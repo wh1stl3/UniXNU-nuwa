@@ -3,6 +3,9 @@
 > 来源：`D:\Code\PortingiOS\docs\handoff-unixnu-route-2026-10-22.md`（2026-10-22 01:33 原件，仅拷入，不再改）。
 > 原文写「工作目录 `D:\Code\PortingiOSWithUniXNU`」，**该目录已废弃**；现行工作目录是本仓库 `D:\Code\UniXNU-nuwa`，其余内容仍然有效。
 > 与 `AGENTS.md` 冲突时以 `AGENTS.md` 为准。
+> **2026-10-22 03:00 追加**：本文写于 01:33，当时还不知道官方移植指南。现行权威是
+> `docs/inherited/unixnu-official-2026-10-22.md`（官方 porting/devices 摘录）+ `docs/DECISIONS.md` D-002/D-003。
+> 本文里「4K/16K 岔路」「三段式架构」等表述以官方文档为准重新对齐，冲突时以官方为准。
 
 交付对象：**WorkBuddy 新会话**
 编写：宿主会话，2026-10-22 01:33 CST
