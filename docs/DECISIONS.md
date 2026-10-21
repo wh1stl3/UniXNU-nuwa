@@ -107,7 +107,7 @@ UEFI 内存映射在 `0x8c0000000` 附近能否给出连续可用块。查法：
 
 # D-003 · 内核页大小走 4 KiB（官方主线），16K 不进本仓
 
-- 状态：**proposed**（2026-10-22 03:00，等用户点头；默认按 4 KiB 推进，不阻塞离线工作）
+- 状态：**accepted**（2026-10-22 03:02，用户明确「4kb」）
 - 依据：官方「移植总览」把「4 KiB XNU 补丁」列为 UniXNU 自带能力；sheng 的观测状态写的是「source 4K XNU to console」，`sheng_defconfig` 带 `CONFIG_XNU_NATIVE_CS_HASH_CACHE`；fuxi 直接沿用 sheng 的内核预链接。
 
 ## 理由
@@ -119,3 +119,72 @@ UEFI 内存映射在 `0x8c0000000` 附近能否给出连续可用块。查法：
 ## 若用户坚持 16K
 
 需要单开一条分支、自维护 16K 补丁集、并放弃与 sheng/fuxi `[kernel.prelink]` 对齐。届时在本文追加 `D-004` 说明代价，不在 bring-up 中途切换页大小。
+
+---
+
+# D-004 · 目标身份是 iOS（iPhone donor），不是 iPadOS —— 但别被 `ipad_identity` 这个键名骗了
+
+- 状态：**accepted**（2026-10-22 03:02，用户明确「nuwa 的目标是跑 iOS 而不是 iPadOS」）
+
+## 1. `ipad_identity = true` 与「跑不跑 iPadOS」无关
+
+查基座源码 `docs/zh/guide/skip-setup.md`：
+
+> 使用 `--ipad-identity` 时，ADT 会加入四个 `/chosen` 属性：
+> `certificate-production-status = 0`、`effective-production-status-ap = 0`、
+> `certificate-security-mode = 1`、`effective-security-mode-sep = 1`
+> 这些属性描述一个 **dev-fused、未 demote 的板子**。`mobileactivationd` 通过 MobileGestalt 读取它们。
+
+所以它是**安全/激活身份**（让 `mobileactivationd` 走原生激活路径），不是平台身份。
+**不要因为名字把它关掉** —— 关掉大概率先把激活打坏。nuwa 应保持 `ipad_identity = true`。
+
+## 2. 真正决定 iOS / iPadOS 的是这四处
+
+| 位置 | 作用 | sheng 的值（不可照抄） |
+| --- | --- | --- |
+| `[ipsw] product / version / build / device_class / chip_id / board_id` | 取哪份原厂 kernelcache / DeviceTree / trust cache | iPad7,1 / iPadOS 17.7.11 / 21H461 / j120ap / 0x8011 / 12 |
+| ADT `/product` 节点 | MobileGestalt 读到的产品名与型号 | 由 ADT 生成器写死 |
+| `[kernel.prelink]` 的 `kernelcache_sha256` / `slide` / `early_security_init` / `roots` | 预链接哪份 Apple 二进制、地址在哪 | 全部绑 iPadOS 17.7.11 那份 kernelcache |
+| 板级 `-disable-jobs` 之类启动参数 | 停掉平台不跑的服务 | sheng 用 `sheng-disable-jobs=com.apple.identityservicesd,...` |
+
+**结论：sheng/fuxi 的 `[kernel.prelink]` 数值一个都不能抄**，它们绑在 iPadOS 17.7.11 的 kernelcache 上。抄了必炸且极难查。
+
+## 3. donor 沿用旧仓已定的 iPhone，不重开题
+
+旧仓 `docs/nuwa-ios-porting-plan.md` 已定：
+
+> 首个候选采用 iPhone X `iPhone10,3 / d22ap` 的 iOS `16.7.16 / 20H392` 用户态，结合公开 XNU `8796.141.3` 参考源码。
+
+那是为「plain arm64 手机用户态」选的，正好满足「iOS 16 + 手机形态」。本仓沿用这个 donor，不再讨论换不换 iPhone 型号，除非出现 ABI/PAC 级别的硬阻塞。
+
+---
+
+# D-005 · 4K 基座钉在 xnu-10063，而 iOS 16 是 8796 —— 版本落差怎么处理（待定，不阻塞）
+
+- 状态：**proposed**（2026-10-22 03:02）
+
+## 事实
+
+- 基座 `feeds.toml` 钉死 `xnu` = **`xnu-10063.141.1`（darwin 23.6.0，对应 17.x）**，49 个补丁是对这棵树写的。
+- sheng = iPadOS 17.7.11（`21H461`）↔ 10063，配套成立。
+- **iOS 16 = xnu-8796（darwin 22.x）**，与 10063 差一个大版本。4K 补丁集、预链接、defconfig 静态库都按 10063 写的。
+
+→ 「4 KiB + iOS 16」这个组合**官方没有现成答案**，成本全在把 49 个补丁 rebase 到 8796。
+
+## 三个选项
+
+| | 做法 | 代价 | 何时能看到画面 |
+| --- | --- | --- | --- |
+| A | feeds 换 8796，49 补丁全部 rebase | 未知，可能半数要手改 | 最晚 |
+| B | 先用 iOS **17.x** 的 iPhone donor（如 iPhone15,2）打通全链，之后再降版本 | 偏离 iOS 16，但最快见到 iOS 用户态 | 最快 |
+| C | 先花半天对 8796 做 `git apply --check` 批量试算，按失败面决定走 A 还是 B | 半天 | 视结果 |
+
+## 宿主立场
+
+**先做 C 的那次 `git apply --check`，不要凭感觉选。** 旧仓对 sweet 补丁做过同样的事（38/49 可 apply），一次跑完就知道失败面量级：
+
+- 失败 ≤10 个且都是文档/头文件类 → 走 A，直达 iOS 16，符合目标。
+- 失败 ≤10 个但有 pmap/SMMU/ABI 类 → 先 B 通链，再逐个补回。
+- 大面积失败 → 走 B，把「iOS 16」降级为后续里程碑，别一步到位。
+
+判定前**不要动 `feeds.toml` 的 xnu 版本**（会连带影响 49 个补丁的基准，难回滚）。

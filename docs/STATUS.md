@@ -8,7 +8,7 @@
 
 ## 需要你点头的一件事（不阻塞）
 
-**D-003：内核页大小走 4 KiB，还是坚持 16K？** 官方 UniXNU 栈自带的是「4 KiB XNU 补丁」，sheng（4K）和 fuxi（沿用 sheng 预链接）都是 4K。本仓默认按 **4K** 推进——补丁集、预链接、defconfig、QEMU fixture 全围绕 4K，选 16K 就要自维护一套补丁并与官方文档脱钩。你说 16K 的话我改 D-004 并重排计划，但不要在 bring-up 中途换页大小。
+**D-005：「4K + iOS 16」的版本落差怎么办？** 基座 `feeds.toml` 钉死 `xnu-10063.141.1`（17.x），sheng 配 iPadOS 17.7.11 正好；但 **iOS 16 是 xnu-8796**，49 个补丁按 10063 写的。宿主建议先做一次 `git apply --check` 批量试算（旧仓对 sweet 补丁干过，38/49 可过），按失败面决定是「rebase 到 8796 直达 iOS 16」还是「先用 iOS 17.x iPhone 打通再降」。详见 `DECISIONS.md` D-005。**在此之前不动 `feeds.toml` 的 xnu 版本。**
 
 ## 目标
 
@@ -24,20 +24,26 @@
 
 ## 已确定
 
-- **D-002**：内存窗口由 ADT 的 `darwinboot-memory-size` 决定，**上限 8 GiB**；`[payload] dram_size` 与 `[payload.adt] owned_memory_size` 是板级键，二者不等价。bring-up 先要 512 MiB–1 GiB，不要一次要到顶。
+- **D-003 页大小 = 4 KiB**（用户 03:02 拍定）。16K 不进本仓，旧仓 `nuwa-mmu16` 的结论不平移。
+- **D-004 平台身份 = iOS（iPhone donor），不是 iPadOS**。donor 沿用旧仓已定：`iPhone10,3 / d22ap / iOS 16.7.16 / 20H392`，内核参考源码 `8796.141.3`。
+  **注意 `ipad_identity = true` 必须保持**——它写的是四个 `/chosen` 安全属性（`certificate-production-status=0` 等，给 `mobileactivationd` 走原生激活），与「跑不跑 iPadOS」无关。
+- **D-002**：内存窗口由 ADT 的 `darwinboot-memory-size` 决定，**上限 8 GiB**；`[payload] dram_size` 与 `[payload.adt] owned_memory_size` 不等价。bring-up 先要 512 MiB–1 GiB。
 - **D-001 内核侧事实仍有效**：XNU physmap 只有单窗口（`arm_vm_init.c:378,1961`），`pa < gPhysBase` 会 panic。
-- 同 SoC 已有移植可对照：**fuxi**（小米 13）自述「基于 UniXNU-sheng 的板级分支，沿用 iPad7,1 iPadOS 17.7.11 镜像与 sheng 预链接」，**vermeer**（K70）有源码构建基线，**sheng** 是功能最全的官方样本。→ 第一版 `board.toml` 照 sheng/fuxi 的结构抄，只换数值。
-- 官方文档摘录见 `docs/inherited/unixnu-official-2026-10-22.md`（board.toml 全字段、ADT 契约、七阶段判据、QEMU fixture 命令）。
+- 同 SoC 可对照：**fuxi**（小米 13）、**vermeer**（K70）、**sheng**（官方最全）。**但只抄结构，不抄 `[kernel.prelink]` 数值**——那些绑在 iPadOS 17.7.11 的 kernelcache 上。
+- 官方文档摘录见 `docs/inherited/unixnu-official-2026-10-22.md`。
 
 ## 下一步（按序）
 
-1. **补齐三仓**：确认/更新 `UniXNU` 基座（官方 master），建立 `-D ../UniXNU-nuwa` 的调用关系；`uefi-nuwa` 先只做空壳 + 决策记录，等阶段 1 再填。
-2. **抄骨架**：拉 `UniXNU-sheng` 与 `UniXNU-fuxi` 作只读参照，产出本仓第一版 `board.toml`（`[board]`/`[ipsw]`/`[userdata]`/`[kernel]`/`[payload]` 全段，未知值写 TODO，不要编数值）。
-3. **先跑 QEMU fixture**：`scripts/qemu-entry/make-dt.py` + `package/Scripts/qemu-run.py`，目标是阶段 2「菜单出现」与阶段 4「`DARWINBOOT:` 打印」。**不碰设备、不出 nuwa 镜像，但能证明基座在本机可用。**
-4. 之后才谈 UEFI 移植（阶段 1）与 ADT 生成器（`scripts/make-nuwa-adt.py`）。
+1. **D-005 的试算（最便宜、最先做）**：对 `xnu-8796` 树跑 49 个补丁的 `git apply --check`，把失败清单与失败类型（头文件/文档 vs pmap/SMMU/ABI）写成 `docs/operations/2026-10-22-patch-portability-8796.md`。结论决定走哪条版本路。
+2. **补齐三仓**：确认/更新 `UniXNU` 基座（官方 master），建立 `-D ../UniXNU-nuwa` 调用；`uefi-nuwa` 先空壳 + 决策记录。
+3. **抄骨架**：拉 `UniXNU-sheng`、`UniXNU-fuxi` 作只读参照，产出第一版 `board.toml`。`[ipsw]` 按 **iPhone donor（iOS 16.7.16 / 20H392 / d22ap）** 填，`[kernel.prelink]` 留 TODO 等 donor kernelcache 到手再算，**不许抄 sheng 的数**。
+4. **先跑 QEMU fixture**：`scripts/qemu-entry/make-dt.py` + `package/Scripts/qemu-run.py`，目标阶段 2「菜单出现」与阶段 4「`DARWINBOOT:` 打印」。不碰设备、不出 nuwa 镜像。
+5. 之后才谈 UEFI 移植（阶段 1）与 ADT 生成器 `scripts/make-nuwa-adt.py`。
 
 ## 已知坑
 
+- **`[kernel.prelink]` 的 4 个值（`kernelcache_sha256` / `slide` / `early_security_init` / `roots`）与 donor kernelcache 强绑定**，sheng 那套是 iPadOS 17.7.11 的，抄来必炸。
+- 基座 `feeds.toml` 钉 `xnu-10063.141.1`，与 iOS 16 的 8796 差一个大版本；改版本前先做 D-005 的试算。
 - `darwinboot-memory-size` 有 **8 GiB 硬上限**，nuwa 的 9 GiB 主 bank 用不满。
 - `dram_size` ≠ `owned_memory_size`，sheng 是 2 GiB vs 4.75 GiB；照抄一个漏抄另一个会很难查。
 - sheng 的 ABL **需要启动镜像里有 `/reserved-memory/splash_region` 节点，否则关屏**；nuwa 的 ABL 是否同样需要，属阶段 1 验证项。
