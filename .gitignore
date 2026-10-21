@@ -1,0 +1,32 @@
+# 构建产物
+build/
+out/
+*.o
+*.a
+*.dylib
+*.so
+*.img
+*.fd
+*.Fv
+*.efi
+*.iso
+
+# 大体积原始件（实测记录要提交，但 DTB 原件 900 KB+ 不必入库）
+*.dtb
+*.dtbo
+
+# 凭据 / 机器特定
+.ghtoken
+.ghhdr
+*.pem
+*.key
+device-serial.txt
+
+# 工具与系统
+__pycache__/
+*.pyc
+.venv/
+venv/
+node_modules/
+Thumbs.db
+desktop.ini

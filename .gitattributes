@@ -1,0 +1,9 @@
+# 构建在 WSL 里跑，脚本必须 LF，否则 bash 报 $'\r' 错误
+* text=auto
+*.sh   text eol=lf
+*.py   text eol=lf
+*.toml text eol=lf
+*.md   text eol=lf
+*.cmd  text eol=crlf
+*.ps1  text eol=crlf
+*.txt  text eol=lf
