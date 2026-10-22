@@ -9,8 +9,13 @@ import shutil
 ROOT = Path(__file__).resolve().parents[2]
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('run_id', type=int)
+parser.add_argument('--artifact', type=Path, help='Explicit extracted artifact root')
+parser.add_argument('--repo', default='wh1stl3/UniXNU')
 args = parser.parse_args()
-artifact = ROOT / f'out/kernel-ci/{args.run_id}/nuwa-8796-source-{args.run_id}'
+artifact = (args.artifact.resolve() if args.artifact else
+            ROOT / f'out/kernel-ci/{args.run_id}/nuwa-8796-source-{args.run_id}')
+if not artifact.is_relative_to(ROOT / 'out'):
+    raise ValueError('Artifact inputs must stay under ignored out/')
 report = ROOT / f'reports/kernel-ci/{args.run_id}'
 report.mkdir(parents=True, exist_ok=True)
 log = artifact / 'nuwa-host/kernel-console.log'
@@ -54,7 +59,12 @@ for directory in ('compile-records', 'driver-archives', 'platform-link'):
         if copied:
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(source, destination)
-summary = {'run_id': args.run_id, 'command': f'gh run download {args.run_id} --repo wh1stl3/UniXNU --dir out/kernel-ci/{args.run_id}',
+selective = report / 'selective-download.json'
+retrieval = (f'python -X utf8 -B scripts/download-kernel-evidence.py {args.run_id} --repo {args.repo}'
+             if selective.exists() else
+             f'gh run download {args.run_id} --repo {args.repo} --dir out/kernel-ci/{args.run_id}')
+summary = {'run_id': args.run_id, 'artifact_root': str(artifact.relative_to(ROOT)),
+           'command': retrieval,
            'console_path': str(log.relative_to(ROOT)), 'console_bytes': len(raw),
            'console_sha256': hashlib.sha256(raw).hexdigest(), 'console_lines': len(lines),
            'excerpt_trailing_whitespace_trimmed': True,

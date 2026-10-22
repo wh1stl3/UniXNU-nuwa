@@ -1,0 +1,96 @@
+{
+  "run_id": 39793231214,
+  "artifact_root": "out\\kernel-ci\\39793231214",
+  "command": "python -X utf8 -B scripts/download-kernel-evidence.py 39793231214 --repo wh1stl3/UniXNU-nuwa",
+  "console_path": "out\\kernel-ci\\39793231214\\nuwa-host\\kernel-console.log",
+  "console_bytes": 98926092,
+  "console_sha256": "40ff7169dae01bc403960b01b35d739002489567974eba93d53167b7b019c2de",
+  "console_lines": 1015277,
+  "excerpt_trailing_whitespace_trimmed": true,
+  "diagnostics": [],
+  "iorpc_header_unchanged": true,
+  "generated_kernel_content_files": 0,
+  "object_count_all_builds": 873,
+  "xnu_target_object_count": 841,
+  "key_objects": {
+    "ast.o": [
+      {
+        "path": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/ast.o",
+        "bytes": 73896,
+        "sha256": "21a6c61593bdff78f0d3b5466b72ac7e0f8b07c7c8709df8b824dfbeea721874"
+      }
+    ],
+    "processor.o": [
+      {
+        "path": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/processor.o",
+        "bytes": 143264,
+        "sha256": "5226e6a12dfdaa02c1a515f1a5d3e6735937270fe52e8c5de7188f6b699b4d42"
+      }
+    ]
+  },
+  "kernel_built": true,
+  "device_verified": false,
+  "additional_reports": [
+    {
+      "path": "compile-records\\bsd\\DEVELOPMENT\\kern_exec.o.json",
+      "bytes": 8256,
+      "sha256": "20251ceeaa30e7bde0cca43414082db2ca006e87c38f935548ec536f11ada855",
+      "copied": true
+    },
+    {
+      "path": "compile-records\\iokit\\DEVELOPMENT\\IOPlatformExpert.cpo.json",
+      "bytes": 8813,
+      "sha256": "ba34eecd7078f8900ff0e719d226d3ea2c014656050ecb3ed48476f9f850451d",
+      "copied": true
+    },
+    {
+      "path": "compile-records\\osfmk\\DEVELOPMENT\\prng_random.o.json",
+      "bytes": 8293,
+      "sha256": "e6b5c4b47ed16c3e9e04985b490028743627fbeac664a0858edd504c102c1ecc",
+      "copied": true
+    },
+    {
+      "path": "compile-records\\osfmk\\DEVELOPMENT\\startup.o.json",
+      "bytes": 8311,
+      "sha256": "870b0c8b2ce98c8f57f8fc64a6a3c7e77228af841a9f60bed932e354faa92cf5",
+      "copied": true
+    },
+    {
+      "path": "driver-archives\\ArmCpu.log",
+      "bytes": 23314,
+      "sha256": "f7732c16f323516ef3652cd8351e963859fa86c1ffbe8e9d3c61131e9ff34d40",
+      "copied": true
+    },
+    {
+      "path": "driver-archives\\ArmDTPlatform.log",
+      "bytes": 20737,
+      "sha256": "d415f224bf1d3896ffc5e4b2d2a726eb376416396a63ea6b794ecc7dba1a6b9a",
+      "copied": true
+    },
+    {
+      "path": "driver-archives\\ArmVirtPlatform.log",
+      "bytes": 20773,
+      "sha256": "59ec6d0ee93a954856abdede123ac3749cff2a5189104dc0ecc4465162e47814",
+      "copied": true
+    },
+    {
+      "path": "driver-archives\\audit.json",
+      "bytes": 138199,
+      "sha256": "ee5f4c1d319854269ba645d3396490f708d48a40608c68b0956aa30fecd0e18a",
+      "copied": true
+    },
+    {
+      "path": "platform-link\\audit.json",
+      "bytes": 6801,
+      "sha256": "6b68f34bfbd758289b001d7a09b8860fa6c8e537f3b694a5f44c1038c62558eb",
+      "copied": true
+    },
+    {
+      "path": "platform-link\\make.log",
+      "bytes": 17073343,
+      "sha256": "bf6e4a721ee8ee69123cdcc611df2b9cc9e616a636ac6a70b82dd26cddbabba7",
+      "copied": false
+    }
+  ],
+  "uio_alignment_errors_observed": false
+}

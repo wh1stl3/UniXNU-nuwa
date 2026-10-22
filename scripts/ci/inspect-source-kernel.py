@@ -12,6 +12,9 @@ parser.add_argument('kernel', type=Path)
 parser.add_argument('--native-prelink', type=Path,
                     default=Path('D:/Code/PortingiOS/common/sources/UniXNU/kits/NativePrelink/native_prelink.py'))
 parser.add_argument('--output', type=Path, required=True)
+parser.add_argument('--platform-link-report', type=Path,
+                    help='Also compare actual exports and archive bytes with this runner report')
+parser.add_argument('--artifact-root', type=Path)
 args = parser.parse_args()
 output = args.output.resolve()
 if not output.is_relative_to(ROOT / 'reports'):
@@ -90,6 +93,32 @@ report = {'kernel': str(args.kernel), 'bytes': len(data), 'sha256': hashlib.sha2
           'markers': markers, 'segments': segments,
           'prelink_executed': False, 'donor_compatibility': 'not validated',
           'device_verified': False}
+if args.platform_link_report:
+    if not args.artifact_root:
+        raise ValueError('Platform link audit requires extracted artifact root')
+    link = json.loads(args.platform_link_report.read_text())
+    if (not link['passed'] or link['kernel_sha256'] != report['sha256']
+            or link['kernel_bytes'] != len(data) or undefined_count != 0):
+        raise ValueError('Actual kernel disagrees with successful runner link report')
+    required = ('_armcpu_registered', '_armcpu_gic_ready', '_armcpu_timer_interrupts',
+                '_armdt_platform_configured', '_armdt_platform_nvram_proxy')
+    actual = {name: hex(unique_symbol(name)) for name in required}
+    archives = []
+    archive_audit = json.loads((args.artifact_root / 'nuwa-8796-source/reports/driver-archives/audit.json').read_text())
+    for component in archive_audit['components']:
+        entry = component['archive']
+        relative = Path(entry['path'])
+        if relative.is_absolute() or '..' in relative.parts:
+            raise ValueError('Unsafe archive report path')
+        payload = (args.artifact_root / 'nuwa-8796-source' / relative).read_bytes()
+        if (not payload.startswith(b'!<arch>\n') or len(payload) != entry['bytes']
+                or hashlib.sha256(payload).hexdigest() != entry['sha256']):
+            raise ValueError('Actual archive disagrees with runner report')
+        archives.append({'component': component['component'], **entry})
+    report['platform_link_independent_checks'] = {
+        'required_exports': actual, 'actual_archives': archives,
+        'runner_report_sha256': hashlib.sha256(args.platform_link_report.read_bytes()).hexdigest(),
+        'runtime_status': 'unverified; export presence does not prove initialization or ABI'}
 output.parent.mkdir(parents=True, exist_ok=True)
 output.write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
 print(json.dumps(report, indent=2))

@@ -1,14 +1,14 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 23:05（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-22 23:18（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
-**三仓已齐，独立固件源码与本地检出已完成，未重新生成固件。**
+**三仓已齐；合并版内核独立核验通过，独立固件CI39802617878构建中。**
 
 | 仓库 | 当前输入与状态 |
 | --- | --- |
-| wh1stl3/UniXNU | 合并上游的76dd641；合并版内核CI39793231214已success，产物独立下载校验尚未完成 |
+| wh1stl3/UniXNU | 合并上游的76dd641；合并版内核CI39793231214及实际内核/三archive/指针绑定静态核验通过 |
 | D:/Code/UniXNU-nuwa | 设备脚本、补丁、固定构建profile和证据；board仍example=true |
 | wh1stl3/uefi-nuwa / D:/Code/uefi-nuwa | 固件源码0a3a51a，默认/本地分支codex/nuwa-bringup，工作区干净、完整Git fsck通过；子模块尚未初始化 |
 
@@ -20,15 +20,15 @@
 
 ## 内核与Darwin22加载器
 
-合并版CI[39793231214](https://github.com/wh1stl3/UniXNU-nuwa/actions/runs/39793231214)固定device_ref=3a210b1，输入检查和源内核/三平台库/两库重链接步骤均success。146197478B证据包两次gh下载报unexpected EOF，尚无新产物本地独立校验；不将runner成功替代文件校验，不自动更换当前负载。见reports/kernel-ci/39793231214/result.json和artifact-download.json。
+合并版CI[39793231214](https://github.com/wh1stl3/UniXNU-nuwa/actions/runs/39793231214)固定device_ref=3a210b1，真实内核20187912B/SHA77742999fc1c1b6a94c9603664d946553070f73c6eed83ce9fcca06d70d73ac8。分块ZIP读取完成所选成员CRC与实际文件SHA核对，五平台导出/零undefined/三archive哈希及65348项donor指针零失败。两个prelink标记、Darwin22/iOS16与段起始4KiB静态检查通过；完整ZIP摘要未验证，保留两次EOF。没有执行预链接、生成负载或证明运行ABI。[核验报告](operations/2026-10-22-merged-kernel-artifact-validation.md)。
 
-既有可独立复核的内核仍为CI15 39755850870：ArmCpu/ArmDTPlatform真实链接、五导出/零undefined、65348项donor指针零缺失，20187888B，SHA a9e08c693fec4034f613cd554ea94e5855b25b727b4bfb4af46a4103f565bc7a。仍是源内核，不是完成的预链接负载，运行provider/完整ABI未验证。
+历史固定负载仍为CI15 39755850870：ArmCpu/ArmDTPlatform真实链接、五导出/零undefined、65348项donor指针零缺失，20187888B，SHA a9e08c693fec4034f613cd554ea94e5855b25b727b4bfb4af46a4103f565bc7a。仍是源内核，不是完成的预链接负载，运行provider/完整ABI未验证。
 
 CI15实际DWARF为608B CommandLine/0x2e0 boot_args，尾字段0x2d0/0x2d8；上游原始DarwinBoot为1024B/0x480。本仓补丁统一结构、局部缓冲区和复制边界，已接入下一固件profile；两版完整DarwinBoot.c的AArch64语法检查、全部成员布局和宿主边界用例通过，完整EFI模块尚未重新链接。PIE宿主一次无诊断139已保留，后续非PIE ASan/UBSan用例通过，精确根因未验证。[修复与证据](operations/2026-10-22-darwin22-loader-fix.md)。
 
 ## 实机、入口与恢复
 
-用户已明确恢复本仓实机访问；本轮只做仓库/源码/本地检出，没有设备操作。当前设备状态未知，任何下一设备动作先重新核对nuwa身份和模式。
+用户已明确恢复本仓实机访问；本轮完成内核下载/静态核验并调度已批准固件构建，没有设备操作。当前设备状态未知，任何下一设备动作先重新核对nuwa身份和模式。
 
 历史固件CI39764322744的四EFI/FD/BootShim编译与静态检查通过；该旧FD无XNU。v4包3153920B/SHA12864ac6…实际Sending/Booting OKAY、用户黑屏，约29秒fastboot持续可见，BootShim/SEC/DXE/BDS均缺执行证据。20:19最后确认原厂临时boot恢复Android=1，不能代表其他轮操作后的现状；A槽持久unbootable未修复，H-001按键演练仍待办。[实机记录](operations/2026-10-22-v4-firmware-trial.md)。
 
@@ -36,10 +36,10 @@ CI15实际DWARF为608B CommandLine/0x2e0 boot_args，尾字段0x2d0/0x2d8；上�
 
 ## 下一步
 
-1. 对合并版CI39793231214改用可恢复的下载路径获取实际报告/内核/平台库，独立核对SHA、格式、五项导出和零undefined；保留两次EOF失败。当前固件负载仍固定CI15。
-2. 按已批准R-004 A的四EFI/FD/BootShim构建与静态审计范围，使用独立固件profile验证新仓接线和Darwin22 patch；不把源码迁移当作构建成功。后续若变更内存/地址、扩展镜像或设备动作，依具体批准和AGENTS硬停处理。
+1. 读取独立固件CI39802617878的实际首错/结果；R-004 A范围已调度四EFI/FD/BootShim，当前安装构建工具。下载后独立核对产物，不将源码或CI状态代替二进制审查。
+2. 合并版内核独立静态核验已完成；保留CI15候选输入，后续以明确profile逐步接入新内核，不自动混用不同来源或生成预链接。完整运行ABI/provider/ARCH_TIMER仍待审查。
 3. 新固件产物检查用--publisher-name NuwaBootMemoryDxe；legacy默认仍支持旧ShengBootMemoryDxe产物。本地子模块未初始化，31项检查中Mu_Basecore文件借用同固定提交的只读缓存，不能称完整本地构建工具已就绪。
-4. 继续ABL/FDT/splash/x0/initrd保留与早期日志回收，审查SM8550 USB许可/4K/DMA/SMMU依赖、UEFI SerialIo桥接；provider/ARCH_23:05R/GIC/PSCI、13项boot-progress、watchdog和NativePrelink完整ABI仍待验收。
+4. 继续ABL/FDT/splash/x0/initrd保留与早期日志回收，审查SM8550 USB许可/4K/DMA/SMMU依赖、UEFI SerialIo桥接；provider/ARCH_TIMER/GIC/PSCI、13项boot-progress、watchdog和NativePrelink完整ABI仍待验收。
 5. 新试启动先隔离bootloader状态，结束后按D-016恢复Android并确认完成；只差实体键的项记PENDING-HUMAN继续软件工作。QEMU结果不作实机通过。
 
 ## 固定边界

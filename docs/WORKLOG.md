@@ -150,3 +150,5 @@
 2026-10-22 22:42 · 独立uefi-nuwa发布既有BootShim/SEC/DSC/FDF和只读发布器，2256条树与内存/配置/子模块保护通过，main和enuma保持 · 0a3a51af229eabe76bcc9dcb90d3ce985223b125 · reports/uefi-nuwa/result.json
 
 2026-10-22 23:05 · 完成独立固件profile与本地D:/Code/uefi-nuwa，31项输入/接线检查和完整Git fsck通过，移除共享缓存依赖；source-import成功且secret已删除，新内核CI成功但两次产物下载EOF待核验，未生成镜像或访问设备 · 本提交（Q-068） · reports/uefi-nuwa/；reports/kernel-ci/39793231214/
+
+2026-10-22 23:18 · 分块取回合并版内核及三archive，实际SHA/五导出/零undefined/65348项donor指针检查通过；调度独立固件CI39802617878，尚无设备执行 · 本提交（Q-069） · reports/kernel-ci/39793231214/；reports/firmware-ci/39802617878/

@@ -1,0 +1,230 @@
+{
+  "kernel": "out\\kernel-ci\\39793231214\\nuwa-8796-source\\build\\xnu\\ios-obj\\DEVELOPMENT_ARM64_BCM2837\\mach.development.bcm2837.unstripped",
+  "bytes": 20187912,
+  "sha256": "77742999fc1c1b6a94c9603664d946553070f73c6eed83ce9fcca06d70d73ac8",
+  "format": "ordinary ARM64 subtype0 MH_EXECUTE",
+  "parser_sha256": "5bd80b8c63deec29b747c28253e02308a56d5f8cdb37c9d315e7c8af7012d017",
+  "version": {
+    "symbol": "_version",
+    "string": "Darwin Kernel Version 22.6.0: Thu Oct 22 14:21:21 UTC 2026; runner:ios-obj/DEVELOPMENT_ARM64_BCM2837",
+    "file_offset": 237978
+  },
+  "source_version_components": [
+    8796,
+    141,
+    3,
+    0,
+    0
+  ],
+  "link_build_version": {
+    "platform": 2,
+    "minimum_os": "16.0.0",
+    "sdk_metadata": "16.0.0"
+  },
+  "undefined_symbol_count": 0,
+  "exported_symbol_count": 21835,
+  "markers": {
+    "_kalloc_sparse_prelink_index_version": {
+      "value": 1,
+      "address_from_binary": "0xfffffff007005e80",
+      "file_offset": 7808
+    },
+    "_native_prelink_security_init_version": {
+      "value": 1,
+      "address_from_binary": "0xfffffff0070217a0",
+      "file_offset": 120736
+    }
+  },
+  "segments": [
+    {
+      "name": "__TEXT",
+      "vmaddr": "0xfffffff007004000",
+      "vmsize": 1343488,
+      "fileoff": 0,
+      "filesize": 1343488,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__DATA_CONST",
+      "vmaddr": "0xfffffff00714c000",
+      "vmsize": 884736,
+      "fileoff": 1343488,
+      "filesize": 884736,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__TEXT_EXEC",
+      "vmaddr": "0xfffffff007224000",
+      "vmsize": 8110080,
+      "fileoff": 2228224,
+      "filesize": 8110080,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__KLD",
+      "vmaddr": "0xfffffff0079e0000",
+      "vmsize": 16384,
+      "fileoff": 10338304,
+      "filesize": 16384,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__LASTDATA_CONST",
+      "vmaddr": "0xfffffff0079e4000",
+      "vmsize": 16384,
+      "fileoff": 10354688,
+      "filesize": 16384,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__LAST",
+      "vmaddr": "0xfffffff0079e8000",
+      "vmsize": 0,
+      "fileoff": 0,
+      "filesize": 0,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__KLDDATA",
+      "vmaddr": "0xfffffff0079e8000",
+      "vmsize": 16384,
+      "fileoff": 10371072,
+      "filesize": 16384,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__DATA",
+      "vmaddr": "0xfffffff0079ec000",
+      "vmsize": 1097728,
+      "fileoff": 10387456,
+      "filesize": 262144,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__BOOTDATA",
+      "vmaddr": "0xfffffff007af8000",
+      "vmsize": 294912,
+      "fileoff": 10649600,
+      "filesize": 294912,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__PRELINK_TEXT",
+      "vmaddr": "0xfffffff004004000",
+      "vmsize": 0,
+      "fileoff": 10944512,
+      "filesize": 0,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__PRELINK_INFO",
+      "vmaddr": "0xfffffff007b40000",
+      "vmsize": 0,
+      "fileoff": 10944512,
+      "filesize": 0,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__PLK_TEXT_EXEC",
+      "vmaddr": "0xfffffff007b40000",
+      "vmsize": 0,
+      "fileoff": 10944512,
+      "filesize": 0,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__PRELINK_DATA",
+      "vmaddr": "0xfffffff007b40000",
+      "vmsize": 0,
+      "fileoff": 10944512,
+      "filesize": 0,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__PLK_DATA_CONST",
+      "vmaddr": "0xfffffff007b40000",
+      "vmsize": 0,
+      "fileoff": 10944512,
+      "filesize": 0,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__PLK_LLVM_COV",
+      "vmaddr": "0xfffffff007b40000",
+      "vmsize": 0,
+      "fileoff": 10944512,
+      "filesize": 0,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__PLK_LINKEDIT",
+      "vmaddr": "0xfffffff007b40000",
+      "vmsize": 0,
+      "fileoff": 10944512,
+      "filesize": 0,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__LINKINFO",
+      "vmaddr": "0xfffffff007b40000",
+      "vmsize": 278528,
+      "fileoff": 10944512,
+      "filesize": 278528,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__LINKEDIT",
+      "vmaddr": "0xfffffff007b84000",
+      "vmsize": 8978432,
+      "fileoff": 11223040,
+      "filesize": 8964872,
+      "four_kib_start_alignment": true
+    }
+  ],
+  "prelink_executed": false,
+  "donor_compatibility": "not validated",
+  "device_verified": false,
+  "platform_link_independent_checks": {
+    "required_exports": {
+      "_armcpu_registered": "0xfffffff007abdd00",
+      "_armcpu_gic_ready": "0xfffffff007abdd04",
+      "_armcpu_timer_interrupts": "0xfffffff007abdd08",
+      "_armdt_platform_configured": "0xfffffff007abdf40",
+      "_armdt_platform_nvram_proxy": "0xfffffff007abdf54"
+    },
+    "actual_archives": [
+      {
+        "component": "ArmCpu",
+        "path": "build/driver-archives/libArmCpu.a",
+        "bytes": 242720,
+        "sha256": "f404486a19d43002d9aab7459293e64477156b41aa77a155c5b582956fe79140",
+        "members": [
+          "__.SYMDEF SORTED",
+          "ArmCpu.o"
+        ]
+      },
+      {
+        "component": "ArmDTPlatform",
+        "path": "build/driver-archives/libArmDTPlatform.a",
+        "bytes": 186344,
+        "sha256": "5ff9c661ec85fb9448bb5da7860aebdf22a0d0b04f21193a42e88a36bb5f96cd",
+        "members": [
+          "__.SYMDEF SORTED",
+          "ArmDTPlatform.o"
+        ]
+      },
+      {
+        "component": "ArmVirtPlatform",
+        "path": "build/driver-archives/libArmVirtPlatform.a",
+        "bytes": 186312,
+        "sha256": "51526fd5ba88c9a88170d38fdeefab970cbc8ad8b4617241afbe4d8f20159a50",
+        "members": [
+          "__.SYMDEF SORTED",
+          "ArmVirtPlatform.o"
+        ]
+      }
+    ],
+    "runner_report_sha256": "6b68f34bfbd758289b001d7a09b8860fa6c8e537f3b694a5f44c1038c62558eb",
+    "runtime_status": "unverified; export presence does not prove initialization or ABI"
+  }
+}
