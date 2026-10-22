@@ -1,0 +1,91 @@
+{
+  "repository": "wh1stl3/uefi-nuwa",
+  "url": "https://github.com/wh1stl3/uefi-nuwa",
+  "parent": "Project-Silicium/Mu-Silicium",
+  "baseline": "6c6755012728c9f7de748228758bad94d1e9a660",
+  "branch": "codex/nuwa-bringup",
+  "commit": "0a3a51af229eabe76bcc9dcb90d3ce985223b125",
+  "inherited_main": "42fe563791e51bf5500c2e470ed294ca0c94b97c",
+  "source_entries": 2256,
+  "actions_enabled": false,
+  "protected_blobs": {
+    "Resources/Configs/nuwa.toml": "718b6fad52e4f7236e4eb7666cf8992a29693f42",
+    "Platforms/Xiaomi/nuwaPkg/Library/MemoryMapLib/MemoryMapLib.c": "b6a1d01358ae16b514709ff505e6c39817ffb434",
+    "Platforms/Xiaomi/nuwaPkg/Library/ConfigurationMapLib/ConfigurationMapLib.c": "804c7546d26a49a31555bdaddbed8149a81b67da",
+    ".gitmodules": "901009ac612f69713683b6c4c002b74a8a8e8e2e"
+  },
+  "changed_paths": {
+    "BootShim/BootShim.S": {
+      "sha256": "40ff434f170e98010117039bbc6da37b8892bcd07c0c0c090848edc477d5b54f",
+      "git_blob": "cde00dfe4545ca760f1c064e2bca7f47a3e825d2",
+      "bytes": 802
+    },
+    "Platforms/Xiaomi/nuwaPkg/nuwa.dsc": {
+      "sha256": "898fa84809d9b10c604e2774456485d9dfe28ebea00599009fde93d03a57cce5",
+      "git_blob": "f7a24a459ce5c5f53b4eb97e26add99eee74dc4d",
+      "bytes": 2734
+    },
+    "Platforms/Xiaomi/nuwaPkg/nuwa.fdf": {
+      "sha256": "04a854f51f46156fbab09569d23281774d1d3f507b82039f8907529d54c16328",
+      "git_blob": "fe81cdcaa1e5b1e5995f10193fd51e59fd090af3",
+      "bytes": 4789
+    },
+    "Platforms/Xiaomi/nuwaPkg/DeviceBuild.py": {
+      "sha256": "ed2fff500bc578fce42278df345a6303a2dab2e543d5d45fe99bad483db722df",
+      "git_blob": "5ea60cf7f6e077476a02c3aaf5628e57e54dd772",
+      "bytes": 8169
+    },
+    "Silicon/Silicium/SiliciumPkg/SiliciumPkg.dec": {
+      "sha256": "7fc732316ec58ad80ed530925494cf27399b5a2030df1bba66fe0c8d62895208",
+      "git_blob": "d6a355db8b079b9323d9f45ebf454aa51adc5b23",
+      "bytes": 2793
+    },
+    "Silicon/Silicium/SiliciumPkg/Sec/Sec.c": {
+      "sha256": "fd28b90308cbda4d96222ca405871f8182654e6a5ca57735fdf8db193ac81163",
+      "git_blob": "5b9fb382bf2b4d87eb8f8befaea54754f9c01da3",
+      "bytes": 4928
+    },
+    "Silicon/Silicium/SiliciumPkg/Sec/Sec.inf": {
+      "sha256": "c9e6168e99ea7f609dff5594f16d1f79501bc819d45c4fea120179b5f76d4f9f",
+      "git_blob": "3d9868d6c7b299dcef06d94ed0308378c4de0e41",
+      "bytes": 1533
+    },
+    "Silicon/Silicium/SiliciumPkg/Sec/AArch64/ModuleEntryPoint.S": {
+      "sha256": "67e4173615739c542df3736cbf4b403ea018797528c56d957cf0dab22955d7e2",
+      "git_blob": "480c66bdc9c4c60077fba1e27eed32bbb27b77e4",
+      "bytes": 1555
+    },
+    "Platforms/Xiaomi/nuwaPkg/Drivers/NuwaBootMemoryDxe/NuwaBootMemoryDxe.c": {
+      "sha256": "4ad1acce7b3538092a6eaf443a52e3a7c9bd7ce05e6e028f3129d7dd61e3c627",
+      "git_blob": "4ad7a5647c3bb7cb9650d1034af1d94615b642ee",
+      "bytes": 5580
+    },
+    "Platforms/Xiaomi/nuwaPkg/Drivers/NuwaBootMemoryDxe/NuwaBootMemoryDxe.inf": {
+      "sha256": "f83481ac980613d3e33f453706472e94ec9102296a10dd9ca7f1c1510df162fa",
+      "git_blob": "77a155384c7354cf6a7d19847aab107fe8b45b26",
+      "bytes": 832
+    },
+    "Platforms/Xiaomi/nuwaPkg/Drivers/NuwaBootMemoryDxe/ORIGIN.md": {
+      "sha256": "968a0206f4193c383b570092dbdbe87383af2d9886b4921727894a4147e55020",
+      "git_blob": "f2668c6e01311d6ccdba016455036b3564161377",
+      "bytes": 819
+    },
+    "docs/nuwa-unixnu.md": {
+      "sha256": "003b8ae72e40060aaaa4695c0912e03477043f38f8dd49c6537dfc063f099462",
+      "git_blob": "d8d0051fd36c025bec5f1a1f3c10ba2b27a77dab",
+      "bytes": 1130
+    }
+  },
+  "submodules": {
+    "Binaries": "a1501e0c2e642d6ac0d8f52c85af2a67b75a7799",
+    "Common/Mu": "b8d46c71610318e36a661819e1e3c0b8bdda413a",
+    "Common/Mu_OEM_Sample": "b70b4b7bb02c43bf9db2172dfb3ed0457e2361d6",
+    "Mu_Basecore": "cfb93724a06ff86ff5ba971413368a7809ee42a5",
+    "Silicium-ACPI": "2d465ad77c25de908f0ec7bdfcb57f865b61233c",
+    "Silicon/Silicium/OpensslPkg/Library/OpensslLib/openssl": "67b5686b4419b4cb8caa502711c41815f5279751"
+  },
+  "firmware_generated": false,
+  "device_accessed": false,
+  "observed_at": "2026-10-22T14:42:10.597454+00:00",
+  "complete_tree_matches": true
+}

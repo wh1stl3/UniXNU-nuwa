@@ -345,3 +345,10 @@ D-016补充（2026-10-22 20:53）：离线实际FD/TE/map入口一致，SEC WARN
 - 证据：reports/official-site-audit/ci15-boot-args-dwarf.json；reports/darwin22-loader/；operations/2026-10-22-darwin22-loader-fix.md。
 
 本机固定iOS16/XNU8796负载使用608B CommandLine与0x2e0 boot_args，不沿用Darwin23的1024B/0x480。设备专用patch同时调整局部缓冲区与复制边界，超长/非ASCII直接拒绝，保留终止符；不只缩短结构或静默截断。补丁适用原75bc基线和合并后固定DarwinBoot模块，应用前后均有哈希门。此决策不切换4KiB、窗口或身份，不证明当前无XNU的v4黑屏原因；未来多ABI需明确构建/协议选择。
+
+# D-018 · 独立固件仓保留Mu历史并与设备仓分工
+
+- 状态：accepted，源码和本地检出完成，新固件尚未编译（2026-10-22）。
+- 证据：用户要求补齐uefi-nuwa并追问本地目录；reports/uefi-nuwa/；operations/2026-10-22-dedicated-uefi-repository.md。
+
+设备脚本/板描述/补丁与证据留在UniXNU-nuwa；固件改动在独立uefi-nuwa维护，使用固定提交接入。已有enuma处于同一GitHub fork网络，使用独立Git仓导入Mu历史，保持enuma和上游main不变；nuwa开发分支从已验证6c67550建立，不直接升级Mu基线。已入固件仓的patch不重复应用，旧manifest和patch保留以复现历史。用户要求的D:/Code/uefi-nuwa作为独立本地源码目录，旧资料库保持只读；源码仓建立和静态检查不构成镜像或实机阶段验收。

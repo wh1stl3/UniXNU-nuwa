@@ -182,7 +182,7 @@ class Firmware:
             at = align(at + size, 4)
 
 
-def inspect(artifact):
+def inspect(artifact, publisher_name='ShengBootMemoryDxe'):
     artifact = artifact.resolve()
     inventory = json.loads((artifact / "inventory.json").read_text())
     for item in inventory:
@@ -198,6 +198,8 @@ def inspect(artifact):
     fv.volume(data, "FD/FVMAIN_COMPACT")
     modules = []
     for guid, (name, subsystem, kind) in MODULES.items():
+        if name == 'ShengBootMemoryDxe':
+            name = publisher_name
         matches = [item for item in fv.files if item["guid"] == guid]
         need(len(matches) == 1, name + " absent or duplicated inside actual FD")
         item = matches[0]
@@ -257,10 +259,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("artifact", type=Path)
     parser.add_argument("--output", required=True, type=Path)
+    parser.add_argument('--publisher-name', choices=('ShengBootMemoryDxe', 'NuwaBootMemoryDxe'), default='ShengBootMemoryDxe')
     args = parser.parse_args()
     output = args.output.resolve()
     need(output.is_relative_to(ROOT) and output.suffix == ".json", "Evidence output must be repo-local JSON")
-    report = inspect(args.artifact)
+    report = inspect(args.artifact, args.publisher_name)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(dict(result=report["result"], fd=report["fd"], shim=report["shim"], modules=[m["name"] for m in report["modules"]])))

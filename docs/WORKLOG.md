@@ -146,3 +146,7 @@
 2026-10-22 22:14 · 合并版内核CI39793231214已触发，当前排队未执行；两版完整DarwinBoot C翻译单元AArch64语法检查通过，未链接/生成固件或访问设备 · 本提交（Q-066） · reports/kernel-ci/39793231214/dispatch.json；reports/darwin22-loader/checks.json
 
 2026-10-22 22:30 · 创建公开独立uefi-nuwa并关闭Actions；同网络enuma保持，准备仅导入Git历史的临时云任务及已有源码接线脚本，尚未导入或生成镜像 · 本提交（Q-067） · reports/uefi-nuwa/repository-created.json；docs/operations/2026-10-22-dedicated-uefi-repository.md
+
+2026-10-22 22:42 · 独立uefi-nuwa发布既有BootShim/SEC/DSC/FDF和只读发布器，2256条树与内存/配置/子模块保护通过，main和enuma保持 · 0a3a51af229eabe76bcc9dcb90d3ce985223b125 · reports/uefi-nuwa/result.json
+
+2026-10-22 23:05 · 完成独立固件profile与本地D:/Code/uefi-nuwa，31项输入/接线检查和完整Git fsck通过，移除共享缓存依赖；source-import成功且secret已删除，新内核CI成功但两次产物下载EOF待核验，未生成镜像或访问设备 · 本提交（Q-068） · reports/uefi-nuwa/；reports/kernel-ci/39793231214/

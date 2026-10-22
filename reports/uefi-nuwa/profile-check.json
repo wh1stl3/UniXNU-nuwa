@@ -1,0 +1,200 @@
+{
+  "profile": "config/firmware-dedicated-profile.json",
+  "firmware_commit": "0a3a51af229eabe76bcc9dcb90d3ce985223b125",
+  "source_inputs": [
+    {
+      "root": "firmware",
+      "path": "BootShim/BootShim.S",
+      "source": "dedicated local checkout",
+      "passed": true
+    },
+    {
+      "root": "firmware",
+      "path": "Platforms/Xiaomi/nuwaPkg/nuwa.dsc",
+      "source": "dedicated local checkout",
+      "passed": true
+    },
+    {
+      "root": "firmware",
+      "path": "Platforms/Xiaomi/nuwaPkg/nuwa.fdf",
+      "source": "dedicated local checkout",
+      "passed": true
+    },
+    {
+      "root": "firmware",
+      "path": "Platforms/Xiaomi/nuwaPkg/DeviceBuild.py",
+      "source": "dedicated local checkout",
+      "passed": true
+    },
+    {
+      "root": "firmware",
+      "path": "Platforms/Xiaomi/nuwaPkg/Library/MemoryMapLib/MemoryMapLib.c",
+      "source": "dedicated local checkout",
+      "passed": true
+    },
+    {
+      "root": "firmware",
+      "path": "Platforms/Xiaomi/nuwaPkg/Library/ConfigurationMapLib/ConfigurationMapLib.c",
+      "source": "dedicated local checkout",
+      "passed": true
+    },
+    {
+      "root": "firmware",
+      "path": "Silicon/Silicium/SiliciumPkg/Include/Library/MemoryMapLib.h",
+      "source": "dedicated local checkout",
+      "passed": true
+    },
+    {
+      "root": "firmware",
+      "path": "Silicon/Silicium/SiliciumPkg/Drivers/RamManagerDxe/RamManager.c",
+      "source": "dedicated local checkout",
+      "passed": true
+    },
+    {
+      "root": "firmware",
+      "path": "Silicon/Silicium/SiliciumPkg/Library/MemoryInitPeiLib/MemoryInitPei.c",
+      "source": "dedicated local checkout",
+      "passed": true
+    },
+    {
+      "root": "firmware",
+      "path": "Mu_Basecore/MdePkg/Library/BaseFdtLib/BaseFdtLib.inf",
+      "source": "read-only cache of uninitialized pinned module Mu_Basecore",
+      "passed": true
+    },
+    {
+      "root": "unixnu",
+      "path": "package/UniXNUPkg/Application/UniXNU/UniXNU.inf",
+      "source": "verified source mapping",
+      "passed": true
+    },
+    {
+      "root": "unixnu",
+      "path": "package/UniXNUPkg/Driver/UniXNUDxe/UniXNUDxe.inf",
+      "source": "verified source mapping",
+      "passed": true
+    },
+    {
+      "root": "unixnu",
+      "path": "drivers/DarwinBoot/DarwinBootPkg/Driver/DarwinBoot.inf",
+      "source": "verified source mapping",
+      "passed": true
+    },
+    {
+      "root": "unixnu",
+      "path": "package/UniXNUPkg/UniXNUPkg.dec",
+      "source": "verified source mapping",
+      "passed": true
+    },
+    {
+      "root": "unixnu",
+      "path": "package/UniXNUPkg/Library/UniXNULib/UniXNULib.inf",
+      "source": "verified source mapping",
+      "passed": true
+    },
+    {
+      "root": "unixnu",
+      "path": "package/UniXNUPkg/Library/UniXNULib/Boot.c",
+      "source": "verified source mapping",
+      "passed": true
+    },
+    {
+      "root": "unixnu",
+      "path": "package/UniXNUPkg/Driver/UniXNUDxe/UniXNUDxe.c",
+      "source": "verified source mapping",
+      "passed": true
+    },
+    {
+      "root": "unixnu",
+      "path": "drivers/DarwinBoot/DarwinBootPkg/Driver/DarwinBoot.c",
+      "source": "verified source mapping",
+      "passed": true
+    },
+    {
+      "root": "unixnu",
+      "path": "scripts/unixnu/bootimg.py",
+      "source": "verified source mapping",
+      "passed": true
+    },
+    {
+      "root": "firmware",
+      "path": "Resources/Configs/nuwa.toml",
+      "source": "dedicated local checkout",
+      "passed": true
+    },
+    {
+      "root": "firmware",
+      "path": ".gitmodules",
+      "source": "dedicated local checkout",
+      "passed": true
+    },
+    {
+      "root": "firmware",
+      "path": "Platforms/Xiaomi/nuwaPkg/Include/DXE.inc",
+      "source": "dedicated local checkout",
+      "passed": true
+    },
+    {
+      "root": "firmware",
+      "path": "Silicon/Qualcomm/QcomPkg/Library/PlatformBootManagerLib/PlatformBootManager.c",
+      "source": "dedicated local checkout",
+      "passed": true
+    },
+    {
+      "root": "firmware",
+      "path": "Silicon/Qualcomm/QcomPkg/Library/PlatformBootOptionsLib/PlatformBootOptions.c",
+      "source": "dedicated local checkout",
+      "passed": true
+    },
+    {
+      "root": "firmware",
+      "path": "Silicon/Silicium/SiliciumPkg/SiliciumPkg.dec",
+      "source": "dedicated local checkout",
+      "passed": true
+    },
+    {
+      "root": "firmware",
+      "path": "Silicon/Silicium/SiliciumPkg/Sec/Sec.c",
+      "source": "dedicated local checkout",
+      "passed": true
+    },
+    {
+      "root": "firmware",
+      "path": "Silicon/Silicium/SiliciumPkg/Sec/Sec.inf",
+      "source": "dedicated local checkout",
+      "passed": true
+    },
+    {
+      "root": "firmware",
+      "path": "Silicon/Silicium/SiliciumPkg/Sec/AArch64/ModuleEntryPoint.S",
+      "source": "dedicated local checkout",
+      "passed": true
+    },
+    {
+      "root": "unixnu",
+      "path": "drivers/DarwinBoot/DarwinBootPkg/Driver/BootArgs.h",
+      "source": "verified source mapping",
+      "passed": true
+    },
+    {
+      "root": "firmware",
+      "path": "Platforms/Xiaomi/nuwaPkg/Drivers/NuwaBootMemoryDxe/NuwaBootMemoryDxe.c",
+      "source": "dedicated local checkout",
+      "passed": true
+    },
+    {
+      "root": "firmware",
+      "path": "Platforms/Xiaomi/nuwaPkg/Drivers/NuwaBootMemoryDxe/NuwaBootMemoryDxe.inf",
+      "source": "dedicated local checkout",
+      "passed": true
+    }
+  ],
+  "module_count": 4,
+  "external_package_count": 2,
+  "remaining_patch_count": 1,
+  "double_application_avoided": true,
+  "original_board_and_feed_pins_retained": true,
+  "full_build": false,
+  "device_accessed": false,
+  "local_firmware_checkout": "D:\\Code\\uefi-nuwa"
+}

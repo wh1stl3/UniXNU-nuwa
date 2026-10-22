@@ -690,3 +690,23 @@
 [Evidence] GitHub仓库创建记录及Actions关闭；fork API返回已有enuma时名称断言中止，固定Mu基线/上游main并在源码脚本检查原始blob和patch哈希。
 [Risk] 源历史尚待导入，临时import secret结束后须删除；固件仓尚未编译或实机验证，不生成镜像或改板值。
 ```
+
+## UEFI-001 · 独立固件源码已云端提交0a3a51a
+
+```text
+[unixnu-nuwa][firmware] Own the pinned nuwa UniXNU firmware integration
+
+[Change] Apply reviewed shim, loader wiring and SEC HOB changes; import the read-only initrd publisher.
+[Evidence] Device patch hashes and upstream blobs checked; memory maps and module GUID retained.
+[Risk] Source migration only; no firmware build, boot image or hardware execution.
+```
+
+## Q-068 · 固件仓源码接线与本地检出
+
+```text
+[unixnu-nuwa][firmware] 接入独立固件仓并补齐可独立使用的本地检出
+
+[Change] 固定uefi-nuwa的0a3a51a并接入dedicated构建profile，保留legacy与历史patch；建立D:/Code/uefi-nuwa，更新目录边界及发布器产物名。
+[Evidence] 源导入CI成功且临时secret已删除，2256条Git树/31项输入与模块接线检查通过，本地HEAD一致、工作区干净、完整fsck通过且共享缓存依赖已移除。
+[Risk] 新固件尚未编译或实机验证，本地子模块未初始化；合并版内核CI已成功但产物下载两次EOF尚未独立校验，未改board/feed或生成镜像。
+```

@@ -7,7 +7,8 @@
 
 | 路径 | 关系 |
 | --- | --- |
-| `D:\Code\UniXNU-nuwa`（本仓库） | 唯一干活的地方：脚本、补丁、配置、报告、提交 |
+| `D:\Code\UniXNU-nuwa`（本仓库） | 设备仓工作目录：脚本、补丁、配置、报告、提交 |
+| `D:\Code\uefi-nuwa` | 用户2026-10-22要求补齐的独立固件仓本地检出；固件源码在此维护，设备仓保留引用和证据 |
 | `D:\Code\PortingiOS` | **只读资料库**。上游源码副本（`common/sources/`）、旧路线存档、DBC/分区/实测记录都在这里，只准读，不准写、不准提交 |
 | `D:\Code\PortingiOSWithUniXNU` | **只读参照**。上一轮探针的产物（`docs/P0-PROBE-REPORT.md`、`device/observed/`），已拷入本仓库 `docs/inherited/`；不要再往那个目录写任何东西 |
 

@@ -25,7 +25,7 @@ jobs:
           python3 -m venv "$RUNNER_TEMP/firmware-venv"
           echo "$RUNNER_TEMP/firmware-venv/bin" >> "$GITHUB_PATH"
       - name: Build approved candidate only
-        run: python3 scripts/ci/build-firmware-candidate.py
+        run: python3 scripts/ci/build-firmware-candidate.py --profile dedicated
       - name: Preserve evidence and approved artifacts
         if: always()
         uses: actions/upload-artifact@v4

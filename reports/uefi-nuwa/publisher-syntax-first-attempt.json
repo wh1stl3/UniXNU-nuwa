@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "wsl.exe",
+    "-e",
+    "clang",
+    "--target=aarch64-none-elf",
+    "-x",
+    "c",
+    "-std=gnu11",
+    "-fshort-wchar",
+    "-ffreestanding",
+    "-fsyntax-only",
+    "-Wall",
+    "-Werror",
+    "-I/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include",
+    "-I/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/AArch64",
+    "-I/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdeModulePkg/Include",
+    "-I/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Silicon/Silicium/SiliciumPkg/Include",
+    "-"
+  ],
+  "exit_code": 1,
+  "stdout": "",
+  "stderr": "In file included from <stdin>:18:\n/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/Library/HobLib.h:149:1: error: unknown type name 'EFI_BOOT_MODE'\nEFI_BOOT_MODE\n^\n/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/Library/HobLib.h:199:6: error: unknown type name 'EFI_RESOURCE_TYPE'\n  IN EFI_RESOURCE_TYPE            ResourceType,\n     ^\n/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/Library/HobLib.h:200:6: error: unknown type name 'EFI_RESOURCE_ATTRIBUTE_TYPE'\n  IN EFI_RESOURCE_ATTRIBUTE_TYPE  ResourceAttribute,\n     ^\n/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/Library/HobLib.h:228:6: error: unknown type name 'EFI_RESOURCE_TYPE'\n  IN EFI_RESOURCE_TYPE            ResourceType,\n     ^\n/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/Library/HobLib.h:229:6: error: unknown type name 'EFI_RESOURCE_ATTRIBUTE_TYPE'\n  IN EFI_RESOURCE_ATTRIBUTE_TYPE  ResourceAttribute,\n     ^\n/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/Library/HobLib.h:256:6: error: unknown type name 'EFI_RESOURCE_TYPE'\n  IN EFI_RESOURCE_TYPE            ResourceType,\n     ^\n/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/Library/HobLib.h:257:6: error: unknown type name 'EFI_RESOURCE_ATTRIBUTE_TYPE'\n  IN EFI_RESOURCE_ATTRIBUTE_TYPE  ResourceAttribute,\n     ^\n<stdin>:200:3: error: use of undeclared identifier 'EFI_HOB_GUID_TYPE'\n  EFI_HOB_GUID_TYPE  *Hob;\n  ^\n<stdin>:200:23: error: use of undeclared identifier 'Hob'\n  EFI_HOB_GUID_TYPE  *Hob;\n                      ^\n<stdin>:203:3: error: use of undeclared identifier 'Hob'\n  Hob = GetFirstGuidHob (&gSiliciumEntryArgHobGuid);\n  ^\n<stdin>:204:8: error: use of undeclared identifier 'Hob'\n  if ((Hob == NULL) || (GET_GUID_HOB_DATA_SIZE (Hob) < sizeof (UINT64))) {\n       ^\n<stdin>:204:25: error: expected expression\n  if ((Hob == NULL) || (GET_GUID_HOB_DATA_SIZE (Hob) < sizeof (UINT64))) {\n                        ^\n/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/Library/HobLib.h:636:12: note: expanded from macro 'GET_GUID_HOB_DATA_SIZE'\n  (UINT16)(GET_HOB_LENGTH (HobStart) - sizeof (EFI_HOB_GUID_TYPE))\n           ^\n/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/Library/HobLib.h:580:32: note: expanded from macro 'GET_HOB_LENGTH'\n  ((*(EFI_HOB_GENERIC_HEADER **)&(HobStart))->HobLength)\n                               ^\n<stdin>:204:25: error: use of undeclared identifier 'EFI_HOB_GENERIC_HEADER'\n/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/Library/HobLib.h:636:12: note: expanded from macro 'GET_GUID_HOB_DATA_SIZE'\n  (UINT16)(GET_HOB_LENGTH (HobStart) - sizeof (EFI_HOB_GUID_TYPE))\n           ^\n/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/Library/HobLib.h:580:7: note: expanded from macro 'GET_HOB_LENGTH'\n  ((*(EFI_HOB_GENERIC_HEADER **)&(HobStart))->HobLength)\n      ^\n<stdin>:204:49: error: use of undeclared identifier 'Hob'\n  if ((Hob == NULL) || (GET_GUID_HOB_DATA_SIZE (Hob) < sizeof (UINT64))) {\n                                                ^\n<stdin>:204:25: error: use of undeclared identifier 'EFI_HOB_GUID_TYPE'\n  if ((Hob == NULL) || (GET_GUID_HOB_DATA_SIZE (Hob) < sizeof (UINT64))) {\n                        ^\n/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/Library/HobLib.h:636:48: note: expanded from macro 'GET_GUID_HOB_DATA_SIZE'\n  (UINT16)(GET_HOB_LENGTH (HobStart) - sizeof (EFI_HOB_GUID_TYPE))\n                                               ^\n<stdin>:209:45: error: use of undeclared identifier 'Hob'\n  Dtb = ReadUnaligned64 (GET_GUID_HOB_DATA (Hob));\n                                            ^\n<stdin>:209:26: error: use of undeclared identifier 'EFI_HOB_GUID_TYPE'\n  Dtb = ReadUnaligned64 (GET_GUID_HOB_DATA (Hob));\n                         ^\n/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/Library/HobLib.h:623:45: note: expanded from macro 'GET_GUID_HOB_DATA'\n  (VOID *)(*(UINT8 **)&(HobStart) + sizeof (EFI_HOB_GUID_TYPE))\n                                            ^\n17 errors generated.\n",
+  "scope": "AArch64 syntax only; extern declaration matches the INF consumed HOB GUID that AutoGen supplies during a real build",
+  "source_sha256": "4ad1acce7b3538092a6eaf443a52e3a7c9bd7ce05e6e028f3129d7dd61e3c627",
+  "firmware_generated": false
+}

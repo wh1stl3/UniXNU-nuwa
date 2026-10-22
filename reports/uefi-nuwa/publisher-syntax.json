@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "wsl.exe",
+    "-e",
+    "clang",
+    "--target=aarch64-none-elf",
+    "-x",
+    "c",
+    "-std=gnu11",
+    "-fshort-wchar",
+    "-ffreestanding",
+    "-fsyntax-only",
+    "-Wall",
+    "-Werror",
+    "-I/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include",
+    "-I/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/AArch64",
+    "-I/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdeModulePkg/Include",
+    "-I/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Silicon/Silicium/SiliciumPkg/Include",
+    "-"
+  ],
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "",
+  "scope": "AArch64 syntax only; PiDxe.h and the INF consumed HOB GUID declaration model the AutoGen preinclude, not replacement UEFI definitions",
+  "source_sha256": "4ad1acce7b3538092a6eaf443a52e3a7c9bd7ce05e6e028f3129d7dd61e3c627",
+  "firmware_generated": false
+}

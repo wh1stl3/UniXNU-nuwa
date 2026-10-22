@@ -1,0 +1,134 @@
+{
+  "conclusion": "success",
+  "createdAt": "2026-10-22T14:09:10Z",
+  "databaseId": 39793231214,
+  "headSha": "3a210b1a4a9ed4633e14b567fea32c590162baf3",
+  "jobs": [
+    {
+      "completedAt": "2026-10-22T14:22:46Z",
+      "conclusion": "success",
+      "databaseId": 119874191459,
+      "name": "kernel",
+      "startedAt": "2026-10-22T14:09:16Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T14:09:21Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T14:09:17Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T14:09:24Z",
+          "conclusion": "success",
+          "name": "Checkout reviewed base",
+          "number": 2,
+          "startedAt": "2026-10-22T14:09:21Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T14:09:29Z",
+          "conclusion": "success",
+          "name": "Checkout nuwa input",
+          "number": 3,
+          "startedAt": "2026-10-22T14:09:24Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T14:09:29Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v5",
+          "number": 4,
+          "startedAt": "2026-10-22T14:09:29Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T14:09:42Z",
+          "conclusion": "success",
+          "name": "Check fixed host and record actual tools",
+          "number": 5,
+          "startedAt": "2026-10-22T14:09:29Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T14:09:55Z",
+          "conclusion": "success",
+          "name": "Install base host dependencies",
+          "number": 6,
+          "startedAt": "2026-10-22T14:09:42Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T14:09:59Z",
+          "conclusion": "success",
+          "name": "Fetch only the four pinned source modules",
+          "number": 7,
+          "startedAt": "2026-10-22T14:09:55Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T14:10:00Z",
+          "conclusion": "success",
+          "name": "Validate fixed source inputs",
+          "number": 8,
+          "startedAt": "2026-10-22T14:09:59Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T14:22:00Z",
+          "conclusion": "success",
+          "name": "Compile and link 8796 source kernel",
+          "number": 9,
+          "startedAt": "2026-10-22T14:10:00Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T14:22:32Z",
+          "conclusion": "success",
+          "name": "Collect build evidence",
+          "number": 10,
+          "startedAt": "2026-10-22T14:22:00Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T14:22:32Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v5",
+          "number": 18,
+          "startedAt": "2026-10-22T14:22:32Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T14:22:33Z",
+          "conclusion": "success",
+          "name": "Post Checkout nuwa input",
+          "number": 19,
+          "startedAt": "2026-10-22T14:22:32Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T14:22:35Z",
+          "conclusion": "success",
+          "name": "Post Checkout reviewed base",
+          "number": 20,
+          "startedAt": "2026-10-22T14:22:33Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T14:22:36Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 21,
+          "startedAt": "2026-10-22T14:22:35Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/wh1stl3/UniXNU-nuwa/actions/runs/39793231214/job/119874191459"
+    }
+  ],
+  "status": "completed",
+  "updatedAt": "2026-10-22T14:30:12Z",
+  "url": "https://github.com/wh1stl3/UniXNU-nuwa/actions/runs/39793231214"
+}

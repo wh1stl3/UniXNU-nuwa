@@ -172,7 +172,7 @@ def main():
     assert all(original[p]['sha'] == current[p]['sha'] for p in protected)
     result = dict(repository=REPO, url='https://github.com/'+REPO, parent=PARENT,
         baseline=BASE, branch=BRANCH, commit=commit['sha'], inherited_main=saved_main,
-        complete_tree_verified=True, source_entries=len(current), actions_enabled=False,
+        complete_tree_matches=True, source_entries=len(current), actions_enabled=False,
         protected_blobs={p: current[p]['sha'] for p in protected},
         changed_paths=preflight['files'], submodules={p: e['sha'] for p, e in current.items() if e['mode']=='160000'},
         firmware_generated=False, device_accessed=False, observed_at=datetime.now(timezone.utc).isoformat())

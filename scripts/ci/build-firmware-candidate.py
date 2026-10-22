@@ -1,4 +1,5 @@
 """R-004 A: build EFI/FD/BootShim in fresh Actions temp trees, never boot images."""
+import argparse
 import hashlib
 import json
 import os
@@ -24,6 +25,9 @@ def save(name, obj):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--profile', choices=('legacy', 'dedicated'), default='legacy')
+    args = parser.parse_args()
     if os.environ.get("GITHUB_ACTIONS") != "true":
         raise RuntimeError("Only the approved disposable Actions build environment is supported")
     temp = Path(os.environ["RUNNER_TEMP"]).resolve()
@@ -32,8 +36,12 @@ def main():
         raise RuntimeError("Fresh source/build tree required; refusing to overwrite")
     work.mkdir()
     OUT.mkdir(parents=True, exist_ok=False)
-    recipe = json.loads((ROOT / "config/firmware-ci-inputs.json").read_text())
-    candidate = json.loads((ROOT / "config/loader-candidate.json").read_text())
+    if args.profile == 'dedicated':
+        profile = json.loads((ROOT / 'config/firmware-dedicated-profile.json').read_text())
+        recipe, candidate = profile['recipe'], profile['candidate']
+    else:
+        recipe = json.loads((ROOT / "config/firmware-ci-inputs.json").read_text())
+        candidate = json.loads((ROOT / "config/loader-candidate.json").read_text())
     sources = {name: work / name for name in recipe["sources"]}
     commands = []
 
@@ -77,9 +85,11 @@ def main():
         if digest(sources["unixnu"] / "feeds.toml", True) != recipe["feed_lf_sha256"]:
             raise ValueError("Base feed changed")
         save("inputs.json", dict(recipe=recipe, checks=checked, kernel=candidate["kernel"],
+                                 profile=args.profile,
                                  kernel_included_in_firmware=False,
                                  device_commit=os.environ.get("GITHUB_SHA"), run_id=os.environ.get("GITHUB_RUN_ID")))
         normalized_inputs = []
+        patched_paths = set()
         for patch in candidate["patches"]:
             path = ROOT / patch["path"]
             if digest(path) != patch["sha256"]:
@@ -93,6 +103,7 @@ def main():
                 target = (sources[patch["root"]] / line[6:]).resolve()
                 if not target.is_relative_to(sources[patch["root"]]):
                     raise ValueError("Patch target outside approved source root")
+                patched_paths.add((patch['root'], line[6:]))
                 raw = target.read_bytes()
                 lf = raw.replace(b"\r\n", b"\n")
                 if raw != lf:
@@ -149,11 +160,7 @@ def main():
         if fd.stat().st_size != fd_size:
             raise ValueError("FD length does not match original config")
         # Recheck every protected source input after tooling; only approved patched files may differ.
-        touched = {("firmware", "BootShim/BootShim.S"),
-                   *(('firmware', 'Platforms/Xiaomi/nuwaPkg/' + n) for n in ('nuwa.dsc', 'nuwa.fdf', 'DeviceBuild.py')),
-                   *(('firmware', 'Silicon/Silicium/SiliciumPkg/' + n) for n in
-                     ('SiliciumPkg.dec', 'Sec/Sec.c', 'Sec/Sec.inf', 'Sec/AArch64/ModuleEntryPoint.S')),
-                   *(('sheng', 'Platforms/Xiaomi/shengPkg/Drivers/ShengBootMemoryDxe/ShengBootMemoryDxe.' + ext) for ext in ('c', 'inf'))}
+        touched = patched_paths
         for item in recipe["inputs"]:
             expected_post = next((entry for entry in candidate["post_patch_inputs"]
                                   if (entry["root"], entry["path"]) == (item["root"], item["path"])), None)
@@ -176,7 +183,7 @@ def main():
         # Copy only build evidence and approved EFI/FD/FV artifacts, including on compiler failure.
         build = fw / "Build/nuwaPkg/DEBUG_CLANGPDB"
         if build.is_dir():
-            names = {"UniXNU", "UniXNUDxe", "DarwinBoot", "ShengBootMemoryDxe"}
+            names = {Path(module).stem for module in candidate['modules']}
             for path in build.rglob("*"):
                 if not path.is_file():
                     continue
