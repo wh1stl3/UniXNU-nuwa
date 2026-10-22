@@ -1,0 +1,358 @@
+{
+  "scope": "read-only instruction encoding inventory; no code/data/ABI qualification",
+  "donor_sha256": "2ec297bac95bcba01046fd0148e97e7e5885c05a6c18827f39f534ba375c1221",
+  "official_emit_sha256": "4cbd97a7ca231cb56d8d7c6a02d09b86af33b5af3d05dba41edd00e51cd3a36a",
+  "full_hash_checked_known_pools": 9,
+  "internal_pc_relative_encoding_count": 236910,
+  "unqualified_count": 12,
+  "unqualified_page_relative_count": 4,
+  "unqualified_sites": [
+    {
+      "module": "com.apple.kec.Libm",
+      "va": "0xfffffff005b8c1cc",
+      "word": "0xf09d5f48",
+      "decoded_target": "0xffffffef40777000",
+      "page_relative": true,
+      "file_offset": 24379852,
+      "context_hex": "838a3d60adbe6bbd000000c746f209bf485f9df0a754003d000000c746f209bf485f9df0",
+      "classification": "unqualified; not automatically inline data"
+    },
+    {
+      "module": "com.apple.kec.Libm",
+      "va": "0xfffffff005b8c1dc",
+      "word": "0xf09d5f48",
+      "decoded_target": "0xffffffef40777000",
+      "page_relative": true,
+      "file_offset": 24379868,
+      "context_hex": "485f9df0a754003d000000c746f209bf485f9df0a754003d000000c746f209bf485f9df0",
+      "classification": "unqualified; not automatically inline data"
+    },
+    {
+      "module": "com.apple.kec.Libm",
+      "va": "0xfffffff005b8c1ec",
+      "word": "0xf09d5f48",
+      "decoded_target": "0xffffffef40777000",
+      "page_relative": true,
+      "file_offset": 24379884,
+      "context_hex": "485f9df0a754003d000000c746f209bf485f9df0a754003d000000e4e436e83e485f9df0",
+      "classification": "unqualified; not automatically inline data"
+    },
+    {
+      "module": "com.apple.kec.Libm",
+      "va": "0xfffffff005b8c1fc",
+      "word": "0xf09d5f48",
+      "decoded_target": "0xffffffef40777000",
+      "page_relative": true,
+      "file_offset": 24379900,
+      "context_hex": "485f9df0a754003d000000e4e436e83e485f9df0a754003d0000006f6c24cfbef5d15727",
+      "classification": "unqualified; not automatically inline data"
+    },
+    {
+      "module": "com.apple.kec.Libm",
+      "va": "0xfffffff005b8c29c",
+      "word": "0x70565912",
+      "decoded_target": "0xfffffff005c38dbf",
+      "page_relative": false,
+      "file_offset": 24380060,
+      "context_hex": "4e531f7d75c2ef3b000000542a889c3d1259567041c57ebb00000060adbe6bbd12595670",
+      "classification": "unqualified; not automatically inline data"
+    },
+    {
+      "module": "com.apple.kec.Libm",
+      "va": "0xfffffff005b8c2ac",
+      "word": "0x70565912",
+      "decoded_target": "0xfffffff005c38dcf",
+      "page_relative": false,
+      "file_offset": 24380076,
+      "context_hex": "1259567041c57ebb00000060adbe6bbd1259567041c57ebb00000060adbe6bbd12595670",
+      "classification": "unqualified; not automatically inline data"
+    },
+    {
+      "module": "com.apple.kec.Libm",
+      "va": "0xfffffff005b8c2bc",
+      "word": "0x70565912",
+      "decoded_target": "0xfffffff005c38ddf",
+      "page_relative": false,
+      "file_offset": 24380092,
+      "context_hex": "1259567041c57ebb00000060adbe6bbd1259567041c57ebb0000007f4a05413de06e9afa",
+      "classification": "unqualified; not automatically inline data"
+    },
+    {
+      "module": "com.apple.kec.Libm",
+      "va": "0xfffffff005b8c490",
+      "word": "0xb7b24eb5",
+      "decoded_target": "0xfffffff005b90e64",
+      "page_relative": false,
+      "file_offset": 24380560,
+      "context_hex": "526cdb370000007e449695b938de6133b54eb2b70000007e449695b938de6133b54eb2b7",
+      "classification": "unqualified; not automatically inline data"
+    },
+    {
+      "module": "com.apple.kec.Libm",
+      "va": "0xfffffff005b8c4a0",
+      "word": "0xb7b24eb5",
+      "decoded_target": "0xfffffff005b90e74",
+      "page_relative": false,
+      "file_offset": 24380576,
+      "context_hex": "b54eb2b70000007e449695b938de6133b54eb2b70000000377d3843990433c999562ab37",
+      "classification": "unqualified; not automatically inline data"
+    },
+    {
+      "module": "com.apple.kec.Libm",
+      "va": "0xfffffff005b8c4d4",
+      "word": "0x96540c13",
+      "decoded_target": "0xffffffefff08f520",
+      "page_relative": false,
+      "file_offset": 24380628,
+      "context_hex": "83c8c96d305fe43f3f71f8e43e3d2cc0130c549603bc20c05b3a9eb49af02ec0378c6cde",
+      "classification": "unqualified; not automatically inline data"
+    },
+    {
+      "module": "com.apple.kec.Libm",
+      "va": "0xfffffff005b8c4dc",
+      "word": "0xb49e3a5b",
+      "decoded_target": "0xfffffff005ac8c24",
+      "page_relative": false,
+      "file_offset": 24380636,
+      "context_hex": "3f71f8e43e3d2cc0130c549603bc20c05b3a9eb49af02ec0378c6cde5a6f2dc02c349994",
+      "classification": "unqualified; not automatically inline data"
+    },
+    {
+      "module": "com.apple.kec.Libm",
+      "va": "0xfffffff005b8c4ec",
+      "word": "0x9499342c",
+      "decoded_target": "0xfffffff0081d959c",
+      "page_relative": false,
+      "file_offset": 24380652,
+      "context_hex": "5b3a9eb49af02ec0378c6cde5a6f2dc02c34999489bc243fd521974e369c4d3f800d0fa3",
+      "classification": "unqualified; not automatically inline data"
+    }
+  ],
+  "official_inventory_refusal": "External PC-relative encoding at 0xfffffff005b8c1cc; no instruction rewrite supported",
+  "existing_candidate_text_preservation": {
+    "candidate_sha256": "e3cfe478117720307799fcc4201a83e9f30695785ff4f3fb27f23008f0cfb491",
+    "ranges": [
+      {
+        "module": "com.apple.AppleFSCompression.AppleFSCompressionTypeZlib",
+        "bytes": 46848,
+        "original_sha256": "74de14b497448628cc801505b7c989ef6da13e5f1f681077a1605a4a0bc54325",
+        "existing_sha256": "74de14b497448628cc801505b7c989ef6da13e5f1f681077a1605a4a0bc54325",
+        "identical": true
+      },
+      {
+        "module": "com.apple.driver.AppleARMPlatform",
+        "bytes": 230100,
+        "original_sha256": "247b8b77815f8c87b43290e52a6b3888053cb3763a60bf21a004cd65b341388b",
+        "existing_sha256": "247b8b77815f8c87b43290e52a6b3888053cb3763a60bf21a004cd65b341388b",
+        "identical": true
+      },
+      {
+        "module": "com.apple.driver.AppleARMWatchdogTimer",
+        "bytes": 14536,
+        "original_sha256": "9bebb0c0f90d50c7703c99db551ac0894ddcda8eab83d8ded5fdf11bd3b13efb",
+        "existing_sha256": "9bebb0c0f90d50c7703c99db551ac0894ddcda8eab83d8ded5fdf11bd3b13efb",
+        "identical": true
+      },
+      {
+        "module": "com.apple.driver.AppleAudioClockLibs",
+        "bytes": 1752,
+        "original_sha256": "bdafd9a2ed24d3151f1119859cd74bf5d99fd4af7afd4e74610985bc11c57008",
+        "existing_sha256": "bdafd9a2ed24d3151f1119859cd74bf5d99fd4af7afd4e74610985bc11c57008",
+        "identical": true
+      },
+      {
+        "module": "com.apple.driver.AppleEffaceableStorage",
+        "bytes": 17360,
+        "original_sha256": "2e7b3402cdb22319fa82544ab66a9a211799f3e970c5a66f53d3867270ae0d57",
+        "existing_sha256": "2e7b3402cdb22319fa82544ab66a9a211799f3e970c5a66f53d3867270ae0d57",
+        "identical": true
+      },
+      {
+        "module": "com.apple.driver.AppleIISController",
+        "bytes": 20644,
+        "original_sha256": "20a95cd71e2c81feb6d48230a83cdd7fe382a1396db6a02f14c5deb293f12fab",
+        "existing_sha256": "20a95cd71e2c81feb6d48230a83cdd7fe382a1396db6a02f14c5deb293f12fab",
+        "identical": true
+      },
+      {
+        "module": "com.apple.driver.AppleM2ScalerCSCDriver",
+        "bytes": 398888,
+        "original_sha256": "617686e11f04636afa2989519498bef94349d6d2ed4e2b693a74994b4cecff62",
+        "existing_sha256": "617686e11f04636afa2989519498bef94349d6d2ed4e2b693a74994b4cecff62",
+        "identical": true
+      },
+      {
+        "module": "com.apple.driver.AppleMobileFileIntegrity",
+        "bytes": 120712,
+        "original_sha256": "6cbea28deab02a2b848dfac28f11c3c00745b55e7b2a896bac3cf9a600a4c7b1",
+        "existing_sha256": "6cbea28deab02a2b848dfac28f11c3c00745b55e7b2a896bac3cf9a600a4c7b1",
+        "identical": true
+      },
+      {
+        "module": "com.apple.driver.ApplePMGR",
+        "bytes": 232428,
+        "original_sha256": "74ac53a277da51806f323e8c7d765d4ce9baa443adf4e513be2cff52a245db0e",
+        "existing_sha256": "74ac53a277da51806f323e8c7d765d4ce9baa443adf4e513be2cff52a245db0e",
+        "identical": true
+      },
+      {
+        "module": "com.apple.driver.IODARTFamily",
+        "bytes": 66696,
+        "original_sha256": "8cc7ebf550bd7735985b5de8890e3079816842d2ec29d95646f20d553d6ad021",
+        "existing_sha256": "8cc7ebf550bd7735985b5de8890e3079816842d2ec29d95646f20d553d6ad021",
+        "identical": true
+      },
+      {
+        "module": "com.apple.filesystems.apfs",
+        "bytes": 1050376,
+        "original_sha256": "ebc47d686c6917c7fb154a0b2e2ed19e3d6a277d994d1395b02d3214142577cc",
+        "existing_sha256": "ebc47d686c6917c7fb154a0b2e2ed19e3d6a277d994d1395b02d3214142577cc",
+        "identical": true
+      },
+      {
+        "module": "com.apple.iokit.CoreAnalyticsFamily",
+        "bytes": 25108,
+        "original_sha256": "29d73b6c2a37d9eb40712b9413db0790e7fe0122f202341852f7725e24b9ee1f",
+        "existing_sha256": "29d73b6c2a37d9eb40712b9413db0790e7fe0122f202341852f7725e24b9ee1f",
+        "identical": true
+      },
+      {
+        "module": "com.apple.iokit.IOAVFamily",
+        "bytes": 381580,
+        "original_sha256": "e80383975371f1552b9abab64476c4e530c49f1e43c187944b3728c3e7d9d506",
+        "existing_sha256": "e80383975371f1552b9abab64476c4e530c49f1e43c187944b3728c3e7d9d506",
+        "identical": true
+      },
+      {
+        "module": "com.apple.iokit.IOAudio2Family",
+        "bytes": 16788,
+        "original_sha256": "eed290eec9f3d05a362826ad559ba494ab71e48baf746a85d5586267822a7fd4",
+        "existing_sha256": "eed290eec9f3d05a362826ad559ba494ab71e48baf746a85d5586267822a7fd4",
+        "identical": true
+      },
+      {
+        "module": "com.apple.iokit.IOCECFamily",
+        "bytes": 6364,
+        "original_sha256": "f440e646781cc39a6f6f21cfaec088cfb030a38af19e37e6c69c99860eb6f0f8",
+        "existing_sha256": "f440e646781cc39a6f6f21cfaec088cfb030a38af19e37e6c69c99860eb6f0f8",
+        "identical": true
+      },
+      {
+        "module": "com.apple.iokit.IOCryptoAcceleratorFamily",
+        "bytes": 10852,
+        "original_sha256": "87758ce6148f662f31e20fb7a2ec645f90f3697084db0b04331f6b44036a06fb",
+        "existing_sha256": "87758ce6148f662f31e20fb7a2ec645f90f3697084db0b04331f6b44036a06fb",
+        "identical": true
+      },
+      {
+        "module": "com.apple.iokit.IOGPUFamily",
+        "bytes": 153788,
+        "original_sha256": "34aea2cba7f617ae031c37411027b34380c68bbe1e1a17d6abbf3bbabcc777cf",
+        "existing_sha256": "34aea2cba7f617ae031c37411027b34380c68bbe1e1a17d6abbf3bbabcc777cf",
+        "identical": true
+      },
+      {
+        "module": "com.apple.iokit.IOHDCPFamily",
+        "bytes": 48448,
+        "original_sha256": "cce46cc1281541a02de180e05e53f03b5b927c6f4688dc7078624e26b7da1800",
+        "existing_sha256": "cce46cc1281541a02de180e05e53f03b5b927c6f4688dc7078624e26b7da1800",
+        "identical": true
+      },
+      {
+        "module": "com.apple.iokit.IOHIDFamily",
+        "bytes": 276644,
+        "original_sha256": "bb044497e1fe4153f33094011868beb000378a744109c890af9a8d63fa7d3145",
+        "existing_sha256": "bb044497e1fe4153f33094011868beb000378a744109c890af9a8d63fa7d3145",
+        "identical": true
+      },
+      {
+        "module": "com.apple.iokit.IOMobileGraphicsFamily",
+        "bytes": 214340,
+        "original_sha256": "03e4c4d80e4f9c78d4ad03366cd3f1d5894d054ae53cdf06b1a43c81a2eab1cd",
+        "existing_sha256": "03e4c4d80e4f9c78d4ad03366cd3f1d5894d054ae53cdf06b1a43c81a2eab1cd",
+        "identical": true
+      },
+      {
+        "module": "com.apple.iokit.IOReportFamily",
+        "bytes": 8496,
+        "original_sha256": "6dc8734b81f576c22bd9fd78a686b29b46ba5cac4bff0957a489c001ffbc08d1",
+        "existing_sha256": "6dc8734b81f576c22bd9fd78a686b29b46ba5cac4bff0957a489c001ffbc08d1",
+        "identical": true
+      },
+      {
+        "module": "com.apple.iokit.IOSlowAdaptiveClockingFamily",
+        "bytes": 8972,
+        "original_sha256": "e9c3a7337345297aa9282bdd5bda52c0a3ac39a997fb2c9de5ff0952cc39294b",
+        "existing_sha256": "e9c3a7337345297aa9282bdd5bda52c0a3ac39a997fb2c9de5ff0952cc39294b",
+        "identical": true
+      },
+      {
+        "module": "com.apple.iokit.IOStorageFamily",
+        "bytes": 83976,
+        "original_sha256": "4c9e7e8f12306986dc124e9e2cd4f9126fa7dc61e89155d973767b88a0d5ce6f",
+        "existing_sha256": "4c9e7e8f12306986dc124e9e2cd4f9126fa7dc61e89155d973767b88a0d5ce6f",
+        "identical": true
+      },
+      {
+        "module": "com.apple.iokit.IOSurface",
+        "bytes": 145604,
+        "original_sha256": "201b4452233e5471fe88fb7a69e0e3c37a17df3d8eead51e2698ca663ef09bae",
+        "existing_sha256": "201b4452233e5471fe88fb7a69e0e3c37a17df3d8eead51e2698ca663ef09bae",
+        "identical": true
+      },
+      {
+        "module": "com.apple.kec.Libm",
+        "bytes": 14820,
+        "original_sha256": "4d56a6e6b3faf6d5a745cabc904ed6eea6f8872c80040c7e4074c15601f5151a",
+        "existing_sha256": "4d56a6e6b3faf6d5a745cabc904ed6eea6f8872c80040c7e4074c15601f5151a",
+        "identical": true
+      },
+      {
+        "module": "com.apple.kec.corecrypto",
+        "bytes": 297788,
+        "original_sha256": "0da4ca3127ef4ef272b776b932e8bb97855878845034ea1a2d58bb1f5fd6ddd9",
+        "existing_sha256": "0da4ca3127ef4ef272b776b932e8bb97855878845034ea1a2d58bb1f5fd6ddd9",
+        "identical": true
+      },
+      {
+        "module": "com.apple.kext.AppleMatch",
+        "bytes": 7928,
+        "original_sha256": "11eb44b13b917ca2fe80984cc6309e819b8ef597cc9ef9601e96473af0d7fbd4",
+        "existing_sha256": "11eb44b13b917ca2fe80984cc6309e819b8ef597cc9ef9601e96473af0d7fbd4",
+        "identical": true
+      },
+      {
+        "module": "com.apple.kext.CoreTrust",
+        "bytes": 31736,
+        "original_sha256": "ffc005c8163fc83206f3b87720b512a3c7b438d64fa37fece7f437429fdaaa51",
+        "existing_sha256": "ffc005c8163fc83206f3b87720b512a3c7b438d64fa37fece7f437429fdaaa51",
+        "identical": true
+      },
+      {
+        "module": "com.apple.security.AppleImage4",
+        "bytes": 90524,
+        "original_sha256": "1ad058c1e525926c1e5f99b80ee59a05e2ec96c5a9c4663f3e5196f43656099b",
+        "existing_sha256": "1ad058c1e525926c1e5f99b80ee59a05e2ec96c5a9c4663f3e5196f43656099b",
+        "identical": true
+      },
+      {
+        "module": "com.apple.security.sandbox",
+        "bytes": 177728,
+        "original_sha256": "ded8921e103c6597598c3d6b9d505748e096fb77936625d84f5dddde8ead47ca",
+        "existing_sha256": "ded8921e103c6597598c3d6b9d505748e096fb77936625d84f5dddde8ead47ca",
+        "identical": true
+      }
+    ],
+    "all_identical": true,
+    "qualification": "byte preservation only; code/data boundaries and target semantics remain unqualified"
+  },
+  "reference_exemption_kinds": {
+    "outside-image-window": 6,
+    "external_pc_relative_inline_data": 6
+  },
+  "reference_only_sites": [],
+  "new_only_sites": [],
+  "emit_executed": false,
+  "images_modified": false,
+  "device_verified": false
+}

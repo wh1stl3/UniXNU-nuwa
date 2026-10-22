@@ -101,7 +101,8 @@
   "prelink_component_count": 30,
   "inline_data_outside_image_count": 12,
   "inline_data_reason_counts": {
-    "outside-image-window": 12
+    "outside-image-window": 6,
+    "external_pc_relative_inline_data": 6
   },
   "donor": {
     "path": "D:\\Code\\PortingiOS\\nuwa\\artifacts\\ios16-donor-inspection\\20261020T115253317035Z\\original-iphone-kernelcache.macho",
@@ -277,5 +278,6 @@
     }
   },
   "device_verified": false,
-  "images_generated": false
+  "images_generated": false,
+  "reason_count_correction": "Use the actual kind field; 6 outside window and 6 oracle exemptions. Total12 and ADRP4 unchanged."
 }

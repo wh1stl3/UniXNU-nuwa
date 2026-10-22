@@ -421,3 +421,13 @@
 [Evidence] reports/kernel-ci/39747264803/run.json及api-publish.json；https://github.com/wh1stl3/UniXNU/actions/runs/39747264803，device_ref=ff8abe167a039560c816892b78b00660b5518888。
 [Risk] 当前启动不是archive或完整ABI验收，实际编译/链接及donor计划仍待取证；feed/board不变，无预链接/固件镜像生成或设备动作。
 ```
+
+## Q-043 · donor外部编码与已有候选字节核对
+
+```text
+[unixnu-nuwa][kernel] 清点donor外部编码并核对已有候选代码保持
+
+[Change] 新增只读完整PC-relative清点，核对9个完整常量池和参考候选30段可执行字节；纠正前次豁免原因计数键名误读，保留未知站点拒绝。
+[Evidence] reports/donor-compat/pc-relative-inventory.json：236,910内部编码、12外部/4ADRP，集合与参考完全一致；4,201,824字节逐段同hash，官方首拒绝0xfffffff005b8c1cc；实际为6窗口外/6入口oracle。
+[Risk] 字节保持和指纹不证明12处代码/数据分类、目标语义、完整ABI或实机；只读既有文件，未调用emit或生成镜像，feed/board及_verified不变。
+```

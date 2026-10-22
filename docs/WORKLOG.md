@@ -94,3 +94,5 @@
 - 2026-10-22 16:21 · 第十二轮源内核/933份记录再次成功、无效libsa目录修复生效；平台26条诊断分组，补五项匹配真实定义的C声明，仅三类旧头文件风格警告保持可见而不升级error，保留其他检查，4项命令测试通过 · 提交号：Q-040已发布5f118aa；本项待定Q-041 · reports/kernel-ci/39744948467/，include/nuwa/ArmCpuExports.h
 
 - 2026-10-22 16:24 · Q-041已发布ff8abe1，第十三轮39747264803使用60项补丁和平台声明/风格诊断修复启动，继续取真实archive及VFS导出结果 · 提交号：ff8abe1；本项待定Q-042 · reports/kernel-ci/39747264803/
+
+- 2026-10-22 16:33 · 只读复现官方指令拒绝并清点12项Libm外部编码（4ADRP），9常量池完整hash匹配，参考候选30段4,201,824字节保持；更正先前原因计数为6窗口外/6入口oracle，未知项仍未验收，无新镜像 · 提交号：Q-042已发布382cce5；本项待定Q-043 · reports/donor-compat/pc-relative-inventory.json，docs/operations/2026-10-22-donor-pc-relative-inventory.md
