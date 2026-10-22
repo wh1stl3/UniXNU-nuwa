@@ -32,7 +32,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('phase', choices=['launch', 'recover'])
     parser.add_argument('--evidence', type=Path, required=True)
-    parser.add_argument('--package', type=Path, help='R-007 A or R-008 A hash-pinned package report')
+    parser.add_argument('--package', type=Path, help='R-007/R-008/R-009 approved hash-pinned package report')
     args = parser.parse_args()
     evidence = args.evidence.resolve()
     if not evidence.is_relative_to(ROOT / 'reports') or evidence.exists():
@@ -41,7 +41,8 @@ def main():
     package_sha = None
     if args.package:
         package_path = args.package.resolve()
-        scopes = {'R-007 A': ROOT / 'reports/sec-trace', 'R-008 A': ROOT / 'reports/relative-offset'}
+        scopes = {'R-007 A': ROOT / 'reports/sec-trace', 'R-008 A': ROOT / 'reports/relative-offset',
+                  'R-009 A': ROOT / 'reports/pil-no-auto'}
         package_raw = package_path.read_bytes()
         package = json.loads(package_raw)
         approval = package.get('approval')
@@ -57,6 +58,12 @@ def main():
                 or not package['shim_changed_byte_offsets']
                 or any(not 8 <= i < 16 for i in package['shim_changed_byte_offsets'])):
             raise ValueError('R-008 package exceeds the header-only scope')
+        if approval == 'R-009 A' and (package['firmware_commit'] != '2ab6827d77dfe15010534b52e1abb76a26464a7d'
+                or package['shim_text_offset'] != 0 or package['pil_auto_entries'] != []
+                or package['pil_config_sha256'] != 'dbc9ee6e4c7728b32245453322f348c32d6a5eef0107f8c07662918bc3c23fdd'
+                or package['pil_driver_sha256'] != '89e030af07847bdc596f0c213bdce0ac430be66e572db55b434d7ec66ad9afcb'
+                or package['shim_sha256'] != '8a3b54765c895a0366539130fdf6e4e4a01e364fe7de067a38d0193606f9d462'):
+            raise ValueError('R-009 package exceeds the approved PIL configuration scope')
         candidate = (ROOT / package['image_path']).resolve()
         if not candidate.is_relative_to(ROOT / 'out/trial-boot'):
             raise ValueError('Diagnostic candidate escapes trial output')

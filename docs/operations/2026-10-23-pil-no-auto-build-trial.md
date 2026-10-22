@@ -31,3 +31,7 @@
 ## 后续验收顺序
 
 固定本设备提交启动CI → 取实际终态/日志/产物 → 严格检查新RAW/PILDxe/SEC/四EFI/FD/shim → v4原头受限打包（仅kernel_size，raw shim+FD，无新DTB/ramdisk/FAT/XNU）→ 重新识别nuwa并核对Android/恢复源 → D-016隔离bootloader临时试启动 → 记录画面/采样并恢复Android=1，核对三个Android分区hash。任何失败以实际首错推进，不自动切换R-009 B。
+
+## CI已启动与本地打包门
+
+CI39819452729于2026-10-23 01:04:23+08由固定设备6af9701启动，选择pil-no-auto；run-initial.json保存本次实际状态，编译尚未以成功验收。本地prepare-pil-no-auto-boot.py固定新profile并要求实际RAW/原PIL/正确shim；试启动工具只接受R-009对应source/hash/配置范围。两个负路径验证旧39809636575在检查器及打包器被拒绝，且没有输出新包，见reject-old-profile.json。尚未操作设备，读前置时实际nuwa/kalama Android=1，三个分区hash和恢复源SHA已记录。

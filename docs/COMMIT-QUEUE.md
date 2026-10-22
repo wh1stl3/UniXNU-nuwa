@@ -850,3 +850,13 @@
 [Evidence] 实际PILDxe89e030af静态空列表路径跳过加载循环，补丁0007应用检查通过，用户批准R-009 A。
 [Risk] 空AUTO的真实分派及BDS尚未验证；待独立CI产物检查和临时试启动，未改内存图。
 ```
+
+## Q-080 · 新FD CI调度与受限试启动门
+
+```text
+[unixnu-nuwa][build] 启动取消AUTO ABL固件CI并备妥受限打包试启动门
+
+[Change] 保存固定6af9701的CI39819452729调度状态，新增R-009打包器及试启动配置门，核对设备与原Android恢复源。
+[Evidence] 两个负路径拒绝旧R-007产物且未生成包，实际nuwa/kalama Android完成1，恢复源ef558db2；CI输入2ab6827d已固定。
+[Risk] 新FD真实编译与实机结果待取证；未下发新镜像，board/feed及内存图不变，不以CI排队代替构建成功。
+```

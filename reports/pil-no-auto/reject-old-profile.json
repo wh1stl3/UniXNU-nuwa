@@ -1,0 +1,25 @@
+[
+  {
+    "argv": [
+      "scripts/prepare-pil-no-auto-boot.py",
+      "39809636575"
+    ],
+    "exit_code": 1,
+    "expected_failure": "Runner inputs differ",
+    "stderr_tail": "ValueError: Runner inputs differ from the approved diagnostic profile"
+  },
+  {
+    "argv": [
+      "scripts/ci/inspect-firmware-candidate.py",
+      "out/firmware-ci/39809636575/nuwa-firmware-39809636575",
+      "--output",
+      "reports/pil-no-auto/forbidden-old-profile.json",
+      "--publisher-name",
+      "NuwaBootMemoryDxe",
+      "--require-no-auto-abl"
+    ],
+    "exit_code": 1,
+    "expected_failure": "Wrong R-009 build profile/header",
+    "stderr_tail": "ValueError: Wrong R-009 build profile/header"
+  }
+]
