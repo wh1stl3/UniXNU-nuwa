@@ -1,0 +1,318 @@
+[
+  {
+    "argv": [
+      "git",
+      "init",
+      "/home/runner/work/_temp/nuwa-firmware-candidate/firmware"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate",
+    "started": 1792691648.2399817,
+    "exit_code": 0,
+    "ended": 1792691648.2501068
+  },
+  {
+    "argv": [
+      "git",
+      "remote",
+      "add",
+      "origin",
+      "https://github.com/wh1stl3/uefi-nuwa.git"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/firmware",
+    "started": 1792691648.250235,
+    "exit_code": 0,
+    "ended": 1792691648.252252
+  },
+  {
+    "argv": [
+      "git",
+      "fetch",
+      "--depth",
+      "1",
+      "origin",
+      "2ab6827d77dfe15010534b52e1abb76a26464a7d"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/firmware",
+    "started": 1792691648.252372,
+    "exit_code": 0,
+    "ended": 1792691651.0104578
+  },
+  {
+    "argv": [
+      "git",
+      "checkout",
+      "--detach",
+      "FETCH_HEAD"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/firmware",
+    "started": 1792691651.0108774,
+    "exit_code": 0,
+    "ended": 1792691651.5350933
+  },
+  {
+    "argv": [
+      "git",
+      "init",
+      "/home/runner/work/_temp/nuwa-firmware-candidate/unixnu"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate",
+    "started": 1792691651.5373127,
+    "exit_code": 0,
+    "ended": 1792691651.5401814
+  },
+  {
+    "argv": [
+      "git",
+      "remote",
+      "add",
+      "origin",
+      "https://github.com/UniXNU/UniXNU.git"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/unixnu",
+    "started": 1792691651.5404754,
+    "exit_code": 0,
+    "ended": 1792691651.5422697
+  },
+  {
+    "argv": [
+      "git",
+      "fetch",
+      "--depth",
+      "1",
+      "origin",
+      "75bc13dd34dc4e403826793739e316a264ce00dd"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/unixnu",
+    "started": 1792691651.5425727,
+    "exit_code": 0,
+    "ended": 1792691651.8975358
+  },
+  {
+    "argv": [
+      "git",
+      "checkout",
+      "--detach",
+      "FETCH_HEAD"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/unixnu",
+    "started": 1792691651.8979912,
+    "exit_code": 0,
+    "ended": 1792691651.9403725
+  },
+  {
+    "argv": [
+      "git",
+      "submodule",
+      "update",
+      "--init",
+      "--depth",
+      "1",
+      "--",
+      "Common/Mu",
+      "Common/Mu_OEM_Sample",
+      "Mu_Basecore",
+      "Silicium-ACPI",
+      "Silicon/Silicium/OpensslPkg/Library/OpensslLib/openssl",
+      "Binaries"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/firmware",
+    "started": 1792691651.9425423,
+    "exit_code": 0,
+    "ended": 1792691691.6889746
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "--check",
+      "/home/runner/work/UniXNU-nuwa/UniXNU-nuwa/patches/loader-candidates/0005-darwin22-boot-args.patch"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/unixnu",
+    "started": 1792691691.69158,
+    "exit_code": 0,
+    "ended": 1792691691.6938376
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "/home/runner/work/UniXNU-nuwa/UniXNU-nuwa/patches/loader-candidates/0005-darwin22-boot-args.patch"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/unixnu",
+    "started": 1792691691.694159,
+    "exit_code": 0,
+    "ended": 1792691691.69613
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "--check",
+      "/home/runner/work/UniXNU-nuwa/UniXNU-nuwa/patches/firmware-candidates/0008-nuwa-dxe-allocation-trace.patch"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/firmware",
+    "started": 1792691691.697286,
+    "exit_code": 0,
+    "ended": 1792691691.699137
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "/home/runner/work/UniXNU-nuwa/UniXNU-nuwa/patches/firmware-candidates/0008-nuwa-dxe-allocation-trace.patch"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/firmware",
+    "started": 1792691691.6995833,
+    "exit_code": 0,
+    "ended": 1792691691.702251
+  },
+  {
+    "argv": [
+      "/home/runner/work/_temp/firmware-venv/bin/python3",
+      "-m",
+      "pip",
+      "install",
+      "-r",
+      "/home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate",
+    "started": 1792691691.7033644,
+    "exit_code": 0,
+    "ended": 1792691700.2314715
+  },
+  {
+    "argv": [
+      "/home/runner/work/_temp/firmware-venv/bin/python3",
+      "-m",
+      "pip",
+      "freeze"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate",
+    "started": 1792691700.2320328,
+    "exit_code": 0,
+    "ended": 1792691700.498468
+  },
+  {
+    "argv": [
+      "clang",
+      "--version"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate",
+    "started": 1792691700.4990346,
+    "exit_code": 0,
+    "ended": 1792691703.491418
+  },
+  {
+    "argv": [
+      "llvm-objcopy",
+      "--version"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate",
+    "started": 1792691703.4919472,
+    "exit_code": 0,
+    "ended": 1792691703.5564504
+  },
+  {
+    "argv": [
+      "llvm-nm",
+      "--version"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate",
+    "started": 1792691703.5569482,
+    "exit_code": 0,
+    "ended": 1792691703.6015372
+  },
+  {
+    "argv": [
+      "ld.lld",
+      "--version"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate",
+    "started": 1792691703.8193324,
+    "exit_code": 0,
+    "ended": 1792691704.3132596
+  },
+  {
+    "argv": [
+      "make",
+      "--version"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate",
+    "started": 1792691704.3138256,
+    "exit_code": 0,
+    "ended": 1792691704.3316805
+  },
+  {
+    "argv": [
+      "clang",
+      "--target=aarch64-none-elf",
+      "-c",
+      "-DFD_BASE=2802843648",
+      "-DFD_SIZE=3145728",
+      "-DREQUIRES_KERNEL_HEADER=1",
+      "/home/runner/work/_temp/nuwa-firmware-candidate/firmware/BootShim/BootShim.S",
+      "-o",
+      "/home/runner/work/UniXNU-nuwa/UniXNU-nuwa/out/firmware-ci/shim/shim.o"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate",
+    "started": 1792691704.3343585,
+    "exit_code": 0,
+    "ended": 1792691706.3489466
+  },
+  {
+    "argv": [
+      "llvm-objcopy",
+      "-O",
+      "binary",
+      "/home/runner/work/UniXNU-nuwa/UniXNU-nuwa/out/firmware-ci/shim/shim.o",
+      "/home/runner/work/UniXNU-nuwa/UniXNU-nuwa/out/firmware-ci/shim/shim.bin"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate",
+    "started": 1792691706.349499,
+    "exit_code": 0,
+    "ended": 1792691706.624309
+  },
+  {
+    "argv": [
+      "/home/runner/work/_temp/firmware-venv/bin/python3",
+      "Platforms/Xiaomi/nuwaPkg/DeviceBuild.py",
+      "--setup",
+      "-t",
+      "DEBUG"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/firmware",
+    "started": 1792691706.65755,
+    "exit_code": 0,
+    "ended": 1792691751.788918
+  },
+  {
+    "argv": [
+      "/home/runner/work/_temp/firmware-venv/bin/python3",
+      "Platforms/Xiaomi/nuwaPkg/DeviceBuild.py",
+      "--update",
+      "-t",
+      "DEBUG"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/firmware",
+    "started": 1792691751.789543,
+    "exit_code": 0,
+    "ended": 1792691757.1536434
+  },
+  {
+    "argv": [
+      "/home/runner/work/_temp/firmware-venv/bin/python3",
+      "Platforms/Xiaomi/nuwaPkg/DeviceBuild.py",
+      "TARGET=DEBUG",
+      "ENABLE_SECUREBOOT=1",
+      "FD_BASE=0xa7100000",
+      "FD_SIZE=0x300000",
+      "FD_BLOCKS=0x300",
+      "DEVICE_MODEL=nuwa",
+      "BUILDREPORT_FILE=/home/runner/work/UniXNU-nuwa/UniXNU-nuwa/out/firmware-ci/BUILD_REPORT.txt"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/firmware",
+    "started": 1792691757.1542966,
+    "exit_code": 14,
+    "ended": 1792691762.9852657
+  }
+]

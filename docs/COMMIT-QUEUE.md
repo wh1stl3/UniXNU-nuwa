@@ -910,3 +910,13 @@
 [Evidence] 无preflight时明确在设备命令前拒绝；本轮唯一nuwa/kalama Android完成1、三分区SHA与R-009相同，用户已确认可录像；CI39826580758编译中。
 [Risk] 新固件和晚出现fastboot恢复分支实际运行未验证；屏幕是当前唯一阶段日志通道，需启动前通知用户录像，未执行候选启动或刷写。
 ```
+
+## Q-086 · R-010嵌套依赖修复
+
+```text
+[unixnu-nuwa][build] 在修改Mu源码前初始化其固定嵌套依赖
+
+[Change] R-010 CI补丁前显式递归初始化Mu gitlink，保存首轮实际失败及下载证据核验。
+[Evidence] 39826580758实际首错MdePkg.dec(33)缺mipisyst/include，嵌套子模块前导减号；0008应用/后哈希通过，DeviceBuild契约要求Mu递归初始化。
+[Risk] 重试完整编译未验证，未生成FD或执行候选；来源版本、诊断补丁、board/feed及内存图不变。
+```

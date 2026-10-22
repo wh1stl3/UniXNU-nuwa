@@ -78,6 +78,11 @@ def main():
         run(["git", "submodule", "update", "--init", "--depth", "1", "--",
              "Common/Mu", "Common/Mu_OEM_Sample", "Mu_Basecore", "Silicium-ACPI",
              "Silicon/Silicium/OpensslPkg/Library/OpensslLib/openssl", "Binaries"], fw, log="submodules.log")
+        # Patching Mu before stuart --setup makes its checkout dirty; that helper
+        # can skip recursive initialization. Resolve pinned gitlinks first.
+        if args.profile == 'dxe-allocation':
+            run(['git', 'submodule', 'update', '--init', '--recursive', '--depth', '1'],
+                fw / 'Mu_Basecore', log='mu-submodules.log')
         checked = []
         for item in recipe["inputs"]:
             actual = digest(sources[item["root"]] / item["path"], lf=True)
