@@ -1,6 +1,6 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 16:05（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-22 16:14（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
@@ -9,6 +9,10 @@
 ## 本轮推进
 
 [第十一轮39742250205](https://github.com/wh1stl3/UniXNU/actions/runs/39742250205)已完成：源内核再次完整构建成功，933份真实C/C++记录及四项消费者输入已取得；整体CI失败在ArmCpu的不存在libsa搜索目录被-Werror拒绝。仅移除已确认不存在的该目录候选、保留其余头文件检查，4项参数保护测试通过，修复562c22f已发布，[第十二轮39744948467](https://github.com/wh1stl3/UniXNU/actions/runs/39744948467)正在验证；平台archive尚未通过。见[本轮记录](operations/2026-10-22-darwin22-archive-build.md)。
+
+## donor接口推进
+
+已完整清点参考选择的65,348项实际donor指针绑定：当前源内核仅APFS的_vfs_getvfs_with_vfsops缺失，参考run24为0缺失。真实VFS桥接已核对上游实现及8796底层锁/引用语义，下一轮60项231 hunks静态检查通过，实际编译待CI；第十二轮仍是旧59项。见[接口记录](operations/2026-10-22-donor-vfs-bridge.md)。仅为指针名清点，非完整ABI或实机通过。
 
 ## 当前边界
 
@@ -30,7 +34,7 @@
 
 1. 跟踪第十二轮39744948467（device_ref=562c22fda45118f46b450390045a53b5a739f981），下载真实driver archive首错/符号结果；保留-Werror及未知目录报错，原始四份命令和对象证据见reports/kernel-ci/39742250205/。源内核已成功与archive尚未验证分开记录；不把符号名闭包扩大成完整ABI通过。
 2. 收口boot-progress 13项回调、watchdog接口和scratch布局风险，再建立正式nuwa配置并接回-D入口；保持feed，未知板值TODO。
-3. 只读解析既定iPhone donor的kernelcache，补齐真实hash/roots等证据；不移用iPadOS17的prelink数值，不生成镜像。任何board身份/内存/基址变更先硬停审查。
+3. 下一轮实际编译VFS桥接后，重跑既定iPhone donor的只读plan/绑定清点；继续审核布局/PC-relative及真实组件选择，不移用iPadOS17数值或生成镜像。任何board身份/内存/基址变更先硬停审查。
 4. 当前不安排这份源内核上机；达到可启动链路前置条件后，在NEED-REVIEW列出至少两条验证路径、代价和最小批准范围。只差实体按键的待办不阻塞软件侧工作。
 
 ## 并行产物可用性

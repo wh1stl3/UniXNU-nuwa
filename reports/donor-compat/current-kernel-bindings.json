@@ -1,0 +1,71 @@
+{
+  "scope": "pointer-table name inventory only; no layout/PC-relative/ABI/runtime qualification",
+  "native_sha256": "6e918dcbd487df77e7dc1a8bd1c4f1a17182209f32b1783075915807f83d5397",
+  "donor_sha256": "2ec297bac95bcba01046fd0148e97e7e5885c05a6c18827f39f534ba375c1221",
+  "selection_report_sha256": "e9fe59f236e37966a3babe5c0cb4f7a1ddcfbd9e3aaf4b980382afc70d9b0dfd",
+  "parser_sha256": "5bd80b8c63deec29b747c28253e02308a56d5f8cdb37c9d315e7c8af7012d017",
+  "analytical_selection": [
+    "com.apple.AppleFSCompression.AppleFSCompressionTypeZlib",
+    "com.apple.driver.AppleARMPlatform",
+    "com.apple.driver.AppleARMWatchdogTimer",
+    "com.apple.driver.AppleAudioClockLibs",
+    "com.apple.driver.AppleEffaceableStorage",
+    "com.apple.driver.AppleIISController",
+    "com.apple.driver.AppleM2ScalerCSCDriver",
+    "com.apple.driver.AppleMobileFileIntegrity",
+    "com.apple.driver.ApplePMGR",
+    "com.apple.driver.IODARTFamily",
+    "com.apple.filesystems.apfs",
+    "com.apple.iokit.CoreAnalyticsFamily",
+    "com.apple.iokit.IOAVFamily",
+    "com.apple.iokit.IOAudio2Family",
+    "com.apple.iokit.IOCECFamily",
+    "com.apple.iokit.IOCryptoAcceleratorFamily",
+    "com.apple.iokit.IOGPUFamily",
+    "com.apple.iokit.IOHDCPFamily",
+    "com.apple.iokit.IOHIDEventDriver",
+    "com.apple.iokit.IOHIDFamily",
+    "com.apple.iokit.IOMobileGraphicsFamily",
+    "com.apple.iokit.IOReportFamily",
+    "com.apple.iokit.IOSlowAdaptiveClockingFamily",
+    "com.apple.iokit.IOStorageFamily",
+    "com.apple.iokit.IOSurface",
+    "com.apple.kec.Libm",
+    "com.apple.kec.corecrypto",
+    "com.apple.kext.AppleMatch",
+    "com.apple.kext.CoreTrust",
+    "com.apple.security.AppleImage4",
+    "com.apple.security.sandbox"
+  ],
+  "interfaces": [
+    "com.apple.kpi.bsd",
+    "com.apple.kpi.dsep",
+    "com.apple.kpi.iokit",
+    "com.apple.kpi.libkern",
+    "com.apple.kpi.mach",
+    "com.apple.kpi.private",
+    "com.apple.kpi.unsupported"
+  ],
+  "pointer_counts": {
+    "kernel": 41095,
+    "component": 24253
+  },
+  "failure_count": 1,
+  "failures": [
+    {
+      "module": "com.apple.filesystems.apfs",
+      "site": "0xfffffff006eac110",
+      "target": "0xfffffff00734c520",
+      "names": [
+        "_vfs_getvfs_with_vfsops"
+      ],
+      "error": "Kernel target 0xfffffff00734c520 has 0 native address candidates: ['_vfs_getvfs_with_vfsops']"
+    }
+  ],
+  "missing_names": [
+    "_vfs_getvfs_with_vfsops"
+  ],
+  "board_configuration_adopted": false,
+  "images_modified": false,
+  "device_verified": false
+}

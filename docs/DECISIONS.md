@@ -282,3 +282,10 @@ D-008/D-010/D-011补充（2026-10-22 15:28）：第十轮39738601892已完成完
 D-004补充（2026-10-22 15:54）：独立只读Restore/BuildManifest核对既定iPhone身份、d22ap/CPID0x8015/BDID6及KernelCache成员名；真实donor SHA与并行预链接产物报告一致。证据reports/parallel-progress-review/donor-and-relocation-review.json。只记录证据，不改board/IPSW字段；预链接、内存及可启动性仍未验收。
 
 D-012补充（2026-10-22 16:03）：第十一轮真实源内核再次构建成功并生成933份C/C++记录，四份关键记录及原对象通过检查；首次ArmCpu编译失败为原命令中的不存在EXPORT_HDRS/libsa搜索路径被-Werror拒绝。只在该精确目录不存在时去掉并记录路径，保留其余目录/警告/ABI及真实编译，4项保护测试通过。实际archive仍待重跑；证据reports/kernel-ci/39742250205/。
+
+# D-013 · 用真实VFS实现补齐已观测的iPhone donor符号缺口
+
+- 状态：accepted，实际编译/目标导出与donor ABI未验证（2026-10-22 16:14）。
+- 证据：reports/donor-compat/；operations/2026-10-22-donor-vfs-bridge.md。
+
+对同一真实donor的65,348项指针表，当前内核唯一缺失为APFS使用的_vfs_getvfs_with_vfsops，参考run24为0。回移真实上游函数、声明和导出，不填假地址或成功stub；函数及底层mount查找的锁/引用语义静态一致。保持feed、board、原48项选择和既定iOS16目标；下一轮增加1项donor候选，与11项CI兼容分别计数。仅指针名清点不构成完整布局/指令/ABI验收，后续仍以实际Mach-O和只读plan为证据。

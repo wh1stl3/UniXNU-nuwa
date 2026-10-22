@@ -40,6 +40,8 @@ if rules.count('-MJ $@.json') != 2:
     raise ValueError('C and C++ compilation must emit separate records while still compiling')
 if 'LD\t= $(KC++) -nostdlib' not in flags or '-MJ' in flags:
     raise ValueError('Record generation must not alter compiler variables or linker invocation')
+if tree.read('config/BSDKernel.exports').splitlines().count('_vfs_getvfs_with_vfsops') != 1:
+    raise ValueError('Need the real VFS donor bridge export exactly once')
 print(json.dumps({'patch_count': len(patches), 'hunks': hunks,
                   'in_memory_sequence': 'passed', 'zero_initialization_retained': True,
                   'iorpc_header_unchanged': True,

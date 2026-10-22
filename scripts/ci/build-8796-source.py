@@ -73,6 +73,10 @@ def inputs(base):
         if not compatibility.is_file():
             raise ValueError(f'Missing reviewed clang17 compatibility patch: {name}')
         patches.append(compatibility)
+    donor_bridge = DEVICE / 'patches/xnu-8796-donor-candidates/vfs-getvfs-with-vfsops.patch'
+    if not donor_bridge.is_file():
+        raise ValueError('Missing reviewed real VFS donor bridge')
+    patches.append(donor_bridge)
     return patches, script, firehose_script
 
 
@@ -93,7 +97,8 @@ def main():
                'baseline_adapter_sha256': hashlib.sha256(script.encode()).hexdigest(),
                'firehose_adapter_sha256': hashlib.sha256(firehose_script.encode()).hexdigest(),
                'reviewed_base_patch_count': 48,
-               'ci_compatibility_patch_count': len(patches) - 48,
+               'ci_compatibility_patch_count': sum(p.parent.name == 'xnu-8796-ci-candidates' for p in patches),
+               'donor_compatibility_patch_count': sum(p.parent.name == 'xnu-8796-donor-candidates' for p in patches),
                'scope': 'source compile/link only; optional device archives disabled',
                'kernel_built': False, 'prelinked': False, 'device_verified': False}
     if args.check:

@@ -391,3 +391,13 @@
 [Evidence] reports/kernel-ci/39744948467/run.json和api-publish.json；https://github.com/wh1stl3/UniXNU/actions/runs/39744948467，device_ref=562c22fda45118f46b450390045a53b5a739f981。
 [Risk] 本轮最终结果尚未验证，VFS与完整驱动/预链接ABI仍有待办；feed/board不变，无诊断/固件镜像、设备动作或_verified=true。
 ```
+
+## Q-040 · donor指针表清点与真实VFS桥接
+
+```text
+[unixnu-nuwa][kernel] 清点真实donor绑定并回移唯一缺失的VFS接口
+
+[Change] 加入只读完整指针表清点，回移真实VFS函数/声明/导出并独立计数donor候选，保留原版本/板级边界。
+[Evidence] reports/donor-compat/：65,348项计数与参考报告一致，本仓1缺失而run24为0；函数及lookup锁/引用语义与上游一致，唯一声明/导出及60项231 hunks和配方静态检查通过。
+[Risk] VFS候选实际编译/目标导出待下一轮；指针名清点不验收布局/PC-relative/完整ABI或硬件，组件选择仅供分析；feed/board不变，无预链接镜像生成、设备动作或_verified=true。
+```
