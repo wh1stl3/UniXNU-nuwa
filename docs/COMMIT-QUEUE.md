@@ -271,3 +271,13 @@
 [Evidence] reports/kernel-ci/39734939751/diagnostics.txt原始行404291；build.json包含ast.o/processor.o实际路径和哈希；related-kperf-calls.json；next-compatibility-check.json为56项222 hunks通过，配方语法检查通过。
 [Risk] scheduler/KTRACE是源级发现，不是已确认的第七轮链接错误；完整编译/链接待第八轮，性能采样仍关闭，driver/donor ABI、QEMU与实机未验证；feed/board不变，无镜像或设备动作。
 ```
+
+## Q-028 · 第八轮源构建启动
+
+```text
+[unixnu-nuwa][build] 发布关闭性能模块的剩余条件修复并启动第八轮
+
+[Change] 记录8dd1b52已发布和第八轮精确输入，跟踪实际编译和链接结果。
+[Evidence] reports/kernel-ci/39736351595/run.json、api-publish.json；https://github.com/wh1stl3/UniXNU/actions/runs/39736351595；device_ref=8dd1b52e6d10a633f9248e4d54a3ce1f09cb1eff。
+[Risk] 记录时仍在运行，未取得完整内核或ABI成功证据；feed/board不变，无镜像或设备动作。
+```

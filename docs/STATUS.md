@@ -1,10 +1,10 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 14:48（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-22 14:50（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
-第七轮[39734939751](https://github.com/wh1stl3/UniXNU/actions/runs/39734939751)失败证据已下载：ast.o与processor.o均实际生成，首错移至task.c无条件初始化关闭KPC后不存在的字段。已补初始化guard，并按源码审查保护scheduler/KTRACE剩余性能模块引用；56项222 hunks静态检查通过，准备第八轮。见[取证与分析](operations/2026-10-22-ci-fifth-failure.md)。完整内核构建仍未通过。
+第七轮[39734939751](https://github.com/wh1stl3/UniXNU/actions/runs/39734939751)失败证据已下载：ast.o与processor.o均实际生成，首错移至task.c无条件初始化关闭KPC后不存在的字段。已补初始化guard，并按源码审查保护scheduler/KTRACE剩余性能模块引用；56项222 hunks静态检查通过，修复8dd1b52已发布，[第八轮39736351595](https://github.com/wh1stl3/UniXNU/actions/runs/39736351595)已启动，最终结果待取证。见[取证与分析](operations/2026-10-22-ci-fifth-failure.md)。完整内核构建仍未通过。
 
 ## 当前边界
 
@@ -24,7 +24,7 @@
 
 ## 下一步
 
-1. 发布关闭性能模块的剩余条件修复并启动第八轮，取实际第一处错误/链接结果；成功后读取原始Mach-O及NativePrelink标记。
+1. 跟踪第八轮39736351595（device_ref=8dd1b52e6d10a633f9248e4d54a3ce1f09cb1eff），取实际第一处错误/链接结果；成功后读取原始Mach-O及NativePrelink标记。
 2. 按第一处真实错误推进；成功时检查Mach-O、目标对象/符号、版本与NativePrelink标记，不扩大为ABI或实机结论。
 3. 完成Darwin22 archive、boot-progress/watchdog、nuwa defconfig与donor kernelcache解析，接回正式-D入口；feed切换独立处理。
 4. 命中四类硬停先写NEED-REVIEW再停；只差实体按键的项写PENDING-HUMAN继续。

@@ -61,3 +61,7 @@ build.json记录51个真实生成实现、51份适配记录，总共1296次模�
 - 标准BSD单元kern_ktrace.c:211/369/394/506的reset/disable调用没有性能模块保护。disabled-kperf-ktrace.patch保护这些调用及头，KDEBUG重置/禁用、所有权状态流程保持。KTRACE_KPERF直接配置调用者只找到可选osfmk/kperf/kperf.c及kperfbsd.c；不新增虚假provider或成功stub，不把缺失性能服务伪装为可用。
 
 上述scheduler/ktrace问题是源级发现，并非第七轮实际链接错误；第七轮还未成功链接，不混写证据等级。三项候选合并后56项222 hunks、配方hash/bash语法静态检查通过，下一轮进行实际编译验证。日志提取器增加真实ld/undefined-symbol/clang命令行错误及精确目标字段，为链接阶段取证做准备。
+
+## 第八轮启动
+
+8dd1b52e6d10a633f9248e4d54a3ce1f09cb1eff已发布，第八轮39736351595使用56项候选及既定IIG适配，最终结果未验证。运行元数据及相同Git对象发布证明见reports/kernel-ci/39736351595/。
