@@ -1,6 +1,6 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 16:47（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-22 16:49（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
@@ -8,13 +8,13 @@
 
 ## 本轮结果
 
-- ArmCpu真实对象和libArmCpu.a已生成；ArmDTPlatform唯一实际error为platformStageReset缺noreturn声明。已增加与无条件WFE循环一致的前置属性声明，4项命令保护测试通过，不放宽-Wmissing-noreturn或其余-Werror；三项既有风格警告仍可见。下一轮真实编译待触发。见[archive记录](operations/2026-10-22-darwin22-archive-build.md)。
+- ArmCpu真实对象和libArmCpu.a已生成；ArmDTPlatform唯一实际error为platformStageReset缺noreturn声明。已增加与无条件WFE循环一致的前置属性声明，4项命令保护测试通过，不放宽-Wmissing-noreturn或其余-Werror；三项既有风格警告仍可见。[第十四轮39750542014](https://github.com/wh1stl3/UniXNU/actions/runs/39750542014)已触发，device_ref=2b02285b806dfa2e6a9592d1347ea6542cb8aba1，最终结果待取证。见[archive记录](operations/2026-10-22-darwin22-archive-build.md)。
 - VFS桥接已进入真实内核，参考选择65,348项donor指针绑定零失败；固定官方只读plan的119段布局/指针检查通过。仅静态检查通过，未emit，完整ABI/PC-relative未验收。见[接口记录](operations/2026-10-22-donor-vfs-bridge.md)及[实际plan](../reports/donor-compat/ci13-readonly-plan.json)。
 - 用户所指并行boot.img确已打包；独立内存拆读核对203,157,504字节、FD/内核/ADT及FAT内容hash一致。但payload无EFI、固件日志无DarwinBoot/UniXNUDxe/UniXNUPkg，加载器集成尚缺证据。可复用shim/cwd修正与UEFI对账方法，不能据此确认XNU启动。见[过程文档与boot复核](operations/2026-10-22-reference-boot-process-review.md)。来源仓现有授权不导入本仓。
 
 ## 下一步
 
-1. 发布最小noreturn声明修复并启动下一轮，取三个平台archive的实际编译/符号闭包结果；不以ArmCpu单库成功验收全部驱动。
+1. 跟踪第十四轮39750542014（device_ref=2b02285），取三个平台archive的实际编译/符号闭包结果；不以ArmCpu单库成功验收全部驱动。
 2. 审阅正式nuwa构建所需的DarwinBoot/UniXNU固件入口、boot-progress 13项回调及watchdog接口，处理scratch覆盖风险，再接-D入口。参考容器打包经验可用，板值和来源镜像不直接搬入。
 3. 对既定iPhone donor继续审查12处Libm外部PC编码及真实roots/初始化器；119段只读布局通过不等于指令/ABI或可启动性通过。禁止宽泛oracle豁免，无新镜像。
 4. 暂不安排该源内核上机；需要改板值、生成镜像或fastboot boot前，先按本仓NEED-REVIEW硬停。只差实体按键记PENDING-HUMAN，不阻塞软件侧。
