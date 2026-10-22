@@ -19,3 +19,11 @@ config/firmware-sec-trace-profile.json从稳定dedicated profile派生，只改�
 设备动作前按实际Android DT nuwa/kalama筛选，排除同时连接的enuma。进入bootloader后验证product=nuwa、unlocked=yes和槽位观测；按D-016重新进入bootloader隔离状态。临时boot后记录命令接受/USB模式与用户屏幕观察，各自分开；不把ACK写成SEC通过。结束先重进bootloader再临时加载原厂boot，确认实际nuwa Android sys.boot_completed=1。只差实体键记PENDING-HUMAN，恢复若需要用户在场按NEED-HUMAN记录。
 
 当前仅源码/profile与审查工具准备完成，尚未编出这份诊断FD、未生成新boot容器、未执行设备。实际结果随本轮取证追加。
+
+## CI调度与包/恢复脚本
+
+39809636575固定device_ref=f897f90189516fda7d56a6ae43d986f0e937b86d，--profile sec-trace；23:57:18至23:58:06安装通过后进入构建。实际产物尚待取证。
+
+scripts/prepare-sec-trace-boot.py按run_id定位实际artifact，严格比较runner recipe/profile/runid，重新执行全部产物检查和SEC标记门，再哈希核对原厂boot、验证v4/无ramdisk/无signature，仅写kernel_size、拼该轮shim+FD并独立重解析边界/写后hash。只写新out/trial-boot/sec-trace-RUN目录，拒绝覆盖；报告放reports/sec-trace/RUN，不含序列号。
+
+scripts/trial-v4-firmware.py新增--package，仅允许reports/sec-trace下R-007 A/v4/无DTB/FAT/XNU的包，候选路径限out/trial-boot。原厂恢复哈希必须匹配；launch还核对候选哈希，recover不依赖候选文件仍存在或内容正常。launch/recover均先fastboot reboot bootloader重查nuwa，结束显式确认Android=1；不调用flash/erase/set_active。帮助入口已检查，实际设备行为以本轮实测记录为准。

@@ -32,17 +32,40 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('phase', choices=['launch', 'recover'])
     parser.add_argument('--evidence', type=Path, required=True)
+    parser.add_argument('--package', type=Path, help='R-007 A diagnostic package report')
     args = parser.parse_args()
     evidence = args.evidence.resolve()
     if not evidence.is_relative_to(ROOT / 'reports') or evidence.exists():
         raise ValueError('Evidence must be a fresh reports file')
-    for path, digest in HASHES.items():
+    candidate, candidate_sha = CANDIDATE, HASHES[CANDIDATE]
+    package_sha = None
+    if args.package:
+        package_path = args.package.resolve()
+        if not package_path.is_relative_to(ROOT / 'reports/sec-trace'):
+            raise ValueError('Diagnostic package report must stay under reports/sec-trace')
+        package_raw = package_path.read_bytes()
+        package = json.loads(package_raw)
+        if (package['approval'] != 'R-007 A' or package['header_version'] != 4
+                or package['xnu_included'] or package['fat_included'] or package['appended_dtb']
+                or package['original_boot_sha256'] != HASHES[ORIGINAL]):
+            raise ValueError('Package is outside the approved R-007 scope')
+        candidate = (ROOT / package['image_path']).resolve()
+        if not candidate.is_relative_to(ROOT / 'out/trial-boot'):
+            raise ValueError('Diagnostic candidate escapes trial output')
+        candidate_sha = package['image_sha256']
+        package_sha = hashlib.sha256(package_raw).hexdigest()
+    checked_hashes = {ORIGINAL: HASHES[ORIGINAL]}
+    if args.phase == 'launch':
+        checked_hashes[candidate] = candidate_sha
+    for path, digest in checked_hashes.items():
         if hashlib.sha256(path.read_bytes()).hexdigest() != digest:
             raise ValueError('Pinned boot input changed')
     evidence.parent.mkdir(parents=True, exist_ok=True)
     report = dict(phase=args.phase, started_at=now(), commands=[], observations=[],
-                  authorization='User explicitly approved temporary prepared v4 candidate trial; original recovery authorized',
-                  candidate_sha256=HASHES[CANDIDATE], recovery_sha256=HASHES[ORIGINAL])
+                  authorization='R-007 A explicit diagnostic trial/recovery approval' if args.package else
+                  'User explicitly approved temporary prepared v4 candidate trial; original recovery authorized',
+                  candidate_sha256=candidate_sha, candidate_package_sha256=package_sha,
+                  recovery_sha256=HASHES[ORIGINAL])
 
     def save():
         evidence.write_text(json.dumps(report, indent=2) + '\n')
@@ -78,6 +101,18 @@ def main():
             raise ValueError('Ambiguous nuwa bootloaders')
         return found[0] if found else None
 
+    def reset_bootloader(serial):
+        if run('fastboot', serial, ['reboot', 'bootloader']).returncode:
+            raise RuntimeError('Cannot isolate bootloader state (D-016)')
+        time.sleep(2)
+        deadline = time.monotonic() + 45
+        while time.monotonic() < deadline:
+            current = fastboot_target()
+            if current:
+                return current
+            time.sleep(2)
+        raise RuntimeError('Nuwa bootloader did not return after reset')
+
     try:
         serial = fastboot_target()
         if args.phase == 'launch':
@@ -99,12 +134,13 @@ def main():
                         break
             if not serial:
                 raise RuntimeError('No nuwa bootloader after reboot')
+            serial = reset_bootloader(serial)
             unlocked = run('fastboot', serial, ['getvar', 'unlocked'])
             if unlocked.returncode or 'unlocked: yes' not in unlocked.stdout + unlocked.stderr:
                 raise RuntimeError('Bootloader not unlocked')
             run('fastboot', serial, ['getvar', 'current-slot'])
             print('Launching hash-pinned v4 firmware candidate', flush=True)
-            boot = run('fastboot', serial, ['boot', str(CANDIDATE)], timeout=50)
+            boot = run('fastboot', serial, ['boot', str(candidate)], timeout=50)
             print(boot.stdout + boot.stderr, flush=True)
             report['fastboot_boot_exit_code'] = boot.returncode
             save()
@@ -118,6 +154,7 @@ def main():
                     time.sleep(2)
         else:
             if serial:
+                serial = reset_bootloader(serial)
                 print('Temporarily loading original nuwa recovery boot', flush=True)
                 boot = run('fastboot', serial, ['boot', str(ORIGINAL)], timeout=50)
                 print(boot.stdout + boot.stderr, flush=True)

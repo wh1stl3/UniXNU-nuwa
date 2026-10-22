@@ -1,0 +1,66 @@
+{
+  "conclusion": "",
+  "headSha": "f897f90189516fda7d56a6ae43d986f0e937b86d",
+  "jobs": [
+    {
+      "completedAt": "0001-01-01T00:00:00Z",
+      "conclusion": "",
+      "databaseId": 119932088541,
+      "name": "firmware",
+      "startedAt": "2026-10-22T15:57:16Z",
+      "status": "in_progress",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T15:57:17Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T15:57:17Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T15:57:18Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4",
+          "number": 2,
+          "startedAt": "2026-10-22T15:57:17Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T15:58:06Z",
+          "conclusion": "success",
+          "name": "Install build tools",
+          "number": 3,
+          "startedAt": "2026-10-22T15:57:18Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "0001-01-01T00:00:00Z",
+          "conclusion": "",
+          "name": "Build approved candidate only",
+          "number": 4,
+          "startedAt": "2026-10-22T15:58:06Z",
+          "status": "in_progress"
+        },
+        {
+          "completedAt": "0001-01-01T00:00:00Z",
+          "conclusion": "",
+          "name": "Preserve evidence and approved artifacts",
+          "number": 5,
+          "startedAt": "0001-01-01T00:00:00Z",
+          "status": "pending"
+        },
+        {
+          "completedAt": "0001-01-01T00:00:00Z",
+          "conclusion": "",
+          "name": "Post Run actions/checkout@v4",
+          "number": 10,
+          "startedAt": "0001-01-01T00:00:00Z",
+          "status": "pending"
+        }
+      ],
+      "url": "https://github.com/wh1stl3/UniXNU-nuwa/actions/runs/39809636575/job/119932088541"
+    }
+  ],
+  "status": "in_progress"
+}
