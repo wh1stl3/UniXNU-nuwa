@@ -1,0 +1,24 @@
+852584:       |         ^
+852585: /Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kalloc.h:1505:2: note: expanded from macro '_KALLOC_TYPE_DEFINE'
+852586:  1505 |         } };                                                            \
+852587:       |         ^
+852588: /Users/runner/work/UniXNU/UniXNU/base/drivers/ArmDTPlatform/ArmDTPlatform.cpp:113:1: error: function 'platformStageReset' could be declared with attribute 'noreturn' [-Werror,-Wmissing-noreturn]
+852589:   113 | {
+852590:       | ^
+852591: 21 warnings and 1 error generated.
+852592:
+852593: Traceback (most recent call last):
+852594:   File "/Users/runner/work/UniXNU/UniXNU/device/scripts/ci/audit-driver-archives.py", line 208, in <module>
+852595:     main()
+852596:   File "/Users/runner/work/UniXNU/UniXNU/device/scripts/ci/audit-driver-archives.py", line 175, in main
+852597:     raise RuntimeError(f'{component} compile failed; see its actual compiler log')
+852598: RuntimeError: ArmDTPlatform compile failed; see its actual compiler log
+852599: Traceback (most recent call last):
+852600:   File "/Users/runner/work/UniXNU/UniXNU/device/scripts/ci/build-8796-source.py", line 211, in <module>
+852601:     main()
+852602:   File "/Users/runner/work/UniXNU/UniXNU/device/scripts/ci/build-8796-source.py", line 158, in main
+852603:     run([sys.executable, '-B', DEVICE / 'scripts/ci/audit-driver-archives.py',
+852604:   File "/Users/runner/work/UniXNU/UniXNU/device/scripts/ci/build-8796-source.py", line 85, in run
+852605:     return subprocess.run(list(map(str, command)), check=True, **kwargs)
+852606:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+852607:   File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/subprocess.py", line 571, in run

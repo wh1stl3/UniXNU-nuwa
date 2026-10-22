@@ -431,3 +431,14 @@
 [Evidence] reports/donor-compat/pc-relative-inventory.json：236,910内部编码、12外部/4ADRP，集合与参考完全一致；4,201,824字节逐段同hash，官方首拒绝0xfffffff005b8c1cc；实际为6窗口外/6入口oracle。
 [Risk] 字节保持和指纹不证明12处代码/数据分类、目标语义、完整ABI或实机；只读既有文件，未调用emit或生成镜像，feed/board及_verified不变。
 ```
+
+
+## Q-044 · 参考boot过程与真实driver/donor接口
+
+```text
+[unixnu-nuwa][kernel] 复核参考boot链路并补真实平台复位声明
+
+[Change] 只读核对并行boot及过程文档，划清容器与loader证据；保存CI13真实内核/ArmCpu archive及零缺失donor绑定/官方只读plan，补ArmDTPlatform不返回声明。
+[Evidence] reports/parallel-progress-review/boot-*核对203157504字节镜像及五项hash，实际run3761554；reports/kernel-ci/39747264803首错原始行852588、源内核08c23dc、ArmCpu archive42350fb；reports/donor-compat/ci13-*为65348绑定零失败和119段只读布局通过，4项命令保护测试通过。
+[Risk] 参考FD加载器集成无证据，12处指令/完整ABI未验收；新声明待下一轮真实平台编译，三库未全部通过或接回内核；feed/board不变，无镜像生成、设备操作或_verified=true。
+```

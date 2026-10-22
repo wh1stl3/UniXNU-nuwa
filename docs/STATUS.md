@@ -1,54 +1,37 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 16:33（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-22 16:47（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
-**8796.141.3源内核已编译、链接成功。** [第十轮39738601892](https://github.com/wh1stl3/UniXNU/actions/runs/39738601892)于15:20完成，完整配方退出成功，产物已下载并与runner哈希对齐；普通ARM64 MH_EXECUTE、Darwin22.6.0、LC_SOURCE_VERSION=8796.141.3、未解析符号0、NativePrelink两项标记=1，静态检查通过。尚不是完整nuwa可启动内核；未预链接、未QEMU、未实机。见[成功取证](operations/2026-10-22-ci-source-kernel-success.md)。
+**8796.141.3源内核已真实编译、链接成功；尚无本仓完整nuwa启动链验收。** 第十三轮[39747264803](https://github.com/wh1stl3/UniXNU/actions/runs/39747264803)源内核再次成功，普通ARM64/Darwin22.6、0未解析符号、两项NativePrelink标记1；整体CI失败于后续平台archive，不是内核编译失败。未QEMU、未实机。
 
-## 本轮推进
+## 本轮结果
 
-[第十二轮39744948467](https://github.com/wh1stl3/UniXNU/actions/runs/39744948467)已完成：源内核再次成功、933份真实C/C++记录齐全，无效libsa路径修复已生效；平台首错为旧头文件三类风格诊断及ArmCpu五个缺失前置声明。已补五项与定义一致的声明，只把三类风格诊断保留为可见警告，其他-Werror保留；4项命令保护测试通过，修复ff8abe1已发布，[第十三轮39747264803](https://github.com/wh1stl3/UniXNU/actions/runs/39747264803)已启动，含真实VFS桥接。平台archive尚未通过。见[本轮记录](operations/2026-10-22-darwin22-archive-build.md)。
-
-## donor接口推进
-
-已完整清点参考选择的65,348项实际donor指针绑定：当前源内核仅APFS的_vfs_getvfs_with_vfsops缺失，参考run24为0缺失。真实VFS桥接已核对上游实现及8796底层锁/引用语义，下一轮60项231 hunks静态检查通过，实际编译待CI；第十二轮仍是旧59项。见[接口记录](operations/2026-10-22-donor-vfs-bridge.md)。仅为指针名清点，非完整ABI或实机通过。
-
-## 预链接指令证据
-
-固定官方检查仍拒绝12个Libm外部编码（4个ADRP），与参考豁免集合一致；9个已知常量池完整hash通过，参考已有候选30段可执行内容4,201,824字节逐段保持。未知12处仍未验收；原因计数已更正为6窗口外/6入口oracle。见[只读清点](operations/2026-10-22-donor-pc-relative-inventory.md)。没有生成新候选。
-
-## 当前边界
-
-- 用户授权全部Git、gh、workflow修改和触发CI，无需重复询问；按COMMIT-QUEUE分里程碑提交，不强推或改写历史。API发布校验相同Git对象且force=false。
-- 两个旧仓及来源树只读。设备仓独立，以-D接入正式基座；CI临时工作树在云端RUNNER_TEMP、设备仓外，不整体升级基座。
-- 4KiB；iPhone10,3/d22ap/iOS16.7.16/20H392、8796.141.3；ipad_identity=true。D-002上限8GiB，先512MiB–1GiB过阶段5；未知板值TODO。
-- feed与board不变，example=true；四类硬停有效，无诊断/固件镜像、设备动作或_verified=true。
-
-## 已有证据与限制
-
-- [运行状态](../reports/kernel-ci/39738601892/run.json)和[构建记录](../reports/kernel-ci/39738601892/build.json)：完整make/链接成功；输入526651af94610f40c3223eae9550deaa3c44ae57，48项移植选择加10项CI兼容补丁。此前实际错误及修复见[过程记录](operations/2026-10-22-ci-fifth-failure.md)。
-- 原始内核20,136,488字节，SHA-256 bdaad81373d00df8334cb5a453b32f06a5e607c3e7d8cde812e4f5f927e19ced；保存在忽略的out/kernel-ci/39738601892/，不提交二进制。[只读产物检查](../reports/kernel-ci/39738601892/kernel-inspection.json)包含版本、符号和标记；标记存在不等于donor兼容。
-- 真实工具为macOS Actions、Xcode16.4、Apple clang17、iphoneos18.5 SDK；链接metadata指定iOS16.0不表示使用了16.0 SDK。WSL本机路线仍缺目标输入，不能写成本机编译通过。
-- 841个目标.o（不含.cpo），51个IIG实现无kernelContent残留、原IORPC头不变。源CI关闭KPC/KPERF、boot-progress和可选设备archive；编译成功不验收RPC/driver ABI或这些功能。
-- [Darwin22接口审查](operations/2026-10-22-darwin22-interfaces-and-wsl.md)：archive输出/符号、13项回调、watchdog scratch覆盖风险仍待解决；正式nuwa配置尚未接齐。
-- [边界复核](../reports/kernel-ci/39738601892/acceptance.json)：下载文件与runner SHA相同，三来源树tracked状态空，board/feed哈希不变。文件段对齐不能替代运行时页大小或实机验证。
+- ArmCpu真实对象和libArmCpu.a已生成；ArmDTPlatform唯一实际error为platformStageReset缺noreturn声明。已增加与无条件WFE循环一致的前置属性声明，4项命令保护测试通过，不放宽-Wmissing-noreturn或其余-Werror；三项既有风格警告仍可见。下一轮真实编译待触发。见[archive记录](operations/2026-10-22-darwin22-archive-build.md)。
+- VFS桥接已进入真实内核，参考选择65,348项donor指针绑定零失败；固定官方只读plan的119段布局/指针检查通过。仅静态检查通过，未emit，完整ABI/PC-relative未验收。见[接口记录](operations/2026-10-22-donor-vfs-bridge.md)及[实际plan](../reports/donor-compat/ci13-readonly-plan.json)。
+- 用户所指并行boot.img确已打包；独立内存拆读核对203,157,504字节、FD/内核/ADT及FAT内容hash一致。但payload无EFI、固件日志无DarwinBoot/UniXNUDxe/UniXNUPkg，加载器集成尚缺证据。可复用shim/cwd修正与UEFI对账方法，不能据此确认XNU启动。见[过程文档与boot复核](operations/2026-10-22-reference-boot-process-review.md)。来源仓现有授权不导入本仓。
 
 ## 下一步
 
-1. 跟踪第十三轮39747264803（device_ref=ff8abe167a039560c816892b78b00660b5518888），收取平台archive真实结果并检查VFS导出/实际donor绑定；仅三类风格诊断保留为可见警告，其他-Werror不变。不把符号名闭包扩大成完整ABI通过。
-2. 收口boot-progress 13项回调、watchdog接口和scratch布局风险，再建立正式nuwa配置并接回-D入口；保持feed，未知板值TODO。
-3. 下一轮实际编译VFS桥接后，重跑既定iPhone donor的只读plan/绑定清点；继续审核布局/PC-relative及真实组件选择，不移用iPadOS17数值或生成镜像。任何board身份/内存/基址变更先硬停审查。
-4. 当前不安排这份源内核上机；达到可启动链路前置条件后，在NEED-REVIEW列出至少两条验证路径、代价和最小批准范围。只差实体按键的待办不阻塞软件侧工作。
+1. 发布最小noreturn声明修复并启动下一轮，取三个平台archive的实际编译/符号闭包结果；不以ArmCpu单库成功验收全部驱动。
+2. 审阅正式nuwa构建所需的DarwinBoot/UniXNU固件入口、boot-progress 13项回调及watchdog接口，处理scratch覆盖风险，再接-D入口。参考容器打包经验可用，板值和来源镜像不直接搬入。
+3. 对既定iPhone donor继续审查12处Libm外部PC编码及真实roots/初始化器；119段只读布局通过不等于指令/ABI或可启动性通过。禁止宽泛oracle豁免，无新镜像。
+4. 暂不安排该源内核上机；需要改板值、生成镜像或fastboot boot前，先按本仓NEED-REVIEW硬停。只差实体按键记PENDING-HUMAN，不阻塞软件侧。
 
-## 并行产物可用性
+## 当前边界
 
-用户指出的只读参照仓现已真实产出run24源内核、53MB预链接候选及3MiB FD，hash已核对；donor身份及VFS桥接有可复用证据。实际驱动被清空、预链接代码/常量豁免、4项UEFI保留区及DarwinBoot接线仍待收口，不能据此确认nuwa可启动。采用复用证据并补齐本仓接口的路径，见[具体方案](operations/2026-10-22-parallel-three-artifacts-review.md)。未生成镜像或修改参照仓。
+- 全部Git、gh、workflow修改及CI触发已有用户授权；按COMMIT-QUEUE分里程碑，不强推/改写历史。API发布校验相同Git对象且force=false。
+- 两个旧仓及来源树只读，设备仓独立；CI临时源树在云端RUNNER_TEMP、设备仓外，不整体升级基座。
+- feed和board不变，example=true。4KiB；iPhone10,3/d22ap/iOS16.7.16/20H392、8796.141.3；ipad_identity=true（安全属性）。D-002连续窗口上限8GiB，先512MiB–1GiB过阶段5，未知板值TODO。
+- 四类硬停保持，无新诊断/固件镜像、设备动作或_verified=true。
 
-## 新增参考
+## 证据与剩余限制
 
-用户提供的HackiOS开源对照报告已归档，并核验IIG替代、Linux兼容头、PMU不可用实现和返回加载器边界，见[核验记录](operations/2026-10-22-hackios-reference-review.md)。作为独立参考，不自动变更UniXNU主线、donor或验收条件。
-
-## 其余缺口
-
-donor hash/slide/initializer/roots、完整driver闭包、SMMU/DMA、用户态ABI/PAC、uefi-nuwa/ADT和板值未验证。现有按键待办不阻塞软件侧工作。
+- 第十三轮实际内核20,136,616字节，SHA08c23dc162e934a2e9c59780da0a3d69c8f7f422c9f167b80a87b10e550927e3；[实际构建](../reports/kernel-ci/39747264803/build.json)、[产物检查](../reports/kernel-ci/39747264803/kernel-inspection.json)、[archive检查](../reports/kernel-ci/39747264803/driver-archives/audit.json)。源输入ff8abe167a039560c816892b78b00660b5518888、60项补丁；原件忽略保存在out，不提交二进制。
+- 真正工具链为macOS Actions/Xcode16.4/Apple clang17/iphoneos18.5 SDK；iOS16链接metadata不表示使用16SDK。WSL本机仍缺目标工具链输入，不写成本机通过。首轮完整成功见[第十轮证据](operations/2026-10-22-ci-source-kernel-success.md)。
+- 933份真实C/C++记录、51项IIG实现无kernelContent残留、原IORPC头不变。源CI关闭KPC/KPERF、boot-progress和设备archive，三个平台库仍是独立审查，未链接回源内核。源编译成功不验收RPC/driver ABI。
+- [指令清点](operations/2026-10-22-donor-pc-relative-inventory.md)：9已知常量池完整hash通过，剩余12外部编码（4ADRP）未验收；参考候选30段4,201,824字节保持不证明语义。参考roots/slide没有写入本仓board。
+- [Darwin22接口审查](operations/2026-10-22-darwin22-interfaces-and-wsl.md)：正式nuwa配置、watchdog scratch布局、13回调及UFS/framebuffer依赖仍缺，SMMU/DMA、UEFI实机内存图、用户态ABI/PAC未验证。
+- [三件产物审查](operations/2026-10-22-parallel-three-artifacts-review.md)与新boot过程复核互补；来源文档/实际运行SHA已分开核对，当前workflow新增trustcache/仅固件步骤不归于已下载产物。
+- [HackiOS参考](operations/2026-10-22-hackios-reference-review.md)仅作独立对照，不改变主线/donor/验收条件。现有按键待办不阻塞软件工作。

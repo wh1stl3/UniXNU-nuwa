@@ -1,0 +1,313 @@
+{
+  "scope": "Read-only container/content checks; no ABL, UEFI, kernel or hardware execution",
+  "boot_path": "D:\\Code\\PortingiOSWithUniXNU\\.work\\artifacts\\nuwa-boot\\out\\nuwa\\boot\\boot.img",
+  "boot_bytes": 203157504,
+  "boot_sha256": "70d6b97acf6a2ce059dff381b46b0ccf69fc0cda581e4421f689b9c9fb6395fb",
+  "header": {
+    "version": 1,
+    "page_bytes": 4096,
+    "kernel_bytes": 1824867,
+    "ramdisk_bytes": 201326592,
+    "kernel_address": "0x8000",
+    "ramdisk_address": "0x1000000",
+    "tags_address": "0x1e00000",
+    "os_version_raw": 0
+  },
+  "gzip": {
+    "inflated_bytes": 3145840,
+    "shim_bytes": 112,
+    "fd_bytes": 3145728,
+    "fd_sha256": "21c029eb7fa432b040ae5d06872f963fee4d8454cf98503ab0423ca3b5afcad3",
+    "fd_matches_artifact": true
+  },
+  "shim": {
+    "text_offset": "0xa7100000",
+    "image_size": 3145840,
+    "covers_shim_and_fd": true,
+    "arm64_magic": "41524d64"
+  },
+  "appended_dtb": {
+    "bytes": 131437,
+    "sha256": "d865e6620288eabeefb3a2e3ac4c301dc849f2ad3814356768796a6a8c3bd32e"
+  },
+  "payload": {
+    "bytes": 201326592,
+    "sha256": "514c33aeaeb94fcb5a2593192a7b25c12213d69bb4cf31e261b56d83537d1777",
+    "files": [
+      {
+        "path": "/EFI/UniXNU/Payloads/kernel.macho",
+        "bytes": 53014528,
+        "sha256": "e3cfe478117720307799fcc4201a83e9f30695785ff4f3fb27f23008f0cfb491"
+      },
+      {
+        "path": "/EFI/UniXNU/Payloads/kernel.macho.adt",
+        "bytes": 13396,
+        "sha256": "17f9f30ee10d6e4a33c1a3015983f0f2d78784286e23592a45e85eba450655d9"
+      },
+      {
+        "path": "/EFI/UniXNU/unixnu.toml",
+        "bytes": 1130,
+        "sha256": "ae6a435ad3cc7c96958009ce7abe0e600e49abb1d66cebf51bbf57297c220bcc"
+      }
+    ],
+    "config": {
+      "version": 1,
+      "boot": {
+        "timeout": 3,
+        "default": "xnu"
+      },
+      "kits": {
+        "autoload": false
+      },
+      "entry": [
+        {
+          "id": "xnu",
+          "title": "nuwa first boot: source 4K XNU to console",
+          "type": "xnu",
+          "path": "Payloads/kernel.macho",
+          "args": "-v serial=3 debug=0x14e kt_fixed_zones=120 offline-legacy-register=1 offline-legacy-gop=1 offline-legacy-unit-scale=2 offline-legacy-pm=1 offline-legacy-validate=1 offline-legacy-transfer=1 offline-legacy-cpu-present=1 offline-hid-home=1 offline-hid-input=1 offline-legacy-phase=4 offline-mobile-graphics-client=1 offline-mobile-graphics-load=1 offline-apfs-load=1 boot-progress=2 -apfs_shared_datavolume offline-key-events=1 native-ufs-stats-delay=30 armcpu-diagnostics=1 sheng-disable-watchdogd=1 sheng-disable-jobs=com.apple.identityservicesd,com.apple.locationd,com.apple.CommCenter,com.apple.iconservices.iconservicesagent boot-ui-focus=PreBoard boot-ui-focus2=SpringBoard boot-ui-focus3=backboardd boot-ui-focus4=Setup sheng-smp=1 sheng-cpufreq=3 sheng-touch=4 sheng-aks=1 sheng-gpu-power=9 boot-diag-resume=0 sheng-gpu-metal=1 sheng-gpu-addon=1 armcpu-spi-ipi=1 -no_slto_panic ml-timeout-lock-panic-scale=40 sheng-touch-hid=1"
+        }
+      ]
+    },
+    "adt": {
+      "nodes": {
+        "/": {
+          "property_names": [
+            "#address-cells",
+            "#size-cells",
+            "compatible",
+            "model",
+            "name",
+            "target-type"
+          ]
+        },
+        "/chosen": {
+          "certificate-production-status": {
+            "bytes": 4,
+            "integer_le": 0
+          },
+          "effective-production-status-ap": {
+            "bytes": 4,
+            "integer_le": 0
+          },
+          "certificate-security-mode": {
+            "bytes": 4,
+            "integer_le": 1
+          },
+          "effective-security-mode-sep": {
+            "bytes": 4,
+            "integer_le": 1
+          },
+          "darwinboot-memory-size": {
+            "bytes": 8,
+            "integer_le": 6442450944
+          },
+          "dram-base": {
+            "bytes": 8,
+            "integer_le": 37580963840
+          },
+          "dram-size": {
+            "bytes": 8,
+            "integer_le": 9663676416
+          },
+          "property_names": [
+            "amfi-only-platform-code",
+            "certificate-production-status",
+            "certificate-security-mode",
+            "chip-id",
+            "crypto-hash-method",
+            "darwinboot-memory-size",
+            "dram-base",
+            "dram-size",
+            "effective-production-status-ap",
+            "effective-security-mode-sep",
+            "name",
+            "nvram-bank-count",
+            "nvram-bank-size",
+            "nvram-current-bank",
+            "nvram-proxy-data",
+            "osenvironment",
+            "random-seed",
+            "root-matching",
+            "unique-chip-id"
+          ]
+        },
+        "/chosen/memory-map": {
+          "property_names": [
+            "name"
+          ]
+        },
+        "/chosen/manifest-properties": {
+          "property_names": [
+            "name"
+          ]
+        },
+        "/cpus": {
+          "property_names": [
+            "name"
+          ]
+        },
+        "/cpus/cpu0": {
+          "property_names": [
+            "compatible",
+            "device_type",
+            "name",
+            "reg",
+            "state",
+            "timebase-frequency"
+          ]
+        },
+        "/cpus/cpu1": {
+          "property_names": [
+            "compatible",
+            "device_type",
+            "name",
+            "reg",
+            "state",
+            "timebase-frequency"
+          ]
+        },
+        "/cpus/cpu2": {
+          "property_names": [
+            "compatible",
+            "device_type",
+            "name",
+            "reg",
+            "state",
+            "timebase-frequency"
+          ]
+        },
+        "/cpus/cpu3": {
+          "property_names": [
+            "compatible",
+            "device_type",
+            "name",
+            "reg",
+            "state",
+            "timebase-frequency"
+          ]
+        },
+        "/cpus/cpu4": {
+          "property_names": [
+            "compatible",
+            "device_type",
+            "name",
+            "reg",
+            "state",
+            "timebase-frequency"
+          ]
+        },
+        "/cpus/cpu5": {
+          "property_names": [
+            "compatible",
+            "device_type",
+            "name",
+            "reg",
+            "state",
+            "timebase-frequency"
+          ]
+        },
+        "/cpus/cpu6": {
+          "property_names": [
+            "compatible",
+            "device_type",
+            "name",
+            "reg",
+            "state",
+            "timebase-frequency"
+          ]
+        },
+        "/cpus/cpu7": {
+          "property_names": [
+            "compatible",
+            "device_type",
+            "name",
+            "reg",
+            "state",
+            "timebase-frequency"
+          ]
+        },
+        "/psci": {
+          "property_names": [
+            "compatible",
+            "method",
+            "name"
+          ]
+        },
+        "/defaults": {
+          "property_names": [
+            "name",
+            "sleep-disabled"
+          ]
+        },
+        "/options": {
+          "property_names": [
+            "name"
+          ]
+        },
+        "/buttons": {
+          "property_names": [
+            "button-names",
+            "compatible",
+            "device_type",
+            "home-button-type",
+            "name"
+          ]
+        },
+        "/product": {
+          "property_names": [
+            "artwork-device-idiom",
+            "artwork-device-subtype",
+            "artwork-display-gamut",
+            "artwork-scale-factor",
+            "compatible-device-fallback",
+            "model",
+            "name",
+            "product-description",
+            "product-name",
+            "thin-bezel"
+          ]
+        },
+        "/arm-io": {
+          "property_names": [
+            "#address-cells",
+            "#size-cells",
+            "device_type",
+            "name",
+            "ranges"
+          ]
+        },
+        "/arm-io/intc": {
+          "property_names": [
+            "compatible",
+            "name",
+            "redistributor-stride",
+            "reg"
+          ]
+        },
+        "/arm-io/ufshc": {
+          "property_names": [
+            "compatible",
+            "name"
+          ]
+        }
+      },
+      "parsed_bytes": 13396,
+      "trailing_bytes": 0
+    }
+  },
+  "report_hash_matches": {
+    "boot": true,
+    "fd": true,
+    "payload": true,
+    "kernel": true,
+    "adt": true
+  },
+  "named_build_log_mentions": {
+    "DarwinBoot": 0,
+    "UniXNUDxe": 0,
+    "UniXNUPkg": 0
+  },
+  "efi_files_in_payload": [],
+  "device_verified": false
+}

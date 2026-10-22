@@ -1,0 +1,187 @@
+{
+  "kernel": "out\\kernel-ci\\39747264803\\nuwa-8796-source-39747264803\\nuwa-8796-source\\build\\xnu\\ios-obj\\DEVELOPMENT_ARM64_BCM2837\\mach.development.bcm2837.unstripped",
+  "bytes": 20136616,
+  "sha256": "08c23dc162e934a2e9c59780da0a3d69c8f7f422c9f167b80a87b10e550927e3",
+  "format": "ordinary ARM64 subtype0 MH_EXECUTE",
+  "parser_sha256": "5bd80b8c63deec29b747c28253e02308a56d5f8cdb37c9d315e7c8af7012d017",
+  "version": {
+    "symbol": "_version",
+    "string": "Darwin Kernel Version 22.6.0: Thu Oct 22 08:33:01 UTC 2026; runner:ios-obj/DEVELOPMENT_ARM64_BCM2837",
+    "file_offset": 239066
+  },
+  "source_version_components": [
+    8796,
+    141,
+    3,
+    0,
+    0
+  ],
+  "link_build_version": {
+    "platform": 2,
+    "minimum_os": "16.0.0",
+    "sdk_metadata": "16.0.0"
+  },
+  "undefined_symbol_count": 0,
+  "exported_symbol_count": 21733,
+  "markers": {
+    "_kalloc_sparse_prelink_index_version": {
+      "value": 1,
+      "address_from_binary": "0xfffffff0070062c0",
+      "file_offset": 8896
+    },
+    "_native_prelink_security_init_version": {
+      "value": 1,
+      "address_from_binary": "0xfffffff007021be0",
+      "file_offset": 121824
+    }
+  },
+  "segments": [
+    {
+      "name": "__TEXT",
+      "vmaddr": "0xfffffff007004000",
+      "vmsize": 1343488,
+      "fileoff": 0,
+      "filesize": 1343488,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__DATA_CONST",
+      "vmaddr": "0xfffffff00714c000",
+      "vmsize": 868352,
+      "fileoff": 1343488,
+      "filesize": 868352,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__TEXT_EXEC",
+      "vmaddr": "0xfffffff007220000",
+      "vmsize": 8093696,
+      "fileoff": 2211840,
+      "filesize": 8093696,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__KLD",
+      "vmaddr": "0xfffffff0079d8000",
+      "vmsize": 16384,
+      "fileoff": 10305536,
+      "filesize": 16384,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__LASTDATA_CONST",
+      "vmaddr": "0xfffffff0079dc000",
+      "vmsize": 16384,
+      "fileoff": 10321920,
+      "filesize": 16384,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__LAST",
+      "vmaddr": "0xfffffff0079e0000",
+      "vmsize": 0,
+      "fileoff": 0,
+      "filesize": 0,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__KLDDATA",
+      "vmaddr": "0xfffffff0079e0000",
+      "vmsize": 16384,
+      "fileoff": 10338304,
+      "filesize": 16384,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__DATA",
+      "vmaddr": "0xfffffff0079e4000",
+      "vmsize": 1097728,
+      "fileoff": 10354688,
+      "filesize": 262144,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__BOOTDATA",
+      "vmaddr": "0xfffffff007af0000",
+      "vmsize": 294912,
+      "fileoff": 10616832,
+      "filesize": 294912,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__PRELINK_TEXT",
+      "vmaddr": "0xfffffff004004000",
+      "vmsize": 0,
+      "fileoff": 10911744,
+      "filesize": 0,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__PRELINK_INFO",
+      "vmaddr": "0xfffffff007b38000",
+      "vmsize": 0,
+      "fileoff": 10911744,
+      "filesize": 0,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__PLK_TEXT_EXEC",
+      "vmaddr": "0xfffffff007b38000",
+      "vmsize": 0,
+      "fileoff": 10911744,
+      "filesize": 0,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__PRELINK_DATA",
+      "vmaddr": "0xfffffff007b38000",
+      "vmsize": 0,
+      "fileoff": 10911744,
+      "filesize": 0,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__PLK_DATA_CONST",
+      "vmaddr": "0xfffffff007b38000",
+      "vmsize": 0,
+      "fileoff": 10911744,
+      "filesize": 0,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__PLK_LLVM_COV",
+      "vmaddr": "0xfffffff007b38000",
+      "vmsize": 0,
+      "fileoff": 10911744,
+      "filesize": 0,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__PLK_LINKEDIT",
+      "vmaddr": "0xfffffff007b38000",
+      "vmsize": 0,
+      "fileoff": 10911744,
+      "filesize": 0,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__LINKINFO",
+      "vmaddr": "0xfffffff007b38000",
+      "vmsize": 278528,
+      "fileoff": 10911744,
+      "filesize": 278528,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__LINKEDIT",
+      "vmaddr": "0xfffffff007b7c000",
+      "vmsize": 8962048,
+      "fileoff": 11190272,
+      "filesize": 8946344,
+      "four_kib_start_alignment": true
+    }
+  ],
+  "prelink_executed": false,
+  "donor_compatibility": "not validated",
+  "device_verified": false
+}

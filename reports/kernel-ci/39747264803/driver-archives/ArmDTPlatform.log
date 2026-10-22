@@ -1,0 +1,238 @@
+In file included from /Users/runner/work/UniXNU/UniXNU/base/drivers/ArmDTPlatform/ArmDTPlatform.cpp:15:
+In file included from /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOPlatformExpert.h:40:
+In file included from /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:49:
+In file included from /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/system.h:36:
+In file included from /Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/thread.h:98:
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/osfmk/vm/vm_kern.h:629:2: warning: missing field 'kmg_type_hash' initializer [-Wmissing-designated-field-initializers]
+  629 |         };
+      |         ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/osfmk/vm/vm_kern.h:698:2: warning: missing field 'kmg_type_hash' initializer [-Wmissing-designated-field-initializers]
+  698 |         };
+      |         ^
+In file included from /Users/runner/work/UniXNU/UniXNU/base/drivers/ArmDTPlatform/ArmDTPlatform.cpp:15:
+In file included from /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOPlatformExpert.h:40:
+/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:980:2: warning: missing field 'kt_zshared' initializer [-Wmissing-designated-field-initializers]
+  980 |         IOOverrideTypedOperators(T);
+      |         ^
+/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:946:2: note: expanded from macro 'IOOverrideTypedOperators'
+  946 |         __IOOverrideTypedOperators(type)
+      |         ^
+/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:865:17: note: expanded from macro '__IOOverrideTypedOperators'
+  865 |                 return IOMallocType(type);                        \
+      |                        ^
+/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:330:9: note: expanded from macro 'IOMallocType'
+  330 |         static _KALLOC_TYPE_DEFINE(kt_view_var, type,       \
+      |                ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kalloc.h:1505:2: note: expanded from macro '_KALLOC_TYPE_DEFINE'
+ 1505 |         } };                                                            \
+      |         ^
+In file included from /Users/runner/work/UniXNU/UniXNU/base/drivers/ArmDTPlatform/ArmDTPlatform.cpp:15:
+In file included from /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOPlatformExpert.h:40:
+/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:980:2: warning: missing field 'kt_zshared' initializer [-Wmissing-designated-field-initializers]
+/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:946:2: note: expanded from macro 'IOOverrideTypedOperators'
+  946 |         __IOOverrideTypedOperators(type)
+      |         ^
+/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:869:10: note: expanded from macro '__IOOverrideTypedOperators'
+  869 |                 IOFreeType(mem, type);                            \
+      |                 ^
+/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:336:9: note: expanded from macro 'IOFreeType'
+  336 |         static _KALLOC_TYPE_DEFINE(kt_view_var, type,       \
+      |                ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kalloc.h:1505:2: note: expanded from macro '_KALLOC_TYPE_DEFINE'
+ 1505 |         } };                                                            \
+      |         ^
+In file included from /Users/runner/work/UniXNU/UniXNU/base/drivers/ArmDTPlatform/ArmDTPlatform.cpp:15:
+In file included from /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOPlatformExpert.h:40:
+/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:985:2: warning: missing field 'kt_stats' initializer [-Wmissing-designated-field-initializers]
+  985 |         IOOverrideTypedOperatorsSupportingArrayOperators(T);
+      |         ^
+/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:949:2: note: expanded from macro 'IOOverrideTypedOperatorsSupportingArrayOperators'
+  949 |         __IOOverrideTypedArrayOperators(type);                     \
+      |         ^
+/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:875:2: note: expanded from macro '__IOOverrideTypedArrayOperators'
+  875 |         __IOTypedOperatorNewArrayImpl(type, count)   \
+      |         ^
+/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:828:17: note: expanded from macro '__IOTypedOperatorNewArrayImpl'
+  828 |                 static KALLOC_TYPE_VAR_DEFINE(kt_view_var,                 \
+      |                        ^
+note: (skipping 3 expansions in backtrace; use -fmacro-backtrace-limit=0 to see all)
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/cdefs.h:113:26: note: expanded from macro '__CONCAT'
+  113 | #define __CONCAT(x, y)   x ## y
+      |                          ^
+<scratch space>:677:1: note: expanded from here
+  677 | KALLOC_TYPE_VAR_DEFINE_4
+      | ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kalloc.h:1533:2: note: expanded from macro 'KALLOC_TYPE_VAR_DEFINE_4'
+ 1533 |         } };                                                            \
+      |         ^
+In file included from /Users/runner/work/UniXNU/UniXNU/base/drivers/ArmDTPlatform/ArmDTPlatform.cpp:15:
+In file included from /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOPlatformExpert.h:40:
+/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:985:2: warning: missing field 'kt_stats' initializer [-Wmissing-designated-field-initializers]
+/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:949:2: note: expanded from macro 'IOOverrideTypedOperatorsSupportingArrayOperators'
+  949 |         __IOOverrideTypedArrayOperators(type);                     \
+      |         ^
+/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:877:2: note: expanded from macro '__IOOverrideTypedArrayOperators'
+  877 |         __IOTypedOperatorDeleteArrayImpl(type, ptr)  \
+      |         ^
+/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:847:17: note: expanded from macro '__IOTypedOperatorDeleteArrayImpl'
+  847 |                 static KALLOC_TYPE_VAR_DEFINE(kt_view_var,            \
+      |                        ^
+note: (skipping 3 expansions in backtrace; use -fmacro-backtrace-limit=0 to see all)
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/cdefs.h:113:26: note: expanded from macro '__CONCAT'
+  113 | #define __CONCAT(x, y)   x ## y
+      |                          ^
+<scratch space>:19:1: note: expanded from here
+   19 | KALLOC_TYPE_VAR_DEFINE_4
+      | ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kalloc.h:1533:2: note: expanded from macro 'KALLOC_TYPE_VAR_DEFINE_4'
+ 1533 |         } };                                                            \
+      |         ^
+In file included from /Users/runner/work/UniXNU/UniXNU/base/drivers/ArmDTPlatform/ArmDTPlatform.cpp:15:
+In file included from /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOPlatformExpert.h:40:
+/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:985:2: warning: missing field 'kt_zshared' initializer [-Wmissing-designated-field-initializers]
+/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:950:2: note: expanded from macro 'IOOverrideTypedOperatorsSupportingArrayOperators'
+  950 |         __IOOverrideTypedOperators(type)
+      |         ^
+/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:865:17: note: expanded from macro '__IOOverrideTypedOperators'
+  865 |                 return IOMallocType(type);                        \
+      |                        ^
+/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:330:9: note: expanded from macro 'IOMallocType'
+  330 |         static _KALLOC_TYPE_DEFINE(kt_view_var, type,       \
+      |                ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kalloc.h:1505:2: note: expanded from macro '_KALLOC_TYPE_DEFINE'
+ 1505 |         } };                                                            \
+      |         ^
+In file included from /Users/runner/work/UniXNU/UniXNU/base/drivers/ArmDTPlatform/ArmDTPlatform.cpp:15:
+In file included from /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOPlatformExpert.h:40:
+/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:985:2: warning: missing field 'kt_zshared' initializer [-Wmissing-designated-field-initializers]
+/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:950:2: note: expanded from macro 'IOOverrideTypedOperatorsSupportingArrayOperators'
+  950 |         __IOOverrideTypedOperators(type)
+      |         ^
+/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:869:10: note: expanded from macro '__IOOverrideTypedOperators'
+  869 |                 IOFreeType(mem, type);                            \
+      |                 ^
+/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:336:9: note: expanded from macro 'IOFreeType'
+  336 |         static _KALLOC_TYPE_DEFINE(kt_view_var, type,       \
+      |                ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kalloc.h:1505:2: note: expanded from macro '_KALLOC_TYPE_DEFINE'
+ 1505 |         } };                                                            \
+      |         ^
+In file included from /Users/runner/work/UniXNU/UniXNU/base/drivers/ArmDTPlatform/ArmDTPlatform.cpp:15:
+In file included from /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOPlatformExpert.h:41:
+In file included from /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOService.h:44:
+In file included from /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IORegistryEntry.h:40:
+In file included from /Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSContainers.h:33:
+In file included from /Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSObject.h:37:
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:1149:15: warning: 'retain' overrides a member function but is not marked 'override' [-Wsuggest-override]
+ 1149 |         virtual void retain() const;
+      |                      ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:637:15: note: overridden virtual function is here
+  637 |         virtual void retain() const = 0;
+      |                      ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:1163:15: warning: 'release' overrides a member function but is not marked 'override' [-Wsuggest-override]
+ 1163 |         virtual void release() const;
+      |                      ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:655:15: note: overridden virtual function is here
+  655 |         virtual void release() const = 0;
+      |                      ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:1180:15: warning: 'release' overrides a member function but is not marked 'override' [-Wsuggest-override]
+ 1180 |         virtual void release(int freeWhen) const;
+      |                      ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:601:15: note: overridden virtual function is here
+  601 |         virtual void release(int freeWhen) const = 0;
+      |                      ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:1197:15: warning: 'taggedRetain' overrides a member function but is not marked 'override' [-Wsuggest-override]
+ 1197 |         virtual void taggedRetain(const void * tag = NULL) const;
+      |                      ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:885:15: note: overridden virtual function is here
+  885 |         virtual void taggedRetain(const void * tag = NULL) const = 0;
+      |                      ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:1214:15: warning: 'taggedRelease' overrides a member function but is not marked 'override' [-Wsuggest-override]
+ 1214 |         virtual void taggedRelease(const void * tag = NULL) const;
+      |                      ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:904:15: note: overridden virtual function is here
+  904 |         virtual void taggedRelease(const void * tag = NULL) const = 0;
+      |                      ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:1232:15: warning: 'taggedRelease' overrides a member function but is not marked 'override' [-Wsuggest-override]
+ 1232 |         virtual void taggedRelease(
+      |                      ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:923:15: note: overridden virtual function is here
+  923 |         virtual void taggedRelease(
+      |                      ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:1252:14: warning: 'getRetainCount' overrides a member function but is not marked 'override' [-Wsuggest-override]
+ 1252 |         virtual int getRetainCount() const;
+      |                     ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:619:14: note: overridden virtual function is here
+  619 |         virtual int getRetainCount() const = 0;
+      |                     ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:1265:30: warning: 'getMetaClass' overrides a member function but is not marked 'override' [-Wsuggest-override]
+ 1265 |         virtual const OSMetaClass * getMetaClass() const;
+      |                                     ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:688:30: note: overridden virtual function is here
+  688 |         virtual const OSMetaClass * getMetaClass() const = 0;
+      |                                     ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:1337:2: warning: '~OSMetaClass' overrides a destructor but is not marked 'override' [-Wsuggest-destructor-override]
+ 1337 |         ~OSMetaClass();
+      |         ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:555:2: note: overridden virtual function is here
+  555 |         ~OSMetaClassBase();
+      |         ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:2615:15: warning: 'serialize' overrides a member function but is not marked 'override' [-Wsuggest-override]
+ 2615 |         virtual bool serialize(OSSerialize * serializer) const;
+      |                      ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:673:15: note: overridden virtual function is here
+  673 |         virtual bool serialize(OSSerialize * serializer) const = 0;
+      |                      ^
+In file included from /Users/runner/work/UniXNU/UniXNU/base/drivers/ArmDTPlatform/ArmDTPlatform.cpp:15:
+In file included from /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOPlatformExpert.h:41:
+In file included from /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOService.h:44:
+In file included from /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IORegistryEntry.h:40:
+In file included from /Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSContainers.h:46:
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSValueObject.h:472:10: warning: missing field 'kt_zshared' initializer [-Wmissing-designated-field-initializers]
+  472 |                 data = IOMallocType(T);
+      |                        ^
+/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:330:9: note: expanded from macro 'IOMallocType'
+  330 |         static _KALLOC_TYPE_DEFINE(kt_view_var, type,       \
+      |                ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kalloc.h:1505:2: note: expanded from macro '_KALLOC_TYPE_DEFINE'
+ 1505 |         } };                                                            \
+      |         ^
+In file included from /Users/runner/work/UniXNU/UniXNU/base/drivers/ArmDTPlatform/ArmDTPlatform.cpp:15:
+In file included from /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOPlatformExpert.h:41:
+In file included from /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOService.h:44:
+In file included from /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IORegistryEntry.h:40:
+In file included from /Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSContainers.h:46:
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSValueObject.h:487:2: warning: missing field 'kt_zshared' initializer [-Wmissing-designated-field-initializers]
+  487 |         IOFreeType(data, T);
+      |         ^
+/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:336:9: note: expanded from macro 'IOFreeType'
+  336 |         static _KALLOC_TYPE_DEFINE(kt_view_var, type,       \
+      |                ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kalloc.h:1505:2: note: expanded from macro '_KALLOC_TYPE_DEFINE'
+ 1505 |         } };                                                            \
+      |         ^
+/Users/runner/work/UniXNU/UniXNU/base/drivers/ArmDTPlatform/ArmDTPlatform.cpp:44:1: warning: missing field 'kt_zshared' initializer [-Wmissing-designated-field-initializers]
+   44 | OSDefineMetaClassAndStructors (ArmDTPlatform, IODTPlatformExpert)
+      | ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:2330:2: note: expanded from macro 'OSDefineMetaClassAndStructors'
+ 2330 |         OSDefineMetaClassAndStructorsWithInit(className,            \
+      |         ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:2164:2: note: expanded from macro 'OSDefineMetaClassAndStructorsWithInit'
+ 2164 |         OSDefineDefaultStructors(className, superclassName)
+      |         ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:2120:2: note: expanded from macro 'OSDefineDefaultStructors'
+ 2120 |         OSDefineOperatorMethods(className)
+      |         ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:2079:9: note: expanded from macro 'OSDefineOperatorMethods'
+ 2079 |         static KALLOC_TYPE_DEFINE(className ## _ktv, className,     \
+      |                ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kalloc.h:456:2: note: expanded from macro 'KALLOC_TYPE_DEFINE'
+  456 |         _KALLOC_TYPE_DEFINE(var, type, flags); \
+      |         ^
+/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kalloc.h:1505:2: note: expanded from macro '_KALLOC_TYPE_DEFINE'
+ 1505 |         } };                                                            \
+      |         ^
+/Users/runner/work/UniXNU/UniXNU/base/drivers/ArmDTPlatform/ArmDTPlatform.cpp:113:1: error: function 'platformStageReset' could be declared with attribute 'noreturn' [-Werror,-Wmissing-noreturn]
+  113 | {
+      | ^
+21 warnings and 1 error generated.

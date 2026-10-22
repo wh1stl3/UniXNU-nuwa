@@ -27,3 +27,8 @@ python -X utf8 -B scripts/ci/audit-donor-bindings.py --kernel out/kernel-ci/3974
 scripts/ci/check-donor-compat.py对实际下一轮补丁顺序在内存应用，逐一比对函数/底层helper、唯一声明和导出；vfs-static-check.json记录主源码hash和行号。next-sequence-check.json为60项231 hunks，next-source-input-check.json区分48项原选择、11项CI兼容及1项donor桥接，输入与配方语法静态检查通过。正在运行的第十二轮仍使用旧59项，不混写成已编译此候选。
 
 下一步取第十二轮平台库结果，按真实首错修复后以新输入进行完整构建。只有取得本候选实际Mach-O导出后，才重跑本仓donor只读plan和清点。iPhone donor真实身份/hash已独立核对，保持4KiB/iOS16及feed不变；boot-progress/watchdog和镜像硬停继续有效。
+
+
+## 2026-10-22 16:47 实际编译后核对
+
+CI13真实内核SHA08c23dc162e934a2e9c59780da0a3d69c8f7f422c9f167b80a87b10e550927e3已包含VFS桥接，指针绑定65,348项零失败，唯一APFS缺口已消除。官方只读plan也通过119段布局检查，参考roots/slide仅为分析输入，不是本仓配置。reports/donor-compat/ci13-kernel-bindings.json及ci13-readonly-plan.json；仍未emit，PC-relative、完整ABI和硬件未验证。

@@ -96,3 +96,5 @@
 - 2026-10-22 16:24 · Q-041已发布ff8abe1，第十三轮39747264803使用60项补丁和平台声明/风格诊断修复启动，继续取真实archive及VFS导出结果 · 提交号：ff8abe1；本项待定Q-042 · reports/kernel-ci/39747264803/
 
 - 2026-10-22 16:33 · 只读复现官方指令拒绝并清点12项Libm外部编码（4ADRP），9常量池完整hash匹配，参考候选30段4,201,824字节保持；更正先前原因计数为6窗口外/6入口oracle，未知项仍未验收，无新镜像 · 提交号：Q-042已发布382cce5；本项待定Q-043 · reports/donor-compat/pc-relative-inventory.json，docs/operations/2026-10-22-donor-pc-relative-inventory.md
+
+- 2026-10-22 16:47 · 只读核对并行boot及过程文档，实际容器hash匹配但loader接线未验证；CI13源内核成功、ArmCpu archive生成，donor65348绑定零缺失和119段plan通过；最小noreturn声明待重跑 · 提交号：Q-043已发布939967c；本项待定Q-044 · reports/parallel-progress-review/boot-*，reports/kernel-ci/39747264803/，reports/donor-compat/ci13-*

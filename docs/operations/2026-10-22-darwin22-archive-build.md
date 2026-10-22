@@ -53,3 +53,14 @@ ArmCpu实际26条错误均是诊断升级，分类见failure-categories.json：1
 ## 第十三轮启动（2026-10-22 16:24）
 
 ff8abe167a039560c816892b78b00660b5518888已发布，第十三轮39747264803已启动，含60项补丁及新的声明/可见风格警告策略。跟踪实际内核导出、三个archive及符号闭包；最终结果待取证。输入发布及运行元数据见reports/kernel-ci/39747264803/。
+
+
+## 第十三轮实际结果与noreturn声明（2026-10-22 16:47）
+
+39747264803于16:33:58整体failure，源内核实际成功，20,136,616字节、SHA08c23dc162e934a2e9c59780da0a3d69c8f7f422c9f167b80a87b10e550927e3，8796.141.3/Darwin22.6/普通ARM64/0未解析符号及两标记1均通过静态检查。源配方60项包含真实VFS桥接。原始控制台81,822,398字节、852609行，SHAfc872d4038b34351f21cfd876e3cfd9b9306563a326924309414849055f4c403；有界证据reports/kernel-ci/39747264803/。
+
+ArmCpu实际compile=0、libArmCpu.a已生成：242704字节，SHA42350fb7c3241a147c62d898b58dab8b673dc68c390bb90726427c594ed777a2，成员索引及ArmCpu.o已核对。其余闭包尚未运行，不称三个archive通过。ArmDTPlatform的唯一实际error是原始行852588，platformStageReset缺少noreturn属性；此前五项声明已实际解决ArmCpu错误。
+
+固定源drivers/ArmDTPlatform/ArmDTPlatform.cpp:112-123在PSCI调用之后无条件WFE死循环。只给该翻译单元强制包含include/nuwa/ArmDTPlatformDeclarations.h的[[noreturn]]前置声明，复用真实不返回契约；不更改复位实现、不放宽-Wmissing-noreturn、保留三项既有风格警告例外和其他-Werror。该头hash会写入下一轮实际argv报告。4项既有命令保护测试通过；完整真实编译待下一轮。
+
+同轮内核已独立完成65,348项donor指针绑定：零失败。固定官方native_prelink.plan以参考分析选择/slide通过119段布局与指针检查，写入reports/donor-compat/ci13-readonly-plan.json；未调用emit、不把参数写入board，instruction_relocation_complete/abi_qualified/loadable仍false，不能视作预链接镜像或实机通过。

@@ -1,0 +1,86 @@
+{
+  "run_id": 39747264803,
+  "command": "gh run download 39747264803 --repo wh1stl3/UniXNU --dir out/kernel-ci/39747264803",
+  "console_path": "out\\kernel-ci\\39747264803\\nuwa-8796-source-39747264803\\nuwa-host\\kernel-console.log",
+  "console_bytes": 81822398,
+  "console_sha256": "fc872d4038b34351f21cfd876e3cfd9b9306563a326924309414849055f4c403",
+  "console_lines": 852609,
+  "excerpt_trailing_whitespace_trimmed": true,
+  "diagnostics": [
+    {
+      "original_line": 852588,
+      "text": "/Users/runner/work/UniXNU/UniXNU/base/drivers/ArmDTPlatform/ArmDTPlatform.cpp:113:1: error: function 'platformStageReset' could be declared with attribute 'noreturn' [-Werror,-Wmissing-noreturn]"
+    },
+    {
+      "original_line": 852598,
+      "text": "RuntimeError: ArmDTPlatform compile failed; see its actual compiler log"
+    }
+  ],
+  "iorpc_header_unchanged": true,
+  "generated_kernel_content_files": 0,
+  "object_count_all_builds": 871,
+  "xnu_target_object_count": 841,
+  "key_objects": {
+    "ast.o": [
+      {
+        "path": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/ast.o",
+        "bytes": 73896,
+        "sha256": "21a6c61593bdff78f0d3b5466b72ac7e0f8b07c7c8709df8b824dfbeea721874"
+      }
+    ],
+    "processor.o": [
+      {
+        "path": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/processor.o",
+        "bytes": 143264,
+        "sha256": "5226e6a12dfdaa02c1a515f1a5d3e6735937270fe52e8c5de7188f6b699b4d42"
+      }
+    ]
+  },
+  "kernel_built": true,
+  "device_verified": false,
+  "additional_reports": [
+    {
+      "path": "compile-records\\bsd\\DEVELOPMENT\\kern_exec.o.json",
+      "bytes": 8256,
+      "sha256": "20251ceeaa30e7bde0cca43414082db2ca006e87c38f935548ec536f11ada855",
+      "copied": true
+    },
+    {
+      "path": "compile-records\\iokit\\DEVELOPMENT\\IOPlatformExpert.cpo.json",
+      "bytes": 8813,
+      "sha256": "ba34eecd7078f8900ff0e719d226d3ea2c014656050ecb3ed48476f9f850451d",
+      "copied": true
+    },
+    {
+      "path": "compile-records\\osfmk\\DEVELOPMENT\\prng_random.o.json",
+      "bytes": 8293,
+      "sha256": "e6b5c4b47ed16c3e9e04985b490028743627fbeac664a0858edd504c102c1ecc",
+      "copied": true
+    },
+    {
+      "path": "compile-records\\osfmk\\DEVELOPMENT\\startup.o.json",
+      "bytes": 8311,
+      "sha256": "870b0c8b2ce98c8f57f8fc64a6a3c7e77228af841a9f60bed932e354faa92cf5",
+      "copied": true
+    },
+    {
+      "path": "driver-archives\\ArmCpu.log",
+      "bytes": 23204,
+      "sha256": "877530961e7cb02056e3f82c80deb022f633f994d031e8cea35dba5c654b0d4f",
+      "copied": true
+    },
+    {
+      "path": "driver-archives\\ArmDTPlatform.log",
+      "bytes": 20854,
+      "sha256": "dc0d9cd7982ab0890ba8866d41390a6faac6979b7028a2e25c9a96291c0f73a7",
+      "copied": true
+    },
+    {
+      "path": "driver-archives\\audit.json",
+      "bytes": 94285,
+      "sha256": "af7adf953c07e1f733248b8dc0d5da0a6873ce290637662e8be171cd9f8c8377",
+      "copied": true
+    }
+  ],
+  "uio_alignment_errors_observed": false
+}

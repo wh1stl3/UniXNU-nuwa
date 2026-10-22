@@ -1,0 +1,170 @@
+{
+  "run": "https://github.com/wh1stl3/PortingiOSWithUniXNU/actions/runs/39745511080",
+  "head": "37615547b7aaa977fd57c065d4df6f825c7aebee",
+  "conclusion": "success",
+  "sources": [
+    {
+      "path": ".github/workflows/ubuntu-nuwa-bootimg.yml",
+      "run_source_sha256": "33ee7cd469a28ee6b48ff334f825ab2c4aa18b810aff04e26febf288dd18d987",
+      "current_local_sha256": "b82824ec5d3f9028d1841dd0a5c2024f2c3cb8906328d22d7e5c729e37b862ce",
+      "current_local_matches_run": false,
+      "current_text_matches_run_ignoring_crlf": false,
+      "relevant_run_lines": [
+        {
+          "line": 26,
+          "text": "      FD_SIZE: '0x300000'"
+        },
+        {
+          "line": 40,
+          "text": "          repository: UniXNU/UniXNU"
+        },
+        {
+          "line": 63,
+          "text": "          rsync -a porting/uefi-nuwa/Platforms/Xiaomi/nuwaPkg/ uefi/Platforms/Xiaomi/nuwaPkg/"
+        },
+        {
+          "line": 64,
+          "text": "          rsync -a porting/uefi-nuwa/Resources/Configs/nuwa.toml uefi/Resources/Configs/"
+        },
+        {
+          "line": 66,
+          "text": "          rsync -a porting/uefi-nuwa/BootShim/ uefi/BootShim/"
+        },
+        {
+          "line": 91,
+          "text": "          export ENABLE_SECUREBOOT FD_BASE FD_SIZE FD_BLOCKS DEVICE_MODEL"
+        },
+        {
+          "line": 95,
+          "text": "            TARGET=DEBUG ENABLE_SECUREBOOT=1 FD_BASE=0xa7100000 FD_SIZE=0x300000 \\"
+        }
+      ]
+    },
+    {
+      "path": "scripts/build/make-nuwa-payload.py",
+      "run_source_sha256": "5ed6dc8454fee8e21f3de0b0de8027f4eb46e794a587ba13389974b43ca2c2fd",
+      "current_local_sha256": "88b381bf23cee0e1edc31f9bf15b2d775e742fddfa7022848fd5e567a74497ea",
+      "current_local_matches_run": false,
+      "current_text_matches_run_ignoring_crlf": true,
+      "relevant_run_lines": [
+        {
+          "line": 5,
+          "text": "  1. `payload.py` \u5728 `panic_screen = true` \u65f6\u4f1a\u8c03 `scripts/patch-xnu-entry-probe.py`\uff0c"
+        },
+        {
+          "line": 7,
+          "text": "  2. `check_native_root()` \u8981\u6c42 `native-ufs-root=1` \u7684\u5185\u6838\u5e26 `_sheng_pmgr_run` \u7b26\u53f7\uff0c"
+        },
+        {
+          "line": 16,
+          "text": "    EFI/UniXNU/Payloads/kernel.macho.trustcache   \uff08\u53ef\u9009\uff09"
+        },
+        {
+          "line": 41,
+          "text": "NATIVE_ROOT_ARGS = ('native-ufs-root=1', 'sheng-pmgr=2')"
+        },
+        {
+          "line": 69,
+          "text": "        sys.exit(f'kernel command line is {len(line)} bytes; DarwinBoot accepts at most 1023')"
+        },
+        {
+          "line": 80,
+          "text": "    ap.add_argument('--trust-cache', type=Path)"
+        },
+        {
+          "line": 106,
+          "text": "        shutil.copyfile(args.trust_cache, payloads / 'kernel.macho.trustcache')"
+        },
+        {
+          "line": 128,
+          "text": "        command.append('--trust-cache')"
+        },
+        {
+          "line": 135,
+          "text": "    loader = '' if spec.get('loader', 'firmware') == 'firmware' else '[[driver]]\\npath = \"Payloads/DarwinBoot.efi\"\\n'"
+        },
+        {
+          "line": 164,
+          "text": "        'panic_screen_patched': False,"
+        },
+        {
+          "line": 170,
+          "text": "            'panic_screen': 'skipped: UniXNU has no scripts/patch-xnu-entry-probe.py in this revision',"
+        }
+      ]
+    },
+    {
+      "path": "uefi-nuwa/BootShim/BootShim.S",
+      "run_source_sha256": "b0721d569235dc223b6282c9ad018bcd0451413d682d7b72438623d19bb8f420",
+      "current_local_sha256": "b0721d569235dc223b6282c9ad018bcd0451413d682d7b72438623d19bb8f420",
+      "current_local_matches_run": true,
+      "current_text_matches_run_ignoring_crlf": true,
+      "relevant_run_lines": [
+        {
+          "line": 11,
+          "text": "     Upstream Mu-Silicium writes FD_SIZE alone, which UniXNU's bootimg step rejects"
+        },
+        {
+          "line": 14,
+          "text": "     same correction (see its PORTING.md). FD_SIZE stays the copy length below. */"
+        },
+        {
+          "line": 15,
+          "text": "  .quad (_Payload - _Head) + FD_SIZE"
+        },
+        {
+          "line": 29,
+          "text": "  ldr   x6,  =FD_SIZE"
+        }
+      ]
+    },
+    {
+      "path": "uefi-nuwa/Platforms/Xiaomi/nuwaPkg/nuwa.dsc",
+      "run_source_sha256": "676c05a1a292555c54a152825eea4700a77f594ef1a7291bfd330455043059a4",
+      "current_local_sha256": "02125ba6a9ca070ecce305c99648c11ccabee71e081a605e3befd451c514474c",
+      "current_local_matches_run": false,
+      "current_text_matches_run_ignoring_crlf": true,
+      "relevant_run_lines": []
+    },
+    {
+      "path": "uefi-nuwa/Platforms/Xiaomi/nuwaPkg/nuwa.fdf",
+      "run_source_sha256": "812e16803aac96c9ff988b091b834b5ea19ec8f0400162c001ea2f1cc01b7129",
+      "current_local_sha256": "aba2fc0099204c15b4a9b0c1d8ea700bf7a1a939db63b566e7e70ce768b78f03",
+      "current_local_matches_run": false,
+      "current_text_matches_run_ignoring_crlf": true,
+      "relevant_run_lines": [
+        {
+          "line": 23,
+          "text": "Size          = $(FD_SIZE)|gArmTokenSpaceGuid.PcdFdSize        # The size in bytes of the FLASH Device"
+        },
+        {
+          "line": 46,
+          "text": "0x00000000|$(FD_SIZE)"
+        }
+      ]
+    }
+  ],
+  "read_only_process_documents": [
+    {
+      "path": "D:\\Code\\PortingiOSWithUniXNU\\docs\\build-findings.md",
+      "bytes": 30568,
+      "sha256": "d0bdf252cf36c32d280538c0e501d10e79bb47c7d0f39d07e7b05f162d02f2b9"
+    },
+    {
+      "path": "D:\\Code\\PortingiOSWithUniXNU\\docs\\NEED-REVIEW.md",
+      "bytes": 21312,
+      "sha256": "3dd42507908ebf0d8963808d69211e531604609b0f4b0318f6ff45bcce56c939"
+    },
+    {
+      "path": "D:\\Code\\PortingiOSWithUniXNU\\docs\\PENDING-HUMAN.md",
+      "bytes": 2528,
+      "sha256": "5650ca18abfd3943c22af89705944527055d149f785c81b91003dcf7469f31ee"
+    },
+    {
+      "path": "D:\\Code\\PortingiOSWithUniXNU\\docs\\STATUS.md",
+      "bytes": 12524,
+      "sha256": "11f1f387a42923c77e241681789995672a18b90e0f7a2c18cfad01d67e400a84"
+    }
+  ],
+  "authorization_imported": false
+}

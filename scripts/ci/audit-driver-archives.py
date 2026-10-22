@@ -157,7 +157,10 @@ def main():
             archive = out / ('lib' + component + '.a')
             removed_includes = []
             command = driver_command(record, source, obj, work, removed_includes)
-            forced_header = ROOT / 'include/nuwa/ArmCpuExports.h' if component == 'ArmCpu' else None
+            declaration_headers = {'ArmCpu': 'ArmCpuExports.h',
+                                   'ArmDTPlatform': 'ArmDTPlatformDeclarations.h'}
+            forced_header = (ROOT / 'include/nuwa' / declaration_headers[component]
+                             if component in declaration_headers else None)
             if forced_header:
                 command += ['-include', str(forced_header)]
             item = {'component': component, 'source': str(source), 'source_sha256': sha(source),
