@@ -1,59 +1,33 @@
 # STATUS
 
-> 当前唯一真相。每完成一个里程碑**全文重写**，不留过程；过程在 `WORKLOG.md`。
+> 当前唯一真相；历史只追加WORKLOG。更新：2026-10-22 11:03（Asia/Shanghai）。
 
-- 更新时间：2026-10-22 03:00
-- 阶段：**S0 仓库就位 / 对齐官方移植骨架**（尚未编译内核，尚未生成镜像，尚未碰设备）
-- 分支与提交：见 `git log --oneline`
+## 当前结论
 
-## 需要你点头的一件事（不阻塞）
+GitHub账号wh1stl3已登录，公开的[基座fork](https://github.com/wh1stl3/UniXNU)与[nuwa设备仓](https://github.com/wh1stl3/UniXNU-nuwa)已创建。固定75bc基座的8796源内核CI入口已准备，48项输入hash及适配后的bash语法静态检查通过，待提交/上传并手动触发。**当前没有内核构建通过证据**。见[首轮CI说明](operations/2026-10-22-source-kernel-ci.md)。
 
-**D-005：「4K + iOS 16」的版本落差怎么办？** 基座 `feeds.toml` 钉死 `xnu-10063.141.1`（17.x），sheng 配 iPadOS 17.7.11 正好；但 **iOS 16 是 xnu-8796**，49 个补丁按 10063 写的。宿主建议先做一次 `git apply --check` 批量试算（旧仓对 sweet 补丁干过，38/49 可过），按失败面决定是「rebase 到 8796 直达 iOS 16」还是「先用 iOS 17.x iPhone 打通再降」。详见 `DECISIONS.md` D-005。**在此之前不动 `feeds.toml` 的 xnu 版本。**
+## 当前边界
 
-## 目标
+- 用户后续明确允许全部Git命令，并选择公开设备仓。此前Git只读禁令已解除；本地Git写入仍须遵守宿主沙箱权限。按[提交队列](COMMIT-QUEUE.md)分里程碑提交，不改写历史。
+- 两个旧仓及其上游来源树仍只读。设备仓独立，用-D接入正式基座；云端临时源构建树在RUNNER_TEMP、设备仓外。本地不复制上游源码树。
+- 4KiB；iPhone10,3/d22ap/iOS16.7.16/20H392，8796.141.3；ipad_identity=true。D-002窗口上限8GiB，先512MiB–1GiB过阶段5；未知板值TODO。
+- feed与board不变，example=true。四类硬停不变；无_verified=true、固件/诊断镜像或设备动作。
 
-以 UniXNU 为底座改造，使 nuwa（小米 13 Pro / SM8550 / 12 GB）运行 iOS 16。
+## 已有证据与限制
 
-## 结构：官方是三仓，本仓只占一个
+- [源构建输入检查](../reports/official-ci-plan/source-input-check.json)：同一Apple 8796提交1b191cb，48项选择hash匹配；3处产物名、内核/链接和firehose的iOS16部署目标在内存适配，bash -n通过。没有在本机执行make。
+- 源CI使用基座75bc真实配方，仅关闭可选设备archive/boot-progress；不压掉链接错误、不创建stub，不运行IPSW/预链接/固件/payload/bootimg。即使源内核成功，也不代表完整nuwa内核或实机通过。
+- [官方CI审查](operations/2026-10-22-official-ci-route.md)：固定e95b的macos.yml真实存在；领先本地75个提交、491项完整路径/blob变化。没有整体升级；旧48项结论不平移到e95b。官方kernel仍无条件预链接，默认10063/iOS17。
+- [Darwin22接口审查](operations/2026-10-22-darwin22-interfaces-and-wsl.md)：设备archive ABI、13项回调及watchdog scratch覆盖风险仍未解决；完整driver/donor接口门未过。
+- [WSL预检](../reports/wsl-firststage/preflight.json)仍缺目标clang内建、IIG与sysroot输入；9项工具自身测试通过，MIG/宿主语法样例通过，预检exit2，不是内核构建成功。D-008转向macOS Actions，R-003 A保留历史。
 
-| 仓库 | 作用 | 现状 |
-| --- | --- | --- |
-| `UniXNU` | 基座：构建驱动、UEFI 启动管理器、DarwinBoot、通用驱动、4K 补丁 | 旧仓有副本，**需确认是否官方最新** |
-| `UniXNU-nuwa` | 设备仓：board.toml、defconfig、驱动、kit、package | **本仓**，骨架已有 |
-| `uefi-nuwa` | Mu-Silicium 固件移植：DSC/FDF、预检、厂商输入 | **缺** |
+## 下一步
 
-## 已确定
+1. 检查待发布文件，按队列提交并上传设备仓；将专用源构建workflow安装到基座fork，使用精确device_ref手动触发，收集实际编译/链接结果。
+2. 按第一处真实失败修复8796源构建兼容性；成功后检查Mach-O、对象/符号及版本证据，仍不宣称预链接/QEMU/实机通过。
+3. 完成Darwin22设备archive、boot-progress/watchdog、nuwa defconfig及donor kernelcache解析，接回正式-D设备构建入口；feed切换独立处理。
+4. 板值/内存/地址、镜像或设备动作命中硬停时先写NEED-REVIEW再停。只差人按实体键的项记PENDING-HUMAN后继续。
 
-- **D-003 页大小 = 4 KiB**（用户 03:02 拍定）。16K 不进本仓，旧仓 `nuwa-mmu16` 的结论不平移。
-- **D-004 平台身份 = iOS（iPhone donor），不是 iPadOS**。donor 沿用旧仓已定：`iPhone10,3 / d22ap / iOS 16.7.16 / 20H392`，内核参考源码 `8796.141.3`。
-  **注意 `ipad_identity = true` 必须保持**——它写的是四个 `/chosen` 安全属性（`certificate-production-status=0` 等，给 `mobileactivationd` 走原生激活），与「跑不跑 iPadOS」无关。
-- **D-002**：内存窗口由 ADT 的 `darwinboot-memory-size` 决定，**上限 8 GiB**；`[payload] dram_size` 与 `[payload.adt] owned_memory_size` 不等价。bring-up 先要 512 MiB–1 GiB。
-- **D-001 内核侧事实仍有效**：XNU physmap 只有单窗口（`arm_vm_init.c:378,1961`），`pa < gPhysBase` 会 panic。
-- 同 SoC 可对照：**fuxi**（小米 13）、**vermeer**（K70）、**sheng**（官方最全）。**但只抄结构，不抄 `[kernel.prelink]` 数值**——那些绑在 iPadOS 17.7.11 的 kernelcache 上。
-- 官方文档摘录见 `docs/inherited/unixnu-official-2026-10-22.md`。
+## 其余缺口
 
-## 下一步（按序）
-
-1. **D-005 的试算（最便宜、最先做）**：对 `xnu-8796` 树跑 49 个补丁的 `git apply --check`，把失败清单与失败类型（头文件/文档 vs pmap/SMMU/ABI）写成 `docs/operations/2026-10-22-patch-portability-8796.md`。结论决定走哪条版本路。
-2. **补齐三仓**：确认/更新 `UniXNU` 基座（官方 master），建立 `-D ../UniXNU-nuwa` 调用；`uefi-nuwa` 先空壳 + 决策记录。
-3. **抄骨架**：拉 `UniXNU-sheng`、`UniXNU-fuxi` 作只读参照，产出第一版 `board.toml`。`[ipsw]` 按 **iPhone donor（iOS 16.7.16 / 20H392 / d22ap）** 填，`[kernel.prelink]` 留 TODO 等 donor kernelcache 到手再算，**不许抄 sheng 的数**。
-4. **先跑 QEMU fixture**：`scripts/qemu-entry/make-dt.py` + `package/Scripts/qemu-run.py`，目标阶段 2「菜单出现」与阶段 4「`DARWINBOOT:` 打印」。不碰设备、不出 nuwa 镜像。
-5. 之后才谈 UEFI 移植（阶段 1）与 ADT 生成器 `scripts/make-nuwa-adt.py`。
-
-## 已知坑
-
-- **`[kernel.prelink]` 的 4 个值（`kernelcache_sha256` / `slide` / `early_security_init` / `roots`）与 donor kernelcache 强绑定**，sheng 那套是 iPadOS 17.7.11 的，抄来必炸。
-- 基座 `feeds.toml` 钉 `xnu-10063.141.1`，与 iOS 16 的 8796 差一个大版本；改版本前先做 D-005 的试算。
-- `darwinboot-memory-size` 有 **8 GiB 硬上限**，nuwa 的 9 GiB 主 bank 用不满。
-- `dram_size` ≠ `owned_memory_size`，sheng 是 2 GiB vs 4.75 GiB；照抄一个漏抄另一个会很难查。
-- sheng 的 ABL **需要启动镜像里有 `/reserved-memory/splash_region` 节点，否则关屏**；nuwa 的 ABL 是否同样需要，属阶段 1 验证项。
-- `/chosen` 缺 `unique-chip-id`/`chip-id` 会让 `gethostuuid()` 无限等；`/chosen/memory-map` 缺占位符时 DarwinBoot 返回 `EFI_COMPROMISED_DATA`。
-- IPSW 身份必须整组匹配（product/version/build/device_class/chip_id/board_id + sha256），抄 sheng 的 iPad7,1 值不保证对 nuwa 成立。
-- 设备侧：`verifiedbootstate=orange` 但 `flash_locked=1`、`vbmeta_device_state=locked`，能否 flash 必须进 bootloader `getvar unlocked` 确认。
-- b 槽 `successful:no` 不是可靠兜底；真实兜底是 a 槽重试（剩 6 次）→ TWRP → 强制重启。
-
-## 不要做的事
-
-- 不要修改 `D:\Code\PortingiOS`（只读资料库）或 `D:\Code\PortingiOSWithUniXNU`（已废弃，只读参照）。
-- 不要自己发明 `board.toml` 字段名，官方 schema 见 `docs/inherited/unixnu-official-2026-10-22.md` §2。
-- 不要把旧仓 `nuwa-mmu16` / P16 那套结论平移过来（页大小不同、代码基座不同）。
+donor hash/slide/initializer/roots、driver符号闭包、SMMU/DMA和用户态ABI/PAC未验证；uefi-nuwa/ADT/实机板值未落实，b槽不作可靠兜底。本轮无实体按键待办。

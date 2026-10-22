@@ -1,0 +1,133 @@
+# COMMIT-QUEUE
+
+早期仅排队由宿主提交。用户于2026-10-22后续明确允许全部Git命令，允许将积压里程碑依次提交并发布到公开设备仓；以下保留每项历史描述，不把当时“未执行Git写入”的记载当成现行禁令。提交映射另记WORKLOG/证据，禁止改写既有提交。
+
+## Q-001 · 49 补丁复跑
+
+```text
+[unixnu-nuwa][kernel] 复现8796补丁独立检查38通过11失败
+
+[Change] 保留原始证据，新增49补丁复跑日志并补充可移植性报告，沿用D-006先适配8796的路线。
+[Evidence] reports/patch-portability-8796-recheck/results.json；49项patch/sha256/exit_code与原记录差异为0；XNU检查前后status为空；报告docs/operations/2026-10-22-patch-portability-8796.md。
+[Risk] 独立检查不代表累积应用、编译、ABI、QEMU或实机通过；feed未切换。
+```
+
+## Q-002 · 集成审查与 board 写入前硬停
+
+```text
+[unixnu-nuwa][docs] 明确只读基座集成约束并提交首版board审阅方案
+
+[Change] 记录显式out目录、设备模块覆盖和Xcode工具链约束；规划独立uefi-nuwa目录，提交R-002最小board占位方案并在写入前硬停。
+[Evidence] docs/operations/2026-10-22-readonly-base-integration.md；基座scripts/unixnu/config.py:66、tree.py:65、kernel.py:43；docs/NEED-REVIEW.md R-002。
+[Risk] 远端最新提交与diff未取得；WSL构建、完整补丁集、donor预链接与板级数值未验证；未创建board或固件树，未执行Git写操作。
+```
+
+## Q-003 · 落地获批的 board 占位
+
+```text
+[unixnu-nuwa][device] 按R-002批准创建nuwa最小示例board
+
+[Change] 创建与R-002候选A一致的board.toml，保留example=true、既定iPhone donor身份和ipad_identity=true；未知字段仅TODO，审批记录标为approved并落地。
+[Evidence] 用户回复A；board.toml与docs/NEED-REVIEW.md获批TOML代码块逐字匹配（忽略末尾换行），仅9项赋值，无内存/地址或prelink数值。
+[Risk] 仅为不可构建占位配置；IPSW组件、ADT、内存、bootimg和预链接未验证；未执行Git写操作或生成镜像。
+```
+
+## Q-004 · NativePrelink补充检查
+
+```text
+[unixnu-nuwa][kernel] 确认NativePrelink两项在8796独立静态检查通过
+
+[Change] 新增只读NativePrelink检查脚本、逐补丁日志与审查报告，同时记录获批board的TOML语法解析结果。
+[Evidence] reports/native-prelink-8796/results.json及两项patch.log；docs/operations/2026-10-22-native-prelink-8796.md；源树前后status为空。
+[Risk] 原49项统计不变；累计应用、Darwin22接口、donor初始化地址、编译、QEMU及实机均未验证；feed未改。
+```
+
+## Q-005 · 第一批8796候选
+
+```text
+[unixnu-nuwa][kernel] 适配五项8796候选并识别PGZ探针对缺失API的依赖
+
+[Change] 以只读源文件内存生成五个候选diff，保留原补丁哈希与逐项理由；记录PGZ probe虽可apply却引用8796缺失API的风险。
+[Evidence] reports/xnu-8796-candidates/results.json；五项独立git apply --check返回0，源树前后status为空；docs/operations/2026-10-22-8796-context-candidates.md。
+[Risk] 候选尚未接入完整xnu覆盖模块；其余适配、累计应用、Darwin22接口和编译未完成；feed及板级数值未改。
+```
+
+## Q-006 · 8796完整候选选择集与入口验证
+
+```text
+[unixnu-nuwa][kernel] 完成48项8796候选内存顺序检查及合并diff验证
+
+[Change] 补齐public-entitlements、SystemOS和boot-progress适配，D-007明确两项不适用及PGZ探针延期；新增严格内存顺序模拟与最终合并diff审计，验证最小board可被基座status识别。
+[Evidence] reports/xnu-8796-sequence/results.json：48项顺序模拟成功、51项基线模拟与Git独立结果无差异、合并diff的git apply --check返回0；reports/board-integration/status.log返回0；docs/operations/2026-10-22-8796-selected-sequence.md。
+[Risk] 没有磁盘顺序应用、编译或ABI验证；候选未接入构建，feed未切换，board仍example；WSL工具链及驱动兼容性未验证。
+```
+
+## Q-007 · Darwin22接口审查
+
+```text
+[unixnu-nuwa][kernel] 记录8796产物与archive接口缺口及watchdog条件性覆盖风险
+
+[Change] 新增只读接口审查脚本与证据，核对unstripped产物、Darwin23 archive生产者、13项boot-progress回调、watchdog和NativePrelink布局；记录非union环境路径与584字节watchdog policy的scratch覆盖算例。
+[Evidence] reports/darwin22-audit/interfaces.json；docs/operations/2026-10-22-darwin22-interfaces-and-wsl.md；输入三树前后tracked status为空；kmod64静态模型156/180/188/196与预链接消费者一致。
+[Risk] 只有静态接口审查与主机字符串/布局运算，未编译或验证完整ABI；archive与callback生产流程仍未适配nuwa，feed未改。
+```
+
+## Q-008 · WSL工具链门与R-003暂停
+
+```text
+[unixnu-nuwa][build] 判定当前WSL入口无法直接完成8796内核构建并提交路线审阅
+
+[Change] 新增只读WSL工具/SDK清单及XNU内建预处理探测，记录现有Linux MIG/cctools与Python输入；R-003列出WSL交叉工具链和macOS构建例外两条路径及代价，按用户要求停止。
+[Evidence] reports/darwin22-audit/wsl-toolchain.log：clang14三项XNU内建探测均0，xcrun/xcodebuild/IIG未配置；docs/operations/2026-10-22-darwin22-interfaces-and-wsl.md；docs/NEED-REVIEW.md R-003。
+[Risk] 不代表WSL永久不可能构建XNU；完整内核编译、archive ABI、SDK输入及后续工具链路线未验证；未改feed或板值、未执行Git写操作、未生成镜像。
+```
+
+## Q-009 · R-003 A批准
+
+```text
+[unixnu-nuwa][docs] 按R-003批准保持WSL并启动工具链适配第一阶段
+
+[Change] R-003标记approved A，恢复本仓工具链预检/适配工作；记录用户确认没有额外编译器、IIG或sysroot。
+[Evidence] 用户本轮回复A及输入询问回复没有；docs/NEED-REVIEW.md R-003，docs/WORKLOG.md。
+[Risk] 当前输入仍不足以构建内核；批准不包含工具安装、来源树写入、Git写操作、feed或board改动及镜像生成。
+```
+
+## Q-010 · WSL第一阶段入口与验证
+
+```text
+[unixnu-nuwa][build] 落地WSL工具链预检与8796非执行式适配计划
+
+[Change] 新增主机工具profile、严格输入预检、MIG后端代码生成样例及8796适配计划；固定已有工具哈希，记录缺失的目标编译器扩展、IIG和sysroot输入。
+[Evidence] reports/wsl-firststage/tests.log：9项测试通过；preflight.json：MIG后端及宿主C/C++语法样例通过，目标特征缺失；run.log中预检退出2；adapter-plan.json的executable=false。
+[Risk] 预检与计划已落地但完整工具输入未齐；没有内核compile/link、完整ABI、QEMU或实机证据；feed、board和上游源树未改，未执行Git写操作。
+```
+
+## Q-011 · 官方CI与仓库结构核查
+
+```text
+[unixnu-nuwa][docs] 确认官方Actions使用基座fork并保持设备仓独立
+
+[Change] 记录官方macOS build路线和三仓职责；对比75bc基座与缓存fb2bb快照的kernel/baseline差异，识别已有archive调度实现，准备官方CI接入范围。
+[Evidence] https://unixnu.com/building#macos-runner 与官方sheng构建页；reports/official-ci-plan/local-comparison.json及两个diff；docs/operations/2026-10-22-official-ci-route.md。
+[Risk] 缓存新快照不是当前远端最新证明；实际workflow源文件尚未核验，未fork/push/触发Actions，8796覆盖及ABI门仍未过，feed未改。
+```
+
+## Q-012 · 固定官方CI输入并生成工作流候选
+
+```text
+[unixnu-nuwa][build] 核验官方macOS工作流并准备固定工具链与失败证据候选
+
+[Change] 新增只读API审计及候选生成器，核验e95b的workflow、archive/bootstrap和预链接入口；生成默认kernel、固定runner/Xcode并保留失败证据的工作流diff；记录wh1stl3与用户解除Git命令限制的后续授权。
+[Evidence] reports/official-ci-plan/remote-audit.json：75个新增提交、完整tree差异491项；candidate-check.json：5个hunk内存精确匹配；docs/operations/2026-10-22-official-ci-route.md。
+[Risk] 尚未安装workflow或触发CI，完整8796 compile/link、driver ABI与donor预链接未验证；GitHub CLI登录待完成，feed与board未改；不整体跟进新基座或继承旧48项结论到e95b。
+```
+
+## Q-013 · 创建远端仓库并准备8796源构建入口
+
+```text
+[unixnu-nuwa][build] 建立公开设备仓并准备固定75bc的8796源内核CI
+
+[Change] 按用户后续Git授权和公开选择创建wh1stl3基座fork与设备仓；新增手动源内核工作流和基座配方适配入口，固定同一8796提交与48项补丁选择；沿用基座真实make/archive过程，保持feed及board不变。
+[Evidence] reports/official-ci-plan/repository-setup.json；source-input-check.json：48项hash和适配后bash语法检查通过；ci/workflows/nuwa-8796-source.yml；docs/operations/2026-10-22-source-kernel-ci.md。
+[Risk] 专用入口仅验证源编译/链接，可选设备archive与boot-progress关闭，尚无云端执行结果；donor预链接、完整ABI、QEMU及实机均未验证，未生成固件/启动镜像。
+```
