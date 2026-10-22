@@ -53,18 +53,20 @@ def main():
             raise ValueError('Partition hash changed')
     if args.package:
         package=args.package.resolve()
-        if not package.is_relative_to(ROOT/'reports/dxe-allocation') or json.loads(package.read_text())['approval']!='R-010 A':
-            raise ValueError('Unexpected R-010 package report')
+        scopes = {'R-010 A': ROOT/'reports/dxe-allocation', 'R-011 A': ROOT/'reports/factory-heap'}
+        approval = json.loads(package.read_text())['approval']
+        if approval not in scopes or not package.is_relative_to(scopes[approval]):
+            raise ValueError('Unexpected allocation trial package report')
         if hashlib.sha256(ORIGINAL.read_bytes()).hexdigest()!=ORIGINAL_SHA:
             raise ValueError('Original recovery input changed')
-        recovery=ROOT/'reports/pil-no-auto/39820752081/recovery-after-keys.json'
+        recovery=ROOT/'reports/dxe-allocation/39829943950/recovery.json'
         if json.loads(recovery.read_text()).get('android_boot_completed')!='1':
             raise ValueError('Concrete prior recovery evidence absent')
         report.update(package_sha256=hashlib.sha256(package.read_bytes()).hexdigest(),
             process_log_method='framebuffer photographed or recorded by user',
             human_capture_confirmation='可以，启动前通知我',
-            human_capture_source='User reply in current R-010 conversation; notify immediately before launch',
-            recovery_path='Power plus volume down to fastboot (R-009 completed); reset bootloader and temporarily load pinned original boot; confirm Android completion',
+            human_capture_source='User confirmed capture on notice, supplied R-010 photos and approved R-011 A; notify immediately before launch',
+            recovery_path='Power plus volume down to fastboot (R-010 completed); reset bootloader and temporarily load pinned original boot; confirm Android completion',
             original_boot_sha256=ORIGINAL_SHA,
             recovery_evidence=dict(path=recovery.relative_to(ROOT).as_posix(),sha256=hashlib.sha256(recovery.read_bytes()).hexdigest()))
     output.parent.mkdir(parents=True,exist_ok=True)

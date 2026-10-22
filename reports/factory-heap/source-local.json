@@ -1,0 +1,11 @@
+{
+  "approval": "R-011 A approved by user 同意",
+  "base": "2ab6827d77dfe15010534b52e1abb76a26464a7d",
+  "commit": "1ccf760d667b9eec6dd3491c90cc04ebb7c58340",
+  "branch": "codex/nuwa-factory-heap",
+  "changed_path": "Platforms/Xiaomi/nuwaPkg/Library/MemoryMapLib/MemoryMapLib.c",
+  "lf_sha256": "b6cfda2e2385234ae243159ee258419c43b68a2c1c34484c2bc7f383daa32ccb",
+  "message": "[unixnu-nuwa][firmware] 恢复同机原厂DXE Heap以对照已确认的资源耗尽\n\n[Change] 按R-011 A仅将MemoryMapLib的DXE Heap恢复为BAB00000/0D1C0000，保留其他区域和属性、PIL空AUTO及正确BootShim。\n[Evidence] 同机原厂配置表SHA2adc494b包含相同一行；R-010实机最终仅25页空闲、最大8页，候选区间静态审查和严格apply检查通过。\n[Risk] 原厂范围恢复尚未编译或实机验证；历史Android DT非实际候选ABL x0，SPSS和后续协议问题仍未解决，不改XNU窗口或宣称进入XNU。\n",
+  "device_executed": false,
+  "image_generated": false
+}

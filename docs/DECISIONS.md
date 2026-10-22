@@ -389,3 +389,11 @@ uefipil.cfg保留RETAIL和全部镜像定义，仅取消AUTO ABL；不为这条�
 实机快照27次失败、25页空闲/最大8页/5段确认DXE可分配资源已接近耗尽且碎片化，9页申请在该状态下超过raw最大块。此结论与手机12GB容量/XNU ADT窗口无关；本轮没有XNU负载，D-002保持。上方208页片段及1153页失败支持资源限制，但第一请求的type/guard等仍未完整取得，不定位所有成功分配/泄漏或把每个协议/SPSS错误归为同一原因。下一步优先审查同机原厂Heap单行恢复，R-011待批；不会把静态无重叠写为运行所有权。
 
 D-021补充：本轮日志/恢复门实际通过；用户按键回fastboot后，改进的等待分支接管原boot恢复，02:30:04实际nuwa Android完成1、三分区SHA不变。这只证明本次恢复，不保证任意未来镜像可恢复。
+
+
+# D-023 · 按同机原厂表单行恢复UEFI DXE Heap
+
+- 状态：accepted，R-011 A获用户“同意”，源码落地，新构建/运行未验证。
+- 证据：source-local/source-publish.json、firmware@1ccf760d667b9eec6dd3491c90cc04ebb7c58340、factory-heap-proposal.json、同机抽取表SHA2adc494b；R-010清晰实机资源快照。
+
+只恢复DXE Heap至同机原厂BAB00000/0D1C0000，其他行/属性不变；不从同SoC其他板复制额外bank。此Heap为UEFI临时分配，与D-002的XNU窗口分开。实际SEC描述符/运行快照须分别验收；静态无重叠不证明实际ABL x0或所有权，不承诺全部协议/SPSS错误消失。

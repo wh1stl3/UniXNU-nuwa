@@ -43,7 +43,7 @@ def main():
     if args.package:
         package_path = args.package.resolve()
         scopes = {'R-007 A': ROOT / 'reports/sec-trace', 'R-008 A': ROOT / 'reports/relative-offset',
-                  'R-009 A': ROOT / 'reports/pil-no-auto', 'R-010 A': ROOT / 'reports/dxe-allocation'}
+                  'R-009 A': ROOT / 'reports/pil-no-auto', 'R-010 A': ROOT / 'reports/dxe-allocation', 'R-011 A': ROOT / 'reports/factory-heap'}
         package_raw = package_path.read_bytes()
         package = json.loads(package_raw)
         approval = package.get('approval')
@@ -59,17 +59,21 @@ def main():
                 or not package['shim_changed_byte_offsets']
                 or any(not 8 <= i < 16 for i in package['shim_changed_byte_offsets'])):
             raise ValueError('R-008 package exceeds the header-only scope')
-        if approval in ('R-009 A', 'R-010 A') and (package['firmware_commit'] != '2ab6827d77dfe15010534b52e1abb76a26464a7d'
+        if approval in ('R-009 A', 'R-010 A', 'R-011 A') and (package['firmware_commit'] != (json.loads((ROOT / 'config/firmware-factory-heap-profile.json').read_text())['recipe']['sources']['firmware']['commit'] if approval == 'R-011 A' else '2ab6827d77dfe15010534b52e1abb76a26464a7d')
                 or package['shim_text_offset'] != 0 or package['pil_auto_entries'] != []
                 or package['pil_config_sha256'] != 'dbc9ee6e4c7728b32245453322f348c32d6a5eef0107f8c07662918bc3c23fdd'
                 or package['pil_driver_sha256'] != '89e030af07847bdc596f0c213bdce0ac430be66e572db55b434d7ec66ad9afcb'
                 or package['shim_sha256'] != '8a3b54765c895a0366539130fdf6e4e4a01e364fe7de067a38d0193606f9d462'):
             raise ValueError('R-009 package exceeds the approved PIL configuration scope')
         r010_profile = json.loads((ROOT / 'config/firmware-dxe-allocation-profile.json').read_text())
-        if approval == 'R-010 A' and (package.get('diagnostic_patch_sha256') != r010_profile['candidate']['patches'][-1]['sha256']
+        if approval in ('R-010 A', 'R-011 A') and (package.get('diagnostic_patch_sha256') != r010_profile['candidate']['patches'][-1]['sha256']
                 or not package.get('allocation_trace')
                 or not all(package['allocation_trace']['markers'].values())):
             raise ValueError('R-010 actual-core allocation diagnostics absent')
+        if approval == 'R-011 A' and (not package.get('factory_heap')
+                or package['factory_heap']['base'] != '0xbab00000'
+                or package['factory_heap']['bytes'] != 0x0d1c0000):
+            raise ValueError('R-011 actual SEC factory Heap evidence absent')
         candidate = (ROOT / package['image_path']).resolve()
         if not candidate.is_relative_to(ROOT / 'out/trial-boot'):
             raise ValueError('Diagnostic candidate escapes trial output')

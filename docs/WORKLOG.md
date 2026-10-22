@@ -198,3 +198,6 @@
 2026-10-23T02:29:17+08:00 · R-010唯一临时加载ACK通过、15次nuwa fastboot均false；阶段日志待用户，恢复等待端点/实体键H-005 · Q-090（提交后以git log定位） · reports/dxe-allocation/39829943950/launch.json；preflight.json；trial-summary.json
 
 2026-10-23T02:39:24+08:00 · 最新清晰实机图确认DXE最终25页空闲/最大8页/27次失败，原Android恢复完成1且三分区未变；准备单行原厂Heap候选，R-011待审 · Q-091（提交后以git log定位） · reports/dxe-allocation/39829943950/screen-observation.json；postcondition.json；reports/dxe-allocation-audit/factory-heap-proposal.json
+
+2026-10-23T02:51:01+08:00 · 用户同意R-011 A，独立固件仅恢复同机原厂Heap一行并发布 · 1ccf760d667b（固件） · reports/factory-heap/source-publish.json
+2026-10-23T02:51:01+08:00 · 接入factory-heap CI与实际SEC Heap描述符验收，35项输入及旧FD回归静态检查通过 · Q-092（提交后以git log定位） · reports/factory-heap/profile-check.json；docs/operations/2026-10-23-factory-heap-build-trial.md

@@ -970,3 +970,23 @@
 [Evidence] 实机missing-arch-before-assert为27次失败、25页/100KiB空闲、最大8页/32KiB、5段，DxeMain.c(586) Not Found；02:30:04 nuwa Android完成1且三分区SHA不变。
 [Risk] BDS/XNU未到，第一请求type/guard等缺失，未定位全部开销或SPSS错误；单行Heap候选只有静态无重叠/apply检查，未应用、编译或实机验收，超出R-010内存图范围待批。
 ```
+
+## FW-011 · 已执行独立固件提交 1ccf760d667b9eec6dd3491c90cc04ebb7c58340
+
+```text
+[unixnu-nuwa][firmware] 恢复同机原厂DXE Heap以对照已确认的资源耗尽
+
+[Change] 按R-011 A仅将MemoryMapLib的DXE Heap恢复为BAB00000/0D1C0000，保留其他区域和属性、PIL空AUTO及正确BootShim。
+[Evidence] 同机原厂配置表SHA2adc494b包含相同一行；R-010实机最终仅25页空闲、最大8页，候选区间静态审查和严格apply检查通过。
+[Risk] 原厂范围恢复尚未编译或实机验证；历史Android DT非实际候选ABL x0，SPSS和后续协议问题仍未解决，不改XNU窗口或宣称进入XNU。
+```
+
+## Q-092 · R-011源码及CI配置
+
+```text
+[unixnu-nuwa][firmware] 固定获批的原厂Heap源码并接入实际SEC描述符验收
+
+[Change] R-011 A获同意，独立固件1ccf760只恢复Heap一行，新增factory-heap构建/打包/试启动配置，保留R-010诊断和日志恢复门。
+[Evidence] 源码完整Git对象发布且旧分支保持，35项输入和严格诊断补丁检查通过；旧实际SEC读取69MiB，要求新SEC精确读出同机209.75MiB。
+[Risk] 新固件尚未编译/试启动，实际ABL x0及扩展范围运行所有权未验证；保留其他内存行、board/feed/ADT及所有_verified。
+```

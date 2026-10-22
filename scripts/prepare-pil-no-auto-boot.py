@@ -18,9 +18,9 @@ def sha(data):
 def main():
     cli = argparse.ArgumentParser(description=__doc__)
     cli.add_argument('run_id', type=int)
-    cli.add_argument('--profile', choices=('pil-no-auto', 'dxe-allocation'), default='pil-no-auto')
+    cli.add_argument('--profile', choices=('pil-no-auto', 'dxe-allocation', 'factory-heap'), default='pil-no-auto')
     args = cli.parse_args()
-    approval = 'R-010 A' if args.profile == 'dxe-allocation' else 'R-009 A'
+    approval = {'pil-no-auto': 'R-009 A', 'dxe-allocation': 'R-010 A', 'factory-heap': 'R-011 A'}[args.profile]
     artifact = ROOT / f'out/firmware-ci/{args.run_id}/nuwa-firmware-{args.run_id}'
     output = ROOT / f'out/trial-boot/{args.profile}-{args.run_id}'
     report = ROOT / f'reports/{args.profile}/{args.run_id}'
@@ -35,7 +35,8 @@ def main():
     inspector = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(inspector)
     inspection = inspector.inspect(artifact, 'NuwaBootMemoryDxe', require_sec_trace=True, require_no_auto_abl=True,
-                                   require_allocation_trace=args.profile == 'dxe-allocation')
+                                   require_allocation_trace=args.profile in ('dxe-allocation', 'factory-heap'),
+                                   allocation_profile=args.profile if args.profile != 'pil-no-auto' else 'dxe-allocation')
     original = STOCK.read_bytes()
     if sha(original) != STOCK_SHA:
         raise ValueError('Pinned original recovery boot changed')
@@ -68,9 +69,9 @@ def main():
     if sha(path.read_bytes()) != sha(image):
         raise ValueError('Written package hash mismatch')
     metadata = {'approval': approval, 'scope': args.profile + ' firmware-only temporary v4 container',
-                'allocation_trace': inspection['allocation_trace'],
+                'allocation_trace': inspection['allocation_trace'], 'factory_heap': inspection['factory_heap'],
                 'device_commit': inputs['device_commit'],
-                'diagnostic_patch_sha256': profile['candidate']['patches'][-1]['sha256'] if args.profile == 'dxe-allocation' else None,
+                'diagnostic_patch_sha256': profile['candidate']['patches'][-1]['sha256'] if args.profile in ('dxe-allocation', 'factory-heap') else None,
                 'run_id': args.run_id, 'firmware_commit': profile['recipe']['sources']['firmware']['commit'],
                 'image_path': path.relative_to(ROOT).as_posix(), 'image_bytes': len(image), 'image_sha256': sha(image),
                 'original_boot_sha256': STOCK_SHA, 'fd_sha256': sha(fd), 'shim_sha256': sha(shim),

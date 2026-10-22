@@ -170,7 +170,8 @@ class Firmware:
                      "Invalid SEC AARCH64 TE header")
                 detail["sec_te"] = dict(bytes=len(body), sha256=sha(body),
                                          entry_hob_guid_present=uuid.UUID(ENTRY_HOB_GUID).bytes_le in body,
-                                         trace_markers={marker: marker.encode() in body for marker in SEC_TRACE_MARKERS})
+                                         trace_markers={marker: marker.encode() in body for marker in SEC_TRACE_MARKERS},
+                                         heap_descriptors=heap_descriptors(body))
             elif kind == 0x19 and owner['guid'] == PIL_CONFIG_GUID:
                 text = body.rstrip(b'\0').decode('ascii')
                 active, entries = False, []
@@ -208,7 +209,21 @@ class Firmware:
             at = align(at + size, 4)
 
 
-def inspect(artifact, publisher_name='ShengBootMemoryDxe', require_sec_trace=False, require_no_auto_abl=False, require_allocation_trace=False):
+def heap_descriptors(data):
+    # Fixed MemoryMapLib.h: CHAR8 Name[32], EFI_PHYSICAL_ADDRESS, UINT64.
+    # Read bytes from the actual SEC image, not from a source declaration.
+    prefix = b'DXE Heap' + b'\0' * (32 - len(b'DXE Heap'))
+    result, start = [], 0
+    while (at := data.find(prefix, start)) >= 0:
+        if at + 48 <= len(data):
+            base, size = struct.unpack_from('<QQ', data, at + 32)
+            result.append(dict(offset=at, base=hex(base), bytes=size, mib=size/1048576,
+                               descriptor_prefix_sha256=sha(data[at:at+48])))
+        start = at + len(prefix)
+    return result
+
+
+def inspect(artifact, publisher_name='ShengBootMemoryDxe', require_sec_trace=False, require_no_auto_abl=False, require_allocation_trace=False, allocation_profile='dxe-allocation'):
     artifact = artifact.resolve()
     inventory = json.loads((artifact / "inventory.json").read_text())
     for item in inventory:
@@ -275,7 +290,7 @@ def inspect(artifact, publisher_name='ShengBootMemoryDxe', require_sec_trace=Fal
     need(offset == expected_offset and image_size == len(shim) + len(data), "Shim header length/relative-offset mismatch")
     pil_check = None
     if require_no_auto_abl:
-        need(inputs['profile'] in ('pil-no-auto', 'dxe-allocation') and expected_offset == 0, 'Wrong R-009 build profile/header')
+        need(inputs['profile'] in ('pil-no-auto', 'dxe-allocation', 'factory-heap') and expected_offset == 0, 'Wrong R-009 build profile/header')
         configs = [s['pil_config'] for f in fv.files if f['guid'] == PIL_CONFIG_GUID
                    for s in f['sections'] if 'pil_config' in s]
         need(len(configs) == 1 and configs[0]['auto_entries'] == []
@@ -288,13 +303,20 @@ def inspect(artifact, publisher_name='ShengBootMemoryDxe', require_sec_trace=Fal
         pil_check = dict(config=configs[0], retained_driver=drivers[0])
     allocation_trace = None
     if require_allocation_trace:
-        profile = json.loads((ROOT / 'config/firmware-dxe-allocation-profile.json').read_text())
-        need(inputs['profile'] == 'dxe-allocation' and inputs['recipe'] == profile['recipe'],
+        profile = json.loads((ROOT / f'config/firmware-{allocation_profile}-profile.json').read_text())
+        need(allocation_profile in ('dxe-allocation', 'factory-heap') and inputs['profile'] == allocation_profile and inputs['recipe'] == profile['recipe'],
              'Wrong R-010 source/input profile')
         cores = [s['allocation_trace'] for f in fv.files if f['guid'] == DXE_CORE_GUID and f['type'] == 5
                  for s in f['sections'] if 'allocation_trace' in s]
         need(len(cores) == 1 and all(cores[0]['markers'].values()), 'Actual DXE core lacks allocation diagnostics')
         allocation_trace = cores[0]
+    factory_heap = None
+    if require_allocation_trace and allocation_profile == 'factory-heap':
+        descriptors = sec_te[0]['heap_descriptors']
+        need(len(descriptors) == 1 and descriptors[0]['base'] == '0xbab00000'
+             and descriptors[0]['bytes'] == 0x0d1c0000,
+             'Actual SEC did not embed the exact same-device factory Heap descriptor')
+        factory_heap = descriptors[0]
     symbols = (artifact / "shim/symbols.txt").read_text()
     payload = next(int(line.split()[0], 16) for line in symbols.splitlines() if line.endswith(" _Payload"))
     need(payload == len(shim), "Shim literal pool/padding separates payload")
@@ -304,7 +326,7 @@ def inspect(artifact, publisher_name='ShengBootMemoryDxe', require_sec_trace=Fal
     return dict(result="downloaded EFI/FD/BootShim static inspection passed", inventory_files=len(inventory),
                 fd=dict(bytes=len(data), sha256=sha(data)), shim=dict(bytes=len(shim), image_size=image_size,
                 sha256=sha(shim), payload_offset=payload, copy_count=copy_count, text_offset=offset),
-                pil_no_auto=pil_check, allocation_trace=allocation_trace, volumes=fv.volumes, compression=fv.guided,
+                pil_no_auto=pil_check, allocation_trace=allocation_trace, factory_heap=factory_heap, volumes=fv.volumes, compression=fv.guided,
                 modules=modules, pcd_provider=pcd[0], sec_entry_hob_producer=sec_te[0], device_executed=False, unverified=["DXE dispatch and protocol installation",
                 "initrd mapping/reservation and FAT mount", "UEFI memory map and XNU window", "XNU and iOS execution"])
 
@@ -317,10 +339,11 @@ def main():
     parser.add_argument('--require-sec-trace', action='store_true')
     parser.add_argument('--require-no-auto-abl', action='store_true')
     parser.add_argument('--require-allocation-trace', action='store_true')
+    parser.add_argument('--allocation-profile', choices=('dxe-allocation', 'factory-heap'), default='dxe-allocation')
     args = parser.parse_args()
     output = args.output.resolve()
     need(output.is_relative_to(ROOT) and output.suffix == ".json", "Evidence output must be repo-local JSON")
-    report = inspect(args.artifact, args.publisher_name, args.require_sec_trace, args.require_no_auto_abl, args.require_allocation_trace)
+    report = inspect(args.artifact, args.publisher_name, args.require_sec_trace, args.require_no_auto_abl, args.require_allocation_trace, args.allocation_profile)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(dict(result=report["result"], fd=report["fd"], shim=report["shim"], modules=[m["name"] for m in report["modules"]])))
