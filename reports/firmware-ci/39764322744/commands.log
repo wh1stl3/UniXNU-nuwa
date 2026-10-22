@@ -1,0 +1,91 @@
+
+COMMAND ["git", "init", "/home/runner/work/_temp/nuwa-firmware-candidate/firmware"]
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: will change to "main" in Git 3.0. To configure the initial branch name
+hint: to use in all of your new repositories, which will suppress this warning,
+hint: call:
+hint:
+hint: 	git config --global init.defaultBranch <name>
+hint:
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint:
+hint: 	git branch -m <name>
+hint:
+hint: Disable this message with "git config set advice.defaultBranchName false"
+Initialized empty Git repository in /home/runner/work/_temp/nuwa-firmware-candidate/firmware/.git/
+
+COMMAND ["git", "remote", "add", "origin", "https://github.com/Project-Silicium/Mu-Silicium.git"]
+
+COMMAND ["git", "fetch", "--depth", "1", "origin", "6c6755012728c9f7de748228758bad94d1e9a660"]
+From https://github.com/Project-Silicium/Mu-Silicium
+ * branch            6c6755012728c9f7de748228758bad94d1e9a660 -> FETCH_HEAD
+
+COMMAND ["git", "checkout", "--detach", "FETCH_HEAD"]
+HEAD is now at 6c67550 Add Samsung Galaxy S8 and S5E8895 support (#2160)
+
+COMMAND ["git", "init", "/home/runner/work/_temp/nuwa-firmware-candidate/unixnu"]
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: will change to "main" in Git 3.0. To configure the initial branch name
+hint: to use in all of your new repositories, which will suppress this warning,
+hint: call:
+hint:
+hint: 	git config --global init.defaultBranch <name>
+hint:
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint:
+hint: 	git branch -m <name>
+hint:
+hint: Disable this message with "git config set advice.defaultBranchName false"
+Initialized empty Git repository in /home/runner/work/_temp/nuwa-firmware-candidate/unixnu/.git/
+
+COMMAND ["git", "remote", "add", "origin", "https://github.com/UniXNU/UniXNU.git"]
+
+COMMAND ["git", "fetch", "--depth", "1", "origin", "75bc13dd34dc4e403826793739e316a264ce00dd"]
+From https://github.com/UniXNU/UniXNU
+ * branch            75bc13dd34dc4e403826793739e316a264ce00dd -> FETCH_HEAD
+
+COMMAND ["git", "checkout", "--detach", "FETCH_HEAD"]
+HEAD is now at 75bc13d docs: add a Simplified Chinese README
+
+COMMAND ["git", "init", "/home/runner/work/_temp/nuwa-firmware-candidate/sheng"]
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: will change to "main" in Git 3.0. To configure the initial branch name
+hint: to use in all of your new repositories, which will suppress this warning,
+hint: call:
+hint:
+hint: 	git config --global init.defaultBranch <name>
+hint:
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint:
+hint: 	git branch -m <name>
+hint:
+hint: Disable this message with "git config set advice.defaultBranchName false"
+Initialized empty Git repository in /home/runner/work/_temp/nuwa-firmware-candidate/sheng/.git/
+
+COMMAND ["git", "remote", "add", "origin", "https://github.com/UniXNU/uefi-sheng.git"]
+
+COMMAND ["git", "fetch", "--depth", "1", "origin", "329b473df1e53a3bfa64b2b39b79670c4c02279b"]
+From https://github.com/UniXNU/uefi-sheng
+ * branch            329b473df1e53a3bfa64b2b39b79670c4c02279b -> FETCH_HEAD
+
+COMMAND ["git", "checkout", "--detach", "FETCH_HEAD"]
+HEAD is now at 329b473 docs: adopt the UniXNU name and documentation site
+
+COMMAND ["git", "apply", "--check", "/home/runner/work/UniXNU-nuwa/UniXNU-nuwa/patches/firmware-candidates/0001-bootshim-image-size.patch"]
+
+COMMAND ["git", "apply", "/home/runner/work/UniXNU-nuwa/UniXNU-nuwa/patches/firmware-candidates/0001-bootshim-image-size.patch"]
+
+COMMAND ["git", "apply", "--check", "/home/runner/work/UniXNU-nuwa/UniXNU-nuwa/patches/firmware-candidates/0002-nuwa-loader-wiring.patch"]
+
+COMMAND ["git", "apply", "/home/runner/work/UniXNU-nuwa/UniXNU-nuwa/patches/firmware-candidates/0002-nuwa-loader-wiring.patch"]
+
+COMMAND ["git", "apply", "--check", "/home/runner/work/UniXNU-nuwa/UniXNU-nuwa/patches/firmware-candidates/0003-initrd-publisher-only.patch"]
+
+COMMAND ["git", "apply", "/home/runner/work/UniXNU-nuwa/UniXNU-nuwa/patches/firmware-candidates/0003-initrd-publisher-only.patch"]
+
+COMMAND ["git", "apply", "--check", "/home/runner/work/UniXNU-nuwa/UniXNU-nuwa/patches/firmware-candidates/0004-sec-entry-argument-hob.patch"]
+
+COMMAND ["git", "apply", "/home/runner/work/UniXNU-nuwa/UniXNU-nuwa/patches/firmware-candidates/0004-sec-entry-argument-hob.patch"]

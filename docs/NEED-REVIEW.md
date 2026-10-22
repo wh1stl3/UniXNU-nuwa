@@ -14,11 +14,11 @@
 | --- | --- | --- |
 | — | 无 | — |
 
-## R-004 · 加载器候选编译与产物审计（approved A，执行中）
+## R-004 · 加载器候选编译与产物审计（approved A，已完成）
 
-用户明确批准：“批准 R-004 的 A，继续编译 EFI/FD 和 BootShim 并检查产物”。本轮按A执行；以下保留原候选与边界。暂停解除，不再请求同范围批准。
+用户明确批准：“批准 R-004 的 A，继续编译 EFI/FD 和 BootShim 并检查产物”。本轮按A完成：CI39764322744成功，四EFI/FD/BootShim下载静态检查通过，见operations/2026-10-22-firmware-candidate-build.md；以下保留原候选与边界。暂停解除，不再请求同范围批准。
 
-触发来源：本仓 AGENTS.md §3 第3类“新建或重写任何诊断 / 固件镜像”。Git/gh/workflow授权已明确，不重复请求；这里仅请求新的EFI/FD/BootShim产物生成范围。当前尚未编译或生成这些产物。
+触发来源：本仓 AGENTS.md §3 第3类“新建或重写任何诊断 / 固件镜像”。Git/gh/workflow授权已明确，不重复请求；这里仅请求新的EFI/FD/BootShim产物生成范围。审批时尚未编译或生成这些产物；当前完成状态见上文。
 
 背景：CI15自己的8796内核已链接ArmCpu/ArmDTPlatform。三份源码候选补丁完成了BootShim头修正、四模块DSC/FDF/包路径/库接线，并将sheng的initrd发布模块裁剪为只读BlockIo，去掉AddMemory/GCD扩展。75项静态检查及两来源树git apply --check通过；内核、来源、补丁、board/feed哈希固定。详细变更和来源见 [接线报告](operations/2026-10-22-loader-source-integration.md) 与 config/loader-candidate.json。
 
@@ -37,6 +37,9 @@
 倾向 A：源码候选已具体且可审阅，先获取真实编译证据能缩小后续调试范围；不会把旧内核/旧FD混进来，也不会继承隔壁的容量批准。**需要用户批准的最小范围就是A所列固件构建与静态产物审计；设备执行、board内存/地址变更及完整boot.img均不在其中。**
 
 ## 后续授权记录（2026-10-22）
+
+用户追加：“这个设备日常不需要用 可以随意推送镜像 只要能恢复回fastboot就行”。后续镜像推送/试启动在可恢复fastboot条件下已有授权，无需重复请求相同范围许可；优先临时加载并依据具体镜像、分区和恢复证据决定是否写入，不把此授权当作任意底层分区擦写可恢复的证明。H-001实体键恢复演练仍未验证；只差按键的项保留PENDING-HUMAN并继续软件工作。该授权不替代board/bringup-plan内存/基址审批或_verified实证。本轮仅完成R-004产物检查，未推送或启动镜像。
+
 
 用户在官方CI接入核验后指定GitHub账号`wh1stl3`，确认目标仓库尚未创建，并明确“Git的所有命令都允许”。此前仅允许status/diff/log/show的Git命令限制已解除，不再为云端checkout/clone/apply范围重复请求批准。两个旧仓及上游来源树仍只读；四类硬停、feed不变、未知板值TODO及证据纪律继续有效。Actions主机方向见DECISIONS D-008，R-003 A保留为历史审批记录。
 

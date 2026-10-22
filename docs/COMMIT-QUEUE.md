@@ -541,3 +541,14 @@
 [Evidence] reports/firmware-ci/39762744079包含failure、commands、输入hash和最终run；源码语法检查通过，首轮BootShim证据保留。
 [Risk] 第三轮真实编译待运行，EFI/FD尚未通过；R-004 A边界不变，不改board/feed/内存表、不打boot.img或操作设备。
 ```
+
+
+## Q-054 · 固件构建与下载静态验收完成
+
+```text
+[unixnu-nuwa][firmware] 四EFI及nuwa FD和BootShim实际构建并通过静态审计
+
+[Change] 归档第三轮成功证据及产物hash，修正检查器遗漏的Mu PCD库DEPEX并验证对应提供者；完成R-004 A并记录可恢复fastboot条件下的后续镜像授权。
+[Evidence] CI39764322744输入a8425b3成功，665份下载文件hash一致，四EFI内嵌/独立一致，SEC-HOB/PCD/FV/PE/shim通过；四项负向检查均拒绝异常。
+[Risk] 未QEMU/实机、未包含XNU负载或生成boot.img；缓存/DT/initrd/map/复位仍未验证，board/feed不变，未置_verified=true。
+```

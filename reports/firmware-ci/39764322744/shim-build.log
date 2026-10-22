@@ -1,0 +1,4 @@
+
+COMMAND ["clang", "--target=aarch64-none-elf", "-c", "-DFD_BASE=2802843648", "-DFD_SIZE=3145728", "-DREQUIRES_KERNEL_HEADER=1", "/home/runner/work/_temp/nuwa-firmware-candidate/firmware/BootShim/BootShim.S", "-o", "/home/runner/work/UniXNU-nuwa/UniXNU-nuwa/out/firmware-ci/shim/shim.o"]
+
+COMMAND ["llvm-objcopy", "-O", "binary", "/home/runner/work/UniXNU-nuwa/UniXNU-nuwa/out/firmware-ci/shim/shim.o", "/home/runner/work/UniXNU-nuwa/UniXNU-nuwa/out/firmware-ci/shim/shim.bin"]

@@ -9,3 +9,5 @@
 *.txt  text eol=lf
 # Preserve the observed XBL configuration byte-for-byte, including vendor whitespace.
 reports/loader-integration/factory-uefiplatLA-original.txt -text -whitespace
+# Preserve the original EDK build report, including its trailing blank line.
+reports/firmware-ci/39764322744/BUILD_REPORT.txt -text -whitespace

@@ -1,0 +1,26 @@
+{
+  "valid_artifact_passed": true,
+  "negative_checks": [
+    {
+      "name": "missing PCD provider",
+      "rejected": true,
+      "error": "PCD provider absent or duplicated"
+    },
+    {
+      "name": "missing SEC HOB producer",
+      "rejected": true,
+      "error": "SEC producer HOB GUID absent from image"
+    },
+    {
+      "name": "missing registrar PCD dependency",
+      "rejected": true,
+      "error": "Registrar DEPEX mismatch"
+    },
+    {
+      "name": "publisher ungated TRUE",
+      "rejected": true,
+      "error": "Initrd publisher DEPEX mismatch"
+    }
+  ],
+  "images_modified": false
+}

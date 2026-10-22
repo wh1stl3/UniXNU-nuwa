@@ -321,3 +321,6 @@ D-012补充（2026-10-22 17:49）：CI15实际重链接成功，ArmCpu/ArmDTPlat
 
 
 D-015补充：用户明确批准R-004 A，允许独立Actions临时源树生成四模块EFI、nuwa FD及BootShim并静态检查；不包含boot.img/负载/预链接镜像、设备执行或板内存地址修改。来源由config/firmware-ci-inputs.json钉版并记录LF归一化哈希，固件入口直接调用DeviceBuild，避开build_uefi.py的boot打包阶段。
+
+
+D-015补充（2026-10-22 18:48）：R-004 A已完成；CI39764322744四EFI/FD/BootShim真实编译、665份下载文件hash、嵌套FV/PE/DEPEX/SEC-HOB/PCD/shim机器码检查通过。FD SHA a0bbb964，未包含内核、未生成boot.img、未执行设备；运行内存与完整iOS链路仍未验证。后续用户授权可恢复fastboot前提下推送/试启动镜像，具体恢复条件须证据支持，见NEED-REVIEW授权记录。

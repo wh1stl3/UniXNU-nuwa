@@ -1,0 +1,123 @@
+
+COMMAND ["/home/runner/work/_temp/firmware-venv/bin/python3", "-m", "pip", "install", "-r", "/home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt"]
+Collecting edk2-pytool-library~=0.23.17 (from -r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 15))
+  Downloading edk2_pytool_library-0.23.17-py3-none-any.whl.metadata (9.4 kB)
+Collecting edk2-pytool-extensions~=0.31.2 (from -r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 16))
+  Downloading edk2_pytool_extensions-0.31.3-py3-none-any.whl.metadata (13 kB)
+Collecting antlr4-python3-runtime==4.13.2 (from -r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 17))
+  Downloading antlr4_python3_runtime-4.13.2-py3-none-any.whl.metadata (304 bytes)
+Collecting regex==2026.9.29 (from -r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 18))
+  Downloading regex-2026.9.29-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (40 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.6/40.6 kB 3.8 MB/s eta 0:00:00
+Collecting pefile~=2024.8.26 (from -r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 19))
+  Downloading pefile-2024.8.26-py3-none-any.whl.metadata (1.4 kB)
+Collecting coloredlogs (from -r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 20))
+  Downloading coloredlogs-15.0.1-py2.py3-none-any.whl.metadata (12 kB)
+Collecting pyasn1>=0.4.8 (from edk2-pytool-library~=0.23.17->-r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 15))
+  Downloading pyasn1-0.6.4-py3-none-any.whl.metadata (8.4 kB)
+Collecting pyasn1-modules>=0.2.8 (from edk2-pytool-library~=0.23.17->-r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 15))
+  Downloading pyasn1_modules-0.4.2-py3-none-any.whl.metadata (3.5 kB)
+Collecting cryptography>=39.0.1 (from edk2-pytool-library~=0.23.17->-r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 15))
+  Downloading cryptography-50.0.2-cp311-abi3-manylinux_2_34_x86_64.whl.metadata (4.4 kB)
+Collecting joblib>=1.3.2 (from edk2-pytool-library~=0.23.17->-r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 15))
+  Downloading joblib-1.6.0-py3-none-any.whl.metadata (6.5 kB)
+Collecting GitPython>=3.1.30 (from edk2-pytool-library~=0.23.17->-r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 15))
+  Downloading gitpython-3.2.1-py3-none-any.whl.metadata (13 kB)
+Collecting sqlalchemy>=2.0.0 (from edk2-pytool-library~=0.23.17->-r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 15))
+  Downloading sqlalchemy-2.1.6-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (9.7 kB)
+Collecting pygount>=1.6.1 (from edk2-pytool-library~=0.23.17->-r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 15))
+  Downloading pygount-3.2.0-py3-none-any.whl.metadata (6.4 kB)
+Collecting pyyaml>=6.0.0 (from edk2-pytool-extensions~=0.31.2->-r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 16))
+  Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+Collecting semantic_version>=2.10.0 (from edk2-pytool-extensions~=0.31.2->-r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 16))
+  Downloading semantic_version-2.10.0-py2.py3-none-any.whl.metadata (9.7 kB)
+Collecting openpyxl>=3.1.2 (from edk2-pytool-extensions~=0.31.2->-r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 16))
+  Downloading openpyxl-3.1.5-py2.py3-none-any.whl.metadata (2.5 kB)
+Collecting XlsxWriter>=3.0.9 (from edk2-pytool-extensions~=0.31.2->-r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 16))
+  Downloading xlsxwriter-3.3.0-py3-none-any.whl.metadata (2.9 kB)
+Collecting setuptools>=78.1.1 (from edk2-pytool-extensions~=0.31.2->-r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 16))
+  Downloading setuptools-84.2.1-py3-none-any.whl.metadata (6.6 kB)
+Collecting humanfriendly>=9.1 (from coloredlogs->-r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 20))
+  Downloading humanfriendly-10.0-py2.py3-none-any.whl.metadata (9.2 kB)
+Collecting cffi>=2.0.0 (from cryptography>=39.0.1->edk2-pytool-library~=0.23.17->-r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 15))
+  Downloading cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.5 kB)
+Collecting gitdb<5,>=4.0.1 (from GitPython>=3.1.30->edk2-pytool-library~=0.23.17->-r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 15))
+  Downloading gitdb-4.0.12-py3-none-any.whl.metadata (1.2 kB)
+Collecting cloudpickle>=3.0 (from joblib>=1.3.2->edk2-pytool-library~=0.23.17->-r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 15))
+  Downloading cloudpickle-3.1.2-py3-none-any.whl.metadata (7.1 kB)
+Collecting et-xmlfile (from openpyxl>=3.1.2->edk2-pytool-extensions~=0.31.2->-r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 16))
+  Downloading et_xmlfile-2.0.0-py3-none-any.whl.metadata (2.7 kB)
+Collecting chardet<6,>=5 (from pygount>=1.6.1->edk2-pytool-library~=0.23.17->-r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 15))
+  Downloading chardet-5.2.0-py3-none-any.whl.metadata (3.4 kB)
+Collecting pygments<3,>=2 (from pygount>=1.6.1->edk2-pytool-library~=0.23.17->-r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 15))
+  Downloading pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting rich>=14 (from pygount>=1.6.1->edk2-pytool-library~=0.23.17->-r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 15))
+  Downloading rich-15.0.0-py3-none-any.whl.metadata (18 kB)
+Collecting typing-extensions>=4.6.0 (from sqlalchemy>=2.0.0->edk2-pytool-library~=0.23.17->-r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 15))
+  Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting pycparser (from cffi>=2.0.0->cryptography>=39.0.1->edk2-pytool-library~=0.23.17->-r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 15))
+  Downloading pycparser-3.11-py3-none-any.whl.metadata (8.2 kB)
+Collecting smmap<6,>=3.0.1 (from gitdb<5,>=4.0.1->GitPython>=3.1.30->edk2-pytool-library~=0.23.17->-r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 15))
+  Downloading smmap-5.0.3-py3-none-any.whl.metadata (4.6 kB)
+Collecting markdown-it-py>=2.2.0 (from rich>=14->pygount>=1.6.1->edk2-pytool-library~=0.23.17->-r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 15))
+  Downloading markdown_it_py-4.2.0-py3-none-any.whl.metadata (7.4 kB)
+Collecting mdurl~=0.1 (from markdown-it-py>=2.2.0->rich>=14->pygount>=1.6.1->edk2-pytool-library~=0.23.17->-r /home/runner/work/_temp/nuwa-firmware-candidate/firmware/pip-requirements.txt (line 15))
+  Downloading mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
+Downloading antlr4_python3_runtime-4.13.2-py3-none-any.whl (144 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 144.5/144.5 kB 5.8 MB/s eta 0:00:00
+Downloading regex-2026.9.29-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 807.8/807.8 kB 14.5 MB/s eta 0:00:00
+Downloading edk2_pytool_library-0.23.17-py3-none-any.whl (431 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 431.5/431.5 kB 59.2 MB/s eta 0:00:00
+Downloading edk2_pytool_extensions-0.31.3-py3-none-any.whl (2.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.4/2.4 MB 59.8 MB/s eta 0:00:00
+Downloading pefile-2024.8.26-py3-none-any.whl (74 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 74.8/74.8 kB 36.4 MB/s eta 0:00:00
+Downloading coloredlogs-15.0.1-py2.py3-none-any.whl (46 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 46.0/46.0 kB 20.9 MB/s eta 0:00:00
+Downloading cryptography-50.0.2-cp311-abi3-manylinux_2_34_x86_64.whl (4.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.8/4.8 MB 106.4 MB/s eta 0:00:00
+Downloading gitpython-3.2.1-py3-none-any.whl (231 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 231.5/231.5 kB 90.3 MB/s eta 0:00:00
+Downloading humanfriendly-10.0-py2.py3-none-any.whl (86 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 86.8/86.8 kB 40.4 MB/s eta 0:00:00
+Downloading joblib-1.6.0-py3-none-any.whl (306 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 306.1/306.1 kB 101.8 MB/s eta 0:00:00
+Downloading openpyxl-3.1.5-py2.py3-none-any.whl (250 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 250.9/250.9 kB 98.3 MB/s eta 0:00:00
+Downloading pyasn1-0.6.4-py3-none-any.whl (84 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 84.4/84.4 kB 39.3 MB/s eta 0:00:00
+Downloading pyasn1_modules-0.4.2-py3-none-any.whl (181 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 181.3/181.3 kB 75.1 MB/s eta 0:00:00
+Downloading pygount-3.2.0-py3-none-any.whl (30 kB)
+Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 807.9/807.9 kB 162.1 MB/s eta 0:00:00
+Downloading semantic_version-2.10.0-py2.py3-none-any.whl (15 kB)
+Downloading setuptools-84.2.1-py3-none-any.whl (876 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 876.3/876.3 kB 167.7 MB/s eta 0:00:00
+Downloading sqlalchemy-2.1.6-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (4.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.7/4.7 MB 167.9 MB/s eta 0:00:00
+Downloading xlsxwriter-3.3.0-py3-none-any.whl (179 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 179.5/179.5 kB 77.5 MB/s eta 0:00:00
+Downloading cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (221 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 221.8/221.8 kB 86.3 MB/s eta 0:00:00
+Downloading chardet-5.2.0-py3-none-any.whl (199 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 199.4/199.4 kB 83.3 MB/s eta 0:00:00
+Downloading cloudpickle-3.1.2-py3-none-any.whl (22 kB)
+Downloading gitdb-4.0.12-py3-none-any.whl (62 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 62.8/62.8 kB 29.9 MB/s eta 0:00:00
+Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 186.1 MB/s eta 0:00:00
+Downloading rich-15.0.0-py3-none-any.whl (310 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 310.7/310.7 kB 108.6 MB/s eta 0:00:00
+Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 45.6/45.6 kB 21.3 MB/s eta 0:00:00
+Downloading et_xmlfile-2.0.0-py3-none-any.whl (18 kB)
+Downloading markdown_it_py-4.2.0-py3-none-any.whl (91 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 91.7/91.7 kB 46.8 MB/s eta 0:00:00
+Downloading smmap-5.0.3-py3-none-any.whl (24 kB)
+Downloading pycparser-3.11-py3-none-any.whl (51 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 51.2/51.2 kB 24.2 MB/s eta 0:00:00
+Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+Installing collected packages: antlr4-python3-runtime, XlsxWriter, typing-extensions, smmap, setuptools, semantic_version, regex, pyyaml, pygments, pycparser, pyasn1, pefile, mdurl, humanfriendly, et-xmlfile, cloudpickle, chardet, sqlalchemy, pyasn1-modules, openpyxl, markdown-it-py, joblib, gitdb, coloredlogs, cffi, rich, GitPython, cryptography, pygount, edk2-pytool-library, edk2-pytool-extensions
+Successfully installed GitPython-3.2.1 XlsxWriter-3.3.0 antlr4-python3-runtime-4.13.2 cffi-2.1.1 chardet-5.2.0 cloudpickle-3.1.2 coloredlogs-15.0.1 cryptography-50.0.2 edk2-pytool-extensions-0.31.3 edk2-pytool-library-0.23.17 et-xmlfile-2.0.0 gitdb-4.0.12 humanfriendly-10.0 joblib-1.6.0 markdown-it-py-4.2.0 mdurl-0.1.2 openpyxl-3.1.5 pefile-2024.8.26 pyasn1-0.6.4 pyasn1-modules-0.4.2 pycparser-3.11 pygments-2.21.0 pygount-3.2.0 pyyaml-6.0.3 regex-2026.9.29 rich-15.0.0 semantic_version-2.10.0 setuptools-84.2.1 smmap-5.0.3 sqlalchemy-2.1.6 typing-extensions-4.16.0

@@ -19,6 +19,8 @@ VARIABLE_GUIDS = {"6441f818-6362-4e44-b570-7dba31dd2453", "1e5668e2-8481-11d4-bc
 LOADER_GUID = "0f0a492e-5a6a-49f6-a1bf-743c87ab1cfe"
 ENTRY_HOB_GUID = "daee82e6-8090-4e72-bfb9-78c13cd4e359"
 SEC_GUID = "9affb503-e643-4141-8b90-17e8588b1d35"
+PCD_GUID = "13a3f0f6-264a-3ef0-f2e0-dec512342f34"
+PCD_DRIVER_GUID = "80cf7257-87ab-47f9-a3fe-d50b76d89541"
 
 
 def sha(data):
@@ -145,8 +147,9 @@ class Firmware:
             body = section[hsize:]
             detail = dict(type=hex(kind), bytes=size)
             owner["sections"].append(detail)
-            if kind == 0x10 and owner["guid"] in MODULES:
+            if kind == 0x10 and (owner["guid"] in MODULES or owner["guid"] == PCD_DRIVER_GUID):
                 detail["pe"] = pe(body)
+                detail["pcd_protocol_guid_present"] = uuid.UUID(PCD_GUID).bytes_le in body
             elif kind == 0x12 and owner["guid"] == SEC_GUID:
                 need(len(body) >= 40 and body[:2] == b"VZ" and struct.unpack_from("<H", body, 2)[0] == 0xaa64,
                      "Invalid SEC AARCH64 TE header")
@@ -207,10 +210,12 @@ def inspect(artifact):
             need(images[0]["application_guid_present"], "Registrar application GUID absent from image")
         deps = [s["depex"] for s in item["sections"] if "depex" in s]
         if name == "UniXNUDxe":
-            need(len(deps) == 1 and [x["op"] for x in deps[0]] == ["PUSH", "PUSH", "AND", "END"]
-                 and {x["guid"] for x in deps[0] if "guid" in x} == VARIABLE_GUIDS, "Registrar DEPEX mismatch")
+            # EDK combines module and linked-library DEPEX. Pinned Mu DxePcdLib
+            # contributes gEfiPcdProtocolGuid (BUILD_REPORT.txt, CI 39764322744).
+            need(len(deps) == 1 and [x["op"] for x in deps[0]] == ["PUSH", "PUSH", "PUSH", "AND", "AND", "END"]
+                 and {x["guid"] for x in deps[0] if "guid" in x} == VARIABLE_GUIDS | {PCD_GUID}, "Registrar DEPEX mismatch")
         if name == "ShengBootMemoryDxe":
-            need(len(deps) == 1 and [x["op"] for x in deps[0]] == ["TRUE", "END"], "Initrd publisher DEPEX mismatch")
+            need(deps == [[dict(op="PUSH", guid=PCD_GUID), dict(op="END")]], "Initrd publisher DEPEX mismatch")
             need(images[0]["entry_hob_guid_present"], "Publisher HOB GUID absent from image")
         outputs = []
         for path in artifact.rglob(name + ".efi"):
@@ -223,6 +228,9 @@ def inspect(artifact):
     app = next(m for m in modules if m["name"] == "UniXNU")
     registrar = next(m for m in modules if m["name"] == "UniXNUDxe")
     need(app["ffs"]["volume"] == registrar["ffs"]["volume"], "Registrar/application in different FVs")
+    pcd = [f for f in fv.files if f["guid"] == PCD_DRIVER_GUID]
+    need(len(pcd) == 1 and pcd[0]["type"] == 7, "PCD provider absent or duplicated")
+    need(any(s.get("pcd_protocol_guid_present") for s in pcd[0]["sections"]), "PCD provider GUID absent from PE")
     sec = [f for f in fv.files if f["guid"] == SEC_GUID]
     need(len(sec) == 1 and sec[0]["type"] == 3, "SEC FFS absent or duplicated")
     sec_te = [s["sec_te"] for s in sec[0]["sections"] if "sec_te" in s]
@@ -241,7 +249,7 @@ def inspect(artifact):
     return dict(result="downloaded EFI/FD/BootShim static inspection passed", inventory_files=len(inventory),
                 fd=dict(bytes=len(data), sha256=sha(data)), shim=dict(bytes=len(shim), image_size=image_size,
                 sha256=sha(shim), payload_offset=payload, copy_count=copy_count), volumes=fv.volumes, compression=fv.guided,
-                modules=modules, sec_entry_hob_producer=sec_te[0], device_executed=False, unverified=["DXE dispatch and protocol installation",
+                modules=modules, pcd_provider=pcd[0], sec_entry_hob_producer=sec_te[0], device_executed=False, unverified=["DXE dispatch and protocol installation",
                 "initrd mapping/reservation and FAT mount", "UEFI memory map and XNU window", "XNU and iOS execution"])
 
 
