@@ -372,3 +372,10 @@ D-016/D-018补充（2026-10-23 00:11）：R-007 A诊断固件5e4a8c8/CI398096365
 - 证据：源码2ab6827d，CI39820752081，reports/pil-no-auto/39820752081/{artifact-inspection,screen-observation,trial-summary,postcondition}.json；对应operations。
 
 uefipil.cfg保留RETAIL和全部镜像定义，仅取消AUTO ABL；不为这条二级固件不需要的自动路径刷ABL或猜分区GUID，也不删除PIL/PILProxy。新FD实际6930B RAW SHA匹配且AUTO空，PILDxe原PE不变。本次已执行至候选DXE的后续分派，仍有SPSS metadata/页面分配失败和核心协议缺失；分配问题需独立证据，不能由本决策推导新内存地址/容量或声明存储通过。用户要求本次试验后停止，未切换候选B或继续生成镜像。
+
+
+# D-021 · 镜像生成与设备日志/恢复门分开判定
+
+- 状态：accepted，用户2026-10-23明确修订；来源为本轮“生成镜像无需硬停，刷写后无法监测具体过程log或无法回到Android/fastboot/twrp前的话须硬停”。
+- 执行：镜像编译/打包/静态核验不再单独暂停；设备动作前缺过程日志或已确认恢复路径则记录至少两个候选并硬停。当前屏幕通道需要用户可读取/拍摄，ACK和枚举不替代阶段日志。保留内存/基址、身份及_verified审阅边界。
+- 证据：AGENTS.md§3；R-010 A本轮已批准，不代表实际试启动或恢复完成。

@@ -26,6 +26,10 @@ SEC_TRACE_MARKERS = ('[NUWA-ENTRY]', 'C-before-platform', 'C-after-platform', 'b
 PCD_GUID = "13a3f0f6-264a-3ef0-f2e0-dec512342f34"
 PCD_DRIVER_GUID = "80cf7257-87ab-47f9-a3fe-d50b76d89541"
 PIL_GUID = '1d317734-4083-47c6-83ea-e3a42f2a6bff'
+DXE_CORE_GUID = 'd6a2cb7f-6a18-4e2f-b43b-9920a733700a'
+ALLOCATION_MARKERS = ('[NUWA-MEM]', 'first-pool-failure', 'missing-arch-before-assert',
+                      'request type=%u pages=%lu align=%lu guard=%u caller=%p',
+                      'free=%lu largest=%lu')
 PIL_CONFIG_GUID = '21e9bdd9-6c3f-4f10-84a5-bbec322741f1'
 
 
@@ -156,6 +160,11 @@ class Firmware:
             if kind == 0x10 and (owner["guid"] in MODULES or owner["guid"] in (PCD_DRIVER_GUID, PIL_GUID)):
                 detail["pe"] = pe(body)
                 detail["pcd_protocol_guid_present"] = uuid.UUID(PCD_GUID).bytes_le in body
+            elif kind in (0x10, 0x12) and owner['guid'] == DXE_CORE_GUID:
+                need((kind == 0x10 and body[:2] == b'MZ') or (kind == 0x12 and body[:2] == b'VZ'),
+                     'Invalid DXE core image')
+                detail['allocation_trace'] = dict(bytes=len(body), sha256=sha(body),
+                    markers={marker: marker.encode() in body for marker in ALLOCATION_MARKERS})
             elif kind == 0x12 and owner["guid"] == SEC_GUID:
                 need(len(body) >= 40 and body[:2] == b"VZ" and struct.unpack_from("<H", body, 2)[0] == 0xaa64,
                      "Invalid SEC AARCH64 TE header")
@@ -199,7 +208,7 @@ class Firmware:
             at = align(at + size, 4)
 
 
-def inspect(artifact, publisher_name='ShengBootMemoryDxe', require_sec_trace=False, require_no_auto_abl=False):
+def inspect(artifact, publisher_name='ShengBootMemoryDxe', require_sec_trace=False, require_no_auto_abl=False, require_allocation_trace=False):
     artifact = artifact.resolve()
     inventory = json.loads((artifact / "inventory.json").read_text())
     for item in inventory:
@@ -266,7 +275,7 @@ def inspect(artifact, publisher_name='ShengBootMemoryDxe', require_sec_trace=Fal
     need(offset == expected_offset and image_size == len(shim) + len(data), "Shim header length/relative-offset mismatch")
     pil_check = None
     if require_no_auto_abl:
-        need(inputs['profile'] == 'pil-no-auto' and expected_offset == 0, 'Wrong R-009 build profile/header')
+        need(inputs['profile'] in ('pil-no-auto', 'dxe-allocation') and expected_offset == 0, 'Wrong R-009 build profile/header')
         configs = [s['pil_config'] for f in fv.files if f['guid'] == PIL_CONFIG_GUID
                    for s in f['sections'] if 'pil_config' in s]
         need(len(configs) == 1 and configs[0]['auto_entries'] == []
@@ -277,6 +286,15 @@ def inspect(artifact, publisher_name='ShengBootMemoryDxe', require_sec_trace=Fal
         need(len(drivers) == 1 and drivers[0]['sha256'] == '89e030af07847bdc596f0c213bdce0ac430be66e572db55b434d7ec66ad9afcb',
              'PILDxe driver changed or missing')
         pil_check = dict(config=configs[0], retained_driver=drivers[0])
+    allocation_trace = None
+    if require_allocation_trace:
+        profile = json.loads((ROOT / 'config/firmware-dxe-allocation-profile.json').read_text())
+        need(inputs['profile'] == 'dxe-allocation' and inputs['recipe'] == profile['recipe'],
+             'Wrong R-010 source/input profile')
+        cores = [s['allocation_trace'] for f in fv.files if f['guid'] == DXE_CORE_GUID and f['type'] == 5
+                 for s in f['sections'] if 'allocation_trace' in s]
+        need(len(cores) == 1 and all(cores[0]['markers'].values()), 'Actual DXE core lacks allocation diagnostics')
+        allocation_trace = cores[0]
     symbols = (artifact / "shim/symbols.txt").read_text()
     payload = next(int(line.split()[0], 16) for line in symbols.splitlines() if line.endswith(" _Payload"))
     need(payload == len(shim), "Shim literal pool/padding separates payload")
@@ -286,7 +304,7 @@ def inspect(artifact, publisher_name='ShengBootMemoryDxe', require_sec_trace=Fal
     return dict(result="downloaded EFI/FD/BootShim static inspection passed", inventory_files=len(inventory),
                 fd=dict(bytes=len(data), sha256=sha(data)), shim=dict(bytes=len(shim), image_size=image_size,
                 sha256=sha(shim), payload_offset=payload, copy_count=copy_count, text_offset=offset),
-                pil_no_auto=pil_check, volumes=fv.volumes, compression=fv.guided,
+                pil_no_auto=pil_check, allocation_trace=allocation_trace, volumes=fv.volumes, compression=fv.guided,
                 modules=modules, pcd_provider=pcd[0], sec_entry_hob_producer=sec_te[0], device_executed=False, unverified=["DXE dispatch and protocol installation",
                 "initrd mapping/reservation and FAT mount", "UEFI memory map and XNU window", "XNU and iOS execution"])
 
@@ -298,10 +316,11 @@ def main():
     parser.add_argument('--publisher-name', choices=('ShengBootMemoryDxe', 'NuwaBootMemoryDxe'), default='ShengBootMemoryDxe')
     parser.add_argument('--require-sec-trace', action='store_true')
     parser.add_argument('--require-no-auto-abl', action='store_true')
+    parser.add_argument('--require-allocation-trace', action='store_true')
     args = parser.parse_args()
     output = args.output.resolve()
     need(output.is_relative_to(ROOT) and output.suffix == ".json", "Evidence output must be repo-local JSON")
-    report = inspect(args.artifact, args.publisher_name, args.require_sec_trace, args.require_no_auto_abl)
+    report = inspect(args.artifact, args.publisher_name, args.require_sec_trace, args.require_no_auto_abl, args.require_allocation_trace)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(dict(result=report["result"], fd=report["fd"], shim=report["shim"], modules=[m["name"] for m in report["modules"]])))

@@ -18,21 +18,24 @@ def sha(data):
 def main():
     cli = argparse.ArgumentParser(description=__doc__)
     cli.add_argument('run_id', type=int)
+    cli.add_argument('--profile', choices=('pil-no-auto', 'dxe-allocation'), default='pil-no-auto')
     args = cli.parse_args()
+    approval = 'R-010 A' if args.profile == 'dxe-allocation' else 'R-009 A'
     artifact = ROOT / f'out/firmware-ci/{args.run_id}/nuwa-firmware-{args.run_id}'
-    output = ROOT / f'out/trial-boot/pil-no-auto-{args.run_id}'
-    report = ROOT / f'reports/pil-no-auto/{args.run_id}'
+    output = ROOT / f'out/trial-boot/{args.profile}-{args.run_id}'
+    report = ROOT / f'reports/{args.profile}/{args.run_id}'
     if output.exists() or (report / 'package.json').exists():
         raise ValueError('Refusing to overwrite an existing trial package')
-    profile = json.loads((ROOT / 'config/firmware-pil-no-auto-profile.json').read_text())
+    profile = json.loads((ROOT / f'config/firmware-{args.profile}-profile.json').read_text())
     inputs = json.loads((artifact / 'inputs.json').read_text())
-    if (inputs['recipe'] != profile['recipe'] or inputs['profile'] != 'pil-no-auto'
+    if (inputs['recipe'] != profile['recipe'] or inputs['profile'] != args.profile
             or inputs['run_id'] != str(args.run_id)):
         raise ValueError('Runner inputs differ from the approved diagnostic profile')
     spec = importlib.util.spec_from_file_location('firmware_inspector', ROOT / 'scripts/ci/inspect-firmware-candidate.py')
     inspector = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(inspector)
-    inspection = inspector.inspect(artifact, 'NuwaBootMemoryDxe', require_sec_trace=True, require_no_auto_abl=True)
+    inspection = inspector.inspect(artifact, 'NuwaBootMemoryDxe', require_sec_trace=True, require_no_auto_abl=True,
+                                   require_allocation_trace=args.profile == 'dxe-allocation')
     original = STOCK.read_bytes()
     if sha(original) != STOCK_SHA:
         raise ValueError('Pinned original recovery boot changed')
@@ -60,11 +63,12 @@ def main():
             or len(image) != 4096 + ((len(payload) + 4095) // 4096) * 4096):
         raise ValueError('Independent container bounds/content check failed')
     output.mkdir(parents=True)
-    path = output / 'boot-pil-no-auto-v4.img'
+    path = output / f'boot-{args.profile}-v4.img'
     path.write_bytes(image)
     if sha(path.read_bytes()) != sha(image):
         raise ValueError('Written package hash mismatch')
-    metadata = {'approval': 'R-009 A', 'scope': 'No AUTO ABL firmware-only temporary v4 container',
+    metadata = {'approval': approval, 'scope': args.profile + ' firmware-only temporary v4 container',
+                'allocation_trace': inspection['allocation_trace'],
                 'run_id': args.run_id, 'firmware_commit': profile['recipe']['sources']['firmware']['commit'],
                 'image_path': path.relative_to(ROOT).as_posix(), 'image_bytes': len(image), 'image_sha256': sha(image),
                 'original_boot_sha256': STOCK_SHA, 'fd_sha256': sha(fd), 'shim_sha256': sha(shim),

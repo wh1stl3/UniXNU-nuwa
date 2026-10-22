@@ -26,7 +26,7 @@ def save(name, obj):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--profile', choices=('legacy', 'dedicated', 'sec-trace', 'pil-no-auto'), default='legacy')
+    parser.add_argument('--profile', choices=('legacy', 'dedicated', 'sec-trace', 'pil-no-auto', 'dxe-allocation'), default='legacy')
     args = parser.parse_args()
     if os.environ.get("GITHUB_ACTIONS") != "true":
         raise RuntimeError("Only the approved disposable Actions build environment is supported")
@@ -36,10 +36,11 @@ def main():
         raise RuntimeError("Fresh source/build tree required; refusing to overwrite")
     work.mkdir()
     OUT.mkdir(parents=True, exist_ok=False)
-    if args.profile in ('dedicated', 'sec-trace', 'pil-no-auto'):
+    if args.profile in ('dedicated', 'sec-trace', 'pil-no-auto', 'dxe-allocation'):
         filename = {'dedicated': 'firmware-dedicated-profile.json',
                     'sec-trace': 'firmware-sec-trace-profile.json',
-                    'pil-no-auto': 'firmware-pil-no-auto-profile.json'}[args.profile]
+                    'pil-no-auto': 'firmware-pil-no-auto-profile.json',
+                    'dxe-allocation': 'firmware-dxe-allocation-profile.json'}[args.profile]
         profile = json.loads((ROOT / 'config' / filename).read_text())
         recipe, candidate = profile['recipe'], profile['candidate']
     else:
@@ -109,6 +110,15 @@ def main():
                 patched_paths.add((patch['root'], line[6:]))
                 raw = target.read_bytes()
                 lf = raw.replace(b"\r\n", b"\n")
+                if patch.get('preserve_line_endings'):
+                    pins = {entry['path']: entry['raw_sha256'] for entry in patch['raw_inputs']}
+                    if (patch['root'] != 'firmware' or line[6:] not in pins
+                            or hashlib.sha256(raw).hexdigest() != pins[line[6:]]):
+                        raise ValueError('Unapproved raw patch target or hash')
+                    normalized_inputs.append(dict(root=patch['root'], path=line[6:],
+                                                  preserved=True, raw_sha256=hashlib.sha256(raw).hexdigest(),
+                                                  lf_sha256=hashlib.sha256(lf).hexdigest()))
+                    continue
                 if raw != lf:
                     normalized_inputs.append(dict(root=patch["root"], path=line[6:],
                                                   raw_sha256=hashlib.sha256(raw).hexdigest(),

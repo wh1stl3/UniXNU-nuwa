@@ -1,10 +1,10 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-23 01:44（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-23T01:53:08+08:00（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
-**用户已要求恢复主线。本轮静态审查确认当前初始SYS_MEM/Conv为69MiB，与同机原厂209.75MiB Heap不同；运行时资源量仍缺失，不能据此确定DXE分配失败根因。已备妥不改内存图的两文件分配器诊断源码草案，严格apply检查通过；新诊断固件列R-010，尚未编译、生成镜像或操作设备。**
+**R-010 A已批准；用户修订硬停：生成镜像无需暂停，设备动作前缺具体过程日志或已确认恢复路径须硬停。35项固定输入及严格补丁检查通过，已接入独立dxe-allocation CI配置，待实际编译。保持内存图不变。**
 
 [本轮审查和候选](operations/2026-10-23-dxe-allocation-source-audit.md)，reports/dxe-allocation-audit/。上轮已证实到候选DXE但断言、未进入BDS/XNU；最后Android完成1为R-009恢复记录，本轮未重新读取在线状态。
 
@@ -12,7 +12,7 @@
 
 当前AllocatePoolPages失败来自FindFreePages搜索最终为0；按类型bin/默认bin/全允许区、alignment、guard和资源提升约束尝试，失败不能仅解释为物理内存不足。源码声明69MiB是初始资源，不是运行空闲量；原厂209.75MiB有同机xbl_config证据，也不等于已批准修改。233页仅954368B。
 
-固定Mu_Basecore@cfb93724与实际R-009子模块一致；缓存源码与git对象一致。0008候选只改Page.c/DxeMain.c，在首pool失败及最终ASSERT前记录参数/当前内存类型/空闲与最大块。Helper不分配、不改map，不跳过原错误和断言；最大块为未裁剪raw值。现有帧缓冲栈输出已有源码证据，但锁内flush时序影响/实际编译/运行仍未验证。补丁保留原CRLF，现有CI正规化需获批后做窄范围适配，未直接连接构建。
+固定Mu_Basecore@cfb93724与实际R-009子模块一致；缓存源码与git对象一致。0008候选只改Page.c/DxeMain.c，在首pool失败及最终ASSERT前记录参数/当前内存类型/空闲与最大块。Helper不分配、不改map，不跳过原错误和断言；最大块为未裁剪raw值。现有帧缓冲栈输出已有源码证据，但锁内flush时序影响/实际编译/运行仍未验证。补丁保留原CRLF，本次已增加仅两个固定raw哈希目标保留CRLF的CI接线，35项输入核验通过，实际编译待验证。
 
 同SM8550固定来源已评估：sheng@0eb4514d也用209.75MiB且加其他bank、vendor条件门；fuxi@bb25ad75使用同大小但最小vendor=0且无既定真机运行证明。只借鉴结构和诊断方向，不抄nuwa无证据地址/驱动结论。用户要求已写入AGENTS.md§7：遇到难题主动评估同SoC UniXNU/UEFI仓库，并记录适用性/依赖/许可/验证状态，作为后续任务可读取的仓库记忆。
 
@@ -48,10 +48,10 @@ boot_a/vendor_boot_a/init_boot_a全分区SHA与紧邻试前值相同；未flash/
 
 ## 下一步
 
-1. 等待R-010具体批准。倾向A：不改内存图，构建0008诊断，在一次受限临时启动时采集失败请求/实际空闲总量、最大块与类型占用，结束恢复Android完成1。
-2. 若选择B，先完成同机原厂Heap恢复的具体内存图diff及保留区/交接审查；不会把同SoC地址直接移植，也不把选B当作批准未知数值。
-3. 当前运行空闲/最大块、PoolType/Alignment/NeedGuard仍TODO，只有R-009失败截图；核心协议提供者/DEPEX可能受分配失败连带影响，先拿资源证据再判断。
-4. 原R-009等待恢复后出现fastboot不会自动接管的问题已记录，本轮未设备操作；H-001/H-003仍为独立人工待办，非停因。当前停因仅新诊断镜像硬停审批。
+1. 提交/发布R-010独立profile并触发固件CI，按实际第一处错误处理；不扩heap，不修改board/feed。
+2. 成功后下载真实产物，检查实际DXE核心日志标记、四EFI、SEC、原PIL与空AUTO、相对shim，再制作v4临时包。
+3. 用户已确认可录像，启动前通知；实际动作前重新核对nuwa身份、具体日志通道和Android/fastboot恢复证据。一次受限试启动后恢复Android并确认完成1，实测另记。
+4. H-001/H-003历史人工待办不作为离线阻塞；当前尚未执行R-010设备动作。见operations/2026-10-23-dxe-allocation-build-trial.md。
 
 ## 内核与后续目标
 
@@ -61,4 +61,4 @@ boot_a/vendor_boot_a/init_boot_a全分区SHA与紧邻试前值相同；未flash/
 
 ## 固定边界
 
-board/feed/内存图及所有_verified不变；4KiB、iPhone10,3/d22ap/iOS16.7.16/20H392、8796.141.3；ipad_identity=true为安全属性。D-002先512MiB–1GiB过阶段5，硬上限8GiB。未知板值不编造，不借其他donor的prelink数值。两旧仓只读；Git/GitHub/workflow持续授权，当前暂停于R-010新诊断镜像范围审批。
+board/feed/内存图及所有_verified不变；4KiB、iPhone10,3/d22ap/iOS16.7.16/20H392、8796.141.3；ipad_identity=true为安全属性。D-002先512MiB–1GiB过阶段5，硬上限8GiB。未知板值不编造，不借其他donor的prelink数值。两旧仓只读；Git/GitHub/workflow持续授权，R-010 A已批准，按D-021设备日志/恢复门推进。
