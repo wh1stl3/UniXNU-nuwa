@@ -12,9 +12,11 @@
 
 | 编号 | 主题 | 需要用户做什么 |
 | --- | --- | --- |
-| R-009 | PIL自动ABL链阻塞后的新FD | 倾向A：保留PIL、只取消AUTO ABL；B：参照sheng对PIL链做条件门 |
+| — | 无 | — |
 
-## R-009 · 取消二级固件自动ABL链载（open）
+## R-009 · 取消二级固件自动ABL链载（approved A，进行中）
+
+用户回复“批准”，承接上一条明确请求R-009 A，已批准候选A的源码、构建/产物、临时试启动及Android=1收尾范围；暂停解除。
 
 背景：R-008 A已完成头部单变量构建与两次临时试启动（第二次用户另明确要求录像）。新旧容器只差两个字节，修正后fastboot不再持续枚举，用户看见大量日志。照片清晰记录Pil_abl分区读取/ELF加载失败及uefipil.cfg自动处理panic；这不是XNU panic。同一帧没有NUWA-ENTRY，候选/原厂UEFI均含相关驱动，精确画面时序/来源仍待连续录像。**实际候选FD独立确认带[AUTO] ABL，源码配置问题无需猜测。** 取证与同SM8550对照见[本轮报告](operations/2026-10-23-relative-offset-trial-and-pil-stop.md)及reports/relative-offset/。
 

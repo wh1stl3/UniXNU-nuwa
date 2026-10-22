@@ -25,6 +25,8 @@ SEC_TRACE_MARKERS = ('[NUWA-ENTRY]', 'C-before-platform', 'C-after-platform', 'b
                      'dxe-core returned=%r')
 PCD_GUID = "13a3f0f6-264a-3ef0-f2e0-dec512342f34"
 PCD_DRIVER_GUID = "80cf7257-87ab-47f9-a3fe-d50b76d89541"
+PIL_GUID = '1d317734-4083-47c6-83ea-e3a42f2a6bff'
+PIL_CONFIG_GUID = '21e9bdd9-6c3f-4f10-84a5-bbec322741f1'
 
 
 def sha(data):
@@ -151,7 +153,7 @@ class Firmware:
             body = section[hsize:]
             detail = dict(type=hex(kind), bytes=size)
             owner["sections"].append(detail)
-            if kind == 0x10 and (owner["guid"] in MODULES or owner["guid"] == PCD_DRIVER_GUID):
+            if kind == 0x10 and (owner["guid"] in MODULES or owner["guid"] in (PCD_DRIVER_GUID, PIL_GUID)):
                 detail["pe"] = pe(body)
                 detail["pcd_protocol_guid_present"] = uuid.UUID(PCD_GUID).bytes_le in body
             elif kind == 0x12 and owner["guid"] == SEC_GUID:
@@ -160,6 +162,16 @@ class Firmware:
                 detail["sec_te"] = dict(bytes=len(body), sha256=sha(body),
                                          entry_hob_guid_present=uuid.UUID(ENTRY_HOB_GUID).bytes_le in body,
                                          trace_markers={marker: marker.encode() in body for marker in SEC_TRACE_MARKERS})
+            elif kind == 0x19 and owner['guid'] == PIL_CONFIG_GUID:
+                text = body.rstrip(b'\0').decode('ascii')
+                active, entries = False, []
+                for line in text.splitlines():
+                    value = line.split('#', 1)[0].strip()
+                    if value.startswith('['):
+                        active = value == '[AUTO]'
+                    elif active and value:
+                        entries.append(value)
+                detail['pil_config'] = dict(bytes=len(body), sha256=sha(body), auto_entries=entries)
             elif kind == 0x13 and owner["guid"] in MODULES:
                 detail["depex"] = depex(body)
             elif kind == 0x17:
@@ -187,7 +199,7 @@ class Firmware:
             at = align(at + size, 4)
 
 
-def inspect(artifact, publisher_name='ShengBootMemoryDxe', require_sec_trace=False):
+def inspect(artifact, publisher_name='ShengBootMemoryDxe', require_sec_trace=False, require_no_auto_abl=False):
     artifact = artifact.resolve()
     inventory = json.loads((artifact / "inventory.json").read_text())
     for item in inventory:
@@ -249,7 +261,22 @@ def inspect(artifact, publisher_name='ShengBootMemoryDxe', require_sec_trace=Fal
     recorded = json.loads((artifact / "shim.json").read_text())
     need(sha(shim) == recorded["sha256"] and shim[56:60] == b"ARM\x64", "Shim hash/magic mismatch")
     offset, image_size = struct.unpack_from("<QQ", shim, 8)
-    need(offset == int(settings["fd_base"], 0) and image_size == len(shim) + len(data), "Shim header length/base mismatch")
+    inputs = json.loads((artifact/'inputs.json').read_text())
+    expected_offset = inputs['recipe'].get('shim_text_offset', int(settings['fd_base'], 0))
+    need(offset == expected_offset and image_size == len(shim) + len(data), "Shim header length/relative-offset mismatch")
+    pil_check = None
+    if require_no_auto_abl:
+        need(inputs['profile'] == 'pil-no-auto' and expected_offset == 0, 'Wrong R-009 build profile/header')
+        configs = [s['pil_config'] for f in fv.files if f['guid'] == PIL_CONFIG_GUID
+                   for s in f['sections'] if 'pil_config' in s]
+        need(len(configs) == 1 and configs[0]['auto_entries'] == []
+             and configs[0]['sha256'] == 'dbc9ee6e4c7728b32245453322f348c32d6a5eef0107f8c07662918bc3c23fdd',
+             'Actual FD did not embed the exact approved empty-AUTO config')
+        drivers = [s['pe'] for f in fv.files if f['guid'] == PIL_GUID
+                   for s in f['sections'] if 'pe' in s]
+        need(len(drivers) == 1 and drivers[0]['sha256'] == '89e030af07847bdc596f0c213bdce0ac430be66e572db55b434d7ec66ad9afcb',
+             'PILDxe driver changed or missing')
+        pil_check = dict(config=configs[0], retained_driver=drivers[0])
     symbols = (artifact / "shim/symbols.txt").read_text()
     payload = next(int(line.split()[0], 16) for line in symbols.splitlines() if line.endswith(" _Payload"))
     need(payload == len(shim), "Shim literal pool/padding separates payload")
@@ -258,7 +285,8 @@ def inspect(artifact, publisher_name='ShengBootMemoryDxe', require_sec_trace=Fal
     need(not list(artifact.rglob("*.img")), "Out-of-scope .img artifact")
     return dict(result="downloaded EFI/FD/BootShim static inspection passed", inventory_files=len(inventory),
                 fd=dict(bytes=len(data), sha256=sha(data)), shim=dict(bytes=len(shim), image_size=image_size,
-                sha256=sha(shim), payload_offset=payload, copy_count=copy_count), volumes=fv.volumes, compression=fv.guided,
+                sha256=sha(shim), payload_offset=payload, copy_count=copy_count, text_offset=offset),
+                pil_no_auto=pil_check, volumes=fv.volumes, compression=fv.guided,
                 modules=modules, pcd_provider=pcd[0], sec_entry_hob_producer=sec_te[0], device_executed=False, unverified=["DXE dispatch and protocol installation",
                 "initrd mapping/reservation and FAT mount", "UEFI memory map and XNU window", "XNU and iOS execution"])
 
@@ -269,10 +297,11 @@ def main():
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument('--publisher-name', choices=('ShengBootMemoryDxe', 'NuwaBootMemoryDxe'), default='ShengBootMemoryDxe')
     parser.add_argument('--require-sec-trace', action='store_true')
+    parser.add_argument('--require-no-auto-abl', action='store_true')
     args = parser.parse_args()
     output = args.output.resolve()
     need(output.is_relative_to(ROOT) and output.suffix == ".json", "Evidence output must be repo-local JSON")
-    report = inspect(args.artifact, args.publisher_name, args.require_sec_trace)
+    report = inspect(args.artifact, args.publisher_name, args.require_sec_trace, args.require_no_auto_abl)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(dict(result=report["result"], fd=report["fd"], shim=report["shim"], modules=[m["name"] for m in report["modules"]])))

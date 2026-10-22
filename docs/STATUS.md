@@ -1,10 +1,12 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-23 00:55（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-23 01:05（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
-**R-008 A已完成：BootShim相对text_offset修正真实构建，仅两个字节变化的同FD临时包两次试启动；用户已见日志并提供Qualcomm PIL/ABL加载失败照片。候选FD确有[AUTO] ABL，取消这条自动链的源码草案已准备；新FD范围列R-009，未生成。nuwa已回Android并确认boot_completed=1，尚未进入XNU。**
+**R-009 A已获批准并完成空AUTO解析静态审查；固件源2ab6827d保留PIL、仅取消AUTO ABL，独立profile33项输入检查通过，新CI接线已准备。新FD/打包/试启动尚待执行。nuwa此前已回Android完成1，尚未进入XNU。**
+
+[本轮构建/试验记录](operations/2026-10-23-pil-no-auto-build-trial.md)，reports/pil-no-auto/。
 
 照片显示DXE驱动加载，但同帧没有NUWA-ENTRY；候选和原厂都含相应驱动，精确归属/启动时序仍需连续录像，不能宣布候选SEC/BDS实机通过。[完整构建、试验、照片与同SoC对照](operations/2026-10-23-relative-offset-trial-and-pil-stop.md)。
 
@@ -14,11 +16,11 @@
 | --- | --- |
 | wh1stl3/UniXNU@76dd641 | 合并上游并保留nuwa补丁；内核CI39793231214成功，真实内核静态核验通过 |
 | 设备仓 | board仍example=true，普通基座-D完整入口未打通；feed不变 |
-| wh1stl3/uefi-nuwa | 稳定0a3a51a；SEC诊断5e4a8c8；当前本地codex/nuwa-relative-offset@910ee079，只有BootShim头追加一行修正，已等同发布GitHub，工作树干净 |
+| wh1stl3/uefi-nuwa | 稳定0a3a51a；SEC诊断5e4a8c8；当前本地codex/nuwa-no-auto-abl@2ab6827d，父910ee079保留正确BootShim头，只追加RAW配置替换，已等同发布GitHub，工作树干净 |
 | R-007 FD | CI39809636575，四EFI/3MiB FD/112B旧shim、665项静态检查通过；FD9ea347a4完全复用 |
 | R-008新shim | 本机WSL clang14/llvm-objcopy真实编译112B，SHA8a3b5476…，relative offset=0、FD目标A7100000不变，全部指令与旧版相同 |
 | R-008新包 | 3153920B/SHA8b420abe64ac1738685879497d6a3e167a40873887b2122db01e8ae864ed2dfb，对R-007包仅4106/4107两字节变化，无XNU/新增DTB/ramdisk/FAT |
-| R-009源码候选0007 | 保留PIL驱动，只将内嵌配置AUTO ABL行改注释；RAW输入指向nuwa本地配置，其他字段不变，apply检查通过，尚未应用 |
+| R-009源码候选0007 | 保留PIL驱动，只将内嵌配置AUTO ABL行改注释；RAW输入指向nuwa本地配置，其他字段不变，已应用并提交2ab6827d；空AUTO控制流静态通过，尚未编译 |
 
 ## 本轮真实试验与当前设备
 
@@ -42,9 +44,9 @@ R-008首次与用户要求的同包录像复试，均先重新进入bootloader�
 
 ## 下一步
 
-1. R-009等待具体审批。倾向A：先核实空AUTO解析，保留PIL、应用0007仅取消自动ABL，固定新源并构建/静态验收新FD，保留R-008正确头再打包临时对照和Android=1收尾。
-2. B为参照sheng的PIL链独立条件门，同时控制APRIORI/DXE并排除PILProxy/PIL/SPSS；需额外审查协议/DEPEX依赖，改动代价较A大，不自动切换。
-3. H-003记录连续录像待回传，已取得末屏照片，首个NUWA-ENTRY/启动横幅及前后时序仍缺；只差人在场不阻塞静态工作。当前停点是新FD硬停审批，不是录像或Git授权。
+1. 固定并发布本设备CI输入提交，启动pil-no-auto固件构建；按实际终态首错推进，不凭旧产物替代新FD。
+2. 构建成功后下载并严格检查实际RAW SHA/空AUTO、PILDxe原SHA、正确相对头0、SEC标记、四EFI和FD；再按R-009 A受限v4打包/临时试启动并以Android完成1收尾。B未获批准，不自动切换。
+3. H-003连续录像仍可补首屏时序，不阻塞静态/构建工作。R-009暂停已解除，Git/GitHub持续授权。
 4. 入口/BDS打通后仍需目标ADT、内存窗口、真实provider配置、完整预链接与负载才能推进XNU。无QEMU或XNU实机执行通过结论。
 
 ## 固定边界

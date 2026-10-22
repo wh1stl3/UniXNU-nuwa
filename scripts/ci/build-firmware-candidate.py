@@ -26,7 +26,7 @@ def save(name, obj):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--profile', choices=('legacy', 'dedicated', 'sec-trace'), default='legacy')
+    parser.add_argument('--profile', choices=('legacy', 'dedicated', 'sec-trace', 'pil-no-auto'), default='legacy')
     args = parser.parse_args()
     if os.environ.get("GITHUB_ACTIONS") != "true":
         raise RuntimeError("Only the approved disposable Actions build environment is supported")
@@ -36,8 +36,10 @@ def main():
         raise RuntimeError("Fresh source/build tree required; refusing to overwrite")
     work.mkdir()
     OUT.mkdir(parents=True, exist_ok=False)
-    if args.profile in ('dedicated', 'sec-trace'):
-        filename = 'firmware-sec-trace-profile.json' if args.profile == 'sec-trace' else 'firmware-dedicated-profile.json'
+    if args.profile in ('dedicated', 'sec-trace', 'pil-no-auto'):
+        filename = {'dedicated': 'firmware-dedicated-profile.json',
+                    'sec-trace': 'firmware-sec-trace-profile.json',
+                    'pil-no-auto': 'firmware-pil-no-auto-profile.json'}[args.profile]
         profile = json.loads((ROOT / 'config' / filename).read_text())
         recipe, candidate = profile['recipe'], profile['candidate']
     else:
@@ -147,10 +149,11 @@ def main():
         blob = (shimdir / "shim.bin").read_bytes()
         payload_offset = next(int(line.split()[0], 16) for line in symbols.splitlines() if line.endswith(" _Payload"))
         if (payload_offset != len(blob) or blob[56:60] != b"ARM\x64"
-                or struct.unpack_from("<QQ", blob, 8) != (fd_base, len(blob) + fd_size)):
+                or struct.unpack_from("<QQ", blob, 8) != (recipe.get('shim_text_offset', fd_base), len(blob) + fd_size)):
             raise ValueError("BootShim header/payload mismatch")
         save("shim.json", dict(bytes=len(blob), sha256=digest(shimdir / "shim.bin"), payload_offset=payload_offset,
-                               fd_base=hex(fd_base), fd_size=fd_size, image_size=len(blob) + fd_size))
+                               fd_base=hex(fd_base), fd_size=fd_size, image_size=len(blob) + fd_size,
+                               text_offset=recipe.get('shim_text_offset', fd_base)))
         driver = "Platforms/Xiaomi/nuwaPkg/DeviceBuild.py"
         run([sys.executable, driver, "--setup", "-t", "DEBUG"], fw, env, "setup.log")
         run([sys.executable, driver, "--update", "-t", "DEBUG"], fw, env, "update.log")

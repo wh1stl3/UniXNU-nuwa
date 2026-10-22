@@ -830,3 +830,23 @@
 [Evidence] 同机ABL变量分支会将该字段加到KernelBaseAddr；补丁7409eecd的apply检查通过。
 [Risk] R-008 A已获批准，实际变量及SEC执行待对照试验；此提交只改源码。
 ```
+
+## Q-079 · R-009固定源码和新FD构建门
+
+```text
+[unixnu-nuwa][build] 固定取消AUTO ABL源码并接入独立固件CI
+
+[Change] 记录R-009 A批准及PILDxe空列表控制流，新增33输入profile和workflow选项，CI/检查器区分相对头与FD目标并核对实际RAW及原PIL驱动。
+[Evidence] 固件2ab6827d仅两配置路径且等同发布，PILDxe89e030af的零计数跳转静态核对，profile检查及旧R-007产物回归通过。
+[Risk] 新FD编译、空AUTO真实分派及BDS仍待验收；未打包或操作设备，board/feed/内存图保持。
+```
+
+关联固件提交2ab6827d（已等同发布）：
+
+```text
+[unixnu-nuwa][firmware] 保留PIL驱动并取消自动ABL链载
+
+[Change] RAW配置切到nuwa本地副本，仅注释AUTO ABL；RETAIL与全部镜像定义和数值保留。
+[Evidence] 实际PILDxe89e030af静态空列表路径跳过加载循环，补丁0007应用检查通过，用户批准R-009 A。
+[Risk] 空AUTO的真实分派及BDS尚未验证；待独立CI产物检查和临时试启动，未改内存图。
+```
