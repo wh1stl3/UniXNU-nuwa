@@ -39,7 +39,7 @@
 
 通过GitHub树API固定提交、完整树未截断、文档有界摘录及submodule清点存same-soc-remote-inventory.json。0个drivers目录源文件不代表整个仓无适配代码，package已单独纳入清单；没有clone来源仓到本设备仓。官网此次访问失败，未凭缓存宣称官网新状态。
 
-## 下一门：两库真实重链接
+## 两库真实重链接设计与验收
 
 scripts/ci/build-8796-source.py在原配方最后一次make处记录实际展开argv，并继续执行原make。独立archive审查通过后，platform-link-audit.py再使用同一argv，只追加两项：LD_KERNEL_ARCHIVES里的原firehose+ArmCpu/ArmDTPlatform force_load，以及XNU_EXTERNAL_KERNEL_ARCHIVES的真实依赖。
 
@@ -47,4 +47,20 @@ scripts/ci/build-8796-source.py在原配方最后一次make处记录实际展开
 
 此阶段是**源链接验证**：保持原CFLAGS、原crypto/pthread范围、原start.o的ARCH_TIMER=0及全部运行开关，不启用正式nuwa硬件配置，不绕开原boot profile的crypto依赖检查。源provider的运行初始化、时钟、pmap及完整C++ ABI仍待后续真实运行，不把“只追加静态库能链接”写成“已能启动”。缺少运行provider不通过关检查/填stub解决。ArmVirtPlatform不与实机平台一起强制链接。
 
-7项主机命令保护测试通过：保留所有原参数与空/含空格参数、保护旧对象和依赖输出、拒绝已有archive/provider覆盖及非本轮输出树。完整60项源输入、适配shell语法检查通过；真实重链接结果须下一轮CI取证。本轮feed、board和全部_verified保持原值，无预链接/固件/诊断镜像生成或实机动作。
+7项主机命令保护测试通过：保留所有原参数与空/含空格参数、保护旧对象和依赖输出、拒绝已有archive/provider覆盖及非本轮输出树。完整60项源输入、适配shell语法检查通过；真实重链接已由下述CI15取证。本轮feed、board和全部_verified保持原值，无预链接/固件/诊断镜像生成或实机动作。
+
+
+## 第十五轮实际链接成功
+
+[39755850870](https://github.com/wh1stl3/UniXNU/actions/runs/39755850870)输入ca8db300bf68ebc4853e023f08b920da0eab5de0，编译/重链接步骤17:44:57成功，整轮17:45:40成功。完整console 98,925,055字节、1,015,277行；真正第二次make日志17,073,343字节，make退出0，日志hash见reports/kernel-ci/39755850870/build-analysis.json，原件留out。
+
+重链接前源内核SHA93f1c4e0db621081e35fa737812888ebd8d3d8f2d269dd248375a98e714e2d80；加入两库后20,187,888字节，SHA**a9e08c693fec4034f613cd554ea94e5855b25b727b4bfb4af46a4103f565bc7a**。本地下载内核及两个archive的hash均与runner相同。固定NativePrelink解析器独立确认普通ARM64 MH_EXECUTE、8796.141.3/Darwin22.6、0未解析符号、两项标记1，并在实际导出表找到以下五项：
+
+- _armcpu_registered、_armcpu_gic_ready、_armcpu_timer_interrupts；
+- _armdt_platform_configured、_armdt_platform_nvram_proxy。
+
+源输入与真实argv、平台audit、独立导出地址及边界hash见reports/kernel-ci/39755850870/。933份编译记录仍在，51个IIG实现无kernelContent残留，原IORPC头不变；这不是只生成archive而未进入内核的结果。没有消除任何链接error来凑成功。
+
+对最终新内核重新清点相同分析选择：41,095个kernel绑定+24,253个组件绑定，失败0、missing_names为空（reports/donor-compat/ci15-kernel-bindings.json）。未对CI15运行emit；CI13的119段只读plan仍仅归于旧内核，不能平移成CI15完整布局/指令验收。12处PC-relative与完整ABI门继续保留。
+
+**下一门转为真实运行配置**：需审查Darwin22 crypto/pthread初始化、startup ARCH_TIMER条件、CPU/GIC/PSCI与正式平台注册路径，再接boot-progress/watchdog与loader。当前重链接保留所有运行开关，不能称nuwa可启动。feed/board及两个只读资料库无变化，未生成预链接/诊断/固件镜像、未运行本仓XNU于实机、没有_verified=true。

@@ -36,4 +36,7 @@
 - 先完成CPU/GIC/平台专家的Darwin22真实链接及启动基础，再沿UniXNU接UFS、显示与HID。Android模块`.ko`与XNU不兼容；可复用的是真实协议/寄存器实现及板证据，不是原二进制。
 - 触控候选已从未知品牌收窄到ST FTS SPI：后续分别审查SPI传输、固件依赖、reset/IRQ、事件/坐标解析、HID映射与源文件许可，保留最小依赖，不导入整套Linux/Android服务。未生成触控archive或新固件。
 - 面板按实机m2运行态名称追源码；当前MiCode DT树路径搜索未找到对应面板源文件，仍TODO，不搬sheng面板参数。GPU/UFS继续优先UniXNU现有实现，按本机控制器/PHY证据比对。
-- 下一轮CI15只验证ArmCpu+ArmDTPlatform重链接，与本次Android观测分别验收。feed、board、donor身份和所有_verified字段不变；未QEMU、未执行本仓XNU内核。
+- CI15已完成ArmCpu+ArmDTPlatform真实重链接，与本次Android观测分别验收。feed、board、donor身份和所有_verified字段不变；未QEMU、未执行本仓XNU内核。
+
+
+补充静态对照：UniXNU 75bc13d的NativeUfs/GccUfs.h:9为0x01d84000，NativeUfs.cpp:156注释的host窗口0x3000及:272的stream0x60与本机DT原始cell对应。见reports/driver-reuse/ufs-local-crosscheck.json。仅数值对应不足以证明DMA/SMMU接管可运行，不导入任何旁路或MMIO写动作。

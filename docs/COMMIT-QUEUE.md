@@ -486,3 +486,14 @@
 [Evidence] reports/android-driver-evidence/20261022T092529Z为st,spi/fts_touch_spi、运行态m2_38_0c_0a、Adreno740v2/KIOXIA及采集前后boot_completed=1；reports/driver-reuse/st-spi-source-crosscheck.json与MiCode固定提交对照。
 [Risk] 当前Android内核为自定义版本，公开源码不是已证明的精确模块输入；芯片修订/时序、GPL源移植边界和XNU运行未验证；feed/board不变，无写入设备、镜像生成或_verified=true。
 ```
+
+
+## Q-049 · 第十五轮平台真实链接成功
+
+```text
+[unixnu-nuwa][kernel] 确认两平台库真实链接并复核新内核donor绑定
+
+[Change] 保存CI15最终成功证据、真实make参数及下载内核/archives独立核对，更新主线到运行provider与时钟/启动条件；补UFS本机DT与UniXNU源的静态对应。
+[Evidence] reports/kernel-ci/39755850870为20,187,888字节SHAa9e08c69、五平台导出、零undefined、make退出0；reports/donor-compat/ci15-kernel-bindings.json为65,348绑定零失败，来源树tracked clean和feed/board hash不变。
+[Risk] ARCH_TIMER等运行开关仍保持原范围，crypto/pthread、完整布局/PC-relative/ABI及硬件未验证；Android观测不是XNU实机通过，无新镜像或_verified=true。
+```

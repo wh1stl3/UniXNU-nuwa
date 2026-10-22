@@ -1,0 +1,43 @@
+{
+  "base_commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+  "scope": "static comparison only; no register reads or device writes",
+  "android_evidence": "reports/android-driver-evidence/20261022T092529Z/selected-dt-properties.json",
+  "source": [
+    {
+      "path": "drivers/NativeUfs/GccUfs.h",
+      "sha256": "1ef7030533184ecb7efebb8ad3a6fa8e155a8b5b9eea19a6a2af758027d483c3",
+      "lines": [
+        {
+          "line": 9,
+          "text": "#define UFS_HC_BASE                   0x01d84000ULL"
+        }
+      ]
+    },
+    {
+      "path": "drivers/NativeUfs/NativeUfs.cpp",
+      "sha256": "3fbd24df8e9517b30d369fe64f4133aa6fb05bd90577d220dab8c58c0f5232f4",
+      "lines": [
+        {
+          "line": 156,
+          "text": "// (0x1d84000, 0x3000) ranges. The controller is read only if the GCC says its"
+        },
+        {
+          "line": 272,
+          "text": "// streams fault), no stream-match entry for the UFS host (ID 0x60, `iommus = <&apps_smmu 0x60"
+        },
+        {
+          "line": 370,
+          "text": "  smmuBypassStream (0x60, smmuMap, smmuReport, phys, 16384);"
+        },
+        {
+          "line": 714,
+          "text": "// match entry for the UFS stream ID 0x60 (native-ufs-probe=7). SMMUv2 layout: sCR0 0x0,"
+        },
+        {
+          "line": 930,
+          "text": "  smmuBypassStream (0x60, gHost.smmuMap, report, gHost.phys, kDmaBytes);"
+        }
+      ]
+    }
+  ]
+}

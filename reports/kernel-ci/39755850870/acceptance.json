@@ -1,0 +1,36 @@
+{
+  "run": 39755850870,
+  "download_matches_runner": true,
+  "download_kernel_sha256": "a9e08c693fec4034f613cd554ea94e5855b25b727b4bfb4af46a4103f565bc7a",
+  "independent_driver_exports": {
+    "_armcpu_registered": "0xfffffff007abdd00",
+    "_armcpu_gic_ready": "0xfffffff007abdd04",
+    "_armcpu_timer_interrupts": "0xfffffff007abdd08",
+    "_armdt_platform_configured": "0xfffffff007abdf40",
+    "_armdt_platform_nvram_proxy": "0xfffffff007abdf54"
+  },
+  "archives": [
+    {
+      "path": "build/driver-archives/libArmCpu.a",
+      "downloaded": true,
+      "sha256": "31e3d62f093d7f8e02e3f575892fae7e4d8b789d9d620d843f800fa3db1608de",
+      "matches_runner": true
+    },
+    {
+      "path": "build/driver-archives/libArmDTPlatform.a",
+      "downloaded": true,
+      "sha256": "7bd2eed97c7d1f9df47a1aea2fcbd48f37286fe8aeaec4e185589c229e152e47",
+      "matches_runner": true
+    }
+  ],
+  "baseline_sha256": "93f1c4e0db621081e35fa737812888ebd8d3d8f2d269dd248375a98e714e2d80",
+  "runtime_flags_unchanged": true,
+  "device_verified": false,
+  "source_tracked_status": {
+    "UniXNU": "",
+    "UniXNU-sheng": "",
+    "xnu-ios16-full": ""
+  },
+  "board_sha256": "8601b3e5352ab4656e9aefdc22a03d22d531cbb8d465ca11e27fd9aa9d4d38d5",
+  "feed_sha256": "dec145fe25ed9cf1c50292a1e16ccbaa690b450a1de9e1ed687395e5fef88294"
+}

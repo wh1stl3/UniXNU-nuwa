@@ -106,3 +106,5 @@
 2026-10-22 17:34 · ca8db30已发布；第十五轮两库重链接验证已启动，最终结果待取证 · 本提交（Q-047） · reports/kernel-ci/39755850870/
 
 2026-10-22 17:37 · 只读ADB确认ST FTS SPI、活跃m2面板、Adreno740v2与KIOXIA UFS；固定MiCode DT和LineageOS匹配触控来源，Android仍boot_completed=1 · 本提交（Q-048） · reports/android-driver-evidence/20261022T092529Z/；docs/operations/2026-10-22-android-driver-evidence.md
+
+2026-10-22 17:49 · CI15两平台库真实重链接成功，下载五导出/零undefined核对，65348 donor绑定零失败；运行配置和硬件仍待验证 · 本提交（Q-049） · reports/kernel-ci/39755850870/；reports/donor-compat/ci15-kernel-bindings.json
