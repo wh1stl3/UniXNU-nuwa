@@ -4,7 +4,7 @@
 
 ## 当前结论
 
-**R-010 A与D-021日志/恢复门已落地。首轮39826580758缺Mu嵌套依赖，已修复；重试39827372451已进入真实编译，首错为DxeMain.c缺两个私有锁函数声明。已把加锁封装留在Page.c，仍只改两文件、保持锁语义和原内存图；新patch bb8bf3ec及35项输入静态检查通过，待重跑。当前手机已只读确认nuwa Android完成1，尚未启动R-010候选。**
+**R-010 A与D-021已落地。两处实际问题已修复：Mu嵌套依赖和DxeMain私有锁声明；第三轮39828647170在工具安装360秒超时，未编译。实际源使用mirror+file间接选择Azure，已修复该入口并保留签名/限时；当前patch4a859ab6相对上一版仅改锁包装注释。35项静态检查与工作流Bash语法通过，待第四轮。手机此前只读确认nuwa Android完成1，尚未启动R-010候选。**
 
 [本轮审查和候选](operations/2026-10-23-dxe-allocation-source-audit.md)，reports/dxe-allocation-audit/。上轮已证实到候选DXE但断言、未进入BDS/XNU；最后Android完成1为R-009恢复记录，本轮已只读重新确认Android完成1，尚无R-010启动结果。
 
@@ -48,7 +48,7 @@ boot_a/vendor_boot_a/init_boot_a全分区SHA与紧邻试前值相同；未flash/
 
 ## 下一步
 
-1. 发布R-010私有锁封装修订并重跑dxe-allocation CI，按实际第一处错误处理；不扩heap，不修改board/feed。
+1. 发布mirror+file换源修复并重跑dxe-allocation CI，按实际第一处错误处理；不扩heap，不修改board/feed。
 2. 成功后下载真实产物，检查实际DXE核心日志标记、四EFI、SEC、原PIL与空AUTO、相对shim，再制作v4临时包。
 3. 用户已确认可录像，启动前通知；实际动作前重新核对nuwa身份、具体日志通道和Android/fastboot恢复证据。一次受限试启动后恢复Android并确认完成1，实测另记。
 4. H-001/H-003历史人工待办不作为离线阻塞；当前尚未执行R-010启动/刷写动作。见operations/2026-10-23-dxe-allocation-build-trial.md。

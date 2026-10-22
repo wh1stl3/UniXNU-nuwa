@@ -69,6 +69,8 @@ def main():
         raise ValueError('Written package hash mismatch')
     metadata = {'approval': approval, 'scope': args.profile + ' firmware-only temporary v4 container',
                 'allocation_trace': inspection['allocation_trace'],
+                'device_commit': inputs['device_commit'],
+                'diagnostic_patch_sha256': profile['candidate']['patches'][-1]['sha256'] if args.profile == 'dxe-allocation' else None,
                 'run_id': args.run_id, 'firmware_commit': profile['recipe']['sources']['firmware']['commit'],
                 'image_path': path.relative_to(ROOT).as_posix(), 'image_bytes': len(image), 'image_sha256': sha(image),
                 'original_boot_sha256': STOCK_SHA, 'fd_sha256': sha(fd), 'shim_sha256': sha(shim),

@@ -930,3 +930,13 @@
 [Evidence] 39827372451实际DxeMain.c:575/577报私有锁未声明；Imem.h:106/115和Page.c:90/102为真实原型实现，修订bb8bf3ec严格apply及35项静态检查通过。
 [Risk] 修订版完整编译和设备执行未验证；保持原锁语义、内存图、board/feed和断言，不跳过错误或新增驱动替身。
 ```
+
+## Q-088 · 间接APT镜像源修复
+
+```text
+[unixnu-nuwa][build] 修复runner的mirror文件间接选择Azure导致安装超时
+
+[Change] 精确替换已观测mirror+file入口并拒绝未处理间接源，保留签名和原超时；纠正锁包装注释，包证据增加设备提交与诊断patch SHA。
+[Evidence] 39828647170实际URIs为mirror+file且下载仍落Azure，安装360秒124、编译跳过；安装脚本WSL bash -n和35项输入/严格补丁检查通过。
+[Risk] 当前4a859ab6仅注释变更，私有锁修订尚无完整编译结果；新runner下载待验收，未启动设备、改board/feed或内存图。
+```

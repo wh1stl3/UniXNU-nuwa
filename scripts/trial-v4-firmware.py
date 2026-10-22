@@ -65,7 +65,9 @@ def main():
                 or package['pil_driver_sha256'] != '89e030af07847bdc596f0c213bdce0ac430be66e572db55b434d7ec66ad9afcb'
                 or package['shim_sha256'] != '8a3b54765c895a0366539130fdf6e4e4a01e364fe7de067a38d0193606f9d462'):
             raise ValueError('R-009 package exceeds the approved PIL configuration scope')
-        if approval == 'R-010 A' and (not package.get('allocation_trace')
+        r010_profile = json.loads((ROOT / 'config/firmware-dxe-allocation-profile.json').read_text())
+        if approval == 'R-010 A' and (package.get('diagnostic_patch_sha256') != r010_profile['candidate']['patches'][-1]['sha256']
+                or not package.get('allocation_trace')
                 or not all(package['allocation_trace']['markers'].values())):
             raise ValueError('R-010 actual-core allocation diagnostics absent')
         candidate = (ROOT / package['image_path']).resolve()

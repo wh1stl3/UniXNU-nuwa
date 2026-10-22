@@ -1,0 +1,8 @@
+{
+  "original_result": "tool install timeout 124, no compilation or artifact",
+  "observed_source": "URIs: mirror+file:/etc/apt/apt-mirrors.txt -> Azure downloads",
+  "repair": "Replace exact observed indirection with signed archive.ubuntu.com source; fail closed if any mirror+file remains",
+  "bash_syntax_exit_code": 0,
+  "diagnostic_patch_sha256": "4a859ab6108270229fd305d091deaa6cd2d76c37e62dbce823b7e848c73750e1",
+  "diagnostic_change_from_previous": "comment only: wrapper acquires/releases lock"
+}

@@ -115,7 +115,7 @@ CoreNuwaDumpAllocationStateWithLock (
     revised[PAGE] = revised[PAGE].replace(failure,replacement)
     include = '#include "DxeMain.h"\n'
     revised[MAIN] = old[MAIN].replace(include,include+'''
-// Internal diagnostic helper, called only while holding the core memory lock.
+// Internal diagnostic wrapper acquires and releases the core memory lock.
 VOID CoreNuwaDumpAllocationStateWithLock (IN CONST CHAR8 *Stage);
 ''',1)
     target = '  Status = CoreAllEfiServicesAvailable ();\n  if (EFI_ERROR (Status)) {'

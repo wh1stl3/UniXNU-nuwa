@@ -36,10 +36,11 @@ jobs:
           # Keep Ubuntu's signed repositories and change only that mirror hostname.
           mapfile -d '' task_apt_sources < <(find /etc/apt -maxdepth 2 -type f \( -name sources.list -o -name '*.list' -o -name '*.sources' \) -print0)
           test "${#task_apt_sources[@]}" -gt 0
-          sudo sed -i -E 's@https?://azure.archive.ubuntu.com/ubuntu@https://archive.ubuntu.com/ubuntu@g' "${task_apt_sources[@]}"
+          sudo sed -i -E -e 's@https?://azure.archive.ubuntu.com/ubuntu@https://archive.ubuntu.com/ubuntu@g' \
+            -e 's@mirror\+file:/etc/apt/apt-mirrors.txt@https://archive.ubuntu.com/ubuntu@g' "${task_apt_sources[@]}"
           grep -H -E '^(URIs:|[[:space:]]*deb )' "${task_apt_sources[@]}"
-          if grep -H 'azure.archive.ubuntu.com' "${task_apt_sources[@]}"; then
-            echo 'Unreplaced Azure mirror remains in an APT source' >&2
+          if grep -H -E 'azure[.]archive[.]ubuntu[.]com|mirror\+file:' "${task_apt_sources[@]}"; then
+            echo 'Unreplaced Azure mirror or mirror indirection remains in an APT source' >&2
             exit 1
           fi
           sudo env DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \

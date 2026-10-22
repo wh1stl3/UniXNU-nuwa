@@ -1,0 +1,291 @@
+firmware	Install build tools	﻿2026-10-22T18:07:51.2699837Z ##[group]Run set -euo pipefail
+firmware	Install build tools	2026-10-22T18:07:51.2700657Z ^[[36;1mset -euo pipefail^[[0m
+firmware	Install build tools	2026-10-22T18:07:51.2701384Z ^[[36;1m# Previous runner stalled while fetching cross-GCC from the Azure mirror.^[[0m
+firmware	Install build tools	2026-10-22T18:07:51.2702212Z ^[[36;1m# Keep Ubuntu's signed repositories and change only that mirror hostname.^[[0m
+firmware	Install build tools	2026-10-22T18:07:51.2703210Z ^[[36;1mmapfile -d '' task_apt_sources < <(find /etc/apt -maxdepth 2 -type f \( -name sources.list -o -name '*.list' -o -name '*.sources' \) -print0)^[[0m
+firmware	Install build tools	2026-10-22T18:07:51.2704130Z ^[[36;1mtest "${#task_apt_sources[@]}" -gt 0^[[0m
+firmware	Install build tools	2026-10-22T18:07:51.2705069Z ^[[36;1msudo sed -i -E 's@https?://azure.archive.ubuntu.com/ubuntu@https://archive.ubuntu.com/ubuntu@g' "${task_apt_sources[@]}"^[[0m
+firmware	Install build tools	2026-10-22T18:07:51.2705996Z ^[[36;1mgrep -H -E '^(URIs:|[[:space:]]*deb )' "${task_apt_sources[@]}"^[[0m
+firmware	Install build tools	2026-10-22T18:07:51.2706786Z ^[[36;1mif grep -H 'azure.archive.ubuntu.com' "${task_apt_sources[@]}"; then^[[0m
+firmware	Install build tools	2026-10-22T18:07:51.2707561Z ^[[36;1m  echo 'Unreplaced Azure mirror remains in an APT source' >&2^[[0m
+firmware	Install build tools	2026-10-22T18:07:51.2708451Z ^[[36;1m  exit 1^[[0m
+firmware	Install build tools	2026-10-22T18:07:51.2708972Z ^[[36;1mfi^[[0m
+firmware	Install build tools	2026-10-22T18:07:51.2709566Z ^[[36;1msudo env DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \^[[0m
+firmware	Install build tools	2026-10-22T18:07:51.2710257Z ^[[36;1m  timeout --signal=TERM --kill-after=30s 180s \^[[0m
+firmware	Install build tools	2026-10-22T18:07:51.2711021Z ^[[36;1m  apt-get -o Acquire::Retries=2 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update^[[0m
+firmware	Install build tools	2026-10-22T18:07:51.2711834Z ^[[36;1msudo env DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \^[[0m
+firmware	Install build tools	2026-10-22T18:07:51.2712522Z ^[[36;1m  timeout --signal=TERM --kill-after=30s 360s \^[[0m
+firmware	Install build tools	2026-10-22T18:07:51.2713196Z ^[[36;1m  apt-get -o DPkg::Lock::Timeout=60 -o Acquire::Retries=2 \^[[0m
+firmware	Install build tools	2026-10-22T18:07:51.2713898Z ^[[36;1m  -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 \^[[0m
+firmware	Install build tools	2026-10-22T18:07:51.2714812Z ^[[36;1m  install -y --no-install-recommends build-essential uuid-dev nasm clang lld llvm gcc-aarch64-linux-gnu mono-devel gettext python3-venv^[[0m
+firmware	Install build tools	2026-10-22T18:07:51.2715717Z ^[[36;1mpython3 -m venv "$RUNNER_TEMP/firmware-venv"^[[0m
+firmware	Install build tools	2026-10-22T18:07:51.2716378Z ^[[36;1mecho "$RUNNER_TEMP/firmware-venv/bin" >> "$GITHUB_PATH"^[[0m
+firmware	Install build tools	2026-10-22T18:07:51.2847270Z shell: /usr/bin/bash -e {0}
+firmware	Install build tools	2026-10-22T18:07:51.2847955Z env:
+firmware	Install build tools	2026-10-22T18:07:51.2848453Z   GIT_LFS_SKIP_SMUDGE: 1
+firmware	Install build tools	2026-10-22T18:07:51.2848979Z   PYTHONUNBUFFERED: 1
+firmware	Install build tools	2026-10-22T18:07:51.2849499Z   FW_PROFILE: dxe-allocation
+firmware	Install build tools	2026-10-22T18:07:51.2850014Z ##[endgroup]
+firmware	Install build tools	2026-10-22T18:07:51.3035714Z /etc/apt/sources.list.d/ubuntu.sources:URIs: mirror+file:/etc/apt/apt-mirrors.txt
+firmware	Install build tools	2026-10-22T18:07:51.3036785Z /etc/apt/sources.list.d/ubuntu.sources:URIs: mirror+file:/etc/apt/apt-mirrors.txt
+firmware	Install build tools	2026-10-22T18:07:51.3038332Z /etc/apt/sources.list.d/microsoft-prod.list:deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/ubuntu/24.04/prod noble main
+firmware	Install build tools	2026-10-22T18:07:51.3595033Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+firmware	Install build tools	2026-10-22T18:07:51.3864978Z Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+firmware	Install build tools	2026-10-22T18:07:51.4498138Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [568 kB]
+firmware	Install build tools	2026-10-22T18:07:51.4640270Z Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [631 kB]
+firmware	Install build tools	2026-10-22T18:08:00.2193373Z Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
+firmware	Install build tools	2026-10-22T18:08:00.2207550Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+firmware	Install build tools	2026-10-22T18:08:00.2252869Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+firmware	Install build tools	2026-10-22T18:08:00.2277510Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+firmware	Install build tools	2026-10-22T18:08:00.3095763Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1400 kB]
+firmware	Install build tools	2026-10-22T18:08:00.3235510Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [310 kB]
+firmware	Install build tools	2026-10-22T18:08:00.3275281Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1706 kB]
+firmware	Install build tools	2026-10-22T18:08:00.3444997Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [342 kB]
+firmware	Install build tools	2026-10-22T18:08:00.3955186Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1146 kB]
+firmware	Install build tools	2026-10-22T18:08:00.4075639Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [231 kB]
+firmware	Install build tools	2026-10-22T18:08:00.4103344Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1222 kB]
+firmware	Install build tools	2026-10-22T18:08:03.0435064Z Fetched 7938 kB in 9s (840 kB/s)
+firmware	Install build tools	2026-10-22T18:08:03.7205447Z Reading package lists...
+firmware	Install build tools	2026-10-22T18:08:03.7555129Z Reading package lists...
+firmware	Install build tools	2026-10-22T18:08:03.9584424Z Building dependency tree...
+firmware	Install build tools	2026-10-22T18:08:03.9590769Z Reading state information...
+firmware	Install build tools	2026-10-22T18:08:04.0826777Z python3-venv is already the newest version (3.12.3-0ubuntu2.1).
+firmware	Install build tools	2026-10-22T18:08:04.0827317Z The following additional packages will be installed:
+firmware	Install build tools	2026-10-22T18:08:04.0828270Z   binutils-aarch64-linux-gnu ca-certificates-mono cpp-13-aarch64-linux-gnu
+firmware	Install build tools	2026-10-22T18:08:04.0828833Z   cpp-aarch64-linux-gnu gcc-13-aarch64-linux-gnu gcc-13-aarch64-linux-gnu-base
+firmware	Install build tools	2026-10-22T18:08:04.0829309Z   gcc-13-cross-base gcc-14-cross-base libasan8-arm64-cross
+firmware	Install build tools	2026-10-22T18:08:04.0829633Z   libatomic1-arm64-cross libc6-arm64-cross libexif12 libgcc-13-dev-arm64-cross
+firmware	Install build tools	2026-10-22T18:08:04.0830155Z   libgcc-s1-arm64-cross libgdiplus libgif7 libgomp1-arm64-cross
+firmware	Install build tools	2026-10-22T18:08:04.0830592Z   libhwasan0-arm64-cross libitm1-arm64-cross liblsan0-arm64-cross
+firmware	Install build tools	2026-10-22T18:08:04.0831125Z   libmono-2.0-dev libmono-accessibility4.0-cil libmono-cairo4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0831800Z   libmono-cecil-private-cil libmono-cil-dev libmono-codecontracts4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0832343Z   libmono-compilerservices-symbolwriter4.0-cil libmono-corlib4.5-cil
+firmware	Install build tools	2026-10-22T18:08:04.0832848Z   libmono-corlib4.5-dll libmono-cscompmgd0.0-cil libmono-csharp4.0c-cil
+firmware	Install build tools	2026-10-22T18:08:04.0833375Z   libmono-custommarshalers4.0-cil libmono-data-tds4.0-cil libmono-db2-1.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0834074Z   libmono-debugger-soft4.0a-cil libmono-http4.0-cil libmono-i18n-cjk4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0834614Z   libmono-i18n-mideast4.0-cil libmono-i18n-other4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0835032Z   libmono-i18n-rare4.0-cil libmono-i18n-west4.0-cil libmono-i18n4.0-all
+firmware	Install build tools	2026-10-22T18:08:04.0835508Z   libmono-i18n4.0-cil libmono-ldap4.0-cil libmono-management4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0835992Z   libmono-messaging-rabbitmq4.0-cil libmono-messaging4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0836408Z   libmono-microsoft-build-engine4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0836746Z   libmono-microsoft-build-framework4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0837097Z   libmono-microsoft-build-tasks-v4.0-4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0837502Z   libmono-microsoft-build-utilities-v4.0-4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0838073Z   libmono-microsoft-build4.0-cil libmono-microsoft-csharp4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0838490Z   libmono-microsoft-visualc10.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0841039Z   libmono-microsoft-web-infrastructure1.0-cil libmono-oracle4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0841606Z   libmono-parallel4.0-cil libmono-peapi4.0a-cil libmono-posix4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0842132Z   libmono-rabbitmq4.0-cil libmono-relaxng4.0-cil libmono-security4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0842635Z   libmono-sharpzip4.84-cil libmono-simd4.0-cil libmono-smdiagnostics0.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0843166Z   libmono-sqlite4.0-cil libmono-system-componentmodel-composition4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0843644Z   libmono-system-componentmodel-dataannotations4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0844025Z   libmono-system-configuration-install4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0844428Z   libmono-system-configuration4.0-cil libmono-system-core4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0844835Z   libmono-system-data-datasetextensions4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0845267Z   libmono-system-data-entity4.0-cil libmono-system-data-linq4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0845672Z   libmono-system-data-services-client4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0845938Z   libmono-system-data-services4.0-cil libmono-system-data4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0846381Z   libmono-system-deployment4.0-cil libmono-system-design4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0846682Z   libmono-system-drawing-design4.0-cil libmono-system-drawing4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0847009Z   libmono-system-dynamic4.0-cil libmono-system-enterpriseservices4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0847290Z   libmono-system-identitymodel-selectors4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0847512Z   libmono-system-identitymodel4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0847884Z   libmono-system-io-compression-filesystem4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0848191Z   libmono-system-io-compression4.0-cil libmono-system-json-microsoft4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0848529Z   libmono-system-json4.0-cil libmono-system-ldap-protocols4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0848832Z   libmono-system-ldap4.0-cil libmono-system-management4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0849151Z   libmono-system-messaging4.0-cil libmono-system-net-http-formatting4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0849506Z   libmono-system-net-http-webrequest4.0-cil libmono-system-net-http4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0849859Z   libmono-system-net4.0-cil libmono-system-numerics-vectors4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0913431Z   libmono-system-numerics4.0-cil libmono-system-reactive-core2.2-cil
+firmware	Install build tools	2026-10-22T18:08:04.0913856Z   libmono-system-reactive-debugger2.2-cil
+firmware	Install build tools	2026-10-22T18:08:04.0914165Z   libmono-system-reactive-experimental2.2-cil
+firmware	Install build tools	2026-10-22T18:08:04.0914506Z   libmono-system-reactive-interfaces2.2-cil
+firmware	Install build tools	2026-10-22T18:08:04.0914842Z   libmono-system-reactive-linq2.2-cil
+firmware	Install build tools	2026-10-22T18:08:04.0915235Z   libmono-system-reactive-observable-aliases0.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0915668Z   libmono-system-reactive-platformservices2.2-cil
+firmware	Install build tools	2026-10-22T18:08:04.0916040Z   libmono-system-reactive-providers2.2-cil
+firmware	Install build tools	2026-10-22T18:08:04.0916378Z   libmono-system-reactive-runtime-remoting2.2-cil
+firmware	Install build tools	2026-10-22T18:08:04.0916727Z   libmono-system-reactive-windows-forms2.2-cil
+firmware	Install build tools	2026-10-22T18:08:04.0917091Z   libmono-system-reactive-windows-threading2.2-cil
+firmware	Install build tools	2026-10-22T18:08:04.0917472Z   libmono-system-reflection-context4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0917935Z   libmono-system-runtime-caching4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0918282Z   libmono-system-runtime-durableinstancing4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0918729Z   libmono-system-runtime-serialization-formatters-soap4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0919265Z   libmono-system-runtime-serialization4.0-cil libmono-system-runtime4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0919875Z   libmono-system-security4.0-cil libmono-system-servicemodel-activation4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0920385Z   libmono-system-servicemodel-discovery4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0920783Z   libmono-system-servicemodel-internals0.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0921148Z   libmono-system-servicemodel-routing4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0921616Z   libmono-system-servicemodel-web4.0-cil libmono-system-servicemodel4.0a-cil
+firmware	Install build tools	2026-10-22T18:08:04.0922089Z   libmono-system-serviceprocess4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0922451Z   libmono-system-threading-tasks-dataflow4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0922947Z   libmono-system-transactions4.0-cil libmono-system-web-abstractions4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0923817Z   libmono-system-web-applicationservices4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0924177Z   libmono-system-web-dynamicdata4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0924521Z   libmono-system-web-extensions-design4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0924996Z   libmono-system-web-extensions4.0-cil libmono-system-web-http-selfhost4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0925585Z   libmono-system-web-http-webhost4.0-cil libmono-system-web-http4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0926113Z   libmono-system-web-mobile4.0-cil libmono-system-web-mvc3.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0926623Z   libmono-system-web-razor2.0-cil libmono-system-web-regularexpressions4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0927177Z   libmono-system-web-routing4.0-cil libmono-system-web-services4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0927604Z   libmono-system-web-webpages-deployment2.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0928206Z   libmono-system-web-webpages-razor2.0-cil libmono-system-web-webpages2.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0928527Z   libmono-system-web4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0928898Z   libmono-system-windows-forms-datavisualization4.0a-cil
+firmware	Install build tools	2026-10-22T18:08:04.0929185Z   libmono-system-windows-forms4.0-cil libmono-system-windows4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0929446Z   libmono-system-workflow-activities4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0929670Z   libmono-system-workflow-componentmodel4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0929939Z   libmono-system-workflow-runtime4.0-cil libmono-system-xaml4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0930257Z   libmono-system-xml-linq4.0-cil libmono-system-xml-serialization4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0930583Z   libmono-system-xml4.0-cil libmono-system4.0-cil libmono-tasklets4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0930877Z   libmono-webbrowser4.0-cil libmono-webmatrix-data4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.0931170Z   libmono-windowsbase4.0-cil libmono-xbuild-tasks4.0-cil libmonosgen-2.0-1
+firmware	Install build tools	2026-10-22T18:08:04.0931475Z   libmonosgen-2.0-dev libstdc++6-arm64-cross libtsan2-arm64-cross
+firmware	Install build tools	2026-10-22T18:08:04.0931810Z   libubsan1-arm64-cross llvm-runtime mono-4.0-gac mono-gac mono-mcs
+firmware	Install build tools	2026-10-22T18:08:04.0932105Z   mono-runtime mono-runtime-common mono-runtime-sgen mono-xbuild
+firmware	Install build tools	2026-10-22T18:08:04.0932334Z Suggested packages:
+firmware	Install build tools	2026-10-22T18:08:04.0932535Z   binutils-doc gcc-13-locales cpp-13-doc cpp-doc gcc-13-doc manpages-dev
+firmware	Install build tools	2026-10-22T18:08:04.0932822Z   gdb-aarch64-linux-gnu gcc-doc autopoint gettext-doc libasprintf-dev
+firmware	Install build tools	2026-10-22T18:08:04.0933108Z   libgettextpo-dev libgnomeui-0 libgtk2.0-0 librsvg2-2 libgamin0
+firmware	Install build tools	2026-10-22T18:08:04.0933338Z Recommended packages:
+firmware	Install build tools	2026-10-22T18:08:04.0933551Z   libc6-dev-arm64-cross libc6-dev-arm64-cross | libc-dev-arm64-cross
+firmware	Install build tools	2026-10-22T18:08:04.0933880Z   libmono-btls-interface4.0-cil libgluezilla cli-common mono-csharp-shell
+firmware	Install build tools	2026-10-22T18:08:04.0934144Z   binfmt-support
+firmware	Install build tools	2026-10-22T18:08:04.1271298Z The following NEW packages will be installed:
+firmware	Install build tools	2026-10-22T18:08:04.1271659Z   binutils-aarch64-linux-gnu build-essential ca-certificates-mono clang
+firmware	Install build tools	2026-10-22T18:08:04.1272193Z   cpp-13-aarch64-linux-gnu cpp-aarch64-linux-gnu gcc-13-aarch64-linux-gnu
+firmware	Install build tools	2026-10-22T18:08:04.1272667Z   gcc-13-aarch64-linux-gnu-base gcc-13-cross-base gcc-14-cross-base
+firmware	Install build tools	2026-10-22T18:08:04.1273279Z   gcc-aarch64-linux-gnu gettext libasan8-arm64-cross libatomic1-arm64-cross
+firmware	Install build tools	2026-10-22T18:08:04.1273868Z   libc6-arm64-cross libexif12 libgcc-13-dev-arm64-cross libgcc-s1-arm64-cross
+firmware	Install build tools	2026-10-22T18:08:04.1274258Z   libgdiplus libgif7 libgomp1-arm64-cross libhwasan0-arm64-cross
+firmware	Install build tools	2026-10-22T18:08:04.1274616Z   libitm1-arm64-cross liblsan0-arm64-cross libmono-2.0-dev
+firmware	Install build tools	2026-10-22T18:08:04.1275011Z   libmono-accessibility4.0-cil libmono-cairo4.0-cil libmono-cecil-private-cil
+firmware	Install build tools	2026-10-22T18:08:04.1275367Z   libmono-cil-dev libmono-codecontracts4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1275681Z   libmono-compilerservices-symbolwriter4.0-cil libmono-corlib4.5-cil
+firmware	Install build tools	2026-10-22T18:08:04.1276146Z   libmono-corlib4.5-dll libmono-cscompmgd0.0-cil libmono-csharp4.0c-cil
+firmware	Install build tools	2026-10-22T18:08:04.1276560Z   libmono-custommarshalers4.0-cil libmono-data-tds4.0-cil libmono-db2-1.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1276982Z   libmono-debugger-soft4.0a-cil libmono-http4.0-cil libmono-i18n-cjk4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1277512Z   libmono-i18n-mideast4.0-cil libmono-i18n-other4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1277986Z   libmono-i18n-rare4.0-cil libmono-i18n-west4.0-cil libmono-i18n4.0-all
+firmware	Install build tools	2026-10-22T18:08:04.1278297Z   libmono-i18n4.0-cil libmono-ldap4.0-cil libmono-management4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1278600Z   libmono-messaging-rabbitmq4.0-cil libmono-messaging4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1278978Z   libmono-microsoft-build-engine4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1279260Z   libmono-microsoft-build-framework4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1279507Z   libmono-microsoft-build-tasks-v4.0-4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1279776Z   libmono-microsoft-build-utilities-v4.0-4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1280098Z   libmono-microsoft-build4.0-cil libmono-microsoft-csharp4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1280407Z   libmono-microsoft-visualc10.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1280694Z   libmono-microsoft-web-infrastructure1.0-cil libmono-oracle4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1281057Z   libmono-parallel4.0-cil libmono-peapi4.0a-cil libmono-posix4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1281534Z   libmono-rabbitmq4.0-cil libmono-relaxng4.0-cil libmono-security4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1281935Z   libmono-sharpzip4.84-cil libmono-simd4.0-cil libmono-smdiagnostics0.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1282311Z   libmono-sqlite4.0-cil libmono-system-componentmodel-composition4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1282660Z   libmono-system-componentmodel-dataannotations4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1282930Z   libmono-system-configuration-install4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1283234Z   libmono-system-configuration4.0-cil libmono-system-core4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1283562Z   libmono-system-data-datasetextensions4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1283880Z   libmono-system-data-entity4.0-cil libmono-system-data-linq4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1284175Z   libmono-system-data-services-client4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1284478Z   libmono-system-data-services4.0-cil libmono-system-data4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1284802Z   libmono-system-deployment4.0-cil libmono-system-design4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1285143Z   libmono-system-drawing-design4.0-cil libmono-system-drawing4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1285496Z   libmono-system-dynamic4.0-cil libmono-system-enterpriseservices4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1285814Z   libmono-system-identitymodel-selectors4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1286057Z   libmono-system-identitymodel4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1286292Z   libmono-system-io-compression-filesystem4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1286622Z   libmono-system-io-compression4.0-cil libmono-system-json-microsoft4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1286978Z   libmono-system-json4.0-cil libmono-system-ldap-protocols4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1287325Z   libmono-system-ldap4.0-cil libmono-system-management4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1287876Z   libmono-system-messaging4.0-cil libmono-system-net-http-formatting4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1288280Z   libmono-system-net-http-webrequest4.0-cil libmono-system-net-http4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1288644Z   libmono-system-net4.0-cil libmono-system-numerics-vectors4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1288984Z   libmono-system-numerics4.0-cil libmono-system-reactive-core2.2-cil
+firmware	Install build tools	2026-10-22T18:08:04.1289263Z   libmono-system-reactive-debugger2.2-cil
+firmware	Install build tools	2026-10-22T18:08:04.1289500Z   libmono-system-reactive-experimental2.2-cil
+firmware	Install build tools	2026-10-22T18:08:04.1289748Z   libmono-system-reactive-interfaces2.2-cil
+firmware	Install build tools	2026-10-22T18:08:04.1289979Z   libmono-system-reactive-linq2.2-cil
+firmware	Install build tools	2026-10-22T18:08:04.1290234Z   libmono-system-reactive-observable-aliases0.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1290522Z   libmono-system-reactive-platformservices2.2-cil
+firmware	Install build tools	2026-10-22T18:08:04.1290784Z   libmono-system-reactive-providers2.2-cil
+firmware	Install build tools	2026-10-22T18:08:04.1291018Z   libmono-system-reactive-runtime-remoting2.2-cil
+firmware	Install build tools	2026-10-22T18:08:04.1291247Z   libmono-system-reactive-windows-forms2.2-cil
+firmware	Install build tools	2026-10-22T18:08:04.1291483Z   libmono-system-reactive-windows-threading2.2-cil
+firmware	Install build tools	2026-10-22T18:08:04.1291718Z   libmono-system-reflection-context4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1291925Z   libmono-system-runtime-caching4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1292248Z   libmono-system-runtime-durableinstancing4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1292532Z   libmono-system-runtime-serialization-formatters-soap4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1292866Z   libmono-system-runtime-serialization4.0-cil libmono-system-runtime4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1293234Z   libmono-system-security4.0-cil libmono-system-servicemodel-activation4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1293545Z   libmono-system-servicemodel-discovery4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1293773Z   libmono-system-servicemodel-internals0.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1293994Z   libmono-system-servicemodel-routing4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1294286Z   libmono-system-servicemodel-web4.0-cil libmono-system-servicemodel4.0a-cil
+firmware	Install build tools	2026-10-22T18:08:04.1294579Z   libmono-system-serviceprocess4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1294794Z   libmono-system-threading-tasks-dataflow4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1295084Z   libmono-system-transactions4.0-cil libmono-system-web-abstractions4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1295383Z   libmono-system-web-applicationservices4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1295701Z   libmono-system-web-dynamicdata4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1295913Z   libmono-system-web-extensions-design4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1296202Z   libmono-system-web-extensions4.0-cil libmono-system-web-http-selfhost4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1296554Z   libmono-system-web-http-webhost4.0-cil libmono-system-web-http4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1296869Z   libmono-system-web-mobile4.0-cil libmono-system-web-mvc3.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1297195Z   libmono-system-web-razor2.0-cil libmono-system-web-regularexpressions4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1297542Z   libmono-system-web-routing4.0-cil libmono-system-web-services4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1297978Z   libmono-system-web-webpages-deployment2.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1298277Z   libmono-system-web-webpages-razor2.0-cil libmono-system-web-webpages2.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1298560Z   libmono-system-web4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1298779Z   libmono-system-windows-forms-datavisualization4.0a-cil
+firmware	Install build tools	2026-10-22T18:08:04.1299078Z   libmono-system-windows-forms4.0-cil libmono-system-windows4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1299353Z   libmono-system-workflow-activities4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1299575Z   libmono-system-workflow-componentmodel4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1299850Z   libmono-system-workflow-runtime4.0-cil libmono-system-xaml4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1300173Z   libmono-system-xml-linq4.0-cil libmono-system-xml-serialization4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1300507Z   libmono-system-xml4.0-cil libmono-system4.0-cil libmono-tasklets4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1300808Z   libmono-webbrowser4.0-cil libmono-webmatrix-data4.0-cil
+firmware	Install build tools	2026-10-22T18:08:04.1301118Z   libmono-windowsbase4.0-cil libmono-xbuild-tasks4.0-cil libmonosgen-2.0-1
+firmware	Install build tools	2026-10-22T18:08:04.1301423Z   libmonosgen-2.0-dev libstdc++6-arm64-cross libtsan2-arm64-cross
+firmware	Install build tools	2026-10-22T18:08:04.1301729Z   libubsan1-arm64-cross lld llvm llvm-runtime mono-4.0-gac mono-devel mono-gac
+firmware	Install build tools	2026-10-22T18:08:04.1302065Z   mono-mcs mono-runtime mono-runtime-common mono-runtime-sgen mono-xbuild nasm
+firmware	Install build tools	2026-10-22T18:08:04.1302318Z   uuid-dev
+firmware	Install build tools	2026-10-22T18:08:04.1497408Z 0 upgraded, 182 newly installed, 0 to remove and 55 not upgraded.
+firmware	Install build tools	2026-10-22T18:08:04.1497952Z Need to get 96.1 MB of archives.
+firmware	Install build tools	2026-10-22T18:08:04.1498285Z After this operation, 371 MB of additional disk space will be used.
+firmware	Install build tools	2026-10-22T18:08:04.1498659Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+firmware	Install build tools	2026-10-22T18:08:08.9002498Z Get:2 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 mono-runtime-common amd64 6.8.0.105+dfsg-3.6ubuntu2 [1085 kB]
+firmware	Install build tools	2026-10-22T18:08:35.7990191Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libmono-corlib4.5-dll all 6.8.0.105+dfsg-3.6ubuntu2 [1392 kB]
+firmware	Install build tools	2026-10-22T18:09:10.1346919Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libmono-system-core4.0-cil all 6.8.0.105+dfsg-3.6ubuntu2 [342 kB]
+firmware	Install build tools	2026-10-22T18:09:41.5599288Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libmono-system-numerics4.0-cil all 6.8.0.105+dfsg-3.6ubuntu2 [53.3 kB]
+firmware	Install build tools	2026-10-22T18:09:43.3179316Z Get:6 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libmono-system-xml4.0-cil all 6.8.0.105+dfsg-3.6ubuntu2 [910 kB]
+firmware	Install build tools	2026-10-22T18:10:04.1306197Z Get:7 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libmono-system-security4.0-cil all 6.8.0.105+dfsg-3.6ubuntu2 [125 kB]
+firmware	Install build tools	2026-10-22T18:10:08.8472885Z Get:8 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libmono-system-configuration4.0-cil all 6.8.0.105+dfsg-3.6ubuntu2 [60.4 kB]
+firmware	Install build tools	2026-10-22T18:10:10.8089728Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libmono-system4.0-cil all 6.8.0.105+dfsg-3.6ubuntu2 [902 kB]
+firmware	Install build tools	2026-10-22T18:10:29.5351491Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libmono-security4.0-cil all 6.8.0.105+dfsg-3.6ubuntu2 [106 kB]
+firmware	Install build tools	2026-10-22T18:10:32.3069563Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 mono-4.0-gac all 6.8.0.105+dfsg-3.6ubuntu2 [174 kB]
+firmware	Install build tools	2026-10-22T18:10:36.4453799Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 mono-gac all 6.8.0.105+dfsg-3.6ubuntu2 [19.4 kB]
+firmware	Install build tools	2026-10-22T18:10:37.1993971Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 mono-runtime-sgen amd64 6.8.0.105+dfsg-3.6ubuntu2 [1934 kB]
+firmware	Install build tools	2026-10-22T18:11:19.7886100Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 mono-runtime amd64 6.8.0.105+dfsg-3.6ubuntu2 [15.2 kB]
+firmware	Install build tools	2026-10-22T18:11:38.2178069Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libmono-corlib4.5-cil all 6.8.0.105+dfsg-3.6ubuntu2 [13.2 kB]
+firmware	Install build tools	2026-10-22T18:11:38.8909513Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 ca-certificates-mono all 6.8.0.105+dfsg-3.6ubuntu2 [18.9 kB]
+firmware	Install build tools	2026-10-22T18:11:46.7986266Z Get:17 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 build-essential amd64 12.10ubuntu1 [4928 B]
+firmware	Install build tools	2026-10-22T18:11:47.5512866Z Get:18 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 clang amd64 1:18.0-59~exp2 [5846 B]
+firmware	Install build tools	2026-10-22T18:11:48.3446548Z Get:19 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 gcc-13-aarch64-linux-gnu-base amd64 13.3.0-6ubuntu2~24.04.1cross1 [51.9 kB]
+firmware	Install build tools	2026-10-22T18:11:49.7030009Z Get:20 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 cpp-13-aarch64-linux-gnu amd64 13.3.0-6ubuntu2~24.04.1cross1 [10.8 MB]
+firmware	Install build tools	2026-10-22T18:14:03.7494461Z ##[error]Process completed with exit code 124.
+firmware	Preserve evidence and approved artifacts	﻿2026-10-22T18:14:03.7567559Z ##[group]Run actions/upload-artifact@v4
+firmware	Preserve evidence and approved artifacts	2026-10-22T18:14:03.7567950Z with:
+firmware	Preserve evidence and approved artifacts	2026-10-22T18:14:03.7568078Z   name: nuwa-firmware-39828647170
+firmware	Preserve evidence and approved artifacts	2026-10-22T18:14:03.7568237Z   path: out/firmware-ci
+firmware	Preserve evidence and approved artifacts	2026-10-22T18:14:03.7568375Z   if-no-files-found: error
+firmware	Preserve evidence and approved artifacts	2026-10-22T18:14:03.7568515Z   compression-level: 6
+firmware	Preserve evidence and approved artifacts	2026-10-22T18:14:03.7568641Z   retention-days: 14
+firmware	Preserve evidence and approved artifacts	2026-10-22T18:14:03.7568760Z   overwrite: false
+firmware	Preserve evidence and approved artifacts	2026-10-22T18:14:03.7568884Z   include-hidden-files: false
+firmware	Preserve evidence and approved artifacts	2026-10-22T18:14:03.7569031Z env:
+firmware	Preserve evidence and approved artifacts	2026-10-22T18:14:03.7569147Z   GIT_LFS_SKIP_SMUDGE: 1
+firmware	Preserve evidence and approved artifacts	2026-10-22T18:14:03.7569276Z   PYTHONUNBUFFERED: 1
+firmware	Preserve evidence and approved artifacts	2026-10-22T18:14:03.7569408Z   FW_PROFILE: dxe-allocation
+firmware	Preserve evidence and approved artifacts	2026-10-22T18:14:03.7569553Z ##[endgroup]
+firmware	Preserve evidence and approved artifacts	2026-10-22T18:14:03.8823899Z (node:2699) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+firmware	Preserve evidence and approved artifacts	2026-10-22T18:14:03.8824623Z (Use `node --trace-deprecation ...` to show where the warning was created)
+firmware	Preserve evidence and approved artifacts	2026-10-22T18:14:03.8850256Z ##[error]No files were found with the provided path: out/firmware-ci. No artifacts will be uploaded.

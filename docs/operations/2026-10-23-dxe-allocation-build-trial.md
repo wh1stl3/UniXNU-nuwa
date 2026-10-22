@@ -28,3 +28,12 @@ submodules-final.txt显示Mu嵌套gitlink均为未初始化（前导减号），
 5m10s失败，build.log:1714/1721首报DxeMain.c:575/577未声明CoreAcquireMemoryLock/CoreReleaseMemoryLock；前轮嵌套依赖问题已消失，实际核心C编译开始。下载所有inventory项逐一验证，准确错误行/原build.log摘要见compile-errors.json，原完整build.log仍在本机out证据包。
 
 这两个函数在固定Mu Mem/Imem.h:106/115声明、Page.c:90/102实现，DxeMain.h未导出；草案静态apply不检查C声明可见性，不能当编译证明。修复不手写既有原型、不禁用-Werror、不改锁：Page.c新增CoreNuwaDumpAllocationStateWithLock包装，在其原有可见上下文取锁/快照/放锁；DxeMain只声明并调用包装。首次分配失败仍使用原已持锁的内部快照。保持两文件和日志语义，patch更新为bb8bf3ece733c4410e33477da65e414841a7b890f4f3c54d94c651af47ca3af2，原修订证据保留preview-at-build.json。35项输入及严格apply检查再次通过，修订版实际编译未验证。
+
+
+## 第三轮39828647170工具安装超时
+
+本轮只运行到Install build tools，360秒超时124，编译步骤跳过，out未创建，因此无artifact；服务端失败日志已保存failed-actions.log。实际ubuntu.sources的URIs为mirror+file:/etc/apt/apt-mirrors.txt，两条均如此；apt update和install继续使用Azure，最后下载cpp-13-aarch64-linux-gnu 10.8MB处超时。原sed只处理sources内直接Azure URL，无法触及间接mirrorlist。
+
+修复仅把本次明确观测的mirror+file URI换为https://archive.ubuntu.com/ubuntu，Signed-By、Suites、Components原样保留；预检遇残留Azure或任何未处理mirror+file即失败，不放宽签名或延长超时。工作流安装脚本经WSL bash -n通过。尚未证明新runner下载完成。
+
+顺手纠正DxeMain包装声明的旧注释为“wrapper acquires and releases the core memory lock”，无C语义变化；当前0008 SHA4a859ab6108270229fd305d091deaa6cd2d76c37e62dbce823b7e848c73750e1，35项原/后输入及严格apply再次通过。包报告增加实际设备提交/诊断patch SHA，启动门核对当前精确profile补丁。

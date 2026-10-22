@@ -92,7 +92,7 @@
  
  #include "DxeMain.h"
 +
-+// Internal diagnostic helper, called only while holding the core memory lock.
++// Internal diagnostic wrapper acquires and releases the core memory lock.
 +VOID CoreNuwaDumpAllocationStateWithLock (IN CONST CHAR8 *Stage);
  
  //
