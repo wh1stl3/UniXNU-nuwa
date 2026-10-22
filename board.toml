@@ -1,0 +1,24 @@
+[board]
+name = "nuwa"
+soc = "SM8550"
+description = "Xiaomi 13 Pro / iOS 16 bring-up"
+example = true
+# TODO: kit，尚无经审查的nuwa平台kit，不能照抄sheng实现。
+
+[ipsw]
+product = "iPhone10,3"
+version = "16.7.16"
+build = "20H392"
+device_class = "d22ap"
+# TODO: url/chip_id/board_id/sha256；缺donor BuildManifest及组件哈希核对。
+
+[payload.adt]
+ipad_identity = true
+# TODO: tool/chip_id/cpu_regs/psci_method等，待nuwa ADT来源核对。
+# TODO: owned_memory_size，缺UEFI可用连续区证据；D-002先512MiB–1GiB，上限8GiB。
+# TODO: [payload] dram_size，物理DRAM描述尚需核对，不能当作窗口大小。
+# TODO: [userdata] LBA与lba_bytes，缺本轮GPT证据核对。
+# TODO: [kernel] defconfig/archives，缺8796配置及Darwin22接口审查。
+# TODO: [kernel.prelink] 全部数值，缺donor kernelcache分析；不借sheng/fuxi值。
+# TODO: [firmware] 配置/路径，uefi-nuwa尚未建立。
+# TODO: [bootimg.image] 地址/offset/pagesize/header_version，缺nuwa装载证据。
