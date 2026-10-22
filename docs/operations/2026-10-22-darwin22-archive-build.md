@@ -37,3 +37,15 @@ ccaad74d8862a060efbed259a1335f4a79258f04已发布，运行39742250205已启动�
 ## 第十二轮启动（2026-10-22 16:05）
 
 最小修复562c22fda45118f46b450390045a53b5a739f981已按相同Git对象发布，第十二轮39744948467已启动。仍为59项输入、严格archive检查，运行最终结果待取证；见reports/kernel-ci/39744948467/。未在本轮合入VFS或改board/feed，便于核对真实首错。
+
+## 第十二轮真实结果与C++诊断/声明收口（2026-10-22 16:21）
+
+整体failure，源内核仍kernel_built=true，933份记录和四项原对象均有效；原内核SHA73cc11b99f1541ac36a51a70cd5f88265ff76559c0399a7090026b2cc0790eee已检查。libsa不存在路径已实际移除，没有再次触发该错误。
+
+ArmCpu实际26条错误均是诊断升级，分类见failure-categories.json：11条missing-designated-field-initializers、9条suggest-override、1条suggest-destructor-override、5条missing-prototypes。首次原始行852100为vm_kern.h遗漏kmg_type_hash的指定初始化；其余包括旧OSMetaClass声明、IOLib/kalloc宏以及ArmCpu五个真实C导出。本轮没有报告缺类型/字段定义或调用类型不兼容，但不由此推断完整ABI通过。
+
+下一候选仅对前三类添加-Wno-error=<精确名称>，仍显示警告，不改任何头文件/结构/初始化表达式，不关闭其余-Werror或函数原型检查。过去的“所有警告均为error”范围在此明确收窄为三项有证据的风格兼容例外；未知/类型/头文件缺失错误仍拒绝。原始编译器行为及数据初始化语义不因诊断严重度改变。
+
+五项missing-prototypes通过include/nuwa/ArmCpuExports.h补前置声明解决：gic_diag、sgi_selfprobe、ipi_selftest、spi_attach、spi_count。只在ArmCpu编译强制包含该声明头，记录hash；声明与固定上游实际定义逐项去空白一致，见prototype-check.json，没有新增实现、stub或修改硬件行为。4项命令保护测试通过，真实编译待下一轮。
+
+下一轮也含Q-040已审查的VFS真实函数，共60项231 hunks；第十二轮为59项，不能把静态候选当作本轮已编译。原始控制台81,798,190字节、852406行，SHAfe08444e15402d0c6829b58a14efdb424112d93189d1acb6b81eab2a0853f753，原件留out；有界证据见reports/kernel-ci/39744948467/。

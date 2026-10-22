@@ -1,0 +1,144 @@
+{
+  "error_count": 26,
+  "groups": {
+    "-Werror,-Wmissing-designated-field-initializers": 11,
+    "-Werror,-Wsuggest-override": 9,
+    "-Werror,-Wsuggest-destructor-override": 1,
+    "-Werror,-Wmissing-prototypes": 5
+  },
+  "errors": [
+    {
+      "line": 8,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/osfmk/vm/vm_kern.h:629:2: error: missing field 'kmg_type_hash' initializer [-Werror,-Wmissing-designated-field-initializers]",
+      "group": "-Werror,-Wmissing-designated-field-initializers"
+    },
+    {
+      "line": 11,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/osfmk/vm/vm_kern.h:698:2: error: missing field 'kmg_type_hash' initializer [-Werror,-Wmissing-designated-field-initializers]",
+      "group": "-Werror,-Wmissing-designated-field-initializers"
+    },
+    {
+      "line": 20,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:1149:15: error: 'retain' overrides a member function but is not marked 'override' [-Werror,-Wsuggest-override]",
+      "group": "-Werror,-Wsuggest-override"
+    },
+    {
+      "line": 26,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:1163:15: error: 'release' overrides a member function but is not marked 'override' [-Werror,-Wsuggest-override]",
+      "group": "-Werror,-Wsuggest-override"
+    },
+    {
+      "line": 32,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:1180:15: error: 'release' overrides a member function but is not marked 'override' [-Werror,-Wsuggest-override]",
+      "group": "-Werror,-Wsuggest-override"
+    },
+    {
+      "line": 38,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:1197:15: error: 'taggedRetain' overrides a member function but is not marked 'override' [-Werror,-Wsuggest-override]",
+      "group": "-Werror,-Wsuggest-override"
+    },
+    {
+      "line": 44,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:1214:15: error: 'taggedRelease' overrides a member function but is not marked 'override' [-Werror,-Wsuggest-override]",
+      "group": "-Werror,-Wsuggest-override"
+    },
+    {
+      "line": 50,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:1232:15: error: 'taggedRelease' overrides a member function but is not marked 'override' [-Werror,-Wsuggest-override]",
+      "group": "-Werror,-Wsuggest-override"
+    },
+    {
+      "line": 56,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:1252:14: error: 'getRetainCount' overrides a member function but is not marked 'override' [-Werror,-Wsuggest-override]",
+      "group": "-Werror,-Wsuggest-override"
+    },
+    {
+      "line": 62,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:1265:30: error: 'getMetaClass' overrides a member function but is not marked 'override' [-Werror,-Wsuggest-override]",
+      "group": "-Werror,-Wsuggest-override"
+    },
+    {
+      "line": 68,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:1337:2: error: '~OSMetaClass' overrides a destructor but is not marked 'override' [-Werror,-Wsuggest-destructor-override]",
+      "group": "-Werror,-Wsuggest-destructor-override"
+    },
+    {
+      "line": 74,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:2615:15: error: 'serialize' overrides a member function but is not marked 'override' [-Werror,-Wsuggest-override]",
+      "group": "-Werror,-Wsuggest-override"
+    },
+    {
+      "line": 86,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:980:2: error: missing field 'kt_zshared' initializer [-Werror,-Wmissing-designated-field-initializers]",
+      "group": "-Werror,-Wmissing-designated-field-initializers"
+    },
+    {
+      "line": 107,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:980:2: error: missing field 'kt_zshared' initializer [-Werror,-Wmissing-designated-field-initializers]",
+      "group": "-Werror,-Wmissing-designated-field-initializers"
+    },
+    {
+      "line": 126,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:985:2: error: missing field 'kt_stats' initializer [-Werror,-Wmissing-designated-field-initializers]",
+      "group": "-Werror,-Wmissing-designated-field-initializers"
+    },
+    {
+      "line": 154,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:985:2: error: missing field 'kt_stats' initializer [-Werror,-Wmissing-designated-field-initializers]",
+      "group": "-Werror,-Wmissing-designated-field-initializers"
+    },
+    {
+      "line": 180,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:985:2: error: missing field 'kt_zshared' initializer [-Werror,-Wmissing-designated-field-initializers]",
+      "group": "-Werror,-Wmissing-designated-field-initializers"
+    },
+    {
+      "line": 199,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:985:2: error: missing field 'kt_zshared' initializer [-Werror,-Wmissing-designated-field-initializers]",
+      "group": "-Werror,-Wmissing-designated-field-initializers"
+    },
+    {
+      "line": 217,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSValueObject.h:472:10: error: missing field 'kt_zshared' initializer [-Werror,-Wmissing-designated-field-initializers]",
+      "group": "-Werror,-Wmissing-designated-field-initializers"
+    },
+    {
+      "line": 231,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSValueObject.h:487:2: error: missing field 'kt_zshared' initializer [-Werror,-Wmissing-designated-field-initializers]",
+      "group": "-Werror,-Wmissing-designated-field-initializers"
+    },
+    {
+      "line": 240,
+      "text": "/Users/runner/work/UniXNU/UniXNU/base/drivers/ArmCpu/ArmCpu.cpp:87:1: error: missing field 'kt_zshared' initializer [-Werror,-Wmissing-designated-field-initializers]",
+      "group": "-Werror,-Wmissing-designated-field-initializers"
+    },
+    {
+      "line": 261,
+      "text": "/Users/runner/work/UniXNU/UniXNU/base/drivers/ArmCpu/ArmCpu.cpp:632:17: error: no previous prototype for function 'armcpu_gic_diag' [-Werror,-Wmissing-prototypes]",
+      "group": "-Werror,-Wmissing-prototypes"
+    },
+    {
+      "line": 268,
+      "text": "/Users/runner/work/UniXNU/UniXNU/base/drivers/ArmCpu/ArmCpu.cpp:663:17: error: no previous prototype for function 'armcpu_sgi_selfprobe' [-Werror,-Wmissing-prototypes]",
+      "group": "-Werror,-Wmissing-prototypes"
+    },
+    {
+      "line": 275,
+      "text": "/Users/runner/work/UniXNU/UniXNU/base/drivers/ArmCpu/ArmCpu.cpp:715:17: error: no previous prototype for function 'armcpu_ipi_selftest' [-Werror,-Wmissing-prototypes]",
+      "group": "-Werror,-Wmissing-prototypes"
+    },
+    {
+      "line": 282,
+      "text": "/Users/runner/work/UniXNU/UniXNU/base/drivers/ArmCpu/ArmCpu.cpp:784:21: error: no previous prototype for function 'armcpu_spi_attach' [-Werror,-Wmissing-prototypes]",
+      "group": "-Werror,-Wmissing-prototypes"
+    },
+    {
+      "line": 289,
+      "text": "/Users/runner/work/UniXNU/UniXNU/base/drivers/ArmCpu/ArmCpu.cpp:816:21: error: no previous prototype for function 'armcpu_spi_count' [-Werror,-Wmissing-prototypes]",
+      "group": "-Werror,-Wmissing-prototypes"
+    }
+  ],
+  "source_kernel_built": true,
+  "archive_built": false,
+  "device_verified": false
+}

@@ -11,6 +11,12 @@ import platform
 import struct
 import subprocess
 
+ROOT = Path(__file__).resolve().parents[2]
+# Preserve diagnostics from old upstream headers/macros without changing their
+# definitions, ABI or initializer semantics. All other warnings remain errors.
+HEADER_STYLE_WARNINGS = ('missing-designated-field-initializers',
+                         'suggest-override', 'suggest-destructor-override')
+
 
 def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -72,6 +78,7 @@ def driver_command(record, source, destination, work, removed_includes=None):
         raise ValueError('Ambiguous original source or object output')
     command += ['-Wall', '-Wextra', '-Werror', '-Wno-unused-parameter',
                 '-I', str(work / '.cache/xnu-work/osfmk')]
+    command += ['-Wno-error=' + warning for warning in HEADER_STYLE_WARNINGS]
     return command
 
 
@@ -126,7 +133,8 @@ def main():
     report_dir.mkdir(exist_ok=False)
     summary = {'scope': 'compile/archive and global symbol-name closure only; no kernel relink',
                'components': [], 'passed': False, 'device_verified': False,
-               'hardware_execution': False}
+               'hardware_execution': False,
+               'visible_header_style_warning_exceptions': list(HEADER_STYLE_WARNINGS)}
     try:
         records = {}
         for name in ('startup.o.json', 'kern_exec.o.json', 'IOPlatformExpert.cpo.json', 'prng_random.o.json'):
@@ -149,9 +157,13 @@ def main():
             archive = out / ('lib' + component + '.a')
             removed_includes = []
             command = driver_command(record, source, obj, work, removed_includes)
+            forced_header = ROOT / 'include/nuwa/ArmCpuExports.h' if component == 'ArmCpu' else None
+            if forced_header:
+                command += ['-include', str(forced_header)]
             item = {'component': component, 'source': str(source), 'source_sha256': sha(source),
                     'arguments': command, 'directory': record['directory'], 'compiled': False,
-                    'omitted_missing_include_directories': removed_includes}
+                    'omitted_missing_include_directories': removed_includes,
+                    'declaration_header_sha256': sha(forced_header) if forced_header else None}
             summary['components'].append(item)
             print('+', ' '.join(command), flush=True)
             result = subprocess.run(command, cwd=record['directory'], text=True,

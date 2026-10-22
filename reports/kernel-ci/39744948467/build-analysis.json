@@ -1,0 +1,180 @@
+{
+  "run_id": 39744948467,
+  "command": "gh run download 39744948467 --repo wh1stl3/UniXNU --dir out/kernel-ci/39744948467",
+  "console_path": "out\\kernel-ci\\39744948467\\nuwa-8796-source-39744948467\\nuwa-host\\kernel-console.log",
+  "console_bytes": 81798190,
+  "console_sha256": "fe08444e15402d0c6829b58a14efdb424112d93189d1acb6b81eab2a0853f753",
+  "console_lines": 852406,
+  "excerpt_trailing_whitespace_trimmed": true,
+  "diagnostics": [
+    {
+      "original_line": 852100,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/osfmk/vm/vm_kern.h:629:2: error: missing field 'kmg_type_hash' initializer [-Werror,-Wmissing-designated-field-initializers]"
+    },
+    {
+      "original_line": 852103,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/osfmk/vm/vm_kern.h:698:2: error: missing field 'kmg_type_hash' initializer [-Werror,-Wmissing-designated-field-initializers]"
+    },
+    {
+      "original_line": 852112,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:1149:15: error: 'retain' overrides a member function but is not marked 'override' [-Werror,-Wsuggest-override]"
+    },
+    {
+      "original_line": 852118,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:1163:15: error: 'release' overrides a member function but is not marked 'override' [-Werror,-Wsuggest-override]"
+    },
+    {
+      "original_line": 852124,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:1180:15: error: 'release' overrides a member function but is not marked 'override' [-Werror,-Wsuggest-override]"
+    },
+    {
+      "original_line": 852130,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:1197:15: error: 'taggedRetain' overrides a member function but is not marked 'override' [-Werror,-Wsuggest-override]"
+    },
+    {
+      "original_line": 852136,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:1214:15: error: 'taggedRelease' overrides a member function but is not marked 'override' [-Werror,-Wsuggest-override]"
+    },
+    {
+      "original_line": 852142,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:1232:15: error: 'taggedRelease' overrides a member function but is not marked 'override' [-Werror,-Wsuggest-override]"
+    },
+    {
+      "original_line": 852148,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:1252:14: error: 'getRetainCount' overrides a member function but is not marked 'override' [-Werror,-Wsuggest-override]"
+    },
+    {
+      "original_line": 852154,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:1265:30: error: 'getMetaClass' overrides a member function but is not marked 'override' [-Werror,-Wsuggest-override]"
+    },
+    {
+      "original_line": 852160,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:1337:2: error: '~OSMetaClass' overrides a destructor but is not marked 'override' [-Werror,-Wsuggest-destructor-override]"
+    },
+    {
+      "original_line": 852166,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:2615:15: error: 'serialize' overrides a member function but is not marked 'override' [-Werror,-Wsuggest-override]"
+    },
+    {
+      "original_line": 852178,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:980:2: error: missing field 'kt_zshared' initializer [-Werror,-Wmissing-designated-field-initializers]"
+    },
+    {
+      "original_line": 852199,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:980:2: error: missing field 'kt_zshared' initializer [-Werror,-Wmissing-designated-field-initializers]"
+    },
+    {
+      "original_line": 852218,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:985:2: error: missing field 'kt_stats' initializer [-Werror,-Wmissing-designated-field-initializers]"
+    },
+    {
+      "original_line": 852246,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:985:2: error: missing field 'kt_stats' initializer [-Werror,-Wmissing-designated-field-initializers]"
+    },
+    {
+      "original_line": 852272,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:985:2: error: missing field 'kt_zshared' initializer [-Werror,-Wmissing-designated-field-initializers]"
+    },
+    {
+      "original_line": 852291,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/IOKit/IOLib.h:985:2: error: missing field 'kt_zshared' initializer [-Werror,-Wmissing-designated-field-initializers]"
+    },
+    {
+      "original_line": 852309,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSValueObject.h:472:10: error: missing field 'kt_zshared' initializer [-Werror,-Wmissing-designated-field-initializers]"
+    },
+    {
+      "original_line": 852323,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSValueObject.h:487:2: error: missing field 'kt_zshared' initializer [-Werror,-Wmissing-designated-field-initializers]"
+    },
+    {
+      "original_line": 852332,
+      "text": "/Users/runner/work/UniXNU/UniXNU/base/drivers/ArmCpu/ArmCpu.cpp:87:1: error: missing field 'kt_zshared' initializer [-Werror,-Wmissing-designated-field-initializers]"
+    },
+    {
+      "original_line": 852353,
+      "text": "/Users/runner/work/UniXNU/UniXNU/base/drivers/ArmCpu/ArmCpu.cpp:632:17: error: no previous prototype for function 'armcpu_gic_diag' [-Werror,-Wmissing-prototypes]"
+    },
+    {
+      "original_line": 852360,
+      "text": "/Users/runner/work/UniXNU/UniXNU/base/drivers/ArmCpu/ArmCpu.cpp:663:17: error: no previous prototype for function 'armcpu_sgi_selfprobe' [-Werror,-Wmissing-prototypes]"
+    },
+    {
+      "original_line": 852367,
+      "text": "/Users/runner/work/UniXNU/UniXNU/base/drivers/ArmCpu/ArmCpu.cpp:715:17: error: no previous prototype for function 'armcpu_ipi_selftest' [-Werror,-Wmissing-prototypes]"
+    },
+    {
+      "original_line": 852374,
+      "text": "/Users/runner/work/UniXNU/UniXNU/base/drivers/ArmCpu/ArmCpu.cpp:784:21: error: no previous prototype for function 'armcpu_spi_attach' [-Werror,-Wmissing-prototypes]"
+    },
+    {
+      "original_line": 852381,
+      "text": "/Users/runner/work/UniXNU/UniXNU/base/drivers/ArmCpu/ArmCpu.cpp:816:21: error: no previous prototype for function 'armcpu_spi_count' [-Werror,-Wmissing-prototypes]"
+    },
+    {
+      "original_line": 852395,
+      "text": "RuntimeError: ArmCpu compile failed; see its actual compiler log"
+    }
+  ],
+  "iorpc_header_unchanged": true,
+  "generated_kernel_content_files": 0,
+  "object_count_all_builds": 870,
+  "xnu_target_object_count": 841,
+  "key_objects": {
+    "ast.o": [
+      {
+        "path": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/ast.o",
+        "bytes": 73896,
+        "sha256": "21a6c61593bdff78f0d3b5466b72ac7e0f8b07c7c8709df8b824dfbeea721874"
+      }
+    ],
+    "processor.o": [
+      {
+        "path": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/processor.o",
+        "bytes": 143264,
+        "sha256": "5226e6a12dfdaa02c1a515f1a5d3e6735937270fe52e8c5de7188f6b699b4d42"
+      }
+    ]
+  },
+  "kernel_built": true,
+  "device_verified": false,
+  "additional_reports": [
+    {
+      "path": "compile-records\\bsd\\DEVELOPMENT\\kern_exec.o.json",
+      "bytes": 8256,
+      "sha256": "20251ceeaa30e7bde0cca43414082db2ca006e87c38f935548ec536f11ada855",
+      "copied": true
+    },
+    {
+      "path": "compile-records\\iokit\\DEVELOPMENT\\IOPlatformExpert.cpo.json",
+      "bytes": 8813,
+      "sha256": "ba34eecd7078f8900ff0e719d226d3ea2c014656050ecb3ed48476f9f850451d",
+      "copied": true
+    },
+    {
+      "path": "compile-records\\osfmk\\DEVELOPMENT\\prng_random.o.json",
+      "bytes": 8293,
+      "sha256": "e6b5c4b47ed16c3e9e04985b490028743627fbeac664a0858edd504c102c1ecc",
+      "copied": true
+    },
+    {
+      "path": "compile-records\\osfmk\\DEVELOPMENT\\startup.o.json",
+      "bytes": 8311,
+      "sha256": "870b0c8b2ce98c8f57f8fc64a6a3c7e77228af841a9f60bed932e354faa92cf5",
+      "copied": true
+    },
+    {
+      "path": "driver-archives\\ArmCpu.log",
+      "bytes": 26407,
+      "sha256": "3e403967ce984419c2223678ead85ebe2a6f03e97ab6b615dcac068f8b7f92f3",
+      "copied": true
+    },
+    {
+      "path": "driver-archives\\audit.json",
+      "bytes": 66343,
+      "sha256": "13e67afa9d8292da395446bcc15cc713a5d8c772dade0796bc6e0e4ec5b6a522",
+      "copied": true
+    }
+  ],
+  "uio_alignment_errors_observed": false
+}

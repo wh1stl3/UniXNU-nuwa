@@ -289,3 +289,5 @@ D-012补充（2026-10-22 16:03）：第十一轮真实源内核再次构建成�
 - 证据：reports/donor-compat/；operations/2026-10-22-donor-vfs-bridge.md。
 
 对同一真实donor的65,348项指针表，当前内核唯一缺失为APFS使用的_vfs_getvfs_with_vfsops，参考run24为0。回移真实上游函数、声明和导出，不填假地址或成功stub；函数及底层mount查找的锁/引用语义静态一致。保持feed、board、原48项选择和既定iOS16目标；下一轮增加1项donor候选，与11项CI兼容分别计数。仅指针名清点不构成完整布局/指令/ABI验收，后续仍以实际Mach-O和只读plan为证据。
+
+D-012补充（2026-10-22 16:21）：第十二轮无效libsa路径已实际移除、源内核和933份记录仍成功；平台编译被26条诊断升级拒绝。仅missing-designated-field-initializers、suggest-override、suggest-destructor-override三类保留为可见警告，不改旧头文件/结构/初始化，不关闭其余-Werror；五项C导出补与真实定义一致的前置声明，missing-prototypes检查保留。该诊断范围取代此前无例外的-Werror描述，未将风格警告当作ABI失败或成功。证据reports/kernel-ci/39744948467/，实际archive待后续CI。

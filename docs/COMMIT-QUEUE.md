@@ -401,3 +401,13 @@
 [Evidence] reports/donor-compat/：65,348项计数与参考报告一致，本仓1缺失而run24为0；函数及lookup锁/引用语义与上游一致，唯一声明/导出及60项231 hunks和配方静态检查通过。
 [Risk] VFS候选实际编译/目标导出待下一轮；指针名清点不验收布局/PC-relative/完整ABI或硬件，组件选择仅供分析；feed/board不变，无预链接镜像生成、设备动作或_verified=true。
 ```
+
+## Q-041 · 第十二轮平台诊断与导出声明
+
+```text
+[unixnu-nuwa][build] 补平台导出声明并明确旧头文件风格诊断边界
+
+[Change] 保存第十二轮真实26条诊断及源内核/记录成功证据；补五项匹配实际定义的ArmCpu前置声明，仅三项风格诊断保留为可见警告，其他-Werror及原型检查继续保留。
+[Evidence] reports/kernel-ci/39744948467/：原始行852100起，11/9/1条旧初始化及override风格、5条missing-prototypes；prototype-check.json及4项命令保护测试通过；libsa路径修复已实际生效。
+[Risk] 新声明/诊断策略与60项下一输入尚待实际archive编译；不更改结构/初始化/硬件实现，完整ABI/预链接/实机未验证；feed/board不变，无镜像生成或_verified=true。
+```
