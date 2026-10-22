@@ -1,0 +1,21 @@
+{
+  "patch": "external-archive-dependencies.patch",
+  "reason": "8796 actual link target is .unstripped, not 10063 .unstripped.noctf; use actual target",
+  "upstream_sha256": "0a571de8361845266d7d419b0b3d5ebadbef986840c7e06eb981c0960d7fe374",
+  "candidate_sha256": "6f2ce506a3634d06260f14ccd86a84af7fbf7dc5e7c98a2381b6bff52199d7b5",
+  "command": [
+    "C:/Program Files/Git/cmd/git.exe",
+    "-c",
+    "safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full",
+    "--no-optional-locks",
+    "-C",
+    "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full",
+    "apply",
+    "--check",
+    "--verbose",
+    "D:\\Code\\UniXNU-nuwa\\patches\\xnu-8796-candidates\\external-archive-dependencies.patch"
+  ],
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "Checking patch makedefs/MakeInc.kernel...\n"
+}

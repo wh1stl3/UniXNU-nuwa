@@ -1,0 +1,173 @@
+{
+  "timestamp": "2026-10-22T09:06:03.640779+08:00",
+  "mode": "Five independent candidate --check, not cumulative",
+  "source_head": {
+    "command": [
+      "C:/Program Files/Git/cmd/git.exe",
+      "-c",
+      "safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full",
+      "--no-optional-locks",
+      "-C",
+      "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit_code": 0,
+    "stdout": "1b191cb58250d0705d8a51287127505aa4bc0789\n",
+    "stderr": ""
+  },
+  "base_head": {
+    "command": [
+      "C:/Program Files/Git/cmd/git.exe",
+      "-c",
+      "safe.directory=D:/Code/PortingiOS/common/sources/UniXNU",
+      "--no-optional-locks",
+      "-C",
+      "D:\\Code\\PortingiOS\\common\\sources\\UniXNU",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit_code": 0,
+    "stdout": "75bc13dd34dc4e403826793739e316a264ce00dd\n",
+    "stderr": ""
+  },
+  "source_status_before": {
+    "command": [
+      "C:/Program Files/Git/cmd/git.exe",
+      "-c",
+      "safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full",
+      "--no-optional-locks",
+      "-C",
+      "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full",
+      "status",
+      "--porcelain",
+      "--untracked-files=all"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "source_status_after": {
+    "command": [
+      "C:/Program Files/Git/cmd/git.exe",
+      "-c",
+      "safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full",
+      "--no-optional-locks",
+      "-C",
+      "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full",
+      "status",
+      "--porcelain",
+      "--untracked-files=all"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "results": [
+    {
+      "patch": "apple-only-cpu-tunables.patch",
+      "reason": "Keep 8796 assym.s include; guard the same Apple-only include and APPLY_TUNABLES block",
+      "upstream_sha256": "91e431249a4d756bfca8b1800b4b283340c86d1899ec8196a2fe873e8d3c251e",
+      "candidate_sha256": "49ad719fce1e074777041483daef41a3214025d31b2b399858f4dab891b271b9",
+      "command": [
+        "C:/Program Files/Git/cmd/git.exe",
+        "-c",
+        "safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full",
+        "--no-optional-locks",
+        "-C",
+        "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full",
+        "apply",
+        "--check",
+        "--verbose",
+        "D:\\Code\\UniXNU-nuwa\\patches\\xnu-8796-candidates\\apple-only-cpu-tunables.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Checking patch osfmk/arm64/start.s...\n"
+    },
+    {
+      "patch": "external-archive-dependencies.patch",
+      "reason": "8796 actual link target is .unstripped, not 10063 .unstripped.noctf; use actual target",
+      "upstream_sha256": "0a571de8361845266d7d419b0b3d5ebadbef986840c7e06eb981c0960d7fe374",
+      "candidate_sha256": "6f2ce506a3634d06260f14ccd86a84af7fbf7dc5e7c98a2381b6bff52199d7b5",
+      "command": [
+        "C:/Program Files/Git/cmd/git.exe",
+        "-c",
+        "safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full",
+        "--no-optional-locks",
+        "-C",
+        "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full",
+        "apply",
+        "--check",
+        "--verbose",
+        "D:\\Code\\UniXNU-nuwa\\patches\\xnu-8796-candidates\\external-archive-dependencies.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Checking patch makedefs/MakeInc.kernel...\n"
+    },
+    {
+      "patch": "native-aes-personality.patch",
+      "reason": "Reuse original added personality strings verbatim after 8796 IOPanicPlatform, without IOExclaveProxy",
+      "upstream_sha256": "02fe52c87a6bd801e602d03b54ce51de1362a2f2c6f75f5fc08122d3901aefff",
+      "candidate_sha256": "c126435813b4c39c8cb421522e01480cf1675a5dfd628293208e029e2da9b3cb",
+      "command": [
+        "C:/Program Files/Git/cmd/git.exe",
+        "-c",
+        "safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full",
+        "--no-optional-locks",
+        "-C",
+        "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full",
+        "apply",
+        "--check",
+        "--verbose",
+        "D:\\Code\\UniXNU-nuwa\\patches\\xnu-8796-candidates\\native-aes-personality.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Checking patch iokit/KernelConfigTables.cpp...\n"
+    },
+    {
+      "patch": "source-machine-layer.patch",
+      "reason": "Preserve 8796 config context; gate only two existing AMCC units, no invented ctrr3/amcc files",
+      "upstream_sha256": "1538783d2e5956f8ba65baeca4e9490711c43b8825123860847778b256291573",
+      "candidate_sha256": "923b51bac67695c304ee59309aa8db57a2cbe5719ffed1581875f7db4e37b2fc",
+      "command": [
+        "C:/Program Files/Git/cmd/git.exe",
+        "-c",
+        "safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full",
+        "--no-optional-locks",
+        "-C",
+        "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full",
+        "apply",
+        "--check",
+        "--verbose",
+        "D:\\Code\\UniXNU-nuwa\\patches\\xnu-8796-candidates\\source-machine-layer.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Checking patch config/MASTER...\nChecking patch config/MASTER.arm64.bcm2837...\nChecking patch osfmk/conf/files.arm64...\n"
+    },
+    {
+      "patch": "zzx-pmap-sync-64bit-pa.patch",
+      "reason": "Keep original ptoa PA-width fix; omit SPTM branch absent from 8796; no board memory changes",
+      "upstream_sha256": "b8419e7779f49c9c5360a8ae8e9b52a78968511a9e24e43b9edb799793e04496",
+      "candidate_sha256": "50747f5c4f51abf1e0e3d0d82be07d76909a3f28eceffb9e927b0a8aca6f4f82",
+      "command": [
+        "C:/Program Files/Git/cmd/git.exe",
+        "-c",
+        "safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full",
+        "--no-optional-locks",
+        "-C",
+        "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full",
+        "apply",
+        "--check",
+        "--verbose",
+        "D:\\Code\\UniXNU-nuwa\\patches\\xnu-8796-candidates\\zzx-pmap-sync-64bit-pa.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Checking patch osfmk/arm/pmap/pmap.c...\n"
+    }
+  ]
+}

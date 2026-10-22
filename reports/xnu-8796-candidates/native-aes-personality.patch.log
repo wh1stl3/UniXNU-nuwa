@@ -1,0 +1,21 @@
+{
+  "patch": "native-aes-personality.patch",
+  "reason": "Reuse original added personality strings verbatim after 8796 IOPanicPlatform, without IOExclaveProxy",
+  "upstream_sha256": "02fe52c87a6bd801e602d03b54ce51de1362a2f2c6f75f5fc08122d3901aefff",
+  "candidate_sha256": "c126435813b4c39c8cb421522e01480cf1675a5dfd628293208e029e2da9b3cb",
+  "command": [
+    "C:/Program Files/Git/cmd/git.exe",
+    "-c",
+    "safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full",
+    "--no-optional-locks",
+    "-C",
+    "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full",
+    "apply",
+    "--check",
+    "--verbose",
+    "D:\\Code\\UniXNU-nuwa\\patches\\xnu-8796-candidates\\native-aes-personality.patch"
+  ],
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "Checking patch iokit/KernelConfigTables.cpp...\n"
+}

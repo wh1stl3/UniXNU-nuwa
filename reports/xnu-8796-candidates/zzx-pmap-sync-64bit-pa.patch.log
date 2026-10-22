@@ -1,0 +1,21 @@
+{
+  "patch": "zzx-pmap-sync-64bit-pa.patch",
+  "reason": "Keep original ptoa PA-width fix; omit SPTM branch absent from 8796; no board memory changes",
+  "upstream_sha256": "b8419e7779f49c9c5360a8ae8e9b52a78968511a9e24e43b9edb799793e04496",
+  "candidate_sha256": "50747f5c4f51abf1e0e3d0d82be07d76909a3f28eceffb9e927b0a8aca6f4f82",
+  "command": [
+    "C:/Program Files/Git/cmd/git.exe",
+    "-c",
+    "safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full",
+    "--no-optional-locks",
+    "-C",
+    "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full",
+    "apply",
+    "--check",
+    "--verbose",
+    "D:\\Code\\UniXNU-nuwa\\patches\\xnu-8796-candidates\\zzx-pmap-sync-64bit-pa.patch"
+  ],
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "Checking patch osfmk/arm/pmap/pmap.c...\n"
+}

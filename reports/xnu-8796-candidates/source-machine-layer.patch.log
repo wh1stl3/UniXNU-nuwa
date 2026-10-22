@@ -1,0 +1,21 @@
+{
+  "patch": "source-machine-layer.patch",
+  "reason": "Preserve 8796 config context; gate only two existing AMCC units, no invented ctrr3/amcc files",
+  "upstream_sha256": "1538783d2e5956f8ba65baeca4e9490711c43b8825123860847778b256291573",
+  "candidate_sha256": "923b51bac67695c304ee59309aa8db57a2cbe5719ffed1581875f7db4e37b2fc",
+  "command": [
+    "C:/Program Files/Git/cmd/git.exe",
+    "-c",
+    "safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full",
+    "--no-optional-locks",
+    "-C",
+    "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full",
+    "apply",
+    "--check",
+    "--verbose",
+    "D:\\Code\\UniXNU-nuwa\\patches\\xnu-8796-candidates\\source-machine-layer.patch"
+  ],
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "Checking patch config/MASTER...\nChecking patch config/MASTER.arm64.bcm2837...\nChecking patch osfmk/conf/files.arm64...\n"
+}

@@ -1,0 +1,21 @@
+{
+  "patch": "apple-only-cpu-tunables.patch",
+  "reason": "Keep 8796 assym.s include; guard the same Apple-only include and APPLY_TUNABLES block",
+  "upstream_sha256": "91e431249a4d756bfca8b1800b4b283340c86d1899ec8196a2fe873e8d3c251e",
+  "candidate_sha256": "49ad719fce1e074777041483daef41a3214025d31b2b399858f4dab891b271b9",
+  "command": [
+    "C:/Program Files/Git/cmd/git.exe",
+    "-c",
+    "safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full",
+    "--no-optional-locks",
+    "-C",
+    "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full",
+    "apply",
+    "--check",
+    "--verbose",
+    "D:\\Code\\UniXNU-nuwa\\patches\\xnu-8796-candidates\\apple-only-cpu-tunables.patch"
+  ],
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "Checking patch osfmk/arm64/start.s...\n"
+}
