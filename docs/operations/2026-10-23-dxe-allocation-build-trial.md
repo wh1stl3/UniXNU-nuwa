@@ -37,3 +37,12 @@ submodules-final.txt显示Mu嵌套gitlink均为未初始化（前导减号），
 修复仅把本次明确观测的mirror+file URI换为https://archive.ubuntu.com/ubuntu，Signed-By、Suites、Components原样保留；预检遇残留Azure或任何未处理mirror+file即失败，不放宽签名或延长超时。工作流安装脚本经WSL bash -n通过。尚未证明新runner下载完成。
 
 顺手纠正DxeMain包装声明的旧注释为“wrapper acquires and releases the core memory lock”，无C语义变化；当前0008 SHA4a859ab6108270229fd305d091deaa6cd2d76c37e62dbce823b7e848c73750e1，35项原/后输入及严格apply再次通过。包报告增加实际设备提交/诊断patch SHA，启动门核对当前精确profile补丁。
+
+
+## 第四轮39829943950构建与实际产物通过
+
+设备c9d538f，固定源和0008 SHA4a859ab6，CI6m51s成功；安装问题未重现。下载666项清单/文件哈希及输入检查通过。实际FD3MiB SHAd9c3eaa0d5eefd9e237dfd74f7d98402d93764d47cf4126a3c9bba9e4f5b860f；实际DXE核心167936B SHAc013504794e83635c1b9f7b197d3f1c5ff64f96568b37cd2b7ae952f658f4014，五个诊断标记均在真实PE/TE中，四EFI/SEC/DEPEX/HOB及原PIL/空AUTO验收通过；shim SHA8a3b5476、relative offset0保持。
+
+v4包3153920B SHA9197fed24748e1fa2b79da879e3c58c2018e3db943526d65641f86cb2226c0d6，只改原v4 header kernel_size，内容为已验shim+FD，无XNU/FAT/新DTB/ramdisk。包报告包含实际设备提交、源提交及patch哈希；来源未复制入本仓，产物留out未提交。
+
+当前到静态产物核验为止，尚未临时启动。下一步重新读Android/分区摘要并按D-021检查日志与恢复门，启动前通知用户录像。
