@@ -1,10 +1,10 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 14:25（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-22 14:35（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
-第五轮[39723736387](https://github.com/wh1stl3/UniXNU/actions/runs/39723736387)实际12:48已失败，证据已下载：IIG适配无残留，首错为ast.c无条件引用已关闭KPERF的类型。已给include和AST调用加条件保护；52项212 hunks静态检查通过，修复db30d6d已发布，[第六轮39733594660](https://github.com/wh1stl3/UniXNU/actions/runs/39733594660)已通过输入检查，真实编译进行中。见[第五轮分析](operations/2026-10-22-ci-fifth-failure.md)。完整内核构建仍未通过。
+第六轮[39733594660](https://github.com/wh1stl3/UniXNU/actions/runs/39733594660)最终失败，证据已下载：未再观察到AST错误，首错移至processor.c无条件注册已关闭的KPERF定时器。已给表项加与枚举相同的条件，保留长度断言；53项213 hunks静态检查通过，准备第七轮。见[取证与分析](operations/2026-10-22-ci-fifth-failure.md)。完整内核构建仍未通过。
 
 ## 当前边界
 
@@ -15,16 +15,16 @@
 
 ## 已有证据与限制
 
-- [第五轮失败摘录](../reports/kernel-ci/39723736387/diagnostics.txt)：原始行253481/253484，KPC_MAX_COUNTERS未定义，ast.o失败。原始59MB日志留out，hash/元数据已提交。
+- [第六轮失败摘录](../reports/kernel-ci/39733594660/diagnostics.txt)：原始行352764/352771/352784，KPERF定时器枚举/回调缺失及断言失败；原始66MB日志留out，hash/元数据已提取。
 - [build.json](../reports/kernel-ci/39723736387/build.json)：51个IIG实现、51条适配记录，无kernelContent残留，原IORPC头不变。581个.o为全build目录合计，kernel_built=false。
-- [顺序检查](../reports/kernel-ci/39723736387/compatibility-check.json)52项212 hunks和配方检查通过；只为静态检查，无本机make证据。KPC/KPERF仍关闭，未伪造计数上限或空实现。
+- [顺序检查](../reports/kernel-ci/39733594660/compatibility-check.json)53项213 hunks和配方检查通过；只为静态检查，无本机make证据。KPC/KPERF仍关闭，未伪造计数上限、空实现或放松断言。
 - 源CI固定75bc/Apple8796真实配方，boot-progress/设备archive关闭；即使源编译成功，也不能称完整nuwa内核、预链接、QEMU或实机通过。
 - [Darwin22接口审查](operations/2026-10-22-darwin22-interfaces-and-wsl.md)：archive ABI、13项回调、watchdog scratch覆盖风险未解决。WSL仍缺clang内建、IIG和sysroot，D-008采用macOS Actions。
 - [来源边界复核](../reports/kernel-ci/39723736387/workspace-check.json)：三来源树tracked状态空，board/feed哈希不变。
 
 ## 下一步
 
-1. 跟踪第六轮39733594660（device_ref=db30d6d13d5f5fabc3a110d535b1ce3b658c28d5），取完成后的证据检查ast.o与真实链接结果；本轮继续观察最终结果。
+1. 发布定时器表最小修复并启动第七轮，完成后检查精确目标对象清单、实际第一处错误与链接结果。
 2. 按第一处真实错误推进；成功时检查Mach-O、目标对象/符号、版本与NativePrelink标记，不扩大为ABI或实机结论。
 3. 完成Darwin22 archive、boot-progress/watchdog、nuwa defconfig与donor kernelcache解析，接回正式-D入口；feed切换独立处理。
 4. 命中四类硬停先写NEED-REVIEW再停；只差实体按键的项写PENDING-HUMAN继续。

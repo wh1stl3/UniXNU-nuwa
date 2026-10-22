@@ -1,0 +1,29 @@
+{
+  "run_id": 39733594660,
+  "command": "gh run download 39733594660 --repo wh1stl3/UniXNU --dir out/kernel-ci/39733594660",
+  "console_path": "out\\kernel-ci\\39733594660\\nuwa-8796-source-39733594660\\nuwa-host\\kernel-console.log",
+  "console_bytes": 66009696,
+  "console_sha256": "1c6b3e0c1619cddd837bc348c91f371e5877e737e32829e7f256db9e434588c4",
+  "console_lines": 686506,
+  "excerpt_trailing_whitespace_trimmed": true,
+  "diagnostics": [
+    {
+      "original_line": 352764,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/kern/processor.c:151:26: error: use of undeclared identifier 'kperf_timer_expire'; did you mean 'thread_timer_expire'?"
+    },
+    {
+      "original_line": 352771,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/kern/processor.c:151:3: error: use of undeclared identifier 'RUNNING_TIMER_KPERF'; did you mean 'RUNNING_TIMER_MAX'?"
+    },
+    {
+      "original_line": 352784,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/kern/processor.c:153:15: error: static assertion failed due to requirement 'sizeof (running_timer_funcs) / sizeof (running_timer_funcs[0]) == RUNNING_TIMER_MAX': missing running timer function"
+    }
+  ],
+  "iorpc_header_unchanged": true,
+  "generated_kernel_content_files": 0,
+  "object_count_all_builds": 683,
+  "kernel_built": false,
+  "device_verified": false,
+  "uio_alignment_errors_observed": false
+}

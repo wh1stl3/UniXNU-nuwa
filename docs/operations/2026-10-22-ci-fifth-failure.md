@@ -30,3 +30,14 @@ build.json记录51个真实生成实现、51份适配记录，总共1296次模�
 ## 第六轮启动
 
 修复db30d6d13d5f5fabc3a110d535b1ce3b658c28d5已发布；第六轮39733594660使用该精确设备输入，基座仍固定75bc。14:25快照中主机/依赖/输入检查成功、真实编译进行中，最终结果未验证；元数据与发布证明见reports/kernel-ci/39733594660/。
+
+
+## 第六轮实际结果与定时器表修复
+
+第六轮39733594660最终失败，编译步骤于14:31:06结束。已执行gh run view与gh run download，并使用同一摘录脚本取证；run.json/artifacts.json/diagnostics.txt/failure-analysis.json均位于reports/kernel-ci/39733594660/。原始控制台66,009,696字节、686506行，SHA-256为1c6b3e0c1619cddd837bc348c91f371e5877e737e32829e7f256db9e434588c4，留在忽略out。
+
+原始行352764、352771、352784：processor.c:151的kperf_timer_expire、RUNNING_TIMER_KPERF未定义，继而表长度断言失败；processor.o未构建成功。未观察到上一轮AST的KPC_MAX_COUNTERS错误；无ast.o产物清单，暂不单独宣布该对象通过。683个.o仍为所有build目录合计。
+
+同一符号引用审查：timer_call.h:211-217已对RUNNING_TIMER_KPERF枚举使用KPERF条件，kperf.h中的回调声明属于受限KPERF接口；其余调用位于可选kperf/kptimer.c。processor.c:149-154的表项漏条件。disabled-kperf-timer.patch只给该表项加同样#if KPERF，保留RUNNING_TIMER_QUANTUM和原static_assert，不填假函数或放松断言。
+
+单项git apply --check通过；完整53项213 hunks精确顺序及适配配方bash语法检查通过。修复待第七轮实际编译。为区分辅助对象与目标对象，下一轮build.json将额外记录XNU目标目录对象数、ast.o/processor.o的实际路径/字节数/哈希，原全build计数继续保留。

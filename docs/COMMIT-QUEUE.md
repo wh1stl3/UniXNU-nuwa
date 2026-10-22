@@ -241,3 +241,13 @@
 [Evidence] reports/kernel-ci/39733594660/run.json、api-publish.json；https://github.com/wh1stl3/UniXNU/actions/runs/39733594660；device_ref=db30d6d13d5f5fabc3a110d535b1ce3b658c28d5，主机/依赖/输入检查成功。
 [Risk] 尚无第六轮最终结果，启动及输入检查不代表内核、ABI或实机通过；feed/board不变。
 ```
+
+## Q-025 · 第六轮证据与定时器表条件修复
+
+```text
+[unixnu-nuwa][kernel] 对齐关闭KPERF时的定时器枚举与回调表边界
+
+[Change] 保存第六轮真实失败证据，给processor.c的性能采样表项增加与枚举相同的KPERF条件，保留长度断言；下一轮记录精确XNU目标对象数及关键对象哈希。
+[Evidence] reports/kernel-ci/39733594660/diagnostics.txt原始行352764/352771/352784；timer_call.h:211-217；compatibility-check.json为53项213 hunks通过，单项git apply --check及配方语法检查通过。
+[Risk] AST旧错未再观察到但本轮无该对象产物清单；完整编译/链接待第七轮，driver/donor ABI、QEMU及实机未验证；feed/board不变，无镜像或设备动作。
+```

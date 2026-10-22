@@ -1,0 +1,34 @@
+352760: In file included from /Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/bsd/libkern/libkern.h:79:
+352761: /Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/vm_param.h:607:14: warning: mixing declarations and code is incompatible with standards before C99 [-Wdeclaration-after-statement]
+352762:   607 |         vm_offset_t ptr = params.vmpp_base +
+352763:       |                     ^
+352764: /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/kern/processor.c:151:26: error: use of undeclared identifier 'kperf_timer_expire'; did you mean 'thread_timer_expire'?
+352765:   151 |         [RUNNING_TIMER_KPERF] = kperf_timer_expire,
+352766:       |                                 ^~~~~~~~~~~~~~~~~~
+352767:       |                                 thread_timer_expire
+352768: /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/kern/sched_prim.h:426:25: note: 'thread_timer_expire' declared here
+352769:   426 | extern void             thread_timer_expire(
+352770:       |                         ^
+352771: /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/kern/processor.c:151:3: error: use of undeclared identifier 'RUNNING_TIMER_KPERF'; did you mean 'RUNNING_TIMER_MAX'?
+352772:   151 |         [RUNNING_TIMER_KPERF] = kperf_timer_expire,
+352773:       |          ^~~~~~~~~~~~~~~~~~~
+352774:       |          RUNNING_TIMER_MAX
+352775: /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/kern/timer_call.h:216:2: note: 'RUNNING_TIMER_MAX' declared here
+352776:   216 |         RUNNING_TIMER_MAX,
+352777:       |         ^
+352778: /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/kern/processor.c:153:1: warning: '_Static_assert' is incompatible with C standards before C11 [-Wpre-c11-compat]
+352779:   153 | static_assert(sizeof(running_timer_funcs) / sizeof(running_timer_funcs[0])
+352780:       | ^
+352781: /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/kern/assert.h:176:75: note: expanded from macro 'static_assert'
+352782:   176 |                 #define static_assert(...) _STATIC_ASSERT_OVERLOADED_MACRO(__VA_ARGS__, _static_assert_2_args, _static_assert_1_arg)(__VA_ARGS__)
+352783:       |                                                                                         ^
+352784: /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/kern/processor.c:153:15: error: static assertion failed due to requirement 'sizeof (running_timer_funcs) / sizeof (running_timer_funcs[0]) == RUNNING_TIMER_MAX': missing running timer function
+352785:   153 | static_assert(sizeof(running_timer_funcs) / sizeof(running_timer_funcs[0])
+352786:       |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+352787: In file included from /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/libkern/crypto/register_crypto.c:30:
+352788: In file included from /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/libkern/libkern/crypto/register_crypto.h:39:
+352789: /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/ccmode.h:966:40: warning: mixing declarations and code is incompatible with standards before C99 [-Wdeclaration-after-statement]
+352790:   154 |      966  | = =   R UcNcNcIcNmG__nToInMcEeR__dMeAcXl,( m"omdies-s>innogn creu_nsniizneg,  tniomnecre _ctx);
+352791:       |                                        ^
+352792: function");
+352793:       |     ~~~~~~~~~~~~~~~~~~~~

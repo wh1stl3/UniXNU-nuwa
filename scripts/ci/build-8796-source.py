@@ -62,7 +62,8 @@ def inputs(base):
                                    'IPHONEOS_DEPLOYMENT_TARGET=17.0',
                                    'IPHONEOS_DEPLOYMENT_TARGET=16.0', 1)
     for name in ('clang17-zero-init.patch', 'clang17-uio-stackbuf.patch',
-                 'disabled-kperf-ast.patch', 'zzzz-ci-public-profiling.patch'):
+                 'disabled-kperf-ast.patch', 'disabled-kperf-timer.patch',
+                 'zzzz-ci-public-profiling.patch'):
         compatibility = DEVICE / 'patches/xnu-8796-ci-candidates' / name
         if not compatibility.is_file():
             raise ValueError(f'Missing reviewed clang17 compatibility patch: {name}')
@@ -159,6 +160,12 @@ def main():
             summary['iig_kernel_content_references'] = [str(p.relative_to(work)) for p in generated
                 if 'rpc.kernelContent' in p.read_text(errors='replace') or '.kernelContent =' in p.read_text(errors='replace')]
         summary['object_count'] = len(list((work / 'build').rglob('*.o')))
+        target_objects = work / 'build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837'
+        summary['xnu_target_object_count'] = len(list(target_objects.rglob('*.o')))
+        summary['key_objects'] = {name: [
+            {'path': str(path.relative_to(work)), 'bytes': path.stat().st_size, 'sha256': sha(path)}
+            for path in sorted(target_objects.rglob(name))]
+            for name in ('ast.o', 'processor.o')}
         summary['iig_adaptations'] = [json.loads(p.read_text()) for p in
                                       sorted((work / 'build').rglob('*.darwin22.json'))]
         # Preserve unrecognized templates on failure; generated source stays in

@@ -255,3 +255,5 @@ IORPC继续使用8796的四字段定义，不为新IIG生成结果补kernelConte
 D-010补充（2026-10-22 12:40）：第四轮主动拒绝未知回调赋值模板；取得短CI39723294640的17个真实生成文件后，仅补入rpc.kernelContent = &msg->content.__hdr精确规则。17文件432块静态转换通过，仍待完整编译/ABI。原始模板和全集hash见reports/kernel-ci/39723011018/。
 
 D-010补充（2026-10-22 14:22）：第五轮51个IIG生成实现均无kernelContent残留且原IORPC头不变，实际失败移至ast.c无条件包含/调用已关闭的KPERF接口。仅增加include和AST处理块的KPERF条件保护，52项212 hunks静态检查通过，真实修复待第六轮；证据见operations/2026-10-22-ci-fifth-failure.md。
+
+D-010补充（2026-10-22 14:35）：第六轮首错移至processor.c定时器表无条件引用KPERF枚举/回调；timer_call.h枚举已有KPERF guard，现仅给表项加相同条件，保留表长度static_assert。53项213 hunks静态检查通过，待第七轮。证据reports/kernel-ci/39733594660/及第五轮分析的第六轮节。
