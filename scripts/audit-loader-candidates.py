@@ -89,8 +89,10 @@ def main():
         check("patch hash: " + patch["path"], sha(data) == patch["sha256"])
         target = sheng_tree if patch["root"] == "sheng" else tree
         hunks.extend(dict(root=patch["root"], **h) for h in target.apply(data.decode("utf-8")))
-    check("only four intended source files changed", set(tree.files) == {
-        "BootShim/BootShim.S", BASE + "nuwa.dsc", BASE + "nuwa.fdf", BASE + "DeviceBuild.py"})
+    sec_base = "Silicon/Silicium/SiliciumPkg/"
+    check("only wiring, shim and SEC HOB source files changed", set(tree.files) == {
+        "BootShim/BootShim.S", BASE + "nuwa.dsc", BASE + "nuwa.fdf", BASE + "DeviceBuild.py",
+        *(sec_base + p for p in ("SiliciumPkg.dec", "Sec/Sec.c", "Sec/Sec.inf", "Sec/AArch64/ModuleEntryPoint.S"))})
     dsc, fdf = tree.read(BASE + "nuwa.dsc"), tree.read(BASE + "nuwa.fdf")
     fvmain = fdf.split("[FV.FvMain]", 1)[1].split("[FV.FVMAIN_COMPACT]", 1)[0]
     modules = manifest["modules"]
@@ -150,6 +152,13 @@ def main():
         protected = [line for line in old.splitlines() if re.search(r"Pcd|FD_|BaseAddress|BlockSize|NumBlocks", line)]
         check("PCD/FD assignments unchanged: " + filename, all(line in new.splitlines() for line in protected))
     check("memory and configuration maps not patched", not any("MapLib" in p for p in tree.files))
+    sec_c = tree.read(sec_base + "Sec/Sec.c")
+    sec_asm = tree.read(sec_base + "Sec/AArch64/ModuleEntryPoint.S")
+    check("SEC producer and package declare borrowed HOB GUID", all("gSiliciumEntryArgHobGuid" in tree.read(sec_base + p)
+          for p in ("SiliciumPkg.dec", "Sec/Sec.inf", "Sec/Sec.c")))
+    check("SEC saves entry x0 before clobber", sec_asm.index("str   x0, [x1]") < sec_asm.index("bl    ASM_PFX (PlatformAssemblyInitialize)"))
+    check("HOB built after memory initialization", sec_c.index("Status = InitializeMemory ();") <
+          sec_c.index("BuildGuidDataHob (&gSiliciumEntryArgHobGuid, &EntryArg, sizeof (EntryArg));"))
     publisher_path = "Platforms/Xiaomi/shengPkg/Drivers/ShengBootMemoryDxe/ShengBootMemoryDxe.c"
     check("sheng patch only changes borrowed publisher and its INF", set(sheng_tree.files) == {
         publisher_path, publisher_path.removesuffix(".c") + ".inf"})

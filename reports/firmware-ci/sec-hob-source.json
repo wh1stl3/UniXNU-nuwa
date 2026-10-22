@@ -1,0 +1,34 @@
+{
+  "source": [
+    {
+      "repository": "UniXNU/uefi-sheng",
+      "commit": "329b473df1e53a3bfa64b2b39b79670c4c02279b",
+      "path": "Silicon/Silicium/SiliciumPkg/SiliciumPkg.dec",
+      "git_blob": "6f9dcdedae1b156d90b5d6ae384e666fb47dd039",
+      "raw_sha256": "0dca7e7f8b24351f6cc1a1886643ce988f01afd6a7b34b0da7705e1f366218e2"
+    },
+    {
+      "repository": "UniXNU/uefi-sheng",
+      "commit": "329b473df1e53a3bfa64b2b39b79670c4c02279b",
+      "path": "Silicon/Silicium/SiliciumPkg/Sec/Sec.c",
+      "git_blob": "dc1a053a63bd3c043d1d4c441503c793065b3d7e",
+      "raw_sha256": "960823c3c59fd7cbf5f235468989bf4e06d8fef37658ec302c2228b611a1fb25"
+    },
+    {
+      "repository": "UniXNU/uefi-sheng",
+      "commit": "329b473df1e53a3bfa64b2b39b79670c4c02279b",
+      "path": "Silicon/Silicium/SiliciumPkg/Sec/Sec.inf",
+      "git_blob": "3a0a8a972c7342544c12b1c29b08089cd1cc112f",
+      "raw_sha256": "0d4a9f6a1896cdd65491db3effa5c638b3a8a171be1d192651835738767ed392"
+    },
+    {
+      "repository": "UniXNU/uefi-sheng",
+      "commit": "329b473df1e53a3bfa64b2b39b79670c4c02279b",
+      "path": "Silicon/Silicium/SiliciumPkg/Sec/AArch64/ModuleEntryPoint.S",
+      "git_blob": "0b3073c3b570944faac2a46d625524a04d623dd3",
+      "raw_sha256": "f26481c4d5e94f9b2ba02e8226f1a628b3c0f1d5cb37f1104f8ee183087eee6b"
+    }
+  ],
+  "scope": "reuse GUID and SEC producer; exclude unrelated SPSel and framebuffer changes",
+  "patch": "patches/firmware-candidates/0004-sec-entry-argument-hob.patch"
+}

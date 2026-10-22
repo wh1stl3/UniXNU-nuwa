@@ -1,0 +1,62 @@
+{
+  "scope": "read-only reference parsing and in-memory corruptions; no images emitted",
+  "reference": "D:\\Code\\PortingiOSWithUniXNU\\.work\\artifacts\\nuwa-boot\\uefi\\Build\\nuwaPkg\\DEBUG_CLANGPDB\\FV\\SILICIUM_UEFI.fd",
+  "reference_sha256": "21c029eb7fa432b040ae5d06872f963fee4d8454cf98503ab0423ca3b5afcad3",
+  "volumes": [
+    {
+      "label": "reference",
+      "bytes": 3145728,
+      "header_bytes": 72,
+      "sha256": "21c029eb7fa432b040ae5d06872f963fee4d8454cf98503ab0423ca3b5afcad3"
+    },
+    {
+      "label": "reference/9e21fd93-9c72-4c15-8c4b-e77f1db2d792/FV",
+      "bytes": 9777152,
+      "header_bytes": 72,
+      "sha256": "f07211168988b6afe6d3495646fecf3ddf1895a21318edfda9556e684d549415"
+    }
+  ],
+  "files": 154,
+  "expected_loader_guids_found": [],
+  "tests": [
+    {
+      "name": "corrupted FV checksum",
+      "result": "rejected",
+      "reason": "FV header checksum mismatch"
+    },
+    {
+      "name": "corrupted first FFS checksum",
+      "result": "rejected",
+      "reason": "FFS header checksum mismatch"
+    },
+    {
+      "name": "truncated FD",
+      "result": "rejected",
+      "reason": "Invalid FV bounds"
+    },
+    {
+      "name": "invalid PE",
+      "result": "rejected",
+      "reason": "Expected DOS/PE image"
+    },
+    {
+      "name": "truncated DEPEX PUSH",
+      "result": "rejected",
+      "reason": "Truncated DEPEX GUID"
+    },
+    {
+      "name": "DEPEX lacks END",
+      "result": "rejected",
+      "reason": "Missing DEPEX terminator"
+    },
+    {
+      "name": "DEPEX has trailing bytes",
+      "result": "rejected",
+      "reason": "Unexpected trailing DEPEX bytes"
+    },
+    {
+      "name": "valid DEPEX",
+      "result": "passed"
+    }
+  ]
+}

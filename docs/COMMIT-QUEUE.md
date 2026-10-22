@@ -519,3 +519,14 @@
 [Evidence] config/firmware-ci-inputs.json、.github/workflows/firmware-candidate.yml、scripts/ci/build-firmware-candidate.py；Python语法及workflow结构检查通过。
 [Risk] 真实编译/模块产物检查待CI，运行/内存所有权未验证；不打boot.img、不生成预链接或负载、不改board/feed或操作设备。
 ```
+
+
+## Q-052 · 首轮固件取证与入口HOB修复
+
+```text
+[unixnu-nuwa][firmware] 补齐首轮缺失的SEC入口HOB生产链
+
+[Change] 保存第一轮真实失败及BootShim成功产物证据，复用固定sheng的DEC和SEC入口HOB实现；增加下载FD嵌套FV/PE/DEPEX与shim机器码检查器。
+[Evidence] reports/firmware-ci/39761427579首错error4000、112字节shim及3145728字节拷贝计数；83项源码静态检查、8项格式检查与入口补丁apply检查通过。
+[Risk] EFI/FD实际编译仍待第二轮，缓存/DT/内存生命周期及硬件未验证；R-004 A内继续，不打boot.img、不改板值、不操作设备。
+```

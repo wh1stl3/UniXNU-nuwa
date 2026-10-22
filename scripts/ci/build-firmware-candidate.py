@@ -128,6 +128,8 @@ def main():
         # Recheck every protected source input after tooling; only approved patched files may differ.
         touched = {("firmware", "BootShim/BootShim.S"),
                    *(('firmware', 'Platforms/Xiaomi/nuwaPkg/' + n) for n in ('nuwa.dsc', 'nuwa.fdf', 'DeviceBuild.py')),
+                   *(('firmware', 'Silicon/Silicium/SiliciumPkg/' + n) for n in
+                     ('SiliciumPkg.dec', 'Sec/Sec.c', 'Sec/Sec.inf', 'Sec/AArch64/ModuleEntryPoint.S')),
                    *(('sheng', 'Platforms/Xiaomi/shengPkg/Drivers/ShengBootMemoryDxe/ShengBootMemoryDxe.' + ext) for ext in ('c', 'inf'))}
         for item in recipe["inputs"]:
             if (item["root"], item["path"]) not in touched:
@@ -139,6 +141,9 @@ def main():
         save("failure.json", dict(error=str(error), commands_completed=len(commands)))
         raise
     finally:
+        if (fw / ".git").exists():
+            state = subprocess.run(["git", "submodule", "status", "--recursive"], cwd=fw, capture_output=True, text=True)
+            (OUT / "submodules-final.txt").write_text(state.stdout + state.stderr)
         # Copy only build evidence and approved EFI/FD/FV artifacts, including on compiler failure.
         build = fw / "Build/nuwaPkg/DEBUG_CLANGPDB"
         if build.is_dir():

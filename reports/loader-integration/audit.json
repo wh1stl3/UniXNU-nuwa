@@ -126,6 +126,22 @@
       "passed": true
     },
     {
+      "name": "input hash: firmware/Silicon/Silicium/SiliciumPkg/SiliciumPkg.dec",
+      "passed": true
+    },
+    {
+      "name": "input hash: firmware/Silicon/Silicium/SiliciumPkg/Sec/Sec.c",
+      "passed": true
+    },
+    {
+      "name": "input hash: firmware/Silicon/Silicium/SiliciumPkg/Sec/Sec.inf",
+      "passed": true
+    },
+    {
+      "name": "input hash: firmware/Silicon/Silicium/SiliciumPkg/Sec/AArch64/ModuleEntryPoint.S",
+      "passed": true
+    },
+    {
       "name": "protected hash: board.toml",
       "passed": true
     },
@@ -150,7 +166,11 @@
       "passed": true
     },
     {
-      "name": "only four intended source files changed",
+      "name": "patch hash: patches/firmware-candidates/0004-sec-entry-argument-hob.patch",
+      "passed": true
+    },
+    {
+      "name": "only wiring, shim and SEC HOB source files changed",
       "passed": true
     },
     {
@@ -270,6 +290,18 @@
       "passed": true
     },
     {
+      "name": "SEC producer and package declare borrowed HOB GUID",
+      "passed": true
+    },
+    {
+      "name": "SEC saves entry x0 before clobber",
+      "passed": true
+    },
+    {
+      "name": "HOB built after memory initialization",
+      "passed": true
+    },
+    {
       "name": "sheng patch only changes borrowed publisher and its INF",
       "passed": true
     },
@@ -362,6 +394,42 @@
       "path": "Platforms/Xiaomi/shengPkg/Drivers/ShengBootMemoryDxe/ShengBootMemoryDxe.inf",
       "hunk": 1,
       "line": 18
+    },
+    {
+      "root": "firmware",
+      "path": "Silicon/Silicium/SiliciumPkg/SiliciumPkg.dec",
+      "hunk": 1,
+      "line": 9
+    },
+    {
+      "root": "firmware",
+      "path": "Silicon/Silicium/SiliciumPkg/Sec/Sec.c",
+      "hunk": 1,
+      "line": 17
+    },
+    {
+      "root": "firmware",
+      "path": "Silicon/Silicium/SiliciumPkg/Sec/Sec.c",
+      "hunk": 2,
+      "line": 133
+    },
+    {
+      "root": "firmware",
+      "path": "Silicon/Silicium/SiliciumPkg/Sec/Sec.inf",
+      "hunk": 1,
+      "line": 52
+    },
+    {
+      "root": "firmware",
+      "path": "Silicon/Silicium/SiliciumPkg/Sec/AArch64/ModuleEntryPoint.S",
+      "hunk": 1,
+      "line": 13
+    },
+    {
+      "root": "firmware",
+      "path": "Silicon/Silicium/SiliciumPkg/Sec/AArch64/ModuleEntryPoint.S",
+      "hunk": 2,
+      "line": 66
     }
   ],
   "modules": [

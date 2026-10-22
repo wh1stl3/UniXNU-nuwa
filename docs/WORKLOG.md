@@ -112,3 +112,5 @@
 2026-10-22 18:04 · 固定CI15内核并完成四模块加载器/只读initrd源码接线与BootShim修正，独立提取原厂cfg；75项静态检查和两来源apply检查通过，停于R-004固件产物生成门 · 本提交（Q-050） · reports/loader-integration/；docs/operations/2026-10-22-loader-source-integration.md
 
 2026-10-22 18:10 · R-004 A获批，准备只构建EFI/FD/BootShim的独立Actions流程及固定输入闸门；实际构建待启动 · 本提交（Q-051） · .github/workflows/firmware-candidate.yml；scripts/ci/build-firmware-candidate.py；config/firmware-ci-inputs.json
+
+2026-10-22 18:22 · 首轮固件39761427579取证：BootShim编译/下载机器码检查通过，EDK首错为入口HOB GUID缺失；固定来源补齐SEC生产链，83项静态检查通过并准备第二轮 · 本提交（Q-052） · reports/firmware-ci/39761427579/；docs/operations/2026-10-22-firmware-candidate-build.md
