@@ -790,3 +790,13 @@
 [Evidence] FD9ea347a4、shim9346a527，SEC实际TE标记完整；3153920B包SHAfbb7940a，nuwa身份/Android完成及boot和vendor_boot备份哈希匹配。
 [Risk] 包不含XNU且尚未执行；当前rooted init_boot保留，屏幕/SEC/DXE与恢复结果以随后实测为准，board/feed与内存图不变。
 ```
+
+## Q-076 · SEC诊断实测与Android恢复
+
+```text
+[unixnu-nuwa][device] 记录SEC诊断黑屏结果并完成nuwa Android恢复
+
+[Change] 临时试启动唯一锁定诊断包，保存用户屏幕反馈、15次fastboot/USB采样和前后bootloader隔离及原Android备份恢复记录，R-007 A标完成。
+[Evidence] 包fbb7940a发送/Booting OKAY，用户FASTBOOT后黑屏；00:09:01实际nuwa boot_completed=1，boot/vendor_boot/init_boot全分区SHA与试前相同。
+[Risk] BootShim/SEC/DXE执行仍未验证，包无XNU；当前恢复为既有自定义/rooted Android，未修复持久A槽标志或建立独立日志通道。
+```

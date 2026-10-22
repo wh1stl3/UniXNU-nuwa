@@ -355,3 +355,6 @@ D-016补充（2026-10-22 20:53）：离线实际FD/TE/map入口一致，SEC WARN
 
 
 D-017/D-018补充（2026-10-22 23:47）：独立固件CI39805110487及665项下载产物静态检查通过，Darwin22 ABI补丁完成真实DarwinBoot EFI编译链接；FD3MiB/SHA7f6f16c8、shim112B保持9346a527。未生成Android容器或执行设备，运行ABI未验证；新SEC阶段诊断范围另列R-007，未应用。证据reports/firmware-ci/39805110487/。
+
+
+D-016/D-018补充（2026-10-23 00:11）：R-007 A诊断固件5e4a8c8/CI39809636575编译和静态审计通过，v4包fbb7940a临时命令OKAY但用户黑屏、15次fastboot持续，无SEC/DXE证据。按D-016前后均bootloader复位，已验证Android备份boot恢复后nuwa boot_completed=1，boot/vendor_boot/init_boot三个分区hash未变。此实验只验收命令接受与本次恢复，不证明入口执行或修复根因；后续转向ABL交接/独立观测。证据reports/sec-trace/39809636575/trial-summary.json。

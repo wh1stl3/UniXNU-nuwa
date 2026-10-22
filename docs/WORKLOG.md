@@ -166,3 +166,5 @@
 2026-10-23 00:00 · 调度SEC诊断CI39809636575，工具安装48秒通过进入编译；接好严格v4打包与D-016试启动/原厂恢复脚本，尚未生成包或操作设备 · 本提交（Q-074） · reports/sec-trace/39809636575/dispatch.json；scripts/prepare-sec-trace-boot.py
 
 2026-10-23 00:06 · SEC诊断CI39809636575成功，665项实际产物及阶段字符串静态检查通过；生成3153920B受限v4包SHAfbb7940a，完成恢复/身份只读前置，尚未试启动 · 本提交（Q-075） · reports/sec-trace/39809636575/
+
+2026-10-23 00:11 · R-007 A诊断包fbb7940a临时Sending/Booting OKAY，用户FASTBOOT后黑屏、15样本fastboot持续；按D-016恢复nuwa Android=1，三分区hash不变，SEC/DXE/XNU未验证 · 本提交（Q-076） · reports/sec-trace/39809636575/launch.json、recovery.json、trial-summary.json

@@ -37,3 +37,19 @@ CI39809636575 success，00:03:47结束；实际编译5分32秒。31项来源与�
 00:01只读恢复核对：实际nuwa/kalama、Android完成1、槽A，当前内核5.15.195-MorizukiNeko-260620LTSC为自定义Android内核。当前boot_a SHAef558db2与vendor_boot_a SHA5ad2a9dc分别匹配已有备份；init_boot_a SHA19e95d95匹配上轮已root记录，与备份996572d3不同。恢复只临时加载已验证Android备份boot、继续使用安装的vendor_boot/init_boot，不覆盖rooted init_boot，不称完整恢复为原厂系统。此前文中的“原厂恢复源”沿用文件角色命名，实际是已验证的原Android备份。
 
 新增只读USB VID/PID快照工具，InstanceId仅用于提取VID/PID，不保存序列号；试前状态在usb-before.json。尚未试启动；后续launch/recovery分开记录并确认Android=1。
+
+## 实际试启动与恢复（2026-10-23 00:07–00:09）
+
+实际选择唯一nuwa/kalama且Android=1，adb进入bootloader后额外fastboot reboot bootloader隔离状态；重查product=nuwa、unlocked=yes、current-slot=a。临时启动本轮唯一哈希锁定诊断包fbb7940a：Sending boot.img (3080KB) OKAY 0.082s、Booting OKAY 0.117s，总0.201s。命令退出0仅为ABL命令接受，不是BootShim/SEC执行证明。
+
+用户直接回报原文：“fastboot之后黑屏”。没有报告阶段文字。00:07:21.441至00:07:50.395的15次采样，选中nuwa始终可在fastboot枚举；试中Windows快照含18D1:D00D，另一个Android设备仍在18D1:4EE7。不能据此区分从未交接、迅速返回或显示不可见；本实验未把执行区间缩小到具体SEC子阶段，也没有独立USB日志。
+
+恢复阶段再次fastboot reboot bootloader，然后临时加载201326592B/SHAef558db2的已验证原Android备份boot，Sending OKAY 4.483s、Booting OKAY 0.117s。00:09:01.944明确核对实际nuwa/kalama且sys.boot_completed=1。未执行flash/erase/set_active；末次read-only确认slot_a，boot_a/vendor_boot_a/init_boot_a三个全分区SHA与试前相同。后置USB快照重新为Android枚举。此恢复是回到此前已root/自定义Android环境，不声称完整原厂恢复或A槽标志已修复。
+
+证据：launch.json、usb-during-trial.json、recovery.json、post-recovery.json、usb-after-recovery.json、trial-summary.json。用户观察单独标注来源，不伪装成自动抓取屏幕或SEC日志。所有_verified保持；H-001按键演练不因本次软件恢复完成而标为实机通过。
+
+## 本阶段结论与下一入口门
+
+R-007 A要求的源码、真实构建、产物检查、受限临时包、临时试启动和Android=1恢复均已完成。结果未取得BootShim/SEC/DXE/BDS执行证据；诊断包无XNU，所以本次也不是XNU试启动。
+
+下一步应优先追ABL实际装载/跳转与ARM64入口条件，或建立独立且可回读的早期观测通道。继续往同一帧缓冲出口加字不能消除目前的观测盲区；DXE USB本身也覆盖不到更早失败。新BootShim/诊断范围、内存/地址或持久写入需按具体审批边界处理，本轮不额外生成第二种镜像或重试未批准容器。原厂v4 header可接受的事实不保证自定义payload实际被执行；不从黑屏推出唯一根因。

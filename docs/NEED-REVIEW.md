@@ -14,7 +14,7 @@
 | --- | --- | --- |
 | — | 无 | — |
 
-## R-007 · 新SEC阶段诊断镜像（approved A，构建/试启动进行中）
+## R-007 · 新SEC阶段诊断镜像（approved A，构建/试启动/恢复已完成）
 
 背景：独立固件CI39805110487的四EFI/FD/BootShim及665项下载产物静态检查通过，但旧v4实机仅黑屏，未定位BootShim/SEC/DXE。新FD含Darwin22加载器修复，但不含XNU；不能期待该ABI修复本身解决未到加载器的黑屏。既有R-004 A只覆盖固定接线构建与审查，新SEC诊断改动和新boot容器超出这次已完成范围。触发AGENTS.md§3第3类：“新建或重写任何诊断 / 固件镜像”。
 
@@ -28,7 +28,7 @@
 
 **需要用户批准的最小范围：A这一份补丁对应的诊断四EFI/FD/BootShim生成及静态审查，并仅复用原厂已接受的v4头重新打包raw shim+FD临时容器（只更新kernel_size，无新增DTB/FAT/XNU）；临时设备操作沿既有可恢复fastboot授权，执行前重新核对nuwa和原厂恢复源，结束恢复Android=1。** 不包含v1大ramdisk对照、FAT/内核预链接、任何board/内存/地址/slot/flash/erase或_verified=true。新容器的完整SHA待获批构建后记录，当前不编造。
 
-用户明确批准：“批准 R-007 A，继续构建 SEC 阶段诊断固件、检查产物并准备临时启动包，按既有授权试启动，结束后恢复 Android 并确认 boot_completed=1。”暂停解除；源码已在独立固件诊断分支固定，正在接入构建，后续实际结果另记。Git操作已有持续授权，不重复申请。
+用户明确批准：“批准 R-007 A，继续构建 SEC 阶段诊断固件、检查产物并准备临时启动包，按既有授权试启动，结束后恢复 Android 并确认 boot_completed=1。”暂停解除；源码5e4a8c8/CI39809636575真实构建与产物检查通过，v4诊断包fbb7940a已临时试启动。Sending/Booting OKAY、用户“fastboot之后黑屏”、15次采样fastboot持续可见，SEC/DXE未验证。按D-016重新进入bootloader后临时加载已验证Android备份boot，00:09确认nuwa Android boot_completed=1；boot/vendor_boot/init_boot三个分区SHA与试前相同。实际结果见reports/sec-trace/39809636575/trial-summary.json及对应operations。Git操作已有持续授权，不重复申请。
 
 ## R-004 · 加载器候选编译与产物审计（approved A，已完成）
 
