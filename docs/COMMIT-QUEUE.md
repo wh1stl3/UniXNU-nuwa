@@ -607,3 +607,14 @@
 [Evidence] 用户明确另一轮开始推包并要求不要实机操作；本仓设备命令均已结束，最后Android=1为20:19恢复记录，Q-058已推送。
 [Risk] 暂停后当前设备状态未知，不用历史恢复结果替代当前状态，不自动轮询或抢占恢复。
 ```
+
+
+## Q-060 · ARM64与SEC入口离线审查
+
+```text
+[unixnu-nuwa][firmware] 离线核对BootShim入口并确认SEC日志仅走帧缓冲
+
+[Change] 增加只读产物/源码审计，核对ARM64头、拷贝机器码、FD→TE→SEC及日志掩码/实现，列出交接/cache与早期观测待测项。
+[Evidence] 33项静态断言通过，实际FD分支和TE/map指向0xa710a838并保存x0；构建报告链接FrameBufferSerialPortLib和Null DebugAgent，归档ABL仅解压到RAM查看路径字符串。
+[Risk] 实际L/EL/MMU/cache与DT可达性仍未验证，屏幕日志不能定位黑屏阶段；设备暂停保持，无设备访问、新镜像、板值/feed或_verified改动。
+```

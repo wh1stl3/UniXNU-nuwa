@@ -1,0 +1,293 @@
+{
+  "scope": "Offline static audit only; no device access, image creation or execution",
+  "sources": {
+    "firmware": {
+      "repository": "Project-Silicium/Mu-Silicium",
+      "commit": "6c6755012728c9f7de748228758bad94d1e9a660"
+    },
+    "unixnu": {
+      "repository": "UniXNU/UniXNU",
+      "commit": "75bc13dd34dc4e403826793739e316a264ce00dd"
+    },
+    "sheng": {
+      "repository": "UniXNU/uefi-sheng",
+      "commit": "329b473df1e53a3bfa64b2b39b79670c4c02279b"
+    }
+  },
+  "source_hashes": [
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\BootShim\\BootShim.S",
+      "sha256": "8a49c15435be45846e9b52ac00d752621e5bdb72221b1c18edbafd14a77a8961"
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Silicon\\Silicium\\SiliciumPkg\\Sec\\Sec.c",
+      "sha256": "77639c5a4ca526b199e9bcff2271625bac9952de8b3766d6a2ec03719c5da783"
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Silicon\\Silicium\\SiliciumPkg\\Sec\\AArch64\\ModuleEntryPoint.S",
+      "sha256": "ac62466d82cb6f1cfe3a67d59de304a60e555fac142dc36c80dace94f53fc149"
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Silicon\\Silicium\\SiliciumPkg\\Sec\\AArch64\\Helper.S",
+      "sha256": "52a490984e3c163a093aca0898384349f45f457efab6d7bb94c2cca5deb8544b"
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Silicon\\Silicium\\SiliciumPkg\\Sec\\AArch64\\ArchSec.c",
+      "sha256": "900d8d655eeb7422b6ff8b055b7941d96d35fc6c520bf07e37613a474bb6d771"
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Silicon\\Silicium\\SiliciumPkg\\Library\\FrameBufferSerialPortLib\\FrameBufferSerialPortLib.c",
+      "sha256": "7942b204196f784611c73901b220789d7044a21b70188044e68aa2ea344f273d"
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Silicon\\Silicium\\SiliciumPkg\\Library\\FrameBufferSerialPortLib\\FrameBuffer.h",
+      "sha256": "4a03d7154ccfc8d106c62a11b2c5d56dd4568cb6973c4d65a4bb44bad8563d57"
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Silicon\\Silicium\\SiliciumPkg\\Library\\MemoryMapHelperLib\\MemoryMapHelper.c",
+      "sha256": "d3718a3393558a50f305bbea444d60a53da6de315c66310b246cdb3e7431f354"
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Platforms\\Xiaomi\\nuwaPkg\\Library\\MemoryMapLib\\MemoryMapLib.c",
+      "sha256": "873a66409b2b960633a666adf0bc843bf0697b55972006d036f605223aeba3ea"
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Silicon\\Qualcomm\\KailuaPkg\\Library\\PlatformSecLib\\PlatformSec.c",
+      "sha256": "a8b0a6d473d6eb87813ab12fd418df63dd0922cfcc3835926d9000d03345eb84"
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Silicon\\Qualcomm\\KailuaPkg\\Library\\PlatformSecLib\\AArch64\\PlatformHelper.S",
+      "sha256": "38b2ece426e62b9bb57a34dfae354a52a26e9521ec4437eafc898a1b32cb467e"
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Silicon\\Qualcomm\\QcomPkg\\Library\\ArmSmmuDetachLib\\ArmSmmuDetachLib.c",
+      "sha256": "bddce9962797132d1b6f8ec91a105304764e872c3aea3b9d104966da4748700b"
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Mu_Basecore\\MdePkg\\Library\\BaseDebugLibSerialPort\\DebugLib.c",
+      "sha256": "47020b50980ccfae3ef1d46a93aa13e21d84ee76258aa714e6a4d0d0a9a68bac"
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Mu_Basecore\\MdePkg\\Library\\BaseDebugPrintErrorLevelLib\\BaseDebugPrintErrorLevelLib.c",
+      "sha256": "758ab613c1d0246a35bb924f64c1a6d9396f146fd33258d030456b208dbddb74"
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Mu_Basecore\\MdePkg\\Library\\ArmLib\\AArch64\\AArch64Support.S",
+      "sha256": "6e32fb4c582a345d0b2ea18ccfd40b632548c766a7b3c4cbaa68a9f93a710a2b"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "D:\\Code\\UniXNU-nuwa\\out\\trial-boot\\firmware-v4\\boot-firmware-v4.img",
+      "sha256": "12864ac6cc0ffc9909f4abbdfab91bfee216c3fdcfc5ab0d52b4d4b9cf4579f9"
+    },
+    {
+      "path": "D:\\Code\\UniXNU-nuwa\\out\\firmware-ci\\39764322744\\nuwa-firmware-39764322744\\build\\FV\\FVMAIN_COMPACT.Fv.map",
+      "sha256": "65bad47844ac7905312f93b160364c40a7a8e7ec4dc8f0b39b43846a61dd08d9"
+    },
+    {
+      "path": "D:\\Code\\UniXNU-nuwa\\reports\\firmware-ci\\39764322744\\BUILD_REPORT.txt",
+      "sha256": "499c3c07e292432df0e89b425d47b2bd4a960e4d54e5c0013a134e6616cc2630"
+    }
+  ],
+  "headers": {
+    "original": {
+      "kernel_file_bytes": 40417792,
+      "code_words": [
+        "0xfa405a4d",
+        "0x148b7fff"
+      ],
+      "text_offset": "0x0",
+      "image_size": 41091072,
+      "flags": "0xa",
+      "page_size_flag": 1,
+      "arm64_magic": "41524d64",
+      "dos_mz": true,
+      "pe_offset": "0x40",
+      "pe_present": true
+    },
+    "candidate": {
+      "kernel_file_bytes": 3145840,
+      "code_words": [
+        "0x10000381",
+        "0x1400000f"
+      ],
+      "text_offset": "0xa7100000",
+      "image_size": 3145840,
+      "flags": "0x0",
+      "page_size_flag": 0,
+      "arm64_magic": "41524d64",
+      "dos_mz": false,
+      "pe_offset": "0x0",
+      "pe_present": false
+    }
+  },
+  "bootshim": {
+    "bytes": 112,
+    "destination": "0xa7100000",
+    "copy_bytes": 3145728,
+    "source_expression": "L + 112; L is the unknown actual ABL load address",
+    "preserved_argument": "X0; scratch X1-X6 may change",
+    "unvalidated": [
+      "incoming EL/DAIF/MMU/cache state",
+      "source/destination and DTB non-overlap",
+      "new destination cache coherency before BR X5"
+    ]
+  },
+  "sec": {
+    "fd_reset_vector_target": "0xa710a838",
+    "te_entry": "0xa710a838",
+    "saved_x0_slot": "0xa710a8d8",
+    "c_entry": "0xa7101058",
+    "early_compiled_calls": [
+      {
+        "pc": "0xa710107c",
+        "target": "0xa7108dd4",
+        "symbols": [
+          "ArmDisableDataCache"
+        ]
+      },
+      {
+        "pc": "0xa7101080",
+        "target": "0xa7109274",
+        "symbols": [
+          "ArmInvalidateInstructionCache"
+        ]
+      },
+      {
+        "pc": "0xa7101084",
+        "target": "0xa7109028",
+        "symbols": [
+          "ArmEnableInstructionCache"
+        ]
+      },
+      {
+        "pc": "0xa7101094",
+        "target": "0xa7102ed4",
+        "symbols": [
+          "InvalidateDataCacheRange"
+        ]
+      },
+      {
+        "pc": "0xa71010a0",
+        "target": "0xa7102ed4",
+        "symbols": [
+          "InvalidateDataCacheRange"
+        ]
+      },
+      {
+        "pc": "0xa71010c8",
+        "target": "0xa7102fc8",
+        "symbols": [
+          "DebugAssert"
+        ]
+      },
+      {
+        "pc": "0xa71010d4",
+        "target": "0xa7109a24",
+        "symbols": [
+          "ArmWriteVBar"
+        ]
+      }
+    ],
+    "exception_vector": "0xa710a000",
+    "spsel": "inherited; no explicit selection in compiled early entry",
+    "pcds": {
+      "PcdDebugPropertyMask": 47,
+      "PcdDebugPrintErrorLevel": 2148003343,
+      "PcdFixedDebugPrintErrorLevel": 4294967295,
+      "PcdFrameBufferWidth": 1440,
+      "PcdFrameBufferHeight": 3200,
+      "PcdFrameBufferColorDepth": 32,
+      "PcdFrameBufferDelay": 10000,
+      "PcdCPUCoresStackBase": 2808139776,
+      "PcdCPUCorePrimaryStackSize": 262144
+    }
+  },
+  "logging": {
+    "route": "DebugLib -> SerialPortWrite -> framebuffer pixels; not UART/USB/file",
+    "debug_agent": "null",
+    "framebuffer_base": "0xb8000000",
+    "declared_region_bytes": 45088768,
+    "pixel_bytes": 18432000,
+    "assumed_stride_bytes": 5760,
+    "historical_android_splash": {
+      "path": "D:\\Code\\UniXNU-nuwa\\out\\trial-boot\\nuwa-android-live.dtb",
+      "sha256": "e3b6e6767527b4543872ba09d21ea7275137ff6f4ddf2077103aeded2582ca34",
+      "base": "0xb8000000",
+      "bytes": 45088768,
+      "scope": "Historical Android DT; not candidate live scanout"
+    },
+    "first_banner_preceded_by": [
+      "BootShim",
+      "SEC assembly and stack",
+      "cache/vector setup",
+      "PlatformInitialize SMMU detach",
+      "framebuffer clear"
+    ],
+    "exceptions": "SerialPortWrite of type/ELR then CpuDeadLoop; same framebuffer dependency"
+  },
+  "archived_abl": {
+    "sha256": "38a837fa917ff45e5be7cf6a421e0417015d875db503d1fb2dbc4d89080b0188",
+    "scope": "Archived input only; current installed ABL not queried",
+    "volumes": [
+      {
+        "label": "Archived ABL",
+        "bytes": 225280,
+        "header_bytes": 72,
+        "sha256": "178dbcc75cc899ed184e2a223add7a0e99402570da765cb623704c3306883400"
+      },
+      {
+        "label": "Archived ABL/9e21fd93-9c72-4c15-8c4b-e77f1db2d792/FV",
+        "bytes": 1134784,
+        "header_bytes": 72,
+        "sha256": "52251aa175e1d7401b120227eff60286930d3969030c97aa3165fe4e8a25c162"
+      }
+    ],
+    "messages": [
+      "BootLinux: Get%aImage failed!",
+      "BootLinux: failed to get dtbo image",
+      "BootLinux: invalid parameter Info",
+      "Failed to load/authenticate boot image: %r",
+      "Kernel mode check 32/64: KernelLoadAddr->magic_64 (%x) KERNEL64_HDR_MAGIC = %x"
+    ],
+    "live_handoff_policy": "unverified; strings are not control-flow proof"
+  },
+  "protocol_reference": "https://docs.kernel.org/arch/arm64/booting.html",
+  "passed_static_checks": [
+    "candidate hash unchanged since trial",
+    "original recovery hash unchanged",
+    "FD matches inspected CI",
+    "shim matches inspected CI",
+    "candidate embeds exact shim and FD",
+    "shim image_size covers itself plus FD",
+    "shim ADR computes exact appended FD start",
+    "shim branch skips Linux header data",
+    "copy loop is the expected fixed 16-byte sequence",
+    "X5 receives fixed FD destination",
+    "X6 receives FD-only copy count",
+    "final branch is BR X5",
+    "copy size and shim alignment support 16-byte loop",
+    "FD reset-vector B reaches SEC map entry",
+    "TE header agrees with linked entry and physical layout",
+    "SEC entry ADR points to gSecEntryArg0",
+    "SEC first store preserves X0 to the slot",
+    "compiled C entry first calls perform cache setup",
+    "compiled early entry has no explicit SPSel selection",
+    "linked SEC exception vector has 2KiB alignment",
+    "actual SEC uses framebuffer serial implementation",
+    "actual SEC uses serial debug implementation",
+    "actual SEC debug agent is null",
+    "actual SEC banner and exception messages are in FD",
+    "actual masks permit WARN and ERROR but not INFO",
+    "assert mask requests deadloop rather than breakpoint",
+    "compiled geometry fits declared Display Reserved region",
+    "historical Android splash reservation matches static framebuffer region",
+    "pinned source LF hash: BootShim/BootShim.S",
+    "pinned source LF hash: Platforms/Xiaomi/nuwaPkg/Library/MemoryMapLib/MemoryMapLib.c",
+    "pinned source LF hash: Silicon/Silicium/SiliciumPkg/Sec/Sec.c",
+    "pinned source LF hash: Silicon/Silicium/SiliciumPkg/Sec/AArch64/ModuleEntryPoint.S",
+    "archived ABL hash pinned"
+  ],
+  "runtime_status": "unverified; device access remains paused"
+}

@@ -1,6 +1,6 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 20:27（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-22 20:53（Asia/Shanghai）。历史见WORKLOG。
 
 ## 实机操作暂停
 
@@ -29,9 +29,13 @@ r6 v1回环已在RAM复现OS字节0x1009和ID前20B差异，32B ID补零与分�
 
 驱动报告索引可用，但本机触控是ST FTS SPI；官方sheng GPU已列可用。设备feeds可选，“同SoC可直接用”不能代替Darwin22/硬件验收；feed保持。[复核](operations/2026-10-22-driver-source-report-review.md)。
 
+## 离线入口与SEC日志审查
+
+33项静态断言通过：FD首分支/TE/map均指0xa710a838，入口机器码保存x0到0xa710a8d8，拷贝尺寸与cache调用吻合。SEC实际日志为帧缓冲绘字，WARN/ERROR已开，异常也走同一出口；正常横幅前先有SMMU调整和清屏。BootShim不准备EL/DAIF/MMU/cache，实际L/x0/SPSel仍未知；text_offset的FD_BASE值与ABL放置策略、原厂EFI入口差异待澄清，不能凭头字段直接归因。只读归档ABL包含BootLinux/ARM64检查路径，不代表当前设备分支。全程未访问设备、未生成镜像。[完整审查与最小待测清单](operations/2026-10-22-arm64-sec-entry-audit.md)。
+
 ## 下一步
 
-1. 先只读核对原厂ARM64入口/候选BootShim头及执行前提、SEC DebugLib输出出口，确定能回收的早期日志或阶段标记，解决当前无法区分ABL交接、BootShim和SEC的问题；不能凭黑屏直接归因显示、内存或DT，也不能提前验收DXE/BDS。
+1. 入口头、BootShim机器码和SEC日志实现已完成首轮离线核对。下一步可离线追归档ABL的实际加载/交接分支，并评估独立于显示的早期记录/回收通道；未知地址、UART路由和RAM读回路径继续TODO。实机暂停不解除，不能以黑屏归因某阶段或先验收DXE/BDS。
 2. 仅在用户明确恢复本仓设备访问后，后续任何容器对照从重新进入bootloader开始；结束后重进bootloader再用ef558db2原厂boot恢复Android并确认完成。保留候选原hash，不自动换v1或混入参考负载。H-001按键项记待办继续软件项。
 3. 新FAT的映射/保留、CI15 runtime crypto/pthread provider、ARCH_TIMER/startup/GIC/PSCI、13项boot-progress、watchdog scratch和NativePrelink布局/12处Libm编码继续审查；XNU负载另验收。
 4. A槽持久启动若要修复，先明确具体授权动作；不在临时固件测试中顺带改槽位。board/bringup-plan内存/基址及_verified保留硬停规则，未知值TODO。

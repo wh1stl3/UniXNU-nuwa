@@ -128,3 +128,5 @@
 2026-10-22 20:22 · 获批临时启动v4候选，命令OKAY/屏幕黑屏/fastboot持续可见，SEC与DXE未验证；原厂恢复先失败，重进bootloader后成功回nuwa Android=1，建立D-016状态隔离规则 · 本提交（Q-058） · reports/v4-firmware-trial/；docs/operations/2026-10-22-v4-firmware-trial.md
 
 2026-10-22 20:27 · 用户告知另一轮开始推送镜像，暂停本仓全部ADB/fastboot/USB查询；Q-058证据已同步，无运行中的设备命令，设备当前状态不再轮询 · 本提交（Q-059） · docs/STATUS.md实机操作暂停；上一轮reports/v4-firmware-trial/
+
+2026-10-22 20:53 · 离线完成ARM64头/BootShim/FD→SEC与日志路由核对，33项静态断言通过；确认屏幕独占日志及SMMU前置盲区，实际ABL交接/cache条件仍TODO，设备暂停不变 · 本提交（Q-060） · reports/arm64-sec-entry-audit/audit.json；docs/operations/2026-10-22-arm64-sec-entry-audit.md

@@ -335,3 +335,6 @@ D-015补充（2026-10-22 19:06）：原厂nuwa v4 boot临时加载回Android boo
 - 证据：reports/v4-firmware-trial/launch.json、recovery.json、reset-bootloader.json、recovery-after-loader-reset.json、post-recovery.json；operations/2026-10-22-v4-firmware-trial.md。
 
 固定v4候选命令OKAY、屏幕黑屏且fastboot持续可见，不构成BootShim/SEC/DXE通过。同一原厂输入在候选后直接恢复报Load Error、重新进入bootloader后成功恢复Android=1，说明实验必须控制状态；尚不能归因某个内部缺陷。以后各镜像对照从重新进入的bootloader开始，恢复也先重进bootloader；保留原始失败证据，不凭单次Load Error外推唯一版本/大小门槛。未得到入口日志的阶段写未验证，不用ACK或黑屏替代执行证明。
+
+
+D-016补充（2026-10-22 20:53）：离线实际FD/TE/map入口一致，SEC WARN/ERROR已开但DebugLib和异常仅走FrameBufferSerialPortLib，正常横幅前还有SMMU调整/清屏。没有独立早期出口，黑屏不能定位SEC或证明未进入。后续先澄清ABL交接契约与可回收早期日志通道，不用更多屏幕DEBUG替代观测；33项静态断言见reports/arm64-sec-entry-audit/audit.json。设备暂停持续，无镜像/板值修改。
