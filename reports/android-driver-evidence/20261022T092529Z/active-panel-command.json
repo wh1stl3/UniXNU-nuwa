@@ -1,0 +1,5 @@
+{
+  "command": "for f in /sys/class/mi_display/disp-DSI-0/panel_info /sys/module/msm_drm/parameters/dsi_display0 /sys/module/msm_drm/parameters/dsi_display1; do echo \"FILE $f\"; cat \"$f\"; echo; done; getprop sys.boot_completed",
+  "exit_code": 0,
+  "stderr": ""
+}

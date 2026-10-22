@@ -1,0 +1,1214 @@
+[
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/clock-names",
+    "hex": "73652d636c6b00",
+    "strings": [
+      "se-clk"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/clocks",
+    "hex": "0000003700000065",
+    "be32": [
+      55,
+      101
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/compatible",
+    "hex": "71636f6d2c7370692d67656e6900",
+    "strings": [
+      "qcom,spi-geni"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/interrupts",
+    "hex": "000000000000016500000004",
+    "be32": [
+      0,
+      357,
+      4
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/pinctrl-0",
+    "hex": "0000021b0000021c0000021d000005d2",
+    "be32": [
+      539,
+      540,
+      541,
+      1490
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/pinctrl-1",
+    "hex": "000005d3000005d4",
+    "be32": [
+      1491,
+      1492
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/pinctrl-names",
+    "hex": "64656661756c7400736c65657000",
+    "strings": [
+      "default",
+      "sleep"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/reg",
+    "hex": "00a9000000004000",
+    "be32": [
+      11075584,
+      16384
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/reg-names",
+    "hex": "73655f7068797300",
+    "strings": [
+      "se_phys"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/spi-max-frequency",
+    "hex": "02faf080",
+    "be32": [
+      50000000
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/status",
+    "hex": "6f6b00",
+    "strings": [
+      "ok"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/avdd-supply",
+    "hex": "0000031c",
+    "be32": [
+      796
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/compatible",
+    "hex": "73742c73706900",
+    "strings": [
+      "st,spi"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,bus-reg-name",
+    "hex": "76646400",
+    "strings": [
+      "vdd"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,config-array-size",
+    "hex": "00000001",
+    "be32": [
+      1
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,cornerfilter-area-step1",
+    "hex": "00000096",
+    "be32": [
+      150
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,cornerfilter-area-step2",
+    "hex": "00000118",
+    "be32": [
+      280
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,cornerfilter-area-step3",
+    "hex": "00000190",
+    "be32": [
+      400
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,default-fw-name",
+    "hex": "73745f6674735f6d322e66746200",
+    "strings": [
+      "st_fts_m2.ftb"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,fod-lx",
+    "hex": "000016e9",
+    "be32": [
+      5865
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,fod-ly",
+    "hex": "00005e0b",
+    "be32": [
+      24075
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,fod-x-size",
+    "hex": "00000a6e",
+    "be32": [
+      2670
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,fod-y-size",
+    "hex": "00000a6e",
+    "be32": [
+      2670
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,irq-flags",
+    "hex": "00002008",
+    "be32": [
+      8200
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,irq-gpio",
+    "hex": "000000790000001900002008",
+    "be32": [
+      121,
+      25,
+      8200
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,irq-gpio-name",
+    "hex": "6674735f69727100",
+    "strings": [
+      "fts_irq"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,pwr-reg-name",
+    "hex": "6176646400",
+    "strings": [
+      "avdd"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,reset-gpio",
+    "hex": "000000790000001800000000",
+    "be32": [
+      121,
+      24,
+      0
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,reset-gpio-enable",
+    "hex": "",
+    "be32": []
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,reset-gpio-name",
+    "hex": "6674735f72737400",
+    "strings": [
+      "fts_rst"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,support-fod",
+    "hex": "",
+    "be32": []
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,support-super-resolution",
+    "hex": "00000001",
+    "be32": [
+      1
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,support-thp",
+    "hex": "",
+    "be32": []
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,support-thp-fw",
+    "hex": "",
+    "be32": []
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-aim-sensitivity",
+    "hex": "0000000a00000008000000060000000400000002",
+    "be32": [
+      10,
+      8,
+      6,
+      4,
+      2
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-aim-sensitivity-def",
+    "hex": "00000003",
+    "be32": [
+      3
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-cornerzone-filter-hor1",
+    "hex": "0000000000000000000000000000000000000118000001180000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000020000000000000b670000011800000c7f00000000000000000000000000000003000000000000000000000000000000000000000000000000",
+    "be32": [
+      0,
+      0,
+      0,
+      0,
+      280,
+      280,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      0,
+      2919,
+      280,
+      3199,
+      0,
+      0,
+      0,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-cornerzone-filter-hor2",
+    "hex": "0000000000000000000000000000000000000000000000000000000000000000000000000000000100000487000000000000059f000001180000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000030000048700000b670000059f00000c7f0000000000000000",
+    "be32": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1159,
+      0,
+      1439,
+      280,
+      0,
+      0,
+      0,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3,
+      1159,
+      2919,
+      1439,
+      3199,
+      0,
+      0
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-cornerzone-filter-ver",
+    "hex": "0000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000020000000000000aef000000fa00000c7f00000000000000000000000000000003000004a500000aef0000059f00000c7f0000000000000000",
+    "be32": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      0,
+      2799,
+      250,
+      3199,
+      0,
+      0,
+      0,
+      3,
+      1189,
+      2799,
+      1439,
+      3199,
+      0,
+      0
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-deadzone-filter-hor",
+    "hex": "000000020000000000000000000000000000059f00000007000000000000000000000002000000010000000000000c780000059f00000c7f0000000000000000000000020000000200000000000000000000000000000c7f000000000000000000000002000000030000059f000000000000059f00000c7f0000000000000000",
+    "be32": [
+      2,
+      0,
+      0,
+      0,
+      1439,
+      7,
+      0,
+      0,
+      2,
+      1,
+      0,
+      3192,
+      1439,
+      3199,
+      0,
+      0,
+      2,
+      2,
+      0,
+      0,
+      0,
+      3199,
+      0,
+      0,
+      2,
+      3,
+      1439,
+      0,
+      1439,
+      3199,
+      0,
+      0
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-deadzone-filter-ver",
+    "hex": "00000002000000000000000000000000000000000000000000000000000000000000000200000001000000000000000000000000000000000000000000000000000000020000000200000000000000000000000000000c7f000000000000000000000002000000030000059f000000000000059f00000c7f0000000000000000",
+    "be32": [
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      2,
+      0,
+      0,
+      0,
+      3199,
+      0,
+      0,
+      2,
+      3,
+      1439,
+      0,
+      1439,
+      3199,
+      0,
+      0
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-edgezone-filter-hor",
+    "hex": "000000010000000000000000000000000000059f00000046000000000000000000000001000000010000000000000c390000059f00000c7f0000000000000000000000010000000200000000000000000000003c00000c7f0000000000000000000000010000000300000563000000000000059f00000c7f0000000000000000",
+    "be32": [
+      1,
+      0,
+      0,
+      0,
+      1439,
+      70,
+      0,
+      0,
+      1,
+      1,
+      0,
+      3129,
+      1439,
+      3199,
+      0,
+      0,
+      1,
+      2,
+      0,
+      0,
+      60,
+      3199,
+      0,
+      0,
+      1,
+      3,
+      1379,
+      0,
+      1439,
+      3199,
+      0,
+      0
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-edgezone-filter-ver",
+    "hex": "00000001000000000000000000000000000000000000000000000000000000000000000100000001000000000000000000000000000000000000000000000000000000010000000200000000000000000000003c00000c7f0000000000000000000000010000000300000563000000000000059f00000c7f0000000000000000",
+    "be32": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      2,
+      0,
+      0,
+      60,
+      3199,
+      0,
+      0,
+      1,
+      3,
+      1379,
+      0,
+      1439,
+      3199,
+      0,
+      0
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-expert-array",
+    "hex": "000000060000000f0000000100000078000000060000000f000000020000000f0000000100000078000000040000000f000000040000000f0000000100000078000000020000000f",
+    "be32": [
+      6,
+      15,
+      1,
+      120,
+      6,
+      15,
+      2,
+      15,
+      1,
+      120,
+      4,
+      15,
+      4,
+      15,
+      1,
+      120,
+      2,
+      15
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-follow-performance",
+    "hex": "0000000a0000000f00000001000000080000000f00000001000000060000000f00000001000000040000000f00000001000000020000000f00000001",
+    "be32": [
+      10,
+      15,
+      1,
+      8,
+      15,
+      1,
+      6,
+      15,
+      1,
+      4,
+      15,
+      1,
+      2,
+      15,
+      1
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-follow-performance-def",
+    "hex": "00000003",
+    "be32": [
+      3
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-tap-sensitivity",
+    "hex": "000000a0000000960000008c0000007800000064",
+    "be32": [
+      160,
+      150,
+      140,
+      120,
+      100
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-tap-sensitivity-def",
+    "hex": "00000004",
+    "be32": [
+      4
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-tap-stability",
+    "hex": "000000080000000c0000000f0000001200000019",
+    "be32": [
+      8,
+      12,
+      15,
+      18,
+      25
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-tap-stability-def",
+    "hex": "00000003",
+    "be32": [
+      3
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,x-max",
+    "hex": "00003840",
+    "be32": [
+      14400
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,y-max",
+    "hex": "00007d00",
+    "be32": [
+      32000
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/interrupt-parent",
+    "hex": "00000079",
+    "be32": [
+      121
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/interrupts",
+    "hex": "0000001900002008",
+    "be32": [
+      25,
+      8200
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/pinctrl-0",
+    "hex": "000005d5",
+    "be32": [
+      1493
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/pinctrl-1",
+    "hex": "000003a5000003a4",
+    "be32": [
+      933,
+      932
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/pinctrl-names",
+    "hex": "706d785f74735f61637469766500706d785f74735f73757370656e6400",
+    "strings": [
+      "pmx_ts_active",
+      "pmx_ts_suspend"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/reg",
+    "hex": "00000000",
+    "be32": [
+      0
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/spi-max-frequency",
+    "hex": "00b71b00",
+    "be32": [
+      12000000
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/status",
+    "hex": "6f6b00",
+    "strings": [
+      "ok"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/vdd-supply",
+    "hex": "0000002a",
+    "be32": [
+      42
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,cfg_0/fts,fw-name",
+    "hex": "73745f6674735f6d322e66746200",
+    "strings": [
+      "st_fts_m2.ftb"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,cfg_0/fts,limit-name",
+    "hex": "73746d5f6674735f70726f64756374696f6e5f6c696d6974732e63737600",
+    "strings": [
+      "stm_fts_production_limits.csv"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,cfg_0/fts,tp-vendor",
+    "hex": "00000038",
+    "be32": [
+      56
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/i2c@a90000/goodix-berlin@5d/avdd-supply",
+    "hex": "000002f3",
+    "be32": [
+      755
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/i2c@a90000/goodix-berlin@5d/compatible",
+    "hex": "676f6f6469782c67743939313600",
+    "strings": [
+      "goodix,gt9916"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/i2c@a90000/goodix-berlin@5d/goodix,irq-gpio",
+    "hex": "000000790000001900002008",
+    "be32": [
+      121,
+      25,
+      8200
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/i2c@a90000/goodix-berlin@5d/goodix,reset-gpio",
+    "hex": "000000790000001800000000",
+    "be32": [
+      121,
+      24,
+      0
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/i2c@a90000/goodix-berlin@5d/interrupt-parent",
+    "hex": "00000079",
+    "be32": [
+      121
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/i2c@a90000/goodix-berlin@5d/interrupts",
+    "hex": "0000001900002008",
+    "be32": [
+      25,
+      8200
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/i2c@a90000/goodix-berlin@5d/iovdd-supply",
+    "hex": "0000002a",
+    "be32": [
+      42
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/i2c@a90000/goodix-berlin@5d/qts,trusted-touch-vm-gpio-list",
+    "hex": "000000790000002c00000000000000790000002d00000000000000790000002e00000000000000790000002f00000000000000790000001800000000000000790000001900002008",
+    "be32": [
+      121,
+      44,
+      0,
+      121,
+      45,
+      0,
+      121,
+      46,
+      0,
+      121,
+      47,
+      0,
+      121,
+      24,
+      0,
+      121,
+      25,
+      8200
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/i2c@a90000/goodix-berlin@5d/reg",
+    "hex": "0000005d",
+    "be32": [
+      93
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/clock-names",
+    "hex": "706c6c5f627974655f636c6b3000706c6c5f6473695f636c6b3000706c6c5f627974655f636c6b3100706c6c5f6473695f636c6b31006d64705f636f72655f636c6b00",
+    "strings": [
+      "pll_byte_clk0",
+      "pll_dsi_clk0",
+      "pll_byte_clk1",
+      "pll_dsi_clk1",
+      "mdp_core_clk"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/clocks",
+    "hex": "0000074f000000000000074f00000001000007500000000200000750000000030000002f0000003d",
+    "be32": [
+      1871,
+      0,
+      1871,
+      1,
+      1872,
+      2,
+      1872,
+      3,
+      47,
+      61
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/compatible",
+    "hex": "71636f6d2c6473692d646973706c617900",
+    "strings": [
+      "qcom,dsi-display"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/pinctrl-0",
+    "hex": "0000075100000752",
+    "be32": [
+      1873,
+      1874
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/pinctrl-1",
+    "hex": "0000075300000754",
+    "be32": [
+      1875,
+      1876
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/pinctrl-names",
+    "hex": "70616e656c5f6163746976650070616e656c5f73757370656e6400",
+    "strings": [
+      "panel_active",
+      "panel_suspend"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/qcom,platform-te-gpio",
+    "hex": "000000790000005600000000",
+    "be32": [
+      121,
+      86,
+      0
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/vci-supply",
+    "hex": "00000757",
+    "be32": [
+      1879
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/vddd-supply",
+    "hex": "00000758",
+    "be32": [
+      1880
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/vddio-supply",
+    "hex": "00000756",
+    "be32": [
+      1878
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/ufshc@1d84000/clock-names",
+    "hex": "636f72655f636c6b006275735f616767725f636c6b0069666163655f636c6b00636f72655f636c6b5f756e6970726f00636f72655f636c6b5f696365007265665f636c6b0074785f6c616e65305f73796e635f636c6b0072785f6c616e65305f73796e635f636c6b0072785f6c616e65315f73796e635f636c6b00",
+    "strings": [
+      "core_clk",
+      "bus_aggr_clk",
+      "iface_clk",
+      "core_clk_unipro",
+      "core_clk_ice",
+      "ref_clk",
+      "tx_lane0_sync_clk",
+      "rx_lane0_sync_clk",
+      "rx_lane1_sync_clk"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/ufshc@1d84000/clocks",
+    "hex": "000000370000008a000000370000000100000037000000890000003700000099000000370000008d0000003800000004000000370000009700000037000000930000003700000095",
+    "be32": [
+      55,
+      138,
+      55,
+      1,
+      55,
+      137,
+      55,
+      153,
+      55,
+      141,
+      56,
+      4,
+      55,
+      151,
+      55,
+      147,
+      55,
+      149
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/ufshc@1d84000/compatible",
+    "hex": "71636f6d2c756673686300",
+    "strings": [
+      "qcom,ufshc"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/ufshc@1d84000/interrupts",
+    "hex": "000000000000010900000004",
+    "be32": [
+      0,
+      265,
+      4
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/ufshc@1d84000/iommus",
+    "hex": "0000003e0000006000000000",
+    "be32": [
+      62,
+      96,
+      0
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/ufshc@1d84000/qcom,vccq-parent-supply",
+    "hex": "00000305",
+    "be32": [
+      773
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/ufshc@1d84000/qcom,vddp-ref-clk-supply",
+    "hex": "0000030a",
+    "be32": [
+      778
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/ufshc@1d84000/reg",
+    "hex": "01d840000000300001d880000000800001d9000000009000",
+    "be32": [
+      30949376,
+      12288,
+      30965760,
+      32768,
+      30998528,
+      36864
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/ufshc@1d84000/reg-names",
+    "hex": "7566735f6d656d007566735f696365007566735f6963655f68776b6d00",
+    "strings": [
+      "ufs_mem",
+      "ufs_ice",
+      "ufs_ice_hwkm"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/ufshc@1d84000/reset-gpios",
+    "hex": "00000079000000d200000001",
+    "be32": [
+      121,
+      210,
+      1
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/ufshc@1d84000/status",
+    "hex": "6f6b00",
+    "strings": [
+      "ok"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/ufshc@1d84000/vcc-supply",
+    "hex": "000002f6",
+    "be32": [
+      758
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/ufshc@1d84000/vccq-supply",
+    "hex": "00000308",
+    "be32": [
+      776
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/ufshc@1d84000/vdd-hba-supply",
+    "hex": "000002bc",
+    "be32": [
+      700
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/ufsphy_mem@1d80000/clock-names",
+    "hex": "7265665f636c6b5f737263007265665f6175785f636c6b00717265665f636c6b0072785f73796d305f6d75785f636c6b0072785f73796d315f6d75785f636c6b0074785f73796d305f6d75785f636c6b0072785f73796d305f7068795f636c6b0072785f73796d315f7068795f636c6b0074785f73796d305f7068795f636c6b00",
+    "strings": [
+      "ref_clk_src",
+      "ref_aux_clk",
+      "qref_clk",
+      "rx_sym0_mux_clk",
+      "rx_sym1_mux_clk",
+      "tx_sym0_mux_clk",
+      "rx_sym0_phy_clk",
+      "rx_sym1_phy_clk",
+      "tx_sym0_phy_clk"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/ufsphy_mem@1d80000/clocks",
+    "hex": "000000380000001b00000037000000900000004f00000002000000370000009400000037000000960000003700000098000000370000009300000037000000950000003700000097",
+    "be32": [
+      56,
+      27,
+      55,
+      144,
+      79,
+      2,
+      55,
+      148,
+      55,
+      150,
+      55,
+      152,
+      55,
+      147,
+      55,
+      149,
+      55,
+      151
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/ufsphy_mem@1d80000/compatible",
+    "hex": "71636f6d2c7566732d7068792d716d702d76342d6b616c616d6100",
+    "strings": [
+      "qcom,ufs-phy-qmp-v4-kalama"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/ufsphy_mem@1d80000/reg",
+    "hex": "01d8000000001934",
+    "be32": [
+      30932992,
+      6452
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/ufsphy_mem@1d80000/reg-names",
+    "hex": "7068795f6d656d00",
+    "strings": [
+      "phy_mem"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/ufsphy_mem@1d80000/status",
+    "hex": "6f6b00",
+    "strings": [
+      "ok"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/ufsphy_mem@1d80000/vdd-phy-gdsc-supply",
+    "hex": "000004c6",
+    "be32": [
+      1222
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/ufsphy_mem@1d80000/vdda-phy-supply",
+    "hex": "000002fb",
+    "be32": [
+      763
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/ufsphy_mem@1d80000/vdda-pll-supply",
+    "hex": "0000002d",
+    "be32": [
+      45
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/ufsphy_mem@1d80000/vdda-qref-supply",
+    "hex": "0000002c",
+    "be32": [
+      44
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,kgsl-3d0@3d00000/clock-names",
+    "hex": "6763635f6770755f6d656d6e6f635f676678006763635f6770755f736e6f635f64766d5f676678006770755f63635f616862006170625f70636c6b00",
+    "strings": [
+      "gcc_gpu_memnoc_gfx",
+      "gcc_gpu_snoc_dvm_gfx",
+      "gpu_cc_ahb",
+      "apb_pclk"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,kgsl-3d0@3d00000/clocks",
+    "hex": "000000370000002000000037000000210000004e000000000000005c00000000",
+    "be32": [
+      55,
+      32,
+      55,
+      33,
+      78,
+      0,
+      92,
+      0
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,kgsl-3d0@3d00000/compatible",
+    "hex": "71636f6d2c616472656e6f2d6770752d67656e372d322d310071636f6d2c6b67736c2d33643000",
+    "strings": [
+      "qcom,adreno-gpu-gen7-2-1",
+      "qcom,kgsl-3d0"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,kgsl-3d0@3d00000/interrupt-names",
+    "hex": "6b67736c5f3364305f69727100",
+    "strings": [
+      "kgsl_3d0_irq"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,kgsl-3d0@3d00000/interrupts",
+    "hex": "000000000000012c00000004",
+    "be32": [
+      0,
+      300,
+      4
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,kgsl-3d0@3d00000/reg",
+    "hex": "03d000000004000003d610000000080003d500000001000003d8b0000000200003d9e000000010001090000000080000100480000000800010b0500000001000",
+    "be32": [
+      63963136,
+      262144,
+      64360448,
+      2048,
+      64290816,
+      65536,
+      64532480,
+      8192,
+      64610304,
+      4096,
+      277872640,
+      524288,
+      268730368,
+      32768,
+      279990272,
+      4096
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,kgsl-3d0@3d00000/reg-names",
+    "hex": "6b67736c5f3364305f7265675f6d656d6f72790063785f646267630072736363006973656e73655f636e746c0063785f6d69736300716473735f67667800716473735f65747200716473735f746d6300",
+    "strings": [
+      "kgsl_3d0_reg_memory",
+      "cx_dbgc",
+      "rscc",
+      "isense_cntl",
+      "cx_misc",
+      "qdss_gfx",
+      "qdss_etr",
+      "qdss_tmc"
+    ]
+  },
+  {
+    "path": "/sys/firmware/devicetree/base/soc/qcom,kgsl-3d0@3d00000/status",
+    "hex": "6f6b00",
+    "strings": [
+      "ok"
+    ]
+  }
+]

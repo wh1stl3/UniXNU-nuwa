@@ -1,0 +1,1302 @@
+NODE /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary
+clock-names  pinctrl-1               qcom,panel-te-source
+clocks       pinctrl-names           qcom,platform-te-gpio
+compatible   qcom,demura-panel-id    vci-supply
+label        qcom,dsi-ctrl           vddd-supply
+name         qcom,dsi-default-panel  vddio-supply
+phandle      qcom,dsi-phy
+pinctrl-0    qcom,mdp
+NODE /sys/class/drm/card0-DSI-1
+device  dpms  edid  enabled  modes  power  status  subsystem  uevent
+NODE /sys/firmware/devicetree/base/soc/pinctrl@f000000
+#gpio-cells                       gamepad_gpio_key
+#interrupt-cells                  gpio-controller
+ap2mdm                            i2s0_sck
+aux0_pcm_clk                      i2s0_sd0
+aux0_pcm_din                      i2s0_sd1
+aux0_pcm_dout                     i2s0_ws
+aux0_pcm_ws                       i2s1_sck
+aux1_pcm_clk                      i2s1_sd0
+aux1_pcm_din                      i2s1_sd1
+aux1_pcm_dout                     i2s1_ws
+aux1_pcm_ws                       interrupt-controller
+bt_en_sleep                       interrupts
+cam_ois_wide_active_vaf           mdm2ap
+cam_ois_wide_suspend_vaf          mi_ts_active
+cam_sensor_active_rst0            mi_ts_cs_active
+cam_sensor_active_rst1            mi_ts_cs_suspend
+cam_sensor_active_rst2            mi_ts_spi_suspend
+cam_sensor_active_rst3            name
+cam_sensor_active_rst4            nfc
+cam_sensor_active_rst5            pcie0
+cam_sensor_front_active_rst       pcie1
+cam_sensor_front_suspend_rst      phandle
+cam_sensor_mclk0_active           pmx_sde
+cam_sensor_mclk0_suspend          pmx_sde_te
+cam_sensor_mclk1_active           pmx_ts_active
+cam_sensor_mclk1_suspend          pmx_ts_int_suspend
+cam_sensor_mclk1_version_active   pmx_ts_release
+cam_sensor_mclk1_version_suspend  pmx_ts_reset_suspend
+cam_sensor_mclk2_active           qcom,gpios-reserved
+cam_sensor_mclk2_suspend          qupv3_hub_i2c0_pins
+cam_sensor_mclk2_version_active   qupv3_hub_i2c1_pins
+cam_sensor_mclk2_version_suspend  qupv3_hub_i2c2_pins
+cam_sensor_mclk3_active           qupv3_hub_i2c3_pins
+cam_sensor_mclk3_suspend          qupv3_hub_i2c4_pins
+cam_sensor_mclk3_version_active   qupv3_hub_i2c5_pins
+cam_sensor_mclk3_version_suspend  qupv3_hub_i2c6_pins
+cam_sensor_mclk4_active           qupv3_hub_i2c7_pins
+cam_sensor_mclk4_suspend          qupv3_hub_i2c8_pins
+cam_sensor_mclk4_version_active   qupv3_hub_i2c9_pins
+cam_sensor_mclk4_version_suspend  qupv3_se0_i2c_pins
+cam_sensor_mclk5_active           qupv3_se0_i3c_pins
+cam_sensor_mclk5_suspend          qupv3_se0_spi_pins
+cam_sensor_ponv_active            qupv3_se10_i2c_pins
+cam_sensor_ponv_suspend           qupv3_se10_spi_pins
+cam_sensor_suspend_rst0           qupv3_se11_i2c_pins
+cam_sensor_suspend_rst1           qupv3_se11_spi_pins
+cam_sensor_suspend_rst2           qupv3_se12_i2c_pins
+cam_sensor_suspend_rst3           qupv3_se12_spi_pins
+cam_sensor_suspend_rst4           qupv3_se13_i2c_pins
+cam_sensor_suspend_rst5           qupv3_se13_spi_pins
+cam_sensor_tele_active_avdd       qupv3_se14_4uart_pins
+cam_sensor_tele_active_rst        qupv3_se15_i2c_pins
+cam_sensor_tele_suspend_avdd      qupv3_se15_spi_pins
+cam_sensor_tele_suspend_rst       qupv3_se1_i2c_pins
+cam_sensor_ultra_active_avdd      qupv3_se1_i3c_pins
+cam_sensor_ultra_active_rst       qupv3_se1_spi_pins
+cam_sensor_ultra_suspend_avdd     qupv3_se2_i2c_pins
+cam_sensor_ultra_suspend_rst      qupv3_se2_spi_pins
+cam_sensor_wide_active_avdd1      qupv3_se3_i2c_pins
+cam_sensor_wide_active_avdd2      qupv3_se3_spi_pins
+cam_sensor_wide_active_rst        qupv3_se4_i2c_pins
+cam_sensor_wide_suspend_avdd1     qupv3_se4_spi_pins
+cam_sensor_wide_suspend_avdd2     qupv3_se5_i2c_pins
+cam_sensor_wide_suspend_rst       qupv3_se5_spi_pins
+cci_aon_i2c_active                qupv3_se6_i2c_pins
+cci_aon_i2c_suspend               qupv3_se6_spi_pins
+cci_i2c_scl0_active               qupv3_se7_2uart_pins
+cci_i2c_scl0_suspend              qupv3_se8_i2c_pins
+cci_i2c_scl1_active               qupv3_se8_i3c_pins
+cci_i2c_scl1_suspend              qupv3_se8_spi_pins
+cci_i2c_scl2_active               qupv3_se9_i2c_pins
+cci_i2c_scl2_suspend              qupv3_se9_i3c_pins
+cci_i2c_scl4_active               qupv3_se9_spi_pins
+cci_i2c_scl4_suspend              reg
+cci_i2c_scl5_active               sbu_uart_en_ctrl
+cci_i2c_scl5_suspend              sdc2_off
+cci_i2c_sda0_active               sdc2_on
+cci_i2c_sda0_suspend              tdm0_clk
+cci_i2c_sda1_active               tdm0_din
+cci_i2c_sda1_suspend              tdm0_dout
+cci_i2c_sda2_active               tdm0_ws
+cci_i2c_sda2_suspend              tdm1_clk
+cci_i2c_sda4_active               tdm1_din
+cci_i2c_sda4_suspend              tdm1_dout
+cci_i2c_sda5_active               tdm1_ws
+cci_i2c_sda5_suspend              trigout_a
+cirrus_irq_default                usb_phy_ps
+cirrus_reset_default_0            wakeup-parent
+cirrus_reset_default_1            wcd938x_reset_active
+cnss_pins                         wcd938x_reset_sleep
+compatible
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/clock-names
+ 70 6c 6c 5f 62 79 74 65 5f 63 6c 6b 30 00 70 6c
+ 6c 5f 64 73 69 5f 63 6c 6b 30 00 70 6c 6c 5f 62
+ 79 74 65 5f 63 6c 6b 31 00 70 6c 6c 5f 64 73 69
+ 5f 63 6c 6b 31 00 6d 64 70 5f 63 6f 72 65 5f 63
+ 6c 6b 00
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/clocks
+ 00 00 07 4f 00 00 00 00 00 00 07 4f 00 00 00 01
+ 00 00 07 50 00 00 00 02 00 00 07 50 00 00 00 03
+ 00 00 00 2f 00 00 00 3d
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/compatible
+ 71 63 6f 6d 2c 64 73 69 2d 64 69 73 70 6c 61 79
+ 00
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/label
+ 70 72 69 6d 61 72 79 00
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/name
+ 71 63 6f 6d 2c 64 73 69 2d 64 69 73 70 6c 61 79
+ 2d 70 72 69 6d 61 72 79 00
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/phandle
+ 00 00 07 42
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/pinctrl-0
+ 00 00 07 51 00 00 07 52
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/pinctrl-1
+ 00 00 07 53 00 00 07 54
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/pinctrl-names
+ 70 61 6e 65 6c 5f 61 63 74 69 76 65 00 70 61 6e
+ 65 6c 5f 73 75 73 70 65 6e 64 00
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/qcom,demura-panel-id
+[omitted: not needed for driver selection]
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/qcom,dsi-ctrl
+ 00 00 07 47 00 00 07 4e
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/qcom,dsi-default-panel
+ 00 00 07 55
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/qcom,dsi-phy
+ 00 00 07 4f 00 00 07 50
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/qcom,mdp
+ 00 00 07 4a
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/qcom,panel-te-source
+ 00 00 00 00
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/qcom,platform-te-gpio
+ 00 00 00 79 00 00 00 56 00 00 00 00
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/vci-supply
+ 00 00 07 57
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/vddd-supply
+ 00 00 07 58
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/vddio-supply
+ 00 00 07 56
+/sys/firmware/devicetree/base/soc/qcom,mdss_mdp@ae00000/qcom,mdss_dsi_m2_38_0c_0a_dsc_cmd
+/sys/firmware/devicetree/base/soc/qcom,mdss_mdp@ae00000/qcom,mdss_dsi_m2_38_0c_0a_dsc_cmd/qcom,mdss-dsi-display-timings
+/sys/firmware/devicetree/base/soc/qcom,mdss_mdp@ae00000/qcom,mdss_dsi_m2_38_0c_0a_dsc_cmd/qcom,mdss-dsi-display-timings/timing@wqhd_30hz_index_03
+/sys/firmware/devicetree/base/soc/qcom,mdss_mdp@ae00000/qcom,mdss_dsi_m2_38_0c_0a_dsc_cmd/qcom,mdss-dsi-display-timings/timing@wqhd_40hz_index_02
+/sys/firmware/devicetree/base/soc/qcom,mdss_mdp@ae00000/qcom,mdss_dsi_m2_38_0c_0a_dsc_cmd/qcom,mdss-dsi-display-timings/timing@wqhd_60hz_index_00
+/sys/firmware/devicetree/base/soc/qcom,mdss_mdp@ae00000/qcom,mdss_dsi_m2_38_0c_0a_dsc_cmd/qcom,mdss-dsi-display-timings/timing@wqhd_ddic_auto_minfps_1hz_index_07
+/sys/firmware/devicetree/base/soc/qcom,mdss_mdp@ae00000/qcom,mdss_dsi_m2_38_0c_0a_dsc_cmd/qcom,mdss-dsi-display-timings/timing@wqhd_120hz_index_01
+/sys/firmware/devicetree/base/soc/qcom,mdss_mdp@ae00000/qcom,mdss_dsi_m2_38_0c_0a_dsc_cmd/qcom,mdss-dsi-display-timings/timing@wqhd_ddic_auto_minfps_1hz_index_08
+/sys/firmware/devicetree/base/soc/qcom,mdss_mdp@ae00000/qcom,mdss_dsi_m2_38_0c_0a_dsc_cmd/qcom,mdss-dsi-display-timings/timing@wqhd_ddic_qsync_index_9
+/sys/firmware/devicetree/base/soc/qcom,mdss_mdp@ae00000/qcom,mdss_dsi_m2_38_0c_0a_dsc_cmd/qcom,mdss-dsi-display-timings/timing@wqhd_24hz_index_04
+/sys/firmware/devicetree/base/soc/qcom,mdss_mdp@ae00000/qcom,mdss_dsi_m2_38_0c_0a_dsc_cmd/qcom,mdss-dsi-display-timings/timing@wqhd_1hz_index_06
+/sys/firmware/devicetree/base/soc/qcom,mdss_mdp@ae00000/qcom,mdss_dsi_m2_38_0c_0a_dsc_cmd/qcom,mdss-dsi-display-timings/timing@wqhd_ddic_qsync_index_10
+/sys/firmware/devicetree/base/soc/qcom,mdss_mdp@ae00000/qcom,mdss_dsi_m2_38_0c_0a_dsc_cmd/qcom,mdss-dsi-display-timings/timing@wqhd_10hz_index_05
+/sys/firmware/devicetree/base/soc/qcom,mdss_mdp@ae00000/qcom,mdss_dsi_m2a_42_02_0b_dsc_cmd
+/sys/firmware/devicetree/base/soc/qcom,mdss_mdp@ae00000/qcom,mdss_dsi_m2a_42_02_0b_dsc_cmd/qcom,mdss-dsi-display-timings
+/sys/firmware/devicetree/base/soc/qcom,mdss_mdp@ae00000/qcom,mdss_dsi_m2a_42_02_0b_dsc_cmd/qcom,mdss-dsi-display-timings/timing@wqhd_30hz_index_03
+/sys/firmware/devicetree/base/soc/qcom,mdss_mdp@ae00000/qcom,mdss_dsi_m2a_42_02_0b_dsc_cmd/qcom,mdss-dsi-display-timings/timing@wqhd_60hz_index_00
+/sys/firmware/devicetree/base/soc/qcom,mdss_mdp@ae00000/qcom,mdss_dsi_m2a_42_02_0b_dsc_cmd/qcom,mdss-dsi-display-timings/timing@wqhd_120hz_index_01
+/sys/firmware/devicetree/base/soc/qcom,mdss_mdp@ae00000/qcom,mdss_dsi_m2a_42_02_0b_dsc_cmd/qcom,mdss-dsi-display-timings/timing@wqhd_1hz_index_05
+/sys/firmware/devicetree/base/soc/qcom,mdss_mdp@ae00000/qcom,mdss_dsi_m2a_42_02_0b_dsc_cmd/qcom,mdss-dsi-display-timings/timing@wqhd_90hz_index_02
+/sys/firmware/devicetree/base/soc/qcom,mdss_mdp@ae00000/qcom,mdss_dsi_m2a_42_02_0b_dsc_cmd/qcom,mdss-dsi-display-timings/timing@wqhd_10hz_index_04
+/sys/firmware/devicetree/base/soc/dsi_panel_pwr_supply_M2
+/sys/firmware/devicetree/base/soc/dsi_panel_pwr_supply_M2/qcom,panel-supply-entry@1
+/sys/firmware/devicetree/base/soc/dsi_panel_pwr_supply_M2/qcom,panel-supply-entry@2
+/sys/firmware/devicetree/base/soc/dsi_panel_pwr_supply_M2/qcom,panel-supply-entry@0
+/sys/firmware/devicetree/base/soc/pinctrl@f000000
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/wcd938x_reset_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/wcd938x_reset_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/wcd938x_reset_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_ts_int_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_ts_int_suspend/ts_int_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_ts_int_suspend/ts_int_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_ts_int_suspend/ts_int_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_ultra_suspend_rst
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_ultra_suspend_rst/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_ultra_suspend_rst/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_sd1
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_sd1/i2s0_sd1_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_sd1/i2s0_sd1_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_sd1/i2s0_sd1_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_sd1/i2s0_sd1_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_sd1/i2s0_sd1_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_sd1/i2s0_sd1_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl5_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl5_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl5_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda5_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda5_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda5_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se15_spi_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se15_spi_pins/qupv3_se15_spi_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se15_spi_pins/qupv3_se15_spi_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se15_spi_pins/qupv3_se15_spi_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se15_spi_pins/qupv3_se15_spi_miso_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se15_spi_pins/qupv3_se15_spi_miso_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se15_spi_pins/qupv3_se15_spi_miso_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se15_spi_pins/qupv3_se15_spi_mosi_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se15_spi_pins/qupv3_se15_spi_mosi_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se15_spi_pins/qupv3_se15_spi_mosi_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se15_spi_pins/qupv3_se15_spi_clk_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se15_spi_pins/qupv3_se15_spi_clk_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se15_spi_pins/qupv3_se15_spi_clk_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se15_spi_pins/qupv3_se15_spi_cs_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se15_spi_pins/qupv3_se15_spi_cs_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se15_spi_pins/qupv3_se15_spi_cs_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se6_spi_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se6_spi_pins/qupv3_se6_spi_miso_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se6_spi_pins/qupv3_se6_spi_miso_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se6_spi_pins/qupv3_se6_spi_miso_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se6_spi_pins/qupv3_se6_spi_mosi_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se6_spi_pins/qupv3_se6_spi_mosi_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se6_spi_pins/qupv3_se6_spi_mosi_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se6_spi_pins/qupv3_se6_spi_cs_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se6_spi_pins/qupv3_se6_spi_cs_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se6_spi_pins/qupv3_se6_spi_cs_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se6_spi_pins/qupv3_se6_spi_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se6_spi_pins/qupv3_se6_spi_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se6_spi_pins/qupv3_se6_spi_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se6_spi_pins/qupv3_se6_spi_clk_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se6_spi_pins/qupv3_se6_spi_clk_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se6_spi_pins/qupv3_se6_spi_clk_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk4_version_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk4_version_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk4_version_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_tele_active_rst
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_tele_active_rst/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_tele_active_rst/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_ws
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_ws/tdm0_ws_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_ws/tdm0_ws_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_ws/tdm0_ws_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_ws/tdm0_ws_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_ws/tdm0_ws_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_ws/tdm0_ws_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se11_i2c_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se11_i2c_pins/qupv3_se11_i2c_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se11_i2c_pins/qupv3_se11_i2c_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se11_i2c_pins/qupv3_se11_i2c_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se11_i2c_pins/qupv3_se11_i2c_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se11_i2c_pins/qupv3_se11_i2c_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se11_i2c_pins/qupv3_se11_i2c_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se11_i2c_pins/qupv3_se11_i2c_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se11_i2c_pins/qupv3_se11_i2c_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se11_i2c_pins/qupv3_se11_i2c_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se2_i2c_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se2_i2c_pins/qupv3_se2_i2c_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se2_i2c_pins/qupv3_se2_i2c_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se2_i2c_pins/qupv3_se2_i2c_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se2_i2c_pins/qupv3_se2_i2c_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se2_i2c_pins/qupv3_se2_i2c_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se2_i2c_pins/qupv3_se2_i2c_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se2_i2c_pins/qupv3_se2_i2c_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se2_i2c_pins/qupv3_se2_i2c_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se2_i2c_pins/qupv3_se2_i2c_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk4_version_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk4_version_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk4_version_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_active_rst5
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_active_rst5/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_active_rst5/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_clk
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_clk/tdm1_clk_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_clk/tdm1_clk_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_clk/tdm1_clk_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_clk/tdm1_clk_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_clk/tdm1_clk_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_clk/tdm1_clk_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c3_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c3_pins/qupv3_hub_i2c3_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c3_pins/qupv3_hub_i2c3_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c3_pins/qupv3_hub_i2c3_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c3_pins/qupv3_hub_i2c3_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c3_pins/qupv3_hub_i2c3_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c3_pins/qupv3_hub_i2c3_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c3_pins/qupv3_hub_i2c3_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c3_pins/qupv3_hub_i2c3_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c3_pins/qupv3_hub_i2c3_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/gamepad_gpio_key
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/gamepad_gpio_key/gpio_key_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/gamepad_gpio_key/gpio_key_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/gamepad_gpio_key/gpio_key_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/gamepad_gpio_key/gpio_key_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/gamepad_gpio_key/gpio_key_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/gamepad_gpio_key/gpio_key_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_clk
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_clk/aux1_pcm_clk_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_clk/aux1_pcm_clk_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_clk/aux1_pcm_clk_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_clk/aux1_pcm_clk_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_clk/aux1_pcm_clk_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_clk/aux1_pcm_clk_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/bt_en_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/bt_en_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/bt_en_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/sdc2_off
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/sdc2_off/clk
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/sdc2_off/data
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/sdc2_off/cmd
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_i3c_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_i3c_pins/qupv3_se1_i3c_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_i3c_pins/qupv3_se1_i3c_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_i3c_pins/qupv3_se1_i3c_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_i3c_pins/qupv3_se1_i3c_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_i3c_pins/qupv3_se1_i3c_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_i3c_pins/qupv3_se1_i3c_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_i3c_pins/qupv3_se1_i3c_disable
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_i3c_pins/qupv3_se1_i3c_disable/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_i3c_pins/qupv3_se1_i3c_disable/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_i3c_pins/qupv3_se1_i3c_scl_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_i3c_pins/qupv3_se1_i3c_scl_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_i3c_pins/qupv3_se1_i3c_scl_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_i3c_pins/qupv3_se1_i3c_sda_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_i3c_pins/qupv3_se1_i3c_sda_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_i3c_pins/qupv3_se1_i3c_sda_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_wide_active_avdd1
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_wide_active_avdd1/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_wide_active_avdd1/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/mi_ts_spi_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/mi_ts_spi_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/mi_ts_spi_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c9_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c9_pins/qupv3_hub_i2c9_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c9_pins/qupv3_hub_i2c9_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c9_pins/qupv3_hub_i2c9_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c9_pins/qupv3_hub_i2c9_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c9_pins/qupv3_hub_i2c9_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c9_pins/qupv3_hub_i2c9_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c9_pins/qupv3_hub_i2c9_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c9_pins/qupv3_hub_i2c9_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c9_pins/qupv3_hub_i2c9_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cirrus_reset_default_1
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cirrus_reset_default_1/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cirrus_reset_default_1/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se11_spi_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se11_spi_pins/qupv3_se11_spi_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se11_spi_pins/qupv3_se11_spi_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se11_spi_pins/qupv3_se11_spi_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se11_spi_pins/qupv3_se11_spi_miso_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se11_spi_pins/qupv3_se11_spi_miso_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se11_spi_pins/qupv3_se11_spi_miso_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se11_spi_pins/qupv3_se11_spi_mosi_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se11_spi_pins/qupv3_se11_spi_mosi_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se11_spi_pins/qupv3_se11_spi_mosi_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se11_spi_pins/qupv3_se11_spi_cs_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se11_spi_pins/qupv3_se11_spi_cs_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se11_spi_pins/qupv3_se11_spi_cs_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se11_spi_pins/qupv3_se11_spi_clk_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se11_spi_pins/qupv3_se11_spi_clk_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se11_spi_pins/qupv3_se11_spi_clk_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se2_spi_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se2_spi_pins/qupv3_se2_spi_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se2_spi_pins/qupv3_se2_spi_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se2_spi_pins/qupv3_se2_spi_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se2_spi_pins/qupv3_se2_spi_cs_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se2_spi_pins/qupv3_se2_spi_cs_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se2_spi_pins/qupv3_se2_spi_cs_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se2_spi_pins/qupv3_se2_spi_clk_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se2_spi_pins/qupv3_se2_spi_clk_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se2_spi_pins/qupv3_se2_spi_clk_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se2_spi_pins/qupv3_se2_spi_miso_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se2_spi_pins/qupv3_se2_spi_miso_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se2_spi_pins/qupv3_se2_spi_miso_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se2_spi_pins/qupv3_se2_spi_mosi_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se2_spi_pins/qupv3_se2_spi_mosi_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se2_spi_pins/qupv3_se2_spi_mosi_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_active_rst3
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_active_rst3/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_active_rst3/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_front_suspend_rst
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_front_suspend_rst/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_front_suspend_rst/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_suspend_rst4
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_suspend_rst4/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_suspend_rst4/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/usb_phy_ps
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/usb_phy_ps/usb3phy_portselect_default
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/usb_phy_ps/usb3phy_portselect_default/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/usb_phy_ps/usb3phy_portselect_default/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/usb_phy_ps/usb3phy_portselect_gpio
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/usb_phy_ps/usb3phy_portselect_gpio/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/usb_phy_ps/usb3phy_portselect_gpio/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl0_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl0_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl0_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda0_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda0_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda0_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se14_4uart_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se14_4uart_pins/qupv3_se14_rts
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se14_4uart_pins/qupv3_se14_rts/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se14_4uart_pins/qupv3_se14_rts/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se14_4uart_pins/qupv3_se14_default_tx
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se14_4uart_pins/qupv3_se14_default_tx/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se14_4uart_pins/qupv3_se14_default_tx/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se14_4uart_pins/qupv3_se14_default_rx
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se14_4uart_pins/qupv3_se14_default_rx/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se14_4uart_pins/qupv3_se14_default_rx/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se14_4uart_pins/qupv3_se14_default_cts
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se14_4uart_pins/qupv3_se14_default_cts/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se14_4uart_pins/qupv3_se14_default_cts/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se14_4uart_pins/qupv3_se14_default_rts
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se14_4uart_pins/qupv3_se14_default_rts/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se14_4uart_pins/qupv3_se14_default_rts/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se14_4uart_pins/qupv3_se14_tx
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se14_4uart_pins/qupv3_se14_tx/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se14_4uart_pins/qupv3_se14_tx/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se14_4uart_pins/qupv3_se14_rx
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se14_4uart_pins/qupv3_se14_rx/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se14_4uart_pins/qupv3_se14_rx/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se14_4uart_pins/qupv3_se14_cts
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se14_4uart_pins/qupv3_se14_cts/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se14_4uart_pins/qupv3_se14_cts/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_ponv_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_ponv_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_ponv_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk3_version_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk3_version_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk3_version_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_din
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_din/tdm1_din_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_din/tdm1_din_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_din/tdm1_din_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_din/tdm1_din_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_din/tdm1_din_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_din/tdm1_din_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_ois_wide_suspend_vaf
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_ois_wide_suspend_vaf/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_ois_wide_suspend_vaf/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se7_2uart_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se7_2uart_pins/qupv3_se7_2uart_rx_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se7_2uart_pins/qupv3_se7_2uart_rx_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se7_2uart_pins/qupv3_se7_2uart_rx_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se7_2uart_pins/qupv3_se7_2uart_tx_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se7_2uart_pins/qupv3_se7_2uart_tx_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se7_2uart_pins/qupv3_se7_2uart_tx_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se7_2uart_pins/qupv3_se7_2uart_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se7_2uart_pins/qupv3_se7_2uart_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se7_2uart_pins/qupv3_se7_2uart_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cirrus_irq_default
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cirrus_irq_default/cirrus_irq_default_1
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cirrus_irq_default/cirrus_irq_default_1/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cirrus_irq_default/cirrus_irq_default_1/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cirrus_irq_default/cirrus_irq_default_0
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cirrus_irq_default/cirrus_irq_default_0/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cirrus_irq_default/cirrus_irq_default_0/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c2_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c2_pins/qupv3_hub_i2c2_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c2_pins/qupv3_hub_i2c2_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c2_pins/qupv3_hub_i2c2_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c2_pins/qupv3_hub_i2c2_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c2_pins/qupv3_hub_i2c2_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c2_pins/qupv3_hub_i2c2_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c2_pins/qupv3_hub_i2c2_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c2_pins/qupv3_hub_i2c2_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c2_pins/qupv3_hub_i2c2_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_din
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_din/aux1_pcm_din_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_din/aux1_pcm_din_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_din/aux1_pcm_din_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_din/aux1_pcm_din_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_din/aux1_pcm_din_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_din/aux1_pcm_din_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_sd1
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_sd1/i2s1_sd1_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_sd1/i2s1_sd1_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_sd1/i2s1_sd1_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_sd1/i2s1_sd1_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_sd1/i2s1_sd1_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_sd1/i2s1_sd1_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk3_version_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk3_version_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk3_version_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk1_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk1_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk1_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_active_rst1
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_active_rst1/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_active_rst1/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_front_active_rst
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_front_active_rst/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_front_active_rst/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_suspend_rst2
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_suspend_rst2/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_suspend_rst2/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/mi_ts_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/mi_ts_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/mi_ts_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se12_i2c_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se12_i2c_pins/qupv3_se12_i2c_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se12_i2c_pins/qupv3_se12_i2c_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se12_i2c_pins/qupv3_se12_i2c_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se12_i2c_pins/qupv3_se12_i2c_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se12_i2c_pins/qupv3_se12_i2c_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se12_i2c_pins/qupv3_se12_i2c_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se12_i2c_pins/qupv3_se12_i2c_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se12_i2c_pins/qupv3_se12_i2c_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se12_i2c_pins/qupv3_se12_i2c_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se3_i2c_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se3_i2c_pins/qupv3_se3_i2c_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se3_i2c_pins/qupv3_se3_i2c_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se3_i2c_pins/qupv3_se3_i2c_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se3_i2c_pins/qupv3_se3_i2c_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se3_i2c_pins/qupv3_se3_i2c_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se3_i2c_pins/qupv3_se3_i2c_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se3_i2c_pins/qupv3_se3_i2c_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se3_i2c_pins/qupv3_se3_i2c_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se3_i2c_pins/qupv3_se3_i2c_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_aon_i2c_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_aon_i2c_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_aon_i2c_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/ap2mdm
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/ap2mdm/ap2mdm_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/ap2mdm/ap2mdm_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/ap2mdm/ap2mdm_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/ap2mdm/ap2mdm_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/ap2mdm/ap2mdm_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/ap2mdm/ap2mdm_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/nfc
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/nfc/nfc_int_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/nfc/nfc_int_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/nfc/nfc_int_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/nfc/nfc_enable_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/nfc/nfc_enable_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/nfc/nfc_enable_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/nfc/nfc_int_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/nfc/nfc_int_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/nfc/nfc_int_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/nfc/nfc_enable_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/nfc/nfc_enable_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/nfc/nfc_enable_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c8_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c8_pins/qupv3_hub_i2c8_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c8_pins/qupv3_hub_i2c8_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c8_pins/qupv3_hub_i2c8_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c8_pins/qupv3_hub_i2c8_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c8_pins/qupv3_hub_i2c8_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c8_pins/qupv3_hub_i2c8_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c8_pins/qupv3_hub_i2c8_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c8_pins/qupv3_hub_i2c8_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c8_pins/qupv3_hub_i2c8_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_ws
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_ws/aux0_pcm_ws_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_ws/aux0_pcm_ws_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_ws/aux0_pcm_ws_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_ws/aux0_pcm_ws_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_ws/aux0_pcm_ws_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_ws/aux0_pcm_ws_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl2_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl2_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl2_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda2_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda2_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda2_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/sbu_uart_en_ctrl
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/sbu_uart_en_ctrl/uart_audio_en_idle
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/sbu_uart_en_ctrl/uart_audio_en_idle/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/sbu_uart_en_ctrl/uart_audio_en_idle/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/sbu_uart_en_ctrl/uart_audio_en_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/sbu_uart_en_ctrl/uart_audio_en_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/sbu_uart_en_ctrl/uart_audio_en_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl0_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl0_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl0_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda0_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda0_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda0_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_ultra_active_rst
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_ultra_active_rst/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_ultra_active_rst/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pcie0
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pcie0/pcie0_perst_default
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pcie0/pcie0_perst_default/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pcie0/pcie0_perst_default/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pcie0/pcie0_clkreq_default
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pcie0/pcie0_clkreq_default/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pcie0/pcie0_clkreq_default/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pcie0/pcie0_clkreq_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pcie0/pcie0_clkreq_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pcie0/pcie0_clkreq_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pcie0/pcie0_wake_default
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pcie0/pcie0_wake_default/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pcie0/pcie0_wake_default/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk2_version_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk2_version_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk2_version_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_ws
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_ws/aux1_pcm_ws_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_ws/aux1_pcm_ws_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_ws/aux1_pcm_ws_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_ws/aux1_pcm_ws_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_ws/aux1_pcm_ws_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_ws/aux1_pcm_ws_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_suspend_rst0
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_suspend_rst0/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_suspend_rst0/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_wide_suspend_avdd1
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_wide_suspend_avdd1/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_wide_suspend_avdd1/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_ts_reset_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_ts_reset_suspend/ts_reset_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_ts_reset_suspend/ts_reset_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_ts_reset_suspend/ts_reset_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se12_spi_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se12_spi_pins/qupv3_se12_spi_miso_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se12_spi_pins/qupv3_se12_spi_miso_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se12_spi_pins/qupv3_se12_spi_miso_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se12_spi_pins/qupv3_se12_spi_mosi_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se12_spi_pins/qupv3_se12_spi_mosi_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se12_spi_pins/qupv3_se12_spi_mosi_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se12_spi_pins/qupv3_se12_spi_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se12_spi_pins/qupv3_se12_spi_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se12_spi_pins/qupv3_se12_spi_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se12_spi_pins/qupv3_se12_spi_clk_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se12_spi_pins/qupv3_se12_spi_clk_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se12_spi_pins/qupv3_se12_spi_clk_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se12_spi_pins/qupv3_se12_spi_cs_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se12_spi_pins/qupv3_se12_spi_cs_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se12_spi_pins/qupv3_se12_spi_cs_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_i2c_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_i2c_pins/qupv3_se8_i2c_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_i2c_pins/qupv3_se8_i2c_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_i2c_pins/qupv3_se8_i2c_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_i2c_pins/qupv3_se8_i2c_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_i2c_pins/qupv3_se8_i2c_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_i2c_pins/qupv3_se8_i2c_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_i2c_pins/qupv3_se8_i2c_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_i2c_pins/qupv3_se8_i2c_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_i2c_pins/qupv3_se8_i2c_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se3_spi_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se3_spi_pins/qupv3_se3_spi_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se3_spi_pins/qupv3_se3_spi_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se3_spi_pins/qupv3_se3_spi_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se3_spi_pins/qupv3_se3_spi_clk_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se3_spi_pins/qupv3_se3_spi_clk_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se3_spi_pins/qupv3_se3_spi_clk_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se3_spi_pins/qupv3_se3_spi_miso_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se3_spi_pins/qupv3_se3_spi_miso_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se3_spi_pins/qupv3_se3_spi_miso_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se3_spi_pins/qupv3_se3_spi_mosi_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se3_spi_pins/qupv3_se3_spi_mosi_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se3_spi_pins/qupv3_se3_spi_mosi_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se3_spi_pins/qupv3_se3_spi_cs_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se3_spi_pins/qupv3_se3_spi_cs_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se3_spi_pins/qupv3_se3_spi_cs_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl1_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl1_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl1_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda1_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda1_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda1_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk3_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk3_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk3_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c1_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c1_pins/qupv3_hub_i2c1_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c1_pins/qupv3_hub_i2c1_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c1_pins/qupv3_hub_i2c1_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c1_pins/qupv3_hub_i2c1_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c1_pins/qupv3_hub_i2c1_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c1_pins/qupv3_hub_i2c1_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c1_pins/qupv3_hub_i2c1_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c1_pins/qupv3_hub_i2c1_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c1_pins/qupv3_hub_i2c1_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_dout
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_dout/tdm1_dout_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_dout/tdm1_dout_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_dout/tdm1_dout_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_dout/tdm1_dout_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_dout/tdm1_dout_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_dout/tdm1_dout_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/mi_ts_cs_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/mi_ts_cs_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/mi_ts_cs_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_ts_release
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_ts_release/ts_release
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_ts_release/ts_release/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_ts_release/ts_release/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl4_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl4_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl4_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda4_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda4_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda4_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl2_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl2_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl2_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda2_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda2_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda2_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_sck
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_sck/i2s0_sck_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_sck/i2s0_sck_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_sck/i2s0_sck_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_sck/i2s0_sck_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_sck/i2s0_sck_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_sck/i2s0_sck_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk2_version_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk2_version_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk2_version_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c7_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c7_pins/qupv3_hub_i2c7_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c7_pins/qupv3_hub_i2c7_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c7_pins/qupv3_hub_i2c7_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c7_pins/qupv3_hub_i2c7_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c7_pins/qupv3_hub_i2c7_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c7_pins/qupv3_hub_i2c7_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c7_pins/qupv3_hub_i2c7_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c7_pins/qupv3_hub_i2c7_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c7_pins/qupv3_hub_i2c7_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_spi_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_spi_pins/qupv3_se8_spi_cs_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_spi_pins/qupv3_se8_spi_cs_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_spi_pins/qupv3_se8_spi_cs_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_spi_pins/qupv3_se8_spi_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_spi_pins/qupv3_se8_spi_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_spi_pins/qupv3_se8_spi_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_spi_pins/qupv3_se8_spi_clk_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_spi_pins/qupv3_se8_spi_clk_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_spi_pins/qupv3_se8_spi_clk_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_spi_pins/qupv3_se8_spi_miso_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_spi_pins/qupv3_se8_spi_miso_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_spi_pins/qupv3_se8_spi_miso_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_spi_pins/qupv3_se8_spi_mosi_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_spi_pins/qupv3_se8_spi_mosi_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_spi_pins/qupv3_se8_spi_mosi_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk0_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk0_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk0_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_dout
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_dout/aux0_pcm_dout_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_dout/aux0_pcm_dout_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_dout/aux0_pcm_dout_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_dout/aux0_pcm_dout_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_dout/aux0_pcm_dout_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_dout/aux0_pcm_dout_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk1_version_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk1_version_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk1_version_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se13_i2c_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se13_i2c_pins/qupv3_se13_i2c_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se13_i2c_pins/qupv3_se13_i2c_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se13_i2c_pins/qupv3_se13_i2c_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se13_i2c_pins/qupv3_se13_i2c_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se13_i2c_pins/qupv3_se13_i2c_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se13_i2c_pins/qupv3_se13_i2c_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se13_i2c_pins/qupv3_se13_i2c_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se13_i2c_pins/qupv3_se13_i2c_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se13_i2c_pins/qupv3_se13_i2c_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se4_i2c_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se4_i2c_pins/qupv3_se4_i2c_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se4_i2c_pins/qupv3_se4_i2c_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se4_i2c_pins/qupv3_se4_i2c_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se4_i2c_pins/qupv3_se4_i2c_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se4_i2c_pins/qupv3_se4_i2c_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se4_i2c_pins/qupv3_se4_i2c_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se4_i2c_pins/qupv3_se4_i2c_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se4_i2c_pins/qupv3_se4_i2c_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se4_i2c_pins/qupv3_se4_i2c_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde_te
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde_te/sde_te_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde_te/sde_te_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde_te/sde_te_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde_te/sde_te1_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde_te/sde_te1_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde_te/sde_te1_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde_te/sde_te1_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde_te/sde_te1_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde_te/sde_te1_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde_te/sde_te_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde_te/sde_te_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde_te/sde_te_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk5_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk5_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk5_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_ponv_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_ponv_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_ponv_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk1_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk1_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk1_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_sd0
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_sd0/i2s0_sd0_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_sd0/i2s0_sd0_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_sd0/i2s0_sd0_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_sd0/i2s0_sd0_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_sd0/i2s0_sd0_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_sd0/i2s0_sd0_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cnss_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cnss_pins/cnss_wlan_en_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cnss_pins/cnss_wlan_en_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cnss_pins/cnss_wlan_en_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cnss_pins/cnss_wlan_en_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cnss_pins/cnss_wlan_en_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cnss_pins/cnss_wlan_en_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl4_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl4_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl4_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda4_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda4_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda4_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_clk
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_clk/aux0_pcm_clk_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_clk/aux0_pcm_clk_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_clk/aux0_pcm_clk_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_clk/aux0_pcm_clk_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_clk/aux0_pcm_clk_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_clk/aux0_pcm_clk_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c0_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c0_pins/qupv3_hub_i2c0_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c0_pins/qupv3_hub_i2c0_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c0_pins/qupv3_hub_i2c0_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c0_pins/qupv3_hub_i2c0_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c0_pins/qupv3_hub_i2c0_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c0_pins/qupv3_hub_i2c0_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c0_pins/qupv3_hub_i2c0_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c0_pins/qupv3_hub_i2c0_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c0_pins/qupv3_hub_i2c0_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_wide_suspend_rst
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_wide_suspend_rst/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_wide_suspend_rst/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_dout
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_dout/tdm0_dout_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_dout/tdm0_dout_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_dout/tdm0_dout_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_dout/tdm0_dout_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_dout/tdm0_dout_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_dout/tdm0_dout_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk2_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk2_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk2_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_ws
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_ws/i2s1_ws_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_ws/i2s1_ws_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_ws/i2s1_ws_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_ws/i2s1_ws_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_ws/i2s1_ws_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_ws/i2s1_ws_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_wide_active_avdd2
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_wide_active_avdd2/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_wide_active_avdd2/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl5_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl5_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl5_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda5_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda5_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda5_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se13_spi_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se13_spi_pins/qupv3_se13_spi_cs_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se13_spi_pins/qupv3_se13_spi_cs_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se13_spi_pins/qupv3_se13_spi_cs_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se13_spi_pins/qupv3_se13_spi_clk_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se13_spi_pins/qupv3_se13_spi_clk_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se13_spi_pins/qupv3_se13_spi_clk_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se13_spi_pins/qupv3_se13_spi_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se13_spi_pins/qupv3_se13_spi_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se13_spi_pins/qupv3_se13_spi_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se13_spi_pins/qupv3_se13_spi_miso_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se13_spi_pins/qupv3_se13_spi_miso_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se13_spi_pins/qupv3_se13_spi_miso_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se13_spi_pins/qupv3_se13_spi_mosi_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se13_spi_pins/qupv3_se13_spi_mosi_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se13_spi_pins/qupv3_se13_spi_mosi_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_i2c_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_i2c_pins/qupv3_se9_i2c_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_i2c_pins/qupv3_se9_i2c_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_i2c_pins/qupv3_se9_i2c_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_i2c_pins/qupv3_se9_i2c_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_i2c_pins/qupv3_se9_i2c_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_i2c_pins/qupv3_se9_i2c_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_i2c_pins/qupv3_se9_i2c_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_i2c_pins/qupv3_se9_i2c_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_i2c_pins/qupv3_se9_i2c_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se4_spi_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se4_spi_pins/qupv3_se4_spi_clk_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se4_spi_pins/qupv3_se4_spi_clk_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se4_spi_pins/qupv3_se4_spi_clk_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se4_spi_pins/qupv3_se4_spi_cs_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se4_spi_pins/qupv3_se4_spi_cs_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se4_spi_pins/qupv3_se4_spi_cs_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se4_spi_pins/qupv3_se4_spi_miso_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se4_spi_pins/qupv3_se4_spi_miso_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se4_spi_pins/qupv3_se4_spi_miso_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se4_spi_pins/qupv3_se4_spi_mosi_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se4_spi_pins/qupv3_se4_spi_mosi_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se4_spi_pins/qupv3_se4_spi_mosi_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se4_spi_pins/qupv3_se4_spi_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se4_spi_pins/qupv3_se4_spi_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se4_spi_pins/qupv3_se4_spi_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_ts_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_ts_active/ts_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_ts_active/ts_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_ts_active/ts_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c6_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c6_pins/qupv3_hub_i2c6_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c6_pins/qupv3_hub_i2c6_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c6_pins/qupv3_hub_i2c6_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c6_pins/qupv3_hub_i2c6_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c6_pins/qupv3_hub_i2c6_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c6_pins/qupv3_hub_i2c6_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c6_pins/qupv3_hub_i2c6_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c6_pins/qupv3_hub_i2c6_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c6_pins/qupv3_hub_i2c6_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_active_rst4
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_active_rst4/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_active_rst4/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_suspend_rst5
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_suspend_rst5/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_suspend_rst5/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk3_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk3_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk3_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_i2c_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_i2c_pins/qupv3_se0_i2c_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_i2c_pins/qupv3_se0_i2c_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_i2c_pins/qupv3_se0_i2c_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_i2c_pins/qupv3_se0_i2c_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_i2c_pins/qupv3_se0_i2c_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_i2c_pins/qupv3_se0_i2c_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_i2c_pins/qupv3_se0_i2c_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_i2c_pins/qupv3_se0_i2c_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_i2c_pins/qupv3_se0_i2c_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk1_version_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk1_version_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk1_version_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/sdc2_on
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/sdc2_on/clk
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/sdc2_on/data
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/sdc2_on/cmd
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_i3c_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_i3c_pins/qupv3_se8_i3c_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_i3c_pins/qupv3_se8_i3c_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_i3c_pins/qupv3_se8_i3c_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_i3c_pins/qupv3_se8_i3c_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_i3c_pins/qupv3_se8_i3c_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_i3c_pins/qupv3_se8_i3c_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_i3c_pins/qupv3_se8_i3c_disable
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_i3c_pins/qupv3_se8_i3c_disable/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_i3c_pins/qupv3_se8_i3c_disable/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_i3c_pins/qupv3_se8_i3c_scl_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_i3c_pins/qupv3_se8_i3c_scl_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_i3c_pins/qupv3_se8_i3c_scl_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_i3c_pins/qupv3_se8_i3c_sda_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_i3c_pins/qupv3_se8_i3c_sda_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se8_i3c_pins/qupv3_se8_i3c_sda_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_din
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_din/aux0_pcm_din_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_din/aux0_pcm_din_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_din/aux0_pcm_din_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_din/aux0_pcm_din_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_din/aux0_pcm_din_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux0_pcm_din/aux0_pcm_din_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk4_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk4_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk4_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_spi_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_spi_pins/qupv3_se9_spi_clk_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_spi_pins/qupv3_se9_spi_clk_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_spi_pins/qupv3_se9_spi_clk_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_spi_pins/qupv3_se9_spi_cs_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_spi_pins/qupv3_se9_spi_cs_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_spi_pins/qupv3_se9_spi_cs_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_spi_pins/qupv3_se9_spi_miso_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_spi_pins/qupv3_se9_spi_miso_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_spi_pins/qupv3_se9_spi_miso_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_spi_pins/qupv3_se9_spi_mosi_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_spi_pins/qupv3_se9_spi_mosi_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_spi_pins/qupv3_se9_spi_mosi_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_spi_pins/qupv3_se9_spi_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_spi_pins/qupv3_se9_spi_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_spi_pins/qupv3_se9_spi_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cirrus_reset_default_0
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cirrus_reset_default_0/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cirrus_reset_default_0/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk0_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk0_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk0_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_dout
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_dout/aux1_pcm_dout_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_dout/aux1_pcm_dout_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_dout/aux1_pcm_dout_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_dout/aux1_pcm_dout_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_dout/aux1_pcm_dout_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/aux1_pcm_dout/aux1_pcm_dout_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_sck
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_sck/i2s1_sck_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_sck/i2s1_sck_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_sck/i2s1_sck_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_sck/i2s1_sck_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_sck/i2s1_sck_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_sck/i2s1_sck_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/trigout_a
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/trigout_a/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/trigout_a/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_active_rst2
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_active_rst2/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_active_rst2/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_aon_i2c_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_aon_i2c_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_aon_i2c_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_ws
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_ws/tdm1_ws_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_ws/tdm1_ws_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_ws/tdm1_ws_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_ws/tdm1_ws_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_ws/tdm1_ws_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm1_ws/tdm1_ws_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_suspend_rst3
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_suspend_rst3/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_suspend_rst3/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se5_i2c_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se5_i2c_pins/qupv3_se5_i2c_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se5_i2c_pins/qupv3_se5_i2c_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se5_i2c_pins/qupv3_se5_i2c_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se5_i2c_pins/qupv3_se5_i2c_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se5_i2c_pins/qupv3_se5_i2c_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se5_i2c_pins/qupv3_se5_i2c_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se5_i2c_pins/qupv3_se5_i2c_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se5_i2c_pins/qupv3_se5_i2c_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se5_i2c_pins/qupv3_se5_i2c_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_spi_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_spi_pins/qupv3_se0_spi_mosi_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_spi_pins/qupv3_se0_spi_mosi_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_spi_pins/qupv3_se0_spi_mosi_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_spi_pins/qupv3_se0_spi_clk_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_spi_pins/qupv3_se0_spi_clk_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_spi_pins/qupv3_se0_spi_clk_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_spi_pins/qupv3_se0_spi_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_spi_pins/qupv3_se0_spi_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_spi_pins/qupv3_se0_spi_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_spi_pins/qupv3_se0_spi_cs_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_spi_pins/qupv3_se0_spi_cs_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_spi_pins/qupv3_se0_spi_cs_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_spi_pins/qupv3_se0_spi_miso_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_spi_pins/qupv3_se0_spi_miso_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_spi_pins/qupv3_se0_spi_miso_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk5_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk5_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk5_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_tele_active_avdd
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_tele_active_avdd/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_tele_active_avdd/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl1_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl1_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_scl1_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda1_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda1_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cci_i2c_sda1_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde/sde_dsi_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde/sde_dsi_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde/sde_dsi_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde/sde_dsi1_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde/sde_dsi1_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde/sde_dsi1_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde/sde_dsi1_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde/sde_dsi1_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde/sde_dsi1_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde/sde_esd_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde/sde_esd_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde/sde_esd_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde/sde_dsi_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde/sde_dsi_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde/sde_dsi_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde/sde_esd_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde/sde_esd_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pmx_sde/sde_esd_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_wide_active_rst
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_wide_active_rst/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_wide_active_rst/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c5_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c5_pins/qupv3_hub_i2c5_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c5_pins/qupv3_hub_i2c5_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c5_pins/qupv3_hub_i2c5_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c5_pins/qupv3_hub_i2c5_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c5_pins/qupv3_hub_i2c5_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c5_pins/qupv3_hub_i2c5_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c5_pins/qupv3_hub_i2c5_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c5_pins/qupv3_hub_i2c5_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c5_pins/qupv3_hub_i2c5_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/wcd938x_reset_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/wcd938x_reset_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/wcd938x_reset_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/mdm2ap
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/mdm2ap/mdm2ap_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/mdm2ap/mdm2ap_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/mdm2ap/mdm2ap_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/mdm2ap/mdm2ap_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/mdm2ap/mdm2ap_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/mdm2ap/mdm2ap_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_sd0
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_sd0/i2s1_sd0_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_sd0/i2s1_sd0_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_sd0/i2s1_sd0_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_sd0/i2s1_sd0_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_sd0/i2s1_sd0_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s1_sd0/i2s1_sd0_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pcie1
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pcie1/pcie1_clkreq_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pcie1/pcie1_clkreq_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pcie1/pcie1_clkreq_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pcie1/pcie1_clkreq_default
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pcie1/pcie1_clkreq_default/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pcie1/pcie1_clkreq_default/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pcie1/pcie1_wake_default
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pcie1/pcie1_wake_default/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pcie1/pcie1_wake_default/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pcie1/pcie1_perst_default
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pcie1/pcie1_perst_default/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/pcie1/pcie1_perst_default/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_active_rst0
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_active_rst0/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_active_rst0/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_suspend_rst1
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_suspend_rst1/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_suspend_rst1/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_wide_suspend_avdd2
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_wide_suspend_avdd2/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_wide_suspend_avdd2/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se5_spi_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se5_spi_pins/qupv3_se5_spi_clk_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se5_spi_pins/qupv3_se5_spi_clk_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se5_spi_pins/qupv3_se5_spi_clk_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se5_spi_pins/qupv3_se5_spi_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se5_spi_pins/qupv3_se5_spi_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se5_spi_pins/qupv3_se5_spi_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se5_spi_pins/qupv3_se5_spi_miso_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se5_spi_pins/qupv3_se5_spi_miso_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se5_spi_pins/qupv3_se5_spi_miso_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se5_spi_pins/qupv3_se5_spi_mosi_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se5_spi_pins/qupv3_se5_spi_mosi_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se5_spi_pins/qupv3_se5_spi_mosi_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se5_spi_pins/qupv3_se5_spi_cs_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se5_spi_pins/qupv3_se5_spi_cs_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se5_spi_pins/qupv3_se5_spi_cs_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_clk
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_clk/tdm0_clk_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_clk/tdm0_clk_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_clk/tdm0_clk_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_clk/tdm0_clk_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_clk/tdm0_clk_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_clk/tdm0_clk_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk2_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk2_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk2_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_ois_wide_active_vaf
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_ois_wide_active_vaf/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_ois_wide_active_vaf/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_ultra_active_avdd
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_ultra_active_avdd/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_ultra_active_avdd/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se10_i2c_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se10_i2c_pins/qupv3_se10_i2c_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se10_i2c_pins/qupv3_se10_i2c_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se10_i2c_pins/qupv3_se10_i2c_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se10_i2c_pins/qupv3_se10_i2c_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se10_i2c_pins/qupv3_se10_i2c_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se10_i2c_pins/qupv3_se10_i2c_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se10_i2c_pins/qupv3_se10_i2c_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se10_i2c_pins/qupv3_se10_i2c_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se10_i2c_pins/qupv3_se10_i2c_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_i2c_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_i2c_pins/qupv3_se1_i2c_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_i2c_pins/qupv3_se1_i2c_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_i2c_pins/qupv3_se1_i2c_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_i2c_pins/qupv3_se1_i2c_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_i2c_pins/qupv3_se1_i2c_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_i2c_pins/qupv3_se1_i2c_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_i2c_pins/qupv3_se1_i2c_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_i2c_pins/qupv3_se1_i2c_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_i2c_pins/qupv3_se1_i2c_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_i3c_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_i3c_pins/qupv3_se9_i3c_scl_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_i3c_pins/qupv3_se9_i3c_scl_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_i3c_pins/qupv3_se9_i3c_scl_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_i3c_pins/qupv3_se9_i3c_sda_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_i3c_pins/qupv3_se9_i3c_sda_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_i3c_pins/qupv3_se9_i3c_sda_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_i3c_pins/qupv3_se9_i3c_disable
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_i3c_pins/qupv3_se9_i3c_disable/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_i3c_pins/qupv3_se9_i3c_disable/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_i3c_pins/qupv3_se9_i3c_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_i3c_pins/qupv3_se9_i3c_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_i3c_pins/qupv3_se9_i3c_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_i3c_pins/qupv3_se9_i3c_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_i3c_pins/qupv3_se9_i3c_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se9_i3c_pins/qupv3_se9_i3c_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_tele_suspend_rst
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_tele_suspend_rst/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_tele_suspend_rst/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_i3c_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_i3c_pins/qupv3_se0_i3c_disable
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_i3c_pins/qupv3_se0_i3c_disable/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_i3c_pins/qupv3_se0_i3c_disable/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_i3c_pins/qupv3_se0_i3c_scl_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_i3c_pins/qupv3_se0_i3c_scl_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_i3c_pins/qupv3_se0_i3c_scl_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_i3c_pins/qupv3_se0_i3c_sda_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_i3c_pins/qupv3_se0_i3c_sda_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_i3c_pins/qupv3_se0_i3c_sda_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_i3c_pins/qupv3_se0_i3c_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_i3c_pins/qupv3_se0_i3c_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_i3c_pins/qupv3_se0_i3c_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_i3c_pins/qupv3_se0_i3c_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_i3c_pins/qupv3_se0_i3c_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se0_i3c_pins/qupv3_se0_i3c_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_ws
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_ws/i2s0_ws_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_ws/i2s0_ws_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_ws/i2s0_ws_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_ws/i2s0_ws_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_ws/i2s0_ws_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/i2s0_ws/i2s0_ws_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/mi_ts_cs_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/mi_ts_cs_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/mi_ts_cs_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c4_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c4_pins/qupv3_hub_i2c4_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c4_pins/qupv3_hub_i2c4_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c4_pins/qupv3_hub_i2c4_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c4_pins/qupv3_hub_i2c4_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c4_pins/qupv3_hub_i2c4_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c4_pins/qupv3_hub_i2c4_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c4_pins/qupv3_hub_i2c4_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c4_pins/qupv3_hub_i2c4_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_hub_i2c4_pins/qupv3_hub_i2c4_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_tele_suspend_avdd
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_tele_suspend_avdd/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_tele_suspend_avdd/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se15_i2c_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se15_i2c_pins/qupv3_se15_i2c_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se15_i2c_pins/qupv3_se15_i2c_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se15_i2c_pins/qupv3_se15_i2c_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se15_i2c_pins/qupv3_se15_i2c_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se15_i2c_pins/qupv3_se15_i2c_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se15_i2c_pins/qupv3_se15_i2c_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se15_i2c_pins/qupv3_se15_i2c_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se15_i2c_pins/qupv3_se15_i2c_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se15_i2c_pins/qupv3_se15_i2c_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_ultra_suspend_avdd
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_ultra_suspend_avdd/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_ultra_suspend_avdd/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se10_spi_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se10_spi_pins/qupv3_se10_spi_miso_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se10_spi_pins/qupv3_se10_spi_miso_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se10_spi_pins/qupv3_se10_spi_miso_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se10_spi_pins/qupv3_se10_spi_mosi_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se10_spi_pins/qupv3_se10_spi_mosi_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se10_spi_pins/qupv3_se10_spi_mosi_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se10_spi_pins/qupv3_se10_spi_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se10_spi_pins/qupv3_se10_spi_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se10_spi_pins/qupv3_se10_spi_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se10_spi_pins/qupv3_se10_spi_cs_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se10_spi_pins/qupv3_se10_spi_cs_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se10_spi_pins/qupv3_se10_spi_cs_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se10_spi_pins/qupv3_se10_spi_clk_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se10_spi_pins/qupv3_se10_spi_clk_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se10_spi_pins/qupv3_se10_spi_clk_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se6_i2c_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se6_i2c_pins/qupv3_se6_i2c_scl_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se6_i2c_pins/qupv3_se6_i2c_scl_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se6_i2c_pins/qupv3_se6_i2c_scl_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se6_i2c_pins/qupv3_se6_i2c_sda_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se6_i2c_pins/qupv3_se6_i2c_sda_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se6_i2c_pins/qupv3_se6_i2c_sda_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se6_i2c_pins/qupv3_se6_i2c_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se6_i2c_pins/qupv3_se6_i2c_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se6_i2c_pins/qupv3_se6_i2c_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_spi_pins
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_spi_pins/qupv3_se1_spi_cs_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_spi_pins/qupv3_se1_spi_cs_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_spi_pins/qupv3_se1_spi_cs_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_spi_pins/qupv3_se1_spi_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_spi_pins/qupv3_se1_spi_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_spi_pins/qupv3_se1_spi_sleep/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_spi_pins/qupv3_se1_spi_miso_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_spi_pins/qupv3_se1_spi_miso_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_spi_pins/qupv3_se1_spi_miso_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_spi_pins/qupv3_se1_spi_mosi_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_spi_pins/qupv3_se1_spi_mosi_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_spi_pins/qupv3_se1_spi_mosi_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_spi_pins/qupv3_se1_spi_clk_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_spi_pins/qupv3_se1_spi_clk_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/qupv3_se1_spi_pins/qupv3_se1_spi_clk_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk4_suspend
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk4_suspend/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/cam_sensor_mclk4_suspend/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_din
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_din/tdm0_din_active
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_din/tdm0_din_active/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_din/tdm0_din_active/config
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_din/tdm0_din_sleep
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_din/tdm0_din_sleep/mux
+/sys/firmware/devicetree/base/soc/pinctrl@f000000/tdm0_din/tdm0_din_sleep/config

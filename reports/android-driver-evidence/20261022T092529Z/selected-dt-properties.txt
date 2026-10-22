@@ -1,0 +1,425 @@
+NODE /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000
+#address-cells  dma-names           interrupts  pinctrl-names      status
+#size-cells     dmas                name        qcom,rt
+clock-names     fts@0               phandle     reg
+clocks          interconnect-names  pinctrl-0   reg-names
+compatible      interconnects       pinctrl-1   spi-max-frequency
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/clock-names
+ 73 65 2d 63 6c 6b 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/clocks
+ 00 00 00 37 00 00 00 65
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/compatible
+ 71 63 6f 6d 2c 73 70 69 2d 67 65 6e 69 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/interrupts
+ 00 00 00 00 00 00 01 65 00 00 00 04
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/pinctrl-0
+ 00 00 02 1b 00 00 02 1c 00 00 02 1d 00 00 05 d2
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/pinctrl-1
+ 00 00 05 d3 00 00 05 d4
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/pinctrl-names
+ 64 65 66 61 75 6c 74 00 73 6c 65 65 70 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/reg
+ 00 a9 00 00 00 00 40 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/reg-names
+ 73 65 5f 70 68 79 73 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/spi-max-frequency
+ 02 fa f0 80
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/status
+ 6f 6b 00
+NODE /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0
+avdd-supply                       fts,touch-cornerzone-filter-hor2
+compatible                        fts,touch-cornerzone-filter-ver
+fts,bus-reg-name                  fts,touch-deadzone-filter-hor
+fts,cfg_0                         fts,touch-deadzone-filter-ver
+fts,config-array-size             fts,touch-edgezone-filter-hor
+fts,cornerfilter-area-step1       fts,touch-edgezone-filter-ver
+fts,cornerfilter-area-step2       fts,touch-expert-array
+fts,cornerfilter-area-step3       fts,touch-follow-performance
+fts,default-fw-name               fts,touch-follow-performance-def
+fts,fod-lx                        fts,touch-tap-sensitivity
+fts,fod-ly                        fts,touch-tap-sensitivity-def
+fts,fod-x-size                    fts,touch-tap-stability
+fts,fod-y-size                    fts,touch-tap-stability-def
+fts,irq-flags                     fts,x-max
+fts,irq-gpio                      fts,y-max
+fts,irq-gpio-name                 interrupt-parent
+fts,pwr-reg-name                  interrupts
+fts,reset-gpio                    name
+fts,reset-gpio-enable             panel
+fts,reset-gpio-name               pinctrl-0
+fts,support-fod                   pinctrl-1
+fts,support-super-resolution      pinctrl-names
+fts,support-thp                   reg
+fts,support-thp-fw                spi-max-frequency
+fts,touch-aim-sensitivity         status
+fts,touch-aim-sensitivity-def     vdd-supply
+fts,touch-cornerzone-filter-hor1
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/avdd-supply
+ 00 00 03 1c
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/compatible
+ 73 74 2c 73 70 69 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,bus-reg-name
+ 76 64 64 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,config-array-size
+ 00 00 00 01
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,cornerfilter-area-step1
+ 00 00 00 96
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,cornerfilter-area-step2
+ 00 00 01 18
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,cornerfilter-area-step3
+ 00 00 01 90
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,default-fw-name
+ 73 74 5f 66 74 73 5f 6d 32 2e 66 74 62 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,fod-lx
+ 00 00 16 e9
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,fod-ly
+ 00 00 5e 0b
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,fod-x-size
+ 00 00 0a 6e
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,fod-y-size
+ 00 00 0a 6e
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,irq-flags
+ 00 00 20 08
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,irq-gpio
+ 00 00 00 79 00 00 00 19 00 00 20 08
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,irq-gpio-name
+ 66 74 73 5f 69 72 71 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,pwr-reg-name
+ 61 76 64 64 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,reset-gpio
+ 00 00 00 79 00 00 00 18 00 00 00 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,reset-gpio-enable
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,reset-gpio-name
+ 66 74 73 5f 72 73 74 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,support-fod
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,support-super-resolution
+ 00 00 00 01
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,support-thp
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,support-thp-fw
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-aim-sensitivity
+ 00 00 00 0a 00 00 00 08 00 00 00 06 00 00 00 04
+ 00 00 00 02
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-aim-sensitivity-def
+ 00 00 00 03
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-cornerzone-filter-hor1
+ 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ 00 00 01 18 00 00 01 18 00 00 00 00 00 00 00 00
+ 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 00
+ 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ 00 00 00 00 00 00 00 02 00 00 00 00 00 00 0b 67
+ 00 00 01 18 00 00 0c 7f 00 00 00 00 00 00 00 00
+ 00 00 00 00 00 00 00 03 00 00 00 00 00 00 00 00
+ 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-cornerzone-filter-hor2
+ 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ 00 00 00 00 00 00 00 01 00 00 04 87 00 00 00 00
+ 00 00 05 9f 00 00 01 18 00 00 00 00 00 00 00 00
+ 00 00 00 00 00 00 00 02 00 00 00 00 00 00 00 00
+ 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ 00 00 00 00 00 00 00 03 00 00 04 87 00 00 0b 67
+ 00 00 05 9f 00 00 0c 7f 00 00 00 00 00 00 00 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-cornerzone-filter-ver
+ 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 00
+ 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ 00 00 00 00 00 00 00 02 00 00 00 00 00 00 0a ef
+ 00 00 00 fa 00 00 0c 7f 00 00 00 00 00 00 00 00
+ 00 00 00 00 00 00 00 03 00 00 04 a5 00 00 0a ef
+ 00 00 05 9f 00 00 0c 7f 00 00 00 00 00 00 00 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-deadzone-filter-hor
+ 00 00 00 02 00 00 00 00 00 00 00 00 00 00 00 00
+ 00 00 05 9f 00 00 00 07 00 00 00 00 00 00 00 00
+ 00 00 00 02 00 00 00 01 00 00 00 00 00 00 0c 78
+ 00 00 05 9f 00 00 0c 7f 00 00 00 00 00 00 00 00
+ 00 00 00 02 00 00 00 02 00 00 00 00 00 00 00 00
+ 00 00 00 00 00 00 0c 7f 00 00 00 00 00 00 00 00
+ 00 00 00 02 00 00 00 03 00 00 05 9f 00 00 00 00
+ 00 00 05 9f 00 00 0c 7f 00 00 00 00 00 00 00 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-deadzone-filter-ver
+ 00 00 00 02 00 00 00 00 00 00 00 00 00 00 00 00
+ 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ 00 00 00 02 00 00 00 01 00 00 00 00 00 00 00 00
+ 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ 00 00 00 02 00 00 00 02 00 00 00 00 00 00 00 00
+ 00 00 00 00 00 00 0c 7f 00 00 00 00 00 00 00 00
+ 00 00 00 02 00 00 00 03 00 00 05 9f 00 00 00 00
+ 00 00 05 9f 00 00 0c 7f 00 00 00 00 00 00 00 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-edgezone-filter-hor
+ 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00
+ 00 00 05 9f 00 00 00 46 00 00 00 00 00 00 00 00
+ 00 00 00 01 00 00 00 01 00 00 00 00 00 00 0c 39
+ 00 00 05 9f 00 00 0c 7f 00 00 00 00 00 00 00 00
+ 00 00 00 01 00 00 00 02 00 00 00 00 00 00 00 00
+ 00 00 00 3c 00 00 0c 7f 00 00 00 00 00 00 00 00
+ 00 00 00 01 00 00 00 03 00 00 05 63 00 00 00 00
+ 00 00 05 9f 00 00 0c 7f 00 00 00 00 00 00 00 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-edgezone-filter-ver
+ 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00
+ 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ 00 00 00 01 00 00 00 01 00 00 00 00 00 00 00 00
+ 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ 00 00 00 01 00 00 00 02 00 00 00 00 00 00 00 00
+ 00 00 00 3c 00 00 0c 7f 00 00 00 00 00 00 00 00
+ 00 00 00 01 00 00 00 03 00 00 05 63 00 00 00 00
+ 00 00 05 9f 00 00 0c 7f 00 00 00 00 00 00 00 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-expert-array
+ 00 00 00 06 00 00 00 0f 00 00 00 01 00 00 00 78
+ 00 00 00 06 00 00 00 0f 00 00 00 02 00 00 00 0f
+ 00 00 00 01 00 00 00 78 00 00 00 04 00 00 00 0f
+ 00 00 00 04 00 00 00 0f 00 00 00 01 00 00 00 78
+ 00 00 00 02 00 00 00 0f
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-follow-performance
+ 00 00 00 0a 00 00 00 0f 00 00 00 01 00 00 00 08
+ 00 00 00 0f 00 00 00 01 00 00 00 06 00 00 00 0f
+ 00 00 00 01 00 00 00 04 00 00 00 0f 00 00 00 01
+ 00 00 00 02 00 00 00 0f 00 00 00 01
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-follow-performance-def
+ 00 00 00 03
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-tap-sensitivity
+ 00 00 00 a0 00 00 00 96 00 00 00 8c 00 00 00 78
+ 00 00 00 64
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-tap-sensitivity-def
+ 00 00 00 04
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-tap-stability
+ 00 00 00 08 00 00 00 0c 00 00 00 0f 00 00 00 12
+ 00 00 00 19
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,touch-tap-stability-def
+ 00 00 00 03
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,x-max
+ 00 00 38 40
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,y-max
+ 00 00 7d 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/interrupt-parent
+ 00 00 00 79
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/interrupts
+ 00 00 00 19 00 00 20 08
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/pinctrl-0
+ 00 00 05 d5
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/pinctrl-1
+ 00 00 03 a5 00 00 03 a4
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/pinctrl-names
+ 70 6d 78 5f 74 73 5f 61 63 74 69 76 65 00 70 6d
+ 78 5f 74 73 5f 73 75 73 70 65 6e 64 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/reg
+ 00 00 00 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/spi-max-frequency
+ 00 b7 1b 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/status
+ 6f 6b 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/vdd-supply
+ 00 00 00 2a
+NODE /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,cfg_0
+fts,fw-name  fts,limit-name  fts,tp-vendor  name
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,cfg_0/fts,fw-name
+ 73 74 5f 66 74 73 5f 6d 32 2e 66 74 62 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,cfg_0/fts,limit-name
+ 73 74 6d 5f 66 74 73 5f 70 72 6f 64 75 63 74 69
+ 6f 6e 5f 6c 69 6d 69 74 73 2e 63 73 76 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,cfg_0/fts,tp-vendor
+ 00 00 00 38
+NODE /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/i2c@a90000/goodix-berlin@5d
+avdd-supply           goodix,panel-max-x  qts,touch-environment
+compatible            goodix,panel-max-y  qts,trusted-touch-io-bases
+goodix,avdd-name      goodix,qts_en       qts,trusted-touch-io-sizes
+goodix,config-name    goodix,reset-gpio   qts,trusted-touch-mode
+goodix,firmware-name  goodix,touch-type   qts,trusted-touch-spi-irq
+goodix,iovdd-name     interrupt-parent    qts,trusted-touch-type
+goodix,irq-flags      interrupts          qts,trusted-touch-vm-gpio-list
+goodix,irq-gpio       invert_xy           reg
+goodix,panel-max-p    iovdd-supply
+goodix,panel-max-w    name
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/i2c@a90000/goodix-berlin@5d/avdd-supply
+ 00 00 02 f3
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/i2c@a90000/goodix-berlin@5d/compatible
+ 67 6f 6f 64 69 78 2c 67 74 39 39 31 36 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/i2c@a90000/goodix-berlin@5d/goodix,irq-gpio
+ 00 00 00 79 00 00 00 19 00 00 20 08
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/i2c@a90000/goodix-berlin@5d/goodix,reset-gpio
+ 00 00 00 79 00 00 00 18 00 00 00 00
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/i2c@a90000/goodix-berlin@5d/interrupt-parent
+ 00 00 00 79
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/i2c@a90000/goodix-berlin@5d/interrupts
+ 00 00 00 19 00 00 20 08
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/i2c@a90000/goodix-berlin@5d/iovdd-supply
+ 00 00 00 2a
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/i2c@a90000/goodix-berlin@5d/qts,trusted-touch-vm-gpio-list
+ 00 00 00 79 00 00 00 2c 00 00 00 00 00 00 00 79
+ 00 00 00 2d 00 00 00 00 00 00 00 79 00 00 00 2e
+ 00 00 00 00 00 00 00 79 00 00 00 2f 00 00 00 00
+ 00 00 00 79 00 00 00 18 00 00 00 00 00 00 00 79
+ 00 00 00 19 00 00 20 08
+PROP /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/i2c@a90000/goodix-berlin@5d/reg
+ 00 00 00 5d
+NODE /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary
+clock-names  pinctrl-1               qcom,panel-te-source
+clocks       pinctrl-names           qcom,platform-te-gpio
+compatible   qcom,demura-panel-id    vci-supply
+label        qcom,dsi-ctrl           vddd-supply
+name         qcom,dsi-default-panel  vddio-supply
+phandle      qcom,dsi-phy
+pinctrl-0    qcom,mdp
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/clock-names
+ 70 6c 6c 5f 62 79 74 65 5f 63 6c 6b 30 00 70 6c
+ 6c 5f 64 73 69 5f 63 6c 6b 30 00 70 6c 6c 5f 62
+ 79 74 65 5f 63 6c 6b 31 00 70 6c 6c 5f 64 73 69
+ 5f 63 6c 6b 31 00 6d 64 70 5f 63 6f 72 65 5f 63
+ 6c 6b 00
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/clocks
+ 00 00 07 4f 00 00 00 00 00 00 07 4f 00 00 00 01
+ 00 00 07 50 00 00 00 02 00 00 07 50 00 00 00 03
+ 00 00 00 2f 00 00 00 3d
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/compatible
+ 71 63 6f 6d 2c 64 73 69 2d 64 69 73 70 6c 61 79
+ 00
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/pinctrl-0
+ 00 00 07 51 00 00 07 52
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/pinctrl-1
+ 00 00 07 53 00 00 07 54
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/pinctrl-names
+ 70 61 6e 65 6c 5f 61 63 74 69 76 65 00 70 61 6e
+ 65 6c 5f 73 75 73 70 65 6e 64 00
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/qcom,platform-te-gpio
+ 00 00 00 79 00 00 00 56 00 00 00 00
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/vci-supply
+ 00 00 07 57
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/vddd-supply
+ 00 00 07 58
+PROP /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/vddio-supply
+ 00 00 07 56
+NODE /sys/firmware/devicetree/base/soc/ufshc@1d84000
+#reset-cells         phys                            qos1
+clock-names          qcom,bus-vector-names           reg
+clocks               qcom,iommu-dma                  reg-names
+compatible           qcom,prime-mask                 reset-gpios
+dev-ref-clk-freq     qcom,silver-mask                reset-names
+dma-coherent         qcom,ufs-bus-bw,name            resets
+freq-table-hz        qcom,ufs-bus-bw,num-cases       shared-ice-cfg
+interconnect-names   qcom,ufs-bus-bw,num-paths       status
+interconnects        qcom,ufs-bus-bw,vectors-KBps    vcc-max-microamp
+interrupts           qcom,vccq-lpm-uV                vcc-supply
+iommus               qcom,vccq-parent-max-microamp   vccq-max-microamp
+lanes-per-direction  qcom,vccq-parent-supply         vccq-supply
+name                 qcom,vddp-ref-clk-max-microamp  vdd-hba-supply
+phandle              qcom,vddp-ref-clk-supply
+phy-names            qos0
+PROP /sys/firmware/devicetree/base/soc/ufshc@1d84000/clock-names
+ 63 6f 72 65 5f 63 6c 6b 00 62 75 73 5f 61 67 67
+ 72 5f 63 6c 6b 00 69 66 61 63 65 5f 63 6c 6b 00
+ 63 6f 72 65 5f 63 6c 6b 5f 75 6e 69 70 72 6f 00
+ 63 6f 72 65 5f 63 6c 6b 5f 69 63 65 00 72 65 66
+ 5f 63 6c 6b 00 74 78 5f 6c 61 6e 65 30 5f 73 79
+ 6e 63 5f 63 6c 6b 00 72 78 5f 6c 61 6e 65 30 5f
+ 73 79 6e 63 5f 63 6c 6b 00 72 78 5f 6c 61 6e 65
+ 31 5f 73 79 6e 63 5f 63 6c 6b 00
+PROP /sys/firmware/devicetree/base/soc/ufshc@1d84000/clocks
+ 00 00 00 37 00 00 00 8a 00 00 00 37 00 00 00 01
+ 00 00 00 37 00 00 00 89 00 00 00 37 00 00 00 99
+ 00 00 00 37 00 00 00 8d 00 00 00 38 00 00 00 04
+ 00 00 00 37 00 00 00 97 00 00 00 37 00 00 00 93
+ 00 00 00 37 00 00 00 95
+PROP /sys/firmware/devicetree/base/soc/ufshc@1d84000/compatible
+ 71 63 6f 6d 2c 75 66 73 68 63 00
+PROP /sys/firmware/devicetree/base/soc/ufshc@1d84000/interrupts
+ 00 00 00 00 00 00 01 09 00 00 00 04
+PROP /sys/firmware/devicetree/base/soc/ufshc@1d84000/iommus
+ 00 00 00 3e 00 00 00 60 00 00 00 00
+PROP /sys/firmware/devicetree/base/soc/ufshc@1d84000/qcom,vccq-parent-supply
+ 00 00 03 05
+PROP /sys/firmware/devicetree/base/soc/ufshc@1d84000/qcom,vddp-ref-clk-supply
+ 00 00 03 0a
+PROP /sys/firmware/devicetree/base/soc/ufshc@1d84000/reg
+ 01 d8 40 00 00 00 30 00 01 d8 80 00 00 00 80 00
+ 01 d9 00 00 00 00 90 00
+PROP /sys/firmware/devicetree/base/soc/ufshc@1d84000/reg-names
+ 75 66 73 5f 6d 65 6d 00 75 66 73 5f 69 63 65 00
+ 75 66 73 5f 69 63 65 5f 68 77 6b 6d 00
+PROP /sys/firmware/devicetree/base/soc/ufshc@1d84000/reset-gpios
+ 00 00 00 79 00 00 00 d2 00 00 00 01
+PROP /sys/firmware/devicetree/base/soc/ufshc@1d84000/status
+ 6f 6b 00
+PROP /sys/firmware/devicetree/base/soc/ufshc@1d84000/vcc-supply
+ 00 00 02 f6
+PROP /sys/firmware/devicetree/base/soc/ufshc@1d84000/vccq-supply
+ 00 00 03 08
+PROP /sys/firmware/devicetree/base/soc/ufshc@1d84000/vdd-hba-supply
+ 00 00 02 bc
+NODE /sys/firmware/devicetree/base/soc/ufsphy_mem@1d80000
+#phy-cells           phandle              vdda-phy-max-microamp
+clock-names          reg                  vdda-phy-supply
+clocks               reg-names            vdda-pll-max-microamp
+compatible           resets               vdda-pll-supply
+lanes-per-direction  status               vdda-qref-max-microamp
+name                 vdd-phy-gdsc-supply  vdda-qref-supply
+PROP /sys/firmware/devicetree/base/soc/ufsphy_mem@1d80000/clock-names
+ 72 65 66 5f 63 6c 6b 5f 73 72 63 00 72 65 66 5f
+ 61 75 78 5f 63 6c 6b 00 71 72 65 66 5f 63 6c 6b
+ 00 72 78 5f 73 79 6d 30 5f 6d 75 78 5f 63 6c 6b
+ 00 72 78 5f 73 79 6d 31 5f 6d 75 78 5f 63 6c 6b
+ 00 74 78 5f 73 79 6d 30 5f 6d 75 78 5f 63 6c 6b
+ 00 72 78 5f 73 79 6d 30 5f 70 68 79 5f 63 6c 6b
+ 00 72 78 5f 73 79 6d 31 5f 70 68 79 5f 63 6c 6b
+ 00 74 78 5f 73 79 6d 30 5f 70 68 79 5f 63 6c 6b
+ 00
+PROP /sys/firmware/devicetree/base/soc/ufsphy_mem@1d80000/clocks
+ 00 00 00 38 00 00 00 1b 00 00 00 37 00 00 00 90
+ 00 00 00 4f 00 00 00 02 00 00 00 37 00 00 00 94
+ 00 00 00 37 00 00 00 96 00 00 00 37 00 00 00 98
+ 00 00 00 37 00 00 00 93 00 00 00 37 00 00 00 95
+ 00 00 00 37 00 00 00 97
+PROP /sys/firmware/devicetree/base/soc/ufsphy_mem@1d80000/compatible
+ 71 63 6f 6d 2c 75 66 73 2d 70 68 79 2d 71 6d 70
+ 2d 76 34 2d 6b 61 6c 61 6d 61 00
+PROP /sys/firmware/devicetree/base/soc/ufsphy_mem@1d80000/reg
+ 01 d8 00 00 00 00 19 34
+PROP /sys/firmware/devicetree/base/soc/ufsphy_mem@1d80000/reg-names
+ 70 68 79 5f 6d 65 6d 00
+PROP /sys/firmware/devicetree/base/soc/ufsphy_mem@1d80000/status
+ 6f 6b 00
+PROP /sys/firmware/devicetree/base/soc/ufsphy_mem@1d80000/vdd-phy-gdsc-supply
+ 00 00 04 c6
+PROP /sys/firmware/devicetree/base/soc/ufsphy_mem@1d80000/vdda-phy-supply
+ 00 00 02 fb
+PROP /sys/firmware/devicetree/base/soc/ufsphy_mem@1d80000/vdda-pll-supply
+ 00 00 00 2d
+PROP /sys/firmware/devicetree/base/soc/ufsphy_mem@1d80000/vdda-qref-supply
+ 00 00 00 2c
+NODE /sys/firmware/devicetree/base/soc/qcom,kgsl-3d0@3d00000
+#cooling-cells      name                    qcom,no-nap
+clock-names         phandle                 qcom,tzone-names
+clocks              qcom,bus-table-cnoc     qcom,ubwc-mode
+compatible          qcom,bus-table-ddr      reg
+interconnect-names  qcom,gpu-mempools       reg-names
+interconnects       qcom,gpu-pwrlevel-bins  status
+interrupt-names     qcom,gpu-qdss-stm       zap-shader
+interrupts          qcom,min-access-length
+PROP /sys/firmware/devicetree/base/soc/qcom,kgsl-3d0@3d00000/clock-names
+ 67 63 63 5f 67 70 75 5f 6d 65 6d 6e 6f 63 5f 67
+ 66 78 00 67 63 63 5f 67 70 75 5f 73 6e 6f 63 5f
+ 64 76 6d 5f 67 66 78 00 67 70 75 5f 63 63 5f 61
+ 68 62 00 61 70 62 5f 70 63 6c 6b 00
+PROP /sys/firmware/devicetree/base/soc/qcom,kgsl-3d0@3d00000/clocks
+ 00 00 00 37 00 00 00 20 00 00 00 37 00 00 00 21
+ 00 00 00 4e 00 00 00 00 00 00 00 5c 00 00 00 00
+PROP /sys/firmware/devicetree/base/soc/qcom,kgsl-3d0@3d00000/compatible
+ 71 63 6f 6d 2c 61 64 72 65 6e 6f 2d 67 70 75 2d
+ 67 65 6e 37 2d 32 2d 31 00 71 63 6f 6d 2c 6b 67
+ 73 6c 2d 33 64 30 00
+PROP /sys/firmware/devicetree/base/soc/qcom,kgsl-3d0@3d00000/interrupt-names
+ 6b 67 73 6c 5f 33 64 30 5f 69 72 71 00
+PROP /sys/firmware/devicetree/base/soc/qcom,kgsl-3d0@3d00000/interrupts
+ 00 00 00 00 00 00 01 2c 00 00 00 04
+PROP /sys/firmware/devicetree/base/soc/qcom,kgsl-3d0@3d00000/reg
+ 03 d0 00 00 00 04 00 00 03 d6 10 00 00 00 08 00
+ 03 d5 00 00 00 01 00 00 03 d8 b0 00 00 00 20 00
+ 03 d9 e0 00 00 00 10 00 10 90 00 00 00 08 00 00
+ 10 04 80 00 00 00 80 00 10 b0 50 00 00 00 10 00
+PROP /sys/firmware/devicetree/base/soc/qcom,kgsl-3d0@3d00000/reg-names
+ 6b 67 73 6c 5f 33 64 30 5f 72 65 67 5f 6d 65 6d
+ 6f 72 79 00 63 78 5f 64 62 67 63 00 72 73 63 63
+ 00 69 73 65 6e 73 65 5f 63 6e 74 6c 00 63 78 5f
+ 6d 69 73 63 00 71 64 73 73 5f 67 66 78 00 71 64
+ 73 73 5f 65 74 72 00 71 64 73 73 5f 74 6d 63 00
+PROP /sys/firmware/devicetree/base/soc/qcom,kgsl-3d0@3d00000/status
+ 6f 6b 00

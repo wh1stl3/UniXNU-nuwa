@@ -1,0 +1,5 @@
+{
+  "command": "for d in /sys/firmware/devicetree/base/soc/qcom,mdss_mdp@ae00000/qcom,mdss_dsi_m2* /sys/firmware/devicetree/base/soc/pinctrl@f000000; do echo \"NODE $d\"; for f in \"$d/phandle\" \"$d/compatible\" \"$d/#gpio-cells\" \"$d/qcom,mdss-dsi-panel-name\" \"$d/qcom,mdss-dsi-panel-type\" \"$d/qcom,mdss-dsi-panel-width\" \"$d/qcom,mdss-dsi-panel-height\"; do test -f \"$f\" || continue; echo \"PROP $f\"; od -An -v -tx1 \"$f\"; done; done; getprop sys.boot_completed",
+  "exit_code": 0,
+  "stderr": ""
+}

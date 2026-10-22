@@ -1,0 +1,299 @@
+{
+  "repo": "LineageOS/android_kernel_xiaomi_sm8550-modules",
+  "commit": "92a9fde479d3262da080cfd28bab0775b0da500a",
+  "blob_sha": "f6d832334509551b8ef932850f66ada254be2011",
+  "matching_context": [
+    {
+      "line": 1231,
+      "text": " * cat appid show on the terminal fw_version.config_id of"
+    },
+    {
+      "line": 1232,
+      "text": " * the FW running in the IC"
+    },
+    {
+      "line": 1233,
+      "text": " */"
+    },
+    {
+      "line": 1234,
+      "text": "static ssize_t fts_appid_show(struct device *dev,"
+    },
+    {
+      "line": 1235,
+      "text": "\tstruct device_attribute *attr, char *buf)"
+    },
+    {
+      "line": 1236,
+      "text": "{"
+    },
+    {
+      "line": 1237,
+      "text": "\tint error;"
+    },
+    {
+      "line": 1238,
+      "text": ""
+    },
+    {
+      "line": 1239,
+      "text": "\terror = snprintf(buf, PAGE_SIZE, \"%x.%x\\n\", ftsInfo.u16_fwVer,"
+    },
+    {
+      "line": 1240,
+      "text": "\t\tftsInfo.u16_cfgId);"
+    },
+    {
+      "line": 1241,
+      "text": "\treturn error;"
+    },
+    {
+      "line": 1242,
+      "text": "}"
+    },
+    {
+      "line": 1243,
+      "text": ""
+    },
+    {
+      "line": 1244,
+      "text": "/**"
+    },
+    {
+      "line": 1245,
+      "text": " * cat mode_active to show the bitmask of which indicate the modes/features"
+    },
+    {
+      "line": 1246,
+      "text": " * which are running on the IC in a specific istant oftime (example output in"
+    },
+    {
+      "line": 1247,
+      "text": " * the terminal = \"AA10000000BB\" only senseOn performed)"
+    },
+    {
+      "line": 1248,
+      "text": " */"
+    },
+    {
+      "line": 1249,
+      "text": "static ssize_t fts_mode_active_show(struct device *dev,"
+    },
+    {
+      "line": 1250,
+      "text": "\tstruct device_attribute *attr, char *buf)"
+    },
+    {
+      "line": 1251,
+      "text": "{"
+    },
+    {
+      "line": 1252,
+      "text": "\tstruct i2c_client *client = to_i2c_client(dev);"
+    },
+    {
+      "line": 1253,
+      "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+    },
+    {
+      "line": 3583,
+      "text": "}"
+    },
+    {
+      "line": 3584,
+      "text": ""
+    },
+    {
+      "line": 3585,
+      "text": "static DEVICE_ATTR_RW(fts_fwupdate);"
+    },
+    {
+      "line": 3586,
+      "text": "static DEVICE_ATTR_RO(fts_appid);"
+    },
+    {
+      "line": 3587,
+      "text": "static DEVICE_ATTR_RO(fts_mode_active);"
+    },
+    {
+      "line": 3588,
+      "text": "static DEVICE_ATTR_RO(fts_lockdown_info);"
+    },
+    {
+      "line": 3589,
+      "text": "static DEVICE_ATTR_RW(fts_strength_frame);"
+    },
+    {
+      "line": 3590,
+      "text": "static DEVICE_ATTR_RO(fts_fw_test);"
+    },
+    {
+      "line": 3591,
+      "text": "static DEVICE_ATTR_RW(fts_stm_cmd);"
+    },
+    {
+      "line": 3592,
+      "text": "#ifdef USE_ONE_FILE_NODE"
+    },
+    {
+      "line": 3593,
+      "text": "static DEVICE_ATTR_RW(fts_feature_enable);"
+    },
+    {
+      "line": 3594,
+      "text": "#else"
+    },
+    {
+      "line": 3595,
+      "text": ""
+    },
+    {
+      "line": 3596,
+      "text": "#ifdef EDGE_REJ"
+    },
+    {
+      "line": 3597,
+      "text": "static DEVICE_ATTR_RW(fts_edge_rej);"
+    },
+    {
+      "line": 3598,
+      "text": "#endif"
+    },
+    {
+      "line": 3599,
+      "text": ""
+    },
+    {
+      "line": 3600,
+      "text": "#ifdef CORNER_REJ"
+    },
+    {
+      "line": 3601,
+      "text": "static DEVICE_ATTR_RW(fts_corner_rej);"
+    },
+    {
+      "line": 3602,
+      "text": "#endif"
+    },
+    {
+      "line": 3603,
+      "text": ""
+    },
+    {
+      "line": 3604,
+      "text": "#ifdef EDGE_PALM_REJ"
+    },
+    {
+      "line": 3605,
+      "text": "static DEVICE_ATTR_RW(fts_edge_palm_rej);"
+    },
+    {
+      "line": 3646,
+      "text": "/*  /sys/devices/soc.0/f9928000.i2c/i2c-6/6-0049  */"
+    },
+    {
+      "line": 3647,
+      "text": "static struct attribute *fts_attr_group[] = {"
+    },
+    {
+      "line": 3648,
+      "text": "\t&dev_attr_fts_fwupdate.attr,"
+    },
+    {
+      "line": 3649,
+      "text": "\t&dev_attr_fts_appid.attr,"
+    },
+    {
+      "line": 3650,
+      "text": "\t&dev_attr_fts_mode_active.attr,"
+    },
+    {
+      "line": 3651,
+      "text": "\t&dev_attr_fts_lockdown_info.attr,"
+    },
+    {
+      "line": 3652,
+      "text": "\t&dev_attr_fts_strength_frame.attr,"
+    },
+    {
+      "line": 3653,
+      "text": "\t&dev_attr_fts_fw_test.attr,"
+    },
+    {
+      "line": 3654,
+      "text": "\t&dev_attr_fts_stm_cmd.attr,"
+    },
+    {
+      "line": 3655,
+      "text": "#ifdef USE_ONE_FILE_NODE"
+    },
+    {
+      "line": 3656,
+      "text": "\t&dev_attr_fts_feature_enable.attr,"
+    },
+    {
+      "line": 3657,
+      "text": "#else"
+    },
+    {
+      "line": 3658,
+      "text": ""
+    },
+    {
+      "line": 3659,
+      "text": "#ifdef EDGE_REJ"
+    },
+    {
+      "line": 3660,
+      "text": "\t&dev_attr_fts_edge_rej.attr,"
+    },
+    {
+      "line": 3661,
+      "text": "#endif"
+    },
+    {
+      "line": 3662,
+      "text": "#ifdef CORNER_REJ"
+    },
+    {
+      "line": 3663,
+      "text": "\t&dev_attr_fts_corner_rej.attr,"
+    },
+    {
+      "line": 3664,
+      "text": "#endif"
+    },
+    {
+      "line": 3665,
+      "text": "#ifdef EDGE_PALM_REJ"
+    },
+    {
+      "line": 3666,
+      "text": "\t&dev_attr_fts_edge_palm_rej.attr,"
+    },
+    {
+      "line": 3667,
+      "text": "#endif"
+    },
+    {
+      "line": 3668,
+      "text": "#ifdef CHARGER_MODE"
+    },
+    {
+      "line": 6075,
+      "text": "module_exit(fts_driver_exit);"
+    },
+    {
+      "line": 6076,
+      "text": ""
+    },
+    {
+      "line": 6077,
+      "text": "MODULE_DESCRIPTION(\"STMicroelectronics MultiTouch IC Driver\");"
+    },
+    {
+      "line": 6078,
+      "text": "MODULE_LICENSE(\"GPL v2\");"
+    }
+  ]
+}

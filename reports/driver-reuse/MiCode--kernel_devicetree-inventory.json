@@ -1,0 +1,942 @@
+{
+  "repo": "MiCode/kernel_devicetree",
+  "ref": "5647c799a064dfec73332a4fe2ef7aa3fb2f4887",
+  "commit": "5647c799a064dfec73332a4fe2ef7aa3fb2f4887",
+  "truncated": false,
+  "entries": [
+    {
+      "path": "bindings/arm/stm32",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "3a00170ea4299178f6e010b88b5542d21f2dc9e0",
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/trees/3a00170ea4299178f6e010b88b5542d21f2dc9e0"
+    },
+    {
+      "path": "bindings/arm/stm32/st,mlahb.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8e711bd202fd0b9cc2d3d736654c3365188a0ef5",
+      "size": 1982,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/8e711bd202fd0b9cc2d3d736654c3365188a0ef5"
+    },
+    {
+      "path": "bindings/arm/stm32/st,stm32-syscon.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "149afb5df5af2ac5ea03bd700bf3a04160a6d24b",
+      "size": 1225,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/149afb5df5af2ac5ea03bd700bf3a04160a6d24b"
+    },
+    {
+      "path": "bindings/clock/st,stm32-rcc.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cfa04b614d8aadff693e6566dbf2d475b0818c75",
+      "size": 3792,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/cfa04b614d8aadff693e6566dbf2d475b0818c75"
+    },
+    {
+      "path": "bindings/clock/st,stm32h7-rcc.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cac24ee10b72ebc3765d29708fa27c5ae6848950",
+      "size": 2023,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/cac24ee10b72ebc3765d29708fa27c5ae6848950"
+    },
+    {
+      "path": "bindings/clock/st,stm32mp1-rcc.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8b1ecb2ecdd565de080305e52f356140fb63a52b",
+      "size": 2134,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/8b1ecb2ecdd565de080305e52f356140fb63a52b"
+    },
+    {
+      "path": "bindings/crypto/st,stm32-crc.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cee624c14f07cdf758b6e9c1cc8e73f315b91f32",
+      "size": 663,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/cee624c14f07cdf758b6e9c1cc8e73f315b91f32"
+    },
+    {
+      "path": "bindings/crypto/st,stm32-cryp.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a4574552502a3802620f50cd0a9ae4433bdfbeb6",
+      "size": 970,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/a4574552502a3802620f50cd0a9ae4433bdfbeb6"
+    },
+    {
+      "path": "bindings/crypto/st,stm32-hash.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6dd658f0912ccc5460054c02b1d2700572fd2d0b",
+      "size": 1310,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/6dd658f0912ccc5460054c02b1d2700572fd2d0b"
+    },
+    {
+      "path": "bindings/display/st,stm32-dsi.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ed310bbe3afe5f316728fe8fa8c84690f4219da9",
+      "size": 2943,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/ed310bbe3afe5f316728fe8fa8c84690f4219da9"
+    },
+    {
+      "path": "bindings/display/st,stm32-ltdc.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4ae3d75492d39cb060e8efe123153cdf91827f7c",
+      "size": 1771,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/4ae3d75492d39cb060e8efe123153cdf91827f7c"
+    },
+    {
+      "path": "bindings/dma/st,stm32-dma.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2a5325f480f69f7e1b629730bb0881191f962670",
+      "size": 3137,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/2a5325f480f69f7e1b629730bb0881191f962670"
+    },
+    {
+      "path": "bindings/dma/st,stm32-dmamux.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c8d2b51d8410ea845ea6ef0fe088ed4ee5ff330b",
+      "size": 1027,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/c8d2b51d8410ea845ea6ef0fe088ed4ee5ff330b"
+    },
+    {
+      "path": "bindings/dma/st,stm32-mdma.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c30be840be1c972852ecb47890d556f63044f9c6",
+      "size": 3388,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/c30be840be1c972852ecb47890d556f63044f9c6"
+    },
+    {
+      "path": "bindings/gpio/gpio-stmpe.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a0e4cf8852139eea53f193c9e6f961544d1f026c",
+      "size": 428,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/a0e4cf8852139eea53f193c9e6f961544d1f026c"
+    },
+    {
+      "path": "bindings/hwlock/st,stm32-hwspinlock.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "47cf9c8d97e90c1fd6b7bf54f94ae55c8ccbabda",
+      "size": 933,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/47cf9c8d97e90c1fd6b7bf54f94ae55c8ccbabda"
+    },
+    {
+      "path": "bindings/i2c/st,stm32-i2c.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d747f4990ad8b64b8b048adca7e2f9cf46098189",
+      "size": 3757,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/d747f4990ad8b64b8b048adca7e2f9cf46098189"
+    },
+    {
+      "path": "bindings/iio/adc/st,stm32-adc.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a58334c3bb76d685867bc1c45e65e01581b46d35",
+      "size": 11958,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/a58334c3bb76d685867bc1c45e65e01581b46d35"
+    },
+    {
+      "path": "bindings/iio/adc/st,stm32-dfsdm-adc.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "733351dee2526fb5b3d58e60b8f48c591893c42f",
+      "size": 8666,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/733351dee2526fb5b3d58e60b8f48c591893c42f"
+    },
+    {
+      "path": "bindings/iio/adc/st,stmpe-adc.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9049c699152f7e41f0e87a16d5128724b5997766",
+      "size": 1118,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/9049c699152f7e41f0e87a16d5128724b5997766"
+    },
+    {
+      "path": "bindings/iio/dac/st,stm32-dac.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "393f7005941af6fe11b4d18ad9604bf17f3de8dc",
+      "size": 2268,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/393f7005941af6fe11b4d18ad9604bf17f3de8dc"
+    },
+    {
+      "path": "bindings/input/stmpe-keypad.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "12bb771d66d446647722ba3e423aabc3734f77bc",
+      "size": 895,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/12bb771d66d446647722ba3e423aabc3734f77bc"
+    },
+    {
+      "path": "bindings/input/touchscreen",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "4a8442498ce3b4426b1ea347b4a1302e98a072e3",
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/trees/4a8442498ce3b4426b1ea347b4a1302e98a072e3"
+    },
+    {
+      "path": "bindings/input/touchscreen/ad7879.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "afa38dc069f01824d7a38c677dc695c31af26fe8",
+      "size": 2323,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/afa38dc069f01824d7a38c677dc695c31af26fe8"
+    },
+    {
+      "path": "bindings/input/touchscreen/ads7846.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "81f6bda97d3c73d9dbc2899c777b6a708c12ed09",
+      "size": 3690,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/81f6bda97d3c73d9dbc2899c777b6a708c12ed09"
+    },
+    {
+      "path": "bindings/input/touchscreen/ar1021.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "82019bd6094ee30b0f86726162e7ab950f37f9a3",
+      "size": 350,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/82019bd6094ee30b0f86726162e7ab950f37f9a3"
+    },
+    {
+      "path": "bindings/input/touchscreen/auo_pixcir_ts.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f40f21c642b96f90d9447d5984a0119d6e58cba4",
+      "size": 667,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/f40f21c642b96f90d9447d5984a0119d6e58cba4"
+    },
+    {
+      "path": "bindings/input/touchscreen/azoteq,iqs5xx.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b5f377215c0984769af1a55d39634fedc06102cf",
+      "size": 1666,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/b5f377215c0984769af1a55d39634fedc06102cf"
+    },
+    {
+      "path": "bindings/input/touchscreen/brcm,iproc-touchscreen.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f127a2117072f91c6c91c97f42f39264684c04f0",
+      "size": 3360,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/f127a2117072f91c6c91c97f42f39264684c04f0"
+    },
+    {
+      "path": "bindings/input/touchscreen/bu21013.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "da4c9d8b99b1d24102c2db7fec0a996228204f86",
+      "size": 1626,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/da4c9d8b99b1d24102c2db7fec0a996228204f86"
+    },
+    {
+      "path": "bindings/input/touchscreen/bu21029.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8daa0e868a8fa1e59ca99b00882cb3cf852ace34",
+      "size": 1122,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/8daa0e868a8fa1e59ca99b00882cb3cf852ace34"
+    },
+    {
+      "path": "bindings/input/touchscreen/chipone_icn8318.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "38b0603f65f36b4df7ccc4cdca42ed56b00d7b17",
+      "size": 1447,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/38b0603f65f36b4df7ccc4cdca42ed56b00d7b17"
+    },
+    {
+      "path": "bindings/input/touchscreen/colibri-vf50-ts.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2e1490a8fe74ed8ca36f3b655d62f4e4ca3458d6",
+      "size": 1325,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/2e1490a8fe74ed8ca36f3b655d62f4e4ca3458d6"
+    },
+    {
+      "path": "bindings/input/touchscreen/cypress,cy8ctma140.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3225c8d1fdaf002c35ea43bd3b6a0d68967672bc",
+      "size": 1621,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/3225c8d1fdaf002c35ea43bd3b6a0d68967672bc"
+    },
+    {
+      "path": "bindings/input/touchscreen/cypress,cy8ctma340.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "762e56ee90cd2a5537ccc113adce9eed978e1dde",
+      "size": 4385,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/762e56ee90cd2a5537ccc113adce9eed978e1dde"
+    },
+    {
+      "path": "bindings/input/touchscreen/eeti,exc3000.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "007adbc89c143c6fb124fb04c934383b9a1a475a",
+      "size": 1326,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/007adbc89c143c6fb124fb04c934383b9a1a475a"
+    },
+    {
+      "path": "bindings/input/touchscreen/eeti.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "32b3712c916ebd7d4c1a3558d7bdc5184ca99d15",
+      "size": 774,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/32b3712c916ebd7d4c1a3558d7bdc5184ca99d15"
+    },
+    {
+      "path": "bindings/input/touchscreen/egalax-ts.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "92fb2620f5e24d13c7b7e44842c80f0eef3e5cff",
+      "size": 428,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/92fb2620f5e24d13c7b7e44842c80f0eef3e5cff"
+    },
+    {
+      "path": "bindings/input/touchscreen/ektf2127.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5eef5e7d6aae12f4bd0278e92d863eef58ef7fa3",
+      "size": 755,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/5eef5e7d6aae12f4bd0278e92d863eef58ef7fa3"
+    },
+    {
+      "path": "bindings/input/touchscreen/elan,elants_i2c.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a9b53c2e6f0abc8e8bc495981995105322e7bfaa",
+      "size": 1412,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/a9b53c2e6f0abc8e8bc495981995105322e7bfaa"
+    },
+    {
+      "path": "bindings/input/touchscreen/focaltech-ts.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9f8537e547902beebf230d052d9b76b82672d46c",
+      "size": 2568,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/9f8537e547902beebf230d052d9b76b82672d46c"
+    },
+    {
+      "path": "bindings/input/touchscreen/fsl-mx25-tcq.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "99d6f9d2533579672eb4e277bcb40d274696831b",
+      "size": 1322,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/99d6f9d2533579672eb4e277bcb40d274696831b"
+    },
+    {
+      "path": "bindings/input/touchscreen/goodix_ts_i2c.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c7ed553c65328d8415c6bce8bbadb08d881cab80",
+      "size": 2468,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/c7ed553c65328d8415c6bce8bbadb08d881cab80"
+    },
+    {
+      "path": "bindings/input/touchscreen/goodix_ts_spi.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1c817f37fe88643a9a846b2a0c5287bc02ebb7b5",
+      "size": 2447,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/1c817f37fe88643a9a846b2a0c5287bc02ebb7b5"
+    },
+    {
+      "path": "bindings/input/touchscreen/hideep.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a47c36190b01120c74c8e30077d5c2e9d25e0485",
+      "size": 1199,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/a47c36190b01120c74c8e30077d5c2e9d25e0485"
+    },
+    {
+      "path": "bindings/input/touchscreen/hycon,hy46xx.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "942562f1e45b2498cfa63adb3e3483e7b3f1b4b2",
+      "size": 2804,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/942562f1e45b2498cfa63adb3e3483e7b3f1b4b2"
+    },
+    {
+      "path": "bindings/input/touchscreen/ilitek_ts_i2c.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a190e7baac3162a3f4a840d7182d90957a569caa",
+      "size": 1509,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/a190e7baac3162a3f4a840d7182d90957a569caa"
+    },
+    {
+      "path": "bindings/input/touchscreen/imx6ul_tsc.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "16491500442447e4ce61d85a7b4f7dac44c930b1",
+      "size": 1460,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/16491500442447e4ce61d85a7b4f7dac44c930b1"
+    },
+    {
+      "path": "bindings/input/touchscreen/lpc32xx-tsc.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "41cbf4b7a670df3dd8ae3bfc5438a5be51683941",
+      "size": 376,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/41cbf4b7a670df3dd8ae3bfc5438a5be51683941"
+    },
+    {
+      "path": "bindings/input/touchscreen/max11801-ts.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "05e982c3454eb6aed5ca9fe10ca78e725d47cf9a",
+      "size": 373,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/05e982c3454eb6aed5ca9fe10ca78e725d47cf9a"
+    },
+    {
+      "path": "bindings/input/touchscreen/melfas,mms114.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "62366886fb3e17cd6e186aea2dcee49b072bda9a",
+      "size": 1963,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/62366886fb3e17cd6e186aea2dcee49b072bda9a"
+    },
+    {
+      "path": "bindings/input/touchscreen/melfas_mip4.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b2ab5498e51900e887fab4d9b5239cccccec2ea9",
+      "size": 517,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/b2ab5498e51900e887fab4d9b5239cccccec2ea9"
+    },
+    {
+      "path": "bindings/input/touchscreen/mstar,msg2638.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3a42c23faf6f9af6eb1495cb3a29de9801bf6971",
+      "size": 1472,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/3a42c23faf6f9af6eb1495cb3a29de9801bf6971"
+    },
+    {
+      "path": "bindings/input/touchscreen/novatek_nt36xxx.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "44b963f1a264bd93875d9055207b9f8b2d9fe68f",
+      "size": 1019,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/44b963f1a264bd93875d9055207b9f8b2d9fe68f"
+    },
+    {
+      "path": "bindings/input/touchscreen/pixcir_i2c_ts.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "697a3e7831e734e00173ffee012d3bc0f40381da",
+      "size": 857,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/697a3e7831e734e00173ffee012d3bc0f40381da"
+    },
+    {
+      "path": "bindings/input/touchscreen/raspberrypi,firmware-ts.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2a1af240ccc33c0f58678d21cb9d212a3b757d22",
+      "size": 680,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/2a1af240ccc33c0f58678d21cb9d212a3b757d22"
+    },
+    {
+      "path": "bindings/input/touchscreen/resistive-adc-touch.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7fc22a403d485d8b2b72ff3623f025b26e970790",
+      "size": 2149,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/7fc22a403d485d8b2b72ff3623f025b26e970790"
+    },
+    {
+      "path": "bindings/input/touchscreen/samsung,s6sy761.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6805d10d226d394a2a1ac35994c2def38acc50b5",
+      "size": 849,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/6805d10d226d394a2a1ac35994c2def38acc50b5"
+    },
+    {
+      "path": "bindings/input/touchscreen/silead_gsl1680.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d67e558e5ab5652322b1f2f13123c06ca1b600a8",
+      "size": 1561,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/d67e558e5ab5652322b1f2f13123c06ca1b600a8"
+    },
+    {
+      "path": "bindings/input/touchscreen/sis_i2c.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8f5322e01024040d76ea0c6eb4df8a04ec1cf730",
+      "size": 980,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/8f5322e01024040d76ea0c6eb4df8a04ec1cf730"
+    },
+    {
+      "path": "bindings/input/touchscreen/sitronix,st1232.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1d8ca19fd37ae3fc5a858e5aa1fe01ff5b227090",
+      "size": 950,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/1d8ca19fd37ae3fc5a858e5aa1fe01ff5b227090"
+    },
+    {
+      "path": "bindings/input/touchscreen/st,stmfts.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0a5d0cb4a280d83aad04cfcecb15e37f2d2f78fe",
+      "size": 1132,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/0a5d0cb4a280d83aad04cfcecb15e37f2d2f78fe"
+    },
+    {
+      "path": "bindings/input/touchscreen/stmpe.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c549924603d2691e5e7ceac14517c41cbf922165",
+      "size": 2609,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/c549924603d2691e5e7ceac14517c41cbf922165"
+    },
+    {
+      "path": "bindings/input/touchscreen/sx8654.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0ebe6dd043c7bf1f1a4355e6fb642f2c8e8434af",
+      "size": 542,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/0ebe6dd043c7bf1f1a4355e6fb642f2c8e8434af"
+    },
+    {
+      "path": "bindings/input/touchscreen/synaptics_dsx_i2c.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "131942dd0ae9b4a092ece9bd1a4f558c10bf0945",
+      "size": 2811,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/131942dd0ae9b4a092ece9bd1a4f558c10bf0945"
+    },
+    {
+      "path": "bindings/input/touchscreen/synaptics_tcm_i2c.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "11ec15a5603bc221768c9aef83ffe7847edf0391",
+      "size": 2052,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/11ec15a5603bc221768c9aef83ffe7847edf0391"
+    },
+    {
+      "path": "bindings/input/touchscreen/ti-tsc-adc.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "aad5e34965eb52c8bf07f92c44aa8dc7c84a3c80",
+      "size": 3537,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/aad5e34965eb52c8bf07f92c44aa8dc7c84a3c80"
+    },
+    {
+      "path": "bindings/input/touchscreen/touchscreen.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e1adb902d50398cf86bc1f0360e568c74cf38fc9",
+      "size": 21,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/e1adb902d50398cf86bc1f0360e568c74cf38fc9"
+    },
+    {
+      "path": "bindings/input/touchscreen/ts4800-ts.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4c1c092c276bc5c602223aa88fa810aa6cbef11b",
+      "size": 438,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/4c1c092c276bc5c602223aa88fa810aa6cbef11b"
+    },
+    {
+      "path": "bindings/input/touchscreen/tsc2005.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b80c04b0e5c028a45ae85f3ba77230b509318037",
+      "size": 1748,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/b80c04b0e5c028a45ae85f3ba77230b509318037"
+    },
+    {
+      "path": "bindings/input/touchscreen/tsc2007.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ed00f61b8c08b078bc0ee386c9f0bb379eec6ccf",
+      "size": 1285,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/ed00f61b8c08b078bc0ee386c9f0bb379eec6ccf"
+    },
+    {
+      "path": "bindings/input/touchscreen/zet6223.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "27d55a506f183df5e2ad6f26c0c4a3c196e02599",
+      "size": 817,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/27d55a506f183df5e2ad6f26c0c4a3c196e02599"
+    },
+    {
+      "path": "bindings/input/touchscreen/zforce_ts.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e3c27c4fd9c851fbbb51791084b280a9e343827d",
+      "size": 784,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/e3c27c4fd9c851fbbb51791084b280a9e343827d"
+    },
+    {
+      "path": "bindings/input/touchscreen/zinitix.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "446efb9f5f5519d8c77878247aac4c8430defd1d",
+      "size": 1075,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/446efb9f5f5519d8c77878247aac4c8430defd1d"
+    },
+    {
+      "path": "bindings/interrupt-controller/st,stm32-exti.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6d3e68eb2e8ba4af9d45013c4ea3ad00073a1f31",
+      "size": 2111,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/6d3e68eb2e8ba4af9d45013c4ea3ad00073a1f31"
+    },
+    {
+      "path": "bindings/mailbox/st,stm32-ipcc.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b15da9ba90b203e7f7d56bfdcde6e7db1337787f",
+      "size": 1852,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/b15da9ba90b203e7f7d56bfdcde6e7db1337787f"
+    },
+    {
+      "path": "bindings/media/st,stm32-cec.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d75019c093a4f99204f36586d5b387031b6be471",
+      "size": 1077,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/d75019c093a4f99204f36586d5b387031b6be471"
+    },
+    {
+      "path": "bindings/media/st,stm32-dcmi.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "41e1d0cd80e5446f9acb2079ca49e5ab8ddf9039",
+      "size": 2348,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/41e1d0cd80e5446f9acb2079ca49e5ab8ddf9039"
+    },
+    {
+      "path": "bindings/memory-controllers/st,stm32-fmc2-ebi.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cba74205846a2e389fd7a2ae128db24415fd9313",
+      "size": 9216,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/cba74205846a2e389fd7a2ae128db24415fd9313"
+    },
+    {
+      "path": "bindings/mfd/st,stm32-lptimer.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8bcea8dd7d908acf952614fa797b558ac08de402",
+      "size": 2615,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/8bcea8dd7d908acf952614fa797b558ac08de402"
+    },
+    {
+      "path": "bindings/mfd/st,stm32-timers.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dace35362a7af56dc20f9dc267190cfc576eb475",
+      "size": 3576,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/dace35362a7af56dc20f9dc267190cfc576eb475"
+    },
+    {
+      "path": "bindings/mfd/st,stmfx.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "19e9afb385acb42429959eff845105785218e59c",
+      "size": 3066,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/19e9afb385acb42429959eff845105785218e59c"
+    },
+    {
+      "path": "bindings/mfd/stmpe.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d4408a417193319950b04a15289a6f2942bcb658",
+      "size": 1383,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/d4408a417193319950b04a15289a6f2942bcb658"
+    },
+    {
+      "path": "bindings/mtd/st,stm32-fmc2-nand.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "29c5ef24ac6a261f605cb5091d416330e2c1482d",
+      "size": 3031,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/29c5ef24ac6a261f605cb5091d416330e2c1482d"
+    },
+    {
+      "path": "bindings/net/qcom,stmmac-ethqos.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e5e9fc0c0c83abebdd63b216681840aceee2d062",
+      "size": 7441,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/e5e9fc0c0c83abebdd63b216681840aceee2d062"
+    },
+    {
+      "path": "bindings/net/stm32-dwmac.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d3f05d5934d5696e465deeb2f3ee5fe928c1e276",
+      "size": 4291,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/d3f05d5934d5696e465deeb2f3ee5fe928c1e276"
+    },
+    {
+      "path": "bindings/net/stmmac.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7d48782767cb555c32d51d1722f067c9964990fb",
+      "size": 40,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/7d48782767cb555c32d51d1722f067c9964990fb"
+    },
+    {
+      "path": "bindings/nvmem/st,stm32-romem.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0b80ce22a2f8859032b49d0fa79f6fdf31c1b744",
+      "size": 1506,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/0b80ce22a2f8859032b49d0fa79f6fdf31c1b744"
+    },
+    {
+      "path": "bindings/phy/phy-stm32-usbphyc.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3329f1d33a4feae481b36fda159878873a82b6df",
+      "size": 3455,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/3329f1d33a4feae481b36fda159878873a82b6df"
+    },
+    {
+      "path": "bindings/pinctrl/st,stm32-pinctrl.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "72877544ca78f798d166ae70a7e9d2e6fdc8660e",
+      "size": 7963,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/72877544ca78f798d166ae70a7e9d2e6fdc8660e"
+    },
+    {
+      "path": "bindings/pwm/st,stmpe-pwm.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f401316e0248b6825bcbcf755d621055414dcc04",
+      "size": 431,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/f401316e0248b6825bcbcf755d621055414dcc04"
+    },
+    {
+      "path": "bindings/regulator/raspberrypi,7inch-touchscreen-panel-regulator.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0ae25d119b6f7fd56aa72b1d78f6b28f6cd21a77",
+      "size": 955,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/0ae25d119b6f7fd56aa72b1d78f6b28f6cd21a77"
+    },
+    {
+      "path": "bindings/regulator/st,stm32-booster.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9f1c70381b826c8b76854fc7e3b4ead486b891d0",
+      "size": 1042,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/9f1c70381b826c8b76854fc7e3b4ead486b891d0"
+    },
+    {
+      "path": "bindings/regulator/st,stm32-vrefbuf.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3cd4a254e4cba1adfe6d1ba0686911ffc3ae6a34",
+      "size": 1158,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/3cd4a254e4cba1adfe6d1ba0686911ffc3ae6a34"
+    },
+    {
+      "path": "bindings/regulator/st,stm32mp1-pwr-reg.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e6322bc3e4478ffe7252640fa082df8653d3768b",
+      "size": 1320,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/e6322bc3e4478ffe7252640fa082df8653d3768b"
+    },
+    {
+      "path": "bindings/remoteproc/st,stm32-rproc.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1e6225677e002b2515cb472d605d1d0ba343fbdf",
+      "size": 4229,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/1e6225677e002b2515cb472d605d1d0ba343fbdf"
+    },
+    {
+      "path": "bindings/reset/st,stm32-rcc.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "01db34375192e64e151d68ea77805bc987885109",
+      "size": 227,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/01db34375192e64e151d68ea77805bc987885109"
+    },
+    {
+      "path": "bindings/reset/st,stm32mp1-rcc.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2880d5dda95e8326c561fb6347b3336d5d10c4b5",
+      "size": 237,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/2880d5dda95e8326c561fb6347b3336d5d10c4b5"
+    },
+    {
+      "path": "bindings/rng/st,stm32-rng.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "82bb2e97e889f809845ca34a08f2bf5fb0b62ad8",
+      "size": 914,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/82bb2e97e889f809845ca34a08f2bf5fb0b62ad8"
+    },
+    {
+      "path": "bindings/rtc/st,stm32-rtc.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5456604b1c14fa1673cd6865516d3356c4e60620",
+      "size": 2936,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/5456604b1c14fa1673cd6865516d3356c4e60620"
+    },
+    {
+      "path": "bindings/rtc/stmp3xxx-rtc.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fa6a9422666982b03eb659a2726845a81514d01d",
+      "size": 565,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/fa6a9422666982b03eb659a2726845a81514d01d"
+    },
+    {
+      "path": "bindings/serial/st,stm32-uart.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f50f4ca893a099daf97a358fb8f379a38c404fab",
+      "size": 2714,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/f50f4ca893a099daf97a358fb8f379a38c404fab"
+    },
+    {
+      "path": "bindings/sound/st,stm32-i2s.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6feb5a09c184e35be3b74b5c58b098be9b70e80a",
+      "size": 2078,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/6feb5a09c184e35be3b74b5c58b098be9b70e80a"
+    },
+    {
+      "path": "bindings/sound/st,stm32-sai.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "06e83461705cca5d5dae73f955f86aeda3fb71d4",
+      "size": 5108,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/06e83461705cca5d5dae73f955f86aeda3fb71d4"
+    },
+    {
+      "path": "bindings/sound/st,stm32-spdifrx.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b7f7dc45223192d4e528f8a208c89ae97be93ba3",
+      "size": 1603,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/b7f7dc45223192d4e528f8a208c89ae97be93ba3"
+    },
+    {
+      "path": "bindings/spi/st,stm32-qspi.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "983c4e54c0be02d0db7c9a9221dc3a9d535f8127",
+      "size": 1761,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/983c4e54c0be02d0db7c9a9221dc3a9d535f8127"
+    },
+    {
+      "path": "bindings/spi/st,stm32-spi.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2d9af4c506bbcf59461d70b90c0a346edc0aff24",
+      "size": 2419,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/2d9af4c506bbcf59461d70b90c0a346edc0aff24"
+    },
+    {
+      "path": "bindings/thermal/st,stm32-thermal.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c0f59c56003d6bba995b822aa54fe406dff59565",
+      "size": 1711,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/c0f59c56003d6bba995b822aa54fe406dff59565"
+    },
+    {
+      "path": "bindings/timer/renesas,ostm.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "600d47ab7d58570f240b6dc257fad9c4437c2afc",
+      "size": 1380,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/600d47ab7d58570f240b6dc257fad9c4437c2afc"
+    },
+    {
+      "path": "bindings/timer/st,stm32-timer.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "176aa3c9baf88c7ed59befe88e80b3161dbcdd41",
+      "size": 878,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/176aa3c9baf88c7ed59befe88e80b3161dbcdd41"
+    },
+    {
+      "path": "bindings/watchdog/st,stm32-iwdg.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "481bf91f988ad3771cf9549df8abee7d91f47654",
+      "size": 1105,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/481bf91f988ad3771cf9549df8abee7d91f47654"
+    },
+    {
+      "path": "qcom/nuwa-pinctrl.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dab50609eb104b7773225bcb74038919c25f4053",
+      "size": 1075,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/dab50609eb104b7773225bcb74038919c25f4053"
+    },
+    {
+      "path": "qcom/nuwa-sm8550-overlay.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4fd245aeae634c38bc9ab3ff5e6ebe831120060c",
+      "size": 335,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/4fd245aeae634c38bc9ab3ff5e6ebe831120060c"
+    },
+    {
+      "path": "qcom/nuwa-sm8550.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "407dd38c5efa91a4d0b3b77aa92d905ac74b8182",
+      "size": 10637,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/407dd38c5efa91a4d0b3b77aa92d905ac74b8182"
+    },
+    {
+      "path": "xiaomi/nuwa-pinctrl.dtsi",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "881746ae3dbd3972e728278fcb4b4d0933290ccd",
+      "size": 25,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/881746ae3dbd3972e728278fcb4b4d0933290ccd"
+    },
+    {
+      "path": "xiaomi/nuwa-sm8550-overlay.dts",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "c58dd314ff2ff6cbda143a9886da90bd600fa7e0",
+      "size": 31,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/c58dd314ff2ff6cbda143a9886da90bd600fa7e0"
+    },
+    {
+      "path": "xiaomi/nuwa-sm8550.dtsi",
+      "mode": "120000",
+      "type": "blob",
+      "sha": "88260ecfaba819bd2496ebafaee88ed31d19b942",
+      "size": 24,
+      "url": "https://api.github.com/repos/MiCode/kernel_devicetree/git/blobs/88260ecfaba819bd2496ebafaee88ed31d19b942"
+    }
+  ]
+}

@@ -1,0 +1,4062 @@
+{
+  "repo": "MiCode/Xiaomi_Kernel_OpenSource",
+  "ref": "7fad87dc178d09489b74a714e4a525d56f546855",
+  "commit": "7fad87dc178d09489b74a714e4a525d56f546855",
+  "truncated": false,
+  "entries": [
+    {
+      "path": "Documentation/ABI/testing/sysfs-bus-coresight-devices-stm",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "53e1f4815d64314e6d6181978fa2ecbd77f5b9db",
+      "size": 2210,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/53e1f4815d64314e6d6181978fa2ecbd77f5b9db"
+    },
+    {
+      "path": "Documentation/ABI/testing/sysfs-bus-iio-adc-stm32",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1975c7a1af34670359413e531eff0c9c41152b50",
+      "size": 643,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/1975c7a1af34670359413e531eff0c9c41152b50"
+    },
+    {
+      "path": "Documentation/ABI/testing/sysfs-bus-iio-dfsdm-adc-stm32",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "91439d6d60b5c0ce0acd7924602f2a2af8b7b49a",
+      "size": 642,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/91439d6d60b5c0ce0acd7924602f2a2af8b7b49a"
+    },
+    {
+      "path": "Documentation/ABI/testing/sysfs-bus-iio-timer-stm32",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c4a4497c249aa5e154c06d9cf6056e7c97418264",
+      "size": 4895,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/c4a4497c249aa5e154c06d9cf6056e7c97418264"
+    },
+    {
+      "path": "Documentation/ABI/testing/sysfs-class-stm",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "77ed3da0f68e437f9c82ccfebcdc79d761831833",
+      "size": 802,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/77ed3da0f68e437f9c82ccfebcdc79d761831833"
+    },
+    {
+      "path": "Documentation/ABI/testing/sysfs-class-stm_source",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "57b8dd39bbf7e6beddfd198fe3cbeed1ad47514f",
+      "size": 530,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/57b8dd39bbf7e6beddfd198fe3cbeed1ad47514f"
+    },
+    {
+      "path": "Documentation/arm/stm32",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "fd67d11d576532a2392a19b9c690df6ac3cf6d96",
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/trees/fd67d11d576532a2392a19b9c690df6ac3cf6d96"
+    },
+    {
+      "path": "Documentation/arm/stm32/overview.rst",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "85cfc84107983c5953b9c1669f2154017cba62a7",
+      "size": 862,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/85cfc84107983c5953b9c1669f2154017cba62a7"
+    },
+    {
+      "path": "Documentation/arm/stm32/stm32f429-overview.rst",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a7ebe8ea66970d0dfca3cbce2145fe864df56a84",
+      "size": 700,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/a7ebe8ea66970d0dfca3cbce2145fe864df56a84"
+    },
+    {
+      "path": "Documentation/arm/stm32/stm32f746-overview.rst",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "78befddc77405d309268d663bcf4a3babaedceb2",
+      "size": 865,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/78befddc77405d309268d663bcf4a3babaedceb2"
+    },
+    {
+      "path": "Documentation/arm/stm32/stm32f769-overview.rst",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e482980ddf2128ba3d101b8b4092a1d3a284594c",
+      "size": 933,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/e482980ddf2128ba3d101b8b4092a1d3a284594c"
+    },
+    {
+      "path": "Documentation/arm/stm32/stm32h743-overview.rst",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4e15f1a42730a7cbbed29a3b9bafb544eb16ccc2",
+      "size": 800,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/4e15f1a42730a7cbbed29a3b9bafb544eb16ccc2"
+    },
+    {
+      "path": "Documentation/arm/stm32/stm32h750-overview.rst",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0e51235c95477b85f46cdf9c1e2e254a02a7dd73",
+      "size": 793,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/0e51235c95477b85f46cdf9c1e2e254a02a7dd73"
+    },
+    {
+      "path": "Documentation/arm/stm32/stm32mp157-overview.rst",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f62fdc8e7d8de1879725ae5e837e375faf6a5f94",
+      "size": 467,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/f62fdc8e7d8de1879725ae5e837e375faf6a5f94"
+    },
+    {
+      "path": "Documentation/hwmon/ftsteutates.rst",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "58a2483d8d0da999d31a5d92594379f5346d5e31",
+      "size": 1091,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/58a2483d8d0da999d31a5d92594379f5346d5e31"
+    },
+    {
+      "path": "Documentation/networking/device_drivers/ethernet/stmicro",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1aff77512cce2426eb149803467d35aa54099b41",
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/trees/1aff77512cce2426eb149803467d35aa54099b41"
+    },
+    {
+      "path": "Documentation/networking/device_drivers/ethernet/stmicro/stmmac.rst",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5d46e50361294eb57ea9a7fca88aa1504df0acef",
+      "size": 19009,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/5d46e50361294eb57ea9a7fca88aa1504df0acef"
+    },
+    {
+      "path": "Documentation/trace/stm.rst",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1ed49dde04fc188a0856a710d543184be46bef15",
+      "size": 6751,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/1ed49dde04fc188a0856a710d543184be46bef15"
+    },
+    {
+      "path": "arch/arm/boot/dts/imx23-stmp378x_devb.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "da4b88f32eaa48d04f77dd7b04d686abd0b5a1a3",
+      "size": 1558,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/da4b88f32eaa48d04f77dd7b04d686abd0b5a1a3"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32429i-eval.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cb46326a8c75ded4553069a425464636519f0a46",
+      "size": 6940,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/cb46326a8c75ded4553069a425464636519f0a46"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32746g-eval.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "327613fd9666c1b4a050b10cc3f5f80e3e168b86",
+      "size": 5284,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/327613fd9666c1b4a050b10cc3f5f80e3e168b86"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32f4-pinctrl.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "155d9ffacc8341de18ec2dc9ccf7a5e11bdc86d9",
+      "size": 13728,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/155d9ffacc8341de18ec2dc9ccf7a5e11bdc86d9"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32f429-disco.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6435e099c632627708b6b5ad648643752db3a9e7",
+      "size": 5618,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/6435e099c632627708b6b5ad648643752db3a9e7"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32f429-pinctrl.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e10d7a1f320797cdab017519b57ce19d93e1a40b",
+      "size": 2802,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/e10d7a1f320797cdab017519b57ce19d93e1a40b"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32f429.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8748d58502980e7a0a3afc1d0d7526976c9cd328",
+      "size": 19138,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/8748d58502980e7a0a3afc1d0d7526976c9cd328"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32f469-disco.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "30905ce672a0911519d20be12c5f67d41c84f4be",
+      "size": 5402,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/30905ce672a0911519d20be12c5f67d41c84f4be"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32f469-pinctrl.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6bf60263dff8951b671b347f6f1b1394891af3de",
+      "size": 2831,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/6bf60263dff8951b671b347f6f1b1394891af3de"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32f469.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "be002e8a78ac103c1af267004b2dde8cacf4e725",
+      "size": 429,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/be002e8a78ac103c1af267004b2dde8cacf4e725"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32f7-pinctrl.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1cf8a23c2644821979657a26c4aa0613bf4f95b2",
+      "size": 7867,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/1cf8a23c2644821979657a26c4aa0613bf4f95b2"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32f746-disco.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "569d23cc61e52eea83f7db2ce83988b6de7d77b6",
+      "size": 3793,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/569d23cc61e52eea83f7db2ce83988b6de7d77b6"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32f746-pinctrl.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fcfd2ac7239bb622b87f92e07105b3ccb21709ca",
+      "size": 289,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/fcfd2ac7239bb622b87f92e07105b3ccb21709ca"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32f746.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "014b416f57e6fb36b425eb4b3eca841c87673ed8",
+      "size": 14971,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/014b416f57e6fb36b425eb4b3eca841c87673ed8"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32f769-disco.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "be943b701980638d8a401716c6fe238e51487f65",
+      "size": 4031,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/be943b701980638d8a401716c6fe238e51487f65"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32f769-pinctrl.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "31005dd9929c40cb6d5cf0ff93b141b28ac0dd1d",
+      "size": 289,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/31005dd9929c40cb6d5cf0ff93b141b28ac0dd1d"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32h7-pinctrl.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "aa1bc3e10a49deaeb688d4705a3b2c67ba3f49fb",
+      "size": 8116,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/aa1bc3e10a49deaeb688d4705a3b2c67ba3f49fb"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32h743.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6e42ca2dada2c6a940d65e955e91d3db27d6268f",
+      "size": 17437,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/6e42ca2dada2c6a940d65e955e91d3db27d6268f"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32h743i-disco.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "59e01ce10318412528d8813edcb6994e099a96a7",
+      "size": 3244,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/59e01ce10318412528d8813edcb6994e099a96a7"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32h743i-eval.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "38cc7faf68841294c5fe18214aaa86f02bd06b70",
+      "size": 4188,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/38cc7faf68841294c5fe18214aaa86f02bd06b70"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32h750.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "41e3b1e3a874b4c9f4ae13ce48a8b17a5008c5c4",
+      "size": 153,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/41e3b1e3a874b4c9f4ae13ce48a8b17a5008c5c4"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32h750i-art-pi.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9bb73bb6190126394694a332794fa259c11f40e3",
+      "size": 5457,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/9bb73bb6190126394694a332794fa259c11f40e3"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp15-pinctrl.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2ebafe27a865bae40c9fdd197e9878d8c27789ac",
+      "size": 60961,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/2ebafe27a865bae40c9fdd197e9878d8c27789ac"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp151.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6992a4b0ba79bb5d63f9fc6c801772c87fcbb4eb",
+      "size": 42529,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/6992a4b0ba79bb5d63f9fc6c801772c87fcbb4eb"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp153.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1c1889b194cfcc719f9ca200a1d1c0660d612388",
+      "size": 1387,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/1c1889b194cfcc719f9ca200a1d1c0660d612388"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp153c-dhcom-drc02.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b4e504f026ce73794df91994bad3256f36887a55",
+      "size": 879,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/b4e504f026ce73794df91994bad3256f36887a55"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp157.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "54e73ccea4464fcc1cff0a7c759f3519c6ce65b1",
+      "size": 855,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/54e73ccea4464fcc1cff0a7c759f3519c6ce65b1"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp157a-avenger96.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8a6eaca994d1ba497fd53227917c85ffa629a934",
+      "size": 343,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/8a6eaca994d1ba497fd53227917c85ffa629a934"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp157a-dhcor-avenger96.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2e3c9fbb4eb361d901ae8c30d571afb797bf170c",
+      "size": 983,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/2e3c9fbb4eb361d901ae8c30d571afb797bf170c"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp157a-dk1.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4c8be9c8eb20e2e25695700b1acce06d0fa556de",
+      "size": 624,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/4c8be9c8eb20e2e25695700b1acce06d0fa556de"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp157a-icore-stm32mp1-ctouch2.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d3058a036c749f62fcc7f1aae882b637a06ffa0c",
+      "size": 1073,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/d3058a036c749f62fcc7f1aae882b637a06ffa0c"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp157a-icore-stm32mp1-edimm2.2.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ec9f1d1cd50fb456615e92913393a49898d155fc",
+      "size": 1083,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/ec9f1d1cd50fb456615e92913393a49898d155fc"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp157a-icore-stm32mp1.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "01166ccacf2b0b1298d6466dd90a2a6e5f4ca46e",
+      "size": 4135,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/01166ccacf2b0b1298d6466dd90a2a6e5f4ca46e"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp157a-iot-box.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "70f394b4d3c0739c087fa73688a8124e18e57770",
+      "size": 1432,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/70f394b4d3c0739c087fa73688a8124e18e57770"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp157a-microgea-stm32mp1-microdev2.0-of7.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5670b23812a2165a2ef12a537f300b22e7679473",
+      "size": 4004,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/5670b23812a2165a2ef12a537f300b22e7679473"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp157a-microgea-stm32mp1-microdev2.0.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7a75868164dc065825f1a96cb53e91a9a858b56f",
+      "size": 1228,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/7a75868164dc065825f1a96cb53e91a9a858b56f"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp157a-microgea-stm32mp1.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0b85175f151e4e3e4e389db552f3843e738ae9b5",
+      "size": 2822,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/0b85175f151e4e3e4e389db552f3843e738ae9b5"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp157a-stinger96.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "249a53877512fa8e5d57c807e75a15a38a44cbef",
+      "size": 270,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/249a53877512fa8e5d57c807e75a15a38a44cbef"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp157a-stinger96.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a4b14ef3caeeb963ce71a13ae3e65c2bdb16b902",
+      "size": 6753,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/a4b14ef3caeeb963ce71a13ae3e65c2bdb16b902"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp157c-dhcom-pdk2.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6dd8216c235eb574b516acdaaabb5c6d77bc1296",
+      "size": 781,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/6dd8216c235eb574b516acdaaabb5c6d77bc1296"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp157c-dhcom-picoitx.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7067a860aaff8c751b523797c71549dc31d57fcf",
+      "size": 895,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/7067a860aaff8c751b523797c71549dc31d57fcf"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp157c-dk2.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2bc92ef3aeb9570d496f521a142326832cc379c0",
+      "size": 1750,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/2bc92ef3aeb9570d496f521a142326832cc379c0"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp157c-ed1.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "46b471d09c50c41cf5c318a18ca9d449d746b0de",
+      "size": 8314,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/46b471d09c50c41cf5c318a18ca9d449d746b0de"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp157c-ev1.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5c5b1ddf7bfd21d7252fb4ec98ca088d2af948a4",
+      "size": 7534,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/5c5b1ddf7bfd21d7252fb4ec98ca088d2af948a4"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1e9bf7eea0f1f6e8ee7c307f3bf257dc55991e9c",
+      "size": 5335,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/1e9bf7eea0f1f6e8ee7c307f3bf257dc55991e9c"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp157c-odyssey-som.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2d9461006810c5e0777026bb25c99e181acbb679",
+      "size": 5889,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/2d9461006810c5e0777026bb25c99e181acbb679"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp157c-odyssey.dts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "be1dd5e9e7443f642afd0a22b5f894a37afe9e37",
+      "size": 1800,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/be1dd5e9e7443f642afd0a22b5f894a37afe9e37"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp15xc.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b06a55a2fa188dfb7f5212f887d6e80e01b20e9a",
+      "size": 445,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/b06a55a2fa188dfb7f5212f887d6e80e01b20e9a"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp15xx-dhcom-drc02.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4b10b013ffd52274fc6ae1cd2dde1c83eddee4f3",
+      "size": 3270,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/4b10b013ffd52274fc6ae1cd2dde1c83eddee4f3"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp15xx-dhcom-pdk2.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fbf3826933e4dbe5dc1f52a973c4e6018ca25319",
+      "size": 6472,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/fbf3826933e4dbe5dc1f52a973c4e6018ca25319"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp15xx-dhcom-picoitx.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ba816ef8b9b25586e13aee1bbeba5d905262e35e",
+      "size": 2571,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/ba816ef8b9b25586e13aee1bbeba5d905262e35e"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp15xx-dhcom-som.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8c41f819f77696171d8da706391979983cbaf5b2",
+      "size": 11060,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/8c41f819f77696171d8da706391979983cbaf5b2"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp15xx-dhcor-avenger96.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6885948f3024e753d4785be40338a60c63dd7194",
+      "size": 8406,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/6885948f3024e753d4785be40338a60c63dd7194"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp15xx-dhcor-io1v8.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "75172314d7afd3fb515bc1e846cccac8cc3550aa",
+      "size": 572,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/75172314d7afd3fb515bc1e846cccac8cc3550aa"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp15xx-dhcor-som.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "44ecc4708587191d41149d5e7dbd6d2b94e0e4e9",
+      "size": 4644,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/44ecc4708587191d41149d5e7dbd6d2b94e0e4e9"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp15xx-dkx.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "48beed0f1f30a7c6e2e68c9585fe0af4595eeac2",
+      "size": 14562,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/48beed0f1f30a7c6e2e68c9585fe0af4595eeac2"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp15xx-osd32.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6706d8311a6655f0b6d7e93a3d9fa72daf90f53f",
+      "size": 4936,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/6706d8311a6655f0b6d7e93a3d9fa72daf90f53f"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp15xxaa-pinctrl.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "04f7a43ad66f978d4ee34aeb99b70233416a436a",
+      "size": 1513,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/04f7a43ad66f978d4ee34aeb99b70233416a436a"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp15xxab-pinctrl.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "328dad140e9b0b3e4bf66a7156cba95f9ca5c7f2",
+      "size": 1055,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/328dad140e9b0b3e4bf66a7156cba95f9ca5c7f2"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp15xxac-pinctrl.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7eaa245f44db4774337548c13f7bdf112282c017",
+      "size": 1311,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/7eaa245f44db4774337548c13f7bdf112282c017"
+    },
+    {
+      "path": "arch/arm/boot/dts/stm32mp15xxad-pinctrl.dtsi",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b63e207de2166b5bd811d34baf2d1e3744a85719",
+      "size": 1055,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/b63e207de2166b5bd811d34baf2d1e3744a85719"
+    },
+    {
+      "path": "arch/arm/configs/stm32_defconfig",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "551db328009dd697194718dd349d6223febb0122",
+      "size": 2091,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/551db328009dd697194718dd349d6223febb0122"
+    },
+    {
+      "path": "arch/arm/include/debug/stm32.S",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b6d9df30e37d2cf853be44cb82bf776117b94113",
+      "size": 1162,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/b6d9df30e37d2cf853be44cb82bf776117b94113"
+    },
+    {
+      "path": "arch/arm/mach-s3c/mach-vstms.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ec024af7b0ce49f18978b90274298c4b50f54a3b",
+      "size": 3579,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/ec024af7b0ce49f18978b90274298c4b50f54a3b"
+    },
+    {
+      "path": "arch/arm/mach-stm32",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "468987a67438c44ffe492c5c863f20de16ea94f1",
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/trees/468987a67438c44ffe492c5c863f20de16ea94f1"
+    },
+    {
+      "path": "arch/arm/mach-stm32/Kconfig",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "57699bd8f10750f73410e142b9e791fac9a9dd5e",
+      "size": 1045,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/57699bd8f10750f73410e142b9e791fac9a9dd5e"
+    },
+    {
+      "path": "arch/arm/mach-stm32/Makefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c80d80c199d37835339cf00243eebe6f02257050",
+      "size": 60,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/c80d80c199d37835339cf00243eebe6f02257050"
+    },
+    {
+      "path": "arch/arm/mach-stm32/Makefile.boot",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5dde7328a7a95b375de473365934fe49e72baf9d",
+      "size": 224,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/5dde7328a7a95b375de473365934fe49e72baf9d"
+    },
+    {
+      "path": "arch/arm/mach-stm32/board-dt.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a766310d8dca41d6447af6c23898ca18500e9a3b",
+      "size": 643,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/a766310d8dca41d6447af6c23898ca18500e9a3b"
+    },
+    {
+      "path": "arch/arm64/configs/vendor/nuwa_GKI.config",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c7bd89a43a0344009c997406ca452e21deb65108",
+      "size": 10645,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/c7bd89a43a0344009c997406ca452e21deb65108"
+    },
+    {
+      "path": "arch/arm64/configs/vendor/nuwa_consolidate.config",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c03050ce03b46045815b12913a0b1a13fd8589be",
+      "size": 776,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/c03050ce03b46045815b12913a0b1a13fd8589be"
+    },
+    {
+      "path": "arch/arm64/configs/vendor/nuwa_tuivm.config",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fe5056a99a232ddffb8c9c1375af1aa200b7ead1",
+      "size": 4985,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/fe5056a99a232ddffb8c9c1375af1aa200b7ead1"
+    },
+    {
+      "path": "arch/arm64/configs/vendor/nuwa_tuivm_debug.config",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0aef2b503ed96166fad9fefa03f6eccccbfed069",
+      "size": 710,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/0aef2b503ed96166fad9fefa03f6eccccbfed069"
+    },
+    {
+      "path": "arch/m68k/coldfire/stmark2.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "036a6ae5f5992832367f80616b84ae9e13a39b71",
+      "size": 2904,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/036a6ae5f5992832367f80616b84ae9e13a39b71"
+    },
+    {
+      "path": "arch/m68k/configs/stmark2_defconfig",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8898ae321779155f8614712cb21d01164501c209",
+      "size": 2348,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/8898ae321779155f8614712cb21d01164501c209"
+    },
+    {
+      "path": "arch/x86/mm/testmmiotrace.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bda73cb7a0446b932a60710525b1a605331445cf",
+      "size": 3255,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/bda73cb7a0446b932a60710525b1a605331445cf"
+    },
+    {
+      "path": "bindings/net/qcom,stmmac-ethqos.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e5e9fc0c0c83abebdd63b216681840aceee2d062",
+      "size": 7441,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/e5e9fc0c0c83abebdd63b216681840aceee2d062"
+    },
+    {
+      "path": "build.config.msm.nuwa",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1659573ab519813c0dee1e7f7c775b7ff323b467",
+      "size": 1158,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/1659573ab519813c0dee1e7f7c775b7ff323b467"
+    },
+    {
+      "path": "build.config.msm.nuwa.oemvm",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c90c5e78afbacbfdb636c9c90c2f440912910130",
+      "size": 420,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/c90c5e78afbacbfdb636c9c90c2f440912910130"
+    },
+    {
+      "path": "build.config.msm.nuwa.tuivm",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "91a2cde11ea812b597cf37a8783a42ce92f18b27",
+      "size": 369,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/91a2cde11ea812b597cf37a8783a42ce92f18b27"
+    },
+    {
+      "path": "build.config.msm.nuwa.vm",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5afc78ca1cf2eb12efc3c597105d2e10a7456946",
+      "size": 1393,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/5afc78ca1cf2eb12efc3c597105d2e10a7456946"
+    },
+    {
+      "path": "crypto/testmgr.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "70f69f0910c9ea198bbe3d4bf77a3192f13ef630",
+      "size": 148909,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/70f69f0910c9ea198bbe3d4bf77a3192f13ef630"
+    },
+    {
+      "path": "crypto/testmgr.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e6fca34b5b257ccdac6e9d91cf24a6e52e4a9b85",
+      "size": 1247703,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/e6fca34b5b257ccdac6e9d91cf24a6e52e4a9b85"
+    },
+    {
+      "path": "drivers/char/hw_random/stm32-rng.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bc22178f83e83ac80cd50677a63da2ef07995136",
+      "size": 5081,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/bc22178f83e83ac80cd50677a63da2ef07995136"
+    },
+    {
+      "path": "drivers/clk/clk-stm32f4.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "473dfe632cc5771c3f089a2b7d3f19e856666b12",
+      "size": 51772,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/473dfe632cc5771c3f089a2b7d3f19e856666b12"
+    },
+    {
+      "path": "drivers/clk/clk-stm32h7.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1a701eada0c1a3c8d99e486455f129ae91814eb6",
+      "size": 37131,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/1a701eada0c1a3c8d99e486455f129ae91814eb6"
+    },
+    {
+      "path": "drivers/clk/clk-stm32mp1.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4bd1fe7d8af4a4ee06b7548d6dd18320c7ed83e3",
+      "size": 62671,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/4bd1fe7d8af4a4ee06b7548d6dd18320c7ed83e3"
+    },
+    {
+      "path": "drivers/clocksource/renesas-ostm.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3d06ba66008c70294a9da6059e1d46ce8ddcaeec",
+      "size": 4875,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/3d06ba66008c70294a9da6059e1d46ce8ddcaeec"
+    },
+    {
+      "path": "drivers/clocksource/timer-stm32-lp.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "db2841d0beb8192baa789ed1814f24510cd59e3c",
+      "size": 6102,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/db2841d0beb8192baa789ed1814f24510cd59e3c"
+    },
+    {
+      "path": "drivers/clocksource/timer-stm32.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c9a753f96ba12d50930ab242bec5eb5bce79fcfc",
+      "size": 8628,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/c9a753f96ba12d50930ab242bec5eb5bce79fcfc"
+    },
+    {
+      "path": "drivers/counter/stm32-lptimer-cnt.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "13656957c45f12768d537c02cc4c3af59bc8fc66",
+      "size": 13918,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/13656957c45f12768d537c02cc4c3af59bc8fc66"
+    },
+    {
+      "path": "drivers/counter/stm32-timer-cnt.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3fb0debd7425d10e14c4185b6f92169371ca3468",
+      "size": 11774,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/3fb0debd7425d10e14c4185b6f92169371ca3468"
+    },
+    {
+      "path": "drivers/crypto/stm32",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "4e651be2eb0ef26c92aa6c05eadd82f29985ddde",
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/trees/4e651be2eb0ef26c92aa6c05eadd82f29985ddde"
+    },
+    {
+      "path": "drivers/crypto/stm32/Kconfig",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4a4c3284ae1f3b5de3187a2082a858c79582e187",
+      "size": 917,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/4a4c3284ae1f3b5de3187a2082a858c79582e187"
+    },
+    {
+      "path": "drivers/crypto/stm32/Makefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "518e0e0b11a9eeffab1aa9269adebc92c3cf47b9",
+      "size": 196,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/518e0e0b11a9eeffab1aa9269adebc92c3cf47b9"
+    },
+    {
+      "path": "drivers/crypto/stm32/stm32-crc32.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "be1bf39a317de15b335d6289bf556e7e1205371b",
+      "size": 11946,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/be1bf39a317de15b335d6289bf556e7e1205371b"
+    },
+    {
+      "path": "drivers/crypto/stm32/stm32-cryp.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "81eb136b6c11df0308969c9ee0ec91f696a0213f",
+      "size": 47042,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/81eb136b6c11df0308969c9ee0ec91f696a0213f"
+    },
+    {
+      "path": "drivers/crypto/stm32/stm32-hash.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d33006d43f761b2b3dafd68ad888dd7b71b80a04",
+      "size": 38808,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/d33006d43f761b2b3dafd68ad888dd7b71b80a04"
+    },
+    {
+      "path": "drivers/dma/stm32-dma.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7dfc743ac4338c722712a0c5f81f19fc2ed185f0",
+      "size": 43280,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/7dfc743ac4338c722712a0c5f81f19fc2ed185f0"
+    },
+    {
+      "path": "drivers/dma/stm32-dmamux.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d5d55732adba10dfb950d2a66f1866996e60b72f",
+      "size": 10653,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/d5d55732adba10dfb950d2a66f1866996e60b72f"
+    },
+    {
+      "path": "drivers/dma/stm32-mdma.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f17a9ffcd00da71d85056027e73d40f706252f3a",
+      "size": 51104,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/f17a9ffcd00da71d85056027e73d40f706252f3a"
+    },
+    {
+      "path": "drivers/gpio/gpio-stmpe.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dd4d58b4ae498351f1ed68a140ea8364e1ca9602",
+      "size": 14197,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/dd4d58b4ae498351f1ed68a140ea8364e1ca9602"
+    },
+    {
+      "path": "drivers/gpu/drm/nouveau/include/nvkm/subdev/instmem.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f967b97d163c0a444bd4813fd41ce388aa3feafc",
+      "size": 1148,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/f967b97d163c0a444bd4813fd41ce388aa3feafc"
+    },
+    {
+      "path": "drivers/gpu/drm/nouveau/nvkm/subdev/instmem",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "36fc836929975b4ec7a96114c9b926856986eabe",
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/trees/36fc836929975b4ec7a96114c9b926856986eabe"
+    },
+    {
+      "path": "drivers/gpu/drm/nouveau/nvkm/subdev/instmem/Kbuild",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "06cbe19ce3766e9f182be86268a6fea800b56ec5",
+      "size": 217,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/06cbe19ce3766e9f182be86268a6fea800b56ec5"
+    },
+    {
+      "path": "drivers/gpu/drm/nouveau/nvkm/subdev/instmem/base.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cd8163a52bb65c6bf4ba04d45b0a4b01089bc94f",
+      "size": 6255,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/cd8163a52bb65c6bf4ba04d45b0a4b01089bc94f"
+    },
+    {
+      "path": "drivers/gpu/drm/nouveau/nvkm/subdev/instmem/gk20a.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "648ecf5a8fbc2a298db0758438f926628024ed36",
+      "size": 16305,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/648ecf5a8fbc2a298db0758438f926628024ed36"
+    },
+    {
+      "path": "drivers/gpu/drm/nouveau/nvkm/subdev/instmem/nv04.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "25603b01d6f8421a1bb01d73559a1dfb87b0e2d7",
+      "size": 6524,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/25603b01d6f8421a1bb01d73559a1dfb87b0e2d7"
+    },
+    {
+      "path": "drivers/gpu/drm/nouveau/nvkm/subdev/instmem/nv40.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6b462f9609226e1c63a72f5cc5bf7bca73d81385",
+      "size": 7480,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/6b462f9609226e1c63a72f5cc5bf7bca73d81385"
+    },
+    {
+      "path": "drivers/gpu/drm/nouveau/nvkm/subdev/instmem/nv50.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "96aca0edfa3c04f4cd2ff76d0853d87785e6470e",
+      "size": 11236,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/96aca0edfa3c04f4cd2ff76d0853d87785e6470e"
+    },
+    {
+      "path": "drivers/gpu/drm/nouveau/nvkm/subdev/instmem/priv.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "56c15e30a5dd70aceca31fb42f8ee643c88ebe2d",
+      "size": 1068,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/56c15e30a5dd70aceca31fb42f8ee643c88ebe2d"
+    },
+    {
+      "path": "drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "145047e193946a5e4f852802d87c2903029edd20",
+      "size": 12869,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/145047e193946a5e4f852802d87c2903029edd20"
+    },
+    {
+      "path": "drivers/gpu/drm/stm",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f2fdbb0daf369571c3e15ac0ae5a3ae711672a64",
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/trees/f2fdbb0daf369571c3e15ac0ae5a3ae711672a64"
+    },
+    {
+      "path": "drivers/gpu/drm/stm/Kconfig",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b7d66915a2be3996d92353e8d401b1f3c137452f",
+      "size": 743,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/b7d66915a2be3996d92353e8d401b1f3c137452f"
+    },
+    {
+      "path": "drivers/gpu/drm/stm/Makefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4df5caf01f3507905b48920c4bc17878908cf8b0",
+      "size": 156,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/4df5caf01f3507905b48920c4bc17878908cf8b0"
+    },
+    {
+      "path": "drivers/gpu/drm/stm/drv.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "222869b232ae00a64c6447f774da7e2a4df11d7f",
+      "size": 5725,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/222869b232ae00a64c6447f774da7e2a4df11d7f"
+    },
+    {
+      "path": "drivers/gpu/drm/stm/dw_mipi_dsi-stm.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "32cb41b2202fee164235d4554dbff94b8c54138c",
+      "size": 13501,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/32cb41b2202fee164235d4554dbff94b8c54138c"
+    },
+    {
+      "path": "drivers/gpu/drm/stm/ltdc.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "195de30eb90c7adf843f5a1cb9658fea3e873cd9",
+      "size": 39782,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/195de30eb90c7adf843f5a1cb9658fea3e873cd9"
+    },
+    {
+      "path": "drivers/gpu/drm/stm/ltdc.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f153b908c70ea3b7bc90312b2dfd5ff161f39bdd",
+      "size": 1355,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/f153b908c70ea3b7bc90312b2dfd5ff161f39bdd"
+    },
+    {
+      "path": "drivers/hid/hid-thrustmaster.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a28c3e5756506251ab9b075d39a8482840d734ec",
+      "size": 10664,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/a28c3e5756506251ab9b075d39a8482840d734ec"
+    },
+    {
+      "path": "drivers/hwmon/ftsteutates.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ceffc76a0c515437f70387d7f0eba2378597aae9",
+      "size": 24372,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/ceffc76a0c515437f70387d7f0eba2378597aae9"
+    },
+    {
+      "path": "drivers/hwspinlock/stm32_hwspinlock.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3ad0ce0da4d98b4f10bc0f15f777baa943b403a4",
+      "size": 3916,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/3ad0ce0da4d98b4f10bc0f15f777baa943b403a4"
+    },
+    {
+      "path": "drivers/hwtracing/coresight/coresight-stm.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a0c250679f2344e07b0c3a92fc065cbde99dfa6f",
+      "size": 25367,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/a0c250679f2344e07b0c3a92fc065cbde99dfa6f"
+    },
+    {
+      "path": "drivers/hwtracing/stm",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c618bacfedf094a42a45043876e9695b56d5ba34",
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/trees/c618bacfedf094a42a45043876e9695b56d5ba34"
+    },
+    {
+      "path": "drivers/hwtracing/stm/Kconfig",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0b52901125f70c0de24c18ae78e89847cc791e10",
+      "size": 3135,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/0b52901125f70c0de24c18ae78e89847cc791e10"
+    },
+    {
+      "path": "drivers/hwtracing/stm/Makefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "715fc721891e2761815d3d642ec250ed04153344",
+      "size": 599,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/715fc721891e2761815d3d642ec250ed04153344"
+    },
+    {
+      "path": "drivers/hwtracing/stm/console.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cd0b719b42d96ce01cd36fe5ad5eaf5c2c7f299b",
+      "size": 1788,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/cd0b719b42d96ce01cd36fe5ad5eaf5c2c7f299b"
+    },
+    {
+      "path": "drivers/hwtracing/stm/core.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a6968d8c8f91ed17ad8e9b709711687cda935543",
+      "size": 31156,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/a6968d8c8f91ed17ad8e9b709711687cda935543"
+    },
+    {
+      "path": "drivers/hwtracing/stm/dummy_stm.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "38528ffdc0b3f7869b73e0a59677a9e0399ca3d7",
+      "size": 2690,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/38528ffdc0b3f7869b73e0a59677a9e0399ca3d7"
+    },
+    {
+      "path": "drivers/hwtracing/stm/ftrace.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "93ccfbaa98ff0d7e6d399a4d41ed26aa28e57e7b",
+      "size": 2232,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/93ccfbaa98ff0d7e6d399a4d41ed26aa28e57e7b"
+    },
+    {
+      "path": "drivers/hwtracing/stm/heartbeat.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "81d7b21d31ec27312ab39b853f28593781d005d8",
+      "size": 2887,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/81d7b21d31ec27312ab39b853f28593781d005d8"
+    },
+    {
+      "path": "drivers/hwtracing/stm/p_basic.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8980a6a5fd6c45da1e501c470d03c03d5e984992",
+      "size": 1114,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/8980a6a5fd6c45da1e501c470d03c03d5e984992"
+    },
+    {
+      "path": "drivers/hwtracing/stm/p_ost.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c0ee1302f6b6b0d632f56c3529d7c1974eaafb53",
+      "size": 2476,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/c0ee1302f6b6b0d632f56c3529d7c1974eaafb53"
+    },
+    {
+      "path": "drivers/hwtracing/stm/p_sys-t.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8254971c02e70eec9fd4dad08824a0bfa8cb4ae3",
+      "size": 9095,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/8254971c02e70eec9fd4dad08824a0bfa8cb4ae3"
+    },
+    {
+      "path": "drivers/hwtracing/stm/policy.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "42103c3a177f92f85011de8ce638c2994ecaa898",
+      "size": 12898,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/42103c3a177f92f85011de8ce638c2994ecaa898"
+    },
+    {
+      "path": "drivers/hwtracing/stm/stm.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8d5d5b58c737ffe877de455eae1f6ded3a55e2e0",
+      "size": 3222,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/8d5d5b58c737ffe877de455eae1f6ded3a55e2e0"
+    },
+    {
+      "path": "drivers/i2c/busses/i2c-stm32.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "157c64e27d0bd3ca44b6e38be9caa96f9a41d784",
+      "size": 3831,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/157c64e27d0bd3ca44b6e38be9caa96f9a41d784"
+    },
+    {
+      "path": "drivers/i2c/busses/i2c-stm32.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2c21893905a30148f622e362f969cba32e94122e",
+      "size": 1597,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/2c21893905a30148f622e362f969cba32e94122e"
+    },
+    {
+      "path": "drivers/i2c/busses/i2c-stm32f4.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "eebce7ecef25b7c887e3f654cbcc0266d2a59066",
+      "size": 24533,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/eebce7ecef25b7c887e3f654cbcc0266d2a59066"
+    },
+    {
+      "path": "drivers/i2c/busses/i2c-stm32f7.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "50d5ae81d22714c02d823a07d4aa266c21e55279",
+      "size": 66624,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/50d5ae81d22714c02d823a07d4aa266c21e55279"
+    },
+    {
+      "path": "drivers/iio/adc/stm32-adc-core.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c088cb990193ca35d51f5400908f41db576bf447",
+      "size": 22884,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/c088cb990193ca35d51f5400908f41db576bf447"
+    },
+    {
+      "path": "drivers/iio/adc/stm32-adc-core.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2322809bfd2f7931385a9260104d4f7d8d68e350",
+      "size": 5971,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/2322809bfd2f7931385a9260104d4f7d8d68e350"
+    },
+    {
+      "path": "drivers/iio/adc/stm32-adc.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e3e75413b49e7084ad961d93e51063c5d7656cce",
+      "size": 59663,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/e3e75413b49e7084ad961d93e51063c5d7656cce"
+    },
+    {
+      "path": "drivers/iio/adc/stm32-dfsdm-adc.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1cfefb3b5e56cd44018332cda266288e8e62c973",
+      "size": 43879,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/1cfefb3b5e56cd44018332cda266288e8e62c973"
+    },
+    {
+      "path": "drivers/iio/adc/stm32-dfsdm-core.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a627af9a825e7f6b7ba438267ea83ca5ecc5a2c9",
+      "size": 11511,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/a627af9a825e7f6b7ba438267ea83ca5ecc5a2c9"
+    },
+    {
+      "path": "drivers/iio/adc/stm32-dfsdm.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4afc1f528b78a6c7ec7077c8a6ec7fdf3787f5f7",
+      "size": 13851,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/4afc1f528b78a6c7ec7077c8a6ec7fdf3787f5f7"
+    },
+    {
+      "path": "drivers/iio/adc/stmpe-adc.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fba659bfdb40a9977e048a08189c02f8f9dc78c4",
+      "size": 8420,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/fba659bfdb40a9977e048a08189c02f8f9dc78c4"
+    },
+    {
+      "path": "drivers/iio/dac/stm32-dac-core.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "90643678034794fc3b7be4f8c4e5158585a1a6df",
+      "size": 6421,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/90643678034794fc3b7be4f8c4e5158585a1a6df"
+    },
+    {
+      "path": "drivers/iio/dac/stm32-dac-core.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d3b415fb9575a1c2aa00add5f63124fa043f2b56",
+      "size": 903,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/d3b415fb9575a1c2aa00add5f63124fa043f2b56"
+    },
+    {
+      "path": "drivers/iio/dac/stm32-dac.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dd2e306824e7dac6f8e02d632b7bd81160fbc41c",
+      "size": 10040,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/dd2e306824e7dac6f8e02d632b7bd81160fbc41c"
+    },
+    {
+      "path": "drivers/iio/trigger/stm32-lptimer-trigger.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "98cdc7e47f3dd75fbb156e24674e0bcf22e1b7fe",
+      "size": 2757,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/98cdc7e47f3dd75fbb156e24674e0bcf22e1b7fe"
+    },
+    {
+      "path": "drivers/iio/trigger/stm32-timer-trigger.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4353b749ecef2795cd11d055f30f4c364397208b",
+      "size": 22789,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/4353b749ecef2795cd11d055f30f4c364397208b"
+    },
+    {
+      "path": "drivers/input/keyboard/stmpe-keypad.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7bf97285e30cf2972b0974900d356418851e61c6",
+      "size": 10829,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/7bf97285e30cf2972b0974900d356418851e61c6"
+    },
+    {
+      "path": "drivers/input/touchscreen.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4620e20d0190f7bb0e5ab197cca0765dcd8ad821",
+      "size": 6172,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/4620e20d0190f7bb0e5ab197cca0765dcd8ad821"
+    },
+    {
+      "path": "drivers/input/touchscreen",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "fe1a53a07741770ca4c7b81f1272a388f5fe0f6a",
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/trees/fe1a53a07741770ca4c7b81f1272a388f5fe0f6a"
+    },
+    {
+      "path": "drivers/input/touchscreen/88pm860x-ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "81a3ea4b9a3dd149d2f8c8a30503011275fbde4e",
+      "size": 8253,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/81a3ea4b9a3dd149d2f8c8a30503011275fbde4e"
+    },
+    {
+      "path": "drivers/input/touchscreen/Kconfig",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d4e74738c5a82fa7085067ac00c608517337eb29",
+      "size": 37830,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/d4e74738c5a82fa7085067ac00c608517337eb29"
+    },
+    {
+      "path": "drivers/input/touchscreen/Makefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7d34100f7f223f3dbb87af40ca0466b782d589ce",
+      "size": 5635,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/7d34100f7f223f3dbb87af40ca0466b782d589ce"
+    },
+    {
+      "path": "drivers/input/touchscreen/ad7877.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "08f5372f0bfde165b126ac169659a9544e44133e",
+      "size": 20066,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/08f5372f0bfde165b126ac169659a9544e44133e"
+    },
+    {
+      "path": "drivers/input/touchscreen/ad7879-i2c.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0f20a1fdcdba03f59405477bb59cf40588321da8",
+      "size": 1746,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/0f20a1fdcdba03f59405477bb59cf40588321da8"
+    },
+    {
+      "path": "drivers/input/touchscreen/ad7879-spi.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "50e88984680032ab89ff6811ed65dabd325da7f0",
+      "size": 1744,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/50e88984680032ab89ff6811ed65dabd325da7f0"
+    },
+    {
+      "path": "drivers/input/touchscreen/ad7879.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e850853328f1b3bd9f13f46ab8644cfda1f45516",
+      "size": 15493,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/e850853328f1b3bd9f13f46ab8644cfda1f45516"
+    },
+    {
+      "path": "drivers/input/touchscreen/ad7879.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ae8aa1428e56b7de7ca2af89956ed7b677dd6ba0",
+      "size": 418,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/ae8aa1428e56b7de7ca2af89956ed7b677dd6ba0"
+    },
+    {
+      "path": "drivers/input/touchscreen/ads7846.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f113a27aeb1ef16e80cbc28dac47b6ebb770560f",
+      "size": 36564,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/f113a27aeb1ef16e80cbc28dac47b6ebb770560f"
+    },
+    {
+      "path": "drivers/input/touchscreen/ar1021_i2c.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dc6a85362a408a43b89625947bb24ce3947d9038",
+      "size": 4416,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/dc6a85362a408a43b89625947bb24ce3947d9038"
+    },
+    {
+      "path": "drivers/input/touchscreen/atmel_mxt_ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "eb66cd2689b7c64487910cacc75a97f231e804ef",
+      "size": 81056,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/eb66cd2689b7c64487910cacc75a97f231e804ef"
+    },
+    {
+      "path": "drivers/input/touchscreen/auo-pixcir-ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c33e63ca61425bf2524bd1dc107a74c8d6da3f80",
+      "size": 17079,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/c33e63ca61425bf2524bd1dc107a74c8d6da3f80"
+    },
+    {
+      "path": "drivers/input/touchscreen/bcm_iproc_tsc.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7de1fd24ce36b50ef058ad42390acc068ba371b9",
+      "size": 13877,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/7de1fd24ce36b50ef058ad42390acc068ba371b9"
+    },
+    {
+      "path": "drivers/input/touchscreen/bu21013_ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2f1f0d7607f81e496b7defaa61ca89aa0e703819",
+      "size": 16551,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/2f1f0d7607f81e496b7defaa61ca89aa0e703819"
+    },
+    {
+      "path": "drivers/input/touchscreen/bu21029_ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "392950aa7856f01a40109828ce5a7b7554845f33",
+      "size": 15685,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/392950aa7856f01a40109828ce5a7b7554845f33"
+    },
+    {
+      "path": "drivers/input/touchscreen/chipone_icn8318.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f2fb41fb031e1d3e40bba77949ffdf83f2e452bd",
+      "size": 6861,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/f2fb41fb031e1d3e40bba77949ffdf83f2e452bd"
+    },
+    {
+      "path": "drivers/input/touchscreen/chipone_icn8505.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f9ca5502ac8c533d5eb02b92e6d5ede3620f338e",
+      "size": 13137,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/f9ca5502ac8c533d5eb02b92e6d5ede3620f338e"
+    },
+    {
+      "path": "drivers/input/touchscreen/colibri-vf50-ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "aa829725ded7f5b8a2dc137d3416329803adf235",
+      "size": 9442,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/aa829725ded7f5b8a2dc137d3416329803adf235"
+    },
+    {
+      "path": "drivers/input/touchscreen/cy8ctma140.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a9be29139cbff561e399a57dcb1567dbcfc31324",
+      "size": 8718,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/a9be29139cbff561e399a57dcb1567dbcfc31324"
+    },
+    {
+      "path": "drivers/input/touchscreen/cy8ctmg110_ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "495ef156cf4313cf2f6df56576833a14ebf9196c",
+      "size": 6568,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/495ef156cf4313cf2f6df56576833a14ebf9196c"
+    },
+    {
+      "path": "drivers/input/touchscreen/cyttsp4_core.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dccbcb942fe59affc47488e83343a9b9cec576e7",
+      "size": 56732,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/dccbcb942fe59affc47488e83343a9b9cec576e7"
+    },
+    {
+      "path": "drivers/input/touchscreen/cyttsp4_core.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6262f6e45075196c441779c25d68e75a2050a0b9",
+      "size": 10259,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/6262f6e45075196c441779c25d68e75a2050a0b9"
+    },
+    {
+      "path": "drivers/input/touchscreen/cyttsp4_i2c.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c65ccb2f4716e28fb4f3edb79810da5f45abfa75",
+      "size": 1829,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/c65ccb2f4716e28fb4f3edb79810da5f45abfa75"
+    },
+    {
+      "path": "drivers/input/touchscreen/cyttsp4_spi.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2aec41eb76b72fde33029fbe6ce56ab91202647e",
+      "size": 4586,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/2aec41eb76b72fde33029fbe6ce56ab91202647e"
+    },
+    {
+      "path": "drivers/input/touchscreen/cyttsp_core.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1dbd849c9613a5e9c1a814ac4cc8a7f842427d6f",
+      "size": 17065,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/1dbd849c9613a5e9c1a814ac4cc8a7f842427d6f"
+    },
+    {
+      "path": "drivers/input/touchscreen/cyttsp_core.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "075509e695a276ed5c798af9aea099708e7080ee",
+      "size": 3057,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/075509e695a276ed5c798af9aea099708e7080ee"
+    },
+    {
+      "path": "drivers/input/touchscreen/cyttsp_i2c.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4c8473d327ab384b1d50dde5c6b3b72715a24873",
+      "size": 1917,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/4c8473d327ab384b1d50dde5c6b3b72715a24873"
+    },
+    {
+      "path": "drivers/input/touchscreen/cyttsp_i2c_common.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1f0b6d6f48e290073e3a97d35b4ce980a7762922",
+      "size": 1991,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/1f0b6d6f48e290073e3a97d35b4ce980a7762922"
+    },
+    {
+      "path": "drivers/input/touchscreen/cyttsp_spi.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "30c6fbf86a86758de840328ed7e7f61312f21d85",
+      "size": 4702,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/30c6fbf86a86758de840328ed7e7f61312f21d85"
+    },
+    {
+      "path": "drivers/input/touchscreen/da9034-ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2943f6a583881f03d94d9269aa15e6cb0f85ca5e",
+      "size": 8293,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/2943f6a583881f03d94d9269aa15e6cb0f85ca5e"
+    },
+    {
+      "path": "drivers/input/touchscreen/da9052_tsi.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f91d0e02ddaee1ddc01eecdad1d61372cbd6fd07",
+      "size": 8256,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/f91d0e02ddaee1ddc01eecdad1d61372cbd6fd07"
+    },
+    {
+      "path": "drivers/input/touchscreen/dynapro.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dc07fca7c5edc03351344ce457857f96e9ba1e97",
+      "size": 4455,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/dc07fca7c5edc03351344ce457857f96e9ba1e97"
+    },
+    {
+      "path": "drivers/input/touchscreen/edt-ft5x06.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bb2e1cbffba73aabd77ee2489d29fcf3b11ee22b",
+      "size": 36707,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/bb2e1cbffba73aabd77ee2489d29fcf3b11ee22b"
+    },
+    {
+      "path": "drivers/input/touchscreen/eeti_ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a639ba7e56ea060056869f125f06a9e3a0dad4ea",
+      "size": 7055,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/a639ba7e56ea060056869f125f06a9e3a0dad4ea"
+    },
+    {
+      "path": "drivers/input/touchscreen/egalax_ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "83ac8c128192846f21a9aeb40d80b39869a1c245",
+      "size": 6963,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/83ac8c128192846f21a9aeb40d80b39869a1c245"
+    },
+    {
+      "path": "drivers/input/touchscreen/egalax_ts_serial.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "375922d3a6d18e21eb3a491b7711cf1bf2fd3ce9",
+      "size": 4449,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/375922d3a6d18e21eb3a491b7711cf1bf2fd3ce9"
+    },
+    {
+      "path": "drivers/input/touchscreen/ektf2127.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2d01a8cbfcc6b820e082f7c4148a84cd1e7139cd",
+      "size": 8893,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/2d01a8cbfcc6b820e082f7c4148a84cd1e7139cd"
+    },
+    {
+      "path": "drivers/input/touchscreen/elants_i2c.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b9e2219efbb8f300a047612302b8bdf03401a510",
+      "size": 42632,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/b9e2219efbb8f300a047612302b8bdf03401a510"
+    },
+    {
+      "path": "drivers/input/touchscreen/elo.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "96173232e53fec54a2b74a00f976394a7c624d0d",
+      "size": 8735,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/96173232e53fec54a2b74a00f976394a7c624d0d"
+    },
+    {
+      "path": "drivers/input/touchscreen/exc3000.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cbe0dd4129121ef9eeabe7533ae61e204f1ffb32",
+      "size": 10866,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/cbe0dd4129121ef9eeabe7533ae61e204f1ffb32"
+    },
+    {
+      "path": "drivers/input/touchscreen/fsl-imx25-tcq.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "60a7246c51577fb6f2a14438b969921b4b94ff8e",
+      "size": 15430,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/60a7246c51577fb6f2a14438b969921b4b94ff8e"
+    },
+    {
+      "path": "drivers/input/touchscreen/fujitsu_ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3b0b8fccc3f0ac654ef044919b9ed067e9841d5c",
+      "size": 3936,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/3b0b8fccc3f0ac654ef044919b9ed067e9841d5c"
+    },
+    {
+      "path": "drivers/input/touchscreen/goodix.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5051a1766aac6264c5a383e9d133a0ee579c359b",
+      "size": 36958,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/5051a1766aac6264c5a383e9d133a0ee579c359b"
+    },
+    {
+      "path": "drivers/input/touchscreen/gunze.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e07e8e0fe8ea97d2ee4dd3fd03af1e02a035ae23",
+      "size": 3814,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/e07e8e0fe8ea97d2ee4dd3fd03af1e02a035ae23"
+    },
+    {
+      "path": "drivers/input/touchscreen/hampshire.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5c4d877564eeeb332f3addd3f1e21802cfc513be",
+      "size": 4631,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/5c4d877564eeeb332f3addd3f1e21802cfc513be"
+    },
+    {
+      "path": "drivers/input/touchscreen/hideep.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e9547ee297564d21e3e6782304ba8a2938ae3de6",
+      "size": 25943,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/e9547ee297564d21e3e6782304ba8a2938ae3de6"
+    },
+    {
+      "path": "drivers/input/touchscreen/hp680_ts_input.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "818f2e48be5a2bf4cef13ebd19716c72a9231268",
+      "size": 2990,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/818f2e48be5a2bf4cef13ebd19716c72a9231268"
+    },
+    {
+      "path": "drivers/input/touchscreen/htcpen.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "056ba76087e8d90a83c66be4ed2563603191a42a",
+      "size": 5670,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/056ba76087e8d90a83c66be4ed2563603191a42a"
+    },
+    {
+      "path": "drivers/input/touchscreen/hycon-hy46xx.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "891d0430083e789d2a9cc9126ec1c58594cd895f",
+      "size": 15381,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/891d0430083e789d2a9cc9126ec1c58594cd895f"
+    },
+    {
+      "path": "drivers/input/touchscreen/ili210x.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "30576a5f2f045d4e53dda760400ef4e1d6eaf021",
+      "size": 12688,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/30576a5f2f045d4e53dda760400ef4e1d6eaf021"
+    },
+    {
+      "path": "drivers/input/touchscreen/ilitek_ts_i2c.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c5d259c76adc125284d7a361f643587c4dbbca54",
+      "size": 15661,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/c5d259c76adc125284d7a361f643587c4dbbca54"
+    },
+    {
+      "path": "drivers/input/touchscreen/imx6ul_tsc.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2d4facf70cdbebcaf315f63955f344fc8389c4ab",
+      "size": 14081,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/2d4facf70cdbebcaf315f63955f344fc8389c4ab"
+    },
+    {
+      "path": "drivers/input/touchscreen/inexio.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1d7e4c3966ce7f2aef42c39a8fa39f1a84707521",
+      "size": 4477,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/1d7e4c3966ce7f2aef42c39a8fa39f1a84707521"
+    },
+    {
+      "path": "drivers/input/touchscreen/ipaq-micro-ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0eb5689fe65f36f8db83ca1a6d5d284c3b9d9e08",
+      "size": 3808,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/0eb5689fe65f36f8db83ca1a6d5d284c3b9d9e08"
+    },
+    {
+      "path": "drivers/input/touchscreen/iqs5xx.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b3fa71213d603421d040b2a1503482d05db4f8cd",
+      "size": 26115,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/b3fa71213d603421d040b2a1503482d05db4f8cd"
+    },
+    {
+      "path": "drivers/input/touchscreen/jornada720_ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "974521102178284f091f565a0606f5a7edb11d21",
+      "size": 4242,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/974521102178284f091f565a0606f5a7edb11d21"
+    },
+    {
+      "path": "drivers/input/touchscreen/lpc32xx_ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "15b5cb763526a56d24d8c12949823e31f28bc7e6",
+      "size": 10016,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/15b5cb763526a56d24d8c12949823e31f28bc7e6"
+    },
+    {
+      "path": "drivers/input/touchscreen/mainstone-wm97xx.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f8564b398eb392d13765c9ddaa04e49cb978cfc7",
+      "size": 7433,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/f8564b398eb392d13765c9ddaa04e49cb978cfc7"
+    },
+    {
+      "path": "drivers/input/touchscreen/max11801_ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f15713aaebc27508e5831b46917af2f22b62f2b5",
+      "size": 6965,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/f15713aaebc27508e5831b46917af2f22b62f2b5"
+    },
+    {
+      "path": "drivers/input/touchscreen/mc13783_ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ae0d978c83bfa4754eb5b6e9901da6f9622ca578",
+      "size": 6346,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/ae0d978c83bfa4754eb5b6e9901da6f9622ca578"
+    },
+    {
+      "path": "drivers/input/touchscreen/mcs5000_ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5376d8f740ab4c1a50a6294546924cbf3d23376a",
+      "size": 7931,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/5376d8f740ab4c1a50a6294546924cbf3d23376a"
+    },
+    {
+      "path": "drivers/input/touchscreen/melfas_mip4.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2745bf1aee3815f15e5e5c575bd74415ab30b1b6",
+      "size": 38483,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/2745bf1aee3815f15e5e5c575bd74415ab30b1b6"
+    },
+    {
+      "path": "drivers/input/touchscreen/migor_ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "42d3fd7e04d7c1a7f29fb0689fe5b597ef070692",
+      "size": 5578,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/42d3fd7e04d7c1a7f29fb0689fe5b597ef070692"
+    },
+    {
+      "path": "drivers/input/touchscreen/mk712.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "753d9cc1de1f8134b9368adbd652a46f30f14f54",
+      "size": 5688,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/753d9cc1de1f8134b9368adbd652a46f30f14f54"
+    },
+    {
+      "path": "drivers/input/touchscreen/mms114.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9fa3b0e421be2a6e314ab284a31503402695d4de",
+      "size": 15882,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/9fa3b0e421be2a6e314ab284a31503402695d4de"
+    },
+    {
+      "path": "drivers/input/touchscreen/msg2638.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "75536bc88969acf8d161a7f3a23febb64a12675c",
+      "size": 8132,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/75536bc88969acf8d161a7f3a23febb64a12675c"
+    },
+    {
+      "path": "drivers/input/touchscreen/mtouch.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "28e449eea318dcc75db8f8be1418fa3ce643258e",
+      "size": 4920,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/28e449eea318dcc75db8f8be1418fa3ce643258e"
+    },
+    {
+      "path": "drivers/input/touchscreen/mxs-lradc-ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9e36fee38d612b1700e727d0ace40a4477bcc800",
+      "size": 19533,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/9e36fee38d612b1700e727d0ace40a4477bcc800"
+    },
+    {
+      "path": "drivers/input/touchscreen/pcap_ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b2da0194e02ab1e845a1aae978cdbae277daebca",
+      "size": 6460,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/b2da0194e02ab1e845a1aae978cdbae277daebca"
+    },
+    {
+      "path": "drivers/input/touchscreen/penmount.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "12abb3b361287bae23a9c37a2cdce52eadbc3218",
+      "size": 6915,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/12abb3b361287bae23a9c37a2cdce52eadbc3218"
+    },
+    {
+      "path": "drivers/input/touchscreen/pixcir_i2c_ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dc148b4bed74cd1e203c4da2ed6cdf8b8d309c1a",
+      "size": 15017,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/dc148b4bed74cd1e203c4da2ed6cdf8b8d309c1a"
+    },
+    {
+      "path": "drivers/input/touchscreen/raspberrypi-ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5000f5fd9ec387b96203f5b53c0df071c63fa0b7",
+      "size": 5757,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/5000f5fd9ec387b96203f5b53c0df071c63fa0b7"
+    },
+    {
+      "path": "drivers/input/touchscreen/raydium_i2c_ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4d2d22a8697732d9bb54cfb7abae3714fb5ebc5d",
+      "size": 29967,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/4d2d22a8697732d9bb54cfb7abae3714fb5ebc5d"
+    },
+    {
+      "path": "drivers/input/touchscreen/resistive-adc-touch.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6f754a8d30b11776381b3fe78427c09226b98385",
+      "size": 7598,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/6f754a8d30b11776381b3fe78427c09226b98385"
+    },
+    {
+      "path": "drivers/input/touchscreen/rohm_bu21023.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "730596d599d856ae1d19b83f2ace13034a9eff09",
+      "size": 27390,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/730596d599d856ae1d19b83f2ace13034a9eff09"
+    },
+    {
+      "path": "drivers/input/touchscreen/s3c2410_ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2e70c0b79444efbd75883a0383c67261867e3ac3",
+      "size": 11690,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/2e70c0b79444efbd75883a0383c67261867e3ac3"
+    },
+    {
+      "path": "drivers/input/touchscreen/s6sy761.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "85a1f465c097ea10621f7e2860b0cb777f84bf89",
+      "size": 13607,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/85a1f465c097ea10621f7e2860b0cb777f84bf89"
+    },
+    {
+      "path": "drivers/input/touchscreen/silead.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1ee760bac0cfacc92f776d8154bcfcd5f3a153d1",
+      "size": 17136,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/1ee760bac0cfacc92f776d8154bcfcd5f3a153d1"
+    },
+    {
+      "path": "drivers/input/touchscreen/sis_i2c.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6274555f167360ec7bcf6d21a93fe50978a59acc",
+      "size": 10021,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/6274555f167360ec7bcf6d21a93fe50978a59acc"
+    },
+    {
+      "path": "drivers/input/touchscreen/st1232.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9d1dea6996a2252f5f02e731d84d530e100a4bac",
+      "size": 9550,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/9d1dea6996a2252f5f02e731d84d530e100a4bac"
+    },
+    {
+      "path": "drivers/input/touchscreen/stmfts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bc11203c9cf785f5afcdf070ed5314185573a1cd",
+      "size": 20365,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/bc11203c9cf785f5afcdf070ed5314185573a1cd"
+    },
+    {
+      "path": "drivers/input/touchscreen/stmpe-ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "25c45c3a35615c76eb7b1bc1d02483248fbf0bf1",
+      "size": 10000,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/25c45c3a35615c76eb7b1bc1d02483248fbf0bf1"
+    },
+    {
+      "path": "drivers/input/touchscreen/sun4i-ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "742a7e96c1b57d73a565eab8eda5511e9a78e18a",
+      "size": 11777,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/742a7e96c1b57d73a565eab8eda5511e9a78e18a"
+    },
+    {
+      "path": "drivers/input/touchscreen/sur40.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "12f2562b0141b318dbc3a5f363a5399cb3972593",
+      "size": 32462,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/12f2562b0141b318dbc3a5f363a5399cb3972593"
+    },
+    {
+      "path": "drivers/input/touchscreen/surface3_spi.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1da23e5585a0da2e3a19168fb88e78df781af419",
+      "size": 9901,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/1da23e5585a0da2e3a19168fb88e78df781af419"
+    },
+    {
+      "path": "drivers/input/touchscreen/sx8654.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "de85e57b248605957bb7290d770fa7d1ee708f0a",
+      "size": 11890,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/de85e57b248605957bb7290d770fa7d1ee708f0a"
+    },
+    {
+      "path": "drivers/input/touchscreen/ti_am335x_tsc.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cfc943423241f5814a80325a6bdec2db774bd7d4",
+      "size": 14231,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/cfc943423241f5814a80325a6bdec2db774bd7d4"
+    },
+    {
+      "path": "drivers/input/touchscreen/touchit213.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fb49687da40532d06711b780f37cb9633d81a002",
+      "size": 5620,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/fb49687da40532d06711b780f37cb9633d81a002"
+    },
+    {
+      "path": "drivers/input/touchscreen/touchright.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3cd58a13e44feaba0e57e6613c1aee29b4f4fa89",
+      "size": 3815,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/3cd58a13e44feaba0e57e6613c1aee29b4f4fa89"
+    },
+    {
+      "path": "drivers/input/touchscreen/touchwin.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bde3c6ee3c60570ddd55c1edde06d0f4e2488296",
+      "size": 3999,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/bde3c6ee3c60570ddd55c1edde06d0f4e2488296"
+    },
+    {
+      "path": "drivers/input/touchscreen/tps6507x-ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "357a3108f2e57050351133e37d592f97f3d46373",
+      "size": 7015,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/357a3108f2e57050351133e37d592f97f3d46373"
+    },
+    {
+      "path": "drivers/input/touchscreen/ts4800-ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6cf66aadc10eddcf8e4da5091a8303f7f71b143e",
+      "size": 5176,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/6cf66aadc10eddcf8e4da5091a8303f7f71b143e"
+    },
+    {
+      "path": "drivers/input/touchscreen/tsc2004.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0272cedcc726175aab8c4a56ab9e2a7affe3d9ec",
+      "size": 1803,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/0272cedcc726175aab8c4a56ab9e2a7affe3d9ec"
+    },
+    {
+      "path": "drivers/input/touchscreen/tsc2005.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "923496bbb368d5b248d9fc6f7f51ec1fe4664da0",
+      "size": 2114,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/923496bbb368d5b248d9fc6f7f51ec1fe4664da0"
+    },
+    {
+      "path": "drivers/input/touchscreen/tsc2007.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "69b08dd6c8df17230111993ff4e486c79c79590f",
+      "size": 2488,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/69b08dd6c8df17230111993ff4e486c79c79590f"
+    },
+    {
+      "path": "drivers/input/touchscreen/tsc2007_core.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3e871d182c4090e131c74848ae9704b707038e6f",
+      "size": 10548,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/3e871d182c4090e131c74848ae9704b707038e6f"
+    },
+    {
+      "path": "drivers/input/touchscreen/tsc2007_iio.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "752eb7fe5da3af8d0972a46eeff4583af840fb79",
+      "size": 3272,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/752eb7fe5da3af8d0972a46eeff4583af840fb79"
+    },
+    {
+      "path": "drivers/input/touchscreen/tsc200x-core.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b8d720d520131a9758c097677f59bd0820d6d2fd",
+      "size": 15080,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/b8d720d520131a9758c097677f59bd0820d6d2fd"
+    },
+    {
+      "path": "drivers/input/touchscreen/tsc200x-core.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a43c08ccfd3dc0bce3ff578584024b8a1fe028f1",
+      "size": 2591,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/a43c08ccfd3dc0bce3ff578584024b8a1fe028f1"
+    },
+    {
+      "path": "drivers/input/touchscreen/tsc40.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "13957702141369dd2d12251e94f233f826663189",
+      "size": 3676,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/13957702141369dd2d12251e94f233f826663189"
+    },
+    {
+      "path": "drivers/input/touchscreen/ucb1400_ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e3f2c940ef3d27f465f55a4abb83afc202d4da93",
+      "size": 12384,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/e3f2c940ef3d27f465f55a4abb83afc202d4da93"
+    },
+    {
+      "path": "drivers/input/touchscreen/usbtouchscreen.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "43c521f50c851d37253151f57b9adda5fd24ebeb",
+      "size": 46257,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/43c521f50c851d37253151f57b9adda5fd24ebeb"
+    },
+    {
+      "path": "drivers/input/touchscreen/wacom_i2c.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "22826c387da5b6b1f0f75f2b1b32b6215a5dfe72",
+      "size": 6019,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/22826c387da5b6b1f0f75f2b1b32b6215a5dfe72"
+    },
+    {
+      "path": "drivers/input/touchscreen/wacom_w8001.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "691285ace2289f83f0f270ba091e58bc8ef718d9",
+      "size": 17170,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/691285ace2289f83f0f270ba091e58bc8ef718d9"
+    },
+    {
+      "path": "drivers/input/touchscreen/wdt87xx_i2c.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "166edeb77776b20d9875ea1732761cbf08e1fa15",
+      "size": 28596,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/166edeb77776b20d9875ea1732761cbf08e1fa15"
+    },
+    {
+      "path": "drivers/input/touchscreen/wm831x-ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "319f57fb9af52805bd143ba25f55e1650cd05c7a",
+      "size": 11391,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/319f57fb9af52805bd143ba25f55e1650cd05c7a"
+    },
+    {
+      "path": "drivers/input/touchscreen/wm9705.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4b55d5e1ea0fb845e7d4f21c6865c77a5ec3e167",
+      "size": 9217,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/4b55d5e1ea0fb845e7d4f21c6865c77a5ec3e167"
+    },
+    {
+      "path": "drivers/input/touchscreen/wm9712.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6947714dfefa1817e107b03df66d4228723610b6",
+      "size": 11976,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/6947714dfefa1817e107b03df66d4228723610b6"
+    },
+    {
+      "path": "drivers/input/touchscreen/wm9713.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a67fbe304f9291a4791affd3cad1d0ec414e6b92",
+      "size": 12293,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/a67fbe304f9291a4791affd3cad1d0ec414e6b92"
+    },
+    {
+      "path": "drivers/input/touchscreen/wm97xx-core.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "78d2ee99f37ac7aee418a50180fc96996192b351",
+      "size": 23804,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/78d2ee99f37ac7aee418a50180fc96996192b351"
+    },
+    {
+      "path": "drivers/input/touchscreen/zet6223.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3b6f7ee1e38fc9dc72e8055dc4f6a3b379767eaa",
+      "size": 5876,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/3b6f7ee1e38fc9dc72e8055dc4f6a3b379767eaa"
+    },
+    {
+      "path": "drivers/input/touchscreen/zforce_ts.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "495629628af646c329a2585524f2f9bb309a4dc5",
+      "size": 23448,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/495629628af646c329a2585524f2f9bb309a4dc5"
+    },
+    {
+      "path": "drivers/input/touchscreen/zinitix.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "400957f4c8c9cc3d53e64a04a31e7543af5eb44c",
+      "size": 14648,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/400957f4c8c9cc3d53e64a04a31e7543af5eb44c"
+    },
+    {
+      "path": "drivers/input/touchscreen/zylonite-wm97xx.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0f4ac7f844cebec37b2cbd1d30821022d44a7c20",
+      "size": 5519,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/0f4ac7f844cebec37b2cbd1d30821022d44a7c20"
+    },
+    {
+      "path": "drivers/irqchip/irq-stm32-exti.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "33c76710f845f57c703bee898ebdaf0fb98cdc5a",
+      "size": 26142,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/33c76710f845f57c703bee898ebdaf0fb98cdc5a"
+    },
+    {
+      "path": "drivers/mailbox/stm32-ipcc.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b84e0587937c3b06d06d8d87c710f27bc70c42a5",
+      "size": 9892,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/b84e0587937c3b06d06d8d87c710f27bc70c42a5"
+    },
+    {
+      "path": "drivers/media/cec/platform/stm32",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ac717011b61634ccd23ccfa0d6aa044771c79a1e",
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/trees/ac717011b61634ccd23ccfa0d6aa044771c79a1e"
+    },
+    {
+      "path": "drivers/media/cec/platform/stm32/Makefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b7597a00befa39ce856bbe3e8fd16383e1800639",
+      "size": 79,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/b7597a00befa39ce856bbe3e8fd16383e1800639"
+    },
+    {
+      "path": "drivers/media/cec/platform/stm32/stm32-cec.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0ffd89712536be33c96552de421b5b936b8f7071",
+      "size": 9187,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/0ffd89712536be33c96552de421b5b936b8f7071"
+    },
+    {
+      "path": "drivers/media/platform/stm32",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "64e4e07de464fedf1742c02bcb8e3fb6baf0f6db",
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/trees/64e4e07de464fedf1742c02bcb8e3fb6baf0f6db"
+    },
+    {
+      "path": "drivers/media/platform/stm32/Makefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "48b36db2c2e21320b7c660bfa05c9167f19938fb",
+      "size": 87,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/48b36db2c2e21320b7c660bfa05c9167f19938fb"
+    },
+    {
+      "path": "drivers/media/platform/stm32/stm32-dcmi.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6110718645a4f7ea64b54e7b0727c6720ee75452",
+      "size": 53797,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/6110718645a4f7ea64b54e7b0727c6720ee75452"
+    },
+    {
+      "path": "drivers/memory/stm32-fmc2-ebi.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ffec26a99313bd1ef3cc7ddd01d2332d300e1e62",
+      "size": 31237,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/ffec26a99313bd1ef3cc7ddd01d2332d300e1e62"
+    },
+    {
+      "path": "drivers/mfd/stm32-lptimer.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "746e51a17cc8eafd212e64489e3400114477ba23",
+      "size": 2537,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/746e51a17cc8eafd212e64489e3400114477ba23"
+    },
+    {
+      "path": "drivers/mfd/stm32-timers.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "44ed2fce0319648c94c783ef8533ebd624861860",
+      "size": 7875,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/44ed2fce0319648c94c783ef8533ebd624861860"
+    },
+    {
+      "path": "drivers/mfd/stmfx.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e095a39301423c5816946eefd99bf89af9d4e234",
+      "size": 13343,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/e095a39301423c5816946eefd99bf89af9d4e234"
+    },
+    {
+      "path": "drivers/mfd/stmpe-i2c.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cd2f45257dc165f6ece99cd24dfc2efbd6be7c8d",
+      "size": 3703,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/cd2f45257dc165f6ece99cd24dfc2efbd6be7c8d"
+    },
+    {
+      "path": "drivers/mfd/stmpe-spi.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7351734f759385e372d89fd95bbf0dbd3eb7e2e0",
+      "size": 3624,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/7351734f759385e372d89fd95bbf0dbd3eb7e2e0"
+    },
+    {
+      "path": "drivers/mfd/stmpe.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "58d09c615e673fbeb6f668eef8fe9a650c3dfdaa",
+      "size": 38898,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/58d09c615e673fbeb6f668eef8fe9a650c3dfdaa"
+    },
+    {
+      "path": "drivers/mfd/stmpe.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "83491e99ba3c1970541ecc3d6e6639191bcdc473",
+      "size": 11091,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/83491e99ba3c1970541ecc3d6e6639191bcdc473"
+    },
+    {
+      "path": "drivers/mmc/host/mmci_stm32_sdmmc.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4cceb9bab0361e311c38ea4800df8d355b557f70",
+      "size": 14032,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/4cceb9bab0361e311c38ea4800df8d355b557f70"
+    },
+    {
+      "path": "drivers/mtd/nand/raw/stm32_fmc2_nand.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1c277fbb91f2bfad9a18f47e4bfded311af88595",
+      "size": 54793,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/1c277fbb91f2bfad9a18f47e4bfded311af88595"
+    },
+    {
+      "path": "drivers/mtd/ubi/fastmap-wl.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "28f55f9cf71533a54f2f83578b2f8f30a176d55a",
+      "size": 9831,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/28f55f9cf71533a54f2f83578b2f8f30a176d55a"
+    },
+    {
+      "path": "drivers/mtd/ubi/fastmap.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6b5f1ffd961b9430e553e2564f7163598f3a1b63",
+      "size": 41703,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/6b5f1ffd961b9430e553e2564f7163598f3a1b63"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "16f6b3f1396a74dc3f17c584220556a3367486bf",
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/trees/16f6b3f1396a74dc3f17c584220556a3367486bf"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/Kconfig",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cc136b4c9afd3b4333729cb86de545957b49388f",
+      "size": 650,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/cc136b4c9afd3b4333729cb86de545957b49388f"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/Makefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "72fd1f6ab9b2fc91efb50e4f8a1d3bd34575c94a",
+      "size": 135,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/72fd1f6ab9b2fc91efb50e4f8a1d3bd34575c94a"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "cf8653167d45416e641d5b0aeda669ec4717652c",
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/trees/cf8653167d45416e641d5b0aeda669ec4717652c"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/Kconfig",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "929cfc22cd0cf08ef3e37ee858b8a2c42eb32526",
+      "size": 7979,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/929cfc22cd0cf08ef3e37ee858b8a2c42eb32526"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/Makefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e6840d9686cdc3c91ad24139aab6255e09366b2b",
+      "size": 1975,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/e6840d9686cdc3c91ad24139aab6255e09366b2b"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/altr_tse_pcs.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "00f6d347eaf75b33ec43c60aea8aca1fcaebdc7a",
+      "size": 7811,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/00f6d347eaf75b33ec43c60aea8aca1fcaebdc7a"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/altr_tse_pcs.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "694ac25ef426ba2e6a9848b6881b9e3386d32ef6",
+      "size": 712,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/694ac25ef426ba2e6a9848b6881b9e3386d32ef6"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/chain_mode.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "78ebfb71e158001a366dc3c5d3e9372fec13c6b4",
+      "size": 4924,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/78ebfb71e158001a366dc3c5d3e9372fec13c6b4"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/common.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9b20c48067f7b6dc4015d740ddd9c92ed9835ed2",
+      "size": 16479,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/9b20c48067f7b6dc4015d740ddd9c92ed9835ed2"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/descs.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "49d6a866244f47d7d0967b4e9372955afb8ce730",
+      "size": 6206,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/49d6a866244f47d7d0967b4e9372955afb8ce730"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/descs_com.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "40f7f2da9c5e62cdd84a33066557501efb82e209",
+      "size": 3363,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/40f7f2da9c5e62cdd84a33066557501efb82e209"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac-anarion.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dfbaea06d10865909bc0351e5682a2c6a638d9e6",
+      "size": 3819,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/dfbaea06d10865909bc0351e5682a2c6a638d9e6"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bc91fd867dcd468097b671351b19e723a6be2f40",
+      "size": 12187,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/bc91fd867dcd468097b671351b19e723a6be2f40"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac-generic.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5e731a72cce81a4c2d50dbece319465588e3df70",
+      "size": 2608,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/5e731a72cce81a4c2d50dbece319465588e3df70"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "84651207a1de43af2969420dc26aa97084e8c208",
+      "size": 7562,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/84651207a1de43af2969420dc26aa97084e8c208"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac-ingenic.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9a6d819b84aeadd19a0bbeebec9ac458dc770914",
+      "size": 11070,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/9a6d819b84aeadd19a0bbeebec9ac458dc770914"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac-intel-plat.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "06d287f104bec9d01b4ff126e26f4a948ef4fe33",
+      "size": 4495,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/06d287f104bec9d01b4ff126e26f4a948ef4fe33"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6f87e296a410f857526fd04aeb3962ab49457889",
+      "size": 32389,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/6f87e296a410f857526fd04aeb3962ab49457889"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac-intel.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0a37987478c15ac2bceabd233be5b1c8a1851b99",
+      "size": 1723,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/0a37987478c15ac2bceabd233be5b1c8a1851b99"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f7dc8458cde86855548ac03762d9aa5adff92d30",
+      "size": 11127,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/f7dc8458cde86855548ac03762d9aa5adff92d30"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ecf759ee1c9f5e21e2519c416e3d1323cdc0e474",
+      "size": 5074,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/ecf759ee1c9f5e21e2519c416e3d1323cdc0e474"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac-lpc18xx.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9d77c647badd5cfae2f1fe001073039f3c849f0f",
+      "size": 2561,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/9d77c647badd5cfae2f1fe001073039f3c849f0f"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "58c0feaa813145135693fea89ca4d1cb1994a235",
+      "size": 13508,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/58c0feaa813145135693fea89ca4d1cb1994a235"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac-meson.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "16fb66a0ca72cab0e7c87b02013b2cf7dcfa5a5f",
+      "size": 2305,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/16fb66a0ca72cab0e7c87b02013b2cf7dcfa5a5f"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c7a6588d9398be3a4a0bc7511d39f6772c4b248a",
+      "size": 15199,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/c7a6588d9398be3a4a0bc7511d39f6772c4b248a"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac-oxnas.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "adfeb8d3293dc6d6f04fa75133f833bc8681bf9a",
+      "size": 4970,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/adfeb8d3293dc6d6f04fa75133f833bc8681bf9a"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "772ce1e451372d575bb013a66bb772406e452bc3",
+      "size": 55785,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/772ce1e451372d575bb013a66bb772406e452bc3"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "54f05035df3c022e7b8530b1286c23a26c144c1e",
+      "size": 8973,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/54f05035df3c022e7b8530b1286c23a26c144c1e"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-gpio.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e2c92e043ac15c6d188c48e5ba086b9982466a67",
+      "size": 6304,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/e2c92e043ac15c6d188c48e5ba086b9982466a67"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-pps.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "95fc0eef430c49bc1332943ecda4b68e2259c2bf",
+      "size": 11962,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/95fc0eef430c49bc1332943ecda4b68e2259c2bf"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c469abc91fa1b04966f276042c60e1fa0f8696a3",
+      "size": 49058,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/c469abc91fa1b04966f276042c60e1fa0f8696a3"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6b447d8f0bd8a3fb25dc3076d8ec5f455512f640",
+      "size": 15315,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/6b447d8f0bd8a3fb25dc3076d8ec5f455512f640"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac-sti.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "710d7435733e1256fd5a2178cc4eba34972b6041",
+      "size": 11647,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/710d7435733e1256fd5a2178cc4eba34972b6041"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2b38a499a4045b84447339c20a99abd3e31e713c",
+      "size": 14974,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/2b38a499a4045b84447339c20a99abd3e31e713c"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "06e2af9387d7c6b7935a4a578b546bbde328db32",
+      "size": 35578,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/06e2af9387d7c6b7935a4a578b546bbde328db32"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac-sunxi.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fc3b0acc8f99f0ee2cae3db690eb8fac78436f81",
+      "size": 4763,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/fc3b0acc8f99f0ee2cae3db690eb8fac78436f81"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac-visconti.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c27441c08dd6fe479c8d07efbc4e5e161ee023a2",
+      "size": 8625,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/c27441c08dd6fe479c8d07efbc4e5e161ee023a2"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac100.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "35ab8d0bdce71c6223f6905b876e230177a66db8",
+      "size": 5104,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/35ab8d0bdce71c6223f6905b876e230177a66db8"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac1000.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3c73453725f946b00d6d15aedbc934efe5cfa583",
+      "size": 13173,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/3c73453725f946b00d6d15aedbc934efe5cfa583"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fc8759f146c7c1bdfefa6835cab502089cac3691",
+      "size": 15453,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/fc8759f146c7c1bdfefa6835cab502089cac3691"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac1000_dma.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f5581db0ba9bacb040d5328866ab2bc47b2029e0",
+      "size": 8558,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/f5581db0ba9bacb040d5328866ab2bc47b2029e0"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac100_core.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ebcad8dd99dbbf0254e02f4d8415747fc842879e",
+      "size": 5866,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/ebcad8dd99dbbf0254e02f4d8415747fc842879e"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac100_dma.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8f0d9bc7cab54aae379b640d6dfa55d76d579991",
+      "size": 3924,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/8f0d9bc7cab54aae379b640d6dfa55d76d579991"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac4.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "462ca7ed095a2a8e8d4b5462191d02c756797098",
+      "size": 17428,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/462ca7ed095a2a8e8d4b5462191d02c756797098"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b21745368983931ad59bf41a269ef30861e92446",
+      "size": 36675,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/b21745368983931ad59bf41a269ef30861e92446"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1bd3024ea3908825250ce6b90ccd9b0ea8e54fb3",
+      "size": 15261,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/1bd3024ea3908825250ce6b90ccd9b0ea8e54fb3"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6da070ccd73746664721a297d89c31b0449554bc",
+      "size": 4843,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/6da070ccd73746664721a297d89c31b0449554bc"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d99fa028c6468ef988482c80dc5a941283e530f9",
+      "size": 17523,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/d99fa028c6468ef988482c80dc5a941283e530f9"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9321879b599c1cd1195dc92dcc0299479ac18b83",
+      "size": 8735,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/9321879b599c1cd1195dc92dcc0299479ac18b83"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9292a1fab7d32006cec8f4068ec79ef7dcfaa264",
+      "size": 6154,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/9292a1fab7d32006cec8f4068ec79ef7dcfaa264"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac5.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9c2d40f853ed0429d19d2ac0d647640f29dda878",
+      "size": 20611,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/9c2d40f853ed0429d19d2ac0d647640f29dda878"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac5.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "53c138d0ff4808d3ca4b4f3fcd456afbe85ae493",
+      "size": 5123,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/53c138d0ff4808d3ca4b4f3fcd456afbe85ae493"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac_dma.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "acd70b9a3173c4202a8f1e80dab51e21cfe3074c",
+      "size": 6743,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/acd70b9a3173c4202a8f1e80dab51e21cfe3074c"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwmac_lib.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d1c31200bb9111d66613bd86f85bbc09afe22cc9",
+      "size": 7446,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/d1c31200bb9111d66613bd86f85bbc09afe22cc9"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3296709398043ce69faf0563aa14cfd21efdd51d",
+      "size": 17489,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/3296709398043ce69faf0563aa14cfd21efdd51d"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "719aa3e1361fd4e5158da3f2fa0c990da7f0acb4",
+      "size": 43876,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/719aa3e1361fd4e5158da3f2fa0c990da7f0acb4"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "846343e0491b050250ec01e7f52d3e26ae9a4b16",
+      "size": 10842,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/846343e0491b050250ec01e7f52d3e26ae9a4b16"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5e98355f422b39e22110bded362de1939f85ce3f",
+      "size": 15785,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/5e98355f422b39e22110bded362de1939f85ce3f"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/dwxlgmac2.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "726090d4922166c123bff282201ab077b306482b",
+      "size": 828,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/726090d4922166c123bff282201ab077b306482b"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/enh_desc.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6650edfab5bc488b041be84e261e7c2d8a20a37f",
+      "size": 13053,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/6650edfab5bc488b041be84e261e7c2d8a20a37f"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/hwif.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bb7114f970f8445871acf1f610a4e5ef5e113797",
+      "size": 7960,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/bb7114f970f8445871acf1f610a4e5ef5e113797"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/hwif.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fe2660d5694d7994db088195c5126afd4a61a335",
+      "size": 30001,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/fe2660d5694d7994db088195c5126afd4a61a335"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/mmc.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a0c05925883e49e8251d6b446594b576ddeaa73a",
+      "size": 4141,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/a0c05925883e49e8251d6b446594b576ddeaa73a"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/mmc_core.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a57b0fa815abad896d6a485c4c17a7efe320291c",
+      "size": 18457,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/a57b0fa815abad896d6a485c4c17a7efe320291c"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/norm_desc.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "98ef43f35802adfa50aa5e55bf5ce0d5e407acae",
+      "size": 8415,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/98ef43f35802adfa50aa5e55bf5ce0d5e407acae"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/ring_mode.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "55540a82f0db6f66d2f16bffb952daf3051d021c",
+      "size": 4218,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/55540a82f0db6f66d2f16bffb952daf3051d021c"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/stmmac.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "615899300911e649cc5a3fc495b6134dd8e46ac2",
+      "size": 10219,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/615899300911e649cc5a3fc495b6134dd8e46ac2"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5a0de6f469bf12c18aee483d5fb104091d5670fd",
+      "size": 35116,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/5a0de6f469bf12c18aee483d5fb104091d5670fd"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e15de834ab911fddcd71eab5d9ef8950a4fd54aa",
+      "size": 5832,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/e15de834ab911fddcd71eab5d9ef8950a4fd54aa"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/stmmac_main.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "792c3342d563f0666affa31f8e610968807bee65",
+      "size": 213165,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/792c3342d563f0666affa31f8e610968807bee65"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "96287ad6eda10eb56be3acb45393ccade32b36f0",
+      "size": 15058,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/96287ad6eda10eb56be3acb45393ccade32b36f0"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fcf17d8a0494b7a464e2e704bf049d44738640fe",
+      "size": 7929,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/fcf17d8a0494b7a464e2e704bf049d44738640fe"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/stmmac_pcs.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "aefc121464b5829bd18480213be2e3560d418820",
+      "size": 4789,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/aefc121464b5829bd18480213be2e3560d418820"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7b4203c7cfc93651ea6f9a610153cb10b9fbb405",
+      "size": 25313,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/7b4203c7cfc93651ea6f9a610153cb10b9fbb405"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/stmmac_platform.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3fff3f59d73d8961aa5162280ed8751a2ea6eeb1",
+      "size": 1036,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/3fff3f59d73d8961aa5162280ed8751a2ea6eeb1"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ac8bc1c8614d3fda7cb3143a3c9b9ec3c6cff253",
+      "size": 9426,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/ac8bc1c8614d3fda7cb3143a3c9b9ec3c6cff253"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d37708b4fc99d6ac431798af3edb716a55fb01a3",
+      "size": 3857,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/d37708b4fc99d6ac431798af3edb716a55fb01a3"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0462dcc93e536e430423b2ea113c85be34e0c7db",
+      "size": 46369,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/0462dcc93e536e430423b2ea113c85be34e0c7db"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d0a2b289f4603ce1b594ff03689240c6f52f8e1a",
+      "size": 22235,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/d0a2b289f4603ce1b594ff03689240c6f52f8e1a"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/stmmac_xdp.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9d4d8c3dad0a3f769650d571ace87a4e77d292a7",
+      "size": 3267,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/9d4d8c3dad0a3f769650d571ace87a4e77d292a7"
+    },
+    {
+      "path": "drivers/net/ethernet/stmicro/stmmac/stmmac_xdp.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "896dc987d4ef380f71c2c0adebb7ca6605259f9b",
+      "size": 525,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/896dc987d4ef380f71c2c0adebb7ca6605259f9b"
+    },
+    {
+      "path": "drivers/net/fddi/skfp/fplustm.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4cbb145c74abbf2dd2421a6c1c1fbc5844bf426a",
+      "size": 39502,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/4cbb145c74abbf2dd2421a6c1c1fbc5844bf426a"
+    },
+    {
+      "path": "drivers/net/fddi/skfp/h/fplustm.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6065b0799537a38742c5bb401caaec404fc5dde5",
+      "size": 7663,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/6065b0799537a38742c5bb401caaec404fc5dde5"
+    },
+    {
+      "path": "drivers/net/wireless/ath/ath10k/testmode.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7a9b9bbcdbfc5a290128ec55d3d3ce158a7b58c7",
+      "size": 11120,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/7a9b9bbcdbfc5a290128ec55d3d3ce158a7b58c7"
+    },
+    {
+      "path": "drivers/net/wireless/ath/ath10k/testmode.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6488fd514ae351f5a49a8f7fbd80bd7f97585f67",
+      "size": 696,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/6488fd514ae351f5a49a8f7fbd80bd7f97585f67"
+    },
+    {
+      "path": "drivers/net/wireless/ath/ath10k/testmode_i.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ee1cb27c1d6001729e50a076e5a6bebd877c164f",
+      "size": 1682,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/ee1cb27c1d6001729e50a076e5a6bebd877c164f"
+    },
+    {
+      "path": "drivers/net/wireless/ath/ath11k/testmode.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4bf1931adbaaec6590aedb1e1930c7d48e28145d",
+      "size": 4552,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/4bf1931adbaaec6590aedb1e1930c7d48e28145d"
+    },
+    {
+      "path": "drivers/net/wireless/ath/ath11k/testmode.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "aaa122ed90697fecf67ce3926c54263dcb32921c",
+      "size": 619,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/aaa122ed90697fecf67ce3926c54263dcb32921c"
+    },
+    {
+      "path": "drivers/net/wireless/ath/ath11k/testmode_i.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4bae2a9eeea4f09197fdb6d42aae681b69adbeb1",
+      "size": 1497,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/4bae2a9eeea4f09197fdb6d42aae681b69adbeb1"
+    },
+    {
+      "path": "drivers/net/wireless/ath/ath6kl/testmode.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "89c7c4e25169206fbef471e41f44d784f62c4835",
+      "size": 2779,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/89c7c4e25169206fbef471e41f44d784f62c4835"
+    },
+    {
+      "path": "drivers/net/wireless/ath/ath6kl/testmode.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9fbcdec3e208b6049f49598759f4e2f4ee7fb00a",
+      "size": 1293,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/9fbcdec3e208b6049f49598759f4e2f4ee7fb00a"
+    },
+    {
+      "path": "drivers/net/wireless/ath/wcn36xx/testmode.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7ae14b4d2d0e95f8187465df28d0aaf29dc6cb1d",
+      "size": 3955,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/7ae14b4d2d0e95f8187465df28d0aaf29dc6cb1d"
+    },
+    {
+      "path": "drivers/net/wireless/ath/wcn36xx/testmode.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "09d68fab9add7c01cb739d47d0c1f15c48568687",
+      "size": 1421,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/09d68fab9add7c01cb739d47d0c1f15c48568687"
+    },
+    {
+      "path": "drivers/net/wireless/ath/wcn36xx/testmode_i.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8a1477ffd5a0fc3a91f53e11bf9c71733f338f8a",
+      "size": 1095,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/8a1477ffd5a0fc3a91f53e11bf9c71733f338f8a"
+    },
+    {
+      "path": "drivers/net/wireless/intel/iwlwifi/mvm/testmode.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ff82af11de8df3d07529b40ebf4290e7cb4b798c",
+      "size": 3831,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/ff82af11de8df3d07529b40ebf4290e7cb4b798c"
+    },
+    {
+      "path": "drivers/net/wireless/mediatek/mt76/mt7615/testmode.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "59d99264f5e5f9856f21267751e77f1009c644cf",
+      "size": 9489,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/59d99264f5e5f9856f21267751e77f1009c644cf"
+    },
+    {
+      "path": "drivers/net/wireless/mediatek/mt76/mt7915/testmode.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b220b334906bcfbd686ce3d1fb3561ceb223b179",
+      "size": 18259,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/b220b334906bcfbd686ce3d1fb3561ceb223b179"
+    },
+    {
+      "path": "drivers/net/wireless/mediatek/mt76/mt7915/testmode.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "397a6b5532bcc7a5be076630c4da545d071f188a",
+      "size": 1357,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/397a6b5532bcc7a5be076630c4da545d071f188a"
+    },
+    {
+      "path": "drivers/net/wireless/mediatek/mt76/testmode.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f73ffbd6e622d89d9cb2cfe711cf3d9e46fa918f",
+      "size": 16398,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/f73ffbd6e622d89d9cb2cfe711cf3d9e46fa918f"
+    },
+    {
+      "path": "drivers/net/wireless/mediatek/mt76/testmode.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d32a7654c47e00c830770196b9eccaf03fe1aa21",
+      "size": 5483,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/d32a7654c47e00c830770196b9eccaf03fe1aa21"
+    },
+    {
+      "path": "drivers/net/wireless/ti/wlcore/testmode.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3a17b9a8207e2cb7ad051cfe908d54bd5198112d",
+      "size": 8310,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/3a17b9a8207e2cb7ad051cfe908d54bd5198112d"
+    },
+    {
+      "path": "drivers/net/wireless/ti/wlcore/testmode.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "28bb597b205ebabad30386466a526e2cdced4481",
+      "size": 389,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/28bb597b205ebabad30386466a526e2cdced4481"
+    },
+    {
+      "path": "drivers/nvmem/stm32-romem.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "354be526897ff027d259747f38d3b8c355d64012",
+      "size": 4925,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/354be526897ff027d259747f38d3b8c355d64012"
+    },
+    {
+      "path": "drivers/phy/st/phy-stm32-usbphyc.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "da05642d3bd4aa29ed57298388e10b531be83785",
+      "size": 15534,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/da05642d3bd4aa29ed57298388e10b531be83785"
+    },
+    {
+      "path": "drivers/pinctrl/pinctrl-stmfx.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5fa2488fae87ae037529340991278120c970c523",
+      "size": 23108,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/5fa2488fae87ae037529340991278120c970c523"
+    },
+    {
+      "path": "drivers/pinctrl/stm32",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "cfe0a4d308d3c9782ced1b68351debf3fab6af29",
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/trees/cfe0a4d308d3c9782ced1b68351debf3fab6af29"
+    },
+    {
+      "path": "drivers/pinctrl/stm32/Kconfig",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d532f3c6f670de63c1a6b85c90b94ad8ed048a6e",
+      "size": 1516,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/d532f3c6f670de63c1a6b85c90b94ad8ed048a6e"
+    },
+    {
+      "path": "drivers/pinctrl/stm32/Makefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "619629ee9944da73a75719cf0d739bb9b4fbefe5",
+      "size": 493,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/619629ee9944da73a75719cf0d739bb9b4fbefe5"
+    },
+    {
+      "path": "drivers/pinctrl/stm32/pinctrl-stm32.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "97a4fb5a9328096952bda416d7c6f6e160edb905",
+      "size": 41331,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/97a4fb5a9328096952bda416d7c6f6e160edb905"
+    },
+    {
+      "path": "drivers/pinctrl/stm32/pinctrl-stm32.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b0882d1207658a6262d8cd9906ac5bf88b60fbc4",
+      "size": 1667,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/b0882d1207658a6262d8cd9906ac5bf88b60fbc4"
+    },
+    {
+      "path": "drivers/pinctrl/stm32/pinctrl-stm32f429.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "663a97113c5171b6b31417cd41da05c8b9b8306d",
+      "size": 42997,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/663a97113c5171b6b31417cd41da05c8b9b8306d"
+    },
+    {
+      "path": "drivers/pinctrl/stm32/pinctrl-stm32f469.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ed5397f6d7f2991b617bbe511d58429de6460b7e",
+      "size": 43268,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/ed5397f6d7f2991b617bbe511d58429de6460b7e"
+    },
+    {
+      "path": "drivers/pinctrl/stm32/pinctrl-stm32f746.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d832aab7ebe1178f5ca0a3eb8af42faf882fa06e",
+      "size": 46497,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/d832aab7ebe1178f5ca0a3eb8af42faf882fa06e"
+    },
+    {
+      "path": "drivers/pinctrl/stm32/pinctrl-stm32f769.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f81c51c5aedfbf21123d7d25aff164d6a8ae5b5d",
+      "size": 51402,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/f81c51c5aedfbf21123d7d25aff164d6a8ae5b5d"
+    },
+    {
+      "path": "drivers/pinctrl/stm32/pinctrl-stm32h743.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ffe7b52715069da220f3e76e7ade51dffa1d9f4a",
+      "size": 57183,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/ffe7b52715069da220f3e76e7ade51dffa1d9f4a"
+    },
+    {
+      "path": "drivers/pinctrl/stm32/pinctrl-stm32mp135.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4ab03520c4077734dff8c7607b32d10bece4a7fe",
+      "size": 49726,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/4ab03520c4077734dff8c7607b32d10bece4a7fe"
+    },
+    {
+      "path": "drivers/pinctrl/stm32/pinctrl-stm32mp157.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2ccb99d64df8372ccb4a12a8df18c5bf548d2650",
+      "size": 73914,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/2ccb99d64df8372ccb4a12a8df18c5bf548d2650"
+    },
+    {
+      "path": "drivers/platform/x86/touchscreen_dmi.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c608078538a7922283b86e4b9f3797b04b109e8b",
+      "size": 52362,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/c608078538a7922283b86e4b9f3797b04b109e8b"
+    },
+    {
+      "path": "drivers/pwm/pwm-stm32-lp.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3115abb3f52abebc0d400bab5d2dbb095abed0ff",
+      "size": 6553,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/3115abb3f52abebc0d400bab5d2dbb095abed0ff"
+    },
+    {
+      "path": "drivers/pwm/pwm-stm32.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "794ca5b029681f6668f13c23d2865105ab2dfbdc",
+      "size": 19117,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/794ca5b029681f6668f13c23d2865105ab2dfbdc"
+    },
+    {
+      "path": "drivers/pwm/pwm-stmpe.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9dc983a3cbf1b1f427396378e80e8de8940ad3ea",
+      "size": 7212,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/9dc983a3cbf1b1f427396378e80e8de8940ad3ea"
+    },
+    {
+      "path": "drivers/regulator/stm32-booster.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3136ea8a35d5c923ae80c64da903a405607a8a23",
+      "size": 3593,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/3136ea8a35d5c923ae80c64da903a405607a8a23"
+    },
+    {
+      "path": "drivers/regulator/stm32-pwr.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2a42acb7c24e98f536858c0b92d2e6feaa44d53e",
+      "size": 4548,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/2a42acb7c24e98f536858c0b92d2e6feaa44d53e"
+    },
+    {
+      "path": "drivers/regulator/stm32-vrefbuf.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "161622ea72592815bdb0d510e987c76d4102dd3f",
+      "size": 7816,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/161622ea72592815bdb0d510e987c76d4102dd3f"
+    },
+    {
+      "path": "drivers/remoteproc/stm32_rproc.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b643efcf995a1beb57c1cd29169a8c87a2cf1347",
+      "size": 21918,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/b643efcf995a1beb57c1cd29169a8c87a2cf1347"
+    },
+    {
+      "path": "drivers/rtc/rtc-stm32.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ac9e228b56d0bd0fc7b5541ec8a0c47e28e9129c",
+      "size": 24970,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/ac9e228b56d0bd0fc7b5541ec8a0c47e28e9129c"
+    },
+    {
+      "path": "drivers/rtc/rtc-stmp3xxx.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "40c0f7ed36e0685e489d07a16706e81db3de2c8f",
+      "size": 12634,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/40c0f7ed36e0685e489d07a16706e81db3de2c8f"
+    },
+    {
+      "path": "drivers/spi/spi-stm32-qspi.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ffdc55f87e8210bb36da18e9658214eba006b6c5",
+      "size": 21942,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/ffdc55f87e8210bb36da18e9658214eba006b6c5"
+    },
+    {
+      "path": "drivers/spi/spi-stm32.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9bd3fd1652f744bc6132198414a2e790f3866a81",
+      "size": 58339,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/9bd3fd1652f744bc6132198414a2e790f3866a81"
+    },
+    {
+      "path": "drivers/thermal/st/stm_thermal.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5fd3fb8912a6a796f0a5d8953b3e2def32ded5d3",
+      "size": 14597,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/5fd3fb8912a6a796f0a5d8953b3e2def32ded5d3"
+    },
+    {
+      "path": "drivers/tty/serial/stm32-usart.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "810a1b0b65203d63929903afec6a11ef60f1e93c",
+      "size": 45395,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/810a1b0b65203d63929903afec6a11ef60f1e93c"
+    },
+    {
+      "path": "drivers/tty/serial/stm32-usart.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "07ac291328cda85359dd9a78441ffb553368ff44",
+      "size": 7753,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/07ac291328cda85359dd9a78441ffb553368ff44"
+    },
+    {
+      "path": "drivers/watchdog/stm32_iwdg.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a3436c296c97b2f80c8b7c8bbe901ce8a3837042",
+      "size": 7764,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/a3436c296c97b2f80c8b7c8bbe901ce8a3837042"
+    },
+    {
+      "path": "drivers/watchdog/stmp3xxx_rtc_wdt.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7caf3aa71c6ab9aede683c8e1ab0ccde58984e11",
+      "size": 3874,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/7caf3aa71c6ab9aede683c8e1ab0ccde58984e11"
+    },
+    {
+      "path": "include/dt-bindings/clock/stm32fx-clock.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1cc89c548578bbc404c987cf226de40f5f5a9deb",
+      "size": 1363,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/1cc89c548578bbc404c987cf226de40f5f5a9deb"
+    },
+    {
+      "path": "include/dt-bindings/clock/stm32h7-clks.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6637272b324244f96497817756aa1e25102c1ba0",
+      "size": 3187,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/6637272b324244f96497817756aa1e25102c1ba0"
+    },
+    {
+      "path": "include/dt-bindings/clock/stm32mp1-clks.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e02770b98e6c4ca16639a1aa7dbbfd4ff4fb1c0b",
+      "size": 5323,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/e02770b98e6c4ca16639a1aa7dbbfd4ff4fb1c0b"
+    },
+    {
+      "path": "include/dt-bindings/mfd/stm32f4-rcc.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "309e8c79f27b182056116c17b675ea0a6fbbe262",
+      "size": 3421,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/309e8c79f27b182056116c17b675ea0a6fbbe262"
+    },
+    {
+      "path": "include/dt-bindings/mfd/stm32f7-rcc.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a90f3613c584d18c44c0d3f9a29cc35311d3a9ba",
+      "size": 3661,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/a90f3613c584d18c44c0d3f9a29cc35311d3a9ba"
+    },
+    {
+      "path": "include/dt-bindings/mfd/stm32h7-rcc.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "461a8e04453a2b432400b7e5fc669b518362b3fe",
+      "size": 4118,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/461a8e04453a2b432400b7e5fc669b518362b3fe"
+    },
+    {
+      "path": "include/dt-bindings/pinctrl/stm32-pinfunc.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e6fb8ada3f4d395184a33b900a43c2566cc6cc76",
+      "size": 950,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/e6fb8ada3f4d395184a33b900a43c2566cc6cc76"
+    },
+    {
+      "path": "include/dt-bindings/reset/stm32mp1-resets.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f3a0ed3178356c571a1664715710973854dcfa3e",
+      "size": 2883,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/f3a0ed3178356c571a1664715710973854dcfa3e"
+    },
+    {
+      "path": "include/linux/coresight-stm.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "74714b59f9d2c9c4bca80367808d1c6c64539496",
+      "size": 152,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/74714b59f9d2c9c4bca80367808d1c6c64539496"
+    },
+    {
+      "path": "include/linux/iio/adc/stm32-dfsdm-adc.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0da298b41737f5700774c6748b7a89214ff3a7de",
+      "size": 537,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/0da298b41737f5700774c6748b7a89214ff3a7de"
+    },
+    {
+      "path": "include/linux/iio/timer/stm32-lptim-trigger.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a34dcf6a6001e3f9ff3bfd6dc26759dbc1ddfc70",
+      "size": 692,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/a34dcf6a6001e3f9ff3bfd6dc26759dbc1ddfc70"
+    },
+    {
+      "path": "include/linux/iio/timer/stm32-timer-trigger.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "37572e4dc73aa2d9ea1402cb0f406228a5b11d71",
+      "size": 1919,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/37572e4dc73aa2d9ea1402cb0f406228a5b11d71"
+    },
+    {
+      "path": "include/linux/input/touchscreen.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fe66e2b58f62d8881777df0b02f84e8a42e183b0",
+      "size": 763,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/fe66e2b58f62d8881777df0b02f84e8a42e183b0"
+    },
+    {
+      "path": "include/linux/mfd/stm32-lptimer.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "90b20550c1c8b6a327acbcce31688519442c7963",
+      "size": 1957,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/90b20550c1c8b6a327acbcce31688519442c7963"
+    },
+    {
+      "path": "include/linux/mfd/stm32-timers.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f8db83aedb2b598448a3f9749bcedb43c374e0c7",
+      "size": 5595,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/f8db83aedb2b598448a3f9749bcedb43c374e0c7"
+    },
+    {
+      "path": "include/linux/mfd/stmfx.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "744dce63946e069f90f8efb2c8f190ba0c36a58e",
+      "size": 4051,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/744dce63946e069f90f8efb2c8f190ba0c36a58e"
+    },
+    {
+      "path": "include/linux/mfd/stmpe.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "87e29d561e223997ffb07f458ca1a7ae270d4d1a",
+      "size": 4083,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/87e29d561e223997ffb07f458ca1a7ae270d4d1a"
+    },
+    {
+      "path": "include/linux/platform_data/touchscreen-s3c2410.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bf8d3b9d7c6a98fc2392786df2c0cdf128047645",
+      "size": 595,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/bf8d3b9d7c6a98fc2392786df2c0cdf128047645"
+    },
+    {
+      "path": "include/linux/stm.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3b22689512be2afe35aaa5bd36c6b6ccfa7eb621",
+      "size": 4449,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/3b22689512be2afe35aaa5bd36c6b6ccfa7eb621"
+    },
+    {
+      "path": "include/linux/stmmac.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9ccbdedf102f0e57af00e950bf68567244f123ce",
+      "size": 7747,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/9ccbdedf102f0e57af00e950bf68567244f123ce"
+    },
+    {
+      "path": "include/linux/stmp3xxx_rtc_wdt.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "be71a59b777d4442d04f8f158ed40b5c435c11dd",
+      "size": 331,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/be71a59b777d4442d04f8f158ed40b5c435c11dd"
+    },
+    {
+      "path": "include/linux/stmp_device.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "23046916a001f0801bf178781b95f67c911894b7",
+      "size": 412,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/23046916a001f0801bf178781b95f67c911894b7"
+    },
+    {
+      "path": "include/uapi/linux/coresight-stm.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7ff3709c01b854e9250b4d6f837c744b2f7f4443",
+      "size": 747,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/7ff3709c01b854e9250b4d6f837c744b2f7f4443"
+    },
+    {
+      "path": "include/uapi/linux/stm.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7bac318b44400e1d54485db8be67bc9bc9cbe42d",
+      "size": 1290,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/7bac318b44400e1d54485db8be67bc9bc9cbe42d"
+    },
+    {
+      "path": "lib/stmp_device.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a4f77b6a91e3eb4a86554549707692212dafc31c",
+      "size": 1953,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/a4f77b6a91e3eb4a86554549707692212dafc31c"
+    },
+    {
+      "path": "modules.list.msm.nuwa",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "428c664a078884ac6833f9ad98b335cdccf8181a",
+      "size": 1527,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/428c664a078884ac6833f9ad98b335cdccf8181a"
+    },
+    {
+      "path": "modules.systemdlkm_blocklist.msm.nuwa",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "85698d918b213d87117450e0e60e7d530730c2b6",
+      "size": 117,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/85698d918b213d87117450e0e60e7d530730c2b6"
+    },
+    {
+      "path": "modules.vendor_blocklist.msm.nuwa",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a95684b1a963a5b45bceb47e2dc8ecdbafa6dd93",
+      "size": 1290,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/a95684b1a963a5b45bceb47e2dc8ecdbafa6dd93"
+    },
+    {
+      "path": "sound/soc/stm",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1ee4cbec737b365b9055d02c269dcf2cd8be870c",
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/trees/1ee4cbec737b365b9055d02c269dcf2cd8be870c"
+    },
+    {
+      "path": "sound/soc/stm/Kconfig",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "da1f7a16605b44c4d74beddb25a5f119fc9b40be",
+      "size": 1397,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/da1f7a16605b44c4d74beddb25a5f119fc9b40be"
+    },
+    {
+      "path": "sound/soc/stm/Makefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3143c0b4704263655108de9c88398c6c3c459604",
+      "size": 520,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/3143c0b4704263655108de9c88398c6c3c459604"
+    },
+    {
+      "path": "sound/soc/stm/stm32_adfsdm.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e6078f50e508e05210c223f0e2d1cfcfe4227e8d",
+      "size": 10615,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/e6078f50e508e05210c223f0e2d1cfcfe4227e8d"
+    },
+    {
+      "path": "sound/soc/stm/stm32_i2s.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "717f45a83445c129e1779d3f3851011b207517ef",
+      "size": 32325,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/717f45a83445c129e1779d3f3851011b207517ef"
+    },
+    {
+      "path": "sound/soc/stm/stm32_sai.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "058757c721f0a55b16aee3cc254efe5168436c15",
+      "size": 7679,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/058757c721f0a55b16aee3cc254efe5168436c15"
+    },
+    {
+      "path": "sound/soc/stm/stm32_sai.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "33e4bff8c2f575d9fe92b06efcae88577463d6b7",
+      "size": 10227,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/33e4bff8c2f575d9fe92b06efcae88577463d6b7"
+    },
+    {
+      "path": "sound/soc/stm/stm32_sai_sub.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9c3b8e2096565b82daa6cbad6c2155493f49b630",
+      "size": 42984,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/9c3b8e2096565b82daa6cbad6c2155493f49b630"
+    },
+    {
+      "path": "sound/soc/stm/stm32_spdifrx.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "48145f5535880267b7eb4177903a3ab16ef2d187",
+      "size": 30204,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/48145f5535880267b7eb4177903a3ab16ef2d187"
+    },
+    {
+      "path": "tools/perf/pmu-events/arch/x86/westmereep-dp",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "777ea96e354be8bf95b7bef28a06db3d03c7b2b4",
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/trees/777ea96e354be8bf95b7bef28a06db3d03c7b2b4"
+    },
+    {
+      "path": "tools/perf/pmu-events/arch/x86/westmereep-dp/cache.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6e61ae20d01a064f5a2085de83fdcd9e4a361c18",
+      "size": 94977,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/6e61ae20d01a064f5a2085de83fdcd9e4a361c18"
+    },
+    {
+      "path": "tools/perf/pmu-events/arch/x86/westmereep-dp/floating-point.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7d2f71a9dee3ef04934087f1e645557335192af9",
+      "size": 7096,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/7d2f71a9dee3ef04934087f1e645557335192af9"
+    },
+    {
+      "path": "tools/perf/pmu-events/arch/x86/westmereep-dp/frontend.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e5e21e03444d7b2b286556d2d06526453dfe833f",
+      "size": 722,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/e5e21e03444d7b2b286556d2d06526453dfe833f"
+    },
+    {
+      "path": "tools/perf/pmu-events/arch/x86/westmereep-dp/memory.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6e0829b7617ffad76645ba9c85876b48a1f5ef59",
+      "size": 25968,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/6e0829b7617ffad76645ba9c85876b48a1f5ef59"
+    },
+    {
+      "path": "tools/perf/pmu-events/arch/x86/westmereep-dp/other.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "85133d6a5ce018e1b30d252b8852a23e6600076e",
+      "size": 8566,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/85133d6a5ce018e1b30d252b8852a23e6600076e"
+    },
+    {
+      "path": "tools/perf/pmu-events/arch/x86/westmereep-dp/pipeline.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f130510f761617aec034ae1a21cb7ad871e6cf26",
+      "size": 27620,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/f130510f761617aec034ae1a21cb7ad871e6cf26"
+    },
+    {
+      "path": "tools/perf/pmu-events/arch/x86/westmereep-dp/virtual-memory.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "57b53562e2bd65e8eb37404a5dc1d5f42398d6e0",
+      "size": 5179,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/57b53562e2bd65e8eb37404a5dc1d5f42398d6e0"
+    },
+    {
+      "path": "tools/perf/pmu-events/arch/x86/westmereep-sp",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "604040816c6e2570ad865f1590a6ebbfe5770fff",
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/trees/604040816c6e2570ad865f1590a6ebbfe5770fff"
+    },
+    {
+      "path": "tools/perf/pmu-events/arch/x86/westmereep-sp/cache.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dad20f0e3cac235ff859385945cfde51f6682970",
+      "size": 109439,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/dad20f0e3cac235ff859385945cfde51f6682970"
+    },
+    {
+      "path": "tools/perf/pmu-events/arch/x86/westmereep-sp/floating-point.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7d2f71a9dee3ef04934087f1e645557335192af9",
+      "size": 7096,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/7d2f71a9dee3ef04934087f1e645557335192af9"
+    },
+    {
+      "path": "tools/perf/pmu-events/arch/x86/westmereep-sp/frontend.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e5e21e03444d7b2b286556d2d06526453dfe833f",
+      "size": 722,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/e5e21e03444d7b2b286556d2d06526453dfe833f"
+    },
+    {
+      "path": "tools/perf/pmu-events/arch/x86/westmereep-sp/memory.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "90eb6aac357b5ffaade7d5fbc9e38fc37721c748",
+      "size": 24863,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/90eb6aac357b5ffaade7d5fbc9e38fc37721c748"
+    },
+    {
+      "path": "tools/perf/pmu-events/arch/x86/westmereep-sp/other.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "85133d6a5ce018e1b30d252b8852a23e6600076e",
+      "size": 8566,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/85133d6a5ce018e1b30d252b8852a23e6600076e"
+    },
+    {
+      "path": "tools/perf/pmu-events/arch/x86/westmereep-sp/pipeline.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f130510f761617aec034ae1a21cb7ad871e6cf26",
+      "size": 27620,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/f130510f761617aec034ae1a21cb7ad871e6cf26"
+    },
+    {
+      "path": "tools/perf/pmu-events/arch/x86/westmereep-sp/virtual-memory.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2153b3f5d7b0b4987d04d4d3a4d619f751af557e",
+      "size": 4420,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/2153b3f5d7b0b4987d04d4d3a4d619f751af557e"
+    },
+    {
+      "path": "tools/perf/pmu-events/arch/x86/westmereex",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "89b9d8524bef274927a65007538a773eae7d7522",
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/trees/89b9d8524bef274927a65007538a773eae7d7522"
+    },
+    {
+      "path": "tools/perf/pmu-events/arch/x86/westmereex/cache.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f9bc7fdd48d6e648fad5975633590eede56659e8",
+      "size": 105512,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/f9bc7fdd48d6e648fad5975633590eede56659e8"
+    },
+    {
+      "path": "tools/perf/pmu-events/arch/x86/westmereex/floating-point.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7d2f71a9dee3ef04934087f1e645557335192af9",
+      "size": 7096,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/7d2f71a9dee3ef04934087f1e645557335192af9"
+    },
+    {
+      "path": "tools/perf/pmu-events/arch/x86/westmereex/frontend.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e5e21e03444d7b2b286556d2d06526453dfe833f",
+      "size": 722,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/e5e21e03444d7b2b286556d2d06526453dfe833f"
+    },
+    {
+      "path": "tools/perf/pmu-events/arch/x86/westmereex/memory.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3ba555e73cbd60d509c1c0b8c03135fd63694cc5",
+      "size": 23895,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/3ba555e73cbd60d509c1c0b8c03135fd63694cc5"
+    },
+    {
+      "path": "tools/perf/pmu-events/arch/x86/westmereex/other.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "85133d6a5ce018e1b30d252b8852a23e6600076e",
+      "size": 8566,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/85133d6a5ce018e1b30d252b8852a23e6600076e"
+    },
+    {
+      "path": "tools/perf/pmu-events/arch/x86/westmereex/pipeline.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "799c57d94c39617f283aa61405c75a54fb75ebdc",
+      "size": 27807,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/799c57d94c39617f283aa61405c75a54fb75ebdc"
+    },
+    {
+      "path": "tools/perf/pmu-events/arch/x86/westmereex/virtual-memory.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ad989207e8f8b85eac675c1d009a7cd4f6838d5c",
+      "size": 5256,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/ad989207e8f8b85eac675c1d009a7cd4f6838d5c"
+    },
+    {
+      "path": "tools/testing/selftests/bpf/bpf_testmod",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7d95aef1c8d55e2d8611fd18ce6a1222b059d740",
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/trees/7d95aef1c8d55e2d8611fd18ce6a1222b059d740"
+    },
+    {
+      "path": "tools/testing/selftests/bpf/bpf_testmod/.gitignore",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ded5137772813b802d7b903fbde93e421418499e",
+      "size": 53,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/ded5137772813b802d7b903fbde93e421418499e"
+    },
+    {
+      "path": "tools/testing/selftests/bpf/bpf_testmod/Makefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "15cb36c4483ac3b970d93d2e4467cd290917c361",
+      "size": 364,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/15cb36c4483ac3b970d93d2e4467cd290917c361"
+    },
+    {
+      "path": "tools/testing/selftests/bpf/bpf_testmod/bpf_testmod-events.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "89c6d58e5dd68f28063bf81f2e4dcdf5d69cc05f",
+      "size": 1182,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/89c6d58e5dd68f28063bf81f2e4dcdf5d69cc05f"
+    },
+    {
+      "path": "tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "141d8da687d21f024df33be2a14a0530a82455b2",
+      "size": 1835,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/141d8da687d21f024df33be2a14a0530a82455b2"
+    },
+    {
+      "path": "tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b3892dc401113ec781b47450b1f220d1a509a229",
+      "size": 329,
+      "url": "https://api.github.com/repos/MiCode/Xiaomi_Kernel_OpenSource/git/blobs/b3892dc401113ec781b47450b1f220d1a509a229"
+    }
+  ]
+}

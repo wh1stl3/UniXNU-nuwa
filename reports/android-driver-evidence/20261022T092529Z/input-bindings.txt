@@ -1,0 +1,39 @@
+INPUT /sys/class/input/input0
+gpio-keys
+/sys/devices/platform/soc/soc:gpio_keys
+/sys/bus/platform/drivers/gpio-keys
+INPUT /sys/class/input/input1
+uinput-goodix
+/sys/devices/virtual/input/input1/device
+INPUT /sys/class/input/input2
+fts
+/sys/devices/platform/soc/ac0000.qcom,qupv3_1_geni_se/a90000.spi/spi_master/spi0/spi0.0
+/sys/bus/spi/drivers/fts
+INPUT /sys/class/input/input3
+pmic_pwrkey
+/sys/devices/platform/soc/c42d000.qcom,spmi/spmi-0/0-00/c42d000.qcom,spmi:qcom,pmk8550@0:pon_hlos@1300/c42d000.qcom,spmi:qcom,pmk8550@0:pon_hlos@1300:pwrkey
+/sys/bus/platform/drivers/pm8941-pwrkey
+INPUT /sys/class/input/input4
+pmic_resin
+/sys/devices/platform/soc/c42d000.qcom,spmi/spmi-0/0-00/c42d000.qcom,spmi:qcom,pmk8550@0:pon_hlos@1300/c42d000.qcom,spmi:qcom,pmk8550@0:pon_hlos@1300:resin
+/sys/bus/platform/drivers/pm8941-pwrkey
+INPUT /sys/class/input/input5
+pmic_pwrkey_resin_bark
+/sys/devices/platform/soc/c42d000.qcom,spmi/spmi-0/0-00/c42d000.qcom,spmi:qcom,pmk8550@0:pon_hlos@1300/c42d000.qcom,spmi:qcom,pmk8550@0:pon_hlos@1300:pwrkey-resin-bark
+/sys/bus/platform/drivers/pm8941-pwrkey
+INPUT /sys/class/input/input6
+pmic_pwrkey_bark
+/sys/devices/platform/soc/c42d000.qcom,spmi/spmi-0/0-00/c42d000.qcom,spmi:qcom,pmk8550@0:pon_hlos@1300/c42d000.qcom,spmi:qcom,pmk8550@0:pon_hlos@1300:pwrkey-bark
+/sys/bus/platform/drivers/pm8941-pwrkey
+INPUT /sys/class/input/input7
+qcom-hv-haptics
+/sys/devices/platform/soc/c42d000.qcom,spmi/spmi-0/0-07/c42d000.qcom,spmi:qcom,pm8550b@7:qcom,hv-haptics@f000
+/sys/bus/platform/drivers/qcom-hv-haptics
+INPUT /sys/class/input/input8
+kalama-mtp-snd-card Headset Jack
+/sys/devices/platform/soc/soc:spf_core_platform/soc:spf_core_platform:sound/sound/card0
+/sys/devices/platform/soc/soc:spf_core_platform/soc:spf_core_platform:sound/sound/card0/driver
+INPUT /sys/class/input/input9
+kalama-mtp-snd-card Button Jack
+/sys/devices/platform/soc/soc:spf_core_platform/soc:spf_core_platform:sound/sound/card0
+/sys/devices/platform/soc/soc:spf_core_platform/soc:spf_core_platform:sound/sound/card0/driver

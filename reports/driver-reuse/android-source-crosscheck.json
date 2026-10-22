@@ -1,0 +1,645 @@
+[
+  {
+    "repo": "MiCode/kernel_devicetree",
+    "commit": "5647c799a064dfec73332a4fe2ef7aa3fb2f4887",
+    "path": "xiaomi/nuwa-sm8550.dtsi",
+    "blob_sha": "88260ecfaba819bd2496ebafaee88ed31d19b942",
+    "sha256": "3f9df9488103aeb48ba138e15b89388c23295018484606a694246138def584ed",
+    "bytes": 10637,
+    "url": "https://github.com/MiCode/kernel_devicetree/blob/5647c799a064dfec73332a4fe2ef7aa3fb2f4887/xiaomi/nuwa-sm8550.dtsi",
+    "matching_lines": [
+      {
+        "line": 105,
+        "text": "\tfts@0 {"
+      },
+      {
+        "line": 107,
+        "text": "\t\tcompatible = \"st,spi\";"
+      },
+      {
+        "line": 119,
+        "text": "\t\tfts,irq-gpio = <&tlmm 25 0x2008>;"
+      },
+      {
+        "line": 120,
+        "text": "\t\tfts,irq-gpio-name = \"fts_irq\";"
+      },
+      {
+        "line": 121,
+        "text": "\t\tfts,reset-gpio-enable;"
+      },
+      {
+        "line": 122,
+        "text": "\t\tfts,reset-gpio = <&tlmm 24 0x00>;"
+      },
+      {
+        "line": 123,
+        "text": "\t\tfts,reset-gpio-name = \"fts_rst\";"
+      },
+      {
+        "line": 125,
+        "text": "\t\tfts,x-max = <14400>;"
+      },
+      {
+        "line": 126,
+        "text": "\t\tfts,y-max = <32000>;"
+      },
+      {
+        "line": 134,
+        "text": "\t\tspi-max-frequency = <12000000>;"
+      },
+      {
+        "line": 136,
+        "text": "\t\tfts,default-fw-name = \"st_fts_m2.ftb\";"
+      },
+      {
+        "line": 186,
+        "text": "\t\t\tfts,fw-name = \"st_fts_m2.ftb\";"
+      }
+    ]
+  },
+  {
+    "repo": "MiCode/kernel_devicetree",
+    "commit": "5647c799a064dfec73332a4fe2ef7aa3fb2f4887",
+    "path": "qcom/nuwa-sm8550.dtsi",
+    "blob_sha": "407dd38c5efa91a4d0b3b77aa92d905ac74b8182",
+    "sha256": "3f9df9488103aeb48ba138e15b89388c23295018484606a694246138def584ed",
+    "bytes": 10637,
+    "url": "https://github.com/MiCode/kernel_devicetree/blob/5647c799a064dfec73332a4fe2ef7aa3fb2f4887/qcom/nuwa-sm8550.dtsi",
+    "matching_lines": [
+      {
+        "line": 105,
+        "text": "\tfts@0 {"
+      },
+      {
+        "line": 107,
+        "text": "\t\tcompatible = \"st,spi\";"
+      },
+      {
+        "line": 119,
+        "text": "\t\tfts,irq-gpio = <&tlmm 25 0x2008>;"
+      },
+      {
+        "line": 120,
+        "text": "\t\tfts,irq-gpio-name = \"fts_irq\";"
+      },
+      {
+        "line": 121,
+        "text": "\t\tfts,reset-gpio-enable;"
+      },
+      {
+        "line": 122,
+        "text": "\t\tfts,reset-gpio = <&tlmm 24 0x00>;"
+      },
+      {
+        "line": 123,
+        "text": "\t\tfts,reset-gpio-name = \"fts_rst\";"
+      },
+      {
+        "line": 125,
+        "text": "\t\tfts,x-max = <14400>;"
+      },
+      {
+        "line": 126,
+        "text": "\t\tfts,y-max = <32000>;"
+      },
+      {
+        "line": 134,
+        "text": "\t\tspi-max-frequency = <12000000>;"
+      },
+      {
+        "line": 136,
+        "text": "\t\tfts,default-fw-name = \"st_fts_m2.ftb\";"
+      },
+      {
+        "line": 186,
+        "text": "\t\t\tfts,fw-name = \"st_fts_m2.ftb\";"
+      }
+    ]
+  },
+  {
+    "repo": "MiCode/kernel_devicetree",
+    "commit": "5647c799a064dfec73332a4fe2ef7aa3fb2f4887",
+    "path": "xiaomi/nuwa-pinctrl.dtsi",
+    "blob_sha": "881746ae3dbd3972e728278fcb4b4d0933290ccd",
+    "sha256": "271328b34dcbc99c95a009b0c9e6c15e85e7f392771374ceaa56710dfbf11681",
+    "bytes": 1075,
+    "url": "https://github.com/MiCode/kernel_devicetree/blob/5647c799a064dfec73332a4fe2ef7aa3fb2f4887/xiaomi/nuwa-pinctrl.dtsi",
+    "matching_lines": []
+  },
+  {
+    "repo": "LineageOS/android_kernel_xiaomi_sm8550-modules",
+    "commit": "92a9fde479d3262da080cfd28bab0775b0da500a",
+    "path": "qcom/opensource/touch-drivers/st/fts.c",
+    "blob_sha": "f6d832334509551b8ef932850f66ada254be2011",
+    "sha256": "35c8517c72ce2fa400a475d939041dd19b9cefc272439b804294ee35cc7dd596",
+    "bytes": 153713,
+    "url": "https://github.com/LineageOS/android_kernel_xiaomi_sm8550-modules/blob/92a9fde479d3262da080cfd28bab0775b0da500a/qcom/opensource/touch-drivers/st/fts.c",
+    "matching_lines": [
+      {
+        "line": 1,
+        "text": "// SPDX-License-Identifier: GPL-2.0-only"
+      },
+      {
+        "line": 3,
+        "text": " * Copyright (C) 2016-2019, STMicroelectronics Limited."
+      },
+      {
+        "line": 9,
+        "text": " * it under the terms of the GNU General Public License version 2 as"
+      },
+      {
+        "line": 121,
+        "text": "static void fts_interrupt_disable(struct fts_ts_info *info);"
+      },
+      {
+        "line": 122,
+        "text": "static void fts_interrupt_enable(struct fts_ts_info *info);"
+      },
+      {
+        "line": 124,
+        "text": "static int fts_probe_delayed(struct fts_ts_info *info);"
+      },
+      {
+        "line": 167,
+        "text": "static int fts_populate_vm_info(struct fts_ts_info *info)"
+      },
+      {
+        "line": 252,
+        "text": "static void fts_destroy_vm_info(struct fts_ts_info *info)"
+      },
+      {
+        "line": 259,
+        "text": "static void fts_vm_deinit(struct fts_ts_info *info)"
+      },
+      {
+        "line": 267,
+        "text": "static int fts_vm_mem_release(struct fts_ts_info *info);"
+      },
+      {
+        "line": 268,
+        "text": "static void fts_trusted_touch_vm_mode_disable(struct fts_ts_info *info);"
+      },
+      {
+        "line": 305,
+        "text": "static int fts_vm_handle_vm_hardware(struct fts_ts_info *info)"
+      },
+      {
+        "line": 329,
+        "text": "\tstruct fts_ts_info *info = data;"
+      },
+      {
+        "line": 382,
+        "text": "\tstruct fts_ts_info *info;"
+      },
+      {
+        "line": 396,
+        "text": "\tinfo = (struct fts_ts_info *)entry_data;"
+      },
+      {
+        "line": 459,
+        "text": "static int fts_vm_mem_release(struct fts_ts_info *info)"
+      },
+      {
+        "line": 477,
+        "text": "static void fts_trusted_touch_vm_mode_disable(struct fts_ts_info *info)"
+      },
+      {
+        "line": 513,
+        "text": "static int fts_handle_trusted_touch_tvm(struct fts_ts_info *info, int value)"
+      },
+      {
+        "line": 556,
+        "text": "static int fts_clk_prepare_enable(struct fts_ts_info *info)"
+      },
+      {
+        "line": 576,
+        "text": "static void fts_clk_disable_unprepare(struct fts_ts_info *info)"
+      },
+      {
+        "line": 582,
+        "text": "static int fts_bus_get(struct fts_ts_info *info)"
+      },
+      {
+        "line": 597,
+        "text": "static void fts_bus_put(struct fts_ts_info *info)"
+      },
+      {
+        "line": 620,
+        "text": "static void fts_trusted_touch_complete(struct fts_ts_info *info)"
+      },
+      {
+        "line": 638,
+        "text": "\tstruct fts_ts_info *info = data;"
+      },
+      {
+        "line": 653,
+        "text": "\tstruct fts_ts_info *info;"
+      },
+      {
+        "line": 668,
+        "text": "\tinfo = (struct fts_ts_info *)entry_data;"
+      },
+      {
+        "line": 689,
+        "text": "static int fts_vm_mem_lend(struct fts_ts_info *info)"
+      },
+      {
+        "line": 743,
+        "text": "static int fts_trusted_touch_vm_mode_enable(struct fts_ts_info *info)"
+      },
+      {
+        "line": 787,
+        "text": "static int fts_handle_trusted_touch_pvm(struct fts_ts_info *info, int value)"
+      },
+      {
+        "line": 828,
+        "text": "static int fts_vm_init(struct fts_ts_info *info)"
+      },
+      {
+        "line": 875,
+        "text": "static void fts_dt_parse_trusted_touch_info(struct fts_ts_info *info)"
+      },
+      {
+        "line": 908,
+        "text": "static void fts_trusted_touch_init(struct fts_ts_info *info)"
+      },
+      {
+        "line": 944,
+        "text": "\tstruct fts_ts_info *info;"
+      },
+      {
+        "line": 963,
+        "text": "\tstruct fts_ts_info *info;"
+      },
+      {
+        "line": 1012,
+        "text": "static char fts_ts_phys[64];"
+      },
+      {
+        "line": 1031,
+        "text": "static void fts_interrupt_enable(struct fts_ts_info *info);"
+      },
+      {
+        "line": 1032,
+        "text": "static int fts_init_afterProbe(struct fts_ts_info *info);"
+      },
+      {
+        "line": 1033,
+        "text": "static int fts_mode_handler(struct fts_ts_info *info, int force);"
+      },
+      {
+        "line": 1034,
+        "text": "static int fts_command(struct fts_ts_info *info, unsigned char cmd);"
+      },
+      {
+        "line": 1035,
+        "text": "static int fts_chip_initialization(struct fts_ts_info *info);"
+      },
+      {
+        "line": 1036,
+        "text": "static int fts_enable_reg(struct fts_ts_info *info, bool enable);"
+      },
+      {
+        "line": 1043,
+        "text": "\tstruct fts_ts_info *info = client_data;"
+      },
+      {
+        "line": 1089,
+        "text": "\t\t\t\t\tstruct fts_ts_info *info)"
+      },
+      {
+        "line": 1125,
+        "text": "void release_all_touches(struct fts_ts_info *info)"
+      },
+      {
+        "line": 1172,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      },
+      {
+        "line": 1223,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      },
+      {
+        "line": 1253,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      },
+      {
+        "line": 1349,
+        "text": "\t/*struct fts_ts_info *info = i2c_get_clientdata(client); */"
+      },
+      {
+        "line": 1369,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      },
+      {
+        "line": 1488,
+        "text": "int check_feature_feasibility(struct fts_ts_info *info, unsigned int feature)"
+      },
+      {
+        "line": 1556,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      },
+      {
+        "line": 1749,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      },
+      {
+        "line": 1784,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      },
+      {
+        "line": 1846,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      },
+      {
+        "line": 1881,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      },
+      {
+        "line": 1950,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      },
+      {
+        "line": 1987,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      },
+      {
+        "line": 2050,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      },
+      {
+        "line": 2085,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      },
+      {
+        "line": 2151,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      },
+      {
+        "line": 2186,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      },
+      {
+        "line": 2248,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      },
+      {
+        "line": 2284,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      },
+      {
+        "line": 2349,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      },
+      {
+        "line": 2385,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      },
+      {
+        "line": 2447,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      },
+      {
+        "line": 2483,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      },
+      {
+        "line": 2565,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      },
+      {
+        "line": 2683,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      },
+      {
+        "line": 2720,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      }
+    ]
+  },
+  {
+    "repo": "LineageOS/android_kernel_xiaomi_sm8550-modules",
+    "commit": "92a9fde479d3262da080cfd28bab0775b0da500a",
+    "path": "qcom/opensource/touch-drivers/st/fts.h",
+    "blob_sha": "ca1888ac3ba3c5621d9d92a119a3603d497f60d2",
+    "sha256": "7a9264bb7f20055dc72770c30d3b620ede5122095c638998020298d8c70d963a",
+    "bytes": 10328,
+    "url": "https://github.com/LineageOS/android_kernel_xiaomi_sm8550-modules/blob/92a9fde479d3262da080cfd28bab0775b0da500a/qcom/opensource/touch-drivers/st/fts.h",
+    "matching_lines": [
+      {
+        "line": 1,
+        "text": "/* SPDX-License-Identifier: GPL-2.0-only */"
+      },
+      {
+        "line": 5,
+        "text": " * Copyright (C) 2016-2019, STMicroelectronics Limited."
+      },
+      {
+        "line": 10,
+        "text": " * under the terms of the GNU General Public License version 2 as published by"
+      },
+      {
+        "line": 15,
+        "text": " * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for"
+      },
+      {
+        "line": 18,
+        "text": " * You should have received a copy of the GNU General Public License along with"
+      },
+      {
+        "line": 19,
+        "text": " * this program.  If not, see <http://www.gnu.org/licenses/>."
+      },
+      {
+        "line": 41,
+        "text": "#define FTS_TS_DRV_NAME      \"fts\""
+      },
+      {
+        "line": 42,
+        "text": "#define FTS_TS_DRV_VERSION   \"4.2.14\" /* version */"
+      },
+      {
+        "line": 206,
+        "text": "struct fts_ts_info;"
+      },
+      {
+        "line": 212,
+        "text": "\tvoid (*handler)(struct fts_ts_info *info, unsigned char *data);"
+      },
+      {
+        "line": 243,
+        "text": " * struct fts_ts_info - FTS capacitive touch screen device information"
+      },
+      {
+        "line": 270,
+        "text": "struct fts_ts_info {"
+      },
+      {
+        "line": 376,
+        "text": "int fts_chip_powercycle(struct fts_ts_info *info);"
+      },
+      {
+        "line": 377,
+        "text": "int fts_chip_powercycle2(struct fts_ts_info *info, unsigned long sleep);"
+      },
+      {
+        "line": 378,
+        "text": "void release_all_touches(struct fts_ts_info *info);"
+      },
+      {
+        "line": 379,
+        "text": "/*int fts_get_fw_version(struct fts_ts_info *info);*/"
+      }
+    ]
+  },
+  {
+    "repo": "LineageOS/android_kernel_xiaomi_sm8550-modules",
+    "commit": "92a9fde479d3262da080cfd28bab0775b0da500a",
+    "path": "qcom/opensource/touch-drivers/st/fts_lib/ftsHardware.h",
+    "blob_sha": "553cf6d5762f2e85e574b4f976a31b14b082e008",
+    "sha256": "a9830660e67870399c25da11c168d63a417c27fda196533eedb6047c6db399f6",
+    "bytes": 6733,
+    "url": "https://github.com/LineageOS/android_kernel_xiaomi_sm8550-modules/blob/92a9fde479d3262da080cfd28bab0775b0da500a/qcom/opensource/touch-drivers/st/fts_lib/ftsHardware.h",
+    "matching_lines": [
+      {
+        "line": 1,
+        "text": "/* SPDX-License-Identifier: GPL-2.0-only */"
+      },
+      {
+        "line": 5,
+        "text": " * Copyright (C) 2016-2019, STMicroelectronics Limited."
+      },
+      {
+        "line": 10,
+        "text": " * under the terms of the GNU General Public License version 2 as published by"
+      },
+      {
+        "line": 15,
+        "text": " * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for"
+      },
+      {
+        "line": 18,
+        "text": " * You should have received a copy of the GNU General Public License along with"
+      },
+      {
+        "line": 19,
+        "text": " * this program.  If not, see <http://www.gnu.org/licenses/>."
+      },
+      {
+        "line": 45,
+        "text": "#define DCHIP_ID_0                     0x39"
+      },
+      {
+        "line": 46,
+        "text": "#define DCHIP_ID_1                     0x6C"
+      },
+      {
+        "line": 48,
+        "text": "#define DCHIP_ID_0                     0x36"
+      },
+      {
+        "line": 49,
+        "text": "#define DCHIP_ID_1                     0x70"
+      },
+      {
+        "line": 53,
+        "text": "#define DCHIP_ID_ADDR                  0x0007"
+      },
+      {
+        "line": 56,
+        "text": "#define DCHIP_ID_ADDR                  0x0004"
+      }
+    ]
+  },
+  {
+    "repo": "LineageOS/android_kernel_xiaomi_sm8550-modules",
+    "commit": "92a9fde479d3262da080cfd28bab0775b0da500a",
+    "path": "qcom/opensource/touch-drivers/st/fts_lib/ftsSoftware.h",
+    "blob_sha": "0c52982856c3f8eba35958d07aa631cda7765eab",
+    "sha256": "a72b1ce29b34ee80959a08d4925fca82607bc89e97a7b961c5ba23c5af4a57bf",
+    "bytes": 7389,
+    "url": "https://github.com/LineageOS/android_kernel_xiaomi_sm8550-modules/blob/92a9fde479d3262da080cfd28bab0775b0da500a/qcom/opensource/touch-drivers/st/fts_lib/ftsSoftware.h",
+    "matching_lines": [
+      {
+        "line": 1,
+        "text": "/* SPDX-License-Identifier: GPL-2.0-only */"
+      },
+      {
+        "line": 5,
+        "text": " * Copyright (C) 2016-2019, STMicroelectronics Limited."
+      },
+      {
+        "line": 10,
+        "text": " * under the terms of the GNU General Public License version 2 as published by"
+      },
+      {
+        "line": 15,
+        "text": " * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for"
+      },
+      {
+        "line": 18,
+        "text": " * You should have received a copy of the GNU General Public License along with"
+      },
+      {
+        "line": 19,
+        "text": " * this program.  If not, see <http://www.gnu.org/licenses/>."
+      }
+    ]
+  },
+  {
+    "repo": "LineageOS/android_kernel_xiaomi_sm8550-modules",
+    "commit": "92a9fde479d3262da080cfd28bab0775b0da500a",
+    "path": "qcom/opensource/touch-drivers/st/fts_lib/ftsIO.c",
+    "blob_sha": "ba0fb18e33073eccf9d107eadbcf46c0a62fde3f",
+    "sha256": "457935b7388991eb42ef0d3cd554de79b073da311d25fe206545d4a70c7abaac",
+    "bytes": 12506,
+    "url": "https://github.com/LineageOS/android_kernel_xiaomi_sm8550-modules/blob/92a9fde479d3262da080cfd28bab0775b0da500a/qcom/opensource/touch-drivers/st/fts_lib/ftsIO.c",
+    "matching_lines": [
+      {
+        "line": 1,
+        "text": "// SPDX-License-Identifier: GPL-2.0-only"
+      },
+      {
+        "line": 5,
+        "text": " * Copyright (C) 2016-2019, STMicroelectronics Limited."
+      },
+      {
+        "line": 10,
+        "text": " * under the terms of the GNU General Public License version 2 as published by"
+      },
+      {
+        "line": 15,
+        "text": " * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for"
+      },
+      {
+        "line": 18,
+        "text": " * You should have received a copy of the GNU General Public License along with"
+      },
+      {
+        "line": 19,
+        "text": " * this program.  If not, see <http://www.gnu.org/licenses/>."
+      },
+      {
+        "line": 107,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      },
+      {
+        "line": 163,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      },
+      {
+        "line": 209,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      },
+      {
+        "line": 264,
+        "text": "\tstruct fts_ts_info *info = i2c_get_clientdata(client);"
+      },
+      {
+        "line": 481,
+        "text": "\t\tlogError(1, \"%s writereadCmd32: ERROR %02X\\n\","
+      }
+    ]
+  }
+]

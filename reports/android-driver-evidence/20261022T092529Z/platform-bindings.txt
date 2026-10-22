@@ -1,0 +1,141 @@
+PLATFORM /sys/bus/platform/devices/15000000.apps-smmu
+/sys/bus/platform/drivers/arm-smmu
+/sys/module/arm_smmu
+/sys/firmware/devicetree/base/soc/apps-smmu@15000000
+PLATFORM /sys/bus/platform/devices/1d80000.ufsphy_mem
+/sys/bus/platform/drivers/ufs_qcom_phy_qmp_v4_kalama
+/sys/module/phy_qcom_ufs_qmp_v4_kalama
+/sys/firmware/devicetree/base/soc/ufsphy_mem@1d80000
+PLATFORM /sys/bus/platform/devices/1d84000.ufshc
+/sys/bus/platform/drivers/ufshcd-qcom
+/sys/module/ufs_qcom
+/sys/firmware/devicetree/base/soc/ufshc@1d84000
+PLATFORM /sys/bus/platform/devices/3d00000.qcom,kgsl-3d0
+/sys/bus/platform/drivers/kgsl-3d
+/sys/module/msm_kgsl
+/sys/firmware/devicetree/base/soc/qcom,kgsl-3d0@3d00000
+PLATFORM /sys/bus/platform/devices/3da0000.kgsl-smmu
+/sys/bus/platform/drivers/arm-smmu
+/sys/module/arm_smmu
+/sys/firmware/devicetree/base/soc/kgsl-smmu@3da0000
+PLATFORM /sys/bus/platform/devices/3da0000.qcom,kgsl-iommu
+/sys/devices/platform/soc/3da0000.qcom,kgsl-iommu/driver
+/sys/firmware/devicetree/base/soc/qcom,kgsl-iommu@3da0000
+PLATFORM /sys/bus/platform/devices/3da0000.qcom,kgsl-iommu:gfx3d_lpac
+/sys/devices/platform/soc/3da0000.qcom,kgsl-iommu/3da0000.qcom,kgsl-iommu:gfx3d_lpac/driver
+/sys/firmware/devicetree/base/soc/qcom,kgsl-iommu@3da0000/gfx3d_lpac
+PLATFORM /sys/bus/platform/devices/3da0000.qcom,kgsl-iommu:gfx3d_secure
+/sys/devices/platform/soc/3da0000.qcom,kgsl-iommu/3da0000.qcom,kgsl-iommu:gfx3d_secure/driver
+/sys/firmware/devicetree/base/soc/qcom,kgsl-iommu@3da0000/gfx3d_secure
+PLATFORM /sys/bus/platform/devices/3da0000.qcom,kgsl-iommu:gfx3d_user
+/sys/devices/platform/soc/3da0000.qcom,kgsl-iommu/3da0000.qcom,kgsl-iommu:gfx3d_user/driver
+/sys/firmware/devicetree/base/soc/qcom,kgsl-iommu@3da0000/gfx3d_user
+PLATFORM /sys/bus/platform/devices/3de8000.gpu_qtb
+/sys/bus/platform/drivers/qsmmuv500-tbu
+/sys/module/arm_smmu
+/sys/firmware/devicetree/base/soc/kgsl-smmu@3da0000/gpu_qtb@3de8000
+PLATFORM /sys/bus/platform/devices/3e00000.qcom,ipa:ipa_smmu_11ad
+/sys/bus/platform/drivers/ipa
+/sys/module/ipam
+/sys/firmware/devicetree/base/soc/qcom,ipa@3e00000/ipa_smmu_11ad
+PLATFORM /sys/bus/platform/devices/3e00000.qcom,ipa:ipa_smmu_ap
+/sys/bus/platform/drivers/ipa
+/sys/module/ipam
+/sys/firmware/devicetree/base/soc/qcom,ipa@3e00000/ipa_smmu_ap
+PLATFORM /sys/bus/platform/devices/3e00000.qcom,ipa:ipa_smmu_uc
+/sys/bus/platform/drivers/ipa
+/sys/module/ipam
+/sys/firmware/devicetree/base/soc/qcom,ipa@3e00000/ipa_smmu_uc
+PLATFORM /sys/bus/platform/devices/3e00000.qcom,ipa:ipa_smmu_wlan
+/sys/bus/platform/drivers/ipa
+/sys/module/ipam
+/sys/firmware/devicetree/base/soc/qcom,ipa@3e00000/ipa_smmu_wlan
+PLATFORM /sys/bus/platform/devices/a4a80000.dump_display_region
+/sys/bus/platform/drivers/dump_display
+/sys/module/dump_display
+/sys/firmware/devicetree/base/soc/dump_display_region@a4a80000
+PLATFORM /sys/bus/platform/devices/ae00000.qcom,mdss_mdp
+/sys/bus/platform/drivers/msm_drm
+/sys/module/msm_drm
+/sys/firmware/devicetree/base/soc/qcom,mdss_mdp@ae00000
+PLATFORM /sys/bus/platform/devices/ae94000.qcom,mdss_dsi_ctrl0
+/sys/bus/platform/drivers/drm_dsi_ctrl
+/sys/module/msm_drm
+/sys/firmware/devicetree/base/soc/qcom,mdss_dsi_ctrl0@ae94000
+PLATFORM /sys/bus/platform/devices/ae95000.qcom,mdss_dsi_phy0
+/sys/bus/platform/drivers/dsi_phy
+/sys/module/msm_drm
+/sys/firmware/devicetree/base/soc/qcom,mdss_dsi_phy0@ae95500
+PLATFORM /sys/bus/platform/devices/ae96000.qcom,mdss_dsi_ctrl1
+/sys/bus/platform/drivers/drm_dsi_ctrl
+/sys/module/msm_drm
+/sys/firmware/devicetree/base/soc/qcom,mdss_dsi_ctrl1@ae96000
+PLATFORM /sys/bus/platform/devices/ae97000.qcom,mdss_dsi_phy1
+/sys/bus/platform/drivers/dsi_phy
+/sys/module/msm_drm
+/sys/firmware/devicetree/base/soc/qcom,mdss_dsi_phy1@ae97500
+PLATFORM /sys/bus/platform/devices/soc:display_panel_vci
+/sys/bus/platform/drivers/reg-fixed-voltage
+/sys/bus/platform/drivers/reg-fixed-voltage/module
+/sys/firmware/devicetree/base/soc/display_panel_vci
+PLATFORM /sys/bus/platform/devices/soc:display_panel_vddd
+/sys/bus/platform/drivers/reg-fixed-voltage
+/sys/bus/platform/drivers/reg-fixed-voltage/module
+/sys/firmware/devicetree/base/soc/display_panel_vddd
+PLATFORM /sys/bus/platform/devices/soc:display_panel_vddio
+/sys/bus/platform/drivers/reg-fixed-voltage
+/sys/bus/platform/drivers/reg-fixed-voltage/module
+/sys/firmware/devicetree/base/soc/display_panel_vddio
+PLATFORM /sys/bus/platform/devices/soc:qcom,cam_smmu
+/sys/bus/platform/drivers/msm_cam_smmu
+/sys/module/camera
+/sys/firmware/devicetree/base/soc/qcom,cam_smmu
+PLATFORM /sys/bus/platform/devices/soc:qcom,cam_smmu:msm_cam_smmu_cdm
+/sys/bus/platform/drivers/msm_cam_smmu
+/sys/module/camera
+/sys/firmware/devicetree/base/soc/qcom,cam_smmu/msm_cam_smmu_cdm
+PLATFORM /sys/bus/platform/devices/soc:qcom,cam_smmu:msm_cam_smmu_icp
+/sys/bus/platform/drivers/msm_cam_smmu
+/sys/module/camera
+/sys/firmware/devicetree/base/soc/qcom,cam_smmu/msm_cam_smmu_icp
+PLATFORM /sys/bus/platform/devices/soc:qcom,cam_smmu:msm_cam_smmu_ife
+/sys/bus/platform/drivers/msm_cam_smmu
+/sys/module/camera
+/sys/firmware/devicetree/base/soc/qcom,cam_smmu/msm_cam_smmu_ife
+PLATFORM /sys/bus/platform/devices/soc:qcom,cam_smmu:msm_cam_smmu_jpeg
+/sys/bus/platform/drivers/msm_cam_smmu
+/sys/module/camera
+/sys/firmware/devicetree/base/soc/qcom,cam_smmu/msm_cam_smmu_jpeg
+PLATFORM /sys/bus/platform/devices/soc:qcom,cam_smmu:msm_cam_smmu_secure
+/sys/bus/platform/drivers/msm_cam_smmu
+/sys/module/camera
+/sys/firmware/devicetree/base/soc/qcom,cam_smmu/msm_cam_smmu_secure
+PLATFORM /sys/bus/platform/devices/soc:qcom,dma-heaps:qcom,display
+/sys/devices/platform/soc/soc:qcom,dma-heaps/soc:qcom,dma-heaps:qcom,display/driver
+/sys/firmware/devicetree/base/soc/qcom,dma-heaps/qcom,display
+PLATFORM /sys/bus/platform/devices/soc:qcom,dsi-display-primary
+/sys/bus/platform/drivers/msm-dsi-display
+/sys/module/msm_drm
+/sys/firmware/devicetree/base/soc/qcom,dsi-display-primary
+PLATFORM /sys/bus/platform/devices/soc:qcom,gpu-coresight-cx
+/sys/devices/platform/soc/soc:qcom,gpu-coresight-cx/driver
+/sys/firmware/devicetree/base/soc/qcom,gpu-coresight-cx
+PLATFORM /sys/bus/platform/devices/soc:qcom,gpu-coresight-gx
+/sys/devices/platform/soc/soc:qcom,gpu-coresight-gx/driver
+/sys/firmware/devicetree/base/soc/qcom,gpu-coresight-gx
+PLATFORM /sys/bus/platform/devices/soc:qcom,smmu_sde_sec_cb
+/sys/bus/platform/drivers/msmdrm_smmu
+/sys/module/msm_drm
+/sys/firmware/devicetree/base/soc/qcom,smmu_sde_sec_cb
+PLATFORM /sys/bus/platform/devices/soc:qcom,smmu_sde_unsec_cb
+/sys/bus/platform/drivers/msmdrm_smmu
+/sys/module/msm_drm
+/sys/firmware/devicetree/base/soc/qcom,smmu_sde_unsec_cb
+PLATFORM /sys/bus/platform/devices/soc:qcom,wb-display@1
+/sys/bus/platform/drivers/sde_wb
+/sys/module/msm_drm
+/sys/firmware/devicetree/base/soc/qcom,wb-display@1
+PLATFORM /sys/bus/platform/devices/soc:qcom,wb-display@2
+/sys/bus/platform/drivers/sde_wb
+/sys/module/msm_drm
+/sys/firmware/devicetree/base/soc/qcom,wb-display@2

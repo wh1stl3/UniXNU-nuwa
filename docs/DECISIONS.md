@@ -306,3 +306,5 @@ D-012补充（2026-10-22 17:29）：CI14真实源内核及ArmCpu/ArmDTPlatform/A
 - 证据：operations/2026-10-22-driver-reuse-and-platform-link.md；reports/driver-reuse/固定本地和远端提交、文件hash和许可。AGENTS第7节记录约定。
 
 优先沿已有真实实现做Darwin22最小适配；按驱动模块核对依赖与许可证，源树只读引用，不复制整棵树。相同SoC只作为筛选条件，触控IC/面板/MMIO/IRQ/电源/固件等须本机证据。Android绑定及DT只是Android观测，不将其转换成XNU实机通过或_verified=true；仍保留板字段和镜像硬停。
+
+D-014补充（2026-10-22 17:37）：本机触控实际为fts_touch_spi/st,spi，MiCode nuwa DT在GPIO/坐标/SPI频率/固件名上对应；优先固定LineageOS SM8550内核fts_spi真实实现审查。sm8550-modules的旧st/I2C实现不作为直接版本，虚拟uinput-goodix不作为IC依据；面板以mi_display和msm_drm运行态一致的m2_38_0c_0a选择，不盲从default-panel指针。该项只确定来源方向，未移植/编译XNU触控、未改板值或镜像；详见Android取证报告。

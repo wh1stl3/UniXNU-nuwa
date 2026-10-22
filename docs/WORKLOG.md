@@ -104,3 +104,5 @@
 2026-10-22 17:29 · CI14源内核与三平台库成功取证；固定开源复用路线并准备两库真实重链接，7项测试通过 · 本提交（Q-046） · reports/kernel-ci/39750542014/；reports/driver-reuse/；docs/operations/2026-10-22-driver-reuse-and-platform-link.md
 
 2026-10-22 17:34 · ca8db30已发布；第十五轮两库重链接验证已启动，最终结果待取证 · 本提交（Q-047） · reports/kernel-ci/39755850870/
+
+2026-10-22 17:37 · 只读ADB确认ST FTS SPI、活跃m2面板、Adreno740v2与KIOXIA UFS；固定MiCode DT和LineageOS匹配触控来源，Android仍boot_completed=1 · 本提交（Q-048） · reports/android-driver-evidence/20261022T092529Z/；docs/operations/2026-10-22-android-driver-evidence.md

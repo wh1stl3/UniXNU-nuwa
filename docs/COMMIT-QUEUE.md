@@ -475,3 +475,14 @@
 [Evidence] reports/kernel-ci/39755850870/run.json与api-publish.json；https://github.com/wh1stl3/UniXNU/actions/runs/39755850870，device_ref=ca8db300bf68ebc4853e023f08b920da0eab5de0。
 [Risk] 本轮真实链接结果待取证，完整ABI/硬件未验证；feed/board不变，无镜像生成或_verified=true。
 ```
+
+
+## Q-048 · 实机Android驱动取证与源码筛选
+
+```text
+[unixnu-nuwa][device] 只读确认ST触控和活跃面板并固定匹配开源来源
+
+[Change] 增加白名单ADB采集与Android绑定/DT证据，核对MiCode nuwa DT和LineageOS SM8550 fts_spi源码；排除虚拟Goodix、旧I2C版本及DT默认面板误判。
+[Evidence] reports/android-driver-evidence/20261022T092529Z为st,spi/fts_touch_spi、运行态m2_38_0c_0a、Adreno740v2/KIOXIA及采集前后boot_completed=1；reports/driver-reuse/st-spi-source-crosscheck.json与MiCode固定提交对照。
+[Risk] 当前Android内核为自定义版本，公开源码不是已证明的精确模块输入；芯片修订/时序、GPL源移植边界和XNU运行未验证；feed/board不变，无写入设备、镜像生成或_verified=true。
+```

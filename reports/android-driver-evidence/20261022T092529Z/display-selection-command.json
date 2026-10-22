@@ -1,0 +1,5 @@
+{
+  "command": "for d in /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary /sys/class/drm/card0-DSI-1 /sys/firmware/devicetree/base/soc/pinctrl@f000000; do echo \"NODE $d\"; ls \"$d\"; done; for f in /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary/*; do test -f \"$f\" || continue; echo \"PROP $f\"; od -An -v -tx1 \"$f\"; done; find /sys/firmware/devicetree/base -type d | grep -Ei \"m2.*(dsi|panel)|dsi.*m2|pinctrl@f000000\"",
+  "exit_code": 0,
+  "stderr": ""
+}

@@ -1,0 +1,5 @@
+{
+  "command": "for d in /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000 /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0 /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/spi@a90000/fts@0/fts,cfg_0 /sys/firmware/devicetree/base/soc/qcom,qupv3_1_geni_se@ac0000/i2c@a90000/goodix-berlin@5d /sys/firmware/devicetree/base/soc/qcom,dsi-display-primary /sys/firmware/devicetree/base/soc/ufshc@1d84000 /sys/firmware/devicetree/base/soc/ufsphy_mem@1d80000 /sys/firmware/devicetree/base/soc/qcom,kgsl-3d0@3d00000; do echo \"NODE $d\"; ls \"$d\"; for f in \"$d\"/*; do test -f \"$f\" || continue; case \"${f##*/}\" in compatible|status|reg|reg-names|interrupt*|iommus|clock*|pinctrl*|*gpio*|*supply|spi-*|fts,*|qcom,dsi-panel|qcom,dsi-display-name|qcom,chipid) echo \"PROP $f\"; od -An -v -tx1 \"$f\";; esac; done; done",
+  "exit_code": 0,
+  "stderr": ""
+}

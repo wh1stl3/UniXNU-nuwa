@@ -1,0 +1,233 @@
+[
+  {
+    "repo": "LineageOS/android_kernel_xiaomi_sm8550",
+    "commit": "9d5787a9b37e3ed5e368b7e635ad6e436a629cfa",
+    "path": "drivers/input/touchscreen/fts_spi/fts.c",
+    "blob_sha": "2e61a6dadee1a023ab4c07fef1cc48074b74a342",
+    "sha256": "422a93b72dbb598e328db121cdf25d7bea79b9d5bb2632eabb76fd9feb365504",
+    "bytes": 217474,
+    "url": "https://github.com/LineageOS/android_kernel_xiaomi_sm8550/blob/9d5787a9b37e3ed5e368b7e635ad6e436a629cfa/drivers/input/touchscreen/fts_spi/fts.c",
+    "matching_lines": [
+      {
+        "line": 6,
+        "text": " * Copyright (C) 2016, STMicroelectronics Limited."
+      },
+      {
+        "line": 12,
+        "text": " * it under the terms of the GNU General Public License version 2 as"
+      },
+      {
+        "line": 168,
+        "text": "static int fts_chip_initialization(struct fts_ts_info *info, int init_type);"
+      },
+      {
+        "line": 300,
+        "text": "static ssize_t fts_appid_show(struct device *dev, struct device_attribute *attr,"
+      },
+      {
+        "line": 3380,
+        "text": "static DEVICE_ATTR(appid, (S_IRUGO), fts_appid_show, NULL);"
+      },
+      {
+        "line": 3856,
+        "text": "\t\tfts_chip_powercycle(info);"
+      },
+      {
+        "line": 4724,
+        "text": "\t\t\tfts_chip_powercycle(info);"
+      },
+      {
+        "line": 4809,
+        "text": "\t\terror = fts_chip_initialization(info, init_type);"
+      },
+      {
+        "line": 4850,
+        "text": "static int fts_chip_initialization(struct fts_ts_info *info, int init_type)"
+      },
+      {
+        "line": 4864,
+        "text": "\t\tfts_chip_powercycle(info);"
+      },
+      {
+        "line": 5069,
+        "text": "\t\t\t\t\t\t  ADDR_DCHIP_ID, readData, 2,"
+      },
+      {
+        "line": 5073,
+        "text": "\t\t\tif ((readData[0] == DCHIP_ID_0) &&"
+      },
+      {
+        "line": 5074,
+        "text": "\t\t\t    (readData[1] == DCHIP_ID_1))"
+      },
+      {
+        "line": 5112,
+        "text": "int fts_chip_powercycle(struct fts_ts_info *info)"
+      },
+      {
+        "line": 7130,
+        "text": "\t\t FTS_TS_DRV_VERSION);"
+      },
+      {
+        "line": 7564,
+        "text": "\t\t\t\t\t    DCHIP_ID_0, info, FTS_TOUCH_DEV_NAME);"
+      },
+      {
+        "line": 7615,
+        "text": "\tdevice_destroy(info->fts_tp_class, DCHIP_ID_0);"
+      },
+      {
+        "line": 7739,
+        "text": "\tdevice_destroy(info->fts_tp_class, DCHIP_ID_0);"
+      },
+      {
+        "line": 7766,
+        "text": "\t\t.compatible = \"st,spi\","
+      },
+      {
+        "line": 7822,
+        "text": "MODULE_LICENSE(\"GPL\");"
+      }
+    ]
+  },
+  {
+    "repo": "LineageOS/android_kernel_xiaomi_sm8550",
+    "commit": "9d5787a9b37e3ed5e368b7e635ad6e436a629cfa",
+    "path": "drivers/input/touchscreen/fts_spi/fts.h",
+    "blob_sha": "5d3c163bc02fa7d1add7ba48888caa153cfeddc5",
+    "sha256": "8ca9b84189316d4e5375090bc74acaa63449b7802d1dccc910fcffb0aca9aba3",
+    "bytes": 13119,
+    "url": "https://github.com/LineageOS/android_kernel_xiaomi_sm8550/blob/9d5787a9b37e3ed5e368b7e635ad6e436a629cfa/drivers/input/touchscreen/fts_spi/fts.h",
+    "matching_lines": [
+      {
+        "line": 6,
+        "text": " * Copyright (C) 2017, STMicroelectronics"
+      },
+      {
+        "line": 12,
+        "text": " * it under the terms of the GNU General Public License version 2 as"
+      },
+      {
+        "line": 64,
+        "text": "#define FTS_TS_DRV_VERSION \"5.2.4.1\" /*driver version string format*/"
+      },
+      {
+        "line": 475,
+        "text": "extern int fts_chip_powercycle(struct fts_ts_info *info);"
+      }
+    ]
+  },
+  {
+    "repo": "LineageOS/android_kernel_xiaomi_sm8550",
+    "commit": "9d5787a9b37e3ed5e368b7e635ad6e436a629cfa",
+    "path": "drivers/input/touchscreen/fts_spi/Makefile",
+    "blob_sha": "6c93d39c4c85a1dff6c72ec51de165513ae30cd6",
+    "sha256": "a0c98978caf8af350549c787c31548332db29c74c0ca2f897c165c1a3737b3be",
+    "bytes": 1021,
+    "url": "https://github.com/LineageOS/android_kernel_xiaomi_sm8550/blob/9d5787a9b37e3ed5e368b7e635ad6e436a629cfa/drivers/input/touchscreen/fts_spi/Makefile",
+    "matching_lines": [
+      {
+        "line": 3,
+        "text": "    obj-$(CONFIG_TOUCHSCREEN_ST_FTS_V521_SPI) := fts_touch_spi.o"
+      },
+      {
+        "line": 4,
+        "text": "    fts_touch_spi-y := fts_lib/ftsCompensation.o \\"
+      },
+      {
+        "line": 27,
+        "text": "\t$(MAKE) ARCH=arm64 CROSS_COMPILE=$(CROSS_COMPILE) REAL_CC=$(REAL_CC) CLANG_TRIPLE=aarch64-linux-gnu- AR=$(AR) LLVM_NM=$(LLVM_NM) LD=$(LD) -C $(KDIR) M=$(PWD) modules"
+      }
+    ]
+  },
+  {
+    "repo": "LineageOS/android_kernel_xiaomi_sm8550",
+    "commit": "9d5787a9b37e3ed5e368b7e635ad6e436a629cfa",
+    "path": "drivers/input/touchscreen/fts_spi/fts_lib/ftsHardware.h",
+    "blob_sha": "c5fa0809cee1638095280390b4939102871f8f5d",
+    "sha256": "b835dfadc69cabddf2b0ead13091c7f229f3c25ae5993bc82c4fa681fddc62f3",
+    "bytes": 11276,
+    "url": "https://github.com/LineageOS/android_kernel_xiaomi_sm8550/blob/9d5787a9b37e3ed5e368b7e635ad6e436a629cfa/drivers/input/touchscreen/fts_spi/fts_lib/ftsHardware.h",
+    "matching_lines": [
+      {
+        "line": 28,
+        "text": "#define DCHIP_ID_0 0x36 /* /< LSB chip ID for FTM5 */"
+      },
+      {
+        "line": 29,
+        "text": "#define DCHIP_ID_1 0x48 /* /< MSB chip ID for FTM5 */"
+      },
+      {
+        "line": 31,
+        "text": "#define DCHIP_ID_0 0x36 /* /< LSB chip ID for FTM5 */"
+      },
+      {
+        "line": 32,
+        "text": "#define DCHIP_ID_1 0x50 /* /< MSB chip ID for FTM5 */"
+      },
+      {
+        "line": 34,
+        "text": "#define DCHIP_ID_0 0x36 /* /< LSB chip ID for FTM5 */"
+      },
+      {
+        "line": 35,
+        "text": "#define DCHIP_ID_1 0x40 /* /< MSB chip ID for FTM5 */"
+      },
+      {
+        "line": 37,
+        "text": "#define DCHIP_ID_0 0x36 /* /< LSB chip ID for FTM5 */"
+      },
+      {
+        "line": 38,
+        "text": "#define DCHIP_ID_1 0x39 /* /< MSB chip ID for FTM5 */"
+      },
+      {
+        "line": 140,
+        "text": "\t32 /*max number of events that the FIFO can collect before going in overflow in FTM5*/"
+      },
+      {
+        "line": 222,
+        "text": "\t\t\t\t\t * system reset in FTM5 */"
+      },
+      {
+        "line": 230,
+        "text": "\t((u64)0x0000000020000029) /*address of the Interrupt enable register in FTMI*/"
+      },
+      {
+        "line": 233,
+        "text": "#define ADDR_DCHIP_ID ((u64)0x0000000020000000) /*chip id address for FTI*/"
+      }
+    ]
+  },
+  {
+    "repo": "LineageOS/android_kernel_xiaomi_sm8550",
+    "commit": "9d5787a9b37e3ed5e368b7e635ad6e436a629cfa",
+    "path": "drivers/input/touchscreen/fts_spi/fts_lib/ftsIO.c",
+    "blob_sha": "b9317a8e7bf99ccd790083aed1fb8463e66230a3",
+    "sha256": "64098fcae0a7f25b210ec86823c526eeb35d3ad4d64d766e6078f46e339c50b6",
+    "bytes": 23779,
+    "url": "https://github.com/LineageOS/android_kernel_xiaomi_sm8550/blob/9d5787a9b37e3ed5e368b7e635ad6e436a629cfa/drivers/input/touchscreen/fts_spi/fts_lib/ftsIO.c",
+    "matching_lines": [
+      {
+        "line": 181,
+        "text": "\t\tret = spi_sync(getClient(), &msg);"
+      },
+      {
+        "line": 253,
+        "text": "\t\tret = spi_sync(getClient(), &msg);"
+      },
+      {
+        "line": 309,
+        "text": "\t\tret = spi_sync(getClient(), &msg);"
+      },
+      {
+        "line": 520,
+        "text": "\t\tret = spi_sync(getClient(), &msg);"
+      },
+      {
+        "line": 609,
+        "text": "\t\tret = spi_sync(getClient(), &msg);"
+      }
+    ]
+  }
+]
