@@ -321,3 +321,13 @@
 [Evidence] reports/kernel-ci/39736926012/diagnostics.txt原始行851223-851227只有native_legacy_display_probe未解析；baseline:319,600-614；next-compatibility-check.json为58项226 hunks通过，配方语法检查通过。
 [Risk] 完整make/链接仍失败，修复待第十轮，目标841个.o不含.cpo；driver/donor ABI、QEMU及实机未验证，feed/board不变，无镜像或设备操作。
 ```
+
+## Q-033 · 第十轮源构建启动
+
+```text
+[unixnu-nuwa][build] 发布display条件修复并启动第十轮完整源构建
+
+[Change] 记录526651a发布和第十轮精确58项输入，继续取完整make、链接与原始Mach-O证据。
+[Evidence] reports/kernel-ci/39738601892/run.json、api-publish.json；https://github.com/wh1stl3/UniXNU/actions/runs/39738601892；device_ref=526651af94610f40c3223eae9550deaa3c44ae57。
+[Risk] 最终构建结果未验证；源构建不是预链接、完整driver ABI或实机通过，feed/board不变，无镜像或设备动作。
+```

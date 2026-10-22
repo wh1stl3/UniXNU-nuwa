@@ -91,3 +91,7 @@ build.json记录51个真实生成实现、51份适配记录，总共1296次模�
 zzzz-display-probe-feature.patch仅给bsd_init.c的该运行时分支增加同样的XNU_NATIVE_LEGACY_DISPLAY构建条件。默认源CI不链接此archive，所以不引用其功能；开启并提供archive时保留原行为。不启用未知设备库、不新增stub/弱化导入或忽略链接错误。58项226 hunks及输入hash/bash配方静态检查通过，待第十轮。
 
 另外，入口在finally记录原始kernel文件是否存在及大小/hash，便于区分链接产物已产生但后续make检查失败的情况；kernel_built仍要求完整命令成功和普通ARM64 MH_EXECUTE检查通过，不因存在文件就置成功。
+
+## 第十轮启动（2026-10-22 15:11）
+
+526651af94610f40c3223eae9550deaa3c44ae57已发布，第十轮39738601892采用58项完整输入验证可选display引用条件修复；结果未验证。HackiOS参考核验单独提交7bc0b1a，未改变本轮工具链、供体或RPC实现。

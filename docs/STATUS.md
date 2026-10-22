@@ -1,10 +1,10 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 15:09（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-22 15:11（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
-第九轮[39736926012](https://github.com/wh1stl3/UniXNU/actions/runs/39736926012)已进入最终链接，失败只剩native_legacy_display_probe可选provider引用。已让该调用服从已有display构建开关，保留真实archive要求与完整链接检查；58项226 hunks静态检查通过，准备第十轮。完整内核尚未构建成功，见[取证分析](operations/2026-10-22-ci-fifth-failure.md)。
+第九轮[39736926012](https://github.com/wh1stl3/UniXNU/actions/runs/39736926012)已进入最终链接，失败只剩native_legacy_display_probe可选provider引用。已让该调用服从已有display构建开关，保留真实archive要求与完整链接检查；58项226 hunks静态检查通过，修复526651a已发布，[第十轮39738601892](https://github.com/wh1stl3/UniXNU/actions/runs/39738601892)已启动，最终结果待取证。完整内核尚未构建成功，见[取证分析](operations/2026-10-22-ci-fifth-failure.md)。
 
 ## 当前边界
 
@@ -25,7 +25,7 @@
 
 ## 下一步
 
-1. 发布display probe构建条件修复，启动第十轮；完成后取完整make/链接结果和原始Mach-O，按实际首错推进。
+1. 跟踪第十轮39738601892（device_ref=526651af94610f40c3223eae9550deaa3c44ae57）；完成后取完整make/链接结果和原始Mach-O，按实际首错推进。
 2. 成功后只读检查普通ARM64 MH_EXECUTE、版本/符号、NativePrelink两项标记，区分构建、静态接口与实机结论；ARM64页大小是运行时初始化，不从文件零值推断。
 3. 完成Darwin22 archive、boot-progress/watchdog、nuwa defconfig及donor kernelcache解析，接回正式-D入口；feed切换独立处理。
 4. 命中四类硬停先写NEED-REVIEW再停；只差实体按键的项写PENDING-HUMAN继续。

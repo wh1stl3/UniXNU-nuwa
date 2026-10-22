@@ -74,3 +74,5 @@
 - 2026-10-22 15:07 · 收录用户提供的HackiOS比较报告，读取固定提交原始实现核验真实源码、IIG替代、Linux类型内建降级、PMU不可用实现和返回加载器边界；未执行上游代码或改变主线 · 提交号：待定Q-031 · docs/inherited/hackios-route-comparison-2026-10-22.md，reports/hackios-review/
 
 - 2026-10-22 15:09 · 第九轮首次到达最终链接，唯一缺失native_legacy_display_probe；使调用匹配已有display构建开关，58项226 hunks及配方检查通过；保持完整链接错误检查，新增失败后原始kernel存在性/hash记录 · 提交号：Q-031已提交7bc0b1a待随本项发布；本项待定Q-032 · reports/kernel-ci/39736926012/
+
+- 2026-10-22 15:11 · Q-031/Q-032均已按相同对象发布（7bc0b1a/526651a），启动第十轮39738601892验证可选display引用修复，使用58项精确输入，真实结果待取证 · 提交号：526651a；本项待定Q-033 · reports/kernel-ci/39738601892/
