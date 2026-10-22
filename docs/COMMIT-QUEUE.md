@@ -411,3 +411,13 @@
 [Evidence] reports/kernel-ci/39744948467/：原始行852100起，11/9/1条旧初始化及override风格、5条missing-prototypes；prototype-check.json及4项命令保护测试通过；libsa路径修复已实际生效。
 [Risk] 新声明/诊断策略与60项下一输入尚待实际archive编译；不更改结构/初始化/硬件实现，完整ABI/预链接/实机未验证；feed/board不变，无镜像生成或_verified=true。
 ```
+
+## Q-042 · 第十三轮平台与donor接口验证启动
+
+```text
+[unixnu-nuwa][build] 发布平台声明修复并启动含VFS桥接的第十三轮
+
+[Change] 保存ff8abe1发布和第十三轮精确60项输入，分开跟踪源内核、平台archive和donor绑定证据。
+[Evidence] reports/kernel-ci/39747264803/run.json及api-publish.json；https://github.com/wh1stl3/UniXNU/actions/runs/39747264803，device_ref=ff8abe167a039560c816892b78b00660b5518888。
+[Risk] 当前启动不是archive或完整ABI验收，实际编译/链接及donor计划仍待取证；feed/board不变，无预链接/固件镜像生成或设备动作。
+```

@@ -49,3 +49,7 @@ ArmCpu实际26条错误均是诊断升级，分类见failure-categories.json：1
 五项missing-prototypes通过include/nuwa/ArmCpuExports.h补前置声明解决：gic_diag、sgi_selfprobe、ipi_selftest、spi_attach、spi_count。只在ArmCpu编译强制包含该声明头，记录hash；声明与固定上游实际定义逐项去空白一致，见prototype-check.json，没有新增实现、stub或修改硬件行为。4项命令保护测试通过，真实编译待下一轮。
 
 下一轮也含Q-040已审查的VFS真实函数，共60项231 hunks；第十二轮为59项，不能把静态候选当作本轮已编译。原始控制台81,798,190字节、852406行，SHAfe08444e15402d0c6829b58a14efdb424112d93189d1acb6b81eab2a0853f753，原件留out；有界证据见reports/kernel-ci/39744948467/。
+
+## 第十三轮启动（2026-10-22 16:24）
+
+ff8abe167a039560c816892b78b00660b5518888已发布，第十三轮39747264803已启动，含60项补丁及新的声明/可见风格警告策略。跟踪实际内核导出、三个archive及符号闭包；最终结果待取证。输入发布及运行元数据见reports/kernel-ci/39747264803/。

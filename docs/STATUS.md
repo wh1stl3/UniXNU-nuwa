@@ -1,6 +1,6 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 16:21（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-22 16:24（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
@@ -8,7 +8,7 @@
 
 ## 本轮推进
 
-[第十二轮39744948467](https://github.com/wh1stl3/UniXNU/actions/runs/39744948467)已完成：源内核再次成功、933份真实C/C++记录齐全，无效libsa路径修复已生效；平台首错为旧头文件三类风格诊断及ArmCpu五个缺失前置声明。已补五项与定义一致的声明，只把三类风格诊断保留为可见警告，其他-Werror保留；4项命令保护测试通过，待发布下一轮。平台archive尚未通过。见[本轮记录](operations/2026-10-22-darwin22-archive-build.md)。
+[第十二轮39744948467](https://github.com/wh1stl3/UniXNU/actions/runs/39744948467)已完成：源内核再次成功、933份真实C/C++记录齐全，无效libsa路径修复已生效；平台首错为旧头文件三类风格诊断及ArmCpu五个缺失前置声明。已补五项与定义一致的声明，只把三类风格诊断保留为可见警告，其他-Werror保留；4项命令保护测试通过，修复ff8abe1已发布，[第十三轮39747264803](https://github.com/wh1stl3/UniXNU/actions/runs/39747264803)已启动，含真实VFS桥接。平台archive尚未通过。见[本轮记录](operations/2026-10-22-darwin22-archive-build.md)。
 
 ## donor接口推进
 
@@ -32,7 +32,7 @@
 
 ## 下一步
 
-1. 发布第十二轮风格诊断/导出声明修复，与已准备的真实VFS桥接组成60项输入，实际编译平台archive后取证；仅三类风格诊断保留为可见警告，其他-Werror不变。不把符号名闭包扩大成完整ABI通过。
+1. 跟踪第十三轮39747264803（device_ref=ff8abe167a039560c816892b78b00660b5518888），收取平台archive真实结果并检查VFS导出/实际donor绑定；仅三类风格诊断保留为可见警告，其他-Werror不变。不把符号名闭包扩大成完整ABI通过。
 2. 收口boot-progress 13项回调、watchdog接口和scratch布局风险，再建立正式nuwa配置并接回-D入口；保持feed，未知板值TODO。
 3. 下一轮实际编译VFS桥接后，重跑既定iPhone donor的只读plan/绑定清点；继续审核布局/PC-relative及真实组件选择，不移用iPadOS17数值或生成镜像。任何board身份/内存/基址变更先硬停审查。
 4. 当前不安排这份源内核上机；达到可启动链路前置条件后，在NEED-REVIEW列出至少两条验证路径、代价和最小批准范围。只差实体按键的待办不阻塞软件侧工作。
