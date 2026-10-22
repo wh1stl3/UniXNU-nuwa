@@ -1,0 +1,447 @@
+{
+  "result": "downloaded EFI/FD/BootShim static inspection passed",
+  "inventory_files": 665,
+  "fd": {
+    "bytes": 3145728,
+    "sha256": "7f6f16c8c58c4695c1d883e1597e52379042175e4b668ad5e99e4e6a648707de"
+  },
+  "shim": {
+    "bytes": 112,
+    "image_size": 3145840,
+    "sha256": "9346a527441b242c69414fd7e3d6fa17813f281d562fef13d9ba8373d39007a9",
+    "payload_offset": 112,
+    "copy_count": 3145728
+  },
+  "volumes": [
+    {
+      "label": "FD/FVMAIN_COMPACT",
+      "bytes": 3145728,
+      "header_bytes": 72,
+      "sha256": "7f6f16c8c58c4695c1d883e1597e52379042175e4b668ad5e99e4e6a648707de"
+    },
+    {
+      "label": "FD/FVMAIN_COMPACT/9e21fd93-9c72-4c15-8c4b-e77f1db2d792/FV",
+      "bytes": 9932800,
+      "header_bytes": 72,
+      "sha256": "0fa351cb4f95087dc86c81f2048a794d7749a74c1a922b64bdf45be3a534d60e"
+    }
+  ],
+  "compression": [
+    {
+      "guid": "ee4e5898-3914-4259-9d6e-dc7bd79403cf",
+      "attributes": 1,
+      "encoded_bytes": 1700570,
+      "decoded_bytes": 9932808,
+      "decoded_sha256": "861884da0b03f7c71421ea878be80cf74ae3733d4d6cd19594867fd205794f98"
+    }
+  ],
+  "modules": [
+    {
+      "name": "UniXNU",
+      "guid": "9b665204-a133-47a2-9396-9e2b370a4e25",
+      "ffs": {
+        "guid": "9b665204-a133-47a2-9396-9e2b370a4e25",
+        "type": 9,
+        "bytes": 97840,
+        "volume": "FD/FVMAIN_COMPACT/9e21fd93-9c72-4c15-8c4b-e77f1db2d792/FV",
+        "offset": 7717288,
+        "sections": [
+          {
+            "type": "0x15",
+            "bytes": 18
+          },
+          {
+            "type": "0x10",
+            "bytes": 97796,
+            "pe": {
+              "machine": "0xaa64",
+              "subsystem": 10,
+              "entry_rva": "0x1050",
+              "image_size": 110592,
+              "sections": 5,
+              "bytes": 97792,
+              "sha256": "2b5ec9d5d1765d5f97f7f00fe353d42e8847fceae42afac81a59be5956ae30a2",
+              "loader_protocol_guid_present": true,
+              "entry_hob_guid_present": false,
+              "application_guid_present": false
+            },
+            "pcd_protocol_guid_present": false
+          }
+        ]
+      },
+      "standalone": [
+        {
+          "path": "build/AARCH64/UniXNU.efi",
+          "machine": "0xaa64",
+          "subsystem": 10,
+          "entry_rva": "0x1050",
+          "image_size": 110592,
+          "sections": 5,
+          "bytes": 97792,
+          "sha256": "2b5ec9d5d1765d5f97f7f00fe353d42e8847fceae42afac81a59be5956ae30a2",
+          "loader_protocol_guid_present": true,
+          "entry_hob_guid_present": false,
+          "application_guid_present": false
+        },
+        {
+          "path": "build/AARCH64/UniXNUPkg/Application/UniXNU/UniXNU/DEBUG/UniXNU.efi",
+          "machine": "0xaa64",
+          "subsystem": 10,
+          "entry_rva": "0x1050",
+          "image_size": 110592,
+          "sections": 5,
+          "bytes": 97792,
+          "sha256": "2b5ec9d5d1765d5f97f7f00fe353d42e8847fceae42afac81a59be5956ae30a2",
+          "loader_protocol_guid_present": true,
+          "entry_hob_guid_present": false,
+          "application_guid_present": false
+        },
+        {
+          "path": "build/AARCH64/UniXNUPkg/Application/UniXNU/UniXNU/OUTPUT/UniXNU.efi",
+          "machine": "0xaa64",
+          "subsystem": 10,
+          "entry_rva": "0x1050",
+          "image_size": 110592,
+          "sections": 5,
+          "bytes": 97792,
+          "sha256": "2b5ec9d5d1765d5f97f7f00fe353d42e8847fceae42afac81a59be5956ae30a2",
+          "loader_protocol_guid_present": true,
+          "entry_hob_guid_present": false,
+          "application_guid_present": false
+        }
+      ],
+      "embedded_matches_standalone": true
+    },
+    {
+      "name": "UniXNUDxe",
+      "guid": "29b950cf-586d-49ea-9d71-f88645ccdaf6",
+      "ffs": {
+        "guid": "29b950cf-586d-49ea-9d71-f88645ccdaf6",
+        "type": 7,
+        "bytes": 22128,
+        "volume": "FD/FVMAIN_COMPACT/9e21fd93-9c72-4c15-8c4b-e77f1db2d792/FV",
+        "offset": 7815128,
+        "sections": [
+          {
+            "type": "0x13",
+            "bytes": 58,
+            "depex": [
+              {
+                "op": "PUSH",
+                "guid": "1e5668e2-8481-11d4-bcf1-0080c73c8881"
+              },
+              {
+                "op": "PUSH",
+                "guid": "6441f818-6362-4e44-b570-7dba31dd2453"
+              },
+              {
+                "op": "PUSH",
+                "guid": "13a3f0f6-264a-3ef0-f2e0-dec512342f34"
+              },
+              {
+                "op": "AND"
+              },
+              {
+                "op": "AND"
+              },
+              {
+                "op": "END"
+              }
+            ]
+          },
+          {
+            "type": "0x10",
+            "bytes": 22020,
+            "pe": {
+              "machine": "0xaa64",
+              "subsystem": 11,
+              "entry_rva": "0x1050",
+              "image_size": 36864,
+              "sections": 4,
+              "bytes": 22016,
+              "sha256": "f0eee6690dc87e686bea005ab0d98f1c40b21b263c0c4172088bd703cc5d9114",
+              "loader_protocol_guid_present": false,
+              "entry_hob_guid_present": false,
+              "application_guid_present": true
+            },
+            "pcd_protocol_guid_present": false
+          },
+          {
+            "type": "0x15",
+            "bytes": 24
+          }
+        ]
+      },
+      "standalone": [
+        {
+          "path": "build/AARCH64/UniXNUDxe.efi",
+          "machine": "0xaa64",
+          "subsystem": 11,
+          "entry_rva": "0x1050",
+          "image_size": 36864,
+          "sections": 4,
+          "bytes": 22016,
+          "sha256": "f0eee6690dc87e686bea005ab0d98f1c40b21b263c0c4172088bd703cc5d9114",
+          "loader_protocol_guid_present": false,
+          "entry_hob_guid_present": false,
+          "application_guid_present": true
+        },
+        {
+          "path": "build/AARCH64/UniXNUPkg/Driver/UniXNUDxe/UniXNUDxe/DEBUG/UniXNUDxe.efi",
+          "machine": "0xaa64",
+          "subsystem": 11,
+          "entry_rva": "0x1050",
+          "image_size": 36864,
+          "sections": 4,
+          "bytes": 22016,
+          "sha256": "f0eee6690dc87e686bea005ab0d98f1c40b21b263c0c4172088bd703cc5d9114",
+          "loader_protocol_guid_present": false,
+          "entry_hob_guid_present": false,
+          "application_guid_present": true
+        },
+        {
+          "path": "build/AARCH64/UniXNUPkg/Driver/UniXNUDxe/UniXNUDxe/OUTPUT/UniXNUDxe.efi",
+          "machine": "0xaa64",
+          "subsystem": 11,
+          "entry_rva": "0x1050",
+          "image_size": 36864,
+          "sections": 4,
+          "bytes": 22016,
+          "sha256": "f0eee6690dc87e686bea005ab0d98f1c40b21b263c0c4172088bd703cc5d9114",
+          "loader_protocol_guid_present": false,
+          "entry_hob_guid_present": false,
+          "application_guid_present": true
+        }
+      ],
+      "embedded_matches_standalone": true
+    },
+    {
+      "name": "DarwinBoot",
+      "guid": "1b64af87-8415-4b57-9b16-680d70913b9f",
+      "ffs": {
+        "guid": "1b64af87-8415-4b57-9b16-680d70913b9f",
+        "type": 7,
+        "bytes": 31286,
+        "volume": "FD/FVMAIN_COMPACT/9e21fd93-9c72-4c15-8c4b-e77f1db2d792/FV",
+        "offset": 7837256,
+        "sections": [
+          {
+            "type": "0x10",
+            "bytes": 31236,
+            "pe": {
+              "machine": "0xaa64",
+              "subsystem": 11,
+              "entry_rva": "0x1050",
+              "image_size": 45056,
+              "sections": 5,
+              "bytes": 31232,
+              "sha256": "5fcc7cb2b1c9455b5a88a6acf21972bf65350bca09b59624681ab8a0fae3fcac",
+              "loader_protocol_guid_present": true,
+              "entry_hob_guid_present": false,
+              "application_guid_present": false
+            },
+            "pcd_protocol_guid_present": false
+          },
+          {
+            "type": "0x15",
+            "bytes": 26
+          }
+        ]
+      },
+      "standalone": [
+        {
+          "path": "build/AARCH64/DarwinBoot.efi",
+          "machine": "0xaa64",
+          "subsystem": 11,
+          "entry_rva": "0x1050",
+          "image_size": 45056,
+          "sections": 5,
+          "bytes": 31232,
+          "sha256": "5fcc7cb2b1c9455b5a88a6acf21972bf65350bca09b59624681ab8a0fae3fcac",
+          "loader_protocol_guid_present": true,
+          "entry_hob_guid_present": false,
+          "application_guid_present": false
+        },
+        {
+          "path": "build/AARCH64/DarwinBootPkg/Driver/DarwinBoot/DEBUG/DarwinBoot.efi",
+          "machine": "0xaa64",
+          "subsystem": 11,
+          "entry_rva": "0x1050",
+          "image_size": 45056,
+          "sections": 5,
+          "bytes": 31232,
+          "sha256": "5fcc7cb2b1c9455b5a88a6acf21972bf65350bca09b59624681ab8a0fae3fcac",
+          "loader_protocol_guid_present": true,
+          "entry_hob_guid_present": false,
+          "application_guid_present": false
+        },
+        {
+          "path": "build/AARCH64/DarwinBootPkg/Driver/DarwinBoot/OUTPUT/DarwinBoot.efi",
+          "machine": "0xaa64",
+          "subsystem": 11,
+          "entry_rva": "0x1050",
+          "image_size": 45056,
+          "sections": 5,
+          "bytes": 31232,
+          "sha256": "5fcc7cb2b1c9455b5a88a6acf21972bf65350bca09b59624681ab8a0fae3fcac",
+          "loader_protocol_guid_present": true,
+          "entry_hob_guid_present": false,
+          "application_guid_present": false
+        }
+      ],
+      "embedded_matches_standalone": true
+    },
+    {
+      "name": "NuwaBootMemoryDxe",
+      "guid": "5c0e4b7a-31d2-4e8f-9a66-0b1f7d2c8e43",
+      "ffs": {
+        "guid": "5c0e4b7a-31d2-4e8f-9a66-0b1f7d2c8e43",
+        "type": 7,
+        "bytes": 23132,
+        "volume": "FD/FVMAIN_COMPACT/9e21fd93-9c72-4c15-8c4b-e77f1db2d792/FV",
+        "offset": 7868544,
+        "sections": [
+          {
+            "type": "0x13",
+            "bytes": 22,
+            "depex": [
+              {
+                "op": "PUSH",
+                "guid": "13a3f0f6-264a-3ef0-f2e0-dec512342f34"
+              },
+              {
+                "op": "END"
+              }
+            ]
+          },
+          {
+            "type": "0x10",
+            "bytes": 23044,
+            "pe": {
+              "machine": "0xaa64",
+              "subsystem": 11,
+              "entry_rva": "0x1050",
+              "image_size": 40960,
+              "sections": 5,
+              "bytes": 23040,
+              "sha256": "a4249f5406147e6037051c1f9932f88370488bbea2c96e59e2171d2c0e00f6d1",
+              "loader_protocol_guid_present": false,
+              "entry_hob_guid_present": true,
+              "application_guid_present": false
+            },
+            "pcd_protocol_guid_present": false
+          },
+          {
+            "type": "0x15",
+            "bytes": 40
+          }
+        ]
+      },
+      "standalone": [
+        {
+          "path": "build/AARCH64/NuwaBootMemoryDxe.efi",
+          "machine": "0xaa64",
+          "subsystem": 11,
+          "entry_rva": "0x1050",
+          "image_size": 40960,
+          "sections": 5,
+          "bytes": 23040,
+          "sha256": "a4249f5406147e6037051c1f9932f88370488bbea2c96e59e2171d2c0e00f6d1",
+          "loader_protocol_guid_present": false,
+          "entry_hob_guid_present": true,
+          "application_guid_present": false
+        },
+        {
+          "path": "build/AARCH64/nuwaPkg/Drivers/NuwaBootMemoryDxe/NuwaBootMemoryDxe/DEBUG/NuwaBootMemoryDxe.efi",
+          "machine": "0xaa64",
+          "subsystem": 11,
+          "entry_rva": "0x1050",
+          "image_size": 40960,
+          "sections": 5,
+          "bytes": 23040,
+          "sha256": "a4249f5406147e6037051c1f9932f88370488bbea2c96e59e2171d2c0e00f6d1",
+          "loader_protocol_guid_present": false,
+          "entry_hob_guid_present": true,
+          "application_guid_present": false
+        },
+        {
+          "path": "build/AARCH64/nuwaPkg/Drivers/NuwaBootMemoryDxe/NuwaBootMemoryDxe/OUTPUT/NuwaBootMemoryDxe.efi",
+          "machine": "0xaa64",
+          "subsystem": 11,
+          "entry_rva": "0x1050",
+          "image_size": 40960,
+          "sections": 5,
+          "bytes": 23040,
+          "sha256": "a4249f5406147e6037051c1f9932f88370488bbea2c96e59e2171d2c0e00f6d1",
+          "loader_protocol_guid_present": false,
+          "entry_hob_guid_present": true,
+          "application_guid_present": false
+        }
+      ],
+      "embedded_matches_standalone": true
+    }
+  ],
+  "pcd_provider": {
+    "guid": "80cf7257-87ab-47f9-a3fe-d50b76d89541",
+    "type": 7,
+    "bytes": 36634,
+    "volume": "FD/FVMAIN_COMPACT/9e21fd93-9c72-4c15-8c4b-e77f1db2d792/FV",
+    "offset": 168952,
+    "sections": [
+      {
+        "type": "0x19",
+        "bytes": 212
+      },
+      {
+        "type": "0x13",
+        "bytes": 22
+      },
+      {
+        "type": "0x10",
+        "bytes": 36356,
+        "pe": {
+          "machine": "0xaa64",
+          "subsystem": 11,
+          "entry_rva": "0x1050",
+          "image_size": 49152,
+          "sections": 5,
+          "bytes": 36352,
+          "sha256": "f751c0db25502ee67d059c18144a65a2fb83cc68fb343439c6f94184442806e2",
+          "loader_protocol_guid_present": false,
+          "entry_hob_guid_present": false,
+          "application_guid_present": false
+        },
+        "pcd_protocol_guid_present": true
+      },
+      {
+        "type": "0x15",
+        "bytes": 18
+      }
+    ]
+  },
+  "sec_entry_hob_producer": {
+    "bytes": 65192,
+    "sha256": "39cf87d36106d600eff0a14d447bd9e243ff13e56f55652caa89e8b7af2765a5",
+    "entry_hob_guid_present": true,
+    "trace_markers": {
+      "[NUWA-ENTRY]": false,
+      "C-before-platform": false,
+      "C-after-platform": false,
+      "before-memory": false,
+      "before-platform-hobs": false,
+      "before-fv-decompress": false,
+      "before-dxe-core": false,
+      "memory status=%r": false,
+      "platform-hobs status=%r": false,
+      "fv-decompress status=%r": false,
+      "dxe-core returned=%r": false
+    }
+  },
+  "device_executed": false,
+  "unverified": [
+    "DXE dispatch and protocol installation",
+    "initrd mapping/reservation and FAT mount",
+    "UEFI memory map and XNU window",
+    "XNU and iOS execution"
+  ]
+}

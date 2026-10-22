@@ -1,4 +1,4 @@
-"""R-004 A: build EFI/FD/BootShim in fresh Actions temp trees, never boot images."""
+"""Approved R-004/R-007 EFI/FD/BootShim builds; never create Android boot images."""
 import argparse
 import hashlib
 import json
@@ -26,7 +26,7 @@ def save(name, obj):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--profile', choices=('legacy', 'dedicated'), default='legacy')
+    parser.add_argument('--profile', choices=('legacy', 'dedicated', 'sec-trace'), default='legacy')
     args = parser.parse_args()
     if os.environ.get("GITHUB_ACTIONS") != "true":
         raise RuntimeError("Only the approved disposable Actions build environment is supported")
@@ -36,8 +36,9 @@ def main():
         raise RuntimeError("Fresh source/build tree required; refusing to overwrite")
     work.mkdir()
     OUT.mkdir(parents=True, exist_ok=False)
-    if args.profile == 'dedicated':
-        profile = json.loads((ROOT / 'config/firmware-dedicated-profile.json').read_text())
+    if args.profile in ('dedicated', 'sec-trace'):
+        filename = 'firmware-sec-trace-profile.json' if args.profile == 'sec-trace' else 'firmware-dedicated-profile.json'
+        profile = json.loads((ROOT / 'config' / filename).read_text())
         recipe, candidate = profile['recipe'], profile['candidate']
     else:
         recipe = json.loads((ROOT / "config/firmware-ci-inputs.json").read_text())
@@ -133,7 +134,7 @@ def main():
                    FD_BLOCKS=hex(fd_size // 4096), DEVICE_MODEL="nuwa", CLANGPDB_AARCH64_PREFIX="aarch64-linux-gnu-")
         env["SOURCE_DATE_EPOCH"] = subprocess.check_output(["git", "log", "-1", "--format=%ct"], cwd=fw, text=True).strip()
         save("build-settings.json", dict(fd_base=hex(fd_base), fd_size=fd_size, target="DEBUG", toolchain="CLANGPDB",
-                                         source_date_epoch=env["SOURCE_DATE_EPOCH"], approval="R-004 A",
+                                         source_date_epoch=env["SOURCE_DATE_EPOCH"], approval=recipe['approval'],
                                          source_config_sha256=digest(fw / "Resources/Configs/nuwa.toml")))
         # Assemble shim before the full firmware, so its proof survives a later compiler failure.
         shimdir = OUT / "shim"

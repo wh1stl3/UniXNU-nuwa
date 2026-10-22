@@ -2,6 +2,7 @@
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 from virtual_patch import Tree, parse
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -14,7 +15,8 @@ def main():
     profile = json.loads((ROOT / 'config/firmware-dedicated-profile.json').read_text())
     entry = next(item for item in profile['recipe']['inputs']
                  if item['root'] == 'firmware' and item['path'] == RELATIVE)
-    original = (FIRMWARE / RELATIVE).read_text(encoding='utf-8')
+    original = subprocess.check_output(['C:/Program Files/Git/cmd/git.exe', '-C', str(FIRMWARE),
+        'show', '0a3a51af229eabe76bcc9dcb90d3ce985223b125:' + RELATIVE]).decode().replace('\r\n', '\n')
     source_hash = hashlib.sha256(original.encode()).hexdigest()
     if source_hash != entry['lf_sha256']:
         raise ValueError('SEC source differs from the built dedicated profile')
@@ -22,6 +24,7 @@ def main():
     if [path for path, _, _ in parse(patch)] != [RELATIVE]:
         raise ValueError('Trace candidate must modify SEC.c only')
     tree = Tree(FIRMWARE)
+    tree.files[RELATIVE] = original
     tree.apply(patch)
     source = tree.read(RELATIVE)
     stages = ('C-before-platform', 'C-after-platform', 'before-memory',
@@ -51,7 +54,8 @@ def main():
                               'Does not instrument ABL/BootShim/earliest SEC assembly',
                               'Absent text cannot prove no SEC execution',
                               'DEBUG formatting/cache flush can perturb timing']}
-    destination = ROOT / 'reports/firmware-ci/39805110487/sec-trace-preview.json'
+    destination = ROOT / 'reports/sec-trace/source-patch-check.json'
+    destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
     print(json.dumps(report, indent=2))
 

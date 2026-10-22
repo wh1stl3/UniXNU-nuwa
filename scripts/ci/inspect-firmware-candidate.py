@@ -19,6 +19,10 @@ VARIABLE_GUIDS = {"6441f818-6362-4e44-b570-7dba31dd2453", "1e5668e2-8481-11d4-bc
 LOADER_GUID = "0f0a492e-5a6a-49f6-a1bf-743c87ab1cfe"
 ENTRY_HOB_GUID = "daee82e6-8090-4e72-bfb9-78c13cd4e359"
 SEC_GUID = "9affb503-e643-4141-8b90-17e8588b1d35"
+SEC_TRACE_MARKERS = ('[NUWA-ENTRY]', 'C-before-platform', 'C-after-platform', 'before-memory',
+                     'before-platform-hobs', 'before-fv-decompress', 'before-dxe-core',
+                     'memory status=%r', 'platform-hobs status=%r', 'fv-decompress status=%r',
+                     'dxe-core returned=%r')
 PCD_GUID = "13a3f0f6-264a-3ef0-f2e0-dec512342f34"
 PCD_DRIVER_GUID = "80cf7257-87ab-47f9-a3fe-d50b76d89541"
 
@@ -154,7 +158,8 @@ class Firmware:
                 need(len(body) >= 40 and body[:2] == b"VZ" and struct.unpack_from("<H", body, 2)[0] == 0xaa64,
                      "Invalid SEC AARCH64 TE header")
                 detail["sec_te"] = dict(bytes=len(body), sha256=sha(body),
-                                         entry_hob_guid_present=uuid.UUID(ENTRY_HOB_GUID).bytes_le in body)
+                                         entry_hob_guid_present=uuid.UUID(ENTRY_HOB_GUID).bytes_le in body,
+                                         trace_markers={marker: marker.encode() in body for marker in SEC_TRACE_MARKERS})
             elif kind == 0x13 and owner["guid"] in MODULES:
                 detail["depex"] = depex(body)
             elif kind == 0x17:
@@ -182,7 +187,7 @@ class Firmware:
             at = align(at + size, 4)
 
 
-def inspect(artifact, publisher_name='ShengBootMemoryDxe'):
+def inspect(artifact, publisher_name='ShengBootMemoryDxe', require_sec_trace=False):
     artifact = artifact.resolve()
     inventory = json.loads((artifact / "inventory.json").read_text())
     for item in inventory:
@@ -216,7 +221,7 @@ def inspect(artifact, publisher_name='ShengBootMemoryDxe'):
             # contributes gEfiPcdProtocolGuid (BUILD_REPORT.txt, CI 39764322744).
             need(len(deps) == 1 and [x["op"] for x in deps[0]] == ["PUSH", "PUSH", "PUSH", "AND", "AND", "END"]
                  and {x["guid"] for x in deps[0] if "guid" in x} == VARIABLE_GUIDS | {PCD_GUID}, "Registrar DEPEX mismatch")
-        if name == "ShengBootMemoryDxe":
+        if name == publisher_name:
             need(deps == [[dict(op="PUSH", guid=PCD_GUID), dict(op="END")]], "Initrd publisher DEPEX mismatch")
             need(images[0]["entry_hob_guid_present"], "Publisher HOB GUID absent from image")
         outputs = []
@@ -225,6 +230,7 @@ def inspect(artifact, publisher_name='ShengBootMemoryDxe'):
             need(parsed["subsystem"] == subsystem, name + " standalone EFI subsystem mismatch")
             outputs.append(dict(path=path.relative_to(artifact).as_posix(), **parsed))
         need(bool(outputs), name + " standalone EFI missing")
+        need(any(o['sha256'] == images[0]['sha256'] for o in outputs), name + ' embedded/standalone mismatch')
         modules.append(dict(name=name, guid=guid, ffs=item, standalone=outputs,
                             embedded_matches_standalone=any(o["sha256"] == images[0]["sha256"] for o in outputs)))
     app = next(m for m in modules if m["name"] == "UniXNU")
@@ -237,6 +243,8 @@ def inspect(artifact, publisher_name='ShengBootMemoryDxe'):
     need(len(sec) == 1 and sec[0]["type"] == 3, "SEC FFS absent or duplicated")
     sec_te = [s["sec_te"] for s in sec[0]["sections"] if "sec_te" in s]
     need(len(sec_te) == 1 and sec_te[0]["entry_hob_guid_present"], "SEC producer HOB GUID absent from image")
+    if require_sec_trace:
+        need(all(sec_te[0]['trace_markers'].values()), 'SEC diagnostic stage markers absent from actual TE')
     shim = (artifact / "shim/shim.bin").read_bytes()
     recorded = json.loads((artifact / "shim.json").read_text())
     need(sha(shim) == recorded["sha256"] and shim[56:60] == b"ARM\x64", "Shim hash/magic mismatch")
@@ -260,10 +268,11 @@ def main():
     parser.add_argument("artifact", type=Path)
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument('--publisher-name', choices=('ShengBootMemoryDxe', 'NuwaBootMemoryDxe'), default='ShengBootMemoryDxe')
+    parser.add_argument('--require-sec-trace', action='store_true')
     args = parser.parse_args()
     output = args.output.resolve()
     need(output.is_relative_to(ROOT) and output.suffix == ".json", "Evidence output must be repo-local JSON")
-    report = inspect(args.artifact, args.publisher_name)
+    report = inspect(args.artifact, args.publisher_name, args.require_sec_trace)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(dict(result=report["result"], fd=report["fd"], shim=report["shim"], modules=[m["name"] for m in report["modules"]])))

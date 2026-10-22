@@ -1,0 +1,24 @@
+{
+  "scope": "Source patch preview only; no diagnostic/firmware image generated",
+  "firmware_commit": "0a3a51af229eabe76bcc9dcb90d3ce985223b125",
+  "path": "Silicon/Silicium/SiliciumPkg/Sec/Sec.c",
+  "source_lf_sha256": "fd28b90308cbda4d96222ca405871f8182654e6a5ca57735fdf8db193ac81163",
+  "patched_lf_sha256": "6af8dd4d45476fb3b0a387b8d85913765c6d6b1bcdab99f3c6275cc9a5b1efaa",
+  "patch_sha256": "ae5d5e16254da93dac42665bfedeef77cf1ed737df0332fe84f1b2dfce57303f",
+  "checks": {
+    "one_file_only": true,
+    "all_original_stage_calls_retained_once": true,
+    "all_six_trace_markers_present_once": true,
+    "trace_precedes_platform": true,
+    "framebuffer_clear_removed": true,
+    "no_address_constants_added": true,
+    "no_new_library_headers": true
+  },
+  "compile_status": "unverified; requires approved diagnostic build",
+  "limitations": [
+    "Framebuffer only; no USB/UART or persistent logs",
+    "Does not instrument ABL/BootShim/earliest SEC assembly",
+    "Absent text cannot prove no SEC execution",
+    "DEBUG formatting/cache flush can perturb timing"
+  ]
+}

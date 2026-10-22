@@ -2,6 +2,14 @@ name: nuwa EFI FD BootShim candidate
 
 on:
   workflow_dispatch:
+    inputs:
+      profile:
+        description: Approved firmware build profile
+        type: choice
+        default: dedicated
+        options:
+          - dedicated
+          - sec-trace
 
 permissions:
   contents: read
@@ -13,6 +21,7 @@ jobs:
     env:
       GIT_LFS_SKIP_SMUDGE: '1'
       PYTHONUNBUFFERED: '1'
+      FW_PROFILE: ${{ inputs.profile || 'dedicated' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -37,7 +46,7 @@ jobs:
           python3 -m venv "$RUNNER_TEMP/firmware-venv"
           echo "$RUNNER_TEMP/firmware-venv/bin" >> "$GITHUB_PATH"
       - name: Build approved candidate only
-        run: python3 scripts/ci/build-firmware-candidate.py --profile dedicated
+        run: python3 scripts/ci/build-firmware-candidate.py --profile "$FW_PROFILE"
       - name: Preserve evidence and approved artifacts
         if: always()
         uses: actions/upload-artifact@v4

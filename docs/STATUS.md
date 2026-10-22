@@ -1,10 +1,10 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 23:47（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-22 23:56（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
-**合并版8796内核、独立uefi-nuwa的四EFI/FD/BootShim均已真实编出并独立静态核验。尚未进入XNU；停在新SEC诊断镜像范围R-007待批准。**
+**合并版8796内核、独立uefi-nuwa的四EFI/FD/BootShim均已真实编出并独立静态核验。尚未进入XNU；R-007 A已明确批准，诊断固件正在接入CI，随后检查、临时试启动并恢复Android。**
 
 | 输入 | 实际状态 |
 | --- | --- |
@@ -35,8 +35,8 @@ SEC现有日志仅帧缓冲，第一条正常文字前有SMMU调整与45MiB清�
 
 ## 下一步
 
-1. R-007 A待批准：单文件SEC阶段WARN补丁已准备、RAM应用与git apply --check通过，未接活动profile；拟保持原初始化调用并移除全屏清零，先定位平台/内存/FV/DXE边界。详见NEED-REVIEW，两候选及代价已列明。新诊断镜像生成是本轮硬停点。
-2. 获批后固定诊断输入/源哈希，编译四EFI/FD/BootShim并独立检查；再准备受限v4 raw shim+FD临时容器，不混旧r6 FAT/旧内核/6GiB ADT，不自动改v1或添加XNU。具体SHA由实际产物取得。
+1. R-007 A已批准：SEC诊断源码固定在uefi-nuwa/codex/nuwa-sec-trace@5e4a8c8，只改SEC.c；31项profile输入检查通过。调度firmware-candidate的sec-trace profile，读取实际首错与结果。
+2. 诊断输入/源哈希已固定；编译四EFI/FD/BootShim并独立检查，包括实际SEC TE中的六阶段标记；再准备受限v4 raw shim+FD临时容器，不混旧r6 FAT/旧内核/6GiB ADT，不自动改v1或添加XNU。具体SHA由实际产物取得。
 3. 临时实机验证沿既有可恢复授权；先核对身份/原厂恢复源，观察阶段文字，结束恢复Android=1。若无文字仍不能断言未进SEC；继续ABL交接/独立日志方案，不靠更多DEBUG宣称USB日志已建立。
 4. 后续再完成目标ADT、内存窗口、真实provider/定时器运行配置及预链接/载荷集成。未知字段保持TODO；QEMU/静态结果不替代实机。
 
@@ -45,3 +45,5 @@ SEC现有日志仅帧缓冲，第一条正常文字前有SMMU调整与45MiB清�
 board/feed/内存图及所有_verified不变；4KiB、iPhone10,3/d22ap/iOS16.7.16/20H392、8796.141.3；ipad_identity=true仅安全属性。D-002先512MiB–1GiB过阶段5、硬上限8GiB。未知板值不编造，不复用其他donor的slide/early_security_init/roots。两旧仓只读；独立固件本地目录用户已授权。Git/GitHub/workflow持续授权，无需重复询问。
 
 官方72中文页/144路由复核与早期日志选项见对应operations；iOS用户态、完整本地内核构建及新固件实机运行未验证。
+
+R-007执行记录：[诊断构建与试启动](operations/2026-10-22-sec-stage-diagnostic-trial.md)。固件稳定分支0a3a51a保持；本地当前切到诊断分支5e4a8c8，完整树与单文件差异已核对。新profile保留稳定版所有来源/板值/feed/模块/ABI patch，仅变固件提交与SEC输入hash。修正产物验收器在发布器改名后漏走HOB/DEPEX检查的分支，并对稳定版补做通过的检查；不改历史报告。

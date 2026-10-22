@@ -750,3 +750,23 @@
 [Evidence] FD3MiB/SHA7f6f16c8与112B shim9346a527静态检查通过；Darwin22完整EFI编译链接成功，诊断patch严格RAM应用和git apply --check通过。
 [Risk] 新FD无XNU且未实机执行；诊断patch未编译或应用，帧缓冲可见性/独立日志/入口条件仍未验证，board/feed及内存图不变。
 ```
+
+## UEFI-002 · R-007诊断源码已发布5e4a8c8
+
+```text
+[unixnu-nuwa][firmware] Add approved SEC stage tracing for the nuwa entry trial
+
+[Change] Add WARN stage/x0 markers around platform, memory, HOB, FV and DXE handoff; preserve splash contents.
+[Evidence] R-007 A approved; exact source/patch hashes and git apply check recorded in the device repository.
+[Risk] Diagnostic framebuffer output only; no ABL/BootShim visibility, USB logging or hardware pass claimed.
+```
+
+## Q-073 · R-007诊断构建接入
+
+```text
+[unixnu-nuwa][firmware] 固定获批SEC阶段诊断源码并接入专用CI输入
+
+[Change] 发布独立固件诊断分支5e4a8c8，新增sec-trace profile与工作流选项；强化实际SEC标记、发布器HOB/DEPEX及嵌入PE一致性检查。
+[Evidence] 固件完整tree/commit身份与单文件差异匹配，31项输入通过；稳定产物665项补查通过，R-007 A明确批准构建/临时容器/试启动和Android恢复。
+[Risk] 诊断固件尚待编译，阶段文字仍依赖显示路径；未操作设备，board/feed/内存图与稳定固件分支保持。
+```
