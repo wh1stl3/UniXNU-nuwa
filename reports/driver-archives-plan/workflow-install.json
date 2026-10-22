@@ -1,0 +1,10 @@
+{
+  "repository": "wh1stl3/UniXNU",
+  "commit": "02daabcbcf1387fc67c15efeaef8085614dd97f2",
+  "path": ".github/workflows/nuwa-8796-source.yml",
+  "old_sha256": "2fbf66d780c88c52edc1500c84addc7b985bbfe81ac8359133ae68ebd62205c9",
+  "new_sha256": "837f57e5ed25f1d930b958c6bda8c9e1a2218e61828c206231140f91f1ec1adf",
+  "identical_to_device_template": true,
+  "diff": "--- \n+++ \n@@ -84,5 +84,6 @@\n             ${{ runner.temp }}/nuwa-host/**\n             ${{ runner.temp }}/nuwa-8796-source/reports/**\n             ${{ runner.temp }}/nuwa-8796-source/build/xnu/ios-obj/**/mach.development.bcm2837*\n+            ${{ runner.temp }}/nuwa-8796-source/build/driver-archives/**\n           if-no-files-found: error\n           retention-days: 7\n",
+  "device_verified": false
+}

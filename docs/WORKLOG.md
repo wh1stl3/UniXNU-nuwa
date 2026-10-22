@@ -80,3 +80,5 @@
 - 2026-10-22 15:28 · 第十轮完整源码编译/链接成功，下载20,136,488字节Mach-O与runner哈希一致；8796.141.3/Darwin22.6.0、未解析符号0和两项NativePrelink标记1静态检查通过；未预链接/QEMU/实机，当前不安排上机，下一步收口Darwin22设备接口 · 提交号：Q-033已发布4bcb017；本项待定Q-034 · reports/kernel-ci/39738601892/，docs/operations/2026-10-22-ci-source-kernel-success.md
 
 - 2026-10-22 15:40 · 补真实编译时逐对象记录生产者，建立同轮Darwin22三项平台archive编译/格式/符号审查；59项228 hunks及3项参数保护测试通过，实际archive待CI · 提交号：Q-034已发布a8665e8；本项待定Q-035 · reports/driver-archives-plan/，docs/operations/2026-10-22-darwin22-archive-build.md
+
+- 2026-10-22 15:43 · Q-035已发布ccaad74，逐字核验后更新base fork workflow，仅增加archive收集路径，启动第十一轮39742250205验证真实记录与三项平台库，最终结果待取证 · 提交号：ccaad74；本项待定Q-036 · reports/kernel-ci/39742250205/，reports/driver-archives-plan/workflow-install.json

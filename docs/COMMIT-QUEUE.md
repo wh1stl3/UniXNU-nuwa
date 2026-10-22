@@ -351,3 +351,13 @@
 [Evidence] reports/driver-archives-plan/：59项228 hunks精确顺序、输入hash及配方语法检查通过；3项参数保护测试通过；固定基座三来源文件hash和原消费路径；D-012及本轮操作文档。
 [Risk] 实际fragment、archive编译及符号闭包待CI，完整C++/donor ABI和硬件未验证；不接入board或重新链接带库内核，feed/板值不变，无诊断/固件镜像、设备动作或_verified=true。
 ```
+
+## Q-036 · 第十一轮Darwin22平台archive构建启动
+
+```text
+[unixnu-nuwa][build] 发布真实编译记录候选并启动平台archive验证
+
+[Change] 保存设备ccaad74发布、workflow唯一收集路径变更及第十一轮精确输入，继续跟踪实际记录与库构建结果。
+[Evidence] reports/driver-archives-plan/workflow-install.json：base fork提交02daabcb、前后模板逐字核验；reports/kernel-ci/39742250205/；https://github.com/wh1stl3/UniXNU/actions/runs/39742250205，device_ref=ccaad74d8862a060efbed259a1335f4a79258f04。
+[Risk] 本轮尚运行，fragment和archive未验证；第十轮源内核成功不等于完整设备ABI/实机；feed/board不变，无诊断/固件镜像、设备动作或_verified=true。
+```

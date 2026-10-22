@@ -19,3 +19,7 @@ workflow仅新增archive产物收集路径，保持固定基座、工具链和�
 ## 后续接口门
 
 boot-progress的13项真实实现及uefi framebuffer依赖尚未移植，watchdog非union scratch覆盖风险仍未解决。本轮不启用这两项，也不搬入参考板地址。archive成功后再审阅它们；既定iPhone donor解析与正式-D入口另有剩余工作。
+
+## 第十一轮启动
+
+ccaad74d8862a060efbed259a1335f4a79258f04已发布，运行39742250205已启动；base fork workflow安装提交02daabcbcf1387fc67c15efeaef8085614dd97f2，安装前逐字比较旧模板、安装后逐字比较新模板，只增加一条archive产物路径。安装证据reports/driver-archives-plan/workflow-install.json；启动/相同Git对象发布证据reports/kernel-ci/39742250205/。最终记录和库结果待取证。
