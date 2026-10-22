@@ -31,6 +31,22 @@ def replace_exact(text, before, after, count):
     return text.replace(before, after)
 
 
+def capture_kernel_make(script):
+    """Record the expanded argv while executing the exact same real make."""
+    start = script.index('\nmake -C .cache/xnu-work "${XNU_BUILD_TARGET:-build}"') + 1
+    end_marker = 'DSTROOT="$ROOT/build/xnu/ios-dst"'
+    end = script.index(end_marker, start) + len(end_marker)
+    command = script[start:end]
+    if command.count('\nmake ') or script.count(end_marker) != 1:
+        raise ValueError('Ambiguous final kernel make command')
+    captured = 'NUWA_KERNEL_MAKE=(' + command + ')\n'
+    captured += ('python3 -c \'import json,sys; from pathlib import Path; '
+                 'Path(sys.argv[1]).write_text(json.dumps(sys.argv[2:], indent=2)+"\\n")\' '
+                 '"$ROOT/reports/kernel-make-command.json" "${NUWA_KERNEL_MAKE[@]}"\n')
+    captured += '"${NUWA_KERNEL_MAKE[@]}"'
+    return script[:start] + captured + script[end:]
+
+
 def inputs(base):
     evidence = json.loads((DEVICE / 'reports/xnu-8796-sequence/results.json').read_text(encoding='utf-8'))
     if evidence['base_head'] != BASE_COMMIT or evidence['source_head'] != XNU_COMMIT:
@@ -58,6 +74,7 @@ def inputs(base):
     script = replace_exact(script, '.unstripped.noctf', '.unstripped', 3)
     script = replace_exact(script, '-miphoneos-version-min=17.0', '-miphoneos-version-min=16.0', 1)
     script = replace_exact(script, '-Wl,-ios_version_min,17.0', '-Wl,-ios_version_min,16.0', 1)
+    script = capture_kernel_make(script)
     firehose_script = replace_exact(firehose.read_text(encoding='utf-8'),
                                    'IPHONEOS_DEPLOYMENT_TARGET=17.0',
                                    'IPHONEOS_DEPLOYMENT_TARGET=16.0', 1)
@@ -158,6 +175,13 @@ def main():
         run([sys.executable, '-B', DEVICE / 'scripts/ci/audit-driver-archives.py',
              '--work', work, '--base', base])
         summary['driver_archive_audit'] = 'passed; compile and symbol closure only'
+        # Reuse this exact build's argv and real archives. Runtime feature flags,
+        # crypto/pthread providers and the startup timer branch remain unchanged.
+        summary['baseline_kernel_sha256'] = sha(kernel)
+        run([sys.executable, '-B', DEVICE / 'scripts/ci/platform-link-audit.py',
+             '--work', work])
+        summary['platform_link_audit'] = 'passed; ArmCpu + ArmDTPlatform linked, no hardware execution'
+        summary['kernel_sha256'] = sha(kernel)
     finally:
         source = work / '.cache/xnu-work'
         if source.is_dir():

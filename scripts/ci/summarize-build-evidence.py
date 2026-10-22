@@ -41,7 +41,7 @@ for source, destination in ((artifact / 'nuwa-host/toolchain.log', report / 'too
     shutil.copyfile(source, destination)
 build = json.loads((report / 'build.json').read_text())
 additional_reports = []
-for directory in ('compile-records', 'driver-archives'):
+for directory in ('compile-records', 'driver-archives', 'platform-link'):
     source_root = artifact / 'nuwa-8796-source/reports' / directory
     for source in sorted(source_root.rglob('*')):
         if not source.is_file() or source.suffix not in ('.json', '.log'):

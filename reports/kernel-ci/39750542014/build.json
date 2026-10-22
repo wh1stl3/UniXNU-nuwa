@@ -1,0 +1,722 @@
+{
+  "base_commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+  "xnu_commit": "1b191cb58250d0705d8a51287127505aa4bc0789",
+  "patches": [
+    {
+      "name": "apple-only-cpu-tunables.patch",
+      "sha256": "49ad719fce1e074777041483daef41a3214025d31b2b399858f4dab891b271b9"
+    },
+    {
+      "name": "architectural-timer-entry.patch",
+      "sha256": "809b0c951545d889a2a37c730189283e7e890340894bab6d937c914dbd20b8e5"
+    },
+    {
+      "name": "armvirt-platform-personality.patch",
+      "sha256": "00e7054c9ff2ae82b66f27bfbefd7620e9000503ea5b38b80aa90aab1e4b7225"
+    },
+    {
+      "name": "cxx-flag-dependencies.patch",
+      "sha256": "a435e8797ed24a8338db53d0eaac49c163f90170c1fb7946d0c5cdee9d7d4b52"
+    },
+    {
+      "name": "disabled-deferred-reclaim.patch",
+      "sha256": "817a0b017aebb21f773aafe2b92a81be076abc66e29275d57220635339a407e1"
+    },
+    {
+      "name": "external-archive-dependencies.patch",
+      "sha256": "6f2ce506a3634d06260f14ccd86a84af7fbf7dc5e7c98a2381b6bff52199d7b5"
+    },
+    {
+      "name": "kernel-sdk-root.patch",
+      "sha256": "2bcf10f4bf171afbc358cb64e9bc742563dd21f5eadf0e7a17936e87fa8ba43d"
+    },
+    {
+      "name": "local-availability.patch",
+      "sha256": "a051857d524f8836068fd2f1182ebe9e9d9ccf28b9560fb27ad634b0cb93270e"
+    },
+    {
+      "name": "mockfs-intermediate-lookup.patch",
+      "sha256": "51a5b76873c2a39b777bd4f1f5e78730ce72e93d548de6fbe4655f107731fa00"
+    },
+    {
+      "name": "mockfs-memory-device-width.patch",
+      "sha256": "506f4ba36e30a700f0d27370d07abbde6e2c689d13fbad3400a6b940569ae30a"
+    },
+    {
+      "name": "mockfs-statfs.patch",
+      "sha256": "58c9a51909b12dca9cd1ac2fdb94be748b43be1c979383b9504a0304fb16a809"
+    },
+    {
+      "name": "mockfs-test-file.patch",
+      "sha256": "4a1ef86e0bdca7b633f59885961be1939574f8ba9814d1d75ebbfd0a7a8bd919"
+    },
+    {
+      "name": "mockfs-typed-allocation.patch",
+      "sha256": "44dfe8ea590336fae48a4d5f7b8fd478a435d591a34ba77fe1d0a961c630ad57"
+    },
+    {
+      "name": "native-4k-bootstrap-capacity.patch",
+      "sha256": "4ac39b497d88b28432bc7844c7137c8d2acc1992bef53f68c3512523a80b13a3"
+    },
+    {
+      "name": "native-4k-signature-hash-cache.patch",
+      "sha256": "f9a8b4d39022a726ba1e0e4842248d57b20fe3a05fbf41b3a01f6700b2e3ca72"
+    },
+    {
+      "name": "native-4k-user-abi.patch",
+      "sha256": "981ac483ae898426486aab475e22b2286bc1d820ad047c566182c3fbf435f6d4"
+    },
+    {
+      "name": "native-aes-personality.patch",
+      "sha256": "c126435813b4c39c8cb421522e01480cf1675a5dfd628293208e029e2da9b3cb"
+    },
+    {
+      "name": "native-arm-pan.patch",
+      "sha256": "7948f0ca8ad0ac5313a32bc8d9377290f88a7d64c880bbfac8e2b4c092e916f6"
+    },
+    {
+      "name": "native-dt-panic-region.patch",
+      "sha256": "b60c2a9a72ea23832f1e64348a5c5d1152cf05db6c156283dd8a93c804cd89cb"
+    },
+    {
+      "name": "native-priv-work-interval.patch",
+      "sha256": "6250b487e67dd35e97da59cc79040aa5d73f11106fbe5bc07e81047c4c33e2ed"
+    },
+    {
+      "name": "native-smp-secondary.patch",
+      "sha256": "cc16c2d53cbcc50eb2547e2c6f5b61f325348d07495378d9cdf187246b4d315c"
+    },
+    {
+      "name": "native-trust-cache-runtime.patch",
+      "sha256": "19e000ca6f70a8ddfefa503d2936894dd8315fae3ca2fb3e50d666d65252de79"
+    },
+    {
+      "name": "native-union-getattrlistbulk.patch",
+      "sha256": "f5d665fd7250717cfacced8408a0b94f282eb2764e514f61a378f7d085c7a03b"
+    },
+    {
+      "name": "native-work-interval-soft-fail.patch",
+      "sha256": "b163b85e0340abf2da104527a3b5c3c4e72abe6cacabb3bacb6001e84a67f3fe"
+    },
+    {
+      "name": "native-work-interval-trace.patch",
+      "sha256": "f2c11511c172929572c3b075b0b0f3b8ae2c63d6f229c489c0339acc4f39815c"
+    },
+    {
+      "name": "non-apple-cache-monitor.patch",
+      "sha256": "116ee4e61fb68e4a403049e349ceb23334e2eff0bec0eb11dc3bd5f3259fabdf"
+    },
+    {
+      "name": "non-apple-iommu-bootstrap.patch",
+      "sha256": "a53aaf1073976aed1561cb609763c7a4214e245a50fb534cc77b643808df9e70"
+    },
+    {
+      "name": "non-apple-pmap-field.patch",
+      "sha256": "82fe0a5021d59ddb766884f802f960ad67d61be63596f0bde136bf3875ff3ff8"
+    },
+    {
+      "name": "null-root-media.patch",
+      "sha256": "a67ce9afd5af8178e83089ace6ce5d21f5e820b69e4c70dfc2cdae1be274678a"
+    },
+    {
+      "name": "offline-component-load-probes.patch",
+      "sha256": "1f228c5c6d8387b13cd8e0964ddeb56c858a5dae16478f3ed2baae8a2e4da1e9"
+    },
+    {
+      "name": "offline-legacy-start.patch",
+      "sha256": "a6ed6012f215e2c13c09f1b89fe986616af0a0674b0f6e4afd2194d4b8de4c0c"
+    },
+    {
+      "name": "offline-native-gpu-broker.patch",
+      "sha256": "dc7590c3298ead78a843f098d3f47df57350e15b30746890b162a24b6eb182f5"
+    },
+    {
+      "name": "offline-owner-boot-manifest.patch",
+      "sha256": "840a73448459b0ddad1ad7d8525ffb3bd0826d58a7e732f8283a4222c2df175e"
+    },
+    {
+      "name": "offline-owner-cache-carrier.patch",
+      "sha256": "11b292274599c7161d5eaef627d11934166b136c5e8c31098bcabb2569da3d0e"
+    },
+    {
+      "name": "offline-owner-root-binding-audit.patch",
+      "sha256": "f77d07af625d8cf2404185717e58738841ff453735f260fd7dc3c4e8526a4e69"
+    },
+    {
+      "name": "offline-owner-root-crypto-probe.patch",
+      "sha256": "35415f0a13a2770d835f0e837ecc47e6fa51934a6faa1edfc6900e5f5d479e4d"
+    },
+    {
+      "name": "offline-owner-systemos-mount.patch",
+      "sha256": "1f88ed8eeae5c5eda782ccce1ae335361cb7b69c77e986167118bd18a53f42b8"
+    },
+    {
+      "name": "offline-owner-z-air-init.patch",
+      "sha256": "5b1b1252a0614eee6926fb05def89c49008a6d891dc8760e7d126d1a444ac6d9"
+    },
+    {
+      "name": "public-entitlements-header.patch",
+      "sha256": "ff4ca93bf834f750f9f1442733cd94995b1b08d9a509d1a956e71a97ffa804c3"
+    },
+    {
+      "name": "sheng-platform-power.patch",
+      "sha256": "6e68dbcdac670624f2a9806a61fef42110bfe6586029b3f1a0acb068c3a23ec2"
+    },
+    {
+      "name": "source-corecrypto14-bootstrap.patch",
+      "sha256": "041f0d0627e83f5c276cfa87130cec04907cdd02682428d069af2a9af2a16ebd"
+    },
+    {
+      "name": "source-machine-layer.patch",
+      "sha256": "923b51bac67695c304ee59309aa8db57a2cbe5719ffed1581875f7db4e37b2fc"
+    },
+    {
+      "name": "source-pthread-bootstrap.patch",
+      "sha256": "1bbf00cc2b4e8f227dddf2807818d10e07325beea8e6c2c0b12106228d31d643"
+    },
+    {
+      "name": "zzx-pmap-sync-64bit-pa.patch",
+      "sha256": "50747f5c4f51abf1e0e3d0d82be07d76909a3f28eceffb9e927b0a8aca6f4f82"
+    },
+    {
+      "name": "zzy-native-gpu-addon-mount.patch",
+      "sha256": "bf53de7363413b00c06fa71071bb9bb4f8daddec2ecf7b33435bb0d99adf6ebb"
+    },
+    {
+      "name": "zzz-boot-progress.patch",
+      "sha256": "1e7adabe9d00642d1d4ced10b572d5f62785db883dec468c9677a2869ddc1148"
+    },
+    {
+      "name": "xnu-10063.141.1-security-init.patch",
+      "sha256": "f9ea76df15b01c8073c0fe8e38a1c05ac9db9202c393811756f6b616275b4675"
+    },
+    {
+      "name": "xnu-10063.141.1-sparse-index.patch",
+      "sha256": "d0a2da8ca1a0b4021629b0ecaadad20c0e6cf7b3205f8d780242a60034f44d91"
+    },
+    {
+      "name": "clang17-zero-init.patch",
+      "sha256": "07dc59c1cdea54de7b846cfb9aa93598efaa3895dffc3c8dcb91b9d908b1c6c9"
+    },
+    {
+      "name": "clang17-uio-stackbuf.patch",
+      "sha256": "ab4ec11a8471d4a3c80c9538a0a698b93936be2de58c1af417ed90c37e5092de"
+    },
+    {
+      "name": "clang-compile-records.patch",
+      "sha256": "b3d6286ce709489fcfeb08cf5961965516d9d05dcf84aaa553514456641f92cd"
+    },
+    {
+      "name": "disabled-kperf-ast.patch",
+      "sha256": "31d4125a883c758255e4c6dbc4c9a0a3e01b33c86cd521dcef7fead8abb426c4"
+    },
+    {
+      "name": "disabled-kperf-timer.patch",
+      "sha256": "d2b670336116e466c4096c475c931817714029ede285bbab97e4898314753bec"
+    },
+    {
+      "name": "disabled-kperf-scheduler.patch",
+      "sha256": "027a8887ff3eeeb5765bfa032ba6cf7403ef067003ac41f9b25d4a6119a3db32"
+    },
+    {
+      "name": "disabled-kperf-ktrace.patch",
+      "sha256": "fbb489e4e569982f318c70f510847ae4290be0e7ed085c3d2768de546141e2ca"
+    },
+    {
+      "name": "disabled-kpc-task.patch",
+      "sha256": "326410bef685884a117dfca16422e0c7f247a9d7a8abbc98166c363b322e602c"
+    },
+    {
+      "name": "disabled-kpc-context.patch",
+      "sha256": "7dc7041cf30540f301f325709902804c204adf1cac3c930a02ef92a54545a537"
+    },
+    {
+      "name": "zzzz-ci-public-profiling.patch",
+      "sha256": "8318a2c0fa46482a7c189d4addda0065bfa8d0a707da177c49660828ec13f22d"
+    },
+    {
+      "name": "zzzz-display-probe-feature.patch",
+      "sha256": "b5245754c8fef6b381f004a77ca5a483df8c0e285dfd1c99e90043f924fb1779"
+    },
+    {
+      "name": "vfs-getvfs-with-vfsops.patch",
+      "sha256": "ac27f0b6363193ce4145c951b1ad5422caebc92f69e8b97f18590f92142c63c5"
+    }
+  ],
+  "baseline_adapter_sha256": "bddc60351dce266fd932651aa68b963751b9c773bb339266ac016f975b0aa3d9",
+  "firehose_adapter_sha256": "8f4451c21792009561f7e4f5d8b6db05db51fbbe29623435da0d05f8af763b93",
+  "reviewed_base_patch_count": 48,
+  "ci_compatibility_patch_count": 11,
+  "donor_compatibility_patch_count": 1,
+  "scope": "source compile/link only; optional device archives disabled",
+  "kernel_built": true,
+  "prelinked": false,
+  "device_verified": false,
+  "iig_adapter_sha256": "ed256d59368025316c0e96a4363039e4845c7689bb6e6bbe1632372f15209519",
+  "iig_compatibility": "pinned generator inline RPC branches; deployment-target candidate rejected",
+  "kernel_sha256": "298101014d8e1d3dc5b107e05e6731b9aa78be148537a61b80a9617cc0cbed80",
+  "kernel_path": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped",
+  "driver_archive_audit": "passed; compile and symbol closure only",
+  "source_status": " M EXTERNAL_HEADERS/CoreEntitlements/CoreEntitlements.h\n M bsd/conf/Makefile.template\n M bsd/kern/bsd_init.c\n M bsd/kern/decmpfs.c\n M bsd/kern/kern_exec.c\n M bsd/kern/kern_exit.c\n M bsd/kern/kern_ktrace.c\n M bsd/kern/kern_priv.c\n M bsd/kern/kpi_socket.c\n M bsd/kern/mach_loader.c\n M bsd/kern/sys_generic.c\n M bsd/kern/sys_work_interval.c\n M bsd/kern/ubc_subr.c\n M bsd/kern/uipc_syscalls.c\n M bsd/miscfs/bindfs/bind_vfsops.c\n M bsd/miscfs/bindfs/bind_vnops.c\n M bsd/miscfs/bindfs/bindfs.h\n M bsd/miscfs/mockfs/mockfs_fsnode.c\n M bsd/miscfs/mockfs/mockfs_fsnode.h\n M bsd/miscfs/mockfs/mockfs_vfsops.c\n M bsd/miscfs/mockfs/mockfs_vnops.c\n M bsd/nfs/nfs_serv.c\n M bsd/sys/make_symbol_aliasing.sh\n M bsd/sys/mount.h\n M bsd/sys/ubc_internal.h\n M bsd/sys/uio_internal.h\n M bsd/vfs/vfs_attrlist.c\n M bsd/vfs/vfs_lookup.c\n M bsd/vfs/vfs_quota.c\n M bsd/vfs/vfs_subr.c\n M bsd/vfs/vfs_syscalls.c\n M bsd/vfs/vfs_vnops.c\n M bsd/vm/vm_unix.c\n M config/BSDKernel.exports\n M config/MASTER\n M config/MASTER.arm64.bcm2837\n M iokit/Kernel/IOService.cpp\n M iokit/Kernel/IOUserClient.cpp\n M iokit/KernelConfigTables.cpp\n M iokit/bsddev/IOKitBSDInit.cpp\n M iokit/conf/Makefile.template\n M libkern/c++/OSKext.cpp\n M libkern/conf/Makefile.template\n M libsa/conf/Makefile.template\n M makedefs/MakeInc.def\n M makedefs/MakeInc.kernel\n M makedefs/MakeInc.rule\n M osfmk/arm/arm_init.c\n M osfmk/arm/commpage/commpage.c\n M osfmk/arm/pmap/pmap.c\n M osfmk/arm/pmap/pmap.h\n M osfmk/arm64/arm_vm_init.c\n M osfmk/arm64/caches_asm.s\n M osfmk/arm64/genassym.c\n M osfmk/arm64/pcb.c\n M osfmk/arm64/sleh.c\n M osfmk/arm64/start.s\n M osfmk/conf/Makefile.template\n M osfmk/conf/files.arm64\n M osfmk/console/serial_console.c\n M osfmk/console/video_console.c\n M osfmk/kern/Makefile\n M osfmk/kern/ast.c\n M osfmk/kern/kalloc.c\n M osfmk/kern/processor.c\n M osfmk/kern/sched_prim.c\n M osfmk/kern/startup.c\n M osfmk/kern/task.c\n M osfmk/kern/work_interval.c\n M osfmk/prng/prng_random.c\n M osfmk/vm/vm_shared_region.c\n M osfmk/vm/vm_user.c\n M pexpert/arm/pe_init.c\n M pexpert/arm/pe_kprintf.c\n M pexpert/conf/Makefile.template\n M pexpert/pexpert/arm64/BCM2837.h\n M pexpert/pexpert/arm64/board_config.h\n M san/conf/Makefile.template\n M security/conf/Makefile.template\n M security/mac_vfs_subr.c\n?? bsd/kern/source_pthread_bootstrap.c\n?? osfmk/kern/boot_progress.h\n",
+  "iorpc_header_unchanged": true,
+  "iig_generated_files": 51,
+  "iig_kernel_content_references": [],
+  "object_count": 873,
+  "linked_kernel_present": true,
+  "linked_kernel_bytes": 20136616,
+  "linked_kernel_sha256": "298101014d8e1d3dc5b107e05e6731b9aa78be148537a61b80a9617cc0cbed80",
+  "xnu_target_object_count": 841,
+  "compile_record_count": 933,
+  "required_compile_records": {
+    "startup.o.json": [
+      {
+        "path": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/startup.o.json",
+        "sha256": "870b0c8b2ce98c8f57f8fc64a6a3c7e77228af841a9f60bed932e354faa92cf5"
+      }
+    ],
+    "kern_exec.o.json": [
+      {
+        "path": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/bsd/DEVELOPMENT/kern_exec.o.json",
+        "sha256": "20251ceeaa30e7bde0cca43414082db2ca006e87c38f935548ec536f11ada855"
+      }
+    ],
+    "IOPlatformExpert.cpo.json": [
+      {
+        "path": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/IOPlatformExpert.cpo.json",
+        "sha256": "ba34eecd7078f8900ff0e719d226d3ea2c014656050ecb3ed48476f9f850451d"
+      }
+    ],
+    "prng_random.o.json": [
+      {
+        "path": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/prng_random.o.json",
+        "sha256": "e6b5c4b47ed16c3e9e04985b490028743627fbeac664a0858edd504c102c1ecc"
+      }
+    ]
+  },
+  "key_objects": {
+    "ast.o": [
+      {
+        "path": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/ast.o",
+        "bytes": 73896,
+        "sha256": "21a6c61593bdff78f0d3b5466b72ac7e0f8b07c7c8709df8b824dfbeea721874"
+      }
+    ],
+    "processor.o": [
+      {
+        "path": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/processor.o",
+        "bytes": 143264,
+        "sha256": "5226e6a12dfdaa02c1a515f1a5d3e6735937270fe52e8c5de7188f6b699b4d42"
+      }
+    ]
+  },
+  "iig_adaptations": [
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/DriverKit/IOBufferMemoryDescriptor.iig.cpp",
+      "template_blocks": 11,
+      "original_sha256": "d3193e522c408b1cf0717e5569e7762cf49e957a23b7cf9668ec5cbcf47acc5b",
+      "adapted_sha256": "b005d39d347a9657b5635fb69c4202e05563f0a4c62585210bd98159541f22a0",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/DriverKit/IODMACommand.iig.cpp",
+      "template_blocks": 23,
+      "original_sha256": "1d08308a298a176582c3d8345552ee35b32cc2e89cb7b9b0c6ced9676417dd45",
+      "adapted_sha256": "e1a0d6d3baf94a95f4d6d99d754c067a3e2f3d3d5a1609c6225b090134bea793",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/DriverKit/IODataQueueDispatchSource.iig.cpp",
+      "template_blocks": 35,
+      "original_sha256": "c2f8f7481f61517f16ec08d7a169aa0d580ca625c666a4d5b5ba534c1d7d95d2",
+      "adapted_sha256": "3f92be56729cc55cd00ef031d12488b62686ce314ffc7e60870c632bb2680e49",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/DriverKit/IODispatchQueue.iig.cpp",
+      "template_blocks": 11,
+      "original_sha256": "7ef31a769e639d0b36820c76e7603e1c5038d26df1e2f82e11323100357473a7",
+      "adapted_sha256": "f4a73b2498ccb0e759ffddf97cec7747d984f57d6f923d371d8b9df8e60ee685",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/DriverKit/IODispatchSource.iig.cpp",
+      "template_blocks": 21,
+      "original_sha256": "1fcd1e88690f9c613ab01ff38727fb664422330123baf124dd4fc6689e4277f4",
+      "adapted_sha256": "98734304a4e4a450e128f57601627493abbf1ccbc95af26be20c9d0dab85db78",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/DriverKit/IOEventLink.iig.cpp",
+      "template_blocks": 15,
+      "original_sha256": "d41bf3bc8a662ee32fc7065a345b68aa964a14499e88a5e7164ee93df661104e",
+      "adapted_sha256": "ddee8614cd10d2ba28d83dc31a3205c6098805b7bee4d069637299a79ac8cc91",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/DriverKit/IOInterruptDispatchSource.iig.cpp",
+      "template_blocks": 23,
+      "original_sha256": "07b820084187cf5145c24e2d88428a6e448fd7d596a7648f7c70ce7dca77412e",
+      "adapted_sha256": "c86c43982574f2573faf863fdcd61f940c941ee2bcdefec38e2f7d70eb6d5396",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/DriverKit/IOMemoryDescriptor.iig.cpp",
+      "template_blocks": 19,
+      "original_sha256": "b3310c5c2301dccb8c7fb9221521e53a9000593441960c9f7224fd1b3fbd1da8",
+      "adapted_sha256": "a8240494ab817e65e745bdb3007fe37c0f35e12b5add593ecced4f60fa201038",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/DriverKit/IOMemoryMap.iig.cpp",
+      "template_blocks": 7,
+      "original_sha256": "cc10322f686bb7abf72367f359ac4d404c03625e7388e0454344da65d9540e33",
+      "adapted_sha256": "15ec45a45ca8c423262845661a67dcec75b04c8704c14694754eaef80fba20c2",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/DriverKit/IOService.iig.cpp",
+      "template_blocks": 147,
+      "original_sha256": "95f7582c6539e4e2bb6f6b9a2ff1f3e5ea9d39ff316ed09182cdf7785f70aa3e",
+      "adapted_sha256": "43f07cd6e70ad2ad015dd5066fe0fea260147bdb6ac75a12966e122b20b7e028",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/DriverKit/IOServiceNotificationDispatchSource.iig.cpp",
+      "template_blocks": 19,
+      "original_sha256": "868f0c7d48170254b901a29db7eabbec35f9de99d8f76f32724d26553ef30aad",
+      "adapted_sha256": "2de744a8df0865d079331b00e868ebf4c1475d2bfef6e4d6adde4979e8c93e39",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/DriverKit/IOServiceStateNotificationDispatchSource.iig.cpp",
+      "template_blocks": 19,
+      "original_sha256": "c2064dc87034a3cc96f9aae4b024a0ffa6c6d67b216c244835b445bb230bd8f5",
+      "adapted_sha256": "4e56743d229a421273f969836dc680643e3c7dc77c8af2d119d516e9fc8a4820",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/DriverKit/IOUserClient.iig.cpp",
+      "template_blocks": 26,
+      "original_sha256": "469dd8533cb7e76f5c55d468cf22881b681d918acbbd1aede3756481e5e28984",
+      "adapted_sha256": "a4b152b5952844513972c9bda03e1ae310ba062896af363997141b11915ee4fd",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/DriverKit/IOUserServer.iig.cpp",
+      "template_blocks": 15,
+      "original_sha256": "3537604576c29bda8a51065a978f76b9583634b87144baf289d95e8ff294c04c",
+      "adapted_sha256": "7a8c80e1a60c7e183e29d73afdb3b853baf725eee5e32004c2bca17c983fe5df",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/DriverKit/IOWorkGroup.iig.cpp",
+      "template_blocks": 15,
+      "original_sha256": "bc0b9af2db1ae39c7636204082972d86c8e0b9b7cd4d953d4dbd6ce01293e569",
+      "adapted_sha256": "d41e0d91110a14ef6b6a51a2e9c6af912381e2705a4a4eb85c4e3ef38da17284",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/DriverKit/OSAction.iig.cpp",
+      "template_blocks": 15,
+      "original_sha256": "25992b15d5d3fac1cd4d0cea5f67f019a965169f52eac2197347f2a61333db6d",
+      "adapted_sha256": "d4412067007f0840c187df1619f6fff2d782800df4cc0114556f53c213fd61ec",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/DriverKit/OSObject.iig.cpp",
+      "template_blocks": 11,
+      "original_sha256": "77c9e91930992f2538794df79a44ad93f2f01a6f621a450a0e010cfd08961d48",
+      "adapted_sha256": "040982c0af5690eebfa70a96e7bf999dcd12478db16c5cb6231e54535f943151",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IOBufferMemoryDescriptor.iig.cpp",
+      "template_blocks": 11,
+      "original_sha256": "d3193e522c408b1cf0717e5569e7762cf49e957a23b7cf9668ec5cbcf47acc5b",
+      "adapted_sha256": "b005d39d347a9657b5635fb69c4202e05563f0a4c62585210bd98159541f22a0",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IODMACommand.iig.cpp",
+      "template_blocks": 23,
+      "original_sha256": "1d08308a298a176582c3d8345552ee35b32cc2e89cb7b9b0c6ced9676417dd45",
+      "adapted_sha256": "e1a0d6d3baf94a95f4d6d99d754c067a3e2f3d3d5a1609c6225b090134bea793",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IODataQueueDispatchSource.iig.cpp",
+      "template_blocks": 35,
+      "original_sha256": "c2f8f7481f61517f16ec08d7a169aa0d580ca625c666a4d5b5ba534c1d7d95d2",
+      "adapted_sha256": "3f92be56729cc55cd00ef031d12488b62686ce314ffc7e60870c632bb2680e49",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IODispatchQueue.iig.cpp",
+      "template_blocks": 11,
+      "original_sha256": "7ef31a769e639d0b36820c76e7603e1c5038d26df1e2f82e11323100357473a7",
+      "adapted_sha256": "f4a73b2498ccb0e759ffddf97cec7747d984f57d6f923d371d8b9df8e60ee685",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IODispatchSource.iig.cpp",
+      "template_blocks": 21,
+      "original_sha256": "1fcd1e88690f9c613ab01ff38727fb664422330123baf124dd4fc6689e4277f4",
+      "adapted_sha256": "98734304a4e4a450e128f57601627493abbf1ccbc95af26be20c9d0dab85db78",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IOEventLink.iig.cpp",
+      "template_blocks": 15,
+      "original_sha256": "d41bf3bc8a662ee32fc7065a345b68aa964a14499e88a5e7164ee93df661104e",
+      "adapted_sha256": "ddee8614cd10d2ba28d83dc31a3205c6098805b7bee4d069637299a79ac8cc91",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IOInterruptDispatchSource.iig.cpp",
+      "template_blocks": 23,
+      "original_sha256": "07b820084187cf5145c24e2d88428a6e448fd7d596a7648f7c70ce7dca77412e",
+      "adapted_sha256": "c86c43982574f2573faf863fdcd61f940c941ee2bcdefec38e2f7d70eb6d5396",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IOMemoryDescriptor.iig.cpp",
+      "template_blocks": 19,
+      "original_sha256": "b3310c5c2301dccb8c7fb9221521e53a9000593441960c9f7224fd1b3fbd1da8",
+      "adapted_sha256": "a8240494ab817e65e745bdb3007fe37c0f35e12b5add593ecced4f60fa201038",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IOMemoryMap.iig.cpp",
+      "template_blocks": 7,
+      "original_sha256": "cc10322f686bb7abf72367f359ac4d404c03625e7388e0454344da65d9540e33",
+      "adapted_sha256": "15ec45a45ca8c423262845661a67dcec75b04c8704c14694754eaef80fba20c2",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IOService.iig.cpp",
+      "template_blocks": 147,
+      "original_sha256": "95f7582c6539e4e2bb6f6b9a2ff1f3e5ea9d39ff316ed09182cdf7785f70aa3e",
+      "adapted_sha256": "43f07cd6e70ad2ad015dd5066fe0fea260147bdb6ac75a12966e122b20b7e028",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IOServiceNotificationDispatchSource.iig.cpp",
+      "template_blocks": 19,
+      "original_sha256": "868f0c7d48170254b901a29db7eabbec35f9de99d8f76f32724d26553ef30aad",
+      "adapted_sha256": "2de744a8df0865d079331b00e868ebf4c1475d2bfef6e4d6adde4979e8c93e39",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IOServiceStateNotificationDispatchSource.iig.cpp",
+      "template_blocks": 19,
+      "original_sha256": "c2064dc87034a3cc96f9aae4b024a0ffa6c6d67b216c244835b445bb230bd8f5",
+      "adapted_sha256": "4e56743d229a421273f969836dc680643e3c7dc77c8af2d119d516e9fc8a4820",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IOUserClient.iig.cpp",
+      "template_blocks": 26,
+      "original_sha256": "469dd8533cb7e76f5c55d468cf22881b681d918acbbd1aede3756481e5e28984",
+      "adapted_sha256": "a4b152b5952844513972c9bda03e1ae310ba062896af363997141b11915ee4fd",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IOUserServer.iig.cpp",
+      "template_blocks": 15,
+      "original_sha256": "3537604576c29bda8a51065a978f76b9583634b87144baf289d95e8ff294c04c",
+      "adapted_sha256": "7a8c80e1a60c7e183e29d73afdb3b853baf725eee5e32004c2bca17c983fe5df",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IOWorkGroup.iig.cpp",
+      "template_blocks": 15,
+      "original_sha256": "bc0b9af2db1ae39c7636204082972d86c8e0b9b7cd4d953d4dbd6ce01293e569",
+      "adapted_sha256": "d41e0d91110a14ef6b6a51a2e9c6af912381e2705a4a4eb85c4e3ef38da17284",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/OSAction.iig.cpp",
+      "template_blocks": 15,
+      "original_sha256": "25992b15d5d3fac1cd4d0cea5f67f019a965169f52eac2197347f2a61333db6d",
+      "adapted_sha256": "d4412067007f0840c187df1619f6fff2d782800df4cc0114556f53c213fd61ec",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/OSObject.iig.cpp",
+      "template_blocks": 11,
+      "original_sha256": "77c9e91930992f2538794df79a44ad93f2f01a6f621a450a0e010cfd08961d48",
+      "adapted_sha256": "040982c0af5690eebfa70a96e7bf999dcd12478db16c5cb6231e54535f943151",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IOBufferMemoryDescriptor.iig.cpp",
+      "template_blocks": 11,
+      "original_sha256": "d3193e522c408b1cf0717e5569e7762cf49e957a23b7cf9668ec5cbcf47acc5b",
+      "adapted_sha256": "b005d39d347a9657b5635fb69c4202e05563f0a4c62585210bd98159541f22a0",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IODMACommand.iig.cpp",
+      "template_blocks": 23,
+      "original_sha256": "1d08308a298a176582c3d8345552ee35b32cc2e89cb7b9b0c6ced9676417dd45",
+      "adapted_sha256": "e1a0d6d3baf94a95f4d6d99d754c067a3e2f3d3d5a1609c6225b090134bea793",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IODataQueueDispatchSource.iig.cpp",
+      "template_blocks": 35,
+      "original_sha256": "c2f8f7481f61517f16ec08d7a169aa0d580ca625c666a4d5b5ba534c1d7d95d2",
+      "adapted_sha256": "3f92be56729cc55cd00ef031d12488b62686ce314ffc7e60870c632bb2680e49",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IODispatchQueue.iig.cpp",
+      "template_blocks": 11,
+      "original_sha256": "7ef31a769e639d0b36820c76e7603e1c5038d26df1e2f82e11323100357473a7",
+      "adapted_sha256": "f4a73b2498ccb0e759ffddf97cec7747d984f57d6f923d371d8b9df8e60ee685",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IODispatchSource.iig.cpp",
+      "template_blocks": 21,
+      "original_sha256": "1fcd1e88690f9c613ab01ff38727fb664422330123baf124dd4fc6689e4277f4",
+      "adapted_sha256": "98734304a4e4a450e128f57601627493abbf1ccbc95af26be20c9d0dab85db78",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IOEventLink.iig.cpp",
+      "template_blocks": 15,
+      "original_sha256": "d41bf3bc8a662ee32fc7065a345b68aa964a14499e88a5e7164ee93df661104e",
+      "adapted_sha256": "ddee8614cd10d2ba28d83dc31a3205c6098805b7bee4d069637299a79ac8cc91",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IOInterruptDispatchSource.iig.cpp",
+      "template_blocks": 23,
+      "original_sha256": "07b820084187cf5145c24e2d88428a6e448fd7d596a7648f7c70ce7dca77412e",
+      "adapted_sha256": "c86c43982574f2573faf863fdcd61f940c941ee2bcdefec38e2f7d70eb6d5396",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IOMemoryDescriptor.iig.cpp",
+      "template_blocks": 19,
+      "original_sha256": "b3310c5c2301dccb8c7fb9221521e53a9000593441960c9f7224fd1b3fbd1da8",
+      "adapted_sha256": "a8240494ab817e65e745bdb3007fe37c0f35e12b5add593ecced4f60fa201038",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IOMemoryMap.iig.cpp",
+      "template_blocks": 7,
+      "original_sha256": "cc10322f686bb7abf72367f359ac4d404c03625e7388e0454344da65d9540e33",
+      "adapted_sha256": "15ec45a45ca8c423262845661a67dcec75b04c8704c14694754eaef80fba20c2",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IOService.iig.cpp",
+      "template_blocks": 147,
+      "original_sha256": "95f7582c6539e4e2bb6f6b9a2ff1f3e5ea9d39ff316ed09182cdf7785f70aa3e",
+      "adapted_sha256": "43f07cd6e70ad2ad015dd5066fe0fea260147bdb6ac75a12966e122b20b7e028",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IOServiceNotificationDispatchSource.iig.cpp",
+      "template_blocks": 19,
+      "original_sha256": "868f0c7d48170254b901a29db7eabbec35f9de99d8f76f32724d26553ef30aad",
+      "adapted_sha256": "2de744a8df0865d079331b00e868ebf4c1475d2bfef6e4d6adde4979e8c93e39",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IOServiceStateNotificationDispatchSource.iig.cpp",
+      "template_blocks": 19,
+      "original_sha256": "c2064dc87034a3cc96f9aae4b024a0ffa6c6d67b216c244835b445bb230bd8f5",
+      "adapted_sha256": "4e56743d229a421273f969836dc680643e3c7dc77c8af2d119d516e9fc8a4820",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IOUserClient.iig.cpp",
+      "template_blocks": 26,
+      "original_sha256": "469dd8533cb7e76f5c55d468cf22881b681d918acbbd1aede3756481e5e28984",
+      "adapted_sha256": "a4b152b5952844513972c9bda03e1ae310ba062896af363997141b11915ee4fd",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IOUserServer.iig.cpp",
+      "template_blocks": 15,
+      "original_sha256": "3537604576c29bda8a51065a978f76b9583634b87144baf289d95e8ff294c04c",
+      "adapted_sha256": "7a8c80e1a60c7e183e29d73afdb3b853baf725eee5e32004c2bca17c983fe5df",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/IOWorkGroup.iig.cpp",
+      "template_blocks": 15,
+      "original_sha256": "bc0b9af2db1ae39c7636204082972d86c8e0b9b7cd4d953d4dbd6ce01293e569",
+      "adapted_sha256": "d41e0d91110a14ef6b6a51a2e9c6af912381e2705a4a4eb85c4e3ef38da17284",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/OSAction.iig.cpp",
+      "template_blocks": 15,
+      "original_sha256": "25992b15d5d3fac1cd4d0cea5f67f019a965169f52eac2197347f2a61333db6d",
+      "adapted_sha256": "d4412067007f0840c187df1619f6fff2d782800df4cc0114556f53c213fd61ec",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    },
+    {
+      "implementation": "/Users/runner/work/_temp/nuwa-8796-source/build/xnu/obj/DEVELOPMENT_ARM64_BCM2837/iokit/DriverKit/OSObject.iig.cpp",
+      "template_blocks": 11,
+      "original_sha256": "77c9e91930992f2538794df79a44ad93f2f01a6f621a450a0e010cfd08961d48",
+      "adapted_sha256": "040982c0af5690eebfa70a96e7bf999dcd12478db16c5cb6231e54535f943151",
+      "remaining_split_content_references": 0,
+      "device_verified": false
+    }
+  ]
+}

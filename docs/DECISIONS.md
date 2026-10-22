@@ -296,3 +296,13 @@ D-012补充（2026-10-22 16:21）：第十二轮无效libsa路径已实际移除
 D-013补充（2026-10-22 16:47）：CI13实际内核包含VFS桥接，65,348项绑定零缺失、官方只读plan布局/指针检查通过。静态候选已取得真实编译和产物证据；参考roots/slide未写入board，12处指令豁免和完整ABI仍未验收，无emit或新镜像。证据reports/donor-compat/ci13-*。
 
 D-012补充（2026-10-22 16:47）：CI13的ArmCpu真实对象和242704字节archive已生成；ArmDTPlatform首错为真实不返回复位函数缺noreturn。仅加单翻译单元前置属性声明，不关闭该诊断或更改复位代码。三个archive的完整闭包待下一轮。
+
+
+D-012补充（2026-10-22 17:29）：CI14真实源内核及ArmCpu/ArmDTPlatform/ArmVirtPlatform三库编译、符号名闭包通过，见reports/kernel-ci/39750542014/。下一阶段仅复用同轮make参数追加ArmCpu+ArmDTPlatform实际重链接，保持所有运行开关，不启用正式硬件profile、不替换crypto/pthread检查。真实链接与完整ABI仍待验证。
+
+# D-014 · 优先复用已有开源驱动并以本机绑定筛选板级适配
+
+- 状态：accepted（2026-10-22；用户明确要求尽可能使用UniXNU及其他开源/机型适配，并授权只读ADB获取硬件信息）。
+- 证据：operations/2026-10-22-driver-reuse-and-platform-link.md；reports/driver-reuse/固定本地和远端提交、文件hash和许可。AGENTS第7节记录约定。
+
+优先沿已有真实实现做Darwin22最小适配；按驱动模块核对依赖与许可证，源树只读引用，不复制整棵树。相同SoC只作为筛选条件，触控IC/面板/MMIO/IRQ/电源/固件等须本机证据。Android绑定及DT只是Android观测，不将其转换成XNU实机通过或_verified=true；仍保留板字段和镜像硬停。

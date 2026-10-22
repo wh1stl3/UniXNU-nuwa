@@ -453,3 +453,14 @@
 [Evidence] reports/kernel-ci/39750542014/run.json与api-publish.json；https://github.com/wh1stl3/UniXNU/actions/runs/39750542014，device_ref=2b02285b806dfa2e6a9592d1347ea6542cb8aba1。
 [Risk] 当前仅已触发，三个archive完整闭包及新声明真实编译待取证；feed/board不变，无新镜像、设备操作或_verified=true。
 ```
+
+
+## Q-046 · 三库成功取证与真实平台链接门
+
+```text
+[unixnu-nuwa][build] 验收第十四轮三库编译并接入两库真实重链接审查
+
+[Change] 保存CI14实际成功证据和开源驱动固定来源，记录原make参数并仅追加ArmCpu与ArmDTPlatform真实archive，保留全部运行/编译开关与provider边界。
+[Evidence] reports/kernel-ci/39750542014下载内核29810101与runner一致，三库编译和符号名闭包通过；reports/driver-reuse为固定来源与7项命令保护测试、60项源输入静态检查。
+[Risk] 下一重链接仍待实际CI，完整ABI/时钟/crypto与硬件未验证；feed/board不变，无预链接/固件镜像或_verified=true。
+```
