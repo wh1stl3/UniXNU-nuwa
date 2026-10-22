@@ -1,0 +1,54 @@
+{
+    "timestamp":  "2026-10-22T10:14:34.4376224+08:00",
+    "read_only_source_status":  [
+                                    {
+                                        "command":  [
+                                                        "C:/Program Files/Git/cmd/git.exe",
+                                                        "-c",
+                                                        "safe.directory=D:/Code/PortingiOS/common/sources/UniXNU",
+                                                        "--no-optional-locks",
+                                                        "-C",
+                                                        "D:/Code/PortingiOS/common/sources/UniXNU",
+                                                        "status",
+                                                        "--porcelain",
+                                                        "--untracked-files=no"
+                                                    ],
+                                        "exit_code":  0,
+                                        "output":  ""
+                                    },
+                                    {
+                                        "command":  [
+                                                        "C:/Program Files/Git/cmd/git.exe",
+                                                        "-c",
+                                                        "safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full",
+                                                        "--no-optional-locks",
+                                                        "-C",
+                                                        "D:/Code/PortingiOS/common/sources/xnu-ios16-full",
+                                                        "status",
+                                                        "--porcelain",
+                                                        "--untracked-files=no"
+                                                    ],
+                                        "exit_code":  0,
+                                        "output":  ""
+                                    },
+                                    {
+                                        "command":  [
+                                                        "C:/Program Files/Git/cmd/git.exe",
+                                                        "-c",
+                                                        "safe.directory=D:/Code/PortingiOS/common/sources/UniXNU-sheng",
+                                                        "--no-optional-locks",
+                                                        "-C",
+                                                        "D:/Code/PortingiOS/common/sources/UniXNU-sheng",
+                                                        "status",
+                                                        "--porcelain",
+                                                        "--untracked-files=no"
+                                                    ],
+                                        "exit_code":  0,
+                                        "output":  ""
+                                    }
+                                ],
+    "board_sha256":  "8601b3e5352ab4656e9aefdc22a03d22d531cbb8d465ca11e27fd9aa9d4d38d5",
+    "base_feeds_sha256":  "dec145fe25ed9cf1c50292a1e16ccbaa690b450a1de9e1ed687395e5fef88294",
+    "comparison_basis":  "reports/darwin22-audit/interfaces.json",
+    "board_and_feed":  "unchanged"
+}

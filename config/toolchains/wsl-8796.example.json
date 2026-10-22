@@ -1,0 +1,80 @@
+{
+    "schema_version":  1,
+    "scope":  "Host toolchain manifest only; not board.toml or a feed override",
+    "target":  "arm64-apple-ios16.0",
+    "source":  {
+                   "path":  "/mnt/d/Code/PortingiOS/common/sources/xnu-ios16-full",
+                   "expected_master_version":  "22.6.0",
+                   "head_reference":  "1b191cb58250d0705d8a51287127505aa4bc0789"
+               },
+    "tools":  {
+                  "cc":  {
+                             "path":  "/usr/bin/clang",
+                             "sha256":  "31925065812631303cf9af9a30b2f56427d2102667a87a9fb4ba03a306104589"
+                         },
+                  "cxx":  {
+                              "path":  "/usr/bin/clang++",
+                              "sha256":  "31925065812631303cf9af9a30b2f56427d2102667a87a9fb4ba03a306104589"
+                          },
+                  "host_cc":  {
+                                  "path":  "/usr/bin/clang",
+                                  "sha256":  "31925065812631303cf9af9a30b2f56427d2102667a87a9fb4ba03a306104589"
+                              },
+                  "host_cxx":  {
+                                   "path":  "/usr/bin/clang++",
+                                   "sha256":  "31925065812631303cf9af9a30b2f56427d2102667a87a9fb4ba03a306104589"
+                               },
+                  "mig":  {
+                              "path":  "/var/tmp/portingios-1000/xnu-linux-tools-20261020T165202299904Z/install/bin/mig",
+                              "sha256":  "44f865a17c4a7106b90f8d7353a03babfc88d394f0ed79fb0118b80b7313e99f"
+                          },
+                  "migcom":  {
+                                 "path":  "/var/tmp/portingios-1000/xnu-linux-tools-20261020T165202299904Z/install/bin/migcom",
+                                 "sha256":  "74c2408c9d1ecc4ddacb013619d0e5b41d8ddf10ce1d894985bffcfd4b633803"
+                             },
+                  "ld":  {
+                             "path":  "/var/tmp/portingios-1000/xnu-linux-tools-20261020T165202299904Z/install/bin/aarch64-apple-darwin-ld",
+                             "sha256":  "ca2decabaf9a64ddffb67f29fe2aeb119ada3d9bb846c08b7bdbd81edfbe1cff"
+                         },
+                  "ar":  {
+                             "path":  "/var/tmp/portingios-1000/xnu-linux-tools-20261020T165202299904Z/install/bin/aarch64-apple-darwin-ar",
+                             "sha256":  "79b113f18046302da7a92dd91e4f1ea9b07adf80cdd6092d25fc3a82870d1701"
+                         },
+                  "nm":  {
+                             "path":  "/var/tmp/portingios-1000/xnu-linux-tools-20261020T165202299904Z/install/bin/aarch64-apple-darwin-nm",
+                             "sha256":  "aa39e7b7f44808e2b1f21bbdf4ce3fe74c7b7685d9ec485b254dc0e8723c7a7e"
+                         },
+                  "libtool":  {
+                                  "path":  "/var/tmp/portingios-1000/xnu-linux-tools-20261020T165202299904Z/install/bin/aarch64-apple-darwin-libtool",
+                                  "sha256":  "aa626c14da2a2b7970db3b06be81ad4eb59d3dba53bfc85e0de4c9ea93fae7b4"
+                              },
+                  "iig":  {
+                              "path":  null,
+                              "sha256":  null
+                          }
+              },
+    "sysroots":  {
+                     "target":  {
+                                    "path":  null,
+                                    "file_manifest":  null
+                                },
+                     "host":  {
+                                  "path":  null,
+                                  "file_manifest":  null
+                              },
+                     "kernel_exported":  {
+                                             "path":  null,
+                                             "file_manifest":  null
+                                         }
+                 },
+    "sdk_version":  null,
+    "writable_source_view":  null,
+    "notes":  [
+                  "Known paths are inventory candidates, not a qualified compiler/toolchain.",
+                  "sha256 null is TODO and prevents input readiness; paths are not auto-installed.",
+                  "Sysroot manifest format is {files: {relative_path: sha256}}; it is an integrity check, not SDK completeness proof.",
+                  "User has no additional Linux clang, IIG or sysroot as of R-003 A approval.",
+                  "Pinned MIG/cctools digests come from read-only common/reports/xnu-linux-tools.json; fresh WSL checks must match before reuse.",
+                  "Clang14 is pinned to the freshly observed local file identity only; its missing XNU features still block target compilation."
+              ]
+}

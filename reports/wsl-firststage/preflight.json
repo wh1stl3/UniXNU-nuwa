@@ -1,0 +1,272 @@
+{
+  "timestamp": "2026-10-22T10:11:05.441735+08:00",
+  "state": "inputs-incomplete",
+  "blockers": [
+    "tool:iig:missing",
+    "compiler:cc:features-missing",
+    "compiler:cxx:features-missing",
+    "sysroot:target:missing",
+    "sysroot:host:missing",
+    "sysroot:kernel_exported:missing",
+    "sdk_version:TODO"
+  ],
+  "tools": {
+    "cc": {
+      "path": "/usr/bin/clang",
+      "resolved": "/usr/lib/llvm-14/bin/clang",
+      "sha256": "31925065812631303cf9af9a30b2f56427d2102667a87a9fb4ba03a306104589",
+      "elf": true,
+      "executable": true,
+      "state": "identity-match"
+    },
+    "cxx": {
+      "path": "/usr/bin/clang++",
+      "resolved": "/usr/lib/llvm-14/bin/clang",
+      "sha256": "31925065812631303cf9af9a30b2f56427d2102667a87a9fb4ba03a306104589",
+      "elf": true,
+      "executable": true,
+      "state": "identity-match"
+    },
+    "host_cc": {
+      "path": "/usr/bin/clang",
+      "resolved": "/usr/lib/llvm-14/bin/clang",
+      "sha256": "31925065812631303cf9af9a30b2f56427d2102667a87a9fb4ba03a306104589",
+      "elf": true,
+      "executable": true,
+      "state": "identity-match"
+    },
+    "host_cxx": {
+      "path": "/usr/bin/clang++",
+      "resolved": "/usr/lib/llvm-14/bin/clang",
+      "sha256": "31925065812631303cf9af9a30b2f56427d2102667a87a9fb4ba03a306104589",
+      "elf": true,
+      "executable": true,
+      "state": "identity-match"
+    },
+    "mig": {
+      "path": "/var/tmp/portingios-1000/xnu-linux-tools-20261020T165202299904Z/install/bin/mig",
+      "resolved": "/var/tmp/portingios-1000/xnu-linux-tools-20261020T165202299904Z/install/bin/mig",
+      "sha256": "44f865a17c4a7106b90f8d7353a03babfc88d394f0ed79fb0118b80b7313e99f",
+      "elf": false,
+      "executable": true,
+      "state": "identity-match"
+    },
+    "migcom": {
+      "path": "/var/tmp/portingios-1000/xnu-linux-tools-20261020T165202299904Z/install/bin/migcom",
+      "resolved": "/var/tmp/portingios-1000/xnu-linux-tools-20261020T165202299904Z/install/bin/migcom",
+      "sha256": "74c2408c9d1ecc4ddacb013619d0e5b41d8ddf10ce1d894985bffcfd4b633803",
+      "elf": true,
+      "executable": true,
+      "state": "identity-match"
+    },
+    "ld": {
+      "path": "/var/tmp/portingios-1000/xnu-linux-tools-20261020T165202299904Z/install/bin/aarch64-apple-darwin-ld",
+      "resolved": "/var/tmp/portingios-1000/xnu-linux-tools-20261020T165202299904Z/install/bin/aarch64-apple-darwin-ld",
+      "sha256": "ca2decabaf9a64ddffb67f29fe2aeb119ada3d9bb846c08b7bdbd81edfbe1cff",
+      "elf": true,
+      "executable": true,
+      "state": "identity-match"
+    },
+    "ar": {
+      "path": "/var/tmp/portingios-1000/xnu-linux-tools-20261020T165202299904Z/install/bin/aarch64-apple-darwin-ar",
+      "resolved": "/var/tmp/portingios-1000/xnu-linux-tools-20261020T165202299904Z/install/bin/aarch64-apple-darwin-ar",
+      "sha256": "79b113f18046302da7a92dd91e4f1ea9b07adf80cdd6092d25fc3a82870d1701",
+      "elf": true,
+      "executable": true,
+      "state": "identity-match"
+    },
+    "nm": {
+      "path": "/var/tmp/portingios-1000/xnu-linux-tools-20261020T165202299904Z/install/bin/aarch64-apple-darwin-nm",
+      "resolved": "/var/tmp/portingios-1000/xnu-linux-tools-20261020T165202299904Z/install/bin/aarch64-apple-darwin-nm",
+      "sha256": "aa39e7b7f44808e2b1f21bbdf4ce3fe74c7b7685d9ec485b254dc0e8723c7a7e",
+      "elf": true,
+      "executable": true,
+      "state": "identity-match"
+    },
+    "libtool": {
+      "path": "/var/tmp/portingios-1000/xnu-linux-tools-20261020T165202299904Z/install/bin/aarch64-apple-darwin-libtool",
+      "resolved": "/var/tmp/portingios-1000/xnu-linux-tools-20261020T165202299904Z/install/bin/aarch64-apple-darwin-libtool",
+      "sha256": "aa626c14da2a2b7970db3b06be81ad4eb59d3dba53bfc85e0de4c9ea93fae7b4",
+      "elf": true,
+      "executable": true,
+      "state": "identity-match"
+    },
+    "iig": {
+      "state": "missing",
+      "reason": "TODO path"
+    }
+  },
+  "compilers": {
+    "cc": {
+      "version": {
+        "command": [
+          "/usr/bin/clang",
+          "--version"
+        ],
+        "exit_code": 0,
+        "stdout": "Ubuntu clang version 14.0.0-1ubuntu1.1\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/bin\n",
+        "stderr": ""
+      },
+      "features": {
+        "signature": false,
+        "summary": false,
+        "compatible": false,
+        "usage": false
+      },
+      "feature_command": {
+        "command": [
+          "/usr/bin/clang",
+          "-target",
+          "arm64-apple-ios16.0",
+          "-ffreestanding",
+          "-nostdinc",
+          "-x",
+          "c",
+          "-E",
+          "-P",
+          "-"
+        ],
+        "exit_code": 0,
+        "stdout": "NUWA_signature=0\nNUWA_summary=0\nNUWA_compatible=0\nNUWA_usage=0\n",
+        "stderr": ""
+      },
+      "state": "features-missing",
+      "semantics": null
+    },
+    "cxx": {
+      "version": {
+        "command": [
+          "/usr/bin/clang++",
+          "--version"
+        ],
+        "exit_code": 0,
+        "stdout": "Ubuntu clang version 14.0.0-1ubuntu1.1\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/bin\n",
+        "stderr": ""
+      },
+      "features": {
+        "signature": false,
+        "summary": false,
+        "compatible": false,
+        "usage": false
+      },
+      "feature_command": {
+        "command": [
+          "/usr/bin/clang++",
+          "-target",
+          "arm64-apple-ios16.0",
+          "-ffreestanding",
+          "-nostdinc",
+          "-x",
+          "c++",
+          "-E",
+          "-P",
+          "-"
+        ],
+        "exit_code": 0,
+        "stdout": "NUWA_signature=0\nNUWA_summary=0\nNUWA_compatible=0\nNUWA_usage=0\n",
+        "stderr": "clang: warning: include path for libstdc++ headers not found; pass '-stdlib=libc++' on the command line to use the libc++ standard library instead [-Wstdlibcxx-not-found]\n"
+      },
+      "state": "features-missing",
+      "semantics": null
+    }
+  },
+  "host_samples": {
+    "host_cc": {
+      "state": "syntax-sample-match",
+      "command": {
+        "command": [
+          "/usr/bin/clang",
+          "-x",
+          "c",
+          "-fsyntax-only",
+          "-"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "limitation": "Host syntax/headers only; not a linked host SETUP tool"
+    },
+    "host_cxx": {
+      "state": "syntax-sample-match",
+      "command": {
+        "command": [
+          "/usr/bin/clang++",
+          "-x",
+          "c++",
+          "-fsyntax-only",
+          "-"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "limitation": "Host syntax/headers only; not a linked host SETUP tool"
+    }
+  },
+  "sysroots": {
+    "target": {
+      "state": "missing",
+      "reason": "TODO sysroot path and file_manifest"
+    },
+    "host": {
+      "state": "missing",
+      "reason": "TODO sysroot path and file_manifest"
+    },
+    "kernel_exported": {
+      "state": "missing",
+      "reason": "TODO sysroot path and file_manifest"
+    }
+  },
+  "source": {
+    "path": "/mnt/d/Code/PortingiOS/common/sources/xnu-ios16-full",
+    "expected_head": "1b191cb58250d0705d8a51287127505aa4bc0789",
+    "master_version": "22.6.0",
+    "state": "master-match",
+    "limitation": "MasterVersion check only; no Git access or patched-view provenance claim"
+  },
+  "mig_backend": {
+    "state": "codegen-smoke-match",
+    "command": {
+      "command": [
+        "/var/tmp/portingios-1000/xnu-linux-tools-20261020T165202299904Z/install/bin/migcom",
+        "-header",
+        "/mnt/d/Code/UniXNU-nuwa/out/wsl-toolchain/mig-smoke/probe.h",
+        "-user",
+        "/mnt/d/Code/UniXNU-nuwa/out/wsl-toolchain/mig-smoke/probe-user.c",
+        "-server",
+        "/mnt/d/Code/UniXNU-nuwa/out/wsl-toolchain/mig-smoke/probe-server.c"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "outputs": [
+      {
+        "path": "out/wsl-toolchain/mig-smoke/probe.h",
+        "bytes": 4867,
+        "sha256": "83d0c6bafd1ef9bd97189ed5920b71a0bb34ee948d8a5dfe7fb5c8e7c6ec8b15"
+      },
+      {
+        "path": "out/wsl-toolchain/mig-smoke/probe-user.c",
+        "bytes": 6168,
+        "sha256": "13fdc587180cdd3e4038d889c4e9df80cd0fd6d6877ea47d2e8607efc0dcb000"
+      },
+      {
+        "path": "out/wsl-toolchain/mig-smoke/probe-server.c",
+        "bytes": 9532,
+        "sha256": "36ac5624f69ec2dc551fa1d7ad6b83e492b26e8cfd490cccd000e64ec2d18624"
+      }
+    ],
+    "limitation": "MIG backend generation only; no SDK compile, target execution or IIG proof"
+  },
+  "may_execute_kernel_build": false,
+  "kernel_built": false,
+  "pending_build_gates": [
+    "approved writable source view",
+    "complete host-tool adaptation",
+    "8796 archive/compile-record production",
+    "independent compile/link evidence"
+  ],
+  "manifest_sha256": "5593126ceb95dd8a103d1d3d1454164569f9de7c4ef2eafbeb4a1c680bc885f6"
+}

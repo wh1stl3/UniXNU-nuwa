@@ -1,0 +1,53 @@
+{
+  "executable": false,
+  "reason": "First-stage plan only; no make execution mode is implemented",
+  "preflight_state": "inputs-incomplete",
+  "blockers": [
+    "tool:iig:missing",
+    "compiler:cc:features-missing",
+    "compiler:cxx:features-missing",
+    "sysroot:target:missing",
+    "sysroot:host:missing",
+    "sysroot:kernel_exported:missing",
+    "sdk_version:TODO"
+  ],
+  "expected_raw_kernel": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped",
+  "feed_changed": false,
+  "board_changed": false,
+  "make_variables": {
+    "CC": "/usr/bin/clang",
+    "CXX": "/usr/bin/clang++",
+    "HOST_CC": "/usr/bin/clang",
+    "HOST_CXX": "/usr/bin/clang++",
+    "MIG": "/var/tmp/portingios-1000/xnu-linux-tools-20261020T165202299904Z/install/bin/mig",
+    "MIGCOM": "/var/tmp/portingios-1000/xnu-linux-tools-20261020T165202299904Z/install/bin/migcom",
+    "MIGCC": "/usr/bin/clang",
+    "IIG": null,
+    "AR": "/var/tmp/portingios-1000/xnu-linux-tools-20261020T165202299904Z/install/bin/aarch64-apple-darwin-ar",
+    "NM": "/var/tmp/portingios-1000/xnu-linux-tools-20261020T165202299904Z/install/bin/aarch64-apple-darwin-nm",
+    "LIBTOOL": "/var/tmp/portingios-1000/xnu-linux-tools-20261020T165202299904Z/install/bin/aarch64-apple-darwin-libtool",
+    "SDKROOT_RESOLVED": null,
+    "HOST_SDKROOT_RESOLVED": null,
+    "SDKVERSION": null,
+    "PLATFORM": "iPhoneOS",
+    "RC_DARWIN_KERNEL_VERSION": "22.6.0",
+    "RC_ProjectSourceVersion": "8796.141.3",
+    "ARCH_CONFIGS": "ARM64",
+    "MACHINE_CONFIGS": "BCM2837",
+    "KERNEL_CONFIGS": "DEVELOPMENT",
+    "DEPLOYMENT_TARGET_FLAGS": "-miphoneos-version-min=16.0 -DXNU_TARGET_OS_IOS",
+    "DEPLOYMENT_LINKER_FLAGS": "-Wl,-ios_version_min,16.0"
+  },
+  "adaptation_tasks": [
+    "replace all .unstripped.noctf consumers with verified 8796 artifact mapping",
+    "record actual successful CC/CXX arguments per object; database-only mode is insufficient",
+    "schedule archives from explicit device-owned implementation; baseline does not consume archives",
+    "replace remaining Darwin host SETUP/tool calls with proven Linux equivalents",
+    "leave watchdog/PGZ/board-specific code disabled until its own interface gates pass"
+  ],
+  "link_driver": {
+    "source_contract": "makedefs/MakeInc.def:619: LD = $(KC++) -nostdlib",
+    "candidate_backend": "/var/tmp/portingios-1000/xnu-linux-tools-20261020T165202299904Z/install/bin/aarch64-apple-darwin-ld",
+    "state": "TODO prove CXX driver selects this backend; do not pass -Wl options directly to ld"
+  }
+}
