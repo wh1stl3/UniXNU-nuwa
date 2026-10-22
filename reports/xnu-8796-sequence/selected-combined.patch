@@ -1,0 +1,2956 @@
+--- a/osfmk/arm64/start.s
++++ b/osfmk/arm64/start.s
+@@ -33,7 +33,9 @@
+ #include <mach_assert.h>
+ #include <machine/asm.h>
+ #include "assym.s"
++#if defined(APPLE_ARM64_ARCH_FAMILY)
+ #include <arm64/tunables/tunables.s>
++#endif
+ #include <arm64/exception_asm.h>
+ 
+ #if __ARM_KERNEL_PROTECT__
+@@ -143,8 +145,8 @@
+ 	adrp	x19, EXT(ResetHandlerData)@page			// Get address of the reset handler data
+ 	add		x19, x19, EXT(ResetHandlerData)@pageoff
+ 	mrs		x15, MPIDR_EL1						// Load MPIDR to get CPU number
+-#if HAS_CLUSTER
+-	and		x0, x15, #0xFFFF					// CPU number in Affinity0, cluster ID in Affinity1
++#if HAS_CLUSTER || defined(BCM2837)
++	and		x0, x15, #0xFFFF					// CPU number in Affinity0, cluster ID in Affinity1 (SM8550 numbers cores in Affinity1)
+ #else
+ 	and		x0, x15, #0xFF						// CPU number is in MPIDR Affinity Level 0
+ #endif
+@@ -422,6 +424,10 @@
+ 
+ 	/* allocate an L2 table */
+ 3:	add	$4, $4, PGBYTES
++	/* Refuse before a new table can overwrite adjacent kernel globals. */
++	add $6, x25, #(BOOTSTRAP_TABLE_BYTES >> 12), lsl #12
++	cmp $4, $6
++	b.hs Lbootstrap_tables_exhausted
+ 
+ 	/* create_l1_table_entry(virt_base, L1 table, L2 table, scratch1, scratch2, scratch3) */
+ 	create_l1_table_entry	$0, $3, $4, $6, $7, $8
+@@ -524,8 +530,8 @@
+ 	// Invalidate all entries in the bootstrap page tables
+ 	mov		x0, #(ARM_TTE_EMPTY)				// Load invalid entry template
+ 	mov		x1, x25								// Start at V=P pagetable root
+-	mov		x2, #(TTE_PGENTRIES)				// Load number of entries per page
+-	lsl		x2, x2, #2							// Shift by 2 for num entries on 4 pages
++	mov		x2, #(BOOTSTRAP_TABLE_BYTES / ARM_PGBYTES)
++	lsl		x2, x2, #(ARM_PGSHIFT - TTE_SHIFT) // Clear the whole reserved pool
+ 
+ Linvalidate_bootstrap:							// do {
+ 	str		x0, [x1], #(1 << TTE_SHIFT)			//   Invalidate and advance
+@@ -609,6 +615,12 @@
+ 	lsr		x5,  x24, #(ARM_TT_L2_SHIFT)
+ 	create_bootstrap_mapping x14, x15, x5, x3, x2, x9, x10, x11, x12, x13
+ 
++	b Lbootstrap_tables_ready
++Lbootstrap_tables_exhausted:
++	// MMU is still off. Stop with the offending cursor/end preserved for
++	// the early debugger rather than corrupting memory or forging a map.
++	b Lbootstrap_tables_exhausted
++Lbootstrap_tables_ready:
+ 	/* Ensure TTEs are visible */
+ 	dsb		ish
+ 
+@@ -686,7 +698,7 @@
+ 	dsb		ish
+ 
+ 
+-#if defined(BCM2837)
++#if defined(BCM2837) && (!defined(XNU_NATIVE_ARCH_TIMER) || !XNU_NATIVE_ARCH_TIMER)
+ 	// Setup timer interrupt routing; must be done before MMU is enabled
+ 	mrs		x15, MPIDR_EL1						// Load MPIDR to get CPU number
+ 	and		x15, x15, #0xFF						// CPU number is in MPIDR Affinity Level 0
+@@ -774,10 +786,12 @@
+ 	// Initialization common to all non-virtual Apple targets
+ #endif  // APPLE_ARM64_ARCH_FAMILY
+ 
++#if defined(APPLE_ARM64_ARCH_FAMILY)
+ 	// Read MIDR before start of per-SoC tunables
+ 	mrs x12, MIDR_EL1
+ 
+ 	APPLY_TUNABLES x12, x13, x14
++#endif
+ 
+ 
+ #if HAS_CLUSTER
+--- a/iokit/KernelConfigTables.cpp
++++ b/iokit/KernelConfigTables.cpp
+@@ -35,8 +35,69 @@
+ const char * gIOKernelConfigTables =
+     "("
+     "   {"
++    "     'IOClass'         = ArmCpu;"
++    "     'IOProviderClass' = IOPlatformDevice;"
++    "     'IOProbeScore'    = 2000:32;"
++    "   },"
++    "   {"
++    "     'IOClass'         = ArmVirtPlatform;"
++    "     'IOProviderClass' = IOPlatformExpertDevice;"
++    "     'IONameMatch'     = 'linux,dummy-virt';"
++    "     'IOProbeScore'    = 10000:32;"
++    "   },"
++    "   {"
++    "     'IOClass'         = ArmDTPlatform;"
++    "     'IOProviderClass' = IOPlatformExpertDevice;"
++    "     'IONameMatch'     = 'device-tree';"
++    "     'IOProbeScore'    = 5000:32;"
++    "   },"
++    "   {"
+     "     'IOClass'         = IOPanicPlatform;"
+     "     'IOProviderClass' = IOPlatformExpertDevice;"
+     "     'IOProbeScore'    = 0:32;"
+     "   }"
++#if defined(XNU_NATIVE_AES) && XNU_NATIVE_AES
++    "   ,{"
++    "     'IOClass'         = NativeAES;"
++    "     'IOProviderClass' = IOResources;"
++    "     'IOResourceMatch' = IOBSD;"
++    "     'IOProbeScore'    = 1000:32;"
++    "   }"
++#endif
++#if defined(XNU_NATIVE_VIRTIO_BLOCK) && XNU_NATIVE_VIRTIO_BLOCK
++    "   ,{"
++    "     'IOClass'         = NativeVirtioBlock;"
++    "     'IOProviderClass' = IOPlatformDevice;"
++    "     'IOProbeScore'    = 1000:32;"
++    "   }"
++#endif
++#if defined(XNU_NATIVE_VIRTIO_CONSOLE) && XNU_NATIVE_VIRTIO_CONSOLE
++    "   ,{"
++    "     'IOClass'         = NativeVirtioConsole;"
++    "     'IOProviderClass' = IOPlatformDevice;"
++    "     'IOProbeScore'    = 1000:32;"
++    "   }"
++#endif
++#if defined(XNU_NATIVE_RAM_BLOCK) && XNU_NATIVE_RAM_BLOCK
++    "   ,{"
++    "     'IOClass'         = NativeRamBlock;"
++    "     'IOMatchCategory' = NativeRamBlock;"
++    "     'IOProviderClass' = IOResources;"
++    "     'IOResourceMatch' = IOBSD;"
++    "     'IOProbeScore'    = 1000:32;"
++    "   }"
++#endif
++#if defined(XNU_NATIVE_UFS) && XNU_NATIVE_UFS
++    "   ,{"
++    "     'IOClass'         = NativeUfs;"
++    "     'IOProviderClass' = IOPlatformDevice;"
++    "     'IOProbeScore'    = 1000:32;"
++    "   }"
++    "   ,{"
++    "     'IOClass'         = NativeUfs;"
++    "     'IOMatchCategory' = NativeUfsRoot;"
++    "     'IOProviderClass' = IOPlatformExpertDevice;"
++    "     'IOProbeScore'    = 500:32;"
++    "   }"
++#endif
+     ")";
+--- a/bsd/conf/Makefile.template
++++ b/bsd/conf/Makefile.template
+@@ -543,7 +543,7 @@
+ 	$(_v)$(REPLACECONTENTS) $@ $(KCC) $(CFLAGS) $(INCFLAGS)
+ $(CXXOBJS): .CXXFLAGS
+ .CXXFLAGS: ALWAYS
+-	$(_v)$(REPLACECONTENTS) $@ $(KC++) $(CXXFLAGS) $(INCFLAGS)
++	$(_v)$(REPLACECONTENTS) $@ $(KC++) $(CFLAGS) $(CXXFLAGS) $(INCFLAGS)
+ $(SOBJS): .SFLAGS
+ .SFLAGS: ALWAYS
+ 	$(_v)$(REPLACECONTENTS) $@ $(S_KCC) $(SFLAGS) $(INCFLAGS)
+--- a/iokit/conf/Makefile.template
++++ b/iokit/conf/Makefile.template
+@@ -208,7 +208,7 @@
+ 	$(_v)$(REPLACECONTENTS) $@ $(KCC) $(CFLAGS) $(INCFLAGS)
+ $(CXXOBJS): .CXXFLAGS
+ .CXXFLAGS: ALWAYS
+-	$(_v)$(REPLACECONTENTS) $@ $(KC++) $(CXXFLAGS) $(INCFLAGS)
++	$(_v)$(REPLACECONTENTS) $@ $(KC++) $(CFLAGS) $(CXXFLAGS) $(INCFLAGS)
+ $(SOBJS): .SFLAGS
+ .SFLAGS: ALWAYS
+ 	$(_v)$(REPLACECONTENTS) $@ $(S_KCC) $(SFLAGS) $(INCFLAGS)
+--- a/libkern/conf/Makefile.template
++++ b/libkern/conf/Makefile.template
+@@ -144,7 +144,7 @@
+ 	$(_v)$(REPLACECONTENTS) $@ $(KCC) $(CFLAGS) $(INCFLAGS)
+ $(CXXOBJS): .CXXFLAGS
+ .CXXFLAGS: ALWAYS
+-	$(_v)$(REPLACECONTENTS) $@ $(KC++) $(CXXFLAGS) $(INCFLAGS)
++	$(_v)$(REPLACECONTENTS) $@ $(KC++) $(CFLAGS) $(CXXFLAGS) $(INCFLAGS)
+ $(SOBJS): .SFLAGS
+ .SFLAGS: ALWAYS
+ 	$(_v)$(REPLACECONTENTS) $@ $(S_KCC) $(SFLAGS) $(INCFLAGS)
+--- a/libsa/conf/Makefile.template
++++ b/libsa/conf/Makefile.template
+@@ -59,7 +59,7 @@
+ 	$(_v)$(REPLACECONTENTS) $@ $(KCC) $(CFLAGS) $(INCFLAGS)
+ $(CXXOBJS): .CXXFLAGS
+ .CXXFLAGS: ALWAYS
+-	$(_v)$(REPLACECONTENTS) $@ $(KC++) $(CXXFLAGS) $(INCFLAGS)
++	$(_v)$(REPLACECONTENTS) $@ $(KC++) $(CFLAGS) $(CXXFLAGS) $(INCFLAGS)
+ $(SOBJS): .SFLAGS
+ .SFLAGS: ALWAYS
+ 	$(_v)$(REPLACECONTENTS) $@ $(S_KCC) $(SFLAGS) $(INCFLAGS)
+--- a/osfmk/conf/Makefile.template
++++ b/osfmk/conf/Makefile.template
+@@ -379,7 +379,7 @@
+ 	$(_v)$(REPLACECONTENTS) $@ $(KCC) $(CFLAGS) $(INCFLAGS)
+ $(CXXOBJS): .CXXFLAGS
+ .CXXFLAGS: ALWAYS
+-	$(_v)$(REPLACECONTENTS) $@ $(KC++) $(CXXFLAGS) $(INCFLAGS)
++	$(_v)$(REPLACECONTENTS) $@ $(KC++) $(CFLAGS) $(CXXFLAGS) $(INCFLAGS)
+ $(SOBJS): .SFLAGS
+ .SFLAGS: ALWAYS
+ 	$(_v)$(REPLACECONTENTS) $@ $(S_KCC) $(SFLAGS) $(INCFLAGS)
+--- a/pexpert/conf/Makefile.template
++++ b/pexpert/conf/Makefile.template
+@@ -78,7 +78,7 @@
+ 	$(_v)$(REPLACECONTENTS) $@ $(KCC) $(CFLAGS) $(INCFLAGS)
+ $(CXXOBJS): .CXXFLAGS
+ .CXXFLAGS: ALWAYS
+-	$(_v)$(REPLACECONTENTS) $@ $(KC++) $(CXXFLAGS) $(INCFLAGS)
++	$(_v)$(REPLACECONTENTS) $@ $(KC++) $(CFLAGS) $(CXXFLAGS) $(INCFLAGS)
+ $(SOBJS): .SFLAGS
+ .SFLAGS: ALWAYS
+ 	$(_v)$(REPLACECONTENTS) $@ $(S_KCC) $(SFLAGS) $(INCFLAGS)
+--- a/san/conf/Makefile.template
++++ b/san/conf/Makefile.template
+@@ -55,7 +55,7 @@
+ 	$(_v)$(REPLACECONTENTS) $@ $(KCC) $(CFLAGS) $(INCFLAGS)
+ $(CXXOBJS): .CXXFLAGS
+ .CXXFLAGS: ALWAYS
+-	$(_v)$(REPLACECONTENTS) $@ $(KC++) $(CXXFLAGS) $(INCFLAGS)
++	$(_v)$(REPLACECONTENTS) $@ $(KC++) $(CFLAGS) $(CXXFLAGS) $(INCFLAGS)
+ $(SOBJS): .SFLAGS
+ .SFLAGS: ALWAYS
+ 	$(_v)$(REPLACECONTENTS) $@ $(S_KCC) $(SFLAGS) $(INCFLAGS)
+--- a/security/conf/Makefile.template
++++ b/security/conf/Makefile.template
+@@ -81,7 +81,7 @@
+ 	$(_v)$(REPLACECONTENTS) $@ $(KCC) $(CFLAGS) $(INCFLAGS)
+ $(CXXOBJS): .CXXFLAGS
+ .CXXFLAGS: ALWAYS
+-	$(_v)$(REPLACECONTENTS) $@ $(KC++) $(CXXFLAGS) $(INCFLAGS)
++	$(_v)$(REPLACECONTENTS) $@ $(KC++) $(CFLAGS) $(CXXFLAGS) $(INCFLAGS)
+ $(SOBJS): .SFLAGS
+ .SFLAGS: ALWAYS
+ 	$(_v)$(REPLACECONTENTS) $@ $(S_KCC) $(SFLAGS) $(INCFLAGS)
+--- a/osfmk/vm/vm_user.c
++++ b/osfmk/vm/vm_user.c
+@@ -4474,7 +4474,6 @@
+ 	(void) task;
+ 	(void) address;
+ 	(void) size;
+-	(void) indices;
+ 	return KERN_NOT_SUPPORTED;
+ #endif /* CONFIG_DEFERRED_RECLAIM */
+ }
+--- a/makedefs/MakeInc.kernel
++++ b/makedefs/MakeInc.kernel
+@@ -143,6 +143,9 @@
+ 	$(_v)$(LIBTOOL) -static -csD -filelist link.filelist -o $@
+ 	$(_v)$(LN) $(call function_convert_build_config_to_objdir,$(CURRENT_BUILD_CONFIG))/lib$(KERNEL_FILE_NAME).a $(OBJROOT)/lib$(KERNEL_FILE_NAME).a
+ endif
++
++# Explicit external source archives participate in incremental relinking.
++$(TARGET)/$(KERNEL_FILE_NAME).unstripped: $(XNU_EXTERNAL_KERNEL_ARCHIVES)
+ 
+ $(TARGET)/$(KERNEL_FILE_NAME).unstripped: $(addprefix $(TARGET)/,$(foreach component,$(COMPONENT_LIST),$(component)/$(CURRENT_KERNEL_CONFIG)/$(component).filelist)) lastkerneldataconst.o lastkernelconstructor.o nonlto.o $(SRCROOT)/config/version.c $(SRCROOT)/config/MasterVersion $(LDFILES_KERNEL_ONLY) .LDFLAGS $(filter %/MakeInc.kernel,$(MAKEFILE_LIST))
+ 	$(_v)${MAKE} -f $(firstword $(MAKEFILE_LIST)) version.o
+--- a/makedefs/MakeInc.def
++++ b/makedefs/MakeInc.def
+@@ -642,7 +642,8 @@
+ 	-Wl,-headerpad,152
+ 
+ # LDFLAGS_KERNEL_SDK	= -L$(SDKROOT)/usr/local/lib/kernel -lfirehose_kernel
+-LDFLAGS_KERNEL_SDK	= -L$(SDKROOT)/usr/local/lib/kernel -L$(SDKROOT)/usr/local/lib/kernel/platform
++export KERNEL_SDKROOT ?= $(SDKROOT)
++LDFLAGS_KERNEL_SDK	= -L$(KERNEL_SDKROOT)/usr/local/lib/kernel -L$(KERNEL_SDKROOT)/usr/local/lib/kernel/platform
+ 
+ LDFLAGS_KERNEL_RELEASE	=
+ LDFLAGS_KERNEL_DEVELOPMENT =
+@@ -884,8 +885,8 @@
+ INCFLAGS_EXTERN	= -I$(SRCROOT)/EXTERNAL_HEADERS
+ INCFLAGS_GEN	= -I$(SRCROOT)/$(COMPONENT) -I$(OBJROOT)/EXPORT_HDRS/$(COMPONENT)
+ INCFLAGS_LOCAL	= -I.
+-INCFLAGS_SDK	= -I$(SDKROOT)/usr/local/include/kernel
+-INCFLAGS_PLATFORM = -I$(SDKROOT)/$(KPINCDIR)/platform
++INCFLAGS_SDK	= -I$(KERNEL_SDKROOT)/usr/local/include/kernel -I$(KERNEL_SDKROOT)/usr/local/include
++INCFLAGS_PLATFORM = -I$(KERNEL_SDKROOT)/$(KPINCDIR)/platform
+ 
+ INCFLAGS	= $(INCFLAGS_LOCAL) $(INCFLAGS_GEN) $(INCFLAGS_IMPORT) $(INCFLAGS_EXTERN) $(INCFLAGS_MAKEFILE) $(INCFLAGS_SDK) $(INCFLAGS_PLATFORM)
+ 
+--- a/bsd/sys/make_symbol_aliasing.sh
++++ b/bsd/sys/make_symbol_aliasing.sh
+@@ -34,7 +34,7 @@
+ SDKROOT="$1"
+ OUTPUT="$2"
+ 
+-AVAILABILITY_PL="${SDKROOT}/${DRIVERKITROOT}/usr/local/libexec/availability.pl"
++AVAILABILITY_PL="${XNU_AVAILABILITY_PL:-${SDKROOT}/${DRIVERKITROOT}/usr/local/libexec/availability.pl}"
+ 
+ if [ ! -x "${AVAILABILITY_PL}" ] ; then
+     echo "Unable to locate ${AVAILABILITY_PL} (or not executable)" >&2
+--- a/bsd/miscfs/mockfs/mockfs_vnops.c
++++ b/bsd/miscfs/mockfs/mockfs_vnops.c
+@@ -29,6 +29,7 @@
+ #include <miscfs/mockfs/mockfs.h>
+ #include <miscfs/mockfs/mockfs_vnops.h>
+ #include <sys/ubc.h>
++#include <sys/fcntl.h>
+ #include <sys/mount_internal.h>
+ #include <sys/vnode_internal.h>
+ #include <vfs/vfs_support.h>
+@@ -46,6 +47,11 @@
+  *   each function does in generic terms.
+  */
+ int mockfs_lookup(struct vnop_lookup_args * ap);
++static int mockfs_readonly_open(struct vnop_open_args *ap)
++{
++	return (ap->a_mode & FWRITE) ? EROFS : 0;
++}
++
+ int mockfs_getattr(struct vnop_getattr_args * ap);
+ int mockfs_read(struct vnop_read_args * ap);
+ int mockfs_strategy(struct vnop_strategy_args * ap);
+@@ -103,7 +109,7 @@
+ 	fsnode = (mockfs_fsnode_t) dvp->v_data;
+ 	target_fsnode = NULL;
+ 
+-	if ((op == LOOKUP) && (fsnode->type == MOCKFS_ROOT)) {
++	if ((op == LOOKUP || !(cnp->cn_flags & ISLASTCN)) && (fsnode->type == MOCKFS_ROOT)) {
+ 		/*
+ 		 * Okay, we're looking in the root directory, so we aren't necessarily
+ 		 *   going to fail.  What are we looking for?
+@@ -117,10 +123,15 @@
+ 		 *   accidentally commit a change to the init_process pathname.  We map from name to node type
+ 		 *   here, as mockfs doesn't current use names; just unique types.
+ 		 */
+-		if (!strncmp(cnp->cn_nameptr, "sbin", 5)) {
++		if (!strncmp(cnp->cn_nameptr, "sbin", 5) ||
++		    !strncmp(cnp->cn_nameptr, "usr", 4) || !strncmp(cnp->cn_nameptr, "lib", 4)) {
+ 			target_fsnode = fsnode;
+ 		} else if (!strncmp(cnp->cn_nameptr, "dev", 4)) {
+ 			mockfs_fsnode_child_by_type(fsnode, MOCKFS_DEV, &target_fsnode);
++		} else if (!strncmp(cnp->cn_nameptr, "dyld", 5)) {
++			mockfs_fsnode_child_by_type(fsnode, MOCKFS_TEST_FILE, &target_fsnode);
++		} else if (!strncmp(cnp->cn_nameptr, "probe.bin", 10)) {
++			mockfs_fsnode_child_by_type(fsnode, MOCKFS_TEST_FILE, &target_fsnode);
+ 		} else if (!strncmp(cnp->cn_nameptr, "launchd", 8)) {
+ 			mockfs_fsnode_child_by_type(fsnode, MOCKFS_FILE, &target_fsnode);
+ 		} else {
+@@ -392,8 +403,12 @@
+ 	 *   This also means that their request should always be contiguous, so the run calculation is easy!
+ 	 */
+ 	if (vp->v_type == VREG) {
+-		*bpn = foffset / blksize;
+-		*run = fsnode->size - foffset;
++		if (foffset < 0 || (uint64_t)foffset > fsnode->size) {
++			return EINVAL;
++		}
++		*bpn = (fsnode->backing_offset + foffset) / blksize;
++		/* File metadata is exact; block I/O may include allocated zero padding. */
++		*run = ((fsnode->size + 4095) & ~4095ULL) - foffset;
+ 
+ 		if (ap->a_size > *run) {
+ 			/* We've been asked for more data than the backing device can provide; we're done. */
+@@ -411,9 +426,9 @@
+ 	{ .opve_op = &vnop_default_desc, .opve_impl = (VOPFUNC) vn_default_error }, /* default */
+ 	{ .opve_op = &vnop_lookup_desc, .opve_impl = (VOPFUNC) mockfs_lookup }, /* lookup */
+ 	{ .opve_op = &vnop_create_desc, .opve_impl = (VOPFUNC) err_create },/* create */
+-	{ .opve_op = &vnop_open_desc, .opve_impl = (VOPFUNC) err_open }, /* open */
++	{ .opve_op = &vnop_open_desc, .opve_impl = (VOPFUNC) mockfs_readonly_open }, /* open */
+ 	{ .opve_op = &vnop_mknod_desc, .opve_impl = (VOPFUNC) err_mknod }, /* mknod */
+-	{ .opve_op = &vnop_close_desc, .opve_impl = (VOPFUNC) err_close }, /* close */
++	{ .opve_op = &vnop_close_desc, .opve_impl = (VOPFUNC) nop_close }, /* close */
+ 	{ .opve_op = &vnop_access_desc, .opve_impl = (VOPFUNC) err_access }, /* access */
+ 	{ .opve_op = &vnop_getattr_desc, .opve_impl = (VOPFUNC) mockfs_getattr }, /* getattr */
+ 	{ .opve_op = &vnop_setattr_desc, .opve_impl = (VOPFUNC) err_setattr }, /* setattr */
+@@ -421,7 +436,7 @@
+ 	{ .opve_op = &vnop_write_desc, .opve_impl = (VOPFUNC) err_write }, /* write */
+ 	{ .opve_op = &vnop_ioctl_desc, .opve_impl = (VOPFUNC) err_ioctl }, /* ioctl */
+ 	{ .opve_op = &vnop_select_desc, .opve_impl = (VOPFUNC) err_select }, /* select */
+-	{ .opve_op = &vnop_mmap_desc, .opve_impl = (VOPFUNC) err_mmap }, /* mmap */
++	{ .opve_op = &vnop_mmap_desc, .opve_impl = (VOPFUNC) nop_mmap }, /* mmap */
+ 	{ .opve_op = &vnop_fsync_desc, .opve_impl = (VOPFUNC) nop_fsync }, /* fsync */
+ 	{ .opve_op = &vnop_remove_desc, .opve_impl = (VOPFUNC) err_remove }, /* remove */
+ 	{ .opve_op = &vnop_link_desc, .opve_impl = (VOPFUNC) err_link }, /* link */
+--- a/bsd/miscfs/mockfs/mockfs_vfsops.c
++++ b/bsd/miscfs/mockfs/mockfs_vfsops.c
+@@ -34,12 +34,23 @@
+ #include <miscfs/mockfs/mockfs_vnops.h>
+ #include <miscfs/specfs/specdev.h>
+ #include <sys/disk.h>
++#include <sys/buf.h>
++#include <sys/kauth.h>
+ #include <sys/errno.h>
+ #include <sys/malloc.h>
+ #include <sys/mount_internal.h>
+ #include <sys/vnode_internal.h>
+ 
+ static LCK_GRP_DECLARE(mockfs_mtx_grp, "mockfs-mutex");
++
++/* Bounded offline input container, not a deployment filesystem or trust claim.
++ * Two unmodified files: /sbin/launchd and /probe.bin; all offsets native 4K.
++ */
++struct mockfs_test_header {
++	char magic[8];
++	uint32_t version, count;
++	uint64_t launch_offset, launch_size, test_offset, test_size;
++};
+ 
+ int mockfs_mountroot(mount_t mp, vnode_t rvp, __unused vfs_context_t ctx);
+ 
+@@ -68,6 +79,10 @@
+ 	mockfs_fsnode_t root_fsnode = NULL;
+ 	mockfs_fsnode_t dev_fsnode = NULL;
+ 	mockfs_fsnode_t file_fsnode = NULL;
++	mockfs_fsnode_t test_fsnode = NULL;
++	struct mockfs_test_header header = {0};
++	buf_t header_buf = NULL;
++	boolean_t test_image = FALSE;
+ 	mockfs_mount_t mockfs_mount_data = NULL;
+ 	dk_memdev_info_t memdev_info;
+ 
+@@ -99,9 +114,11 @@
+ 
+ 	if (!VNOP_IOCTL(rvp, DKIOCGETMEMDEVINFO, (caddr_t)&memdev_info, 0, NULL)) {
+ 		/*
+-		 * For the moment, we won't try to optimize when mi_phys is true.
++		 * The legacy ioctl exposes a 32-bit base page. A 64-bit kernel
++		 * virtual address cannot be represented; use the real device I/O
++		 * path instead. Physical memory is not supported by this optimization.
+ 		 */
+-		if (!mockfs_mount_data->mockfs_physical_memory) {
++		if (!memdev_info.mi_phys && (sizeof(uintptr_t) == sizeof(uint32_t))) {
+ 			mockfs_mount_data->mockfs_memory_backed = memdev_info.mi_mdev;
+ 			mockfs_mount_data->mockfs_physical_memory = memdev_info.mi_phys;
+ 			mockfs_mount_data->mockfs_memdev_base = memdev_info.mi_base;
+@@ -111,6 +128,42 @@
+ 
+ 	lck_mtx_init(&mockfs_mount_data->mockfs_mnt_mtx, &mockfs_mtx_grp, LCK_ATTR_NULL);
+ 
++	mp->mnt_data = (typeof(mp->mnt_data))mockfs_mount_data;
++
++	/* Legacy single-Mach-O images retain their original mapping. */
++	rvalue = buf_meta_bread(rvp, 0, 4096, vfs_context_ucred(ctx), &header_buf);
++	if (!rvalue) {
++		memcpy(&header, (void *)buf_dataptr(header_buf), sizeof(header));
++	}
++	if (header_buf) {
++		buf_brelse(header_buf);
++	}
++	if (rvalue) {
++		goto done;
++	}
++	if (!memcmp(header.magic, "N4KROOT", 8)) {
++		uint64_t bytes = rvp->v_specinfo->si_devsize;
++		if (header.version != 1 || header.count != 2 || bytes > 32 * 1024 * 1024 ||
++		    header.launch_offset != 4096 || !header.launch_size || !header.test_size ||
++		    (header.test_offset & 4095) || header.test_offset < 8192 || header.test_offset > bytes ||
++		    header.launch_size > header.test_offset - header.launch_offset ||
++		    header.test_size > bytes - header.test_offset) {
++			rvalue = EINVAL;
++			goto done;
++		}
++		rvalue = mockfs_fsnode_create(mp, MOCKFS_TEST_FILE, &test_fsnode);
++		if (rvalue) {
++			goto done;
++		}
++		file_fsnode->backing_offset = header.launch_offset;
++		file_fsnode->size = header.launch_size;
++		test_fsnode->backing_offset = header.test_offset;
++		test_fsnode->size = header.test_size;
++		mockfs_mount_data->mockfs_memory_backed = FALSE;
++		test_image = TRUE;
++	}
++
++
+ 	/*
+ 	 * All of the needed nodes/structures have been set up; now we just need to establish the relationships
+ 	 *   between the various mockfs nodes.
+@@ -123,11 +176,18 @@
+ 		goto done;
+ 	}
+ 
++	if (test_image && (rvalue = mockfs_fsnode_adopt(root_fsnode, test_fsnode))) {
++		goto done;
++	}
++
+ 	mockfs_mount_data->mockfs_root = root_fsnode;
+ 	mp->mnt_data = (typeof(mp->mnt_data))mockfs_mount_data;
+ 
+ done:
+ 	if (rvalue) {
++		if (test_fsnode) {
++			mockfs_fsnode_destroy(test_fsnode);
++		}
+ 		if (file_fsnode) {
+ 			mockfs_fsnode_destroy(file_fsnode);
+ 		}
+@@ -140,6 +200,7 @@
+ 		if (mockfs_mount_data) {
+ 			lck_mtx_destroy(&mockfs_mount_data->mockfs_mnt_mtx, &mockfs_mtx_grp);
+ 			kfree_type(struct mockfs_mount, mockfs_mount_data);
++		mp->mnt_data = NULL;
+ 		}
+ 	}
+ 
+@@ -225,6 +286,27 @@
+ 	return 0;
+ }
+ 
++static int
++mockfs_getattr(mount_t mp, struct vfs_attr *attributes, __unused vfs_context_t ctx)
++{
++	mockfs_fsnode_t root = ((mockfs_mount_t)mp->mnt_data)->mockfs_root;
++	uint64_t nodes = 1 + (root->child_a != NULL) + (root->child_b != NULL) + (root->child_c != NULL);
++	uint64_t bytes = mp->mnt_devvp->v_specinfo->si_devsize;
++	uint64_t blocks = bytes / 4096 + ((bytes & 4095) != 0);
++	VFSATTR_RETURN(attributes, f_bsize, 4096);
++	VFSATTR_RETURN(attributes, f_iosize, 4096);
++	VFSATTR_RETURN(attributes, f_blocks, blocks);
++	VFSATTR_RETURN(attributes, f_bused, blocks);
++	VFSATTR_RETURN(attributes, f_bfree, 0);
++	VFSATTR_RETURN(attributes, f_bavail, 0);
++	VFSATTR_RETURN(attributes, f_files, nodes);
++	VFSATTR_RETURN(attributes, f_ffree, 0);
++	VFSATTR_RETURN(attributes, f_objcount, nodes);
++	VFSATTR_RETURN(attributes, f_maxobjcount, nodes);
++	VFSATTR_RETURN(attributes, f_fssubtype, 0);
++	return 0;
++}
++
+ int
+ mockfs_init(__unused struct vfsconf * vfsc)
+ {
+@@ -235,5 +317,6 @@
+ 	.vfs_unmount = mockfs_unmount,
+ 	.vfs_root = mockfs_root,
+ 	.vfs_sync = mockfs_sync,
++	.vfs_getattr = mockfs_getattr,
+ 	.vfs_init = mockfs_init,
+ };
+--- a/bsd/miscfs/mockfs/mockfs_fsnode.h
++++ b/bsd/miscfs/mockfs/mockfs_fsnode.h
+@@ -46,7 +46,8 @@
+ enum mockfs_fsnode_type {
+ 	MOCKFS_ROOT,
+ 	MOCKFS_DEV,
+-	MOCKFS_FILE
++	MOCKFS_FILE,
++	MOCKFS_TEST_FILE
+ };
+ 
+ /*
+@@ -58,6 +59,7 @@
+  *   VREG access).
+  */
+ struct mockfs_fsnode {
++	uint64_t               backing_offset; /* Offline two-file image only. */
+ 	uint64_t               size;    /* Bytes of data; 0 unless type is MOCKFS_FILE */
+ 	uint8_t                type;    /* Serves as a unique identifier for now */
+ 	mount_t                mnt;     /* The mount that this node belongs to */
+@@ -66,6 +68,7 @@
+ 	                                /* TODO: Replace child_a/child_b with something more flexible */
+ 	struct mockfs_fsnode * child_a; /* TEMPORARY */
+ 	struct mockfs_fsnode * child_b; /* TEMPORARY */
++	struct mockfs_fsnode * child_c; /* Offline test input. */
+ };
+ 
+ typedef struct mockfs_fsnode * mockfs_fsnode_t;
+--- a/bsd/miscfs/mockfs/mockfs_fsnode.c
++++ b/bsd/miscfs/mockfs/mockfs_fsnode.c
+@@ -74,6 +74,7 @@
+ 	case MOCKFS_DEV:
+ 		break;
+ 	case MOCKFS_FILE:
++	case MOCKFS_TEST_FILE:
+ 		/*
+ 		 * For a regular file, size is meaningful, but it will always be equal to the
+ 		 * size of the backing device.
+@@ -85,7 +86,7 @@
+ 		goto done;
+ 	}
+ 
+-	*fsnpp = kalloc_type(mockfs_fsnode_t, Z_WAITOK | Z_ZERO | Z_NOFAIL);
++	*fsnpp = kalloc_type(struct mockfs_fsnode, Z_WAITOK | Z_ZERO | Z_NOFAIL);
+ 	(*fsnpp)->size = new_size;
+ 	(*fsnpp)->type = type;
+ 	(*fsnpp)->mnt = mp;
+@@ -145,6 +146,12 @@
+ 		}
+ 	}
+ 
++	if (fsnp->child_c) {
++		if ((rvalue = mockfs_fsnode_destroy(fsnp->child_c))) {
++			panic("mockfs: failed to destroy test node");
++		}
++	}
++
+ 	/*
+ 	 * We need to orphan this node before we destroy it.
+ 	 */
+@@ -154,7 +161,7 @@
+ 		}
+ 	}
+ 
+-	kfree_type(mockfs_fsnode_t, fsnp);
++	kfree_type(struct mockfs_fsnode, fsnp);
+ done:
+ 	return rvalue;
+ }
+@@ -202,6 +209,9 @@
+ 	} else if (!parent->child_b) {
+ 		parent->child_b = child;
+ 		child->parent = parent;
++	} else if (!parent->child_c) {
++		parent->child_c = child;
++		child->parent = parent;
+ 	} else {
+ 		rvalue = ENOMEM;
+ 	}
+@@ -243,6 +253,9 @@
+ 	} else if (parent->child_b == fsnp) {
+ 		parent->child_b = NULL;
+ 		fsnp->parent = NULL;
++	} else if (parent->child_c == fsnp) {
++		parent->child_c = NULL;
++		fsnp->parent = NULL;
+ 	} else {
+ 		panic("mockfs_fsnode_orphan insanity, fsnp->parent != parent->child; fsnp = %p (in case gdb is screwing with you)", fsnp);
+ 	}
+@@ -278,6 +291,8 @@
+ 		*child = parent->child_a;
+ 	} else if ((parent->child_b) && (parent->child_b->type == type)) {
+ 		*child = parent->child_b;
++	} else if ((parent->child_c) && (parent->child_c->type == type)) {
++		*child = parent->child_c;
+ 	} else {
+ 		rvalue = ENOENT;
+ 	}
+@@ -322,7 +337,7 @@
+ 		 * We need to create the vnode; this will be unpleasant.
+ 		 */
+ 		vnfs_param.vnfs_mp = fsnp->mnt;
+-		vnfs_param.vnfs_vtype = (fsnp->type == MOCKFS_FILE) ? VREG : VDIR;
++		vnfs_param.vnfs_vtype = ((fsnp->type == MOCKFS_FILE) || (fsnp->type == MOCKFS_TEST_FILE)) ? VREG : VDIR;
+ 		vnfs_param.vnfs_str = "mockfs";
+ 		vnfs_param.vnfs_dvp = (fsnp->type == MOCKFS_ROOT) ? NULL : fsnp->parent->vp;
+ 		vnfs_param.vnfs_fsnode = fsnp;
+--- a/osfmk/arm/pmap/pmap.h
++++ b/osfmk/arm/pmap/pmap.h
+@@ -111,6 +111,11 @@
+  * Upper limit on how many pages can be consumed by bootstrap page tables
+  */
+ #define BOOTSTRAP_TABLE_SIZE (ARM_PGBYTES * 34)
++#elif !defined(APPLE_ARM64_ARCH_FAMILY) && !__ARM_16K_PG__
++/* Native 4 KiB: two roots plus up to seven L2 pages per 6 GiB mapping.
++ * The physical and virtual bases may each straddle an extra 1 GiB region.
++ */
++#define BOOTSTRAP_TABLE_SIZE (ARM_PGBYTES * 16)
+ #else /* defined(ARM_LARGE_MEMORY) */
+ #define BOOTSTRAP_TABLE_SIZE (ARM_PGBYTES * 8)
+ #endif /* defined(ARM_LARGE_MEMORY) */
+@@ -442,7 +447,7 @@
+ #if HAS_APPLE_PAC
+ 	bool disable_jop;
+ #else
+-	bool reserved10;
++	bool reserved13;
+ #endif /* HAS_APPLE_PAC */
+ 
+ 	bool reserved11;
+--- a/osfmk/arm64/genassym.c
++++ b/osfmk/arm64/genassym.c
+@@ -249,6 +249,7 @@
+ 
+ 
+ 	DECLARE("PGBYTES", ARM_PGBYTES);
++	DECLARE("BOOTSTRAP_TABLE_BYTES", BOOTSTRAP_TABLE_SIZE);
+ 	DECLARE("PGSHIFT", ARM_PGSHIFT);
+ 
+ 	DECLARE("VM_MIN_KERNEL_ADDRESS", VM_MIN_KERNEL_ADDRESS);
+--- a/bsd/sys/ubc_internal.h
++++ b/bsd/sys/ubc_internal.h
+@@ -155,6 +155,13 @@
+ 	void *XNU_PTRAUTH_SIGNED_PTR("cs_blob.csb_csm_obj") csb_csm_obj;
+ 	bool csb_csm_managed;
+ #endif
++
++	/* Native 4K authenticators derived only from fully verified original
++	 * 16K blocks. Append fields to preserve the existing binary prefix.
++	 */
++	const uint8_t   *csb_native4k_hashes;
++	vm_size_t       csb_native4k_hashes_size;
++	vm_size_t       csb_native4k_hash_count;
+ };
+ 
+ /*
+--- a/bsd/kern/ubc_subr.c
++++ b/bsd/kern/ubc_subr.c
+@@ -69,6 +69,7 @@
+ #include <kern/thread.h>
+ #include <vm/pmap.h>
+ #include <vm/vm_kern.h>
++#include <vm/vm_map.h>
+ #include <vm/vm_protos.h> /* last */
+ 
+ #include <libkern/crypto/sha1.h>
+@@ -108,6 +109,9 @@
+ 
+ static boolean_t ubc_cs_supports_multilevel_hash(struct cs_blob *blob);
+ static kern_return_t ubc_cs_convert_to_multilevel_hash(struct cs_blob *blob);
++#if defined(XNU_NATIVE_CS_HASH_CACHE) && XNU_NATIVE_CS_HASH_CACHE
++static int cs_native4k_prepare(vnode_t vp, struct cs_blob *blob);
++#endif
+ 
+ ZONE_DEFINE_TYPE(ubc_info_zone, "ubc_info zone", struct ubc_info,
+     ZC_ZFREE_CLEARMEM);
+@@ -371,7 +375,11 @@
+ 	if (ntohl(cd->magic) != CSMAGIC_CODEDIRECTORY) {
+ 		return EBADEXEC;
+ 	}
+-	if ((cd->pageSize != PAGE_SHIFT_4K) && (cd->pageSize != PAGE_SHIFT)) {
++	if ((cd->pageSize != PAGE_SHIFT_4K) && (cd->pageSize != PAGE_SHIFT)
++#if defined(XNU_NATIVE_CS_HASH_CACHE) && XNU_NATIVE_CS_HASH_CACHE
++	    && !(PAGE_SHIFT == 12 && cd->pageSize == 14)
++#endif
++	    ) {
+ 		printf("disallowing unsupported code signature page shift: %u\n", cd->pageSize);
+ 		return EBADEXEC;
+ 	}
+@@ -3874,6 +3882,13 @@
+ static void
+ cs_blob_cleanup(struct cs_blob *blob)
+ {
++	if (blob->csb_native4k_hashes != NULL) {
++		kmem_free(kernel_map, (vm_offset_t)blob->csb_native4k_hashes,
++		    blob->csb_native4k_hashes_size);
++		blob->csb_native4k_hashes = NULL;
++		blob->csb_native4k_hashes_size = 0;
++		blob->csb_native4k_hash_count = 0;
++	}
+ 	if (blob->csb_entitlements != NULL) {
+ 		amfi->OSEntitlements_invalidate(blob->csb_entitlements);
+ 		osobject_release(blob->csb_entitlements);
+@@ -4800,6 +4815,14 @@
+ 		error = EINVAL;
+ 		goto out;
+ 	}
++
++#if defined(XNU_NATIVE_CS_HASH_CACHE) && XNU_NATIVE_CS_HASH_CACHE
++	/* Authenticate before publishing the signed object or taking its locks. */
++	error = cs_native4k_prepare(vp, &tmp_blob);
++	if (error != 0) {
++		goto out;
++	}
++#endif
+ 
+ 	/*
+ 	 * The vnode_lock, linked list traversal, and marking of the memory object as
+@@ -5668,6 +5691,121 @@
+ 
+ unsigned long cs_validate_page_no_hash = 0;
+ unsigned long cs_validate_page_bad_hash = 0;
++
++#if defined(XNU_NATIVE_CS_HASH_CACHE) && XNU_NATIVE_CS_HASH_CACHE
++__attribute__((used)) const uint32_t cs_native4k_hash_cache_version = 1;
++unsigned long cs_native4k_full_blocks = 0;
++unsigned long cs_native4k_page_checks = 0;
++unsigned long cs_native4k_ready_blobs = 0;
++
++/* The original signed 16K hash authenticates the whole immutable input
++ * buffer first. Only then derive native-page digests from that same buffer.
++ * Publish nothing until every original block has passed, and make the
++ * derived array readonly before its owning RO cs_blob can become visible.
++ * VM fault validation consequently performs no vnode I/O under object locks.
++ */
++__attribute__((noinline))
++static int
++cs_native4k_prepare(vnode_t vp, struct cs_blob *blob)
++{
++	const CS_CodeDirectory *cd = blob->csb_cd;
++	const struct cs_hash *md = blob->csb_hashtype;
++	vm_offset_t storage = 0;
++	vm_size_t allocation = 0, count = 0;
++	uint8_t *buffer = NULL;
++	uint64_t limit, offset;
++	int error = EBADEXEC;
++	kern_return_t kr;
++
++	if (blob->csb_hash_pageshift <= PAGE_SHIFT) {
++		return 0;
++	}
++	if (PAGE_SHIFT != 12 || blob->csb_hash_pageshift != 14 || cd == NULL || md == NULL ||
++	    md->cs_size == 0 || md->cs_size > CS_HASH_MAX_SIZE ||
++	    md->cs_digest_size > CS_HASH_MAX_SIZE || blob->csb_base_offset < 0 ||
++	    (blob->csb_base_offset & PAGE_MASK) || blob->csb_hash_firstlevel_pageshift ||
++	    ((ntohl(cd->version) >= CS_SUPPORTSSCATTER) && ntohl(cd->scatterOffset))) {
++		return ENOTSUP;
++	}
++	limit = ntohl(cd->codeLimit);
++	if (!limit || ((ntohl(cd->version) >= CS_SUPPORTSCODELIMIT64) &&
++	    ntohll(cd->codeLimit64) && ntohll(cd->codeLimit64) != limit) ||
++	    ntohl(cd->nCodeSlots) != ((limit + 16383) >> 14)) {
++		return ENOTSUP;
++	}
++	count = (limit + PAGE_MASK) >> PAGE_SHIFT;
++	if (os_mul_overflow(count, (vm_size_t)md->cs_size, &allocation) ||
++	    round_page_overflow(allocation, &allocation)) {
++		return EOVERFLOW;
++	}
++	kr = kmem_alloc(kernel_map, &storage, allocation,
++	    KMA_KOBJECT | KMA_DATA | KMA_ZERO, VM_KERN_MEMORY_SECURITY);
++	if (kr != KERN_SUCCESS) {
++		return ENOMEM;
++	}
++	buffer = kalloc_data(16384, Z_WAITOK);
++	for (offset = 0; offset < limit; offset += 16384) {
++		union cs_hash_union ctx;
++		uint8_t digest[CS_HASH_MAX_SIZE];
++		const uint8_t *expected;
++		const char *lower = blob->csb_mem_kaddr;
++		const char *upper = lower + blob->csb_mem_size;
++		size_t length = MIN((uint64_t)16384, limit - offset);
++		int resid = 0;
++		off_t position;
++		if (os_add_overflow(blob->csb_base_offset, (off_t)offset, &position)) {
++			error = EOVERFLOW;
++			goto out;
++		}
++		error = vn_rdwr(UIO_READ, vp, (caddr_t)buffer, (int)length, position,
++		    UIO_SYSSPACE, 0, vfs_context_ucred(vfs_context_current()),
++		    &resid, current_proc());
++		if (error || resid) {
++			error = error ? error : EIO;
++			goto out;
++		}
++		expected = hashes(cd, (uint32_t)(offset >> 14), md->cs_size, lower, upper);
++		if (expected == NULL) {
++			error = EBADEXEC;
++			goto out;
++		}
++		md->cs_init(&ctx);
++		md->cs_update(&ctx, buffer, length);
++		md->cs_final(digest, &ctx);
++		if (bcmp(expected, digest, md->cs_size)) {
++			os_atomic_inc(&cs_validate_page_bad_hash, relaxed);
++			error = EBADEXEC;
++			goto out;
++		}
++		os_atomic_inc(&cs_native4k_full_blocks, relaxed);
++		for (size_t sub = 0; sub < length; sub += PAGE_SIZE) {
++			size_t bytes = MIN((size_t)PAGE_SIZE, length - sub);
++			vm_size_t index = (offset + sub) >> PAGE_SHIFT;
++			md->cs_init(&ctx);
++			md->cs_update(&ctx, buffer + sub, bytes);
++			md->cs_final(digest, &ctx);
++			memcpy((void *)(storage + index * md->cs_size), digest, md->cs_size);
++		}
++	}
++	kr = vm_map_protect(kernel_map, storage, storage + allocation, VM_PROT_READ, TRUE);
++	if (kr != KERN_SUCCESS) {
++		error = EPERM;
++		goto out;
++	}
++	blob->csb_native4k_hashes = (const uint8_t *)storage;
++	blob->csb_native4k_hashes_size = allocation;
++	blob->csb_native4k_hash_count = count;
++	storage = 0;
++	os_atomic_inc(&cs_native4k_ready_blobs, relaxed);
++	error = 0;
++out:
++	kfree_data(buffer, 16384);
++	if (storage) {
++		kmem_free(kernel_map, storage, allocation);
++	}
++	return error;
++}
++#endif
+ static boolean_t
+ cs_validate_hash(
+ 	struct cs_blob          *blobs,
+@@ -5691,6 +5829,7 @@
+ 	off_t                   codeLimit = 0;
+ 	const char              *lower_bound, *upper_bound;
+ 	vm_offset_t             kaddr, blob_addr;
++	boolean_t               native4k_cached = FALSE;
+ 
+ 	/* retrieve the expected hash */
+ 	found_hash = FALSE;
+@@ -5726,15 +5865,31 @@
+ 			if (hashtype->cs_digest_size > sizeof(actual_hash)) {
+ 				panic("hash size too large");
+ 			}
+-			if (offset & ((1U << blob->csb_hash_pageshift) - 1)) {
+-				panic("offset not aligned to cshash boundary");
++			codeLimit = ntohl(cd->codeLimit);
++#if defined(XNU_NATIVE_CS_HASH_CACHE) && XNU_NATIVE_CS_HASH_CACHE
++			if (PAGE_SHIFT == 12 && blob->csb_hash_pageshift == 14) {
++				vm_size_t index = (vm_size_t)offset >> PAGE_SHIFT;
++				if ((offset & PAGE_MASK) || offset >= codeLimit ||
++				    blob->csb_native4k_hashes == NULL ||
++				    index >= blob->csb_native4k_hash_count ||
++				    hashtype->cs_size > blob->csb_native4k_hashes_size ||
++				    index > (blob->csb_native4k_hashes_size - hashtype->cs_size) / hashtype->cs_size) {
++					*bytes_processed = PAGE_SIZE;
++					*tainted = CS_VALIDATE_TAINTED;
++					return FALSE;
++				}
++				hash = blob->csb_native4k_hashes + index * hashtype->cs_size;
++				native4k_cached = TRUE;
++				os_atomic_inc(&cs_native4k_page_checks, relaxed);
++			} else
++#endif
++			{
++				if (offset & ((1U << blob->csb_hash_pageshift) - 1)) {
++					panic("offset not aligned to cshash boundary");
++				}
++				hash = hashes(cd, (uint32_t)(offset >> blob->csb_hash_pageshift),
++				    hashtype->cs_size, lower_bound, upper_bound);
+ 			}
+-
+-			codeLimit = ntohl(cd->codeLimit);
+-
+-			hash = hashes(cd, (uint32_t)(offset >> blob->csb_hash_pageshift),
+-			    hashtype->cs_size,
+-			    lower_bound, upper_bound);
+ 			if (hash != NULL) {
+ 				bcopy(hash, expected_hash, hashtype->cs_size);
+ 				found_hash = TRUE;
+@@ -5764,7 +5919,7 @@
+ 	} else {
+ 		*tainted = 0;
+ 
+-		size = (1U << blob->csb_hash_pageshift);
++		size = native4k_cached ? PAGE_SIZE : (1U << blob->csb_hash_pageshift);
+ 		*bytes_processed = size;
+ 
+ 		const uint32_t *asha1, *esha1;
+--- a/bsd/kern/mach_loader.c
++++ b/bsd/kern/mach_loader.c
+@@ -509,8 +509,12 @@
+ 
+ #if defined(__arm64__)
+ 	if (result->is_64bit_addr) {
++#if !defined(APPLE_ARM64_ARCH_FAMILY) && !__ARM_16K_PG__
++		vm_map_set_page_shift(map, FOURK_PAGE_SHIFT);
++#else
+ 		/* enforce 16KB alignment of VM map entries */
+ 		vm_map_set_page_shift(map, SIXTEENK_PAGE_SHIFT);
++#endif
+ 	} else {
+ 		vm_map_set_page_shift(map, page_shift_user32);
+ 	}
+--- a/osfmk/arm/arm_init.c
++++ b/osfmk/arm/arm_init.c
+@@ -1,3 +1,4 @@
++#include <kern/boot_progress.h>
+ /*
+  * Copyright (c) 2007-2021 Apple Inc. All rights reserved.
+  *
+@@ -362,6 +363,7 @@
+ #endif /* defined(HAS_APPLE_PAC) */
+ 
+ 	PE_init_platform(FALSE, args); /* Get platform expert set up */
++	boot_progress_init();
+ 
+ #if __arm64__
+ 	configure_timer_apple_regs();
+@@ -392,6 +394,10 @@
+ 
+ 
+ 	{
++		/* Native non-Apple 4K builds expose the hardware page size at any RAM size. */
++#if !defined(APPLE_ARM64_ARCH_FAMILY) && !__ARM_16K_PG__
++		PAGE_SHIFT_CONST = ARM_PGSHIFT;
++#else
+ 		/*
+ 		 * Select the advertised kernel page size.
+ 		 */
+@@ -410,8 +416,14 @@
+ 			PAGE_SHIFT_CONST = ARM_PGSHIFT;
+ 		}
+ 
++#endif
++
++#if !defined(APPLE_ARM64_ARCH_FAMILY) && !__ARM_16K_PG__
++		page_shift_user32 = ARM_PGSHIFT;
++#else
+ 		/* 32-bit apps always see 16KB page size */
+ 		page_shift_user32 = PAGE_MAX_SHIFT;
++#endif
+ #ifdef  APPLETYPHOON
+ 		if (PE_parse_boot_argn("cpus_defeatures", &cpus_defeatures, sizeof(cpus_defeatures))) {
+ 			if ((cpus_defeatures & 0xF) != 0) {
+@@ -513,7 +525,9 @@
+ 	__builtin_arm_wsr("pan", 1);
+ #endif  /* __ARM_PAN_AVAILABLE__ */
+ 
++	boot_progress_stage("arm_vm_init enter");
+ 	arm_vm_init(xmaxmem, args);
++	boot_progress_stage("arm_vm_init returned");
+ 
+ 	if (debug_boot_arg) {
+ 		patch_low_glo();
+--- a/osfmk/arm/commpage/commpage.c
++++ b/osfmk/arm/commpage/commpage.c
+@@ -175,8 +175,13 @@
+ #if __arm64__
+ 	*((uint8_t*)(_COMM_PAGE_USER_PAGE_SHIFT_32_LEGACY + _COMM_PAGE_RW_OFFSET)) = (uint8_t) page_shift_user32;
+ 	*((uint8_t*)(_COMM_PAGE_USER_PAGE_SHIFT_32 + _COMM_PAGE_RO_OFFSET)) = (uint8_t) page_shift_user32;
++#if !defined(APPLE_ARM64_ARCH_FAMILY) && !__ARM_16K_PG__
++	*((uint8_t*)(_COMM_PAGE_USER_PAGE_SHIFT_64_LEGACY + _COMM_PAGE_RW_OFFSET)) = (uint8_t) FOURK_PAGE_SHIFT;
++	*((uint8_t*)(_COMM_PAGE_USER_PAGE_SHIFT_64 + _COMM_PAGE_RO_OFFSET)) = (uint8_t) FOURK_PAGE_SHIFT;
++#else
+ 	*((uint8_t*)(_COMM_PAGE_USER_PAGE_SHIFT_64_LEGACY + _COMM_PAGE_RW_OFFSET)) = (uint8_t) SIXTEENK_PAGE_SHIFT;
+ 	*((uint8_t*)(_COMM_PAGE_USER_PAGE_SHIFT_64 + _COMM_PAGE_RO_OFFSET)) = (uint8_t) SIXTEENK_PAGE_SHIFT;
++#endif
+ #endif /* __arm64__ */
+ 
+ 	commpage_update_timebase();
+--- a/osfmk/vm/vm_shared_region.c
++++ b/osfmk/vm/vm_shared_region.c
+@@ -774,11 +774,15 @@
+ 			sub_map = vm_map_create_options(pmap_nested, 0,
+ 			    (vm_map_offset_t)size, VM_MAP_CREATE_PAGEABLE);
+ 
++#if !defined(APPLE_ARM64_ARCH_FAMILY) && !__ARM_16K_PG__
++			vm_map_set_page_shift(sub_map, FOURK_PAGE_SHIFT);
++#else
+ 			if (is_64bit ||
+ 			    page_shift_user32 == SIXTEENK_PAGE_SHIFT) {
+ 				/* enforce 16KB alignment of VM map entries */
+ 				vm_map_set_page_shift(sub_map, SIXTEENK_PAGE_SHIFT);
+ 			}
++#endif
+ #if __ARM_MIXED_PAGE_SIZE__
+ 			if (cputype == CPU_TYPE_ARM64 &&
+ 			    target_page_shift == FOURK_PAGE_SHIFT) {
+--- a/pexpert/pexpert/arm64/BCM2837.h
++++ b/pexpert/pexpert/arm64/BCM2837.h
+@@ -18,6 +18,11 @@
+ #define __ARM_COHERENT_CACHE__    1
+ #define __ARM_DEBUG__             7
+ #define __ARM64_PMAP_SUBPAGE_L1__ 1
++
++/* Explicit native ARMv8.1+ bring-up; the original A53 target has no PAN. */
++#if defined(XNU_NATIVE_PAN) && XNU_NATIVE_PAN
++#define __ARM_PAN_AVAILABLE__      1
++#endif
+ 
+ #ifndef ASSEMBLER
+ 
+--- a/pexpert/arm/pe_init.c
++++ b/pexpert/arm/pe_init.c
+@@ -93,7 +93,7 @@
+ static void
+ check_for_panic_log(void)
+ {
+-#ifdef PLATFORM_PANIC_LOG_PADDR
++#if defined(PLATFORM_PANIC_LOG_PADDR) && !(defined(XNU_DT_PANIC_REGION) && XNU_DT_PANIC_REGION)
+ 	gPanicBase = ml_io_map_wcomb(PLATFORM_PANIC_LOG_PADDR, PLATFORM_PANIC_LOG_SIZE);
+ 	panic_text_len = PLATFORM_PANIC_LOG_SIZE - sizeof(struct embedded_panic_header);
+ 	gPanicSize = PLATFORM_PANIC_LOG_SIZE;
+@@ -123,7 +123,10 @@
+ 		return;
+ 	}
+ 
+-	if (kSuccess != SecureDTGetProperty(entry, "reg", (void const **)&reg_prop, &size)) {
++	if (kSuccess != SecureDTGetProperty(entry, "reg", (void const **)&reg_prop, &size) ||
++	    size != 2 * sizeof(*reg_prop) || !reg_prop[0] ||
++	    reg_prop[1] < sizeof(struct embedded_panic_header) ||
++	    reg_prop[0] > UINTPTR_MAX - reg_prop[1]) {
+ 		return;
+ 	}
+ 
+@@ -131,11 +134,17 @@
+ 		return;
+ 	}
+ 
+-	if (kSuccess != SecureDTGetProperty(chosen, "embedded-panic-log-size", (void const **) &panic_region_length, &size)) {
++	if (kSuccess != SecureDTGetProperty(chosen, "embedded-panic-log-size", (void const **) &panic_region_length, &size) ||
++	    size != sizeof(*panic_region_length) ||
++	    panic_region_length[0] < sizeof(struct embedded_panic_header) ||
++	    panic_region_length[0] > reg_prop[1]) {
+ 		return;
+ 	}
+ 
+ 	gPanicBase = ml_io_map_wcomb(reg_prop[0], panic_region_length[0]);
++	if (!gPanicBase) {
++		return;
++	}
+ 
+ 	/* Deduct the size of the panic header from the panic region size */
+ 	panic_text_len = panic_region_length[0] - sizeof(struct embedded_panic_header);
+--- a/bsd/kern/kern_priv.c
++++ b/bsd/kern/kern_priv.c
+@@ -83,6 +83,16 @@
+ 	int error;
+ 
+ 	/*
++	 * CoreAnimation creates its render-server work interval as an ordinary user, and
++	 * UIKit processes (SpringBoard, apps) abort with "Failed to create work interval"
++	 * without it. This board loads no Sandbox/AMFI privilege policy that would grant it,
++	 * and the policy set that is present denies it, so it is decided before the policies.
++	 */
++	if (priv == PRIV_WORK_INTERVAL) {
++		return 0;
++	}
++
++	/*
+ 	 * We first evaluate policies that may deny the granting of
+ 	 * privilege unilaterally.
+ 	 */
+--- a/pexpert/pexpert/arm64/board_config.h
++++ b/pexpert/pexpert/arm64/board_config.h
+@@ -91,7 +91,7 @@
+ #include <pexpert/arm64/BCM2837.h>
+ 
+ #define MAX_L2_CLINE                   6
+-#define MAX_CPUS                       4
++#define MAX_CPUS                       8 /* sheng: SM8550 has eight cores */
+ #define MAX_CPU_CLUSTERS               1
+ 
+ #define CORE_NCTRS                     8 /* Placeholder; KPC is not enabled for this target */
+--- a/osfmk/kern/startup.c
++++ b/osfmk/kern/startup.c
+@@ -1,3 +1,4 @@
++#include <kern/boot_progress.h>
+ /*
+  * Copyright (c) 2000-2020 Apple Inc. All rights reserved.
+  *
+@@ -221,6 +222,7 @@
+ static inline void
+ kernel_bootstrap_log(const char *message)
+ {
++	boot_progress_stage(message);
+ 	if ((startup_debug & STARTUP_DEBUG_VERBOSE) &&
+ 	    startup_phase >= STARTUP_SUB_KPRINTF) {
+ 		kprintf("kernel_bootstrap: %s\n", message);
+@@ -231,6 +233,7 @@
+ static inline void
+ kernel_bootstrap_thread_log(const char *message)
+ {
++	boot_progress_stage(message);
+ 	if ((startup_debug & STARTUP_DEBUG_VERBOSE) &&
+ 	    startup_phase >= STARTUP_SUB_KPRINTF) {
+ 		kprintf("kernel_bootstrap_thread: %s\n", message);
+@@ -468,10 +471,12 @@
+ 		if (PE_parse_boot_argn("-show_pointers", &namep, sizeof(namep))) {
+ 			doprnt_hide_pointers = FALSE;
+ 		}
+-		if (PE_parse_boot_argn("-no_slto_panic", &namep, sizeof(namep))) {
+-			extern boolean_t spinlock_timeout_panic;
+-			spinlock_timeout_panic = FALSE;
+-		}
++	}
++	/* Owner device: honour -no_slto_panic without a debugger-enabled device policy. A thread that waits for an IPI acknowledgement
++	 * (restartable ranges) then keeps waiting instead of panicking the whole machine; the other cores keep running. */
++	if (PE_parse_boot_argn("-no_slto_panic", &namep, sizeof(namep))) {
++		extern boolean_t spinlock_timeout_panic;
++		spinlock_timeout_panic = FALSE;
+ 	}
+ 
+ 	kernel_bootstrap_log("console_init");
+@@ -642,6 +647,7 @@
+ 	 */
+ 	kernel_bootstrap_thread_log("clock_service_create");
+ 	clock_service_create();
++	boot_progress_start();
+ 
+ 	/*
+ 	 *	Create the device service.
+@@ -734,7 +740,7 @@
+ 	csm_initialize_provisioning_profiles();
+ #endif
+ 
+-#ifndef BCM2837
++#if !defined(BCM2837) || (defined(XNU_NATIVE_TRUST_CACHE) && XNU_NATIVE_TRUST_CACHE)
+ 	kernel_bootstrap_log("trust_cache_init");
+ 
+ 	/* Initialize the runtime for the trust cache interface */
+--- a/bsd/vfs/vfs_attrlist.c
++++ b/bsd/vfs/vfs_attrlist.c
+@@ -4158,6 +4158,9 @@
+ 
+ 	FV_LOCK(fvdata);
+ 
++#if CONFIG_UNION_MOUNTS
++unionread:
++#endif
+ 	/*
+ 	 * getattrlistbulk(2) maintains its offset in fv_offset. However
+ 	 * if the offset in the file glob is set (or reset) to 0, the directory
+@@ -4249,6 +4252,52 @@
+ 		    &count, &eofflag, ctx);
+ 		ut->uu_flag &= ~UT_KERN_RAGE_VNODES;
+ 	}
++
++#if CONFIG_UNION_MOUNTS
++	/* Match getdirentriesattr: consume the upper directory before moving
++	 * this open descriptor to the corresponding lower union directory.
++	 * Snapshot enumeration must stay on the requested snapshot directory.
++	 * Recheck lower-directory access before publishing the new vnode.
++	 */
++	if (!error && !count && eofflag &&
++	    !(uap->options & FSOPT_LIST_SNAPSHOT) &&
++	    (dvp->v_mount->mnt_flag & MNT_UNION)) {
++		vnode_t uvp;
++		int union_error = lookup_traverse_union(dvp, &uvp, ctx);
++		if (!union_error) {
++			if (uvp->v_type != VDIR) {
++				union_error = ENOTDIR;
++			}
++#if CONFIG_MACF
++			if (!union_error) {
++				union_error = mac_vnode_check_readdir(ctx, uvp);
++			}
++#endif
++			if (!union_error) {
++				union_error = vnode_authorize(uvp, NULL, action, ctx);
++			}
++			if (!union_error) {
++				union_error = vnode_ref_ext(uvp, fp->fp_glob->fg_flag & O_EVTONLY, 0);
++			}
++			if (!union_error) {
++				fp_set_data(fp, uvp);
++				fp->fp_glob->fg_offset = 0;
++				vnode_rele_internal(dvp, fp->fp_glob->fg_flag & O_EVTONLY, 0, 0);
++				vnode_put(dvp);
++				dvp = uvp;
++				/* The existing zero-offset path discards upper EOF and
++				 * buffered dirents before constructing the lower UIO. */
++				goto unionread;
++			}
++			vnode_put(uvp);
++		}
++		/* No corresponding lower directory is ordinary end-of-directory;
++		 * other failures must not silently hide lower entries. */
++		if (union_error != ENOENT) {
++			error = union_error;
++		}
++	}
++#endif
+ 
+ 	if (count) {
+ 		fvdata->fv_offset = uio_offset(auio);
+--- a/osfmk/kern/work_interval.c
++++ b/osfmk/kern/work_interval.c
+@@ -1050,7 +1050,7 @@
+ 			return KERN_FAILURE;
+ 		}
+ 		if (!task_is_app(creating_task)) {
+-#if XNU_TARGET_OS_OSX
++#if XNU_TARGET_OS_OSX || 1  /* sheng: UIKit aborts on a refused CA_CLIENT interval; soft-fail it as macOS does */
+ 			/*
+ 			 * Soft-fail the case of a non-app pretending to be an
+ 			 * app, by allowing it to press the buttons, but they're
+@@ -1066,7 +1066,8 @@
+ #endif /* XNU_TARGET_OS_OSX */
+ 		}
+ 		if (task_set_ca_client_wi(creating_task, true) == false) {
+-			return KERN_FAILURE;
++			/* sheng: a second CA_CLIENT interval in a task is accepted but not connected, instead of aborting the app */
++			create_flags |= WORK_INTERVAL_FLAG_IGNORED;
+ 		}
+ 	}
+ 
+--- a/bsd/kern/sys_work_interval.c
++++ b/bsd/kern/sys_work_interval.c
+@@ -38,6 +38,22 @@
+ 
+ #include <libkern/libkern.h>
+ 
++#include <sys/proc.h>
++#include <kern/policy_internal.h>
++
++/* Board bring-up diagnostic: the last work-interval CREATE2 results, read by the boot-progress banner. */
++char native_wi_log[4][100];
++volatile unsigned native_wi_count;
++static void
++native_wi_note(const char *what, int error, int kret, uint32_t flags)
++{
++	char name[20];
++	proc_selfname(name, sizeof(name));
++	unsigned slot = native_wi_count++ % 4;
++	snprintf(native_wi_log[slot], sizeof(native_wi_log[slot]), "WI#%u p%d %s %s err=%d kret=%d flags=%x app=%d",
++	    native_wi_count, proc_selfpid(), name, what, error, kret, flags, (int)task_is_app(current_task()));
++}
++
+ int
+ work_interval_ctl(__unused proc_t p, struct work_interval_ctl_args *uap,
+     __unused int32_t *retval)
+@@ -69,6 +85,7 @@
+ 		}
+ 
+ 		if ((error = priv_check_cred(kauth_cred_get(), PRIV_WORK_INTERVAL, 0)) != 0) {
++			native_wi_note("priv", error, 0, create_params.wicp_create_flags);
+ 			return error;
+ 		}
+ 
+@@ -79,6 +96,7 @@
+ 		};
+ 
+ 		kret = kern_work_interval_create(current_thread(), &create_args);
++		native_wi_note("create", 0, kret, create_params.wicp_create_flags);
+ 
+ 		/* thread already has a work interval */
+ 		if (kret == KERN_FAILURE) {
+--- a/osfmk/arm64/arm_vm_init.c
++++ b/osfmk/arm64/arm_vm_init.c
+@@ -2143,7 +2143,9 @@
+ 	arm_vm_physmap_init(args);
+ 	set_mmu_ttb_alternate(cpu_ttep & TTBR_BADDR_MASK);
+ 
++#if XNU_MONITOR
+ 	ml_enable_monitor();
++#endif
+ 
+ 	set_mmu_ttb(invalid_ttep & TTBR_BADDR_MASK);
+ 
+--- a/osfmk/arm64/caches_asm.s
++++ b/osfmk/arm64/caches_asm.s
+@@ -276,6 +276,10 @@
+  */
+ 	.text
+ 	.align 2
++#if !defined(APPLE_ARM64_ARCH_FAMILY)
++	.globl EXT(CleanPoC_DcacheRegion_Force_nopreempt_nohid)
++LEXT(CleanPoC_DcacheRegion_Force_nopreempt_nohid)
++#endif
+ LEXT(CleanPoC_DcacheRegion_internal)
+ 	#define CLINE_FLUSH_STRIDE MMU_CLINE
+ 
+--- a/osfmk/arm/pmap/pmap.c
++++ b/osfmk/arm/pmap/pmap.c
+@@ -84,8 +84,12 @@
+ 
+ #include <arm64/proc_reg.h>
+ #include <pexpert/arm64/boot.h>
++#if XNU_MONITOR_ANS2_SART
+ #include <arm64/ppl/sart.h>
++#endif
++#if XNU_MONITOR_UAT_PPL
+ #include <arm64/ppl/uat.h>
++#endif
+ 
+ #if defined(KERNEL_INTEGRITY_KTRR) || defined(KERNEL_INTEGRITY_CTRR)
+ #include <arm64/amcc_rorgn.h>
+@@ -856,6 +860,8 @@
+ 	arm_force_fast_fault, (ppnum_t ppnum,
+ 	vm_prot_t allow_mode,
+ 	int options), ARM_FORCE_FAST_FAULT_INDEX);
++
++MARK_AS_PMAP_TEXT static void pmap_phys_write_disable(vm_address_t va);
+ 
+ MARK_AS_PMAP_TEXT static boolean_t
+ arm_force_fast_fault_with_flush_range(
+@@ -2183,13 +2189,17 @@
+ 	/**
+ 	 * Bootstrap any necessary UAT data structures and values needed from the device tree.
+ 	 */
++#if XNU_MONITOR_UAT_PPL
+ 	uat_bootstrap();
++#endif
+ 
+ 
+ 	/**
+ 	 * Bootstrap any necessary SART data structures and values needed from the device tree.
+ 	 */
++#if XNU_MONITOR_ANS2_SART
+ 	sart_bootstrap();
++#endif
+ 
+ 	/**
+ 	 * Don't make any assumptions about the alignment of avail_start before this
+@@ -4671,13 +4681,13 @@
+ 		if (pvh_ptep_is_iommu(pte_p)) {
+ #if XNU_MONITOR
+ 			if (__improbable(pvh_flags & PVH_FLAG_LOCKDOWN_MASK)) {
+-				panic("pmap_page_protect: ppnum 0x%x locked down, cannot be owned by iommu %p, pve_p=%p",
+-				    ppnum, ptep_get_iommu(pte_p), pve_p);
++				panic("pmap_page_protect: ppnum 0x%x locked down, cannot be owned by iommu ptep %p, pve_p=%p",
++				    ppnum, pte_p, pve_p);
+ 			}
+ #endif
+ 			if (remove && (options & PMAP_OPTIONS_COMPRESSOR)) {
+-				panic("pmap_page_protect: attempt to compress ppnum 0x%x owned by iommu %p, pve_p=%p",
+-				    ppnum, ptep_get_iommu(pte_p), pve_p);
++				panic("pmap_page_protect: attempt to compress ppnum 0x%x owned by iommu ptep %p, pve_p=%p",
++				    ppnum, pte_p, pve_p);
+ 			}
+ 			goto protect_skip_pve_pass1;
+ 		}
+@@ -6877,7 +6887,9 @@
+ pmap_sync_page_attributes_phys(
+ 	ppnum_t pp)
+ {
+-	flush_dcache((vm_offset_t) (pp << PAGE_SHIFT), PAGE_SIZE, TRUE);
++	/* ptoa() widens before the shift: pp << PAGE_SHIFT is a 32-bit shift and drops the high bits of physical
++	 * addresses at or above 4 GiB (all of DRAM on boards whose memory starts there), which phystokv() then rejects. */
++	flush_dcache((vm_offset_t) ptoa(pp), PAGE_SIZE, TRUE);
+ }
+ 
+ #if CONFIG_COREDUMP
+@@ -11617,6 +11629,7 @@
+ #endif /* !XNU_MONITOR */
+ 
+ 
++#if PMAP_CS_PPL_MONITOR || PMAP_CS_INCLUDE_CODE_SIGNING
+ MARK_AS_PMAP_TEXT static inline void
+ pmap_cs_lockdown_pages(vm_address_t kva, vm_size_t size, bool ppl_writable)
+ {
+@@ -11636,6 +11649,8 @@
+ 	pmap_ppl_unlockdown_pages(kva, size, 0, ppl_writable);
+ #endif
+ }
++
++#endif /* PMAP_CS_PPL_MONITOR || PMAP_CS_INCLUDE_CODE_SIGNING */
+ 
+ /**
+  * Perform basic validation checks on the destination only and
+--- a/iokit/Kernel/IOService.cpp
++++ b/iokit/Kernel/IOService.cpp
+@@ -5178,14 +5178,16 @@
+ 	const OSMetaClass * ioblockstoragedriverClass;
+ 	bool unhide;
+ 
+-	ioblockstoragedriverClass = OSMetaClass::getMetaClassWithName(gIOBlockStorageDriverKey);
+-	assert(ioblockstoragedriverClass);
+-
+-	while (root) {
+-		if (root->metaCast(ioblockstoragedriverClass)) {
+-			break;
+-		}
+-		root = root->getProvider();
++	if (root) {
++		ioblockstoragedriverClass = OSMetaClass::getMetaClassWithName(gIOBlockStorageDriverKey);
++		assert(ioblockstoragedriverClass);
++
++		while (root) {
++			if (root->metaCast(ioblockstoragedriverClass)) {
++				break;
++			}
++			root = root->getProvider();
++		}
+ 	}
+ 
+ 	LOCKWRITENOTIFY();
+--- a/bsd/kern/bsd_init.c
++++ b/bsd/kern/bsd_init.c
+@@ -1,3 +1,4 @@
++#include <kern/boot_progress.h>
+ /*
+  * Copyright (c) 2000-2021 Apple Inc. All rights reserved.
+  *
+@@ -473,9 +474,93 @@
+  * of the tro_ucred field so that the uthread structure can be
+  * used like any other.
+  */
++#if DEVELOPMENT || DEBUG
++extern kern_return_t OSKextLoadKextWithIdentifier(const char *identifier);
++volatile int native_apfs_load_status = -1;
++volatile uint32_t native_apfs_registered = 0;
++volatile uintptr_t native_apfs_vfsops = 0;
++
++__attribute__((noinline)) void
++native_apfs_probe_checkpoint(void)
++{
++	__asm__ volatile("" ::: "memory");
++}
++
++static void
++native_apfs_load_probe(void)
++{
++	int enabled = 0;
++	if (!PE_parse_boot_argn("offline-apfs-load", &enabled, sizeof(enabled)) || !enabled) {
++		return;
++	}
++	native_apfs_load_status = OSKextLoadKextWithIdentifier("com.apple.filesystems.apfs");
++	mount_list_lock();
++	for (struct vfstable *entry = vfsconf; entry; entry = entry->vfc_next) {
++		if (!strncmp(entry->vfc_name, "apfs", MFSNAMELEN)) {
++			native_apfs_registered = 1;
++			native_apfs_vfsops = (uintptr_t)entry->vfc_vfsops;
++			break;
++		}
++	}
++	mount_list_unlock();
++	native_apfs_probe_checkpoint();
++}
++
++volatile int native_iogpu_load_status = -1;
++
++__attribute__((noinline)) void
++native_iogpu_probe_checkpoint(void)
++{
++	__asm__ volatile("" ::: "memory");
++}
++
++static void
++native_iogpu_load_probe(void)
++{
++	int enabled = 0;
++	if (!PE_parse_boot_argn("offline-iogpu-load", &enabled, sizeof(enabled)) || !enabled) {
++		return;
++	}
++	native_iogpu_load_status = OSKextLoadKextWithIdentifier("com.apple.iokit.IOGPUFamily");
++	native_iogpu_probe_checkpoint();
++}
++
++volatile int native_mobile_graphics_load_status = -1;
++
++__attribute__((noinline)) void
++native_mobile_graphics_probe_checkpoint(void)
++{
++	__asm__ volatile("" ::: "memory");
++}
++
++static void
++native_mobile_graphics_load_probe(void)
++{
++	int enabled = 0;
++	if (!PE_parse_boot_argn("offline-mobile-graphics-load", &enabled, sizeof(enabled)) || !enabled) {
++		return;
++	}
++	native_mobile_graphics_load_status = OSKextLoadKextWithIdentifier("com.apple.iokit.IOMobileGraphicsFamily");
++	native_mobile_graphics_probe_checkpoint();
++	int legacy_register = 0;
++	if (native_mobile_graphics_load_status == 0 &&
++	    PE_parse_boot_argn("offline-legacy-register", &legacy_register, sizeof(legacy_register)) && legacy_register) {
++		extern void native_legacy_display_probe(void);
++		native_legacy_display_probe();
++	}
++	int client_probe = 0;
++	if (native_mobile_graphics_load_status == 0 &&
++	    PE_parse_boot_argn("offline-mobile-graphics-client", &client_probe, sizeof(client_probe)) && client_probe) {
++		extern void native_mobile_graphics_client_probe(void);
++		native_mobile_graphics_client_probe();
++	}
++}
++#endif
++
+ void
+ bsd_init(void)
+ {
++	boot_progress_stage("bsd_init enter");
+ 	struct uthread *ut;
+ 	vnode_t init_rootvnode = NULLVP;
+ 	struct proc_ro_data kernproc_ro_data = {
+@@ -495,7 +580,7 @@
+ #if DEBUG_BSDINIT
+ #define bsd_init_kprintf(x, ...) kprintf("bsd_init: " x, ## __VA_ARGS__)
+ #else
+-#define bsd_init_kprintf(x, ...)
++#define bsd_init_kprintf(x, ...) boot_progress_stage("bsd_init: " x)
+ #endif
+ 
+ 	throttle_init();
+@@ -681,6 +766,13 @@
+ 	bsd_init_kprintf("calling bsd_bufferinit\n");
+ 	bsd_bufferinit();
+ 
++#if defined(XNU_SHENG_PMGR) && XNU_SHENG_PMGR
++	extern void sheng_pmgr_run(void);
++	boot_progress_stage("original PMGR nub start");
++	sheng_pmgr_run();
++	boot_progress_stage("original PMGR nub returned");
++#endif
++
+ 	/*
+ 	 * Initialize the calendar.
+ 	 */
+@@ -690,6 +782,27 @@
+ 	/* Initialize the file systems. */
+ 	bsd_init_kprintf("calling vfsinit\n");
+ 	vfsinit();
++#if DEVELOPMENT || DEBUG
++	native_apfs_load_probe();
++	native_mobile_graphics_load_probe();
++	native_iogpu_load_probe();
++#if defined(XNU_ADRENO_FIRMWARE_PROBE) && XNU_ADRENO_FIRMWARE_PROBE
++	extern void native_adreno_firmware_probe(void);
++	native_adreno_firmware_probe();
++#endif
++#if defined(XNU_ADRENO_PM4_PROBE) && XNU_ADRENO_PM4_PROBE
++	extern void native_adreno_pm4_probe(void);
++	native_adreno_pm4_probe();
++#endif
++#if defined(XNU_SMMU4K_PROBE) && XNU_SMMU4K_PROBE
++	extern void native_smmu4k_probe(void);
++	native_smmu4k_probe();
++#endif
++#if defined(XNU_CONSTANT_UPLOADS_PROBE) && XNU_CONSTANT_UPLOADS_PROBE
++	extern void native_constants_probe(void);
++	native_constants_probe();
++#endif
++#endif
+ 
+ #if CONFIG_PROC_UUID_POLICY
+ 	/* Initial proc_uuid_policy subsystem */
+@@ -784,12 +897,25 @@
+ 
+ 	bsd_init_kprintf("calling sysctl_mib_init\n");
+ 	sysctl_mib_init();
++#if defined(XNU_VERIFIED_ROOT_PROBE) && XNU_VERIFIED_ROOT_PROBE
++	{
++		extern void native_verified_root_probe(void);
++		int enabled = 0;
++		if (PE_parse_boot_argn("offline-owner-root-check", &enabled, sizeof(enabled)) && enabled) {
++			native_verified_root_probe();
++		}
++	}
++#endif
+ 
+ 	bsd_init_kprintf("calling bsd_autoconf\n");
+ 	bsd_autoconf();
+ 
+ #if CONFIG_DTRACE
+ 	dtrace_postinit();
++#endif
++#if (DEVELOPMENT || DEBUG) && defined(XNU_NATIVE_OFFLINE_GPU) && XNU_NATIVE_OFFLINE_GPU
++	extern void native_offline_gpu_publish(void);
++	native_offline_gpu_publish();
+ #endif
+ 
+ 	/*
+@@ -867,7 +993,9 @@
+ #endif
+ 
+ 		bsd_init_kprintf("vfs_mountroot\n");
++		boot_progress_stage("vfs_mountroot enter");
+ 		if (0 == (err = vfs_mountroot())) {
++			boot_progress_stage("vfs_mountroot mounted; authentication pending");
+ 			break;
+ 		}
+ 		rootdevice[0] = '\0';
+@@ -921,9 +1049,42 @@
+ 		if (require_rootauth) {
+ 			/* enforce sealedness */
+ 			int autherr = VNOP_IOCTL(rootvnode, FSIOC_KERNEL_ROOTAUTH, NULL, 0, vfs_context_kernel());
+-			if (autherr) {
++			int owner_authorized = 0;
++#if defined(XNU_OWNER_ROOT_AUDIT) && XNU_OWNER_ROOT_AUDIT
++			{
++				extern int native_verified_block_root_authorized(dev_t);
++				extern volatile int native_owner_root_apple_autherr, native_owner_root_decision, native_owner_root_readonly;
++				extern volatile dev_t native_owner_root_mount_device, native_owner_root_selected_device;
++				extern void native_owner_root_checkpoint(int, int, dev_t);
++				mount_t root_mount = vnode_mount(rootvnode);
++				vnode_t device_vnode = vfs_devvp(root_mount);
++				dev_t device = device_vnode ? vnode_specrdev(device_vnode) : NODEV;
++				int readonly = (vfs_flags(root_mount) & MNT_RDONLY) != 0;
++				int owner = readonly && device_vnode && native_verified_block_root_authorized(device);
++				if (device_vnode) vnode_put(device_vnode);
++				native_owner_root_mount_device = device;
++				native_owner_root_selected_device = rootdev;
++				native_owner_root_apple_autherr = autherr;
++				native_owner_root_decision = owner;
++				native_owner_root_readonly = readonly;
++#if defined(XNU_OWNER_ROOT_TRUST) && XNU_OWNER_ROOT_TRUST
++				owner_authorized = owner;
++#endif
++				native_owner_root_checkpoint(autherr, owner, device);
++			}
++#endif
++			if (autherr && !owner_authorized) {
+ 				panic("rootvp not authenticated after mounting");
+ 			}
++#if defined(XNU_OWNER_ROOT_TRUST) && XNU_OWNER_ROOT_TRUST
++			{
++				extern volatile int native_owner_root_accepted;
++				extern void native_owner_root_accepted_checkpoint(int, int);
++				native_owner_root_accepted = owner_authorized;
++				native_owner_root_accepted_checkpoint(autherr, owner_authorized);
++				boot_progress_stage("root authentication decision recorded");
++			}
++#endif
+ 		}
+ 	}
+ 
+@@ -1049,6 +1210,32 @@
+ 	bsd_init_kprintf("done\n");
+ }
+ 
++#if defined(XNU_OWNER_ROOT_AUDIT) && XNU_OWNER_ROOT_AUDIT
++#if defined(XNU_OWNER_ROOT_TRUST) && XNU_OWNER_ROOT_TRUST
++volatile int native_owner_root_trust_enabled = 1;
++#else
++volatile int native_owner_root_trust_enabled = 0;
++#endif
++volatile int native_owner_root_accepted = 0;
++volatile int native_owner_root_apple_autherr = -1;
++volatile int native_owner_root_decision = -1;
++volatile int native_owner_root_readonly = -1;
++volatile dev_t native_owner_root_mount_device = NODEV;
++volatile dev_t native_owner_root_selected_device = NODEV;
++void native_owner_root_accepted_checkpoint(int, int);
++__attribute__((noinline)) void
++native_owner_root_accepted_checkpoint(int apple, int owner)
++{
++	__asm__ volatile("" : : "r"(apple), "r"(owner) : "memory");
++}
++void native_owner_root_checkpoint(int, int, dev_t);
++__attribute__((noinline)) void
++native_owner_root_checkpoint(int apple, int owner, dev_t device)
++{
++	__asm__ volatile("" : : "r"(apple), "r"(owner), "r"(device) : "memory");
++}
++#endif
++
+ void
+ bsdinit_task(void)
+ {
+@@ -1096,7 +1283,15 @@
+ 		}
+ 	}
+ 
+-	return IOKitBSDInit();
++	kern_return_t result = IOKitBSDInit();
++#if (DEVELOPMENT || DEBUG) && defined(XNU_NATIVE_LEGACY_DISPLAY) && XNU_NATIVE_LEGACY_DISPLAY
++	/* The original IOSurface personality requires the genuine IOBSD resource.
++	 * The default-off framebuffer instrument may start only after publication.
++	 */
++	extern void native_legacy_display_late_probe(void);
++	native_legacy_display_late_probe();
++#endif
++	return result;
+ }
+ 
+ 
+--- a/iokit/Kernel/IOUserClient.cpp
++++ b/iokit/Kernel/IOUserClient.cpp
+@@ -6603,3 +6603,66 @@
+ OSMetaClassDefineReservedUnused(IOUserClient2022, 1);
+ OSMetaClassDefineReservedUnused(IOUserClient2022, 2);
+ OSMetaClassDefineReservedUnused(IOUserClient2022, 3);
++
++#if DEVELOPMENT || DEBUG
++extern "C" {
++volatile uint32_t native_mobile_graphics_abstract_null_mask;
++volatile uint64_t native_mobile_graphics_client_object;
++volatile uint64_t native_mobile_graphics_client_vptr;
++volatile uint64_t native_mobile_graphics_client_meta;
++volatile uint32_t native_mobile_graphics_client_size;
++volatile int native_mobile_graphics_client_init = -1;
++volatile uint32_t native_mobile_graphics_client_results[3] = {~0U, ~0U, ~0U};
++volatile int native_mobile_graphics_client_released;
++
++__attribute__((noinline)) void
++native_mobile_graphics_client_checkpoint(void)
++{
++	__asm__ volatile("" ::: "memory");
++}
++
++void
++native_mobile_graphics_client_probe(void)
++{
++	const char *abstract_names[] = {"IOMobileFramebuffer", "IOMobileFramebufferService", "IOMobileFramebufferLegacy"};
++	for (unsigned i = 0; i < 3; i++) {
++		OSObject *object = OSMetaClass::allocClassWithName(abstract_names[i]);
++		if (!object) {
++			native_mobile_graphics_abstract_null_mask |= 1U << i;
++		} else {
++			object->release();
++		}
++	}
++	OSObject *object = OSMetaClass::allocClassWithName("IOMobileFramebufferUserClient");
++	IOUserClient *client = OSDynamicCast(IOUserClient, object);
++	if (client) {
++		native_mobile_graphics_client_object = (uintptr_t)client;
++		native_mobile_graphics_client_vptr = *(const uintptr_t *)client;
++		native_mobile_graphics_client_meta = (uintptr_t)client->getMetaClass();
++		native_mobile_graphics_client_size = client->getMetaClass()->getClassSize();
++		native_mobile_graphics_client_init = client->init();
++		if (native_mobile_graphics_client_init) {
++			IOExternalMethodArguments arguments = {};
++			const uint32_t selectors[] = {90, 0x80000000U, ~0U};
++			for (unsigned i = 0; i < 3; i++) {
++				arguments.selector = selectors[i];
++				native_mobile_graphics_client_results[i] = client->externalMethod(selectors[i], &arguments, NULL, NULL, NULL);
++			}
++		}
++	}
++	if (object) {
++		object->release();
++		native_mobile_graphics_client_released = 1;
++	}
++	native_mobile_graphics_client_checkpoint();
++#if defined(XNU_NATIVE_MOBILE_DISPLAY) && XNU_NATIVE_MOBILE_DISPLAY
++	extern void native_mobile_display_provider_probe(void);
++	native_mobile_display_provider_probe();
++#endif
++#if defined(XNU_NATIVE_LEGACY_DISPLAY) && XNU_NATIVE_LEGACY_DISPLAY
++	extern void native_legacy_display_probe(void);
++	native_legacy_display_probe();
++#endif
++}
++}
++#endif
+--- a/iokit/bsddev/IOKitBSDInit.cpp
++++ b/iokit/bsddev/IOKitBSDInit.cpp
+@@ -553,6 +553,69 @@
+ 	return result;
+ }
+ 
++#if defined(XNU_OWNER_BOOT_MANIFEST) && XNU_OWNER_BOOT_MANIFEST
++#if !DEVELOPMENT && !DEBUG
++#error Owner image-set metadata is an offline development instrument
++#endif
++#include <libkern/crypto/sha2.h>
++extern "C" int native_verified_block_manifest_sha384(dev_t, const char *, uint8_t[48]);
++extern "C" int native_owner_publish_boot_manifest(dev_t, const char *, dev_t, const char *);
++extern "C" {
++volatile int native_owner_boot_manifest_status = -1;
++uint8_t native_owner_boot_manifest_hash[48];
++}
++
++extern "C" int
++native_owner_publish_boot_manifest(dev_t rootDevice, const char *rootUUID,
++    dev_t cacheDevice, const char *cacheUUID)
++{
++	static const char domain[] = "VerifiedRoot.OwnerBootSet.v1";
++	uint8_t rootDigest[48], cacheDigest[48], digest[48];
++	uint8_t rootRole = 1, cacheRole = 2;
++	if (rootDevice == cacheDevice ||
++	    !native_verified_block_manifest_sha384(rootDevice, rootUUID, rootDigest) ||
++	    !native_verified_block_manifest_sha384(cacheDevice, cacheUUID, cacheDigest)) {
++		native_owner_boot_manifest_status = 1;
++		return 0;
++	}
++	SHA384_CTX context;
++	SHA384_Init(&context);
++	SHA384_Update(&context, domain, sizeof(domain));
++	SHA384_Update(&context, &rootRole, sizeof(rootRole));
++	SHA384_Update(&context, rootDigest, sizeof(rootDigest));
++	SHA384_Update(&context, &cacheRole, sizeof(cacheRole));
++	SHA384_Update(&context, cacheDigest, sizeof(cacheDigest));
++	SHA384_Final(digest, &context);
++	IORegistryEntry *chosen = IORegistryEntry::fromPath("/chosen", gIODTPlane);
++	if (!chosen) { native_owner_boot_manifest_status = 2; return 0; }
++	// Never replace an existing firmware/Apple identity with an owner identity.
++	if (chosen->getProperty("boot-manifest-hash") || chosen->getProperty("owner-boot-manifest-domain")) {
++		chosen->release();
++		native_owner_boot_manifest_status = 3;
++		return 0;
++	}
++	OSData *value = OSData::withBytes(digest, sizeof(digest));
++	OSData *tag = OSData::withBytes(domain, sizeof(domain));
++	bool tagged = tag && chosen->setProperty("owner-boot-manifest-domain", tag);
++	bool published = tagged && value && chosen->setProperty("boot-manifest-hash", value);
++	uint8_t actual[48];
++	size_t actualSize = sizeof(actual);
++	bool result = published && IOGetBootManifestHash(reinterpret_cast<char *>(actual), &actualSize) &&
++	    actualSize == sizeof(digest) && !memcmp(actual, digest, sizeof(digest));
++	if (!result) {
++		if (published) chosen->removeProperty("boot-manifest-hash");
++		if (tagged) chosen->removeProperty("owner-boot-manifest-domain");
++	} else {
++		memcpy(native_owner_boot_manifest_hash, actual, sizeof(actual));
++	}
++	OSSafeReleaseNULL(tag);
++	OSSafeReleaseNULL(value);
++	chosen->release();
++	native_owner_boot_manifest_status = result ? 0 : 4;
++	return result;
++}
++#endif
++
+ /*
+  * Set NVRAM to boot into the right flavor of Recovery,
+  * optionally passing a UUID of a volume that failed to boot.
+--- a/bsd/vm/vm_unix.c
++++ b/bsd/vm/vm_unix.c
+@@ -2213,6 +2213,65 @@
+ 	struct _sr_file_mappings *sr_file_mappings,
+ 	struct vm_shared_region  *shared_region);
+ 
++#if defined(XNU_OWNER_CACHE_CARRIER) && XNU_OWNER_CACHE_CARRIER && !CONFIG_CSR
++#if !DEVELOPMENT && !DEBUG
++#error The independent owner cache carrier is a development instrument
++#endif
++extern int native_verified_block_root_authorized(dev_t);
++extern int native_verified_block_volume_device(const char *, dev_t *, char *, size_t);
++unsigned long native_owner_cache_carrier_accepts = 0;
++unsigned long native_owner_cache_carrier_rejects = 0;
++volatile dev_t native_owner_cache_carrier_root_device = NODEV;
++volatile dev_t native_owner_cache_carrier_file_device = NODEV;
++
++static boolean_t
++native_owner_shared_cache_carrier(vnode_t process_root, vnode_t file)
++{
++	const char *root_uuid = "04769D26-2CA0-4825-B443-E2E5F88300F2";
++#if defined(XNU_OWNER_CACHE_CARRIER_WRONG_UUID) && XNU_OWNER_CACHE_CARRIER_WRONG_UUID
++	const char *cache_uuid = "9846FE78-2910-4297-AF97-D59BB6F8FC16";
++#else
++	const char *cache_uuid = "8846FE78-2910-4297-AF97-D59BB6F8FC16";
++#endif
++	const char *directory = "/private/preboot/System/Library/Caches/com.apple.dyld";
++	vnode_t expected_parent = NULLVP, device_vnode;
++	dev_t root_device = NODEV, cache_device = NODEV, expected = NODEV;
++	char device_path[64];
++	boolean_t authorized = FALSE;
++	if (process_root != rootvnode || !file || vnode_vtype(file) != VREG) goto out;
++	mount_t root_mount = vnode_mount(process_root), cache_mount = vnode_mount(file);
++	if (!root_mount || !cache_mount || root_mount == cache_mount ||
++	    !(vfs_flags(root_mount) & MNT_RDONLY) || !(vfs_flags(cache_mount) & MNT_RDONLY) ||
++	    strcmp(vfs_statfs(root_mount)->f_fstypename, "apfs") ||
++	    strcmp(vfs_statfs(cache_mount)->f_fstypename, "apfs")) goto out;
++	device_vnode = vfs_devvp(root_mount);
++	if (device_vnode) {
++		root_device = vnode_specrdev(device_vnode);
++		vnode_put(device_vnode);
++	}
++	device_vnode = vfs_devvp(cache_mount);
++	if (device_vnode) {
++		cache_device = vnode_specrdev(device_vnode);
++		vnode_put(device_vnode);
++	}
++	if (root_device == NODEV || cache_device == NODEV ||
++	    !native_verified_block_volume_device(root_uuid, &expected, device_path, sizeof(device_path)) ||
++	    expected != root_device ||
++	    !native_verified_block_volume_device(cache_uuid, &expected, device_path, sizeof(device_path)) ||
++	    expected != cache_device) goto out;
++	if (vnode_lookup(directory, 0, &expected_parent, vfs_context_current())) goto out;
++	authorized = vnode_vtype(expected_parent) == VDIR && vnode_mount(expected_parent) == cache_mount &&
++	    vnode_parent(file) == expected_parent && native_verified_block_root_authorized(root_device);
++out:
++	if (expected_parent) vnode_put(expected_parent);
++	native_owner_cache_carrier_root_device = root_device;
++	native_owner_cache_carrier_file_device = cache_device;
++	if (authorized) os_atomic_inc(&native_owner_cache_carrier_accepts, relaxed);
++	else os_atomic_inc(&native_owner_cache_carrier_rejects, relaxed);
++	return authorized;
++}
++#endif
++
+ /*
+  * Setup part of _shared_region_map_and_slide().
+  * It had to be broken out of _shared_region_map_and_slide() to
+@@ -2545,7 +2604,13 @@
+ 		 * is either on the root volume or in the preboot cryptex volume.
+ 		 */
+ 		assert(rdir_vp != NULL);
++#if defined(XNU_OWNER_CACHE_CARRIER) && XNU_OWNER_CACHE_CARRIER
++		boolean_t owner_carrier = FALSE;
++#endif
+ 		if (srfmp->vp->v_mount != rdir_vp->v_mount) {
++#if defined(XNU_OWNER_CACHE_CARRIER) && XNU_OWNER_CACHE_CARRIER
++			owner_carrier = native_owner_shared_cache_carrier(rdir_vp, srfmp->vp);
++#endif
+ 			vnode_t preboot_vp = NULL;
+ #if XNU_TARGET_OS_OSX
+ #define PREBOOT_CRYPTEX_PATH "/System/Volumes/Preboot/Cryptexes"
+@@ -2553,7 +2618,11 @@
+ #define PREBOOT_CRYPTEX_PATH "/private/preboot/Cryptexes"
+ #endif
+ 			error = vnode_lookup(PREBOOT_CRYPTEX_PATH, 0, &preboot_vp, vfs_context_current());
+-			if (error || srfmp->vp->v_mount != preboot_vp->v_mount) {
++			if ((error || srfmp->vp->v_mount != preboot_vp->v_mount)
++#if defined(XNU_OWNER_CACHE_CARRIER) && XNU_OWNER_CACHE_CARRIER
++			    && !owner_carrier
++#endif
++			    ) {
+ 				SHARED_REGION_TRACE_ERROR(
+ 					("shared_region: %p [%d(%s)] map(%p:'%s'): "
+ 					"not on process' root volume nor preboot volume\n",
+@@ -2572,7 +2641,11 @@
+ 		}
+ #endif /* CONFIG_CSR */
+ 
+-		if (scdir_enforce) {
++		if (scdir_enforce
++#if defined(XNU_OWNER_CACHE_CARRIER) && XNU_OWNER_CACHE_CARRIER && !CONFIG_CSR
++		    && !owner_carrier
++#endif
++		    ) {
+ 			char **expected_scdir_path = is_driverkit ? driverkit_scdir_path : scdir_path;
+ 			struct vnode *scdir_vp = NULL;
+ 			for (expected_scdir_path = is_driverkit ? driverkit_scdir_path : scdir_path;
+--- a/bsd/kern/kern_exec.c
++++ b/bsd/kern/kern_exec.c
+@@ -1,3 +1,4 @@
++#include <kern/boot_progress.h>
+ /*
+  * Copyright (c) 2000-2020 Apple Inc. All rights reserved.
+  *
+@@ -181,6 +182,7 @@
+ #include <IOKit/IOBSD.h>
+ 
+ #include "kern_exec_internal.h"
++#include <CoreEntitlements/CoreEntitlements.h>
+ 
+ extern boolean_t vm_darkwake_mode;
+ 
+@@ -1314,7 +1316,9 @@
+ 	/*
+ 	 * Actually load the image file we previously decided to load.
+ 	 */
++	boot_progress_process_stage(proc_getpid(p),p->p_name,"exec load_machfile enter");
+ 	lret = load_machfile(imgp, mach_header, thread, &map, &load_result);
++	boot_progress_process_stage(proc_getpid(p),p->p_name,"exec load_machfile returned");
+ 	if (lret != LOAD_SUCCESS) {
+ 		error = load_return_to_errno(lret);
+ 
+@@ -6748,8 +6752,329 @@
+  *		word width of the kernel. Once the self-exec completes, the
+  *		initproc might be different.
+  */
++#if defined(XNU_OWNER_CACHE_MOUNT) && XNU_OWNER_CACHE_MOUNT
++#if !DEVELOPMENT && !DEBUG
++#error The offline owner cache mount is a development instrument
++#endif
++extern int native_verified_block_volume_device(const char *, dev_t *, char *, size_t);
++#if defined(XNU_OWNER_BOOT_MANIFEST) && XNU_OWNER_BOOT_MANIFEST
++extern int native_owner_publish_boot_manifest(dev_t, const char *, dev_t, const char *);
++#endif
++#if defined(XNU_OWNER_CACHE_STARTUP) && XNU_OWNER_CACHE_STARTUP
++extern void commpage_update_dyld_flags(uint64_t);
++volatile uint64_t native_owner_cache_dyld_flags = 0;
++#endif
++extern int native_verified_block_root_authorized(dev_t);
++volatile int native_owner_cache_stage = 0;
++volatile int native_owner_cache_status = -1;
++volatile int native_owner_cache_mount_status = -1;
++volatile int native_owner_cache_readonly = 0;
++volatile int native_owner_cache_authorized = 0;
++volatile int native_owner_cache_root_recheck = 0;
++volatile uint64_t native_owner_cache_actual_mount_flags = 0;
++volatile uintptr_t native_owner_cache_original_root = 0;
++volatile uintptr_t native_owner_cache_current_root = 0;
++volatile int native_owner_cache_native_union = 0;
++volatile dev_t native_owner_cache_selected_device = NODEV;
++volatile dev_t native_owner_cache_mounted_device = NODEV;
++char native_owner_cache_device_path[64];
++void native_owner_cache_checkpoint(int, int);
++__attribute__((noinline)) void
++native_owner_cache_checkpoint(int status, int authorized)
++{
++	__asm__ volatile("" : : "r"(status), "r"(authorized) : "memory");
++}
++
+ static int
+-load_init_program_at_path(proc_t p, user_addr_t scratch_addr, const char* path)
++native_owner_cache_prepare(proc_t p, user_addr_t scratch, user_addr_t *envp)
++{
++	const char *volume = "8846FE78-2910-4297-AF97-D59BB6F8FC16";
++#if defined(XNU_OWNER_UNION_SYSTEMOS) && XNU_OWNER_UNION_SYSTEMOS
++#if !CONFIG_UNION_MOUNTS
++#error The owner composition requires the original native union-mount implementation
++#endif
++	const char *mountpoint = "/";
++#else
++	const char *mountpoint = "/private/preboot";
++#endif
++#if !defined(XNU_OWNER_UNION_SYSTEMOS) || !XNU_OWNER_UNION_SYSTEMOS
++	const char *environment = "DYLD_SHARED_CACHE_DIR=/private/preboot/System/Library/Caches/com.apple.dyld";
++#endif
++	vnode_t original_os_root = rootvnode;
++	native_owner_cache_original_root = (uintptr_t)original_os_root;
++	mount_t root_mount = vnode_mount(original_os_root);
++	vnode_t device_vnode = vfs_devvp(root_mount);
++	dev_t root_device = device_vnode ? vnode_specrdev(device_vnode) : NODEV;
++	dev_t selected = NODEV;
++	vnode_t mounted_root = NULLVP;
++	int error = EAUTH, root_authorized = 0, cache_authorized = 0;
++	int32_t result = 0;
++	user64_addr_t spec = scratch + 0x160;
++	char device_path[64] = {0};
++	uint8_t mount_data[0x150] = {0};
++	uint64_t mount_flags = MNT_RDONLY;
++	uint16_t mount_mode = 1;
++	uint32_t anonymous_owner = 99;
++#if !defined(XNU_OWNER_UNION_SYSTEMOS) || !XNU_OWNER_UNION_SYSTEMOS
++#if defined(XNU_OWNER_CRYPTEX_FILES) && XNU_OWNER_CRYPTEX_FILES
++	const char *fallback = "DYLD_FALLBACK_LIBRARY_PATH=/private/preboot/usr/lib";
++	user64_addr_t environment_vector[3] = {scratch + 0x400, scratch + 0x600, USER_ADDR_NULL};
++#else
++	user64_addr_t environment_vector[2] = {scratch + 0x400, USER_ADDR_NULL};
++#endif
++#endif
++	struct mount_args request = {.type = scratch + 0x100, .path = scratch + 0x120,
++	    .flags = MNT_RDONLY, .data = scratch + 0x200};
++	request.flags = (int)mount_flags;
++#if defined(XNU_OWNER_UNION_SYSTEMOS) && XNU_OWNER_UNION_SYSTEMOS
++	request.flags |= MNT_UNION;
++#endif
++	if (device_vnode) vnode_put(device_vnode);
++	root_authorized = (vfs_flags(root_mount) & MNT_RDONLY) && root_device != NODEV &&
++	    native_verified_block_root_authorized(root_device);
++	if (!root_authorized) goto done;
++	native_owner_cache_stage = 1;
++	if (!native_verified_block_volume_device(volume, &selected, device_path,
++	    sizeof(device_path))) goto done;
++	strlcpy(native_owner_cache_device_path, device_path, sizeof(native_owner_cache_device_path));
++	native_owner_cache_selected_device = selected;
++	native_owner_cache_stage = 2;
++	/* Exact user-mount payload already qualified against this original APFS. */
++	memcpy(mount_data, &spec, sizeof(spec));
++	memcpy(mount_data + 8, &mount_flags, sizeof(mount_flags));
++	memcpy(mount_data + 16, &mount_mode, sizeof(mount_mode));
++	memcpy(mount_data + 0x144, &anonymous_owner, sizeof(anonymous_owner));
++	memcpy(mount_data + 0x148, &anonymous_owner, sizeof(anonymous_owner));
++	if ((error = copyout("apfs", request.type, 5)) != 0 ||
++	    (error = copyout(mountpoint, request.path, strlen(mountpoint) + 1)) != 0 ||
++	    (error = copyout(device_path, spec, strlen(device_path) + 1)) != 0 ||
++	    (error = copyout(mount_data, request.data, sizeof(mount_data))) != 0) goto done;
++	native_owner_cache_stage = 3;
++	error = mount(p, &request, &result);
++	native_owner_cache_mount_status = error;
++	if (error) goto done;
++	native_owner_cache_stage = 4;
++	error = vnode_lookup(mountpoint, 0, &mounted_root, vfs_context_current());
++	if (error) goto done;
++	mount_t cache_mount = vnode_mount(mounted_root);
++	device_vnode = vfs_devvp(cache_mount);
++	dev_t actual = device_vnode ? vnode_specrdev(device_vnode) : NODEV;
++	if (device_vnode) vnode_put(device_vnode);
++	native_owner_cache_mounted_device = actual;
++	int readonly = (vfs_flags(cache_mount) & MNT_RDONLY) != 0;
++	native_owner_cache_readonly = readonly;
++	native_owner_cache_actual_mount_flags = vfs_flags(cache_mount);
++	native_owner_cache_current_root = (uintptr_t)rootvnode;
++	int native_union = (vfs_flags(cache_mount) & MNT_UNION) &&
++	    vnode_mountedhere(original_os_root) == cache_mount && rootvnode == mounted_root;
++	native_owner_cache_native_union = native_union;
++	cache_authorized = readonly && actual == selected &&
++	    !strcmp(vfs_statfs(cache_mount)->f_fstypename, "apfs") && native_verified_block_root_authorized(actual);
++#if defined(XNU_OWNER_UNION_SYSTEMOS) && XNU_OWNER_UNION_SYSTEMOS
++	cache_authorized = cache_authorized && native_union;
++#endif
++	if (!cache_authorized) { error = EAUTH; goto done; }
++	native_owner_cache_stage = 5;
++#if !defined(XNU_OWNER_UNION_SYSTEMOS) || !XNU_OWNER_UNION_SYSTEMOS
++	if ((error = copyout(environment, environment_vector[0], strlen(environment) + 1)) != 0 ||
++	    (error = copyout(environment_vector, scratch + 0x500, sizeof(environment_vector))) != 0) goto done;
++#if defined(XNU_OWNER_CRYPTEX_FILES) && XNU_OWNER_CRYPTEX_FILES
++	if ((error = copyout(fallback, scratch + 0x600, strlen(fallback) + 1)) != 0) goto done;
++#endif
++	*envp = scratch + 0x500;
++#else
++	*envp = USER_ADDR_NULL;
++#endif
++	native_owner_cache_stage = 6;
++done:
++	if (mounted_root) vnode_put(mounted_root);
++	int root_recheck = root_authorized && native_verified_block_root_authorized(root_device);
++	native_owner_cache_root_recheck = root_recheck;
++	if (!root_recheck) error = EAUTH;
++#if defined(XNU_OWNER_BOOT_MANIFEST) && XNU_OWNER_BOOT_MANIFEST
++	if (!error && cache_authorized && root_recheck &&
++	    !native_owner_publish_boot_manifest(root_device, "04769D26-2CA0-4825-B443-E2E5F88300F2",
++	        selected, volume)) error = EAUTH;
++#endif
++#if defined(XNU_OWNER_CACHE_STARTUP) && XNU_OWNER_CACHE_STARTUP
++	if (!error && cache_authorized && root_recheck) {
++		/* Original dyld bit 3 selects no ignition; the owner chain and actual
++		 * readonly mounts above supply image authentication in this mode. */
++		dyld_flags |= UINT64_C(8);
++		commpage_update_dyld_flags(dyld_flags);
++		native_owner_cache_dyld_flags = dyld_flags;
++	}
++#endif
++	native_owner_cache_authorized = cache_authorized;
++	native_owner_cache_status = error;
++	native_owner_cache_checkpoint(error, cache_authorized);
++	return error;
++}
++#endif
++
++#if defined(XNU_OWNER_DATA_MOUNT) && XNU_OWNER_DATA_MOUNT
++#if !defined(XNU_OWNER_BOOT_MANIFEST) || !XNU_OWNER_BOOT_MANIFEST
++#error Scratch Data mounting requires the authenticated original OS startup path
++#endif
++#if defined(XNU_NATIVE_RAM_BLOCK) && XNU_NATIVE_RAM_BLOCK
++#ifndef XNU_OWNER_DATA_VOLUME_UUID
++#error Supply the observed scratch volume UUID for the IOKit backend
++#endif
++extern int native_ram_block_volume_seed(const char *, dev_t *, char *, size_t, uint64_t *, uint64_t *, uint8_t *);
++#endif
++extern dev_t mdevlookup(int);
++extern int mdevgetrange(int, uint64_t *, uint64_t *);
++volatile int native_owner_data_status = -1;
++volatile int native_owner_data_stage = 0;
++volatile int native_owner_data_readonly = -1;
++volatile dev_t native_owner_data_device = NODEV;
++uint64_t native_owner_data_seed_base, native_owner_data_seed_size;
++uint8_t native_owner_data_seed_sha256[32];
++char native_owner_data_device_path[64];
++
++/* Boot-time read-only union views of owner-provided GPU addon content over sealed system directories, mounted after the Data mount and
++ * before launchd starts: the Adreno Metal plugin bundle over /System/Library/Extensions (the original Metal discovery loads
++ * /System/Library/Extensions/<MetalPluginName>.bundle) and an owner launchd job over /System/Library/LaunchDaemons (a process outside
++ * every sandbox profile). Only with boot-arg sheng-gpu-addon=1. Never panics: a missing source directory or a refused mount only
++ * records its status. The backing directories are owner Data (not an authenticated immutable volume); code in them still has to
++ * pass AMFI through the loaded trust cache. */
++extern volatile int native_bindfs_boot_mount;
++volatile int native_gpu_addon_stage = 0;
++volatile int native_gpu_addon_status = -1;
++volatile int native_gpu_addon2_stage = 0;
++volatile int native_gpu_addon2_status = -1;
++static void
++native_gpu_addon_mount(proc_t p, user_addr_t scratch, user_addr_t offset, const char *source, size_t source_size,
++    const char *point, size_t point_size, const char *visible, const char *own, volatile int *stage, volatile int *status)
++{
++	vnode_t probe = NULLVP;
++	int error;
++	*stage = 1;
++	error = vnode_lookup(source, 0, &probe, vfs_context_current());
++	if (error) {
++		*status = error;
++		return;
++	}
++	vnode_put(probe);
++	probe = NULLVP;
++	*stage = 2;
++	struct mount_args request = {.type = scratch + offset, .path = scratch + offset + 0x20,
++	    .flags = MNT_RDONLY | MNT_UNION, .data = scratch + offset + 0x100};
++	int32_t result = 0;
++	if ((error = copyout("bindfs", request.type, 7)) || (error = copyout(point, request.path, point_size)) ||
++	    (error = copyout(source, request.data, source_size))) {
++		*status = error;
++		return;
++	}
++	native_bindfs_boot_mount = 1;
++	error = mount(p, &request, &result);
++	native_bindfs_boot_mount = 0;
++	if (error) {
++		*status = error;
++		return;
++	}
++	*stage = 3;
++	/* The union must still show a sealed lower entry next to the owner's. */
++	error = vnode_lookup(visible, 0, &probe, vfs_context_current());
++	if (!error) {
++		vnode_put(probe);
++		probe = NULLVP;
++		*stage = 4;
++		/* ... and the owner's own entry must be visible through it (stage 5). */
++		error = vnode_lookup(own, 0, &probe, vfs_context_current());
++		if (!error) {
++			vnode_put(probe);
++			probe = NULLVP;
++			*stage = 5;
++		}
++	}
++	*status = error;
++}
++static void
++native_gpu_addon_prepare(proc_t p, user_addr_t scratch)
++{
++	uint32_t enabled = 0;
++	if (!PE_parse_boot_argn("sheng-gpu-addon", &enabled, sizeof(enabled)) || enabled != 1) {
++		return;
++	}
++	static const char extensions_source[] = "/private/var/ngpu/addons", extensions_point[] = "/System/Library/Extensions";
++	static const char daemons_source[] = "/private/var/ngpu/daemons", daemons_point[] = "/System/Library/LaunchDaemons";
++	native_gpu_addon_mount(p, scratch, 0x400, extensions_source, sizeof(extensions_source), extensions_point,
++	    sizeof(extensions_point), "/System/Library/Extensions/AGXMetalA10.bundle",
++	    "/System/Library/Extensions/NativeAdrenoMetal.bundle/Info.plist", &native_gpu_addon_stage,
++	    &native_gpu_addon_status);
++	native_gpu_addon_mount(p, scratch, 0x600, daemons_source, sizeof(daemons_source), daemons_point, sizeof(daemons_point),
++	    "/System/Library/LaunchDaemons/com.apple.backboardd.plist",
++	    "/System/Library/LaunchDaemons/org.blu-sharky.adrenoprobed.plist", &native_gpu_addon2_stage, &native_gpu_addon2_status);
++}
++
++static int
++native_owner_data_prepare(proc_t p, user_addr_t scratch)
++{
++	uint64_t base = 0, size = 0;
++	dev_t device = NODEV;
++	int error = EINVAL;
++	vnode_t data_root = NULLVP;
++	char device_path[64] = "/dev/md0";
++#if defined(XNU_NATIVE_RAM_BLOCK) && XNU_NATIVE_RAM_BLOCK
++	/* The typed provider supplies logical seed identity for both dense and
++	 * sparse media. A sparse disk has no contiguous logical-byte address. */
++	if (!native_ram_block_volume_seed(XNU_OWNER_DATA_VOLUME_UUID, &device, device_path,
++	    sizeof(device_path), &base, &size, native_owner_data_seed_sha256)) { error = ENOENT; goto done; }
++	if (!size || size > UINT64_C(0x80000000) || (size & 4095)) goto done;
++#else
++	device = mdevlookup(0);
++	if (device == NODEV || mdevgetrange(0, &base, &size) || base < VM_MIN_KERNEL_ADDRESS ||
++	    !size || size > UINT64_C(0x80000000) || (base & 4095) || (size & 4095)) goto done;
++	SHA256_CTX context;
++	SHA256_Init(&context);
++	SHA256_Update(&context, (const void *)base, size);
++	SHA256_Final(native_owner_data_seed_sha256, &context);
++#endif
++	native_owner_data_seed_base = base;
++	native_owner_data_seed_size = size;
++	native_owner_data_stage = 1;
++	strlcpy(native_owner_data_device_path, device_path, sizeof(native_owner_data_device_path));
++	uint8_t payload[0x150] = {0};
++	user64_addr_t spec = scratch + 0x160;
++	uint16_t mode = 1;
++	uint32_t anonymous_owner = 99;
++	memcpy(payload, &spec, sizeof(spec));
++	memcpy(payload + 16, &mode, sizeof(mode));
++	memcpy(payload + 0x144, &anonymous_owner, sizeof(anonymous_owner));
++	memcpy(payload + 0x148, &anonymous_owner, sizeof(anonymous_owner));
++	struct mount_args request = {.type = scratch + 0x100, .path = scratch + 0x120,
++	    .flags = 0, .data = scratch + 0x200};
++	int32_t result = 0;
++	if ((error = copyout("apfs", request.type, 5)) ||
++	    (error = copyout("/private/var", request.path, 13)) ||
++	    (error = copyout(device_path, spec, strlen(device_path) + 1)) ||
++	    (error = copyout(payload, request.data, sizeof(payload)))) goto done;
++	native_owner_data_stage = 2;
++	error = mount(p, &request, &result);
++	if (error) goto done;
++	native_owner_data_stage = 3;
++	error = vnode_lookup("/private/var", 0, &data_root, vfs_context_current());
++	if (error) goto done;
++	mount_t data_mount = vnode_mount(data_root);
++	vnode_t device_node = vfs_devvp(data_mount);
++	dev_t actual = device_node ? vnode_specrdev(device_node) : NODEV;
++	if (device_node) vnode_put(device_node);
++	native_owner_data_device = actual;
++	native_owner_data_readonly = (vfs_flags(data_mount) & MNT_RDONLY) != 0;
++	if (actual != device || (vfs_flags(data_mount) & MNT_RDONLY) ||
++	    strcmp(vfs_statfs(data_mount)->f_fstypename, "apfs")) error = EINVAL;
++	if (!error) native_owner_data_stage = 4;
++	if (!error) native_gpu_addon_prepare(p, scratch);
++done:
++	if (data_root) vnode_put(data_root);
++	native_owner_data_status = error;
++	return error;
++}
++#endif
++
++static int
++load_init_program_at_path(proc_t p, user_addr_t scratch_addr, const char* path, user_addr_t envp)
+ {
+ 	int retval[2];
+ 	int error;
+@@ -6821,7 +7146,7 @@
+ 	 */
+ 	init_exec_args.fname = argv0;
+ 	init_exec_args.argp = scratch_addr;
+-	init_exec_args.envp = USER_ADDR_NULL;
++	init_exec_args.envp = envp;
+ 
+ 	/*
+ 	 * So that init task is set with uid,gid 0 token
+@@ -6873,6 +7198,7 @@
+ void
+ load_init_program(proc_t p)
+ {
++	boot_progress_stage("load_init_program enter");
+ 	uint32_t i;
+ 	int error;
+ 	vm_map_t map = current_map();
+@@ -6880,9 +7206,40 @@
+ 	mach_vm_size_t map_page_size = vm_map_page_size(map);
+ 
+ 	(void) mach_vm_allocate_kernel(map, &scratch_addr, map_page_size, VM_FLAGS_ANYWHERE, VM_KERN_MEMORY_NONE);
++	user_addr_t init_envp = USER_ADDR_NULL;
++#if defined(XNU_OWNER_CACHE_MOUNT) && XNU_OWNER_CACHE_MOUNT
++	boot_progress_stage("SystemOS mount enter");
++	int cache_error = native_owner_cache_prepare(p, (user_addr_t)scratch_addr, &init_envp);
++	boot_progress_stage("SystemOS mount returned");
++	if (cache_error) panic("offline owner SystemOS mount failed: %d", cache_error);
++#endif
++#if defined(XNU_OWNER_DATA_MOUNT) && XNU_OWNER_DATA_MOUNT
++	boot_progress_stage("Data mount enter");
++	int data_error = native_owner_data_prepare(p, (user_addr_t)scratch_addr);
++	boot_progress_stage("Data mount returned");
++	if (data_error) panic("offline scratch Data mount failed: %d", data_error);
++#if defined(XNU_BOOT_PROGRESS) && XNU_BOOT_PROGRESS
++	extern int sheng_boot_watchdog_policy(void *, uint64_t);
++	boot_progress_stage("temporary watchdog launch policy enter");
++	int policy_error=sheng_boot_watchdog_policy(p, (uint64_t)scratch_addr);
++	if (policy_error) panic("sheng watchdog launch policy failed: %d", policy_error);
++	boot_progress_stage("temporary watchdog launch policy ready");
++#endif
++#endif
+ #if CONFIG_MEMORYSTATUS
+ 	(void) memorystatus_init_at_boot_snapshot();
+ #endif /* CONFIG_MEMORYSTATUS */
++
++#if (DEBUG || DEVELOPMENT) && defined(XNU_NATIVE_AIR_INIT) && XNU_NATIVE_AIR_INIT
++	int offline_air = 0;
++	if (PE_parse_boot_argn("offline-air-init", &offline_air, sizeof(offline_air)) && offline_air) {
++		if (offline_air != 1) panic("offline AIR init invalid selector");
++		error = load_init_program_at_path(p, (user_addr_t)scratch_addr,
++		    "/private/var/tmp/air-native", init_envp);
++		if (error) panic("offline signed AIR instrument exec failed: %d", error);
++		return;
++	}
++#endif
+ 
+ #if DEBUG || DEVELOPMENT
+ 	/* Check for boot-arg suffix first */
+@@ -6894,7 +7251,7 @@
+ 
+ 		if (is_release_suffix) {
+ 			printf("load_init_program: attempting to load /sbin/launchd\n");
+-			error = load_init_program_at_path(p, (user_addr_t)scratch_addr, "/sbin/launchd");
++			error = load_init_program_at_path(p, (user_addr_t)scratch_addr, "/sbin/launchd", init_envp);
+ 			if (!error) {
+ 				return;
+ 			}
+@@ -6905,7 +7262,7 @@
+ 			strlcat(launchd_path, launchd_suffix, sizeof(launchd_path));
+ 
+ 			printf("load_init_program: attempting to load %s\n", launchd_path);
+-			error = load_init_program_at_path(p, (user_addr_t)scratch_addr, launchd_path);
++			error = load_init_program_at_path(p, (user_addr_t)scratch_addr, launchd_path, init_envp);
+ 			if (!error) {
+ 				return;
+ 			} else if (error != ENOENT) {
+@@ -6918,7 +7275,7 @@
+ 	error = ENOENT;
+ 	for (i = 0; i < sizeof(init_programs) / sizeof(init_programs[0]); i++) {
+ 		printf("load_init_program: attempting to load %s\n", init_programs[i]);
+-		error = load_init_program_at_path(p, (user_addr_t)scratch_addr, init_programs[i]);
++		error = load_init_program_at_path(p, (user_addr_t)scratch_addr, init_programs[i], init_envp);
+ 		if (!error) {
+ 			return;
+ 		} else if (error != ENOENT) {
+@@ -7364,6 +7721,7 @@
+ 	 * approve of exec, kill and return immediately.
+ 	 */
+ 	if (imgp->ip_mac_return != 0) {
++		boot_progress_process_stage(proc_getpid(p),p->p_name,"exec MAC policy REFUSED");
+ 		KERNEL_DEBUG_CONSTANT(BSDDBG_CODE(DBG_BSD_PROC, BSD_PROC_EXITREASON_CREATE) | DBG_FUNC_NONE,
+ 		    proc_getpid(p), OS_REASON_EXEC, EXEC_EXIT_REASON_SECURITY_POLICY, 0, 0);
+ 		signature_failure_reason = os_reason_create(OS_REASON_EXEC, EXEC_EXIT_REASON_SECURITY_POLICY);
+@@ -7526,7 +7884,9 @@
+ 		 * state.
+ 		 */
+ 
++		boot_progress_process_stage(proc_getpid(p),p->p_name,"exec process signature enter");
+ 		error = proc_process_signature(p, &signature_failure_reason);
++		boot_progress_process_stage(proc_getpid(p),p->p_name,error ? "exec process signature REFUSED" : "exec process signature accepted");
+ 	}
+ 
+ 	if (0 == error) {
+--- a/EXTERNAL_HEADERS/CoreEntitlements/CoreEntitlements.h
++++ b/EXTERNAL_HEADERS/CoreEntitlements/CoreEntitlements.h
+@@ -4,6 +4,11 @@
+  */
+ #ifndef CORE_ENTITLEMENTS_H
+ #define CORE_ENTITLEMENTS_H
++
++#define kCSWebBrowserNetworkEntitlement "com.apple.developer.web-browser-engine.networking"
++#define kCSWebBrowserWebContentEntitlement "com.apple.developer.web-browser-engine.webcontent"
++#define kCSWebBrowserGPUEntitlement "com.apple.developer.web-browser-engine.rendering"
++#define kCSWebBrowserHostEntitlement "com.apple.developer.web-browser-engine.host"
+ 
+ #ifdef __cplusplus
+ extern "C" {
+--- a/osfmk/prng/prng_random.c
++++ b/osfmk/prng/prng_random.c
+@@ -420,3 +420,35 @@
+ 	}
+ 	return rbits;
+ }
++
++/* Internal source-provider verification; no replacement callbacks or skipped POST. */
++#if defined(XNU_SOURCE_CORECRYPTO14)
++#include <kern/startup.h>
++#include <mach/kmod.h>
++#include <mach-o/loader.h>
++
++extern struct mach_header_64 _mh_execute_header;
++extern kern_return_t corecrypto_kext_start(kmod_info_t *, void *);
++SECURITY_READ_ONLY_LATE(kern_return_t) source_corecrypto14_status = KERN_FAILURE;
++
++static void
++source_corecrypto14_bootstrap(void)
++{
++	static kmod_info_t info = {
++		.info_version = KMOD_INFO_VERSION,
++		.name = "source-corecrypto14-evaluation",
++		.version = "14.0",
++	};
++	uint32_t mode = 0;
++
++	if (PE_parse_boot_argn("fips_mode", &mode, sizeof(mode)) && mode != 0) {
++		panic("source corecrypto verification requires complete default POST");
++	}
++	info.address = (vm_address_t)&_mh_execute_header;
++	source_corecrypto14_status = corecrypto_kext_start(&info, NULL);
++	if (source_corecrypto14_status != KERN_SUCCESS) {
++		panic("source corecrypto initialization failed: %d", source_corecrypto14_status);
++	}
++}
++STARTUP(EARLY_BOOT, STARTUP_RANK_FIRST, source_corecrypto14_bootstrap);
++#endif
+--- a/config/MASTER
++++ b/config/MASTER
+@@ -321,6 +321,8 @@
+ # Compile XNU with PPL support.
+ options   CONFIG_PMAP_PPL			# <config_pmap_ppl>
+ 
++options   CONFIG_APPLE_AMCC			# <apple_amcc>
++
+ options   NOS_ARM_ASM			# <nos_arm_asm>
+ options   NOS_ARM_PMAP			# <nos_arm_pmap>
+ 
+--- a/config/MASTER.arm64.bcm2837
++++ b/config/MASTER.arm64.bcm2837
+@@ -16,7 +16,7 @@
+ #  Standard Apple OS Configurations:
+ #  -------- ----- -- ---------------
+ #
+-#  KERNEL_BASE =    [ arm64 config_pmap_ppl xsmall msgb_small config_embedded config_requires_u32_munging ARM_EXTRAS_BASE ]
++#  KERNEL_BASE =    [ arm64 config_pmap_ppl nos_arm_asm nos_arm_pmap xsmall msgb_small config_embedded config_requires_u32_munging ARM_EXTRAS_BASE ]
+ #  KERNEL_RELEASE = [ KERNEL_BASE ]
+ #  KERNEL_DEV =     [ KERNEL_BASE development mach_assert config_xnupost proc_ref_debug ]
+ #  KERNEL_DEBUG =   [ KERNEL_BASE debug mach_assert config_xnupost config_waitq_stats config_workloop_debug ]
+@@ -50,8 +50,8 @@
+ #  LIBKERN_DEBUG =  [ LIBKERN_BASE iotracking ]
+ #  PERF_DBG_BASE =  [ mach_kdp config_serial_kdp kperf kpc ]
+ #  PERF_DBG_RELEASE=[ PERF_DBG_BASE ist_kdebug ]
+-#  PERF_DBG_DEV =   [ PERF_DBG_BASE config_dtrace zleaks kdp_interactive_debugging alternate_debugger sched_hygiene_debug config_iotrace]
+-#  PERF_DBG_DEBUG = [ PERF_DBG_BASE config_dtrace zleaks kdp_interactive_debugging alternate_debugger sched_hygiene_debug config_iotrace]
++#  PERF_DBG_DEV =   [ PERF_DBG_BASE config_dtrace zleaks kdp_interactive_debugging alternate_debugger config_iotrace]
++#  PERF_DBG_DEBUG = [ PERF_DBG_BASE config_dtrace zleaks kdp_interactive_debugging alternate_debugger config_iotrace]
+ #  MACH_BASE =      [ mach config_ecc_logging vc_progress_white importance_inheritance config_atm config_coalitions config_iosched config_library_validation config_sysdiagnose config_telemetry config_mach_bridge_recv_time config_quiesce_counter config_service_port_info ]
+ #  MACH_RELEASE =   [ MACH_BASE config_skip_precise_user_kernel_time debugger_for_zone_info ]
+ #  MACH_DEV =       [ MACH_BASE config_io_accounting importance_trace ]
+--- a/osfmk/conf/files.arm64
++++ b/osfmk/conf/files.arm64
+@@ -25,8 +25,8 @@
+ osfmk/arm64/WKdmData.s		standard
+ osfmk/arm64/lz4_decode_arm64.s  standard
+ osfmk/arm64/lz4_encode_arm64.s  standard
+-osfmk/arm64/amcc_rorgn_ppl.c optional nos_arm_asm config_pmap_ppl
+-osfmk/arm64/amcc_rorgn_common.c optional nos_arm_asm
++osfmk/arm64/amcc_rorgn_ppl.c optional nos_arm_asm config_pmap_ppl apple_amcc
++osfmk/arm64/amcc_rorgn_common.c optional nos_arm_asm apple_amcc
+ osfmk/arm64/bcopy.s standard
+ osfmk/arm64/bzero.s standard
+ osfmk/arm/caches.c		standard
+--- /dev/null
++++ b/bsd/kern/source_pthread_bootstrap.c
+@@ -0,0 +1,23 @@
++/* SPDX-License-Identifier: BSD-2-Clause-Patent */
++#include <kern/startup.h>
++#include <kern/debug.h>
++#include <libkern/section_keywords.h>
++#include <mach/kmod.h>
++
++extern kern_return_t pthread_start(kmod_info_t *, void *);
++SECURITY_READ_ONLY_LATE(kern_return_t) source_pthread_status = KERN_FAILURE;
++
++static void
++source_pthread_bootstrap(void)
++{
++	static kmod_info_t info = {
++		.info_version = KMOD_INFO_VERSION,
++		.name = "source-libpthread",
++		.version = "519.120.4",
++	};
++	source_pthread_status = pthread_start(&info, NULL);
++	if (source_pthread_status != KERN_SUCCESS) {
++		panic("source libpthread registration failed: %d", source_pthread_status);
++	}
++}
++STARTUP(EARLY_BOOT, STARTUP_RANK_SECOND, source_pthread_bootstrap);
+--- a/bsd/miscfs/bindfs/bind_vfsops.c
++++ b/bsd/miscfs/bindfs/bind_vfsops.c
+@@ -77,6 +77,8 @@
+ #include <IOKit/IOBSD.h>
+ 
+ #include "bindfs.h"
++
++volatile int native_bindfs_boot_mount = 0;
+ 
+ #define BINDFS_ENTITLEMENT "com.apple.private.bindfs-allow"
+ 
+@@ -139,8 +141,9 @@
+ 		return ENOTSUP;
+ 	}
+ 
+-	/* check entitlement */
+-	if (!IOCurrentTaskHasEntitlement(BINDFS_ENTITLEMENT)) {
++	/* check entitlement; the boot-time addon mount (kern_exec.c native_gpu_addon_prepare) runs before any
++	 * entitled process exists and sets this flag around its own mount() call only */
++	if (!native_bindfs_boot_mount && !IOCurrentTaskHasEntitlement(BINDFS_ENTITLEMENT)) {
+ 		return EPERM;
+ 	}
+ 
+@@ -230,6 +233,9 @@
+ 	sp->f_flags = flags;
+ 
+ 	xmp->bindm_flags = BINDM_CASEINSENSITIVE; /* default to case insensitive */
++	if (native_bindfs_boot_mount) {
++		xmp->bindm_flags |= BINDM_FORCE_ROOT;
++	}
+ 
+ 	error = bindfs_vfs_getlowerattr(vnode_mount(lowerrootvp), &vfa, ctx);
+ 	if (error == 0) {
+--- a/bsd/miscfs/bindfs/bind_vnops.c
++++ b/bsd/miscfs/bindfs/bind_vnops.c
+@@ -105,6 +105,14 @@
+ 		vnode_put(lowervp);
+ 
+ 		if (error == 0) {
++			if (MOUNTTOBINDMOUNT(vnode_mount(args->a_vp))->bindm_flags & BINDM_FORCE_ROOT) {
++				if (VATTR_IS_ACTIVE(args->a_vap, va_uid)) {
++					VATTR_RETURN(args->a_vap, va_uid, 0);
++				}
++				if (VATTR_IS_ACTIVE(args->a_vap, va_gid)) {
++					VATTR_RETURN(args->a_vap, va_gid, 0);
++				}
++			}
+ 			if (VATTR_IS_ACTIVE(args->a_vap, va_fsid)) {
+ 				/* fix up fsid so it doesn't say the underlying fs*/
+ 				VATTR_RETURN(args->a_vap, va_fsid, vfs_statfs(vnode_mount(args->a_vp))->f_fsid.val[0]);
+--- a/bsd/miscfs/bindfs/bindfs.h
++++ b/bsd/miscfs/bindfs/bindfs.h
+@@ -81,6 +81,9 @@
+ //#define BINDFS_DEBUG 0
+ 
+ #define BINDM_CACHE 0x0001
++/* Owner boot overlay (native_bindfs_boot_mount): report every file as owned by root:wheel. The backing directory is owner data made
++ * without root; launchd and the loader expect system-directory content to be root owned. Mode bits are left as they are. */
++#define BINDM_FORCE_ROOT 0x80000000ULL
+ #define BINDM_CASEINSENSITIVE 0x0000000000000002
+ 
+ typedef int (*vop_t)(void *);
+--- a/osfmk/console/video_console.c
++++ b/osfmk/console/video_console.c
+@@ -1,3 +1,4 @@
++#include <kern/boot_progress.h>
+ /*
+  * Copyright (c) 2000-2020 Apple Inc. All rights reserved.
+  *
+@@ -1230,6 +1231,7 @@
+ void
+ vcputc_options(char c, __unused bool poll)
+ {
++	if (boot_progress_active()) { boot_progress_putc(c); return; }
+ 	if (gc_initialized && gc_enabled) {
+ 		VCPUTC_LOCK_LOCK();
+ 		if (gc_enabled) {
+@@ -2891,6 +2893,9 @@
+ 			vinfo = new_vinfo;
+ 		}
+ 
++		boot_progress_bind(vinfo.v_baseaddr, vinfo.v_width, vinfo.v_height,
++		    vinfo.v_rowbytes, vinfo.v_depth);
++
+ 		// If we changed the virtual address, remove the old mapping
+ 		if (newVideoVirt != 0) {
+ 			if (lastVideoVirt && lastVideoMapSize) {                                                /* Was the framebuffer mapped before? */
+@@ -3043,6 +3048,10 @@
+ 	}
+ #endif
+ 	}
++
++	/* Console initialization/acquisition may clear the existing mapping. */
++	boot_progress_bind(vinfo.v_baseaddr, vinfo.v_width, vinfo.v_height,
++	    vinfo.v_rowbytes, vinfo.v_depth);
+ }
+ 
+ void vcattach(void); /* XXX gcc 4 warning cleanup */
+--- a/osfmk/console/serial_console.c
++++ b/osfmk/console/serial_console.c
+@@ -1,3 +1,4 @@
++#include <kern/boot_progress.h>
+ /*
+  * Copyright (c) 2000-2020 Apple, Inc. All rights reserved.
+  *
+@@ -245,6 +246,7 @@
+ static inline void
+ _cnputc(char c, bool poll)
+ {
++	if (boot_progress_active()) { boot_progress_putc(c); return; }
+ 	bool in_debugger = (kernel_debugger_entry_count > 0);
+ 	const uint32_t idx = get_cons_ops_index();
+ 
+--- a/pexpert/arm/pe_kprintf.c
++++ b/pexpert/arm/pe_kprintf.c
+@@ -1,3 +1,4 @@
++#include <kern/boot_progress.h>
+ /*
+  * Copyright (c) 2000-2019 Apple Inc. All rights reserved.
+  */
+@@ -58,6 +59,7 @@
+ static void
+ PE_init_kprintf(void)
+ {
++	if (boot_progress_active()) { PE_kputc = boot_progress_putc; return; }
+ 	if (serial_init()) {
+ 		PE_kputc = serial_putc_crlf;
+ 	} else {
+--- a/osfmk/arm64/sleh.c
++++ b/osfmk/arm64/sleh.c
+@@ -1,3 +1,4 @@
++#include <kern/boot_progress.h>
+ /*
+  * Copyright (c) 2012-2020 Apple Inc. All rights reserved.
+  *
+@@ -1067,6 +1068,7 @@
+ 	mach_exception_data_type_t codes[2]  = {EXC_ARM_BREAKPOINT};
+ 	mach_msg_type_number_t     numcodes  = 2;
+ 
++	boot_progress_user_breakpoint(state, esr);
+ #if __has_feature(ptrauth_calls)
+ 	if (ESR_EC(esr) == ESR_EC_BRK_AARCH64 &&
+ 	    brk_comment_is_ptrauth(ISS_BRK_COMMENT(esr))) {
+@@ -1481,6 +1483,7 @@
+ 		exc |= EXC_PTRAUTH_BIT;
+ 	}
+ #endif /* __has_feature(ptrauth_calls) */
++	boot_progress_user_abort(state, esr, fault_addr);
+ 	exception_triage(exc, codes, numcodes);
+ 	__builtin_unreachable();
+ }
+@@ -1856,6 +1859,7 @@
+ 
+ 
+ 	sleh_interrupt_handler_prologue(state, DBG_INTR_TYPE_OTHER);
++	boot_progress_irq(get_saved_state_pc(state), get_saved_state_cpsr(state), get_saved_state_sp(state));
+ 
+ #if USE_APPLEARMSMP
+ 	PE_handle_ext_interrupt();
+--- /dev/null
++++ b/osfmk/kern/boot_progress.h
+@@ -0,0 +1,34 @@
++// SPDX-License-Identifier: MIT
++#ifndef XNU_BOOT_PROGRESS_H
++#define XNU_BOOT_PROGRESS_H
++#include <stdint.h>
++#if defined(XNU_BOOT_PROGRESS) && XNU_BOOT_PROGRESS
++void boot_progress_init(void);
++void boot_progress_start(void);
++int boot_progress_active(void);
++void boot_progress_bind(uintptr_t, unsigned, unsigned, unsigned, unsigned);
++void boot_progress_putc(char);
++void boot_progress_stage(const char *);
++void boot_progress_irq(uint64_t, uint64_t, uint64_t);
++void boot_progress_poll(void);
++void boot_progress_user_breakpoint(void *, unsigned);
++void boot_progress_user_abort(void *, unsigned, uint64_t);
++void boot_progress_critical_exit(int, char *, unsigned long);
++void boot_progress_process_stage(int, const char *, const char *);
++void boot_progress_exit(int, const char *, int, unsigned, uint64_t);
++#else
++#define boot_progress_init() ((void)0)
++#define boot_progress_start() ((void)0)
++#define boot_progress_active() 0
++#define boot_progress_bind(...) ((void)0)
++static inline void boot_progress_putc(char c) { (void)c; }
++#define boot_progress_stage(s) ((void)0)
++#define boot_progress_irq(...) ((void)0)
++#define boot_progress_poll() ((void)0)
++#define boot_progress_user_breakpoint(...) ((void)0)
++#define boot_progress_user_abort(...) ((void)0)
++#define boot_progress_critical_exit(...) ((void)0)
++#define boot_progress_process_stage(...) ((void)0)
++#define boot_progress_exit(...) ((void)0)
++#endif
++#endif
+--- a/osfmk/kern/Makefile
++++ b/osfmk/kern/Makefile
+@@ -113,6 +113,7 @@
+ 
+ 
+ XNU_ONLY_EXPORTS = \
++	boot_progress.h \
+ 	arcade.h \
+ 	btlog.h \
+ 	cpu_quiesce.h \
+--- a/bsd/kern/kern_exit.c
++++ b/bsd/kern/kern_exit.c
+@@ -1,3 +1,4 @@
++#include <kern/boot_progress.h>
+ /*
+  * Copyright (c) 2000-2016 Apple Inc. All rights reserved.
+  *
+@@ -1801,7 +1802,11 @@
+ 	}
+ 
+ 	const char *prefix_str;
++#if defined(XNU_BOOT_PROGRESS) && XNU_BOOT_PROGRESS
++	char prefix_str_buf[1024];
++#else
+ 	char prefix_str_buf[128];
++#endif
+ 
+ 	if (p == initproc) {
+ 		if (strnstr(p->p_name, "preinit", sizeof(p->p_name))) {
+@@ -1814,6 +1819,7 @@
+ 	} else {
+ 		/* For processes that aren't launchd, just use the process name and pid */
+ 		snprintf(prefix_str_buf, sizeof(prefix_str_buf), "%s[%d] exited", p->p_name, proc_getpid(p));
++		boot_progress_critical_exit(proc_getpid(p), prefix_str_buf, sizeof(prefix_str_buf));
+ 		prefix_str = prefix_str_buf;
+ 	}
+ 
+@@ -1844,6 +1850,10 @@
+ 	struct rusage_superset *rup;
+ 	int kr = 0;
+ 	int create_corpse = FALSE;
++
++	boot_progress_exit(proc_getpid(p),p->p_name,rv,
++	    p->p_exit_reason ? p->p_exit_reason->osr_namespace : 0,
++	    p->p_exit_reason ? p->p_exit_reason->osr_code : 0);
+ 
+ 	if (p->p_crash_behavior != 0 || p == initproc) {
+ 		proc_handle_critical_exit(p, rv);
+--- a/libkern/c++/OSKext.cpp
++++ b/libkern/c++/OSKext.cpp
+@@ -73,6 +73,11 @@
+ 
+ #include <libkern/OSKextLibPrivate.h>
+ #include <libkern/c++/OSKext.h>
++
++#if CONFIG_MACF
++extern "C" int mac_late;
++extern "C" __attribute__((used)) const uint32_t native_prelink_security_init_version = 1;
++#endif
+ #include <libkern/c++/OSLib.h>
+ 
+ #include <IOKit/IOLib.h>
+@@ -8284,6 +8289,43 @@
+ 	result = OSRuntimeInitializeCPP(this);
+ 	if (result == KERN_SUCCESS) {
+ 		result = startfunc(kmod_info, kmodStartData);
++	}
++
++	/* An explicitly linked security initializer must run with its real
++	 * dependencies and constructors ready, before MAC policy lockdown.
++	 * It executes original component code; no policy result is supplied.
++	 */
++	{
++		OSObject *earlyInitProperty = getPropertyForHostArch("_NativePrelinkEarlySecurityInit");
++		if (result == KERN_SUCCESS && earlyInitProperty != NULL) {
++	#if CONFIG_MACF
++			OSNumber *earlyInit = OSDynamicCast(OSNumber, earlyInitProperty);
++			uintptr_t target = 0;
++			bool executable = false;
++			if (!earlyInit || !isPrelinked() || mac_late ||
++			    getPropertyForHostArch("AppleSecurityExtension") != kOSBooleanTrue ||
++			    __builtin_add_overflow((uintptr_t)earlyInit->unsigned64BitValue(),
++			    vm_kernel_slide, &target) || (target & 3)) {
++				panic("NativePrelink: invalid early security initializer or phase");
++			}
++			kernel_mach_header_t *header = (kernel_mach_header_t *)kmod_info->address;
++			for (kernel_segment_command_t *seg = firstsegfromheader(header);
++			    seg != NULL; seg = nextsegfromheader(header, seg)) {
++				if (seg->initprot == (VM_PROT_READ | VM_PROT_EXECUTE) &&
++				    !(seg->maxprot & VM_PROT_WRITE) && seg->vmsize >= 4 &&
++				    target >= seg->vmaddr && target - seg->vmaddr <= seg->vmsize - 4) {
++					executable = true;
++					break;
++				}
++			}
++			if (!executable) {
++				panic("NativePrelink: early security initializer outside module code");
++			}
++			((void (*)(void))target)();
++	#else
++			panic("NativePrelink: early security initializer requires MAC framework");
++	#endif
++		}
+ 	}
+ 
+ 	flags.starting = 0;
+--- a/osfmk/kern/kalloc.c
++++ b/osfmk/kern/kalloc.c
+@@ -949,6 +949,8 @@
+ 	}
+ }
+ 
++__attribute__((used)) const uint32_t kalloc_sparse_prelink_index_version = 1;
++
+ __startup_func
+ static uint64_t
+ kalloc_type_view_parse(const kalloc_type_variant_t type)
+@@ -1031,10 +1033,46 @@
+ 		cur = prelink_sect->addr;
+ 		end = prelink_sect->addr + prelink_sect->size;
+ 
+-		while (cur < end) {
++		/* A sparse native prelink supplies its actual component headers.
++		 * Keep the original contiguous KCGEN format when no index exists.
++		 */
++		kernel_section_t *macho_list = getsectbynamefromheader(
++			xnu_mh, kPrelinkTextSegment, "__macho_list");
++		uint64_t list_index = 0, list_count = 0;
++		uintptr_t previous_header = 0;
++		if (macho_list) {
++			kernel_segment_command_t *prelink_segment =
++			    getsegbynamefromheader(xnu_mh, kPrelinkTextSegment);
++			if (!macho_list->size || macho_list->size % sizeof(uintptr_t) ||
++			    macho_list->addr % sizeof(uintptr_t) ||
++			    macho_list->size > prelink_segment->vmsize ||
++			    macho_list->addr < prelink_segment->vmaddr ||
++			    macho_list->addr - prelink_segment->vmaddr >
++			    prelink_segment->vmsize - macho_list->size) {
++				panic("kalloc_type_view_parse: invalid sparse prelink index");
++			}
++			list_count = macho_list->size / sizeof(uintptr_t);
++		}
++
++		while (macho_list ? list_index < list_count : cur < end) {
++			if (macho_list) {
++				uintptr_t unslid = ((const uintptr_t *)macho_list->addr)[list_index++];
++				if ((list_index > 1 && unslid <= previous_header) ||
++				    __builtin_add_overflow(unslid, vm_kernel_slide, &cur) ||
++				    cur % sizeof(uintptr_t) || cur < prelink_sect->addr ||
++				    cur > end || end - cur < sizeof(kernel_mach_header_t)) {
++					panic("kalloc_type_view_parse: sparse header outside prelink text");
++				}
++				previous_header = unslid;
++			}
+ 			uint64_t kext_text_sz = 0;
+ 			kernel_mach_header_t *kext_mh = (kernel_mach_header_t *) cur;
+ 
++			if (macho_list && (kext_mh->magic != MH_MAGIC_64 ||
++			    kext_mh->sizeofcmds > end - cur - sizeof(*kext_mh) ||
++			    kext_mh->ncmds > kext_mh->sizeofcmds / sizeof(struct load_command))) {
++				panic("kalloc_type_view_parse: malformed sparse component header");
++			}
+ 			if (kext_mh->magic == 0) {
+ 				/*
+ 				 * Assert that we have processed all kexts and all that is left
+@@ -1057,6 +1095,15 @@
+ 
+ 			for (uint32_t i = 0; i < kext_mh->ncmds && (vm_offset_t)lc < end;
+ 			    i++, lc = (struct load_command *)((vm_offset_t)lc + lc->cmdsize)) {
++				if (macho_list) {
++					vm_offset_t header_end = cur + sizeof(*kext_mh) + kext_mh->sizeofcmds;
++					if ((vm_offset_t)lc > header_end ||
++					    header_end - (vm_offset_t)lc < sizeof(*lc) ||
++					    lc->cmdsize < sizeof(*lc) || lc->cmdsize % sizeof(uintptr_t) ||
++					    lc->cmdsize > header_end - (vm_offset_t)lc) {
++						panic("kalloc_type_view_parse: malformed sparse load command");
++					}
++				}
+ 				if (lc->cmd == LC_SEGMENT_SPLIT_INFO) {
+ 					isSplitKext = true;
+ 					continue;
+@@ -1066,6 +1113,10 @@
+ 
+ 				kernel_segment_command_t *seg_cmd =
+ 				    (struct segment_command_64 *)(vm_offset_t)lc;
++				if (macho_list && (lc->cmdsize < sizeof(*seg_cmd) ||
++				    seg_cmd->nsects > (lc->cmdsize - sizeof(*seg_cmd)) / sizeof(kernel_section_t))) {
++					panic("kalloc_type_view_parse: malformed sparse segment");
++				}
+ 				/*
+ 				 * Parse kalloc_type section
+ 				 */
+@@ -1099,7 +1150,9 @@
+ 				break;
+ 			}
+ 
+-			cur += ((kext_text_sz + (KEXT_ALIGN_BYTES - 1)) & (~KEXT_ALIGN_MASK));
++			if (!macho_list) {
++				cur += ((kext_text_sz + (KEXT_ALIGN_BYTES - 1)) & (~KEXT_ALIGN_MASK));
++			}
+ 		}
+ 	} else {
+ 		/*

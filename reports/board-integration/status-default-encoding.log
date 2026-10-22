@@ -1,0 +1,22 @@
+python -B D:/Code/PortingiOS/common/sources/UniXNU/unixnu status -D D:/Code/UniXNU-nuwa --out D:/Code/UniXNU-nuwa/out
+exit_code=1
+unixnu: developed and tested on macOS only; the kernel step needs Xcode and --skip-setup needs hdiutil
+Traceback (most recent call last):
+  File "D:\Code\PortingiOS\common\sources\UniXNU\unixnu", line 8, in <module>
+    main()
+    ~~~~^^
+  File "D:\Code\PortingiOS\common\sources\UniXNU\scripts\unixnu\cli.py", line 206, in main
+    ctx = Context(args)
+  File "D:\Code\PortingiOS\common\sources\UniXNU\scripts\unixnu\config.py", line 75, in __init__
+    self.board = load_toml(self.device / 'board.toml')
+                 ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Code\PortingiOS\common\sources\UniXNU\scripts\unixnu\config.py", line 25, in load_toml
+    return tomllib.loads(path.read_text())
+                         ~~~~~~~~~~~~~~^^
+  File "C:\Program Files\WorkBuddy\resources\vendor\python\Lib\pathlib\_local.py", line 546, in read_text
+    return PathBase.read_text(self, encoding, errors, newline)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WorkBuddy\resources\vendor\python\Lib\pathlib\_abc.py", line 633, in read_text
+    return f.read()
+           ~~~~~~^^
+UnicodeDecodeError: 'gbk' codec can't decode byte 0x82 in position 173: illegal multibyte sequence

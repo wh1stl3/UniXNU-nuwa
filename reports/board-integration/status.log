@@ -1,0 +1,37 @@
+python -X utf8 -B D:/Code/PortingiOS/common/sources/UniXNU/unixnu status -D D:/Code/UniXNU-nuwa --out D:/Code/UniXNU-nuwa/out
+exit_code=0
+unixnu: developed and tested on macOS only; the kernel step needs Xcode and --skip-setup needs hdiutil
+device   D:\Code\UniXNU-nuwa (nuwa)  [EXAMPLE]
+output   D:\Code\UniXNU-nuwa\out\nuwa
+config   none (run defconfig)
+driver   ArmCpu                   base
+driver   ArmDTPlatform            base
+driver   ArmVirtPlatform          base
+driver   DarwinBoot               base
+driver   NativeAES                base
+driver   NativeAdreno             base
+driver   NativeGeniSpi            base
+driver   NativeHidInput           base
+driver   NativeKeyStoreEvents     base
+driver   NativeMetal              base
+driver   NativeMobileDisplay      base
+driver   NativeRamBlock           base
+driver   NativeUfs                base
+driver   NativeVirtioBlock        base
+driver   NativeVirtioConsole      base
+kit      AdrenoFirmware           base
+kit      AdrenoPM4                base
+kit      AirNir                   base
+kit      ArmSmmu4K                base
+kit      NativePrelink            base
+kit      VerifiedRoot             base
+package  main                     base
+patch    libpthread               base
+patch    mesa                     base
+patch    xnu                      base
+patch    xnu-8796-candidates      device
+refer    AvailabilityVersions     git pinned 933f9360f1b7
+refer    edk2                     git pinned cfb93724a06f
+refer    libdispatch              git pinned 30fe6a7d9453
+refer    libplatform              git pinned a00a4cc36da2
+refer    xnu                      git pinned d8b80295118e
