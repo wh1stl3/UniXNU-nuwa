@@ -1,0 +1,28 @@
+[
+    {
+        "command":  [
+                        "C:/Program Files/Git/cmd/git.exe",
+                        "--no-optional-locks",
+                        "diff",
+                        "--no-index",
+                        "--",
+                        "D:/Code/PortingiOS/common/sources/UniXNU/scripts/unixnu/kernel.py",
+                        "D:/Code/PortingiOS/common/sources/UniXNU-latest-audit/scripts/unixnu/kernel.py"
+                    ],
+        "exit_code":  1,
+        "report":  "scripts_unixnu_kernel.py.diff"
+    },
+    {
+        "command":  [
+                        "C:/Program Files/Git/cmd/git.exe",
+                        "--no-optional-locks",
+                        "diff",
+                        "--no-index",
+                        "--",
+                        "D:/Code/PortingiOS/common/sources/UniXNU/scripts/build-xnu-4k-baseline.sh",
+                        "D:/Code/PortingiOS/common/sources/UniXNU-latest-audit/scripts/build-xnu-4k-baseline.sh"
+                    ],
+        "exit_code":  0,
+        "report":  "scripts_build-xnu-4k-baseline.sh.diff"
+    }
+]
