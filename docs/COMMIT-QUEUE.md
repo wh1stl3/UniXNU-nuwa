@@ -361,3 +361,13 @@
 [Evidence] reports/driver-archives-plan/workflow-install.json：base fork提交02daabcb、前后模板逐字核验；reports/kernel-ci/39742250205/；https://github.com/wh1stl3/UniXNU/actions/runs/39742250205，device_ref=ccaad74d8862a060efbed259a1335f4a79258f04。
 [Risk] 本轮尚运行，fragment和archive未验证；第十轮源内核成功不等于完整设备ABI/实机；feed/board不变，无诊断/固件镜像、设备动作或_verified=true。
 ```
+
+## Q-037 · 并行仓三件产物可用性与接入方案
+
+```text
+[unixnu-nuwa][docs] 核验并行仓三件真实产物并明确接入缺口
+
+[Change] 只读校验run24内核、53MB预链接和3MiB固件及输入哈希，独立核对donor manifest，重放本仓只读plan并定位VFS缺口；给出复用成果和启动闭环的具体路径。
+[Evidence] reports/parallel-progress-review/：candidate及FD哈希匹配，VFS函数与10063上游定义一致，本仓plan实际缺_vfs_getvfs_with_vfsops；实际配置清空、4项UEFI预检错误及12处豁免中4处ADRP均有来源；操作报告列出验收门槛。
+[Risk] 现有三件不证明nuwa启动/桌面；false资格标记为工具默认未验收，不当作emit失败；DarwinBoot集成未验证，未运行对方脚本或修改其目录，未生成镜像或操作设备，feed/board不变。
+```

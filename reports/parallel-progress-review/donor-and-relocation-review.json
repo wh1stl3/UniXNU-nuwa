@@ -1,0 +1,157 @@
+{
+  "scope": "read-only source and existing report classification; no emit",
+  "reported_exemptions": [
+    {
+      "module": "com.apple.kec.Libm",
+      "va": 18446744005086069196,
+      "word": "0xf09d5f48",
+      "decoded_target": "0xffffffef40777000",
+      "adrp_encoding": true
+    },
+    {
+      "module": "com.apple.kec.Libm",
+      "va": 18446744005086069212,
+      "word": "0xf09d5f48",
+      "decoded_target": "0xffffffef40777000",
+      "adrp_encoding": true
+    },
+    {
+      "module": "com.apple.kec.Libm",
+      "va": 18446744005086069228,
+      "word": "0xf09d5f48",
+      "decoded_target": "0xffffffef40777000",
+      "adrp_encoding": true
+    },
+    {
+      "module": "com.apple.kec.Libm",
+      "va": 18446744005086069244,
+      "word": "0xf09d5f48",
+      "decoded_target": "0xffffffef40777000",
+      "adrp_encoding": true
+    },
+    {
+      "module": "com.apple.kec.Libm",
+      "va": 18446744005086069404,
+      "word": "0x70565912",
+      "decoded_target": "0xfffffff005c38dbf",
+      "kind": "external_pc_relative_inline_data",
+      "adrp_encoding": false
+    },
+    {
+      "module": "com.apple.kec.Libm",
+      "va": 18446744005086069420,
+      "word": "0x70565912",
+      "decoded_target": "0xfffffff005c38dcf",
+      "kind": "external_pc_relative_inline_data",
+      "adrp_encoding": false
+    },
+    {
+      "module": "com.apple.kec.Libm",
+      "va": 18446744005086069436,
+      "word": "0x70565912",
+      "decoded_target": "0xfffffff005c38ddf",
+      "kind": "external_pc_relative_inline_data",
+      "adrp_encoding": false
+    },
+    {
+      "module": "com.apple.kec.Libm",
+      "va": 18446744005086069904,
+      "word": "0xb7b24eb5",
+      "decoded_target": "0xfffffff005b90e64",
+      "kind": "external_pc_relative_inline_data",
+      "adrp_encoding": false
+    },
+    {
+      "module": "com.apple.kec.Libm",
+      "va": 18446744005086069920,
+      "word": "0xb7b24eb5",
+      "decoded_target": "0xfffffff005b90e74",
+      "kind": "external_pc_relative_inline_data",
+      "adrp_encoding": false
+    },
+    {
+      "module": "com.apple.kec.Libm",
+      "va": 18446744005086069972,
+      "word": "0x96540c13",
+      "decoded_target": "0xffffffefff08f520",
+      "adrp_encoding": false
+    },
+    {
+      "module": "com.apple.kec.Libm",
+      "va": 18446744005086069980,
+      "word": "0xb49e3a5b",
+      "decoded_target": "0xfffffff005ac8c24",
+      "kind": "external_pc_relative_inline_data",
+      "adrp_encoding": false
+    },
+    {
+      "module": "com.apple.kec.Libm",
+      "va": 18446744005086069996,
+      "word": "0x9499342c",
+      "decoded_target": "0xfffffff0081d959c",
+      "adrp_encoding": false
+    }
+  ],
+  "adrp_exemption_count": 4,
+  "oracle_patch_sha256": "e7aae6c6e4c060185a99e7baaa701f53637af568acf089e5bcc267d512bedf76",
+  "oracle_condition": "entry_points is not None and not page and target not in entry_points",
+  "runtime_verdict": "not qualified",
+  "device_verified": false,
+  "donor_manifest_identity": {
+    "Restore.plist": {
+      "path": "D:\\Code\\PortingiOS\\common\\cache\\donor-ios16\\Restore.plist",
+      "sha256": "770bbcb52c853ff298c224f44b1d2ed0380e27a6104d9902252310ac3f6ccbe2",
+      "ProductVersion": "16.7.16",
+      "ProductBuildVersion": "20H392",
+      "SupportedProductTypes": [
+        "iPhone10,6",
+        "iPhone10,3"
+      ],
+      "d22ap": [
+        {
+          "BDID": 6,
+          "BoardConfig": "d22ap",
+          "CPID": 32789,
+          "Platform": "t8015",
+          "SCEP": 0,
+          "SDOM": 1
+        }
+      ]
+    },
+    "BuildManifest.plist": {
+      "path": "D:\\Code\\PortingiOS\\common\\cache\\donor-ios16\\BuildManifest.plist",
+      "sha256": "2d1452103a2f5ad71cb78d94454977fc70632472201980a468c247fba14b10b7",
+      "ProductVersion": "16.7.16",
+      "ProductBuildVersion": "20H392",
+      "SupportedProductTypes": [
+        "iPhone10,6",
+        "iPhone10,3"
+      ],
+      "d22ap": [
+        {
+          "ApChipID": "0x8015",
+          "ApBoardID": "0x06",
+          "KernelCache": {
+            "Path": "kernelcache.release.iphone10b"
+          }
+        },
+        {
+          "ApChipID": "0x8015",
+          "ApBoardID": "0x06",
+          "KernelCache": {
+            "Path": "kernelcache.release.iphone10b"
+          }
+        }
+      ]
+    }
+  },
+  "vfs_backport_review": {
+    "path": "D:\\Code\\PortingiOSWithUniXNU\\patches\\xnu-8796\\zzzzz-vfs-getvfs-with-vfsops-8796.patch",
+    "sha256": "ac27f0b6363193ce4145c951b1ad5422caebc92f69e8b97f18590f92142c63c5",
+    "upstream_path": "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios17-full\\bsd\\vfs\\vfs_subr.c",
+    "upstream_definition_line": 1955,
+    "normalized_definition_matches_upstream": true,
+    "actual_8796_build_in_this_repository": "not yet run",
+    "runtime_abi": "not qualified"
+  }
+}

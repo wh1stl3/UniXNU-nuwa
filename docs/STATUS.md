@@ -1,6 +1,6 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 15:43（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-22 15:54（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
@@ -32,6 +32,10 @@
 2. 收口boot-progress 13项回调、watchdog接口和scratch布局风险，再建立正式nuwa配置并接回-D入口；保持feed，未知板值TODO。
 3. 只读解析既定iPhone donor的kernelcache，补齐真实hash/roots等证据；不移用iPadOS17的prelink数值，不生成镜像。任何board身份/内存/基址变更先硬停审查。
 4. 当前不安排这份源内核上机；达到可启动链路前置条件后，在NEED-REVIEW列出至少两条验证路径、代价和最小批准范围。只差实体按键的待办不阻塞软件侧工作。
+
+## 并行产物可用性
+
+用户指出的只读参照仓现已真实产出run24源内核、53MB预链接候选及3MiB FD，hash已核对；donor身份及VFS桥接有可复用证据。实际驱动被清空、预链接代码/常量豁免、4项UEFI保留区及DarwinBoot接线仍待收口，不能据此确认nuwa可启动。采用复用证据并补齐本仓接口的路径，见[具体方案](operations/2026-10-22-parallel-three-artifacts-review.md)。未生成镜像或修改参照仓。
 
 ## 新增参考
 

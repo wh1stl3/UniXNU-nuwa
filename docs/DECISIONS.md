@@ -278,3 +278,5 @@ D-008/D-010/D-011补充（2026-10-22 15:28）：第十轮39738601892已完成完
 - 证据：8796 MakeInc.rule:403,427与MakeInc.def:955-970；reports/driver-archives-plan/；operations/2026-10-22-darwin22-archive-build.md。
 
 在C/C++规则中用Clang -MJ生成逐对象fragment，保留实际编译和完整链接，不采用替换编译的数据库模式。archive只重用同轮真实IOPlatformExpert命令，保留ABI、清除原对象/依赖输出副作用，重建三项基座通用平台库并检查ARM64/iOS16格式与符号名闭包。此步骤不把archive接入内核或board，不验收硬件、完整C++/donor ABI；boot-progress/watchdog继续关闭。feed、板值和镜像硬停不变。
+
+D-004补充（2026-10-22 15:54）：独立只读Restore/BuildManifest核对既定iPhone身份、d22ap/CPID0x8015/BDID6及KernelCache成员名；真实donor SHA与并行预链接产物报告一致。证据reports/parallel-progress-review/donor-and-relocation-review.json。只记录证据，不改board/IPSW字段；预链接、内存及可启动性仍未验收。

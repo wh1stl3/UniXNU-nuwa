@@ -1,0 +1,187 @@
+{
+  "kernel": "D:\\Code\\PortingiOSWithUniXNU\\.work\\artifacts\\run24\\UniXNU\\out\\sheng\\tree\\build\\xnu\\ios-obj\\DEVELOPMENT_ARM64_BCM2837\\mach.development.bcm2837",
+  "bytes": 14867248,
+  "sha256": "89d8ff86391cbb094de774c48a6ab12932a0fae89b58ab7bc9d3215a6b895532",
+  "format": "ordinary ARM64 subtype0 MH_EXECUTE",
+  "parser_sha256": "5bd80b8c63deec29b747c28253e02308a56d5f8cdb37c9d315e7c8af7012d017",
+  "version": {
+    "symbol": "_version",
+    "string": "Darwin Kernel Version 22.6.0: Thu Oct 22 03:41:31 UTC 2026; runner:ios-obj/DEVELOPMENT_ARM64_BCM2837",
+    "file_offset": 256810
+  },
+  "source_version_components": [
+    8796,
+    141,
+    3,
+    0,
+    0
+  ],
+  "link_build_version": {
+    "platform": 2,
+    "minimum_os": "17.0.0",
+    "sdk_metadata": "17.0.0"
+  },
+  "undefined_symbol_count": 0,
+  "exported_symbol_count": 21918,
+  "markers": {
+    "_kalloc_sparse_prelink_index_version": {
+      "value": 1,
+      "address_from_binary": "0xfffffff007009048",
+      "file_offset": 20552
+    },
+    "_native_prelink_security_init_version": {
+      "value": 1,
+      "address_from_binary": "0xfffffff007025f50",
+      "file_offset": 139088
+    }
+  },
+  "segments": [
+    {
+      "name": "__TEXT",
+      "vmaddr": "0xfffffff007004000",
+      "vmsize": 1376256,
+      "fileoff": 0,
+      "filesize": 1376256,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__DATA_CONST",
+      "vmaddr": "0xfffffff007154000",
+      "vmsize": 884736,
+      "fileoff": 1376256,
+      "filesize": 884736,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__TEXT_EXEC",
+      "vmaddr": "0xfffffff00722c000",
+      "vmsize": 8175616,
+      "fileoff": 2260992,
+      "filesize": 8175616,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__KLD",
+      "vmaddr": "0xfffffff0079f8000",
+      "vmsize": 16384,
+      "fileoff": 10436608,
+      "filesize": 16384,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__LASTDATA_CONST",
+      "vmaddr": "0xfffffff0079fc000",
+      "vmsize": 16384,
+      "fileoff": 10452992,
+      "filesize": 16384,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__LAST",
+      "vmaddr": "0xfffffff007a00000",
+      "vmsize": 0,
+      "fileoff": 0,
+      "filesize": 0,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__KLDDATA",
+      "vmaddr": "0xfffffff007a00000",
+      "vmsize": 16384,
+      "fileoff": 10469376,
+      "filesize": 16384,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__DATA",
+      "vmaddr": "0xfffffff007a04000",
+      "vmsize": 1097728,
+      "fileoff": 10485760,
+      "filesize": 262144,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__BOOTDATA",
+      "vmaddr": "0xfffffff007b10000",
+      "vmsize": 294912,
+      "fileoff": 10747904,
+      "filesize": 294912,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__PRELINK_TEXT",
+      "vmaddr": "0xfffffff004004000",
+      "vmsize": 0,
+      "fileoff": 11042816,
+      "filesize": 0,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__PRELINK_INFO",
+      "vmaddr": "0xfffffff007b58000",
+      "vmsize": 0,
+      "fileoff": 11042816,
+      "filesize": 0,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__PLK_TEXT_EXEC",
+      "vmaddr": "0xfffffff007b58000",
+      "vmsize": 0,
+      "fileoff": 11042816,
+      "filesize": 0,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__PRELINK_DATA",
+      "vmaddr": "0xfffffff007b58000",
+      "vmsize": 0,
+      "fileoff": 11042816,
+      "filesize": 0,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__PLK_DATA_CONST",
+      "vmaddr": "0xfffffff007b58000",
+      "vmsize": 0,
+      "fileoff": 11042816,
+      "filesize": 0,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__PLK_LLVM_COV",
+      "vmaddr": "0xfffffff007b58000",
+      "vmsize": 0,
+      "fileoff": 11042816,
+      "filesize": 0,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__PLK_LINKEDIT",
+      "vmaddr": "0xfffffff007b58000",
+      "vmsize": 0,
+      "fileoff": 11042816,
+      "filesize": 0,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__LINKINFO",
+      "vmaddr": "0xfffffff007b58000",
+      "vmsize": 278528,
+      "fileoff": 11042816,
+      "filesize": 278528,
+      "four_kib_start_alignment": true
+    },
+    {
+      "name": "__LINKEDIT",
+      "vmaddr": "0xfffffff007b9c000",
+      "vmsize": 3555328,
+      "fileoff": 11321344,
+      "filesize": 3545904,
+      "four_kib_start_alignment": true
+    }
+  ],
+  "prelink_executed": false,
+  "donor_compatibility": "not validated",
+  "device_verified": false
+}

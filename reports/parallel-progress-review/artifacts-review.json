@@ -1,0 +1,281 @@
+{
+  "captured_at_utc": "2026-10-22T07:48:55.246547+00:00",
+  "review_scope": "existing artifacts read-only; no external workspace scripts executed",
+  "kernels": [
+    {
+      "path": "D:\\Code\\PortingiOSWithUniXNU\\.work\\artifacts\\run22\\UniXNU\\out\\sheng\\tree\\build\\xnu\\ios-obj\\DEVELOPMENT_ARM64_BCM2837\\mach.development.bcm2837",
+      "bytes": 14867192,
+      "sha256": "0fd030b2808b365c2fb18405884e20599ae209399c15563521eddc20329b70d6",
+      "kind": 2,
+      "platform_driver_global_markers": {
+        "_armcpu_registered": false,
+        "_armdt_platform_configured": false,
+        "_armvirt_platform_configured": false
+      },
+      "vfs_getvfs_with_vfsops_exported": false,
+      "segment_count": 18
+    },
+    {
+      "path": "D:\\Code\\PortingiOSWithUniXNU\\.work\\artifacts\\run22\\UniXNU\\out\\sheng\\tree\\build\\xnu\\ios-obj\\DEVELOPMENT_ARM64_BCM2837\\mach.development.bcm2837.unstripped",
+      "bytes": 20180552,
+      "sha256": "87cfad501460be0b147d86f31833146bb069d4db5d397d1bb796f09d1f796848",
+      "kind": 2,
+      "platform_driver_global_markers": {
+        "_armcpu_registered": false,
+        "_armdt_platform_configured": false,
+        "_armvirt_platform_configured": false
+      },
+      "vfs_getvfs_with_vfsops_exported": false,
+      "segment_count": 18
+    },
+    {
+      "path": "D:\\Code\\PortingiOSWithUniXNU\\.work\\artifacts\\run24\\UniXNU\\out\\sheng\\tree\\build\\xnu\\ios-obj\\DEVELOPMENT_ARM64_BCM2837\\mach.development.bcm2837",
+      "bytes": 14867248,
+      "sha256": "89d8ff86391cbb094de774c48a6ab12932a0fae89b58ab7bc9d3215a6b895532",
+      "kind": 2,
+      "platform_driver_global_markers": {
+        "_armcpu_registered": false,
+        "_armdt_platform_configured": false,
+        "_armvirt_platform_configured": false
+      },
+      "vfs_getvfs_with_vfsops_exported": true,
+      "segment_count": 18
+    },
+    {
+      "path": "D:\\Code\\PortingiOSWithUniXNU\\.work\\artifacts\\run24\\UniXNU\\out\\sheng\\tree\\build\\xnu\\ios-obj\\DEVELOPMENT_ARM64_BCM2837\\mach.development.bcm2837.unstripped",
+      "bytes": 20180688,
+      "sha256": "57bd42dfec3c3c0fddb8dc58308d1ae21b7a595cbb77cfa4876efa62f3e9cd48",
+      "kind": 2,
+      "platform_driver_global_markers": {
+        "_armcpu_registered": false,
+        "_armdt_platform_configured": false,
+        "_armvirt_platform_configured": false
+      },
+      "vfs_getvfs_with_vfsops_exported": true,
+      "segment_count": 18
+    }
+  ],
+  "prelink_candidate": {
+    "path": "D:\\Code\\PortingiOSWithUniXNU\\.work\\kernel-prelinked.macho",
+    "bytes": 53014528,
+    "sha256": "e3cfe478117720307799fcc4201a83e9f30695785ff4f3fb27f23008f0cfb491",
+    "kind": 2,
+    "platform_driver_global_markers": {
+      "_armcpu_registered": false,
+      "_armdt_platform_configured": false,
+      "_armvirt_platform_configured": false
+    },
+    "vfs_getvfs_with_vfsops_exported": true,
+    "segment_count": 18
+  },
+  "prelink_native_inputs_matching": [
+    {
+      "path": "D:\\Code\\PortingiOSWithUniXNU\\.work\\artifacts\\run24\\UniXNU\\out\\sheng\\tree\\build\\xnu\\ios-obj\\DEVELOPMENT_ARM64_BCM2837\\mach.development.bcm2837",
+      "bytes": 14867248,
+      "sha256": "89d8ff86391cbb094de774c48a6ab12932a0fae89b58ab7bc9d3215a6b895532",
+      "kind": 2,
+      "platform_driver_global_markers": {
+        "_armcpu_registered": false,
+        "_armdt_platform_configured": false,
+        "_armvirt_platform_configured": false
+      },
+      "vfs_getvfs_with_vfsops_exported": true,
+      "segment_count": 18
+    }
+  ],
+  "prelink_report": {
+    "path": "D:\\Code\\PortingiOSWithUniXNU\\.work\\kernel-prelinked.json",
+    "bytes": 16529855,
+    "sha256": "e9fe59f236e37966a3babe5c0cb4f7a1ddcfbd9e3aaf4b980382afc70d9b0dfd"
+  },
+  "prelink_claims": {
+    "native_sha256": "89d8ff86391cbb094de774c48a6ab12932a0fae89b58ab7bc9d3215a6b895532",
+    "original_sha256": "2ec297bac95bcba01046fd0148e97e7e5885c05a6c18827f39f534ba375c1221",
+    "candidate_sha256": "e3cfe478117720307799fcc4201a83e9f30695785ff4f3fb27f23008f0cfb491",
+    "candidate_bytes": 53014528,
+    "abi_qualified": false,
+    "runtime_qualified": false,
+    "loadable": false,
+    "register_dataflow_qualified": false
+  },
+  "prelink_component_count": 30,
+  "inline_data_outside_image_count": 12,
+  "inline_data_reason_counts": {
+    "outside-image-window": 12
+  },
+  "donor": {
+    "path": "D:\\Code\\PortingiOS\\nuwa\\artifacts\\ios16-donor-inspection\\20261020T115253317035Z\\original-iphone-kernelcache.macho",
+    "bytes": 50937856,
+    "sha256": "2ec297bac95bcba01046fd0148e97e7e5885c05a6c18827f39f534ba375c1221"
+  },
+  "our_kernel_reference_plan": {
+    "scope": "read-only plan of our kernel with reference roots/slide; parameters not adopted",
+    "native_sha256": "bdaad81373d00df8334cb5a453b32f06a5e607c3e7d8cde812e4f5f927e19ced",
+    "images_modified": false,
+    "result": "failed",
+    "actual_error": "Kernel target 0xfffffff00734c520 has 0 native address candidates: ['_vfs_getvfs_with_vfsops']"
+  },
+  "firmware": {
+    "path": "D:\\Code\\PortingiOSWithUniXNU\\.work\\artifacts\\nuwa-firmware\\Build\\nuwaPkg\\DEBUG_CLANGPDB\\FV\\SILICIUM_UEFI.fd",
+    "bytes": 3145728,
+    "sha256": "f58d575466538931a1be7065572dbd58afa3607777ab552ccf7d7f06412ade24",
+    "darwinboot_string_in_build_log": false,
+    "success_tail": [
+      "INFO - ------------------0048 Images Verified-------------------",
+      "PROGRESS - Success"
+    ],
+    "preflight_errors": [
+      "R1 uncovered reservation: /reserved-memory/xbl-dt-log-merged-region@81a00000 0x81a00000+0x260000",
+      "R1 uncovered reservation: /reserved-memory/aop-config-merged-region@81c80000 0x81c80000+0x74000",
+      "R1 uncovered reservation: /reserved-memory/adspslpi-region@9ea00000 0x9ea00000+0x4880000",
+      "R1 uncovered reservation: /reserved-memory/rmtfs-region@e8100000 0xe8100000+0x280000"
+    ]
+  },
+  "firmware_preflight": {
+    "path": "D:\\Code\\PortingiOSWithUniXNU\\.work\\artifacts\\nuwa-firmware\\preflight.json",
+    "bytes": 879,
+    "sha256": "964df1e2487f59882fc24ce89bf6494002546236895ff54cbf6a27cc0cd99342"
+  },
+  "firmware_log": {
+    "path": "D:\\Code\\PortingiOSWithUniXNU\\.work\\artifacts\\nuwa-firmware\\build.log",
+    "bytes": 2431171,
+    "sha256": "1381aec2ae90d82074463768f45e367ca4724b49c01542689636060db1340e3a"
+  },
+  "source_evidence": {
+    ".github/workflows/macos-kernel-probe.yml": {
+      "path": "D:\\Code\\PortingiOSWithUniXNU\\.github\\workflows\\macos-kernel-probe.yml",
+      "bytes": 8021,
+      "sha256": "1491a24531039ed71b7f2acf5b8b1402f8d175b62bc8fd96d3983a7cbf80c332",
+      "matches": [
+        {
+          "line": 68,
+          "text": "      - name: \u5b50\u6a21\u5757\u53ea\u4fdd\u7559 NativePrelink"
+        },
+        {
+          "line": 69,
+          "text": "        # \u4e0a\u6e38\u591a\u4e2a\u5b50\u6a21\u5757\u7684 gitlink \u6307\u5411\u5df2\u5220\u9664\u7684 commit\uff08DarwinBoot\u3001NativeAdreno \u90fd\u4e2d\u62db\uff09\uff0c"
+        },
+        {
+          "line": 71,
+          "text": "        # kits/NativePrelink\uff08\u63d0\u4f9b\u9884\u94fe\u63a5\u5de5\u5177\u4e0e 2 \u4e2a\u8865\u4e01\uff09\uff0c\u5176\u4f59\u5168\u90e8\u8df3\u8fc7\u3002"
+        },
+        {
+          "line": 77,
+          "text": "            [ \"$sm\" = \"kits/NativePrelink\" ] && continue"
+        },
+        {
+          "line": 81,
+          "text": "          git submodule update --init -- kits/NativePrelink"
+        },
+        {
+          "line": 82,
+          "text": "          ls kits/NativePrelink/patches"
+        },
+        {
+          "line": 84,
+          "text": "      - name: defconfig\uff08\u6e05\u7a7a\u53ef\u9009\u7279\u6027\uff0c\u5148\u53ea\u6c42\u7f16\u51fa\u6765\uff09"
+        },
+        {
+          "line": 85,
+          "text": "        # sheng_defconfig \u7684\u6bcf\u4e2a CONFIG_XNU_* \u90fd\u4f1a\u8981\u6c42\u5bf9\u5e94\u7684\u9759\u6001\u5e93/\u9a71\u52a8\u5b50\u6a21\u5757\uff0c"
+        },
+        {
+          "line": 86,
+          "text": "        # \u800c\u591a\u4e2a\u4e0a\u6e38\u5b50\u6a21\u5757\u5df2\u7ecf\u62c9\u4e0d\u4e0b\u6765\u3002\u7b2c\u4e00\u76ee\u6807\u53ea\u662f\"8796 + \u8865\u4e01\u5e8f\u5217\u80fd\u7f16\u51fa\u5185\u6838\"\uff0c"
+        },
+        {
+          "line": 87,
+          "text": "        # \u6240\u4ee5\u628a\u53ef\u9009\u7279\u6027\u5168\u90e8\u53bb\u6389\uff0c\u57fa\u7ebf\u811a\u672c\u4f1a\u8d70\u5168 0 \u7684\u9ed8\u8ba4\u8def\u5f84\u3002"
+        },
+        {
+          "line": 92,
+          "text": "          echo '--- \u539f\u59cb .config ---'"
+        },
+        {
+          "line": 93,
+          "text": "          cat out/sheng/.config"
+        },
+        {
+          "line": 94,
+          "text": "          : > out/sheng/.config"
+        },
+        {
+          "line": 96,
+          "text": "          cat out/sheng/.config"
+        }
+      ]
+    },
+    ".github/workflows/ubuntu-uefi-nuwa.yml": {
+      "path": "D:\\Code\\PortingiOSWithUniXNU\\.github\\workflows\\ubuntu-uefi-nuwa.yml",
+      "bytes": 4290,
+      "sha256": "4a35ff2b26989b57b2952dbfe2cc3e08f0da7a6fb6202d58f3792f36c56855e7",
+      "matches": [
+        {
+          "line": 36,
+          "text": "          repository: Project-Silicium/Mu-Silicium"
+        },
+        {
+          "line": 72,
+          "text": "        continue-on-error: true"
+        },
+        {
+          "line": 76,
+          "text": "          python3 device/nuwa/scripts/check-nuwa.py | tee ../uefi/preflight.json"
+        },
+        {
+          "line": 83,
+          "text": "          python3 Platforms/Xiaomi/nuwaPkg/DeviceBuild.py --setup -t DEBUG 2>&1 | tail -30"
+        },
+        {
+          "line": 84,
+          "text": "          python3 Platforms/Xiaomi/nuwaPkg/DeviceBuild.py --update -t DEBUG 2>&1 | tail -30"
+        },
+        {
+          "line": 85,
+          "text": "          python3 Platforms/Xiaomi/nuwaPkg/DeviceBuild.py \\"
+        },
+        {
+          "line": 101,
+          "text": "            uefi/preflight.json"
+        }
+      ]
+    },
+    "device/nuwa/board.toml": {
+      "path": "D:\\Code\\PortingiOSWithUniXNU\\device\\nuwa\\board.toml",
+      "bytes": 7774,
+      "sha256": "c4df53106c4f50c3db9f552b70d20a086119b2337ef5ed513d3f6fa5af66ca56",
+      "matches": [
+        {
+          "line": 20,
+          "text": "url = \"https://updates.cdn-apple.com/2022Q1/fullrestores/1e2b6d1a5a0a5f0a/iPhone_4s_16.7.16_20H392_Restore.ipsw\""
+        },
+        {
+          "line": 46,
+          "text": "kernel = \"build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped.noctf\""
+        },
+        {
+          "line": 50,
+          "text": "slide = \"-0x1000000\""
+        },
+        {
+          "line": 103,
+          "text": "  \"{tree}/drivers/DarwinBoot\","
+        },
+        {
+          "line": 122,
+          "text": "# the optional trust cache and Data seed. The loader (DarwinBoot) is part of the firmware volume."
+        },
+        {
+          "line": 182,
+          "text": "# The contiguous window DarwinBoot allocates for the kernel."
+        },
+        {
+          "line": 186,
+          "text": "owned_memory_size = \"0x180000000\""
+        }
+      ]
+    }
+  },
+  "device_verified": false,
+  "images_generated": false
+}
