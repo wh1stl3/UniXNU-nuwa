@@ -1,10 +1,14 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 20:22（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-22 20:27（Asia/Shanghai）。历史见WORKLOG。
+
+## 实机操作暂停
+
+用户2026-10-22 20:26明确：“deepseek开始推送包了，不要做实机操作”。本仓暂停全部ADB、fastboot和USB/设备状态查询，直至用户明确恢复本仓设备访问；已有长期设备授权在暂停期间不执行。只继续仓库内离线分析/文档和Git同步。设备暂停后的状态以该轮操作为准，本仓不轮询、不抢占、不自动执行恢复。
 
 ## 当前结论
 
-**已实际临时启动本仓v4固件入口候选：Sending/Booting均OKAY，但用户见黑屏，约29秒15次采样fastboot始终可见。BootShim/SEC和DXE/BDS均未取得执行证据；不能称UEFI阶段通过。** 随后重进bootloader并临时加载原厂boot，nuwa已恢复Android，sys.boot_completed=1。A槽持久启动状态仍未修复。
+**已实际临时启动本仓v4固件入口候选：Sending/Booting均OKAY，但用户见黑屏，约29秒15次采样fastboot始终可见。BootShim/SEC和DXE/BDS均未取得执行证据；不能称UEFI阶段通过。** 随后重进bootloader并临时加载原厂boot，本仓最后确认nuwa恢复Android、sys.boot_completed=1（20:19，不能代表暂停后的当前状态）。A槽持久启动状态仍未修复。
 
 - 候选：out/trial-boot/firmware-v4/boot-firmware-v4.img，3153920B，SHA12864ac6cc0ffc9909f4abbdfab91bfee216c3fdcfc5ab0d52b4d4b9cf4579f9；只含raw shim+FD，原v4头仅改kernel_size，无附加DTB或新增FAT/XNU。[首次实机记录](operations/2026-10-22-v4-firmware-trial.md)。
 - 构建：固件CI39764322744 success，四EFI/FD/BootShim下载静态检查通过，FD3145728B/SHAa0bbb964…、shim112B/SHA9346a527…。实际启动命令不把这项静态证据升级为固件运行验收。R-004 A完成。
@@ -28,7 +32,7 @@ r6 v1回环已在RAM复现OS字节0x1009和ID前20B差异，32B ID补零与分�
 ## 下一步
 
 1. 先只读核对原厂ARM64入口/候选BootShim头及执行前提、SEC DebugLib输出出口，确定能回收的早期日志或阶段标记，解决当前无法区分ABL交接、BootShim和SEC的问题；不能凭黑屏直接归因显示、内存或DT，也不能提前验收DXE/BDS。
-2. 后续任何容器对照从重新进入bootloader开始；结束后重进bootloader再用ef558db2原厂boot恢复Android并确认完成。保留候选原hash，不自动换v1或混入参考负载。H-001按键项记待办继续软件项。
+2. 仅在用户明确恢复本仓设备访问后，后续任何容器对照从重新进入bootloader开始；结束后重进bootloader再用ef558db2原厂boot恢复Android并确认完成。保留候选原hash，不自动换v1或混入参考负载。H-001按键项记待办继续软件项。
 3. 新FAT的映射/保留、CI15 runtime crypto/pthread provider、ARCH_TIMER/startup/GIC/PSCI、13项boot-progress、watchdog scratch和NativePrelink布局/12处Libm编码继续审查；XNU负载另验收。
 4. A槽持久启动若要修复，先明确具体授权动作；不在临时固件测试中顺带改槽位。board/bringup-plan内存/基址及_verified保留硬停规则，未知值TODO。
 

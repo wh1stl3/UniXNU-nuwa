@@ -596,3 +596,14 @@
 [Evidence] SHA12864ac6候选Sending/Booting OKAY、15次采样fastboot持续可见、用户报黑屏；同一原厂boot首次Load Error，重进bootloader后成功且最终nuwa Android boot_completed=1。
 [Risk] BootShim/SEC/DXE/BDS均未验证，ACK不等于执行；未flash/改槽位或镜像/board/feed，未置_verified，A槽持久启动和H-001仍未验收。
 ```
+
+
+## Q-059 · 同设备协作暂停
+
+```text
+[unixnu-nuwa][docs] 按用户要求暂停本仓全部实机访问
+
+[Change] 将全部ADB/fastboot/USB查询暂停写入当前状态，只继续离线分析和Git同步，用户明确恢复前不执行原有长期设备授权。
+[Evidence] 用户明确另一轮开始推包并要求不要实机操作；本仓设备命令均已结束，最后Android=1为20:19恢复记录，Q-058已推送。
+[Risk] 暂停后当前设备状态未知，不用历史恢复结果替代当前状态，不自动轮询或抢占恢复。
+```

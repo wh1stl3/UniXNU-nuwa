@@ -126,3 +126,5 @@
 2026-10-22 19:33 · 只读审查r6重打包脚本并在RAM复现gzip OS/ID差异，确认v1 SHA规则；识别原FAT旧内核/6GiB/自动启动风险，未采用混合镜像 · 本提交（Q-057） · reports/repack-reference-review.json；docs/operations/2026-10-22-reference-repack-review.md
 
 2026-10-22 20:22 · 获批临时启动v4候选，命令OKAY/屏幕黑屏/fastboot持续可见，SEC与DXE未验证；原厂恢复先失败，重进bootloader后成功回nuwa Android=1，建立D-016状态隔离规则 · 本提交（Q-058） · reports/v4-firmware-trial/；docs/operations/2026-10-22-v4-firmware-trial.md
+
+2026-10-22 20:27 · 用户告知另一轮开始推送镜像，暂停本仓全部ADB/fastboot/USB查询；Q-058证据已同步，无运行中的设备命令，设备当前状态不再轮询 · 本提交（Q-059） · docs/STATUS.md实机操作暂停；上一轮reports/v4-firmware-trial/
