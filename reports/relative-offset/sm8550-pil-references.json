@@ -1,0 +1,302 @@
+{
+  "at_utc": "2026-10-22T16:52:34.385098+00:00",
+  "repositories": [
+    {
+      "repository": "UniXNU/uefi-sheng",
+      "branch": "sheng",
+      "device": "sheng",
+      "scope": "Read-only pinned reference; no source adoption",
+      "commit": "0eb4514db0744b8136a3897ab1af93b713c2c27b",
+      "selected_paths": [
+        "Platforms/Xiaomi/shengPkg/Include/APRIORI.inc",
+        "Platforms/Xiaomi/shengPkg/Include/DXE.inc",
+        "Platforms/Xiaomi/shengPkg/Include/RAW.inc"
+      ],
+      "files": [
+        {
+          "path": "Platforms/Xiaomi/shengPkg/Include/APRIORI.inc",
+          "blob": "a587753796e975b8e659e877917c6565dbf363b2",
+          "sha256": "1f170245b6abcdaf0da96755e7d6f73219bad7aaf70f353069fc36f48f687cec",
+          "selected_lines": [
+            {
+              "line": 76,
+              "text": "!if $(SHENG_VENDOR_HW) == 1"
+            },
+            {
+              "line": 77,
+              "text": "  INF Binaries/sheng/QcomPkg/Drivers/PILProxyDxe/PILProxyDxe.inf"
+            },
+            {
+              "line": 78,
+              "text": "  INF Binaries/sheng/QcomPkg/Drivers/PILDxe/PILDxe.inf"
+            },
+            {
+              "line": 79,
+              "text": "  INF Binaries/sheng/QcomPkg/Drivers/SPSSDxe/SPSSDxe.inf"
+            },
+            {
+              "line": 80,
+              "text": "!endif"
+            },
+            {
+              "line": 89,
+              "text": "  INF MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf"
+            },
+            {
+              "line": 90,
+              "text": "  INF MdeModulePkg/Universal/BdsDxe/BdsDxe.inf"
+            },
+            {
+              "line": 91,
+              "text": ""
+            },
+            {
+              "line": 92,
+              "text": "!if $(SHENG_VENDOR_HW) == 1"
+            }
+          ],
+          "permalink": "https://github.com/UniXNU/uefi-sheng/blob/0eb4514db0744b8136a3897ab1af93b713c2c27b/Platforms/Xiaomi/shengPkg/Include/APRIORI.inc"
+        },
+        {
+          "path": "Platforms/Xiaomi/shengPkg/Include/DXE.inc",
+          "blob": "3f30008b55f6b7779093808b7a830903c8442532",
+          "sha256": "98e927c4f30833ede8e1fe686f41b7a40c46c27f119a8e0704b3bc347328ab5d",
+          "selected_lines": [
+            {
+              "line": 67,
+              "text": "!endif"
+            },
+            {
+              "line": 68,
+              "text": "  INF MdeModulePkg/Universal/BdsDxe/BdsDxe.inf"
+            },
+            {
+              "line": 69,
+              "text": ""
+            },
+            {
+              "line": 70,
+              "text": "!if $(SHENG_VENDOR_HW) == 1"
+            },
+            {
+              "line": 127,
+              "text": "  INF Binaries/sheng/QcomPkg/Drivers/RNGDxe/RngDxe.inf"
+            },
+            {
+              "line": 128,
+              "text": "  INF Binaries/sheng/QcomPkg/Drivers/PILDxe/PILDxe.inf"
+            },
+            {
+              "line": 129,
+              "text": "  INF Binaries/sheng/QcomPkg/Drivers/PILProxyDxe/PILProxyDxe.inf"
+            },
+            {
+              "line": 130,
+              "text": "  INF Binaries/sheng/QcomPkg/Drivers/SPSSDxe/SPSSDxe.inf"
+            },
+            {
+              "line": 131,
+              "text": "!endif"
+            }
+          ],
+          "permalink": "https://github.com/UniXNU/uefi-sheng/blob/0eb4514db0744b8136a3897ab1af93b713c2c27b/Platforms/Xiaomi/shengPkg/Include/DXE.inc"
+        },
+        {
+          "path": "Platforms/Xiaomi/shengPkg/Include/RAW.inc",
+          "blob": "263c70dda3a278fe981c1d6cd2156afc1af6155a",
+          "sha256": "588418269acdf0551ee77c3520a841a8e31df602ce28854cf6d13397823d9d59",
+          "selected_lines": [],
+          "permalink": "https://github.com/UniXNU/uefi-sheng/blob/0eb4514db0744b8136a3897ab1af93b713c2c27b/Platforms/Xiaomi/shengPkg/Include/RAW.inc"
+        }
+      ],
+      "additional_files": [
+        {
+          "path": "Platforms/Xiaomi/shengPkg/sheng.dsc",
+          "sha256": "1842f786198642ddc03e04e9dffe8c950308bbcb5aa0c9112c731a8f7aed49c5",
+          "selected_lines": [
+            {
+              "line": 33,
+              "text": "  #"
+            },
+            {
+              "line": 34,
+              "text": "  SHENG_VENDOR_HW                = 0"
+            },
+            {
+              "line": 35,
+              "text": ""
+            },
+            {
+              "line": 36,
+              "text": "  #"
+            },
+            {
+              "line": 43,
+              "text": ""
+            },
+            {
+              "line": 44,
+              "text": "!if ($(USE_CUSTOM_DISPLAY_DRIVER) == 1) && ($(SHENG_VENDOR_HW) == 0)"
+            },
+            {
+              "line": 45,
+              "text": "  !error The stock DisplayDxe chain needs SHENG_VENDOR_HW = 1"
+            },
+            {
+              "line": 46,
+              "text": "!endif"
+            },
+            {
+              "line": 47,
+              "text": ""
+            },
+            {
+              "line": 90,
+              "text": "  gQcomPkgTokenSpaceGuid.PcdPlatformType|\"LA\""
+            },
+            {
+              "line": 91,
+              "text": "!if $(SHENG_VENDOR_HW) == 0"
+            },
+            {
+              "line": 92,
+              "text": "  # Intermittent stall right after \"MMU: enabled\" (int-103 photos): PlatformPeim scanned the stock UEFI's leftover FD window and"
+            },
+            {
+              "line": 93,
+              "text": "  # called into its scheduler protocol. Without the stock vendor drivers nothing reads those HOBs."
+            }
+          ],
+          "total_lines": 122,
+          "permalink": "https://github.com/UniXNU/uefi-sheng/blob/0eb4514db0744b8136a3897ab1af93b713c2c27b/Platforms/Xiaomi/shengPkg/sheng.dsc"
+        },
+        {
+          "path": "Resources/Configs/sheng.toml",
+          "sha256": "dd50cbf859b5529fa2ca3420e257b701e50c8c624b5aad8446bd4b443026f5eb",
+          "selected_lines": [],
+          "total_lines": 29,
+          "permalink": "https://github.com/UniXNU/uefi-sheng/blob/0eb4514db0744b8136a3897ab1af93b713c2c27b/Resources/Configs/sheng.toml"
+        },
+        {
+          "path": "Platforms/Xiaomi/shengPkg/Include/RAW.inc",
+          "sha256": "588418269acdf0551ee77c3520a841a8e31df602ce28854cf6d13397823d9d59",
+          "selected_lines": [],
+          "total_lines": 18,
+          "permalink": "https://github.com/UniXNU/uefi-sheng/blob/0eb4514db0744b8136a3897ab1af93b713c2c27b/Platforms/Xiaomi/shengPkg/Include/RAW.inc"
+        }
+      ],
+      "github_license_metadata": "BSD-2-Clause"
+    },
+    {
+      "repository": "hanzi123-bilp/uefi-fuxi",
+      "branch": "fuxi",
+      "device": "fuxi",
+      "scope": "Read-only pinned reference; no source adoption",
+      "commit": "bb25ad75eedf2c224951c71767a077976b721793",
+      "selected_paths": [
+        "Platforms/Xiaomi/fuxiPkg/Include/APRIORI.inc",
+        "Platforms/Xiaomi/fuxiPkg/Include/DXE.inc",
+        "Platforms/Xiaomi/fuxiPkg/Include/RAW.inc"
+      ],
+      "files": [
+        {
+          "path": "Platforms/Xiaomi/fuxiPkg/Include/APRIORI.inc",
+          "blob": "39f07174817c97bd9100ccf1a8c5eb7f042a8b15",
+          "sha256": "f443530ae475821fda58e74b9d7e1e604c099a10f3d5b920a086ccad290e796d",
+          "selected_lines": [
+            {
+              "line": 44,
+              "text": "  INF MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf"
+            },
+            {
+              "line": 45,
+              "text": "  INF MdeModulePkg/Universal/BdsDxe/BdsDxe.inf"
+            },
+            {
+              "line": 46,
+              "text": ""
+            },
+            {
+              "line": 47,
+              "text": "  INF MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf"
+            }
+          ],
+          "permalink": "https://github.com/hanzi123-bilp/uefi-fuxi/blob/bb25ad75eedf2c224951c71767a077976b721793/Platforms/Xiaomi/fuxiPkg/Include/APRIORI.inc"
+        },
+        {
+          "path": "Platforms/Xiaomi/fuxiPkg/Include/DXE.inc",
+          "blob": "f6d3156eca5493cb94e79eea52feb8e0f8cfea8a",
+          "sha256": "1b1ea9bf405f974493da584cd84dfc20766a25d4c1d33df50260daf2db27990d",
+          "selected_lines": [
+            {
+              "line": 41,
+              "text": ""
+            },
+            {
+              "line": 42,
+              "text": "  INF MdeModulePkg/Universal/BdsDxe/BdsDxe.inf"
+            },
+            {
+              "line": 43,
+              "text": ""
+            },
+            {
+              "line": 44,
+              "text": "  INF EmbeddedPkg/SimpleTextInOutSerial/SimpleTextInOutSerial.inf"
+            }
+          ],
+          "permalink": "https://github.com/hanzi123-bilp/uefi-fuxi/blob/bb25ad75eedf2c224951c71767a077976b721793/Platforms/Xiaomi/fuxiPkg/Include/DXE.inc"
+        },
+        {
+          "path": "Platforms/Xiaomi/fuxiPkg/Include/RAW.inc",
+          "blob": "495c494e89872cb4cbcff046021410ce9b9d7a2a",
+          "sha256": "d6d444217f366157aac57a07c3a036c43c2841450563b792d5d2f4aeb1ed4a58",
+          "selected_lines": [],
+          "permalink": "https://github.com/hanzi123-bilp/uefi-fuxi/blob/bb25ad75eedf2c224951c71767a077976b721793/Platforms/Xiaomi/fuxiPkg/Include/RAW.inc"
+        }
+      ],
+      "additional_files": [
+        {
+          "path": "Platforms/Xiaomi/fuxiPkg/Include/RAW.inc",
+          "sha256": "d6d444217f366157aac57a07c3a036c43c2841450563b792d5d2f4aeb1ed4a58",
+          "selected_lines": [
+            {
+              "line": 1,
+              "text": "## fuxiPkg/Include/RAW.inc"
+            },
+            {
+              "line": 2,
+              "text": "## Xiaomi 13 (SM8550)"
+            },
+            {
+              "line": 3,
+              "text": "##"
+            },
+            {
+              "line": 4,
+              "text": "## sheng's RAW.inc carries the stock vendor FFS files and the N81A panel XMLs"
+            },
+            {
+              "line": 5,
+              "text": "## under their original GUIDs. fuxi has none of that yet, and the"
+            },
+            {
+              "line": 6,
+              "text": "## FUXI_VENDOR_HW = 0 build does not need it: the panel is already scanning out"
+            }
+          ],
+          "total_lines": 16,
+          "permalink": "https://github.com/hanzi123-bilp/uefi-fuxi/blob/bb25ad75eedf2c224951c71767a077976b721793/Platforms/Xiaomi/fuxiPkg/Include/RAW.inc"
+        }
+      ],
+      "github_license_metadata": "BSD-2-Clause"
+    }
+  ],
+  "official_status_note": "fuxi has no documented device runtime; vermeer documented kernel build only; neither proves nuwa runtime",
+  "official_pages": [
+    "https://unixnu.com/zh/devices/sheng",
+    "https://unixnu.com/zh/devices/fuxi",
+    "https://unixnu.com/zh/devices/vermeer",
+    "https://unixnu.com/zh/devices/nx729j"
+  ]
+}

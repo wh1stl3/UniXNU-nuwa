@@ -358,3 +358,10 @@ D-017/D-018补充（2026-10-22 23:47）：独立固件CI39805110487及665项下�
 
 
 D-016/D-018补充（2026-10-23 00:11）：R-007 A诊断固件5e4a8c8/CI39809636575编译和静态审计通过，v4包fbb7940a临时命令OKAY但用户黑屏、15次fastboot持续，无SEC/DXE证据。按D-016前后均bootloader复位，已验证Android备份boot恢复后nuwa boot_completed=1，boot/vendor_boot/init_boot三个分区hash未变。此实验只验收命令接受与本次恢复，不证明入口执行或修复根因；后续转向ABL交接/独立观测。证据reports/sec-trace/39809636575/trial-summary.json。
+
+# D-019 · BootShim Image头使用相对装载偏移，FD复制目标独立保留
+
+- 状态：accepted，R-008 A源码/构建与单变量试启动完成（2026-10-23）。
+- 证据：operations/2026-10-23-abl-handoff-and-relative-offset.md、operations/2026-10-23-relative-offset-trial-and-pil-stop.md；reports/relative-offset/package.json及两次launch/recovery；源码910ee079。
+
+头+8的text_offset不能填绝对FD_BASE；本机普通ABL变量分支会将其加到KernelBaseAddr。获批候选改为0，FD复制/入口目标仍A7100000，全部指令不变。WSL实际112B新shim与旧版只差offset10/11，容器只差4106/4107；两次实机fastboot枚举行为改变且用户有日志照片，但运行变量/PC/具体候选SEC阶段仍未验证，不把条件算术模型写为已捕获的实际错误码。后续构建/检查应分别描述relative text_offset和FD destination，不用旧header=FD_BASE门验收新shim。新FD的PIL策略另列R-009，未纳入本决策或R-008审批。

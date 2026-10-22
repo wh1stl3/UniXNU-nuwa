@@ -810,3 +810,23 @@
 [Evidence] 两槽ABL38a837fa匹配备份，UEFI98PE含QcomBds发布器；条件模型A8000000+A7100000越窗，源补丁apply检查通过，nuwa Android完成1。
 [Risk] 变量运行值和实际拒绝码未观测，BootShim/SEC/XNU仍未验证；没有新镜像、设备模式或board/feed/内存修改。
 ```
+
+## Q-078 · 相对偏移修正实测与PIL链阻塞取证
+
+```text
+[unixnu-nuwa][firmware] 完成相对偏移对照并定位候选自动ABL配置
+
+[Change] R-008只编译新shim复用原FD打包，完成两次授权临时启动及Android核对；保存用户照片和同SM8550源码片段，准备取消AUTO ABL的源码候选并列R-009。
+[Evidence] 源码910ee079，新包8b420abe与旧包仅4106/4107不同；两次15样本fastboot均false，照片PIL加载失败，候选RAW带AUTO ABL；Android完成1且三分区hash不变。
+[Risk] 候选/原厂日志精确归属及SEC/BDS/XNU阶段未确认；空AUTO解析与新FD待审批验收，未改board/feed/内存或生成R-009镜像。
+```
+
+关联固件提交910ee079（codex/nuwa-relative-offset，已发布）：
+
+```text
+[unixnu-nuwa][firmware] 修正BootShim头的相对装载偏移
+
+[Change] text_offset从绝对FD_BASE改0，FD复制地址和全部指令保持。
+[Evidence] 同机ABL变量分支会将该字段加到KernelBaseAddr；补丁7409eecd的apply检查通过。
+[Risk] R-008 A已获批准，实际变量及SEC执行待对照试验；此提交只改源码。
+```

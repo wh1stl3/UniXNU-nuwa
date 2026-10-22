@@ -1,0 +1,43 @@
+{
+  "approval": "R-008 A",
+  "scope": "Header-only relative text_offset correction; exact R-007 FD reused",
+  "run_id": 39809636575,
+  "firmware_commit": "910ee079fbaef736c49c14fd24501b132e98bb90",
+  "fd_firmware_commit": "5e4a8c814b89f62a4ba2bc145249314fed5db787",
+  "source_sha256": "985a68764e965903b5b0b0b6958164db2861dfb981a28e468484f35cbdb3a2dd",
+  "image_path": "out/trial-boot/relative-offset-R008/boot-relative-offset-v4.img",
+  "image_bytes": 3153920,
+  "image_sha256": "8b420abe64ac1738685879497d6a3e167a40873887b2122db01e8ae864ed2dfb",
+  "original_boot_sha256": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+  "fd_sha256": "9ea347a49e51472adac987cf12e20f9e0d99453a23f2113ad24efcd0a07f2eaf",
+  "shim_sha256": "8a3b54765c895a0366539130fdf6e4e4a01e364fe7de067a38d0193606f9d462",
+  "shim_bytes": 112,
+  "shim_text_offset": 0,
+  "fd_copy_destination": "0xa7100000",
+  "image_size": 3145840,
+  "copy_bytes": 3145728,
+  "payload_offset": 112,
+  "shim_changed_byte_offsets": [
+    10,
+    11
+  ],
+  "package_changed_byte_offsets": [
+    4106,
+    4107
+  ],
+  "previous_image_sha256": "fbb7940a8ee8cb5f2577a30bc2e5fb5bc31e1b84930c05b40c6304dfe970bcde",
+  "header_version": 4,
+  "page_bytes": 4096,
+  "kernel_bytes": 3145840,
+  "changed_header_fields": [
+    "kernel_size"
+  ],
+  "ramdisk_bytes": 0,
+  "signature_bytes": 0,
+  "appended_dtb": false,
+  "fat_included": false,
+  "xnu_included": false,
+  "dt_source": "Installed vendor_boot through ABL; actual handoff unverified",
+  "candidate_device_executed": false,
+  "recovery_required": true
+}

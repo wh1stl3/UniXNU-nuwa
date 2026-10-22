@@ -1,0 +1,82 @@
+{
+  "scope": "Static driver/FV comparison and manual transcription of user photo",
+  "candidate_fd_sha256": "9ea347a49e51472adac987cf12e20f9e0d99453a23f2113ad24efcd0a07f2eaf",
+  "installed_uefi_sha256": "d95cd6c7e602a7a2b439ea3ae58b6c51621893c0d60a6a7fcc2477b3b1a7e30d",
+  "candidate_ffs_count": 158,
+  "drivers": [
+    {
+      "name": "FeatureEnablerDxe",
+      "installed_guid": "1c04f529-0612-4319-9315-b2e75c16810a",
+      "installed_pe_sha256": "55d5ba6f74b03e17d34ca02e92de46080d527b21cdf84bf1935e099673ed60ea",
+      "candidate_contains_same_guid": true
+    },
+    {
+      "name": "DisplayDxe",
+      "installed_guid": "4138022f-06c7-4f79-9c94-7e33b511a4e7",
+      "installed_pe_sha256": "c534534943f73be77fde9c64f9b03d47f428b322597d78fbfb6933ac4c716e4d",
+      "candidate_contains_same_guid": true
+    },
+    {
+      "name": "PILDxe",
+      "installed_guid": "1d317734-4083-47c6-83ea-e3a42f2a6bff",
+      "installed_pe_sha256": "89e030af07847bdc596f0c213bdce0ac430be66e572db55b434d7ec66ad9afcb",
+      "candidate_contains_same_guid": true
+    },
+    {
+      "name": "PILProxyDxe",
+      "installed_guid": "8cf9c920-d5e6-4dac-bef9-6e6a4eec7add",
+      "installed_pe_sha256": "26c2e2be2b5c908ab75ff01ac409879237d5df34f81f74eea940da9739def5dd",
+      "candidate_contains_same_guid": true
+    }
+  ],
+  "candidate_selected_string_hits": [
+    {
+      "guid": "9e21fd93-9c72-4c15-8c4b-e77f1db2d792",
+      "text": "uefipil.cfg"
+    },
+    {
+      "guid": "9e21fd93-9c72-4c15-8c4b-e77f1db2d792",
+      "text": "Calling target panic"
+    },
+    {
+      "guid": "9e21fd93-9c72-4c15-8c4b-e77f1db2d792",
+      "text": "Failed to read from partition"
+    },
+    {
+      "guid": "1d317734-4083-47c6-83ea-e3a42f2a6bff",
+      "text": "uefipil.cfg"
+    },
+    {
+      "guid": "1d317734-4083-47c6-83ea-e3a42f2a6bff",
+      "text": "Calling target panic"
+    },
+    {
+      "guid": "1d317734-4083-47c6-83ea-e3a42f2a6bff",
+      "text": "Failed to read from partition"
+    },
+    {
+      "guid": "21e9bdd9-6c3f-4f10-84a5-bbec322741f1",
+      "text": "uefipil.cfg"
+    }
+  ],
+  "candidate_pil_configs": [
+    {
+      "bytes": 6868,
+      "sha256": "51facfcbe4c7a80be030ab061f94a30d924bad22f0056d53af372fe9f9c9f61e",
+      "text": "[PIL]\nCfgVersion = 1\n\n########################################################################\n## \n##   PIL configuration, contains the base address and size of image load\n##   information region in IMEM\n##\n########################################################################\\\n\n[IMAGE_LOAD_INFO_REGION]\nImageLoadInfoBase = 0x146AA94C\nImageLoadInfoSize = 200\n\n########################################################################\n## \n##   PIL configuration, contains the list of images which is allowed \n##   to be loaded by PIL in retail. PIL does not support images beyond\n##   the list\n##\n########################################################################\\\n\n[RETAIL]\nABL\nSPSS\nImageFv\nFULL_ADSP\nFULL_ADSP_DTB\n\n########################################################################\n## \n##   PIL configuration, contains the list of images which will be \n##   loaded by PIL by default\n##\n########################################################################\\\n[AUTO]\nABL\n\n\n########################################################################\n## \n##   PIL image configuration, updated to Kailua V4 memory map\n##\n########################################################################\\\n#Few parameter values are commented for DTB's and shall be updated later\n[FULL_ADSP_DTB]\nType = elf_split\nPartiGuid = \"EBD0A0A2 B9E5 4433 87C0 68B6B72699C7\"\nImagePath = \\image\\adsp_dtb\nSubsysID = 36\nResvMemoryStart = 0x9E980000\nResvMemorySize = 0x80000\nImageLoadInfo = No\nOverrideElfAddr = No\n\n[FULL_ADSP]\nPreImage = \"FULL_ADSP_DTB\"\nType = elf_split\n#PartiLabel = modem_a\n#PartiRootGuid = \nPartiGuid = \"EBD0A0A2 B9E5 4433 87C0 68B6B72699C7\"\nImagePath = \\image\\adsp\nSubsysID = 1\nResvMemoryStart = 0x9EA00000\nResvMemorySize = 0x4680000\nImageLoadInfo = Yes\nOverrideElfAddr = Yes\nProxyGuid = \"36FE27E1 33E9 45AD 98DA C88438CA8816\"\n\n#[FULL_SLPI]\n#Type = elf_split\n##PartiLabel = modem_a\n##PartiRootGuid = \n#PartiGuid = \"EBD0A0A2 B9E5 4433 87C0 68B6B72699C7\"\n#ImagePath = \\image\\slpi\n#SubsysID = 12\n#ResvMemoryStart = 0x9EA00000\n#ResvMemorySize = 0x4080000\n#ImageLoadInfo = Yes\n#OverrideElfAddr = Yes\n#ProxyGuid = \"B2DCFC34 B2A0 4BB7 BDB0 31DB01E3CC2A\"\n\n[FULL_CDSP_DTB]\nType = elf_split\nPartiGuid = \"EBD0A0A2 B9E5 4433 87C0 68B6B72699C7\"\n#ImagePath = \\image\\device_tree\nImagePath = \\image\\cdsp_dtb\nSubsysID = 37\nResvMemoryStart = 0x9E900000\nResvMemorySize = 0x80000\nImageLoadInfo = No\nOverrideElfAddr = No\nProxyGuid = \"973f30f9 b696 4252 a840 f4eb99fd130f\"\n\n\n[FULL_CDSP]\nPreImage = \"FULL_CDSP_DTB\"\nType = elf_split\n#PartiLabel = modem_a\n#PartiRootGuid = \nPartiGuid = \"EBD0A0A2 B9E5 4433 87C0 68B6B72699C7\"\nImagePath = \\image\\cdsp\nSubsysID = 18\nResvMemoryStart = 0x9C900000\nResvMemorySize = 0x2000000\nImageLoadInfo = Yes\nOverrideElfAddr = Yes\nProxyGuid = \"45E14C04 D134 4EE4 AC13 7098F0A9F261\"\n\n#[FULL_NPU]\n#Type = elf_split\n##PartiLabel = modem_a\n##PartiRootGuid = \n#PartiGuid = \"EBD0A0A2 B9E5 4433 87C0 68B6B72699C7\"\n#ImagePath = \\image\\npu\n#SubsysID = 23\n#ResvMemoryStart = 0x86900000\n#ResvMemorySize = 0x500000\n#ImageLoadInfo = Yes\n#OverrideElfAddr = Yes\n#ProxyGuid = \"45654140 778E 4384 8EEC 703FDACE3172\"\n\n[FULL_MODEM_DTB]\nType = elf_split\nPartiGuid = \"EBD0A0A2 B9E5 4433 87C0 68B6B72699C7\"\n#ImagePath = \\image\\qdsp6sw_dtb\nImagePath = \\image\\modem_dtb\nSubsysID = 38\nResvMemoryStart = 0x9B000000\nResvMemorySize = 0x80000\nImageLoadInfo = No\nOverrideElfAddr = No\n\n\n[FULL_MODEM]\nPreImage = \"FULL_MODEM_DTB\"\nType = elf_split\n#PartiLabel = modem_a\n#PartiRootGuid = \nPartiGuid = \"EBD0A0A2 B9E5 4433 87C0 68B6B72699C7\"\nImagePath = \\image\\modem\nSubsysID = 4\nResvMemoryStart = 0x8A800000\nResvMemorySize = 0x10800000  \nImageLoadInfo = Yes\nOverrideElfAddr = Yes\nProxyGuid = \"61513695 E0C6 4F07 BF41 A51A7770640E\"\n\n[CORE_ADSP_DTB]\nType = elf_split\nPartiLabel = core_nhlos_a\n#PartiGuid = \"EBD0A0A2 B9E5 4433 87C0 68B6B72699C7\"\n#ImagePath = \\image\\adsp_dtbs\nImagePath = \\image\\adsp_dtb\nSubsysID = 36\nResvMemoryStart = 0x9E980000\nResvMemorySize = 0x80000\nImageLoadInfo = No\nOverrideElfAddr = No\n\n[CORE_ADSP]\nPreImage = \"CORE_ADSP_DTB\"\nType = elf_split\nPartiLabel = core_nhlos_a\n#PartiRootGuid = \n#PartiGuid = \"EBD0A0A2 B9E5 4433 87C0 68B6B72699C7\"\nImagePath = \\image\\adsp\nSubsysID = 1\nResvMemoryStart = 0x9EA00000\nResvMemorySize = 0x4080000\nImageLoadInfo = Yes\nOverrideElfAddr = Yes\nProxyGuid = \"36FE27E1 33E9 45AD 98DA C88438CA8816\"\n\n#[CORE_SLPI]\n#Type = elf_split\n#PartiLabel = core_nhlos_a\n##PartiRootGuid = \n##PartiGuid = \"EBD0A0A2 B9E5 4433 87C0 68B6B72699C7\"\n#ImagePath = \\image\\slpi\n#SubsysID = 12\n#ResvMemoryStart = 0x9EA00000\n#ResvMemorySize = 0x4080000\t\n#ImageLoadInfo = Yes\n#OverrideElfAddr = Yes\n#ProxyGuid = \"B2DCFC34 B2A0 4BB7 BDB0 31DB01E3CC2A\"\n\n[CORE_CDSP_DTB]\nType = elf_split\nPartiLabel = core_nhlos_a\n#PartiGuid = \"EBD0A0A2 B9E5 4433 87C0 68B6B72699C7\"\n#ImagePath = \\image\\device_tree\nImagePath = \\image\\cdsp_dtb\nSubsysID = 37\nResvMemoryStart = 0x9E900000\nResvMemorySize = 0x80000\nImageLoadInfo = No\nOverrideElfAddr = No\nProxyGuid = \"973f30f9 b696 4252 a840 f4eb99fd130f\"\n\n[CORE_CDSP]\nPreImage = \"CORE_CDSP_DTB\"\nType = elf_split\nPartiLabel = core_nhlos_a\n#PartiRootGuid = \n#PartiGuid = \"EBD0A0A2 B9E5 4433 87C0 68B6B72699C7\"\nImagePath = \\image\\cdsp\nSubsysID = 18\nResvMemoryStart = 0x9C900000\nResvMemorySize = 0x2000000\nImageLoadInfo = Yes\nOverrideElfAddr = Yes\nProxyGuid = \"45E14C04 D134 4EE4 AC13 7098F0A9F261\"\n\n#[CORE_NPU]\n#Type = elf_split\n#PartiLabel = core_nhlos_a\n##PartiRootGuid = \n##PartiGuid = \"EBD0A0A2 B9E5 4433 87C0 68B6B72699C7\"\n#ImagePath = \\image\\npu\n#SubsysID = 23\n#ResvMemoryStart = 0x86900000\n#ResvMemorySize = 0x500000\n#ImageLoadInfo = Yes\n#OverrideElfAddr = Yes\n#ProxyGuid = \"45654140 778E 4384 8EEC 703FDACE3172\"\n\n[CORE_MODEM_DTB]\nType = elf_split\nPartiLabel = core_nhlos_a\n#ImagePath = \\image\\qdsp6sw_dtb\nImagePath = \\image\\modem_dtb\nSubsysID = 38\nResvMemoryStart = 0x9B000000\nResvMemorySize = 0x80000 \nImageLoadInfo = No\nOverrideElfAddr = No\n\n[CORE_MODEM]\nPreImage = \"CORE_MODEM_DTB\"\nType = elf_split\nPartiLabel = core_nhlos_a\n#PartiRootGuid = \n#PartiGuid = \"EBD0A0A2 B9E5 4433 87C0 68B6B72699C7\"\n#ImagePath = \\image\\qdsp6sw\nImagePath = \\image\\modem\nSubsysID = 4\nResvMemoryStart = 0x8A800000\nResvMemorySize = 0x10800000 \nImageLoadInfo = Yes\nOverrideElfAddr = Yes\nProxyGuid = \"61513695 e0c6 4f07 bf41 a51a7770640e\"\n\n[SPSS]\nType = elf_split\n#PartiLabel = modem_a\n#PartiRootGuid = \nPartiGuid = \"EBD0A0A2 B9E5 4433 87C0 68B6B72699C7\"\nImagePath = \\image\\spss1t\nSubsysID = 14\nResvMemoryStart = 0x9B100000\nResvMemorySize = 0x180000\nImageLoadInfo = Yes\nOverrideElfAddr = Yes\nProxyGuid = \"2B4DE7E9 B796 4FE7 B210 49F11C6BABC2\"\n\n[ABL]\nType = elf_fv\n#PartiLabel = abl_a\n#PartiRootGuid = \nPartiGuid = \"BD6928A1 4CE0 A038 4F3A 1495E3EDDFFB\"\nSubsysID = 21\nImageLoadInfo = No\nUnlock = Yes\n\n[ImageFv]\nType = elf_fv\n#PartiLabel = imagefv_a\n#PartiRootGuid = \nPartiGuid = \"17911177 C9E6 4372 933C 804B678E666F\"\nSubsysID = 20\nImageLoadInfo = No\nUnlock = Yes\n\n"
+    }
+  ],
+  "photo_path": "reports/relative-offset/user-screen.jpg",
+  "photo_sha256": "277bae54e8607eadebcb68a42e192f9c2a758a03e26012381ad936c0cc6dfe17",
+  "readable_tail": [
+    "Pil_abl Failed to read from partition",
+    "Pil_abl Failed to load ELF file",
+    "Auto processing of uefipil.cfg failed. Calling target panic"
+  ],
+  "conclusion": "Photo contains Qualcomm PIL/ABL-loading errors, not an XNU panic. Attribution to candidate SEC/DXE is not established; compare FFS identity.",
+  "limitations": [
+    "No timestamp or NUWA-ENTRY marker visible in this frame",
+    "Video chronology needed to separate initial stock boot, candidate execution and later reboot",
+    "No exact candidate runtime PC/SEC stage inferred from this frame"
+  ]
+}

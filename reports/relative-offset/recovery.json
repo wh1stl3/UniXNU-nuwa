@@ -1,0 +1,91 @@
+{
+  "phase": "recover",
+  "started_at": "2026-10-22T16:41:22.985151+00:00",
+  "commands": [
+    {
+      "at": "2026-10-22T16:41:38.641577+00:00",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'cat /sys/firmware/devicetree/base/model; cat /sys/firmware/devicetree/base/compatible'"
+      ],
+      "exit_code": 0,
+      "stdout": "Qualcomm Technologies, Inc. 8550 nuwa\u0000qcom,kalama-mtp\u0000qcom,kalama\u0000qcom,mtp\u0000",
+      "stderr": ""
+    },
+    {
+      "at": "2026-10-22T16:41:38.699110+00:00",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "shell",
+        "getprop sys.boot_completed"
+      ],
+      "exit_code": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "at": "2026-10-22T16:41:43.956973+00:00",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'cat /sys/firmware/devicetree/base/model; cat /sys/firmware/devicetree/base/compatible'"
+      ],
+      "exit_code": 0,
+      "stdout": "Qualcomm Technologies, Inc. 8550 nuwa\u0000qcom,kalama-mtp\u0000qcom,kalama\u0000qcom,mtp\u0000",
+      "stderr": ""
+    },
+    {
+      "at": "2026-10-22T16:41:44.018803+00:00",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "shell",
+        "getprop sys.boot_completed"
+      ],
+      "exit_code": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "at": "2026-10-22T16:41:49.536365+00:00",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'cat /sys/firmware/devicetree/base/model; cat /sys/firmware/devicetree/base/compatible'"
+      ],
+      "exit_code": 0,
+      "stdout": "Qualcomm Technologies, Inc. 8550 nuwa\u0000qcom,kalama-mtp\u0000qcom,kalama\u0000qcom,mtp\u0000",
+      "stderr": ""
+    },
+    {
+      "at": "2026-10-22T16:41:49.711174+00:00",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "shell",
+        "getprop sys.boot_completed"
+      ],
+      "exit_code": 0,
+      "stdout": "1\n",
+      "stderr": ""
+    }
+  ],
+  "observations": [],
+  "authorization": "R-008 A explicit diagnostic trial/recovery approval",
+  "candidate_sha256": "8b420abe64ac1738685879497d6a3e167a40873887b2122db01e8ae864ed2dfb",
+  "candidate_package_sha256": "8b8001f01c65eec1a2f4d390a357a46f3a6dcfb2bbd1f5e66767c50598ab2371",
+  "recovery_sha256": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+  "android_boot_completed": "1",
+  "ended_at": "2026-10-22T16:41:49.711707+00:00"
+}

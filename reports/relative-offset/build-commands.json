@@ -1,0 +1,92 @@
+[
+  {
+    "argv": [
+      "wsl",
+      "-d",
+      "Ubuntu-22.04",
+      "--",
+      "clang",
+      "--version"
+    ],
+    "exit_code": 0,
+    "stdout": "Ubuntu clang version 14.0.0-1ubuntu1.1\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/bin\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "wsl",
+      "-d",
+      "Ubuntu-22.04",
+      "--",
+      "llvm-objcopy",
+      "--version"
+    ],
+    "exit_code": 0,
+    "stdout": "llvm-objcopy, compatible with GNU objcopy\nUbuntu LLVM version 14.0.0\n  \n  Optimized build.\n  Default target: x86_64-pc-linux-gnu\n  Host CPU: znver3\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "wsl",
+      "-d",
+      "Ubuntu-22.04",
+      "--",
+      "clang",
+      "--target=aarch64-linux-gnu",
+      "-c",
+      "/mnt/d/Code/uefi-nuwa/BootShim/BootShim.S",
+      "-o",
+      "/mnt/d/Code/UniXNU-nuwa/out/trial-boot/relative-offset-R008/BootShim.elf",
+      "-DREQUIRES_KERNEL_HEADER=1",
+      "-DFD_BASE=0xa7100000",
+      "-DFD_SIZE=0x300000"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "wsl",
+      "-d",
+      "Ubuntu-22.04",
+      "--",
+      "llvm-objcopy",
+      "-O",
+      "binary",
+      "/mnt/d/Code/UniXNU-nuwa/out/trial-boot/relative-offset-R008/BootShim.elf",
+      "/mnt/d/Code/UniXNU-nuwa/out/trial-boot/relative-offset-R008/shim.bin"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "wsl",
+      "-d",
+      "Ubuntu-22.04",
+      "--",
+      "llvm-nm",
+      "-n",
+      "/mnt/d/Code/UniXNU-nuwa/out/trial-boot/relative-offset-R008/BootShim.elf"
+    ],
+    "exit_code": 0,
+    "stdout": "0000000000000000 t _Head\n0000000000000008 t _StackBase\n0000000000000010 t _StackSize\n0000000000000040 t _Start\n0000000000000054 t _CopyLoop\n0000000000000068 t _Entry\n000000000000006c t _Dead\n0000000000000070 t _Payload\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "wsl",
+      "-d",
+      "Ubuntu-22.04",
+      "--",
+      "llvm-objdump",
+      "-d",
+      "/mnt/d/Code/UniXNU-nuwa/out/trial-boot/relative-offset-R008/BootShim.elf"
+    ],
+    "exit_code": 0,
+    "stdout": "\n/mnt/d/Code/UniXNU-nuwa/out/trial-boot/relative-offset-R008/BootShim.elf:\tfile format elf64-littleaarch64\n\nDisassembly of section .text:\n\n0000000000000000 <_Head>:\n       0: 81 03 00 10  \tadr\tx1, #112\n       4: 0f 00 00 14  \tb\t0x40 <_Start>\n\n0000000000000008 <_StackBase>:\n       8:\t00 00 00 00\t.word\t0x00000000\n       c:\t00 00 00 00\t.word\t0x00000000\n\n0000000000000010 <_StackSize>:\n      10:\t70 00 30 00\t.word\t0x00300070\n      14:\t00 00 00 00\t.word\t0x00000000\n      18:\t00 00 00 00\t.word\t0x00000000\n      1c:\t00 00 00 00\t.word\t0x00000000\n      20:\t00 00 00 00\t.word\t0x00000000\n      24:\t00 00 00 00\t.word\t0x00000000\n      28:\t00 00 00 00\t.word\t0x00000000\n      2c:\t00 00 00 00\t.word\t0x00000000\n      30:\t00 00 00 00\t.word\t0x00000000\n      34:\t00 00 00 00\t.word\t0x00000000\n      38:\t41 52 4d 64\t.word\t0x644d5241\n      3c:\t00 00 00 00\t.word\t0x00000000\n\n0000000000000040 <_Start>:\n      40: e4 03 01 aa  \tmov\tx4, x1\n      44: 05 e2 b4 d2  \tmov\tx5, #2802843648\n      48: 9f 00 05 eb  \tcmp\tx4, x5\n      4c: e0 00 00 54  \tb.eq\t0x68 <_Entry>\n      50: 06 06 a0 d2  \tmov\tx6, #3145728\n\n0000000000000054 <_CopyLoop>:\n      54: 82 0c c1 a8  \tldp\tx2, x3, [x4], #16\n      58: a2 0c 81 a8  \tstp\tx2, x3, [x5], #16\n      5c: c6 40 00 f1  \tsubs\tx6, x6, #16\n      60: a1 ff ff 54  \tb.ne\t0x54 <_CopyLoop>\n      64: 05 e2 b4 d2  \tmov\tx5, #2802843648\n\n0000000000000068 <_Entry>:\n      68: a0 00 1f d6  \tbr\tx5\n\n000000000000006c <_Dead>:\n      6c: 00 00 00 14  \tb\t0x6c <_Dead>\n",
+    "stderr": ""
+  }
+]

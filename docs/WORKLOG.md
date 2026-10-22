@@ -170,3 +170,5 @@
 2026-10-23 00:11 · R-007 A诊断包fbb7940a临时Sending/Booting OKAY，用户FASTBOOT后黑屏、15样本fastboot持续；按D-016恢复nuwa Android=1，三分区hash不变，SEC/DXE/XNU未验证 · 本提交（Q-076） · reports/sec-trace/39809636575/launch.json、recovery.json、trial-summary.json
 
 2026-10-23 00:36 · 本机ABL/UEFI静态交叉核对发现BootShim相对text_offset误用，准备源码单字段修正；实际运行拒绝未验证，R-008待审批，nuwa Android=1 · Q-077（本条提交） · docs/operations/2026-10-23-abl-handoff-and-relative-offset.md；reports/abl-handoff/
+
+2026-10-23 00:55 · R-008新shim只改两字节，同FD包两次试启动见日志并恢复Android=1；照片PIL/ABL失败与候选AUTO ABL一致，同SM8550源码核对后准备0007，R-009待审批 · Q-078（本条提交） · docs/operations/2026-10-23-relative-offset-trial-and-pil-stop.md；reports/relative-offset/

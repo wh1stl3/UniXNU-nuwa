@@ -12,9 +12,29 @@
 
 | 编号 | 主题 | 需要用户做什么 |
 | --- | --- | --- |
-| R-008 | BootShim相对text_offset修正后的新镜像 | 选择A：只重编shim、复用R-007 FD打包并临时对照恢复；或B：继续现有dump/独立观测分析 |
+| R-009 | PIL自动ABL链阻塞后的新FD | 倾向A：保留PIL、只取消AUTO ABL；B：参照sheng对PIL链做条件门 |
 
-## R-008 · 修正BootShim的相对text_offset并做单变量试验（open）
+## R-009 · 取消二级固件自动ABL链载（open）
+
+背景：R-008 A已完成头部单变量构建与两次临时试启动（第二次用户另明确要求录像）。新旧容器只差两个字节，修正后fastboot不再持续枚举，用户看见大量日志。照片清晰记录Pil_abl分区读取/ELF加载失败及uefipil.cfg自动处理panic；这不是XNU panic。同一帧没有NUWA-ENTRY，候选/原厂UEFI均含相关驱动，精确画面时序/来源仍待连续录像。**实际候选FD独立确认带[AUTO] ABL，源码配置问题无需猜测。** 取证与同SM8550对照见[本轮报告](operations/2026-10-23-relative-offset-trial-and-pil-stop.md)及reports/relative-offset/。
+
+触发AGENTS.md§3第3类“新建或重写任何诊断 / 固件镜像”。R-008 A明确只复用旧FD，新PIL配置必须重建FD，超出其范围。Git/GitHub和可恢复临时试启动持续授权不重复请求。
+
+**候选A（倾向）：保留PILDxe/PILProxyDxe，只取消uefipil.cfg的AUTO ABL项。** 源码预览0007-nuwa-disable-auto-abl.patch SHA f3d6d9c76a7e6ec2531a7bdbc2aa185a86ad74808c55f73eb6b63f05f462faaf已准备，对910ee079的git apply --check通过。只将RAW.inc的该配置输入切到nuwaPkg本地文件；本地文件来自实际同一FD的6868B原始配置SHA51facfcb…，只把[AUTO]下ABL行改注释，其他RETAIL、镜像定义、GUID、内存值逐字保留，未猜板值。先静态核实PILDxe空AUTO解析行为，再应用/固定来源，沿现有CI构建和独立产物检查，使用R-008修正shim打包同类v4临时包，临时对照后恢复Android=1。
+
+代价：需要一次新FD/四EFI构建及容器检查；原配置RAW内容从FD提取、来源hash已固定，需核实空列表处理，不能把无崩溃预先当结果。UFS/BlockIo或其他Qsee/FeatureEnabler错误可能仍阻塞，BDS/UniXNU/XNU仍未验证；保留PIL不等于协议初始化通过。若解析不支持空AUTO，先报告并修正方案，不自动换B或改二进制跳过panic。
+
+**候选B：参照sheng给PIL链建立独立条件门，本轮关闭PILProxy/PIL/SPSS三项。** UniXNU/uefi-sheng@0eb4514d在APRIORI与DXE中将三项包在SHENG_VENDOR_HW条件内，默认0；fuxi@bb25ad75最小链无PIL且尚未记录真机运行。可以在nuwa中同时控制APRIORI/DXE而保留其余真实驱动，不照搬全部vendor=0。代价是需审计其协议消费者/DEPEX和SPSS初始化影响，改动范围和潜在硬件影响大于A；不能只删APRIORI而让DXE仍分派，也不能声称同SoC已实机验证。
+
+倾向A：精准对应候选FD确有的自动Android ABL路径，保留已复用的真实硬件驱动。B是有同SoC结构依据的替代路线，不能无证据整体关闭驱动。两者均不修复/重刷ABL分区，不以取消一条路径证明存储可用。
+
+**需要批准的最小范围：选择A或B对应源码改动、独立新固件编译与静态检查、保持R-008相对偏移修正的v4新临时包，并按既有可恢复授权试启动、最后确认nuwa Android boot_completed=1。** 不含XNU/新FAT负载、不改board/bringup-plan或原厂内存表/基址、不flash/erase/改槽、不设置_verified=true。当前Android=1，尚未应用0007或生成R-009镜像；连续录像待办不阻塞静态工作，暂停原因仅为新镜像具体范围。
+
+## R-008 · 修正BootShim的相对text_offset并做单变量试验（approved A，已完成）
+
+用户在R-008具体方案提交后回复“授权通过 继续主线”，按倾向A执行；新shim/复用FD打包及一次临时对照/恢复范围获批，不扩展其他硬停项。
+
+结果：固件源码910ee079已发布独立分支，WSL只编译112B shim；新包8b420abe与R-007包仅offset4106/4107不同，FD9ea347a4完全复用。两次临时启动（第二次用户明确“你直接启动就好 我随时录像”追加授权）均OKAY、15次fastboot均false；用户提供Qualcomm PIL/ABL错误照片，不能据此称XNU panic或确认候选SEC阶段。两次恢复检查分别00:41:49/00:43:49实际nuwa Android=1，记录均无临时原boot下发，回返机制未确定；三个Android分区hash与试前一致。完整证据reports/relative-offset/及本轮operations。下方保留审批时背景与候选；新FD另列R-009。
 
 背景：本机abl_a/b SHA38a837fa与只读备份相同，安装UEFI QcomBds的变量发布代码和ABL消费代码已静态核对。现有shim头把绝对FD_BASE=A7100000写入相对text_offset；若普通平台分支成功读取原厂Kernel变量，装载地址会算成14F100000，越过B8000000末端，在CopyMem之前返回EFI_BUFFER_TOO_SMALL。**这是一条有条件的静态诊断，运行变量/实际错误码仍未验证**。ACK在BootLinux之前发出，不能排除早退。logfs/minidump只读取证未得到可归属R-007的实际错误。详见[完整证据](operations/2026-10-23-abl-handoff-and-relative-offset.md)。
 

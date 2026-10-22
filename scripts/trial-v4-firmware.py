@@ -32,7 +32,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('phase', choices=['launch', 'recover'])
     parser.add_argument('--evidence', type=Path, required=True)
-    parser.add_argument('--package', type=Path, help='R-007 A diagnostic package report')
+    parser.add_argument('--package', type=Path, help='R-007 A or R-008 A hash-pinned package report')
     args = parser.parse_args()
     evidence = args.evidence.resolve()
     if not evidence.is_relative_to(ROOT / 'reports') or evidence.exists():
@@ -41,14 +41,22 @@ def main():
     package_sha = None
     if args.package:
         package_path = args.package.resolve()
-        if not package_path.is_relative_to(ROOT / 'reports/sec-trace'):
-            raise ValueError('Diagnostic package report must stay under reports/sec-trace')
+        scopes = {'R-007 A': ROOT / 'reports/sec-trace', 'R-008 A': ROOT / 'reports/relative-offset'}
         package_raw = package_path.read_bytes()
         package = json.loads(package_raw)
-        if (package['approval'] != 'R-007 A' or package['header_version'] != 4
+        approval = package.get('approval')
+        if (approval not in scopes or not package_path.is_relative_to(scopes[approval])
+                or package['header_version'] != 4
                 or package['xnu_included'] or package['fat_included'] or package['appended_dtb']
                 or package['original_boot_sha256'] != HASHES[ORIGINAL]):
-            raise ValueError('Package is outside the approved R-007 scope')
+            raise ValueError('Package is outside the approved trial scope')
+        if approval == 'R-008 A' and (package['shim_text_offset'] != 0
+                or package['fd_sha256'] != '9ea347a49e51472adac987cf12e20f9e0d99453a23f2113ad24efcd0a07f2eaf'
+                or package['firmware_commit'] != '910ee079fbaef736c49c14fd24501b132e98bb90'
+                or package['shim_bytes'] != 112 or package['fd_copy_destination'] != '0xa7100000'
+                or not package['shim_changed_byte_offsets']
+                or any(not 8 <= i < 16 for i in package['shim_changed_byte_offsets'])):
+            raise ValueError('R-008 package exceeds the header-only scope')
         candidate = (ROOT / package['image_path']).resolve()
         if not candidate.is_relative_to(ROOT / 'out/trial-boot'):
             raise ValueError('Diagnostic candidate escapes trial output')
@@ -62,7 +70,7 @@ def main():
             raise ValueError('Pinned boot input changed')
     evidence.parent.mkdir(parents=True, exist_ok=True)
     report = dict(phase=args.phase, started_at=now(), commands=[], observations=[],
-                  authorization='R-007 A explicit diagnostic trial/recovery approval' if args.package else
+                  authorization=package['approval']+' explicit diagnostic trial/recovery approval' if args.package else
                   'User explicitly approved temporary prepared v4 candidate trial; original recovery authorized',
                   candidate_sha256=candidate_sha, candidate_package_sha256=package_sha,
                   recovery_sha256=HASHES[ORIGINAL])

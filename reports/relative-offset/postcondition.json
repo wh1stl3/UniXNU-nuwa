@@ -1,0 +1,79 @@
+{
+  "at_utc": "2026-10-22T16:44:13.375922+00:00",
+  "scope": "Post two R-008 trials, read only; no flash/erase/slot operation",
+  "commands": [
+    {
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "getprop sys.boot_completed"
+      ],
+      "exit_code": 0,
+      "stdout": "1",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'cat /sys/firmware/devicetree/base/model; cat /sys/firmware/devicetree/base/compatible'"
+      ],
+      "exit_code": 0,
+      "stdout": "Qualcomm Technologies, Inc. 8550 nuwa\nqcom,kalama-mtp\nqcom,kalama\nqcom,mtp\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'sha256sum /dev/block/by-name/boot_a /dev/block/by-name/vendor_boot_a /dev/block/by-name/init_boot_a'"
+      ],
+      "exit_code": 0,
+      "stdout": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31  /dev/block/by-name/boot_a\n5ad2a9dc751870fa3c367fa2833582147541f5b62b880dcbdf525003ad68cc23  /dev/block/by-name/vendor_boot_a\n19e95d952ded5172e8a17bd1af907a8d6b08b29734881c370961b09bbaf78f96  /dev/block/by-name/init_boot_a",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'sha256sum /dev/block/by-name/logfs /dev/block/by-name/minidump'"
+      ],
+      "exit_code": 0,
+      "stdout": "723cce1421d7c34ae6949af55e28cae3d050d4b05bfae6e39824a71254c4f1a0  /dev/block/by-name/logfs\ne367ac9bce6420c4327f68758d5f68bfe282176cc756db351f65664c66cb10f3  /dev/block/by-name/minidump",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "getprop ro.boot.bootreason"
+      ],
+      "exit_code": 0,
+      "stdout": "bootloader",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "getprop sys.boot.reason"
+      ],
+      "exit_code": 0,
+      "stdout": "bootloader",
+      "stderr": ""
+    }
+  ],
+  "three_partition_hashes_unchanged": true
+}

@@ -1,0 +1,27 @@
+{
+  "result": "Source-only apply check passed; no image or firmware checkout changed",
+  "approval": "R-009 pending",
+  "base_commit": "910ee079fbaef736c49c14fd24501b132e98bb90",
+  "original_config_bytes": 6868,
+  "original_config_sha256": "51facfcbe4c7a80be030ab061f94a30d924bad22f0056d53af372fe9f9c9f61e",
+  "proposed_config_sha256": "dbc9ee6e4c7728b32245453322f348c32d6a5eef0107f8c07662918bc3c23fdd",
+  "patch": "patches/firmware-candidates/0007-nuwa-disable-auto-abl.patch",
+  "patch_sha256": "f3d6d9c76a7e6ec2531a7bdbc2aa185a86ad74808c55f73eb6b63f05f462faaf",
+  "changed_config_lines": "--- embedded-original\n+++ proposed-local-config\n@@ -34,7 +34,7 @@\n ##\n ########################################################################\\\n [AUTO]\n-ABL\n+# No automatic ABL chainload in the UniXNU second-stage firmware.\n \n \n ########################################################################\n",
+  "changed_source_paths": [
+    "Platforms/Xiaomi/nuwaPkg/Include/RAW.inc",
+    "Platforms/Xiaomi/nuwaPkg/RawFiles/uefipil.cfg"
+  ],
+  "retained": [
+    "PILDxe",
+    "PILProxyDxe",
+    "All RETAIL and image definitions, GUIDs and memory numbers"
+  ],
+  "unverified": [
+    "Empty AUTO section parser/runtime behavior",
+    "DXE dependencies after PIL",
+    "BDS/UniXNU dispatch"
+  ],
+  "image_generated": false,
+  "firmware_source_changed": false
+}
