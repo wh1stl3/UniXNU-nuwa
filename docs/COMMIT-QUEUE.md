@@ -371,3 +371,13 @@
 [Evidence] reports/parallel-progress-review/：candidate及FD哈希匹配，VFS函数与10063上游定义一致，本仓plan实际缺_vfs_getvfs_with_vfsops；实际配置清空、4项UEFI预检错误及12处豁免中4处ADRP均有来源；操作报告列出验收门槛。
 [Risk] 现有三件不证明nuwa启动/桌面；false资格标记为工具默认未验收，不当作emit失败；DarwinBoot集成未验证，未运行对方脚本或修改其目录，未生成镜像或操作设备，feed/board不变。
 ```
+
+## Q-038 · 第十一轮真实编译记录与平台首错
+
+```text
+[unixnu-nuwa][build] 取得真实编译记录并清除平台命令中无效libsa路径
+
+[Change] 保存第十一轮源内核成功和933份记录计数，收录四项真实fragment/原对象及平台首错；仅在精确libsa目录不存在时移除该搜索项，记录移除路径，保留其余检查。
+[Evidence] reports/kernel-ci/39742250205/：kernel_built=true、四项记录及原对象通过，原始行852093为-Werror,-Wmissing-include-dirs；4项参数保护测试通过，未知缺失目录仍保留；提取器保存有界附加证据。
+[Risk] ArmCpu对象及后续两库尚未构建通过，修复待重跑；符号闭包/完整ABI/预链接和实机未验证；feed/board不变，无诊断/固件镜像、设备动作或_verified=true。
+```

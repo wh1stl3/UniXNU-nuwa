@@ -34,7 +34,7 @@ def load_record(path, work):
     return record, output
 
 
-def driver_command(record, source, destination, work):
+def driver_command(record, source, destination, work, removed_includes=None):
     """Keep ABI flags; replace source/output and remove dependency side effects."""
     command = []
     replaced = 0
@@ -44,6 +44,14 @@ def driver_command(record, source, destination, work):
     original = (directory / record['file']).resolve()
     while i < len(args):
         value = args[i]
+        if value == '-I' and i + 1 < len(args):
+            include = (directory / args[i + 1]).resolve()
+            legacy = (work / 'build/xnu/ios-obj/EXPORT_HDRS/libsa').resolve()
+            if include == legacy and not include.is_dir():
+                if removed_includes is not None:
+                    removed_includes.append(str(include))
+                i += 2
+                continue
         if value in ('-o', '-MF', '-MT', '-MQ', '-MJ'):
             if i + 1 == len(args):
                 raise ValueError(f'Missing argument after {value}')
@@ -139,9 +147,11 @@ def main():
             source = base / 'drivers' / component / (component + '.cpp')
             obj = out / (component + '.o')
             archive = out / ('lib' + component + '.a')
-            command = driver_command(record, source, obj, work)
+            removed_includes = []
+            command = driver_command(record, source, obj, work, removed_includes)
             item = {'component': component, 'source': str(source), 'source_sha256': sha(source),
-                    'arguments': command, 'directory': record['directory'], 'compiled': False}
+                    'arguments': command, 'directory': record['directory'], 'compiled': False,
+                    'omitted_missing_include_directories': removed_includes}
             summary['components'].append(item)
             print('+', ' '.join(command), flush=True)
             result = subprocess.run(command, cwd=record['directory'], text=True,

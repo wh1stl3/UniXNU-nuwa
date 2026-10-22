@@ -44,6 +44,19 @@ class DriverCommands(unittest.TestCase):
         with self.assertRaises(ValueError):
             audit.driver_command(record, ROOT / 'out/driver.cpp', ROOT / 'out/driver.o', ROOT / 'out')
 
+    def test_only_omits_the_known_absent_legacy_libsa_directory(self):
+        record = self.record()
+        work = ROOT / 'out/nonexistent-include-check'
+        legacy = work / 'build/xnu/ios-obj/EXPORT_HDRS/libsa'
+        self.assertFalse(legacy.exists())
+        unknown = str(work / 'required-missing-header-directory')
+        record['arguments'] += ['-I', str(legacy), '-I', unknown]
+        removed = []
+        result = audit.driver_command(record, ROOT / 'out/driver.cpp', ROOT / 'out/driver.o', work, removed)
+        self.assertEqual(removed, [str(legacy.resolve())])
+        self.assertNotIn(str(legacy), result)
+        self.assertIn(unknown, result)
+
 
 if __name__ == '__main__':
     unittest.main()

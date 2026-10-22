@@ -84,3 +84,5 @@
 - 2026-10-22 15:43 · Q-035已发布ccaad74，逐字核验后更新base fork workflow，仅增加archive收集路径，启动第十一轮39742250205验证真实记录与三项平台库，最终结果待取证 · 提交号：ccaad74；本项待定Q-036 · reports/kernel-ci/39742250205/，reports/driver-archives-plan/workflow-install.json
 
 - 2026-10-22 15:54 · 只读核验并行仓run24/53MB预链接/3MiB固件及输入hash，独立核对iPhone donor manifest；本仓只读plan首错确认缺VFS符号，可复用桥接实现；记录真实驱动缺口、预链接豁免与固件保留区/加载器门槛及两条路径 · 提交号：Q-036已发布875482a；本项待定Q-037 · reports/parallel-progress-review/，docs/operations/2026-10-22-parallel-three-artifacts-review.md
+
+- 2026-10-22 16:03 · 第十一轮源内核再次构建成功，933份真实编译记录及四项消费者输入已取得；平台首错为不存在libsa搜索目录触发-Werror，仅在其不存在时移除，保留未知目录报错，4项保护测试通过 · 提交号：Q-037已发布e7228be；本项待定Q-038 · reports/kernel-ci/39742250205/，docs/operations/2026-10-22-darwin22-archive-build.md

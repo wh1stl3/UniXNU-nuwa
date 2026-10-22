@@ -23,3 +23,13 @@ boot-progress的13项真实实现及uefi framebuffer依赖尚未移植，watchdo
 ## 第十一轮启动
 
 ccaad74d8862a060efbed259a1335f4a79258f04已发布，运行39742250205已启动；base fork workflow安装提交02daabcbcf1387fc67c15efeaef8085614dd97f2，安装前逐字比较旧模板、安装后逐字比较新模板，只增加一条archive产物路径。安装证据reports/driver-archives-plan/workflow-install.json；启动/相同Git对象发布证据reports/kernel-ci/39742250205/。最终记录和库结果待取证。
+
+## 第十一轮实际结果与最小修复（2026-10-22 16:03）
+
+整体CI failure，源内核kernel_built=true，原始内核20,136,488字节、SHA6e918dcb…已按固定解析器只读核验。933份C/C++逐对象记录实际生成，四项关键记录唯一且原对象存在/格式通过，已完整保存到reports/kernel-ci/39742250205/compile-records/；driver-archives/audit.json保存实际argv及对应原对象hash。F-003的记录生产缺口已取得真实证据，不再只靠静态设计。
+
+首次平台编译ArmCpu失败于原始行852093：EXPORT_HDRS/libsa目录不存在，-Wmissing-include-dirs在追加-Werror后变为错误；尚未编出该driver对象，后两库未执行。不把这次整体失败写成内核构建回退，也不称archive已通过。
+
+最小修复仅去掉这一个已不存在的搜索目录，且仅当其在真实构建目录仍不存在时去掉；若目录存在则保留。其他未知缺失-I一律保留，-Werror及ABI/源语义不变；将实际移除路径写入单组件报告。4项命令保护测试通过，新增负例确认未知缺失目录仍保留。未给警告全局降级、未制造空目录或头文件，候选待下一轮真实编译。
+
+原始控制台81,771,040字节、852111行，SHA4d4e76be7fd806934cdab22f241b42df6bd32abef0a7a2afa6682352a728859e，留在out。日志摘录、构建及关键记录hash见reports/kernel-ci/39742250205/。提取器保留不超过2MB的结构化附加报告，大件仅存hash/原始out；完整二进制不入Git。

@@ -1,0 +1,80 @@
+{
+  "run_id": 39742250205,
+  "command": "gh run download 39742250205 --repo wh1stl3/UniXNU --dir out/kernel-ci/39742250205",
+  "console_path": "out\\kernel-ci\\39742250205\\nuwa-8796-source-39742250205\\nuwa-host\\kernel-console.log",
+  "console_bytes": 81771040,
+  "console_sha256": "4d4e76be7fd806934cdab22f241b42df6bd32abef0a7a2afa6682352a728859e",
+  "console_lines": 852111,
+  "excerpt_trailing_whitespace_trimmed": true,
+  "diagnostics": [
+    {
+      "original_line": 852093,
+      "text": "clang: error: no such include directory: '/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libsa' [-Werror,-Wmissing-include-dirs]"
+    },
+    {
+      "original_line": 852100,
+      "text": "RuntimeError: ArmCpu compile failed; see its actual compiler log"
+    }
+  ],
+  "iorpc_header_unchanged": true,
+  "generated_kernel_content_files": 0,
+  "object_count_all_builds": 870,
+  "xnu_target_object_count": 841,
+  "key_objects": {
+    "ast.o": [
+      {
+        "path": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/ast.o",
+        "bytes": 73896,
+        "sha256": "21a6c61593bdff78f0d3b5466b72ac7e0f8b07c7c8709df8b824dfbeea721874"
+      }
+    ],
+    "processor.o": [
+      {
+        "path": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/processor.o",
+        "bytes": 143264,
+        "sha256": "5226e6a12dfdaa02c1a515f1a5d3e6735937270fe52e8c5de7188f6b699b4d42"
+      }
+    ]
+  },
+  "kernel_built": true,
+  "device_verified": false,
+  "additional_reports": [
+    {
+      "path": "compile-records\\bsd\\DEVELOPMENT\\kern_exec.o.json",
+      "bytes": 8256,
+      "sha256": "20251ceeaa30e7bde0cca43414082db2ca006e87c38f935548ec536f11ada855",
+      "copied": true
+    },
+    {
+      "path": "compile-records\\iokit\\DEVELOPMENT\\IOPlatformExpert.cpo.json",
+      "bytes": 8813,
+      "sha256": "ba34eecd7078f8900ff0e719d226d3ea2c014656050ecb3ed48476f9f850451d",
+      "copied": true
+    },
+    {
+      "path": "compile-records\\osfmk\\DEVELOPMENT\\prng_random.o.json",
+      "bytes": 8293,
+      "sha256": "e6b5c4b47ed16c3e9e04985b490028743627fbeac664a0858edd504c102c1ecc",
+      "copied": true
+    },
+    {
+      "path": "compile-records\\osfmk\\DEVELOPMENT\\startup.o.json",
+      "bytes": 8311,
+      "sha256": "870b0c8b2ce98c8f57f8fc64a6a3c7e77228af841a9f60bed932e354faa92cf5",
+      "copied": true
+    },
+    {
+      "path": "driver-archives\\ArmCpu.log",
+      "bytes": 154,
+      "sha256": "ed686d6e50cff87dcfc3167cc432b808eefdab0d36d5bb82d4dbbfb1f41a0069",
+      "copied": true
+    },
+    {
+      "path": "driver-archives\\audit.json",
+      "bytes": 66302,
+      "sha256": "4e9ddfef5d8d5a32e1681a6d89291fa9dc55c6fba88c61bfe78ab2fbf7f0cab5",
+      "copied": true
+    }
+  ],
+  "uio_alignment_errors_observed": false
+}
