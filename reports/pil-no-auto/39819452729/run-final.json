@@ -1,0 +1,77 @@
+{
+  "conclusion": "failure",
+  "createdAt": "2026-10-22T17:04:23Z",
+  "headSha": "6af970172027872f8bebdd841bf7cd4bc9d50f86",
+  "jobs": [
+    {
+      "completedAt": "2026-10-22T17:10:40Z",
+      "conclusion": "failure",
+      "databaseId": 119966554160,
+      "name": "firmware",
+      "startedAt": "2026-10-22T17:04:28Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T17:04:29Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T17:04:28Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T17:04:30Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4",
+          "number": 2,
+          "startedAt": "2026-10-22T17:04:29Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T17:10:37Z",
+          "conclusion": "failure",
+          "name": "Install build tools",
+          "number": 3,
+          "startedAt": "2026-10-22T17:04:30Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T17:10:37Z",
+          "conclusion": "skipped",
+          "name": "Build approved candidate only",
+          "number": 4,
+          "startedAt": "2026-10-22T17:10:37Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T17:10:37Z",
+          "conclusion": "failure",
+          "name": "Preserve evidence and approved artifacts",
+          "number": 5,
+          "startedAt": "2026-10-22T17:10:37Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T17:10:38Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4",
+          "number": 10,
+          "startedAt": "2026-10-22T17:10:37Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T17:10:38Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "startedAt": "2026-10-22T17:10:38Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/wh1stl3/UniXNU-nuwa/actions/runs/39819452729/job/119966554160"
+    }
+  ],
+  "status": "completed",
+  "updatedAt": "2026-10-22T17:10:41Z",
+  "url": "https://github.com/wh1stl3/UniXNU-nuwa/actions/runs/39819452729"
+}

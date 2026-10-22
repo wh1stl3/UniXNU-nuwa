@@ -1,0 +1,50 @@
+firmware	Install build tools	2026-10-22T17:04:30.7557841Z ^[[36;1m  apt-get -o DPkg::Lock::Timeout=60 -o Acquire::Retries=2 \^[[0m
+firmware	Install build tools	2026-10-22T17:10:37.7201420Z ##[error]Process completed with exit code 124.
+firmware	Preserve evidence and approved artifacts	2026-10-22T17:10:37.7280499Z   if-no-files-found: error
+firmware	Preserve evidence and approved artifacts	2026-10-22T17:10:37.8716763Z ##[error]No files were found with the provided path: out/firmware-ci. No artifacts will be uploaded.
+--- final log lines ---
+firmware	Install build tools	2026-10-22T17:04:38.1958694Z   libmonosgen-2.0-dev libstdc++6-arm64-cross libtsan2-arm64-cross
+firmware	Install build tools	2026-10-22T17:04:38.1959017Z   libubsan1-arm64-cross lld llvm llvm-runtime mono-4.0-gac mono-devel mono-gac
+firmware	Install build tools	2026-10-22T17:04:38.1959352Z   mono-mcs mono-runtime mono-runtime-common mono-runtime-sgen mono-xbuild nasm
+firmware	Install build tools	2026-10-22T17:04:38.1959574Z   uuid-dev
+firmware	Install build tools	2026-10-22T17:04:38.2223844Z 0 upgraded, 182 newly installed, 0 to remove and 55 not upgraded.
+firmware	Install build tools	2026-10-22T17:04:38.2224256Z Need to get 96.1 MB of archives.
+firmware	Install build tools	2026-10-22T17:04:38.2224483Z After this operation, 371 MB of additional disk space will be used.
+firmware	Install build tools	2026-10-22T17:04:38.2224803Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+firmware	Install build tools	2026-10-22T17:04:39.2354791Z Get:2 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 mono-runtime-common amd64 6.8.0.105+dfsg-3.6ubuntu2 [1085 kB]
+firmware	Install build tools	2026-10-22T17:05:06.2825017Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libmono-corlib4.5-dll all 6.8.0.105+dfsg-3.6ubuntu2 [1392 kB]
+firmware	Install build tools	2026-10-22T17:05:38.4462187Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libmono-system-core4.0-cil all 6.8.0.105+dfsg-3.6ubuntu2 [342 kB]
+firmware	Install build tools	2026-10-22T17:05:47.0609615Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libmono-system-numerics4.0-cil all 6.8.0.105+dfsg-3.6ubuntu2 [53.3 kB]
+firmware	Install build tools	2026-10-22T17:05:48.9709893Z Get:6 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libmono-system-xml4.0-cil all 6.8.0.105+dfsg-3.6ubuntu2 [910 kB]
+firmware	Install build tools	2026-10-22T17:06:10.8615917Z Get:7 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libmono-system-security4.0-cil all 6.8.0.105+dfsg-3.6ubuntu2 [125 kB]
+firmware	Install build tools	2026-10-22T17:06:14.8876713Z Get:8 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libmono-system-configuration4.0-cil all 6.8.0.105+dfsg-3.6ubuntu2 [60.4 kB]
+firmware	Install build tools	2026-10-22T17:06:16.8192603Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libmono-system4.0-cil all 6.8.0.105+dfsg-3.6ubuntu2 [902 kB]
+firmware	Install build tools	2026-10-22T17:06:38.7037742Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libmono-security4.0-cil all 6.8.0.105+dfsg-3.6ubuntu2 [106 kB]
+firmware	Install build tools	2026-10-22T17:06:41.2438398Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 mono-4.0-gac all 6.8.0.105+dfsg-3.6ubuntu2 [174 kB]
+firmware	Install build tools	2026-10-22T17:06:45.6307240Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 mono-gac all 6.8.0.105+dfsg-3.6ubuntu2 [19.4 kB]
+firmware	Install build tools	2026-10-22T17:06:46.4744938Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 mono-runtime-sgen amd64 6.8.0.105+dfsg-3.6ubuntu2 [1934 kB]
+firmware	Install build tools	2026-10-22T17:07:27.1752831Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 mono-runtime amd64 6.8.0.105+dfsg-3.6ubuntu2 [15.2 kB]
+firmware	Install build tools	2026-10-22T17:07:28.1412480Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libmono-corlib4.5-cil all 6.8.0.105+dfsg-3.6ubuntu2 [13.2 kB]
+firmware	Install build tools	2026-10-22T17:07:29.0281555Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 ca-certificates-mono all 6.8.0.105+dfsg-3.6ubuntu2 [18.9 kB]
+firmware	Install build tools	2026-10-22T17:07:30.1851093Z Get:17 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 build-essential amd64 12.10ubuntu1 [4928 B]
+firmware	Install build tools	2026-10-22T17:07:30.9914448Z Get:18 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 clang amd64 1:18.0-59~exp2 [5846 B]
+firmware	Install build tools	2026-10-22T17:07:31.7820430Z Get:19 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 gcc-13-aarch64-linux-gnu-base amd64 13.3.0-6ubuntu2~24.04.1cross1 [51.9 kB]
+firmware	Install build tools	2026-10-22T17:07:33.3866241Z Get:20 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 cpp-13-aarch64-linux-gnu amd64 13.3.0-6ubuntu2~24.04.1cross1 [10.8 MB]
+firmware	Install build tools	2026-10-22T17:10:37.7201420Z ##[error]Process completed with exit code 124.
+firmware	Preserve evidence and approved artifacts	﻿2026-10-22T17:10:37.7278177Z ##[group]Run actions/upload-artifact@v4
+firmware	Preserve evidence and approved artifacts	2026-10-22T17:10:37.7278341Z with:
+firmware	Preserve evidence and approved artifacts	2026-10-22T17:10:37.7280017Z   name: nuwa-firmware-39819452729
+firmware	Preserve evidence and approved artifacts	2026-10-22T17:10:37.7280191Z   path: out/firmware-ci
+firmware	Preserve evidence and approved artifacts	2026-10-22T17:10:37.7280499Z   if-no-files-found: error
+firmware	Preserve evidence and approved artifacts	2026-10-22T17:10:37.7280645Z   compression-level: 6
+firmware	Preserve evidence and approved artifacts	2026-10-22T17:10:37.7280761Z   retention-days: 14
+firmware	Preserve evidence and approved artifacts	2026-10-22T17:10:37.7280888Z   overwrite: false
+firmware	Preserve evidence and approved artifacts	2026-10-22T17:10:37.7281003Z   include-hidden-files: false
+firmware	Preserve evidence and approved artifacts	2026-10-22T17:10:37.7281133Z env:
+firmware	Preserve evidence and approved artifacts	2026-10-22T17:10:37.7281235Z   GIT_LFS_SKIP_SMUDGE: 1
+firmware	Preserve evidence and approved artifacts	2026-10-22T17:10:37.7281358Z   PYTHONUNBUFFERED: 1
+firmware	Preserve evidence and approved artifacts	2026-10-22T17:10:37.7281476Z   FW_PROFILE: pil-no-auto
+firmware	Preserve evidence and approved artifacts	2026-10-22T17:10:37.7281600Z ##[endgroup]
+firmware	Preserve evidence and approved artifacts	2026-10-22T17:10:37.8694837Z (node:2731) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+firmware	Preserve evidence and approved artifacts	2026-10-22T17:10:37.8695430Z (Use `node --trace-deprecation ...` to show where the warning was created)
+firmware	Preserve evidence and approved artifacts	2026-10-22T17:10:37.8716763Z ##[error]No files were found with the provided path: out/firmware-ci. No artifacts will be uploaded.

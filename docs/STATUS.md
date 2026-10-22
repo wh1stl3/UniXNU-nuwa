@@ -1,10 +1,10 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-23 01:07（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-23 01:12（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
-**R-009 A已获批准并完成空AUTO解析静态审查；固件源2ab6827d保留PIL、仅取消AUTO ABL，独立profile33项输入检查通过，CI39819452729已从固定设备提交6af9701启动；本地新FD打包/试启动门已备妥，待真实产物。nuwa此前已回Android完成1，尚未进入XNU。**
+**R-009 A已获批准并完成空AUTO解析静态审查；固件源2ab6827d保留PIL、仅取消AUTO ABL，独立profile33项输入检查通过，CI39819452729在APT安装超时124，尚未编译且无固件产物；已扩大换源到全部活跃APT配置，待同一固件输入重试。nuwa此前已回Android完成1，尚未进入XNU。**
 
 [本轮构建/试验记录](operations/2026-10-23-pil-no-auto-build-trial.md)，reports/pil-no-auto/。
 
@@ -44,7 +44,9 @@ R-008首次与用户要求的同包录像复试，均先重新进入bootloader�
 
 ## 下一步
 
-1. 跟进已启动的CI39819452729（device6af9701、firmware2ab6827d、pil-no-auto），按真实终态/首错推进；当前run-initial.json保留状态，不凭旧产物替代新FD。
+**用户最新收尾指令：只完成当前R-009这笔实机验证，确认Android完成1，写好文档后停下；后续问题仅记录为下一轮起点。**
+
+1. CI39819452729终态failure，真实首错为APT仍从Azure慢速下载cpp-13-aarch64并触及360秒上限；修正全部APT源覆盖后重试，固件2ab6827d不变。旧run-final/failure-selected.log保留，未执行本轮实机。
 2. 构建成功后下载并严格检查实际RAW SHA/空AUTO、PILDxe原SHA、正确相对头0、SEC标记、四EFI和FD；再按R-009 A受限v4打包/临时试启动并以Android完成1收尾。B未获批准，不自动切换。
 3. H-003连续录像仍可补首屏时序，不阻塞静态/构建工作。R-009暂停已解除，Git/GitHub持续授权。
 4. 入口/BDS打通后仍需目标ADT、内存窗口、真实provider配置、完整预链接与负载才能推进XNU。无QEMU或XNU实机执行通过结论。

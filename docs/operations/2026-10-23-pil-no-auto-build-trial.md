@@ -35,3 +35,11 @@
 ## CI已启动与本地打包门
 
 CI39819452729于2026-10-23 01:04:23+08由固定设备6af9701启动，选择pil-no-auto；run-initial.json保存本次实际状态，编译尚未以成功验收。本地prepare-pil-no-auto-boot.py固定新profile并要求实际RAW/原PIL/正确shim；试启动工具只接受R-009对应source/hash/配置范围。两个负路径验证旧39809636575在检查器及打包器被拒绝，且没有输出新包，见reject-old-profile.json。尚未操作设备，读前置时实际nuwa/kalama Android=1，三个分区hash和恢复源SHA已记录。
+
+## 用户收尾边界
+
+用户追加“做完这笔实机验证就停下 写好文档”。本轮仅完成当前R-009验证、恢复/确认Android完成1并保存证据与文档；其后不展开新镜像或下一轮修复，新增问题只列下一轮起点。见stop-after-trial.json。
+
+## 首轮CI的实际失败与最小前置修复
+
+39819452729在01:10:37+08结束：Install build tools退出124，未执行Build步骤，无固件包。失败日志最后下载是cpp-13-aarch64-linux-gnu 10.8MB，仍为http://azure.archive.ubuntu.com；前面的mono包也逐个慢速下载。没有源码编译首错，不能归因PIL或空AUTO。旧workflow只替换ubuntu.sources，现扩大到/etc/apt下depth<=2的sources.list、*.list、*.sources，逐一记录有效源并检查Azure主机名已清除；保持签名仓库、包版本选择、超时和固件输入不变。是否完全解决以重试实际日志为准。

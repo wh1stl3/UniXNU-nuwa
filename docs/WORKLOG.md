@@ -176,3 +176,5 @@
 2026-10-23 01:05 · R-009 A获批，空AUTO路径静态通过；固件2ab6827d仅替换PIL配置，33输入profile与CI新头/RAW门准备完成，尚无新产物 · Q-079（本条提交） · docs/operations/2026-10-23-pil-no-auto-build-trial.md；reports/pil-no-auto/
 
 2026-10-23 01:07 · 固定6af9701触发CI39819452729，新profile打包/试启动门及拒绝旧产物的负路径通过，设备只读前置Android=1 · Q-080（本条提交） · reports/pil-no-auto/39819452729/run-initial.json；reports/pil-no-auto/reject-old-profile.json
+
+2026-10-23 01:12 · CI39819452729工具安装超时124且未编译；据真实Azure下载日志将换源覆盖扩至全部APT源，固件输入不变，准备重试以完成获批单次实机 · Q-081（本条提交） · reports/pil-no-auto/39819452729/run-final.json；failure-selected.log

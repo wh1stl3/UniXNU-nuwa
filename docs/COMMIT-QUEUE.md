@@ -860,3 +860,13 @@
 [Evidence] 两个负路径拒绝旧R-007产物且未生成包，实际nuwa/kalama Android完成1，恢复源ef558db2；CI输入2ab6827d已固定。
 [Risk] 新FD真实编译与实机结果待取证；未下发新镜像，board/feed及内存图不变，不以CI排队代替构建成功。
 ```
+
+## Q-081 · APT超时取证及换源覆盖修正
+
+```text
+[unixnu-nuwa][build] 修正固件CI遗漏APT源导致的Azure下载超时
+
+[Change] 保存39819452729失败终态与首错日志，换源由单个ubuntu.sources扩展至所有活跃list/sources并检查无Azure地址残留。
+[Evidence] 安装步骤6分钟超时124，末项cpp-13-aarch64下载仍走Azure；构建未开始且无固件产物，固件2ab6827d和包清单不变。
+[Risk] 新runner实际下载与编译待重试，尚未执行本轮实机；维持用户要求的本次试验后停止边界。
+```
