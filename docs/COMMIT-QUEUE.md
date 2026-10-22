@@ -618,3 +618,14 @@
 [Evidence] 33项静态断言通过，实际FD分支和TE/map指向0xa710a838并保存x0；构建报告链接FrameBufferSerialPortLib和Null DebugAgent，归档ABL仅解压到RAM查看路径字符串。
 [Risk] 实际L/EL/MMU/cache与DT可达性仍未验证，屏幕日志不能定位黑屏阶段；设备暂停保持，无设备访问、新镜像、板值/feed或_verified改动。
 ```
+
+
+## Q-061 · 非显示日志通道离线评估
+
+```text
+[unixnu-nuwa][docs] 确认USB日志导出接口并限定早期故障覆盖范围
+
+[Change] 比较USB CDC、早期RAM补发、UART和文件日志，列出Mu开源日志组件及安全缓冲区/USB功能接线待办。
+[Evidence] nuwa DXE配置和CI39764322744打包记录包含高通USB设备驱动，协议头提供Start/Send/HandleEvent；当前SEC仍链接帧缓冲输出。
+[Risk] USB导出尚未实现或实机验证，DXE前挂死不能保证回收；RAM地址/生命周期与UART路由仍TODO，无设备访问、新镜像或board/feed改动。
+```

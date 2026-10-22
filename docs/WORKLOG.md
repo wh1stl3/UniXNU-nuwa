@@ -130,3 +130,5 @@
 2026-10-22 20:27 · 用户告知另一轮开始推送镜像，暂停本仓全部ADB/fastboot/USB查询；Q-058证据已同步，无运行中的设备命令，设备当前状态不再轮询 · 本提交（Q-059） · docs/STATUS.md实机操作暂停；上一轮reports/v4-firmware-trial/
 
 2026-10-22 20:53 · 离线完成ARM64头/BootShim/FD→SEC与日志路由核对，33项静态断言通过；确认屏幕独占日志及SMMU前置盲区，实际ABL交接/cache条件仍TODO，设备暂停不变 · 本提交（Q-060） · reports/arm64-sec-entry-audit/audit.json；docs/operations/2026-10-22-arm64-sec-entry-audit.md
+
+2026-10-22 21:04 · 完成USB/RAM/UART/文件日志出口离线评估：现有高通设备栈可作为DXE导出基础，早期挂死仍需独立记录与回收；Mu日志框架列为复用候选，未实现或实机验证 · 本提交（Q-061） · docs/operations/2026-10-22-log-export-options.md
