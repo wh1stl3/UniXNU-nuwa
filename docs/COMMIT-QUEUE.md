@@ -740,3 +740,13 @@
 [Evidence] ArmCpu和ArmDTPlatform源码与CI记录一致，内核catalogue含两类匹配；39805110487依赖安装4分23秒成功进入构建。
 [Risk] 未生成ADT或证明平台运行，ARCH_TIMER和boot-progress仍禁用，固件结果待取证；board/feed及_verified不变。
 ```
+
+## Q-072 · 独立固件构建验收与SEC诊断审阅
+
+```text
+[unixnu-nuwa][firmware] 验收独立固件四模块并提交SEC阶段诊断范围
+
+[Change] 保存39805110487构建与665项下载审计；准备仅SEC阶段WARN的源码补丁预览，R-007列两种日志路径并停在新诊断镜像生成前。
+[Evidence] FD3MiB/SHA7f6f16c8与112B shim9346a527静态检查通过；Darwin22完整EFI编译链接成功，诊断patch严格RAM应用和git apply --check通过。
+[Risk] 新FD无XNU且未实机执行；诊断patch未编译或应用，帧缓冲可见性/独立日志/入口条件仍未验证，board/feed及内存图不变。
+```

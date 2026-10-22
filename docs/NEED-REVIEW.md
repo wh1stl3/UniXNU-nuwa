@@ -12,7 +12,23 @@
 
 | 编号 | 主题 | 需要用户做什么 |
 | --- | --- | --- |
-| — | 无 | — |
+| R-007 | SEC阶段诊断固件与新临时启动容器 | 批准A的有限诊断范围，或选择B独立日志通道 |
+
+## R-007 · 新SEC阶段诊断镜像（open，未生成/未启动）
+
+背景：独立固件CI39805110487的四EFI/FD/BootShim及665项下载产物静态检查通过，但旧v4实机仅黑屏，未定位BootShim/SEC/DXE。新FD含Darwin22加载器修复，但不含XNU；不能期待该ABI修复本身解决未到加载器的黑屏。既有R-004 A只覆盖固定接线构建与审查，新SEC诊断改动和新boot容器超出这次已完成范围。触发AGENTS.md§3第3类：“新建或重写任何诊断 / 固件镜像”。
+
+**候选A（倾向）：生成有限SEC阶段标记诊断版，沿已有可恢复授权临时试启动。** 源码补丁0005-nuwa-sec-stage-trace.patch已准备，固定原SEC LF SHAfd28b903，补丁SHAae5d5e16，patched SHA6af8dd4d；RAM应用与git apply --check通过。只在既有帧缓冲出口增加六个阶段WARN与阶段返回状态/已有x0值，并移除SEC全屏清零以保留文字；原SMMU、内存、HOB、解压和DXE调用不跳过，不增MMIO/内存地址。完整范围见operations/2026-10-22-dedicated-firmware-build.md和sec-trace-preview.json。
+
+代价/限制：需另一次四EFI/FD/BootShim构建、独立静态检查及新v4临时boot容器；仍依赖面板显示，不能导出USB文本或定位ABL/BootShim/最早汇编，未显示时结论仍有限。打印与flush可能改变时序，不能把实验版当生产修复。后续试启动需用户查看屏幕，按D-016隔离bootloader状态，结束恢复Android=1；不刷分区、不改槽位。
+
+**候选B：先完成独立USB日志驱动与早期RAM记录/回收，再生成诊断镜像。** 优点是DXE可向电脑回传文本，具备证据的RAM通道才能补早期日志；代价是USB描述符/事件/PHY角色、RAM所有权/cache/跨重启回读需实际开发与验证。当前没有安全缓冲区/持久回读证明，Android ramoops与固件FD重叠，不能直接选用；只做DXE USB仍不能覆盖更早入口。未实现、未估计完成时间。
+
+倾向A：已有可审查的单文件补丁与匹配的当前splash保留区证据，先以有限范围缩小SEC的平台初始化/内存/解压阶段；不承诺一定可见，若仍黑屏再转独立通道/ABL交接排查。
+
+**需要用户批准的最小范围：A这一份补丁对应的诊断四EFI/FD/BootShim生成及静态审查，并仅复用原厂已接受的v4头重新打包raw shim+FD临时容器（只更新kernel_size，无新增DTB/FAT/XNU）；临时设备操作沿既有可恢复fastboot授权，执行前重新核对nuwa和原厂恢复源，结束恢复Android=1。** 不包含v1大ramdisk对照、FAT/内核预链接、任何board/内存/地址/slot/flash/erase或_verified=true。新容器的完整SHA待获批构建后记录，当前不编造。
+
+本轮停在生成新诊断镜像之前；补丁未接活动profile，未修改D:/Code/uefi-nuwa源码，未生成此诊断FD或boot.img。Git操作已有持续授权，不重复申请。
 
 ## R-004 · 加载器候选编译与产物审计（approved A，已完成）
 

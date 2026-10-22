@@ -1,0 +1,88 @@
+--- a/Silicon/Silicium/SiliciumPkg/Sec/Sec.c
++++ b/Silicon/Silicium/SiliciumPkg/Sec/Sec.c
+@@ -21,29 +21,16 @@
+ // First argument (x0) of the previous stage, saved by ModuleEntryPoint.S
+ extern UINT64  gSecEntryArg0;
+ 
++// Candidate only: the existing framebuffer DebugLib is the sole output.
++#define NUWA_ENTRY_TRACE(Stage) \
++  DEBUG ((EFI_D_WARN, "[NUWA-ENTRY] %a x0=0x%lx\n", (Stage), gSecEntryArg0))
++
+ #ifndef MDEPKG_NDEBUG
+-STATIC
+-VOID
+-ClearFrameBuffer (VOID)
+-{
+-  EFI_MEMORY_REGION_DESCRIPTOR FrameBufferRegion;
+-
+-  // Locate "Display Reserved" Memory Region
+-  LocateMemoryRegionByName ("Display Reserved", &FrameBufferRegion);
+-  LocateMemoryRegionByName ("Display_Reserved", &FrameBufferRegion);
+-
+-  // Clear Memory Region
+-  if (FrameBufferRegion.Address != 0 && FrameBufferRegion.Length != 0) {
+-    ZeroMem ((VOID *)FrameBufferRegion.Address, FrameBufferRegion.Length);
+-  }
+-}
+-
+ STATIC
+ VOID
+ PrintFirmwareVersion (VOID)
+ {
+-  // Clear Frame Buffer
+-  ClearFrameBuffer ();
++  // Diagnostic candidate: preserve early stage text; do not clear splash memory.
+ 
+   // Print UEFI Version Message
+   DEBUG ((EFI_D_WARN, "\n"));
+@@ -97,8 +84,11 @@
+ {
+   EFI_STATUS Status;
+ 
++  NUWA_ENTRY_TRACE ("C-before-platform");
++
+   // Do Platform Specific Initialization
+   PlatformInitialize ();
++  NUWA_ENTRY_TRACE ("C-after-platform");
+ 
+ #ifndef MDEPKG_NDEBUG
+   // Initialize Serial Port
+@@ -116,7 +106,9 @@
+ #endif
+ 
+   // Initialize Memory
++  NUWA_ENTRY_TRACE ("before-memory");
+   Status = InitializeMemory ();
++  DEBUG ((EFI_D_WARN, "[NUWA-ENTRY] memory status=%r\n", Status));
+   if (EFI_ERROR (Status)) {
+     return;
+   }
+@@ -128,7 +120,9 @@
+   SetBootMode (BOOT_WITH_DEFAULT_SETTINGS);
+ 
+   // Initialize Platform HOBs
++  NUWA_ENTRY_TRACE ("before-platform-hobs");
+   Status = PlatformPeim ();
++  DEBUG ((EFI_D_WARN, "[NUWA-ENTRY] platform-hobs status=%r\n", Status));
+   if (EFI_ERROR (Status)) {
+     return;
+   }
+@@ -145,14 +139,18 @@
+   ProcessLibraryConstructorList ();
+ 
+   // Decompress all FVs
++  NUWA_ENTRY_TRACE ("before-fv-decompress");
+   Status = DecompressFirstFv ();
++  DEBUG ((EFI_D_WARN, "[NUWA-ENTRY] fv-decompress status=%r\n", Status));
+   if (EFI_ERROR (Status)) {
+     DEBUG ((EFI_D_ERROR, "Failed to Decompress FV! Status = %r\n", Status));
+     return;
+   }
+ 
+   // Load DXE Core
++  NUWA_ENTRY_TRACE ("before-dxe-core");
+   Status = LoadDxeCoreFromFv (NULL, 0);
++  DEBUG ((EFI_D_WARN, "[NUWA-ENTRY] dxe-core returned=%r\n", Status));
+   if (EFI_ERROR (Status)) {
+     DEBUG ((EFI_D_ERROR, "Failed to Load DXE Core! Status = %r\n", Status));
+   }

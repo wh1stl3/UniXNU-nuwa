@@ -352,3 +352,6 @@ D-016补充（2026-10-22 20:53）：离线实际FD/TE/map入口一致，SEC WARN
 - 证据：用户要求补齐uefi-nuwa并追问本地目录；reports/uefi-nuwa/；operations/2026-10-22-dedicated-uefi-repository.md。
 
 设备脚本/板描述/补丁与证据留在UniXNU-nuwa；固件改动在独立uefi-nuwa维护，使用固定提交接入。已有enuma处于同一GitHub fork网络，使用独立Git仓导入Mu历史，保持enuma和上游main不变；nuwa开发分支从已验证6c67550建立，不直接升级Mu基线。已入固件仓的patch不重复应用，旧manifest和patch保留以复现历史。用户要求的D:/Code/uefi-nuwa作为独立本地源码目录，旧资料库保持只读；源码仓建立和静态检查不构成镜像或实机阶段验收。
+
+
+D-017/D-018补充（2026-10-22 23:47）：独立固件CI39805110487及665项下载产物静态检查通过，Darwin22 ABI补丁完成真实DarwinBoot EFI编译链接；FD3MiB/SHA7f6f16c8、shim112B保持9346a527。未生成Android容器或执行设备，运行ABI未验证；新SEC阶段诊断范围另列R-007，未应用。证据reports/firmware-ci/39805110487/。
