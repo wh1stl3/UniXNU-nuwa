@@ -46,3 +46,9 @@ GitHub CLI原OAuth授权缺workflow scope，第一次写入返回404；只读确
 首轮最终失败：镜像20260824.0482.1/macOS15.7.9、Xcode16.4(16F6)、SDK18.5、Apple clang17；IIG/MIG存在，48项补丁实际应用、headers步骤和firehose构建完成（lipo报告arm64）。build.json统计所有build子目录共有29个.o，未把它当成29个XNU目标对象或完整内核证据。首个真实错误在run.log:4503：旧`-enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang`不被识别；没有内核产物。
 
 新增`patches/xnu-8796-ci-candidates/clang17-zero-init.patch`只删除8796 MakeInc.def:309这一个过渡开关，保留:308的`-ftrivial-auto-var-init=zero`。Git apply --check返回0；按照实际文件名顺序检查原48项+1项，49项172 hunks静态检查通过且清零选项仍在。证据`compatibility-check.json`与`failure-analysis.json`。修复待真实重跑，原49独立38/11及后续48项统计不改写。
+
+## 第二轮运行
+
+兼容修复已发布`dbbf029d8c9893759f86d828507e309ade8d11eb`，[第二轮39716728005](https://github.com/wh1stl3/UniXNU/actions/runs/39716728005)已启动，当前编译中。调度命令：`scripts/start-kernel-ci.ps1 -DeviceRef dbbf029d8c9893759f86d828507e309ade8d11eb`；跟踪器传`-RunId 39716728005`。记录时无最终结果。
+
+发布后`post-publish-workspace-check.json`确认三来源树tracked status均空，board SHA-256仍8601b3e5…，基座feed仍dec145fe…；完整hash在JSON，没有改变只读来源树或已批准板配置。

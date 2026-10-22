@@ -11,8 +11,14 @@
 
 1. `AGENTS.md` —— 只读边界、版本管理、文档五件套、硬停四类。**动手前必读**。
 2. `docs/STATUS.md` —— 现在做到哪、下一步、已知坑。
-3. `docs/DECISIONS.md` —— 已定技术决策（`D-001` 内存窗口），带代码证据。
-4. `docs/handoff-route.md` —— 路线交接（三段式架构、4K/16K 岔路、补丁可移植性）。
+3. `docs/DECISIONS.md` —— 已定决策：D-002内存窗口、4KiB、iPhone donor与8796路线，带证据。
+4. `docs/inherited/unixnu-official-2026-10-22.md` —— 官方移植指南摘录、board schema与bring-up契约；旧handoff-route仅作历史参照。
+
+## 仓库与构建
+
+[UniXNU基座fork](https://github.com/wh1stl3/UniXNU)承载Actions，本仓是独立设备输入；固件仍规划为单独uefi-nuwa。正式构建从基座用`-D ../UniXNU-nuwa`接入，当前board保持example=true，尚不能作为完整设备构建配置。
+
+首轮云端源内核入口见`docs/operations/2026-10-22-source-kernel-ci.md`。它复用固定75bc基座配方，编译8796源码，不运行donor预链接或镜像打包。构建状态只以`docs/STATUS.md`及原始CI日志为准；源编译与QEMU结果均不能当成实机通过。
 
 ## 目录
 

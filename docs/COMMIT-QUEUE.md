@@ -151,3 +151,13 @@
 [Evidence] reports/kernel-ci/39715232540/run.log:4503；toolchain.log；failure-analysis.json；compatibility-check.json：49项172 hunks精确检查通过；source-input-check.json：bash语法检查通过。
 [Risk] 首轮完整内核构建失败；此修复尚待真实CI重跑，不代表Darwin22驱动或donor预链接通过，feed/board不变，无固件或设备动作。
 ```
+
+## Q-016 · 第二轮固定输入与边界复核
+
+```text
+[unixnu-nuwa][build] 启动clang17修复后的第二轮源编译并复核来源边界
+
+[Change] 新增限定仓库和完整device_ref的手动调度脚本，记录第二轮构建；更新README当前决策与设备仓入口，保存发布后三来源树和board/feed哈希检查。
+[Evidence] https://github.com/wh1stl3/UniXNU/actions/runs/39716728005，device_ref=dbbf029d8c9893759f86d828507e309ade8d11eb；reports/official-ci-plan/post-publish-workspace-check.json。
+[Risk] 记录时仍编译中，无内核链接成功证据；设备archive ABI、donor预链接、QEMU及实机未验证。
+```

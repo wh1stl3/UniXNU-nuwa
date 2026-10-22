@@ -1,10 +1,10 @@
 # STATUS
 
-> 当前唯一真相；历史只追加WORKLOG。更新：2026-10-22 11:21（Asia/Shanghai）。
+> 当前唯一真相；历史只追加WORKLOG。更新：2026-10-22 11:28（Asia/Shanghai）。
 
 ## 当前结论
 
-公开基座fork及设备仓已创建并发布13项积压里程碑。[首轮CI 39715232540](https://github.com/wh1stl3/UniXNU/actions/runs/39715232540)失败：Xcode16.4/iPhoneOS18.5/IIG/MIG可用，48项补丁已应用、ARM64 firehose真实构建完成，随后clang17拒绝8796旧启用开关。已准备仅移除废弃开关、保留变量清零的补丁，48+1项精确内存顺序及bash语法静态检查通过，待重跑。**内核构建尚未通过**。见[首轮CI说明](operations/2026-10-22-source-kernel-ci.md)。
+公开基座fork及设备仓已创建。[首轮CI](https://github.com/wh1stl3/UniXNU/actions/runs/39715232540)失败于clang17拒绝8796过期启用开关；保留变量清零的修复已提交推送dbbf029，[第二轮39716728005](https://github.com/wh1stl3/UniXNU/actions/runs/39716728005)正在编译。首轮已证明Xcode16.4/SDK18.5/IIG/MIG可用、48项实际应用及ARM64 firehose真实构建；修复后48+1项精确顺序和bash静态检查通过。**内核构建尚未通过**。见[CI说明](operations/2026-10-22-source-kernel-ci.md)。
 
 ## 当前边界
 
@@ -23,7 +23,7 @@
 
 ## 下一步
 
-1. 发布clang17过渡开关修复并用精确device_ref重跑。首轮原始run.log、toolchain.log、build.json与失败分析已保存reports/kernel-ci/39715232540/。
+1. 跟踪第二轮39716728005（device_ref=dbbf029），按真实首个失败继续修复。首轮原始证据已保存reports/kernel-ci/39715232540/；第二轮状态见对应run.json。
 2. 按第一处真实失败修复8796源构建兼容性；成功后检查Mach-O、对象/符号及版本证据，仍不宣称预链接/QEMU/实机通过。
 3. 完成Darwin22设备archive、boot-progress/watchdog、nuwa defconfig及donor kernelcache解析，接回正式-D设备构建入口；feed切换独立处理。
 4. 板值/内存/地址、镜像或设备动作命中硬停时先写NEED-REVIEW再停。只差人按实体键的项记PENDING-HUMAN后继续。
