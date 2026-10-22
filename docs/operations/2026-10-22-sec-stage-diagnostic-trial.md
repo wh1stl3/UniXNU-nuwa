@@ -27,3 +27,13 @@ config/firmware-sec-trace-profile.json从稳定dedicated profile派生，只改�
 scripts/prepare-sec-trace-boot.py按run_id定位实际artifact，严格比较runner recipe/profile/runid，重新执行全部产物检查和SEC标记门，再哈希核对原厂boot、验证v4/无ramdisk/无signature，仅写kernel_size、拼该轮shim+FD并独立重解析边界/写后hash。只写新out/trial-boot/sec-trace-RUN目录，拒绝覆盖；报告放reports/sec-trace/RUN，不含序列号。
 
 scripts/trial-v4-firmware.py新增--package，仅允许reports/sec-trace下R-007 A/v4/无DTB/FAT/XNU的包，候选路径限out/trial-boot。原厂恢复哈希必须匹配；launch还核对候选哈希，recover不依赖候选文件仍存在或内容正常。launch/recover均先fastboot reboot bootloader重查nuwa，结束显式确认Android=1；不调用flash/erase/set_active。帮助入口已检查，实际设备行为以本轮实测记录为准。
+
+## 诊断固件与包实际生成（2026-10-23 00:05）
+
+CI39809636575 success，00:03:47结束；实际编译5分32秒。31项来源与构建后保护通过；下载后全部665项inventory文件hash、四模块PE/GUID/DEPEX/HOB/PCD/嵌入一致性、SEC TE中全部六阶段/状态格式字符串及BootShim复制量检查通过。字符串存在只作静态检查，不构成调用执行证明。
+
+诊断FD3145728B，SHA9ea347a49e51472adac987cf12e20f9e0d99453a23f2113ad24efcd0a07f2eaf；112B shim仍9346a527。受限v4包3153920B，SHAfbb7940a8ee8cb5f2577a30bc2e5fb5bc31e1b84930c05b40c6304dfe970bcde，唯头字段kernel_size改变，无ramdisk/signature/DTB/FAT/XNU；拼接边界与写后hash检查通过。报告artifact-inspection.json/package.json，二进制仅out/trial-boot/sec-trace-39809636575/boot-sec-trace-v4.img。
+
+00:01只读恢复核对：实际nuwa/kalama、Android完成1、槽A，当前内核5.15.195-MorizukiNeko-260620LTSC为自定义Android内核。当前boot_a SHAef558db2与vendor_boot_a SHA5ad2a9dc分别匹配已有备份；init_boot_a SHA19e95d95匹配上轮已root记录，与备份996572d3不同。恢复只临时加载已验证Android备份boot、继续使用安装的vendor_boot/init_boot，不覆盖rooted init_boot，不称完整恢复为原厂系统。此前文中的“原厂恢复源”沿用文件角色命名，实际是已验证的原Android备份。
+
+新增只读USB VID/PID快照工具，InstanceId仅用于提取VID/PID，不保存序列号；试前状态在usb-before.json。尚未试启动；后续launch/recovery分开记录并确认Android=1。

@@ -780,3 +780,13 @@
 [Evidence] 39809636575固定f897f90/sec-trace，依赖48秒成功后进入构建；两脚本帮助入口正常，v4头/原厂恢复哈希及输出边界保持严格检查。
 [Risk] 实际诊断产物/包和实机结果待取证；尚未操作设备或更改board/feed/内存/槽位，屏幕与早期入口仍未验证。
 ```
+
+## Q-075 · SEC诊断产物验收与临时启动包
+
+```text
+[unixnu-nuwa][firmware] 验收SEC诊断固件并生成受限v4临时包
+
+[Change] 保存39809636575成功证据及665项检查，生成仅kernel_size更新的shim加FD容器，加入不含序列号的USB状态采集。
+[Evidence] FD9ea347a4、shim9346a527，SEC实际TE标记完整；3153920B包SHAfbb7940a，nuwa身份/Android完成及boot和vendor_boot备份哈希匹配。
+[Risk] 包不含XNU且尚未执行；当前rooted init_boot保留，屏幕/SEC/DXE与恢复结果以随后实测为准，board/feed与内存图不变。
+```

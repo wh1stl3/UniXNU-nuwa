@@ -1,0 +1,26 @@
+{
+  "approval": "R-007 A",
+  "scope": "SEC diagnostic firmware-only temporary v4 container",
+  "run_id": 39809636575,
+  "firmware_commit": "5e4a8c814b89f62a4ba2bc145249314fed5db787",
+  "image_path": "out/trial-boot/sec-trace-39809636575/boot-sec-trace-v4.img",
+  "image_bytes": 3153920,
+  "image_sha256": "fbb7940a8ee8cb5f2577a30bc2e5fb5bc31e1b84930c05b40c6304dfe970bcde",
+  "original_boot_sha256": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+  "fd_sha256": "9ea347a49e51472adac987cf12e20f9e0d99453a23f2113ad24efcd0a07f2eaf",
+  "shim_sha256": "9346a527441b242c69414fd7e3d6fa17813f281d562fef13d9ba8373d39007a9",
+  "header_version": 4,
+  "page_bytes": 4096,
+  "kernel_bytes": 3145840,
+  "changed_header_fields": [
+    "kernel_size"
+  ],
+  "ramdisk_bytes": 0,
+  "signature_bytes": 0,
+  "appended_dtb": false,
+  "fat_included": false,
+  "xnu_included": false,
+  "dt_source": "Installed nuwa vendor_boot via ABL; actual candidate handoff unverified",
+  "candidate_device_executed": false,
+  "recovery_required": true
+}

@@ -1,10 +1,10 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-23 00:00（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-23 00:06（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
-**合并版8796内核、独立uefi-nuwa的四EFI/FD/BootShim均已真实编出并独立静态核验。尚未进入XNU；R-007 A已明确批准，诊断固件正在接入CI，随后检查、临时试启动并恢复Android。**
+**合并版8796内核、独立uefi-nuwa的四EFI/FD/BootShim均已真实编出并独立静态核验。尚未进入XNU；R-007 A已明确批准，诊断CI39809636575与临时包静态检查通过，下一步按已授权试启动并恢复Android。**
 
 | 输入 | 实际状态 |
 | --- | --- |
@@ -35,7 +35,7 @@ SEC现有日志仅帧缓冲，第一条正常文字前有SMMU调整与45MiB清�
 
 ## 下一步
 
-1. R-007 A已批准：SEC诊断源码固定在uefi-nuwa/codex/nuwa-sec-trace@5e4a8c8，只改SEC.c；31项profile输入检查通过。诊断CI39809636575固定device=f897f90，安装48秒通过，正在真实构建，继续读取实际首错与结果。
+1. R-007 A已批准：SEC诊断源码固定在uefi-nuwa/codex/nuwa-sec-trace@5e4a8c8，只改SEC.c；31项profile输入检查通过。诊断CI39809636575固定device=f897f90，success；665项产物检查与实际SEC全部阶段标记检查通过。
 2. 诊断输入/源哈希已固定；编译四EFI/FD/BootShim并独立检查，包括实际SEC TE中的六阶段标记；再准备受限v4 raw shim+FD临时容器，不混旧r6 FAT/旧内核/6GiB ADT，不自动改v1或添加XNU。具体SHA由实际产物取得。
 3. 临时实机验证沿既有可恢复授权；先核对身份/原厂恢复源，观察阶段文字，结束恢复Android=1。若无文字仍不能断言未进SEC；继续ABL交接/独立日志方案，不靠更多DEBUG宣称USB日志已建立。
 4. 后续再完成目标ADT、内存窗口、真实provider/定时器运行配置及预链接/载荷集成。未知字段保持TODO；QEMU/静态结果不替代实机。
@@ -48,4 +48,6 @@ board/feed/内存图及所有_verified不变；4KiB、iPhone10,3/d22ap/iOS16.7.1
 
 R-007执行记录：[诊断构建与试启动](operations/2026-10-22-sec-stage-diagnostic-trial.md)。固件稳定分支0a3a51a保持；本地当前切到诊断分支5e4a8c8，完整树与单文件差异已核对。新profile保留稳定版所有来源/板值/feed/模块/ABI patch，仅变固件提交与SEC输入hash。修正产物验收器在发布器改名后漏走HOB/DEPEX检查的分支，并对稳定版补做通过的检查；不改历史报告。
 
-临时包脚本prepare-sec-trace-boot.py只接受对应sec-trace来源与实际SEC标记通过的产物，再复用固定原厂v4头仅改kernel_size；试启动脚本支持R-007包报告与D-016强制bootloader复位，恢复不依赖诊断image仍可读。本轮尚未生成诊断boot包或操作设备。
+临时包脚本prepare-sec-trace-boot.py只接受对应sec-trace来源与实际SEC标记通过的产物，再复用固定原厂v4头仅改kernel_size；试启动脚本支持R-007包报告与D-016强制bootloader复位，恢复不依赖诊断image仍可读。本轮诊断boot包已生成并静态检查通过，尚未操作设备。
+
+诊断FD9ea347a4、v4临时包fbb7940a（3153920B）已核验，包无XNU/DTB/FAT。恢复前置确认nuwa Android=1，boot/vendor_boot与备份相同，当前已root init_boot与历史记录相同。下一动作：试启动本包，采集屏幕/USB/命令结果后按D-016恢复Android=1。
