@@ -1,0 +1,91 @@
+288: 13 warnings generated.
+289:              LD kextsymboltool
+290:            FLEX lexer.yy.c
+291:              CC parser.o
+292:              CC main.o
+293:              CC mkheaders.o
+294:              CC mkioconf.o
+295:              CC mkmakefile.o
+302:              CC setsegname.o
+303:              LD config
+304:        CODESIGN config
+305:              LD setsegname
+306:        CODESIGN setsegname
+307:              CC decomment.o
+308:              LD decomment
+309:              CC installfile.o
+310:        CODESIGN decomment
+311:              LD installfile
+312:        CODESIGN installfile
+313:              CC replacecontents.o
+314:              LD replacecontents
+315:        CODESIGN replacecontents
+316:             IIG IOBufferMemoryDescriptor.h
+317:        GENERATE bsd.syscalls.master from /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/bsd/kern/syscalls.master
+318:        GENERATE bsd/sys/sysproto.h from bsd.syscalls.master
+319:             IIG IODataQueueDispatchSource.h
+320:      INSTALLHDR endian.h
+3860: 13 warnings generated.
+3861:              LD kextsymboltool
+3862: 1 warning generated.
+3863:              CC lexer.yy.o
+3864:        CODESIGN kextsymboltool
+3865:              LD config
+3866:              CC setsegname.o
+3867:        CODESIGN config
+3868:              CC decomment.o
+3869:              LD setsegname
+3870:              LD decomment
+3871:        CODESIGN setsegname
+3872:        CODESIGN decomment
+3873:              CC installfile.o
+3874:              CC replacecontents.o
+3875:              LD installfile
+3876:              LD replacecontents
+3877:        CODESIGN installfile
+3878:        CODESIGN replacecontents
+3879:             MIG clock.h
+3880:             IIG IOBufferMemoryDescriptor.h
+3881:             MIG clock_priv.h
+3882:             IIG IODataQueueDispatchSource.h
+851339: clang: warning: no such include directory: '/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libsa' [-Wmissing-include-dirs]
+851340:              LD mach.development.bcm2837.unstripped
+851341: ld: warning: directory not found for option '-L/Users/runner/work/_temp/nuwa-8796-source/.cache/fakeroot/usr/local/lib/kernel/platform'
+851342: ld: warning: directory not found for option '-L/Users/runner/work/_temp/nuwa-8796-source/.cache/fakeroot/usr/local/lib/kernel/platform'
+851343:         LIBTOOL mach.development.bcm2837.a
+851344:        DSYMUTIL mach.development.bcm2837.dSYM
+851345: warning: ignoring unknown option: --minimize
+851346:           STRIP mach.development.bcm2837
+851347: built kernel at /Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837//mach.development.bcm2837
+851348: + file /Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped
+851349: /Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped: Mach-O 64-bit executable arm64
+851350: + xcrun otool -l /Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped
+851351: /Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped:
+851352: Load command 0
+851353:       cmd LC_SEGMENT_64
+851354:   cmdsize 552
+851355:   segname __TEXT
+852158:       iundefsym 268171
+852159:       nundefsym 0
+852160:          tocoff 0
+852161:            ntoc 0
+852162:       modtaboff 0
+852163:         nmodtab 0
+852164:    extrefsymoff 0
+852165:     nextrefsyms 0
+852176: Load command 21
+852177:       cmd LC_BUILD_VERSION
+852178:   cmdsize 32
+852179:  platform 2
+852180:     minos 16.0
+852181:       sdk 16.0
+852182:    ntools 1
+852183:      tool 3
+852185: Load command 22
+852186:       cmd LC_SOURCE_VERSION
+852187:   cmdsize 16
+852188:   version 8796.141.3
+852189: Load command 23
+852190:         cmd LC_UNIXTHREAD
+852191:     cmdsize 288
+852192:      flavor ARM_THREAD_STATE64

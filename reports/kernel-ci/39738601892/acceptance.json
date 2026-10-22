@@ -1,0 +1,22 @@
+{
+  "run_id": 39738601892,
+  "device_ref": "526651af94610f40c3223eae9550deaa3c44ae57",
+  "cloud_complete_recipe": "success",
+  "artifact_hash_matches_runner": true,
+  "kernel_sha256": "bdaad81373d00df8334cb5a453b32f06a5e607c3e7d8cde812e4f5f927e19ced",
+  "kernel_bytes": 20136488,
+  "source_tracked_status": {
+    "D:\\Code\\PortingiOS\\common\\sources\\UniXNU": "",
+    "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full": "",
+    "D:\\Code\\PortingiOS\\common\\sources\\UniXNU-sheng": ""
+  },
+  "unchanged_sha256": {
+    "board.toml": "8601b3e5352ab4656e9aefdc22a03d22d531cbb8d465ca11e27fd9aa9d4d38d5",
+    "base/feeds.toml": "dec145fe25ed9cf1c50292a1e16ccbaa690b450a1de9e1ed687395e5fef88294"
+  },
+  "read_only_inspection_command": "python -X utf8 -B scripts/ci/inspect-source-kernel.py out\\kernel-ci\\39738601892\\nuwa-8796-source-39738601892\\nuwa-8796-source\\build\\xnu\\ios-obj\\DEVELOPMENT_ARM64_BCM2837\\mach.development.bcm2837.unstripped --output reports/kernel-ci/39738601892/kernel-inspection.json",
+  "scope": "source kernel compile/link and read-only static inspection",
+  "prelink_executed": false,
+  "qemu_executed": false,
+  "device_verified": false
+}

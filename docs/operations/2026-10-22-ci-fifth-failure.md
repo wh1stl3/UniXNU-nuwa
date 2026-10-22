@@ -95,3 +95,7 @@ zzzz-display-probe-feature.patch仅给bsd_init.c的该运行时分支增加同�
 ## 第十轮启动（2026-10-22 15:11）
 
 526651af94610f40c3223eae9550deaa3c44ae57已发布，第十轮39738601892采用58项完整输入验证可选display引用条件修复；结果未验证。HackiOS参考核验单独提交7bc0b1a，未改变本轮工具链、供体或RPC实现。
+
+## 第十轮最终结果（2026-10-22 15:28）
+
+已完成success，完整make/链接通过；下载原始Mach-O与runner哈希一致，8796.141.3/Darwin22.6.0、普通ARM64、未解析符号0、两项NativePrelink标记值1均已只读检查。详细取证和限制见[源内核成功记录](2026-10-22-ci-source-kernel-success.md)。本阶段源码构建首错修复完成，正式nuwa驱动/ADT/donor闭包仍未验证，不上升为可启动或实机结论。

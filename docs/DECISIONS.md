@@ -269,3 +269,5 @@ D-010补充（2026-10-22 14:54）：ARM64上下文两处kpc_off_cpu调用仍引�
 - 证据：第九轮39736926012原始行851223-851227；基座baseline:319,600-614；reports/kernel-ci/39736926012/。
 
 第九轮到达最终链接，唯一缺失符号为native_legacy_display_probe。保持源CI可选设备archive关闭的范围，仅使bsd_init中运行时probe分支服从已有XNU_NATIVE_LEGACY_DISPLAY开关；开启功能时仍必须提供真实archive并完成Darwin22接口审查。保留完整链接错误和make退出码检查，无stub或忽略undefined-symbol行为。58项226 hunks静态检查通过，实际修复待第十轮。feed/board、未知板值和实机边界不变。
+
+D-008/D-010/D-011补充（2026-10-22 15:28）：第十轮39738601892已完成完整源配方与链接，下载产物SHA与runner一致，普通ARM64、LC_SOURCE_VERSION8796.141.3、Darwin22.6.0、未解析符号0、两项NativePrelink标记1，静态检查通过。云端macOS工具链路线取得真实源内核构建证据；WSL本机、完整driver/RPC ABI、donor预链接与nuwa可启动性仍未验证。源CI性能及可选设备archive保持关闭。证据reports/kernel-ci/39738601892/与operations/2026-10-22-ci-source-kernel-success.md。

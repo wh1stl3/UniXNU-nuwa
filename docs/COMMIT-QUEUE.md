@@ -331,3 +331,13 @@
 [Evidence] reports/kernel-ci/39738601892/run.json、api-publish.json；https://github.com/wh1stl3/UniXNU/actions/runs/39738601892；device_ref=526651af94610f40c3223eae9550deaa3c44ae57。
 [Risk] 最终构建结果未验证；源构建不是预链接、完整driver ABI或实机通过，feed/board不变，无镜像或设备动作。
 ```
+
+## Q-034 · 8796源内核完整构建成功
+
+```text
+[unixnu-nuwa][build] 确认8796源内核完整构建成功并核验下载产物
+
+[Change] 保存第十轮最终success和真实产物元数据，加入只读Mach-O/版本/NativePrelink标记检查，更新源构建完成与设备接口待办边界。
+[Evidence] CI39738601892完整配方和链接成功；reports/kernel-ci/39738601892/acceptance.json与kernel-inspection.json：20,136,488字节、SHA bdaad81373d00df8334cb5a453b32f06a5e607c3e7d8cde812e4f5f927e19ced，8796.141.3/Darwin22.6.0，未解析符号0，两项标记1；board/feed哈希不变，来源树tracked状态空。
+[Risk] BCM2837源CI关闭性能采样及可选设备archive；WSL本机、driver/RPC ABI、donor预链接、完整nuwa启动/QEMU/实机未验证；无诊断/固件镜像生成、设备动作或_verified=true。
+```

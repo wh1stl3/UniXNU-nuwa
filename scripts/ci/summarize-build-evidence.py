@@ -33,6 +33,8 @@ for index in diagnostics:
             if lines[position].startswith('ld:'):
                 break
 excerpt = '\n'.join(f'{i+1}: {lines[i].rstrip()}' for i in sorted(selected)) + '\n'
+if not diagnostics:
+    excerpt = 'No compiler/linker diagnostics matched the bounded error patterns.\n'
 (report / 'diagnostics.txt').write_text(excerpt, encoding='utf-8')
 for source, destination in ((artifact / 'nuwa-host/toolchain.log', report / 'toolchain.log'),
                             (artifact / 'nuwa-8796-source/reports/build.json', report / 'build.json')):
@@ -50,5 +52,6 @@ summary = {'run_id': args.run_id, 'command': f'gh run download {args.run_id} --r
            'key_objects': build.get('key_objects'),
            'kernel_built': build['kernel_built'], 'device_verified': False,
            'uio_alignment_errors_observed': 'size of array element of type' in '\n'.join(lines)}
-(report / 'failure-analysis.json').write_text(json.dumps(summary, indent=2) + '\n', encoding='utf-8')
+analysis_name = 'build-analysis.json' if build['kernel_built'] else 'failure-analysis.json'
+(report / analysis_name).write_text(json.dumps(summary, indent=2) + '\n', encoding='utf-8')
 print(json.dumps(summary, indent=2))
