@@ -1,0 +1,63 @@
+{
+  "scope": "Source-header comparison under explicit ARM64 LP64 layout; compiled CI15 type and runtime remain unverified",
+  "xnu": {
+    "path": "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full\\pexpert\\pexpert\\arm64\\boot.h",
+    "sha256": "e69bc1d56697c6ac649b8700551bb50df0f4cf3e31f8390bac799aca9a91868e",
+    "layout": {
+      "size": 736,
+      "command_line_bytes": 608,
+      "offsets": {
+        "Revision": 0,
+        "Version": 2,
+        "VirtualBase": 8,
+        "PhysicalBase": 16,
+        "MemorySize": 24,
+        "TopOfKernelData": 32,
+        "Video": 40,
+        "MachineType": 88,
+        "DeviceTree": 96,
+        "DeviceTreeLength": 104,
+        "CommandLine": 108,
+        "BootFlags": 720,
+        "MemorySizeActual": 728
+      }
+    }
+  },
+  "loader": {
+    "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU\\drivers\\DarwinBoot\\DarwinBootPkg\\Driver\\BootArgs.h",
+    "sha256": "1d6b172a306bf5d3fc409d22bd7e674d166e5fde92652c4135de5c79f3eddd16",
+    "layout": {
+      "size": 1152,
+      "command_line_bytes": 1024,
+      "offsets": {
+        "Revision": 0,
+        "Version": 2,
+        "VirtualBase": 8,
+        "PhysicalBase": 16,
+        "MemorySize": 24,
+        "TopOfKernelData": 32,
+        "Video": 40,
+        "MachineType": 88,
+        "DeviceTree": 96,
+        "DeviceTreeLength": 104,
+        "CommandLine": 108,
+        "BootFlags": 1136,
+        "MemorySizeActual": 1144
+      }
+    }
+  },
+  "differences": {
+    "BootFlags": {
+      "xnu": 720,
+      "loader": 1136
+    },
+    "MemorySizeActual": {
+      "xnu": 728,
+      "loader": 1144
+    }
+  },
+  "compatible_source_layouts": false,
+  "compiled_kernel_type_checked": false,
+  "device_accessed": false,
+  "image_written": false
+}

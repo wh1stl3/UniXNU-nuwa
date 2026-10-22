@@ -1,6 +1,6 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 21:04（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-22 21:23（Asia/Shanghai）。历史见WORKLOG。
 
 ## 实机操作暂停
 
@@ -37,12 +37,19 @@ r6 v1回环已在RAM复现OS字节0x1009和ID前20B差异，32B ID补零与分�
 
 离线确认nuwa构建已列入高通USB设备栈，协议提供Start/Send/HandleEvent，可在DXE实现CDC ACM导出到Windows日志文件；目前未实现、未实机验证。优先复用Mu AdvancedLogger早期RAM记录候选，USB就绪后补发；若故障早于DXE，仍需已验证的UART或保留RAM读回路径。安全缓冲区地址/长度、UART路由、跨重启保留均TODO，不能声称普通USB线已能抓BootShim/SEC。设备暂停保持。[通道比较与源码证据](operations/2026-10-22-log-export-options.md)。
 
+## 官方全站复核的新发现
+
+已读取全部72个中文页面，并用144路由发布清单核对，中文遗漏0；结构索引和报告见[官方路线复核](operations/2026-10-22-official-site-route-review.md)。官方已列iPhone X iOS16第二目标；guacamole用户态记录使用16KiB内核，只参考加载器/DT保留，不移植页大小。Ace5源码清单追到SM8550 vermeer真实XNU USB CDC实现；sheng有UFS日志+Linux CDC读取器，均不能直接覆盖早期SEC，许可/依赖和本机绑定仍待审查。
+
+新增负载前检查项：8796原始ARM64 boot_args命令行608B，当前DarwinBoot为1024B，BootFlags/memSizeActual源定义偏移不同（0x2d0/0x2d8 vs 0x470/0x478）；静态LP64建模已记录，CI15实际编译类型和运行ABI仍未验证。当前v4不含XNU，不能据此解释黑屏。官网nuwa页落后于CI15，继续以本仓证据为准。未自动跟进89个上游提交，feed/版本保持。
+
 ## 下一步
 
-1. 入口头、BootShim机器码和SEC日志实现已完成首轮离线核对。下一步可离线追归档ABL的实际加载/交接分支，日志通道已完成离线比较，下一步固定Mu日志组件版本并核对安全RAM/USB协议依赖；未知地址、UART路由和RAM读回路径继续TODO。实机暂停不解除，不能以黑屏归因某阶段或先验收DXE/BDS。
-2. 仅在用户明确恢复本仓设备访问后，后续任何容器对照从重新进入bootloader开始；结束后重进bootloader再用ef558db2原厂boot恢复Android并确认完成。保留候选原hash，不自动换v1或混入参考负载。H-001按键项记待办继续软件项。
-3. 新FAT的映射/保留、CI15 runtime crypto/pthread provider、ARCH_TIMER/startup/GIC/PSCI、13项boot-progress、watchdog scratch和NativePrelink布局/12处Libm编码继续审查；XNU负载另验收。
-4. A槽持久启动若要修复，先明确具体授权动作；不在临时固件测试中顺带改槽位。board/bringup-plan内存/基址及_verified保留硬停规则，未知值TODO。
+1. **离线优先**：核对CI15实际boot_args类型与DarwinBoot构建输入，收敛Darwin22适配；继续归档ABL加载/交接、实际FDT/splash、x0与initrd保留审查。当前无安全RAM/读回证据时继续TODO，不能以黑屏定位SEC或先验收DXE。
+2. 审查SM8550 vermeer CDC源码的许可、Darwin22/4K/DMA/SMMU依赖，及高通UEFI设备协议→SerialIo桥接；与Mu早期RAM记录分别验收。sheng UFS日志/独立Linux读取器留待存储阶段，不运行其重启/写盘流程。
+3. 官方QEMU fixture可隔离菜单/loader/ADT/入口逻辑，先核对本机工具与输入；实际测试遵守镜像生成硬停，结果不升级为nuwa实机。新FAT映射/保留、provider、ARCH_TIMER/GIC/PSCI、13项boot-progress、watchdog scratch、完整NativePrelink/12处Libm编码继续审查。
+4. 仅在用户明确恢复本仓设备访问后，任何容器对照先重新进入bootloader；结束后重进bootloader再用ef558db2原厂boot恢复Android并确认完成。保留候选原hash，不自动换v1或混入旧负载。H-001按键项记待办继续软件项。
+5. A槽持久启动修复单独限定动作；不在临时固件测试中顺带改槽位。board/bringup-plan内存/基址、镜像及_verified保留硬停，未知值TODO。
 
 ## 边界与记录
 

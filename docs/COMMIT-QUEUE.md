@@ -629,3 +629,14 @@
 [Evidence] nuwa DXE配置和CI39764322744打包记录包含高通USB设备驱动，协议头提供Start/Send/HandleEvent；当前SEC仍链接帧缓冲输出。
 [Risk] USB导出尚未实现或实机验证，DXE前挂死不能保证回收；RAM地址/生命周期与UART路由仍TODO，无设备访问、新镜像或board/feed改动。
 ```
+
+
+## Q-062 · 官方全站结构与路线复核
+
+```text
+[unixnu-nuwa][docs] 遍历官方文档并补充Darwin22加载器与USB日志检查项
+
+[Change] 增加站点遍历/发布路由交叉检查与LP64头布局比较，记录72页导航、相关源码固定引用和nuwa分阶段推进顺序。
+[Evidence] 全部72中文页HTTP200且144路由清单中中文遗漏0；8796头608B命令行与DarwinBoot1024B导致尾字段偏移不同；找到SM8550 vermeer CDC及sheng UFS/Linux日志实现。
+[Risk] CI15编译类型、完整ABI和本机USB均未验证，其他机型/P16或虚拟机结果不作nuwa验收；feed/board/版本及实机暂停不变，没有新镜像。
+```
