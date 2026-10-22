@@ -1,0 +1,66 @@
+34849:   443 | #define os_atomic_inc_orig(p, m)    _os_atomic_c11_op_orig(p, 1, m, fetch_add)
+34850:       |                                     ^
+34851:             MIG coalition_notification_user.c
+34852: /Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/os/atomic_private_impl.h:224:6: note: expanded from macro '_os_atomic_c11_op_orig'
+34853: DriverKit/OSObject.iig.cpp  224 |            :277:30: error: no member named 'kernelContent' in 'IORPC'
+34854:   277 |     IORPCMessa _os_atomic_value_cast(p, v), \
+34855:       |             ^
+34856: ge/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/os/atomic_private_impl.h :*218 :m13s:g  note: =expanded from macro '_os_atomic_value_cast'
+34857:   218 |         ({ typeof(*os_cast_to_nonatomic _poripnct.ekre(rpn)e)l C_o_n_tve n=t ;(
+34858: v      )| ;                         ~~~ ^
+34859: ___v; })
+34860:       |                    ^
+34861: /Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/os/atomic.h:81:43: note: expanded from macro 'os_cast_to_nonatomic_pointer'
+34862:    81 | #define os_cast_to_nonatomic_pointer(p)  (os_atomic_basetypeof(p) *)(uintptr_t)(p)
+34866:       |                                                                 ^
+34867: /Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/os/atomic.h:79:69: note: expanded from macro 'os_cast_to_atomic_pointer'
+34868:    79 | #define os_cast_to_atomic_pointer(p)     (__typeof__(*(p)) volatile _Atomic *)(uintptr_t)(p)
+34869:       |                                                                     ^
+34870: DriverKit/OSObject.iig.cpp:305:30: error: no member named 'kernelContent' in 'IORPC'
+34871:   305 |     IORPCMessage * msg = rpc.kernelCo/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/bsd/vfs/vfs_syscalls.c:1230:21: warning: mixing declarations and code is incompatible with standards before C99 [-Wdeclaration-after-statement]
+34872: /Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/os/atomic_private.h:443:37: note: expanded from macro 'os_atomic_inc_orig'
+34873:   443 | #define os_antomitce_nitn;c
+34874: _      o| r                         ~~~ ^i
+34875: g(p, m)    _os_atomic_c11_op_orig(p, 1, m, fetch_add)
+34876:       |                                     ^
+34877: /Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/os/atomic_private_impl.h:222:14: note: expanded from macro '_os_atomic_c11_op_orig'
+34878:   222 |         __auto_type _r = os_atomic_std(atomic_##o##_explicit)(\
+34879:       |                     ^
+34880: DriverKit/OSObject.iig.cpp:362:133: error: field designator 'kernelContent' does not refer to any field in type 'IORPC'
+34881:   362 |     IORPC rpc = { .message = &buf.msg.mach, .reply = &buf.rpl.rpl.mach, .sendSize = sizeof(buf.msg), .replySize = sizeof(buf.rpl), .kernelContent = &buf.msg.content.__hdr };
+34882:       |                                                                                                                                    ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+34883: /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/bsd/vfs/vfs_syscalls.c:1746:3: warning: '_Static_assert' is incompatible with C standards before C11 [-Wpre-c11-compat]
+34884:  1746 |                 OSAddAtomic(1, &vfs_nummntops);
+34885:       |                 ^
+34886: /Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/OSAtomic.h:293:18: note: expanded from macro 'OSAddAtomic'
+34887:   293 |         (OSAddAtomic(a, __SAFE_CAST_PTR(volatile SInt32*,b)))
+34888:       |                         ^
+34889: /Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/OSAtomic.h:59:5: note: expanded from macro '__SAFE_CAST_PTR'
+34906:       |                                       ^
+34907: /Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/os/alloc_util.h:64:2: note: expanded from macro 'os_ptr_load_and_erase'
+34908:    64 |         _Static_assert(os_is_ptr_like(elem),                      \
+34909:       |         ^
+34910: DriverKit/OSObject.iig.cpp:425:133: error: field designator 'kernelContent' does not refer to any field in type 'IORPC'
+34911:   425 |     IORPC rpc = { .message = &buf.msg.mach, .reply = &buf.rpl.rpl.mach, .sendSize = sizeof(buf.msg), .replySize = sizeof(buf.rpl), .kernelContent = &buf.msg.content.__hdr };
+34912:       |                                                                                                                                    ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+34913: 10 warnings and 4 errors generated.
+34914: make[7]: *** [OSObject.iig.cpo] Error 1
+34915: make[6]: *** [build_all] Error 2
+34916: /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/bsd/vfs/vfs_syscalls.c:2839:3: warning: '_Static_assert' is incompatible with C standards before C11 [-Wpre-c11-compat]
+34917:  2839 |                 OSAddAtomic(1, &vfs_nummntops);
+34918:       |                 ^
+34919: /Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/OSAtomic.h:293:18: note: expanded from macro 'OSAddAtomic'
+99809: :11: warning: mixing declarations and code is incompatible with standards before C99 [-Wdeclaration-after-statement]
+99810:   323 |         uint32_t instr = *((uint32_t *)get_saved_state_pc(saved_state));
+99811:       |                  ^
+99812: /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/kdp/ml/arm/kdp_machdep.c:491:8: warning: mixing declarations and code is incompatible with standards before C99 [-Wdeclaration-after-statement]
+99813:   491 |                 bmake[7]: *** No rule to make target `/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/arm64/kpc.c', needed by `kpc.o'.  Stop.
+99814: make[7]: *** Waiting for unfinished jobs....
+99815:              CC kdp_vm.o
+99816: ool ok = machine_traceclang: warning: no such include directory: '/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libsa' [-Wmissing-include-dirs]
+99817: _thread_validate_kva(kern_virt_addr);
+99818:       |                      ^
+99819: /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/kdp/ml/arm/kdp_machdep.c:391:26: warning: mixing declarations and code is incompatible with standards before C99 [-Wdeclaration-after-statement]
+99820:   391 |         struct arm_saved_state *state = thread->machine.kpcb;
+99821:       |                                 ^
+99822: In file included from /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/kdp/ml/arm/kdp_vm.c:28:

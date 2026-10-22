@@ -1,0 +1,37 @@
+{
+  "run_id": 39718507532,
+  "command": "gh run download 39718507532 --repo wh1stl3/UniXNU --dir out/kernel-ci/39718507532",
+  "console_path": "out\\kernel-ci\\39718507532\\nuwa-8796-source-39718507532\\nuwa-host\\kernel-console.log",
+  "console_bytes": 52230989,
+  "console_sha256": "f17b03b58f1ac381dba8e583db86fc34e8022acb4d012afef0cc55a8ba621e2c",
+  "console_lines": 542006,
+  "excerpt_trailing_whitespace_trimmed": true,
+  "diagnostics": [
+    {
+      "original_line": 34853,
+      "text": "DriverKit/OSObject.iig.cpp  224 |            :277:30: error: no member named 'kernelContent' in 'IORPC'"
+    },
+    {
+      "original_line": 34870,
+      "text": "DriverKit/OSObject.iig.cpp:305:30: error: no member named 'kernelContent' in 'IORPC'"
+    },
+    {
+      "original_line": 34880,
+      "text": "DriverKit/OSObject.iig.cpp:362:133: error: field designator 'kernelContent' does not refer to any field in type 'IORPC'"
+    },
+    {
+      "original_line": 34910,
+      "text": "DriverKit/OSObject.iig.cpp:425:133: error: field designator 'kernelContent' does not refer to any field in type 'IORPC'"
+    },
+    {
+      "original_line": 99813,
+      "text": "  491 |                 bmake[7]: *** No rule to make target `/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/arm64/kpc.c', needed by `kpc.o'.  Stop."
+    }
+  ],
+  "iorpc_header_unchanged": true,
+  "generated_kernel_content_files": 51,
+  "object_count_all_builds": 539,
+  "kernel_built": false,
+  "device_verified": false,
+  "uio_alignment_errors_observed": false
+}

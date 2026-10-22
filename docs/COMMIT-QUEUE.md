@@ -181,3 +181,13 @@
 [Evidence] reports/kernel-ci/39718507532/run.json；https://github.com/wh1stl3/UniXNU/actions/runs/39718507532；device_ref=4be1fb48c7389b61fba4a245f58e2bae4e2a9a62。
 [Risk] 记录时仍在编译，尚无完整内核或ABI通过证据；feed/board不变，未运行预链接、QEMU或设备动作。
 ```
+
+## Q-019 · 第三轮实际错误与内联RPC候选
+
+```text
+[unixnu-nuwa][kernel] 根据第三轮证据适配内联RPC并关闭缺失实现的性能采样
+
+[Change] 下载第三轮证据并保存原始行号/哈希摘录；以真实五目标生成否证deployment-target候选；增加固定IIG叶子模板适配，保留IORPC原布局；源CI关闭KPC及依赖KPERF，记录D-010。
+[Evidence] reports/kernel-ci/39718507532/diagnostics.txt原始行34853/99813；IIG短CI39722376512五目标同hash；compatibility-check.json为51项210 hunks；iig-adapter-check.json转换真实样本11块、拒绝未知模板；workspace-check.json确认来源与feed/board边界。
+[Risk] 完整IIG生成集与内核编译/链接待下一轮；性能计数采样关闭，完整driver/donor ABI未验证；未生成固件/诊断镜像，预链接、QEMU与实机均未验证。
+```

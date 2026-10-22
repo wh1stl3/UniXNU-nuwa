@@ -232,8 +232,22 @@ UEFI 内存映射在 `0x8c0000000` 附近能否给出连续可用块。查法：
 # D-009 · 新工具链适配保留8796的数据接口
 
 - 状态：**accepted，实际编译验证进行中**（2026-10-22）。
+- 后续：UIO部分继续有效；IIG deployment-target候选被真实生成否证，**该部分 superseded by D-010**。
 - 证据：CI39716728005的UIO对齐与IORPC.kernelContent错误；CI39717772747的实际IIG帮助和旧/新模板字符串；`reports/kernel-ci/39716728005/compatibility-check.json`。
 
 UIO缓冲区继续是原UIO_SIZEOF(niov)字节，按原_Alignof(union iovecs)对齐；仅把对齐施加到声明，不把元素扩大8倍或取消对齐。36处调用使用声明宏，原typedef保留。
 
 IORPC继续使用8796的四字段定义，不为新IIG生成结果补kernelContent。下一轮通过Makefile现有OTHER_IIG_FLAGS传`--deployment-target 22.0`选择旧DriverKit生成目标；这是有实际工具帮助支持的候选，不是已证明ABI兼容。是否选中旧模板以生成结果和真实编译为准；不能将类型同名或编译成功推为完整driver ABI通过。
+
+---
+
+# D-010 · 8796源CI保留内联RPC，关闭缺失公开实现的性能采样
+
+- 状态：**accepted，兼容候选待真实编译**（2026-10-22）。
+- 证据：[第三轮分析](operations/2026-10-22-ci-third-failure.md)、`reports/kernel-ci/39718507532/`。
+
+第三轮仍生成51个含kernelContent的文件，IORPC原头未变；实际错误为OSObject生成代码访问不存在字段，以及缺少公开源码osfmk/arm64/kpc.c。短CI 39722376512对真实OSObject.iig使用16/19/20/21/22五个目标，结果字节和哈希完全相同。因此不再以deployment-target作为旧RPC模板开关。
+
+使用固定IIG DriverKit-427.100.5生成器的内联消息分支建立受限文本适配候选：仅识别叶子KERNEL条件中的split-content/对应消息指针类型，采用其现有内联分支；KERNEL定义、其余内核条件、消息字段声明和IORPC头不改。未知版本、未知残留模板立即失败。生成内容和适配哈希进入云端报告，完整ABI与driver archive仍需后续独立验证。
+
+仅源CI的BCM2837配置关闭KPC及依赖它的KPERF；后者kperf_kpc.c有无条件kpc调用，不能只删缺失源文件或塞空实现。代价是该源内核没有性能计数采样能力，不能把它当完整donor ABI闭包。正式nuwa配置尚未建立。本决策不切feed、不改board、不生成固件/诊断镜像、不改变任何_verified。

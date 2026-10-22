@@ -33,6 +33,8 @@ if 'char name[UIO_SIZEOF(niov)] __attribute__((aligned(_Alignof(union iovecs))))
     raise ValueError('UIO declaration must preserve byte size and explicit original alignment')
 if tree.read('iokit/DriverKit/IORPC.h') != (args.xnu / 'iokit/DriverKit/IORPC.h').read_text(encoding='utf-8'):
     raise ValueError('CI compatibility patches must not widen the original IORPC ABI')
+if '#  PERF_DBG_BASE =  [ mach_kdp config_serial_kdp ]' not in tree.read('config/MASTER.arm64.bcm2837'):
+    raise ValueError('Public source CI must not select unavailable ARM64 KPC or dependent KPERF')
 print(json.dumps({'patch_count': len(patches), 'hunks': hunks,
                   'in_memory_sequence': 'passed', 'zero_initialization_retained': True,
                   'iorpc_header_unchanged': True,

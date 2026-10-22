@@ -12,6 +12,7 @@ import platform
 import shutil
 import struct
 import subprocess
+import sys
 
 DEVICE = Path(__file__).resolve().parents[2]
 BASE_COMMIT = '75bc13dd34dc4e403826793739e316a264ce00dd'
@@ -60,7 +61,8 @@ def inputs(base):
     firehose_script = replace_exact(firehose.read_text(encoding='utf-8'),
                                    'IPHONEOS_DEPLOYMENT_TARGET=17.0',
                                    'IPHONEOS_DEPLOYMENT_TARGET=16.0', 1)
-    for name in ('clang17-zero-init.patch', 'clang17-uio-stackbuf.patch'):
+    for name in ('clang17-zero-init.patch', 'clang17-uio-stackbuf.patch',
+                 'zzzz-ci-public-profiling.patch'):
         compatibility = DEVICE / 'patches/xnu-8796-ci-candidates' / name
         if not compatibility.is_file():
             raise ValueError(f'Missing reviewed clang17 compatibility patch: {name}')
@@ -117,13 +119,19 @@ def main():
         shutil.copyfile(path, target)
     (work / 'scripts/build-xnu-4k-baseline.sh').write_text(script, newline='\n')
     (work / 'scripts/build-firehose.sh').write_text(firehose_script, newline='\n')
+    iig_adapter = work / 'scripts/iig-darwin22.py'
+    adapter_source = DEVICE / 'scripts/ci/iig-darwin22.py'
+    iig_adapter.write_text(f'#!{sys.executable}\n' + adapter_source.read_text(), newline='\n')
+    iig_adapter.chmod(0o755)
+    real_iig = subprocess.check_output(['xcrun', '--sdk', 'iphoneos', '--find', 'iig'], text=True).strip()
     env = {k: v for k, v in os.environ.items() if not k.startswith(('XNU_', 'UNIXNU_'))}
     env.update(UNIXNU_XNU_TAG='xnu-8796.141.3', UNIXNU_XNU_COMMIT=XNU_COMMIT,
                UNIXNU_XNU_DARWIN='22.6.0', UNIXNU_XNU_VERSION='8796.141.3',
                UNIXNU_DRIVERKIT_TAG='xnu-8796.141.3', UNIXNU_TRUSTCACHE_TAG='xnu-8796.141.3',
                XNU_BOOT_PROGRESS='0', XNU_ZONE_PGZ_ALIGNMENT_PROBE='0', JOBS='3',
-               OTHER_IIG_FLAGS='--deployment-target 22.0')
-    summary['iig_deployment_target'] = '22.0 (DriverKit generation compatibility, not board data)'
+               IIG=str(iig_adapter), NUWA_REAL_IIG=real_iig)
+    summary['iig_adapter_sha256'] = sha(adapter_source)
+    summary['iig_compatibility'] = 'pinned generator inline RPC branches; deployment-target candidate rejected'
     try:
         # Reuse the base recipe: real source checkout, ordered patches, installhdrs,
         # real libfirehose archive and XNU build. No stubs or suppressed link errors.
@@ -151,6 +159,8 @@ def main():
             summary['iig_kernel_content_references'] = [str(p.relative_to(work)) for p in generated
                 if 'rpc.kernelContent' in p.read_text(errors='replace') or '.kernelContent =' in p.read_text(errors='replace')]
         summary['object_count'] = len(list((work / 'build').rglob('*.o')))
+        summary['iig_adaptations'] = [json.loads(p.read_text()) for p in
+                                      sorted((work / 'build').rglob('*.darwin22.json'))]
         report.write_text(json.dumps(summary, indent=2) + '\n')
 
 
