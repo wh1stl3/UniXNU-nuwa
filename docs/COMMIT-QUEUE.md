@@ -211,3 +211,13 @@
 [Evidence] reports/kernel-ci/39723011018/diagnostics.txt原始行226；callback-template.txt原始行809；短CI39723294640生成17文件exit0，iig-all-adapter-check.json静态转换432块、字段声明保留；api-publish-previous.json已发布同一7dfa3c1。
 [Risk] 全集转换不等于真实内核编译/ABI通过，性能采样关闭；feed/board不变，无预链接、镜像、QEMU或设备动作。
 ```
+
+## Q-022 · 第五轮源构建启动
+
+```text
+[unixnu-nuwa][build] 发布完整模板适配候选并启动第五轮源编译
+
+[Change] 记录4313f2d按相同Git对象经API发布和第五轮精确设备输入，更新STATUS与证据下载入口。
+[Evidence] reports/kernel-ci/39723736387/api-publish.json确认force=false及相同commit；run.json；https://github.com/wh1stl3/UniXNU/actions/runs/39723736387，device_ref=4313f2d1c1a5abd9f96d11073b2e343b8aedadfe。
+[Risk] 运行中，无完整内核编译/链接或ABI通过结论；feed/board不变，无预链接、镜像、QEMU或设备动作。
+```

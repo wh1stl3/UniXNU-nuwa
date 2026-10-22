@@ -73,3 +73,12 @@ UIO新增候选保留原typedef，通过声明宏对char数组变量施加原对
 修复提交7d6675ee49578eac2b02c5b65a0ac42b29dc1fd4已推送；[39723011018](https://github.com/wh1stl3/UniXNU/actions/runs/39723011018)于2026-10-22 12:33启动。第一次Git推送连接重置，HTTP/1.1重试后成功；只读API确认远端精确提交后才调度。12:34观察实际主机检查、依赖安装、固定输入检查均成功，编译步骤进行中。完整构建结果未验证。
 
 工作流宿主head为caa9acb（仅新增IIG生成探针），源构建仍checkout75bc。第四轮使用51项补丁和固定IIG内联RPC适配；保留IORPC头，关闭KPC/KPERF性能采样，不运行预链接/镜像/设备。完成后优先gh run download获取证据包；旧observe脚本先下载大run日志可能挂起，不能以空run.log判断没有错误。
+
+
+第四轮最终失败于IIG适配器主动拒绝尚未识别的回调字段赋值；已补取全部17个真实生成文件并收紧为精确规则，完整经过见第三轮分析末节，不能把第四轮启动状态当作成功。
+
+## 第五轮运行
+
+候选4313f2d1c1a5abd9f96d11073b2e343b8aedadfe已经发布，[39723736387](https://github.com/wh1stl3/UniXNU/actions/runs/39723736387)已启动，结果未验证。17文件432块仅为真实生成样本的静态转换证据。本轮保留未知模板失败边界，并会上传失败原始模板；不宽泛删除字段引用。
+
+Git HTTPS连续连接失败后，已用GitHub API上传与本地完全相同的对象，校验blob/tree/commit哈希后force=false更新main；原提交4313f2d保持。发布证据见reports/kernel-ci/39723736387/api-publish.json。源构建仍固定75bc/8796，不切feed、board或donor。

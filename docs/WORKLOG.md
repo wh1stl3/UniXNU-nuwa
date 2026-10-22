@@ -52,3 +52,5 @@
 - 2026-10-22 12:34 · Q-019提交7d6675e并推送成功；固定该device_ref启动第四轮39723011018，实际主机/依赖/输入检查成功、真实编译进行中；未取得完整内核构建结果 · 提交号：7d6675e；本项待定Q-020 · reports/kernel-ci/39723011018/run.json
 
 - 2026-10-22 12:40 · 第四轮被适配器主动拒绝未知回调模板，下载证据后以短CI取得17文件全集，仅补入精确kernelContent回调赋值规则，432块静态转换通过；Q-020已通过同对象ID、force=false的GitHub API发布7dfa3c1；补充失败模板保留机制 · 提交号：7dfa3c1；本项待定Q-021 · reports/kernel-ci/39723011018/，scripts/publish-main-via-api.py
+
+- 2026-10-22 12:42 · Q-021以相同对象ID经API发布4313f2d，force=false，启动第五轮39723736387；仍固定75bc/8796与既定设备输入，完整内核/ABI结果未验证 · 提交号：4313f2d；本项待定Q-022 · reports/kernel-ci/39723736387/run.json，api-publish.json

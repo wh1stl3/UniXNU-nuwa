@@ -1,10 +1,10 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 12:40（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-22 12:42（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
-第三轮实错为IIG的kernelContent及缺失公开arm64/kpc.c；第四轮[39723011018](https://github.com/wh1stl3/UniXNU/actions/runs/39723011018)被适配器主动拒绝未知回调模板。已取得全部17个真实IIG生成文件，补入精确回调赋值规则，432块静态转换通过；准备第五轮。见[分析与证据](operations/2026-10-22-ci-third-failure.md)。完整内核构建仍未通过。
+第三轮实错为IIG的kernelContent及缺失公开arm64/kpc.c；第四轮[39723011018](https://github.com/wh1stl3/UniXNU/actions/runs/39723011018)被适配器主动拒绝未知回调模板。已取得全部17个真实IIG生成文件，补入精确回调赋值规则，432块静态转换通过；修复4313f2d已发布，[第五轮39723736387](https://github.com/wh1stl3/UniXNU/actions/runs/39723736387)正在运行。见[分析与证据](operations/2026-10-22-ci-third-failure.md)。完整内核构建仍未通过。
 
 ## 当前边界
 
@@ -24,7 +24,7 @@
 
 ## 下一步
 
-1. 发布17文件模板验证后的候选并启动第五轮；确认真实生成与KPC/KPERF选择，再按实际编译结果推进。
+1. 跟踪第五轮39723736387（device_ref=4313f2d1c1a5abd9f96d11073b2e343b8aedadfe）；完成后优先gh run download取证，确认真实生成与KPC/KPERF选择，再按实际错误推进。
 2. 按实际第一处错误继续适配；成功时检查Mach-O/对象/符号/版本，不能把构建结果写成实机通过。
 3. 完成Darwin22 archive、boot-progress/watchdog、nuwa defconfig与donor kernelcache解析，再接回正式-D入口；feed切换独立处理。
 4. 命中四类硬停先写NEED-REVIEW再停；仅实体按键待办写PENDING-HUMAN后继续。
