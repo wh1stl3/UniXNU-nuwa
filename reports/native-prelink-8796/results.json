@@ -1,0 +1,145 @@
+{
+  "timestamp": "2026-10-22T09:02:49.353698+08:00",
+  "mode": "Independent --check; no patches applied, no cumulative or build claim",
+  "source_head": {
+    "command": [
+      "C:/Program Files/Git/cmd/git.exe",
+      "-c",
+      "safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full",
+      "--no-optional-locks",
+      "-C",
+      "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit_code": 0,
+    "stdout": "1b191cb58250d0705d8a51287127505aa4bc0789\n",
+    "stderr": ""
+  },
+  "base_head": {
+    "command": [
+      "C:/Program Files/Git/cmd/git.exe",
+      "-c",
+      "safe.directory=D:/Code/PortingiOS/common/sources/UniXNU",
+      "--no-optional-locks",
+      "-C",
+      "D:\\Code\\PortingiOS\\common\\sources\\UniXNU",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit_code": 0,
+    "stdout": "75bc13dd34dc4e403826793739e316a264ce00dd\n",
+    "stderr": ""
+  },
+  "base_status": {
+    "command": [
+      "C:/Program Files/Git/cmd/git.exe",
+      "-c",
+      "safe.directory=D:/Code/PortingiOS/common/sources/UniXNU",
+      "--no-optional-locks",
+      "-C",
+      "D:\\Code\\PortingiOS\\common\\sources\\UniXNU",
+      "status",
+      "--porcelain",
+      "--untracked-files=no"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "source_status_before": {
+    "command": [
+      "C:/Program Files/Git/cmd/git.exe",
+      "-c",
+      "safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full",
+      "--no-optional-locks",
+      "-C",
+      "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full",
+      "status",
+      "--porcelain",
+      "--untracked-files=all"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "source_status_after": {
+    "command": [
+      "C:/Program Files/Git/cmd/git.exe",
+      "-c",
+      "safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full",
+      "--no-optional-locks",
+      "-C",
+      "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full",
+      "status",
+      "--porcelain",
+      "--untracked-files=all"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "board_toml": {
+    "parse": "pass",
+    "sha256": "8601b3e5352ab4656e9aefdc22a03d22d531cbb8d465ca11e27fd9aa9d4d38d5",
+    "data": {
+      "board": {
+        "name": "nuwa",
+        "soc": "SM8550",
+        "description": "Xiaomi 13 Pro / iOS 16 bring-up",
+        "example": true
+      },
+      "ipsw": {
+        "product": "iPhone10,3",
+        "version": "16.7.16",
+        "build": "20H392",
+        "device_class": "d22ap"
+      },
+      "payload": {
+        "adt": {
+          "ipad_identity": true
+        }
+      }
+    }
+  },
+  "results": [
+    {
+      "command": [
+        "C:/Program Files/Git/cmd/git.exe",
+        "-c",
+        "safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full",
+        "--no-optional-locks",
+        "-C",
+        "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full",
+        "apply",
+        "--check",
+        "--verbose",
+        "D:\\Code\\PortingiOS\\common\\sources\\UniXNU\\kits\\NativePrelink\\patches\\xnu-10063.141.1-security-init.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Checking patch libkern/c++/OSKext.cpp...\nHunk #2 succeeded at 8289 (offset -162 lines).\n",
+      "patch": "xnu-10063.141.1-security-init.patch",
+      "sha256": "f9ea76df15b01c8073c0fe8e38a1c05ac9db9202c393811756f6b616275b4675"
+    },
+    {
+      "command": [
+        "C:/Program Files/Git/cmd/git.exe",
+        "-c",
+        "safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full",
+        "--no-optional-locks",
+        "-C",
+        "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full",
+        "apply",
+        "--check",
+        "--verbose",
+        "D:\\Code\\PortingiOS\\common\\sources\\UniXNU\\kits\\NativePrelink\\patches\\xnu-10063.141.1-sparse-index.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Checking patch osfmk/kern/kalloc.c...\nHunk #1 succeeded at 949 (offset -1 lines).\nHunk #2 succeeded at 1033 (offset -1 lines).\nHunk #3 succeeded at 1095 (offset -1 lines).\nHunk #4 succeeded at 1113 (offset -1 lines).\nHunk #5 succeeded at 1150 (offset -1 lines).\n",
+      "patch": "xnu-10063.141.1-sparse-index.patch",
+      "sha256": "d0a2da8ca1a0b4021629b0ecaadad20c0e6cf7b3205f8d780242a60034f44d91"
+    }
+  ]
+}
