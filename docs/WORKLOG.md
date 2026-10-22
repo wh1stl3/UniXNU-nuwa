@@ -144,3 +144,5 @@
 2026-10-22 22:07 · 准备76dd合并版独立内核CI profile，原48项序列重验通过，两份变化挂载patch保留8796字节；60项适配输入/语法和旧基线回归检查通过，待真实CI编译 · 本提交（Q-065） · reports/upstream-merge/kernel-input-review.json；docs/operations/2026-10-22-merged-kernel-profile.md
 
 2026-10-22 22:14 · 合并版内核CI39793231214已触发，当前排队未执行；两版完整DarwinBoot C翻译单元AArch64语法检查通过，未链接/生成固件或访问设备 · 本提交（Q-066） · reports/kernel-ci/39793231214/dispatch.json；reports/darwin22-loader/checks.json
+
+2026-10-22 22:30 · 创建公开独立uefi-nuwa并关闭Actions；同网络enuma保持，准备仅导入Git历史的临时云任务及已有源码接线脚本，尚未导入或生成镜像 · 本提交（Q-067） · reports/uefi-nuwa/repository-created.json；docs/operations/2026-10-22-dedicated-uefi-repository.md

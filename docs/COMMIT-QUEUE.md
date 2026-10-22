@@ -680,3 +680,13 @@
 [Evidence] 两版完整DarwinBoot.c均通过AArch64 clang语法检查；新CI固定device_ref=3a210b1，查询为queued且steps为空，尚无编译结果。
 [Risk] 未完成EFI库链接/打包或运行ABI验收；合并版内核仍待runner与真实构建，未生成固件或访问设备。
 ```
+
+## Q-067 · 独立固件仓与源历史导入准备
+
+```text
+[unixnu-nuwa][firmware] 创建独立uefi-nuwa并隔离源历史导入
+
+[Change] 创建公开固件仓并关闭其Actions，增加仅bare Git历史传输任务和既有固件源码迁入脚本，保留同网络enuma。
+[Evidence] GitHub仓库创建记录及Actions关闭；fork API返回已有enuma时名称断言中止，固定Mu基线/上游main并在源码脚本检查原始blob和patch哈希。
+[Risk] 源历史尚待导入，临时import secret结束后须删除；固件仓尚未编译或实机验证，不生成镜像或改板值。
+```

@@ -1,0 +1,58 @@
+name: Import pinned uefi-nuwa source history
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  import:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ secrets.UEFI_IMPORT_TOKEN }}
+      GIT_LFS_SKIP_SMUDGE: '1'
+    steps:
+      - name: Import history without checkout or firmware build
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, pathlib, subprocess
+          repo = 'wh1stl3/uefi-nuwa'
+          upstream = 'https://github.com/Project-Silicium/Mu-Silicium.git'
+          tip = '42fe563791e51bf5500c2e470ed294ca0c94b97c'
+          base = '6c6755012728c9f7de748228758bad94d1e9a660'
+          def api(path):
+              return json.loads(subprocess.check_output(['gh','api',path]))
+          assert not api('repos/'+repo+'/actions/permissions')['enabled']
+          info=api('repos/'+repo)
+          assert info['full_name']==repo and not info['private']
+          work=pathlib.Path(os.environ['RUNNER_TEMP'])/'uefi-source-import.git'
+          subprocess.run(['git','init','--bare',str(work)],check=True)
+          def git(*args):
+              return subprocess.check_output(['git','-C',str(work),*args]).decode().strip()
+          git('fetch','--no-tags',upstream,'refs/heads/main:refs/heads/main')
+          assert git('rev-parse','refs/heads/main')==tip
+          git('merge-base','--is-ancestor',base,tip)
+          subprocess.run(['gh','auth','setup-git','--hostname','github.com'],check=True)
+          git('push','https://github.com/'+repo+'.git',
+              'refs/heads/main:refs/heads/main',base+':refs/heads/codex/nuwa-bringup')
+          result=dict(repository=repo,upstream=upstream,main=tip,baseline=base,
+              branches={name:api('repos/'+repo+'/git/ref/heads/'+name)['object']['sha']
+                        for name in ['main','codex/nuwa-bringup']},
+              source_checkout=False,firmware_generated=False)
+          assert result['branches']=={'main':tip,'codex/nuwa-bringup':base}
+          output=pathlib.Path(os.environ['RUNNER_TEMP'])/'uefi-source-import.json'
+          output.write_text(json.dumps(result,indent=2)+'\n')
+          print(json.dumps(result,indent=2))
+          PY
+      - name: Preserve import metadata only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uefi-source-import-${{ github.run_id }}
+          path: ${{ runner.temp }}/uefi-source-import.json
+          if-no-files-found: warn
+          retention-days: 7
