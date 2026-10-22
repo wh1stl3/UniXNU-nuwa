@@ -1,37 +1,32 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 17:49（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-22 18:04（Asia/Shanghai）。历史见 WORKLOG。
 
 ## 当前结论
 
-**源内核已编出，并成功真实链接ArmCpu与ArmDTPlatform；完整nuwa启动链仍未验收。** 第十四轮三平台archive编译/闭包通过；[第十五轮39755850870](https://github.com/wh1stl3/UniXNU/actions/runs/39755850870)于17:45:40整体success。下载内核20,187,888字节、SHAa9e08c693fec4034f613cd554ea94e5855b25b727b4bfb4af46a4103f565bc7a，与runner一致；五项平台导出存在，未解析符号0。仅编译与静态检查通过，未QEMU、未在手机执行本仓XNU。
+**咱们的源内核已真实链接 ArmCpu、ArmDTPlatform；加载器源码候选已接线，尚未生成或验证本仓启动镜像。** CI15 [39755850870](https://github.com/wh1stl3/UniXNU/actions/runs/39755850870) success，下载内核20,187,888字节、SHA a9e08c693fec4034f613cd554ea94e5855b25b727b4bfb4af46a4103f565bc7a，五平台导出、零undefined。仅构建与静态检查通过，未QEMU、未在手机执行本仓XNU。
+
+**当前停在 [R-004](NEED-REVIEW.md) 镜像生成审批门。** 倾向先只编译四个加载器模块与FD/BootShim并审计产物；没有触发新的固件CI或设备操作。
 
 ## 本轮结果
 
-- CI15精确设备输入ca8db300bf68ebc4853e023f08b920da0eab5de0；保持原make argv，仅追加两库及依赖，真实第二次make退出0；普通ARM64、8796.141.3/Darwin22.6，两项NativePrelink标记1。[平台链接及来源报告](operations/2026-10-22-driver-reuse-and-platform-link.md)。
-- 同轮内核新SHA下，65,348项donor指针绑定再次零缺失。CI13的119段只读plan不直接继承给新内核；完整布局/指令/ABI仍未验收，没有emit。
-- Android只读ADB确认ST FTS SPI（fts_touch_spi、st,spi、st_fts_m2.ftb）、活跃m2_38_0c_0a面板、Adreno740v2、KIOXIA UFS。MiCode nuwa DT与LineageOS SM8550 fts_spi源码固定提交对照；Android仍boot_completed=1。[实机观测报告](operations/2026-10-22-android-driver-evidence.md)。
-- 驱动优先复用真实开源实现；不以虚拟uinput-goodix/备用DT节点/旧I2C版误判触控，不套用sheng板值。UFS host窗口与stream cell和UniXNU源对应，DMA/SMMU接管未验证。
+- 三份源码候选补丁：BootShim image_size包含自身；nuwa DSC/FDF/包路径/库接入UniXNU应用、UniXNUDxe、DarwinBoot和只读initrd发布模块；裁掉借用sheng模块的AddMemory/GCD扩展逻辑，不继承其内存策略。
+- 75项静态检查通过，两个来源树真实git apply --check退出0；原始内核/输入/补丁/board/feed哈希固定。只在内存模拟应用，未修改任何参考源树。[接线及内存报告](operations/2026-10-22-loader-source-integration.md)。
+- 从参考现有xbl_config原件独立提取8,342字节原始cfg：28个DDR行+14个寄存器行，DXE Heap精确209.75MiB；隔壁整理文本的42行相同，但其C表改写了NoMap/AddDynamicMem、拆分FD并追加高地址策略。原始表和差异已入库，未直接转换成运行内存表。
+- Android只读既有证据：ST FTS SPI/st_fts_m2.ftb、活跃m2_38_0c_0a面板、Adreno740v2、KIOXIA UFS；固定MiCode DT与LineageOS来源。[驱动取证](operations/2026-10-22-android-driver-evidence.md)。本轮未操作手机，上轮采集后boot_completed=1。
 
 ## 下一步
 
-1. **转入运行配置审查**：Darwin22真实crypto/pthread provider与初始化、startup ARCH_TIMER、平台注册/GIC/PSCI；保留原boot profile依赖检查，不以两库链接成功代替可启动性。当前无待运行CI；不要为同一已通过输入空转重跑。
-2. 处理boot-progress 13回调和watchdog scratch覆盖，审查DarwinBoot/UniXNU固件入口，再接-D正式nuwa配置。触发镜像生成或板内存/地址修改前先NEED-REVIEW硬停。
-3. 对新内核继续官方只读plan及12处Libm外部PC编码/roots/初始化器审查；不平移旧plan或扩大oracle豁免。
-4. 沿ST FTS SPI、活跃m2面板及UFS/GPU的已固定源码做最小依赖审查，补精确芯片修订、TLMM/IRQ/SID和电源时序证据；Android只读信息可继续采，未知项TODO。
+1. R-004等待选择：A（倾向）先批准受限固件编译，验证四模块真实构建、FV内容/容量和BootShim头；B继续纯源码/ABI及内存语义工作，推迟生成。审批前不生成EFI/FD/boot镜像，不启动相应CI。
+2. A获批后只在独立云端构建树应用固定补丁，包路径按config/loader-candidate.json接入；不改board/feed或板地址，不部署。按首个真实编译错误推进并保存日志。所有实际启动仍需后续单独硬停范围。
+3. 在任何XNU负载/启动镜像组装前，继续核验CI15 runtime crypto/pthread provider、ARCH_TIMER/startup/GIC/PSCI、13项boot-progress及watchdog scratch；新内核的NativePrelink布局和12处Libm外部PC编码仍待审查，旧CI13只读plan不能直接继承。
+4. 原厂NoMap/AddDynamicMem语义、RamManager最终EFI map、initrd保留/映射与FAT挂载、DarwinBoot连续分配均为TODO；按D-002先512MiB–1GiB过阶段5，再抬容量。板字段修改仍单独审阅。
 
-## 当前边界
+## 当前边界与证据
 
-- 全部Git、gh、workflow修改及CI触发已有用户授权；按COMMIT-QUEUE分里程碑，不强推/改写历史。API发布校验相同Git对象且force=false。
-- 两个旧仓及来源树只读，设备仓独立；CI临时源树在云端RUNNER_TEMP、设备仓外，不整体升级基座。
-- feed和board不变，example=true。4KiB；iPhone10,3/d22ap/iOS16.7.16/20H392、8796.141.3；ipad_identity=true（安全属性）。D-002连续窗口上限8GiB，先512MiB–1GiB过阶段5，未知板值TODO。
-- 四类硬停保持，无新诊断/固件镜像或_verified=true；仅Android只读ADB采集，无写入/重启。
-
-## 证据与剩余限制
-
-- 最新reports/kernel-ci/39755850870含实际构建、三archive、平台链接、下载独立解析、五导出、原argv和边界hash；大日志/二进制忽略在out。reports/donor-compat/ci15-kernel-bindings.json为新内核的指针名清点。
-- 933份真实编译记录，51个IIG实现无kernelContent残留，原IORPC头不变；实际工具链macOS Actions/Xcode16.4/Apple clang17/iphoneos18.5 SDK。iOS16 metadata不等于16 SDK，WSL本机完整构建未验证。
-- 源CI保留关闭性能采样、boot-progress与startup ARCH_TIMER的范围；两库已链接，但crypto/pthread、时钟及完整driver/RPC ABI未验收。ArmVirtPlatform仅独立编译，不与实机平台一起force_load。
-- [donor指令清点](operations/2026-10-22-donor-pc-relative-inventory.md)：12处外部编码含4ADRP未验收；原CI13只读plan/参考roots/slide不构成正式配置。
-- [参考boot复核](operations/2026-10-22-reference-boot-process-review.md)：容器已打包，FD内DarwinBoot/UniXNU加载器集成未验证，不代表XNU启动。
-- [接口审查](operations/2026-10-22-darwin22-interfaces-and-wsl.md)：watchdog scratch、UFS/framebuffer依赖、SMMU/DMA、UEFI连续可用内存图及用户态ABI/PAC仍未验证。
+- feed和board不变、example=true；4KiB，iPhone10,3/d22ap/iOS16.7.16/20H392，8796.141.3；ipad_identity=true为安全属性。连续窗口硬上限8GiB。
+- Git/gh/workflow已有持续授权；不得强推/改写历史；两个旧仓及上游源码只读。四类硬停不因Git授权解除。
+- reports/loader-integration/为本轮原始cfg、75项静态检查、apply检查与来源状态；config/loader-candidate.json是审计清单，不是新增board字段。
+- reports/kernel-ci/39755850870/为两库实际重链接和下载核对；reports/donor-compat/ci15-kernel-bindings.json为65,348个指针绑定零缺失，不等于完整ABI通过。
+- CI工具链为macOS Actions/Xcode16.4/Apple clang17/iphoneos18.5；WSL完整内核构建未验证。源CI关闭性能、boot-progress和startup ARCH_TIMER的范围不变，ArmVirt仅独立编译。
+- 四模块源码接线不保证DXE/BDS/协议安装和initrd发布成功；完整nuwa启动链、SMMU/DMA、根卷和iOS用户态仍未验证。没有新固件/诊断镜像，没有_verified=true。

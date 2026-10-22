@@ -1,0 +1,38 @@
+{
+  "scope": "git apply --check only; no source/index writes",
+  "results": [
+    {
+      "source": "firmware",
+      "command": [
+        "C:/Program Files/Git/cmd/git.exe",
+        "-c",
+        "safe.directory=D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware",
+        "-C",
+        "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware",
+        "apply",
+        "--check",
+        "D:\\Code\\UniXNU-nuwa\\patches\\firmware-candidates\\0001-bootshim-image-size.patch",
+        "D:\\Code\\UniXNU-nuwa\\patches\\firmware-candidates\\0002-nuwa-loader-wiring.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "source": "sheng",
+      "command": [
+        "C:/Program Files/Git/cmd/git.exe",
+        "-c",
+        "safe.directory=D:\\Code\\PortingiOS\\common\\sources\\uefi-sheng",
+        "-C",
+        "D:\\Code\\PortingiOS\\common\\sources\\uefi-sheng",
+        "apply",
+        "--check",
+        "D:\\Code\\UniXNU-nuwa\\patches\\firmware-candidates\\0003-initrd-publisher-only.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ]
+}

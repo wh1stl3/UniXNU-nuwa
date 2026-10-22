@@ -310,3 +310,11 @@ D-012补充（2026-10-22 17:29）：CI14真实源内核及ArmCpu/ArmDTPlatform/A
 D-014补充（2026-10-22 17:37）：本机触控实际为fts_touch_spi/st,spi，MiCode nuwa DT在GPIO/坐标/SPI频率/固件名上对应；优先固定LineageOS SM8550内核fts_spi真实实现审查。sm8550-modules的旧st/I2C实现不作为直接版本，虚拟uinput-goodix不作为IC依据；面板以mi_display和msm_drm运行态一致的m2_38_0c_0a选择，不盲从default-panel指针。该项只确定来源方向，未移植/编译XNU触控、未改板值或镜像；详见Android取证报告。
 
 D-012补充（2026-10-22 17:49）：CI15实际重链接成功，ArmCpu/ArmDTPlatform五项导出已由下载内核独立核对，undefined=0、SHAa9e08c69与runner一致；65,348个donor指针绑定零缺失。源链接门取得真实证据；后续转向provider/时钟/平台启动条件，现有运行开关不变，不以链接通过验收硬件或完整ABI。证据reports/kernel-ci/39755850870/与reports/donor-compat/ci15-kernel-bindings.json。
+
+
+# D-015 · 固定本仓真实平台内核，分开复用加载器接线和原厂内存证据
+
+- 状态：accepted，源码候选静态检查通过；固件生成待R-004（2026-10-22 18:04）。
+- 证据：operations/2026-10-22-loader-source-integration.md；config/loader-candidate.json；reports/loader-integration/。
+
+当前内核输入固定为CI15 SHA a9e08c69（ArmCpu/ArmDTPlatform真实链接），不以隔壁预链接内核或旧FAT代替。复用BootShim长度修正、UniXNU应用/注册器/DarwinBoot协议链及sheng只读initrd BlockIo实现，后者移除DRAM/GCD扩展，只保留发布功能并检查入口HOB长度。原厂XBL配置以独立提取的8342字节原文为准；NoMap/AddDynamicMem、FD拆分和参考高地址策略分别审查，不整表套用或推翻D-002。源码候选不构成编译/分派/内存所有权/硬件通过；下一镜像生成步骤按R-004硬停。

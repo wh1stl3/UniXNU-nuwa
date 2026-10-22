@@ -1,0 +1,52 @@
+--- a/Platforms/Xiaomi/nuwaPkg/nuwa.dsc
++++ b/Platforms/Xiaomi/nuwaPkg/nuwa.dsc
+@@ -67,6 +67,10 @@
+   gQcomPkgTokenSpaceGuid.PcdPlatformType|"LA"
+ 
+ [LibraryClasses]
++  # UniXNU boot manager and DarwinBoot loader libraries.
++  UniXNULib|UniXNUPkg/Library/UniXNULib/UniXNULib.inf
++  FdtLib|MdePkg/Library/BaseFdtLib/BaseFdtLib.inf
++
+   #
+   # Memory Libraries
+   #
+@@ -78,6 +82,12 @@
+   ConfigurationMapLib|nuwaPkg/Library/ConfigurationMapLib/ConfigurationMapLib.inf
+ 
+ [Components]
++  # Keep registrar and application in the same firmware volume.
++  UniXNUPkg/Application/UniXNU/UniXNU.inf
++  UniXNUPkg/Driver/UniXNUDxe/UniXNUDxe.inf
++  DarwinBootPkg/Driver/DarwinBoot.inf
++  shengPkg/Drivers/ShengBootMemoryDxe/ShengBootMemoryDxe.inf
++
+   #
+   # ACPI Tables
+   #
+--- a/Platforms/Xiaomi/nuwaPkg/nuwa.fdf
++++ b/Platforms/Xiaomi/nuwaPkg/nuwa.fdf
+@@ -83,6 +83,12 @@
+   !include Include/DXE.inc
+   !include Include/RAW.inc
+ 
++  # UniXNU application, boot-option registrar, and XNU loader protocol.
++  INF UniXNUPkg/Application/UniXNU/UniXNU.inf
++  INF UniXNUPkg/Driver/UniXNUDxe/UniXNUDxe.inf
++  INF DarwinBootPkg/Driver/DarwinBoot.inf
++  INF shengPkg/Drivers/ShengBootMemoryDxe/ShengBootMemoryDxe.inf
++
+   # RAM Manager
+   INF SiliciumPkg/Drivers/RamManagerDxe/RamManagerDxe.inf
+ 
+--- a/Platforms/Xiaomi/nuwaPkg/DeviceBuild.py
++++ b/Platforms/Xiaomi/nuwaPkg/DeviceBuild.py
+@@ -30,6 +30,8 @@
+     Scopes = ('nuwa', 'gcc_aarch64_linux', 'edk2-build')
+     WorkspaceRoot = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+     PackagesPath = (
++        # Symlinks to pinned UniXNU packages; populated only in the build tree.
++        ".unixnu-packages",
+         "Platforms/Xiaomi",
+         "Common/Mu",
+         "Common/Mu_OEM_Sample",

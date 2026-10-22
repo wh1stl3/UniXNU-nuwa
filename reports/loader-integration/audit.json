@@ -1,0 +1,1307 @@
+{
+  "result": "static checks passed; no compile/emission/device execution",
+  "checks": [
+    {
+      "name": "input hash: firmware/BootShim/BootShim.S",
+      "passed": true
+    },
+    {
+      "name": "input hash: firmware/Platforms/Xiaomi/nuwaPkg/nuwa.dsc",
+      "passed": true
+    },
+    {
+      "name": "input hash: firmware/Platforms/Xiaomi/nuwaPkg/nuwa.fdf",
+      "passed": true
+    },
+    {
+      "name": "input hash: firmware/Platforms/Xiaomi/nuwaPkg/DeviceBuild.py",
+      "passed": true
+    },
+    {
+      "name": "input hash: firmware/Platforms/Xiaomi/nuwaPkg/Library/MemoryMapLib/MemoryMapLib.c",
+      "passed": true
+    },
+    {
+      "name": "input hash: firmware/Platforms/Xiaomi/nuwaPkg/Library/ConfigurationMapLib/ConfigurationMapLib.c",
+      "passed": true
+    },
+    {
+      "name": "input hash: firmware/Silicon/Silicium/SiliciumPkg/Include/Library/MemoryMapLib.h",
+      "passed": true
+    },
+    {
+      "name": "input hash: firmware/Silicon/Silicium/SiliciumPkg/Drivers/RamManagerDxe/RamManager.c",
+      "passed": true
+    },
+    {
+      "name": "input hash: firmware/Silicon/Silicium/SiliciumPkg/Library/MemoryInitPeiLib/MemoryInitPei.c",
+      "passed": true
+    },
+    {
+      "name": "input hash: firmware/Mu_Basecore/MdePkg/Library/BaseFdtLib/BaseFdtLib.inf",
+      "passed": true
+    },
+    {
+      "name": "input hash: unixnu/package/UniXNUPkg/Application/UniXNU/UniXNU.inf",
+      "passed": true
+    },
+    {
+      "name": "input hash: unixnu/package/UniXNUPkg/Driver/UniXNUDxe/UniXNUDxe.inf",
+      "passed": true
+    },
+    {
+      "name": "input hash: unixnu/drivers/DarwinBoot/DarwinBootPkg/Driver/DarwinBoot.inf",
+      "passed": true
+    },
+    {
+      "name": "input hash: unixnu/package/UniXNUPkg/UniXNUPkg.dec",
+      "passed": true
+    },
+    {
+      "name": "input hash: unixnu/package/UniXNUPkg/Library/UniXNULib/UniXNULib.inf",
+      "passed": true
+    },
+    {
+      "name": "input hash: unixnu/package/UniXNUPkg/Library/UniXNULib/Boot.c",
+      "passed": true
+    },
+    {
+      "name": "input hash: unixnu/package/UniXNUPkg/Driver/UniXNUDxe/UniXNUDxe.c",
+      "passed": true
+    },
+    {
+      "name": "input hash: unixnu/drivers/DarwinBoot/DarwinBootPkg/Driver/DarwinBoot.c",
+      "passed": true
+    },
+    {
+      "name": "input hash: unixnu/scripts/unixnu/bootimg.py",
+      "passed": true
+    },
+    {
+      "name": "input hash: reference/.work/nuwa-xbl_config_a.img",
+      "passed": true
+    },
+    {
+      "name": "input hash: reference/device/observed/nuwa-uefiplatLA.cfg",
+      "passed": true
+    },
+    {
+      "name": "input hash: reference/uefi-nuwa/Platforms/Xiaomi/nuwaPkg/Library/MemoryMapLib/MemoryMapLib.c",
+      "passed": true
+    },
+    {
+      "name": "input hash: reference/uefi-nuwa/BootShim/BootShim.S",
+      "passed": true
+    },
+    {
+      "name": "input hash: firmware/Resources/Configs/nuwa.toml",
+      "passed": true
+    },
+    {
+      "name": "input hash: firmware/.gitmodules",
+      "passed": true
+    },
+    {
+      "name": "input hash: firmware/Platforms/Xiaomi/nuwaPkg/Include/DXE.inc",
+      "passed": true
+    },
+    {
+      "name": "input hash: firmware/Silicon/Qualcomm/QcomPkg/Library/PlatformBootManagerLib/PlatformBootManager.c",
+      "passed": true
+    },
+    {
+      "name": "input hash: firmware/Silicon/Qualcomm/QcomPkg/Library/PlatformBootOptionsLib/PlatformBootOptions.c",
+      "passed": true
+    },
+    {
+      "name": "input hash: sheng/Platforms/Xiaomi/shengPkg/Drivers/ShengBootMemoryDxe/ShengBootMemoryDxe.c",
+      "passed": true
+    },
+    {
+      "name": "input hash: sheng/Platforms/Xiaomi/shengPkg/Drivers/ShengBootMemoryDxe/ShengBootMemoryDxe.inf",
+      "passed": true
+    },
+    {
+      "name": "input hash: sheng/README.md",
+      "passed": true
+    },
+    {
+      "name": "protected hash: board.toml",
+      "passed": true
+    },
+    {
+      "name": "protected hash: feeds.toml",
+      "passed": true
+    },
+    {
+      "name": "downloaded CI15 linked kernel size and SHA",
+      "passed": true
+    },
+    {
+      "name": "patch hash: patches/firmware-candidates/0001-bootshim-image-size.patch",
+      "passed": true
+    },
+    {
+      "name": "patch hash: patches/firmware-candidates/0002-nuwa-loader-wiring.patch",
+      "passed": true
+    },
+    {
+      "name": "patch hash: patches/firmware-candidates/0003-initrd-publisher-only.patch",
+      "passed": true
+    },
+    {
+      "name": "only four intended source files changed",
+      "passed": true
+    },
+    {
+      "name": "DSC component: UniXNUPkg/Application/UniXNU/UniXNU.inf",
+      "passed": true
+    },
+    {
+      "name": "same FvMain: UniXNUPkg/Application/UniXNU/UniXNU.inf",
+      "passed": true
+    },
+    {
+      "name": "DSC component: UniXNUPkg/Driver/UniXNUDxe/UniXNUDxe.inf",
+      "passed": true
+    },
+    {
+      "name": "same FvMain: UniXNUPkg/Driver/UniXNUDxe/UniXNUDxe.inf",
+      "passed": true
+    },
+    {
+      "name": "DSC component: DarwinBootPkg/Driver/DarwinBoot.inf",
+      "passed": true
+    },
+    {
+      "name": "same FvMain: DarwinBootPkg/Driver/DarwinBoot.inf",
+      "passed": true
+    },
+    {
+      "name": "DSC component: shengPkg/Drivers/ShengBootMemoryDxe/ShengBootMemoryDxe.inf",
+      "passed": true
+    },
+    {
+      "name": "same FvMain: shengPkg/Drivers/ShengBootMemoryDxe/ShengBootMemoryDxe.inf",
+      "passed": true
+    },
+    {
+      "name": "external package root in build settings",
+      "passed": true
+    },
+    {
+      "name": "module source exists: UniXNUPkg/Application/UniXNU/UniXNU.inf:UniXNU.c",
+      "passed": true
+    },
+    {
+      "name": "module source exists: UniXNUPkg/Driver/UniXNUDxe/UniXNUDxe.inf:UniXNUDxe.c",
+      "passed": true
+    },
+    {
+      "name": "module source exists: DarwinBootPkg/Driver/DarwinBoot.inf:DarwinBoot.c",
+      "passed": true
+    },
+    {
+      "name": "module source exists: DarwinBootPkg/Driver/DarwinBoot.inf:PackedRamdisk.h",
+      "passed": true
+    },
+    {
+      "name": "module source exists: DarwinBootPkg/Driver/DarwinBoot.inf:BootArgs.h",
+      "passed": true
+    },
+    {
+      "name": "module source exists: DarwinBootPkg/Driver/DarwinBoot.inf:BootVideo.h",
+      "passed": true
+    },
+    {
+      "name": "module source exists: DarwinBootPkg/Driver/DarwinBoot.inf:DiagFont.h",
+      "passed": true
+    },
+    {
+      "name": "module source exists: DarwinBootPkg/Driver/DarwinBoot.inf:Entry.S",
+      "passed": true
+    },
+    {
+      "name": "module source exists: shengPkg/Drivers/ShengBootMemoryDxe/ShengBootMemoryDxe.inf:ShengBootMemoryDxe.c",
+      "passed": true
+    },
+    {
+      "name": "module types",
+      "passed": true
+    },
+    {
+      "name": "library mapping: UniXNULib|UniXNUPkg/Library/UniXNULib/UniXNULib.inf",
+      "passed": true
+    },
+    {
+      "name": "library mapping: FdtLib|MdePkg/Library/BaseFdtLib/BaseFdtLib.inf",
+      "passed": true
+    },
+    {
+      "name": "registrar PCD matches application GUID",
+      "passed": true
+    },
+    {
+      "name": "loader consumer and producer refer to same protocol",
+      "passed": true
+    },
+    {
+      "name": "registrar waits for variable protocols",
+      "passed": true
+    },
+    {
+      "name": "shim change limited to image_size expression",
+      "passed": true
+    },
+    {
+      "name": "FD copy length unchanged",
+      "passed": true
+    },
+    {
+      "name": "PCD/FD assignments unchanged: nuwa.dsc",
+      "passed": true
+    },
+    {
+      "name": "PCD/FD assignments unchanged: nuwa.fdf",
+      "passed": true
+    },
+    {
+      "name": "memory and configuration maps not patched",
+      "passed": true
+    },
+    {
+      "name": "sheng patch only changes borrowed publisher and its INF",
+      "passed": true
+    },
+    {
+      "name": "publisher no longer extends RAM",
+      "passed": true
+    },
+    {
+      "name": "publisher preserves readonly BlockIo",
+      "passed": true
+    },
+    {
+      "name": "stock FAT and partition drivers wired",
+      "passed": true
+    },
+    {
+      "name": "unique raw cfg header",
+      "passed": true
+    },
+    {
+      "name": "reference reassembly preserves all 42 memory rows",
+      "passed": true
+    },
+    {
+      "name": "raw factory rows do not describe high bank",
+      "passed": true
+    },
+    {
+      "name": "dynamic TZ marker retained in original",
+      "passed": true
+    }
+  ],
+  "hunks": [
+    {
+      "root": "firmware",
+      "path": "BootShim/BootShim.S",
+      "hunk": 1,
+      "line": 7
+    },
+    {
+      "root": "firmware",
+      "path": "Platforms/Xiaomi/nuwaPkg/nuwa.dsc",
+      "hunk": 1,
+      "line": 67
+    },
+    {
+      "root": "firmware",
+      "path": "Platforms/Xiaomi/nuwaPkg/nuwa.dsc",
+      "hunk": 2,
+      "line": 82
+    },
+    {
+      "root": "firmware",
+      "path": "Platforms/Xiaomi/nuwaPkg/nuwa.fdf",
+      "hunk": 1,
+      "line": 83
+    },
+    {
+      "root": "firmware",
+      "path": "Platforms/Xiaomi/nuwaPkg/DeviceBuild.py",
+      "hunk": 1,
+      "line": 30
+    },
+    {
+      "root": "sheng",
+      "path": "Platforms/Xiaomi/shengPkg/Drivers/ShengBootMemoryDxe/ShengBootMemoryDxe.c",
+      "hunk": 1,
+      "line": 1
+    },
+    {
+      "root": "sheng",
+      "path": "Platforms/Xiaomi/shengPkg/Drivers/ShengBootMemoryDxe/ShengBootMemoryDxe.c",
+      "hunk": 2,
+      "line": 29
+    },
+    {
+      "root": "sheng",
+      "path": "Platforms/Xiaomi/shengPkg/Drivers/ShengBootMemoryDxe/ShengBootMemoryDxe.c",
+      "hunk": 3,
+      "line": 198
+    },
+    {
+      "root": "sheng",
+      "path": "Platforms/Xiaomi/shengPkg/Drivers/ShengBootMemoryDxe/ShengBootMemoryDxe.c",
+      "hunk": 4,
+      "line": 211
+    },
+    {
+      "root": "sheng",
+      "path": "Platforms/Xiaomi/shengPkg/Drivers/ShengBootMemoryDxe/ShengBootMemoryDxe.inf",
+      "hunk": 1,
+      "line": 18
+    }
+  ],
+  "modules": [
+    {
+      "module": "UniXNUPkg/Application/UniXNU/UniXNU.inf",
+      "resolved": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU\\package\\UniXNUPkg\\Application\\UniXNU\\UniXNU.inf",
+      "guid": "9B665204-A133-47A2-9396-9E2B370A4E25",
+      "kind": "UEFI_APPLICATION",
+      "source_sha256": "8afae643b8f99a923e9c89ed371538f15895ab974a639e894da9a36f7fc5efad",
+      "effective_text_sha256": "8afae643b8f99a923e9c89ed371538f15895ab974a639e894da9a36f7fc5efad"
+    },
+    {
+      "module": "UniXNUPkg/Driver/UniXNUDxe/UniXNUDxe.inf",
+      "resolved": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU\\package\\UniXNUPkg\\Driver\\UniXNUDxe\\UniXNUDxe.inf",
+      "guid": "29B950CF-586D-49EA-9D71-F88645CCDAF6",
+      "kind": "DXE_DRIVER",
+      "source_sha256": "077045b9876cf528cf9f9b9e21fd5c5ed857798fd009ff265966c81d86e1249c",
+      "effective_text_sha256": "077045b9876cf528cf9f9b9e21fd5c5ed857798fd009ff265966c81d86e1249c"
+    },
+    {
+      "module": "DarwinBootPkg/Driver/DarwinBoot.inf",
+      "resolved": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU\\drivers\\DarwinBoot\\DarwinBootPkg\\Driver\\DarwinBoot.inf",
+      "guid": "1B64AF87-8415-4B57-9B16-680D70913B9F",
+      "kind": "UEFI_DRIVER",
+      "source_sha256": "cb10851277b53b355794c1bca3fa16d3bf18a0dc2dee857091837b63599019df",
+      "effective_text_sha256": "cb10851277b53b355794c1bca3fa16d3bf18a0dc2dee857091837b63599019df"
+    },
+    {
+      "module": "shengPkg/Drivers/ShengBootMemoryDxe/ShengBootMemoryDxe.inf",
+      "resolved": "D:\\Code\\PortingiOS\\common\\sources\\uefi-sheng\\Platforms\\Xiaomi\\shengPkg\\Drivers\\ShengBootMemoryDxe\\ShengBootMemoryDxe.inf",
+      "guid": "5C0E4B7A-31D2-4E8F-9A66-0B1F7D2C8E43",
+      "kind": "DXE_DRIVER",
+      "source_sha256": "c0b0ce64f12f90ba6b239e8e97191f5c5bb97c450947b748d22b4a39e4fd44ed",
+      "effective_text_sha256": "88562f071dac938d7bf545de48b2945862e3c05878528cabe0171509ad62e6b6"
+    }
+  ],
+  "kernel": {
+    "ci_run": 39755850870,
+    "sha256": "a9e08c693fec4034f613cd554ea94e5855b25b727b4bfb4af46a4103f565bc7a",
+    "bytes": 20187888,
+    "kind": "source kernel with ArmCpu and ArmDTPlatform; not a prelinked payload"
+  },
+  "factory": {
+    "source": "D:\\Code\\PortingiOSWithUniXNU\\.work\\nuwa-xbl_config_a.img",
+    "source_sha256": "686bce68b672213c749eea1efbf4575ff7d56c3a0b2326375fb70fd7a952db21",
+    "offset": 101928,
+    "end_exclusive": 110270,
+    "bytes": 8342,
+    "sha256": "2adc494b0325278c5709f63e52cb4c9e7b2cf29812f67710ee40d2e719c77d12",
+    "rows": [
+      {
+        "base": 2147483648,
+        "size": 18874368,
+        "name": "NOMAP",
+        "attributes": [
+          "NoMap",
+          "MEM_RES",
+          "UNCACHEABLE",
+          "Reserv",
+          "UNCACHED_UNBUFFERED_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 9
+      },
+      {
+        "base": 2166358016,
+        "size": 8388608,
+        "name": "RSRV0",
+        "attributes": [
+          "AddMem",
+          "SYS_MEM",
+          "SYS_MEM_CAP",
+          "Reserv",
+          "WRITE_BACK_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 10
+      },
+      {
+        "base": 2174746624,
+        "size": 262144,
+        "name": "XBL DT",
+        "attributes": [
+          "AddMem",
+          "SYS_MEM",
+          "SYS_MEM_CAP",
+          "Reserv",
+          "WRITE_BACK_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 11
+      },
+      {
+        "base": 2175008768,
+        "size": 1835008,
+        "name": "XBL Ramdump",
+        "attributes": [
+          "AddMem",
+          "MEM_RES",
+          "UNCACHEABLE",
+          "Reserv",
+          "UNCACHED_UNBUFFERED_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 12
+      },
+      {
+        "base": 2176843776,
+        "size": 655360,
+        "name": "AOP",
+        "attributes": [
+          "AddMem",
+          "MEM_RES",
+          "UNCACHEABLE",
+          "Reserv",
+          "UNCACHED_UNBUFFERED_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 13
+      },
+      {
+        "base": 2177892352,
+        "size": 2097152,
+        "name": "SMEM",
+        "attributes": [
+          "AddMem",
+          "MEM_RES",
+          "UNCACHEABLE",
+          "Reserv",
+          "UNCACHED_UNBUFFERED_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 14
+      },
+      {
+        "base": 2262827008,
+        "size": 44040192,
+        "name": "RSRV1",
+        "attributes": [
+          "AddMem",
+          "MEM_RES",
+          "SYS_MEM_CAP",
+          "Reserv",
+          "WRITE_BACK_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 15
+      },
+      {
+        "base": 2306867200,
+        "size": 422051840,
+        "name": "PIL Reserved",
+        "attributes": [
+          "AddMem",
+          "MEM_RES",
+          "UNCACHEABLE",
+          "Reserv",
+          "UNCACHED_UNBUFFERED_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 16
+      },
+      {
+        "base": 2728919040,
+        "size": 45088768,
+        "name": "Display Demura",
+        "attributes": [
+          "AddMem",
+          "MEM_RES",
+          "SYS_MEM_CAP",
+          "Reserv",
+          "WRITE_THROUGH_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 17
+      },
+      {
+        "base": 2774007808,
+        "size": 12058624,
+        "name": "RSRV2",
+        "attributes": [
+          "AddMem",
+          "MEM_RES",
+          "SYS_MEM_CAP",
+          "Reserv",
+          "WRITE_BACK_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 18
+      },
+      {
+        "base": 2786066432,
+        "size": 15728640,
+        "name": "DBI Dump",
+        "attributes": [
+          "NoHob",
+          "MMAP_IO",
+          "INITIALIZED",
+          "Conv",
+          "UNCACHED_UNBUFFERED_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 19
+      },
+      {
+        "base": 2801795072,
+        "size": 4194304,
+        "name": "UEFI FD",
+        "attributes": [
+          "AddMem",
+          "SYS_MEM",
+          "SYS_MEM_CAP",
+          "BsData",
+          "WRITE_BACK"
+        ],
+        "section": "MemoryMap",
+        "line": 20
+      },
+      {
+        "base": 2805989376,
+        "size": 2097152,
+        "name": "UEFI FD Reserved",
+        "attributes": [
+          "AddMem",
+          "SYS_MEM",
+          "SYS_MEM_CAP",
+          "BsData",
+          "WRITE_BACK"
+        ],
+        "section": "MemoryMap",
+        "line": 21
+      },
+      {
+        "base": 2808086528,
+        "size": 4096,
+        "name": "CPU Vectors",
+        "attributes": [
+          "AddMem",
+          "SYS_MEM",
+          "SYS_MEM_CAP",
+          "BsData",
+          "WRITE_BACK"
+        ],
+        "section": "MemoryMap",
+        "line": 22
+      },
+      {
+        "base": 2808090624,
+        "size": 4096,
+        "name": "Info Blk",
+        "attributes": [
+          "AddMem",
+          "SYS_MEM",
+          "SYS_MEM_CAP",
+          "RtData",
+          "WRITE_BACK_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 23
+      },
+      {
+        "base": 2808094720,
+        "size": 12288,
+        "name": "MMU PageTables",
+        "attributes": [
+          "AddMem",
+          "SYS_MEM",
+          "SYS_MEM_CAP",
+          "BsData",
+          "WRITE_BACK_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 24
+      },
+      {
+        "base": 2808107008,
+        "size": 32768,
+        "name": "Log Buffer",
+        "attributes": [
+          "AddMem",
+          "SYS_MEM",
+          "SYS_MEM_CAP",
+          "RtData",
+          "WRITE_BACK_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 25
+      },
+      {
+        "base": 2808139776,
+        "size": 262144,
+        "name": "UEFI Stack",
+        "attributes": [
+          "AddMem",
+          "SYS_MEM",
+          "SYS_MEM_CAP",
+          "BsData",
+          "WRITE_BACK_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 26
+      },
+      {
+        "base": 2808401920,
+        "size": 573440,
+        "name": "SEC Heap",
+        "attributes": [
+          "AddMem",
+          "SYS_MEM",
+          "SYS_MEM_CAP",
+          "BsData",
+          "WRITE_BACK_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 27
+      },
+      {
+        "base": 2808975360,
+        "size": 4194304,
+        "name": "Sched Heap",
+        "attributes": [
+          "AddMem",
+          "SYS_MEM",
+          "SYS_MEM_CAP",
+          "BsData",
+          "WRITE_BACK_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 28
+      },
+      {
+        "base": 2813169664,
+        "size": 4194304,
+        "name": "FV Region",
+        "attributes": [
+          "AddMem",
+          "SYS_MEM",
+          "SYS_MEM_CAP",
+          "BsData",
+          "WRITE_BACK_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 29
+      },
+      {
+        "base": 2817363968,
+        "size": 1208320,
+        "name": "UEFI RESV",
+        "attributes": [
+          "AddMem",
+          "SYS_MEM",
+          "SYS_MEM_CAP",
+          "BsData",
+          "WRITE_BACK_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 30
+      },
+      {
+        "base": 2818572288,
+        "size": 268435456,
+        "name": "Kernel",
+        "attributes": [
+          "AddMem",
+          "SYS_MEM",
+          "SYS_MEM_CAP",
+          "Reserv",
+          "WRITE_BACK_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 31
+      },
+      {
+        "base": 3087007744,
+        "size": 45088768,
+        "name": "Display Reserved",
+        "attributes": [
+          "AddMem",
+          "MEM_RES",
+          "SYS_MEM_CAP",
+          "Reserv",
+          "WRITE_THROUGH_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 32
+      },
+      {
+        "base": 3132096512,
+        "size": 219938816,
+        "name": "DXE Heap",
+        "attributes": [
+          "AddMem",
+          "SYS_MEM",
+          "SYS_MEM_CAP",
+          "Conv",
+          "WRITE_BACK_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 33
+      },
+      {
+        "base": 3632267264,
+        "size": 144703488,
+        "name": "TZApps Reserved",
+        "attributes": [
+          "AddDynamicMem",
+          "MEM_RES",
+          "UNCACHEABLE",
+          "Reserv",
+          "UNCACHED_UNBUFFERED_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 34
+      },
+      {
+        "base": 4004511744,
+        "size": 78643200,
+        "name": "RSRV3",
+        "attributes": [
+          "AddMem",
+          "MEM_RES",
+          "SYS_MEM_CAP",
+          "Reserv",
+          "WRITE_BACK_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 35
+      },
+      {
+        "base": 4286578688,
+        "size": 8388608,
+        "name": "NOMAP",
+        "attributes": [
+          "NoMap",
+          "MEM_RES",
+          "UNCACHEABLE",
+          "Reserv",
+          "UNCACHED_UNBUFFERED_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 36
+      },
+      {
+        "base": 342360064,
+        "size": 172032,
+        "name": "IMEM Base",
+        "attributes": [
+          "NoHob",
+          "MMAP_IO",
+          "INITIALIZED",
+          "Conv",
+          "NS_DEVICE"
+        ],
+        "section": "RegisterMap",
+        "line": 40
+      },
+      {
+        "base": 342532096,
+        "size": 90112,
+        "name": "IMEM Cookie Base",
+        "attributes": [
+          "AddDev",
+          "MMAP_IO",
+          "INITIALIZED",
+          "Conv",
+          "NS_DEVICE"
+        ],
+        "section": "RegisterMap",
+        "line": 41
+      },
+      {
+        "base": 4194304,
+        "size": 1048576,
+        "name": "IPC_ROUTER_TOP",
+        "attributes": [
+          "AddDev",
+          "MMAP_IO",
+          "UNCACHEABLE",
+          "MmIO",
+          "NS_DEVICE"
+        ],
+        "section": "RegisterMap",
+        "line": 43
+      },
+      {
+        "base": 7864320,
+        "size": 28672,
+        "name": "SECURITY CONTROL",
+        "attributes": [
+          "AddDev",
+          "MMAP_IO",
+          "UNCACHEABLE",
+          "MmIO",
+          "NS_DEVICE"
+        ],
+        "section": "RegisterMap",
+        "line": 44
+      },
+      {
+        "base": 8388608,
+        "size": 3145728,
+        "name": "QUP",
+        "attributes": [
+          "AddDev",
+          "MMAP_IO",
+          "UNCACHEABLE",
+          "MmIO",
+          "NS_DEVICE"
+        ],
+        "section": "RegisterMap",
+        "line": 45
+      },
+      {
+        "base": 17563648,
+        "size": 49152,
+        "name": "PRNG_CFG_PRNG",
+        "attributes": [
+          "AddDev",
+          "MMAP_IO",
+          "UNCACHEABLE",
+          "MmIO",
+          "NS_DEVICE"
+        ],
+        "section": "RegisterMap",
+        "line": 46
+      },
+      {
+        "base": 31195136,
+        "size": 262144,
+        "name": "CRYPTO0 CRYPTO",
+        "attributes": [
+          "AddDev",
+          "MMAP_IO",
+          "UNCACHEABLE",
+          "MmIO",
+          "NS_DEVICE"
+        ],
+        "section": "RegisterMap",
+        "line": 47
+      },
+      {
+        "base": 32505856,
+        "size": 1048576,
+        "name": "CORE_TOP_CSR",
+        "attributes": [
+          "AddDev",
+          "MMAP_IO",
+          "UNCACHEABLE",
+          "MmIO",
+          "NS_DEVICE"
+        ],
+        "section": "RegisterMap",
+        "line": 48
+      },
+      {
+        "base": 142606336,
+        "size": 1048576,
+        "name": "PERIPH_SS",
+        "attributes": [
+          "AddDev",
+          "MMAP_IO",
+          "UNCACHEABLE",
+          "MmIO",
+          "NS_DEVICE"
+        ],
+        "section": "RegisterMap",
+        "line": 49
+      },
+      {
+        "base": 174063616,
+        "size": 2097152,
+        "name": "USB",
+        "attributes": [
+          "AddDev",
+          "MMAP_IO",
+          "UNCACHEABLE",
+          "MmIO",
+          "NS_DEVICE"
+        ],
+        "section": "RegisterMap",
+        "line": 50
+      },
+      {
+        "base": 184549376,
+        "size": 67108864,
+        "name": "AOSS",
+        "attributes": [
+          "AddDev",
+          "MMAP_IO",
+          "UNCACHEABLE",
+          "MmIO",
+          "NS_DEVICE"
+        ],
+        "section": "RegisterMap",
+        "line": 51
+      },
+      {
+        "base": 251658240,
+        "size": 16777216,
+        "name": "TLMM",
+        "attributes": [
+          "AddDev",
+          "MMAP_IO",
+          "UNCACHEABLE",
+          "MmIO",
+          "NS_DEVICE"
+        ],
+        "section": "RegisterMap",
+        "line": 52
+      },
+      {
+        "base": 352321536,
+        "size": 2097152,
+        "name": "SMMU",
+        "attributes": [
+          "AddDev",
+          "MMAP_IO",
+          "UNCACHEABLE",
+          "MmIO",
+          "NS_DEVICE"
+        ],
+        "section": "RegisterMap",
+        "line": 53
+      },
+      {
+        "base": 385875968,
+        "size": 33554432,
+        "name": "APSS_HM",
+        "attributes": [
+          "AddDev",
+          "MMAP_IO",
+          "UNCACHEABLE",
+          "MmIO",
+          "NS_DEVICE"
+        ],
+        "section": "RegisterMap",
+        "line": 54
+      }
+    ],
+    "memory_rows": 28,
+    "register_rows": 14,
+    "reference_cfg_is_verbatim": false,
+    "dxe_heap_mib": 209.75,
+    "conventional_sys_mem_total_mib": 209.75
+  },
+  "reference_map": {
+    "rows": 53,
+    "changed_or_split": [
+      {
+        "factory": {
+          "base": 2147483648,
+          "size": 18874368,
+          "name": "NOMAP",
+          "attributes": [
+            "NoMap",
+            "MEM_RES",
+            "UNCACHEABLE",
+            "Reserv",
+            "UNCACHED_UNBUFFERED_XN"
+          ],
+          "section": "MemoryMap",
+          "line": 9
+        },
+        "reference_same_extent": [
+          {
+            "base": 2147483648,
+            "size": 18874368,
+            "name": "NOMAP",
+            "attributes": [
+              "HobOnlyNoCacheSetting",
+              "MEM_RES",
+              "UNCACHEABLE",
+              "Reserv",
+              "UNCACHED_UNBUFFERED_XN"
+            ],
+            "section": "MemoryMap",
+            "line": 33
+          }
+        ]
+      },
+      {
+        "factory": {
+          "base": 2801795072,
+          "size": 4194304,
+          "name": "UEFI FD",
+          "attributes": [
+            "AddMem",
+            "SYS_MEM",
+            "SYS_MEM_CAP",
+            "BsData",
+            "WRITE_BACK"
+          ],
+          "section": "MemoryMap",
+          "line": 20
+        },
+        "reference_same_extent": []
+      },
+      {
+        "factory": {
+          "base": 3632267264,
+          "size": 144703488,
+          "name": "TZApps Reserved",
+          "attributes": [
+            "AddDynamicMem",
+            "MEM_RES",
+            "UNCACHEABLE",
+            "Reserv",
+            "UNCACHED_UNBUFFERED_XN"
+          ],
+          "section": "MemoryMap",
+          "line": 34
+        },
+        "reference_same_extent": [
+          {
+            "base": 3632267264,
+            "size": 144703488,
+            "name": "TZApps Reserved",
+            "attributes": [
+              "AddMem",
+              "MEM_RES",
+              "UNCACHEABLE",
+              "Reserv",
+              "UNCACHED_UNBUFFERED_XN"
+            ],
+            "section": "MemoryMap",
+            "line": 59
+          }
+        ]
+      },
+      {
+        "factory": {
+          "base": 4286578688,
+          "size": 8388608,
+          "name": "NOMAP",
+          "attributes": [
+            "NoMap",
+            "MEM_RES",
+            "UNCACHEABLE",
+            "Reserv",
+            "UNCACHED_UNBUFFERED_XN"
+          ],
+          "section": "MemoryMap",
+          "line": 36
+        },
+        "reference_same_extent": [
+          {
+            "base": 4286578688,
+            "size": 8388608,
+            "name": "NOMAP LLCC",
+            "attributes": [
+              "HobOnlyNoCacheSetting",
+              "MEM_RES",
+              "UNCACHEABLE",
+              "Reserv",
+              "UNCACHED_UNBUFFERED_XN"
+            ],
+            "section": "MemoryMap",
+            "line": 61
+          }
+        ]
+      }
+    ],
+    "added_or_split": [
+      {
+        "base": 2801795072,
+        "size": 1048576,
+        "name": "FD Reserved",
+        "attributes": [
+          "AddMem",
+          "SYS_MEM",
+          "SYS_MEM_CAP",
+          "BsData",
+          "WRITE_BACK"
+        ],
+        "section": "MemoryMap",
+        "line": 44
+      },
+      {
+        "base": 2802843648,
+        "size": 3145728,
+        "name": "UEFI FD",
+        "attributes": [
+          "AddMem",
+          "SYS_MEM",
+          "SYS_MEM_CAP",
+          "BsData",
+          "WRITE_BACK"
+        ],
+        "section": "MemoryMap",
+        "line": 45
+      },
+      {
+        "base": 2177499136,
+        "size": 344064,
+        "name": "AOP extended",
+        "attributes": [
+          "AddMem",
+          "MEM_RES",
+          "UNCACHEABLE",
+          "Reserv",
+          "UNCACHED_UNBUFFERED_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 67
+      },
+      {
+        "base": 3624927232,
+        "size": 262144,
+        "name": "XBL SC",
+        "attributes": [
+          "AddMem",
+          "MEM_RES",
+          "UNCACHEABLE",
+          "Reserv",
+          "UNCACHED_UNBUFFERED_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 68
+      },
+      {
+        "base": 2179989504,
+        "size": 131072,
+        "name": "ADSP MHI",
+        "attributes": [
+          "AddMem",
+          "MEM_RES",
+          "UNCACHEABLE",
+          "Reserv",
+          "UNCACHED_UNBUFFERED_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 69
+      },
+      {
+        "base": 2188378112,
+        "size": 1048576,
+        "name": "TZ STATS",
+        "attributes": [
+          "AddMem",
+          "MEM_RES",
+          "UNCACHEABLE",
+          "Reserv",
+          "UNCACHED_UNBUFFERED_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 70
+      },
+      {
+        "base": 3570401280,
+        "size": 53477376,
+        "name": "MPSS DSM",
+        "attributes": [
+          "AddMem",
+          "MEM_RES",
+          "UNCACHEABLE",
+          "Reserv",
+          "UNCACHED_UNBUFFERED_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 71
+      },
+      {
+        "base": 3625189376,
+        "size": 1835008,
+        "name": "CPUCP FW",
+        "attributes": [
+          "AddMem",
+          "SYS_MEM",
+          "SYS_MEM_CAP",
+          "Reserv",
+          "UNCACHED_UNBUFFERED_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 72
+      },
+      {
+        "base": 3627024384,
+        "size": 5242880,
+        "name": "QTEE",
+        "attributes": [
+          "AddMem",
+          "MEM_RES",
+          "UNCACHEABLE",
+          "Reserv",
+          "UNCACHED_UNBUFFERED_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 73
+      },
+      {
+        "base": 3863216128,
+        "size": 3002368,
+        "name": "HWFENCE Shbuf",
+        "attributes": [
+          "AddMem",
+          "MEM_RES",
+          "UNCACHEABLE",
+          "Reserv",
+          "UNCACHED_UNBUFFERED_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 74
+      },
+      {
+        "base": 37580963840,
+        "size": 6442450944,
+        "name": "DRAM bank 1 high",
+        "attributes": [
+          "AddMem",
+          "SYS_MEM",
+          "SYS_MEM_CAP",
+          "Conv",
+          "WRITE_BACK_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 81
+      },
+      {
+        "base": 44023414784,
+        "size": 3221225472,
+        "name": "DRAM bank 1 tail",
+        "attributes": [
+          "AddMem",
+          "SYS_MEM",
+          "SYS_MEM_CAP",
+          "Reserv",
+          "WRITE_BACK_XN"
+        ],
+        "section": "MemoryMap",
+        "line": 82
+      }
+    ]
+  },
+  "unverified": [
+    "EDK full library resolution/compile/FV size",
+    "DXE dispatch/BDS/protocol installation on device",
+    "ABL initrd properties, firmware mapping and reservation lifetime, FAT mount",
+    "NoMap/AddDynamicMem semantics and live UEFI memory map",
+    "512 MiB-1 GiB contiguous allocation",
+    "CI15 runtime providers/timer/startup and donor prelink/ABI",
+    "boot image and XNU execution"
+  ]
+}

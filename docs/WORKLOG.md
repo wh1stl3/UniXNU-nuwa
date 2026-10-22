@@ -108,3 +108,5 @@
 2026-10-22 17:37 · 只读ADB确认ST FTS SPI、活跃m2面板、Adreno740v2与KIOXIA UFS；固定MiCode DT和LineageOS匹配触控来源，Android仍boot_completed=1 · 本提交（Q-048） · reports/android-driver-evidence/20261022T092529Z/；docs/operations/2026-10-22-android-driver-evidence.md
 
 2026-10-22 17:49 · CI15两平台库真实重链接成功，下载五导出/零undefined核对，65348 donor绑定零失败；运行配置和硬件仍待验证 · 本提交（Q-049） · reports/kernel-ci/39755850870/；reports/donor-compat/ci15-kernel-bindings.json
+
+2026-10-22 18:04 · 固定CI15内核并完成四模块加载器/只读initrd源码接线与BootShim修正，独立提取原厂cfg；75项静态检查和两来源apply检查通过，停于R-004固件产物生成门 · 本提交（Q-050） · reports/loader-integration/；docs/operations/2026-10-22-loader-source-integration.md

@@ -497,3 +497,14 @@
 [Evidence] reports/kernel-ci/39755850870为20,187,888字节SHAa9e08c69、五平台导出、零undefined、make退出0；reports/donor-compat/ci15-kernel-bindings.json为65,348绑定零失败，来源树tracked clean和feed/board hash不变。
 [Risk] ARCH_TIMER等运行开关仍保持原范围，crypto/pthread、完整布局/PC-relative/ABI及硬件未验证；Android观测不是XNU实机通过，无新镜像或_verified=true。
 ```
+
+
+## Q-050 · 加载器源码接线与原厂内存证据
+
+```text
+[unixnu-nuwa][loader] 接入四模块加载器候选并隔离参考内存策略
+
+[Change] 固定CI15双平台库内核，准备BootShim长度和nuwa四模块接线补丁，裁剪sheng只读initrd发布器；独立提取原厂配置并记录与参考C表的差异。
+[Evidence] reports/loader-integration含75项静态检查、两来源树git apply --check退出0、8342字节原文及来源hash；config/loader-candidate.json固定所有输入，board/feed不变。
+[Risk] 固件编译/分派、initrd映射保留、动态内存语义、XNU运行provider及预链接ABI未验证；无新镜像或设备动作，后续生成停于R-004。
+```

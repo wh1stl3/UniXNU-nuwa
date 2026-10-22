@@ -12,7 +12,27 @@
 
 | 编号 | 主题 | 需要用户做什么 |
 | --- | --- | --- |
-| — | 无 | — |
+| R-004 | 四模块加载器候选的受限编译 | 选择A：只生成构建产物；或B：继续源码审查、暂不生成 |
+
+## R-004 · 加载器候选编译与产物审计（open，2026-10-22 18:04）
+
+触发来源：本仓 AGENTS.md §3 第3类“新建或重写任何诊断 / 固件镜像”。Git/gh/workflow授权已明确，不重复请求；这里仅请求新的EFI/FD/BootShim产物生成范围。当前尚未编译或生成这些产物。
+
+背景：CI15自己的8796内核已链接ArmCpu/ArmDTPlatform。三份源码候选补丁完成了BootShim头修正、四模块DSC/FDF/包路径/库接线，并将sheng的initrd发布模块裁剪为只读BlockIo，去掉AddMemory/GCD扩展。75项静态检查及两来源树git apply --check通过；内核、来源、补丁、board/feed哈希固定。详细变更和来源见 [接线报告](operations/2026-10-22-loader-source-integration.md) 与 config/loader-candidate.json。
+
+原厂表已独立提取，DXE Heap209.75MiB，隔壁的6GiB高地址Conv和AddDynamicMem转AddMem不能直接继承。尚无nuwa最终UEFI map和initrd保留/映射证据；四模块真实编译、FV容量/分派也尚未验证。本项不询问已作废容量选择。
+
+**候选 A（倾向）：先只构建加载器固件候选并静态审计产物。**
+
+最小范围：允许在独立GitHub Actions临时源树中，使用清单固定的mu-nuwa-firmware、UniXNU和uefi-sheng输入及三份补丁，生成四模块的EFI文件、nuwa FD和BootShim编译/头校验所需二进制；下载后核对模块GUID/DEPEX/协议依赖、FV大小、FD大小及shim头/拷贝长度，保存日志、输入版本和哈希。沿用固定固件来源的Resources/Configs/nuwa.toml及内存表，不改board/feed、内存/地址、设备槽位或_verified。只生成构建验收用产物，不打Android boot.img、不生成预链接/负载镜像、不执行fastboot或将固件送上手机。实际kernel payload仍固定CI15，完整预链接待另外完成。
+
+代价：需要一次固件CI，可能暴露Mu/EDK版本、库依赖或3MiB FD空间问题；产物不能因此称可启动。若需要改地址/容量或扩展镜像范围，继续单独提出具体审批，不自动扩大。收益：先把可编译性与布局问题从内存策略、XNU运行配置和设备问题中分开取证。
+
+**候选 B：推迟所有固件产物，继续源码/ABI与内存语义审查。**
+
+在当前三补丁基础上继续检查Darwin22运行provider/时钟/回调、NativePrelink编码、原厂动态内存语义和initrd生命周期，期间不生成EFI/FD/BootShim/boot镜像。代价：实际EDK依赖、FV容量和模块格式错误仍要到后续构建才能发现，不能靠静态审查验收；最终运行map仍可能需要单独获批的实机验证。
+
+倾向 A：源码候选已具体且可审阅，先获取真实编译证据能缩小后续调试范围；不会把旧内核/旧FD混进来，也不会继承隔壁的容量批准。**需要用户批准的最小范围就是A所列固件构建与静态产物审计；设备执行、board内存/地址变更及完整boot.img均不在其中。**
 
 ## 后续授权记录（2026-10-22）
 
