@@ -1,12 +1,12 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-23T02:07:20+08:00（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-23T02:29:17+08:00（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
-**R-010 A固件CI39829943950成功（6m51s，设备c9d538f），666项产物/输入静态核验通过。实际DXE核心含分配诊断，FD d9c3eaa0、核心c0135047；相同shim/原PIL/空AUTO保留。v4临时包9197fed2已生成，尚未实机启动。D-021日志/恢复前置门已接入，用户确认可录像，准备重新核对nuwa状态后进行一次临时试验并恢复Android。**
+**R-010 A已完成唯一一次临时加载：02:27包9197fed2 Sending/Booting OKAY，15次采样nuwa fastboot均未出现。具体屏幕/分配快照仍等用户证据，不能据ACK认定DXE或XNU通过。已启动原Android恢复等待，H-005只差用户录完画面后按电源+音量下回fastboot；当前尚未确认本次恢复完成1。CI39829943950及666项实际产物静态验收通过。**
 
-[本轮审查和候选](operations/2026-10-23-dxe-allocation-source-audit.md)，reports/dxe-allocation-audit/。上轮已证实到候选DXE但断言、未进入BDS/XNU；最后Android完成1为R-009恢复记录，本轮已只读重新确认Android完成1，尚无R-010启动结果。
+[本轮审查和候选](operations/2026-10-23-dxe-allocation-source-audit.md)，reports/dxe-allocation-audit/。上轮已证实到候选DXE但断言、未进入BDS/XNU；最后Android完成1为R-009恢复记录，本轮试前已只读确认Android完成1，目前实际ACK已记录，阶段日志及恢复完成仍待确认。
 
 ## 本轮新证据与持久约定
 
@@ -48,10 +48,10 @@ boot_a/vendor_boot_a/init_boot_a全分区SHA与紧邻试前值相同；未flash/
 
 ## 下一步
 
-1. 本轮CI39829943950及包已验收，重新采集当前nuwa Android/分区摘要，核对日志与恢复门，然后通知用户录像并执行唯一一次临时启动。
-2. 采集[NUWA-MEM]首失败/断言前状态，不以ACK当DXE通过；恢复Android并确认完成1及三分区摘要。
-3. 用户已确认可录像，启动前通知；实际动作前重新核对nuwa身份、具体日志通道和Android/fastboot恢复证据。一次受限试启动后恢复Android并确认完成1，实测另记。
-4. H-001/H-003历史人工待办不作为离线阻塞；当前尚未执行R-010启动/刷写动作。见operations/2026-10-23-dxe-allocation-build-trial.md。
+1. 当前恢复脚本等待nuwa端点，用户录完后按电源+音量下回fastboot；检测到后只加载已校验原Android boot，不再试新包。H-005只差按键，独立文档/证据工作继续。
+2. 恢复后重新确认nuwa/kalama Android完成1并对比三个分区摘要，原始失败/等待记录保留。
+3. 收到具体[NUWA-MEM]行/画面后分析实际空闲/最大块及请求参数。无截图数字则TODO，不把69MiB源码差异写成运行根因。
+4. 本轮候选试验次数已用完，后续需依据实际结果与D-021日志/恢复门推进；没有修改内存图、board/feed或_verified。
 
 ## 内核与后续目标
 

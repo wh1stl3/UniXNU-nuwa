@@ -950,3 +950,13 @@
 [Evidence] CI6m51s成功，666项核验通过；实际核心c0135047含首失败/断言前标记，FDd9c3eaa0、包9197fed2，原PIL与空AUTO、相对shim保持。
 [Risk] 当前仅编译和静态验收通过，未试启动或进入XNU；日志时序影响和运行分配状态待本轮唯一一次实测。
 ```
+
+## Q-090 · R-010临时加载和恢复等待证据
+
+```text
+[unixnu-nuwa][device] 记录分配诊断临时加载并等待实体键恢复通道
+
+[Change] 完成唯一一次包9197fed2临时加载，保留D-021前置记录和15次采样，H-005记按键回fastboot，原Android恢复等待中。
+[Evidence] 试前实际nuwa/kalama Android完成1及三个原分区SHA；Sending3080KB和Booting均OKAY，15次nuwa fastboot均false，阶段画面尚待用户。
+[Risk] ACK不证明DXE或XNU通过，实际分配数值和本次Android恢复完成1尚未确认；未继续新试验或修改内存图。
+```

@@ -194,3 +194,5 @@
 2026-10-23T02:16:49+08:00 · 39828647170工具安装超时，按实际mirror+file入口修复Azure间接选源，保留签名/限时；35项与Bash语法通过 · Q-088（提交后以git log定位） · reports/dxe-allocation/39828647170/
 
 2026-10-23T02:26:32+08:00 · 39829943950固件编译成功，666项及实际DXE核心日志标记静态检查通过，v4包9197fed2准备完成 · Q-089（提交后以git log定位） · reports/dxe-allocation/39829943950/
+
+2026-10-23T02:29:17+08:00 · R-010唯一临时加载ACK通过、15次nuwa fastboot均false；阶段日志待用户，恢复等待端点/实体键H-005 · Q-090（提交后以git log定位） · reports/dxe-allocation/39829943950/launch.json；preflight.json；trial-summary.json

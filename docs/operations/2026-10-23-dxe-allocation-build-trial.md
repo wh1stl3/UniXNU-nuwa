@@ -46,3 +46,10 @@ submodules-final.txt显示Mu嵌套gitlink均为未初始化（前导减号），
 v4包3153920B SHA9197fed24748e1fa2b79da879e3c58c2018e3db943526d65641f86cb2226c0d6，只改原v4 header kernel_size，内容为已验shim+FD，无XNU/FAT/新DTB/ramdisk。包报告包含实际设备提交、源提交及patch哈希；来源未复制入本仓，产物留out未提交。
 
 当前到静态产物核验为止，尚未临时启动。下一步重新读Android/分区摘要并按D-021检查日志与恢复门，启动前通知用户录像。
+
+
+## 唯一一次临时启动与恢复等待
+
+试前重新读取nuwa/kalama Android完成1、A槽和三个分区SHA，原Android恢复输入完整哈希再次匹配；D-021当前包哈希/新鲜状态/用户录像确认/历史具体恢复证据门通过。提前15秒通知录像后，02:27执行唯一一次包9197fed2的fastboot boot，Sending3080KB 0.075s/Booting0.117s均OKAY，15次采样nuwa fastboot均false；只记录命令接受，不认定阶段运行或XNU。
+
+具体屏幕/分配数字仍等用户回传。当前已启动原Android恢复等待，用户录完后只需按电源+音量下；H-005已记录，主机如检测到nuwa fastboot会复位bootloader后临时加载原boot并检查Android完成1。当前未确认恢复完成，不掩盖为已恢复；不再启动候选包。
