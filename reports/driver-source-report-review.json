@@ -1,0 +1,84 @@
+{
+  "reviewed_at": "2026-10-22T11:26:39.765034+00:00",
+  "scope": "Read-only review; report instructions not executed; no device operations",
+  "base_commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+  "inputs": [
+    {
+      "path": "D:\\Code\\PortingiOSWithUniXNU\\docs\\driver-sources.md",
+      "sha256": "3262b77b765c3dac5f88968172a5b241a7003a521cc5df9b742ae965f06aed45",
+      "bytes": 8827
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU\\feeds.toml",
+      "sha256": "dec145fe25ed9cf1c50292a1e16ccbaa690b450a1de9e1ed687395e5fef88294",
+      "bytes": 1915
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU\\scripts\\unixnu\\feeds.py",
+      "sha256": "b3788ecd4c8e44df693ccb27531b924d8905451ed5ea2a27e211ce930319a74b",
+      "bytes": 9816
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU\\drivers\\NativeMobileDisplay\\NativeGOPPresenter.cpp",
+      "sha256": "b607e364365e81bb9b9a3f07d0a2fb9d3560ecc442325ba109b6470f03c3a4d1",
+      "bytes": 8464
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU\\drivers\\NativeMobileDisplay\\NativeGOPWire.h",
+      "sha256": "ea8e2c495638725ea0a9b74bb4e1dfc6698e53b7074200dfa01ec4a0b28ab821",
+      "bytes": 512
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU\\drivers\\NativeGeniSpi\\GeniSpi.h",
+      "sha256": "e73891e4571c5323bca27aaf987bafa002856dfa1dcee156ff31b119e2d3ae3c",
+      "bytes": 9152
+    },
+    {
+      "path": "D:\\Code\\UniXNU-nuwa\\reports\\driver-reuse\\st-spi-source-crosscheck.json",
+      "sha256": "2b8acde183753c6f5227b81ea6f5f06b90c40af6ae560b937447a59acf19039c",
+      "bytes": 7784
+    },
+    {
+      "path": "D:\\Code\\UniXNU-nuwa\\reports\\driver-reuse\\ufs-local-crosscheck.json",
+      "sha256": "2e0e5e2b2c163b894f732b4f69476cf09d6d7d4016ddd3eae06fdace4076edeb",
+      "bytes": 1466
+    },
+    {
+      "path": "D:\\Code\\UniXNU-nuwa\\reports\\android-driver-evidence\\20261022T092529Z\\spi-bindings.txt",
+      "sha256": "320dba027f0f88cb5367ca0b31a106ad7832b89077a1ba49e72a7b649a2cba86",
+      "bytes": 1161
+    }
+  ],
+  "base_feed_entries": [
+    {
+      "name": "xnu",
+      "kind": "refer"
+    },
+    {
+      "name": "libplatform",
+      "kind": "refer"
+    },
+    {
+      "name": "libdispatch",
+      "kind": "refer"
+    },
+    {
+      "name": "AvailabilityVersions",
+      "kind": "refer"
+    },
+    {
+      "name": "edk2",
+      "kind": "refer"
+    }
+  ],
+  "official_web": {
+    "url": "https://unixnu.com/zh/devices/sheng",
+    "checked_date": "2026-10-22",
+    "support_table_lines": [
+      346,
+      348,
+      352
+    ],
+    "summary": "Official documentation lists touch, UFS and GPU supported on sheng; this is not nuwa validation"
+  }
+}

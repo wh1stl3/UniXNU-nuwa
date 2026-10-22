@@ -563,3 +563,14 @@
 [Evidence] nuwa unlocked=yes，原厂ef558db2临时启动回Android boot_completed=1，当前boot/init_boot与原始hash一致；候选3153920B/SHA12864ac6，原v4头仅kernel_size变化、内嵌FD一致。
 [Risk] A槽持久启动与硬挂按键恢复未验收；新固件包未执行，DT物理放置/生命周期及DXE未验证；无新增XNU/FAT、未flash/改槽位或board/feed，未置_verified=true。
 ```
+
+
+## Q-056 · 外部驱动来源报告复核
+
+```text
+[unixnu-nuwa][docs] 纠正驱动报告的触控品牌与复用判据
+
+[Change] 只读核对外部报告并保存来源hash，明确ST FTS SPI方向、官方sheng GPU状态、可选feeds解析及UFS/显示运行门槛；保留可用索引。
+[Evidence] 本机st,spi/fts_touch_spi/st_fts_m2.ftb与固定LineageOS ST源一致；base75bc13d feeds解析支持device/base目录，官网2026-10-22列sheng GPU/Metal可用。
+[Risk] 官网sheng支持不等于nuwa或Darwin22通过；面板/PHY/DMA/ABI仍未验证，本轮未改feed/board/源树或执行设备动作。
+```

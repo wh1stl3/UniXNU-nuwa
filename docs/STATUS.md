@@ -1,6 +1,6 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 19:06（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-22 19:26（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
@@ -16,6 +16,10 @@
 - 临时fastboot boot原厂nuwa备份ef558db2…被ABL接受，DT确认nuwa/kalama/KALAMA且Android boot_completed=1。当前boot_a/init_boot_a整分区hash与原始备份/锁定记录相同；未flash、未改槽位。不能把临时恢复扩大为持久启动已修复，或新固件实机通过。H-001按键恢复演练仍open；H-002 unlocked核验已完成。
 - nuwa当前boot/init_boot/vendor_boot均v4，原厂v4备份临时启动有真实证据。当前Android initrd[0xb5fb2000,0xb7fff1d4)处于静态Kernel保留区[0xa8000000,0xb8000000)，源码映射WB/XN；该事实不替代新候选ABL布局。DT实际地址、SEC访问及initrd生命周期仍未验证。
 - RamManager会将EFI图中空隙加入Conventional；发布器不保留新initrd。固定上游DT自带旧initrd属性、默认ramdisk5B，不直接复用为有效运行地址。原厂cfg NoMap/AddDynamicMem、209.75MiB DXE Heap与参考C表有差异；未继承高地址6GiB或整表策略。
+
+## 驱动报告复核
+
+外部driver-sources.md可作索引，但FocalTech判定错误（本机为ST FTS SPI）、sheng GPU状态过时、设备feeds必要性和“同SoC直接可用”结论不成立。继续按D-014匹配真实实现，不改feed/板值；[逐条复核](operations/2026-10-22-driver-source-report-review.md)。本轮仅文档/来源审查，未操作设备。
 
 ## 下一步
 
