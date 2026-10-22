@@ -281,3 +281,13 @@
 [Evidence] reports/kernel-ci/39736351595/run.json、api-publish.json；https://github.com/wh1stl3/UniXNU/actions/runs/39736351595；device_ref=8dd1b52e6d10a633f9248e4d54a3ce1f09cb1eff。
 [Risk] 记录时仍在运行，未取得完整内核或ABI成功证据；feed/board不变，无镜像或设备动作。
 ```
+
+## Q-029 · ARM64上下文关闭KPC边界
+
+```text
+[unixnu-nuwa][kernel] 保护关闭KPC时的ARM64上下文回调并批量重跑
+
+[Change] 根据源码审查给arm64/pcb.c的性能计数头与两处回调加KPC条件，保留原pmap及上下文切换；请求取消第八轮以合并已确认缺口，取消结果不当作验证。
+[Evidence] reports/kernel-ci/39736351595/kpc-context-review.json：调用行183/519及optional kpc实现定义；cancel-request.json；next-compatibility-check.json为57项225 hunks通过，配方hash/bash语法检查通过。
+[Risk] 新候选尚待实际编译；源码缺口不冒充已观察到的链接错误，取消不算成功或失败验证；feed/board不变，无镜像、设备动作或_verified=true。
+```

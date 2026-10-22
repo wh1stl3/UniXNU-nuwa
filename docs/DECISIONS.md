@@ -259,3 +259,5 @@ D-010补充（2026-10-22 14:22）：第五轮51个IIG生成实现均无kernelCon
 D-010补充（2026-10-22 14:35）：第六轮首错移至processor.c定时器表无条件引用KPERF枚举/回调；timer_call.h枚举已有KPERF guard，现仅给表项加相同条件，保留表长度static_assert。53项213 hunks静态检查通过，待第七轮。证据reports/kernel-ci/39733594660/及第五轮分析的第六轮节。
 
 D-010补充（2026-10-22 14:48）：第七轮确认ast.o/processor.o均实际生成，首错移至t_kpc初始化与结构KPC条件不一致。仅补初始化guard；同类源码检查另补scheduler/KTRACE对关闭性能模块的引用边界，保留量子定时器与KDEBUG路径，无stub。56项222 hunks静态检查通过，新增候选待第八轮；证据reports/kernel-ci/39734939751/，不混称实际链接错误。
+
+D-010补充（2026-10-22 14:54）：ARM64上下文两处kpc_off_cpu调用仍引用关闭模块，只给include和回调加KPC条件，不改变pmap/上下文切换。第八轮请求取消以合并该已确认源码缺口；取消不作构建验证。57项225 hunks静态检查通过，待后续真实编译。证据reports/kernel-ci/39736351595/kpc-context-review.json。

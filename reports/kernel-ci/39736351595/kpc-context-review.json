@@ -1,0 +1,23 @@
+{
+  "active_calls": [
+    {
+      "file": "osfmk/arm64/pcb.c",
+      "line": 183,
+      "symbol": "kpc_off_cpu"
+    },
+    {
+      "file": "osfmk/arm64/pcb.c",
+      "line": 519,
+      "symbol": "kpc_off_cpu"
+    }
+  ],
+  "implementation": {
+    "file": "osfmk/kern/kpc_thread.c",
+    "active_variable_line": 52,
+    "internal_function_line": 191,
+    "selected_by": "osfmk/conf/files optional kpc"
+  },
+  "excluded_from_candidate": "x86/i386 and optional monotonic/kpc implementation units; harmless ktrace extern declaration",
+  "scope": "source reference audit, not actual unresolved-symbol evidence",
+  "source_written": false
+}

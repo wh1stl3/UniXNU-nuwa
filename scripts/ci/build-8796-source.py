@@ -66,6 +66,7 @@ def inputs(base):
                  'disabled-kperf-scheduler.patch',
                  'disabled-kperf-ktrace.patch',
                  'disabled-kpc-task.patch',
+                 'disabled-kpc-context.patch',
                  'zzzz-ci-public-profiling.patch'):
         compatibility = DEVICE / 'patches/xnu-8796-ci-candidates' / name
         if not compatibility.is_file():

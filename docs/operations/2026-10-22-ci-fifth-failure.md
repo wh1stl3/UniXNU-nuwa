@@ -65,3 +65,12 @@ build.json记录51个真实生成实现、51份适配记录，总共1296次模�
 ## 第八轮启动
 
 8dd1b52e6d10a633f9248e4d54a3ce1f09cb1eff已发布，第八轮39736351595使用56项候选及既定IIG适配，最终结果未验证。运行元数据及相同Git对象发布证明见reports/kernel-ci/39736351595/。
+
+
+## ARM64上下文KPC审查与第八轮取消请求（2026-10-22 14:54）
+
+第八轮运行中继续审查，确认arm64/pcb.c:183,519无条件调用kpc_off_cpu；kern/kpc.h:163-166的inline引用kpc_off_cpu_active和kpc_off_cpu_internal，两者在仅optional kpc选择的kpc_thread.c:52,191定义。该配置已关闭KPC，属于与既有错误同类的明确源码缺口。disabled-kpc-context.patch仅保护该include与两次回调，不改pmap/扩展上下文切换代码。
+
+为批量覆盖而避免再花一整轮等待已知缺口，已执行gh run cancel 39736351595，请求返回0。run.json保留服务端当前状态；取消作业不作为失败、成功或修复通过的证据。下一轮包含该额外候选。x86/i386和optional monotonic实现未纳入修改，ktrace中的纯extern声明也不当作链接引用。
+
+下一候选57项225 hunks精确静态检查、输入hash和配方bash语法检查通过；见该运行目录next-compatibility-check.json及next-source-input-check.json，引用审查见kpc-context-review.json。没有源树/board/feed写入、镜像或设备动作。
