@@ -341,3 +341,13 @@
 [Evidence] CI39738601892完整配方和链接成功；reports/kernel-ci/39738601892/acceptance.json与kernel-inspection.json：20,136,488字节、SHA bdaad81373d00df8334cb5a453b32f06a5e607c3e7d8cde812e4f5f927e19ced，8796.141.3/Darwin22.6.0，未解析符号0，两项标记1；board/feed哈希不变，来源树tracked状态空。
 [Risk] BCM2837源CI关闭性能采样及可选设备archive；WSL本机、driver/RPC ABI、donor预链接、完整nuwa启动/QEMU/实机未验证；无诊断/固件镜像生成、设备动作或_verified=true。
 ```
+
+## Q-035 · 真实编译记录与Darwin22平台archive候选
+
+```text
+[unixnu-nuwa][build] 补实际编译记录并独立构建Darwin22平台archive
+
+[Change] 仅在C/C++真实编译中追加Clang记录；用本轮原命令构建ArmCpu/ArmDTPlatform/ArmVirtPlatform库，清除原对象及依赖输出副作用，记录格式/哈希/ar成员和符号闭包，扩充CI产物收集。
+[Evidence] reports/driver-archives-plan/：59项228 hunks精确顺序、输入hash及配方语法检查通过；3项参数保护测试通过；固定基座三来源文件hash和原消费路径；D-012及本轮操作文档。
+[Risk] 实际fragment、archive编译及符号闭包待CI，完整C++/donor ABI和硬件未验证；不接入board或重新链接带库内核，feed/板值不变，无诊断/固件镜像、设备动作或_verified=true。
+```

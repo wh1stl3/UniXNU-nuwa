@@ -271,3 +271,10 @@ D-010补充（2026-10-22 14:54）：ARM64上下文两处kpc_off_cpu调用仍引�
 第九轮到达最终链接，唯一缺失符号为native_legacy_display_probe。保持源CI可选设备archive关闭的范围，仅使bsd_init中运行时probe分支服从已有XNU_NATIVE_LEGACY_DISPLAY开关；开启功能时仍必须提供真实archive并完成Darwin22接口审查。保留完整链接错误和make退出码检查，无stub或忽略undefined-symbol行为。58项226 hunks静态检查通过，实际修复待第十轮。feed/board、未知板值和实机边界不变。
 
 D-008/D-010/D-011补充（2026-10-22 15:28）：第十轮39738601892已完成完整源配方与链接，下载产物SHA与runner一致，普通ARM64、LC_SOURCE_VERSION8796.141.3、Darwin22.6.0、未解析符号0、两项NativePrelink标记1，静态检查通过。云端macOS工具链路线取得真实源内核构建证据；WSL本机、完整driver/RPC ABI、donor预链接与nuwa可启动性仍未验证。源CI性能及可选设备archive保持关闭。证据reports/kernel-ci/39738601892/与operations/2026-10-22-ci-source-kernel-success.md。
+
+# D-012 · 真实编译时生成记录并独立审查Darwin22平台archive
+
+- 状态：accepted，实际archive编译待CI（2026-10-22 15:40）。
+- 证据：8796 MakeInc.rule:403,427与MakeInc.def:955-970；reports/driver-archives-plan/；operations/2026-10-22-darwin22-archive-build.md。
+
+在C/C++规则中用Clang -MJ生成逐对象fragment，保留实际编译和完整链接，不采用替换编译的数据库模式。archive只重用同轮真实IOPlatformExpert命令，保留ABI、清除原对象/依赖输出副作用，重建三项基座通用平台库并检查ARM64/iOS16格式与符号名闭包。此步骤不把archive接入内核或board，不验收硬件、完整C++/donor ABI；boot-progress/watchdog继续关闭。feed、板值和镜像硬停不变。

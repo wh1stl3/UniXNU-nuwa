@@ -62,6 +62,7 @@ def inputs(base):
                                    'IPHONEOS_DEPLOYMENT_TARGET=17.0',
                                    'IPHONEOS_DEPLOYMENT_TARGET=16.0', 1)
     for name in ('clang17-zero-init.patch', 'clang17-uio-stackbuf.patch',
+                 'clang-compile-records.patch',
                  'disabled-kperf-ast.patch', 'disabled-kperf-timer.patch',
                  'disabled-kperf-scheduler.patch',
                  'disabled-kperf-ktrace.patch',
@@ -149,6 +150,9 @@ def main():
                        kernel_path=str(kernel.relative_to(work)))
         run(['file', kernel])
         run(['xcrun', 'otool', '-l', kernel])
+        run([sys.executable, '-B', DEVICE / 'scripts/ci/audit-driver-archives.py',
+             '--work', work, '--base', base])
+        summary['driver_archive_audit'] = 'passed; compile and symbol closure only'
     finally:
         source = work / '.cache/xnu-work'
         if source.is_dir():
@@ -171,6 +175,17 @@ def main():
             summary['linked_kernel_sha256'] = sha(artifact)
         target_objects = work / 'build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837'
         summary['xnu_target_object_count'] = len(list(target_objects.rglob('*.o')))
+        records = list(target_objects.rglob('*.o.json')) + list(target_objects.rglob('*.cpo.json'))
+        summary['compile_record_count'] = len(records)
+        summary['required_compile_records'] = {}
+        for name in ('startup.o.json', 'kern_exec.o.json', 'IOPlatformExpert.cpo.json', 'prng_random.o.json'):
+            matches = list(target_objects.rglob(name))
+            summary['required_compile_records'][name] = [
+                {'path': str(path.relative_to(work)), 'sha256': sha(path)} for path in matches]
+            for path in matches:
+                target = work / 'reports/compile-records' / path.relative_to(target_objects)
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(path, target)
         summary['key_objects'] = {name: [
             {'path': str(path.relative_to(work)), 'bytes': path.stat().st_size, 'sha256': sha(path)}
             for path in sorted(target_objects.rglob(name))]

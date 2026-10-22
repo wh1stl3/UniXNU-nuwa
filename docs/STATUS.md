@@ -1,10 +1,14 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 15:28（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-22 15:40（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
 **8796.141.3源内核已编译、链接成功。** [第十轮39738601892](https://github.com/wh1stl3/UniXNU/actions/runs/39738601892)于15:20完成，完整配方退出成功，产物已下载并与runner哈希对齐；普通ARM64 MH_EXECUTE、Darwin22.6.0、LC_SOURCE_VERSION=8796.141.3、未解析符号0、NativePrelink两项标记=1，静态检查通过。尚不是完整nuwa可启动内核；未预链接、未QEMU、未实机。见[成功取证](operations/2026-10-22-ci-source-kernel-success.md)。
+
+## 本轮推进
+
+已补真实C/C++逐对象编译记录候选与三个平台archive的严格构建/符号检查，59项228 hunks和3项参数保护测试通过；待发布精确输入并执行云端CI，archive尚未验证。见[本轮记录](operations/2026-10-22-darwin22-archive-build.md)。
 
 ## 当前边界
 
@@ -24,7 +28,7 @@
 
 ## 下一步
 
-1. 接续Darwin22 driver/static archive审查：核对8796实际编译命令/输出文件名与符号、NativePrelink接口，形成可复核的编译数据库获取方案；不把源码内核成功当成archive ABI通过。
+1. 发布本轮精确输入并运行CI；下载真实compile records及ArmCpu/ArmDTPlatform/ArmVirtPlatform构建结果，按首个实际错误推进。源内核已成功与archive尚未验证分开记录；不把符号名闭包扩大成完整ABI通过。
 2. 收口boot-progress 13项回调、watchdog接口和scratch布局风险，再建立正式nuwa配置并接回-D入口；保持feed，未知板值TODO。
 3. 只读解析既定iPhone donor的kernelcache，补齐真实hash/roots等证据；不移用iPadOS17的prelink数值，不生成镜像。任何board身份/内存/基址变更先硬停审查。
 4. 当前不安排这份源内核上机；达到可启动链路前置条件后，在NEED-REVIEW列出至少两条验证路径、代价和最小批准范围。只差实体按键的待办不阻塞软件侧工作。

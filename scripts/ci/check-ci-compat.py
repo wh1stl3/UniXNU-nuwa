@@ -35,6 +35,11 @@ if tree.read('iokit/DriverKit/IORPC.h') != (args.xnu / 'iokit/DriverKit/IORPC.h'
     raise ValueError('CI compatibility patches must not widen the original IORPC ABI')
 if '#  PERF_DBG_BASE =  [ mach_kdp config_serial_kdp ]' not in tree.read('config/MASTER.arm64.bcm2837'):
     raise ValueError('Public source CI must not select unavailable ARM64 KPC or dependent KPERF')
+rules = tree.read('makedefs/MakeInc.rule')
+if rules.count('-MJ $@.json') != 2:
+    raise ValueError('C and C++ compilation must emit separate records while still compiling')
+if 'LD\t= $(KC++) -nostdlib' not in flags or '-MJ' in flags:
+    raise ValueError('Record generation must not alter compiler variables or linker invocation')
 print(json.dumps({'patch_count': len(patches), 'hunks': hunks,
                   'in_memory_sequence': 'passed', 'zero_initialization_retained': True,
                   'iorpc_header_unchanged': True,

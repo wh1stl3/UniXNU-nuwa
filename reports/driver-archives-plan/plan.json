@@ -1,0 +1,29 @@
+{
+  "base_commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+  "sources": {
+    "ArmCpu": {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU\\drivers\\ArmCpu\\ArmCpu.cpp",
+      "sha256": "3c87b3bd617be5582a6a24ff797c359497ee9feaa702ee883ecee4270db21c9f"
+    },
+    "ArmDTPlatform": {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU\\drivers\\ArmDTPlatform\\ArmDTPlatform.cpp",
+      "sha256": "07f96a42bdd638022960f5fcaf9e3a07dd73a82c869a70815781cac6d4873b3b"
+    },
+    "ArmVirtPlatform": {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU\\drivers\\ArmVirtPlatform\\ArmVirtPlatform.cpp",
+      "sha256": "34213e235425bfc201e7348aecdebbb861cb3c7492c3ebbf1d5eeefa20ece8a3"
+    }
+  },
+  "required_records": [
+    "startup.o.json",
+    "kern_exec.o.json",
+    "IOPlatformExpert.cpo.json",
+    "prng_random.o.json"
+  ],
+  "record_method": "Clang -MJ in C_RULE_1A and P_RULE_1A; actual compilation and link retained",
+  "reference": "https://clang.llvm.org/docs/JSONCompilationDatabase.html",
+  "target": "ordinary ARM64 / iOS16.0 MH_OBJECT and ar archives",
+  "archive_execution": "not yet run",
+  "kernel_relink_with_archives": false,
+  "device_verified": false
+}
