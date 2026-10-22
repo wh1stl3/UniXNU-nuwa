@@ -1,0 +1,52 @@
+{
+  "scope": "Source-only pending R-010; no compilation/image/device command",
+  "mu_repository": "microsoft/mu_basecore",
+  "mu_commit": "cfb93724a06ff86ff5ba971413368a7809ee42a5",
+  "license": "BSD-2-Clause-Patent (source headers)",
+  "inputs": [
+    {
+      "path": "MdeModulePkg/Core/Dxe/Mem/Page.c",
+      "lf_sha256": "d0d0a2db4e3956c4cffd81a68efc705212ebdbe0ea2f0e7d1fffbe358bb82dd7",
+      "proposed_lf_sha256": "410caf700acd4d6d1e5268e5de1296cd56f2d475efddd9e94183e6afcaeedc3d"
+    },
+    {
+      "path": "MdeModulePkg/Core/Dxe/DxeMain/DxeMain.c",
+      "lf_sha256": "baa2b6c6c201afaa06d044ea1f15f26c48f2133821d347a0d42f54e4aed231ba",
+      "proposed_lf_sha256": "615fa3160a1ed33165c10c126bd26f62e19df837a3965e303d0d37d39c057cfe"
+    }
+  ],
+  "patch": "patches/firmware-candidates/0008-nuwa-dxe-allocation-trace.patch",
+  "patch_sha256": "ac8bd4763feddda9a7e5e6b0d179c3416531283137b75329965d5737bb6e32d9",
+  "apply_check": {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Mu_Basecore",
+      "apply",
+      "--check",
+      "-p2",
+      "D:\\Code\\UniXNU-nuwa\\patches\\firmware-candidates\\0008-nuwa-dxe-allocation-trace.patch"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "source_only_checks": [
+    "Pinned working cache matches git objects",
+    "git apply --check -p2 passes",
+    "No allocator/map-changing calls in helper",
+    "First failure and final pre-assert only",
+    "Original allocation result, resource promotion and assertion unchanged"
+  ],
+  "limitations": [
+    "No full Mu compile or device result",
+    "Largest raw free range before alignment/guard clipping; not guaranteed allocatable",
+    "Framebuffer-only output; timing/flush overhead and lock-held logging",
+    "Only first eight free ranges printed, aggregate includes all ranges",
+    "No successful-allocation history or early initialization map snapshot"
+  ],
+  "image_generated": false,
+  "firmware_checkout_modified": false,
+  "device_operated": false
+}

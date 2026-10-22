@@ -880,3 +880,13 @@
 [Evidence] 新包b60f96c0、FD5ad08040、实际空AUTO/PILDxe89e030af；照片候选GUID确认DXE但分配失败/架构协议缺失，01:25:30实际nuwa Android完成1且三分区hash与试前相同。
 [Risk] 分配器/内存图根因及BDS/XNU仍未验证，未扩heap或改ADT/board/feed，未继续修复、生成镜像或第二次试验；下一轮起点仅记文档。
 ```
+
+## Q-083 · DXE资源静态审查及同SoC评估规则
+
+```text
+[unixnu-nuwa][firmware] 审查DXE分配限制并准备不改内存图的诊断候选
+
+[Change] 固化遇难题评估同SoC UniXNU/UEFI来源的仓库约定，记录69MiB与原厂Heap差异及分配器搜索路径，准备首次失败和断言前快照源码，R-010列两方案待审。
+[Evidence] 固定Mu cfb93724与R-009子模块一致，0008严格apply检查通过；sheng0eb4514d/fuxibb25ad75固定源码及适用性已评估，运行空闲量仍TODO。
+[Risk] 源码草案未编译/执行，69MiB差异不是实测根因；帧缓冲时序/锁内打印影响待验收，未生成镜像、操作设备或改board/feed/内存图。
+```

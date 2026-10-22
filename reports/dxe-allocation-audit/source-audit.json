@@ -1,0 +1,261 @@
+{
+  "scope": "Static source and prior actual-build evidence; no runtime free-memory values",
+  "sources": [
+    {
+      "path": "D:\\Code\\uefi-nuwa\\Platforms\\Xiaomi\\nuwaPkg\\Library\\MemoryMapLib\\MemoryMapLib.c",
+      "lf_sha256": "051c431a43b94ae83dac8868ca6a617b0e21763a132440b92d4417b745d7d00e",
+      "selected_lines": [
+        {
+          "line": 30,
+          "text": "  {\"Kernel\",             0xA8000000, 0x10000000, AddMem, SYS_MEM, SYS_MEM_CAP, Reserv, WRITE_BACK_XN},"
+        },
+        {
+          "line": 32,
+          "text": "  {\"DXE Heap\",           0xBAE00000, 0x04500000, AddMem, SYS_MEM, SYS_MEM_CAP, Conv,   WRITE_BACK_XN},"
+        }
+      ]
+    },
+    {
+      "path": "D:\\Code\\uefi-nuwa\\Silicon\\Silicium\\SiliciumPkg\\Library\\MemoryInitPeiLib\\MemoryInitPei.c",
+      "lf_sha256": "dced274a5e31484b647e643fa255439a9a6f6eb5fc210671233614ed80ef2edb",
+      "selected_lines": [
+        {
+          "line": 86,
+          "text": "AddHob (IN EFI_MEMORY_REGION_DESCRIPTOR MemoryRegion)"
+        },
+        {
+          "line": 93,
+          "text": "    BuildResourceDescriptorHob (MemoryRegion.ResourceType, MemoryRegion.ResourceAttribute, MemoryRegion.Address, MemoryRegion.Length);"
+        },
+        {
+          "line": 98,
+          "text": "    BuildMemoryAllocationHob (MemoryRegion.Address, MemoryRegion.Length, MemoryRegion.MemoryType);"
+        },
+        {
+          "line": 128,
+          "text": "    AddHob (MemoryDescriptor[i]);"
+        }
+      ]
+    },
+    {
+      "path": "D:\\Code\\uefi-nuwa\\Silicon\\Silicium\\SiliciumPkg\\Sec\\Sec.c",
+      "lf_sha256": "6af8dd4d45476fb3b0a387b8d85913765c6d6b1bcdab99f3c6275cc9a5b1efaa",
+      "selected_lines": [
+        {
+          "line": 52,
+          "text": "  LocateMemoryRegionByName (\"DXE Heap\", &UefiMemoryRegion);"
+        },
+        {
+          "line": 66,
+          "text": "  HobList = HobConstructor ((VOID *)UefiMemoryBase, UefiMemorySize, (VOID *)UefiMemoryBase, (VOID *)(UefiMemoryBase + UefiMemorySize));"
+        }
+      ]
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Mu_Basecore\\MdeModulePkg\\Core\\Dxe\\Mem\\Page.c",
+      "lf_sha256": "d0d0a2db4e3956c4cffd81a68efc705212ebdbe0ea2f0e7d1fffbe358bb82dd7",
+      "selected_lines": [
+        {
+          "line": 928,
+          "text": "CoreFindFreePagesI ("
+        },
+        {
+          "line": 1085,
+          "text": "FindFreePages ("
+        },
+        {
+          "line": 1099,
+          "text": "    Start = CoreFindFreePagesI ("
+        },
+        {
+          "line": 1116,
+          "text": "    Start = CoreFindFreePagesI ("
+        },
+        {
+          "line": 1139,
+          "text": "  Start = CoreFindFreePagesI ("
+        },
+        {
+          "line": 1161,
+          "text": "  return FindFreePages (MaxAddress, NoPages, NewType, Alignment, NeedGuard);"
+        },
+        {
+          "line": 1331,
+          "text": "    Start = FindFreePages ("
+        },
+        {
+          "line": 2367,
+          "text": "  Start = FindFreePages ("
+        },
+        {
+          "line": 2379,
+          "text": "    DEBUG ((DEBUG_ERROR | DEBUG_PAGE, \"AllocatePoolPages: failed to allocate %d pages\\n\", (UINT32)NumberOfPages));"
+        }
+      ]
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Mu_Basecore\\MdeModulePkg\\Core\\Dxe\\Mem\\Pool.c",
+      "lf_sha256": "b9ecc2f781d213d214d3059c8bc07abdad0dece33b4fc645ab4b52b926f1f5d5",
+      "selected_lines": [
+        {
+          "line": 305,
+          "text": "CoreAllocatePoolPagesI ("
+        },
+        {
+          "line": 315,
+          "text": "  Status = CoreAcquireLockOrFail (&gMemoryLock);"
+        },
+        {
+          "line": 431,
+          "text": "    Head     = CoreAllocatePoolPagesI (PoolType, NoPages, Granularity, NeedGuard);"
+        },
+        {
+          "line": 466,
+          "text": "    NewPage = CoreAllocatePoolPagesI ("
+        }
+      ]
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Mu_Basecore\\MdeModulePkg\\Core\\Dxe\\DxeMain\\DxeMain.c",
+      "lf_sha256": "baa2b6c6c201afaa06d044ea1f15f26c48f2133821d347a0d42f54e4aed231ba",
+      "selected_lines": [
+        {
+          "line": 259,
+          "text": "  ASSERT_EFI_ERROR (Status);"
+        },
+        {
+          "line": 265,
+          "text": "  ASSERT_EFI_ERROR (Status);"
+        },
+        {
+          "line": 283,
+          "text": "  ASSERT_EFI_ERROR (Status);"
+        },
+        {
+          "line": 291,
+          "text": "    ASSERT_EFI_ERROR (Status);"
+        },
+        {
+          "line": 298,
+          "text": "  ASSERT_EFI_ERROR (Status);"
+        },
+        {
+          "line": 357,
+          "text": "  ASSERT_EFI_ERROR (Status);"
+        },
+        {
+          "line": 363,
+          "text": "  ASSERT_EFI_ERROR (Status);"
+        },
+        {
+          "line": 369,
+          "text": "  ASSERT_EFI_ERROR (Status);"
+        },
+        {
+          "line": 378,
+          "text": "    ASSERT_EFI_ERROR (Status);"
+        },
+        {
+          "line": 465,
+          "text": "  ASSERT_EFI_ERROR (Status);"
+        },
+        {
+          "line": 494,
+          "text": "    ASSERT_EFI_ERROR (Status);"
+        },
+        {
+          "line": 518,
+          "text": "  ASSERT_EFI_ERROR (Status);"
+        },
+        {
+          "line": 531,
+          "text": "  ASSERT_EFI_ERROR (Status);"
+        },
+        {
+          "line": 534,
+          "text": "  ASSERT_EFI_ERROR (Status);"
+        },
+        {
+          "line": 540,
+          "text": "  ASSERT_EFI_ERROR (Status);"
+        },
+        {
+          "line": 550,
+          "text": "  CoreDispatcher ();"
+        },
+        {
+          "line": 570,
+          "text": "  Status = CoreAllEfiServicesAvailable ();"
+        },
+        {
+          "line": 581,
+          "text": "  ASSERT_EFI_ERROR (Status);"
+        }
+      ]
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Mu_Basecore\\MdePkg\\Library\\BaseDebugLibSerialPort\\DebugLib.c",
+      "lf_sha256": "215edfd87b2859b4a0e9180dd7ccf5481e80ed2392051f417078271d5dd020fb",
+      "selected_lines": [
+        {
+          "line": 105,
+          "text": "  CHAR8  Buffer[MAX_DEBUG_MESSAGE_LENGTH];"
+        },
+        {
+          "line": 131,
+          "text": "  SerialPortWrite ((UINT8 *)Buffer, AsciiStrLen (Buffer));"
+        },
+        {
+          "line": 217,
+          "text": "  CHAR8  Buffer[MAX_DEBUG_MESSAGE_LENGTH];"
+        },
+        {
+          "line": 227,
+          "text": "  SerialPortWrite ((UINT8 *)Buffer, AsciiStrLen (Buffer));"
+        }
+      ]
+    },
+    {
+      "path": "D:\\Code\\uefi-nuwa\\Silicon\\Silicium\\SiliciumPkg\\Library\\FrameBufferSerialPortLib\\FrameBufferSerialPortLib.c",
+      "lf_sha256": "85e7dba58a1022e042e72a56aff01a09d1fcf7360e5801ce73fa750e253ab7fe",
+      "selected_lines": [
+        {
+          "line": 243,
+          "text": "SerialPortWrite ("
+        },
+        {
+          "line": 276,
+          "text": "  WriteBackInvalidateDataCacheRange ((VOID *)FbBase, FbLength);"
+        }
+      ]
+    }
+  ],
+  "firmware_commit": "2ab6827d77dfe15010534b52e1abb76a26464a7d",
+  "mu_commit": "cfb93724a06ff86ff5ba971413368a7809ee42a5",
+  "configured_sys_mem_conv": [
+    {
+      "name": "DXE Heap",
+      "base": "0xbae00000",
+      "end": "0xbf300000",
+      "bytes": 72351744,
+      "hob": "AddMem",
+      "resource": "SYS_MEM",
+      "type": "Conv"
+    }
+  ],
+  "configured_conv_mib": 69.0,
+  "factory_heap": {
+    "source_sha256": "686bce68b672213c749eea1efbf4575ff7d56c3a0b2326375fb70fd7a952db21",
+    "base": "0xbab00000",
+    "end": "0xc7cc0000",
+    "bytes": 219938816,
+    "mib": 209.75
+  },
+  "runtime_free_pages": "TODO: not captured in R-009",
+  "runtime_largest_free_range": "TODO: not captured in R-009",
+  "runtime_pool_type_and_guard": "TODO: R-009 failure text only reports page count",
+  "known_233_page_request_bytes": 954368,
+  "interpretation": "Initial configured conventional SYS_MEM is 69MiB; other Conv/MMIO/NoHob rows are not additional tested system memory. This is not final runtime free memory.",
+  "image_generated": false,
+  "device_operated": false
+}

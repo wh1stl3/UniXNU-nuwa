@@ -1,0 +1,99 @@
+--- a/Mu_Basecore/MdeModulePkg/Core/Dxe/Mem/Page.c
++++ b/Mu_Basecore/MdeModulePkg/Core/Dxe/Mem/Page.c
+@@ -2339,6 +2339,58 @@
+   return Status;
+ }
+ 
++// Nuwa diagnostic only: no allocation, map conversion or resource promotion.
++STATIC UINTN  mNuwaPoolFailureCount;
++
++VOID
++CoreNuwaDumpAllocationState (
++  IN CONST CHAR8  *Stage
++  )
++{
++  LIST_ENTRY  *Link;
++  MEMORY_MAP  *Entry;
++  UINT64      Pages;
++  UINT64      FreePages = 0;
++  UINT64      Largest = 0;
++  UINT64      SpPages = 0;
++  UINT64      TypePages[EfiMaxMemoryType] = {0};
++  UINTN       Ranges = 0;
++
++  // Caller holds gMemoryLock. Read the existing list; do not call GetMemoryMap.
++  for (Link = gMemoryMap.ForwardLink; Link != &gMemoryMap; Link = Link->ForwardLink) {
++    Entry = CR (Link, MEMORY_MAP, Link, MEMORY_MAP_SIGNATURE);
++    if (Entry->End < Entry->Start) {
++      DEBUG ((DEBUG_ERROR, "[NUWA-MEM] invalid descriptor start=%lx end=%lx\n", Entry->Start, Entry->End));
++      continue;
++    }
++    Pages = (Entry->End - Entry->Start + 1) >> EFI_PAGE_SHIFT;
++    if (Entry->Type < EfiMaxMemoryType) {
++      TypePages[Entry->Type] += Pages;
++    }
++    if (Entry->Type != EfiConventionalMemory) {
++      continue;
++    }
++    if ((Entry->Attribute & EFI_MEMORY_SP) != 0) {
++      SpPages += Pages;
++      continue;
++    }
++    FreePages += Pages;
++    if (Pages > Largest) {
++      Largest = Pages;
++    }
++    if (Ranges < 8) {
++      DEBUG ((DEBUG_ERROR, "[NUWA-MEM] free start=%lx end=%lx pages=%lu attr=%lx\n", Entry->Start, Entry->End, Pages, Entry->Attribute));
++    }
++    Ranges++;
++  }
++  DEBUG ((DEBUG_ERROR, "[NUWA-MEM] %a failures=%lu free=%lu largest=%lu ranges=%lu special=%lu\n", Stage, (UINT64)mNuwaPoolFailureCount, FreePages, Largest, (UINT64)Ranges, SpPages));
++  for (UINTN Type = 0; Type < EfiMaxMemoryType; Type++) {
++    if (TypePages[Type] != 0) {
++      DEBUG ((DEBUG_ERROR, "[NUWA-MEM] type=%u pages=%lu\n", (UINT32)Type, TypePages[Type]));
++    }
++  }
++}
++
+ /**
+   Internal function.  Used by the pool functions to allocate pages
+   to back pool allocation requests.
+@@ -2376,6 +2428,14 @@
+   // Convert it to boot services data
+   //
+   if (Start == 0) {
++    mNuwaPoolFailureCount++;
++    if (mNuwaPoolFailureCount == 1) {
++      DEBUG ((DEBUG_ERROR, "[NUWA-MEM] request type=%u pages=%lu align=%lu guard=%u caller=%p\n", (UINT32)PoolType, (UINT64)NumberOfPages, (UINT64)Alignment, (UINT32)NeedGuard, RETURN_ADDRESS (0)));
++      if ((UINT32)PoolType < EfiMaxMemoryType) {
++        DEBUG ((DEBUG_ERROR, "[NUWA-MEM] bin base=%lx max=%lx default-base=%lx default-max=%lx\n", mMemoryTypeStatistics[PoolType].BaseAddress, mMemoryTypeStatistics[PoolType].MaximumAddress, mDefaultBaseAddress, mDefaultMaximumAddress));
++      }
++      CoreNuwaDumpAllocationState ("first-pool-failure");
++    }
+     DEBUG ((DEBUG_ERROR | DEBUG_PAGE, "AllocatePoolPages: failed to allocate %d pages\n", (UINT32)NumberOfPages));
+   } else {
+     if (NeedGuard) {
+--- a/Mu_Basecore/MdeModulePkg/Core/Dxe/DxeMain/DxeMain.c
++++ b/Mu_Basecore/MdeModulePkg/Core/Dxe/DxeMain/DxeMain.c
+@@ -7,6 +7,9 @@
+ **/
+ 
+ #include "DxeMain.h"
++
++// Internal diagnostic helper, called only while holding the core memory lock.
++VOID CoreNuwaDumpAllocationState (IN CONST CHAR8 *Stage);
+ 
+ //
+ // DXE Core Global Variables for Protocols from PEI
+@@ -569,6 +572,10 @@
+   //
+   Status = CoreAllEfiServicesAvailable ();
+   if (EFI_ERROR (Status)) {
++    CoreAcquireMemoryLock ();
++    CoreNuwaDumpAllocationState ("missing-arch-before-assert");
++    CoreReleaseMemoryLock ();
++
+     //
+     // Report Status code that some Architectural Protocols are not present.
+     //

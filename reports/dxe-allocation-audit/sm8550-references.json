@@ -1,0 +1,338 @@
+{
+  "scope": "Read-only fixed SM8550 sources considered for DXE allocation diagnosis, not adoption",
+  "at_utc": "2026-10-22T17:41:41.854273+00:00",
+  "sources": [
+    {
+      "repository": "UniXNU/uefi-sheng",
+      "commit": "0eb4514db0744b8136a3897ab1af93b713c2c27b",
+      "path": "Platforms/Xiaomi/shengPkg/Library/MemoryMapLib/MemoryMapLib.c",
+      "sha256": "c162d99e6e5b8baaf48b305b2383ef5ad4aacac866ec72e3efbb3b40bf21280c",
+      "license_metadata": "BSD-2-Clause, checked in previous same pinned repo audit; no source imported",
+      "selected_lines": [
+        {
+          "line": 47,
+          "text": "  {\"UEFI Stack\", 0xA760D000, 0x00040000, AddMem, SYS_MEM, SYS_MEM_CAP, BsData, WRITE_BACK_XN},"
+        },
+        {
+          "line": 48,
+          "text": "  {\"SEC Heap\", 0xA764D000, 0x0008C000, AddMem, SYS_MEM, SYS_MEM_CAP, BsData, WRITE_BACK_XN},"
+        },
+        {
+          "line": 49,
+          "text": "  {\"Sched Heap\", 0xA76D9000, 0x00400000, AddMem, SYS_MEM, SYS_MEM_CAP, BsData, WRITE_BACK_XN},"
+        },
+        {
+          "line": 50,
+          "text": "  {\"FV Region\", 0xA7AD9000, 0x00400000, AddMem, SYS_MEM, SYS_MEM_CAP, BsData, WRITE_BACK_XN},"
+        },
+        {
+          "line": 52,
+          "text": "  {\"Kernel\", 0xA8000000, 0x10000000, AddMem, MEM_RES, SYS_MEM_CAP, Reserv, WRITE_BACK_XN},"
+        },
+        {
+          "line": 53,
+          "text": "  {\"DXE Heap\", 0xBAB00000, 0x0D1C0000, AddMem, SYS_MEM, SYS_MEM_CAP, Conv, WRITE_BACK_XN},"
+        },
+        {
+          "line": 54,
+          "text": "  // DRAM between the carveouts above and the Linux reserved-memory table (reservations.json), inside"
+        },
+        {
+          "line": 55,
+          "text": "  // 0x80000000..0x100000000, which the SMEM RAM partition table lists as SDRAM. UEFI accepted these on hardware."
+        },
+        {
+          "line": 56,
+          "text": "  {\"DRAM gap 0xC7CC0000\", 0xC7CC0000, 0x05040000, AddMem, SYS_MEM, SYS_MEM_CAP, Conv, WRITE_BACK_XN},"
+        },
+        {
+          "line": 57,
+          "text": "  {\"DRAM gap 0xCCF80000\", 0xCCF80000, 0x0B080000, AddMem, SYS_MEM, SYS_MEM_CAP, Conv, WRITE_BACK_XN},"
+        },
+        {
+          "line": 58,
+          "text": "  {\"DRAM gap 0xE671D000\", 0xE671D000, 0x190E3000, AddMem, SYS_MEM, SYS_MEM_CAP, Conv, WRITE_BACK_XN},"
+        },
+        {
+          "line": 59,
+          "text": "  // Second DRAM bank from the SMEM usable-RAM partition table read on the tablet (entries 5 and 6:"
+        },
+        {
+          "line": 61,
+          "text": "  // clearing memory at 0x8BB300000, so the top of the first entry (to 0x8C0000000) is not given to UEFI."
+        },
+        {
+          "line": 62,
+          "text": "  {\"DRAM bank 1 low\", 0x880000000, 0x3B300000, AddMem, SYS_MEM, SYS_MEM_CAP, Conv, WRITE_BACK_XN},"
+        },
+        {
+          "line": 63,
+          "text": "  // Full five-GiB extent reported by the hardware SMEM partition table."
+        },
+        {
+          "line": 64,
+          "text": "  // First four GiB reached userland; the added last GiB needs hardware validation."
+        },
+        {
+          "line": 65,
+          "text": "  {\"DRAM bank 1 high\", 0x8C0000000, 0x140000000, AddMem, SYS_MEM, SYS_MEM_CAP, Conv, WRITE_BACK_XN},"
+        },
+        {
+          "line": 66,
+          "text": "  {\"IMEM Base\", 0x14680000, 0x0002A000, NoHob, MMAP_IO, INITIALIZED, Conv, NS_DEVICE},"
+        },
+        {
+          "line": 67,
+          "text": "  {\"IMEM Cookie Base\", 0x146AA000, 0x00016000, AddDev, MMAP_IO, INITIALIZED, Conv, NS_DEVICE},"
+        },
+        {
+          "line": 68,
+          "text": "  {\"IPC_ROUTER_TOP\", 0x00400000, 0x00100000, AddDev, MMAP_IO, UNCACHEABLE, MmIO, NS_DEVICE},"
+        },
+        {
+          "line": 86,
+          "text": "  {\"Display Demura gap0\", 0xA3080000, 0x02500000, AddMem, MEM_RES, SYS_MEM_CAP, Reserv, WRITE_THROUGH_XN},"
+        },
+        {
+          "line": 87,
+          "text": "  {\"DBI Dump\", 0xA6100000, 0x00F00000, NoHob, MMAP_IO, INITIALIZED, Conv, UNCACHED_UNBUFFERED_XN},"
+        },
+        {
+          "line": 88,
+          "text": "  {\"CPU Vectors\", 0xA7600000, 0x00001000, AddMem, SYS_MEM, SYS_MEM_CAP, BsData, WRITE_BACK},"
+        }
+      ],
+      "permalink": "https://github.com/UniXNU/uefi-sheng/blob/0eb4514db0744b8136a3897ab1af93b713c2c27b/Platforms/Xiaomi/shengPkg/Library/MemoryMapLib/MemoryMapLib.c"
+    },
+    {
+      "repository": "UniXNU/uefi-sheng",
+      "commit": "0eb4514db0744b8136a3897ab1af93b713c2c27b",
+      "path": "Platforms/Xiaomi/shengPkg/Include/APRIORI.inc",
+      "sha256": "1f170245b6abcdaf0da96755e7d6f73219bad7aaf70f353069fc36f48f687cec",
+      "license_metadata": "BSD-2-Clause, checked in previous same pinned repo audit; no source imported",
+      "selected_lines": [
+        {
+          "line": 4,
+          "text": ""
+        },
+        {
+          "line": 5,
+          "text": "!if $(SHENG_VENDOR_HW) == 1"
+        },
+        {
+          "line": 6,
+          "text": "  INF Binaries/sheng/QcomPkg/Drivers/EnvDxe/EnvDxe.inf"
+        },
+        {
+          "line": 16,
+          "text": ""
+        },
+        {
+          "line": 17,
+          "text": "!if $(SHENG_VENDOR_HW) == 1"
+        },
+        {
+          "line": 18,
+          "text": "  INF Binaries/sheng/QcomPkg/Drivers/SmemDxe/SmemDxe.inf"
+        },
+        {
+          "line": 43,
+          "text": ""
+        },
+        {
+          "line": 44,
+          "text": "!if $(SHENG_VENDOR_HW) == 1"
+        },
+        {
+          "line": 45,
+          "text": "  INF Binaries/sheng/QcomPkg/Drivers/PmicDxe/PmicDxeLa.inf"
+        },
+        {
+          "line": 51,
+          "text": ""
+        },
+        {
+          "line": 52,
+          "text": "!if $(SHENG_VENDOR_HW) == 1"
+        },
+        {
+          "line": 53,
+          "text": "  INF Binaries/sheng/QcomPkg/Drivers/SdccDxe/SdccDxe.inf"
+        },
+        {
+          "line": 58,
+          "text": ""
+        },
+        {
+          "line": 59,
+          "text": "!if $(SHENG_VENDOR_HW) == 1"
+        },
+        {
+          "line": 60,
+          "text": "  INF Binaries/sheng/QcomPkg/Drivers/TzDxe/TzDxeLA.inf"
+        },
+        {
+          "line": 64,
+          "text": ""
+        },
+        {
+          "line": 65,
+          "text": "!if $(SHENG_VENDOR_HW) == 1"
+        },
+        {
+          "line": 66,
+          "text": "  INF Binaries/sheng/QcomPkg/Drivers/DDRInfoDxe/DDRInfoDxe.inf"
+        },
+        {
+          "line": 75,
+          "text": "!endif"
+        },
+        {
+          "line": 76,
+          "text": "!if $(SHENG_VENDOR_HW) == 1"
+        },
+        {
+          "line": 77,
+          "text": "  INF Binaries/sheng/QcomPkg/Drivers/PILProxyDxe/PILProxyDxe.inf"
+        },
+        {
+          "line": 91,
+          "text": ""
+        },
+        {
+          "line": 92,
+          "text": "!if $(SHENG_VENDOR_HW) == 1"
+        },
+        {
+          "line": 93,
+          "text": "  INF Binaries/sheng/QcomPkg/Drivers/SPIDxe/SPIDxe.inf"
+        },
+        {
+          "line": 106,
+          "text": ""
+        },
+        {
+          "line": 107,
+          "text": "!if $(SHENG_VENDOR_HW) == 1"
+        },
+        {
+          "line": 108,
+          "text": "  INF Binaries/sheng/QcomPkg/Drivers/UsbMsdDxe/UsbMsdDxe.inf"
+        },
+        {
+          "line": 127,
+          "text": ""
+        },
+        {
+          "line": 128,
+          "text": "!if $(SHENG_VENDOR_HW) == 1"
+        },
+        {
+          "line": 129,
+          "text": "  INF Binaries/sheng/QcomPkg/Drivers/RscDxe/RscDxe.inf"
+        }
+      ],
+      "permalink": "https://github.com/UniXNU/uefi-sheng/blob/0eb4514db0744b8136a3897ab1af93b713c2c27b/Platforms/Xiaomi/shengPkg/Include/APRIORI.inc"
+    },
+    {
+      "repository": "hanzi123-bilp/uefi-fuxi",
+      "commit": "bb25ad75eedf2c224951c71767a077976b721793",
+      "path": "Platforms/Xiaomi/fuxiPkg/Library/MemoryMapLib/MemoryMapLib.c",
+      "sha256": "7bd2f6ec8fc6e11081c92dd39697b521b3efb576f4031643cd3433dc43ee1435",
+      "license_metadata": "BSD-2-Clause, checked in previous same pinned repo audit; no source imported",
+      "selected_lines": [
+        {
+          "line": 23,
+          "text": "// the live FDT) are deliberately omitted: the first bring-up fits entirely in"
+        },
+        {
+          "line": 24,
+          "text": "// the 209 MiB DXE Heap at 0xBAB00000. They are added in stage 2, when the XNU"
+        },
+        {
+          "line": 25,
+          "text": "// kernel window needs real RAM."
+        },
+        {
+          "line": 34,
+          "text": "  // it is decoding (that surfaced as 'Decompress Failed - Invalid Parameter')."
+        },
+        {
+          "line": 35,
+          "text": "  {\"DXE Heap\",          0xBAB00000, 0x0D1C0000, AddMem,   SYS_MEM, SYS_MEM_CAP, Conv,   WRITE_BACK_XN},"
+        },
+        {
+          "line": 36,
+          "text": ""
+        },
+        {
+          "line": 47,
+          "text": "  {\"RSRV2\",             0xA5580000, 0x00B80000, AddMem,   MEM_RES, SYS_MEM_CAP, Reserv, WRITE_BACK_XN},"
+        },
+        {
+          "line": 48,
+          "text": "  {\"DBI Dump\",          0xA6100000, 0x00F00000, NoHob,    MMAP_IO, INITIALIZED, Conv,  UNCACHED_UNBUFFERED_XN},"
+        },
+        {
+          "line": 49,
+          "text": "  {\"TZApps Reserved\",   0xD8800000, 0x08A00000, AddMem, MEM_RES, UNCACHEABLE, Reserv, UNCACHED_UNBUFFERED_XN},"
+        },
+        {
+          "line": 61,
+          "text": "  {\"UEFI Stack\",        0xA760D000, 0x00040000, AddMem,   SYS_MEM, SYS_MEM_CAP, BsData, WRITE_BACK_XN},"
+        },
+        {
+          "line": 62,
+          "text": "  {\"SEC Heap\",          0xA764D000, 0x0008C000, AddMem,   SYS_MEM, SYS_MEM_CAP, BsData, WRITE_BACK_XN},"
+        },
+        {
+          "line": 63,
+          "text": "  {\"Sched Heap\",        0xA76D9000, 0x00400000, AddMem,   SYS_MEM, SYS_MEM_CAP, BsData, WRITE_BACK_XN},"
+        },
+        {
+          "line": 64,
+          "text": "  {\"FV Region\",         0xA7AD9000, 0x00400000, AddMem,   SYS_MEM, SYS_MEM_CAP, BsData, WRITE_BACK_XN},"
+        },
+        {
+          "line": 94,
+          "text": "  {\"APSS_HM\",           0x17000000, 0x02000000, AddDev, MMAP_IO, UNCACHEABLE, MmIO, NS_DEVICE},"
+        },
+        {
+          "line": 95,
+          "text": "  {\"IMEM Base\",         0x14680000, 0x0002A000, NoHob,  MMAP_IO, INITIALIZED, Conv,   NS_DEVICE},"
+        },
+        {
+          "line": 96,
+          "text": "  {\"IMEM Cookie Base\",  0x146AA000, 0x00016000, AddDev, MMAP_IO, INITIALIZED, Conv,   NS_DEVICE},"
+        },
+        {
+          "line": 97,
+          "text": "};"
+        }
+      ],
+      "permalink": "https://github.com/hanzi123-bilp/uefi-fuxi/blob/bb25ad75eedf2c224951c71767a077976b721793/Platforms/Xiaomi/fuxiPkg/Library/MemoryMapLib/MemoryMapLib.c"
+    },
+    {
+      "repository": "hanzi123-bilp/uefi-fuxi",
+      "commit": "bb25ad75eedf2c224951c71767a077976b721793",
+      "path": "Platforms/Xiaomi/fuxiPkg/Include/APRIORI.inc",
+      "sha256": "f443530ae475821fda58e74b9d7e1e604c099a10f3d5b920a086ccad290e796d",
+      "license_metadata": "BSD-2-Clause, checked in previous same pinned repo audit; no source imported",
+      "selected_lines": [
+        {
+          "line": 3,
+          "text": "##"
+        },
+        {
+          "line": 4,
+          "text": "## Minimal PEI/DXE dispatch order for FUXI_VENDOR_HW = 0:"
+        },
+        {
+          "line": 5,
+          "text": "## only Project Mu / Silicium drivers plus UniXNU. Every `Binaries/sheng/*`"
+        }
+      ],
+      "permalink": "https://github.com/hanzi123-bilp/uefi-fuxi/blob/bb25ad75eedf2c224951c71767a077976b721793/Platforms/Xiaomi/fuxiPkg/Include/APRIORI.inc"
+    }
+  ]
+}

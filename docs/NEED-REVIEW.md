@@ -12,7 +12,23 @@
 
 | 编号 | 主题 | 需要用户做什么 |
 | --- | --- | --- |
-| — | 无 | — |
+| R-010 | DXE分配失败的下一诊断固件 | 倾向A：保持内存图，仅加分配器快照；B：先审查恢复同机原厂Heap配置 |
+
+## R-010 · DXE分配器资源快照诊断（open）
+
+背景：R-009实际到DXE后连续AllocatePoolPages失败，核心架构协议缺失并断言。当前源码SYS_MEM/Conv仅69MiB，与同机原厂209.75MiB Heap不同；同SM8550的sheng/fuxi也使用后者但驱动范围/额外映射不同，不能凭容量差直接判断根因。失败API还受连续范围、类型bin、地址、alignment/guard与可提升资源影响。本轮没有操作设备或生成镜像，静态审查见[完整报告](operations/2026-10-23-dxe-allocation-source-audit.md)。
+
+触发AGENTS.md§3第3类：“新建或重写任何诊断 / 固件镜像”。R-009已完成，其配置替换范围不自动覆盖新的Mu核心诊断。Git/GitHub持续授权不重复申请；这里仅请求下一具体诊断范围。
+
+**候选A（倾向）：保持现有内存图和驱动链，构建分配器快照诊断并进行一次受限临时启动/恢复。** 源码草案0008-nuwa-dxe-allocation-trace.patch已完成，固定Mu_Basecore@cfb93724，只改Page.c与DxeMain.c：首次pool页搜索失败打印请求参数、类型bin、原始总空闲页/最大空闲块、各类型占用；最终架构协议检查失败前再打印快照，保留原断言与返回。Helper不分配内存、不调用GetMemoryMap、不改变map，前8条自由区间打印但汇总所有区间。严格git apply --check -p2通过，未实际apply/编译。patch SHAac8bd4763feddda9a7e5e6b0d179c3416531283137b75329965d5737bb6e32d9，完整原/候选hash见preview.json。
+
+代价/限制：须新的核心/四EFI/FD/shim构建与严格产物检查；Mu原blob/补丁保留CRLF，现有CI正规化应仅对这两个目标作精确例外并检查raw/LF hash，不能直接沿用旧处理。日志仍走已有FrameBufferSerialPortLib，锁内打印和cache flush改变时序，非独立USB/持久通道；需要照片/录像。最大块仅raw值，尚未按alignment/guard裁剪，不保证能分配；不会直接得出所有成功分配的来源。源码静态通过不等于编译或实机通过。
+
+**候选B：不加核心诊断，先基于同机原厂表审查恢复209.75MiB Heap。** 固件Heap从当前BAE00000/04500000变到原表BAB00000/0D1C0000有同机取证来源，但必须额外核对保留区、MMU/HOB、ABL交接与RamManager，不机械复制sheng/fuxi的额外bank。代价是改变可分配范围且未证明能解决碎片/guard/泄漏；需要单独可审阅的具体内存图diff和审批后才构建。本轮未改这些数值，也不把选择B视为立即批准未知内存图。
+
+倾向A：先获取失败时实际资源量，减少无证据调heap的试验；同SoC仓已评估，作为来源之一而非nuwa运行证明。现无实际空闲量/最大块，相关值保留TODO。
+
+**需要批准的最小范围：A对应这份两文件源码诊断、精确CI接线/独立新固件构建与产物审查、保持正确相对头及R-009空AUTO配置的同类v4临时包，一次试启动后恢复Android并确认boot_completed=1。** 不改board/bringup-plan、原内存图或任何基址/容量，不flash/erase/改槽，不加FAT/XNU负载，不置_verified=true。若需实体按键恢复按PENDING-HUMAN执行，继续独立证据工作；超出此范围另审查。当前未生成R-010镜像，等待具体选择。
 
 ## R-009 · 取消二级固件自动ABL链载（approved A，已完成本轮验证与恢复）
 

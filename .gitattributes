@@ -11,3 +11,5 @@
 reports/loader-integration/factory-uefiplatLA-original.txt -text -whitespace
 # Preserve the original EDK build report, including its trailing blank line.
 reports/firmware-ci/39764322744/BUILD_REPORT.txt -text -whitespace
+# Diagnostic patch retains the pinned Mu blobs' CRLF context for strict apply checks.
+patches/firmware-candidates/0008-nuwa-dxe-allocation-trace.patch -text

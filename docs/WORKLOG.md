@@ -180,3 +180,5 @@
 2026-10-23 01:12 · CI39819452729工具安装超时124且未编译；据真实Azure下载日志将换源覆盖扩至全部APT源，固件输入不变，准备重试以完成获批单次实机 · Q-081（本条提交） · reports/pil-no-auto/39819452729/run-final.json；failure-selected.log
 
 2026-10-23 01:30 · R-009 A重试CI成功及665项检查后完成唯一一次实机，候选DXE页分配/协议缺失断言；按键回fastboot后原Android备份临时恢复，01:25:30完成1且三分区hash不变，按用户要求停止 · Q-082（本条提交） · docs/operations/2026-10-23-pil-no-auto-build-trial.md；reports/pil-no-auto/39820752081/
+
+2026-10-23 01:44 · 恢复主线审查DXE页搜索及69MiB/原厂209.75MiB差异，评估同SoC固定来源；不改map的0008诊断源码apply检查通过，R-010待审批，用户同SoC评估规则持久化至AGENTS · Q-083（本条提交） · docs/operations/2026-10-23-dxe-allocation-source-audit.md；reports/dxe-allocation-audit/

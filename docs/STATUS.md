@@ -1,12 +1,20 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-23 01:30（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-23 01:44（Asia/Shanghai）。历史见WORKLOG。
 
-## 当前结论与停止边界
+## 当前结论
 
-**R-009 A的构建、唯一一次实机验证和恢复已完成，按用户“做完这笔实机验证就停下 写好文档”停止。候选已实际进入DXE，随后页面分配失败、核心架构协议缺失，停在DxeMain.c(581)；尚未到BDS/UniXNU加载器/XNU。nuwa已恢复Android，boot_completed=1，三个Android分区hash与试前一致。**
+**用户已要求恢复主线。本轮静态审查确认当前初始SYS_MEM/Conv为69MiB，与同机原厂209.75MiB Heap不同；运行时资源量仍缺失，不能据此确定DXE分配失败根因。已备妥不改内存图的两文件分配器诊断源码草案，严格apply检查通过；新诊断固件列R-010，尚未编译、生成镜像或操作设备。**
 
-[本轮完整报告](operations/2026-10-23-pil-no-auto-build-trial.md)，证据reports/pil-no-auto/39820752081/。R-009标approved A/已完成，当前无新增审批请求；下方下一轮事项本轮不执行。
+[本轮审查和候选](operations/2026-10-23-dxe-allocation-source-audit.md)，reports/dxe-allocation-audit/。上轮已证实到候选DXE但断言、未进入BDS/XNU；最后Android完成1为R-009恢复记录，本轮未重新读取在线状态。
+
+## 本轮新证据与持久约定
+
+当前AllocatePoolPages失败来自FindFreePages搜索最终为0；按类型bin/默认bin/全允许区、alignment、guard和资源提升约束尝试，失败不能仅解释为物理内存不足。源码声明69MiB是初始资源，不是运行空闲量；原厂209.75MiB有同机xbl_config证据，也不等于已批准修改。233页仅954368B。
+
+固定Mu_Basecore@cfb93724与实际R-009子模块一致；缓存源码与git对象一致。0008候选只改Page.c/DxeMain.c，在首pool失败及最终ASSERT前记录参数/当前内存类型/空闲与最大块。Helper不分配、不改map，不跳过原错误和断言；最大块为未裁剪raw值。现有帧缓冲栈输出已有源码证据，但锁内flush时序影响/实际编译/运行仍未验证。补丁保留原CRLF，现有CI正规化需获批后做窄范围适配，未直接连接构建。
+
+同SM8550固定来源已评估：sheng@0eb4514d也用209.75MiB且加其他bank、vendor条件门；fuxi@bb25ad75使用同大小但最小vendor=0且无既定真机运行证明。只借鉴结构和诊断方向，不抄nuwa无证据地址/驱动结论。用户要求已写入AGENTS.md§7：遇到难题主动评估同SoC UniXNU/UEFI仓库，并记录适用性/依赖/许可/验证状态，作为后续任务可读取的仓库记忆。
 
 ## 固定源码、CI与真实产物
 
@@ -24,7 +32,7 @@
 
 下载的665项清单/文件SHA与内容检查通过；服务端ZIP digest已记录，未独立核对完整ZIP摘要，不混为一谈。本机WSL只编译过shim，不是完整XNU本机构建通过。
 
-## 本轮实机结果
+## 已完成的R-009实机结果
 
 2026-10-23 01:21:19开始唯一一次R-009临时启动，实际nuwa/kalama、Android完成1和fastboot产品/解锁/槽位先核对，按D-016重进bootloader隔离。Sending/Booting OKAY，15次fastboot采样均false；ACK只作命令接受。
 
@@ -32,18 +40,18 @@
 
 **已实机观察到候选DXE执行，不等于完整DXE/BDS实机通过。** UniXNUDxe/DarwinBoot未加载，未到XNU。页面分配失败的根因未确定：没有本轮运行时可用map/空闲量/最大连续块或分配轨迹，不能直接说12GB不够、认定唯一驱动或直接扩heap/ADT窗口。
 
-## 恢复与当前设备
+## R-009恢复记录（本轮未操作设备）
 
 初次recovery.json因启动时无nuwa fastboot/ADB，只等待ADB后180秒超时，原始失败保留。用户按电源+音量下并明确“已回fastboot”；H-004已完成。单独recovery-after-keys重新识别nuwa/复位bootloader后，临时发送已验证Android备份boot SHAef558db2…，Sending196608KB/Booting均OKAY；**01:25:30确认实际nuwa/kalama sys.boot_completed=1**，postcondition再次确认。
 
 boot_a/vendor_boot_a/init_boot_a全分区SHA与紧邻试前值相同；未flash/erase/改槽，enuma未作为目标。当前是此前自定义/rooted Android，非完整原厂恢复，既有A槽持久标志未修复。H-001独立按键演练及H-003可选完整首屏录像留后续，不阻塞本轮收尾。
 
-## 下一轮起点（本轮不执行）
+## 下一步
 
-1. 先审查UEFI可分配内存图、空闲量/最大连续块与首次分配失败，再看必需架构协议提供者/DEPEX；区分UEFI分配器资源和XNU/ADT拥有窗口，不凭照片选择新基址或容量。
-2. 分析SPSS metadata失败是否独立阻塞，复用真实驱动并保留依赖/来源证据；R-009 B未执行，不能直接整体关闭vendor驱动。
-3. 恢复工具现有ADB等待路径不会接管后来才出现的fastboot；下轮可完善，但本轮已用独立恢复流程完成Android=1，不再改代码或试启动。
-4. 后续若生成新FD或改内存相关字段，仍按具体硬停范围审阅；当前没有新镜像或下一次实机请求。
+1. 等待R-010具体批准。倾向A：不改内存图，构建0008诊断，在一次受限临时启动时采集失败请求/实际空闲总量、最大块与类型占用，结束恢复Android完成1。
+2. 若选择B，先完成同机原厂Heap恢复的具体内存图diff及保留区/交接审查；不会把同SoC地址直接移植，也不把选B当作批准未知数值。
+3. 当前运行空闲/最大块、PoolType/Alignment/NeedGuard仍TODO，只有R-009失败截图；核心协议提供者/DEPEX可能受分配失败连带影响，先拿资源证据再判断。
+4. 原R-009等待恢复后出现fastboot不会自动接管的问题已记录，本轮未设备操作；H-001/H-003仍为独立人工待办，非停因。当前停因仅新诊断镜像硬停审批。
 
 ## 内核与后续目标
 
@@ -53,4 +61,4 @@ boot_a/vendor_boot_a/init_boot_a全分区SHA与紧邻试前值相同；未flash/
 
 ## 固定边界
 
-board/feed/内存图及所有_verified不变；4KiB、iPhone10,3/d22ap/iOS16.7.16/20H392、8796.141.3；ipad_identity=true为安全属性。D-002先512MiB–1GiB过阶段5，硬上限8GiB。未知板值不编造，不借其他donor的prelink数值。两旧仓只读；Git/GitHub/workflow持续授权，本轮结束后不继续推进。
+board/feed/内存图及所有_verified不变；4KiB、iPhone10,3/d22ap/iOS16.7.16/20H392、8796.141.3；ipad_identity=true为安全属性。D-002先512MiB–1GiB过阶段5，硬上限8GiB。未知板值不编造，不借其他donor的prelink数值。两旧仓只读；Git/GitHub/workflow持续授权，当前暂停于R-010新诊断镜像范围审批。
