@@ -151,6 +151,7 @@ int main(void) {
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--prepare', action='store_true', help='write reviewed candidate patch')
+    parser.add_argument('--translation-unit', action='store_true', help='also syntax-check both complete DarwinBoot C units')
     args = parser.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
     adapted, parts, evidence = {}, [], []
@@ -210,11 +211,45 @@ def main():
         if checks[-1]['exit_code'] == 0:
             for _ in range(4):
                 checks.append(execute(['wsl.exe', '-e', linux(executable)]))
+    translation_units = []
+    if args.translation_unit:
+        # Expand only the module's private includes in memory. EDK headers are
+        # read from the original Mu tree. No source copies or fake UEFI stubs.
+        from concurrent.futures import ThreadPoolExecutor
+        names = ('BootVideo.h', 'DiagFont.h', 'PackedRamdisk.h', 'WindowSize.h')
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            latest = dict(zip(names, pool.map(upstream, names)))
+        latest['BootArgs.h'] = adapted['BootArgs.h'].encode()
+        protocol = json.loads(subprocess.check_output([
+            'C:/Program Files/GitHub CLI/gh.exe', 'api',
+            'repos/wh1stl3/UniXNU/contents/package/UniXNUPkg/Include/Protocol/UniXNULoader.h?ref=76dd64142decca55f6594b860565e848de71d271'],
+            env={**os.environ, 'GODEBUG': 'http2client=0'}))
+        latest_protocol = base64.b64decode(protocol['content'])
+        for label in ('baseline', 'latest'):
+            private = latest if label == 'latest' else {
+                name: (BASE/PREFIX/name).read_bytes() for name in names}
+            private = {**private, 'BootArgs.h': adapted['BootArgs.h'].encode()}
+
+            def expand(text):
+                return re.sub(r'^#include "([^"\n]+)"\s*$',
+                    lambda m: expand(private[m[1]].decode()), text, flags=re.M)
+
+            implementation = adapted['DarwinBoot.c'] if label == 'latest' else old_tree.read(PREFIX+'DarwinBoot.c')
+            api_header = latest_protocol if label == 'latest' else (
+                BASE/'package/UniXNUPkg/Include/Protocol/UniXNULoader.h').read_bytes()
+            source = expand(implementation).replace('#include <Protocol/UniXNULoader.h>', api_header.decode())
+            result = execute(common+['--target=aarch64-none-elf', '-ffreestanding', '-fsyntax-only', '-'], source)
+            result['profile'] = label
+            result['private_header_sha256'] = {name: sha(raw) for name, raw in private.items()}
+            result['loader_protocol_sha256'] = sha(api_header)
+            translation_units.append(result)
+            checks.append(result)
     report = dict(upstream_repository='UniXNU/DarwinBoot', upstream_commit=COMMIT,
         patch=PATCH.relative_to(ROOT).as_posix(), patch_sha256=sha(content), sources=evidence,
         old_baseline_post_patch_sha256=old_post,
         compiled_type_evidence='reports/official-site-audit/ci15-boot-args-dwarf.json',
         checks=checks, passed=all(item['exit_code'] == 0 for item in checks),
+        translation_unit_syntax=translation_units,
         toolchain=execute(['wsl.exe', '-e', 'clang', '--version']),
         edk_header_sha256={str(p): sha(p.read_bytes()) for p in (EDK/'Base.h', EDK/'AArch64/ProcessorBind.h')},
         full_darwinboot_module_compiled=False, firmware_generated=False, device_accessed=False)

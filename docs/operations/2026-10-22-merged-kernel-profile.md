@@ -33,3 +33,7 @@ feeds.toml相对75bc在上游已有变化；本仓没有修改它，也没有采
 工作流只取四个固定模块，脚本再次核对主仓/模块HEAD。它生成源内核和三平台静态库并重链接其中两库，收集日志/实际make参数/对象和符号证据，不执行NativePrelink emit、不生成EFI/FD或Android boot镜像、不访问设备、不改board/feed或_verified。Darwin22加载器patch属于另一路固件候选，不被此次内核CI编译。
 
 下一步推送设备提交后以完整device_ref触发新工作流，先确认输入门，再按实际第一处编译/链接错误推进。原baseline工作流继续可用，禁止将此profile静态通过写成合并版编译成功。
+
+## CI调度记录
+
+设备输入3a210b1a4a9ed4633e14b567fea32c590162baf3已推送并触发[39793231214](https://github.com/wh1stl3/UniXNU-nuwa/actions/runs/39793231214)。本轮查询仍queued，steps为空；证据reports/kernel-ci/39793231214/dispatch.json。未取得编译日志或产物，不提前判断成功/失败，不重复触发同任务。

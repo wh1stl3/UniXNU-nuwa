@@ -37,3 +37,9 @@ patches/loader-candidates/0005-darwin22-boot-args.patch针对固定DarwinBoot子
 ## 下一步
 
 先迁移合并版输入：核对模块固定提交、原48项选择的来源哈希变化和构建脚本上下文；完整DarwinBoot编译另取证。已有旧FD的黑屏仍需入口/日志证据；该包不含XNU，本patch不解释那次黑屏。若下一动作进入新的固件/诊断镜像生成，依据AGENTS与已有批准范围处理，不自动触发镜像工作流。
+
+## 补充：完整C翻译单元语法检查
+
+命令追加--translation-unit。私有头递归展开到RAM，旧版读取固定只读源树，最新版按d099固定提交获取；协议头按76dd固定主仓获取。两版完整DarwinBoot.c通过clang --target=aarch64-none-elf -ffreestanding -fsyntax-only -Wall -Werror检查，具体命令/私有头及协议哈希见checks.json的translation_unit_syntax。
+
+该检查覆盖C翻译单元与头接口，未编译Entry.S、未链接UEFI库/PE、未生成固件，不称完整模块编译或运行通过。最新PackedRamdisk.h与旧版不同，已分别使用对应版本，未以旧头替代新头。

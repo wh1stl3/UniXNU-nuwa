@@ -670,3 +670,13 @@
 [Evidence] 原48项顺序RAM应用通过，46份上游未变，两份新上游对8796独立git检查失败；60项适配输入哈希及Bash语法、旧基线检查通过。
 [Risk] 新模块真实编译/链接和运行ABI待CI；未改feed/board、生成固件/boot镜像或访问设备，不把静态检查当实机通过。
 ```
+
+## Q-066 · CI调度与完整加载器C语法检查
+
+```text
+[unixnu-nuwa][loader] 核对两版完整DarwinBoot语法并记录合并版CI排队
+
+[Change] 扩展真实头文件下的完整C翻译单元检查，记录39793231214调度与固定设备输入，更新下一轮取证入口。
+[Evidence] 两版完整DarwinBoot.c均通过AArch64 clang语法检查；新CI固定device_ref=3a210b1，查询为queued且steps为空，尚无编译结果。
+[Risk] 未完成EFI库链接/打包或运行ABI验收；合并版内核仍待runner与真实构建，未生成固件或访问设备。
+```

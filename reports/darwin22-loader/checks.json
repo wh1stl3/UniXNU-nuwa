@@ -179,9 +179,131 @@
       ],
       "exit_code": 0,
       "output": "10 production command-line conversion/copy cases passed; guards intact\n"
+    },
+    {
+      "argv": [
+        "wsl.exe",
+        "-e",
+        "clang",
+        "-x",
+        "c",
+        "-std=gnu11",
+        "-fshort-wchar",
+        "-Wall",
+        "-Werror",
+        "-I/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include",
+        "-I/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/AArch64",
+        "--target=aarch64-none-elf",
+        "-ffreestanding",
+        "-fsyntax-only",
+        "-"
+      ],
+      "exit_code": 0,
+      "output": "",
+      "profile": "baseline",
+      "private_header_sha256": {
+        "BootVideo.h": "8d25e85a166b272a1cbc0a5238288670e2707303f4cd97aef180ebf0c42246c4",
+        "DiagFont.h": "d2a3687db67b069f4e34a961e17fd28b0242986e3fa8dd8a7545cab70834fa8e",
+        "PackedRamdisk.h": "9501be052befd2865d32026f8c2a6575f6a39db5a55d8ccfbe52a5d35ae949d5",
+        "WindowSize.h": "6f78303c54252eae722be7c9b33869e4e8251ee3569736511790170d499b58cb",
+        "BootArgs.h": "082006494e5ec30b8b03fef11c2ae3a40c9bfe2839d933809206554e54df50ff"
+      },
+      "loader_protocol_sha256": "4853991ceac062a2bd3d8d36d262d0cf09b1fe751c44813e267371cd93479cbb"
+    },
+    {
+      "argv": [
+        "wsl.exe",
+        "-e",
+        "clang",
+        "-x",
+        "c",
+        "-std=gnu11",
+        "-fshort-wchar",
+        "-Wall",
+        "-Werror",
+        "-I/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include",
+        "-I/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/AArch64",
+        "--target=aarch64-none-elf",
+        "-ffreestanding",
+        "-fsyntax-only",
+        "-"
+      ],
+      "exit_code": 0,
+      "output": "",
+      "profile": "latest",
+      "private_header_sha256": {
+        "BootVideo.h": "8d25e85a166b272a1cbc0a5238288670e2707303f4cd97aef180ebf0c42246c4",
+        "DiagFont.h": "d2a3687db67b069f4e34a961e17fd28b0242986e3fa8dd8a7545cab70834fa8e",
+        "PackedRamdisk.h": "8b3a326062baee88a179274e92df05a3a07792d25ef84daa23b71aa47b4a2326",
+        "WindowSize.h": "6f78303c54252eae722be7c9b33869e4e8251ee3569736511790170d499b58cb",
+        "BootArgs.h": "082006494e5ec30b8b03fef11c2ae3a40c9bfe2839d933809206554e54df50ff"
+      },
+      "loader_protocol_sha256": "4853991ceac062a2bd3d8d36d262d0cf09b1fe751c44813e267371cd93479cbb"
     }
   ],
   "passed": true,
+  "translation_unit_syntax": [
+    {
+      "argv": [
+        "wsl.exe",
+        "-e",
+        "clang",
+        "-x",
+        "c",
+        "-std=gnu11",
+        "-fshort-wchar",
+        "-Wall",
+        "-Werror",
+        "-I/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include",
+        "-I/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/AArch64",
+        "--target=aarch64-none-elf",
+        "-ffreestanding",
+        "-fsyntax-only",
+        "-"
+      ],
+      "exit_code": 0,
+      "output": "",
+      "profile": "baseline",
+      "private_header_sha256": {
+        "BootVideo.h": "8d25e85a166b272a1cbc0a5238288670e2707303f4cd97aef180ebf0c42246c4",
+        "DiagFont.h": "d2a3687db67b069f4e34a961e17fd28b0242986e3fa8dd8a7545cab70834fa8e",
+        "PackedRamdisk.h": "9501be052befd2865d32026f8c2a6575f6a39db5a55d8ccfbe52a5d35ae949d5",
+        "WindowSize.h": "6f78303c54252eae722be7c9b33869e4e8251ee3569736511790170d499b58cb",
+        "BootArgs.h": "082006494e5ec30b8b03fef11c2ae3a40c9bfe2839d933809206554e54df50ff"
+      },
+      "loader_protocol_sha256": "4853991ceac062a2bd3d8d36d262d0cf09b1fe751c44813e267371cd93479cbb"
+    },
+    {
+      "argv": [
+        "wsl.exe",
+        "-e",
+        "clang",
+        "-x",
+        "c",
+        "-std=gnu11",
+        "-fshort-wchar",
+        "-Wall",
+        "-Werror",
+        "-I/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include",
+        "-I/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/AArch64",
+        "--target=aarch64-none-elf",
+        "-ffreestanding",
+        "-fsyntax-only",
+        "-"
+      ],
+      "exit_code": 0,
+      "output": "",
+      "profile": "latest",
+      "private_header_sha256": {
+        "BootVideo.h": "8d25e85a166b272a1cbc0a5238288670e2707303f4cd97aef180ebf0c42246c4",
+        "DiagFont.h": "d2a3687db67b069f4e34a961e17fd28b0242986e3fa8dd8a7545cab70834fa8e",
+        "PackedRamdisk.h": "8b3a326062baee88a179274e92df05a3a07792d25ef84daa23b71aa47b4a2326",
+        "WindowSize.h": "6f78303c54252eae722be7c9b33869e4e8251ee3569736511790170d499b58cb",
+        "BootArgs.h": "082006494e5ec30b8b03fef11c2ae3a40c9bfe2839d933809206554e54df50ff"
+      },
+      "loader_protocol_sha256": "4853991ceac062a2bd3d8d36d262d0cf09b1fe751c44813e267371cd93479cbb"
+    }
+  ],
   "toolchain": {
     "argv": [
       "wsl.exe",

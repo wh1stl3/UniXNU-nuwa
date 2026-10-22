@@ -1,0 +1,45 @@
+{
+  "observed_at": "2026-10-22T22:14:22.278051+08:00",
+  "query_command": [
+    "C:/Program Files/GitHub CLI/gh.exe",
+    "run",
+    "view",
+    "39793231214",
+    "--repo",
+    "wh1stl3/UniXNU-nuwa",
+    "--json",
+    "databaseId,status,conclusion,headSha,url,createdAt,jobs"
+  ],
+  "trigger_command": [
+    "gh",
+    "workflow",
+    "run",
+    "kernel-merged-source.yml",
+    "--repo",
+    "wh1stl3/UniXNU-nuwa",
+    "--ref",
+    "main",
+    "-f",
+    "device_ref=3a210b1a4a9ed4633e14b567fea32c590162baf3"
+  ],
+  "run": {
+    "conclusion": "",
+    "createdAt": "2026-10-22T14:09:10Z",
+    "databaseId": 39793231214,
+    "headSha": "3a210b1a4a9ed4633e14b567fea32c590162baf3",
+    "jobs": [
+      {
+        "completedAt": "0001-01-01T00:00:00Z",
+        "conclusion": "",
+        "databaseId": 119874191459,
+        "name": "kernel",
+        "startedAt": "2026-10-22T14:09:12Z",
+        "status": "queued",
+        "steps": [],
+        "url": "https://github.com/wh1stl3/UniXNU-nuwa/actions/runs/39793231214/job/119874191459"
+      }
+    ],
+    "status": "queued",
+    "url": "https://github.com/wh1stl3/UniXNU-nuwa/actions/runs/39793231214"
+  }
+}
