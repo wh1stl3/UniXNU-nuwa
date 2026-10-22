@@ -800,3 +800,13 @@
 [Evidence] 包fbb7940a发送/Booting OKAY，用户FASTBOOT后黑屏；00:09:01实际nuwa boot_completed=1，boot/vendor_boot/init_boot全分区SHA与试前相同。
 [Risk] BootShim/SEC/DXE执行仍未验证，包无XNU；当前恢复为既有自定义/rooted Android，未修复持久A槽标志或建立独立日志通道。
 ```
+
+## Q-077 · ABL交接取证与BootShim相对偏移候选
+
+```text
+[unixnu-nuwa][loader] 核对本机ABL变量交接并提出BootShim相对偏移修正
+
+[Change] 保存同机ABL和UEFI变量发布/消费反汇编、既有日志筛选，准备只改text_offset的源码补丁，R-008列出两条候选并暂停新镜像生成。
+[Evidence] 两槽ABL38a837fa匹配备份，UEFI98PE含QcomBds发布器；条件模型A8000000+A7100000越窗，源补丁apply检查通过，nuwa Android完成1。
+[Risk] 变量运行值和实际拒绝码未观测，BootShim/SEC/XNU仍未验证；没有新镜像、设备模式或board/feed/内存修改。
+```

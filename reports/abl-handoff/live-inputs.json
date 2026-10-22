@@ -1,0 +1,54 @@
+{
+  "at_utc": "2026-10-22T16:13:07.986863+00:00",
+  "scope": "Read-only identity, installed ABL hashes, log endpoint inventory; no reboot",
+  "commands": [
+    {
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "getprop sys.boot_completed"
+      ],
+      "exit_code": 0,
+      "stdout": "1",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'cat /sys/firmware/devicetree/base/model; cat /sys/firmware/devicetree/base/compatible'"
+      ],
+      "exit_code": 0,
+      "stdout": "Qualcomm Technologies, Inc. 8550 nuwa\nqcom,kalama-mtp\nqcom,kalama\nqcom,mtp",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'sha256sum /dev/block/by-name/abl_a /dev/block/by-name/abl_b'"
+      ],
+      "exit_code": 0,
+      "stdout": "38a837fa917ff45e5be7cf6a421e0417015d875db503d1fb2dbc4d89080b0188  /dev/block/by-name/abl_a\n38a837fa917ff45e5be7cf6a421e0417015d875db503d1fb2dbc4d89080b0188  /dev/block/by-name/abl_b",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'ls -l /sys/fs/pstore; ls -l /sys/kernel/debug/bootloader_log /proc/bootloader_log /sys/kernel/bootloader_log 2>/dev/null'"
+      ],
+      "exit_code": 0,
+      "stdout": "total 0",
+      "stderr": ""
+    }
+  ]
+}

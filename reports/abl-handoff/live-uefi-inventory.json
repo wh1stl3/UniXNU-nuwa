@@ -1,0 +1,42 @@
+{
+  "scope": "Read existing installed UEFI into RAM only; no image file emitted",
+  "argv": [
+    "adb",
+    "-s",
+    "<selected-nuwa>",
+    "exec-out",
+    "su -c 'cat /dev/block/by-name/uefi_a'"
+  ],
+  "bytes": 5242880,
+  "sha256": "d95cd6c7e602a7a2b439ea3ae58b6c51621893c0d60a6a7fcc2477b3b1a7e30d",
+  "hash_query_stdout": "d95cd6c7e602a7a2b439ea3ae58b6c51621893c0d60a6a7fcc2477b3b1a7e30d  /dev/block/by-name/uefi_a\nd95cd6c7e602a7a2b439ea3ae58b6c51621893c0d60a6a7fcc2477b3b1a7e30d  /dev/block/by-name/uefi_b\n5242880",
+  "fv_candidates": [
+    {
+      "offset": 4096,
+      "bytes": 2936832
+    }
+  ],
+  "volumes": [
+    {
+      "label": "Installed UEFI@0x1000",
+      "bytes": 2936832,
+      "header_bytes": 72,
+      "sha256": "06dba15e4490cb9fa8d56e29a0c9df9483291e5e201a063ff3a690f27988fee3"
+    }
+  ],
+  "pe_images": [],
+  "nondecoded_sections": [
+    {
+      "guid": "1d301fe9-be79-4353-91c2-d23bc959ae0c",
+      "attributes": 1,
+      "encoded_bytes": 1347016,
+      "decoded": false
+    },
+    {
+      "guid": "1d301fe9-be79-4353-91c2-d23bc959ae0c",
+      "attributes": 1,
+      "encoded_bytes": 1110643,
+      "decoded": false
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "argv": [
+    "adb",
+    "-s",
+    "<selected-nuwa>",
+    "exec-out",
+    "su -c 'sha256sum /dev/block/by-name/xbl_a /dev/block/by-name/xbl_b /dev/block/by-name/xbl_config_a /dev/block/by-name/xbl_config_b'"
+  ],
+  "exit_code": 0,
+  "stdout": "01eade26ad60350452c9b96af91b7faee75a5aed5cb8c5748482f30e06558848  /dev/block/by-name/xbl_a\n01eade26ad60350452c9b96af91b7faee75a5aed5cb8c5748482f30e06558848  /dev/block/by-name/xbl_b\n686bce68b672213c749eea1efbf4575ff7d56c3a0b2326375fb70fd7a952db21  /dev/block/by-name/xbl_config_a\n686bce68b672213c749eea1efbf4575ff7d56c3a0b2326375fb70fd7a952db21  /dev/block/by-name/xbl_config_b",
+  "archives": [
+    {
+      "name": "xbl_a.img",
+      "sha256": "01eade26ad60350452c9b96af91b7faee75a5aed5cb8c5748482f30e06558848",
+      "matches_live": true,
+      "fvs": []
+    },
+    {
+      "name": "xbl_b.img",
+      "sha256": "01eade26ad60350452c9b96af91b7faee75a5aed5cb8c5748482f30e06558848",
+      "matches_live": true,
+      "fvs": []
+    },
+    {
+      "name": "xbl_config_a.img",
+      "sha256": "686bce68b672213c749eea1efbf4575ff7d56c3a0b2326375fb70fd7a952db21",
+      "matches_live": true,
+      "fvs": []
+    },
+    {
+      "name": "xbl_config_b.img",
+      "sha256": "686bce68b672213c749eea1efbf4575ff7d56c3a0b2326375fb70fd7a952db21",
+      "matches_live": true,
+      "fvs": []
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "at_utc": "2026-10-22T16:33:53.157413+00:00",
+  "scope": "Read-only log partition inventory and final Android completion; no reboot",
+  "commands": [
+    {
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'for p in blackbox minidump; do if [ -e /dev/block/by-name/$p ]; then echo $p; blockdev --getsize64 /dev/block/by-name/$p; else echo $p:absent; fi; done'"
+      ],
+      "exit_code": 0,
+      "stdout": "blackbox:absent\nminidump\n100663296",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "getprop sys.boot_completed"
+      ],
+      "exit_code": 0,
+      "stdout": "1",
+      "stderr": ""
+    }
+  ]
+}

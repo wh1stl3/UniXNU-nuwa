@@ -1,0 +1,21 @@
+{
+  "scope": "Read existing logfs into RAM; only selected kernel-loader diagnostic strings retained",
+  "argv": [
+    "adb",
+    "-s",
+    "<selected-nuwa>",
+    "exec-out",
+    "su -c 'cat /dev/block/by-name/logfs'"
+  ],
+  "bytes": 8388608,
+  "sha256": "723cce1421d7c34ae6949af55e28cae3d050d4b05bfae6e39824a71254c4f1a0",
+  "first64_hex": "56424c47010000004000000060000000010000002800000001000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "selected_messages": [
+    {
+      "file_offset": 178242,
+      "text": "No bootable slots found enter fastboot mode"
+    }
+  ],
+  "raw_image_written": false,
+  "limitation": "Raw string occurrence has no boot-session attribution until format is decoded"
+}

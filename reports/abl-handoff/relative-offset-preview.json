@@ -1,0 +1,50 @@
+{
+  "result": "Source patch applies; conditional arithmetic only, no compilation/execution",
+  "base_commit": "5e4a8c814b89f62a4ba2bc145249314fed5db787",
+  "source_sha256": "40ff434f170e98010117039bbc6da37b8892bcd07c0c0c090848edc477d5b54f",
+  "patched_source_sha256": "985a68764e965903b5b0b0b6958164db2861dfb981a28e468484f35cbdb3a2dd",
+  "patch": "patches/firmware-candidates/0006-bootshim-relative-text-offset.patch",
+  "patch_sha256": "7409eecd0c6956becab01f7efb426cde2437de807ec5ebbf15f8a286058adf05",
+  "original_shim_sha256": "9346a527441b242c69414fd7e3d6fa17813f281d562fef13d9ba8373d39007a9",
+  "existing_image_size": "0x300070",
+  "original_text_offset": "0xa7100000",
+  "proposed_text_offset": "0x0",
+  "unchanged_fd_destination": "0xa7100000",
+  "factory_source_sha256": "686bce68b672213c749eea1efbf4575ff7d56c3a0b2326375fb70fd7a952db21",
+  "factory_region": {
+    "base": 2818572288,
+    "size": 268435456,
+    "name": "Kernel",
+    "attributes": [
+      "AddMem",
+      "SYS_MEM",
+      "SYS_MEM_CAP",
+      "Reserv",
+      "WRITE_BACK_XN"
+    ],
+    "section": "MemoryMap",
+    "line": 31
+  },
+  "assumptions": [
+    "Both KernelBaseAddr/KernelSize GetVariable calls succeed",
+    "Normal platform branch (fde0 returns zero), raw ARM64, image_size nonzero",
+    "Variable values equal the Kernel descriptor in matching installed xbl_config",
+    "Ramdisk/page/DT deductions do not wrap the unsigned address arithmetic"
+  ],
+  "model": {
+    "kernel_base": "0xa8000000",
+    "kernel_end": "0xb8000000",
+    "original_load": "0x14f100000",
+    "proposed_load": "0xa8000000",
+    "original_load_above_end": true,
+    "original_result": "DTAddr below KernelEnd cannot exceed KernelLoadAddr; EFI_BUFFER_TOO_SMALL",
+    "proposed_result": "Removes this out-of-window load; does not prove copy/entry/SEC success"
+  },
+  "fallback": "Without both variables ABL uses its own base/offset path, ignoring this header field",
+  "runtime_values_observed": false,
+  "trial_error_observed": false,
+  "firmware_source_changed": false,
+  "image_generated": false,
+  "approval_required_for_build": "R-008",
+  "protocol_source": "https://docs.kernel.org/arch/arm64/booting.html"
+}

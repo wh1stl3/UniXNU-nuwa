@@ -12,7 +12,23 @@
 
 | 编号 | 主题 | 需要用户做什么 |
 | --- | --- | --- |
-| — | 无 | — |
+| R-008 | BootShim相对text_offset修正后的新镜像 | 选择A：只重编shim、复用R-007 FD打包并临时对照恢复；或B：继续现有dump/独立观测分析 |
+
+## R-008 · 修正BootShim的相对text_offset并做单变量试验（open）
+
+背景：本机abl_a/b SHA38a837fa与只读备份相同，安装UEFI QcomBds的变量发布代码和ABL消费代码已静态核对。现有shim头把绝对FD_BASE=A7100000写入相对text_offset；若普通平台分支成功读取原厂Kernel变量，装载地址会算成14F100000，越过B8000000末端，在CopyMem之前返回EFI_BUFFER_TOO_SMALL。**这是一条有条件的静态诊断，运行变量/实际错误码仍未验证**。ACK在BootLinux之前发出，不能排除早退。logfs/minidump只读取证未得到可归属R-007的实际错误。详见[完整证据](operations/2026-10-23-abl-handoff-and-relative-offset.md)。
+
+触发：AGENTS.md§3第3类“新建或重写任何诊断 / 固件镜像”。R-007 A只涵盖已完成的SEC阶段诊断，新BootShim头修正/新容器超出该具体范围。已有Git/GitHub及可恢复临时实机授权持续有效，不请求重复授权这些通用动作。
+
+**候选A（倾向）：只修正相对偏移、复用同一FD，生成并临时试启动一个对照包。** 源码草案0006-bootshim-relative-text-offset.patch已完成，SHA7409eecd0c6956becab01f7efb426cde2437de807ec5ebbf15f8a286058adf05。只把头字段`.quad FD_BASE`改`.quad 0`，FD_BASE拷贝/入口目标A7100000、image_size和指令保持；source-only preview及git apply --check通过，尚未实际apply或编译。固定基线5e4a8c8，复用R-007 FD SHA9ea347a49e51472adac987cf12e20f9e0d99453a23f2113ad24efcd0a07f2eaf，避免重新构建FD引入其他变化。
+
+代价/验收：需重编112B shim、更新旧头值检查门和打包输入清单，对比确认除头text_offset八字节范围外shim逐字节相同，FD SHA相同，复用原v4头且只按既有规则更新kernel_size，不增加DTB/ramdisk/FAT/XNU；记录真实新SHA，不预填。再按D-016重新进入bootloader、筛选nuwa、临时启动及观察/采样，恢复前再复位bootloader，加载已验证Android备份并确认boot_completed=1。风险：没有运行变量/PC证据，该修正可能仍黑屏；显示/SEC/更后阶段问题仍可能存在。不得因新的ACK声称进入SEC或XNU。
+
+**候选B：暂不生成新镜像，继续解码现有minidump并寻找独立运行观测。** 本轮96MiB minidump含五个Raw_Dmp!头，但明文筛选无相应加载错误；下一步需解析各段/会话与可能压缩内容，或核实BootLinux错误的其他可读出口。代价是时间与产出未验证，旧记录可能根本不包含R-007；boot-only易失变量也不能靠Android efivarstore追溯。优点是避免新试验，若取得实际拒绝码能减少条件假设。不会直接占用Android ramoops或发明USB/RAM地址。
+
+倾向A：二进制控制流与同机表已有明确对应，补丁只纠正一个协议字段；复用同一FD可把新变量限定到头部，实验成本小于重新开发日志通道。B保留为黑屏持续后的取证路径，不把A成功预先写入结论。
+
+**需要批准的最小范围：A这一份源码补丁、相应shim编译/静态核验、复用已锁定R-007 FD的受限v4新容器，以及按既有可恢复临时启动授权进行一次对照并恢复Android=1。** 不改任何board/bringup-plan内存或基址，不修改FD目标/原厂内存表，不flash/erase/改槽、不含XNU负载、不置_verified=true。当前手机仍在Android=1，本轮未生成新镜像。
 
 ## R-007 · 新SEC阶段诊断镜像（approved A，构建/试启动/恢复已完成）
 

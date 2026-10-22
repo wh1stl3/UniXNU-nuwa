@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "adb",
+    "-s",
+    "<selected-nuwa>",
+    "exec-out",
+    "su -c 'ls /dev/block/by-name'"
+  ],
+  "exit_code": 0,
+  "selected_partition_names": [
+    "uefi_a",
+    "uefi_b",
+    "uefisecapp_a",
+    "uefisecapp_b",
+    "uefivarstore",
+    "xbl_a",
+    "xbl_b",
+    "xbl_config_a",
+    "logfs",
+    "xbl_config_b",
+    "xbl_ramdump_a",
+    "xbl_ramdump_b",
+    "xbl_sc_logs",
+    "xbl_sc_test_mode"
+  ]
+}
