@@ -291,3 +291,13 @@
 [Evidence] reports/kernel-ci/39736351595/kpc-context-review.json：调用行183/519及optional kpc实现定义；cancel-request.json；next-compatibility-check.json为57项225 hunks通过，配方hash/bash语法检查通过。
 [Risk] 新候选尚待实际编译；源码缺口不冒充已观察到的链接错误，取消不算成功或失败验证；feed/board不变，无镜像、设备动作或_verified=true。
 ```
+
+## Q-030 · 第八轮取消确认与第九轮启动
+
+```text
+[unixnu-nuwa][build] 确认第八轮取消并以完整条件修复启动第九轮
+
+[Change] 保存第八轮cancelled最终状态，发布4dd55f0并启动第九轮57项输入；重写当前STATUS，区分实际错误、源码审查和取消结果。
+[Evidence] reports/kernel-ci/39736351595/run.json、cancel-request.json；reports/kernel-ci/39736926012/run.json、api-publish.json；https://github.com/wh1stl3/UniXNU/actions/runs/39736926012，device_ref=4dd55f0ec8c72e08946c6f597bb3ca3389b65dbd。
+[Risk] 第九轮最终编译/链接未验证，取消不是构建验收；完整driver/donor ABI、QEMU及实机未验证，feed/board不变。
+```

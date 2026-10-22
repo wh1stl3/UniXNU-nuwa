@@ -74,3 +74,7 @@ build.json记录51个真实生成实现、51份适配记录，总共1296次模�
 为批量覆盖而避免再花一整轮等待已知缺口，已执行gh run cancel 39736351595，请求返回0。run.json保留服务端当前状态；取消作业不作为失败、成功或修复通过的证据。下一轮包含该额外候选。x86/i386和optional monotonic实现未纳入修改，ktrace中的纯extern声明也不当作链接引用。
 
 下一候选57项225 hunks精确静态检查、输入hash和配方bash语法检查通过；见该运行目录next-compatibility-check.json及next-source-input-check.json，引用审查见kpc-context-review.json。没有源树/board/feed写入、镜像或设备动作。
+
+## 第八轮取消确认与第九轮启动（2026-10-22 14:56）
+
+服务端已确认第八轮cancelled；原始状态和请求记录已更新。4dd55f0ec8c72e08946c6f597bb3ca3389b65dbd已发布，第九轮39736926012采用57项完整候选。结果未验证，继续观察编译/链接；启动及发布证明见reports/kernel-ci/39736926012/。
