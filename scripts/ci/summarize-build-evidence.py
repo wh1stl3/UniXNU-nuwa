@@ -21,11 +21,17 @@ if lines[-1] == '':
 lines = [line.removesuffix('\r') for line in lines]
 diagnostics = [i for i, line in enumerate(lines)
                if re.search(r':\d+:\d+: (?:fatal )?error:', line)
+               or re.match(r'^(ld: (?!warning:)|Undefined symbols for architecture|clang(?:\+\+)?: error:)', line)
                or line.startswith(('ValueError:', 'FileNotFoundError:', 'RuntimeError:'))
                or '*** No rule to make target' in line]
 selected = set()
 for index in diagnostics:
     selected.update(range(max(0, index - 4), min(len(lines), index + 10)))
+    if lines[index].startswith('Undefined symbols for architecture'):
+        for position in range(index + 1, min(len(lines), index + 400)):
+            selected.add(position)
+            if lines[position].startswith('ld:'):
+                break
 excerpt = '\n'.join(f'{i+1}: {lines[i].rstrip()}' for i in sorted(selected)) + '\n'
 (report / 'diagnostics.txt').write_text(excerpt, encoding='utf-8')
 for source, destination in ((artifact / 'nuwa-host/toolchain.log', report / 'toolchain.log'),
@@ -40,6 +46,8 @@ summary = {'run_id': args.run_id, 'command': f'gh run download {args.run_id} --r
            'iorpc_header_unchanged': build.get('iorpc_header_unchanged'),
            'generated_kernel_content_files': len(build.get('iig_kernel_content_references', [])),
            'object_count_all_builds': build.get('object_count'),
+           'xnu_target_object_count': build.get('xnu_target_object_count'),
+           'key_objects': build.get('key_objects'),
            'kernel_built': build['kernel_built'], 'device_verified': False,
            'uio_alignment_errors_observed': 'size of array element of type' in '\n'.join(lines)}
 (report / 'failure-analysis.json').write_text(json.dumps(summary, indent=2) + '\n', encoding='utf-8')

@@ -1,0 +1,44 @@
+{
+  "scope": "read-only text scan of C call expressions outside optional kperf/kpc implementation units; not a complete preprocessor/ABI analysis",
+  "source": "Apple xnu-8796.141.3",
+  "unconditional_call_candidates": [
+    {
+      "file": "osfmk/kern/ast.c",
+      "line": 259,
+      "text": "kperf_kpc_thread_ast(thread);",
+      "conditions": []
+    },
+    {
+      "file": "bsd/kern/kern_ktrace.c",
+      "line": 211,
+      "text": "kperf_reset();",
+      "conditions": []
+    },
+    {
+      "file": "bsd/kern/kern_ktrace.c",
+      "line": 369,
+      "text": "kperf_disable_sampling();",
+      "conditions": []
+    },
+    {
+      "file": "bsd/kern/kern_ktrace.c",
+      "line": 394,
+      "text": "kperf_reset();",
+      "conditions": []
+    },
+    {
+      "file": "bsd/kern/kern_ktrace.c",
+      "line": 506,
+      "text": "kperf_reset();",
+      "conditions": []
+    },
+    {
+      "file": "osfmk/kern/sched_prim.c",
+      "line": 3754,
+      "text": "kperf_running_setup(processor, processor->last_dispatch);",
+      "conditions": []
+    }
+  ],
+  "review": "ast covered by published patch; scheduler and standard BSD ktrace covered by prepared candidates; all direct KTRACE_KPERF configuration callers found in optional osfmk/kperf units",
+  "source_written": false
+}

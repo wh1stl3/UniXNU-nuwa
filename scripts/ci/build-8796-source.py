@@ -63,6 +63,9 @@ def inputs(base):
                                    'IPHONEOS_DEPLOYMENT_TARGET=16.0', 1)
     for name in ('clang17-zero-init.patch', 'clang17-uio-stackbuf.patch',
                  'disabled-kperf-ast.patch', 'disabled-kperf-timer.patch',
+                 'disabled-kperf-scheduler.patch',
+                 'disabled-kperf-ktrace.patch',
+                 'disabled-kpc-task.patch',
                  'zzzz-ci-public-profiling.patch'):
         compatibility = DEVICE / 'patches/xnu-8796-ci-candidates' / name
         if not compatibility.is_file():

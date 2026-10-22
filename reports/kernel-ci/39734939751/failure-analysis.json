@@ -1,0 +1,38 @@
+{
+  "run_id": 39734939751,
+  "command": "gh run download 39734939751 --repo wh1stl3/UniXNU --dir out/kernel-ci/39734939751",
+  "console_path": "out\\kernel-ci\\39734939751\\nuwa-8796-source-39734939751\\nuwa-host\\kernel-console.log",
+  "console_bytes": 68699001,
+  "console_sha256": "9bde5e32572a915ee1b7859a377c19bba99b554dd81e2855d4c79749bed70c06",
+  "console_lines": 714074,
+  "excerpt_trailing_whitespace_trimmed": true,
+  "diagnostics": [
+    {
+      "original_line": 404291,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/kern/task.c:1513:12: error: no member named 't_kpc' in 'struct task'"
+    }
+  ],
+  "iorpc_header_unchanged": true,
+  "generated_kernel_content_files": 0,
+  "object_count_all_builds": 703,
+  "xnu_target_object_count": 674,
+  "key_objects": {
+    "ast.o": [
+      {
+        "path": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/ast.o",
+        "bytes": 73896,
+        "sha256": "21a6c61593bdff78f0d3b5466b72ac7e0f8b07c7c8709df8b824dfbeea721874"
+      }
+    ],
+    "processor.o": [
+      {
+        "path": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/processor.o",
+        "bytes": 143264,
+        "sha256": "5226e6a12dfdaa02c1a515f1a5d3e6735937270fe52e8c5de7188f6b699b4d42"
+      }
+    ]
+  },
+  "kernel_built": false,
+  "device_verified": false,
+  "uio_alignment_errors_observed": false
+}

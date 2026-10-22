@@ -45,3 +45,19 @@ build.json记录51个真实生成实现、51份适配记录，总共1296次模�
 ## 第七轮启动
 
 484b97c57fc2be0a6b5b0455bcca44b5246e0278已发布，第七轮39734939751已启动；实际结果未验证，构建入口将记录目标对象数量和ast.o/processor.o证据，保留所有原始失败退出码。
+
+
+## 第七轮实际结果与关闭性能模块后的剩余入口
+
+第七轮39734939751失败，首错原始行404291：task.c:1513无条件初始化new_task->t_kpc，但task.h:384-387仅KPC为真时定义该字段。task.c:3047处销毁路径已保护；其余真实字段使用在可选kpc_common.c。disabled-kpc-task.patch仅给初始化加#if KPC，不新建字段或改变原结构定义。
+
+本轮build.json首次给出精确目标证据：ast.o为73896字节、SHA-256 21a6c61593bdff78f0d3b5466b72ac7e0f8b07c7c8709df8b824dfbeea721874；processor.o为143264字节、SHA-256 5226e6a12dfdaa02c1a515f1a5d3e6735937270fe52e8c5de7188f6b699b4d42。路径均在目标osfmk/DEVELOPMENT目录。目标目录674个.o、全部build目录703个.o；这里不包含.cpo，不把数量当作完整内核或链接成功。kernel_built=false，IIG残留仍为0、原IORPC头未变。
+
+原始控制台68,699,001字节、714074行，SHA-256 9bde5e32572a915ee1b7859a377c19bba99b554dd81e2855d4c79749bed70c06，保留out。元数据、摘录和对象报告位于reports/kernel-ci/39734939751/。
+
+同时完成相关调用的源码检查（related-kperf-calls.json为受限文本扫描，不是完整预处理/ABI证明）：
+
+- sched_prim.c:3754在was_idle分支无条件调用kperf_running_setup；该inline会引用可选kperf_is_sampling/kptimer_running_setup。disabled-kperf-scheduler.patch只保护这一性能分支及对应头，保留quantum定时器setup和activate；kern/kpc.h只在KPC启用时包含。
+- 标准BSD单元kern_ktrace.c:211/369/394/506的reset/disable调用没有性能模块保护。disabled-kperf-ktrace.patch保护这些调用及头，KDEBUG重置/禁用、所有权状态流程保持。KTRACE_KPERF直接配置调用者只找到可选osfmk/kperf/kperf.c及kperfbsd.c；不新增虚假provider或成功stub，不把缺失性能服务伪装为可用。
+
+上述scheduler/ktrace问题是源级发现，并非第七轮实际链接错误；第七轮还未成功链接，不混写证据等级。三项候选合并后56项222 hunks、配方hash/bash语法静态检查通过，下一轮进行实际编译验证。日志提取器增加真实ld/undefined-symbol/clang命令行错误及精确目标字段，为链接阶段取证做准备。

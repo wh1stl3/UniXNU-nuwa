@@ -261,3 +261,13 @@
 [Evidence] reports/kernel-ci/39734939751/run.json、api-publish.json；https://github.com/wh1stl3/UniXNU/actions/runs/39734939751；device_ref=484b97c57fc2be0a6b5b0455bcca44b5246e0278。
 [Risk] 记录时仍运行中，尚无完整编译/链接或ABI成功证据；feed/board不变，无镜像或设备动作。
 ```
+
+## Q-027 · 第七轮证据与关闭性能模块的剩余入口
+
+```text
+[unixnu-nuwa][kernel] 对齐任务字段及调度跟踪对关闭性能模块的条件边界
+
+[Change] 保存第七轮真实错误和关键目标对象证据，给t_kpc初始化加与结构相同的KPC条件；根据同类源码审查保护scheduler/KTRACE剩余引用，保留量子定时器、KDEBUG和断言；完善链接日志取证。
+[Evidence] reports/kernel-ci/39734939751/diagnostics.txt原始行404291；build.json包含ast.o/processor.o实际路径和哈希；related-kperf-calls.json；next-compatibility-check.json为56项222 hunks通过，配方语法检查通过。
+[Risk] scheduler/KTRACE是源级发现，不是已确认的第七轮链接错误；完整编译/链接待第八轮，性能采样仍关闭，driver/donor ABI、QEMU与实机未验证；feed/board不变，无镜像或设备动作。
+```

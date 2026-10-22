@@ -1,0 +1,14 @@
+404287:       |                                                                  %u
+404288: /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/kern/task.c:999:12: warning: mixing declarations and code is incompatible with standards before C99 [-Wdeclaration-after-statement]
+404289:   999 |         boolean_t is_64bit = TRUE;
+404290:       |                   ^
+404291: /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/kern/task.c:1513:12: error: no member named 't_kpc' in 'struct task'
+404292:  1513 |         new_task->t_kpc = 0;
+404293:       |         ~~~~~~~~  ^
+404294: /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/kern/task.c:1669:28: warning: cast from 'void (*)(vm_allocation_site_t *)' (aka 'void (*)(struct vm_allocation_site *)') to 'typeof (__zone_site_register(&site)) (*)(const void *)' (aka 'void (*)(const void *)') converts to incompatible function type [-Wcast-function-type-strict]
+404295:  1669 |         new_task->task_io_stats = kalloc_data(sizeof(struct io_stat_info),
+404296:       |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+404297:  1670 |             Z_WAITOK | Z_ZERO | Z_NOFAIL);
+404298:       |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+404299: /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/kern/kalloc.h:512:2: note: expanded from macro 'kalloc_data'
+404300:   512 |         kheap_alloc(KHEAP_DATA_BUFFERS, size, flags)
