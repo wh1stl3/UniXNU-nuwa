@@ -136,3 +136,7 @@
 2026-10-22 21:23 · 遍历官方72中文页并核对144路由，发现Darwin22 boot_args源定义偏移差异，补充SM8550 CDC与sheng持久日志来源；保持4KiB/iPhone主线，未升级上游/生成镜像或访问设备 · 本提交（Q-062） · reports/official-site-audit/；docs/operations/2026-10-22-official-site-route-review.md
 
 2026-10-22 21:40 · 合并上游5fdbd5d到UniXNU fork 76dd641，完整树/3份工作流/28份patch和feed核对通过；CI15实际DWARF确认608B boot_args，用户撤销实机暂停，未访问设备或生成镜像 · 本提交（Q-063） · reports/upstream-merge/；reports/official-site-audit/ci15-boot-args-dwarf.json
+
+2026-10-22 21:52 · 接入Darwin22加载器608B结构/缓冲区补丁及前后哈希门；AArch64布局编译、88项接线检查和两版各10例宿主边界测试通过，保留PIE一次139失败，未生成固件或访问设备 · 本提交（Q-064） · reports/darwin22-loader/；docs/operations/2026-10-22-darwin22-loader-fix.md
+
+2026-10-22 21:54 · 追加核对既有原厂表逐字节证据，接线检查增至89项；复用历史原文避免重复提交，原始空白未修改 · 本提交（Q-064） · reports/darwin22-loader/integration/audit.json

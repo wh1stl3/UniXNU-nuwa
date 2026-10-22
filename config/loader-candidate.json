@@ -231,6 +231,12 @@
       "path": "Silicon/Silicium/SiliciumPkg/Sec/AArch64/ModuleEntryPoint.S",
       "sha256": "ac62466d82cb6f1cfe3a67d59de304a60e555fac142dc36c80dace94f53fc149",
       "bytes": 1265
+    },
+    {
+      "root": "unixnu",
+      "path": "drivers/DarwinBoot/DarwinBootPkg/Driver/BootArgs.h",
+      "sha256": "1d6b172a306bf5d3fc409d22bd7e674d166e5fde92652c4135de5c79f3eddd16",
+      "bytes": 1012
     }
   ],
   "patches": [
@@ -253,6 +259,11 @@
       "path": "patches/firmware-candidates/0004-sec-entry-argument-hob.patch",
       "root": "firmware",
       "sha256": "1d0fdbd0172e524fccfa6e5cf6a347a7a82700f66cb38e7ea297ed1b60224932"
+    },
+    {
+      "path": "patches/loader-candidates/0005-darwin22-boot-args.patch",
+      "root": "unixnu",
+      "sha256": "8532237ec7774c9315ef0c2226e17df56935a1e32811400e741a4e1d502fdc87"
     }
   ],
   "protected": [
@@ -302,5 +313,18 @@
       "git_blob": "0b3073c3b570944faac2a46d625524a04d623dd3",
       "raw_sha256": "f26481c4d5e94f9b2ba02e8226f1a628b3c0f1d5cb37f1104f8ee183087eee6b"
     }
-  ]
+  ],
+  "post_patch_inputs": [
+    {
+      "root": "unixnu",
+      "path": "drivers/DarwinBoot/DarwinBootPkg/Driver/BootArgs.h",
+      "lf_sha256": "082006494e5ec30b8b03fef11c2ae3a40c9bfe2839d933809206554e54df50ff"
+    },
+    {
+      "root": "unixnu",
+      "path": "drivers/DarwinBoot/DarwinBootPkg/Driver/DarwinBoot.c",
+      "lf_sha256": "1d2917aacdd8bd14a16adde289333fdda2f723720fd88f33f963ad1f07bdf8dc"
+    }
+  ],
+  "darwin22_boot_args_evidence": "reports/official-site-audit/ci15-boot-args-dwarf.json"
 }

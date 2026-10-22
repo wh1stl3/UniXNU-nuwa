@@ -1,0 +1,72 @@
+[
+  {
+    "argv": [
+      "wsl.exe",
+      "-e",
+      "file",
+      "/mnt/d/Code/UniXNU-nuwa/out/darwin22-loader/commandline-host-test-latest"
+    ],
+    "exit_code": 0,
+    "stdout": "/mnt/d/Code/UniXNU-nuwa/out/darwin22-loader/commandline-host-test-latest: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=7158d77fbb420ca27c453ea926bfc79b57fdee9d, for GNU/Linux 3.2.0, with debug_info, not stripped\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "wsl.exe",
+      "-e",
+      "cat",
+      "/proc/sys/vm/mmap_rnd_bits"
+    ],
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "cat: /proc/sys/vm/mmap_rnd_bits: Permission denied\n"
+  },
+  {
+    "argv": [
+      "wsl.exe",
+      "-e",
+      "env",
+      "ASAN_OPTIONS=verbosity=1:log_path=/mnt/d/Code/UniXNU-nuwa/out/darwin22-loader/asan-latest",
+      "/mnt/d/Code/UniXNU-nuwa/out/darwin22-loader/commandline-host-test-latest"
+    ],
+    "exit_code": 0,
+    "stdout": "10 production command-line conversion/copy cases passed; guards intact\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "wsl.exe",
+      "-e",
+      "env",
+      "ASAN_OPTIONS=verbosity=1:log_path=/mnt/d/Code/UniXNU-nuwa/out/darwin22-loader/asan-latest",
+      "/mnt/d/Code/UniXNU-nuwa/out/darwin22-loader/commandline-host-test-latest"
+    ],
+    "exit_code": 0,
+    "stdout": "10 production command-line conversion/copy cases passed; guards intact\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "wsl.exe",
+      "-e",
+      "env",
+      "ASAN_OPTIONS=verbosity=1:log_path=/mnt/d/Code/UniXNU-nuwa/out/darwin22-loader/asan-latest",
+      "/mnt/d/Code/UniXNU-nuwa/out/darwin22-loader/commandline-host-test-latest"
+    ],
+    "exit_code": 0,
+    "stdout": "10 production command-line conversion/copy cases passed; guards intact\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "wsl.exe",
+      "-e",
+      "env",
+      "ASAN_OPTIONS=verbosity=1:log_path=/mnt/d/Code/UniXNU-nuwa/out/darwin22-loader/asan-latest",
+      "/mnt/d/Code/UniXNU-nuwa/out/darwin22-loader/commandline-host-test-latest"
+    ],
+    "exit_code": 0,
+    "stdout": "10 production command-line conversion/copy cases passed; guards intact\n",
+    "stderr": ""
+  }
+]

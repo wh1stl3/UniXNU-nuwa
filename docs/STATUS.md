@@ -1,6 +1,6 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 21:40（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-22 21:52（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
@@ -8,7 +8,7 @@ UniXNU fork已合并上游主分支：wh1stl3/UniXNU@76dd641包含固定上游5f
 
 **仓库已合并，构建迁移未完成。** CI15/固件成功输入仍锁定75bc13d，现有工作流仍使用该历史基线；不能将历史CI成功写成新合并代码编译通过。迁移需审查递归子模块、补丁哈希和构建脚本上下文，不只改一个SHA。
 
-CI15的dSYM与内核UUID匹配，arm_init/machine_routines/pe_init三个编译单元实际boot_args一致：CommandLine608B、sizeof0x2e0、bootFlags0x2d0、memSizeActual0x2d8。当前DarwinBoot仍为1024B/0x480/0x470/0x478，已确认编译类型差异，运行ABI未验证。下一项形成Darwin22加载器最小补丁，必须同步局部缓冲区与长度检查，避免仅缩短结构引起CopyMem越界。
+CI15的dSYM与内核UUID匹配，arm_init/machine_routines/pe_init三个编译单元实际boot_args一致：CommandLine608B、sizeof0x2e0、bootFlags0x2d0、memSizeActual0x2d8。当前DarwinBoot仍为1024B/0x480/0x470/0x478，已确认编译类型差异，运行ABI未验证。已形成Darwin22专用补丁并接入下一版候选清单，结构/局部缓冲区统一608B，复制长度取目标字段；旧基线git apply检查、新子模块RAM上下文、AArch64布局编译和89项接线检查通过。两个版本的生产转换/复制语句各10个宿主用例、各4次ASan/UBSan运行通过。完整模块尚未编译，已有FD未被更新。[修复与验证](operations/2026-10-22-darwin22-loader-fix.md)。
 
 ## 实机访问与已完成构建
 
@@ -31,7 +31,7 @@ nuwa已打包高通USB设备栈，DXE CDC导出尚未接线；早期RAM记录可
 
 ## 下一步
 
-1. 在最新DarwinBoot子模块固定提交上制作Darwin22专用结构/命令行缓冲区补丁，核对旧基线及最新上下文；只做源码适配与静态验证，新的固件生成按硬停范围处理。
+1. Darwin22结构/缓冲区修复已接入源码候选。继续核对合并版输入与补丁选择，完整DarwinBoot模块编译仍待取证；新的固件生成按硬停及已有批准范围处理。宿主PIE曾一次139无诊断，失败已保留；非PIE测试通过不解释手机黑屏。
 2. 迁移合并版构建输入：递归子模块固定、48项选择和本仓兼容补丁逐项检查、构建脚本哈希/输出/参数重新审查；保留可重现的CI15回归路径，不改feed。
 3. 继续ABL/FDT/splash/x0/initrd保留审查，明确早期日志回收通道；设备访问已恢复，但首次新操作前重新核对nuwa身份/状态，候选未获执行证据前不升级阶段。
 4. 审查SM8550 USB许可和依赖、UEFI协议到SerialIo桥接；provider/ARCH_TIMER/GIC/PSCI、13项boot-progress、watchdog、NativePrelink的12处Libm编码和完整ABI仍待验收。

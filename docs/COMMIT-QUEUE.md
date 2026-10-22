@@ -650,3 +650,13 @@
 [Evidence] fork合并76dd641的589条树等于上游加3份原工作流，28份patch哈希和feed不变；UUID匹配的CI15三个编译单元均为608B命令行与0x2e0结构。
 [Risk] 合并版尚未构建，历史CI仍固定75bc；Darwin22加载器修复和运行ABI未验证，本轮未访问设备或生成镜像。
 ```
+
+## Q-064 · Darwin22加载器ABI修正
+
+```text
+[unixnu-nuwa][loader] 统一Darwin22的608B命令行布局与复制边界
+
+[Change] 增加设备专用BootArgs补丁并接入候选清单，按应用后哈希保护两个修改文件，扩展三来源虚拟接线审计。
+[Evidence] 原基线git apply检查及最新模块RAM上下文通过；AArch64真实EDK头布局与CI15全部成员偏移一致，89项接线检查和两版各10例宿主ASan/UBSan边界用例通过。
+[Risk] 完整模块和运行ABI未验证；PIE宿主一次无诊断139已保留，非PIE测试通过不证明根因；未生成新固件、访问设备或修改board/feed。
+```

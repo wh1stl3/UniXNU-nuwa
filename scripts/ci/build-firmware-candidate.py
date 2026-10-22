@@ -103,6 +103,11 @@ def main():
             save("line-ending-normalization.json", normalized_inputs)
             run(["git", "apply", "--check", path], sources[patch["root"]])
             run(["git", "apply", path], sources[patch["root"]])
+        # Exact post-patch hashes keep the new ABI source protected rather than
+        # treating it as an unrestricted exception to the original input pins.
+        for item in candidate["post_patch_inputs"]:
+            if digest(sources[item["root"]] / item["path"], True) != item["lf_sha256"]:
+                raise ValueError("Patched input mismatch: " + item["path"])
         (fw / ".unixnu-packages").mkdir()
         for name, target in candidate["package_links"].items():
             path = Path(target.format(**{k: str(v) for k, v in sources.items()}))
@@ -150,6 +155,12 @@ def main():
                      ('SiliciumPkg.dec', 'Sec/Sec.c', 'Sec/Sec.inf', 'Sec/AArch64/ModuleEntryPoint.S')),
                    *(('sheng', 'Platforms/Xiaomi/shengPkg/Drivers/ShengBootMemoryDxe/ShengBootMemoryDxe.' + ext) for ext in ('c', 'inf'))}
         for item in recipe["inputs"]:
+            expected_post = next((entry for entry in candidate["post_patch_inputs"]
+                                  if (entry["root"], entry["path"]) == (item["root"], item["path"])), None)
+            if expected_post is not None:
+                if digest(sources[item["root"]] / item["path"], True) != expected_post["lf_sha256"]:
+                    raise ValueError("Patched input changed during build: " + item["path"])
+                continue
             if (item["root"], item["path"]) not in touched:
                 if digest(sources[item["root"]] / item["path"], True) != item["lf_sha256"]:
                     raise ValueError("Protected input changed during build: " + item["path"])

@@ -59,9 +59,10 @@ def main():
     parser.add_argument("--reference", type=Path, default=Path("D:/Code/PortingiOSWithUniXNU"))
     parser.add_argument("--sheng", type=Path, default=Path("D:/Code/PortingiOS/common/sources/uefi-sheng"))
     parser.add_argument("--kernel", type=Path, default=ROOT / "out/kernel-ci/39755850870/nuwa-8796-source-39755850870/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped")
+    parser.add_argument("--report-dir", type=Path, default=ROOT / "reports/loader-integration")
     args = parser.parse_args()
     roots = {key: value.resolve() for key, value in vars(args).items()}
-    report_dir = ROOT / "reports/loader-integration"
+    report_dir = args.report_dir
     manifest = json.loads((ROOT / "config/loader-candidate.json").read_text(encoding="utf-8"))
     checks = []
 
@@ -83,12 +84,21 @@ def main():
 
     tree = Tree(args.firmware)
     sheng_tree = Tree(args.sheng)
+    unixnu_tree = Tree(args.unixnu)
+    patch_trees = {"firmware": tree, "sheng": sheng_tree, "unixnu": unixnu_tree}
     hunks = []
     for patch in manifest["patches"]:
         data = (ROOT / patch["path"]).read_bytes()
         check("patch hash: " + patch["path"], sha(data) == patch["sha256"])
-        target = sheng_tree if patch["root"] == "sheng" else tree
+        target = patch_trees[patch["root"]]
         hunks.extend(dict(root=patch["root"], **h) for h in target.apply(data.decode("utf-8")))
+    expected_loader_files = {
+        "drivers/DarwinBoot/DarwinBootPkg/Driver/BootArgs.h",
+        "drivers/DarwinBoot/DarwinBootPkg/Driver/DarwinBoot.c"}
+    check("Darwin22 patch only changes loader ABI and command-line source", set(unixnu_tree.files) == expected_loader_files)
+    for item in manifest["post_patch_inputs"]:
+        check("effective patched hash: " + item["path"],
+              sha(patch_trees[item["root"]].read(item["path"]).encode()) == item["lf_sha256"])
     sec_base = "Silicon/Silicium/SiliciumPkg/"
     check("only wiring, shim and SEC HOB source files changed", set(tree.files) == {
         "BootShim/BootShim.S", BASE + "nuwa.dsc", BASE + "nuwa.fdf", BASE + "DeviceBuild.py",
@@ -134,7 +144,7 @@ def main():
     dec = (args.unixnu / "package/UniXNUPkg/UniXNUPkg.dec").read_text()
     check("registrar PCD matches application GUID", 'GUID("' + module_evidence[0]["guid"] + '")' in dec)
     boot = (args.unixnu / "package/UniXNUPkg/Library/UniXNULib/Boot.c").read_text()
-    driver = (args.unixnu / "drivers/DarwinBoot/DarwinBootPkg/Driver/DarwinBoot.c").read_text()
+    driver = unixnu_tree.read("drivers/DarwinBoot/DarwinBootPkg/Driver/DarwinBoot.c")
     check("loader consumer and producer refer to same protocol", "LocateProtocol (&gUniXNULoaderProtocolGuid" in boot
           and "InstallMultipleProtocolInterfaces" in driver and "&gUniXNULoaderProtocolGuid" in driver)
     check("registrar waits for variable protocols", "gEfiVariableArchProtocolGuid AND gEfiVariableWriteArchProtocolGuid"
@@ -211,7 +221,13 @@ def main():
                               "NoMap/AddDynamicMem semantics and live UEFI memory map", "512 MiB-1 GiB contiguous allocation",
                               "CI15 runtime providers/timer/startup and donor prelink/ABI", "boot image and XNU execution"])
     report_dir.mkdir(parents=True, exist_ok=True)
-    (report_dir / "factory-uefiplatLA-original.txt").write_bytes(cfg_data)
+    # Reuse the already committed byte-for-byte factory evidence for a new
+    # audit directory. Do not duplicate it or trim its original whitespace.
+    existing_factory = ROOT / "reports/loader-integration/factory-uefiplatLA-original.txt"
+    if report_dir.resolve() != existing_factory.parent.resolve() and existing_factory.exists():
+        check("existing verbatim factory evidence matches", existing_factory.read_bytes() == cfg_data)
+    else:
+        (report_dir / "factory-uefiplatLA-original.txt").write_bytes(cfg_data)
     (report_dir / "audit.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(dict(checks=len(checks), cfg_offset=start, cfg_bytes=len(cfg_data),
                           memory_rows=report["factory"]["memory_rows"], register_rows=report["factory"]["register_rows"], dxe_heap_mib=heap["size"] / 2**20,

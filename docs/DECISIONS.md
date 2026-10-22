@@ -338,3 +338,10 @@ D-015补充（2026-10-22 19:06）：原厂nuwa v4 boot临时加载回Android boo
 
 
 D-016补充（2026-10-22 20:53）：离线实际FD/TE/map入口一致，SEC WARN/ERROR已开但DebugLib和异常仅走FrameBufferSerialPortLib，正常横幅前还有SMMU调整/清屏。没有独立早期出口，黑屏不能定位SEC或证明未进入。后续先澄清ABL交接契约与可回收早期日志通道，不用更多屏幕DEBUG替代观测；33项静态断言见reports/arm64-sec-entry-audit/audit.json。设备暂停持续，无镜像/板值修改。
+
+# D-017 · 以CI15实际DWARF固定Darwin22加载器ABI
+
+- 状态：accepted，源码候选/布局编译通过，完整固件和运行ABI未验证（2026-10-22 21:52）。
+- 证据：reports/official-site-audit/ci15-boot-args-dwarf.json；reports/darwin22-loader/；operations/2026-10-22-darwin22-loader-fix.md。
+
+本机固定iOS16/XNU8796负载使用608B CommandLine与0x2e0 boot_args，不沿用Darwin23的1024B/0x480。设备专用patch同时调整局部缓冲区与复制边界，超长/非ASCII直接拒绝，保留终止符；不只缩短结构或静默截断。补丁适用原75bc基线和合并后固定DarwinBoot模块，应用前后均有哈希门。此决策不切换4KiB、窗口或身份，不证明当前无XNU的v4黑屏原因；未来多ABI需明确构建/协议选择。

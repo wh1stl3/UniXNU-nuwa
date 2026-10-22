@@ -1,0 +1,202 @@
+{
+  "upstream_repository": "UniXNU/DarwinBoot",
+  "upstream_commit": "d099354d0eab34df5088ca1ba89c9c88bc3260bb",
+  "patch": "patches/loader-candidates/0005-darwin22-boot-args.patch",
+  "patch_sha256": "8532237ec7774c9315ef0c2226e17df56935a1e32811400e741a4e1d502fdc87",
+  "sources": [
+    {
+      "path": "drivers/DarwinBoot/DarwinBootPkg/Driver/BootArgs.h",
+      "remote_sha256": "1d6b172a306bf5d3fc409d22bd7e674d166e5fde92652c4135de5c79f3eddd16",
+      "old_lf_sha256": "1d6b172a306bf5d3fc409d22bd7e674d166e5fde92652c4135de5c79f3eddd16",
+      "candidate_lf_sha256": "082006494e5ec30b8b03fef11c2ae3a40c9bfe2839d933809206554e54df50ff",
+      "old_baseline_identical": true,
+      "latest_exact_patch_applies": true
+    },
+    {
+      "path": "drivers/DarwinBoot/DarwinBootPkg/Driver/DarwinBoot.c",
+      "remote_sha256": "db189a520fb7af3decb80f6ad65e2b7ab2aa9e3e6c5ab6e2286a23df6108d8f2",
+      "old_lf_sha256": "cd141d002f24b951d3dfa7773f29cf645712be3c71f4b6e801d1114eb81b5c0a",
+      "candidate_lf_sha256": "c9f042982083cf49a3d227a764e568e0ca711f6b87b39b3dbb6f240071f9f472",
+      "old_baseline_identical": false,
+      "latest_exact_patch_applies": true
+    }
+  ],
+  "old_baseline_post_patch_sha256": {
+    "drivers/DarwinBoot/DarwinBootPkg/Driver/BootArgs.h": "082006494e5ec30b8b03fef11c2ae3a40c9bfe2839d933809206554e54df50ff",
+    "drivers/DarwinBoot/DarwinBootPkg/Driver/DarwinBoot.c": "1d2917aacdd8bd14a16adde289333fdda2f723720fd88f33f963ad1f07bdf8dc"
+  },
+  "compiled_type_evidence": "reports/official-site-audit/ci15-boot-args-dwarf.json",
+  "checks": [
+    {
+      "argv": [
+        "C:/Program Files/Git/cmd/git.exe",
+        "-C",
+        "D:\\Code\\PortingiOS\\common\\sources\\UniXNU",
+        "apply",
+        "--check",
+        "D:\\Code\\UniXNU-nuwa\\patches\\loader-candidates\\0005-darwin22-boot-args.patch"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "argv": [
+        "wsl.exe",
+        "-e",
+        "clang",
+        "-x",
+        "c",
+        "-std=gnu11",
+        "-fshort-wchar",
+        "-Wall",
+        "-Werror",
+        "-I/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include",
+        "-I/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/AArch64",
+        "--target=aarch64-none-elf",
+        "-ffreestanding",
+        "-fsyntax-only",
+        "-"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "argv": [
+        "wsl.exe",
+        "-e",
+        "clang",
+        "-x",
+        "c",
+        "-std=gnu11",
+        "-fshort-wchar",
+        "-Wall",
+        "-Werror",
+        "-I/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include",
+        "-I/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/AArch64",
+        "-fsanitize=address,undefined",
+        "-fno-pie",
+        "-no-pie",
+        "-g",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-loader/commandline-host-test-latest",
+        "-"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "argv": [
+        "wsl.exe",
+        "-e",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-loader/commandline-host-test-latest"
+      ],
+      "exit_code": 0,
+      "output": "10 production command-line conversion/copy cases passed; guards intact\n"
+    },
+    {
+      "argv": [
+        "wsl.exe",
+        "-e",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-loader/commandline-host-test-latest"
+      ],
+      "exit_code": 0,
+      "output": "10 production command-line conversion/copy cases passed; guards intact\n"
+    },
+    {
+      "argv": [
+        "wsl.exe",
+        "-e",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-loader/commandline-host-test-latest"
+      ],
+      "exit_code": 0,
+      "output": "10 production command-line conversion/copy cases passed; guards intact\n"
+    },
+    {
+      "argv": [
+        "wsl.exe",
+        "-e",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-loader/commandline-host-test-latest"
+      ],
+      "exit_code": 0,
+      "output": "10 production command-line conversion/copy cases passed; guards intact\n"
+    },
+    {
+      "argv": [
+        "wsl.exe",
+        "-e",
+        "clang",
+        "-x",
+        "c",
+        "-std=gnu11",
+        "-fshort-wchar",
+        "-Wall",
+        "-Werror",
+        "-I/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include",
+        "-I/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/AArch64",
+        "-fsanitize=address,undefined",
+        "-fno-pie",
+        "-no-pie",
+        "-g",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-loader/commandline-host-test-baseline",
+        "-"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "argv": [
+        "wsl.exe",
+        "-e",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-loader/commandline-host-test-baseline"
+      ],
+      "exit_code": 0,
+      "output": "10 production command-line conversion/copy cases passed; guards intact\n"
+    },
+    {
+      "argv": [
+        "wsl.exe",
+        "-e",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-loader/commandline-host-test-baseline"
+      ],
+      "exit_code": 0,
+      "output": "10 production command-line conversion/copy cases passed; guards intact\n"
+    },
+    {
+      "argv": [
+        "wsl.exe",
+        "-e",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-loader/commandline-host-test-baseline"
+      ],
+      "exit_code": 0,
+      "output": "10 production command-line conversion/copy cases passed; guards intact\n"
+    },
+    {
+      "argv": [
+        "wsl.exe",
+        "-e",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-loader/commandline-host-test-baseline"
+      ],
+      "exit_code": 0,
+      "output": "10 production command-line conversion/copy cases passed; guards intact\n"
+    }
+  ],
+  "passed": true,
+  "toolchain": {
+    "argv": [
+      "wsl.exe",
+      "-e",
+      "clang",
+      "--version"
+    ],
+    "exit_code": 0,
+    "output": "Ubuntu clang version 14.0.0-1ubuntu1.1\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/bin\n"
+  },
+  "edk_header_sha256": {
+    "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Mu_Basecore\\MdePkg\\Include\\Base.h": "a90f4bf7b02910711506fa1882a709ca10a6798bd5614c1690b5b10b843f9cfa",
+    "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Mu_Basecore\\MdePkg\\Include\\AArch64\\ProcessorBind.h": "c3f547e05561baa01d0dd8caa6ddc18607122660d2700861c64b3891eb953beb"
+  },
+  "full_darwinboot_module_compiled": false,
+  "firmware_generated": false,
+  "device_accessed": false
+}
