@@ -1,0 +1,14 @@
+222:     adapted, count = adapt(original)
+223:                      ^^^^^^^^^^^^^^^
+224:   File "/Users/runner/work/_temp/nuwa-8796-source/scripts/iig-darwin22.py", line 62, in adapt
+225:     raise ValueError('Unreviewed IIG kernel-only RPC template')
+226: ValueError: Unreviewed IIG kernel-only RPC template
+227: make[5]: *** [IOInterruptDispatchSource.h] Error 1
+228: make[4]: *** [build_exporthdrs_mi] Error 2
+229: make[3]: *** [build_exporthdrs_mi_recurse_into_DriverKit] Error 2
+230: make[2]: *** [build_exporthdrs_mi_recurse_into_iokit] Error 2
+231: make[2]: *** Waiting for unfinished jobs....
+232:             MIG processor_set.h
+233:             MIG task.h
+234:             MIG task_access.h
+235:      INSTALLHDR endian.h

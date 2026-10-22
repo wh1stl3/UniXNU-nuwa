@@ -21,6 +21,7 @@ if lines[-1] == '':
 lines = [line.removesuffix('\r') for line in lines]
 diagnostics = [i for i, line in enumerate(lines)
                if re.search(r':\d+:\d+: (?:fatal )?error:', line)
+               or line.startswith(('ValueError:', 'FileNotFoundError:', 'RuntimeError:'))
                or '*** No rule to make target' in line]
 selected = set()
 for index in diagnostics:

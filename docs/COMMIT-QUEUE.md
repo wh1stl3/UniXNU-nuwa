@@ -201,3 +201,13 @@
 [Evidence] reports/kernel-ci/39723011018/run.json；https://github.com/wh1stl3/UniXNU/actions/runs/39723011018；device_ref=7d6675ee49578eac2b02c5b65a0ac42b29dc1fd4；主机/依赖/输入检查成功，编译进行中。
 [Risk] 尚无第四轮完整编译/链接结果，内联RPC适配不是完整ABI验收；feed/board不变，预链接、QEMU及实机未验证。
 ```
+
+## Q-021 · 完整IIG模板候选与发布兜底
+
+```text
+[unixnu-nuwa][kernel] 按完整生成证据补入旧RPC回调规则并保留未知模板失败边界
+
+[Change] 保存第四轮主动拒绝的错误和全17个IIG定义生成证据；仅识别移除旧IORPC不需要的新字段回调赋值，未知模板继续失败；云端保留失败源码；增加对象ID一致、force=false的API发布兜底。
+[Evidence] reports/kernel-ci/39723011018/diagnostics.txt原始行226；callback-template.txt原始行809；短CI39723294640生成17文件exit0，iig-all-adapter-check.json静态转换432块、字段声明保留；api-publish-previous.json已发布同一7dfa3c1。
+[Risk] 全集转换不等于真实内核编译/ABI通过，性能采样关闭；feed/board不变，无预链接、镜像、QEMU或设备动作。
+```

@@ -25,3 +25,14 @@
 本地检查：`python -B scripts/ci/check-ci-compat.py --base D:/Code/PortingiOS/common/sources/UniXNU --xnu D:/Code/PortingiOS/common/sources/xnu-ios16-full`；51项210 hunks精确顺序通过，自动变量清零和原IORPC头保留。`build-8796-source.py --base ... --check`的hash/配方bash语法检查通过。均为静态检查，没有本机make证据。
 
 workspace-check.json记录三个只读来源树tracked状态空、board/feed哈希不变。预链接、driver archive、boot-progress/watchdog、QEMU与实机均未验证；没有设备动作、镜像构建或_verified=true。
+
+
+## 第四轮反馈与模板全集
+
+第四轮39723011018于installhdrs阶段失败：原始控制台226为适配器Unreviewed IIG kernel-only RPC template，主动拒绝IOInterruptDispatchSource未知模板，没有继续内核编译。证据见reports/kernel-ci/39723011018/diagnostics.txt与failure-analysis.json。14个.o为辅助/宿主统计，kernel_built=false。
+
+短CI [39723294640](https://github.com/wh1stl3/UniXNU/actions/runs/39723294640)生成全部17个真实DriverKit实现（全部生成exit0），实际回调模板见callback-template.txt:809对应原始行：rpc.kernelContent = &msg->content.__hdr。它为新分离内容字段赋值；旧消息已在同一msg缓冲区内联。适配器仅新增对此精确赋值的识别和移除，不泛化删除其他语句。17文件432块全部静态适配通过，保留消息字段声明并无split-content引用；完整hash和适配器hash见iig-all-adapter-check.json。完整编译/ABI仍待下一轮。
+
+build入口补充失败时上传未识别生成文件的机制：只进入云端reports/iig-failures及本机忽略out，不提交源码副本。Windows本机仍不执行内核make。
+
+Git HTTPS多次连接443失败后，新增scripts/publish-main-via-api.py：经已授权gh逐项上传相同blob/tree/commit，三层对象ID全部必须与本地Git一致，确认远端未移动后force=false更新main；任何不一致都不改ref。Q-020已实际发布并保持原提交7dfa3c1，证据api-publish-previous.json。此路线不改写已推送历史。

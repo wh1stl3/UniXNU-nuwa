@@ -1,0 +1,15 @@
+802:         uint64_t count,
+803:         uint64_t time,
+804:         OSDispatchMethod supermethod)
+805: {
+806:     kern_return_t ret;
+807:     struct IOInterruptDispatchSource_InterruptOccurred_Msg_With_Content * msg = (typeof(msg)) rpc.reply;
+808: #ifdef KERNEL
+809:     rpc.kernelContent = &msg->content.__hdr;
+810: #endif /* KERNEL */
+811:
+812:     memset(msg, 0, sizeof(*msg));
+813:     msg->mach.msgh.msgh_id   = kIORPCVersion190615;
+814:     msg->mach.msgh.msgh_size = sizeof(*msg);
+815:     msg->content.__hdr.flags = 1*kIORPCMessageOneway
+816:                              | 1*kIORPCMessageSimpleReply

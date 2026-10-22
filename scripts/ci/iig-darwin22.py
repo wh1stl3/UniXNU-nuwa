@@ -57,8 +57,11 @@ def adapt(text):
         if split_content or typed_message:
             if block['elif_seen']:
                 raise ValueError('Unreviewed IIG RPC #elif')
-            if alternate is None and not re.fullmatch(r'\s*const struct \w+_Msg_Content \* kernelContent;\s*', kernel):
-                raise ValueError('Unreviewed IIG kernel-only RPC template')
+            if alternate is None:
+                declaration = re.fullmatch(r'\s*const struct \w+_Msg_Content \* kernelContent;\s*', kernel)
+                callback = re.fullmatch(r'\s*rpc\.kernelContent = &msg->content\.__hdr;\s*', kernel)
+                if not declaration and not callback:
+                    raise ValueError('Unreviewed IIG kernel-only RPC template')
             edits.append((start, end, inline))
     for start, end, inline in sorted(edits, reverse=True):
         lines[start:end+1] = ['/* Darwin22: retain inline RPC content and four-field IORPC. */\n', inline]

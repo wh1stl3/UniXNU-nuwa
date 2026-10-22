@@ -161,6 +161,13 @@ def main():
         summary['object_count'] = len(list((work / 'build').rglob('*.o')))
         summary['iig_adaptations'] = [json.loads(p.read_text()) for p in
                                       sorted((work / 'build').rglob('*.darwin22.json'))]
+        # Preserve unrecognized templates on failure; generated source stays in
+        # cloud artifacts/ignored local out/, never in the tracked device tree.
+        for path in (work / 'build').rglob('*.iig.cpp'):
+            if 'kernelContent' in path.read_text(errors='replace'):
+                target = work / 'reports/iig-failures' / path.relative_to(work / 'build')
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(path, target)
         report.write_text(json.dumps(summary, indent=2) + '\n')
 
 

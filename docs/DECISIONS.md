@@ -251,3 +251,5 @@ IORPC继续使用8796的四字段定义，不为新IIG生成结果补kernelConte
 使用固定IIG DriverKit-427.100.5生成器的内联消息分支建立受限文本适配候选：仅识别叶子KERNEL条件中的split-content/对应消息指针类型，采用其现有内联分支；KERNEL定义、其余内核条件、消息字段声明和IORPC头不改。未知版本、未知残留模板立即失败。生成内容和适配哈希进入云端报告，完整ABI与driver archive仍需后续独立验证。
 
 仅源CI的BCM2837配置关闭KPC及依赖它的KPERF；后者kperf_kpc.c有无条件kpc调用，不能只删缺失源文件或塞空实现。代价是该源内核没有性能计数采样能力，不能把它当完整donor ABI闭包。正式nuwa配置尚未建立。本决策不切feed、不改board、不生成固件/诊断镜像、不改变任何_verified。
+
+D-010补充（2026-10-22 12:40）：第四轮主动拒绝未知回调赋值模板；取得短CI39723294640的17个真实生成文件后，仅补入rpc.kernelContent = &msg->content.__hdr精确规则。17文件432块静态转换通过，仍待完整编译/ABI。原始模板和全集hash见reports/kernel-ci/39723011018/。
