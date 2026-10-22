@@ -324,3 +324,6 @@ D-015补充：用户明确批准R-004 A，允许独立Actions临时源树生成�
 
 
 D-015补充（2026-10-22 18:48）：R-004 A已完成；CI39764322744四EFI/FD/BootShim真实编译、665份下载文件hash、嵌套FV/PE/DEPEX/SEC-HOB/PCD/shim机器码检查通过。FD SHA a0bbb964，未包含内核、未生成boot.img、未执行设备；运行内存与完整iOS链路仍未验证。后续用户授权可恢复fastboot前提下推送/试启动镜像，具体恢复条件须证据支持，见NEED-REVIEW授权记录。
+
+
+D-015补充（2026-10-22 19:06）：原厂nuwa v4 boot临时加载回Android boot_completed=1取得实机证据；当前boot_a/init_boot_a hash与原始输入相同，A槽先前unbootable状态未被本轮改写。首个固件入口包复用原厂v4头仅改kernel_size，raw CI39764322744 shim+FD、不加DTB/FAT/XNU；3153920B/SHA12864ac6。容器静态检查通过，候选执行、实际DT/initrd布局和DXE仍未验证。来源与两方案记录见R-005和试启动报告，未采用上游DT的旧initrd属性为运行地址。

@@ -1,0 +1,65 @@
+{
+  "time": "2026-10-22T10:55:30.277794+00:00",
+  "observations": [
+    {
+      "argv": [
+        "fastboot",
+        "getvar",
+        "product"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "product: nuwa\nFinished. Total time: 0.004s\n"
+    },
+    {
+      "argv": [
+        "fastboot",
+        "getvar",
+        "unlocked"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "unlocked: yes\nFinished. Total time: 0.003s\n"
+    },
+    {
+      "argv": [
+        "fastboot",
+        "getvar",
+        "current-slot"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "current-slot: a\nFinished. Total time: 0.005s\n"
+    },
+    {
+      "argv": [
+        "fastboot",
+        "getvar",
+        "is-userspace"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "is-userspace: no\nFinished. Total time: 0.005s\n"
+    },
+    {
+      "argv": [
+        "fastboot",
+        "getvar",
+        "secure"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "secure: yes\nFinished. Total time: 0.004s\n"
+    },
+    {
+      "argv": [
+        "fastboot",
+        "getvar",
+        "max-download-size"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "max-download-size: 805306368\nFinished. Total time: 0.005s\n"
+    }
+  ]
+}

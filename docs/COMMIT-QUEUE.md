@@ -552,3 +552,14 @@
 [Evidence] CI39764322744输入a8425b3成功，665份下载文件hash一致，四EFI内嵌/独立一致，SEC-HOB/PCD/FV/PE/shim通过；四项负向检查均拒绝异常。
 [Risk] 未QEMU/实机、未包含XNU负载或生成boot.img；缓存/DT/initrd/map/复位仍未验证，board/feed不变，未置_verified=true。
 ```
+
+
+## Q-055 · 恢复与映射核对及固件入口包准备
+
+```text
+[unixnu-nuwa][loader] 验证原厂临时恢复并准备nuwa v4固件入口包
+
+[Change] 增加多设备身份门、DT/initrd静态审计和哈希锁定v4打包；归档fastboot/A槽及原厂boot临时恢复证据，记录授权内方案与未验收条件。
+[Evidence] nuwa unlocked=yes，原厂ef558db2临时启动回Android boot_completed=1，当前boot/init_boot与原始hash一致；候选3153920B/SHA12864ac6，原v4头仅kernel_size变化、内嵌FD一致。
+[Risk] A槽持久启动与硬挂按键恢复未验收；新固件包未执行，DT物理放置/生命周期及DXE未验证；无新增XNU/FAT、未flash/改槽位或board/feed，未置_verified=true。
+```

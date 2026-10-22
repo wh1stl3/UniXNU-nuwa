@@ -1,0 +1,71 @@
+{
+  "target_matches": true,
+  "observations": [
+    {
+      "name": "model",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'cat /sys/firmware/devicetree/base/model'"
+      ],
+      "exit_code": 0,
+      "stdout": "Qualcomm Technologies, Inc. 8550 nuwa",
+      "stderr": ""
+    },
+    {
+      "name": "compatible",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'cat /sys/firmware/devicetree/base/compatible'"
+      ],
+      "exit_code": 0,
+      "stdout": "qcom,kalama-mtp\nqcom,kalama\nqcom,mtp",
+      "stderr": ""
+    },
+    {
+      "name": "machine",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'cat /sys/devices/soc0/machine'"
+      ],
+      "exit_code": 0,
+      "stdout": "KALAMA",
+      "stderr": ""
+    },
+    {
+      "name": "vendor_device",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'getprop ro.product.vendor.device'"
+      ],
+      "exit_code": 0,
+      "stdout": "mivendor",
+      "stderr": ""
+    },
+    {
+      "name": "boot_completed",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'getprop sys.boot_completed'"
+      ],
+      "exit_code": 0,
+      "stdout": "1",
+      "stderr": ""
+    }
+  ],
+  "scope": "Identity only; not boot or recovery verification"
+}

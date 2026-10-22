@@ -118,3 +118,5 @@
 2026-10-22 18:32 · 第二轮39762744079依赖安装及输入检查通过，SEC补丁因上游CRLF未应用；仅云端精确目标归一化并保留严格apply与前后hash，准备第三轮 · 本提交（Q-053） · reports/firmware-ci/39762744079/；docs/operations/2026-10-22-firmware-candidate-build.md
 
 2026-10-22 18:48 · 第三轮固件39764322744成功，四EFI/FD/BootShim下载静态检查通过；修正检查器遗漏的Mu PCD库DEPEX并验证四项负向检查，R-004 A完成；追加记录条件性实机授权 · 本提交（Q-054） · reports/firmware-ci/39764322744/；docs/operations/2026-10-22-firmware-candidate-build.md
+
+2026-10-22 19:06 · 区分enuma与nuwa，核对fastboot解锁/A槽异常后临时原厂boot恢复nuwa Android=1；完成DT/initrd静态核对并准备3153920B v4固件入口包，候选未执行 · 本提交（Q-055） · reports/trial-boot-preflight/；docs/operations/2026-10-22-trial-boot-preflight.md

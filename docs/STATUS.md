@@ -1,32 +1,31 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 18:48（Asia/Shanghai）。历史见 WORKLOG。
+> 当前唯一真相；更新：2026-10-22 19:06（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
-**源内核真实平台链接、四个加载器EFI、nuwa FD及BootShim均已取得实际构建证据。EFI/FD/BootShim下载后静态检查通过；未QEMU、未在手机执行本仓固件或XNU。** 本轮R-004 A已完成，不等于iOS可启动。
+**本仓四EFI/FD/BootShim已编译并静态验收；首个v4固件入口试启动包已准备、未执行。nuwa当前已通过临时加载原厂boot回到Android，boot_completed=1；持久A槽启动状态尚未修复。** DT/initrd静态核对已完成当前Android观测范围，新候选的物理放置/DT访问/DXE运行仍未验证。
 
-- 内核：CI15 [39755850870](https://github.com/wh1stl3/UniXNU/actions/runs/39755850870)，ArmCpu/ArmDTPlatform实际force-load，五平台导出、零undefined；20,187,888B，SHA256 `a9e08c693fec4034f613cd554ea94e5855b25b727b4bfb4af46a4103f565bc7a`。65,348项donor指针绑定零缺失，完整ABI/运行未验证。
-- 固件：第三轮 [39764322744](https://github.com/wh1stl3/UniXNU-nuwa/actions/runs/39764322744) success，设备输入a8425b3。FD 3,145,728B，SHA256 `a0bbb9645f4af2de66e4e29e1b5deaf508e95c41f33de4fd9f811ab03bde1c83`；BootShim 112B，SHA256 `9346a527441b242c69414fd7e3d6fa17813f281d562fef13d9ba8373d39007a9`。未包含内核或生成boot.img。[实际构建与审计](operations/2026-10-22-firmware-candidate-build.md)。
+- 固件CI [39764322744](https://github.com/wh1stl3/UniXNU-nuwa/actions/runs/39764322744) success；四EFI真实进入FD且独立/内嵌hash一致，SEC/HOB/PCD/DEPEX/FV/shim检查通过。FD3145728B/SHA a0bbb9645f4af2de66e4e29e1b5deaf508e95c41f33de4fd9f811ab03bde1c83；BootShim112B/SHA9346a527…。R-004 A完成。[构建报告](operations/2026-10-22-firmware-candidate-build.md)。
+- 源内核CI15 [39755850870](https://github.com/wh1stl3/UniXNU/actions/runs/39755850870)真实链接ArmCpu/ArmDTPlatform、五导出/零undefined；20187888B/SHA a9e08c693fec4034f613cd554ea94e5855b25b727b4bfb4af46a4103f565bc7a，65348个donor指针零缺失。当前试启动包不含XNU，完整ABI/执行未验证。
+- 候选out/trial-boot/firmware-v4/boot-firmware-v4.img：3153920B/SHA12864ac6cc0ffc9909f4abbdfab91bfee216c3fdcfc5ab0d52b4d4b9cf4579f9；v4原厂头仅改kernel_size，raw shim+FD，无附加DTB或新增FAT。静态容器检查通过，ready_to_execute=false表示运行条件未验收。[恢复/映射/试启动报告](operations/2026-10-22-trial-boot-preflight.md)。
 
-## 已完成与当前证据
+## 实机与映射事实
 
-- 四模块UniXNU/UniXNUDxe/DarwinBoot/ShengBootMemoryDxe全部AARCH64 PE32+，位于实际FD中的同一内层FV，独立EFI与内嵌PE哈希一致；665份下载文件的长度/hash通过核对。SEC TE和只读initrd发布器包含同一入口HOB GUID。
-- DEPEX核对包括Mu库引入的gEfiPcdProtocolGuid；PCD驱动存在于FD，已确认源码生产协议及平台APRIORI接线。固件卷校验/LZMA解压通过，外层56%已用、1,375,544B空余；内层9,932,800B由构建工具自适应生成。BootShim头image_size=3,145,840、_Payload=112，机器码拷贝量仍仅FD的3,145,728B。
-- 前两轮实际首错分别是缺失SEC入口HOB生产链、Git blob CRLF；已通过固定来源最小补丁和仅云端精确目标换行归一化解决。未修改只读源树。四补丁/83项源码静态检查记录在reports/loader-integration/；第三轮实际输入、日志、构建报告、产物检查在reports/firmware-ci/39764322744/。
-- 原厂XBL cfg独立提取8,342B，28个DDR行+14个寄存器行，DXE Heap209.75MiB；NoMap/AddDynamicMem与隔壁C表有语义差异，高地址6GiB策略未继承。[接线及内存报告](operations/2026-10-22-loader-source-integration.md)。
-- Android既有只读取证：ST FTS SPI/st_fts_m2.ftb、活跃m2_38_0c_0a面板、Adreno740v2、KIOXIA UFS；固定MiCode DT与LineageOS来源。[驱动取证](operations/2026-10-22-android-driver-evidence.md)。本轮无设备操作。
+- 最初ADB为enuma/SM8250，只读元数据未用于nuwa输入。随后fastboot确认nuwa、unlocked=yes、slot=a；fastboot reboot又回fastboot，A同时successful=yes/unbootable=yes。用户说明此前另一对话推送镜像、未按音量键；不把这当作根因证明。
+- 临时fastboot boot原厂nuwa备份ef558db2…被ABL接受，DT确认nuwa/kalama/KALAMA且Android boot_completed=1。当前boot_a/init_boot_a整分区hash与原始备份/锁定记录相同；未flash、未改槽位。不能把临时恢复扩大为持久启动已修复，或新固件实机通过。H-001按键恢复演练仍open；H-002 unlocked核验已完成。
+- nuwa当前boot/init_boot/vendor_boot均v4，原厂v4备份临时启动有真实证据。当前Android initrd[0xb5fb2000,0xb7fff1d4)处于静态Kernel保留区[0xa8000000,0xb8000000)，源码映射WB/XN；该事实不替代新候选ABL布局。DT实际地址、SEC访问及initrd生命周期仍未验证。
+- RamManager会将EFI图中空隙加入Conventional；发布器不保留新initrd。固定上游DT自带旧initrd属性、默认ramdisk5B，不直接复用为有效运行地址。原厂cfg NoMap/AddDynamicMem、209.75MiB DXE Heap与参考C表有差异；未继承高地址6GiB或整表策略。
 
 ## 下一步
 
-1. 核验恢复路径与候选启动包方案：用户已持续授权可恢复fastboot前提下推送/试启动镜像，见NEED-REVIEW后续授权记录。先核对原厂boot/DTB/打包参数与恢复证据；H-001实体键演练仍未验证，记PENDING-HUMAN并继续软件项。不能把授权或普通重启记录写成硬挂恢复通过；暂不自动修改持久启动链。
-2. 完成原厂NoMap/AddDynamicMem、RamManager最终EFI map、SEC初始缓存/DT生命周期及initrd保留/映射审查；UniXNU固件入口源码含ConnectAll后扫描配置，但真实DXE/BDS/FAT挂载尚未验证。固件现有HwResetSystemLib类声明警告需在恢复评估中核对，不因编译通过验收复位。
-3. 组装XNU负载前核验CI15 runtime crypto/pthread provider、ARCH_TIMER/startup/GIC/PSCI、13项boot-progress及watchdog scratch；新内核的NativePrelink布局和12处Libm外部PC编码仍待审查，旧CI13 plan不能直接继承。将纯固件入口验证与XNU进入平台专家分别验收。
-4. board/bringup-plan内存/地址及_verified仍按原硬停规则。D-002先512MiB–1GiB过阶段5，再抬容量，硬上限8GiB；未知参数TODO，不填假值。
+1. 对准备好的v4固件入口候选核验ABL实际放置、BootShim/SEC入口、DT访问与DXE/BDS结果；按用户已授权临时试启动范围推进，保留原厂boot恢复路径。EFI ResetPlatformSpecific只回退PSCI普通reset，不保证回fastboot。H-001实体键项记待办继续软件项。
+2. 新FAT initrd加入前落实映射/保留与RamManager交互。当前包只有固件，Android ramdisk不能视作FAT负载；不能因容器检查通过宣称UniXNU菜单/配置读取成功。
+3. CI15 runtime crypto/pthread provider、ARCH_TIMER/startup/GIC/PSCI、13项boot-progress、watchdog scratch及NativePrelink布局/12处Libm编码继续审查；旧CI13 plan不能直接继承。XNU负载另立实际验收门。
+4. 若要修复A槽持久启动，先核实具体槽位动作及授权，不在临时固件测试时顺带改动。board/bringup-plan内存/基址和_verified继续按原规则，未知值TODO。
 
-## 当前边界
+## 既定边界与证据
 
-- board/feed不变、example=true；4KiB，iPhone10,3/d22ap/iOS16.7.16/20H392，8796.141.3；ipad_identity=true是安全属性。
-- 两个旧仓与上游源码只读；Git/gh/workflow已有授权，不强推、不改写历史。R-004 A只完成受限固件构建审计；后续设备授权的条件是可恢复fastboot，不能据此声称所有刷写可恢复。
-- 实际固件使用Ubuntu24.04/clang18/CLANGPDB，源码内核使用macOS Actions/Xcode16.4/Apple clang17/iphoneos18.5；WSL完整内核构建仍未验证。
-- 源CI关闭性能、boot-progress与startup ARCH_TIMER的范围不变，ArmVirt仅独立编译。内核链接/固件静态验收均不替代硬件、SMMU/DMA、根卷及iOS用户态验收；未置任何_verified=true。
+board/feed不变、example=true；4KiB，iPhone10,3/d22ap/iOS16.7.16/20H392、8796.141.3，ipad_identity=true为安全属性。D-002先512MiB–1GiB过阶段5、上限8GiB。两个旧仓/源树只读，构建产物留out；Git/gh/workflow已授权，不强推、不改写历史。
+
+本轮reports/trial-boot-preflight含原始命令、目标身份、恢复、启动头/分区hash、静态映射和包检查；config/trial-boot-candidate.json是审计清单而非board schema。新固件未QEMU/实机执行，未置_verified=true。内核仍为macOS CI构建，WSL完整内核构建未验证；源CI运行开关不变，根卷与iOS用户态未验证。

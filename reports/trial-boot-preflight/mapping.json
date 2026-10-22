@@ -1,0 +1,439 @@
+{
+  "scope": "Archived Android DT and static firmware source only; not candidate ABL layout or runtime UEFI map",
+  "dt": {
+    "path": "D:\\Code\\PortingiOSWithUniXNU\\device\\observed\\nuwa-live.dtb",
+    "sha256": "a804f2e29b2c3398c68e33cb94e66ef05aa451fbe6381b8a0830fb0804ee4710",
+    "model": "Qualcomm Technologies, Inc. 8550 nuwa",
+    "compatible": [
+      "qcom,kalama-mtp",
+      "qcom,kalama",
+      "qcom,mtp"
+    ]
+  },
+  "source_hashes": [
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Platforms\\Xiaomi\\nuwaPkg\\Library\\MemoryMapLib\\MemoryMapLib.c",
+      "sha256": "873a66409b2b960633a666adf0bc843bf0697b55972006d036f605223aeba3ea"
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Silicon\\Silicium\\SiliciumPkg\\Library\\MemoryInitPeiLib\\MemoryInitPei.c",
+      "sha256": "7fca3f69ad732a7623ccbb7681077a9d6de724fe1aed37cda99e6022b617b053"
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Silicon\\Silicium\\SiliciumPkg\\Drivers\\RamManagerDxe\\RamManager.c",
+      "sha256": "f870ef3415130b79646a8c650742a66cfbd48cf3dc6051efe66de86f3a52b983"
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Silicon\\Qualcomm\\QcomPkg\\Library\\RamManagerLib\\RamManager.c",
+      "sha256": "964d9c2986f7407945194f9b9e426d49119ea927cebe28bc5ad557a10a8ecb3f"
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Mu_Basecore\\ArmPkg\\Library\\ArmPsciResetSystemLib\\ArmPsciResetSystemLib.c",
+      "sha256": "32dd3f12e4606489df2bd967670bd191057493c67073a83f159e14828a08b9f6"
+    }
+  ],
+  "initrd": {
+    "linux,initrd-start": 3053133824,
+    "linux,initrd-end": 3087004116
+  },
+  "initrd_overlapping_static_regions": [
+    {
+      "name": "Kernel",
+      "start": 2818572288,
+      "end": 3087007744,
+      "hob": "AddMem",
+      "resource": "SYS_MEM",
+      "memory_type": "Reserv",
+      "attributes": "WRITE_BACK_XN"
+    }
+  ],
+  "static_regions": [
+    {
+      "name": "HYP",
+      "start": 2147483648,
+      "end": 2157969408,
+      "hob": "AddMem",
+      "resource": "SYS_MEM",
+      "memory_type": "Reserv",
+      "attributes": "WRITE_BACK_XN"
+    },
+    {
+      "name": "CPU Sys VM",
+      "start": 2157969408,
+      "end": 2162163712,
+      "hob": "AddMem",
+      "resource": "MEM_RES",
+      "memory_type": "Reserv",
+      "attributes": "UNCACHED_UNBUFFERED_XN"
+    },
+    {
+      "name": "XBL DT",
+      "start": 2174746624,
+      "end": 2175008768,
+      "hob": "AddMem",
+      "resource": "SYS_MEM",
+      "memory_type": "Reserv",
+      "attributes": "WRITE_BACK_XN"
+    },
+    {
+      "name": "AOP",
+      "start": 2176843776,
+      "end": 2177777664,
+      "hob": "AddMem",
+      "resource": "MEM_RES",
+      "memory_type": "Reserv",
+      "attributes": "UNCACHED_UNBUFFERED_XN"
+    },
+    {
+      "name": "UEFI Log",
+      "start": 2177777664,
+      "end": 2177843200,
+      "hob": "AddMem",
+      "resource": "MEM_RES",
+      "memory_type": "Reserv",
+      "attributes": "UNCACHED_UNBUFFERED_XN"
+    },
+    {
+      "name": "SMEM",
+      "start": 2177892352,
+      "end": 2179989504,
+      "hob": "AddMem",
+      "resource": "MEM_RES",
+      "memory_type": "Reserv",
+      "attributes": "UNCACHED_UNBUFFERED_XN"
+    },
+    {
+      "name": "ADSP MHI",
+      "start": 2179989504,
+      "end": 2180120576,
+      "hob": "AddMem",
+      "resource": "MEM_RES",
+      "memory_type": "Reserv",
+      "attributes": "UNCACHED_UNBUFFERED_XN"
+    },
+    {
+      "name": "TZ STATS",
+      "start": 2188378112,
+      "end": 2189426688,
+      "hob": "AddMem",
+      "resource": "MEM_RES",
+      "memory_type": "Reserv",
+      "attributes": "UNCACHED_UNBUFFERED_XN"
+    },
+    {
+      "name": "PIL Reserved",
+      "start": 2323644416,
+      "end": 2728919040,
+      "hob": "AddMem",
+      "resource": "MEM_RES",
+      "memory_type": "Reserv",
+      "attributes": "UNCACHED_UNBUFFERED_XN"
+    },
+    {
+      "name": "Display Demura",
+      "start": 2728919040,
+      "end": 2774007808,
+      "hob": "AddMem",
+      "resource": "MEM_RES",
+      "memory_type": "Reserv",
+      "attributes": "WRITE_THROUGH_XN"
+    },
+    {
+      "name": "DBI Dump",
+      "start": 2786066432,
+      "end": 2801795072,
+      "hob": "NoHob",
+      "resource": "MMAP_IO",
+      "memory_type": "Conv",
+      "attributes": "UNCACHED_UNBUFFERED_XN"
+    },
+    {
+      "name": "FD Reserved",
+      "start": 2801795072,
+      "end": 2802843648,
+      "hob": "AddMem",
+      "resource": "SYS_MEM",
+      "memory_type": "BsData",
+      "attributes": "WRITE_BACK"
+    },
+    {
+      "name": "UEFI FD",
+      "start": 2802843648,
+      "end": 2805989376,
+      "hob": "AddMem",
+      "resource": "SYS_MEM",
+      "memory_type": "BsData",
+      "attributes": "WRITE_BACK"
+    },
+    {
+      "name": "UEFI FD Reserved",
+      "start": 2805989376,
+      "end": 2808086528,
+      "hob": "AddMem",
+      "resource": "SYS_MEM",
+      "memory_type": "BsData",
+      "attributes": "WRITE_BACK"
+    },
+    {
+      "name": "Info Blk",
+      "start": 2808090624,
+      "end": 2808094720,
+      "hob": "AddMem",
+      "resource": "SYS_MEM",
+      "memory_type": "RtData",
+      "attributes": "WRITE_BACK_XN"
+    },
+    {
+      "name": "MMU PageTables",
+      "start": 2808094720,
+      "end": 2808107008,
+      "hob": "AddMem",
+      "resource": "SYS_MEM",
+      "memory_type": "BsData",
+      "attributes": "WRITE_BACK_XN"
+    },
+    {
+      "name": "Log Buffer",
+      "start": 2808107008,
+      "end": 2808139776,
+      "hob": "AddMem",
+      "resource": "SYS_MEM",
+      "memory_type": "RtData",
+      "attributes": "WRITE_BACK_XN"
+    },
+    {
+      "name": "UEFI Stack",
+      "start": 2808139776,
+      "end": 2808401920,
+      "hob": "AddMem",
+      "resource": "SYS_MEM",
+      "memory_type": "BsData",
+      "attributes": "WRITE_BACK_XN"
+    },
+    {
+      "name": "SEC Heap",
+      "start": 2808401920,
+      "end": 2808975360,
+      "hob": "AddMem",
+      "resource": "SYS_MEM",
+      "memory_type": "BsData",
+      "attributes": "WRITE_BACK_XN"
+    },
+    {
+      "name": "Sched Heap",
+      "start": 2808975360,
+      "end": 2813169664,
+      "hob": "AddMem",
+      "resource": "SYS_MEM",
+      "memory_type": "BsData",
+      "attributes": "WRITE_BACK_XN"
+    },
+    {
+      "name": "FV Region",
+      "start": 2813169664,
+      "end": 2817363968,
+      "hob": "AddMem",
+      "resource": "SYS_MEM",
+      "memory_type": "BsData",
+      "attributes": "WRITE_BACK_XN"
+    },
+    {
+      "name": "Kernel",
+      "start": 2818572288,
+      "end": 3087007744,
+      "hob": "AddMem",
+      "resource": "SYS_MEM",
+      "memory_type": "Reserv",
+      "attributes": "WRITE_BACK_XN"
+    },
+    {
+      "name": "Display Reserved",
+      "start": 3087007744,
+      "end": 3132096512,
+      "hob": "AddMem",
+      "resource": "MEM_RES",
+      "memory_type": "Reserv",
+      "attributes": "WRITE_THROUGH_XN"
+    },
+    {
+      "name": "DXE Heap",
+      "start": 3135242240,
+      "end": 3207593984,
+      "hob": "AddMem",
+      "resource": "SYS_MEM",
+      "memory_type": "Conv",
+      "attributes": "WRITE_BACK_XN"
+    },
+    {
+      "name": "CPUCP FW",
+      "start": 3625189376,
+      "end": 3627024384,
+      "hob": "AddMem",
+      "resource": "SYS_MEM",
+      "memory_type": "Reserv",
+      "attributes": "UNCACHED_UNBUFFERED_XN"
+    },
+    {
+      "name": "QTEE",
+      "start": 3627024384,
+      "end": 3632267264,
+      "hob": "AddMem",
+      "resource": "MEM_RES",
+      "memory_type": "Reserv",
+      "attributes": "UNCACHED_UNBUFFERED_XN"
+    },
+    {
+      "name": "TZApps Reserved",
+      "start": 3632267264,
+      "end": 3753902080,
+      "hob": "AddMem",
+      "resource": "MEM_RES",
+      "memory_type": "Reserv",
+      "attributes": "UNCACHED_UNBUFFERED_XN"
+    },
+    {
+      "name": "IMEM Base",
+      "start": 342360064,
+      "end": 342532096,
+      "hob": "NoHob",
+      "resource": "MMAP_IO",
+      "memory_type": "Conv",
+      "attributes": "NS_DEVICE"
+    },
+    {
+      "name": "IMEM Cookie Base",
+      "start": 342532096,
+      "end": 342622208,
+      "hob": "AddDev",
+      "resource": "MMAP_IO",
+      "memory_type": "Conv",
+      "attributes": "NS_DEVICE"
+    },
+    {
+      "name": "IPC_ROUTER_TOP",
+      "start": 4194304,
+      "end": 5242880,
+      "hob": "AddDev",
+      "resource": "MMAP_IO",
+      "memory_type": "MmIO",
+      "attributes": "NS_DEVICE"
+    },
+    {
+      "name": "SECURITY CONTROL",
+      "start": 7864320,
+      "end": 7892992,
+      "hob": "AddDev",
+      "resource": "MMAP_IO",
+      "memory_type": "MmIO",
+      "attributes": "NS_DEVICE"
+    },
+    {
+      "name": "QUP",
+      "start": 8388608,
+      "end": 11534336,
+      "hob": "AddDev",
+      "resource": "MMAP_IO",
+      "memory_type": "MmIO",
+      "attributes": "NS_DEVICE"
+    },
+    {
+      "name": "PRNG_CFG_PRNG",
+      "start": 17563648,
+      "end": 17612800,
+      "hob": "AddDev",
+      "resource": "MMAP_IO",
+      "memory_type": "MmIO",
+      "attributes": "NS_DEVICE"
+    },
+    {
+      "name": "CRYPTO0 CRYPTO",
+      "start": 31195136,
+      "end": 31457280,
+      "hob": "AddDev",
+      "resource": "MMAP_IO",
+      "memory_type": "MmIO",
+      "attributes": "NS_DEVICE"
+    },
+    {
+      "name": "CORE_TOP_CSR",
+      "start": 32505856,
+      "end": 33554432,
+      "hob": "AddDev",
+      "resource": "MMAP_IO",
+      "memory_type": "MmIO",
+      "attributes": "NS_DEVICE"
+    },
+    {
+      "name": "PERIPH_SS",
+      "start": 142606336,
+      "end": 143654912,
+      "hob": "AddDev",
+      "resource": "MMAP_IO",
+      "memory_type": "MmIO",
+      "attributes": "NS_DEVICE"
+    },
+    {
+      "name": "USB",
+      "start": 174063616,
+      "end": 176160768,
+      "hob": "AddDev",
+      "resource": "MMAP_IO",
+      "memory_type": "MmIO",
+      "attributes": "NS_DEVICE"
+    },
+    {
+      "name": "AOSS",
+      "start": 184549376,
+      "end": 251658240,
+      "hob": "AddDev",
+      "resource": "MMAP_IO",
+      "memory_type": "MmIO",
+      "attributes": "NS_DEVICE"
+    },
+    {
+      "name": "TLMM",
+      "start": 251658240,
+      "end": 268435456,
+      "hob": "AddDev",
+      "resource": "MMAP_IO",
+      "memory_type": "MmIO",
+      "attributes": "NS_DEVICE"
+    },
+    {
+      "name": "SMMU",
+      "start": 352321536,
+      "end": 354418688,
+      "hob": "AddDev",
+      "resource": "MMAP_IO",
+      "memory_type": "MmIO",
+      "attributes": "NS_DEVICE"
+    },
+    {
+      "name": "APSS_HM",
+      "start": 385875968,
+      "end": 419430400,
+      "hob": "AddDev",
+      "resource": "MMAP_IO",
+      "memory_type": "MmIO",
+      "attributes": "NS_DEVICE"
+    }
+  ],
+  "actual_candidate_dt_address": null,
+  "actual_candidate_initrd_address": null,
+  "current_android_observation": {
+    "sha256": "e3b6e6767527b4543872ba09d21ea7275137ff6f4ddf2077103aeded2582ca34",
+    "initrd": {
+      "linux,initrd-start": "0xb5fb2000",
+      "linux,initrd-end": "0xb7fff1d4"
+    },
+    "scope": "Original Android temporary boot only; not candidate firmware placement"
+  },
+  "archived_initrd_wholly_in_reserved_static_region": true,
+  "archived_initrd_sector_aligned": false,
+  "safe_to_boot": false,
+  "blockers": [
+    "Candidate ABL DT/initrd addresses unknown",
+    "Publisher does not reserve initrd; RamManager can promote unregistered gaps to conventional memory",
+    "SEC access to original DT needs mapping/lifetime evidence in candidate firmware"
+  ]
+}

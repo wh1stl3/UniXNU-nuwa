@@ -1,0 +1,49 @@
+{
+  "purpose": "First-stage firmware-only temporary boot candidate; NOT XNU/iOS boot",
+  "state": "v4 firmware-only package generated; static container checks passed; not executed",
+  "firmware_run": 39764322744,
+  "fd_sha256": "a0bbb9645f4af2de66e4e29e1b5deaf508e95c41f33de4fd9f811ab03bde1c83",
+  "shim_sha256": "9346a527441b242c69414fd7e3d6fa17813f281d562fef13d9ba8373d39007a9",
+  "source_commit": "6c6755012728c9f7de748228758bad94d1e9a660",
+  "kernel_payload": null,
+  "initrd_payload": null,
+  "boot_header": {
+    "version": 4,
+    "page_bytes": 4096,
+    "source": "original nuwa boot ef558db2; temporary boot reached Android"
+  },
+  "boot_base_offsets": "No new base/offset fields in v4 boot header; original vendor_boot parameters retained on device",
+  "dt": "Original nuwa vendor_boot supplied by ABL; no appended DTB and no new FAT initrd",
+  "recovery": "fastboot product nuwa/unlocked yes; ordinary reboot returned fastboot; original boot temporary load reached Android boot_completed=1",
+  "manual_key_recovery": "H-001 pending; not a completed hard-hang recovery test",
+  "hardware_actions": "read-only getvar; fastboot reboot; temporary original stock boot; no flash/slot changes",
+  "safe_to_boot": false,
+  "image": {
+    "scope": "Firmware-only temporary boot container; static inspection only",
+    "original_boot_sha256": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+    "fd_sha256": "a0bbb9645f4af2de66e4e29e1b5deaf508e95c41f33de4fd9f811ab03bde1c83",
+    "shim_sha256": "9346a527441b242c69414fd7e3d6fa17813f281d562fef13d9ba8373d39007a9",
+    "image_bytes": 3153920,
+    "image_sha256": "12864ac6cc0ffc9909f4abbdfab91bfee216c3fdcfc5ab0d52b4d4b9cf4579f9",
+    "header_version": 4,
+    "page_bytes": 4096,
+    "kernel_bytes": 3145840,
+    "ramdisk_bytes": 0,
+    "signature_bytes": 0,
+    "changed_header_fields": [
+      "kernel_size"
+    ],
+    "kernel_compression": "none",
+    "dt_source": "Installed original nuwa vendor_boot via ABL; no appended DTB",
+    "additional_initrd": false,
+    "xnu_included": false,
+    "candidate_device_executed": false,
+    "ready_to_execute": false,
+    "unverified": [
+      "Candidate ABL acceptance and actual placement",
+      "Shim placement/cache conditions and SEC x0 FDT mapping",
+      "DXE/BDS and original Android initrd lifetime",
+      "Hard-hang key recovery (H-001)"
+    ]
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "sys.boot_completed": "1",
+  "ro.boot.slot_suffix": "_a",
+  "ro.boot.flash.locked": "0",
+  "ro.boot.verifiedbootstate": "orange",
+  "ro.product.device": "enuma",
+  "boot": {
+    "bytes_read": 4096,
+    "header_sha256": "3a73616ed018d3bf14d80e4d88a55022ed85ed2374fbbec74859d16e49d31d8f",
+    "magic": "ANDROID!",
+    "kernel_size": 54839312,
+    "ramdisk_size": 50122422,
+    "header_version": 3,
+    "header_size": 1580
+  },
+  "init_boot": {
+    "bytes_read": 0,
+    "header_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "magic": ""
+  },
+  "vendor_boot": {
+    "bytes_read": 4096,
+    "header_sha256": "6c8dd86445a80a80c09276902a248b051ef8abf88ea12d4dd948398132aa69f0",
+    "magic": "VNDRBOOT",
+    "header_version": 3,
+    "page_size": 4096,
+    "kernel_addr": "0x8000",
+    "ramdisk_addr": "0x1000000",
+    "dtb_size": 1613832,
+    "dtb_addr": "0x1f00000"
+  },
+  "linux,initrd-start": {
+    "bytes": 8,
+    "value": "0xad031000"
+  },
+  "linux,initrd-end": {
+    "bytes": 8,
+    "value": "0xafffe76c"
+  },
+  "scope": "CONNECTED ENUMA SM8250 ONLY; NOT NUWA INPUT; must not be used for packaging"
+}

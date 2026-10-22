@@ -1,0 +1,50 @@
+{
+  "sys.boot_completed": "1",
+  "ro.boot.slot_suffix": "_a",
+  "ro.boot.flash.locked": "1",
+  "ro.boot.verifiedbootstate": "orange",
+  "ro.product.device": "nuwa",
+  "boot": {
+    "bytes_read": 4096,
+    "header_sha256": "15e0bf5eed7190fb3d05944e4864256caebc1350ef3b200263bbcc52452dec89",
+    "magic": "ANDROID!",
+    "kernel_size": 40417792,
+    "ramdisk_size": 0,
+    "header_version": 4,
+    "header_size": 1584
+  },
+  "init_boot": {
+    "bytes_read": 4096,
+    "header_sha256": "353061b13da80d866ffb2959b1460a8907638fb7c3525bcac19f5dafce38f3cc",
+    "magic": "ANDROID!",
+    "kernel_size": 0,
+    "ramdisk_size": 2969050,
+    "header_version": 4,
+    "header_size": 1584
+  },
+  "vendor_boot": {
+    "bytes_read": 4096,
+    "header_sha256": "5a4f7e480d0c21fb98997d0398ebe6dca712f656f2ff29f3d4e4fbb08378291d",
+    "magic": "VNDRBOOT",
+    "header_version": 4,
+    "page_size": 4096,
+    "kernel_addr": "0x8000",
+    "ramdisk_addr": "0x1000000",
+    "dtb_size": 3885003,
+    "dtb_addr": "0x1f00000"
+  },
+  "linux,initrd-start": {
+    "bytes": 8,
+    "value": "0xb5fb2000"
+  },
+  "linux,initrd-end": {
+    "bytes": 8,
+    "value": "0xb7fff1d4"
+  },
+  "live_fdt": {
+    "path": "out/trial-boot/nuwa-android-live.dtb",
+    "bytes": 938804,
+    "sha256": "e3b6e6767527b4543872ba09d21ea7275137ff6f4ddf2077103aeded2582ca34"
+  },
+  "running_boot_source": "temporary original boot ef558db2; installed boot header read separately"
+}

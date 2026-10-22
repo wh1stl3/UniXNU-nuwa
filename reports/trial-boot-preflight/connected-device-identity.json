@@ -1,0 +1,76 @@
+{
+  "target_matches": false,
+  "device_actions": "read-only; no reboot or upload",
+  "observations": [
+    {
+      "argv": [
+        "adb",
+        "exec-out",
+        "su -c 'cat /sys/firmware/devicetree/base/model'"
+      ],
+      "exit_code": 0,
+      "stdout": "Qualcomm Technologies, Inc. xiaomi enuma\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "exec-out",
+        "su -c 'cat /sys/firmware/devicetree/base/compatible'"
+      ],
+      "exit_code": 0,
+      "stdout": "qcom,kona-mtp\nqcom,kona\nqcom,mtp\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "exec-out",
+        "su -c 'cat /sys/devices/soc0/machine'"
+      ],
+      "exit_code": 0,
+      "stdout": "SM8250\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "exec-out",
+        "su -c 'cat /sys/devices/soc0/soc_id'"
+      ],
+      "exit_code": 0,
+      "stdout": "356\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "exec-out",
+        "su -c 'getprop ro.product.vendor.device'"
+      ],
+      "exit_code": 0,
+      "stdout": "enuma\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "exec-out",
+        "su -c 'getprop ro.product.model'"
+      ],
+      "exit_code": 0,
+      "stdout": "M2105K81C\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "exec-out",
+        "su -c 'getprop sys.boot_completed'"
+      ],
+      "exit_code": 0,
+      "stdout": "1\n",
+      "stderr": ""
+    }
+  ]
+}

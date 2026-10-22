@@ -1,0 +1,123 @@
+[
+  {
+    "argv": [
+      "adb",
+      "-s",
+      "<selected-nuwa>",
+      "exec-out",
+      "su -c 'getprop sys.boot_completed'"
+    ],
+    "exit_code": 0,
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "adb",
+      "-s",
+      "<selected-nuwa>",
+      "exec-out",
+      "su -c 'getprop ro.boot.slot_suffix'"
+    ],
+    "exit_code": 0,
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "adb",
+      "-s",
+      "<selected-nuwa>",
+      "exec-out",
+      "su -c 'getprop ro.boot.flash.locked'"
+    ],
+    "exit_code": 0,
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "adb",
+      "-s",
+      "<selected-nuwa>",
+      "exec-out",
+      "su -c 'getprop ro.boot.verifiedbootstate'"
+    ],
+    "exit_code": 0,
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "adb",
+      "-s",
+      "<selected-nuwa>",
+      "exec-out",
+      "su -c 'getprop ro.product.device'"
+    ],
+    "exit_code": 0,
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "adb",
+      "-s",
+      "<selected-nuwa>",
+      "exec-out",
+      "su -c 'dd if=/dev/block/by-name/boot_a bs=4096 count=1 2>/dev/null'"
+    ],
+    "exit_code": 0,
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "adb",
+      "-s",
+      "<selected-nuwa>",
+      "exec-out",
+      "su -c 'dd if=/dev/block/by-name/init_boot_a bs=4096 count=1 2>/dev/null'"
+    ],
+    "exit_code": 0,
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "adb",
+      "-s",
+      "<selected-nuwa>",
+      "exec-out",
+      "su -c 'dd if=/dev/block/by-name/vendor_boot_a bs=4096 count=1 2>/dev/null'"
+    ],
+    "exit_code": 0,
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "adb",
+      "-s",
+      "<selected-nuwa>",
+      "exec-out",
+      "su -c 'cat /sys/firmware/devicetree/base/chosen/linux,initrd-start'"
+    ],
+    "exit_code": 0,
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "adb",
+      "-s",
+      "<selected-nuwa>",
+      "exec-out",
+      "su -c 'cat /sys/firmware/devicetree/base/chosen/linux,initrd-end'"
+    ],
+    "exit_code": 0,
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "adb",
+      "-s",
+      "<selected-nuwa>",
+      "exec-out",
+      "su -c 'cat /sys/firmware/fdt'"
+    ],
+    "exit_code": 0,
+    "stderr": ""
+  }
+]

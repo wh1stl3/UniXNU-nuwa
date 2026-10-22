@@ -1,0 +1,35 @@
+{
+  "sources": [
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Resources\\Configs\\nuwa.toml",
+      "bytes": 339,
+      "sha256": "c60213c1e99b5d276b3f9fae85831ecf5461934959df84444f997a11ccc5129f"
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Resources\\DTBs\\nuwa.dtb",
+      "bytes": 930579,
+      "sha256": "a0f2f18b8597a320114ebe5a4a233425cca14ade6679e67d296180db119b88fc"
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Resources\\Scripts\\mkbootimg.py",
+      "bytes": 27705,
+      "sha256": "871ac22b7a1a9cae94a83860f8015b02f511afe15797909788fb6f9304f1d0ab"
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\Resources\\ramdisk",
+      "bytes": 5,
+      "sha256": "b5a2c96250612366ea272ffac6d9744aaf4b45aacd96aa7cfcb931ee3b558259"
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\mu-nuwa-firmware\\build_uefi.py",
+      "bytes": 17877,
+      "sha256": "9ff3b9c9cfe179572b3f02c98afc4928e8f67922f55d22a6ae09bf26ba376f4c"
+    }
+  ],
+  "upstream_initrd_properties": {
+    "linux,initrd-start": "0xb7358000",
+    "linux,initrd-end": "0xb7ffe4e4"
+  },
+  "properties_are_not_candidate_runtime_addresses": true,
+  "reference_logs_have_no_device_identity": true
+}

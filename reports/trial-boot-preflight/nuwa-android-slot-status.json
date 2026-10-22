@@ -1,0 +1,20 @@
+[
+  {
+    "command": "bootctl is-slot-bootable 0",
+    "exit_code": 0,
+    "stdout": "/system/bin/sh: bootctl: inaccessible or not found\n",
+    "stderr": ""
+  },
+  {
+    "command": "bootctl is-slot-marked-successful 0",
+    "exit_code": 0,
+    "stdout": "/system/bin/sh: bootctl: inaccessible or not found\n",
+    "stderr": ""
+  },
+  {
+    "command": "getprop sys.boot_completed",
+    "exit_code": 0,
+    "stdout": "1\n",
+    "stderr": ""
+  }
+]

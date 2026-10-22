@@ -1,0 +1,92 @@
+[
+  {
+    "argv": [
+      "fastboot",
+      "getvar",
+      "product"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "product: nuwa\nFinished. Total time: 0.004s\n"
+  },
+  {
+    "argv": [
+      "fastboot",
+      "getvar",
+      "current-slot"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "current-slot: a\nFinished. Total time: 0.005s\n"
+  },
+  {
+    "argv": [
+      "fastboot",
+      "getvar",
+      "slot-successful:a"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "slot-successful:a: yes\nFinished. Total time: 0.005s\n"
+  },
+  {
+    "argv": [
+      "fastboot",
+      "getvar",
+      "slot-unbootable:a"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "slot-unbootable:a: yes\nFinished. Total time: 0.006s\n"
+  },
+  {
+    "argv": [
+      "fastboot",
+      "getvar",
+      "slot-retry-count:a"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "slot-retry-count:a: 6\nFinished. Total time: 0.005s\n"
+  },
+  {
+    "argv": [
+      "fastboot",
+      "getvar",
+      "slot-successful:b"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "slot-successful:b: no\nFinished. Total time: 0.005s\n"
+  },
+  {
+    "argv": [
+      "fastboot",
+      "getvar",
+      "slot-unbootable:b"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "slot-unbootable:b: no\nFinished. Total time: 0.005s\n"
+  },
+  {
+    "argv": [
+      "fastboot",
+      "getvar",
+      "slot-retry-count:b"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "slot-retry-count:b: 7\nFinished. Total time: 0.006s\n"
+  },
+  {
+    "argv": [
+      "fastboot",
+      "getvar",
+      "boot-reason"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "getvar:boot-reason                                 FAILED (remote: 'GetVar Variable Not found')\nFinished. Total time: 0.005s\n"
+  }
+]
