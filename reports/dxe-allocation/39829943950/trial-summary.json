@@ -6,8 +6,30 @@
   "fastboot_boot_exit_code": 0,
   "samples": 15,
   "samples_nuwa_fastboot_present": 0,
-  "screen_evidence": "pending user observation/video; no stage claimed",
-  "allocation_values": "TODO pending actual screen data",
-  "recovery": "waiting for nuwa endpoint/user power+volume-down; H-005",
-  "no_additional_trial": true
+  "screen_evidence": "clear-screen-1.jpg/clear-screen-2.jpg; transcribed in screen-observation.json",
+  "allocation_values": {
+    "stage": "missing-arch-before-assert",
+    "failures": 27,
+    "free_pages": 25,
+    "largest_raw_free_pages": 8,
+    "ranges": 5,
+    "special_purpose_pages": 0,
+    "free_range_pages": [
+      2,
+      3,
+      6,
+      8,
+      6
+    ],
+    "free_bytes": 102400,
+    "largest_raw_free_bytes": 32768
+  },
+  "recovery": "Original Android temporary boot succeeded after user power+volume-down to fastboot",
+  "no_additional_trial": true,
+  "candidate_dxe_execution_observed": true,
+  "bds_reached": false,
+  "xnu_reached": false,
+  "android_boot_completed": "1",
+  "recovery_ended_at": "2026-10-22T18:30:04.908955+00:00",
+  "three_partition_hashes_unchanged": true
 }

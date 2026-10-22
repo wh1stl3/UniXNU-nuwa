@@ -1,64 +1,54 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-23T02:29:17+08:00（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-23T02:39:24+08:00（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
-**R-010 A已完成唯一一次临时加载：02:27包9197fed2 Sending/Booting OKAY，15次采样nuwa fastboot均未出现。具体屏幕/分配快照仍等用户证据，不能据ACK认定DXE或XNU通过。已启动原Android恢复等待，H-005只差用户录完画面后按电源+音量下回fastboot；当前尚未确认本次恢复完成1。CI39829943950及666项实际产物静态验收通过。**
+**R-010诊断已完成编译、实机取证和Android恢复。最新清晰照片确认候选DXE实际执行：27次分配失败，最终仅25页/100KiB空闲，最大8页/32KiB，5段；随后缺核心架构协议并在DxeMain.c(586)断言Not Found。尚未进入BDS或XNU。**
 
-[本轮审查和候选](operations/2026-10-23-dxe-allocation-source-audit.md)，reports/dxe-allocation-audit/。上轮已证实到候选DXE但断言、未进入BDS/XNU；最后Android完成1为R-009恢复记录，本轮试前已只读确认Android完成1，目前实际ACK已记录，阶段日志及恢复完成仍待确认。
+**02:30:04实际nuwa/kalama Android boot_completed=1，02:30:05复核三个分区SHA与试前相同。** 未flash/erase/改槽，未再次启动候选。当前等待R-011具体内存图范围选择；已有单行原厂Heap候选diff和静态区间审查，未应用。
 
-## 本轮新证据与持久约定
+[构建、试验与恢复报告](operations/2026-10-23-dxe-allocation-build-trial.md)，证据reports/dxe-allocation/39829943950/。以clear-screen-1/2.jpg这次较清晰原图为数值权威；原始字节/哈希已保存，未用低清图猜数。
 
-当前AllocatePoolPages失败来自FindFreePages搜索最终为0；按类型bin/默认bin/全允许区、alignment、guard和资源提升约束尝试，失败不能仅解释为物理内存不足。源码声明69MiB是初始资源，不是运行空闲量；原厂209.75MiB有同机xbl_config证据，也不等于已批准修改。233页仅954368B。
+## 本轮真实结果
 
-固定Mu_Basecore@cfb93724与实际R-009子模块一致；缓存源码与git对象一致。0008候选只改Page.c/DxeMain.c，在首pool失败及最终ASSERT前记录参数/当前内存类型/空闲与最大块。Helper不分配、不改map，不跳过原错误和断言；最大块为未裁剪raw值。现有帧缓冲栈输出已有源码证据，但锁内flush时序影响/实际编译/运行仍未验证。补丁保留原CRLF，本次已增加仅两个固定raw哈希目标保留CRLF的CI接线，35项输入核验通过，原版私有锁调用报错已修复；修订版完整固件编译及实际核心标记静态验收通过，运行仍待验证。
-
-同SM8550固定来源已评估：sheng@0eb4514d也用209.75MiB且加其他bank、vendor条件门；fuxi@bb25ad75使用同大小但最小vendor=0且无既定真机运行证明。只借鉴结构和诊断方向，不抄nuwa无证据地址/驱动结论。用户要求已写入AGENTS.md§7：遇到难题主动评估同SoC UniXNU/UEFI仓库，并记录适用性/依赖/许可/验证状态，作为后续任务可读取的仓库记忆。
-
-## 固定源码、CI与真实产物
-
-| 项目 | 当前状态 |
+| 项目 | 结果 |
 | --- | --- |
-| wh1stl3/UniXNU@76dd641 | 保留nuwa补丁的合并基座；8796内核CI39793231214成功，真实内核静态核验通过 |
-| 设备仓 | board仍example=true，普通基座-D完整入口尚未打通；feed不变 |
-| wh1stl3/uefi-nuwa | 当前codex/nuwa-no-auto-abl@2ab6827d；父910ee079的正确相对头保留，仅RAW输入改本地CFG并注释AUTO ABL；已发布，源码工作树干净 |
-| 旧分支 | 稳定0a3a51a、SEC诊断5e4a8c8、相对偏移910ee079均保留，未重写历史 |
-| 首轮39819452729 | 工具安装从Azure慢下载，360秒超时124；编译未开始，无固件产物，失败日志保留 |
-| 重试39820752081 | 固定设备424513d、固件2ab6827d、pil-no-auto；全活跃APT源换源后工具安装47秒，CI总5m57s成功，665项产物/输入静态检查通过 |
-| 新FD | 3145728B/SHA5ad08040a420608119d1d4cc72b2f54150d1fd33e111460fef711153aa2a3a45；四EFI及SEC标记/DEPEX/HOB验收通过 |
-| 新配置/PIL | 实际RAW6930B/SHAdbc9ee6e…，AUTO空；PILDxe原PE SHA89e030af…保持；未删除驱动或改二进制跳过panic |
-| shim/临时包 | shim112B/SHA8a3b5476…与R-008相同；v4包3153920B/SHAb60f96c0b69e8be6a36b3c74f919fb6a3c88eac7d0c8d3f785c26272cc3e864e，无新增DTB/ramdisk/FAT/XNU |
+| CI39826580758 | Mu嵌套依赖mipisyst缺失，未编译核心；补丁前递归初始化原gitlink修复 |
+| CI39827372451 | 已到真实C编译，DxeMain私有锁声明缺失；加锁包装移回Page.c修复 |
+| CI39828647170 | 工具安装360秒超时，编译跳过；发现mirror+file间接选择Azure并修复 |
+| CI39829943950 | c9d538f、6m51s成功；666项下载/输入/实际固件静态检查通过 |
+| 固定源码 | uefi-nuwa@2ab6827d，UniXNU75bc13dd，Mu cfb93724；0008诊断patch4a859ab6 |
+| 实际FD / 核心 | 3145728B SHA d9c3eaa0d5eefd9e237dfd74f7d98402d93764d47cf4126a3c9bba9e4f5b860f；核心167936B/c0135047，实际包含诊断标记 |
+| shim / PIL | shim112B/8a3b5476、relative offset0保持；实际空AUTO配置dbc9ee6e与原PILDxe89e030af保持 |
+| v4包 | 3153920B SHA9197fed24748e1fa2b79da879e3c58c2018e3db943526d65641f86cb2226c0d6；仅shim+FD，无XNU/FAT/新DTB/ramdisk |
+| 唯一临时启动 | 02:27 Sending3080KB/Booting OKAY，15次nuwa fastboot均false；阶段结论另由照片支持，ACK不替代 |
+| 恢复 | 用户按电源+音量下回fastboot，恢复等待脚本实际接管，复位bootloader后仅临时加载原boot ef558db2，Android完成1 |
 
-下载的665项清单/文件SHA与内容检查通过；服务端ZIP digest已记录，未独立核对完整ZIP摘要，不混为一谈。本机WSL只编译过shim，不是完整XNU本机构建通过。
+## 运行时证据与边界
 
-## 已完成的R-009实机结果
+最新图断言前`missing-arch-before-assert failures=27 free=25 largest=8 ranges=5 special=0`，5段页数2+3+6+8+6一致；该状态下9页连续申请已超过8页raw最大块，对齐/guard不会增加可分配容量。上方可见type7=208页，紧随1153页申请失败，但完整第一请求type/align/guard/caller/bin头部缺失，仍TODO。
 
-2026-10-23 01:21:19开始唯一一次R-009临时启动，实际nuwa/kalama、Android完成1和fastboot产品/解锁/槽位先核对，按D-016重进bootloader隔离。Sending/Booting OKAY，15次fastboot采样均false；ACK只作命令接受。
+已证实本轮DXE资源不足并有碎片，不是手机12GB DRAM不足，也不是XNU ADT窗口问题。不能据此定位全部开销/泄漏、认定所有协议缺失和SPSS Load Error只有同一个原因，或宣称扩Heap后必进入BDS。Security/BDS/Variable/Variable Write/Capsule/RTC未安装，UniXNUDxe/DarwinBoot被发现但未加载。
 
-用户回复“停在报错了”并提供清晰照片。画面有UniXNUDxe GUID29b950cf…和DarwinBoot GUID1b64af87…的discovered but not loaded；实际候选包含而安装原厂98PE清单不含这两个GUID，支持候选DXE执行归属。最后屏已越过此前AUTO ABL的立即终止位置，出现SPSS metadata加载失败、连续AllocatePoolPages失败、Security/Bds/Variable/Variable Write/Capsule/RTC架构协议缺失，最终ASSERT_EFI_ERROR(Not Found)、[DxeCore]DxeMain.c(581)。
-
-**已实机观察到候选DXE执行，不等于完整DXE/BDS实机通过。** UniXNUDxe/DarwinBoot未加载，未到XNU。页面分配失败的根因未确定：没有本轮运行时可用map/空闲量/最大连续块或分配轨迹，不能直接说12GB不够、认定唯一驱动或直接扩heap/ADT窗口。
-
-## R-009历史恢复记录（本轮尚未启动候选）
-
-初次recovery.json因启动时无nuwa fastboot/ADB，只等待ADB后180秒超时，原始失败保留。用户按电源+音量下并明确“已回fastboot”；H-004已完成。单独recovery-after-keys重新识别nuwa/复位bootloader后，临时发送已验证Android备份boot SHAef558db2…，Sending196608KB/Booting均OKAY；**01:25:30确认实际nuwa/kalama sys.boot_completed=1**，postcondition再次确认。
-
-boot_a/vendor_boot_a/init_boot_a全分区SHA与紧邻试前值相同；未flash/erase/改槽，enuma未作为目标。当前是此前自定义/rooted Android，非完整原厂恢复，既有A槽持久标志未修复。H-001独立按键演练及H-003可选完整首屏录像留后续，不阻塞本轮收尾。
+当前固件源码初始SYS_MEM/Conv Heap69MiB。单行候选恢复同机原厂209.75MiB：BAE00000/04500000 → BAB00000/0D1C0000，其他内存行/属性保持；严格apply检查通过、未应用。固件其他行无重叠；历史同机Android DT覆盖候选，reserved reg/当时initrd不重叠，未解析节点0。**这只是静态检查，不证明候选ABL实际DT或扩展范围的运行所有权。**
 
 ## 下一步
 
-1. 当前恢复脚本等待nuwa端点，用户录完后按电源+音量下回fastboot；检测到后只加载已校验原Android boot，不再试新包。H-005只差按键，独立文档/证据工作继续。
-2. 恢复后重新确认nuwa/kalama Android完成1并对比三个分区摘要，原始失败/等待记录保留。
-3. 收到具体[NUWA-MEM]行/画面后分析实际空闲/最大块及请求参数。无截图数字则TODO，不把69MiB源码差异写成运行根因。
-4. 本轮候选试验次数已用完，后续需依据实际结果与D-021日志/恢复门推进；没有修改内存图、board/feed或_verified。
+1. 等待[NEED-REVIEW R-011](NEED-REVIEW.md)选择。倾向A：只恢复已知同机原厂Heap一行，保留真实驱动及R-010诊断；B：保持69MiB先审查可选vendor依赖/占用，再给出裁剪diff。
+2. 仅在新范围获批后修改独立uefi-nuwa、固定提交并更新CI输入。生成镜像本身无需暂停；设备动作仍须D-021具体日志/恢复门，试后恢复Android完成1。
+3. 未知第一请求参数、实际ABL x0 DT/所有权及后续协议/SPSS问题继续TODO；不再为补一张图重复R-010试验。H-005已完成，H-001独立按键演练/H-003历史可选连续录像不阻塞当前文档收尾。
 
-## 内核与后续目标
+## 已完成内核与后续目标
 
-源内核20187912B/SHA77742999fc1c1b6a94c9603664d946553070f73c6eed83ce9fcca06d70d73ac8，Darwin22/iOS16、4KiB段起始、五平台导出、零undefined、三archive hash和65348项donor指针零失败。完整NativePrelink/运行ABI仍未验证，历史payload输入仍CI15 a9e08c69，未自动切换。[内核核验](operations/2026-10-22-merged-kernel-artifact-validation.md)。
+基座wh1stl3/UniXNU@76dd641保留nuwa补丁，8796内核CI39793231214成功。源内核20187912B/SHA77742999fc1c1b6a94c9603664d946553070f73c6eed83ce9fcca06d70d73ac8，Darwin22/iOS16、4KiB段起始、五平台导出、零undefined、三archive哈希及65348项donor指针零失败。完整NativePrelink/运行ABI未验证，历史payload输入仍CI15 a9e08c69，未自动切换；本轮包不含XNU。
 
-608B CommandLine/0x2e0 boot_args修复已实际编译链接DarwinBoot EFI，运行ABI未验证。目标ADT/真实provider/定时器/watchdog/13回调仍待验收，ARCH_TIMER/BOOT_PROGRESS仍0。Android DT不能直接当Apple ADT；ramoops与FD保留区重叠，未占作日志区。入口/BDS之后还需完整负载，不能把本轮固件诊断当内核启动。
+Darwin22的608B CommandLine/0x2e0 boot_args已真实编译链接DarwinBoot EFI，运行ABI未验证。目标ADT/provider/定时器/watchdog/13回调仍待验收，ARCH_TIMER/BOOT_PROGRESS仍0；Android DT不能当Apple ADT。ramoops与FD保留区重叠，未占为日志区。本机WSL只编译过shim，不是完整XNU本机构建通过。
 
-## 固定边界
+## 当前约定
 
-board/feed/内存图及所有_verified不变；4KiB、iPhone10,3/d22ap/iOS16.7.16/20H392、8796.141.3；ipad_identity=true为安全属性。D-002先512MiB–1GiB过阶段5，硬上限8GiB。未知板值不编造，不借其他donor的prelink数值。两旧仓只读；Git/GitHub/workflow持续授权，R-010 A已批准，按D-021设备日志/恢复门推进。
+用户已批准R-010 A，生成诊断/固件镜像无需硬停；设备动作前缺过程日志或已确认恢复路径必须停，保留受审内存/身份字段及_verified=true边界，见AGENTS§3/D-021。R-011改变R-010明确排除的原内存图，具体范围另审。
+
+board/feed/当前实际内存图和_verified均不变；board仍example=true，普通基座-D入口未完整打通。4KiB、iPhone10,3/d22ap/iOS16.7.16/20H392、8796.141.3；ipad_identity=true为安全属性。D-002先512MiB–1GiB过阶段5、硬上限8GiB。两个旧仓只读，Git/GitHub/workflow持续授权；当前Android为原有rooted/custom系统，非完整原厂恢复，既有A槽标志未改。
+
+遇难题主动评估同SoC UniXNU/UEFI来源，固定提交/许可/依赖/验证状态，借鉴实现而不机械抄板值；本次sheng0eb4514d/fuxibb25ad75评估见dxe-allocation-audit。所有QEMU/静态/实机结论分开。

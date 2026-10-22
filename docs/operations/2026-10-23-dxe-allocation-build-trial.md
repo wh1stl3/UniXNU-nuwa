@@ -53,3 +53,18 @@ v4包3153920B SHA9197fed24748e1fa2b79da879e3c58c2018e3db943526d65641f86cb2226c0d
 试前重新读取nuwa/kalama Android完成1、A槽和三个分区SHA，原Android恢复输入完整哈希再次匹配；D-021当前包哈希/新鲜状态/用户录像确认/历史具体恢复证据门通过。提前15秒通知录像后，02:27执行唯一一次包9197fed2的fastboot boot，Sending3080KB 0.075s/Booting0.117s均OKAY，15次采样nuwa fastboot均false；只记录命令接受，不认定阶段运行或XNU。
 
 具体屏幕/分配数字仍等用户回传。当前已启动原Android恢复等待，用户录完后只需按电源+音量下；H-005已记录，主机如检测到nuwa fastboot会复位bootloader后临时加载原boot并检查Android完成1。当前未确认恢复完成，不掩盖为已恢复；不再启动候选包。
+
+
+## 最新清晰照片与最终恢复结果（数值以本节为准）
+
+用户后续提供两张1220x2656清晰原图，并明确“最新发送的更清晰”。原图逐字节保存clear-screen-1/2.jpg及SHA，较早低清图不作为数值权威。最终行为`missing-arch-before-assert failures=27 free=25 largest=8 ranges=5 special=0`，各自由块页数2+3+6+8+6=25，最大8；按4KiB页即100KiB总空闲/32KiB raw最大块。不是15页。上方片段type7=208，其后1153页请求失败；完整第一请求参数行在画外，保留TODO。最新末屏ASSERT_EFI_ERROR(Not Found)、DxeMain.c(586)，与原581行加5个新行一致。
+
+照片含候选特有NUWA-MEM代码、两个阶段中的末阶段标记和UniXNUDxe/DarwinBoot GUID discovered but not loaded，确认此次实际候选DXE执行，但完整DXE/BDS未通过、无XNU。仍有Security/BDS/Variable/Variable Write/Capsule/RTC缺失和SPSS分区/metadata Load Error；资源瓶颈已确认，不把所有独立错误归为单一根因。
+
+用户明确“已回fastboot”，恢复等待脚本在初始无端点后实际检测并接管，复位bootloader后仅临时发送原Android boot，Sending196608KB 4.490s/Booting0.117s均OKAY；02:30:04实际nuwa/kalama Android完成1，02:30:05 postcondition对比boot_a/vendor_boot_a/init_boot_a三个SHA与试前相同。H-005完成，无第二次候选、flash/erase/槽位变更。
+
+## 后续可审阅方案而非已应用修复
+
+已准备0009单行原厂Heap候选和factory-heap-proposal.json：69MiB → 同机原厂209.75MiB，其他行/属性不变。当前源表其他行无重叠；历史同机Android DT银行覆盖候选、reserved-memory/reg与当时initrd均无重叠且未解析reg节点0，严格git apply --check通过。原表同机来源及同SM8550结构评估沿用前报告，数值不从其他板复制。
+
+静态检查仍不证明实际候选ABL x0 DT/运行所有权，未实际应用源码或构建后续固件。因R-010批准范围明确排除原内存图/基址/容量变化，R-011列至少两候选：A单行原厂Heap恢复（倾向）、B保留69MiB并先审查可选vendor依赖/占用后具体裁剪。用户取消生成镜像硬停已按D-021执行，本项仅审新内存图范围，当前已恢复Android并停止新设备试验。

@@ -1,0 +1,61 @@
+{
+  "scope": "R-011 A source proposal only; not applied, built or device tested",
+  "firmware_commit": "2ab6827d77dfe15010534b52e1abb76a26464a7d",
+  "source": {
+    "path": "Platforms/Xiaomi/nuwaPkg/Library/MemoryMapLib/MemoryMapLib.c",
+    "lf_sha256": "051c431a43b94ae83dac8868ca6a617b0e21763a132440b92d4417b745d7d00e",
+    "proposed_lf_sha256": "b6cfda2e2385234ae243159ee258419c43b68a2c1c34484c2bc7f383daa32ccb"
+  },
+  "factory_source": {
+    "path": "reports/loader-integration/factory-uefiplatLA-original.txt",
+    "sha256": "2adc494b0325278c5709f63e52cb4c9e7b2cf29812f67710ee40d2e719c77d12",
+    "row": "0xBAB00000, 0x0D1C0000, \"DXE Heap\",          AddMem, SYS_MEM, SYS_MEM_CAP, Conv,   WRITE_BACK_XN"
+  },
+  "old": {
+    "base": "0xBAE00000",
+    "bytes": 72351744,
+    "mib": 69.0
+  },
+  "proposed": {
+    "base": "0xbab00000",
+    "bytes": 219938816,
+    "end_exclusive": "0xc7cc0000",
+    "mib": 209.75
+  },
+  "patch": {
+    "path": "patches/firmware-candidates/0009-nuwa-factory-dxe-heap-proposal.patch",
+    "sha256": "3e89881ea867e7d38406ecd7f57c59cc0666704710cca7c07fbf78780b84bed3"
+  },
+  "static_checks": {
+    "other_current_firmware_row_overlaps": [],
+    "android_reserved_reg_overlaps": [],
+    "android_memory_bank_covers_proposal": true,
+    "android_initrd_overlap": false,
+    "unparsed_reg_nodes": [],
+    "dt_source": "reports/firmware-ci/39802617878/live-dt-map-comparison.json",
+    "dt_snapshot_sha256": "f4636276599dd5b8c483692745994d1a8285542c30943e901f2717e23378f8a8",
+    "apply_check_argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "D:\\Code\\uefi-nuwa",
+      "apply",
+      "--check",
+      "D:\\Code\\UniXNU-nuwa\\patches\\firmware-candidates\\0009-nuwa-factory-dxe-heap-proposal.patch"
+    ],
+    "apply_check_exit_code": 0
+  },
+  "unchanged": [
+    "All other memory-map rows and attributes",
+    "FD destination and size",
+    "BootShim and loader layout",
+    "board.toml/bringup-plan/feed",
+    "XNU ADT window and 4KiB policy"
+  ],
+  "limitations": [
+    "Android FDT is historical and is not the actual candidate ABL x0 DT",
+    "Static non-overlap does not establish runtime ownership or successful MMU/HOB/dispatch",
+    "Root source of every allocation/protocol/storage failure not determined",
+    "R-010 explicitly excluded memory-map changes; R-011 remains a proposal"
+  ]
+}

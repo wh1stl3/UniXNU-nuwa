@@ -1,0 +1,79 @@
+{
+  "source": "Latest clearer user photographs, 1220x2656; earlier lower-resolution images not used for numeric transcription",
+  "images": [
+    {
+      "path": "reports/dxe-allocation/39829943950/clear-screen-1.jpg",
+      "bytes": 1319462,
+      "sha256": "1bd221aa97ed965fdcb730c1120cc9c03a456d81176d9b6a5214f31373d4fbd3",
+      "role": "authoritative latest clearer user photograph; original bytes preserved"
+    },
+    {
+      "path": "reports/dxe-allocation/39829943950/clear-screen-2.jpg",
+      "bytes": 215692,
+      "sha256": "064e9ec6d3f72b7ef0b4f3c920073f7d9720cc2271dd1000dfea0fcff855b18e",
+      "role": "authoritative latest clearer user photograph; original bytes preserved"
+    }
+  ],
+  "final_snapshot": {
+    "stage": "missing-arch-before-assert",
+    "failures": 27,
+    "free_pages": 25,
+    "largest_raw_free_pages": 8,
+    "ranges": 5,
+    "special_purpose_pages": 0,
+    "free_range_pages": [
+      2,
+      3,
+      6,
+      8,
+      6
+    ],
+    "free_bytes": 102400,
+    "largest_raw_free_bytes": 32768
+  },
+  "upper_visible_partial_snapshot": {
+    "conventional_type": 7,
+    "conventional_pages": 208,
+    "complete_stage_header_visible": false,
+    "following_failed_request_pages": 1153,
+    "interpretation": "Position before subsequent dispatcher errors is consistent with first-failure dump; exact request/bin/guard header outside image"
+  },
+  "missing_arch_protocols": [
+    "Security",
+    "Bds",
+    "Variable",
+    "Variable Write",
+    "Capsule",
+    "Real Time Clock"
+  ],
+  "discovered_not_loaded": [
+    {
+      "name": "UniXNUDxe",
+      "guid": "29b950cf-586d-49ea-9d71-f88645ccdaf6"
+    },
+    {
+      "name": "DarwinBoot",
+      "guid": "1b64af87-8415-4b57-9b16-680d70913b9f"
+    }
+  ],
+  "other_observed_errors": [
+    "SPSS mount partition Not Found",
+    "SPSS MDT size/metadata failure and Load Error",
+    "AllocatePoolPages failures including 1153/233/99/25/23/18/22/19/17/21/24/44/10/9 pages"
+  ],
+  "final_assert": {
+    "status": "Not Found",
+    "module": "DxeCore",
+    "file": "DxeMain.c",
+    "line": 586,
+    "source_cross_check": "Pinned original assertion line581 plus five inserted lines"
+  },
+  "supported_conclusion": "Real candidate DXE allocator resource shortage and fragmentation observed; no BDS or XNU execution",
+  "unverified": [
+    "Exact first request PoolType/Alignment/NeedGuard/caller/bin values",
+    "Full allocation history and any leak attribution",
+    "Cause of every missing protocol and independent SPSS/storage error",
+    "Whether expanding the factory heap resolves dispatch",
+    "Actual ABL x0 DT and runtime ownership of any proposed expanded range"
+  ]
+}

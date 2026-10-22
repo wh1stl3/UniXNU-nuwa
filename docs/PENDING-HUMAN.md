@@ -12,4 +12,4 @@
 
 | H-004 | R-009断言停机后按电源+音量下回fastboot，以便本轮恢复Android | 当前nuwa无ADB/fastboot通道，主机无法发恢复命令；只差实体键，不继续试验 | 2026-10-23 01:24 | completed（用户确认已回fastboot；01:25:30原Android备份临时恢复后完成1，见R-009 recovery-after-keys/postcondition） |
 
-| H-005 | R-010录完画面后按电源+音量下回fastboot，以便原Android恢复 | 候选临时命令已结束，采样无nuwa fastboot；主机等待恢复通道，实体按键需本人 | 2026-10-23 02:28 | open（已请求，恢复脚本等待，非新试验许可） |
+| H-005 | R-010录完画面后按电源+音量下回fastboot，以便原Android恢复 | 候选临时命令已结束，采样无nuwa fastboot；主机等待恢复通道，实体按键需本人 | 2026-10-23 02:28 | completed（用户确认已回fastboot，原boot临时恢复；02:30:04实际nuwa Android完成1，postcondition三分区SHA未变） |

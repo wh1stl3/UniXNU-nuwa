@@ -12,9 +12,29 @@
 
 | 编号 | 主题 | 需要用户做什么 |
 | --- | --- | --- |
-| — | 当前无待批准项；设备日志与恢复条件仍须执行前核对 | — |
+| R-011 | DXE资源耗尽后的单行原厂Heap恢复或裁剪路线 | 倾向A：仅恢复同机原厂DXE Heap；B：保持69MiB并审查可选驱动依赖/占用 |
 
-## R-010 · DXE分配器资源快照诊断（approved A，按实际编译错误修订中）
+## R-011 · 资源耗尽后的DXE Heap修正范围（open）
+
+背景：R-010最新清晰实机照片已取得。断言前快照为27次失败、free=25页/100KiB、largest=8页/32KiB、5段、special=0；各段2+3+6+8+6核对一致。上方可见type7=208页，紧随1153页申请失败；第一请求type/align/guard/caller头部未拍到。当前资源瓶颈已有实机证据，但尚未归因所有协议/SPSS错误或证明扩Heap即可进入BDS。
+
+**本次停下依据是R-010既定最小批准范围明确写了“不改board/bringup-plan、原内存图或任何基址/容量”。** 用户新规取消镜像生成硬停已执行；本项请求的是改变原内存图的新增具体范围，不重复请求一般Git、构建或生成镜像许可。只读候选、逐行diff、区间检查已准备完成，未应用固件源码或生成后续包。
+
+**候选A（倾向）：仅恢复同机原厂DXE Heap一行。** 固定uefi-nuwa@2ab6827d中MemoryMapLib.c:32从`0xBAE00000 / 0x04500000`（69MiB）恢复为同机xbl_config抽取表的`0xBAB00000 / 0x0D1C0000`（209.75MiB，半开端点0xC7CC0000），其他行及AddMem/SYS_MEM/Conv/缓存属性均不改。可审阅diff在patches/firmware-candidates/0009-nuwa-factory-dxe-heap-proposal.patch，完整原/候选SHA及静态审查在reports/dxe-allocation-audit/factory-heap-proposal.json；严格apply --check通过，尚未应用。
+
+代价/风险：需新固件来源固定、输入门和一次同类诊断对照。当前固件其他行无区间重叠；历史同机Android DT的/memory覆盖候选、reserved reg和当时initrd均不重叠，未解析节点0。但历史Android DT不等于本次候选ABL x0 DT，静态无重叠不证明所有权/MMU/HOB/实际dispatch；仍可能有SPSS、协议或驱动问题。增加的是UEFI临时分配Heap，不是XNU ADT窗口，D-002和4KiB保持。
+
+来源与适用性：数值取同机原厂表，当前板原厂xbl_config SHA686bce68…证据沿用loader-integration/audit.json及source-audit；同SM8550 sheng@0eb4514d/fuxi@bb25ad75仅佐证Heap结构，已有固定提交/许可/依赖/适用性记录，不复制其额外bank或当作nuwa实机通过。
+
+**候选B：保持69MiB，先审查可选vendor驱动的依赖和内存开销，再作精确裁剪。** 参照固定sheng的vendor条件门结构，列明每个候选模块、APRIORI/DEPEX/协议消费者与保留范围；不做空实现、不删核心Security/BDS/Variable或显示/恢复所需驱动来掩盖错误。代价是更长依赖/资源追踪，且没有证据保证69MiB能容纳保留链，随意关闭设备驱动可能丢失存储/显示或初始化能力。
+
+倾向A：只改一行、同机原厂有确证，针对已实测资源瓶颈，比无资源归属记录时裁剪多项真实驱动更可审阅；不承诺解决所有后续错误。
+
+**需要批准的最小范围：选择A时，只应用0009这一行的地址/容量恢复，保留R-010诊断、原PIL空AUTO/正确shim和其他内存行，固定独立固件提交后编译/静态核验同类v4包；在D-021日志与恢复门通过后一次临时试启动，结束恢复Android完成1并对比三分区。** 不改board/bringup-plan/feed/ADT、donor或XNU窗口，不flash/erase/改槽，不增FAT/XNU/新DTB，不置_verified=true。选择B仅先进行上述源码依赖/开销方案审查，具体裁剪diff另明确后执行。
+
+## R-010 · DXE分配器资源快照诊断（approved A，本次构建/试启动/恢复完成）
+
+执行结果：CI39829943950/c9d538f成功，666项实际产物检查通过；包9197fed2唯一一次临时启动，最新清晰照片确认候选DXE诊断执行，最终27次失败、25页空闲/最大8页/5段，DxeMain.c(586) Not Found断言；BDS/XNU未到。用户按键回fastboot后原boot恢复，02:30:04 nuwa Android完成1且三分区SHA与试前相同，H-005完成。原内存图未改，下一范围见R-011。
 
 执行补充：39827372451真实编译暴露DxeMain缺私有锁声明，锁封装移回Page.c，仍仅两文件、不改锁语义/内存图；私有锁修订bb8bf3ec；后续仅纠正包装注释得到当前patch SHA 4a859ab6108270229fd305d091deaa6cd2d76c37e62dbce823b7e848c73750e1，原hash下文保留为历史。
 

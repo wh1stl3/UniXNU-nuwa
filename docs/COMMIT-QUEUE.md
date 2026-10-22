@@ -960,3 +960,13 @@
 [Evidence] 试前实际nuwa/kalama Android完成1及三个原分区SHA；Sending3080KB和Booting均OKAY，15次nuwa fastboot均false，阶段画面尚待用户。
 [Risk] ACK不证明DXE或XNU通过，实际分配数值和本次Android恢复完成1尚未确认；未继续新试验或修改内存图。
 ```
+
+## Q-091 · 清晰实机资源快照、恢复与下一范围审阅
+
+```text
+[unixnu-nuwa][device] 确认DXE资源耗尽并恢复Android后提交原厂Heap候选审阅
+
+[Change] 保存最新清晰原图和精确数值，记录本次恢复及三分区对比，关闭H-005；只读准备原厂Heap单行diff/区间审查，R-011列两方案。
+[Evidence] 实机missing-arch-before-assert为27次失败、25页/100KiB空闲、最大8页/32KiB、5段，DxeMain.c(586) Not Found；02:30:04 nuwa Android完成1且三分区SHA不变。
+[Risk] BDS/XNU未到，第一请求type/guard等缺失，未定位全部开销或SPSS错误；单行Heap候选只有静态无重叠/apply检查，未应用、编译或实机验收，超出R-010内存图范围待批。
+```

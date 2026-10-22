@@ -196,3 +196,5 @@
 2026-10-23T02:26:32+08:00 · 39829943950固件编译成功，666项及实际DXE核心日志标记静态检查通过，v4包9197fed2准备完成 · Q-089（提交后以git log定位） · reports/dxe-allocation/39829943950/
 
 2026-10-23T02:29:17+08:00 · R-010唯一临时加载ACK通过、15次nuwa fastboot均false；阶段日志待用户，恢复等待端点/实体键H-005 · Q-090（提交后以git log定位） · reports/dxe-allocation/39829943950/launch.json；preflight.json；trial-summary.json
+
+2026-10-23T02:39:24+08:00 · 最新清晰实机图确认DXE最终25页空闲/最大8页/27次失败，原Android恢复完成1且三分区未变；准备单行原厂Heap候选，R-011待审 · Q-091（提交后以git log定位） · reports/dxe-allocation/39829943950/screen-observation.json；postcondition.json；reports/dxe-allocation-audit/factory-heap-proposal.json
