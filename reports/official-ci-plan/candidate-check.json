@@ -1,0 +1,39 @@
+{
+  "upstream_commit": "e95b37d97875bd8b30c976fcdef44d35d9c27bf3",
+  "source_workflow_sha256": "ba9a1b60371aa93e1a2a6a8524bab0db876d67081a32540a210063b223c5ad81",
+  "patch": "patches/base-ci-candidates/official-macos-observability.patch",
+  "patch_sha256": "718d806d75edf354f4bc868723884cd22349df3c295645271b0505a22896898d",
+  "validation": "strict in-memory context and exact resulting text only",
+  "hunks": [
+    {
+      "path": ".github/workflows/macos.yml",
+      "hunk": 1,
+      "line": 22
+    },
+    {
+      "path": ".github/workflows/macos.yml",
+      "hunk": 2,
+      "line": 66
+    },
+    {
+      "path": ".github/workflows/macos.yml",
+      "hunk": 3,
+      "line": 88
+    },
+    {
+      "path": ".github/workflows/macos.yml",
+      "hunk": 4,
+      "line": 189
+    },
+    {
+      "path": ".github/workflows/macos.yml",
+      "hunk": 5,
+      "line": 197
+    }
+  ],
+  "git_commands_executed": [],
+  "yaml_actions_execution": "not verified",
+  "kernel_built": false,
+  "workflow_installed": false,
+  "workflow_dispatched": false
+}

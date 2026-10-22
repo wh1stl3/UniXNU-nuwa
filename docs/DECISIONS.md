@@ -162,6 +162,7 @@ UEFI 内存映射在 `0x8c0000000` 附近能否给出连续可用块。查法：
 # D-005 · 4K 基座钉在 xnu-10063，而 iOS 16 是 8796 —— 版本落差怎么处理（待定，不阻塞）
 
 - 状态：**proposed**（2026-10-22 03:02）
+- 后续：**superseded by D-006**（2026-10-22；保留本节作为试算前的候选与启发式规则）。
 
 ## 事实
 
@@ -188,3 +189,40 @@ UEFI 内存映射在 `0x8c0000000` 附近能否给出连续可用块。查法：
 - 大面积失败 → 走 B，把「iOS 16」降级为后续里程碑，别一步到位。
 
 判定前**不要动 `feeds.toml` 的 xnu 版本**（会连带影响 49 个补丁的基准，难回滚）。
+
+---
+
+# D-006 · 先适配 8796 直达 iOS 16；feed 切换以完整补丁集与接口审查为门
+
+- 状态：**accepted**（2026-10-22；依据 D-005 试算，细化其按失败数量/文件名选路的启发式）。
+- 证据：[完整报告](operations/2026-10-22-patch-portability-8796.md)、`reports/patch-portability-8796/results.json`、`reports/patch-portability-8796/pmap-existing-path-only.log`。
+- 基线：UniXNU `75bc13dd34dc4e403826793739e316a264ce00dd`；XNU `1b191cb58250d0705d8a51287127505aa4bc0789`（8796.141.3）。
+
+49 项独立检查为 38 项静态检查通过、11 项失败。失败不全是头文件：包括启动汇编、machine layer 配置、PGZ 和根卷/观测钩子。但普通 pmap 的 PA 修复 hunk 匹配；整个 pmap 补丁失败来自不存在的 SPTM 文件，排除此路径后返回 0。两项晚期补丁还含前置依赖，故不把“11 项失败”当成 11 个独立核心阻塞。
+
+选择 A（先适配 8796），因为本次没有确认必须换 donor 的 ABI/PAC 或 pmap/SMMU 语义硬阻塞；先走 B 会另引入 17.x iPhone donor 与预链接工作，而不能消除最终 8796 适配。这里是基于失败性质的工程判断，不声称已验证 ABI 兼容。不套用 D-005 的“触及 pmap 就 B”粗分类。
+
+执行边界：本次不改 feed；先在设备仓维护补丁适配，核查 NativePrelink 的额外两项及完整依赖顺序、Darwin 22 静态库/接口，再单开 feed 切换提交。出现实际核心语义阻塞时追加新决策，不静默更换 donor。D-002/003/004 均保持有效，未知板级值留 TODO；board 身份/内存/bootimg 地址落地前仍须 NEED-REVIEW。编译、QEMU 和实机均未验证。
+
+---
+
+# D-007 · 8796候选选择不强搬不存在的PGZ接口与17.x freezer条件
+
+- 状态：**accepted**（2026-10-22；候选补丁选择，不是feed或构建兼容性验收）。
+- 证据：[选择集报告](operations/2026-10-22-8796-selected-sequence.md)、`reports/xnu-8796-sequence/results.json`；8796 `osfmk/kern/zalloc.c:1467`、`bsd/kern/kern_memorystatus_freeze.c:120`；基座 `patches/xnu/offline-pgz-alignment-probe.patch:51,77`。
+
+保留8796原allocator接口与freezer策略。`pgz-aligned-validation.patch`修补的zone_id_require_aligned在8796不存在；不为凑apply通过而新建17.x接口。依赖它的可选offline PGZ alignment probe延期移植，未来配置不得启用该probe直到等价实现/验证完成。`published-freezer-condition.patch`修复的10063畸形条件在8796不存在，视为不适用。
+
+51项来源中暂选48项，包含NativePrelink两项及8个设备仓适配候选。内存顺序模拟和最终合并diff只读检查通过，不等同实际应用或编译。所有上游补丁仍只读保留，feed不改；后续若发现8796也需对应修补，以新证据追加决策，不静默丢弃安全/接口问题。D-006路线及D-002/003/004继续有效。
+
+---
+
+# D-008 · 采用官方macOS Actions方向准备内核构建，保持设备仓独立
+
+- 状态：**accepted**（2026-10-22；主机/集成方向，不是构建通过）。
+- 用户依据：提出使用GitHub Actions，回复继续，指定账号wh1stl3，并明确Git所有命令允许；R-003 A的WSL预检历史保留，不再作为“禁止macOS”的现行边界。
+- 证据：[官方CI接入审查](operations/2026-10-22-official-ci-route.md)、`reports/official-ci-plan/remote-audit.json`；官方e95b提交存在macos.yml、archive/bootstrap调度，仍固定10063/iOS17并在kernel后调用prelink。
+
+基座fork承载官方构建入口，UniXNU-nuwa继续独立设备仓，uefi-nuwa继续独立固件仓。首轮范围为明确的内核源构建验证；不以iPad或iOS17配置替代既定iOS16/iPhone donor。macos-15-intel/Xcode16.4仅为当前候选主机输入，须记录实际镜像/SDK/编译器并验证，不宣称标签保证长期可用。
+
+本轮不整体跟进e95b的491项路径/blob变化，不切feed；75bc输入上的48项静态结论继续限定在原输入。后续确定最小基座集成及8796覆盖后再编译。允许Git命令不解除资料库/来源树只读边界，也不解除四类硬停；board和未知板值保持原约束。

@@ -1,0 +1,59 @@
+--- a/.github/workflows/macos.yml
++++ b/.github/workflows/macos.yml
+@@ -22,7 +22,7 @@
+           - kernel
+           - kernel userdata
+           - kernel userdata payload
+-        default: kernel userdata
++        default: kernel
+       ipsw_url:
+         description: IPSW URL (empty uses board.toml)
+         required: false
+@@ -66,10 +66,11 @@
+ env:
+   HOMEBREW_NO_AUTO_UPDATE: 1
+   HOMEBREW_NO_INSTALL_CLEANUP: 1
++  DEVELOPER_DIR: /Applications/Xcode_16.4.app/Contents/Developer
+ 
+ jobs:
+   build:
+-    runs-on: macos-latest
++    runs-on: macos-15-intel
+     timeout-minutes: 360
+     steps:
+       - uses: actions/checkout@v4
+@@ -87,10 +88,17 @@
+ 
+       - name: Report the runner toolchain
+         run: |
++          test -d "$DEVELOPER_DIR"
++          echo "ImageOS=$ImageOS ImageVersion=$ImageVersion"
+           sw_vers
+           uname -m
+           xcodebuild -version
+           xcode-select -p
++          echo "DEVELOPER_DIR=$DEVELOPER_DIR"
++          xcrun --sdk iphoneos --show-sdk-version
++          xcrun --sdk iphoneos --show-sdk-path
++          xcrun --sdk iphoneos clang --version
++          xcrun --sdk iphoneos --find iig
+           xcrun --sdk iphoneos --find mig || echo 'mig not found for iphoneos'
+ 
+       - name: Install host tools
+@@ -181,6 +189,7 @@
+           ./unixnu build payload "${args[@]}"
+ 
+       - name: Upload kernel and payload
++        if: always()
+         uses: actions/upload-artifact@v4
+         with:
+           name: unixnu-${{ inputs.defconfig }}
+@@ -188,6 +197,8 @@
+             out/*/kernel/**
+             out/*/payload/**
+             out/*/logs/**
++            out/*/tree/build/xnu/ios-obj/**/mach.development.bcm2837*
++            out/*/tree/build/xnu/ios-obj/**/*.json
+           if-no-files-found: error
+           retention-days: 7
+ 
