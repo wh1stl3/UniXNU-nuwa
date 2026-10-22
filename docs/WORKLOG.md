@@ -134,3 +134,5 @@
 2026-10-22 21:04 · 完成USB/RAM/UART/文件日志出口离线评估：现有高通设备栈可作为DXE导出基础，早期挂死仍需独立记录与回收；Mu日志框架列为复用候选，未实现或实机验证 · 本提交（Q-061） · docs/operations/2026-10-22-log-export-options.md
 
 2026-10-22 21:23 · 遍历官方72中文页并核对144路由，发现Darwin22 boot_args源定义偏移差异，补充SM8550 CDC与sheng持久日志来源；保持4KiB/iPhone主线，未升级上游/生成镜像或访问设备 · 本提交（Q-062） · reports/official-site-audit/；docs/operations/2026-10-22-official-site-route-review.md
+
+2026-10-22 21:40 · 合并上游5fdbd5d到UniXNU fork 76dd641，完整树/3份工作流/28份patch和feed核对通过；CI15实际DWARF确认608B boot_args，用户撤销实机暂停，未访问设备或生成镜像 · 本提交（Q-063） · reports/upstream-merge/；reports/official-site-audit/ci15-boot-args-dwarf.json

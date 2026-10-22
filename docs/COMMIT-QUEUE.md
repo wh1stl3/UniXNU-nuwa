@@ -640,3 +640,13 @@
 [Evidence] 全部72中文页HTTP200且144路由清单中中文遗漏0；8796头608B命令行与DarwinBoot1024B导致尾字段偏移不同；找到SM8550 vermeer CDC及sheng UFS/Linux日志实现。
 [Risk] CI15编译类型、完整ABI和本机USB均未验证，其他机型/P16或虚拟机结果不作nuwa验收；feed/board/版本及实机暂停不变，没有新镜像。
 ```
+
+## Q-063 · 上游合并与实际Darwin22类型核对
+
+```text
+[unixnu-nuwa][build] 合并UniXNU主分支并确认CI15实际boot_args布局
+
+[Change] 将固定上游5fdbd5d合入fork并保留nuwa工作流及设备补丁，增加完整树和DWARF审计，记录实机访问恢复。
+[Evidence] fork合并76dd641的589条树等于上游加3份原工作流，28份patch哈希和feed不变；UUID匹配的CI15三个编译单元均为608B命令行与0x2e0结构。
+[Risk] 合并版尚未构建，历史CI仍固定75bc；Darwin22加载器修复和运行ABI未验证，本轮未访问设备或生成镜像。
+```

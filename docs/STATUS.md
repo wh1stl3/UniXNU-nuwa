@@ -1,58 +1,44 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 21:23（Asia/Shanghai）。历史见WORKLOG。
-
-## 实机操作暂停
-
-用户2026-10-22 20:26明确：“deepseek开始推送包了，不要做实机操作”。本仓暂停全部ADB、fastboot和USB/设备状态查询，直至用户明确恢复本仓设备访问；已有长期设备授权在暂停期间不执行。只继续仓库内离线分析/文档和Git同步。设备暂停后的状态以该轮操作为准，本仓不轮询、不抢占、不自动执行恢复。
+> 当前唯一真相；更新：2026-10-22 21:40（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
-**已实际临时启动本仓v4固件入口候选：Sending/Booting均OKAY，但用户见黑屏，约29秒15次采样fastboot始终可见。BootShim/SEC和DXE/BDS均未取得执行证据；不能称UEFI阶段通过。** 随后重进bootloader并临时加载原厂boot，本仓最后确认nuwa恢复Android、sys.boot_completed=1（20:19，不能代表暂停后的当前状态）。A槽持久启动状态仍未修复。
+UniXNU fork已合并上游主分支：wh1stl3/UniXNU@76dd641包含固定上游5fdbd5d及本仓原5个提交。完整589条Git树核对通过，3份nuwa工作流、设备仓28份patch原哈希保留，fork和设备仓feed不变。21个子模块固定提交已归档。[合并与实际ABI证据](operations/2026-10-22-upstream-merge-and-darwin22.md)。
 
-- 候选：out/trial-boot/firmware-v4/boot-firmware-v4.img，3153920B，SHA12864ac6cc0ffc9909f4abbdfab91bfee216c3fdcfc5ab0d52b4d4b9cf4579f9；只含raw shim+FD，原v4头仅改kernel_size，无附加DTB或新增FAT/XNU。[首次实机记录](operations/2026-10-22-v4-firmware-trial.md)。
-- 构建：固件CI39764322744 success，四EFI/FD/BootShim下载静态检查通过，FD3145728B/SHAa0bbb964…、shim112B/SHA9346a527…。实际启动命令不把这项静态证据升级为固件运行验收。R-004 A完成。
-- 本仓源内核：CI15 39755850870，ArmCpu/ArmDTPlatform真实链接、五导出/零undefined；20187888B/SHAa9e08c693fec4034f613cd554ea94e5855b25b727b4bfb4af46a4103f565bc7a，65348项donor指针零缺失。未加入本次候选，XNU与iOS执行仍未验证。
+**仓库已合并，构建迁移未完成。** CI15/固件成功输入仍锁定75bc13d，现有工作流仍使用该历史基线；不能将历史CI成功写成新合并代码编译通过。迁移需审查递归子模块、补丁哈希和构建脚本上下文，不只改一个SHA。
 
-## 实机与恢复证据
+CI15的dSYM与内核UUID匹配，arm_init/machine_routines/pe_init三个编译单元实际boot_args一致：CommandLine608B、sizeof0x2e0、bootFlags0x2d0、memSizeActual0x2d8。当前DarwinBoot仍为1024B/0x480/0x470/0x478，已确认编译类型差异，运行ABI未验证。下一项形成Darwin22加载器最小补丁，必须同步局部缓冲区与长度检查，避免仅缩短结构引起CopyMem越界。
 
-- 本轮从nuwa Android=1进入bootloader，核对product=nuwa、unlocked=yes、slot=a后执行唯一锁定候选。另一台enuma没有被重启或写入；日志不保存设备序列号。
-- 候选命令成功后屏幕黑屏，USB为Android Bootloader Interface/VID_18D1&PID_D00D，fastboot product仍可查询。缺少早期入口日志，无法定位是否曾执行BootShim/SEC、是否返回或何处失败。
-- 同一原厂boot ef558db2…：在该轮状态直接临时加载报Load Error；reboot bootloader后再次加载成功，nuwa/kalama身份及Android boot_completed=1已确认。每次对照须重新进入bootloader隔离状态，不能以一次Load Error判断唯一格式/大小门槛（D-016）。未flash/改槽位，H-001物理键演练仍open，H-002已完成。
-- 当前boot_a/init_boot_a此前整分区hash与原始备份一致；原厂临时恢复不等于A槽持久启动修复。本轮post-recovery boot reason=bootloader、pstore空，不能据此归因候选失败点。
+## 实机访问与已完成构建
 
-## 静态映射与参考方案
+用户最新明确“实机操作可以继续”，撤销20:26暂停。恢复已授权范围内的设备访问；新镜像/刷写/试启动范围仍依据AGENTS及具体批准判断。本里程碑未访问设备，暂停后的当前状态未知，后续须先重新核对nuwa身份与模式。
 
-nuwa原厂boot/init_boot/vendor_boot均v4；原厂v4有进入Android的实机证据。当前Android initrd[0xb5fb2000,0xb7fff1d4)处于固定Mu静态Kernel保留区[0xa8000000,0xb8000000)，但新候选实际DT地址/映射与生命周期仍未知。RamManager会将EFI图空隙加入Conventional，发布器不保留新initrd；加入新FAT前须核验。
+- 内核CI15 39755850870成功：ArmCpu/ArmDTPlatform真实链接，五项导出/零undefined，20187888B，SHA a9e08c693fec4034f613cd554ea94e5855b25b727b4bfb4af46a4103f565bc7a。65348项donor指针零缺失；仍是源内核，不是完成的预链接负载，运行provider/完整ABI未验证。
+- 固件CI39764322744成功：四EFI、FD3145728B/SHA a0bbb964…、shim112B/SHA9346a527…静态检查通过，未包含XNU。
+- v4固件入口包3153920B/SHA12864ac6…实际Sending/Booting均OKAY、用户见黑屏，约29秒fastboot持续可见。没有BootShim/SEC/DXE/BDS执行证据；不能称UEFI阶段通过。[实机记录](operations/2026-10-22-v4-firmware-trial.md)。
+- 本仓最后恢复Android/sys.boot_completed=1为20:19，不能代表其他轮操作后的当前状态。A槽持久unbootable未修复；H-001物理键演练仍待办。
 
-r6 v1回环已在RAM复现OS字节0x1009和ID前20B差异，32B ID补零与分段SHA修正可吸收；其原FAT含旧内核、3秒默认启动XNU和6GiB ADT，不能随新FD直接上机。咱们FD套该模板的RAM投影总长203194368B，未写镜像。[复核](operations/2026-10-22-reference-repack-review.md)。
+## 入口、映射与日志
 
-驱动报告索引可用，但本机触控是ST FTS SPI；官方sheng GPU已列可用。设备feeds可选，“同SoC可直接用”不能代替Darwin22/硬件验收；feed保持。[复核](operations/2026-10-22-driver-source-report-review.md)。
+离线33项检查通过，FD/TE/map入口0xa710a838一致且保存x0。BootShim未准备EL/DAIF/MMU/cache，实际L、x0、SPSel与ABL放置策略仍未知。SEC日志和异常只走帧缓冲，正常横幅前有SMMU调整和清屏，黑屏不能定位SEC。[入口审查](operations/2026-10-22-arm64-sec-entry-audit.md)。
 
-## 离线入口与SEC日志审查
+nuwa原厂boot/init_boot/vendor_boot均v4，原厂v4有进入Android证据；当前候选raw shim+FD，无附加DTB/FAT/XNU。历史Android initrd处于Mu静态Kernel保留区，但新候选实际FDT地址/保留/生命周期未验证。后续容器比较先重新进入bootloader隔离状态，恢复也先重进bootloader再临时原厂boot并确认Android=1（D-016）。
 
-33项静态断言通过：FD首分支/TE/map均指0xa710a838，入口机器码保存x0到0xa710a8d8，拷贝尺寸与cache调用吻合。SEC实际日志为帧缓冲绘字，WARN/ERROR已开，异常也走同一出口；正常横幅前先有SMMU调整和清屏。BootShim不准备EL/DAIF/MMU/cache，实际L/x0/SPSel仍未知；text_offset的FD_BASE值与ABL放置策略、原厂EFI入口差异待澄清，不能凭头字段直接归因。只读归档ABL包含BootLinux/ARM64检查路径，不代表当前设备分支。全程未访问设备、未生成镜像。[完整审查与最小待测清单](operations/2026-10-22-arm64-sec-entry-audit.md)。
+r6模板FAT含旧内核、3秒自动启动XNU及6GiB ADT，不能原样套新FD上机；32B ID补零与分段SHA经验可复用，“只支持v1+大ramdisk”仍缺隔离状态对照。[模板复核](operations/2026-10-22-reference-repack-review.md)。
 
-## 日志导出可行性
-
-离线确认nuwa构建已列入高通USB设备栈，协议提供Start/Send/HandleEvent，可在DXE实现CDC ACM导出到Windows日志文件；目前未实现、未实机验证。优先复用Mu AdvancedLogger早期RAM记录候选，USB就绪后补发；若故障早于DXE，仍需已验证的UART或保留RAM读回路径。安全缓冲区地址/长度、UART路由、跨重启保留均TODO，不能声称普通USB线已能抓BootShim/SEC。设备暂停保持。[通道比较与源码证据](operations/2026-10-22-log-export-options.md)。
-
-## 官方全站复核的新发现
-
-已读取全部72个中文页面，并用144路由发布清单核对，中文遗漏0；结构索引和报告见[官方路线复核](operations/2026-10-22-official-site-route-review.md)。官方已列iPhone X iOS16第二目标；guacamole用户态记录使用16KiB内核，只参考加载器/DT保留，不移植页大小。Ace5源码清单追到SM8550 vermeer真实XNU USB CDC实现；sheng有UFS日志+Linux CDC读取器，均不能直接覆盖早期SEC，许可/依赖和本机绑定仍待审查。
-
-新增负载前检查项：8796原始ARM64 boot_args命令行608B，当前DarwinBoot为1024B，BootFlags/memSizeActual源定义偏移不同（0x2d0/0x2d8 vs 0x470/0x478）；静态LP64建模已记录，CI15实际编译类型和运行ABI仍未验证。当前v4不含XNU，不能据此解释黑屏。官网nuwa页落后于CI15，继续以本仓证据为准。未自动跟进89个上游提交，feed/版本保持。
+nuwa已打包高通USB设备栈，DXE CDC导出尚未接线；早期RAM记录可参考Mu AdvancedLogger，安全地址/保留和UART仍TODO。SM8550 vermeer有XNU CDC代码但许可、Darwin22/4K/DMA/SMMU依赖待审；sheng UFS日志/Linux读取器只适用于更晚阶段。[日志方案](operations/2026-10-22-log-export-options.md)。
 
 ## 下一步
 
-1. **离线优先**：核对CI15实际boot_args类型与DarwinBoot构建输入，收敛Darwin22适配；继续归档ABL加载/交接、实际FDT/splash、x0与initrd保留审查。当前无安全RAM/读回证据时继续TODO，不能以黑屏定位SEC或先验收DXE。
-2. 审查SM8550 vermeer CDC源码的许可、Darwin22/4K/DMA/SMMU依赖，及高通UEFI设备协议→SerialIo桥接；与Mu早期RAM记录分别验收。sheng UFS日志/独立Linux读取器留待存储阶段，不运行其重启/写盘流程。
-3. 官方QEMU fixture可隔离菜单/loader/ADT/入口逻辑，先核对本机工具与输入；实际测试遵守镜像生成硬停，结果不升级为nuwa实机。新FAT映射/保留、provider、ARCH_TIMER/GIC/PSCI、13项boot-progress、watchdog scratch、完整NativePrelink/12处Libm编码继续审查。
-4. 仅在用户明确恢复本仓设备访问后，任何容器对照先重新进入bootloader；结束后重进bootloader再用ef558db2原厂boot恢复Android并确认完成。保留候选原hash，不自动换v1或混入旧负载。H-001按键项记待办继续软件项。
-5. A槽持久启动修复单独限定动作；不在临时固件测试中顺带改槽位。board/bringup-plan内存/基址、镜像及_verified保留硬停，未知值TODO。
+1. 在最新DarwinBoot子模块固定提交上制作Darwin22专用结构/命令行缓冲区补丁，核对旧基线及最新上下文；只做源码适配与静态验证，新的固件生成按硬停范围处理。
+2. 迁移合并版构建输入：递归子模块固定、48项选择和本仓兼容补丁逐项检查、构建脚本哈希/输出/参数重新审查；保留可重现的CI15回归路径，不改feed。
+3. 继续ABL/FDT/splash/x0/initrd保留审查，明确早期日志回收通道；设备访问已恢复，但首次新操作前重新核对nuwa身份/状态，候选未获执行证据前不升级阶段。
+4. 审查SM8550 USB许可和依赖、UEFI协议到SerialIo桥接；provider/ARCH_TIMER/GIC/PSCI、13项boot-progress、watchdog、NativePrelink的12处Libm编码和完整ABI仍待验收。
+5. QEMU fixture先核对工具/输入，镜像生成仍按硬停，结果不作实机通过。只差人按键的事项记PENDING-HUMAN继续软件工作；A槽持久修复单列范围。
 
-## 边界与记录
+## 固定边界
 
-board/feed不变、example=true；4KiB，iPhone10,3/d22ap/iOS16.7.16/20H392、8796.141.3，ipad_identity=true为安全属性。D-002先512MiB–1GiB过阶段5、上限8GiB。两个旧仓/源树只读，镜像在out，Git/gh已授权且不强推。
+board/feed不变、example=true；4KiB、iPhone10,3/d22ap/iOS16.7.16/20H392、8796.141.3、ipad_identity=true为安全属性。D-002先512MiB–1GiB过阶段5，上限8GiB。未知值TODO，不抄其他donor prelink数值；两个旧仓/源树只读。
 
-本轮reports/v4-firmware-trial/保存实际启动/USB/用户屏幕观察/首次恢复失败/bootloader重进/再次恢复成功及最终Android状态；scripts/trial-v4-firmware.py执行哈希与目标门。新固件未获执行通过，未置_verified=true，WSL完整内核构建和iOS用户态仍未验证。
+[官方72中文页/144路由复核](operations/2026-10-22-official-site-route-review.md)仍可用，官网nuwa页落后于本仓证据；guacamole的16KiB结论不平移。真实驱动优先复用，本机触控是ST FTS SPI；同SoC不替代本板验收。没有新镜像、板内存修改或_verified=true；iOS用户态和WSL完整内核构建仍未验证。

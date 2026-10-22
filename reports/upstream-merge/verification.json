@@ -1,0 +1,45 @@
+{
+  "fork": "wh1stl3/UniXNU",
+  "before": "02daabcbcf1387fc67c15efeaef8085614dd97f2",
+  "upstream": "5fdbd5d08518bc2d5c196264c56a377dd80cf5ca",
+  "merged": "76dd64142decca55f6594b860565e848de71d271",
+  "parents": [
+    "02daabcbcf1387fc67c15efeaef8085614dd97f2",
+    "5fdbd5d08518bc2d5c196264c56a377dd80cf5ca"
+  ],
+  "preserved_workflows": {
+    ".github/workflows/nuwa-8796-source.yml": "15e55da3d0d58525a46168d89f570446e758fae4",
+    ".github/workflows/nuwa-iig-inspect.yml": "50ad354e555f13aa6b561f56165a54b36babd5b8",
+    ".github/workflows/nuwa-iig-targets.yml": "8c94296a17bea1eb871f0289244ad9ba2fcf7259"
+  },
+  "feed_blob_unchanged": true,
+  "device_patch_count": 28,
+  "device_patch_hashes_unchanged": true,
+  "complete_merged_tree_matches": true,
+  "merged_entry_count": 589,
+  "compiled": false,
+  "device_accessed": false,
+  "module_pins": {
+    "drivers/ArmCpu": "1951cc8444b340d7d8879e9418220cf29eb711d7",
+    "drivers/ArmDTPlatform": "0d544705c2e89725caabc0542bb96bc8febd8c70",
+    "drivers/ArmVirtPlatform": "532de8c017e394e69a0b48dc0ffc4ac0d0701177",
+    "drivers/DarwinBoot": "d099354d0eab34df5088ca1ba89c9c88bc3260bb",
+    "drivers/NativeAES": "a34964b8c2fec2e83c8e4f68fb7d6fb7e4b2227b",
+    "drivers/NativeAdreno": "cedcaa2949c795e71a47e78ae413c8a41b17d7d0",
+    "drivers/NativeGeniSpi": "b5399b5646c4d7415deec6d887fd51715a97a024",
+    "drivers/NativeHidInput": "28f9b463b48e862f2def91d29c11b9143785715e",
+    "drivers/NativeKeyStoreEvents": "e59bac4ad1ac8825919ae94da8440a64d8ab90b3",
+    "drivers/NativeMetal": "bcbbc707cf112026ace2a11fa0ed62260b4e16b0",
+    "drivers/NativeMobileDisplay": "c031d882b9721d943383d11f66dc4748252ce929",
+    "drivers/NativeRamBlock": "d4d22d9819b0162eda49f6402235dddc2279410d",
+    "drivers/NativeUfs": "af785c1777161a62931425c2faaa536ce0bebd5b",
+    "drivers/NativeVirtioBlock": "98909eb9198a4360d7a43be831887cb8b74d814d",
+    "drivers/NativeVirtioConsole": "066f9bded311233ed56824e13a5628077619efda",
+    "kits/AdrenoFirmware": "40fdb8ea87606612ac6f1e80bbb49955d0ce4051",
+    "kits/AdrenoPM4": "445f8fe6d115738352b9d78dc70af6d61aa7f62f",
+    "kits/AirNir": "032a867b5dc3121164bbd706e4e81e3b9fcd2b8f",
+    "kits/ArmSmmu4K": "4d0d6598b1a36aeec3de01091893fa6660e49388",
+    "kits/NativePrelink": "2b6ffb50117eee820b98aca9bd51b5c7dfb2970e",
+    "kits/VerifiedRoot": "2854c61f6c4dfda870ac3d93e1f03d9181edb041"
+  }
+}

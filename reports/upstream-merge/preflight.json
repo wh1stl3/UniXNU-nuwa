@@ -1,0 +1,59 @@
+{
+  "before": "02daabcbcf1387fc67c15efeaef8085614dd97f2",
+  "upstream": "5fdbd5d08518bc2d5c196264c56a377dd80cf5ca",
+  "merge_base": "e95b37d97875bd8b30c976fcdef44d35d9c27bf3",
+  "ahead_by": 5,
+  "behind_by": 26,
+  "own_paths": {
+    ".github/workflows/nuwa-8796-source.yml": [
+      "100644",
+      "blob",
+      "15e55da3d0d58525a46168d89f570446e758fae4"
+    ],
+    ".github/workflows/nuwa-iig-inspect.yml": [
+      "100644",
+      "blob",
+      "50ad354e555f13aa6b561f56165a54b36babd5b8"
+    ],
+    ".github/workflows/nuwa-iig-targets.yml": [
+      "100644",
+      "blob",
+      "8c94296a17bea1eb871f0289244ad9ba2fcf7259"
+    ]
+  },
+  "device_patch_sha256": {
+    "patches/base-ci-candidates/official-macos-observability.patch": "718d806d75edf354f4bc868723884cd22349df3c295645271b0505a22896898d",
+    "patches/base-ci-candidates/README.md": "be2c70de2481187c346d75af50d940bb7b6621d3bf131d63f3a781f3d8657478",
+    "patches/firmware-candidates/0001-bootshim-image-size.patch": "226a7e742f17b99c2f44a689b521e24dd4d144ffc73b0844a1f68c7a99893441",
+    "patches/firmware-candidates/0002-nuwa-loader-wiring.patch": "98dc022fc605c89651ef3689792941f23fee36040988ed1446d1502a2f56c4fb",
+    "patches/firmware-candidates/0003-initrd-publisher-only.patch": "9a28104c9dbe3aa1d38248ca1275de7d5637b982325c64cc45fe21f92c1709af",
+    "patches/firmware-candidates/0004-sec-entry-argument-hob.patch": "1d0fdbd0172e524fccfa6e5cf6a347a7a82700f66cb38e7ea297ed1b60224932",
+    "patches/xnu-8796-candidates/apple-only-cpu-tunables.patch": "49ad719fce1e074777041483daef41a3214025d31b2b399858f4dab891b271b9",
+    "patches/xnu-8796-candidates/external-archive-dependencies.patch": "6f2ce506a3634d06260f14ccd86a84af7fbf7dc5e7c98a2381b6bff52199d7b5",
+    "patches/xnu-8796-candidates/native-aes-personality.patch": "c126435813b4c39c8cb421522e01480cf1675a5dfd628293208e029e2da9b3cb",
+    "patches/xnu-8796-candidates/offline-owner-systemos-mount.patch": "1f88ed8eeae5c5eda782ccce1ae335361cb7b69c77e986167118bd18a53f42b8",
+    "patches/xnu-8796-candidates/public-entitlements-header.patch": "ff4ca93bf834f750f9f1442733cd94995b1b08d9a509d1a956e71a97ffa804c3",
+    "patches/xnu-8796-candidates/README.md": "64b208f463b507e161322df6cc8ffefa301bdeeeb4a7533425699bc297ed33b4",
+    "patches/xnu-8796-candidates/source-machine-layer.patch": "923b51bac67695c304ee59309aa8db57a2cbe5719ffed1581875f7db4e37b2fc",
+    "patches/xnu-8796-candidates/zzx-pmap-sync-64bit-pa.patch": "50747f5c4f51abf1e0e3d0d82be07d76909a3f28eceffb9e927b0a8aca6f4f82",
+    "patches/xnu-8796-candidates/zzz-boot-progress.patch": "1e7adabe9d00642d1d4ced10b572d5f62785db883dec468c9677a2869ddc1148",
+    "patches/xnu-8796-ci-candidates/clang-compile-records.patch": "b3d6286ce709489fcfeb08cf5961965516d9d05dcf84aaa553514456641f92cd",
+    "patches/xnu-8796-ci-candidates/clang17-uio-stackbuf.patch": "ab4ec11a8471d4a3c80c9538a0a698b93936be2de58c1af417ed90c37e5092de",
+    "patches/xnu-8796-ci-candidates/clang17-zero-init.patch": "07dc59c1cdea54de7b846cfb9aa93598efaa3895dffc3c8dcb91b9d908b1c6c9",
+    "patches/xnu-8796-ci-candidates/disabled-kpc-context.patch": "7dc7041cf30540f301f325709902804c204adf1cac3c930a02ef92a54545a537",
+    "patches/xnu-8796-ci-candidates/disabled-kpc-task.patch": "326410bef685884a117dfca16422e0c7f247a9d7a8abbc98166c363b322e602c",
+    "patches/xnu-8796-ci-candidates/disabled-kperf-ast.patch": "31d4125a883c758255e4c6dbc4c9a0a3e01b33c86cd521dcef7fead8abb426c4",
+    "patches/xnu-8796-ci-candidates/disabled-kperf-ktrace.patch": "fbb489e4e569982f318c70f510847ae4290be0e7ed085c3d2768de546141e2ca",
+    "patches/xnu-8796-ci-candidates/disabled-kperf-scheduler.patch": "027a8887ff3eeeb5765bfa032ba6cf7403ef067003ac41f9b25d4a6119a3db32",
+    "patches/xnu-8796-ci-candidates/disabled-kperf-timer.patch": "d2b670336116e466c4096c475c931817714029ede285bbab97e4898314753bec",
+    "patches/xnu-8796-ci-candidates/README.md": "957864acbc37f2ae998c048d532216d03522c634db15fb7baa3c8747b9434db8",
+    "patches/xnu-8796-ci-candidates/zzzz-ci-public-profiling.patch": "8318a2c0fa46482a7c189d4addda0065bfa8d0a707da177c49660828ec13f22d",
+    "patches/xnu-8796-ci-candidates/zzzz-display-probe-feature.patch": "b5245754c8fef6b381f004a77ca5a483df8c0e285dfd1c99e90043f924fb1779",
+    "patches/xnu-8796-donor-candidates/vfs-getvfs-with-vfsops.patch": "ac27f0b6363193ce4145c951b1ad5422caebc92f69e8b97f18590f92142c63c5"
+  },
+  "feed_blob": [
+    "100644",
+    "blob",
+    "259bb88a27ff52415c36217958f4fd197b370330"
+  ]
+}
