@@ -1,0 +1,65 @@
+{
+  "phase": "recover",
+  "started_at": "2026-10-22T17:22:20.768829+00:00",
+  "commands": [
+    {
+      "at": "2026-10-22T17:25:14.668407+00:00",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'cat /sys/firmware/devicetree/base/model; cat /sys/firmware/devicetree/base/compatible'"
+      ],
+      "exit_code": 0,
+      "stdout": "Qualcomm Technologies, Inc. 8550 nuwa\u0000qcom,kalama-mtp\u0000qcom,kalama\u0000qcom,mtp\u0000",
+      "stderr": ""
+    },
+    {
+      "at": "2026-10-22T17:25:14.751351+00:00",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "shell",
+        "getprop sys.boot_completed"
+      ],
+      "exit_code": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "at": "2026-10-22T17:25:20.058885+00:00",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'cat /sys/firmware/devicetree/base/model; cat /sys/firmware/devicetree/base/compatible'"
+      ],
+      "exit_code": 0,
+      "stdout": "Qualcomm Technologies, Inc. 8550 nuwa\u0000qcom,kalama-mtp\u0000qcom,kalama\u0000qcom,mtp\u0000",
+      "stderr": ""
+    },
+    {
+      "at": "2026-10-22T17:25:20.133714+00:00",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "shell",
+        "getprop sys.boot_completed"
+      ],
+      "exit_code": 0,
+      "stdout": "\n",
+      "stderr": ""
+    }
+  ],
+  "observations": [],
+  "authorization": "R-009 A explicit diagnostic trial/recovery approval",
+  "candidate_sha256": "b60f96c0b69e8be6a36b3c74f919fb6a3c88eac7d0c8d3f785c26272cc3e864e",
+  "candidate_package_sha256": "0ff732734bc16432de90710d1877190ab470d76ba2c15cc7f6044756bdaf69b5",
+  "recovery_sha256": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+  "error": "Android completion not observed; recovery remains pending",
+  "ended_at": "2026-10-22T17:25:25.134647+00:00"
+}

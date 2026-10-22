@@ -14,9 +14,11 @@
 | --- | --- | --- |
 | — | 无 | — |
 
-## R-009 · 取消二级固件自动ABL链载（approved A，进行中）
+## R-009 · 取消二级固件自动ABL链载（approved A，已完成本轮验证与恢复）
 
 用户回复“批准”，承接上一条明确请求R-009 A，已批准候选A的源码、构建/产物、临时试启动及Android=1收尾范围；暂停解除。
+
+执行结果：源码2ab6827d，首轮39819452729仅APT超时未编译；修正换源覆盖后39820752081成功，665项输入/产物检查、新RAW空AUTO与原PILDxe SHA通过。3153920B包b60f96c0完成唯一一次实机试启动，照片以候选专属GUID确认已到DXE；后续AllocatePoolPages失败、多个架构协议缺失、DxeMain.c(581)断言，BDS/XNU未到达。用户按键回fastboot后按D-016临时加载已验证Android备份，01:25:30实际nuwa boot_completed=1，三分区hash与试前一致。按用户“做完这笔实机验证就停下 写好文档”收尾，未切换B或继续修复。完整证据reports/pil-no-auto/39820752081/及对应operations。下方保留审批时方案，不作为新的待执行授权请求。
 
 背景：R-008 A已完成头部单变量构建与两次临时试启动（第二次用户另明确要求录像）。新旧容器只差两个字节，修正后fastboot不再持续枚举，用户看见大量日志。照片清晰记录Pil_abl分区读取/ELF加载失败及uefipil.cfg自动处理panic；这不是XNU panic。同一帧没有NUWA-ENTRY，候选/原厂UEFI均含相关驱动，精确画面时序/来源仍待连续录像。**实际候选FD独立确认带[AUTO] ABL，源码配置问题无需猜测。** 取证与同SM8550对照见[本轮报告](operations/2026-10-23-relative-offset-trial-and-pil-stop.md)及reports/relative-offset/。
 

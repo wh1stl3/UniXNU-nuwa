@@ -870,3 +870,13 @@
 [Evidence] 安装步骤6分钟超时124，末项cpp-13-aarch64下载仍走Azure；构建未开始且无固件产物，固件2ab6827d和包清单不变。
 [Risk] 新runner实际下载与编译待重试，尚未执行本轮实机；维持用户要求的本次试验后停止边界。
 ```
+
+## Q-082 · R-009实机结果、Android恢复与停工收尾
+
+```text
+[unixnu-nuwa][device] 记录取消AUTO ABL后的DXE断言并恢复Android后停止
+
+[Change] 保存39820752081成功产物与665项核验、唯一一次临时启动照片和采样，保留初次恢复超时及按键后独立恢复成功；R-009/H-004收尾并按用户要求停止。
+[Evidence] 新包b60f96c0、FD5ad08040、实际空AUTO/PILDxe89e030af；照片候选GUID确认DXE但分配失败/架构协议缺失，01:25:30实际nuwa Android完成1且三分区hash与试前相同。
+[Risk] 分配器/内存图根因及BDS/XNU仍未验证，未扩heap或改ADT/board/feed，未继续修复、生成镜像或第二次试验；下一轮起点仅记文档。
+```

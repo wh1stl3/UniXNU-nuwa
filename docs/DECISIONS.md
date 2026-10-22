@@ -365,3 +365,10 @@ D-016/D-018补充（2026-10-23 00:11）：R-007 A诊断固件5e4a8c8/CI398096365
 - 证据：operations/2026-10-23-abl-handoff-and-relative-offset.md、operations/2026-10-23-relative-offset-trial-and-pil-stop.md；reports/relative-offset/package.json及两次launch/recovery；源码910ee079。
 
 头+8的text_offset不能填绝对FD_BASE；本机普通ABL变量分支会将其加到KernelBaseAddr。获批候选改为0，FD复制/入口目标仍A7100000，全部指令不变。WSL实际112B新shim与旧版只差offset10/11，容器只差4106/4107；两次实机fastboot枚举行为改变且用户有日志照片，但运行变量/PC/具体候选SEC阶段仍未验证，不把条件算术模型写为已捕获的实际错误码。后续构建/检查应分别描述relative text_offset和FD destination，不用旧header=FD_BASE门验收新shim。新FD的PIL策略另列R-009，未纳入本决策或R-008审批。
+
+# D-020 · 二级固件保留PIL但不自动链载Android ABL
+
+- 状态：accepted，R-009 A配置落地并完成本次试验（2026-10-23）；不代表完整DXE/BDS通过。
+- 证据：源码2ab6827d，CI39820752081，reports/pil-no-auto/39820752081/{artifact-inspection,screen-observation,trial-summary,postcondition}.json；对应operations。
+
+uefipil.cfg保留RETAIL和全部镜像定义，仅取消AUTO ABL；不为这条二级固件不需要的自动路径刷ABL或猜分区GUID，也不删除PIL/PILProxy。新FD实际6930B RAW SHA匹配且AUTO空，PILDxe原PE不变。本次已执行至候选DXE的后续分派，仍有SPSS metadata/页面分配失败和核心协议缺失；分配问题需独立证据，不能由本决策推导新内存地址/容量或声明存储通过。用户要求本次试验后停止，未切换候选B或继续生成镜像。

@@ -178,3 +178,5 @@
 2026-10-23 01:07 · 固定6af9701触发CI39819452729，新profile打包/试启动门及拒绝旧产物的负路径通过，设备只读前置Android=1 · Q-080（本条提交） · reports/pil-no-auto/39819452729/run-initial.json；reports/pil-no-auto/reject-old-profile.json
 
 2026-10-23 01:12 · CI39819452729工具安装超时124且未编译；据真实Azure下载日志将换源覆盖扩至全部APT源，固件输入不变，准备重试以完成获批单次实机 · Q-081（本条提交） · reports/pil-no-auto/39819452729/run-final.json；failure-selected.log
+
+2026-10-23 01:30 · R-009 A重试CI成功及665项检查后完成唯一一次实机，候选DXE页分配/协议缺失断言；按键回fastboot后原Android备份临时恢复，01:25:30完成1且三分区hash不变，按用户要求停止 · Q-082（本条提交） · docs/operations/2026-10-23-pil-no-auto-build-trial.md；reports/pil-no-auto/39820752081/

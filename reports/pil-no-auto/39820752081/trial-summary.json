@@ -1,0 +1,23 @@
+{
+  "approval": "R-009 A",
+  "candidate_image_sha256": "b60f96c0b69e8be6a36b3c74f919fb6a3c88eac7d0c8d3f785c26272cc3e864e",
+  "launch_started_at": "2026-10-22T17:21:19.271081+00:00",
+  "launch_ended_at": "2026-10-22T17:22:07.318372+00:00",
+  "fastboot_boot_exit_code": 0,
+  "fastboot_sample_count": 15,
+  "fastboot_present_samples": 0,
+  "actual_candidate_dxe_observed": true,
+  "evidence": "user photo: candidate-specific UniXNUDxe/DarwinBoot GUIDs discovered but not loaded, allocation failures and DxeMain.c(581) assertion",
+  "bds_reached": false,
+  "xnu_included": false,
+  "xnu_execution_observed": false,
+  "initial_recovery_wait_result": "Timed out waiting for ADB; no initial fastboot available",
+  "human_recovery": "User confirmed power+volume-down returned fastboot; separate original-boot recovery then succeeded",
+  "android_boot_completed": "1",
+  "android_completed_at": "2026-10-22T17:25:30.932871+00:00",
+  "three_partition_hashes_unchanged": true,
+  "board_feed_memory_fields_changed": false,
+  "flash_erase_slot_commands_used": false,
+  "stopped_after_current_trial": true,
+  "next_round_only": "Audit DXE allocatable memory map/usage and architectural protocol dependencies; no new experiment now"
+}

@@ -1,0 +1,67 @@
+{
+  "conclusion": "",
+  "headSha": "424513d6868290db12544317460dde1c8c283d80",
+  "jobs": [
+    {
+      "completedAt": "0001-01-01T00:00:00Z",
+      "conclusion": "",
+      "databaseId": 119971074580,
+      "name": "firmware",
+      "startedAt": "2026-10-22T17:13:31Z",
+      "status": "in_progress",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T17:13:33Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T17:13:32Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T17:13:35Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4",
+          "number": 2,
+          "startedAt": "2026-10-22T17:13:33Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T17:14:22Z",
+          "conclusion": "success",
+          "name": "Install build tools",
+          "number": 3,
+          "startedAt": "2026-10-22T17:13:35Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "0001-01-01T00:00:00Z",
+          "conclusion": "",
+          "name": "Build approved candidate only",
+          "number": 4,
+          "startedAt": "2026-10-22T17:14:22Z",
+          "status": "in_progress"
+        },
+        {
+          "completedAt": "0001-01-01T00:00:00Z",
+          "conclusion": "",
+          "name": "Preserve evidence and approved artifacts",
+          "number": 5,
+          "startedAt": "0001-01-01T00:00:00Z",
+          "status": "pending"
+        },
+        {
+          "completedAt": "0001-01-01T00:00:00Z",
+          "conclusion": "",
+          "name": "Post Run actions/checkout@v4",
+          "number": 10,
+          "startedAt": "0001-01-01T00:00:00Z",
+          "status": "pending"
+        }
+      ],
+      "url": "https://github.com/wh1stl3/UniXNU-nuwa/actions/runs/39820752081/job/119971074580"
+    }
+  ],
+  "status": "in_progress",
+  "url": "https://github.com/wh1stl3/UniXNU-nuwa/actions/runs/39820752081"
+}

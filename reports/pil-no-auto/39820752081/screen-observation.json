@@ -1,0 +1,39 @@
+{
+  "at_utc": "2026-10-22T17:23:49.240636+00:00",
+  "source": "Direct user reply and attached photo from current R-009 trial",
+  "user_text": "停在报错了",
+  "photo_path": "reports/pil-no-auto/39820752081/user-screen.jpg",
+  "photo_sha256": "df7e22db1f21adf47498ed258016f70e55b09a839f6fcf76f5da6b5f365726b2",
+  "readable_lines": [
+    "SPSS Failed to load metadata",
+    "AllocatePoolPages: failed to allocate 233 pages",
+    "Security Arch Protocol not present!!",
+    "Bds Arch Protocol not present!!",
+    "Variable Arch Protocol not present!!",
+    "Variable Write Arch Protocol not present!!",
+    "Capsule Arch Protocol not present!!",
+    "Real Time Clock Arch Protocol not present!!",
+    "Driver 29B950CF-586D-49EA-9D71-F88645CCDAF6 was discovered but not loaded!!",
+    "Driver 1B64AF87-8415-4B57-9B16-680D70913B9F was discovered but not loaded!!",
+    "ASSERT_EFI_ERROR (Status = Not Found)",
+    "ASSERT [DxeCore] DxeMain.c(581)"
+  ],
+  "interpretation": "Candidate DXE reached; UniXNUDxe/DarwinBoot discovered but not loaded; allocation failures plus missing architectural protocols stop DXE before BDS/XNU",
+  "root_cause": "Not established: exhaustion/fragmentation/map or earlier allocation consumers require next-turn evidence",
+  "next_actions_scope": "Restore Android, document, stop; no additional trial or image",
+  "image_specific_guid_matches": [
+    {
+      "photo_guid": "29b950cf-586d-49ea-9d71-f88645ccdaf6",
+      "name": "UniXNUDxe",
+      "candidate_module_present": true,
+      "installed_uefi_has_guid": false
+    },
+    {
+      "photo_guid": "1b64af87-8415-4b57-9b16-680d70913b9f",
+      "name": "DarwinBoot",
+      "candidate_module_present": true,
+      "installed_uefi_has_guid": false
+    }
+  ],
+  "attribution": "Photo GUIDs specific to candidate modules, absent from installed stock UEFI inventory, support actual candidate DXE execution; both modules shown not loaded"
+}

@@ -1,0 +1,30 @@
+{
+  "approval": "R-009 A",
+  "scope": "No AUTO ABL firmware-only temporary v4 container",
+  "run_id": 39820752081,
+  "firmware_commit": "2ab6827d77dfe15010534b52e1abb76a26464a7d",
+  "image_path": "out/trial-boot/pil-no-auto-39820752081/boot-pil-no-auto-v4.img",
+  "image_bytes": 3153920,
+  "image_sha256": "b60f96c0b69e8be6a36b3c74f919fb6a3c88eac7d0c8d3f785c26272cc3e864e",
+  "original_boot_sha256": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+  "fd_sha256": "5ad08040a420608119d1d4cc72b2f54150d1fd33e111460fef711153aa2a3a45",
+  "shim_sha256": "8a3b54765c895a0366539130fdf6e4e4a01e364fe7de067a38d0193606f9d462",
+  "shim_text_offset": 0,
+  "pil_config_sha256": "dbc9ee6e4c7728b32245453322f348c32d6a5eef0107f8c07662918bc3c23fdd",
+  "pil_auto_entries": [],
+  "pil_driver_sha256": "89e030af07847bdc596f0c213bdce0ac430be66e572db55b434d7ec66ad9afcb",
+  "header_version": 4,
+  "page_bytes": 4096,
+  "kernel_bytes": 3145840,
+  "changed_header_fields": [
+    "kernel_size"
+  ],
+  "ramdisk_bytes": 0,
+  "signature_bytes": 0,
+  "appended_dtb": false,
+  "fat_included": false,
+  "xnu_included": false,
+  "dt_source": "Installed nuwa vendor_boot via ABL; actual candidate handoff unverified",
+  "candidate_device_executed": false,
+  "recovery_required": true
+}

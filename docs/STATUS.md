@@ -1,56 +1,56 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-23 01:12（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-23 01:30（Asia/Shanghai）。历史见WORKLOG。
 
-## 当前结论
+## 当前结论与停止边界
 
-**R-009 A已获批准并完成空AUTO解析静态审查；固件源2ab6827d保留PIL、仅取消AUTO ABL，独立profile33项输入检查通过，CI39819452729在APT安装超时124，尚未编译且无固件产物；已扩大换源到全部活跃APT配置，待同一固件输入重试。nuwa此前已回Android完成1，尚未进入XNU。**
+**R-009 A的构建、唯一一次实机验证和恢复已完成，按用户“做完这笔实机验证就停下 写好文档”停止。候选已实际进入DXE，随后页面分配失败、核心架构协议缺失，停在DxeMain.c(581)；尚未到BDS/UniXNU加载器/XNU。nuwa已恢复Android，boot_completed=1，三个Android分区hash与试前一致。**
 
-[本轮构建/试验记录](operations/2026-10-23-pil-no-auto-build-trial.md)，reports/pil-no-auto/。
+[本轮完整报告](operations/2026-10-23-pil-no-auto-build-trial.md)，证据reports/pil-no-auto/39820752081/。R-009标approved A/已完成，当前无新增审批请求；下方下一轮事项本轮不执行。
 
-照片显示DXE驱动加载，但同帧没有NUWA-ENTRY；候选和原厂都含相应驱动，精确归属/启动时序仍需连续录像，不能宣布候选SEC/BDS实机通过。[完整构建、试验、照片与同SoC对照](operations/2026-10-23-relative-offset-trial-and-pil-stop.md)。
+## 固定源码、CI与真实产物
 
-## 当前输入与产物
-
-| 输入 | 当前状态 |
+| 项目 | 当前状态 |
 | --- | --- |
-| wh1stl3/UniXNU@76dd641 | 合并上游并保留nuwa补丁；内核CI39793231214成功，真实内核静态核验通过 |
-| 设备仓 | board仍example=true，普通基座-D完整入口未打通；feed不变 |
-| wh1stl3/uefi-nuwa | 稳定0a3a51a；SEC诊断5e4a8c8；当前本地codex/nuwa-no-auto-abl@2ab6827d，父910ee079保留正确BootShim头，只追加RAW配置替换，已等同发布GitHub，工作树干净 |
-| R-007 FD | CI39809636575，四EFI/3MiB FD/112B旧shim、665项静态检查通过；FD9ea347a4完全复用 |
-| R-008新shim | 本机WSL clang14/llvm-objcopy真实编译112B，SHA8a3b5476…，relative offset=0、FD目标A7100000不变，全部指令与旧版相同 |
-| R-008新包 | 3153920B/SHA8b420abe64ac1738685879497d6a3e167a40873887b2122db01e8ae864ed2dfb，对R-007包仅4106/4107两字节变化，无XNU/新增DTB/ramdisk/FAT |
-| R-009源码候选0007 | 保留PIL驱动，只将内嵌配置AUTO ABL行改注释；RAW输入指向nuwa本地配置，其他字段不变，已应用并提交2ab6827d；空AUTO控制流静态通过，尚未编译 |
+| wh1stl3/UniXNU@76dd641 | 保留nuwa补丁的合并基座；8796内核CI39793231214成功，真实内核静态核验通过 |
+| 设备仓 | board仍example=true，普通基座-D完整入口尚未打通；feed不变 |
+| wh1stl3/uefi-nuwa | 当前codex/nuwa-no-auto-abl@2ab6827d；父910ee079的正确相对头保留，仅RAW输入改本地CFG并注释AUTO ABL；已发布，源码工作树干净 |
+| 旧分支 | 稳定0a3a51a、SEC诊断5e4a8c8、相对偏移910ee079均保留，未重写历史 |
+| 首轮39819452729 | 工具安装从Azure慢下载，360秒超时124；编译未开始，无固件产物，失败日志保留 |
+| 重试39820752081 | 固定设备424513d、固件2ab6827d、pil-no-auto；全活跃APT源换源后工具安装47秒，CI总5m57s成功，665项产物/输入静态检查通过 |
+| 新FD | 3145728B/SHA5ad08040a420608119d1d4cc72b2f54150d1fd33e111460fef711153aa2a3a45；四EFI及SEC标记/DEPEX/HOB验收通过 |
+| 新配置/PIL | 实际RAW6930B/SHAdbc9ee6e…，AUTO空；PILDxe原PE SHA89e030af…保持；未删除驱动或改二进制跳过panic |
+| shim/临时包 | shim112B/SHA8a3b5476…与R-008相同；v4包3153920B/SHAb60f96c0b69e8be6a36b3c74f919fb6a3c88eac7d0c8d3f785c26272cc3e864e，无新增DTB/ramdisk/FAT/XNU |
 
-## 本轮真实试验与当前设备
+下载的665项清单/文件SHA与内容检查通过；服务端ZIP digest已记录，未独立核对完整ZIP摘要，不混为一谈。本机WSL只编译过shim，不是完整XNU本机构建通过。
 
-R-008首次与用户要求的同包录像复试，均先重新进入bootloader隔离状态；Sending/Booting OKAY，每次15次采样nuwa fastboot均false，与R-007持续true不同。用户原话“很多日志 Auto calling什么 什么panic”，后提供清晰末屏照片。ACK仍不代替阶段证据。
+## 本轮实机结果
 
-两次恢复检查分别00:41:49、00:43:49确认实际nuwa/kalama Android=1；两份记录只有ADB识别/等待，没有重新下发原Android boot，回返机制未确定，不声称已执行原boot临时恢复。postcondition确认boot_a/vendor_boot_a/init_boot_a三个全分区hash与试前相同；logfs/minidump也完全未变。当前仍既有自定义/rooted Android，非完整原厂恢复，未修复持久A槽标志。enuma未作为目标，无flash/erase/改槽。
+2026-10-23 01:21:19开始唯一一次R-009临时启动，实际nuwa/kalama、Android完成1和fastboot产品/解锁/槽位先核对，按D-016重进bootloader隔离。Sending/Booting OKAY，15次fastboot采样均false；ACK只作命令接受。
 
-## 新阻塞与同SM8550参考
+用户回复“停在报错了”并提供清晰照片。画面有UniXNUDxe GUID29b950cf…和DarwinBoot GUID1b64af87…的discovered but not loaded；实际候选包含而安装原厂98PE清单不含这两个GUID，支持候选DXE执行归属。最后屏已越过此前AUTO ABL的立即终止位置，出现SPSS metadata加载失败、连续AllocatePoolPages失败、Security/Bds/Variable/Variable Write/Capsule/RTC架构协议缺失，最终ASSERT_EFI_ERROR(Not Found)、[DxeCore]DxeMain.c(581)。
 
-照片末尾：Pil_abl Failed to read from partition / Failed to load ELF file / Auto processing of uefipil.cfg failed. Calling target panic。**这是Qualcomm PIL/ABL加载错误，非XNU panic。** 候选FD的PILDxe独立匹配错误字符串和CFG FFS，实际RAW配置6868B/SHA51facfcb…带[AUTO] ABL；候选APRIORI在BdsDxe前安排PILProxy/PIL/SPSS。不能为满足不需要的自动ABL路径去刷ABL或猜分区GUID，也不能认为取消AUTO就证明UFS/BlockIo已可用。
+**已实机观察到候选DXE执行，不等于完整DXE/BDS实机通过。** UniXNUDxe/DarwinBoot未加载，未到XNU。页面分配失败的根因未确定：没有本轮运行时可用map/空闲量/最大连续块或分配轨迹，不能直接说12GB不够、认定唯一驱动或直接扩heap/ADT窗口。
 
-已只读核对官方同SoC来源：uefi-sheng@0eb4514d默认SHENG_VENDOR_HW=0，PIL三项有条件门；uefi-fuxi@bb25ad75的最小链没有PIL且未记录真机运行；nx729j模板仍带PIL/原CFG，不能机械复制；vermeer官方只记录内核CI等状态，未找到PIL运行结论。固定提交/文件SHA/片段见sm8550-pil-references.json。未借用预链接、身份或板级内存值，未升级上游。
+## 恢复与当前设备
 
-## ABL契约与内核剩余门
+初次recovery.json因启动时无nuwa fastboot/ADB，只等待ADB后180秒超时，原始失败保留。用户按电源+音量下并明确“已回fastboot”；H-004已完成。单独recovery-after-keys重新识别nuwa/复位bootloader后，临时发送已验证Android备份boot SHAef558db2…，Sending196608KB/Booting均OKAY；**01:25:30确认实际nuwa/kalama sys.boot_completed=1**，postcondition再次确认。
 
-本机ABL/UEFI静态核对：普通平台、raw64、image_size非零且两Kernel变量成功时，ABL会将Image.text_offset加到KernelBaseAddr。旧头A7100000在同机原厂Kernel表[A8000000,B8000000)条件下越窗；已修正头语义，运行变量/实际旧错误仍未捕获。ACK发于BootLinux前，实际L/EL/MMU/cache/PC继续未验证。[契约报告](operations/2026-10-23-abl-handoff-and-relative-offset.md)。
+boot_a/vendor_boot_a/init_boot_a全分区SHA与紧邻试前值相同；未flash/erase/改槽，enuma未作为目标。当前是此前自定义/rooted Android，非完整原厂恢复，既有A槽持久标志未修复。H-001独立按键演练及H-003可选完整首屏录像留后续，不阻塞本轮收尾。
 
-8796源内核20187912B/SHA77742999fc1c1b6a94c9603664d946553070f73c6eed83ce9fcca06d70d73ac8，Darwin22/iOS16、4KiB段起始、五平台导出、零undefined、三archive hash、65348项donor指针零失败。完整NativePrelink/运行ABI仍未验证，历史payload输入仍CI15 a9e08c69，未自动切换；选定ZIP成员校验不等于完整ZIP摘要核验。[内核核验](operations/2026-10-22-merged-kernel-artifact-validation.md)。
+## 下一轮起点（本轮不执行）
 
-608B CommandLine/0x2e0 boot_args修复已真实编译链接DarwinBoot EFI，运行ABI未验证。本机WSL仅新增shim编译通过，不是完整XNU本机构建通过。目标ADT/真实provider/定时器/watchdog/13回调仍待运行验收；ARCH_TIMER/BOOT_PROGRESS仍0，Android DT不能直接当Apple ADT。ramoops与FD保留区重叠，未占用作日志。
+1. 先审查UEFI可分配内存图、空闲量/最大连续块与首次分配失败，再看必需架构协议提供者/DEPEX；区分UEFI分配器资源和XNU/ADT拥有窗口，不凭照片选择新基址或容量。
+2. 分析SPSS metadata失败是否独立阻塞，复用真实驱动并保留依赖/来源证据；R-009 B未执行，不能直接整体关闭vendor驱动。
+3. 恢复工具现有ADB等待路径不会接管后来才出现的fastboot；下轮可完善，但本轮已用独立恢复流程完成Android=1，不再改代码或试启动。
+4. 后续若生成新FD或改内存相关字段，仍按具体硬停范围审阅；当前没有新镜像或下一次实机请求。
 
-## 下一步
+## 内核与后续目标
 
-**用户最新收尾指令：只完成当前R-009这笔实机验证，确认Android完成1，写好文档后停下；后续问题仅记录为下一轮起点。**
+源内核20187912B/SHA77742999fc1c1b6a94c9603664d946553070f73c6eed83ce9fcca06d70d73ac8，Darwin22/iOS16、4KiB段起始、五平台导出、零undefined、三archive hash和65348项donor指针零失败。完整NativePrelink/运行ABI仍未验证，历史payload输入仍CI15 a9e08c69，未自动切换。[内核核验](operations/2026-10-22-merged-kernel-artifact-validation.md)。
 
-1. CI39819452729终态failure，真实首错为APT仍从Azure慢速下载cpp-13-aarch64并触及360秒上限；修正全部APT源覆盖后重试，固件2ab6827d不变。旧run-final/failure-selected.log保留，未执行本轮实机。
-2. 构建成功后下载并严格检查实际RAW SHA/空AUTO、PILDxe原SHA、正确相对头0、SEC标记、四EFI和FD；再按R-009 A受限v4打包/临时试启动并以Android完成1收尾。B未获批准，不自动切换。
-3. H-003连续录像仍可补首屏时序，不阻塞静态/构建工作。R-009暂停已解除，Git/GitHub持续授权。
-4. 入口/BDS打通后仍需目标ADT、内存窗口、真实provider配置、完整预链接与负载才能推进XNU。无QEMU或XNU实机执行通过结论。
+608B CommandLine/0x2e0 boot_args修复已实际编译链接DarwinBoot EFI，运行ABI未验证。目标ADT/真实provider/定时器/watchdog/13回调仍待验收，ARCH_TIMER/BOOT_PROGRESS仍0。Android DT不能直接当Apple ADT；ramoops与FD保留区重叠，未占作日志区。入口/BDS之后还需完整负载，不能把本轮固件诊断当内核启动。
 
 ## 固定边界
 
-board/feed/内存图及所有_verified不变；4KiB、iPhone10,3/d22ap/iOS16.7.16/20H392、8796.141.3；ipad_identity=true为安全属性。D-002先512MiB–1GiB过阶段5，硬上限8GiB。未知板值不编造，不套其他donor的slide/early_security_init/roots。两个旧仓只读，独立固件源码授权明确；Git/GitHub/workflow持续授权。
+board/feed/内存图及所有_verified不变；4KiB、iPhone10,3/d22ap/iOS16.7.16/20H392、8796.141.3；ipad_identity=true为安全属性。D-002先512MiB–1GiB过阶段5，硬上限8GiB。未知板值不编造，不借其他donor的prelink数值。两旧仓只读；Git/GitHub/workflow持续授权，本轮结束后不继续推进。
