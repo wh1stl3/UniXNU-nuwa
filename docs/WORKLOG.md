@@ -86,3 +86,5 @@
 - 2026-10-22 15:54 · 只读核验并行仓run24/53MB预链接/3MiB固件及输入hash，独立核对iPhone donor manifest；本仓只读plan首错确认缺VFS符号，可复用桥接实现；记录真实驱动缺口、预链接豁免与固件保留区/加载器门槛及两条路径 · 提交号：Q-036已发布875482a；本项待定Q-037 · reports/parallel-progress-review/，docs/operations/2026-10-22-parallel-three-artifacts-review.md
 
 - 2026-10-22 16:03 · 第十一轮源内核再次构建成功，933份真实编译记录及四项消费者输入已取得；平台首错为不存在libsa搜索目录触发-Werror，仅在其不存在时移除，保留未知目录报错，4项保护测试通过 · 提交号：Q-037已发布e7228be；本项待定Q-038 · reports/kernel-ci/39742250205/，docs/operations/2026-10-22-darwin22-archive-build.md
+
+- 2026-10-22 16:05 · Q-038已发布562c22f，启动第十二轮39744948467，仅验证已确认无效libsa路径的最小修复与平台archive；VFS候选及预链接方案另有只读核验，未改board/feed，最终结果待取证 · 提交号：562c22f；本项待定Q-039 · reports/kernel-ci/39744948467/

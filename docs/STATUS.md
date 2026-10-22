@@ -1,6 +1,6 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 16:03（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-22 16:05（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
@@ -8,7 +8,7 @@
 
 ## 本轮推进
 
-[第十一轮39742250205](https://github.com/wh1stl3/UniXNU/actions/runs/39742250205)已完成：源内核再次完整构建成功，933份真实C/C++记录及四项消费者输入已取得；整体CI失败在ArmCpu的不存在libsa搜索目录被-Werror拒绝。仅移除已确认不存在的该目录候选、保留其余头文件检查，4项参数保护测试通过，待发布重跑；平台archive尚未通过。见[本轮记录](operations/2026-10-22-darwin22-archive-build.md)。
+[第十一轮39742250205](https://github.com/wh1stl3/UniXNU/actions/runs/39742250205)已完成：源内核再次完整构建成功，933份真实C/C++记录及四项消费者输入已取得；整体CI失败在ArmCpu的不存在libsa搜索目录被-Werror拒绝。仅移除已确认不存在的该目录候选、保留其余头文件检查，4项参数保护测试通过，修复562c22f已发布，[第十二轮39744948467](https://github.com/wh1stl3/UniXNU/actions/runs/39744948467)正在验证；平台archive尚未通过。见[本轮记录](operations/2026-10-22-darwin22-archive-build.md)。
 
 ## 当前边界
 
@@ -28,7 +28,7 @@
 
 ## 下一步
 
-1. 发布第十一轮无效libsa搜索目录的最小修复并重跑平台archive验证，保留-Werror及未知缺失目录报错；四份真实命令和原对象证据见reports/kernel-ci/39742250205/。源内核已成功与archive尚未验证分开记录；不把符号名闭包扩大成完整ABI通过。
+1. 跟踪第十二轮39744948467（device_ref=562c22fda45118f46b450390045a53b5a739f981），下载真实driver archive首错/符号结果；保留-Werror及未知目录报错，原始四份命令和对象证据见reports/kernel-ci/39742250205/。源内核已成功与archive尚未验证分开记录；不把符号名闭包扩大成完整ABI通过。
 2. 收口boot-progress 13项回调、watchdog接口和scratch布局风险，再建立正式nuwa配置并接回-D入口；保持feed，未知板值TODO。
 3. 只读解析既定iPhone donor的kernelcache，补齐真实hash/roots等证据；不移用iPadOS17的prelink数值，不生成镜像。任何board身份/内存/基址变更先硬停审查。
 4. 当前不安排这份源内核上机；达到可启动链路前置条件后，在NEED-REVIEW列出至少两条验证路径、代价和最小批准范围。只差实体按键的待办不阻塞软件侧工作。

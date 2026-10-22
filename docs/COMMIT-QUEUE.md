@@ -381,3 +381,13 @@
 [Evidence] reports/kernel-ci/39742250205/：kernel_built=true、四项记录及原对象通过，原始行852093为-Werror,-Wmissing-include-dirs；4项参数保护测试通过，未知缺失目录仍保留；提取器保存有界附加证据。
 [Risk] ArmCpu对象及后续两库尚未构建通过，修复待重跑；符号闭包/完整ABI/预链接和实机未验证；feed/board不变，无诊断/固件镜像、设备动作或_verified=true。
 ```
+
+## Q-039 · 第十二轮平台archive验证启动
+
+```text
+[unixnu-nuwa][build] 发布无效搜索目录修复并启动第十二轮验证
+
+[Change] 保存562c22f发布和第十二轮精确输入，保持59项补丁及严格平台archive检查，继续按实际首错推进。
+[Evidence] reports/kernel-ci/39744948467/run.json和api-publish.json；https://github.com/wh1stl3/UniXNU/actions/runs/39744948467，device_ref=562c22fda45118f46b450390045a53b5a739f981。
+[Risk] 本轮最终结果尚未验证，VFS与完整驱动/预链接ABI仍有待办；feed/board不变，无诊断/固件镜像、设备动作或_verified=true。
+```
