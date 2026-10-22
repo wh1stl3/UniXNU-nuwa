@@ -920,3 +920,13 @@
 [Evidence] 39826580758实际首错MdePkg.dec(33)缺mipisyst/include，嵌套子模块前导减号；0008应用/后哈希通过，DeviceBuild契约要求Mu递归初始化。
 [Risk] 重试完整编译未验证，未生成FD或执行候选；来源版本、诊断补丁、board/feed及内存图不变。
 ```
+
+## Q-087 · DXE诊断私有锁调用修复
+
+```text
+[unixnu-nuwa][firmware] 将诊断快照加锁包装保留在Mu内存实现上下文
+
+[Change] Page.c提供取锁快照包装，DxeMain只调用该包装，更新两文件诊断补丁及前后哈希，保留旧版编译错误证据。
+[Evidence] 39827372451实际DxeMain.c:575/577报私有锁未声明；Imem.h:106/115和Page.c:90/102为真实原型实现，修订bb8bf3ec严格apply及35项静态检查通过。
+[Risk] 修订版完整编译和设备执行未验证；保持原锁语义、内存图、board/feed和断言，不跳过错误或新增驱动替身。
+```

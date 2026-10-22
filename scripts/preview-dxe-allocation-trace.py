@@ -88,7 +88,18 @@ def main():
     assert old[PAGE].count(anchor) == 1
     # Insert before the function documentation, keeping the original doc attached.
     pos = old[PAGE].rfind('/**',0,old[PAGE].index(anchor))
-    revised = {PAGE:old[PAGE][:pos]+HELPER+old[PAGE][pos:]}
+    revised = {PAGE:old[PAGE][:pos]+HELPER+'''// Keep private memory-lock functions within their existing Page.c context.
+VOID
+CoreNuwaDumpAllocationStateWithLock (
+  IN CONST CHAR8  *Stage
+  )
+{
+  CoreAcquireMemoryLock ();
+  CoreNuwaDumpAllocationState (Stage);
+  CoreReleaseMemoryLock ();
+}
+
+'''+old[PAGE][pos:]}
     failure = '  if (Start == 0) {\n    DEBUG ((DEBUG_ERROR | DEBUG_PAGE, "AllocatePoolPages: failed to allocate %d pages\\n", (UINT32)NumberOfPages));'
     replacement = '''  if (Start == 0) {
     mNuwaPoolFailureCount++;
@@ -105,14 +116,12 @@ def main():
     include = '#include "DxeMain.h"\n'
     revised[MAIN] = old[MAIN].replace(include,include+'''
 // Internal diagnostic helper, called only while holding the core memory lock.
-VOID CoreNuwaDumpAllocationState (IN CONST CHAR8 *Stage);
+VOID CoreNuwaDumpAllocationStateWithLock (IN CONST CHAR8 *Stage);
 ''',1)
     target = '  Status = CoreAllEfiServicesAvailable ();\n  if (EFI_ERROR (Status)) {'
     assert revised[MAIN].count(target)==1
     revised[MAIN] = revised[MAIN].replace(target,target+'''
-    CoreAcquireMemoryLock ();
-    CoreNuwaDumpAllocationState ("missing-arch-before-assert");
-    CoreReleaseMemoryLock ();
+    CoreNuwaDumpAllocationStateWithLock ("missing-arch-before-assert");
 ''',1)
     patch=''.join(''.join(difflib.unified_diff(old[p].replace('\n',original_endings[p]).splitlines(True),
                 revised[p].replace('\n',original_endings[p]).splitlines(True),
@@ -125,7 +134,7 @@ VOID CoreNuwaDumpAllocationState (IN CONST CHAR8 *Stage);
     check.check_returncode()
     if re.search(r'\b(?:AllocatePool|AllocatePages|GetMemoryMap|CoreConvertPages|PromoteMemoryResource)\s*\(',HELPER):
         raise ValueError('Diagnostic helper must not allocate or mutate memory map')
-    result=dict(scope='Source-only pending R-010; no compilation/image/device command',
+    result=dict(scope='Approved R-010 source revision after private-lock declaration error; no compilation/image/device command',
         mu_repository='microsoft/mu_basecore',mu_commit=PIN,license='BSD-2-Clause-Patent (source headers)',
         inputs=[dict(path=p,lf_sha256=hashlib.sha256(old[p].encode()).hexdigest(),
                      proposed_lf_sha256=hashlib.sha256(revised[p].encode()).hexdigest()) for p in old],

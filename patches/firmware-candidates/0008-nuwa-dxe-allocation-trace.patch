@@ -1,6 +1,6 @@
 --- a/Mu_Basecore/MdeModulePkg/Core/Dxe/Mem/Page.c
 +++ b/Mu_Basecore/MdeModulePkg/Core/Dxe/Mem/Page.c
-@@ -2339,6 +2339,58 @@
+@@ -2339,6 +2339,69 @@
    return Status;
  }
  
@@ -56,10 +56,21 @@
 +  }
 +}
 +
++// Keep private memory-lock functions within their existing Page.c context.
++VOID
++CoreNuwaDumpAllocationStateWithLock (
++  IN CONST CHAR8  *Stage
++  )
++{
++  CoreAcquireMemoryLock ();
++  CoreNuwaDumpAllocationState (Stage);
++  CoreReleaseMemoryLock ();
++}
++
  /**
    Internal function.  Used by the pool functions to allocate pages
    to back pool allocation requests.
-@@ -2376,6 +2428,14 @@
+@@ -2376,6 +2439,14 @@
    // Convert it to boot services data
    //
    if (Start == 0) {
@@ -82,17 +93,15 @@
  #include "DxeMain.h"
 +
 +// Internal diagnostic helper, called only while holding the core memory lock.
-+VOID CoreNuwaDumpAllocationState (IN CONST CHAR8 *Stage);
++VOID CoreNuwaDumpAllocationStateWithLock (IN CONST CHAR8 *Stage);
  
  //
  // DXE Core Global Variables for Protocols from PEI
-@@ -569,6 +572,10 @@
+@@ -569,6 +572,8 @@
    //
    Status = CoreAllEfiServicesAvailable ();
    if (EFI_ERROR (Status)) {
-+    CoreAcquireMemoryLock ();
-+    CoreNuwaDumpAllocationState ("missing-arch-before-assert");
-+    CoreReleaseMemoryLock ();
++    CoreNuwaDumpAllocationStateWithLock ("missing-arch-before-assert");
 +
      //
      // Report Status code that some Architectural Protocols are not present.

@@ -1,5 +1,5 @@
 {
-  "scope": "Source-only pending R-010; no compilation/image/device command",
+  "scope": "Approved R-010 source revision after private-lock declaration error; no compilation/image/device command",
   "mu_repository": "microsoft/mu_basecore",
   "mu_commit": "cfb93724a06ff86ff5ba971413368a7809ee42a5",
   "license": "BSD-2-Clause-Patent (source headers)",
@@ -7,16 +7,16 @@
     {
       "path": "MdeModulePkg/Core/Dxe/Mem/Page.c",
       "lf_sha256": "d0d0a2db4e3956c4cffd81a68efc705212ebdbe0ea2f0e7d1fffbe358bb82dd7",
-      "proposed_lf_sha256": "410caf700acd4d6d1e5268e5de1296cd56f2d475efddd9e94183e6afcaeedc3d"
+      "proposed_lf_sha256": "e00998a080748aebd2073e1e81540610c9bfa76860f6cd2821f2f75906845a85"
     },
     {
       "path": "MdeModulePkg/Core/Dxe/DxeMain/DxeMain.c",
       "lf_sha256": "baa2b6c6c201afaa06d044ea1f15f26c48f2133821d347a0d42f54e4aed231ba",
-      "proposed_lf_sha256": "615fa3160a1ed33165c10c126bd26f62e19df837a3965e303d0d37d39c057cfe"
+      "proposed_lf_sha256": "4b6c8e83326d0d3c7b9bde4c8163471f5f63b80605aa41326f4d629fdd8c134d"
     }
   ],
   "patch": "patches/firmware-candidates/0008-nuwa-dxe-allocation-trace.patch",
-  "patch_sha256": "ac8bd4763feddda9a7e5e6b0d179c3416531283137b75329965d5737bb6e32d9",
+  "patch_sha256": "bb8bf3ece733c4410e33477da65e414841a7b890f4f3c54d94c651af47ca3af2",
   "apply_check": {
     "argv": [
       "git",

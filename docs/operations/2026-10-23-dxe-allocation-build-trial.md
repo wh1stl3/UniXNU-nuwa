@@ -21,3 +21,10 @@ CI39826580758从设备316c19f启动，工具安装44秒后进入构建，结果�
 实际首错`MdePkg.dec(33): error 000E`，`Library/MipiSysTLib/mipisyst/library/include`不存在；25条命令已到build入口，尚未编译核心。下载证据包18项大小/哈希逐一匹配。补丁严格应用和后置输入hash均已通过，CRLF例外生效；不归因于C编译错误。
 
 submodules-final.txt显示Mu嵌套gitlink均为未初始化（前导减号），setup只有Mu行缺“## Done.”的常规格式；已修改Mu工作树使Stuart setup未补齐其嵌套依赖是当前解释，精确内部判定未单独跟踪。按DeviceBuild.py GetRequiredSubmodules对Mu声明recursive=True的契约，在应用诊断前主动`git submodule update --init --recursive --depth 1`，仅在CI临时Mu目录执行，使用原gitlink，不更新版本或改只读缓存。运行待重试。
+
+
+## 重试39827372451真实编译错误与修订
+
+5m10s失败，build.log:1714/1721首报DxeMain.c:575/577未声明CoreAcquireMemoryLock/CoreReleaseMemoryLock；前轮嵌套依赖问题已消失，实际核心C编译开始。下载所有inventory项逐一验证，准确错误行/原build.log摘要见compile-errors.json，原完整build.log仍在本机out证据包。
+
+这两个函数在固定Mu Mem/Imem.h:106/115声明、Page.c:90/102实现，DxeMain.h未导出；草案静态apply不检查C声明可见性，不能当编译证明。修复不手写既有原型、不禁用-Werror、不改锁：Page.c新增CoreNuwaDumpAllocationStateWithLock包装，在其原有可见上下文取锁/快照/放锁；DxeMain只声明并调用包装。首次分配失败仍使用原已持锁的内部快照。保持两文件和日志语义，patch更新为bb8bf3ece733c4410e33477da65e414841a7b890f4f3c54d94c651af47ca3af2，原修订证据保留preview-at-build.json。35项输入及严格apply检查再次通过，修订版实际编译未验证。

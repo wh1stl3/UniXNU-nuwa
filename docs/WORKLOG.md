@@ -188,3 +188,5 @@
 2026-10-23T01:55:48+08:00 · CI39826580758编译中，落实D-021设备前置门并只读确认nuwa Android完成1及三分区摘要 · Q-085（提交后以git log定位） · reports/dxe-allocation-audit/gate-check.json；android-online-before-build.json
 
 2026-10-23T01:58:43+08:00 · 39826580758首错为Mu嵌套依赖缺失，取包逐项验hash，补丁前递归初始化固定gitlink后重试 · Q-086（提交后以git log定位） · reports/dxe-allocation/39826580758/
+
+2026-10-23T02:07:20+08:00 · 39827372451真实编译首错为私有锁声明不可见，将加锁包装留在Page.c，35项静态检查重过后重跑 · Q-087（提交后以git log定位） · reports/dxe-allocation/39827372451/compile-errors.json

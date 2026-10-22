@@ -1,0 +1,23 @@
+{
+  "inventory_files": 469,
+  "all_member_hashes_match": true,
+  "build_log_sha256": "7266ad527bff519d4cfdd56dfa521005549c711a68c64c849f0314527147ae2c",
+  "errors": [
+    {
+      "line": 1714,
+      "text": "INFO - /home/runner/work/_temp/nuwa-firmware-candidate/firmware/Mu_Basecore/MdeModulePkg/Core/Dxe/DxeMain/DxeMain.c:575:5: error: call to undeclared function 'CoreAcquireMemoryLock'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]"
+    },
+    {
+      "line": 1721,
+      "text": "INFO - /home/runner/work/_temp/nuwa-firmware-candidate/firmware/Mu_Basecore/MdeModulePkg/Core/Dxe/DxeMain/DxeMain.c:577:5: error: call to undeclared function 'CoreReleaseMemoryLock'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]"
+    },
+    {
+      "line": 1736,
+      "text": "INFO -  : error 7000: Failed to execute command"
+    },
+    {
+      "line": 1741,
+      "text": "INFO -  : error F002: Failed to build module"
+    }
+  ]
+}
