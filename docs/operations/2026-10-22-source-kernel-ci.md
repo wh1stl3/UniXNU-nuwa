@@ -31,7 +31,7 @@
 
 boot-progress、PGZ probe及可选设备archive关闭。这是明确的源编译配置，不是nuwa设备配置；13项回调、watchdog、Darwin22 archive、SMMU/DMA及用户态ABI问题仍未验证。没有运行NativePrelink、IPSW获取、payload/bootimg/固件构建或设备动作。
 
-只有make成功、原始kernel存在且解析为普通ARM64 subtype0/MH_EXECUTE，才记录`kernel_built=true`并保存hash、file/otool结果。即使成功也仅为**云端源内核构建通过**，不是预链接通过、QEMU通过或实机通过；`device_verified`始终false。当前未取得实际构建结果。
+只有make成功、原始kernel存在且解析为普通ARM64 subtype0/MH_EXECUTE，才记录`kernel_built=true`并保存hash、file/otool结果。即使成功也仅为**云端源内核构建通过**，不是预链接通过、QEMU通过或实机通过；`device_verified`始终false。首轮结果为失败，见下。
 
 失败时上传控制台、主机工具清单及build.json（含对象数和应用后的源状态）；成功时额外上传原始Mach-O。工作流只手动触发，不因发布设备代码自动构建。
 
@@ -42,3 +42,7 @@ boot-progress、PGZ probe及可选设备archive关闭。这是明确的源编译
 GitHub CLI原OAuth授权缺workflow scope，第一次写入返回404；只读确认ADMIN/default main及scope后，经用户网页确认补充workflow授权，安装成功。基座workflow提交`4e4c04aa4dec8dc2af48234e3e3faec9704c73cb`；[运行39715232540](https://github.com/wh1stl3/UniXNU/actions/runs/39715232540)已启动，初次观察主机及输入预检完成、编译步骤进行中，结果未验证。
 
 只读跟踪命令：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/observe-kernel-ci.ps1`。状态/完成后原始日志进入`reports/kernel-ci/<run>/`；下载的构建产物只放`out/kernel-ci/<run>/`，不提交。
+
+首轮最终失败：镜像20260824.0482.1/macOS15.7.9、Xcode16.4(16F6)、SDK18.5、Apple clang17；IIG/MIG存在，48项补丁实际应用、headers步骤和firehose构建完成（lipo报告arm64）。build.json统计所有build子目录共有29个.o，未把它当成29个XNU目标对象或完整内核证据。首个真实错误在run.log:4503：旧`-enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang`不被识别；没有内核产物。
+
+新增`patches/xnu-8796-ci-candidates/clang17-zero-init.patch`只删除8796 MakeInc.def:309这一个过渡开关，保留:308的`-ftrivial-auto-var-init=zero`。Git apply --check返回0；按照实际文件名顺序检查原48项+1项，49项172 hunks静态检查通过且清零选项仍在。证据`compatibility-check.json`与`failure-analysis.json`。修复待真实重跑，原49独立38/11及后续48项统计不改写。

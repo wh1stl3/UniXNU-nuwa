@@ -60,6 +60,10 @@ def inputs(base):
     firehose_script = replace_exact(firehose.read_text(encoding='utf-8'),
                                    'IPHONEOS_DEPLOYMENT_TARGET=17.0',
                                    'IPHONEOS_DEPLOYMENT_TARGET=16.0', 1)
+    compatibility = DEVICE / 'patches/xnu-8796-ci-candidates/clang17-zero-init.patch'
+    if not compatibility.is_file():
+        raise ValueError('Missing reviewed clang17 compatibility patch')
+    patches.append(compatibility)
     return patches, script, firehose_script
 
 
@@ -79,6 +83,8 @@ def main():
                'patches': [{'name': p.name, 'sha256': sha(p)} for p in patches],
                'baseline_adapter_sha256': hashlib.sha256(script.encode()).hexdigest(),
                'firehose_adapter_sha256': hashlib.sha256(firehose_script.encode()).hexdigest(),
+               'reviewed_base_patch_count': 48,
+               'ci_compatibility_patch_count': len(patches) - 48,
                'scope': 'source compile/link only; optional device archives disabled',
                'kernel_built': False, 'prelinked': False, 'device_verified': False}
     if args.check:

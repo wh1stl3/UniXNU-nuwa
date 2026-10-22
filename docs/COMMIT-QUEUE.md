@@ -141,3 +141,13 @@
 [Evidence] reports/official-ci-plan/milestone-commits.json；基座workflow提交4e4c04aa4dec8dc2af48234e3e3faec9704c73cb；https://github.com/wh1stl3/UniXNU/actions/runs/39715232540，设备输入b745021。
 [Risk] 此提交记录启动时状态，未取得完整内核构建结果；预链接、设备archive ABI、QEMU及实机未验证；feed/board未改。
 ```
+
+## Q-015 · 首轮真实错误与clang17兼容补丁
+
+```text
+[unixnu-nuwa][kernel] 根据首轮CI移除过期clang开关并保留自动变量清零
+
+[Change] 保存首轮实际主机/源码构建日志和失败分析；新增clang17兼容补丁，仅移除过期启用参数，保留-ftrivial-auto-var-init=zero；扩展CI输入与顺序检查，保留原48项统计。
+[Evidence] reports/kernel-ci/39715232540/run.log:4503；toolchain.log；failure-analysis.json；compatibility-check.json：49项172 hunks精确检查通过；source-input-check.json：bash语法检查通过。
+[Risk] 首轮完整内核构建失败；此修复尚待真实CI重跑，不代表Darwin22驱动或donor预链接通过，feed/board不变，无固件或设备动作。
+```

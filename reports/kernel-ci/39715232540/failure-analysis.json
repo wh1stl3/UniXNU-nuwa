@@ -1,0 +1,21 @@
+{
+    "run_id":  "39715232540",
+    "result":  "failure",
+    "kernel_built":  false,
+    "base_patches_applied":  48,
+    "host":  "macos-15-intel",
+    "image_version":  "20260824.0482.1",
+    "xcode":  "16.4 (16F6)",
+    "iphoneos_sdk":  "18.5",
+    "clang":  "Apple clang 17.0.0 (clang-1700.0.13.5)",
+    "iig_mig_available":  true,
+    "firehose_archive":  "lipo reports arm64",
+    "object_count_all_builds":  29,
+    "first_error":  "unknown argument: \u0027-enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang\u0027",
+    "raw_log_first_error_line":  4503,
+    "console_first_error_line":  3818,
+    "candidate_patch":  "patches/xnu-8796-ci-candidates/clang17-zero-init.patch",
+    "candidate_preserves":  "-ftrivial-auto-var-init=zero",
+    "static_check":  "git apply --check returned 0; exact in-memory sequence including compatibility patch passed",
+    "risk":  "No source-kernel link, donor prelink, full device archive ABI, QEMU or device validation"
+}

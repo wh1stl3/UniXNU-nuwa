@@ -1,10 +1,10 @@
 # STATUS
 
-> 当前唯一真相；历史只追加WORKLOG。更新：2026-10-22 11:12（Asia/Shanghai）。
+> 当前唯一真相；历史只追加WORKLOG。更新：2026-10-22 11:21（Asia/Shanghai）。
 
 ## 当前结论
 
-公开的[基座fork](https://github.com/wh1stl3/UniXNU)与[nuwa设备仓](https://github.com/wh1stl3/UniXNU-nuwa)已创建；13项积压里程碑已提交并推送，设备输入固定b745021。已在基座fork安装源构建workflow并启动[首轮CI 39715232540](https://github.com/wh1stl3/UniXNU/actions/runs/39715232540)，主机检查、48项hash/脚本预检已过，正在源内核编译步骤。**当前没有内核构建通过证据**。见[首轮CI说明](operations/2026-10-22-source-kernel-ci.md)。
+公开基座fork及设备仓已创建并发布13项积压里程碑。[首轮CI 39715232540](https://github.com/wh1stl3/UniXNU/actions/runs/39715232540)失败：Xcode16.4/iPhoneOS18.5/IIG/MIG可用，48项补丁已应用、ARM64 firehose真实构建完成，随后clang17拒绝8796旧启用开关。已准备仅移除废弃开关、保留变量清零的补丁，48+1项精确内存顺序及bash语法静态检查通过，待重跑。**内核构建尚未通过**。见[首轮CI说明](operations/2026-10-22-source-kernel-ci.md)。
 
 ## 当前边界
 
@@ -15,7 +15,7 @@
 
 ## 已有证据与限制
 
-- [源构建输入检查](../reports/official-ci-plan/source-input-check.json)：同一Apple 8796提交1b191cb，48项选择hash匹配；3处产物名、内核/链接和firehose的iOS16部署目标在内存适配，bash -n通过。没有在本机执行make。
+- [源构建输入检查](../reports/official-ci-plan/source-input-check.json)：同一Apple 8796提交1b191cb，48项原选择hash匹配，追加1项clang17兼容补丁；[49项顺序检查](../reports/kernel-ci/39715232540/compatibility-check.json)通过、清零仍保留。没有在本机执行make。
 - 源CI使用基座75bc真实配方，仅关闭可选设备archive/boot-progress；不压掉链接错误、不创建stub，不运行IPSW/预链接/固件/payload/bootimg。即使源内核成功，也不代表完整nuwa内核或实机通过。
 - [官方CI审查](operations/2026-10-22-official-ci-route.md)：固定e95b的macos.yml真实存在；领先本地75个提交、491项完整路径/blob变化。没有整体升级；旧48项结论不平移到e95b。官方kernel仍无条件预链接，默认10063/iOS17。
 - [Darwin22接口审查](operations/2026-10-22-darwin22-interfaces-and-wsl.md)：设备archive ABI、13项回调及watchdog scratch覆盖风险仍未解决；完整driver/donor接口门未过。
@@ -23,7 +23,7 @@
 
 ## 下一步
 
-1. 跟踪首轮CI，下载实际编译/链接证据；状态见reports/kernel-ci/39715232540/run.json。不要在仍运行时写成构建通过。
+1. 发布clang17过渡开关修复并用精确device_ref重跑。首轮原始run.log、toolchain.log、build.json与失败分析已保存reports/kernel-ci/39715232540/。
 2. 按第一处真实失败修复8796源构建兼容性；成功后检查Mach-O、对象/符号及版本证据，仍不宣称预链接/QEMU/实机通过。
 3. 完成Darwin22设备archive、boot-progress/watchdog、nuwa defconfig及donor kernelcache解析，接回正式-D设备构建入口；feed切换独立处理。
 4. 板值/内存/地址、镜像或设备动作命中硬停时先写NEED-REVIEW再停。只差人按实体键的项记PENDING-HUMAN后继续。
