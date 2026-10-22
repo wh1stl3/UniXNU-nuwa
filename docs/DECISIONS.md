@@ -253,3 +253,5 @@ IORPC继续使用8796的四字段定义，不为新IIG生成结果补kernelConte
 仅源CI的BCM2837配置关闭KPC及依赖它的KPERF；后者kperf_kpc.c有无条件kpc调用，不能只删缺失源文件或塞空实现。代价是该源内核没有性能计数采样能力，不能把它当完整donor ABI闭包。正式nuwa配置尚未建立。本决策不切feed、不改board、不生成固件/诊断镜像、不改变任何_verified。
 
 D-010补充（2026-10-22 12:40）：第四轮主动拒绝未知回调赋值模板；取得短CI39723294640的17个真实生成文件后，仅补入rpc.kernelContent = &msg->content.__hdr精确规则。17文件432块静态转换通过，仍待完整编译/ABI。原始模板和全集hash见reports/kernel-ci/39723011018/。
+
+D-010补充（2026-10-22 14:22）：第五轮51个IIG生成实现均无kernelContent残留且原IORPC头不变，实际失败移至ast.c无条件包含/调用已关闭的KPERF接口。仅增加include和AST处理块的KPERF条件保护，52项212 hunks静态检查通过，真实修复待第六轮；证据见operations/2026-10-22-ci-fifth-failure.md。

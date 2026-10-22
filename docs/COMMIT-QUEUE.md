@@ -221,3 +221,13 @@
 [Evidence] reports/kernel-ci/39723736387/api-publish.json确认force=false及相同commit；run.json；https://github.com/wh1stl3/UniXNU/actions/runs/39723736387，device_ref=4313f2d1c1a5abd9f96d11073b2e343b8aedadfe。
 [Risk] 运行中，无完整内核编译/链接或ABI通过结论；feed/board不变，无预链接、镜像、QEMU或设备动作。
 ```
+
+## Q-023 · 第五轮证据与AST条件修复
+
+```text
+[unixnu-nuwa][kernel] 根据第五轮真实错误保护关闭KPERF时的AST接口
+
+[Change] 下载第五轮证据并保留原始行号和大日志hash；仅给ast.c性能采样头和AST处理块增加KPERF条件，继续关闭缺失公开实现的性能采样。
+[Evidence] reports/kernel-ci/39723736387/diagnostics.txt原始行253481/253484；build.json的51个IIG实现无kernelContent残留；compatibility-check.json为52项212 hunks通过，单项git apply --check及bash语法检查通过；workspace-check.json确认来源/board/feed不变。
+[Risk] 修复待第六轮真实编译和链接；581个.o是全部build目录合计，尚无完整内核、driver/donor ABI、QEMU或实机通过结论；无镜像或设备操作。
+```

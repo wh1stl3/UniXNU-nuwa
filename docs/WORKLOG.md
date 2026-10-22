@@ -54,3 +54,5 @@
 - 2026-10-22 12:40 · 第四轮被适配器主动拒绝未知回调模板，下载证据后以短CI取得17文件全集，仅补入精确kernelContent回调赋值规则，432块静态转换通过；Q-020已通过同对象ID、force=false的GitHub API发布7dfa3c1；补充失败模板保留机制 · 提交号：7dfa3c1；本项待定Q-021 · reports/kernel-ci/39723011018/，scripts/publish-main-via-api.py
 
 - 2026-10-22 12:42 · Q-021以相同对象ID经API发布4313f2d，force=false，启动第五轮39723736387；仍固定75bc/8796与既定设备输入，完整内核/ABI结果未验证 · 提交号：4313f2d；本项待定Q-022 · reports/kernel-ci/39723736387/run.json，api-publish.json
+
+- 2026-10-22 14:22 · 第五轮实际12:48失败，下载完整证据；51份IIG输出无kernelContent残留，首错为ast.c无条件引用关闭的KPERF接口；两处条件保护，52项212 hunks和配方静态检查通过，来源/board/feed边界复核通过 · 提交号：待定Q-023 · reports/kernel-ci/39723736387/，docs/operations/2026-10-22-ci-fifth-failure.md

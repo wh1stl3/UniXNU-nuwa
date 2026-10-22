@@ -62,7 +62,7 @@ def inputs(base):
                                    'IPHONEOS_DEPLOYMENT_TARGET=17.0',
                                    'IPHONEOS_DEPLOYMENT_TARGET=16.0', 1)
     for name in ('clang17-zero-init.patch', 'clang17-uio-stackbuf.patch',
-                 'zzzz-ci-public-profiling.patch'):
+                 'disabled-kperf-ast.patch', 'zzzz-ci-public-profiling.patch'):
         compatibility = DEVICE / 'patches/xnu-8796-ci-candidates' / name
         if not compatibility.is_file():
             raise ValueError(f'Missing reviewed clang17 compatibility patch: {name}')

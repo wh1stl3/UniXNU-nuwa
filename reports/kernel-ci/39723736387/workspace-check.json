@@ -1,0 +1,23 @@
+{
+  "sources": [
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU",
+      "tracked_status": ""
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full",
+      "tracked_status": ""
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU-sheng",
+      "tracked_status": ""
+    }
+  ],
+  "board_sha256": "8601b3e5352ab4656e9aefdc22a03d22d531cbb8d465ca11e27fd9aa9d4d38d5",
+  "base_feed_sha256": "dec145fe25ed9cf1c50292a1e16ccbaa690b450a1de9e1ed687395e5fef88294",
+  "new_patch_check": {
+    "command": "git -C D:/Code/PortingiOS/common/sources/xnu-ios16-full apply --check D:/Code/UniXNU-nuwa/patches/xnu-8796-ci-candidates/disabled-kperf-ast.patch",
+    "exit_code": 0,
+    "patch_sha256": "31d4125a883c758255e4c6dbc4c9a0a3e01b33c86cd521dcef7fead8abb426c4"
+  }
+}

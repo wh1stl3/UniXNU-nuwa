@@ -1,0 +1,25 @@
+{
+  "run_id": 39723736387,
+  "command": "gh run download 39723736387 --repo wh1stl3/UniXNU --dir out/kernel-ci/39723736387",
+  "console_path": "out\\kernel-ci\\39723736387\\nuwa-8796-source-39723736387\\nuwa-host\\kernel-console.log",
+  "console_bytes": 59106160,
+  "console_sha256": "6ed4a293a36bfc50bf13cd2636aad649a22585057c416e00e2e627350a443106",
+  "console_lines": 614415,
+  "excerpt_trailing_whitespace_trimmed": true,
+  "diagnostics": [
+    {
+      "original_line": 253481,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/kperf/kperf_kpc.h:43:20: error: use of undeclared identifier 'KPC_MAX_COUNTERS'"
+    },
+    {
+      "original_line": 253484,
+      "text": "/Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/kperf/kperf_kpc.h:45:19: error: use of undeclared identifier 'KPC_MAX_COUNTERS'"
+    }
+  ],
+  "iorpc_header_unchanged": true,
+  "generated_kernel_content_files": 0,
+  "object_count_all_builds": 581,
+  "kernel_built": false,
+  "device_verified": false,
+  "uio_alignment_errors_observed": false
+}

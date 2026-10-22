@@ -1,0 +1,17 @@
+253477: /Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:673:15: note: overridden virtual function is here
+253478:   673 |         virtual bool serialize(OSSerialize * serializer) const = 0;
+253479:       |                      ^
+253480: In file included from /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/kern/ast.c:74:
+253481: /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/kperf/kperf_kpc.h:43:20: error: use of undeclared identifier 'KPC_MAX_COUNTERS'
+253482:    43 |         uint64_t counterv[KPC_MAX_COUNTERS + 1];
+253483:       |                           ^
+253484: /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/kperf/kperf_kpc.h:45:19: error: use of undeclared identifier 'KPC_MAX_COUNTERS'
+253485:    45 |         uint64_t configv[KPC_MAX_COUNTERS];
+253486:       |                          ^
+253487: /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/kern/ast.c:115:11: warning: mixing declarations and code is incompatible with standards before C99 [-Wdeclaration-after-statement]
+253488:   115 |         thread_t thread = current_thread();
+253489:       |                  ^
+253490: /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/kern/ast.c:223:3: warning: '_Atomic' is incompatible with C standards before C11 [-Wpre-c11-compat]
+253491:   223 |                 thread_ast_clear(thread, AST_BSD);
+253492:       |                 ^
+253493: /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/osfmk/kern/ast.h:189:48: note: expanded from macro 'thread_ast_clear'
