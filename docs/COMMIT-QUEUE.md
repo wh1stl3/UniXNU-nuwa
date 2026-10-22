@@ -574,3 +574,14 @@
 [Evidence] 本机st,spi/fts_touch_spi/st_fts_m2.ftb与固定LineageOS ST源一致；base75bc13d feeds解析支持device/base目录，官网2026-10-22列sheng GPU/Metal可用。
 [Risk] 官网sheng支持不等于nuwa或Darwin22通过；面板/PHY/DMA/ABI仍未验证，本轮未改feed/board/源树或执行设备动作。
 ```
+
+
+## Q-057 · r6重打包与接受条件复核
+
+```text
+[unixnu-nuwa][loader] 验证v1重打包修正并隔离参考旧负载风险
+
+[Change] 增加仅RAM模板审计，复现gzip OS和32B ID差异，核对旧FAT内容及新FD布局试算；记录脚本边界缺口和v4实际恢复反例。
+[Evidence] r6模板ed8c4015原ID与AOSP一致，同FD仅0x1009及ID前20B变化；原FAT旧内核e3cfe478、timeout3/default xnu、ADT6GiB，新FD投影总长203194368B。
+[Risk] Booting OKAY不验收UEFI，参考测试未证明唯一版本/ramdisk阈值；本轮无新镜像/设备动作，未继承旧负载、未改board/feed或_verified。
+```

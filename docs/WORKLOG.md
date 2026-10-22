@@ -122,3 +122,5 @@
 2026-10-22 19:06 · 区分enuma与nuwa，核对fastboot解锁/A槽异常后临时原厂boot恢复nuwa Android=1；完成DT/initrd静态核对并准备3153920B v4固件入口包，候选未执行 · 本提交（Q-055） · reports/trial-boot-preflight/；docs/operations/2026-10-22-trial-boot-preflight.md
 
 2026-10-22 19:26 · 只读复核外部驱动报告，纠正ST/FocalTech、sheng GPU、feeds必要性和直接复用判据；保留开源来源索引，主线顺序不变 · 本提交（Q-056） · docs/operations/2026-10-22-driver-source-report-review.md；reports/driver-source-report-review.json
+
+2026-10-22 19:33 · 只读审查r6重打包脚本并在RAM复现gzip OS/ID差异，确认v1 SHA规则；识别原FAT旧内核/6GiB/自动启动风险，未采用混合镜像 · 本提交（Q-057） · reports/repack-reference-review.json；docs/operations/2026-10-22-reference-repack-review.md

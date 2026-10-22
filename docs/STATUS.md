@@ -1,10 +1,10 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 19:26（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-22 19:33（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
-**本仓四EFI/FD/BootShim已编译并静态验收；首个v4固件入口试启动包已准备、未执行。nuwa当前已通过临时加载原厂boot回到Android，boot_completed=1；持久A槽启动状态尚未修复。** DT/initrd静态核对已完成当前Android观测范围，新候选的物理放置/DT访问/DXE运行仍未验证。
+**本仓四EFI/FD/BootShim已编译并静态验收；首个v4固件入口试启动包已准备、未执行。nuwa最近一次本仓确认已通过临时加载原厂boot回到Android，boot_completed=1；持久A槽启动状态尚未修复。** DT/initrd静态核对已完成当前Android观测范围，新候选的物理放置/DT访问/DXE运行仍未验证。
 
 - 固件CI [39764322744](https://github.com/wh1stl3/UniXNU-nuwa/actions/runs/39764322744) success；四EFI真实进入FD且独立/内嵌hash一致，SEC/HOB/PCD/DEPEX/FV/shim检查通过。FD3145728B/SHA a0bbb9645f4af2de66e4e29e1b5deaf508e95c41f33de4fd9f811ab03bde1c83；BootShim112B/SHA9346a527…。R-004 A完成。[构建报告](operations/2026-10-22-firmware-candidate-build.md)。
 - 源内核CI15 [39755850870](https://github.com/wh1stl3/UniXNU/actions/runs/39755850870)真实链接ArmCpu/ArmDTPlatform、五导出/零undefined；20187888B/SHA a9e08c693fec4034f613cd554ea94e5855b25b727b4bfb4af46a4103f565bc7a，65348个donor指针零缺失。当前试启动包不含XNU，完整ABI/执行未验证。
@@ -20,6 +20,10 @@
 ## 驱动报告复核
 
 外部driver-sources.md可作索引，但FocalTech判定错误（本机为ST FTS SPI）、sheng GPU状态过时、设备feeds必要性和“同SoC直接可用”结论不成立。继续按D-014匹配真实实现，不改feed/板值；[逐条复核](operations/2026-10-22-driver-source-report-review.md)。本轮仅文档/来源审查，未操作设备。
+
+## 参考v1重打包复核
+
+r6同FD回环已在RAM独立复现：只差gzip OS字节0x1009和ID前20B，32B ID补零/分段SHA修正可吸收。“ABL只接受v1+大ramdisk”被原厂v4实际恢复证据限制，不能扩大；r6原FAT含旧内核、3秒默认XNU与6GiB ADT，不能随新FD直接上机。咱们FD套该模板的RAM试算总长203194368B，未写镜像。[逐项复核](operations/2026-10-22-reference-repack-review.md)。
 
 ## 下一步
 
