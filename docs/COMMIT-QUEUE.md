@@ -585,3 +585,14 @@
 [Evidence] r6模板ed8c4015原ID与AOSP一致，同FD仅0x1009及ID前20B变化；原FAT旧内核e3cfe478、timeout3/default xnu、ADT6GiB，新FD投影总长203194368B。
 [Risk] Booting OKAY不验收UEFI，参考测试未证明唯一版本/ramdisk阈值；本轮无新镜像/设备动作，未继承旧负载、未改board/feed或_verified。
 ```
+
+
+## Q-058 · v4候选首次临时实机启动与完整恢复
+
+```text
+[unixnu-nuwa][firmware] 记录v4命令接受与黑屏并完成原厂临时恢复
+
+[Change] 增加哈希/身份门的单候选临时启动与恢复脚本，归档屏幕和USB观测及原厂恢复两次结果，记录R-006实施与D-016状态隔离。
+[Evidence] SHA12864ac6候选Sending/Booting OKAY、15次采样fastboot持续可见、用户报黑屏；同一原厂boot首次Load Error，重进bootloader后成功且最终nuwa Android boot_completed=1。
+[Risk] BootShim/SEC/DXE/BDS均未验证，ACK不等于执行；未flash/改槽位或镜像/board/feed，未置_verified，A槽持久启动和H-001仍未验收。
+```

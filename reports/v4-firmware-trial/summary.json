@@ -1,0 +1,31 @@
+{
+  "scope": "Actual temporary boot attempt; command acceptance only, firmware stages unverified",
+  "candidate_sha256": "12864ac6cc0ffc9909f4abbdfab91bfee216c3fdcfc5ab0d52b4d4b9cf4579f9",
+  "fastboot_boot_exit_code": 0,
+  "screen": {
+    "source": "User reply to post-launch observation question",
+    "reported_text": "黑屏"
+  },
+  "usb": {
+    "confirmed_interface": "VID_18D1&PID_D00D Android Bootloader Interface",
+    "samples": 15,
+    "first_sample": "2026-10-22T12:15:50.733816+00:00",
+    "last_sample": "2026-10-22T12:16:19.663849+00:00",
+    "nuwa_fastboot_present_in_all_samples": true
+  },
+  "stages": {
+    "abl": "Sending/Booting OKAY; no claim of handoff or kernel/SEC execution",
+    "bootshim": "unverified",
+    "sec": "unverified",
+    "dxe_bds": "unverified"
+  },
+  "recovery": {
+    "first_original_boot": "Load Error",
+    "then": "fastboot reboot bootloader",
+    "second_original_boot": "Booting OKAY",
+    "android_boot_completed": "1"
+  },
+  "image_changed": false,
+  "partitions_flashed": false,
+  "slots_changed": false
+}

@@ -1,6 +1,6 @@
 {
   "purpose": "First-stage firmware-only temporary boot candidate; NOT XNU/iOS boot",
-  "state": "v4 firmware-only package generated; static container checks passed; not executed",
+  "state": "Temporary v4 boot attempted: command OKAY, user observed black screen, fastboot remained; original Android recovered after bootloader reset",
   "firmware_run": 39764322744,
   "fd_sha256": "a0bbb9645f4af2de66e4e29e1b5deaf508e95c41f33de4fd9f811ab03bde1c83",
   "shim_sha256": "9346a527441b242c69414fd7e3d6fa17813f281d562fef13d9ba8373d39007a9",
@@ -45,5 +45,15 @@
       "DXE/BDS and original Android initrd lifetime",
       "Hard-hang key recovery (H-001)"
     ]
+  },
+  "latest_trial": {
+    "report": "reports/v4-firmware-trial/summary.json",
+    "attempted_on_device": true,
+    "fastboot_command_accepted": true,
+    "bootshim_entry": "unverified",
+    "sec": "unverified",
+    "dxe_bds": "unverified",
+    "android_restored": "boot_completed=1",
+    "image_manifest_scope": "image subtree retains the original static build snapshot"
   }
 }

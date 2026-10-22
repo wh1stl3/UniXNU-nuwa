@@ -327,3 +327,11 @@ D-015补充（2026-10-22 18:48）：R-004 A已完成；CI39764322744四EFI/FD/Bo
 
 
 D-015补充（2026-10-22 19:06）：原厂nuwa v4 boot临时加载回Android boot_completed=1取得实机证据；当前boot_a/init_boot_a hash与原始输入相同，A槽先前unbootable状态未被本轮改写。首个固件入口包复用原厂v4头仅改kernel_size，raw CI39764322744 shim+FD、不加DTB/FAT/XNU；3153920B/SHA12864ac6。容器静态检查通过，候选执行、实际DT/initrd布局和DXE仍未验证。来源与两方案记录见R-005和试启动报告，未采用上游DT的旧initrd属性为运行地址。
+
+
+# D-016 · 实机容器对照隔离bootloader状态，命令接受与固件执行分开验收
+
+- 状态：accepted（2026-10-22 20:22）。
+- 证据：reports/v4-firmware-trial/launch.json、recovery.json、reset-bootloader.json、recovery-after-loader-reset.json、post-recovery.json；operations/2026-10-22-v4-firmware-trial.md。
+
+固定v4候选命令OKAY、屏幕黑屏且fastboot持续可见，不构成BootShim/SEC/DXE通过。同一原厂输入在候选后直接恢复报Load Error、重新进入bootloader后成功恢复Android=1，说明实验必须控制状态；尚不能归因某个内部缺陷。以后各镜像对照从重新进入的bootloader开始，恢复也先重进bootloader；保留原始失败证据，不凭单次Load Error外推唯一版本/大小门槛。未得到入口日志的阶段写未验证，不用ACK或黑屏替代执行证明。

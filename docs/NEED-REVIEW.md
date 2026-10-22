@@ -46,6 +46,16 @@
 
 A的输入、实现和报告见operations/2026-10-22-trial-boot-preflight.md。当前仅原厂boot临时恢复实机通过，新的3153920B固件包只静态检查通过；没有执行新包、flash或改槽位。board/内存字段和_verified审批仍独立，H-001未验证。不新增open审批项。
 
+## R-006 · 已准备v4固件入口包临时启动（approved，已执行并恢复）
+
+用户明确批准“临时启动咱们已准备的v4固件入口包，检查ABL、SEC和DXE/BDS的实际结果”。最小范围为SHA12864ac6…的既有3153920B包单次临时启动、只读观测及原厂ef558db2…恢复；不生成镜像、不flash/erase或改槽位。
+
+候选A（获批执行）：对已核对nuwa执行fastboot boot现有包，记录屏幕/USB/命令，结束回Android。代价是现有日志通道有限，黑屏可能无法定位早期阶段，需原厂恢复。
+
+候选B：先停留只读源码/入口与日志通道审查，再准备后续有观测手段的实验。代价是推迟现有包的命令接受结果，后续新增诊断范围另具体落实。
+
+本轮A结果：Sending/Booting OKAY、黑屏、约29s内15次采样fastboot始终可见；SEC/DXE/BDS未验证。直接原厂恢复先Load Error，reboot bootloader后同一原厂boot成功，最终nuwa Android boot_completed=1。见operations/2026-10-22-v4-firmware-trial.md和reports/v4-firmware-trial/。未以ACK替代阶段通过，未置_verified。
+
 ## 后续授权记录（2026-10-22）
 
 用户追加：“这个设备日常不需要用 可以随意推送镜像 只要能恢复回fastboot就行”。后续镜像推送/试启动在可恢复fastboot条件下已有授权，无需重复请求相同范围许可；优先临时加载并依据具体镜像、分区和恢复证据决定是否写入，不把此授权当作任意底层分区擦写可恢复的证明。H-001实体键恢复演练仍未验证；只差按键的项保留PENDING-HUMAN并继续软件工作。该授权不替代board/bringup-plan内存/基址审批或_verified实证。本轮仅完成R-004产物检查，未推送或启动镜像。

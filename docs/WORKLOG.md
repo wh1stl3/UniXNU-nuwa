@@ -124,3 +124,5 @@
 2026-10-22 19:26 · 只读复核外部驱动报告，纠正ST/FocalTech、sheng GPU、feeds必要性和直接复用判据；保留开源来源索引，主线顺序不变 · 本提交（Q-056） · docs/operations/2026-10-22-driver-source-report-review.md；reports/driver-source-report-review.json
 
 2026-10-22 19:33 · 只读审查r6重打包脚本并在RAM复现gzip OS/ID差异，确认v1 SHA规则；识别原FAT旧内核/6GiB/自动启动风险，未采用混合镜像 · 本提交（Q-057） · reports/repack-reference-review.json；docs/operations/2026-10-22-reference-repack-review.md
+
+2026-10-22 20:22 · 获批临时启动v4候选，命令OKAY/屏幕黑屏/fastboot持续可见，SEC与DXE未验证；原厂恢复先失败，重进bootloader后成功回nuwa Android=1，建立D-016状态隔离规则 · 本提交（Q-058） · reports/v4-firmware-trial/；docs/operations/2026-10-22-v4-firmware-trial.md

@@ -1,0 +1,38 @@
+{
+  "phase": "recover",
+  "started_at": "2026-10-22T12:17:53.956240+00:00",
+  "commands": [
+    {
+      "at": "2026-10-22T12:17:54.008088+00:00",
+      "argv": [
+        "fastboot",
+        "-s",
+        "<selected-nuwa>",
+        "getvar",
+        "product"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "product: nuwa\nFinished. Total time: 0.004s\n"
+    },
+    {
+      "at": "2026-10-22T12:17:58.689657+00:00",
+      "argv": [
+        "fastboot",
+        "-s",
+        "<selected-nuwa>",
+        "boot",
+        "D:\\Code\\PortingiOS\\nuwa\\backups\\recovery-20261020T121245314787Z\\boot_a.img"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Sending 'boot.img' (196608 KB)                     OKAY [  4.543s]\nBooting                                            FAILED (remote: 'Failed to load/authenticate boot image: Load Error')\nfastboot: error: Command failed\n"
+    }
+  ],
+  "observations": [],
+  "authorization": "User explicitly approved temporary prepared v4 candidate trial; original recovery authorized",
+  "candidate_sha256": "12864ac6cc0ffc9909f4abbdfab91bfee216c3fdcfc5ab0d52b4d4b9cf4579f9",
+  "recovery_sha256": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+  "error": "Original boot rejected",
+  "ended_at": "2026-10-22T12:17:58.690166+00:00"
+}
