@@ -4,9 +4,9 @@
 
 ## 当前结论
 
-**R-010 A已批准；用户修订硬停：生成镜像无需暂停，设备动作前缺具体过程日志或已确认恢复路径须硬停。35项固定输入及严格补丁检查通过，已接入独立dxe-allocation CI配置，待实际编译。保持内存图不变。**
+**R-010 A已批准；用户修订硬停：生成镜像无需暂停，设备动作前缺具体过程日志或已确认恢复路径须硬停。35项固定输入及严格补丁检查通过，已接入独立dxe-allocation CI配置，CI39826580758（设备316c19f）已进入构建。新增D-021试启动前置门，缺日志/恢复记录时在设备命令前拒绝；本轮只读确认nuwa Android完成1。保持内存图不变。**
 
-[本轮审查和候选](operations/2026-10-23-dxe-allocation-source-audit.md)，reports/dxe-allocation-audit/。上轮已证实到候选DXE但断言、未进入BDS/XNU；最后Android完成1为R-009恢复记录，本轮未重新读取在线状态。
+[本轮审查和候选](operations/2026-10-23-dxe-allocation-source-audit.md)，reports/dxe-allocation-audit/。上轮已证实到候选DXE但断言、未进入BDS/XNU；最后Android完成1为R-009恢复记录，本轮已只读重新确认Android完成1，尚无R-010启动结果。
 
 ## 本轮新证据与持久约定
 
@@ -51,7 +51,7 @@ boot_a/vendor_boot_a/init_boot_a全分区SHA与紧邻试前值相同；未flash/
 1. 提交/发布R-010独立profile并触发固件CI，按实际第一处错误处理；不扩heap，不修改board/feed。
 2. 成功后下载真实产物，检查实际DXE核心日志标记、四EFI、SEC、原PIL与空AUTO、相对shim，再制作v4临时包。
 3. 用户已确认可录像，启动前通知；实际动作前重新核对nuwa身份、具体日志通道和Android/fastboot恢复证据。一次受限试启动后恢复Android并确认完成1，实测另记。
-4. H-001/H-003历史人工待办不作为离线阻塞；当前尚未执行R-010设备动作。见operations/2026-10-23-dxe-allocation-build-trial.md。
+4. H-001/H-003历史人工待办不作为离线阻塞；当前尚未执行R-010启动/刷写动作。见operations/2026-10-23-dxe-allocation-build-trial.md。
 
 ## 内核与后续目标
 

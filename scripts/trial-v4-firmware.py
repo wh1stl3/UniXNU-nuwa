@@ -33,6 +33,7 @@ def main():
     parser.add_argument('phase', choices=['launch', 'recover'])
     parser.add_argument('--evidence', type=Path, required=True)
     parser.add_argument('--package', type=Path, help='R-007/R-008/R-009 approved hash-pinned package report')
+    parser.add_argument('--preflight', type=Path, help='Fresh D-021 process-log/recovery gate evidence, required for launch')
     args = parser.parse_args()
     evidence = args.evidence.resolve()
     if not evidence.is_relative_to(ROOT / 'reports') or evidence.exists():
@@ -42,7 +43,7 @@ def main():
     if args.package:
         package_path = args.package.resolve()
         scopes = {'R-007 A': ROOT / 'reports/sec-trace', 'R-008 A': ROOT / 'reports/relative-offset',
-                  'R-009 A': ROOT / 'reports/pil-no-auto'}
+                  'R-009 A': ROOT / 'reports/pil-no-auto', 'R-010 A': ROOT / 'reports/dxe-allocation'}
         package_raw = package_path.read_bytes()
         package = json.loads(package_raw)
         approval = package.get('approval')
@@ -58,12 +59,15 @@ def main():
                 or not package['shim_changed_byte_offsets']
                 or any(not 8 <= i < 16 for i in package['shim_changed_byte_offsets'])):
             raise ValueError('R-008 package exceeds the header-only scope')
-        if approval == 'R-009 A' and (package['firmware_commit'] != '2ab6827d77dfe15010534b52e1abb76a26464a7d'
+        if approval in ('R-009 A', 'R-010 A') and (package['firmware_commit'] != '2ab6827d77dfe15010534b52e1abb76a26464a7d'
                 or package['shim_text_offset'] != 0 or package['pil_auto_entries'] != []
                 or package['pil_config_sha256'] != 'dbc9ee6e4c7728b32245453322f348c32d6a5eef0107f8c07662918bc3c23fdd'
                 or package['pil_driver_sha256'] != '89e030af07847bdc596f0c213bdce0ac430be66e572db55b434d7ec66ad9afcb'
                 or package['shim_sha256'] != '8a3b54765c895a0366539130fdf6e4e4a01e364fe7de067a38d0193606f9d462'):
             raise ValueError('R-009 package exceeds the approved PIL configuration scope')
+        if approval == 'R-010 A' and (not package.get('allocation_trace')
+                or not all(package['allocation_trace']['markers'].values())):
+            raise ValueError('R-010 actual-core allocation diagnostics absent')
         candidate = (ROOT / package['image_path']).resolve()
         if not candidate.is_relative_to(ROOT / 'out/trial-boot'):
             raise ValueError('Diagnostic candidate escapes trial output')
@@ -75,12 +79,32 @@ def main():
     for path, digest in checked_hashes.items():
         if hashlib.sha256(path.read_bytes()).hexdigest() != digest:
             raise ValueError('Pinned boot input changed')
+    gate = None
+    if args.phase == 'launch':
+        if not args.package or not args.preflight:
+            raise ValueError('D-021: package and fresh process-log/recovery preflight required before device action')
+        gate_path = args.preflight.resolve()
+        if not gate_path.is_relative_to(ROOT / 'reports'):
+            raise ValueError('Preflight evidence must be repo-local')
+        gate = json.loads(gate_path.read_text())
+        age = (datetime.datetime.now(datetime.timezone.utc) - datetime.datetime.fromisoformat(gate['at'])).total_seconds()
+        if (not 0 <= age <= 900 or gate['package_sha256'] != package_sha
+                or gate['process_log_method'] != 'framebuffer photographed or recorded by user'
+                or gate['human_capture_confirmation'] != '可以，启动前通知我'
+                or gate['android_boot_completed'] != '1' or gate['device'] != 'nuwa'
+                or gate['soc'] != 'kalama' or gate['original_boot_sha256'] != HASHES[ORIGINAL]):
+            raise ValueError('D-021: log/recovery gate missing, stale, or mismatched')
+        recovery = (ROOT / gate['recovery_evidence']['path']).resolve()
+        if (not recovery.is_relative_to(ROOT / 'reports')
+                or hashlib.sha256(recovery.read_bytes()).hexdigest() != gate['recovery_evidence']['sha256']
+                or json.loads(recovery.read_text()).get('android_boot_completed') != '1'):
+            raise ValueError('D-021: prior concrete recovery evidence absent')
     evidence.parent.mkdir(parents=True, exist_ok=True)
     report = dict(phase=args.phase, started_at=now(), commands=[], observations=[],
                   authorization=package['approval']+' explicit diagnostic trial/recovery approval' if args.package else
                   'User explicitly approved temporary prepared v4 candidate trial; original recovery authorized',
                   candidate_sha256=candidate_sha, candidate_package_sha256=package_sha,
-                  recovery_sha256=HASHES[ORIGINAL])
+                  recovery_sha256=HASHES[ORIGINAL], preflight=gate)
 
     def save():
         evidence.write_text(json.dumps(report, indent=2) + '\n')
@@ -175,6 +199,7 @@ def main():
                 print(boot.stdout + boot.stderr, flush=True)
                 if boot.returncode:
                     raise RuntimeError('Original boot rejected')
+            original_sent = bool(serial)
             deadline = time.monotonic() + 180
             while time.monotonic() < deadline:
                 serial = adb_target()
@@ -184,6 +209,15 @@ def main():
                         report['android_boot_completed'] = '1'
                         print('Identified nuwa Android boot_completed=1', flush=True)
                         break
+                if not serial and not original_sent:
+                    bootloader = fastboot_target()
+                    if bootloader:
+                        bootloader = reset_bootloader(bootloader)
+                        boot = run('fastboot', bootloader, ['boot', str(ORIGINAL)], timeout=50)
+                        print(boot.stdout + boot.stderr, flush=True)
+                        if boot.returncode:
+                            raise RuntimeError('Original recovery boot rejected after fastboot returned')
+                        original_sent = True
                 time.sleep(5)
             else:
                 raise RuntimeError('Android completion not observed; recovery remains pending')

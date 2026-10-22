@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "C:/Program Files/WorkBuddy/resources/vendor/python/python.exe",
+    "-X",
+    "utf8",
+    "-B",
+    "scripts/trial-v4-firmware.py",
+    "launch",
+    "--evidence",
+    "reports/dxe-allocation-audit/rejected-without-preflight.json"
+  ],
+  "exit_code": 1,
+  "stderr": "Traceback (most recent call last):\n  File \"D:\\Code\\UniXNU-nuwa\\scripts\\trial-v4-firmware.py\", line 233, in <module>\n    main()\n    ~~~~^^\n  File \"D:\\Code\\UniXNU-nuwa\\scripts\\trial-v4-firmware.py\", line 85, in main\n    raise ValueError('D-021: package and fresh process-log/recovery preflight required before device action')\nValueError: D-021: package and fresh process-log/recovery preflight required before device action\n",
+  "observation": "Rejected before any device command or trial evidence creation"
+}

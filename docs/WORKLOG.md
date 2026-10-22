@@ -184,3 +184,5 @@
 2026-10-23 01:44 · 恢复主线审查DXE页搜索及69MiB/原厂209.75MiB差异，评估同SoC固定来源；不改map的0008诊断源码apply检查通过，R-010待审批，用户同SoC评估规则持久化至AGENTS · Q-083（本条提交） · docs/operations/2026-10-23-dxe-allocation-source-audit.md；reports/dxe-allocation-audit/
 
 2026-10-23T01:53:08+08:00 · 批准R-010 A并按用户修订日志/恢复硬停门，35项输入及旧产物回归静态检查通过，接入分配器诊断CI · Q-084（提交后以git log定位） · reports/dxe-allocation-audit/profile-check.json；docs/operations/2026-10-23-dxe-allocation-build-trial.md
+
+2026-10-23T01:55:48+08:00 · CI39826580758编译中，落实D-021设备前置门并只读确认nuwa Android完成1及三分区摘要 · Q-085（提交后以git log定位） · reports/dxe-allocation-audit/gate-check.json；android-online-before-build.json
