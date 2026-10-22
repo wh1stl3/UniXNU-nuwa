@@ -261,3 +261,11 @@ D-010补充（2026-10-22 14:35）：第六轮首错移至processor.c定时器表
 D-010补充（2026-10-22 14:48）：第七轮确认ast.o/processor.o均实际生成，首错移至t_kpc初始化与结构KPC条件不一致。仅补初始化guard；同类源码检查另补scheduler/KTRACE对关闭性能模块的引用边界，保留量子定时器与KDEBUG路径，无stub。56项222 hunks静态检查通过，新增候选待第八轮；证据reports/kernel-ci/39734939751/，不混称实际链接错误。
 
 D-010补充（2026-10-22 14:54）：ARM64上下文两处kpc_off_cpu调用仍引用关闭模块，只给include和回调加KPC条件，不改变pmap/上下文切换。第八轮请求取消以合并该已确认源码缺口；取消不作构建验证。57项225 hunks静态检查通过，待后续真实编译。证据reports/kernel-ci/39736351595/kpc-context-review.json。
+
+
+# D-011 · 源CI的可选archive调用与构建条件一致
+
+- 状态：accepted（2026-10-22 15:09；源构建链接条件，不是设备功能验收）。
+- 证据：第九轮39736926012原始行851223-851227；基座baseline:319,600-614；reports/kernel-ci/39736926012/。
+
+第九轮到达最终链接，唯一缺失符号为native_legacy_display_probe。保持源CI可选设备archive关闭的范围，仅使bsd_init中运行时probe分支服从已有XNU_NATIVE_LEGACY_DISPLAY开关；开启功能时仍必须提供真实archive并完成Darwin22接口审查。保留完整链接错误和make退出码检查，无stub或忽略undefined-symbol行为。58项226 hunks静态检查通过，实际修复待第十轮。feed/board、未知板值和实机边界不变。

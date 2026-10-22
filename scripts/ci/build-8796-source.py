@@ -67,7 +67,7 @@ def inputs(base):
                  'disabled-kperf-ktrace.patch',
                  'disabled-kpc-task.patch',
                  'disabled-kpc-context.patch',
-                 'zzzz-ci-public-profiling.patch'):
+                 'zzzz-ci-public-profiling.patch', 'zzzz-display-probe-feature.patch'):
         compatibility = DEVICE / 'patches/xnu-8796-ci-candidates' / name
         if not compatibility.is_file():
             raise ValueError(f'Missing reviewed clang17 compatibility patch: {name}')
@@ -164,6 +164,11 @@ def main():
             summary['iig_kernel_content_references'] = [str(p.relative_to(work)) for p in generated
                 if 'rpc.kernelContent' in p.read_text(errors='replace') or '.kernelContent =' in p.read_text(errors='replace')]
         summary['object_count'] = len(list((work / 'build').rglob('*.o')))
+        artifact = work / 'build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped'
+        summary['linked_kernel_present'] = artifact.is_file()
+        if artifact.is_file():
+            summary['linked_kernel_bytes'] = artifact.stat().st_size
+            summary['linked_kernel_sha256'] = sha(artifact)
         target_objects = work / 'build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837'
         summary['xnu_target_object_count'] = len(list(target_objects.rglob('*.o')))
         summary['key_objects'] = {name: [

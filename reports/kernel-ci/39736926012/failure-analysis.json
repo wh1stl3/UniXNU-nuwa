@@ -1,0 +1,46 @@
+{
+  "run_id": 39736926012,
+  "command": "gh run download 39736926012 --repo wh1stl3/UniXNU --dir out/kernel-ci/39736926012",
+  "console_path": "out\\kernel-ci\\39736926012\\nuwa-8796-source-39736926012\\nuwa-host\\kernel-console.log",
+  "console_bytes": 81743282,
+  "console_sha256": "5181e69961465dd140f51405f4606f1531349e19008da5825346358bf2634ab6",
+  "console_lines": 851242,
+  "excerpt_trailing_whitespace_trimmed": true,
+  "diagnostics": [
+    {
+      "original_line": 851223,
+      "text": "Undefined symbols for architecture arm64:"
+    },
+    {
+      "original_line": 851226,
+      "text": "ld: symbol(s) not found for architecture arm64"
+    },
+    {
+      "original_line": 851227,
+      "text": "clang++: error: linker command failed with exit code 1 (use -v to see invocation)"
+    }
+  ],
+  "iorpc_header_unchanged": true,
+  "generated_kernel_content_files": 0,
+  "object_count_all_builds": 870,
+  "xnu_target_object_count": 841,
+  "key_objects": {
+    "ast.o": [
+      {
+        "path": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/ast.o",
+        "bytes": 73896,
+        "sha256": "21a6c61593bdff78f0d3b5466b72ac7e0f8b07c7c8709df8b824dfbeea721874"
+      }
+    ],
+    "processor.o": [
+      {
+        "path": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/processor.o",
+        "bytes": 143264,
+        "sha256": "5226e6a12dfdaa02c1a515f1a5d3e6735937270fe52e8c5de7188f6b699b4d42"
+      }
+    ]
+  },
+  "kernel_built": false,
+  "device_verified": false,
+  "uio_alignment_errors_observed": false
+}

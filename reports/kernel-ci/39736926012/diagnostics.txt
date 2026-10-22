@@ -1,0 +1,18 @@
+851219: clang: warning: no such include directory: '/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/EXPORT_HDRS/libsa' [-Wmissing-include-dirs]
+851220:              LD mach.development.bcm2837.unstripped
+851221: ld: warning: directory not found for option '-L/Users/runner/work/_temp/nuwa-8796-source/.cache/fakeroot/usr/local/lib/kernel/platform'
+851222: ld: warning: directory not found for option '-L/Users/runner/work/_temp/nuwa-8796-source/.cache/fakeroot/usr/local/lib/kernel/platform'
+851223: Undefined symbols for architecture arm64:
+851224:   "_native_legacy_display_probe", referenced from:
+851225:       _bsd_init in bsd_init.o
+851226: ld: symbol(s) not found for architecture arm64
+851227: clang++: error: linker command failed with exit code 1 (use -v to see invocation)
+851228: make[3]: *** [/Users/runner/work/_temp/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837//mach.development.bcm2837.unstripped] Error 1
+851229: make[2]: *** [build_all] Error 2
+851230: make[1]: *** [build_all_bootstrap_DEVELOPMENT^ARM64^BCM2837] Error 2
+851231: make: *** [build] Error 2
+851232: Traceback (most recent call last):
+851233:   File "/Users/runner/work/UniXNU/UniXNU/device/scripts/ci/build-8796-source.py", line 186, in <module>
+851234:     main()
+851235:   File "/Users/runner/work/UniXNU/UniXNU/device/scripts/ci/build-8796-source.py", line 143, in main
+851236:     run(['bash', work / 'scripts/build-xnu-4k-baseline.sh'], cwd=work, env=env)

@@ -311,3 +311,13 @@
 [Evidence] docs/operations/2026-10-22-hackios-reference-review.md；reports/hackios-review/原始来源hash和短摘录；kernel 8e611870、userland 906425b固定提交。
 [Risk] 未执行上游代码或独立复现实机，不推导nuwa硬件、完整RPC或供体ABI通过；报告建议不作执行指令，无板值、feed、镜像或设备修改。
 ```
+
+## Q-032 · 第九轮链接证据与可选display调用条件
+
+```text
+[unixnu-nuwa][kernel] 对齐可选display probe调用与archive构建开关
+
+[Change] 保存第九轮到达最终链接的真实证据，仅给bsd_init中的可选Legacy provider调用加已有构建条件；保留archive要求和完整链接错误检查；记录D-011和原始kernel存在性/hash证据。
+[Evidence] reports/kernel-ci/39736926012/diagnostics.txt原始行851223-851227只有native_legacy_display_probe未解析；baseline:319,600-614；next-compatibility-check.json为58项226 hunks通过，配方语法检查通过。
+[Risk] 完整make/链接仍失败，修复待第十轮，目标841个.o不含.cpo；driver/donor ABI、QEMU及实机未验证，feed/board不变，无镜像或设备操作。
+```

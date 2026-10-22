@@ -78,3 +78,16 @@ build.json记录51个真实生成实现、51份适配记录，总共1296次模�
 ## 第八轮取消确认与第九轮启动（2026-10-22 14:56）
 
 服务端已确认第八轮cancelled；原始状态和请求记录已更新。4dd55f0ec8c72e08946c6f597bb3ca3389b65dbd已发布，第九轮39736926012采用57项完整候选。结果未验证，继续观察编译/链接；启动及发布证明见reports/kernel-ci/39736926012/。
+
+
+## 第九轮进入链接与display probe条件修复（2026-10-22 15:09）
+
+第九轮39736926012首次到达最终LD mach.development.bcm2837.unstripped。原始行851223-851227只有一个未解析符号_native_legacy_display_probe，引用来自_bsd_init/bsd_init.o。kernel_built=false，尚无完整make/链接成功。本轮目标841个.o、全build目录870个.o，C++的.cpo不在此计数内；ast.o/processor.o保持实际哈希证据，IIG残留0、IORPC原头未变。
+
+原始控制台81,743,282字节、851242行，SHA-256 5181e69961465dd140f51405f4606f1531349e19008da5825346358bf2634ab6，留在out。run.json、原始行号摘录、统计与build.json见reports/kernel-ci/39736926012/。
+
+基座baseline:319给bsd_init.o传XNU_NATIVE_LEGACY_DISPLAY（默认0），:600-614仅开启该选项时加入真实Legacy archive。offline-component-load-probes.patch:75-80却在运行时boot-arg分支中无条件引用provider；即使boot-arg不设置，也必须链接该符号。IOUserClient中的同类调用已经有该构建条件。
+
+zzzz-display-probe-feature.patch仅给bsd_init.c的该运行时分支增加同样的XNU_NATIVE_LEGACY_DISPLAY构建条件。默认源CI不链接此archive，所以不引用其功能；开启并提供archive时保留原行为。不启用未知设备库、不新增stub/弱化导入或忽略链接错误。58项226 hunks及输入hash/bash配方静态检查通过，待第十轮。
+
+另外，入口在finally记录原始kernel文件是否存在及大小/hash，便于区分链接产物已产生但后续make检查失败的情况；kernel_built仍要求完整命令成功和普通ARM64 MH_EXECUTE检查通过，不因存在文件就置成功。
