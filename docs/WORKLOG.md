@@ -56,3 +56,5 @@
 - 2026-10-22 12:42 · Q-021以相同对象ID经API发布4313f2d，force=false，启动第五轮39723736387；仍固定75bc/8796与既定设备输入，完整内核/ABI结果未验证 · 提交号：4313f2d；本项待定Q-022 · reports/kernel-ci/39723736387/run.json，api-publish.json
 
 - 2026-10-22 14:22 · 第五轮实际12:48失败，下载完整证据；51份IIG输出无kernelContent残留，首错为ast.c无条件引用关闭的KPERF接口；两处条件保护，52项212 hunks和配方静态检查通过，来源/board/feed边界复核通过 · 提交号：待定Q-023 · reports/kernel-ci/39723736387/，docs/operations/2026-10-22-ci-fifth-failure.md
+
+- 2026-10-22 14:25 · Q-023已发布db30d6d，以同一device_ref启动第六轮39733594660，主机/依赖/固定输入检查成功，真实编译进行中；继续取最终证据，不将启动状态写成通过 · 提交号：db30d6d；本项待定Q-024 · reports/kernel-ci/39733594660/

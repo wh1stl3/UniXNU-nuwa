@@ -1,10 +1,10 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 14:22（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-22 14:25（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
-第五轮[39723736387](https://github.com/wh1stl3/UniXNU/actions/runs/39723736387)实际12:48已失败，证据已下载：IIG适配无残留，首错为ast.c无条件引用已关闭KPERF的类型。已给include和AST调用加条件保护；52项212 hunks静态检查通过，准备第六轮。见[第五轮分析](operations/2026-10-22-ci-fifth-failure.md)。完整内核构建仍未通过。
+第五轮[39723736387](https://github.com/wh1stl3/UniXNU/actions/runs/39723736387)实际12:48已失败，证据已下载：IIG适配无残留，首错为ast.c无条件引用已关闭KPERF的类型。已给include和AST调用加条件保护；52项212 hunks静态检查通过，修复db30d6d已发布，[第六轮39733594660](https://github.com/wh1stl3/UniXNU/actions/runs/39733594660)已通过输入检查，真实编译进行中。见[第五轮分析](operations/2026-10-22-ci-fifth-failure.md)。完整内核构建仍未通过。
 
 ## 当前边界
 
@@ -24,7 +24,7 @@
 
 ## 下一步
 
-1. 发布AST最小修复，以精确device_ref启动第六轮8796源构建，取完成后的证据检查ast.o与真实链接结果。
+1. 跟踪第六轮39733594660（device_ref=db30d6d13d5f5fabc3a110d535b1ce3b658c28d5），取完成后的证据检查ast.o与真实链接结果；本轮继续观察最终结果。
 2. 按第一处真实错误推进；成功时检查Mach-O、目标对象/符号、版本与NativePrelink标记，不扩大为ABI或实机结论。
 3. 完成Darwin22 archive、boot-progress/watchdog、nuwa defconfig与donor kernelcache解析，接回正式-D入口；feed切换独立处理。
 4. 命中四类硬停先写NEED-REVIEW再停；只差实体按键的项写PENDING-HUMAN继续。

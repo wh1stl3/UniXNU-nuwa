@@ -231,3 +231,13 @@
 [Evidence] reports/kernel-ci/39723736387/diagnostics.txt原始行253481/253484；build.json的51个IIG实现无kernelContent残留；compatibility-check.json为52项212 hunks通过，单项git apply --check及bash语法检查通过；workspace-check.json确认来源/board/feed不变。
 [Risk] 修复待第六轮真实编译和链接；581个.o是全部build目录合计，尚无完整内核、driver/donor ABI、QEMU或实机通过结论；无镜像或设备操作。
 ```
+
+## Q-024 · 第六轮源构建启动
+
+```text
+[unixnu-nuwa][build] 发布AST修复并启动第六轮8796源构建
+
+[Change] 记录db30d6d已发布与第六轮精确设备输入，继续观察真实编译及链接结果。
+[Evidence] reports/kernel-ci/39733594660/run.json、api-publish.json；https://github.com/wh1stl3/UniXNU/actions/runs/39733594660；device_ref=db30d6d13d5f5fabc3a110d535b1ce3b658c28d5，主机/依赖/输入检查成功。
+[Risk] 尚无第六轮最终结果，启动及输入检查不代表内核、ABI或实机通过；feed/board不变。
+```

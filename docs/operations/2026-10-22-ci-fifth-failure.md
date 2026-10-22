@@ -26,3 +26,7 @@ build.json记录51个真实生成实现、51份适配记录，总共1296次模�
 - workspace-check.json：三来源树tracked状态空，board与基座feed的既有hash不变。
 
 修复待第六轮真实编译；不把生成/静态检查称ABI、QEMU或实机通过。没有改feed、board、donor、内存或地址，无镜像/设备操作和_verified=true。
+
+## 第六轮启动
+
+修复db30d6d13d5f5fabc3a110d535b1ce3b658c28d5已发布；第六轮39733594660使用该精确设备输入，基座仍固定75bc。14:25快照中主机/依赖/输入检查成功、真实编译进行中，最终结果未验证；元数据与发布证明见reports/kernel-ci/39733594660/。
