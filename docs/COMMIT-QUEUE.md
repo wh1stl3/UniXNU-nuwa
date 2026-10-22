@@ -730,3 +730,13 @@
 [Evidence] nuwa boot_completed=1，FDT SHAf4636276；39802617878日志为Azure cross-GCC包Get/Ign阻塞后取消，未进入编译；更新安装脚本Bash语法通过。
 [Risk] 未生成新固件或执行镜像；候选ABL交接映射、日志持久性及新镜像下载效果仍未验证，board/feed不变。
 ```
+
+## Q-071 · 实机平台属性与已链接驱动契约
+
+```text
+[unixnu-nuwa][device] 核对nuwa平台属性与实际链接驱动的ADT消费契约
+
+[Change] 增加只读平台契约审查，检查精确驱动源码hash和实际内核catalogue，记录八CPU/PSCI/GIC/timer原始属性与转换缺口。
+[Evidence] ArmCpu和ArmDTPlatform源码与CI记录一致，内核catalogue含两类匹配；39805110487依赖安装4分23秒成功进入构建。
+[Risk] 未生成ADT或证明平台运行，ARCH_TIMER和boot-progress仍禁用，固件结果待取证；board/feed及_verified不变。
+```

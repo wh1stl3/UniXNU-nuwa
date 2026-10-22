@@ -154,3 +154,5 @@
 2026-10-22 23:18 · 分块取回合并版内核及三archive，实际SHA/五导出/零undefined/65348项donor指针检查通过；调度独立固件CI39802617878，尚无设备执行 · 本提交（Q-069） · reports/kernel-ci/39793231214/；reports/firmware-ci/39802617878/
 
 2026-10-22 23:27 · nuwa Android=1只读FDT确认splash/initrd与ramoops-FD重叠；固件CI因Azure依赖下载阻塞取消，补有限超时和镜像替换，未进入固件编译 · 本提交（Q-070） · reports/firmware-ci/39802617878/
+
+2026-10-22 23:38 · 对照实际内核catalogue与精确驱动源码，核对nuwa八CPU/PSCI/GIC/timer的FDT→ADT契约；固件重跑39805110487安装成功进入编译 · 本提交（Q-071） · reports/runtime-platform/live-dt-contract.json；reports/firmware-ci/39805110487/dispatch.json

@@ -1,0 +1,432 @@
+{
+  "scope": "Android hardware evidence and linked-source contract, not ADT/runtime validation",
+  "fdt_path": "out\\live-nuwa-dt\\live-dt-map-comparison\\android-live.dtb",
+  "fdt_sha256": "f4636276599dd5b8c483692745994d1a8285542c30943e901f2717e23378f8a8",
+  "exact_linked_driver_sources": [
+    {
+      "component": "ArmCpu",
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU\\drivers\\ArmCpu\\ArmCpu.cpp",
+      "sha256": "3c87b3bd617be5582a6a24ff797c359497ee9feaa702ee883ecee4270db21c9f",
+      "contract_lines": [
+        {
+          "line": 90,
+          "text": "static const uint32_t kSgiPpiEnable = 0xffffU | (1U << 27);"
+        },
+        {
+          "line": 128,
+          "text": "  __asm__ volatile (\"isb; mrs %0, cntvct_el0\" : \"=r\" (value));"
+        },
+        {
+          "line": 135,
+          "text": "  __asm__ volatile (\"mrs %0, cntfrq_el0\" : \"=r\" (frequency));"
+        },
+        {
+          "line": 181,
+          "text": "      (memcmp (type->getBytesNoCopy (), \"cpu\", 4) != 0) ||"
+        },
+        {
+          "line": 185,
+          "text": "  memcpy (&id, reg->getBytesNoCopy (), sizeof (id));"
+        },
+        {
+          "line": 198,
+          "text": "  IORegistryEntry *soc = IORegistryEntry::fromPath (\"/arm-io\", gIODTPlane);"
+        },
+        {
+          "line": 199,
+          "text": "  IORegistryEntry *gic = IORegistryEntry::fromPath (\"/arm-io/intc\", gIODTPlane);"
+        },
+        {
+          "line": 210,
+          "text": "  bool valid = (ranges != nullptr) && (ranges->getLength () == sizeof (bus)) &&"
+        },
+        {
+          "line": 211,
+          "text": "               (reg != nullptr) && (reg->getLength () == sizeof (regions)) &&"
+        },
+        {
+          "line": 212,
+          "text": "               (compatible != nullptr) && (compatible->getLength () == 11) &&"
+        },
+        {
+          "line": 213,
+          "text": "               (memcmp (compatible->getBytesNoCopy (), \"arm,gic-v3\", 11) == 0);"
+        },
+        {
+          "line": 215,
+          "text": "    memcpy (bus, ranges->getBytesNoCopy (), sizeof (bus));"
+        },
+        {
+          "line": 216,
+          "text": "    memcpy (regions, reg->getBytesNoCopy (), sizeof (regions));"
+        },
+        {
+          "line": 220,
+          "text": "    memcpy (&gRedistStride, strideProperty->getBytesNoCopy (), sizeof (uint64_t));"
+        },
+        {
+          "line": 307,
+          "text": "  if (!local) { write32 (sgi, 0x100, kSgiPpiEnable); }"
+        },
+        {
+          "line": 336,
+          "text": "    write32 (redist + 0x10000, 0x100, kSgiPpiEnable);"
+        },
+        {
+          "line": 375,
+          "text": "  memcpy (&physical, reg->getBytesNoCopy (), sizeof (physical));"
+        },
+        {
+          "line": 464,
+          "text": "// PSCI conduit comes from the /psci node of the device tree (\"smc\" or \"hvc\"); no default is assumed."
+        },
+        {
+          "line": 467,
+          "text": "  IORegistryEntry *psci = IORegistryEntry::fromPath (\"/psci\", gIODTPlane);"
+        },
+        {
+          "line": 471,
+          "text": "  if (method != nullptr && method->getLength () == 4 && memcmp (method->getBytesNoCopy (), \"smc\", 4) == 0) {"
+        },
+        {
+          "line": 473,
+          "text": "  } else if (method != nullptr && method->getLength () == 4 && memcmp (method->getBytesNoCopy (), \"hvc\", 4) == 0) {"
+        },
+        {
+          "line": 680,
+          "text": "      __asm__ volatile (\"dsb ishst; isb; mrs %0, cntvct_el0; isb\" : \"=r\" (ta) :: \"memory\");"
+        },
+        {
+          "line": 681,
+          "text": "      __asm__ volatile (\"msr icc_sgi1r_el1, %0; isb; mrs %1, cntvct_el0\" : \"=r\" (tb) : \"r\" (sgi) : \"memory\");"
+        },
+        {
+          "line": 709,
+          "text": "    __asm__ volatile (\"isb; mrs %0, cntvct_el0; isb; mrs %2, icc_pmr_el1; isb; mrs %1, cntvct_el0\" : \"=r\" (ta), \"=r\" (tb), \"=r\" (v) :: \"memory\");"
+        },
+        {
+          "line": 726,
+          "text": "  __asm__ volatile (\"msr cntv_ctl_el0, %0; isb\" :: \"r\" (value) : \"memory\");"
+        }
+      ]
+    },
+    {
+      "component": "ArmDTPlatform",
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU\\drivers\\ArmDTPlatform\\ArmDTPlatform.cpp",
+      "sha256": "07f96a42bdd638022960f5fcaf9e3a07dd73a82c869a70815781cac6d4873b3b",
+      "contract_lines": [
+        {
+          "line": 10,
+          "text": "//   /options, /cpus, /arm-io and /defaults"
+        },
+        {
+          "line": 136,
+          "text": "    IOLog (\"ArmDTPlatform: required /cpus, /arm-io, /defaults or /options node is absent\\n\");"
+        },
+        {
+          "line": 172,
+          "text": "        (memcmp (type->getBytesNoCopy (), \"cpu\", 4) == 0)) {"
+        }
+      ]
+    }
+  ],
+  "android_nodes": [
+    {
+      "android_node": "/cpus/cpu@0",
+      "properties": {
+        "device_type": {
+          "hex": "63707500",
+          "bytes": 4
+        },
+        "compatible": {
+          "hex": "71636f6d2c6b72796f00",
+          "bytes": 10
+        },
+        "reg": {
+          "hex": "0000000000000000",
+          "bytes": 8
+        },
+        "enable-method": {
+          "hex": "7073636900",
+          "bytes": 5
+        }
+      },
+      "decoded_reg_from_parent_cells": [
+        {
+          "address": "0x0",
+          "size": "0x0"
+        }
+      ]
+    },
+    {
+      "android_node": "/cpus/cpu@100",
+      "properties": {
+        "device_type": {
+          "hex": "63707500",
+          "bytes": 4
+        },
+        "compatible": {
+          "hex": "71636f6d2c6b72796f00",
+          "bytes": 10
+        },
+        "reg": {
+          "hex": "0000000000000100",
+          "bytes": 8
+        },
+        "enable-method": {
+          "hex": "7073636900",
+          "bytes": 5
+        }
+      },
+      "decoded_reg_from_parent_cells": [
+        {
+          "address": "0x100",
+          "size": "0x0"
+        }
+      ]
+    },
+    {
+      "android_node": "/cpus/cpu@200",
+      "properties": {
+        "device_type": {
+          "hex": "63707500",
+          "bytes": 4
+        },
+        "compatible": {
+          "hex": "71636f6d2c6b72796f00",
+          "bytes": 10
+        },
+        "reg": {
+          "hex": "0000000000000200",
+          "bytes": 8
+        },
+        "enable-method": {
+          "hex": "7073636900",
+          "bytes": 5
+        }
+      },
+      "decoded_reg_from_parent_cells": [
+        {
+          "address": "0x200",
+          "size": "0x0"
+        }
+      ]
+    },
+    {
+      "android_node": "/cpus/cpu@300",
+      "properties": {
+        "device_type": {
+          "hex": "63707500",
+          "bytes": 4
+        },
+        "compatible": {
+          "hex": "71636f6d2c6b72796f00",
+          "bytes": 10
+        },
+        "reg": {
+          "hex": "0000000000000300",
+          "bytes": 8
+        },
+        "enable-method": {
+          "hex": "7073636900",
+          "bytes": 5
+        }
+      },
+      "decoded_reg_from_parent_cells": [
+        {
+          "address": "0x300",
+          "size": "0x0"
+        }
+      ]
+    },
+    {
+      "android_node": "/cpus/cpu@400",
+      "properties": {
+        "device_type": {
+          "hex": "63707500",
+          "bytes": 4
+        },
+        "compatible": {
+          "hex": "71636f6d2c6b72796f00",
+          "bytes": 10
+        },
+        "reg": {
+          "hex": "0000000000000400",
+          "bytes": 8
+        },
+        "enable-method": {
+          "hex": "7073636900",
+          "bytes": 5
+        }
+      },
+      "decoded_reg_from_parent_cells": [
+        {
+          "address": "0x400",
+          "size": "0x0"
+        }
+      ]
+    },
+    {
+      "android_node": "/cpus/cpu@500",
+      "properties": {
+        "device_type": {
+          "hex": "63707500",
+          "bytes": 4
+        },
+        "compatible": {
+          "hex": "71636f6d2c6b72796f00",
+          "bytes": 10
+        },
+        "reg": {
+          "hex": "0000000000000500",
+          "bytes": 8
+        },
+        "enable-method": {
+          "hex": "7073636900",
+          "bytes": 5
+        }
+      },
+      "decoded_reg_from_parent_cells": [
+        {
+          "address": "0x500",
+          "size": "0x0"
+        }
+      ]
+    },
+    {
+      "android_node": "/cpus/cpu@600",
+      "properties": {
+        "device_type": {
+          "hex": "63707500",
+          "bytes": 4
+        },
+        "compatible": {
+          "hex": "71636f6d2c6b72796f00",
+          "bytes": 10
+        },
+        "reg": {
+          "hex": "0000000000000600",
+          "bytes": 8
+        },
+        "enable-method": {
+          "hex": "7073636900",
+          "bytes": 5
+        }
+      },
+      "decoded_reg_from_parent_cells": [
+        {
+          "address": "0x600",
+          "size": "0x0"
+        }
+      ]
+    },
+    {
+      "android_node": "/cpus/cpu@700",
+      "properties": {
+        "device_type": {
+          "hex": "63707500",
+          "bytes": 4
+        },
+        "compatible": {
+          "hex": "71636f6d2c6b72796f00",
+          "bytes": 10
+        },
+        "reg": {
+          "hex": "0000000000000700",
+          "bytes": 8
+        },
+        "enable-method": {
+          "hex": "7073636900",
+          "bytes": 5
+        }
+      },
+      "decoded_reg_from_parent_cells": [
+        {
+          "address": "0x700",
+          "size": "0x0"
+        }
+      ]
+    },
+    {
+      "android_node": "/soc/psci",
+      "properties": {
+        "compatible": {
+          "hex": "61726d2c707363692d312e3000",
+          "bytes": 13
+        },
+        "method": {
+          "hex": "736d6300",
+          "bytes": 4
+        }
+      }
+    },
+    {
+      "android_node": "/soc/interrupt-controller@17100000",
+      "properties": {
+        "compatible": {
+          "hex": "61726d2c6769632d763300",
+          "bytes": 11
+        },
+        "redistributor-stride": {
+          "hex": "0000000000040000",
+          "bytes": 8
+        },
+        "reg": {
+          "hex": "17100000000100001718000000200000",
+          "bytes": 16
+        },
+        "interrupts": {
+          "hex": "000000010000000900000004",
+          "bytes": 12
+        }
+      },
+      "decoded_reg_from_parent_cells": [
+        {
+          "address": "0x17100000",
+          "size": "0x10000"
+        },
+        {
+          "address": "0x17180000",
+          "size": "0x200000"
+        }
+      ]
+    },
+    {
+      "android_node": "/soc/timer",
+      "properties": {
+        "compatible": {
+          "hex": "61726d2c61726d76382d74696d657200",
+          "bytes": 16
+        },
+        "interrupts": {
+          "hex": "000000010000000d0000ff08000000010000000e0000ff08000000010000000b0000ff08000000010000000c0000ff08",
+          "bytes": 48
+        },
+        "clock-frequency": {
+          "hex": "0124f800",
+          "bytes": 4
+        }
+      }
+    }
+  ],
+  "actual_build_runtime_arguments": [
+    "CFLAGS_EXTRA=-Wno-reserved-identifier -Wno-pre-c11-compat -Wno-missing-designated-field-initializers -Wno-suggest-override -Wno-unnecessary-virtual-specifier -Wno-suggest-destructor-override -Wno-ms-bitfield-padding -DXNU_NATIVE_PAN=0 -DXNU_BOOT_PROGRESS=0",
+    "start.o_SFLAGS_ADD=-DXNU_NATIVE_ARCH_TIMER=0"
+  ],
+  "actual_kernel_catalogue": {
+    "kernel_sha256": "77742999fc1c1b6a94c9603664d946553070f73c6eed83ce9fcca06d70d73ac8",
+    "file_offset": 1178110,
+    "text": "(   {     'IOClass'         = ArmCpu;     'IOProviderClass' = IOPlatformDevice;     'IOProbeScore'    = 2000:32;   },   {     'IOClass'         = ArmVirtPlatform;     'IOProviderClass' = IOPlatformExpertDevice;     'IONameMatch'     = 'linux,dummy-virt';     'IOProbeScore'    = 10000:32;   },   {     'IOClass'         = ArmDTPlatform;     'IOProviderClass' = IOPlatformExpertDevice;     'IONameMatch'     = 'device-tree';     'IOProbeScore'    = 5000:32;   },   {     'IOClass'         = IOPanicPlatform;     'IOProviderClass' = IOPlatformExpertDevice;     'IOProbeScore'    = 0:32;   })",
+    "runtime_matching": "unverified"
+  },
+  "gaps": [
+    "No nuwa candidate ADT generated or validated",
+    "Android FDT big-endian cells must not be copied as Apple ADT native-endian values",
+    "Driver expects /arm-io/intc and /psci, not Android /soc node paths",
+    "No EL/PSCI/GIC/timer hardware execution evidence",
+    "No provider/boot-progress/watchdog runtime qualification"
+  ],
+  "device_executed": false,
+  "board_modified": false,
+  "adt_generated": false
+}

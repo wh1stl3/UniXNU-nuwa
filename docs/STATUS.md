@@ -1,10 +1,10 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 23:27（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-22 23:38（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
-**三仓已齐；合并版内核独立核验通过，独立固件CI39802617878因依赖镜像下载阻塞已取消，有限超时与镜像修复待下一轮。**
+**三仓已齐；合并版内核独立核验通过，独立固件CI39805110487已通过依赖安装并进入构建。**
 
 | 仓库 | 当前输入与状态 |
 | --- | --- |
@@ -36,7 +36,7 @@ CI15实际DWARF为608B CommandLine/0x2e0 boot_args，尾字段0x2d0/0x2d8；上�
 
 ## 下一步
 
-1. 重新调度独立固件：39802617878安装依赖时Azure镜像跨GCC下载长期Get/Ign，已取消且未编译。workflow改官方Ubuntu镜像、有限超时/重试与非交互模式；下一轮取实际首错，不将网络阻塞归为固件编译失败。
+1. 读取独立固件CI39805110487真实编译/链接结果与产物；已通过依赖安装（4分23秒），当前构建中。39802617878的Azure下载阻塞已取消并保留，不能当成固件源错误。
 2. 合并版内核独立静态核验已完成；保留CI15候选输入，后续以明确profile逐步接入新内核，不自动混用不同来源或生成预链接。完整运行ABI/provider/ARCH_TIMER仍待审查。
 3. 新固件产物检查用--publisher-name NuwaBootMemoryDxe；legacy默认仍支持旧ShengBootMemoryDxe产物。本地子模块未初始化，31项检查中Mu_Basecore文件借用同固定提交的只读缓存，不能称完整本地构建工具已就绪。
 4. 继续ABL/FDT/splash/x0/initrd保留与早期日志回收，审查SM8550 USB许可/4K/DMA/SMMU依赖、UEFI SerialIo桥接；provider/ARCH_TIMER/GIC/PSCI、13项boot-progress、watchdog和NativePrelink完整ABI仍待验收。
@@ -49,3 +49,5 @@ board/feed及所有_verified标志不变；4KiB，iPhone10,3/d22ap/iOS16.7.16/20
 官方72中文页/144路由复核与既有日志出口方案见operations对应报告；本机触控ST FTS SPI、同SoC不替代本板验收。iOS用户态、完整本地内核构建和新固件实机运行仍未验证。
 
 本轮当前FDT938828B/SHAf4636276：splash B8000000/02B00000、initrd B5FB2000–B7FFF1D4。ramoops A7000000/00400000与固件FD Reserved/UEFI FD重叠，不能直接作为固件持久日志区；这是跨阶段所有权问题，不是黑屏根因证明。[实机只读复核](operations/2026-10-22-live-dt-and-firmware-map.md)。
+
+平台契约静态审查新增：Android八CPU affinity/PSCI smc/GICv3与timer属性已取证；对应驱动源码哈希与实际archive一致，实际内核catalogue含ArmCpu/ArmDTPlatform personality。Android FDT路径/大小端/属性宽度不等于目标ADT，未生成ADT或改变board。见[平台契约](operations/2026-10-22-live-platform-contract.md)。
