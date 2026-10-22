@@ -140,3 +140,5 @@
 2026-10-22 21:52 · 接入Darwin22加载器608B结构/缓冲区补丁及前后哈希门；AArch64布局编译、88项接线检查和两版各10例宿主边界测试通过，保留PIE一次139失败，未生成固件或访问设备 · 本提交（Q-064） · reports/darwin22-loader/；docs/operations/2026-10-22-darwin22-loader-fix.md
 
 2026-10-22 21:54 · 追加核对既有原厂表逐字节证据，接线检查增至89项；复用历史原文避免重复提交，原始空白未修改 · 本提交（Q-064） · reports/darwin22-loader/integration/audit.json
+
+2026-10-22 22:07 · 准备76dd合并版独立内核CI profile，原48项序列重验通过，两份变化挂载patch保留8796字节；60项适配输入/语法和旧基线回归检查通过，待真实CI编译 · 本提交（Q-065） · reports/upstream-merge/kernel-input-review.json；docs/operations/2026-10-22-merged-kernel-profile.md

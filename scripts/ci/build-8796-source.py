@@ -47,7 +47,7 @@ def capture_kernel_make(script):
     return script[:start] + captured + script[end:]
 
 
-def inputs(base):
+def inputs(base, profile='baseline'):
     evidence = json.loads((DEVICE / 'reports/xnu-8796-sequence/results.json').read_text(encoding='utf-8'))
     if evidence['base_head'] != BASE_COMMIT or evidence['source_head'] != XNU_COMMIT:
         raise ValueError('Review evidence pins differ')
@@ -68,7 +68,13 @@ def inputs(base):
         patches.append(candidate)
     baseline = base / 'scripts/build-xnu-4k-baseline.sh'
     firehose = base / 'scripts/build-firehose.sh'
-    if sha(baseline) != BASELINE_HASH or sha(firehose) != FIREHOSE_HASH:
+    expected_baseline = BASELINE_HASH
+    if profile == 'merged':
+        merged = json.loads((DEVICE / 'config/kernel-merged-profile.json').read_text())
+        expected_baseline = merged['baseline_sha256']
+    elif profile != 'baseline':
+        raise ValueError('Unknown build profile')
+    if sha(baseline) != expected_baseline or sha(firehose) != FIREHOSE_HASH:
         raise ValueError('Unexpected upstream build scripts')
     script = baseline.read_text(encoding='utf-8')
     script = replace_exact(script, '.unstripped.noctf', '.unstripped', 3)
@@ -106,10 +112,21 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--base', required=True, type=Path)
     parser.add_argument('--check', action='store_true')
+    parser.add_argument('--profile', choices=('baseline', 'merged'), default='baseline')
     args = parser.parse_args()
     base = args.base.resolve()
-    patches, script, firehose_script = inputs(base)
-    summary = {'base_commit': BASE_COMMIT, 'xnu_commit': XNU_COMMIT,
+    if args.profile == 'merged':
+        merged = json.loads((DEVICE / 'config/kernel-merged-profile.json').read_text())
+        for relative, expected in {'.': merged['commit'], **merged['modules']}.items():
+            actual = subprocess.check_output(['git', '-C', str(base / relative),
+                                              'rev-parse', 'HEAD'], text=True).strip()
+            if actual != expected:
+                raise ValueError('Merged source pin mismatch: ' + relative)
+    patches, script, firehose_script = inputs(base, args.profile)
+    base_commit = BASE_COMMIT
+    if args.profile == 'merged':
+        base_commit = json.loads((DEVICE / 'config/kernel-merged-profile.json').read_text())['commit']
+    summary = {'base_commit': base_commit, 'profile': args.profile, 'xnu_commit': XNU_COMMIT,
                'patches': [{'name': p.name, 'sha256': sha(p)} for p in patches],
                'baseline_adapter_sha256': hashlib.sha256(script.encode()).hexdigest(),
                'firehose_adapter_sha256': hashlib.sha256(firehose_script.encode()).hexdigest(),

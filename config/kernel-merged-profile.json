@@ -1,0 +1,16 @@
+{
+  "repository": "wh1stl3/UniXNU",
+  "commit": "76dd64142decca55f6594b860565e848de71d271",
+  "baseline_sha256": "d4e4e63291cd044c22ec11e61ec1bb246ecea77e2261f88c19aabc4137e59fbe",
+  "modules": {
+    "drivers/ArmCpu": "1951cc8444b340d7d8879e9418220cf29eb711d7",
+    "drivers/ArmDTPlatform": "0d544705c2e89725caabc0542bb96bc8febd8c70",
+    "drivers/ArmVirtPlatform": "532de8c017e394e69a0b48dc0ffc4ac0d0701177",
+    "kits/NativePrelink": "2b6ffb50117eee820b98aca9bd51b5c7dfb2970e"
+  },
+  "selection_evidence": "reports/xnu-8796-sequence/results.json",
+  "input_review": "reports/upstream-merge/kernel-input-review.json",
+  "patch_policy": "Preserve all 48 reviewed bytes; device candidates override changed upstream patches",
+  "feed_policy": "Do not modify feeds.toml; isolated source build uses explicit pinned environment inputs and does not copy feeds.toml",
+  "scope": "Source kernel, platform static archives and link only; no prelink, firmware or boot image"
+}

@@ -660,3 +660,13 @@
 [Evidence] 原基线git apply检查及最新模块RAM上下文通过；AArch64真实EDK头布局与CI15全部成员偏移一致，89项接线检查和两版各10例宿主ASan/UBSan边界用例通过。
 [Risk] 完整模块和运行ABI未验证；PIE宿主一次无诊断139已保留，非PIE测试通过不证明根因；未生成新固件、访问设备或修改board/feed。
 ```
+
+## Q-065 · 合并版内核构建profile
+
+```text
+[unixnu-nuwa][build] 固定合并版模块并保留8796补丁的独立CI入口
+
+[Change] 新增76dd固定profile与独立内核工作流，保留旧基线默认入口和两份变化挂载patch的8796字节，增加完整树/blob及真实适配函数审查。
+[Evidence] 原48项顺序RAM应用通过，46份上游未变，两份新上游对8796独立git检查失败；60项适配输入哈希及Bash语法、旧基线检查通过。
+[Risk] 新模块真实编译/链接和运行ABI待CI；未改feed/board、生成固件/boot镜像或访问设备，不把静态检查当实机通过。
+```

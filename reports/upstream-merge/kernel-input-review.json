@@ -1,0 +1,629 @@
+{
+  "merged_commit": "76dd64142decca55f6594b860565e848de71d271",
+  "native_prelink_commit": "2b6ffb50117eee820b98aca9bd51b5c7dfb2970e",
+  "selected_count": 48,
+  "preserved_sequence_passed": true,
+  "upstream_selected_patch_changes": 2,
+  "changed_upstream_is_active": false,
+  "patches": [
+    {
+      "patch": "apple-only-cpu-tunables.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/apple-only-cpu-tunables.patch",
+      "new_git_blob": "9470a247483a67f6c3347c481b65cf7fe86277ac",
+      "old_sha256": "91e431249a4d756bfca8b1800b4b283340c86d1899ec8196a2fe873e8d3c251e",
+      "upstream_unchanged": true,
+      "device_override": true,
+      "selected_sha256": "49ad719fce1e074777041483daef41a3214025d31b2b399858f4dab891b271b9",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "architectural-timer-entry.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/architectural-timer-entry.patch",
+      "new_git_blob": "635ed0dd664776d12aafd1059c177ef8726a1e93",
+      "old_sha256": "809b0c951545d889a2a37c730189283e7e890340894bab6d937c914dbd20b8e5",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "809b0c951545d889a2a37c730189283e7e890340894bab6d937c914dbd20b8e5",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "armvirt-platform-personality.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/armvirt-platform-personality.patch",
+      "new_git_blob": "fefd299f34316dde20186c76e9ba1fd04b88e7e1",
+      "old_sha256": "00e7054c9ff2ae82b66f27bfbefd7620e9000503ea5b38b80aa90aab1e4b7225",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "00e7054c9ff2ae82b66f27bfbefd7620e9000503ea5b38b80aa90aab1e4b7225",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "cxx-flag-dependencies.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/cxx-flag-dependencies.patch",
+      "new_git_blob": "08adcde613174e54ed22861e9a37120abbe10656",
+      "old_sha256": "a435e8797ed24a8338db53d0eaac49c163f90170c1fb7946d0c5cdee9d7d4b52",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "a435e8797ed24a8338db53d0eaac49c163f90170c1fb7946d0c5cdee9d7d4b52",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "disabled-deferred-reclaim.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/disabled-deferred-reclaim.patch",
+      "new_git_blob": "3b1ae406c49b3be11333f96a9567066fa6d2edf8",
+      "old_sha256": "817a0b017aebb21f773aafe2b92a81be076abc66e29275d57220635339a407e1",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "817a0b017aebb21f773aafe2b92a81be076abc66e29275d57220635339a407e1",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "external-archive-dependencies.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/external-archive-dependencies.patch",
+      "new_git_blob": "04cc0e0daae2154d1a220e9ea8559f36d524a999",
+      "old_sha256": "0a571de8361845266d7d419b0b3d5ebadbef986840c7e06eb981c0960d7fe374",
+      "upstream_unchanged": true,
+      "device_override": true,
+      "selected_sha256": "6f2ce506a3634d06260f14ccd86a84af7fbf7dc5e7c98a2381b6bff52199d7b5",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "kernel-sdk-root.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/kernel-sdk-root.patch",
+      "new_git_blob": "81826e475270c13830bcea7435dcebcd0a0ac2c8",
+      "old_sha256": "2bcf10f4bf171afbc358cb64e9bc742563dd21f5eadf0e7a17936e87fa8ba43d",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "2bcf10f4bf171afbc358cb64e9bc742563dd21f5eadf0e7a17936e87fa8ba43d",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "local-availability.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/local-availability.patch",
+      "new_git_blob": "4d1708a5783ab320508e6a17cb0fdbdbf5fc7077",
+      "old_sha256": "a051857d524f8836068fd2f1182ebe9e9d9ccf28b9560fb27ad634b0cb93270e",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "a051857d524f8836068fd2f1182ebe9e9d9ccf28b9560fb27ad634b0cb93270e",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "mockfs-intermediate-lookup.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/mockfs-intermediate-lookup.patch",
+      "new_git_blob": "c9b33e9c3e973fda6e5143cc79222e8b43e01d44",
+      "old_sha256": "51a5b76873c2a39b777bd4f1f5e78730ce72e93d548de6fbe4655f107731fa00",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "51a5b76873c2a39b777bd4f1f5e78730ce72e93d548de6fbe4655f107731fa00",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "mockfs-memory-device-width.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/mockfs-memory-device-width.patch",
+      "new_git_blob": "cef784993957c2b7440a7a6158e24e85779f4367",
+      "old_sha256": "506f4ba36e30a700f0d27370d07abbde6e2c689d13fbad3400a6b940569ae30a",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "506f4ba36e30a700f0d27370d07abbde6e2c689d13fbad3400a6b940569ae30a",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "mockfs-statfs.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/mockfs-statfs.patch",
+      "new_git_blob": "6a5eef6d4598d81c8d4913cd7261fb06fd97d5dd",
+      "old_sha256": "58c9a51909b12dca9cd1ac2fdb94be748b43be1c979383b9504a0304fb16a809",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "58c9a51909b12dca9cd1ac2fdb94be748b43be1c979383b9504a0304fb16a809",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "mockfs-test-file.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/mockfs-test-file.patch",
+      "new_git_blob": "8204567cc56474ee152a76003d90dc030e0e12da",
+      "old_sha256": "4a1ef86e0bdca7b633f59885961be1939574f8ba9814d1d75ebbfd0a7a8bd919",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "4a1ef86e0bdca7b633f59885961be1939574f8ba9814d1d75ebbfd0a7a8bd919",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "mockfs-typed-allocation.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/mockfs-typed-allocation.patch",
+      "new_git_blob": "cc494ff1dac87ccd41b7313c27cd65608474cb9d",
+      "old_sha256": "44dfe8ea590336fae48a4d5f7b8fd478a435d591a34ba77fe1d0a961c630ad57",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "44dfe8ea590336fae48a4d5f7b8fd478a435d591a34ba77fe1d0a961c630ad57",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "native-4k-bootstrap-capacity.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/native-4k-bootstrap-capacity.patch",
+      "new_git_blob": "a047677a7267c1e28a33243f18017ee79ea3df38",
+      "old_sha256": "4ac39b497d88b28432bc7844c7137c8d2acc1992bef53f68c3512523a80b13a3",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "4ac39b497d88b28432bc7844c7137c8d2acc1992bef53f68c3512523a80b13a3",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "native-4k-signature-hash-cache.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/native-4k-signature-hash-cache.patch",
+      "new_git_blob": "9e17f53afc39abcb51650dab685e460abcc5f714",
+      "old_sha256": "f9a8b4d39022a726ba1e0e4842248d57b20fe3a05fbf41b3a01f6700b2e3ca72",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "f9a8b4d39022a726ba1e0e4842248d57b20fe3a05fbf41b3a01f6700b2e3ca72",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "native-4k-user-abi.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/native-4k-user-abi.patch",
+      "new_git_blob": "2d66c482998e61e8400e22e98835b3389df64589",
+      "old_sha256": "981ac483ae898426486aab475e22b2286bc1d820ad047c566182c3fbf435f6d4",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "981ac483ae898426486aab475e22b2286bc1d820ad047c566182c3fbf435f6d4",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "native-aes-personality.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/native-aes-personality.patch",
+      "new_git_blob": "b6c3737135a863089ee7bd86fdc58ce4ca71151e",
+      "old_sha256": "02fe52c87a6bd801e602d03b54ce51de1362a2f2c6f75f5fc08122d3901aefff",
+      "upstream_unchanged": true,
+      "device_override": true,
+      "selected_sha256": "c126435813b4c39c8cb421522e01480cf1675a5dfd628293208e029e2da9b3cb",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "native-arm-pan.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/native-arm-pan.patch",
+      "new_git_blob": "cda8457d3b5553bcc1954e3be0b03f8ad47a280b",
+      "old_sha256": "7948f0ca8ad0ac5313a32bc8d9377290f88a7d64c880bbfac8e2b4c092e916f6",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "7948f0ca8ad0ac5313a32bc8d9377290f88a7d64c880bbfac8e2b4c092e916f6",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "native-dt-panic-region.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/native-dt-panic-region.patch",
+      "new_git_blob": "7ba1a0431179cacd5a3213286efd349b2d5f1c75",
+      "old_sha256": "b60c2a9a72ea23832f1e64348a5c5d1152cf05db6c156283dd8a93c804cd89cb",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "b60c2a9a72ea23832f1e64348a5c5d1152cf05db6c156283dd8a93c804cd89cb",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "native-priv-work-interval.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/native-priv-work-interval.patch",
+      "new_git_blob": "c1feffaa350c21d94a5895132510c4d9fc3a9f70",
+      "old_sha256": "6250b487e67dd35e97da59cc79040aa5d73f11106fbe5bc07e81047c4c33e2ed",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "6250b487e67dd35e97da59cc79040aa5d73f11106fbe5bc07e81047c4c33e2ed",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "native-smp-secondary.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/native-smp-secondary.patch",
+      "new_git_blob": "a757f29830c50cddeefa1b10d5e8902ac704da10",
+      "old_sha256": "cc16c2d53cbcc50eb2547e2c6f5b61f325348d07495378d9cdf187246b4d315c",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "cc16c2d53cbcc50eb2547e2c6f5b61f325348d07495378d9cdf187246b4d315c",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "native-trust-cache-runtime.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/native-trust-cache-runtime.patch",
+      "new_git_blob": "1d088a267ec5c7d58b55bbea03178f435b448fde",
+      "old_sha256": "19e000ca6f70a8ddfefa503d2936894dd8315fae3ca2fb3e50d666d65252de79",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "19e000ca6f70a8ddfefa503d2936894dd8315fae3ca2fb3e50d666d65252de79",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "native-union-getattrlistbulk.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/native-union-getattrlistbulk.patch",
+      "new_git_blob": "64f3c19098c8d4b937af561d3f750b492bcf2526",
+      "old_sha256": "f5d665fd7250717cfacced8408a0b94f282eb2764e514f61a378f7d085c7a03b",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "f5d665fd7250717cfacced8408a0b94f282eb2764e514f61a378f7d085c7a03b",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "native-work-interval-soft-fail.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/native-work-interval-soft-fail.patch",
+      "new_git_blob": "ba28cf8e0d7b37d4c4d150ade611053f951e11be",
+      "old_sha256": "b163b85e0340abf2da104527a3b5c3c4e72abe6cacabb3bacb6001e84a67f3fe",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "b163b85e0340abf2da104527a3b5c3c4e72abe6cacabb3bacb6001e84a67f3fe",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "native-work-interval-trace.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/native-work-interval-trace.patch",
+      "new_git_blob": "f855f6e59d1cf5db391d8059fe3dcde89b2e42b0",
+      "old_sha256": "f2c11511c172929572c3b075b0b0f3b8ae2c63d6f229c489c0339acc4f39815c",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "f2c11511c172929572c3b075b0b0f3b8ae2c63d6f229c489c0339acc4f39815c",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "non-apple-cache-monitor.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/non-apple-cache-monitor.patch",
+      "new_git_blob": "781f1d0d6cf54a47d21c5234581f839ca0681db0",
+      "old_sha256": "116ee4e61fb68e4a403049e349ceb23334e2eff0bec0eb11dc3bd5f3259fabdf",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "116ee4e61fb68e4a403049e349ceb23334e2eff0bec0eb11dc3bd5f3259fabdf",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "non-apple-iommu-bootstrap.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/non-apple-iommu-bootstrap.patch",
+      "new_git_blob": "8bac3ee952de94ac361b4bc2ae22cecb8349d53e",
+      "old_sha256": "a53aaf1073976aed1561cb609763c7a4214e245a50fb534cc77b643808df9e70",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "a53aaf1073976aed1561cb609763c7a4214e245a50fb534cc77b643808df9e70",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "non-apple-pmap-field.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/non-apple-pmap-field.patch",
+      "new_git_blob": "2fb23fbef8ecb5c24e56fdfdf65e6e020b01653a",
+      "old_sha256": "82fe0a5021d59ddb766884f802f960ad67d61be63596f0bde136bf3875ff3ff8",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "82fe0a5021d59ddb766884f802f960ad67d61be63596f0bde136bf3875ff3ff8",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "null-root-media.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/null-root-media.patch",
+      "new_git_blob": "0af816370b6c8634aaa17820dca13ea2d099c70e",
+      "old_sha256": "a67ce9afd5af8178e83089ace6ce5d21f5e820b69e4c70dfc2cdae1be274678a",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "a67ce9afd5af8178e83089ace6ce5d21f5e820b69e4c70dfc2cdae1be274678a",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "offline-component-load-probes.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/offline-component-load-probes.patch",
+      "new_git_blob": "94bf52329824dada23e7081f987cfb62dc7f4707",
+      "old_sha256": "1f228c5c6d8387b13cd8e0964ddeb56c858a5dae16478f3ed2baae8a2e4da1e9",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "1f228c5c6d8387b13cd8e0964ddeb56c858a5dae16478f3ed2baae8a2e4da1e9",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "offline-legacy-start.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/offline-legacy-start.patch",
+      "new_git_blob": "55d0d981c1687aa306500c49e991956d0e0e777c",
+      "old_sha256": "a6ed6012f215e2c13c09f1b89fe986616af0a0674b0f6e4afd2194d4b8de4c0c",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "a6ed6012f215e2c13c09f1b89fe986616af0a0674b0f6e4afd2194d4b8de4c0c",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "offline-native-gpu-broker.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/offline-native-gpu-broker.patch",
+      "new_git_blob": "1c991ebf2ee68f9ca52215c1101281cd819a52bd",
+      "old_sha256": "dc7590c3298ead78a843f098d3f47df57350e15b30746890b162a24b6eb182f5",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "dc7590c3298ead78a843f098d3f47df57350e15b30746890b162a24b6eb182f5",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "offline-owner-boot-manifest.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/offline-owner-boot-manifest.patch",
+      "new_git_blob": "589054d1f4ed86c9573e3c7bdaf41812a7301fb5",
+      "old_sha256": "840a73448459b0ddad1ad7d8525ffb3bd0826d58a7e732f8283a4222c2df175e",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "840a73448459b0ddad1ad7d8525ffb3bd0826d58a7e732f8283a4222c2df175e",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "offline-owner-cache-carrier.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/offline-owner-cache-carrier.patch",
+      "new_git_blob": "dacc709a667aea881d1fa173c65152ab5b8386ec",
+      "old_sha256": "11b292274599c7161d5eaef627d11934166b136c5e8c31098bcabb2569da3d0e",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "11b292274599c7161d5eaef627d11934166b136c5e8c31098bcabb2569da3d0e",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "offline-owner-root-binding-audit.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/offline-owner-root-binding-audit.patch",
+      "new_git_blob": "abb99c7b7e88a38556df88e74beed20c1b98880c",
+      "old_sha256": "f77d07af625d8cf2404185717e58738841ff453735f260fd7dc3c4e8526a4e69",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "f77d07af625d8cf2404185717e58738841ff453735f260fd7dc3c4e8526a4e69",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "offline-owner-root-crypto-probe.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/offline-owner-root-crypto-probe.patch",
+      "new_git_blob": "175f1693a9f704e495abb7ed12b11596b073794f",
+      "old_sha256": "35415f0a13a2770d835f0e837ecc47e6fa51934a6faa1edfc6900e5f5d479e4d",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "35415f0a13a2770d835f0e837ecc47e6fa51934a6faa1edfc6900e5f5d479e4d",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "offline-owner-systemos-mount.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/offline-owner-systemos-mount.patch",
+      "new_git_blob": "ab3352556326fed67937b8c21218c67de5e01a4b",
+      "old_sha256": "b10bab8eb09961edd61c5636b892b4b3b73d6458a6826d6dfb5f89141c1a1093",
+      "upstream_unchanged": false,
+      "device_override": true,
+      "selected_sha256": "1f88ed8eeae5c5eda782ccce1ae335361cb7b69c77e986167118bd18a53f42b8",
+      "new_sha256": "42d5642e103d25955db2864ef4cb63a2c14ae94a43b71ac2418b1e587f8de46c",
+      "latest_patch_git_check": {
+        "exit_code": 1,
+        "output": "error: patch failed: bsd/kern/kern_exec.c:183\nerror: bsd/kern/kern_exec.c: patch does not apply\n"
+      },
+      "latest_patch_individual_context": "fail",
+      "latest_patch_error": "bsd/kern/kern_exec.c: hunk 1 at 183 has no exact match: '\\n#include \"kern_exec_internal.h\"\\n\\n#include <CodeSignature/Entitlements.h>\\n\\n#include <mach/exclaves.h>\\n\\n'",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "offline-owner-z-air-init.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/offline-owner-z-air-init.patch",
+      "new_git_blob": "0c82dbd0b2aea0bb23253c495b0453c4ad486be4",
+      "old_sha256": "5b1b1252a0614eee6926fb05def89c49008a6d891dc8760e7d126d1a444ac6d9",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "5b1b1252a0614eee6926fb05def89c49008a6d891dc8760e7d126d1a444ac6d9",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "public-entitlements-header.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/public-entitlements-header.patch",
+      "new_git_blob": "f43ad36c3d320d95950d3c81e1d5468cd766182f",
+      "old_sha256": "c6922bcfde308a02b39570f5f9af8d24e4cf4d88254a80e80218b6d410a784b8",
+      "upstream_unchanged": true,
+      "device_override": true,
+      "selected_sha256": "ff4ca93bf834f750f9f1442733cd94995b1b08d9a509d1a956e71a97ffa804c3",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "sheng-platform-power.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/sheng-platform-power.patch",
+      "new_git_blob": "99f2694b6954dceec025b64f4a7f2bcf80d68484",
+      "old_sha256": "6e68dbcdac670624f2a9806a61fef42110bfe6586029b3f1a0acb068c3a23ec2",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "6e68dbcdac670624f2a9806a61fef42110bfe6586029b3f1a0acb068c3a23ec2",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "source-corecrypto14-bootstrap.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/source-corecrypto14-bootstrap.patch",
+      "new_git_blob": "df9a6c8fb092854b863d1f36f84ff67739ece4d0",
+      "old_sha256": "041f0d0627e83f5c276cfa87130cec04907cdd02682428d069af2a9af2a16ebd",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "041f0d0627e83f5c276cfa87130cec04907cdd02682428d069af2a9af2a16ebd",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "source-machine-layer.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/source-machine-layer.patch",
+      "new_git_blob": "8c419b5c60c3895506d3aff337ab1eebde7ad75a",
+      "old_sha256": "1538783d2e5956f8ba65baeca4e9490711c43b8825123860847778b256291573",
+      "upstream_unchanged": true,
+      "device_override": true,
+      "selected_sha256": "923b51bac67695c304ee59309aa8db57a2cbe5719ffed1581875f7db4e37b2fc",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "source-pthread-bootstrap.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/source-pthread-bootstrap.patch",
+      "new_git_blob": "4b4429de8c8f0b297a7ae409c3382a6d8483aecb",
+      "old_sha256": "1bbf00cc2b4e8f227dddf2807818d10e07325beea8e6c2c0b12106228d31d643",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "1bbf00cc2b4e8f227dddf2807818d10e07325beea8e6c2c0b12106228d31d643",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "zzx-pmap-sync-64bit-pa.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/zzx-pmap-sync-64bit-pa.patch",
+      "new_git_blob": "12f1154162ee28ffb124570975c4094e47eca0df",
+      "old_sha256": "b8419e7779f49c9c5360a8ae8e9b52a78968511a9e24e43b9edb799793e04496",
+      "upstream_unchanged": true,
+      "device_override": true,
+      "selected_sha256": "50747f5c4f51abf1e0e3d0d82be07d76909a3f28eceffb9e927b0a8aca6f4f82",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "zzy-native-gpu-addon-mount.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/zzy-native-gpu-addon-mount.patch",
+      "new_git_blob": "da74ad9fd1e027d149f2cd675b027ceff20c79ef",
+      "old_sha256": "bf53de7363413b00c06fa71071bb9bb4f8daddec2ecf7b33435bb0d99adf6ebb",
+      "upstream_unchanged": false,
+      "device_override": true,
+      "selected_sha256": "bf53de7363413b00c06fa71071bb9bb4f8daddec2ecf7b33435bb0d99adf6ebb",
+      "new_sha256": "206ef7008d4cba8fe76b64cc8a5d9fc642b8c8c98372c108e5af54127eb6a330",
+      "latest_patch_git_check": {
+        "exit_code": 1,
+        "output": "error: patch failed: bsd/kern/kern_exec.c:7193\nerror: bsd/kern/kern_exec.c: patch does not apply\n"
+      },
+      "latest_patch_individual_context": "fail",
+      "latest_patch_error": "Invalid hunk body '\\n'",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "zzz-boot-progress.patch",
+      "repository": "wh1stl3/UniXNU",
+      "path": "patches/xnu/zzz-boot-progress.patch",
+      "new_git_blob": "4a188fbc78a023a0ef9eb3a3cada84d2e165f181",
+      "old_sha256": "6e04d6ebe9035bb897920eceb3f6fddef1f5c6d0afa771a1f39dce741ee9b2be",
+      "upstream_unchanged": true,
+      "device_override": true,
+      "selected_sha256": "1e7adabe9d00642d1d4ced10b572d5f62785db883dec468c9677a2869ddc1148",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "xnu-10063.141.1-security-init.patch",
+      "repository": "UniXNU/NativePrelink",
+      "path": "patches/xnu-10063.141.1-security-init.patch",
+      "new_git_blob": "a4e85a44e33b12672fdb988d9cd2fa728fdd5307",
+      "old_sha256": "f9ea76df15b01c8073c0fe8e38a1c05ac9db9202c393811756f6b616275b4675",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "f9ea76df15b01c8073c0fe8e38a1c05ac9db9202c393811756f6b616275b4675",
+      "preserved_sequence_context": "pass"
+    },
+    {
+      "patch": "xnu-10063.141.1-sparse-index.patch",
+      "repository": "UniXNU/NativePrelink",
+      "path": "patches/xnu-10063.141.1-sparse-index.patch",
+      "new_git_blob": "3fe52703daee222607e70be0d326f59857ec2841",
+      "old_sha256": "d0a2da8ca1a0b4021629b0ecaadad20c0e6cf7b3205f8d780242a60034f44d91",
+      "upstream_unchanged": true,
+      "device_override": false,
+      "selected_sha256": "d0a2da8ca1a0b4021629b0ecaadad20c0e6cf7b3205f8d780242a60034f44d91",
+      "preserved_sequence_context": "pass"
+    }
+  ],
+  "scripts": [
+    {
+      "path": "scripts/build-xnu-4k-baseline.sh",
+      "old_sha256": "3486867d8c639eb10d31be16e875dbbdbb1d27afd97aedbb8ba930f0093c6852",
+      "new_git_blob": "5815dd9c3f233aba1b89bfb759edf87ec2713c0b",
+      "unchanged": false
+    },
+    {
+      "path": "scripts/build-firehose.sh",
+      "old_sha256": "e30d44b2633fb509fefbb316cb2824abb394e3e5779d4b6d86f8ed2b4f91c057",
+      "new_git_blob": "c47301d0d49c30b594de5923c940c1da99aa9144",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/build-libpthread-kernel.py",
+      "old_sha256": "b475ab6a6b4b479e42d5072064eeea7310dfc999a06177d23f7c0cd8873bf7df",
+      "new_git_blob": "c6ac86063abfaa78558a5a275d1335b7aab98416",
+      "unchanged": false
+    },
+    {
+      "path": "scripts/build-corecrypto-14.py",
+      "old_sha256": "b4a21357d3d3f27377e048cbe40eae8877ad89a91c4fb0cd2452c19e2595e229",
+      "new_git_blob": "00bbd1fd24da6b3981d2abac87ac690c1137b83e",
+      "unchanged": false
+    },
+    {
+      "path": "scripts/xnu_symbols.py",
+      "old_sha256": null,
+      "new_git_blob": "62f0b0946ceca08befde18f8f31d38c91fab068d",
+      "unchanged": false
+    },
+    {
+      "path": "feeds.toml",
+      "old_sha256": "dec145fe25ed9cf1c50292a1e16ccbaa690b450a1de9e1ed687395e5fef88294",
+      "new_git_blob": "259bb88a27ff52415c36217958f4fd197b370330",
+      "unchanged": false
+    }
+  ],
+  "existing_adapter_contexts": {
+    "unstripped_noctf_replacements": {
+      "expected": 3,
+      "actual": 3,
+      "matches": true
+    },
+    "clang_ios17_replacements": {
+      "expected": 1,
+      "actual": 1,
+      "matches": true
+    },
+    "link_ios17_replacements": {
+      "expected": 1,
+      "actual": 1,
+      "matches": true
+    },
+    "capture_make_start": {
+      "expected": 1,
+      "actual": 1,
+      "matches": true
+    },
+    "capture_dstroot": {
+      "expected": 1,
+      "actual": 1,
+      "matches": true
+    }
+  },
+  "merged_baseline_sha256": "d4e4e63291cd044c22ec11e61ec1bb246ecea77e2261f88c19aabc4137e59fbe",
+  "merged_adapter_check": {
+    "passed": true,
+    "patch_count": 60,
+    "baseline_sha256": "8873191b981e45bb95d7f0430b8b17c8d9d4130e5eac1b6fa94bd5811ca56f3f",
+    "firehose_sha256": "8f4451c21792009561f7e4f5d8b6db05db51fbbe29623435da0d05f8af763b93",
+    "scope": "Real merged adapter in RAM; Bash syntax only, not a kernel build"
+  },
+  "action": "Do not replace pins or patch hashes blindly; review changed semantics and adapters separately",
+  "built": false,
+  "device_accessed": false,
+  "feed_modified": false
+}
