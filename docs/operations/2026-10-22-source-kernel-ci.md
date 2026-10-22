@@ -60,3 +60,7 @@ UIO新增候选保留原typedef，通过声明宏对char数组变量施加原对
 ## IIG纯文本检查与下一轮候选
 
 [检查39717772747](https://github.com/wh1stl3/UniXNU/actions/runs/39717772747)只执行Xcode/IIG查询和二进制字符串枚举，没有内核或镜像构建。作业成功，iig-help.txt确认`--deployment-target`选项；options-strings.txt同时包含四字段旧IORPC与kernelContent新生成模板。下一轮使用Makefile已有OTHER_IIG_FLAGS入口传22.0（DriverKit生成目标），不修改8796 IORPC。此时“能选旧模板”仍是待编译验证的推断，不能写为ABI通过。
+
+## 第三轮运行
+
+设备提交4be1fb48c7389b61fba4a245f58e2bae4e2a9a62，[第三轮39718507532](https://github.com/wh1stl3/UniXNU/actions/runs/39718507532)已启动。宿主fork的head为a3cacd5（新增工具检查workflow），源构建workflow内仍checkout固定75bc，不代表把基座实现升级到a3cac/e95b。当前编译中，最终结果未验证。

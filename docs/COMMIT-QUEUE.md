@@ -171,3 +171,13 @@
 [Evidence] 第二轮run.log:11187,16673；工具检查39717772747的iig-help.txt/options-strings.txt；compatibility-check.json：50项209 hunks精确顺序通过，清零与IORPC头不变。
 [Risk] 第三轮实际IIG生成与完整内核编译/链接待验证；纯文本检查成功不是内核或实机通过，完整设备archive ABI仍未验证。
 ```
+
+## Q-018 · 第三轮源构建启动
+
+```text
+[unixnu-nuwa][build] 以固定50项输入启动第三轮8796源构建
+
+[Change] 记录UIO/IIG兼容候选发布及第三轮手动构建，继续使用75bc源码配方与既定8796提交。
+[Evidence] reports/kernel-ci/39718507532/run.json；https://github.com/wh1stl3/UniXNU/actions/runs/39718507532；device_ref=4be1fb48c7389b61fba4a245f58e2bae4e2a9a62。
+[Risk] 记录时仍在编译，尚无完整内核或ABI通过证据；feed/board不变，未运行预链接、QEMU或设备动作。
+```

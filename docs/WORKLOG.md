@@ -44,3 +44,5 @@
 - 2026-10-22 11:28 · Q-015已提交推送dbbf029（连同Q-014推送重试成功）；启动第二轮39716728005，当前真实编译进行中；三来源树tracked状态为空，board/feed哈希不变；更新公开README当前入口 · 提交号：dbbf029；本项待定Q-016 · reports/kernel-ci/39716728005/run.json，reports/official-ci-plan/post-publish-workspace-check.json
 
 - 2026-10-22 11:43 · 第二轮失败于UIO数组对齐和新IIG的kernelContent；完成纯文本工具检查39717772747，确认deployment-target选项及旧/新模板；新增不改变字节范围/IORPC的候选，50项209 hunks精确检查通过；用户持续授权所有GitHub命令，Q-016已提交推送42c29a6 · 提交号：待定Q-017 · reports/kernel-ci/39716728005/，reports/kernel-ci/39717772747/，patches/xnu-8796-ci-candidates/
+
+- 2026-10-22 11:47 · Q-017已提交推送4be1fb4，第三轮39718507532以该精确设备输入启动，仍在真实编译；基座workflow宿主head a3cacd5但构建源码仍固定75bc，未整体跟进基座 · 提交号：4be1fb4；本项待定Q-018 · reports/kernel-ci/39718507532/run.json

@@ -1,10 +1,10 @@
 # STATUS
 
-> 当前唯一真相；历史只追加WORKLOG。更新：2026-10-22 11:43（Asia/Shanghai）。
+> 当前唯一真相；历史只追加WORKLOG。更新：2026-10-22 11:47（Asia/Shanghai）。
 
 ## 当前结论
 
-公开基座fork及设备仓已发布。[第二轮39716728005](https://github.com/wh1stl3/UniXNU/actions/runs/39716728005)越过过期clang开关，失败于UIO数组元素对齐与IIG生成的kernelContent字段错位。现有候选保留UIO原字节数/变量对齐，并通过IIG实际支持的deployment-target选择旧接口，IORPC结构不改；50项209 hunks精确顺序检查通过，待第三轮。[纯文本IIG检查](https://github.com/wh1stl3/UniXNU/actions/runs/39717772747)成功只证明工具选项存在，**内核构建仍未通过**。见[CI说明](operations/2026-10-22-source-kernel-ci.md)。
+公开基座fork及设备仓已发布。第二轮失败于UIO数组元素对齐与IIG生成的kernelContent字段错位；修复候选已提交推送4be1fb4，[第三轮39718507532](https://github.com/wh1stl3/UniXNU/actions/runs/39718507532)正在编译。候选保留UIO原字节数/变量对齐、IORPC结构，50项209 hunks精确顺序检查通过。纯文本IIG检查成功只证明工具选项存在，**内核构建仍未通过**。见[CI说明](operations/2026-10-22-source-kernel-ci.md)。
 
 ## 当前边界
 
@@ -23,7 +23,7 @@
 
 ## 下一步
 
-1. 发布第二轮的UIO/IIG候选并固定device_ref启动第三轮；观察旧IORPC生成分支和目标编译结果，不能凭工具帮助宣称兼容。
+1. 跟踪第三轮39718507532（device_ref=4be1fb4），观察旧IORPC生成分支和目标编译结果，不能凭工具帮助宣称兼容。
 2. 按第一处真实失败修复8796源构建兼容性；成功后检查Mach-O、对象/符号及版本证据，仍不宣称预链接/QEMU/实机通过。
 3. 完成Darwin22设备archive、boot-progress/watchdog、nuwa defconfig及donor kernelcache解析，接回正式-D设备构建入口；feed切换独立处理。
 4. 板值/内存/地址、镜像或设备动作命中硬停时先写NEED-REVIEW再停。只差人按实体键的项记PENDING-HUMAN后继续。
