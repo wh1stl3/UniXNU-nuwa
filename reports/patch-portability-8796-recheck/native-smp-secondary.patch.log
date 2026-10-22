@@ -1,0 +1,6 @@
+git -c safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full --no-optional-locks -C D:/Code/PortingiOS/common/sources/xnu-ios16-full apply --check --verbose D:\Code\PortingiOS\common\sources\UniXNU\patches\xnu\native-smp-secondary.patch
+exit_code=0
+Checking patch pexpert/pexpert/arm64/board_config.h...
+Hunk #1 succeeded at 91 (offset -43 lines).
+Checking patch osfmk/arm64/start.s...
+Hunk #1 succeeded at 143 (offset -2 lines).

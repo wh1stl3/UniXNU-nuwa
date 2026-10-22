@@ -1,0 +1,15 @@
+git -c safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full --no-optional-locks -C D:/Code/PortingiOS/common/sources/xnu-ios16-full apply --check --verbose D:\Code\PortingiOS\common\sources\UniXNU\patches\xnu\public-entitlements-header.patch
+exit_code=1
+Checking patch EXTERNAL_HEADERS/CoreEntitlements/CoreEntitlements.h...
+Checking patch bsd/net/necp_client.c...
+error: while searching for:
+
+#include <os/refcnt.h>
+
+#include <CodeSignature/Entitlements.h>
+
+#if SKYWALK
+#include <skywalk/os_skywalk_private.h>
+
+error: patch failed: bsd/net/necp_client.c:68
+error: bsd/net/necp_client.c: patch does not apply

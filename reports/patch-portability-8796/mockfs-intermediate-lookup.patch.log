@@ -1,0 +1,4 @@
+git -c safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full --no-optional-locks -C D:/Code/PortingiOS/common/sources/xnu-ios16-full apply --check --verbose D:\Code\PortingiOS\common\sources\UniXNU\patches\xnu\mockfs-intermediate-lookup.patch
+exit_code=0
+Checking patch bsd/miscfs/mockfs/mockfs_vnops.c...
+Hunk #1 succeeded at 103 (offset -5 lines).

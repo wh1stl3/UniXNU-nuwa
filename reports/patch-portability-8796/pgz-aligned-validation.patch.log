@@ -1,0 +1,17 @@
+git -c safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full --no-optional-locks -C D:/Code/PortingiOS/common/sources/xnu-ios16-full apply --check --verbose D:\Code\PortingiOS\common\sources\UniXNU\patches\xnu\pgz-aligned-validation.patch
+exit_code=1
+Checking patch osfmk/kern/zalloc.c...
+error: while searching for:
+	zone_t zone = zone_by_id(zid);
+	vm_offset_t elem, offs;
+
+	elem = (vm_offset_t)addr;
+	offs = (elem & PAGE_MASK) - zone_elem_inner_offs(zone);
+
+	if (from_zone_map(addr, 1)) {
+		struct zone_page_metadata *meta;
+
+		meta = zone_meta_from_addr(elem);
+
+error: patch failed: osfmk/kern/zalloc.c:1474
+error: osfmk/kern/zalloc.c: patch does not apply

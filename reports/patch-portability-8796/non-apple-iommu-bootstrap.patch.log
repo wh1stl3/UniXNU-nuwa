@@ -1,0 +1,8 @@
+git -c safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full --no-optional-locks -C D:/Code/PortingiOS/common/sources/xnu-ios16-full apply --check --verbose D:\Code\PortingiOS\common\sources\UniXNU\patches\xnu\non-apple-iommu-bootstrap.patch
+exit_code=0
+Checking patch osfmk/arm/pmap/pmap.c...
+Hunk #2 succeeded at 861 (offset -26 lines).
+Hunk #3 succeeded at 2189 (offset -84 lines).
+Hunk #4 succeeded at 4681 (offset -138 lines).
+Hunk #5 succeeded at 11627 (offset -409 lines).
+Hunk #6 succeeded at 11648 (offset -409 lines).

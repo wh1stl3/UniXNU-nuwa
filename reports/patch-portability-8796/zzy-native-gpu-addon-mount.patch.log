@@ -1,0 +1,18 @@
+git -c safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full --no-optional-locks -C D:/Code/PortingiOS/common/sources/xnu-ios16-full apply --check --verbose D:\Code\PortingiOS\common\sources\UniXNU\patches\xnu\zzy-native-gpu-addon-mount.patch
+exit_code=1
+Checking patch bsd/kern/kern_exec.c...
+error: while searching for:
+uint8_t native_owner_data_seed_sha256[32];
+char native_owner_data_device_path[64];
+
+static int
+native_owner_data_prepare(proc_t p, user_addr_t scratch)
+{
+
+error: patch failed: bsd/kern/kern_exec.c:7193
+error: bsd/kern/kern_exec.c: patch does not apply
+Checking patch bsd/miscfs/bindfs/bind_vfsops.c...
+Checking patch bsd/miscfs/bindfs/bind_vnops.c...
+Checking patch bsd/miscfs/bindfs/bindfs.h...
+Checking patch osfmk/kern/startup.c...
+Hunk #1 succeeded at 468 (offset -2 lines).

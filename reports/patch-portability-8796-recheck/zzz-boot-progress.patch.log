@@ -1,0 +1,78 @@
+git -c safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full --no-optional-locks -C D:/Code/PortingiOS/common/sources/xnu-ios16-full apply --check --verbose D:\Code\PortingiOS\common\sources\UniXNU\patches\xnu\zzz-boot-progress.patch
+exit_code=1
+Checking patch osfmk/arm/arm_init.c...
+Hunk #2 succeeded at 363 (offset -7 lines).
+Hunk #3 succeeded at 515 (offset -16 lines).
+Checking patch osfmk/kern/startup.c...
+Hunk #4 succeeded at 645 (offset -7 lines).
+Checking patch osfmk/console/video_console.c...
+Hunk #3 succeeded at 2893 (offset -5 lines).
+Hunk #4 succeeded at 3048 (offset -5 lines).
+Checking patch osfmk/console/serial_console.c...
+Hunk #2 succeeded at 246 (offset -6 lines).
+Checking patch pexpert/arm/pe_kprintf.c...
+Checking patch bsd/kern/bsd_init.c...
+Hunk #2 succeeded at 477 (offset -88 lines).
+Hunk #3 succeeded at 497 (offset -88 lines).
+error: while searching for:
+
+#if defined(XNU_SHENG_PMGR) && XNU_SHENG_PMGR
+	extern void sheng_pmgr_run(void);
+	sheng_pmgr_run();
+#endif
+
+	/*
+
+error: patch failed: bsd/kern/bsd_init.c:773
+error: bsd/kern/bsd_init.c: patch does not apply
+Checking patch bsd/kern/kern_exec.c...
+Hunk #2 succeeded at 1315 (offset -29 lines).
+Hunk #3 succeeded at 6876 (offset -507 lines).
+error: while searching for:
+	(void) mach_vm_allocate_kernel(map, &scratch_addr, map_page_size, VM_FLAGS_ANYWHERE, VM_KERN_MEMORY_NONE);
+	user_addr_t init_envp = USER_ADDR_NULL;
+#if defined(XNU_OWNER_CACHE_MOUNT) && XNU_OWNER_CACHE_MOUNT
+	int cache_error = native_owner_cache_prepare(p, (user_addr_t)scratch_addr, &init_envp);
+	if (cache_error) panic("offline owner SystemOS mount failed: %d", cache_error);
+#endif
+#if defined(XNU_OWNER_DATA_MOUNT) && XNU_OWNER_DATA_MOUNT
+	int data_error = native_owner_data_prepare(p, (user_addr_t)scratch_addr);
+	if (data_error) panic("offline scratch Data mount failed: %d", data_error);
+#endif
+#if CONFIG_MEMORYSTATUS
+
+error: patch failed: bsd/kern/kern_exec.c:7389
+error: bsd/kern/kern_exec.c: patch does not apply
+Checking patch osfmk/arm64/sleh.c...
+error: while searching for:
+/*
+ * Copyright (c) 2012-2023 Apple Inc. All rights reserved.
+ *
+
+error: patch failed: osfmk/arm64/sleh.c:1
+error: osfmk/arm64/sleh.c: patch does not apply
+Checking patch osfmk/kern/boot_progress.h...
+Checking patch osfmk/kern/Makefile...
+error: while searching for:
+
+
+XNU_ONLY_EXPORTS = \
+	arcade.h \
+	btlog.h \
+	cpc.h \
+
+error: patch failed: osfmk/kern/Makefile:114
+error: osfmk/kern/Makefile: patch does not apply
+Checking patch bsd/kern/kern_exit.c...
+Hunk #2 succeeded at 1804 (offset -49 lines).
+Hunk #3 succeeded at 1821 (offset -48 lines).
+error: while searching for:
+	task_t task = proc_task(p);
+
+
+	if (p->p_crash_behavior != 0 || p == initproc) {
+		proc_handle_critical_exit(p, rv);
+	}
+
+error: patch failed: bsd/kern/kern_exit.c:1893
+error: bsd/kern/kern_exit.c: patch does not apply

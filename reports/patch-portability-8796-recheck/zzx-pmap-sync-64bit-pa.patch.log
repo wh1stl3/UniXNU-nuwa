@@ -1,0 +1,6 @@
+git -c safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full --no-optional-locks -C D:/Code/PortingiOS/common/sources/xnu-ios16-full apply --check --verbose D:\Code\PortingiOS\common\sources\UniXNU\patches\xnu\zzx-pmap-sync-64bit-pa.patch
+exit_code=1
+Checking patch osfmk/arm/pmap/pmap.c...
+Hunk #1 succeeded at 6877 (offset -186 lines).
+Checking patch osfmk/arm64/sptm/pmap/pmap.c...
+error: osfmk/arm64/sptm/pmap/pmap.c: No such file or directory

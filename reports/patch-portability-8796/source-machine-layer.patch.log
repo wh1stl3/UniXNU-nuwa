@@ -1,0 +1,31 @@
+git -c safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full --no-optional-locks -C D:/Code/PortingiOS/common/sources/xnu-ios16-full apply --check --verbose D:\Code\PortingiOS\common\sources\UniXNU\patches\xnu\source-machine-layer.patch
+exit_code=1
+Checking patch config/MASTER...
+Hunk #1 succeeded at 321 (offset -11 lines).
+Checking patch config/MASTER.arm64.bcm2837...
+error: while searching for:
+#  Standard Apple OS Configurations:
+#  -------- ----- -- ---------------
+#
+#  KERNEL_BASE =    [ arm64 config_pmap_ppl xsmall msgb_small config_embedded config_requires_u32_munging ARM_EXTRAS_BASE ]
+#  KERNEL_RELEASE = [ KERNEL_BASE ]
+#  KERNEL_DEV =     [ KERNEL_BASE development mach_assert config_xnupost proc_ref_debug config_ext_paniclog ]
+#  KERNEL_DEBUG =   [ KERNEL_BASE debug mach_assert config_xnupost config_waitq_stats config_workloop_debug config_ext_paniclog ]
+
+error: patch failed: config/MASTER.arm64.bcm2837:16
+error: config/MASTER.arm64.bcm2837: patch does not apply
+Checking patch osfmk/conf/files.arm64...
+error: while searching for:
+osfmk/arm64/WKdmData.s		standard
+osfmk/arm64/lz4_decode_arm64.s  standard
+osfmk/arm64/lz4_encode_arm64.s  standard
+osfmk/arm64/amcc_rorgn_ppl.c optional nos_arm_asm config_pmap_ppl
+osfmk/arm64/amcc_rorgn_ppl_amcc.c optional nos_arm_asm config_pmap_ppl
+osfmk/arm64/amcc_rorgn_ppl_ctrr3.c optional nos_arm_asm config_pmap_ppl
+osfmk/arm64/amcc_rorgn_common.c optional nos_arm_asm
+osfmk/arm64/bcopy.s standard
+osfmk/arm64/bzero.s standard
+osfmk/arm/caches.c		standard
+
+error: patch failed: osfmk/conf/files.arm64:34
+error: osfmk/conf/files.arm64: patch does not apply

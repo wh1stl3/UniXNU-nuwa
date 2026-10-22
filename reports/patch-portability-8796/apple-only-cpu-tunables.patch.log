@@ -1,0 +1,14 @@
+git -c safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full --no-optional-locks -C D:/Code/PortingiOS/common/sources/xnu-ios16-full apply --check --verbose D:\Code\PortingiOS\common\sources\UniXNU\patches\xnu\apple-only-cpu-tunables.patch
+exit_code=1
+Checking patch osfmk/arm64/start.s...
+error: while searching for:
+#include <pexpert/arm64/board_config.h>
+#include <mach_assert.h>
+#include <machine/asm.h>
+#include <arm64/tunables/tunables.s>
+#include <arm64/exception_asm.h>
+
+#if __ARM_KERNEL_PROTECT__
+
+error: patch failed: osfmk/arm64/start.s:33
+error: osfmk/arm64/start.s: patch does not apply

@@ -1,0 +1,7 @@
+git -c safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full --no-optional-locks -C D:/Code/PortingiOS/common/sources/xnu-ios16-full apply --check --verbose D:\Code\PortingiOS\common\sources\UniXNU\patches\xnu\offline-component-load-probes.patch
+exit_code=0
+Checking patch bsd/kern/bsd_init.c...
+Hunk #1 succeeded at 473 (offset -5 lines).
+Hunk #2 succeeded at 773 (offset -1 lines).
+Checking patch iokit/Kernel/IOUserClient.cpp...
+Hunk #1 succeeded at 6603 (offset -90 lines).

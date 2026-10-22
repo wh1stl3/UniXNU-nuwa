@@ -1,0 +1,11 @@
+git -c safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full --no-optional-locks -C D:/Code/PortingiOS/common/sources/xnu-ios16-full apply --check --verbose D:\Code\PortingiOS\common\sources\UniXNU\patches\xnu\native-aes-personality.patch
+exit_code=1
+Checking patch iokit/KernelConfigTables.cpp...
+error: while searching for:
+    "     'IOProviderClass' = IOService;"
+    "     'IOExclaveProxy'  = 1:32;"
+    "   }"
+    ")";
+
+error: patch failed: iokit/KernelConfigTables.cpp:61
+error: iokit/KernelConfigTables.cpp: patch does not apply

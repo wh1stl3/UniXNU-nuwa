@@ -1,0 +1,320 @@
+{
+    "timestamp":  "2026-10-22T03:09:23.2118827+08:00",
+    "git_version":  "git version 2.56.0.windows.2",
+    "mode":  "Independent --check against unchanged source; no patches applied; not a cumulative build check",
+    "source":  "D:/Code/PortingiOS/common/sources/xnu-ios16-full",
+    "source_head":  "1b191cb58250d0705d8a51287127505aa4bc0789",
+    "source_commit":  "xnu-8796.141.3\n\nImported from xnu-8796.141.3.tar.gz",
+    "base":  "D:/Code/PortingiOS/common/sources/UniXNU",
+    "base_head":  "75bc13dd34dc4e403826793739e316a264ce00dd",
+    "base_status":  "",
+    "source_status_before":  {
+                                 "exit_code":  0,
+                                 "output":  ""
+                             },
+    "source_status_after":  {
+                                "exit_code":  0,
+                                "output":  ""
+                            },
+    "feeds_sha256":  "dec145fe25ed9cf1c50292a1e16ccbaa690b450a1de9e1ed687395e5fef88294",
+    "pmap_existing_path_only":  {
+                                    "exit_code":  0,
+                                    "output":  "Skipped patch \u0027osfmk/arm64/sptm/pmap/pmap.c\u0027.\nChecking patch osfmk/arm/pmap/pmap.c...\nHunk #1 succeeded at 6877 (offset -186 lines)."
+                                },
+    "results":  [
+                    {
+                        "patch":  "apple-only-cpu-tunables.patch",
+                        "sha256":  "91e431249a4d756bfca8b1800b4b283340c86d1899ec8196a2fe873e8d3c251e",
+                        "exit_code":  1,
+                        "output":  "Checking patch osfmk/arm64/start.s...\nerror: while searching for:\n#include \u003cpexpert/arm64/board_config.h\u003e\n#include \u003cmach_assert.h\u003e\n#include \u003cmachine/asm.h\u003e\n#include \u003carm64/tunables/tunables.s\u003e\n#include \u003carm64/exception_asm.h\u003e\n\n#if __ARM_KERNEL_PROTECT__\n\nerror: patch failed: osfmk/arm64/start.s:33\nerror: osfmk/arm64/start.s: patch does not apply"
+                    },
+                    {
+                        "patch":  "architectural-timer-entry.patch",
+                        "sha256":  "809b0c951545d889a2a37c730189283e7e890340894bab6d937c914dbd20b8e5",
+                        "exit_code":  0,
+                        "output":  "Checking patch osfmk/arm64/start.s...\nHunk #1 succeeded at 686 (offset -11 lines)."
+                    },
+                    {
+                        "patch":  "armvirt-platform-personality.patch",
+                        "sha256":  "00e7054c9ff2ae82b66f27bfbefd7620e9000503ea5b38b80aa90aab1e4b7225",
+                        "exit_code":  0,
+                        "output":  "Checking patch iokit/KernelConfigTables.cpp..."
+                    },
+                    {
+                        "patch":  "cxx-flag-dependencies.patch",
+                        "sha256":  "a435e8797ed24a8338db53d0eaac49c163f90170c1fb7946d0c5cdee9d7d4b52",
+                        "exit_code":  0,
+                        "output":  "Checking patch bsd/conf/Makefile.template...\nHunk #1 succeeded at 543 (offset -1 lines).\nChecking patch iokit/conf/Makefile.template...\nHunk #1 succeeded at 208 (offset -1 lines).\nChecking patch libkern/conf/Makefile.template...\nChecking patch libsa/conf/Makefile.template...\nChecking patch osfmk/conf/Makefile.template...\nHunk #1 succeeded at 379 (offset -10 lines).\nChecking patch pexpert/conf/Makefile.template...\nChecking patch san/conf/Makefile.template...\nChecking patch security/conf/Makefile.template..."
+                    },
+                    {
+                        "patch":  "disabled-deferred-reclaim.patch",
+                        "sha256":  "817a0b017aebb21f773aafe2b92a81be076abc66e29275d57220635339a407e1",
+                        "exit_code":  0,
+                        "output":  "Checking patch osfmk/vm/vm_user.c...\nHunk #1 succeeded at 4474 (offset -29 lines)."
+                    },
+                    {
+                        "patch":  "external-archive-dependencies.patch",
+                        "sha256":  "0a571de8361845266d7d419b0b3d5ebadbef986840c7e06eb981c0960d7fe374",
+                        "exit_code":  1,
+                        "output":  "Checking patch makedefs/MakeInc.kernel...\nerror: while searching for:\n\t$(_v)$(LN) $(call function_convert_build_config_to_objdir,$(CURRENT_BUILD_CONFIG))/lib$(KERNEL_FILE_NAME).a $(OBJROOT)/lib$(KERNEL_FILE_NAME).a\nendif\n\n$(TARGET)/$(KERNEL_FILE_NAME).unstripped.noctf: $(addprefix $(TARGET)/,$(foreach component,$(COMPONENT_LIST),$(component)/$(CURRENT_KERNEL_CONFIG)/$(component).filelist)) lastkerneldataconst.o lastkernelconstructor.o nonlto.o version.o $(LDFILES_KERNEL_ONLY) .LDFLAGS $(filter %/MakeInc.kernel,$(MAKEFILE_LIST))\nifeq ($(PRE_LTO),1)\n\t@$(LOG_LTO) \"$(@F)\"\n\nerror: patch failed: makedefs/MakeInc.kernel:187\nerror: makedefs/MakeInc.kernel: patch does not apply"
+                    },
+                    {
+                        "patch":  "kernel-sdk-root.patch",
+                        "sha256":  "2bcf10f4bf171afbc358cb64e9bc742563dd21f5eadf0e7a17936e87fa8ba43d",
+                        "exit_code":  0,
+                        "output":  "Checking patch makedefs/MakeInc.def...\nHunk #1 succeeded at 642 (offset -25 lines).\nHunk #2 succeeded at 885 (offset -27 lines)."
+                    },
+                    {
+                        "patch":  "local-availability.patch",
+                        "sha256":  "a051857d524f8836068fd2f1182ebe9e9d9ccf28b9560fb27ad634b0cb93270e",
+                        "exit_code":  0,
+                        "output":  "Checking patch bsd/sys/make_symbol_aliasing.sh..."
+                    },
+                    {
+                        "patch":  "mockfs-intermediate-lookup.patch",
+                        "sha256":  "51a5b76873c2a39b777bd4f1f5e78730ce72e93d548de6fbe4655f107731fa00",
+                        "exit_code":  0,
+                        "output":  "Checking patch bsd/miscfs/mockfs/mockfs_vnops.c...\nHunk #1 succeeded at 103 (offset -5 lines)."
+                    },
+                    {
+                        "patch":  "mockfs-memory-device-width.patch",
+                        "sha256":  "506f4ba36e30a700f0d27370d07abbde6e2c689d13fbad3400a6b940569ae30a",
+                        "exit_code":  0,
+                        "output":  "Checking patch bsd/miscfs/mockfs/mockfs_vfsops.c..."
+                    },
+                    {
+                        "patch":  "mockfs-statfs.patch",
+                        "sha256":  "58c9a51909b12dca9cd1ac2fdb94be748b43be1c979383b9504a0304fb16a809",
+                        "exit_code":  0,
+                        "output":  "Checking patch bsd/miscfs/mockfs/mockfs_vfsops.c...\nHunk #1 succeeded at 225 (offset -61 lines).\nHunk #2 succeeded at 256 (offset -61 lines)."
+                    },
+                    {
+                        "patch":  "mockfs-test-file.patch",
+                        "sha256":  "4a1ef86e0bdca7b633f59885961be1939574f8ba9814d1d75ebbfd0a7a8bd919",
+                        "exit_code":  0,
+                        "output":  "Checking patch bsd/miscfs/mockfs/mockfs_fsnode.h...\nChecking patch bsd/miscfs/mockfs/mockfs_fsnode.c...\nChecking patch bsd/miscfs/mockfs/mockfs_vnops.c...\nChecking patch bsd/miscfs/mockfs/mockfs_vfsops.c...\nHunk #3 succeeded at 126 (offset -2 lines).\nHunk #4 succeeded at 174 (offset -2 lines).\nHunk #5 succeeded at 198 (offset -2 lines)."
+                    },
+                    {
+                        "patch":  "mockfs-typed-allocation.patch",
+                        "sha256":  "44dfe8ea590336fae48a4d5f7b8fd478a435d591a34ba77fe1d0a961c630ad57",
+                        "exit_code":  0,
+                        "output":  "Checking patch bsd/miscfs/mockfs/mockfs_fsnode.c..."
+                    },
+                    {
+                        "patch":  "native-4k-bootstrap-capacity.patch",
+                        "sha256":  "4ac39b497d88b28432bc7844c7137c8d2acc1992bef53f68c3512523a80b13a3",
+                        "exit_code":  0,
+                        "output":  "Checking patch osfmk/arm/pmap/pmap.h...\nHunk #1 succeeded at 111 (offset -4 lines).\nChecking patch osfmk/arm64/start.s...\nHunk #1 succeeded at 422 (offset -4 lines).\nHunk #2 succeeded at 528 (offset -4 lines).\nHunk #3 succeeded at 613 (offset -4 lines).\nChecking patch osfmk/arm64/genassym.c...\nHunk #1 succeeded at 249 (offset -21 lines)."
+                    },
+                    {
+                        "patch":  "native-4k-signature-hash-cache.patch",
+                        "sha256":  "f9a8b4d39022a726ba1e0e4842248d57b20fe3a05fbf41b3a01f6700b2e3ca72",
+                        "exit_code":  0,
+                        "output":  "Checking patch bsd/sys/ubc_internal.h...\nHunk #1 succeeded at 155 (offset -3 lines).\nChecking patch bsd/kern/ubc_subr.c...\nHunk #4 succeeded at 3882 (offset -51 lines).\nHunk #5 succeeded at 4815 (offset -58 lines).\nHunk #6 succeeded at 5691 (offset -58 lines).\nHunk #7 succeeded at 5829 (offset -58 lines).\nHunk #8 succeeded at 5865 (offset -58 lines).\nHunk #9 succeeded at 5919 (offset -58 lines)."
+                    },
+                    {
+                        "patch":  "native-4k-user-abi.patch",
+                        "sha256":  "981ac483ae898426486aab475e22b2286bc1d820ad047c566182c3fbf435f6d4",
+                        "exit_code":  0,
+                        "output":  "Checking patch bsd/kern/mach_loader.c...\nHunk #1 succeeded at 509 (offset -2 lines).\nChecking patch osfmk/arm/arm_init.c...\nHunk #1 succeeded at 392 (offset -7 lines).\nHunk #2 succeeded at 414 (offset -7 lines).\nChecking patch osfmk/arm/commpage/commpage.c...\nHunk #1 succeeded at 175 (offset -10 lines).\nChecking patch osfmk/vm/vm_shared_region.c...\nHunk #1 succeeded at 774 (offset -4 lines)."
+                    },
+                    {
+                        "patch":  "native-aes-personality.patch",
+                        "sha256":  "02fe52c87a6bd801e602d03b54ce51de1362a2f2c6f75f5fc08122d3901aefff",
+                        "exit_code":  1,
+                        "output":  "Checking patch iokit/KernelConfigTables.cpp...\nerror: while searching for:\n    \"     \u0027IOProviderClass\u0027 = IOService;\"\n    \"     \u0027IOExclaveProxy\u0027  = 1:32;\"\n    \"   }\"\n    \")\";\n\nerror: patch failed: iokit/KernelConfigTables.cpp:61\nerror: iokit/KernelConfigTables.cpp: patch does not apply"
+                    },
+                    {
+                        "patch":  "native-arm-pan.patch",
+                        "sha256":  "7948f0ca8ad0ac5313a32bc8d9377290f88a7d64c880bbfac8e2b4c092e916f6",
+                        "exit_code":  0,
+                        "output":  "Checking patch pexpert/pexpert/arm64/BCM2837.h..."
+                    },
+                    {
+                        "patch":  "native-dt-panic-region.patch",
+                        "sha256":  "b60c2a9a72ea23832f1e64348a5c5d1152cf05db6c156283dd8a93c804cd89cb",
+                        "exit_code":  0,
+                        "output":  "Checking patch pexpert/arm/pe_init.c...\nHunk #1 succeeded at 93 (offset -9 lines).\nHunk #2 succeeded at 123 (offset -9 lines).\nHunk #3 succeeded at 134 (offset -9 lines)."
+                    },
+                    {
+                        "patch":  "native-priv-work-interval.patch",
+                        "sha256":  "6250b487e67dd35e97da59cc79040aa5d73f11106fbe5bc07e81047c4c33e2ed",
+                        "exit_code":  0,
+                        "output":  "Checking patch bsd/kern/kern_priv.c..."
+                    },
+                    {
+                        "patch":  "native-smp-secondary.patch",
+                        "sha256":  "cc16c2d53cbcc50eb2547e2c6f5b61f325348d07495378d9cdf187246b4d315c",
+                        "exit_code":  0,
+                        "output":  "Checking patch pexpert/pexpert/arm64/board_config.h...\nHunk #1 succeeded at 91 (offset -43 lines).\nChecking patch osfmk/arm64/start.s...\nHunk #1 succeeded at 143 (offset -2 lines)."
+                    },
+                    {
+                        "patch":  "native-trust-cache-runtime.patch",
+                        "sha256":  "19e000ca6f70a8ddfefa503d2936894dd8315fae3ca2fb3e50d666d65252de79",
+                        "exit_code":  0,
+                        "output":  "Checking patch osfmk/kern/startup.c...\nHunk #1 succeeded at 734 (offset -17 lines)."
+                    },
+                    {
+                        "patch":  "native-union-getattrlistbulk.patch",
+                        "sha256":  "f5d665fd7250717cfacced8408a0b94f282eb2764e514f61a378f7d085c7a03b",
+                        "exit_code":  0,
+                        "output":  "Checking patch bsd/vfs/vfs_attrlist.c...\nHunk #1 succeeded at 4158 (offset -33 lines).\nHunk #2 succeeded at 4252 (offset -33 lines)."
+                    },
+                    {
+                        "patch":  "native-work-interval-soft-fail.patch",
+                        "sha256":  "b163b85e0340abf2da104527a3b5c3c4e72abe6cacabb3bacb6001e84a67f3fe",
+                        "exit_code":  0,
+                        "output":  "Checking patch osfmk/kern/work_interval.c...\nHunk #1 succeeded at 1050 (offset -65 lines).\nHunk #2 succeeded at 1066 (offset -65 lines)."
+                    },
+                    {
+                        "patch":  "native-work-interval-trace.patch",
+                        "sha256":  "f2c11511c172929572c3b075b0b0f3b8ae2c63d6f229c489c0339acc4f39815c",
+                        "exit_code":  0,
+                        "output":  "Checking patch bsd/kern/sys_work_interval.c..."
+                    },
+                    {
+                        "patch":  "non-apple-cache-monitor.patch",
+                        "sha256":  "116ee4e61fb68e4a403049e349ceb23334e2eff0bec0eb11dc3bd5f3259fabdf",
+                        "exit_code":  0,
+                        "output":  "Checking patch osfmk/arm64/arm_vm_init.c...\nHunk #1 succeeded at 2143 (offset -7 lines).\nChecking patch osfmk/arm64/caches_asm.s..."
+                    },
+                    {
+                        "patch":  "non-apple-iommu-bootstrap.patch",
+                        "sha256":  "a53aaf1073976aed1561cb609763c7a4214e245a50fb534cc77b643808df9e70",
+                        "exit_code":  0,
+                        "output":  "Checking patch osfmk/arm/pmap/pmap.c...\nHunk #2 succeeded at 861 (offset -26 lines).\nHunk #3 succeeded at 2189 (offset -84 lines).\nHunk #4 succeeded at 4681 (offset -138 lines).\nHunk #5 succeeded at 11627 (offset -409 lines).\nHunk #6 succeeded at 11648 (offset -409 lines)."
+                    },
+                    {
+                        "patch":  "non-apple-pmap-field.patch",
+                        "sha256":  "82fe0a5021d59ddb766884f802f960ad67d61be63596f0bde136bf3875ff3ff8",
+                        "exit_code":  0,
+                        "output":  "Checking patch osfmk/arm/pmap/pmap.h...\nHunk #1 succeeded at 442 (offset -31 lines)."
+                    },
+                    {
+                        "patch":  "null-root-media.patch",
+                        "sha256":  "a67ce9afd5af8178e83089ace6ce5d21f5e820b69e4c70dfc2cdae1be274678a",
+                        "exit_code":  0,
+                        "output":  "Checking patch iokit/Kernel/IOService.cpp...\nHunk #1 succeeded at 5178 (offset -79 lines)."
+                    },
+                    {
+                        "patch":  "offline-component-load-probes.patch",
+                        "sha256":  "1f228c5c6d8387b13cd8e0964ddeb56c858a5dae16478f3ed2baae8a2e4da1e9",
+                        "exit_code":  0,
+                        "output":  "Checking patch bsd/kern/bsd_init.c...\nHunk #1 succeeded at 473 (offset -5 lines).\nHunk #2 succeeded at 773 (offset -1 lines).\nChecking patch iokit/Kernel/IOUserClient.cpp...\nHunk #1 succeeded at 6603 (offset -90 lines)."
+                    },
+                    {
+                        "patch":  "offline-legacy-start.patch",
+                        "sha256":  "a6ed6012f215e2c13c09f1b89fe986616af0a0674b0f6e4afd2194d4b8de4c0c",
+                        "exit_code":  0,
+                        "output":  "Checking patch bsd/kern/bsd_init.c...\nHunk #1 succeeded at 1096 (offset -186 lines)."
+                    },
+                    {
+                        "patch":  "offline-native-gpu-broker.patch",
+                        "sha256":  "dc7590c3298ead78a843f098d3f47df57350e15b30746890b162a24b6eb182f5",
+                        "exit_code":  0,
+                        "output":  "Checking patch bsd/kern/bsd_init.c...\nHunk #1 succeeded at 791 (offset -121 lines)."
+                    },
+                    {
+                        "patch":  "offline-owner-boot-manifest.patch",
+                        "sha256":  "840a73448459b0ddad1ad7d8525ffb3bd0826d58a7e732f8283a4222c2df175e",
+                        "exit_code":  0,
+                        "output":  "Checking patch iokit/bsddev/IOKitBSDInit.cpp...\nHunk #1 succeeded at 553 (offset -13 lines)."
+                    },
+                    {
+                        "patch":  "offline-owner-cache-carrier.patch",
+                        "sha256":  "11b292274599c7161d5eaef627d11934166b136c5e8c31098bcabb2569da3d0e",
+                        "exit_code":  0,
+                        "output":  "Checking patch bsd/vm/vm_unix.c...\nHunk #1 succeeded at 2213 (offset -12 lines).\nHunk #2 succeeded at 2604 (offset -12 lines).\nHunk #3 succeeded at 2618 (offset -12 lines).\nHunk #4 succeeded at 2641 (offset -12 lines)."
+                    },
+                    {
+                        "patch":  "offline-owner-root-binding-audit.patch",
+                        "sha256":  "f77d07af625d8cf2404185717e58738841ff453735f260fd7dc3c4e8526a4e69",
+                        "exit_code":  0,
+                        "output":  "Checking patch bsd/kern/bsd_init.c...\nHunk #1 succeeded at 921 (offset -66 lines).\nHunk #2 succeeded at 1080 (offset -66 lines)."
+                    },
+                    {
+                        "patch":  "offline-owner-root-crypto-probe.patch",
+                        "sha256":  "35415f0a13a2770d835f0e837ecc47e6fa51934a6faa1edfc6900e5f5d479e4d",
+                        "exit_code":  0,
+                        "output":  "Checking patch bsd/kern/bsd_init.c...\nHunk #1 succeeded at 784 (offset -50 lines)."
+                    },
+                    {
+                        "patch":  "offline-owner-systemos-mount.patch",
+                        "sha256":  "b10bab8eb09961edd61c5636b892b4b3b73d6458a6826d6dfb5f89141c1a1093",
+                        "exit_code":  1,
+                        "output":  "Checking patch bsd/kern/kern_exec.c...\nerror: while searching for:\n\n#include \"kern_exec_internal.h\"\n\n#include \u003cCodeSignature/Entitlements.h\u003e\n\n#include \u003cmach/exclaves.h\u003e\n\n\nerror: patch failed: bsd/kern/kern_exec.c:183\nerror: bsd/kern/kern_exec.c: patch does not apply"
+                    },
+                    {
+                        "patch":  "offline-owner-z-air-init.patch",
+                        "sha256":  "5b1b1252a0614eee6926fb05def89c49008a6d891dc8760e7d126d1a444ac6d9",
+                        "exit_code":  0,
+                        "output":  "Checking patch bsd/kern/kern_exec.c...\nHunk #1 succeeded at 6884 (offset -516 lines)."
+                    },
+                    {
+                        "patch":  "offline-pgz-alignment-probe.patch",
+                        "sha256":  "632daaab2392352c69226670750285ead5bbf5aa90ea93198a7c79525a23ea0f",
+                        "exit_code":  0,
+                        "output":  "Checking patch osfmk/kern/zalloc.c...\nHunk #1 succeeded at 5481 (offset -148 lines)."
+                    },
+                    {
+                        "patch":  "pgz-aligned-validation.patch",
+                        "sha256":  "b1c0e2a78de033f9c9b234820e9be93756dcd6765af8a1ecb76b209476058f25",
+                        "exit_code":  1,
+                        "output":  "Checking patch osfmk/kern/zalloc.c...\nerror: while searching for:\n\tzone_t zone = zone_by_id(zid);\n\tvm_offset_t elem, offs;\n\n\telem = (vm_offset_t)addr;\n\toffs = (elem \u0026 PAGE_MASK) - zone_elem_inner_offs(zone);\n\n\tif (from_zone_map(addr, 1)) {\n\t\tstruct zone_page_metadata *meta;\n\n\t\tmeta = zone_meta_from_addr(elem);\n\nerror: patch failed: osfmk/kern/zalloc.c:1474\nerror: osfmk/kern/zalloc.c: patch does not apply"
+                    },
+                    {
+                        "patch":  "public-entitlements-header.patch",
+                        "sha256":  "c6922bcfde308a02b39570f5f9af8d24e4cf4d88254a80e80218b6d410a784b8",
+                        "exit_code":  1,
+                        "output":  "Checking patch EXTERNAL_HEADERS/CoreEntitlements/CoreEntitlements.h...\nChecking patch bsd/net/necp_client.c...\nerror: while searching for:\n\n#include \u003cos/refcnt.h\u003e\n\n#include \u003cCodeSignature/Entitlements.h\u003e\n\n#if SKYWALK\n#include \u003cskywalk/os_skywalk_private.h\u003e\n\nerror: patch failed: bsd/net/necp_client.c:68\nerror: bsd/net/necp_client.c: patch does not apply"
+                    },
+                    {
+                        "patch":  "published-freezer-condition.patch",
+                        "sha256":  "644646451d10ea720414c8ed7b31a5aa63846018a3bb686b966565169fbc9688",
+                        "exit_code":  1,
+                        "output":  "Checking patch bsd/kern/kern_memorystatus_freeze.c...\nerror: while searching for:\n#define FREEZE_APPS_IDLE_DELAY_MULTIPLIER_DEFAULT FREEZE_APPS_IDLE_DELAY_MULTIPLIER_FAST\nunsigned int memorystatus_freeze_apps_idle_delay_multiplier = FREEZE_APPS_IDLE_DELAY_MULTIPLIER_DEFAULT;\n\n#if (XNU_TARGET_OS_IOS \u0026\u0026 || XNU_TARGET_OS_WATCH\n#define FREEZE_ENABLED_DEFAULT true\n#else\n#define FREEZE_ENABLED_DEFAULT false\n\nerror: patch failed: bsd/kern/kern_memorystatus_freeze.c:133\nerror: bsd/kern/kern_memorystatus_freeze.c: patch does not apply"
+                    },
+                    {
+                        "patch":  "sheng-platform-power.patch",
+                        "sha256":  "6e68dbcdac670624f2a9806a61fef42110bfe6586029b3f1a0acb068c3a23ec2",
+                        "exit_code":  0,
+                        "output":  "Checking patch bsd/kern/bsd_init.c...\nHunk #1 succeeded at 681 (offset -7 lines)."
+                    },
+                    {
+                        "patch":  "source-corecrypto14-bootstrap.patch",
+                        "sha256":  "041f0d0627e83f5c276cfa87130cec04907cdd02682428d069af2a9af2a16ebd",
+                        "exit_code":  0,
+                        "output":  "Checking patch osfmk/prng/prng_random.c..."
+                    },
+                    {
+                        "patch":  "source-machine-layer.patch",
+                        "sha256":  "1538783d2e5956f8ba65baeca4e9490711c43b8825123860847778b256291573",
+                        "exit_code":  1,
+                        "output":  "Checking patch config/MASTER...\nHunk #1 succeeded at 321 (offset -11 lines).\nChecking patch config/MASTER.arm64.bcm2837...\nerror: while searching for:\n#  Standard Apple OS Configurations:\n#  -------- ----- -- ---------------\n#\n#  KERNEL_BASE =    [ arm64 config_pmap_ppl xsmall msgb_small config_embedded config_requires_u32_munging ARM_EXTRAS_BASE ]\n#  KERNEL_RELEASE = [ KERNEL_BASE ]\n#  KERNEL_DEV =     [ KERNEL_BASE development mach_assert config_xnupost proc_ref_debug config_ext_paniclog ]\n#  KERNEL_DEBUG =   [ KERNEL_BASE debug mach_assert config_xnupost config_waitq_stats config_workloop_debug config_ext_paniclog ]\n\nerror: patch failed: config/MASTER.arm64.bcm2837:16\nerror: config/MASTER.arm64.bcm2837: patch does not apply\nChecking patch osfmk/conf/files.arm64...\nerror: while searching for:\nosfmk/arm64/WKdmData.s\t\tstandard\nosfmk/arm64/lz4_decode_arm64.s  standard\nosfmk/arm64/lz4_encode_arm64.s  standard\nosfmk/arm64/amcc_rorgn_ppl.c optional nos_arm_asm config_pmap_ppl\nosfmk/arm64/amcc_rorgn_ppl_amcc.c optional nos_arm_asm config_pmap_ppl\nosfmk/arm64/amcc_rorgn_ppl_ctrr3.c optional nos_arm_asm config_pmap_ppl\nosfmk/arm64/amcc_rorgn_common.c optional nos_arm_asm\nosfmk/arm64/bcopy.s standard\nosfmk/arm64/bzero.s standard\nosfmk/arm/caches.c\t\tstandard\n\nerror: patch failed: osfmk/conf/files.arm64:34\nerror: osfmk/conf/files.arm64: patch does not apply"
+                    },
+                    {
+                        "patch":  "source-pthread-bootstrap.patch",
+                        "sha256":  "1bbf00cc2b4e8f227dddf2807818d10e07325beea8e6c2c0b12106228d31d643",
+                        "exit_code":  0,
+                        "output":  "Checking patch bsd/kern/source_pthread_bootstrap.c..."
+                    },
+                    {
+                        "patch":  "zzx-pmap-sync-64bit-pa.patch",
+                        "sha256":  "b8419e7779f49c9c5360a8ae8e9b52a78968511a9e24e43b9edb799793e04496",
+                        "exit_code":  1,
+                        "output":  "Checking patch osfmk/arm/pmap/pmap.c...\nHunk #1 succeeded at 6877 (offset -186 lines).\nChecking patch osfmk/arm64/sptm/pmap/pmap.c...\nerror: osfmk/arm64/sptm/pmap/pmap.c: No such file or directory"
+                    },
+                    {
+                        "patch":  "zzy-native-gpu-addon-mount.patch",
+                        "sha256":  "bf53de7363413b00c06fa71071bb9bb4f8daddec2ecf7b33435bb0d99adf6ebb",
+                        "exit_code":  1,
+                        "output":  "Checking patch bsd/kern/kern_exec.c...\nerror: while searching for:\nuint8_t native_owner_data_seed_sha256[32];\nchar native_owner_data_device_path[64];\n\nstatic int\nnative_owner_data_prepare(proc_t p, user_addr_t scratch)\n{\n\nerror: patch failed: bsd/kern/kern_exec.c:7193\nerror: bsd/kern/kern_exec.c: patch does not apply\nChecking patch bsd/miscfs/bindfs/bind_vfsops.c...\nChecking patch bsd/miscfs/bindfs/bind_vnops.c...\nChecking patch bsd/miscfs/bindfs/bindfs.h...\nChecking patch osfmk/kern/startup.c...\nHunk #1 succeeded at 468 (offset -2 lines)."
+                    },
+                    {
+                        "patch":  "zzz-boot-progress.patch",
+                        "sha256":  "6e04d6ebe9035bb897920eceb3f6fddef1f5c6d0afa771a1f39dce741ee9b2be",
+                        "exit_code":  1,
+                        "output":  "Checking patch osfmk/arm/arm_init.c...\nHunk #2 succeeded at 363 (offset -7 lines).\nHunk #3 succeeded at 515 (offset -16 lines).\nChecking patch osfmk/kern/startup.c...\nHunk #4 succeeded at 645 (offset -7 lines).\nChecking patch osfmk/console/video_console.c...\nHunk #3 succeeded at 2893 (offset -5 lines).\nHunk #4 succeeded at 3048 (offset -5 lines).\nChecking patch osfmk/console/serial_console.c...\nHunk #2 succeeded at 246 (offset -6 lines).\nChecking patch pexpert/arm/pe_kprintf.c...\nChecking patch bsd/kern/bsd_init.c...\nHunk #2 succeeded at 477 (offset -88 lines).\nHunk #3 succeeded at 497 (offset -88 lines).\nerror: while searching for:\n\n#if defined(XNU_SHENG_PMGR) \u0026\u0026 XNU_SHENG_PMGR\n\textern void sheng_pmgr_run(void);\n\tsheng_pmgr_run();\n#endif\n\n\t/*\n\nerror: patch failed: bsd/kern/bsd_init.c:773\nerror: bsd/kern/bsd_init.c: patch does not apply\nChecking patch bsd/kern/kern_exec.c...\nHunk #2 succeeded at 1315 (offset -29 lines).\nHunk #3 succeeded at 6876 (offset -507 lines).\nerror: while searching for:\n\t(void) mach_vm_allocate_kernel(map, \u0026scratch_addr, map_page_size, VM_FLAGS_ANYWHERE, VM_KERN_MEMORY_NONE);\n\tuser_addr_t init_envp = USER_ADDR_NULL;\n#if defined(XNU_OWNER_CACHE_MOUNT) \u0026\u0026 XNU_OWNER_CACHE_MOUNT\n\tint cache_error = native_owner_cache_prepare(p, (user_addr_t)scratch_addr, \u0026init_envp);\n\tif (cache_error) panic(\"offline owner SystemOS mount failed: %d\", cache_error);\n#endif\n#if defined(XNU_OWNER_DATA_MOUNT) \u0026\u0026 XNU_OWNER_DATA_MOUNT\n\tint data_error = native_owner_data_prepare(p, (user_addr_t)scratch_addr);\n\tif (data_error) panic(\"offline scratch Data mount failed: %d\", data_error);\n#endif\n#if CONFIG_MEMORYSTATUS\n\nerror: patch failed: bsd/kern/kern_exec.c:7389\nerror: bsd/kern/kern_exec.c: patch does not apply\nChecking patch osfmk/arm64/sleh.c...\nerror: while searching for:\n/*\n * Copyright (c) 2012-2023 Apple Inc. All rights reserved.\n *\n\nerror: patch failed: osfmk/arm64/sleh.c:1\nerror: osfmk/arm64/sleh.c: patch does not apply\nChecking patch osfmk/kern/boot_progress.h...\nChecking patch osfmk/kern/Makefile...\nerror: while searching for:\n\n\nXNU_ONLY_EXPORTS = \\\n\tarcade.h \\\n\tbtlog.h \\\n\tcpc.h \\\n\nerror: patch failed: osfmk/kern/Makefile:114\nerror: osfmk/kern/Makefile: patch does not apply\nChecking patch bsd/kern/kern_exit.c...\nHunk #2 succeeded at 1804 (offset -49 lines).\nHunk #3 succeeded at 1821 (offset -48 lines).\nerror: while searching for:\n\ttask_t task = proc_task(p);\n\n\n\tif (p-\u003ep_crash_behavior != 0 || p == initproc) {\n\t\tproc_handle_critical_exit(p, rv);\n\t}\n\nerror: patch failed: bsd/kern/kern_exit.c:1893\nerror: bsd/kern/kern_exit.c: patch does not apply"
+                    }
+                ]
+}

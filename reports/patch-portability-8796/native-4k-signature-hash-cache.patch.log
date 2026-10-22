@@ -1,0 +1,11 @@
+git -c safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full --no-optional-locks -C D:/Code/PortingiOS/common/sources/xnu-ios16-full apply --check --verbose D:\Code\PortingiOS\common\sources\UniXNU\patches\xnu\native-4k-signature-hash-cache.patch
+exit_code=0
+Checking patch bsd/sys/ubc_internal.h...
+Hunk #1 succeeded at 155 (offset -3 lines).
+Checking patch bsd/kern/ubc_subr.c...
+Hunk #4 succeeded at 3882 (offset -51 lines).
+Hunk #5 succeeded at 4815 (offset -58 lines).
+Hunk #6 succeeded at 5691 (offset -58 lines).
+Hunk #7 succeeded at 5829 (offset -58 lines).
+Hunk #8 succeeded at 5865 (offset -58 lines).
+Hunk #9 succeeded at 5919 (offset -58 lines).

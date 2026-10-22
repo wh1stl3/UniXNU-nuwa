@@ -1,0 +1,14 @@
+git -c safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full --no-optional-locks -C D:/Code/PortingiOS/common/sources/xnu-ios16-full apply --check --verbose D:\Code\PortingiOS\common\sources\UniXNU\patches\xnu\offline-owner-systemos-mount.patch
+exit_code=1
+Checking patch bsd/kern/kern_exec.c...
+error: while searching for:
+
+#include "kern_exec_internal.h"
+
+#include <CodeSignature/Entitlements.h>
+
+#include <mach/exclaves.h>
+
+
+error: patch failed: bsd/kern/kern_exec.c:183
+error: bsd/kern/kern_exec.c: patch does not apply

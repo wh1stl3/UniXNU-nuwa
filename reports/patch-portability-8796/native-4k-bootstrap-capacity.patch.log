@@ -1,0 +1,10 @@
+git -c safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full --no-optional-locks -C D:/Code/PortingiOS/common/sources/xnu-ios16-full apply --check --verbose D:\Code\PortingiOS\common\sources\UniXNU\patches\xnu\native-4k-bootstrap-capacity.patch
+exit_code=0
+Checking patch osfmk/arm/pmap/pmap.h...
+Hunk #1 succeeded at 111 (offset -4 lines).
+Checking patch osfmk/arm64/start.s...
+Hunk #1 succeeded at 422 (offset -4 lines).
+Hunk #2 succeeded at 528 (offset -4 lines).
+Hunk #3 succeeded at 613 (offset -4 lines).
+Checking patch osfmk/arm64/genassym.c...
+Hunk #1 succeeded at 249 (offset -21 lines).

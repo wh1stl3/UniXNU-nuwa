@@ -1,0 +1,5 @@
+git -c safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full --no-optional-locks -C D:/Code/PortingiOS/common/sources/xnu-ios16-full apply --check --verbose D:\Code\PortingiOS\common\sources\UniXNU\patches\xnu\native-work-interval-soft-fail.patch
+exit_code=0
+Checking patch osfmk/kern/work_interval.c...
+Hunk #1 succeeded at 1050 (offset -65 lines).
+Hunk #2 succeeded at 1066 (offset -65 lines).
