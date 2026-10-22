@@ -1,10 +1,10 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 12:32（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-22 12:34（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
-第三轮[39718507532](https://github.com/wh1stl3/UniXNU/actions/runs/39718507532)证据已下载：仍失败于IIG的kernelContent，并暴露公开树缺少arm64/kpc.c。修复候选已完成：固定IIG模板的内联RPC适配，源CI关闭KPC/KPERF；51项210 hunks静态检查通过，待提交后启动第四轮。见[分析与证据](operations/2026-10-22-ci-third-failure.md)。完整内核构建仍未通过。
+第三轮[39718507532](https://github.com/wh1stl3/UniXNU/actions/runs/39718507532)证据已下载：仍失败于IIG的kernelContent，并暴露公开树缺少arm64/kpc.c。修复已提交推送7d6675e：固定IIG模板的内联RPC适配，源CI关闭KPC/KPERF；51项210 hunks静态检查通过。[第四轮39723011018](https://github.com/wh1stl3/UniXNU/actions/runs/39723011018)已通过输入检查，真实编译进行中。见[分析与证据](operations/2026-10-22-ci-third-failure.md)。完整内核构建仍未通过。
 
 ## 当前边界
 
@@ -24,7 +24,7 @@
 
 ## 下一步
 
-1. 提交推送本轮候选，以精确device_ref启动第四轮8796源编译，先检查全部IIG生成报告及KPC选择。
+1. 跟踪第四轮39723011018（device_ref=7d6675ee49578eac2b02c5b65a0ac42b29dc1fd4），下载完成后的证据包，检查全部IIG生成报告及KPC选择；运行时状态见reports/kernel-ci/39723011018/run.json。
 2. 按实际第一处错误继续适配；成功时检查Mach-O/对象/符号/版本，不能把构建结果写成实机通过。
 3. 完成Darwin22 archive、boot-progress/watchdog、nuwa defconfig与donor kernelcache解析，再接回正式-D入口；feed切换独立处理。
 4. 命中四类硬停先写NEED-REVIEW再停；仅实体按键待办写PENDING-HUMAN后继续。

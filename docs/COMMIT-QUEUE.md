@@ -191,3 +191,13 @@
 [Evidence] reports/kernel-ci/39718507532/diagnostics.txt原始行34853/99813；IIG短CI39722376512五目标同hash；compatibility-check.json为51项210 hunks；iig-adapter-check.json转换真实样本11块、拒绝未知模板；workspace-check.json确认来源与feed/board边界。
 [Risk] 完整IIG生成集与内核编译/链接待下一轮；性能计数采样关闭，完整driver/donor ABI未验证；未生成固件/诊断镜像，预链接、QEMU与实机均未验证。
 ```
+
+## Q-020 · 第四轮源构建启动
+
+```text
+[unixnu-nuwa][build] 发布第三轮修复并启动第四轮8796源构建
+
+[Change] 记录7d6675e已推送和第四轮精确输入，更新当前状态及跟踪方式；原始大控制台保留out而提交摘录，避免旧观察器下载大日志阻塞。
+[Evidence] reports/kernel-ci/39723011018/run.json；https://github.com/wh1stl3/UniXNU/actions/runs/39723011018；device_ref=7d6675ee49578eac2b02c5b65a0ac42b29dc1fd4；主机/依赖/输入检查成功，编译进行中。
+[Risk] 尚无第四轮完整编译/链接结果，内联RPC适配不是完整ABI验收；feed/board不变，预链接、QEMU及实机未验证。
+```

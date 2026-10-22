@@ -48,3 +48,5 @@
 - 2026-10-22 11:47 · Q-017已提交推送4be1fb4，第三轮39718507532以该精确设备输入启动，仍在真实编译；基座workflow宿主head a3cacd5但构建源码仍固定75bc，未整体跟进基座 · 提交号：4be1fb4；本项待定Q-018 · reports/kernel-ci/39718507532/run.json
 
 - 2026-10-22 12:32 · 第三轮证据包已下载，实错为IORPC.kernelContent及缺失arm64/kpc.c；五目标真实IIG生成相同，否证deployment-target候选；新增受限内联RPC适配和源CI关闭KPC/KPERF，51项210 hunks及真实样本检查通过；Q-018已提交推送50fd1fd · 提交号：待定Q-019 · reports/kernel-ci/39718507532/，docs/operations/2026-10-22-ci-third-failure.md
+
+- 2026-10-22 12:34 · Q-019提交7d6675e并推送成功；固定该device_ref启动第四轮39723011018，实际主机/依赖/输入检查成功、真实编译进行中；未取得完整内核构建结果 · 提交号：7d6675e；本项待定Q-020 · reports/kernel-ci/39723011018/run.json

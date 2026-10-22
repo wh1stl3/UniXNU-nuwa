@@ -64,3 +64,12 @@ UIO新增候选保留原typedef，通过声明宏对char数组变量施加原对
 ## 第三轮运行
 
 设备提交4be1fb48c7389b61fba4a245f58e2bae4e2a9a62，[第三轮39718507532](https://github.com/wh1stl3/UniXNU/actions/runs/39718507532)已启动。宿主fork的head为a3cacd5（新增工具检查workflow），源构建workflow内仍checkout固定75bc，不代表把基座实现升级到a3cac/e95b。当前编译中，最终结果未验证。
+
+
+第三轮最终结果：失败；证据包现已下载并提取真实错误，见[第三轮分析](2026-10-22-ci-third-failure.md)。原始日志52MB保留out/，提交带原始行号/哈希的摘录，未提交生成源码或构建产物。deployment-target五目标实际生成相同，候选被否证，D-010接替该部分。
+
+## 第四轮运行
+
+修复提交7d6675ee49578eac2b02c5b65a0ac42b29dc1fd4已推送；[39723011018](https://github.com/wh1stl3/UniXNU/actions/runs/39723011018)于2026-10-22 12:33启动。第一次Git推送连接重置，HTTP/1.1重试后成功；只读API确认远端精确提交后才调度。12:34观察实际主机检查、依赖安装、固定输入检查均成功，编译步骤进行中。完整构建结果未验证。
+
+工作流宿主head为caa9acb（仅新增IIG生成探针），源构建仍checkout75bc。第四轮使用51项补丁和固定IIG内联RPC适配；保留IORPC头，关闭KPC/KPERF性能采样，不运行预链接/镜像/设备。完成后优先gh run download获取证据包；旧observe脚本先下载大run日志可能挂起，不能以空run.log判断没有错误。
