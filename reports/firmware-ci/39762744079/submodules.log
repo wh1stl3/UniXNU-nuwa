@@ -1,0 +1,30 @@
+
+COMMAND ["git", "submodule", "update", "--init", "--depth", "1", "--", "Common/Mu", "Common/Mu_OEM_Sample", "Mu_Basecore", "Silicium-ACPI", "Silicon/Silicium/OpensslPkg/Library/OpensslLib/openssl", "Binaries"]
+Submodule 'Binaries' (https://github.com/Project-Silicium/Device-Binaries.git) registered for path 'Binaries'
+Submodule 'Common/Mu' (https://github.com/microsoft/mu_plus.git) registered for path 'Common/Mu'
+Submodule 'Common/Mu_OEM_Sample' (https://github.com/microsoft/mu_oem_sample.git) registered for path 'Common/Mu_OEM_Sample'
+Submodule 'Mu_Basecore' (https://github.com/microsoft/mu_basecore.git) registered for path 'Mu_Basecore'
+Submodule 'Silicium-ACPI' (https://github.com/Project-Silicium/Silicium-ACPI.git) registered for path 'Silicium-ACPI'
+Submodule 'Silicon/Silicium/OpensslPkg/Library/OpensslLib/openssl' (https://github.com/openssl/openssl.git) registered for path 'Silicon/Silicium/OpensslPkg/Library/OpensslLib/openssl'
+Cloning into '/home/runner/work/_temp/nuwa-firmware-candidate/firmware/Binaries'...
+Cloning into '/home/runner/work/_temp/nuwa-firmware-candidate/firmware/Common/Mu'...
+Cloning into '/home/runner/work/_temp/nuwa-firmware-candidate/firmware/Common/Mu_OEM_Sample'...
+Cloning into '/home/runner/work/_temp/nuwa-firmware-candidate/firmware/Mu_Basecore'...
+Cloning into '/home/runner/work/_temp/nuwa-firmware-candidate/firmware/Silicium-ACPI'...
+Cloning into '/home/runner/work/_temp/nuwa-firmware-candidate/firmware/Silicon/Silicium/OpensslPkg/Library/OpensslLib/openssl'...
+Submodule path 'Binaries': checked out 'a1501e0c2e642d6ac0d8f52c85af2a67b75a7799'
+From https://github.com/microsoft/mu_plus
+ * branch            b8d46c71610318e36a661819e1e3c0b8bdda413a -> FETCH_HEAD
+Submodule path 'Common/Mu': checked out 'b8d46c71610318e36a661819e1e3c0b8bdda413a'
+From https://github.com/microsoft/mu_oem_sample
+ * branch            b70b4b7bb02c43bf9db2172dfb3ed0457e2361d6 -> FETCH_HEAD
+Submodule path 'Common/Mu_OEM_Sample': checked out 'b70b4b7bb02c43bf9db2172dfb3ed0457e2361d6'
+From https://github.com/microsoft/mu_basecore
+ * branch            cfb93724a06ff86ff5ba971413368a7809ee42a5 -> FETCH_HEAD
+Submodule path 'Mu_Basecore': checked out 'cfb93724a06ff86ff5ba971413368a7809ee42a5'
+From https://github.com/Project-Silicium/Silicium-ACPI
+ * branch            2d465ad77c25de908f0ec7bdfcb57f865b61233c -> FETCH_HEAD
+Submodule path 'Silicium-ACPI': checked out '2d465ad77c25de908f0ec7bdfcb57f865b61233c'
+From https://github.com/openssl/openssl
+ * branch            67b5686b4419b4cb8caa502711c41815f5279751 -> FETCH_HEAD
+Submodule path 'Silicon/Silicium/OpensslPkg/Library/OpensslLib/openssl': checked out '67b5686b4419b4cb8caa502711c41815f5279751'

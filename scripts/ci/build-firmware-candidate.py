@@ -79,10 +79,28 @@ def main():
         save("inputs.json", dict(recipe=recipe, checks=checked, kernel=candidate["kernel"],
                                  kernel_included_in_firmware=False,
                                  device_commit=os.environ.get("GITHUB_SHA"), run_id=os.environ.get("GITHUB_RUN_ID")))
+        normalized_inputs = []
         for patch in candidate["patches"]:
             path = ROOT / patch["path"]
             if digest(path) != patch["sha256"]:
                 raise ValueError("Patch hash mismatch")
+            # Some pinned Mu blobs contain CRLF even on Linux. Input hashes above
+            # explicitly normalize CRLF; normalize only these exact patch targets,
+            # retaining strict git-apply context checks (no ignore-whitespace flags).
+            for line in path.read_text().splitlines():
+                if not line.startswith("+++ b/"):
+                    continue
+                target = (sources[patch["root"]] / line[6:]).resolve()
+                if not target.is_relative_to(sources[patch["root"]]):
+                    raise ValueError("Patch target outside approved source root")
+                raw = target.read_bytes()
+                lf = raw.replace(b"\r\n", b"\n")
+                if raw != lf:
+                    normalized_inputs.append(dict(root=patch["root"], path=line[6:],
+                                                  raw_sha256=hashlib.sha256(raw).hexdigest(),
+                                                  lf_sha256=hashlib.sha256(lf).hexdigest()))
+                    target.write_bytes(lf)
+            save("line-ending-normalization.json", normalized_inputs)
             run(["git", "apply", "--check", path], sources[patch["root"]])
             run(["git", "apply", path], sources[patch["root"]])
         (fw / ".unixnu-packages").mkdir()

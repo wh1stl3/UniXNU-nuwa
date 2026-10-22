@@ -1,0 +1,254 @@
+[
+  {
+    "argv": [
+      "git",
+      "init",
+      "/home/runner/work/_temp/nuwa-firmware-candidate/firmware"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate",
+    "started": 1792664972.9436228,
+    "exit_code": 0,
+    "ended": 1792664972.9474337
+  },
+  {
+    "argv": [
+      "git",
+      "remote",
+      "add",
+      "origin",
+      "https://github.com/Project-Silicium/Mu-Silicium.git"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/firmware",
+    "started": 1792664972.947569,
+    "exit_code": 0,
+    "ended": 1792664972.9497545
+  },
+  {
+    "argv": [
+      "git",
+      "fetch",
+      "--depth",
+      "1",
+      "origin",
+      "6c6755012728c9f7de748228758bad94d1e9a660"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/firmware",
+    "started": 1792664972.9499192,
+    "exit_code": 0,
+    "ended": 1792664975.543862
+  },
+  {
+    "argv": [
+      "git",
+      "checkout",
+      "--detach",
+      "FETCH_HEAD"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/firmware",
+    "started": 1792664975.5442126,
+    "exit_code": 0,
+    "ended": 1792664976.1745725
+  },
+  {
+    "argv": [
+      "git",
+      "init",
+      "/home/runner/work/_temp/nuwa-firmware-candidate/unixnu"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate",
+    "started": 1792664976.1770294,
+    "exit_code": 0,
+    "ended": 1792664976.180406
+  },
+  {
+    "argv": [
+      "git",
+      "remote",
+      "add",
+      "origin",
+      "https://github.com/UniXNU/UniXNU.git"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/unixnu",
+    "started": 1792664976.180662,
+    "exit_code": 0,
+    "ended": 1792664976.1826925
+  },
+  {
+    "argv": [
+      "git",
+      "fetch",
+      "--depth",
+      "1",
+      "origin",
+      "75bc13dd34dc4e403826793739e316a264ce00dd"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/unixnu",
+    "started": 1792664976.1829824,
+    "exit_code": 0,
+    "ended": 1792664976.8888893
+  },
+  {
+    "argv": [
+      "git",
+      "checkout",
+      "--detach",
+      "FETCH_HEAD"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/unixnu",
+    "started": 1792664976.8893325,
+    "exit_code": 0,
+    "ended": 1792664976.9432712
+  },
+  {
+    "argv": [
+      "git",
+      "init",
+      "/home/runner/work/_temp/nuwa-firmware-candidate/sheng"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate",
+    "started": 1792664976.9456267,
+    "exit_code": 0,
+    "ended": 1792664976.949018
+  },
+  {
+    "argv": [
+      "git",
+      "remote",
+      "add",
+      "origin",
+      "https://github.com/UniXNU/uefi-sheng.git"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/sheng",
+    "started": 1792664976.9493299,
+    "exit_code": 0,
+    "ended": 1792664976.9514453
+  },
+  {
+    "argv": [
+      "git",
+      "fetch",
+      "--depth",
+      "1",
+      "origin",
+      "329b473df1e53a3bfa64b2b39b79670c4c02279b"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/sheng",
+    "started": 1792664976.9517715,
+    "exit_code": 0,
+    "ended": 1792664979.4891481
+  },
+  {
+    "argv": [
+      "git",
+      "checkout",
+      "--detach",
+      "FETCH_HEAD"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/sheng",
+    "started": 1792664979.4895883,
+    "exit_code": 0,
+    "ended": 1792664980.116486
+  },
+  {
+    "argv": [
+      "git",
+      "submodule",
+      "update",
+      "--init",
+      "--depth",
+      "1",
+      "--",
+      "Common/Mu",
+      "Common/Mu_OEM_Sample",
+      "Mu_Basecore",
+      "Silicium-ACPI",
+      "Silicon/Silicium/OpensslPkg/Library/OpensslLib/openssl",
+      "Binaries"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/firmware",
+    "started": 1792664980.118982,
+    "exit_code": 0,
+    "ended": 1792665028.8494794
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "--check",
+      "/home/runner/work/UniXNU-nuwa/UniXNU-nuwa/patches/firmware-candidates/0001-bootshim-image-size.patch"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/firmware",
+    "started": 1792665028.8525305,
+    "exit_code": 0,
+    "ended": 1792665028.8550897
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "/home/runner/work/UniXNU-nuwa/UniXNU-nuwa/patches/firmware-candidates/0001-bootshim-image-size.patch"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/firmware",
+    "started": 1792665028.8560646,
+    "exit_code": 0,
+    "ended": 1792665028.8623245
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "--check",
+      "/home/runner/work/UniXNU-nuwa/UniXNU-nuwa/patches/firmware-candidates/0002-nuwa-loader-wiring.patch"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/firmware",
+    "started": 1792665028.862823,
+    "exit_code": 0,
+    "ended": 1792665028.8693454
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "/home/runner/work/UniXNU-nuwa/UniXNU-nuwa/patches/firmware-candidates/0002-nuwa-loader-wiring.patch"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/firmware",
+    "started": 1792665028.8697848,
+    "exit_code": 0,
+    "ended": 1792665028.8759933
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "--check",
+      "/home/runner/work/UniXNU-nuwa/UniXNU-nuwa/patches/firmware-candidates/0003-initrd-publisher-only.patch"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/sheng",
+    "started": 1792665028.876505,
+    "exit_code": 0,
+    "ended": 1792665028.880248
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "/home/runner/work/UniXNU-nuwa/UniXNU-nuwa/patches/firmware-candidates/0003-initrd-publisher-only.patch"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/sheng",
+    "started": 1792665028.8806915,
+    "exit_code": 0,
+    "ended": 1792665028.8833308
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "--check",
+      "/home/runner/work/UniXNU-nuwa/UniXNU-nuwa/patches/firmware-candidates/0004-sec-entry-argument-hob.patch"
+    ],
+    "cwd": "/home/runner/work/_temp/nuwa-firmware-candidate/firmware",
+    "started": 1792665028.8838542,
+    "exit_code": 1,
+    "ended": 1792665028.8860674
+  }
+]

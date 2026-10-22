@@ -530,3 +530,14 @@
 [Evidence] reports/firmware-ci/39761427579首错error4000、112字节shim及3145728字节拷贝计数；83项源码静态检查、8项格式检查与入口补丁apply检查通过。
 [Risk] EFI/FD实际编译仍待第二轮，缓存/DT/内存生命周期及硬件未验证；R-004 A内继续，不打boot.img、不改板值、不操作设备。
 ```
+
+
+## Q-053 · 固件CI跨平台换行修复
+
+```text
+[unixnu-nuwa][build] 按第二轮证据归一化精确SEC补丁目标换行
+
+[Change] 记录第二轮输入通过后的CRLF应用错误，仅云端补丁目标转换LF并保存前后hash，保留严格apply；扩展SEC与发布器HOB GUID产物检查。
+[Evidence] reports/firmware-ci/39762744079包含failure、commands、输入hash和最终run；源码语法检查通过，首轮BootShim证据保留。
+[Risk] 第三轮真实编译待运行，EFI/FD尚未通过；R-004 A边界不变，不改board/feed/内存表、不打boot.img或操作设备。
+```

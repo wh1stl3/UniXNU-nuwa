@@ -1,12 +1,12 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 18:22（Asia/Shanghai）。历史见 WORKLOG。
+> 当前唯一真相；更新：2026-10-22 18:32（Asia/Shanghai）。历史见 WORKLOG。
 
 ## 当前结论
 
 **咱们的源内核已真实链接 ArmCpu、ArmDTPlatform；加载器源码候选已接线，尚未生成或验证本仓启动镜像。** CI15 [39755850870](https://github.com/wh1stl3/UniXNU/actions/runs/39755850870) success，下载内核20,187,888字节、SHA a9e08c693fec4034f613cd554ea94e5855b25b727b4bfb4af46a4103f565bc7a，五平台导出、零undefined。仅构建与静态检查通过，未QEMU、未在手机执行本仓XNU。
 
-**R-004 A已获用户明确批准，首轮受限固件CI [39761427579](https://github.com/wh1stl3/UniXNU-nuwa/actions/runs/39761427579) 已失败，精确首错为缺失入口HOB GUID/生产者；最小补丁已准备。** 只编译四个EFI模块、FD与BootShim并检查产物；不打boot.img、不操作手机。
+**R-004 A已获用户明确批准，首轮受限固件CI [39761427579](https://github.com/wh1stl3/UniXNU-nuwa/actions/runs/39761427579) 已失败，精确首错为缺失入口HOB GUID/生产者；第二轮 [39762744079](https://github.com/wh1stl3/UniXNU-nuwa/actions/runs/39762744079) 在严格apply检查遇到上游CRLF差异（输入6304c6c），已准备仅云端精确文件归一化修复。** 只编译四个EFI模块、FD与BootShim并检查产物；不打boot.img、不操作手机。
 
 ## 本轮结果
 
@@ -19,7 +19,7 @@
 
 ## 下一步
 
-1. 发布入口HOB首错修复，启动第二轮固件CI；检查实际编译结果并下载四模块EFI/FD。固定三个来源及LF归一化输入hash，仅在Actions RUNNER_TEMP独立树应用补丁。
+1. 发布云端CRLF归一化修复并启动第三轮；取实际编译结果及EFI/FD，仍保留严格输入hash与apply检查。固定三个来源及LF归一化输入hash，仅在Actions RUNNER_TEMP独立树应用补丁。
 2. 下载EFI/FD/BootShim及报告，核对AARCH64 PE、GUID/DEPEX、FV内容、FD大小和shim头。通过前不声称完整固件可启动；源内核不包含在此固件构建中。设备执行/boot.img/板值仍为后续独立审批范围。
 3. 在任何XNU负载/启动镜像组装前，继续核验CI15 runtime crypto/pthread provider、ARCH_TIMER/startup/GIC/PSCI、13项boot-progress及watchdog scratch；新内核的NativePrelink布局和12处Libm外部PC编码仍待审查，旧CI13只读plan不能直接继承。
 4. 原厂NoMap/AddDynamicMem语义、RamManager最终EFI map、initrd保留/映射与FAT挂载、DarwinBoot连续分配均为TODO；按D-002先512MiB–1GiB过阶段5，再抬容量。板字段修改仍单独审阅。

@@ -17,6 +17,8 @@ MODULES = {
 LZMA_GUID = "ee4e5898-3914-4259-9d6e-dc7bd79403cf"
 VARIABLE_GUIDS = {"6441f818-6362-4e44-b570-7dba31dd2453", "1e5668e2-8481-11d4-bcf1-0080c73c8881"}
 LOADER_GUID = "0f0a492e-5a6a-49f6-a1bf-743c87ab1cfe"
+ENTRY_HOB_GUID = "daee82e6-8090-4e72-bfb9-78c13cd4e359"
+SEC_GUID = "9affb503-e643-4141-8b90-17e8588b1d35"
 
 
 def sha(data):
@@ -52,6 +54,7 @@ def pe(data):
     return dict(machine=hex(machine), subsystem=subsystem, entry_rva=hex(entry), image_size=image_size,
                 sections=sections, bytes=len(data), sha256=sha(data),
                 loader_protocol_guid_present=uuid.UUID(LOADER_GUID).bytes_le in data,
+                entry_hob_guid_present=uuid.UUID(ENTRY_HOB_GUID).bytes_le in data,
                 application_guid_present=uuid.UUID("9b665204-a133-47a2-9396-9e2b370a4e25").bytes_le in data)
 
 
@@ -144,6 +147,11 @@ class Firmware:
             owner["sections"].append(detail)
             if kind == 0x10 and owner["guid"] in MODULES:
                 detail["pe"] = pe(body)
+            elif kind == 0x12 and owner["guid"] == SEC_GUID:
+                need(len(body) >= 40 and body[:2] == b"VZ" and struct.unpack_from("<H", body, 2)[0] == 0xaa64,
+                     "Invalid SEC AARCH64 TE header")
+                detail["sec_te"] = dict(bytes=len(body), sha256=sha(body),
+                                         entry_hob_guid_present=uuid.UUID(ENTRY_HOB_GUID).bytes_le in body)
             elif kind == 0x13 and owner["guid"] in MODULES:
                 detail["depex"] = depex(body)
             elif kind == 0x17:
@@ -203,6 +211,7 @@ def inspect(artifact):
                  and {x["guid"] for x in deps[0] if "guid" in x} == VARIABLE_GUIDS, "Registrar DEPEX mismatch")
         if name == "ShengBootMemoryDxe":
             need(len(deps) == 1 and [x["op"] for x in deps[0]] == ["TRUE", "END"], "Initrd publisher DEPEX mismatch")
+            need(images[0]["entry_hob_guid_present"], "Publisher HOB GUID absent from image")
         outputs = []
         for path in artifact.rglob(name + ".efi"):
             parsed = pe(path.read_bytes())
@@ -214,6 +223,10 @@ def inspect(artifact):
     app = next(m for m in modules if m["name"] == "UniXNU")
     registrar = next(m for m in modules if m["name"] == "UniXNUDxe")
     need(app["ffs"]["volume"] == registrar["ffs"]["volume"], "Registrar/application in different FVs")
+    sec = [f for f in fv.files if f["guid"] == SEC_GUID]
+    need(len(sec) == 1 and sec[0]["type"] == 3, "SEC FFS absent or duplicated")
+    sec_te = [s["sec_te"] for s in sec[0]["sections"] if "sec_te" in s]
+    need(len(sec_te) == 1 and sec_te[0]["entry_hob_guid_present"], "SEC producer HOB GUID absent from image")
     shim = (artifact / "shim/shim.bin").read_bytes()
     recorded = json.loads((artifact / "shim.json").read_text())
     need(sha(shim) == recorded["sha256"] and shim[56:60] == b"ARM\x64", "Shim hash/magic mismatch")
@@ -228,7 +241,7 @@ def inspect(artifact):
     return dict(result="downloaded EFI/FD/BootShim static inspection passed", inventory_files=len(inventory),
                 fd=dict(bytes=len(data), sha256=sha(data)), shim=dict(bytes=len(shim), image_size=image_size,
                 sha256=sha(shim), payload_offset=payload, copy_count=copy_count), volumes=fv.volumes, compression=fv.guided,
-                modules=modules, device_executed=False, unverified=["DXE dispatch and protocol installation",
+                modules=modules, sec_entry_hob_producer=sec_te[0], device_executed=False, unverified=["DXE dispatch and protocol installation",
                 "initrd mapping/reservation and FAT mount", "UEFI memory map and XNU window", "XNU and iOS execution"])
 
 

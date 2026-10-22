@@ -114,3 +114,5 @@
 2026-10-22 18:10 · R-004 A获批，准备只构建EFI/FD/BootShim的独立Actions流程及固定输入闸门；实际构建待启动 · 本提交（Q-051） · .github/workflows/firmware-candidate.yml；scripts/ci/build-firmware-candidate.py；config/firmware-ci-inputs.json
 
 2026-10-22 18:22 · 首轮固件39761427579取证：BootShim编译/下载机器码检查通过，EDK首错为入口HOB GUID缺失；固定来源补齐SEC生产链，83项静态检查通过并准备第二轮 · 本提交（Q-052） · reports/firmware-ci/39761427579/；docs/operations/2026-10-22-firmware-candidate-build.md
+
+2026-10-22 18:32 · 第二轮39762744079依赖安装及输入检查通过，SEC补丁因上游CRLF未应用；仅云端精确目标归一化并保留严格apply与前后hash，准备第三轮 · 本提交（Q-053） · reports/firmware-ci/39762744079/；docs/operations/2026-10-22-firmware-candidate-build.md

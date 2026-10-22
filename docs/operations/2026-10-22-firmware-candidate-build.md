@@ -21,3 +21,10 @@ BootShim已编出：112字节，SHA256 9346a527441b242c69414fd7e3d6fa17813f281d5
 scripts/ci/inspect-firmware-candidate.py只在内存展开下载FD的LZMA嵌套FV，验证FV/FFS校验、四模块GUID/FFS类型/AARCH64 PE32+/子系统、应用与注册器同FV、注册器变量协议DEPEX、发布器TRUE DEPEX、PE内应用/loader协议GUID，核对独立EFI与内嵌PE哈希，并检查shim头、_Payload和机器码中的FD拷贝长度。只写JSON，不修改镜像。
 
 用隔壁已有SHA21c029eb的旧FD校验解析器，得到2个FV/154个FFS，目标四模块均未出现；8项有效/损坏格式检查通过。记录reports/firmware-ci/inspector-tests.json。此基准只验证解析路径，不是新固件结果，更不是QEMU或实机通过。
+
+
+## 第二轮39762744079（18:30结束，failure）
+
+输入6304c6c。安装阶段用时约5分52秒后成功，未取消运行。源码归一化hash全过；第4份补丁的Sec.c/Sec.inf/ModuleEntryPoint.S在Linux git apply --check失败。与本机差异为上游Git blob含CRLF，本机文本视图/候选补丁为LF。尚未验证本轮SEC编译，也无新EFI/FD产物。
+
+修复仅在独立云端源树，对已通过LF哈希闸门的精确补丁目标做CRLF→LF，保存原始/转换后hash；继续严格git apply --check，不启用ignore-whitespace或改源码逻辑。第三轮仍沿用四补丁、同来源与板配置。产物检查器同时加入SEC TE和发布器PE内入口HOB GUID的配对检查。
