@@ -197,12 +197,16 @@
     {
       "name": "clang17-zero-init.patch",
       "sha256": "07dc59c1cdea54de7b846cfb9aa93598efaa3895dffc3c8dcb91b9d908b1c6c9"
+    },
+    {
+      "name": "clang17-uio-stackbuf.patch",
+      "sha256": "ab4ec11a8471d4a3c80c9538a0a698b93936be2de58c1af417ed90c37e5092de"
     }
   ],
   "baseline_adapter_sha256": "bddc60351dce266fd932651aa68b963751b9c773bb339266ac016f975b0aa3d9",
   "firehose_adapter_sha256": "8f4451c21792009561f7e4f5d8b6db05db51fbbe29623435da0d05f8af763b93",
   "reviewed_base_patch_count": 48,
-  "ci_compatibility_patch_count": 1,
+  "ci_compatibility_patch_count": 2,
   "scope": "source compile/link only; optional device archives disabled",
   "kernel_built": false,
   "prelinked": false,

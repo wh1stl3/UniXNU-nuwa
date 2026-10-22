@@ -1,0 +1,63 @@
+{
+  "declarations": 36,
+  "files": [
+    {
+      "file": "bsd/kern/decmpfs.c",
+      "converted_declarations": 1
+    },
+    {
+      "file": "bsd/kern/kpi_socket.c",
+      "converted_declarations": 1
+    },
+    {
+      "file": "bsd/kern/sys_generic.c",
+      "converted_declarations": 4
+    },
+    {
+      "file": "bsd/kern/uipc_syscalls.c",
+      "converted_declarations": 1
+    },
+    {
+      "file": "bsd/nfs/nfs_serv.c",
+      "converted_declarations": 5
+    },
+    {
+      "file": "bsd/sys/uio_internal.h",
+      "converted_declarations": 0
+    },
+    {
+      "file": "bsd/vfs/vfs_attrlist.c",
+      "converted_declarations": 5
+    },
+    {
+      "file": "bsd/vfs/vfs_lookup.c",
+      "converted_declarations": 1
+    },
+    {
+      "file": "bsd/vfs/vfs_quota.c",
+      "converted_declarations": 4
+    },
+    {
+      "file": "bsd/vfs/vfs_subr.c",
+      "converted_declarations": 1
+    },
+    {
+      "file": "bsd/vfs/vfs_syscalls.c",
+      "converted_declarations": 10
+    },
+    {
+      "file": "bsd/vfs/vfs_vnops.c",
+      "converted_declarations": 1
+    },
+    {
+      "file": "security/mac_vfs_subr.c",
+      "converted_declarations": 2
+    }
+  ],
+  "array_element": "char (unchanged byte addressing)",
+  "array_extent": "UIO_SIZEOF(niov) unchanged for every callsite",
+  "variable_alignment": "_Alignof(union iovecs), same as original typedef",
+  "original_typedef": "retained",
+  "source_written": false,
+  "compile_validation": "pending actual clang17 CI"
+}

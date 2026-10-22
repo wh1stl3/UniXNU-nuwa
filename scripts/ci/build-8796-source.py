@@ -60,10 +60,11 @@ def inputs(base):
     firehose_script = replace_exact(firehose.read_text(encoding='utf-8'),
                                    'IPHONEOS_DEPLOYMENT_TARGET=17.0',
                                    'IPHONEOS_DEPLOYMENT_TARGET=16.0', 1)
-    compatibility = DEVICE / 'patches/xnu-8796-ci-candidates/clang17-zero-init.patch'
-    if not compatibility.is_file():
-        raise ValueError('Missing reviewed clang17 compatibility patch')
-    patches.append(compatibility)
+    for name in ('clang17-zero-init.patch', 'clang17-uio-stackbuf.patch'):
+        compatibility = DEVICE / 'patches/xnu-8796-ci-candidates' / name
+        if not compatibility.is_file():
+            raise ValueError(f'Missing reviewed clang17 compatibility patch: {name}')
+        patches.append(compatibility)
     return patches, script, firehose_script
 
 
@@ -120,7 +121,9 @@ def main():
     env.update(UNIXNU_XNU_TAG='xnu-8796.141.3', UNIXNU_XNU_COMMIT=XNU_COMMIT,
                UNIXNU_XNU_DARWIN='22.6.0', UNIXNU_XNU_VERSION='8796.141.3',
                UNIXNU_DRIVERKIT_TAG='xnu-8796.141.3', UNIXNU_TRUSTCACHE_TAG='xnu-8796.141.3',
-               XNU_BOOT_PROGRESS='0', XNU_ZONE_PGZ_ALIGNMENT_PROBE='0', JOBS='3')
+               XNU_BOOT_PROGRESS='0', XNU_ZONE_PGZ_ALIGNMENT_PROBE='0', JOBS='3',
+               OTHER_IIG_FLAGS='--deployment-target 22.0')
+    summary['iig_deployment_target'] = '22.0 (DriverKit generation compatibility, not board data)'
     try:
         # Reuse the base recipe: real source checkout, ordered patches, installhdrs,
         # real libfirehose archive and XNU build. No stubs or suppressed link errors.
@@ -139,6 +142,14 @@ def main():
             summary['source_status'] = subprocess.run(
                 ['git', '-C', str(source), 'status', '--short'], text=True,
                 capture_output=True, check=False).stdout
+            original_rpc = work / 'refer/xnu/iokit/DriverKit/IORPC.h'
+            built_rpc = source / 'iokit/DriverKit/IORPC.h'
+            if original_rpc.exists() and built_rpc.exists():
+                summary['iorpc_header_unchanged'] = sha(original_rpc) == sha(built_rpc)
+            generated = list((work / 'build').rglob('*.iig.cpp'))
+            summary['iig_generated_files'] = len(generated)
+            summary['iig_kernel_content_references'] = [str(p.relative_to(work)) for p in generated
+                if 'rpc.kernelContent' in p.read_text(errors='replace') or '.kernelContent =' in p.read_text(errors='replace')]
         summary['object_count'] = len(list((work / 'build').rglob('*.o')))
         report.write_text(json.dumps(summary, indent=2) + '\n')
 

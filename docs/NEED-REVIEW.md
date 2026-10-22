@@ -18,6 +18,8 @@
 
 用户在官方CI接入核验后指定GitHub账号`wh1stl3`，确认目标仓库尚未创建，并明确“Git的所有命令都允许”。此前仅允许status/diff/log/show的Git命令限制已解除，不再为云端checkout/clone/apply范围重复请求批准。两个旧仓及上游来源树仍只读；四类硬停、feed不变、未知板值TODO及证据纪律继续有效。Actions主机方向见DECISIONS D-008，R-003 A保留为历史审批记录。
 
+用户随后进一步明确：“有关Github的命令以后都无需问我要授权 都允许”。这是持续授权，不再重复向用户请求GitHub操作许可；不解除四类硬停或只读资料库边界。
+
 ## 审批记录：R-003
 
 ### R-003 · WSL工具链与Darwin22构建路线（approved A，第一阶段进行中）

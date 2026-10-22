@@ -161,3 +161,13 @@
 [Evidence] https://github.com/wh1stl3/UniXNU/actions/runs/39716728005，device_ref=dbbf029d8c9893759f86d828507e309ade8d11eb；reports/official-ci-plan/post-publish-workspace-check.json。
 [Risk] 记录时仍编译中，无内核链接成功证据；设备archive ABI、donor预链接、QEMU及实机未验证。
 ```
+
+## Q-017 · UIO声明与IIG目标兼容候选
+
+```text
+[unixnu-nuwa][kernel] 保留UIO字节布局并以IIG生成目标适配Darwin22接口
+
+[Change] 保存第二轮两类真实错误及IIG工具选项证据；把36处UIO数组改为保留原字节数和对齐的声明宏，设置IIG deployment-target 22.0候选，IORPC结构保持原样；记录用户GitHub持续授权。
+[Evidence] 第二轮run.log:11187,16673；工具检查39717772747的iig-help.txt/options-strings.txt；compatibility-check.json：50项209 hunks精确顺序通过，清零与IORPC头不变。
+[Risk] 第三轮实际IIG生成与完整内核编译/链接待验证；纯文本检查成功不是内核或实机通过，完整设备archive ABI仍未验证。
+```

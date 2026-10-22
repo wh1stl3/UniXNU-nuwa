@@ -52,3 +52,11 @@ GitHub CLI原OAuth授权缺workflow scope，第一次写入返回404；只读确
 兼容修复已发布`dbbf029d8c9893759f86d828507e309ade8d11eb`，[第二轮39716728005](https://github.com/wh1stl3/UniXNU/actions/runs/39716728005)已启动，当前编译中。调度命令：`scripts/start-kernel-ci.ps1 -DeviceRef dbbf029d8c9893759f86d828507e309ade8d11eb`；跟踪器传`-RunId 39716728005`。记录时无最终结果。
 
 发布后`post-publish-workspace-check.json`确认三来源树tracked status均空，board SHA-256仍8601b3e5…，基座feed仍dec145fe…；完整hash在JSON，没有改变只读来源树或已批准板配置。
+
+第二轮最终失败，旧clang开关问题已越过。首个错误run.log:11187是对齐8的char typedef不能作为数组元素，后续:16673是IIG生成rpc.kernelContent而8796 IORPC没有该字段。build.json的所有build目录对象共48个，不代表完整内核编译或链接通过。
+
+UIO新增候选保留原typedef，通过声明宏对char数组变量施加原对齐；36处调用的UIO_SIZEOF参数与字节范围不变，详见uio-candidate.json。50项209 hunks内存顺序检查通过，真实clang17验证待重跑。
+
+## IIG纯文本检查与下一轮候选
+
+[检查39717772747](https://github.com/wh1stl3/UniXNU/actions/runs/39717772747)只执行Xcode/IIG查询和二进制字符串枚举，没有内核或镜像构建。作业成功，iig-help.txt确认`--deployment-target`选项；options-strings.txt同时包含四字段旧IORPC与kernelContent新生成模板。下一轮使用Makefile已有OTHER_IIG_FLAGS入口传22.0（DriverKit生成目标），不修改8796 IORPC。此时“能选旧模板”仍是待编译验证的推断，不能写为ABI通过。

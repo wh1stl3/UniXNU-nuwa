@@ -1,0 +1,80 @@
+inspect	Set up job	﻿2026-10-22T03:36:38.8590510Z Current runner version: '2.338.0'
+inspect	Set up job	2026-10-22T03:36:38.8670200Z ##[group]Runner Image Provisioner
+inspect	Set up job	2026-10-22T03:36:38.8672060Z Hosted Compute Agent
+inspect	Set up job	2026-10-22T03:36:38.8673250Z Version: 20260819.586
+inspect	Set up job	2026-10-22T03:36:38.8674580Z Commit: 3cc4a88dfa507ef76119ad1bb3eccc6378bb2b76
+inspect	Set up job	2026-10-22T03:36:38.8676220Z Build Date: 2026-08-18T23:20:18Z
+inspect	Set up job	2026-10-22T03:36:38.8677710Z Worker ID: {7f27ab46-3770-4b5d-8517-f7172aa187bd}
+inspect	Set up job	2026-10-22T03:36:38.8679650Z Azure Region: westus
+inspect	Set up job	2026-10-22T03:36:38.8680960Z ##[endgroup]
+inspect	Set up job	2026-10-22T03:36:38.8687270Z ##[group]Operating System
+inspect	Set up job	2026-10-22T03:36:38.8689000Z macOS
+inspect	Set up job	2026-10-22T03:36:38.8690100Z 15.7.9
+inspect	Set up job	2026-10-22T03:36:38.8691140Z 24G830
+inspect	Set up job	2026-10-22T03:36:38.8692190Z ##[endgroup]
+inspect	Set up job	2026-10-22T03:36:38.8693380Z ##[group]Runner Image
+inspect	Set up job	2026-10-22T03:36:38.8694660Z Image: macos-15
+inspect	Set up job	2026-10-22T03:36:38.8695860Z Version: 20260824.0482.1
+inspect	Set up job	2026-10-22T03:36:38.8698550Z Included Software: https://github.com/actions/runner-images/blob/macos-15/20260824.0482/images/macos/macos-15-Readme.md
+inspect	Set up job	2026-10-22T03:36:38.8703060Z Image Release: https://github.com/actions/runner-images/releases/tag/macos-15%2F20260824.0482
+inspect	Set up job	2026-10-22T03:36:38.8705690Z ##[endgroup]
+inspect	Set up job	2026-10-22T03:36:38.8709790Z ##[group]GITHUB_TOKEN Permissions
+inspect	Set up job	2026-10-22T03:36:38.8715800Z Contents: read
+inspect	Set up job	2026-10-22T03:36:38.8716780Z Metadata: read
+inspect	Set up job	2026-10-22T03:36:38.8717720Z ##[endgroup]
+inspect	Set up job	2026-10-22T03:36:38.8721950Z Secret source: Actions
+inspect	Set up job	2026-10-22T03:36:38.8723550Z Cache mode: write
+inspect	Set up job	2026-10-22T03:36:38.8725430Z Prepare workflow directory
+inspect	Set up job	2026-10-22T03:36:38.9582700Z Prepare all required actions
+inspect	Set up job	2026-10-22T03:36:38.9678730Z Getting action download info
+inspect	Set up job	2026-10-22T03:36:39.4276500Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+inspect	Set up job	2026-10-22T03:36:40.5260520Z Complete job name: inspect
+inspect	Inspect installed generator options	﻿2026-10-22T03:36:40.6881910Z ##[group]Run mkdir -p "$RUNNER_TEMP/nuwa-iig-inspect"
+inspect	Inspect installed generator options	2026-10-22T03:36:40.6884100Z ^[[36;1mmkdir -p "$RUNNER_TEMP/nuwa-iig-inspect"^[[0m
+inspect	Inspect installed generator options	2026-10-22T03:36:40.6886930Z ^[[36;1mxcodebuild -version > "$RUNNER_TEMP/nuwa-iig-inspect/xcode.txt"^[[0m
+inspect	Inspect installed generator options	2026-10-22T03:36:40.6889240Z ^[[36;1mxcrun --sdk iphoneos --find iig > "$RUNNER_TEMP/nuwa-iig-inspect/iig-path.txt"^[[0m
+inspect	Inspect installed generator options	2026-10-22T03:36:40.6891630Z ^[[36;1mif xcrun --sdk iphoneos iig --help > "$RUNNER_TEMP/nuwa-iig-inspect/iig-help.txt" 2>&1; then^[[0m
+inspect	Inspect installed generator options	2026-10-22T03:36:40.6893840Z ^[[36;1m  echo 0 > "$RUNNER_TEMP/nuwa-iig-inspect/help-exit.txt"^[[0m
+inspect	Inspect installed generator options	2026-10-22T03:36:40.6895290Z ^[[36;1melse^[[0m
+inspect	Inspect installed generator options	2026-10-22T03:36:40.6896520Z ^[[36;1m  echo "$?" > "$RUNNER_TEMP/nuwa-iig-inspect/help-exit.txt"^[[0m
+inspect	Inspect installed generator options	2026-10-22T03:36:40.6897940Z ^[[36;1mfi^[[0m
+inspect	Inspect installed generator options	2026-10-22T03:36:40.6898810Z ^[[36;1mpython3 - <<'PY'^[[0m
+inspect	Inspect installed generator options	2026-10-22T03:36:40.6900000Z ^[[36;1mimport os, pathlib, re, subprocess^[[0m
+inspect	Inspect installed generator options	2026-10-22T03:36:40.6902200Z ^[[36;1mtool = pathlib.Path(subprocess.check_output(['xcrun', '--sdk', 'iphoneos', '--find', 'iig'], text=True).strip())^[[0m
+inspect	Inspect installed generator options	2026-10-22T03:36:40.6904710Z ^[[36;1mstrings = re.findall(rb'[ -~]{6,}', tool.read_bytes())^[[0m
+inspect	Inspect installed generator options	2026-10-22T03:36:40.6907380Z ^[[36;1mselected = sorted(set(s.decode() for s in strings if any(k in s.lower() for k in (b'kernelcontent', b'kernel-content', b'compatib', b'iorpc'))))^[[0m
+inspect	Inspect installed generator options	2026-10-22T03:36:40.6910600Z ^[[36;1mtarget = pathlib.Path(os.environ['RUNNER_TEMP']) / 'nuwa-iig-inspect/options-strings.txt'^[[0m
+inspect	Inspect installed generator options	2026-10-22T03:36:40.6912810Z ^[[36;1mtarget.write_text('\n'.join(selected) + '\n')^[[0m
+inspect	Inspect installed generator options	2026-10-22T03:36:40.6914120Z ^[[36;1mPY^[[0m
+inspect	Inspect installed generator options	2026-10-22T03:36:40.7018630Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+inspect	Inspect installed generator options	2026-10-22T03:36:40.7020700Z env:
+inspect	Inspect installed generator options	2026-10-22T03:36:40.7022280Z   DEVELOPER_DIR: /Applications/Xcode_16.4.app/Contents/Developer
+inspect	Inspect installed generator options	2026-10-22T03:36:40.7023880Z ##[endgroup]
+inspect	Upload text evidence	﻿2026-10-22T03:36:49.8989840Z ##[group]Run actions/upload-artifact@v4
+inspect	Upload text evidence	2026-10-22T03:36:49.8995510Z with:
+inspect	Upload text evidence	2026-10-22T03:36:49.8997740Z   name: nuwa-iig-options-39717772747
+inspect	Upload text evidence	2026-10-22T03:36:49.9000230Z   path: /Users/runner/work/_temp/nuwa-iig-inspect/**
+inspect	Upload text evidence	2026-10-22T03:36:49.9002750Z   retention-days: 7
+inspect	Upload text evidence	2026-10-22T03:36:49.9004680Z   if-no-files-found: warn
+inspect	Upload text evidence	2026-10-22T03:36:49.9010600Z   compression-level: 6
+inspect	Upload text evidence	2026-10-22T03:36:49.9012550Z   overwrite: false
+inspect	Upload text evidence	2026-10-22T03:36:49.9013820Z   include-hidden-files: false
+inspect	Upload text evidence	2026-10-22T03:36:49.9015690Z env:
+inspect	Upload text evidence	2026-10-22T03:36:49.9018040Z   DEVELOPER_DIR: /Applications/Xcode_16.4.app/Contents/Developer
+inspect	Upload text evidence	2026-10-22T03:36:49.9020850Z ##[endgroup]
+inspect	Upload text evidence	2026-10-22T03:36:50.8109190Z (node:9552) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+inspect	Upload text evidence	2026-10-22T03:36:50.8117130Z (Use `node --trace-deprecation ...` to show where the warning was created)
+inspect	Upload text evidence	2026-10-22T03:36:50.8267590Z With the provided path, there will be 5 files uploaded
+inspect	Upload text evidence	2026-10-22T03:36:50.8276770Z Artifact name is valid!
+inspect	Upload text evidence	2026-10-22T03:36:50.8279430Z Root directory input is valid!
+inspect	Upload text evidence	2026-10-22T03:36:51.2446540Z Beginning upload of artifact content to blob storage
+inspect	Upload text evidence	2026-10-22T03:36:51.2884440Z (node:9552) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+inspect	Upload text evidence	2026-10-22T03:36:51.5651160Z Uploaded bytes 1524
+inspect	Upload text evidence	2026-10-22T03:36:51.6453890Z Finished uploading artifact content to blob storage!
+inspect	Upload text evidence	2026-10-22T03:36:51.6459740Z SHA256 digest of uploaded artifact zip is 719d66862bf62535a771a7bdd43c3246ab28e1e5cf06135c658b7b30cc8a9f75
+inspect	Upload text evidence	2026-10-22T03:36:51.6465610Z Finalizing artifact upload
+inspect	Upload text evidence	2026-10-22T03:36:52.1567930Z Artifact nuwa-iig-options-39717772747.zip successfully finalized. Artifact ID 12399433525
+inspect	Upload text evidence	2026-10-22T03:36:52.1570520Z Artifact nuwa-iig-options-39717772747 has been successfully uploaded! Final size is 1524 bytes. Artifact ID is 12399433525
+inspect	Upload text evidence	2026-10-22T03:36:52.1588620Z Artifact download URL: https://github.com/wh1stl3/UniXNU/actions/runs/39717772747/artifacts/12399433525
+inspect	Complete job	﻿2026-10-22T03:36:52.1960850Z Cleaning up orphan processes
+inspect	Complete job	2026-10-22T03:36:52.3183710Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

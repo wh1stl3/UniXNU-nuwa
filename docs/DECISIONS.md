@@ -226,3 +226,14 @@ UEFI 内存映射在 `0x8c0000000` 附近能否给出连续可用块。查法：
 基座fork承载官方构建入口，UniXNU-nuwa继续独立设备仓，uefi-nuwa继续独立固件仓。首轮范围为明确的内核源构建验证；不以iPad或iOS17配置替代既定iOS16/iPhone donor。macos-15-intel/Xcode16.4仅为当前候选主机输入，须记录实际镜像/SDK/编译器并验证，不宣称标签保证长期可用。
 
 本轮不整体跟进e95b的491项路径/blob变化，不切feed；75bc输入上的48项静态结论继续限定在原输入。后续确定最小基座集成及8796覆盖后再编译。允许Git命令不解除资料库/来源树只读边界，也不解除四类硬停；board和未知板值保持原约束。
+
+---
+
+# D-009 · 新工具链适配保留8796的数据接口
+
+- 状态：**accepted，实际编译验证进行中**（2026-10-22）。
+- 证据：CI39716728005的UIO对齐与IORPC.kernelContent错误；CI39717772747的实际IIG帮助和旧/新模板字符串；`reports/kernel-ci/39716728005/compatibility-check.json`。
+
+UIO缓冲区继续是原UIO_SIZEOF(niov)字节，按原_Alignof(union iovecs)对齐；仅把对齐施加到声明，不把元素扩大8倍或取消对齐。36处调用使用声明宏，原typedef保留。
+
+IORPC继续使用8796的四字段定义，不为新IIG生成结果补kernelContent。下一轮通过Makefile现有OTHER_IIG_FLAGS传`--deployment-target 22.0`选择旧DriverKit生成目标；这是有实际工具帮助支持的候选，不是已证明ABI兼容。是否选中旧模板以生成结果和真实编译为准；不能将类型同名或编译成功推为完整driver ABI通过。

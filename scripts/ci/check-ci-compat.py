@@ -28,6 +28,12 @@ if '-ftrivial-auto-var-init=zero' not in flags:
     raise ValueError('Auto-variable zero initialization must stay enabled')
 if '-enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang' in flags:
     raise ValueError('Legacy clang flag still present')
+uio_header = tree.read('bsd/sys/uio_internal.h')
+if 'char name[UIO_SIZEOF(niov)] __attribute__((aligned(_Alignof(union iovecs))))' not in uio_header:
+    raise ValueError('UIO declaration must preserve byte size and explicit original alignment')
+if tree.read('iokit/DriverKit/IORPC.h') != (args.xnu / 'iokit/DriverKit/IORPC.h').read_text(encoding='utf-8'):
+    raise ValueError('CI compatibility patches must not widen the original IORPC ABI')
 print(json.dumps({'patch_count': len(patches), 'hunks': hunks,
                   'in_memory_sequence': 'passed', 'zero_initialization_retained': True,
+                  'iorpc_header_unchanged': True,
                   'kernel_build': 'not executed by this check', 'source_written': False}, indent=2))

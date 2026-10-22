@@ -1,0 +1,16 @@
+{
+    "run_id":  "39716728005",
+    "result":  "failure",
+    "kernel_built":  false,
+    "object_count_all_builds":  48,
+    "first_error":  "uio_stackbuf_t has size 1 and alignment 8, invalid as modern-clang array element",
+    "raw_first_error_line":  11187,
+    "second_error":  "new IIG generated rpc.kernelContent against unchanged Darwin22 IORPC",
+    "raw_iig_error_line":  16673,
+    "uio_candidate":  "preserve char array byte extent and original variable alignment",
+    "iig_option_evidence_run":  "39717772747",
+    "iig_candidate":  "OTHER_IIG_FLAGS=--deployment-target 22.0",
+    "iig_candidate_status":  "pending actual source-kernel rerun",
+    "iorpc_struct":  "unchanged, no new field",
+    "compatibility_check":  "50 patches / 209 hunks in memory, not a kernel build"
+}

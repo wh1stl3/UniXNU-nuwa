@@ -1,0 +1,40 @@
+                             | %d*kIORPCMessageLocalHost
+                             | %d*kIORPCMessageOnqueue;
+                             | %d*kIORPCMessageSimpleReply
+            IORPCMessage * message;
+            if ((rpc.reply->msgh_body.msgh_descriptor_count < 1) || !(kIORPCMessageOneway & message->flags)) {
+            message = IORPCMessageFromMach(rpc.reply, false);
+            message = rpc.kernelContent;
+        IORPC rpc%s
+        const IORPC rpc%s
+        const struct %s_%s_Msg_Content * kernelContent;
+    %s_Invoke(const IORPC rpc,
+    Dispatch(const IORPC rpc) APPLE_KEXT_OVERRIDE;
+    Dispatch(const IORPC rpc) override;
+    IORPC rpc = { .message = &buf.msg.mach, .reply = &buf.rpl.rpl.mach, .sendSize = sizeof(buf.msg), .replySize = sizeof(buf.rpl) };
+    IORPC rpc = { .message = &buf.msg.mach, .reply = &buf.rpl.rpl.mach, .sendSize = sizeof(buf.msg), .replySize = sizeof(buf.rpl), .kernelContent = &buf.msg.content.__hdr };
+    IORPC rpc = { .message = &buf.msg.mach, .reply = NULL, .sendSize = sizeof(*msg), .replySize = 0 };
+    IORPC rpc = { .message = &buf.msg.mach, .reply = NULL, .sendSize = sizeof(*msg), .replySize = 0, .kernelContent = &buf.msg.content.__hdr };
+    IORPCMessage * msg = IORPCMessageFromMach(rpc.message, false);
+    IORPCMessage * msg = rpc.kernelContent;
+    IORPCMessage * replyMessage;
+    IORPCMessage __hdr;
+    IORPCMessageMach           mach;
+    _Dispatch(%s * self, const IORPC rpc);
+    const %s_%s_Msg_Content * messageContent = rpc.kernelContent;
+    const IORPC rpc;
+    if ((rpc.rpc.reply->msgh_body.msgh_descriptor_count < 1)  || !(kIORPCMessageOneway & replyMessage->flags)) ret = kIOReturnIPCError;
+    msg->content.__hdr.flags = %d*kIORPCMessageOneway
+    reply->content.__hdr.flags = kIORPCMessageOneway;
+    replyMessage = IORPCMessageFromMach(rpc.rpc.reply, false);
+    replyMessage = rpc.rpc.kernelContent;
+    rpc.kernelContent = &msg->content.__hdr;
+%s::%s_Invoke(const IORPC _rpc,
+%s::Dispatch(const IORPC rpc)
+%s::MetaClass::Dispatch(const IORPC rpc)
+%s::_Dispatch(%s * self, const IORPC rpc)
+%sMetaClass::Dispatch(const IORPC rpc)
+(sizeof(IORPCMessageMach) + sizeof(IORPCMessage))) { ret = kIOReturnIPCError; break; };
+(sizeof(IORPCMessageMach) + sizeof(mach_msg_port_descriptor_t) + sizeof(IORPCMessage))) { ret = kIOReturnIPCError; break; };
+kIORPCVersion190615
+kIORPCVersion190615Reply
