@@ -1,10 +1,10 @@
 # STATUS
 
-> 当前唯一真相；历史只追加WORKLOG。更新：2026-10-22 11:03（Asia/Shanghai）。
+> 当前唯一真相；历史只追加WORKLOG。更新：2026-10-22 11:12（Asia/Shanghai）。
 
 ## 当前结论
 
-GitHub账号wh1stl3已登录，公开的[基座fork](https://github.com/wh1stl3/UniXNU)与[nuwa设备仓](https://github.com/wh1stl3/UniXNU-nuwa)已创建。固定75bc基座的8796源内核CI入口已准备，48项输入hash及适配后的bash语法静态检查通过，待提交/上传并手动触发。**当前没有内核构建通过证据**。见[首轮CI说明](operations/2026-10-22-source-kernel-ci.md)。
+公开的[基座fork](https://github.com/wh1stl3/UniXNU)与[nuwa设备仓](https://github.com/wh1stl3/UniXNU-nuwa)已创建；13项积压里程碑已提交并推送，设备输入固定b745021。已在基座fork安装源构建workflow并启动[首轮CI 39715232540](https://github.com/wh1stl3/UniXNU/actions/runs/39715232540)，主机检查、48项hash/脚本预检已过，正在源内核编译步骤。**当前没有内核构建通过证据**。见[首轮CI说明](operations/2026-10-22-source-kernel-ci.md)。
 
 ## 当前边界
 
@@ -23,7 +23,7 @@ GitHub账号wh1stl3已登录，公开的[基座fork](https://github.com/wh1stl3/
 
 ## 下一步
 
-1. 检查待发布文件，按队列提交并上传设备仓；将专用源构建workflow安装到基座fork，使用精确device_ref手动触发，收集实际编译/链接结果。
+1. 跟踪首轮CI，下载实际编译/链接证据；状态见reports/kernel-ci/39715232540/run.json。不要在仍运行时写成构建通过。
 2. 按第一处真实失败修复8796源构建兼容性；成功后检查Mach-O、对象/符号及版本证据，仍不宣称预链接/QEMU/实机通过。
 3. 完成Darwin22设备archive、boot-progress/watchdog、nuwa defconfig及donor kernelcache解析，接回正式-D设备构建入口；feed切换独立处理。
 4. 板值/内存/地址、镜像或设备动作命中硬停时先写NEED-REVIEW再停。只差人按实体键的项记PENDING-HUMAN后继续。

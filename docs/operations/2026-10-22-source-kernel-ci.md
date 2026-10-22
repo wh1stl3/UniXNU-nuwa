@@ -34,3 +34,11 @@ boot-progress、PGZ probe及可选设备archive关闭。这是明确的源编译
 只有make成功、原始kernel存在且解析为普通ARM64 subtype0/MH_EXECUTE，才记录`kernel_built=true`并保存hash、file/otool结果。即使成功也仅为**云端源内核构建通过**，不是预链接通过、QEMU通过或实机通过；`device_verified`始终false。当前未取得实际构建结果。
 
 失败时上传控制台、主机工具清单及build.json（含对象数和应用后的源状态）；成功时额外上传原始Mach-O。工作流只手动触发，不因发布设备代码自动构建。
+
+## 首轮运行
+
+设备仓已发布`b74502128c20549a107025a91ed4ace1e25dce1a`；Q-001至Q-013的分别提交映射见`reports/official-ci-plan/milestone-commits.json`。本地旧分支实际为master，推送前已改名为约定的main，没有改写提交。
+
+GitHub CLI原OAuth授权缺workflow scope，第一次写入返回404；只读确认ADMIN/default main及scope后，经用户网页确认补充workflow授权，安装成功。基座workflow提交`4e4c04aa4dec8dc2af48234e3e3faec9704c73cb`；[运行39715232540](https://github.com/wh1stl3/UniXNU/actions/runs/39715232540)已启动，初次观察主机及输入预检完成、编译步骤进行中，结果未验证。
+
+只读跟踪命令：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/observe-kernel-ci.ps1`。状态/完成后原始日志进入`reports/kernel-ci/<run>/`；下载的构建产物只放`out/kernel-ci/<run>/`，不提交。

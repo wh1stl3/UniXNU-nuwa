@@ -131,3 +131,13 @@
 [Evidence] reports/official-ci-plan/repository-setup.json；source-input-check.json：48项hash和适配后bash语法检查通过；ci/workflows/nuwa-8796-source.yml；docs/operations/2026-10-22-source-kernel-ci.md。
 [Risk] 专用入口仅验证源编译/链接，可选设备archive与boot-progress关闭，尚无云端执行结果；donor预链接、完整ABI、QEMU及实机均未验证，未生成固件/启动镜像。
 ```
+
+## Q-014 · 发布里程碑并启动源构建CI
+
+```text
+[unixnu-nuwa][build] 发布13项里程碑并启动首轮8796源内核Actions
+
+[Change] 将积压里程碑分别提交并推送设备仓main，保存提交映射；在基座fork安装手动源构建workflow，新增只读CI跟踪器，修正发布脚本对原master分支名的假设。
+[Evidence] reports/official-ci-plan/milestone-commits.json；基座workflow提交4e4c04aa4dec8dc2af48234e3e3faec9704c73cb；https://github.com/wh1stl3/UniXNU/actions/runs/39715232540，设备输入b745021。
+[Risk] 此提交记录启动时状态，未取得完整内核构建结果；预链接、设备archive ABI、QEMU及实机未验证；feed/board未改。
+```

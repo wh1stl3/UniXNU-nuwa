@@ -63,4 +63,4 @@ foreach ($group in $groups) {
 }
 [IO.File]::WriteAllText((Join-Path $root 'out/published-milestone-commits.json'), ($result | ConvertTo-Json) + "`n", [Text.UTF8Encoding]::new($false))
 Invoke-Git @('remote','add','origin','https://github.com/wh1stl3/UniXNU-nuwa.git')
-Invoke-Git @('push','--set-upstream','origin','main')
+Invoke-Git @('push','--set-upstream','origin','HEAD:main')
