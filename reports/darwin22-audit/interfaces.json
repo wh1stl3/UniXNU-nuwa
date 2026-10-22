@@ -1,0 +1,2013 @@
+{
+  "timestamp": "2026-10-22T09:55:21.449419+08:00",
+  "mode": "Static interface audit; not compilation/link/runtime proof",
+  "inputs": {
+    "base": {
+      "head": {
+        "command": [
+          "C:/Program Files/Git/cmd/git.exe",
+          "-c",
+          "safe.directory=D:/Code/PortingiOS/common/sources/UniXNU",
+          "--no-optional-locks",
+          "-C",
+          "D:\\Code\\PortingiOS\\common\\sources\\UniXNU",
+          "log",
+          "-1",
+          "--format=%H"
+        ],
+        "exit_code": 0,
+        "stdout": "75bc13dd34dc4e403826793739e316a264ce00dd\n",
+        "stderr": ""
+      },
+      "status": {
+        "command": [
+          "C:/Program Files/Git/cmd/git.exe",
+          "-c",
+          "safe.directory=D:/Code/PortingiOS/common/sources/UniXNU",
+          "--no-optional-locks",
+          "-C",
+          "D:\\Code\\PortingiOS\\common\\sources\\UniXNU",
+          "status",
+          "--porcelain",
+          "--untracked-files=no"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    "xnu": {
+      "head": {
+        "command": [
+          "C:/Program Files/Git/cmd/git.exe",
+          "-c",
+          "safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full",
+          "--no-optional-locks",
+          "-C",
+          "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full",
+          "log",
+          "-1",
+          "--format=%H"
+        ],
+        "exit_code": 0,
+        "stdout": "1b191cb58250d0705d8a51287127505aa4bc0789\n",
+        "stderr": ""
+      },
+      "status": {
+        "command": [
+          "C:/Program Files/Git/cmd/git.exe",
+          "-c",
+          "safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full",
+          "--no-optional-locks",
+          "-C",
+          "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full",
+          "status",
+          "--porcelain",
+          "--untracked-files=no"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    "sheng_reference": {
+      "head": {
+        "command": [
+          "C:/Program Files/Git/cmd/git.exe",
+          "-c",
+          "safe.directory=D:/Code/PortingiOS/common/sources/UniXNU-sheng",
+          "--no-optional-locks",
+          "-C",
+          "D:\\Code\\PortingiOS\\common\\sources\\UniXNU-sheng",
+          "log",
+          "-1",
+          "--format=%H"
+        ],
+        "exit_code": 0,
+        "stdout": "a599a1a8a92093b5077543e071b72130769eb325\n",
+        "stderr": ""
+      },
+      "status": {
+        "command": [
+          "C:/Program Files/Git/cmd/git.exe",
+          "-c",
+          "safe.directory=D:/Code/PortingiOS/common/sources/UniXNU-sheng",
+          "--no-optional-locks",
+          "-C",
+          "D:\\Code\\PortingiOS\\common\\sources\\UniXNU-sheng",
+          "status",
+          "--porcelain",
+          "--untracked-files=no"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    }
+  },
+  "after": {
+    "base": {
+      "command": [
+        "C:/Program Files/Git/cmd/git.exe",
+        "-c",
+        "safe.directory=D:/Code/PortingiOS/common/sources/UniXNU",
+        "--no-optional-locks",
+        "-C",
+        "D:\\Code\\PortingiOS\\common\\sources\\UniXNU",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "xnu": {
+      "command": [
+        "C:/Program Files/Git/cmd/git.exe",
+        "-c",
+        "safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full",
+        "--no-optional-locks",
+        "-C",
+        "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "sheng_reference": {
+      "command": [
+        "C:/Program Files/Git/cmd/git.exe",
+        "-c",
+        "safe.directory=D:/Code/PortingiOS/common/sources/UniXNU-sheng",
+        "--no-optional-locks",
+        "-C",
+        "D:\\Code\\PortingiOS\\common\\sources\\UniXNU-sheng",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  },
+  "evidence": [
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU\\scripts\\build-xnu-4k-baseline.sh",
+      "sha256": "3486867d8c639eb10d31be16e875dbbdbb1d27afd97aedbb8ba930f0093c6852",
+      "matches": [
+        {
+          "line": 14,
+          "text": "  git clone --depth 1 --branch \"$XNU_TAG\" https://github.com/apple-oss-distributions/xnu.git refer/xnu"
+        },
+        {
+          "line": 21,
+          "text": "  git clone --shared refer/xnu .cache/xnu-work"
+        },
+        {
+          "line": 25,
+          "text": "    git clone --depth 1 --branch \"$AVAILABILITY_TAG\" https://github.com/apple-oss-distributions/AvailabilityVersions.git refer/AvailabilityVersions"
+        },
+        {
+          "line": 37,
+          "text": "  if git -C .cache/xnu-work apply --reverse --check \"$LATE_PATCH\" >/dev/null 2>&1; then"
+        },
+        {
+          "line": 38,
+          "text": "    git -C .cache/xnu-work apply --reverse \"$LATE_PATCH\""
+        },
+        {
+          "line": 42,
+          "text": "  if ! git -C .cache/xnu-work apply --reverse --check \"$PATCH\" >/dev/null 2>&1; then"
+        },
+        {
+          "line": 43,
+          "text": "    git -C .cache/xnu-work apply --check \"$PATCH\""
+        },
+        {
+          "line": 44,
+          "text": "    git -C .cache/xnu-work apply \"$PATCH\""
+        },
+        {
+          "line": 49,
+          "text": "BOOT_PROGRESS=${XNU_BOOT_PROGRESS:-0}"
+        },
+        {
+          "line": 50,
+          "text": "if [ \"$BOOT_PROGRESS\" != 0 ] && [ \"$BOOT_PROGRESS\" != 1 ]; then"
+        },
+        {
+          "line": 51,
+          "text": "  echo 'XNU_BOOT_PROGRESS must be 0 or 1' >&2"
+        },
+        {
+          "line": 54,
+          "text": "if [ \"$BOOT_PROGRESS\" = 1 ]; then"
+        },
+        {
+          "line": 62,
+          "text": "python3 - \"$BOOT_PROGRESS\" <<'PY'"
+        },
+        {
+          "line": 74,
+          "text": "    (out / 'mach.development.bcm2837.unstripped.noctf').unlink(missing_ok=True)"
+        },
+        {
+          "line": 79,
+          "text": "  git clone --depth 1 --branch \"$LIBPLATFORM_TAG\" https://github.com/apple-oss-distributions/libplatform.git refer/libplatform"
+        },
+        {
+          "line": 81,
+          "text": "export KERNEL_SDKROOT=$ROOT/.cache/fakeroot"
+        },
+        {
+          "line": 82,
+          "text": "mkdir -p \"$KERNEL_SDKROOT/usr/local/include/kernel\" \"$ROOT/build/xnu/obj/EXPORT_HDRS/libsa\""
+        },
+        {
+          "line": 83,
+          "text": "ditto refer/libplatform/include \"$KERNEL_SDKROOT/usr/local/include\""
+        },
+        {
+          "line": 84,
+          "text": "ditto refer/libplatform/private \"$KERNEL_SDKROOT/usr/local/include\""
+        },
+        {
+          "line": 85,
+          "text": "ditto refer/libplatform/private/platform \"$KERNEL_SDKROOT/System/Library/Frameworks/Kernel.framework/Versions/A/PrivateHeaders/platform\""
+        },
+        {
+          "line": 87,
+          "text": "  git clone --depth 1 --branch \"$LIBDISPATCH_TAG\" https://github.com/apple-oss-distributions/libdispatch.git refer/libdispatch"
+        },
+        {
+          "line": 104,
+          "text": "if [ ! -f \"$KERNEL_SDKROOT/.xnu-$XNU_VERSION-headers\" ]; then"
+        },
+        {
+          "line": 105,
+          "text": "  make -C .cache/xnu-work installhdrs SDKROOT=macosx ARCH_CONFIGS=ARM64 \\"
+        },
+        {
+          "line": 109,
+          "text": "    SYMROOT=\"$ROOT/build/xnu/sym\" DSTROOT=\"$KERNEL_SDKROOT\""
+        },
+        {
+          "line": 110,
+          "text": "  touch \"$KERNEL_SDKROOT/.xnu-$XNU_VERSION-headers\""
+        },
+        {
+          "line": 112,
+          "text": "if [ ! -f \"$KERNEL_SDKROOT/usr/local/lib/kernel/libfirehose_kernel.a\" ]; then"
+        },
+        {
+          "line": 305,
+          "text": "SHENG_PMGR=${XNU_SHENG_PMGR:-0}"
+        },
+        {
+          "line": 306,
+          "text": "if [ \"$SHENG_PMGR\" != 0 ] && [ \"$SHENG_PMGR\" != 1 ]; then"
+        },
+        {
+          "line": 307,
+          "text": "  echo 'XNU_SHENG_PMGR must be 0 or 1' >&2"
+        },
+        {
+          "line": 310,
+          "text": "if [ \"$SHENG_PMGR\" = 1 ] && [ \"${XNU_SOURCE_CORECRYPTO14:-0}\" != 1 ]; then"
+        },
+        {
+          "line": 314,
+          "text": "SHENG_PMGR_STAMP=$ROOT/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/.sheng-pmgr-mode"
+        },
+        {
+          "line": 315,
+          "text": "if [ \"$(cat \"$SHENG_PMGR_STAMP\" 2>/dev/null || echo 0)\" != \"$SHENG_PMGR\" ]; then"
+        },
+        {
+          "line": 317,
+          "text": "  printf '%s\\n' \"$SHENG_PMGR\" > \"$SHENG_PMGR_STAMP\""
+        },
+        {
+          "line": 319,
+          "text": "EXTRA_MAKE_ARGS+=(\"bsd_init.o_CFLAGS_ADD=-DXNU_SHENG_PMGR=$SHENG_PMGR -DXNU_VERIFIED_ROOT_PROBE=$OWNER_ROOT_PROBE -DXNU_OWNER_ROOT_AUDIT=$OWNER_ROOT_AUDIT -DXNU_OWNER_ROOT_TRUST=$OWNER_ROOT_TRUST -DXNU_ADRENO_FIRMWARE_PROBE=$ADRENO_FIRMWARE_PROBE -DXNU_ADRENO_PM4_PROBE=$ADRENO_PM4_PROBE -DXNU_SMMU4K_PROBE=$SMMU4K_PROBE -DXNU_CONSTANT_UPLOADS_PROBE=$CONSTANT_UPLOADS_PROBE -DXNU_NATIVE_LEGACY_DISPLAY=${XNU_NATIVE_LEGACY_DISPLAY:-0} -DXNU_NATIVE_OFFLINE_GPU=$NATIVE_OFFLINE_GPU\")"
+        },
+        {
+          "line": 528,
+          "text": "  KERNEL_EXTRA_ARCHIVES=\"-L$KERNEL_SDKROOT/usr/local/lib/kernel -lfirehose_kernel $CRYPTO_ARCHIVE\""
+        },
+        {
+          "line": 533,
+          "text": "    KERNEL_EXTRA_ARCHIVES=\"$KERNEL_EXTRA_ARCHIVES -Wl,-force_load,$ADRENO_PROBE_ARCHIVE\""
+        },
+        {
+          "line": 539,
+          "text": "    KERNEL_EXTRA_ARCHIVES=\"$KERNEL_EXTRA_ARCHIVES -Wl,-force_load,$PM4_PROBE_ARCHIVE\""
+        },
+        {
+          "line": 545,
+          "text": "    KERNEL_EXTRA_ARCHIVES=\"$KERNEL_EXTRA_ARCHIVES -Wl,-force_load,$SMMU4K_PROBE_ARCHIVE\""
+        },
+        {
+          "line": 551,
+          "text": "    KERNEL_EXTRA_ARCHIVES=\"$KERNEL_EXTRA_ARCHIVES -Wl,-force_load,$CONSTANT_UPLOADS_ARCHIVE\""
+        },
+        {
+          "line": 557,
+          "text": "    KERNEL_EXTRA_ARCHIVES=\"$KERNEL_EXTRA_ARCHIVES -Wl,-force_load,$ARMVIRT_ARCHIVE\""
+        },
+        {
+          "line": 563,
+          "text": "    KERNEL_EXTRA_ARCHIVES=\"$KERNEL_EXTRA_ARCHIVES -Wl,-force_load,$ARM_DT_ARCHIVE\""
+        },
+        {
+          "line": 569,
+          "text": "    KERNEL_EXTRA_ARCHIVES=\"$KERNEL_EXTRA_ARCHIVES -Wl,-force_load,$ARMCPU_ARCHIVE\""
+        },
+        {
+          "line": 575,
+          "text": "    KERNEL_EXTRA_ARCHIVES=\"$KERNEL_EXTRA_ARCHIVES -Wl,-force_load,$UFS_ARCHIVE\""
+        },
+        {
+          "line": 583,
+          "text": "    KERNEL_EXTRA_ARCHIVES=\"$KERNEL_EXTRA_ARCHIVES -Wl,-force_load,$ADRENO_ARCHIVE\""
+        },
+        {
+          "line": 597,
+          "text": "    KERNEL_EXTRA_ARCHIVES=\"$KERNEL_EXTRA_ARCHIVES -Wl,-force_load,$MOBILE_DISPLAY_ARCHIVE\""
+        },
+        {
+          "line": 613,
+          "text": "    KERNEL_EXTRA_ARCHIVES=\"$KERNEL_EXTRA_ARCHIVES -Wl,-force_load,$LEGACY_DISPLAY_ARCHIVE\""
+        },
+        {
+          "line": 619,
+          "text": "    KERNEL_EXTRA_ARCHIVES=\"$KERNEL_EXTRA_ARCHIVES -Wl,-force_load,$AES_ARCHIVE\""
+        },
+        {
+          "line": 625,
+          "text": "    KERNEL_EXTRA_ARCHIVES=\"$KERNEL_EXTRA_ARCHIVES -Wl,-force_load,$VIRTIO_ARCHIVE\""
+        },
+        {
+          "line": 643,
+          "text": "    KERNEL_EXTRA_ARCHIVES=\"$KERNEL_EXTRA_ARCHIVES -Wl,-force_load,$GPU_BROKER_ARCHIVE\""
+        },
+        {
+          "line": 649,
+          "text": "    KERNEL_EXTRA_ARCHIVES=\"$KERNEL_EXTRA_ARCHIVES -Wl,-force_load,$CONSOLE_ARCHIVE\""
+        },
+        {
+          "line": 675,
+          "text": "      KERNEL_EXTRA_ARCHIVES=\"$KERNEL_EXTRA_ARCHIVES $RAM_BLOCK_OBJECT\""
+        },
+        {
+          "line": 677,
+          "text": "      KERNEL_EXTRA_ARCHIVES=\"$KERNEL_EXTRA_ARCHIVES -Wl,-force_load,$RAM_BLOCK_ARCHIVE\""
+        },
+        {
+          "line": 686,
+          "text": "    KERNEL_EXTRA_ARCHIVES=\"$KERNEL_EXTRA_ARCHIVES -Wl,-force_load,$PTHREAD_ARCHIVE\""
+        },
+        {
+          "line": 692,
+          "text": "    KERNEL_EXTRA_ARCHIVES=\"$KERNEL_EXTRA_ARCHIVES -Wl,-force_load,$VERIFIED_ROOT_ARCHIVE\""
+        },
+        {
+          "line": 698,
+          "text": "    KERNEL_EXTRA_ARCHIVES=\"$KERNEL_EXTRA_ARCHIVES -Wl,-force_load,$MOCKFS_ARCHIVE\""
+        },
+        {
+          "line": 701,
+          "text": "  if [ \"$SHENG_PMGR\" = 1 ]; then"
+        },
+        {
+          "line": 704,
+          "text": "    KERNEL_EXTRA_ARCHIVES=\"$KERNEL_EXTRA_ARCHIVES -Wl,-force_load,$PMGR_ARCHIVE\""
+        },
+        {
+          "line": 708,
+          "text": "  if [ \"$BOOT_PROGRESS\" = 1 ]; then"
+        },
+        {
+          "line": 709,
+          "text": "    KERNEL_EXTRA_ARCHIVES=\"$KERNEL_EXTRA_ARCHIVES -Wl,-force_load,$ROOT/build/boot-progress/libBootProgress.a\""
+        },
+        {
+          "line": 712,
+          "text": "  KERNEL_EXTRA_ARCHIVES=\"$KERNEL_EXTRA_ARCHIVES ${XNU_EXTRA_LD_ARCHIVES:-}\""
+        },
+        {
+          "line": 713,
+          "text": "  EXTRA_MAKE_ARGS+=(\"LD_KERNEL_ARCHIVES=$KERNEL_EXTRA_ARCHIVES\")"
+        },
+        {
+          "line": 714,
+          "text": "  EXTRA_MAKE_ARGS+=(\"XNU_EXTERNAL_KERNEL_ARCHIVES=$KERNEL_ARCHIVE_DEPENDENCIES\")"
+        },
+        {
+          "line": 726,
+          "text": "  \"$SHENG_PMGR\" \"$ROOT/build/sheng-platform-power/libShengPlatformPower.a\" \\"
+        },
+        {
+          "line": 738,
+          "text": "    for relative in ('mach.development.bcm2837.unstripped.noctf',"
+        },
+        {
+          "line": 744,
+          "text": "EXTRA_CFLAGS=\"$EXTRA_CFLAGS -DXNU_BOOT_PROGRESS=$BOOT_PROGRESS\""
+        },
+        {
+          "line": 745,
+          "text": "make -C .cache/xnu-work \"${XNU_BUILD_TARGET:-build}\" SDKROOT=\"${XNU_SDKROOT:-iphoneos}\" ARCH_CONFIGS=ARM64 \\"
+        },
+        {
+          "line": 750,
+          "text": "  DEPLOYMENT_LINKER_FLAGS=\"-Wl,-ios_version_min,17.0\" \\"
+        },
+        {
+          "line": 757,
+          "text": "    build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped.noctf"
+        }
+      ]
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU\\scripts\\unixnu\\kernel.py",
+      "sha256": "f29f1f619b360decd66b8a89661407568e6c4991f24626384f8f394eb3530ce3",
+      "matches": [
+        {
+          "line": 21,
+          "text": "def version_env(modules):"
+        },
+        {
+          "line": 43,
+          "text": "    tool('xcodebuild', 'the kernel step builds with the Xcode iphoneos SDK')"
+        },
+        {
+          "line": 49,
+          "text": "    env.update(version_env(modules))"
+        },
+        {
+          "line": 51,
+          "text": "    record = ctx.tree / 'build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/startup.o.json'"
+        },
+        {
+          "line": 66,
+          "text": "    cache = ctx.option('kernelcache', 'UNIXNU_KERNELCACHE') or (expand(ctx.tree / spec['kernelcache']) if spec.get('kernelcache') else None)"
+        },
+        {
+          "line": 75,
+          "text": "    kernel = ctx.tree / spec['kernel']"
+        },
+        {
+          "line": 80,
+          "text": "    command = ['python3', ctx.tree / spec['tool'], '--kernel', kernel, '--prelinked', cache,"
+        },
+        {
+          "line": 81,
+          "text": "               f'--slide={spec[\"slide\"]}', '--output', output]"
+        },
+        {
+          "line": 85,
+          "text": "        command += ['--early-security-init', spec['early_security_init']]"
+        }
+      ]
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU\\scripts\\build-libpthread-kernel.py",
+      "sha256": "b475ab6a6b4b479e42d5072064eeea7310dfc999a06177d23f7c0cd8873bf7df",
+      "matches": [
+        {
+          "line": 10,
+          "text": "REVISION = 'c0e60fb5ecfc54cf379c261d3f9572cc22ded891'"
+        },
+        {
+          "line": 11,
+          "text": "if subprocess.check_output(['git', '-C', SOURCE, 'rev-parse', 'HEAD'], text=True).strip() != REVISION:"
+        },
+        {
+          "line": 17,
+          "text": "    subprocess.run(['git', 'clone', '--shared', SOURCE, WORK], check=True)"
+        },
+        {
+          "line": 47,
+          "text": "        command = ['xcrun', '--sdk', 'iphoneos', 'clang', '-target', 'arm64-apple-ios17.0',"
+        },
+        {
+          "line": 72,
+          "text": "    if deployment != (2, 0x110000):"
+        },
+        {
+          "line": 88,
+          "text": "kernel_names = names(kernel, '-U', global_only=False)"
+        },
+        {
+          "line": 90,
+          "text": "collisions = definitions & kernel_names"
+        },
+        {
+          "line": 100,
+          "text": "missing = sorted(imports - kernel_names - {'___dso_handle'})"
+        },
+        {
+          "line": 101,
+          "text": "report = {'revision': REVISION, 'sources': 3, 'ordinary_arm64_ios17_audited': True,"
+        },
+        {
+          "line": 102,
+          "text": "          'namespace_collisions_isolated': sorted(collisions), 'missing_kernel_names': missing,"
+        },
+        {
+          "line": 105,
+          "text": "(OUT / 'report.json').write_text(json.dumps(report, indent=2) + '\\n')"
+        },
+        {
+          "line": 108,
+          "text": "if missing:"
+        },
+        {
+          "line": 109,
+          "text": "    raise SystemExit(f'Unavailable real kernel imports: {missing}')"
+        },
+        {
+          "line": 111,
+          "text": "archive.unlink(missing_ok=True)"
+        }
+      ]
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU\\scripts\\build-corecrypto-14.py",
+      "sha256": "b4a21357d3d3f27377e048cbe40eae8877ad89a91c4fb0cd2452c19e2595e229",
+      "matches": [
+        {
+          "line": 18,
+          "text": "REVISION = '11fba65b12d8830630e248dfa8344caf8b065f26'"
+        },
+        {
+          "line": 25,
+          "text": "def names(path, mode):"
+        },
+        {
+          "line": 26,
+          "text": "    text = subprocess.check_output(['xcrun', 'nm', '-g', mode, '-j', path], text=True)"
+        },
+        {
+          "line": 30,
+          "text": "if subprocess.check_output(['git', '-C', SOURCE, 'rev-parse', 'HEAD'], text=True).strip() != REVISION:"
+        },
+        {
+          "line": 68,
+          "text": "sdk = subprocess.check_output(['xcrun', '--sdk', 'iphoneos', '--show-sdk-path'], text=True).strip()"
+        },
+        {
+          "line": 70,
+          "text": "command = ['xcrun', '--sdk', 'iphoneos', 'clang', '-target', 'arm64-apple-ios17.0', '-isysroot', sdk,"
+        },
+        {
+          "line": 78,
+          "text": "kernel = ROOT / 'build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped.noctf'"
+        },
+        {
+          "line": 84,
+          "text": "    collisions = sorted(names(plain, '-U') & names(kernel, '-U'))"
+        },
+        {
+          "line": 109,
+          "text": "report = {'source_url': 'https://github.com/ONLYA/corecrypto-2023', 'source_revision': REVISION,"
+        },
+        {
+          "line": 111,
+          "text": "          'module_version': '14.0', 'target': 'arm64-apple-ios17.0', 'assembly_enabled': False,"
+        },
+        {
+          "line": 136,
+          "text": "subprocess.run(['xcrun', 'ar', 'rcs', archive, *[object_dir / result['object'] for result in results]], check=True)"
+        },
+        {
+          "line": 137,
+          "text": "defined = names(archive, '-U')"
+        },
+        {
+          "line": 138,
+          "text": "undefined = names(archive, '-u') - defined"
+        },
+        {
+          "line": 139,
+          "text": "kernel_exports = names(kernel, '-U')"
+        }
+      ]
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU\\scripts\\build-native-aes-bindings.py",
+      "sha256": "a179cb8d9269dbf32876175fbe60c8f589dd035ee9e588f3d6ee6b2594ed36dd",
+      "matches": [
+        {
+          "line": 49,
+          "text": "kernel = (ROOT / 'build/native-prelink/native-defaults-candidate.macho').read_bytes()"
+        },
+        {
+          "line": 50,
+          "text": "if hashlib.sha256(kernel).hexdigest() != audit['candidate_sha256'] or not audit['live_native_4k']:"
+        },
+        {
+          "line": 53,
+          "text": "plan = json.loads((ROOT / 'build/native-prelink/native-defaults-candidate.json').read_text())"
+        },
+        {
+          "line": 102,
+          "text": "destructor = int(audit['methods'][0]['candidate_target'], 16)"
+        },
+        {
+          "line": 105,
+          "text": "bindings = {name: int(row['candidate_target'], 16) for row in audit['methods']"
+        },
+        {
+          "line": 107,
+          "text": "bindings.update({'__ZN16IOAESAcceleratorC2EPK11OSMetaClass': constructors[0],"
+        },
+        {
+          "line": 112,
+          "text": "source = out / 'original-bindings.S'"
+        },
+        {
+          "line": 113,
+          "text": "source.write_text(''.join(f'.globl {name}\\n.set {name}, {address:#x}\\n' for name, address in sorted(bindings.items())))"
+        },
+        {
+          "line": 114,
+          "text": "subprocess.run(['xcrun', 'clang', '-target', 'arm64-apple-ios17.0', '-Werror', '-Wno-incompatible-sysroot', '-c', source,"
+        },
+        {
+          "line": 115,
+          "text": "                '-o', out / 'original-bindings.o'], check=True)"
+        },
+        {
+          "line": 118,
+          "text": "subprocess.run(['xcrun', 'ar', 'rcs', archive, out / 'NativeAES.o', out / 'original-bindings.o'], check=True)"
+        },
+        {
+          "line": 119,
+          "text": "(out / 'bindings.json').write_text(json.dumps(dict(original_sha256=audit['original_sha256'],"
+        },
+        {
+          "line": 120,
+          "text": "    ordinary_candidate_sha256=audit['candidate_sha256'], original_slide=plan['slide'],"
+        },
+        {
+          "line": 122,
+          "text": "    bindings={name: hex(value) for name, value in bindings.items()}, original_instructions_modified=False,"
+        },
+        {
+          "line": 124,
+          "text": "print(f'PASS: {len(bindings)} native bindings to actual original metaclass/methods; no replacement code')"
+        }
+      ]
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU\\scripts\\build-native-virtio-bindings.py",
+      "sha256": "191d59232ffc54673c8cdb99bdf2e09b741319672d16fc20407d127625dd2b08",
+      "matches": [
+        {
+          "line": 48,
+          "text": "demangled = subprocess.check_output(['xcrun', 'c++filt'], input='\\n'.join(n[1:] for n in all_names) + '\\n', text=True).splitlines()"
+        },
+        {
+          "line": 62,
+          "text": "# The binding values come from the recorded audit; the candidate only proves the audit's identity. Build products are pruned, so a"
+        },
+        {
+          "line": 63,
+          "text": "# missing candidate is accepted (the audit JSON is the pinned record) while a present one must still match."
+        },
+        {
+          "line": 64,
+          "text": "if kernel_path.exists() and hashlib.sha256(kernel_path.read_bytes()).hexdigest() != audit['candidate_sha256']:"
+        },
+        {
+          "line": 66,
+          "text": "possible = {r['reference_name']: int(r['candidate_target'], 16) for r in audit['methods'] if not r['kernel_names']}"
+        },
+        {
+          "line": 77,
+          "text": "bindings = {name: possible[name] for name in undefined}"
+        },
+        {
+          "line": 78,
+          "text": "assembly = out / 'original-bindings.S'"
+        },
+        {
+          "line": 79,
+          "text": "assembly.write_text(''.join(f'.globl {name}\\n.set {name}, {value:#x}\\n' for name, value in sorted(bindings.items())))"
+        },
+        {
+          "line": 80,
+          "text": "subprocess.run(['xcrun', 'clang', '-target', 'arm64-apple-ios17.0', '-Werror', '-Wno-incompatible-sysroot',"
+        },
+        {
+          "line": 81,
+          "text": "                '-c', assembly, '-o', out / 'original-bindings.o'], check=True)"
+        },
+        {
+          "line": 84,
+          "text": "subprocess.run(['xcrun', 'ar', 'rcs', archive, obj_path, out / 'original-bindings.o'], check=True)"
+        },
+        {
+          "line": 85,
+          "text": "(out / 'bindings.json').write_text(json.dumps(dict(original_candidate_sha256=audit['candidate_sha256'],"
+        },
+        {
+          "line": 88,
+          "text": "    bindings={name: hex(value) for name, value in bindings.items()}, original_code_modified=False,"
+        },
+        {
+          "line": 90,
+          "text": "print(f'PASS: 190 concrete slots, {overrides} overrides and {len(bindings)} genuine original storage imports')"
+        }
+      ]
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU\\scripts\\prepare-xnu-source.py",
+      "sha256": "2bd98d822374e9db29839ead6b5496d8376d30d5788474eba6b87db5c4294837",
+      "matches": [
+        {
+          "line": 11,
+          "text": "TAG = os.environ.get('UNIXNU_DRIVERKIT_TAG', 'xnu-10063.121.3')"
+        },
+        {
+          "line": 12,
+          "text": "TRUST_TAG = os.environ.get('UNIXNU_TRUSTCACHE_TAG', 'xnu-8796.101.5')"
+        },
+        {
+          "line": 14,
+          "text": "CACHE = Path(f'.cache/sources/xnu-driverkit-{TAG.removeprefix(\"xnu-\")}.json')"
+        },
+        {
+          "line": 15,
+          "text": "URL = f'https://api.github.com/repos/apple-oss-distributions/xnu/contents/iokit/DriverKit?ref={TAG}'"
+        },
+        {
+          "line": 18,
+          "text": "def restore(entry, destination=DESTINATION, tag=TAG):"
+        },
+        {
+          "line": 22,
+          "text": "    target = destination / name"
+        },
+        {
+          "line": 42,
+          "text": "    crypto_cache = CACHE.with_name(f'xnu-driverkit-crypto-{TAG.removeprefix(\"xnu-\")}.json')"
+        },
+        {
+          "line": 50,
+          "text": "        restored = [entry for entry in executor.map(restore, entries) if entry]"
+        },
+        {
+          "line": 51,
+          "text": "        trust_tag = TRUST_TAG"
+        },
+        {
+          "line": 52,
+          "text": "        trust_cache = CACHE.with_name(f'xnu-trustcache-{TRUST_TAG.removeprefix(\"xnu-\")}.json')"
+        },
+        {
+          "line": 57,
+          "text": "        trust_destination = Path('.cache/xnu-work/EXTERNAL_HEADERS/TrustCache')"
+        },
+        {
+          "line": 58,
+          "text": "        def restore_trust(entry):"
+        },
+        {
+          "line": 59,
+          "text": "            return restore(entry, trust_destination, trust_tag)"
+        },
+        {
+          "line": 60,
+          "text": "        restored.extend(entry for entry in executor.map("
+        },
+        {
+          "line": 61,
+          "text": "            restore_trust, json.loads(trust_cache.read_text())) if entry)"
+        },
+        {
+          "line": 62,
+          "text": "    previous = Path('.cache/sources/xnu-restored-headers.json')"
+        },
+        {
+          "line": 64,
+          "text": "    by_name = {entry['name']: entry for entry in existing + restored}"
+        },
+        {
+          "line": 66,
+          "text": "    print(f'Restored {len(restored)} omitted public headers from Apple; blob hashes verified')"
+        }
+      ]
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full\\makedefs\\MakeInc.kernel",
+      "sha256": "67890b686ee2d9590bb4cd0e3ebc0b84a138a796ac9b8f2a69687c8ebe77f7ec",
+      "matches": [
+        {
+          "line": 50,
+          "text": "# 1) $(KERNEL_FILE_NAME).unstripped    (raw linked kernel, unstripped)"
+        },
+        {
+          "line": 81,
+          "text": "do_build_all:: do_build_kernel"
+        },
+        {
+          "line": 83,
+          "text": ".PHONY: do_build_kernel"
+        },
+        {
+          "line": 86,
+          "text": "do_build_kernel: $(KERNEL_STATIC_LINK_TARGETS)"
+        },
+        {
+          "line": 90,
+          "text": "do_build_kernel: $(TARGET)/$(KERNEL_FILE_NAME) $(TARGET)/$(KERNEL_FILE_NAME).unstripped $(KERNEL_STATIC_LINK_TARGETS)"
+        },
+        {
+          "line": 94,
+          "text": "do_build_all:: do_build_kernel_dSYM"
+        },
+        {
+          "line": 97,
+          "text": ".PHONY: do_build_kernel_dSYM"
+        },
+        {
+          "line": 99,
+          "text": "do_build_kernel_dSYM: $(TARGET)/$(KERNEL_FILE_NAME).dSYM"
+        },
+        {
+          "line": 109,
+          "text": "$(TARGET)/$(KERNEL_FILE_NAME): $(TARGET)/$(KERNEL_FILE_NAME).unstripped $(TARGET)/$(KERNEL_FILE_NAME).dSYM"
+        },
+        {
+          "line": 128,
+          "text": "$(TARGET)/$(KERNEL_FILE_NAME).dSYM: $(TARGET)/$(KERNEL_FILE_NAME).unstripped"
+        },
+        {
+          "line": 132,
+          "text": "\t$(_v)$(MV) $@/$(DSYMDWARFDIR)/$(KERNEL_FILE_NAME).unstripped $@/$(DSYMDWARFDIR)/$(KERNEL_FILE_NAME)"
+        },
+        {
+          "line": 147,
+          "text": "$(TARGET)/$(KERNEL_FILE_NAME).unstripped: $(addprefix $(TARGET)/,$(foreach component,$(COMPONENT_LIST),$(component)/$(CURRENT_KERNEL_CONFIG)/$(component).filelist)) lastkerneldataconst.o lastkernelconstructor.o nonlto.o $(SRCROOT)/config/version.c $(SRCROOT)/config/MasterVersion $(LDFILES_KERNEL_ONLY) .LDFLAGS $(filter %/MakeInc.kernel,$(MAKEFILE_LIST))"
+        },
+        {
+          "line": 199,
+          "text": "$(TARGET)/$(KERNEL_FILE_NAME).link/$(KERNEL_FILE_NAME).a:   $(TARGET)/$(KERNEL_FILE_NAME).unstripped .LDFLAGS $(filter %/MakeInc.kernel,$(MAKEFILE_LIST))"
+        },
+        {
+          "line": 369,
+          "text": "$(SYMROOT)/$(KERNEL_FILE_NAME): $(TARGET)/$(KERNEL_FILE_NAME).unstripped ALWAYS"
+        }
+      ]
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full\\makedefs\\MakeInc.cmd",
+      "sha256": "7a12220cedd8b6c7b7c5fa3e47ca987eaefb515fcef9735714d76ade7f61cabd",
+      "matches": [
+        {
+          "line": 57,
+          "text": "LOG_MIG = $(call LOG,MIG,$(ColorM),$(ColorF),$(LOG_PFX_LEN_ADJ))"
+        },
+        {
+          "line": 70,
+          "text": "LOG_IIG = $(call _LOG_HOST,IIG)"
+        },
+        {
+          "line": 103,
+          "text": "\tXCRUN = /usr/bin/xcrun -verbose"
+        },
+        {
+          "line": 108,
+          "text": "\tXCRUN = /usr/bin/xcrun"
+        },
+        {
+          "line": 117,
+          "text": "SDKROOT ?= macosx"
+        },
+        {
+          "line": 118,
+          "text": "HOST_SDKROOT ?= macosx"
+        },
+        {
+          "line": 120,
+          "text": "# SDKROOT may be passed as a shorthand like \"iphoneos.internal\". We"
+        },
+        {
+          "line": 121,
+          "text": "# must resolve these to a full path and override SDKROOT."
+        },
+        {
+          "line": 123,
+          "text": "ifeq ($(origin SDKROOT_RESOLVED),undefined)"
+        },
+        {
+          "line": 124,
+          "text": "export SDKROOT_RESOLVED := $(shell $(XCRUN) -sdk $(SDKROOT) -show-sdk-path)"
+        },
+        {
+          "line": 125,
+          "text": "ifeq ($(strip $(SDKROOT)_$(SDKROOT_RESOLVED)),/_)"
+        },
+        {
+          "line": 126,
+          "text": "export SDKROOT_RESOLVED := /"
+        },
+        {
+          "line": 129,
+          "text": "override SDKROOT = $(SDKROOT_RESOLVED)"
+        },
+        {
+          "line": 131,
+          "text": "ifeq ($(origin HOST_SDKROOT_RESOLVED),undefined)"
+        },
+        {
+          "line": 132,
+          "text": "export HOST_SDKROOT_RESOLVED := $(shell $(XCRUN) -sdk $(HOST_SDKROOT) -show-sdk-path)"
+        },
+        {
+          "line": 133,
+          "text": "ifeq ($(strip $(HOST_SDKROOT_RESOLVED)),)"
+        },
+        {
+          "line": 134,
+          "text": "export HOST_SDKROOT_RESOLVED := /"
+        },
+        {
+          "line": 137,
+          "text": "override HOST_SDKROOT = $(HOST_SDKROOT_RESOLVED)"
+        },
+        {
+          "line": 140,
+          "text": "     export SDKVERSION := $(shell $(XCRUN) -sdk $(SDKROOT) -show-sdk-version)"
+        },
+        {
+          "line": 144,
+          "text": "\texport PLATFORMPATH := $(shell $(XCRUN) -sdk $(SDKROOT) -show-sdk-platform-path)"
+        },
+        {
+          "line": 154,
+          "text": "\tifeq ($(origin COHORT_SDKROOT_RESOLVED),undefined)"
+        },
+        {
+          "line": 155,
+          "text": "\t\tSDK_NAME = $(notdir $(SDKROOT))"
+        },
+        {
+          "line": 157,
+          "text": "\t\texport COHORT_SDKROOT_RESOLVED := $(shell $(XCRUN) -sdk $(COHORT_NAME) -show-sdk-path)"
+        },
+        {
+          "line": 158,
+          "text": "\t\tifeq ($(strip $(COHORT_SDKROOT_RESOLVED)),)"
+        },
+        {
+          "line": 159,
+          "text": "\t\texport COHORT_SDKROOT_RESOLVED := $(SDKROOT_RESOLVED)"
+        },
+        {
+          "line": 162,
+          "text": "\toverride COHORT_SDKROOT = $(COHORT_SDKROOT_RESOLVED)"
+        },
+        {
+          "line": 163,
+          "text": "\texport PLATFORMPATH = $(shell $(XCRUN) -sdk $(COHORT_SDKROOT) -show-sdk-platform-path)"
+        },
+        {
+          "line": 169,
+          "text": "\toverride COHORT_SDKROOT = $(SDKROOT)"
+        },
+        {
+          "line": 173,
+          "text": "\tifeq (DriverKit,$(shell echo $(SDKROOT_RESOLVED) | sed 's|^.*/\\([^./1-9]*\\)\\(\\.[^./1-9]*\\)\\{0,1\\}[1-9][^/]*\\.sdk$$|\\1|'))"
+        },
+        {
+          "line": 184,
+          "text": "\texport CC := $(shell $(XCRUN) -sdk $(SDKROOT) -find clang)"
+        },
+        {
+          "line": 187,
+          "text": "\texport CXX := $(shell $(XCRUN) -sdk $(SDKROOT) -find clang++)"
+        },
+        {
+          "line": 189,
+          "text": "ifeq ($(origin MIG),undefined)"
+        },
+        {
+          "line": 190,
+          "text": "\texport MIG := $(shell $(XCRUN) -sdk $(SDKROOT) -find mig)"
+        },
+        {
+          "line": 192,
+          "text": "ifeq ($(origin MIGCOM),undefined)"
+        },
+        {
+          "line": 193,
+          "text": "\texport MIGCOM := $(shell $(XCRUN) -sdk $(SDKROOT) -find migcom)"
+        },
+        {
+          "line": 195,
+          "text": "ifeq ($(origin MIGCC),undefined)"
+        },
+        {
+          "line": 196,
+          "text": "\texport MIGCC := $(CC)"
+        },
+        {
+          "line": 198,
+          "text": "ifeq ($(origin IIG),undefined)"
+        },
+        {
+          "line": 199,
+          "text": "\texport IIG := $(shell $(XCRUN) -sdk $(SDKROOT) -find iig)"
+        },
+        {
+          "line": 202,
+          "text": "\texport STRIP := $(shell $(XCRUN) -sdk $(SDKROOT) -find strip)"
+        },
+        {
+          "line": 205,
+          "text": "\texport LIPO := $(shell $(XCRUN) -sdk $(SDKROOT) -find lipo)"
+        },
+        {
+          "line": 208,
+          "text": "\texport LIBTOOL := $(shell $(XCRUN) -sdk $(SDKROOT) -find libtool)"
+        },
+        {
+          "line": 211,
+          "text": "\texport OTOOL := $(shell $(XCRUN) -sdk $(SDKROOT) -find otool)"
+        },
+        {
+          "line": 214,
+          "text": "\texport NM := $(shell $(XCRUN) -sdk $(SDKROOT) -find nm)"
+        },
+        {
+          "line": 217,
+          "text": "\texport UNIFDEF := $(shell $(XCRUN) -sdk $(SDKROOT) -find unifdef)"
+        },
+        {
+          "line": 220,
+          "text": "\texport DSYMUTIL := $(shell $(XCRUN) -sdk $(SDKROOT) -find dsymutil)"
+        },
+        {
+          "line": 223,
+          "text": "\texport NMEDIT := $(shell $(XCRUN) -sdk $(SDKROOT) -find nmedit)"
+        },
+        {
+          "line": 226,
+          "text": "\texport GIT := $(shell $(XCRUN) -sdk $(SDKROOT) -find git)"
+        },
+        {
+          "line": 229,
+          "text": "\texport SCAN_BUILD := $(shell $(XCRUN) -sdk $(SDKROOT) -find scan-build 2> /dev/null)"
+        },
+        {
+          "line": 232,
+          "text": "\texport CTFINSERT := $(shell $(XCRUN) -sdk $(SDKROOT) -find ctf_insert 2> /dev/null)"
+        },
+        {
+          "line": 235,
+          "text": "\texport CTFCONVERT := $(shell $(XCRUN) -sdk $(SDKROOT) -find ctfconvert 2> /dev/null)"
+        },
+        {
+          "line": 238,
+          "text": "\texport CTFMERGE := $(shell $(XCRUN) -sdk $(SDKROOT) -find ctfmerge 2> /dev/null)"
+        },
+        {
+          "line": 244,
+          "text": "\texport CTFDUMP := $(shell $(XCRUN) -sdk $(SDKROOT) -find ctfdump 2> /dev/null)"
+        },
+        {
+          "line": 308,
+          "text": "\texport HOST_CC\t\t:= $(shell $(XCRUN) -sdk $(HOST_SDKROOT) -find clang)"
+        },
+        {
+          "line": 311,
+          "text": "\texport HOST_FLEX\t:= $(shell $(XCRUN) -sdk $(HOST_SDKROOT) -find flex)"
+        },
+        {
+          "line": 314,
+          "text": "\texport HOST_BISON\t:= $(shell $(XCRUN) -sdk $(HOST_SDKROOT) -find bison)"
+        },
+        {
+          "line": 317,
+          "text": "\texport HOST_GM4\t\t:= $(shell $(XCRUN) -sdk $(HOST_SDKROOT) -find gm4)"
+        },
+        {
+          "line": 323,
+          "text": "\texport HOST_CODESIGN_ALLOCATE\t:= $(shell $(XCRUN) -sdk $(HOST_SDKROOT) -find codesign_allocate)"
+        }
+      ]
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full\\makedefs\\MakeInc.def",
+      "sha256": "192db779574cf1a4e715b329431635252cd96af7f226101a872e8c8b65d8162d",
+      "matches": [
+        {
+          "line": 117,
+          "text": "KCC  = $(CCACHE) $(CC)"
+        },
+        {
+          "line": 120,
+          "text": "GENASSYM_KCC = $(CCACHE) $(CC)"
+        },
+        {
+          "line": 581,
+          "text": "S_KCC\t= $(CC)"
+        },
+        {
+          "line": 955,
+          "text": "ifeq ($(BUILD_JSON_COMPILATION_DATABASE),1)"
+        },
+        {
+          "line": 957,
+          "text": "# substituted with JSONCOMPILATIONDB, which appends compile commands to the"
+        },
+        {
+          "line": 964,
+          "text": "KCC\t\t= $(JSONCOMPILATIONDB) $(OBJPATH)/compile_commands.json $(PWD) $< $(CC)"
+        },
+        {
+          "line": 965,
+          "text": "KC++\t\t= $(JSONCOMPILATIONDB) $(OBJPATH)/compile_commands.json $(PWD) $< $(CXX)"
+        },
+        {
+          "line": 966,
+          "text": "S_KCC\t\t= $(JSONCOMPILATIONDB) $(OBJPATH)/compile_commands.json $(PWD) $< $(CC)"
+        }
+      ]
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full\\osfmk\\kern\\kalloc.h",
+      "sha256": "dcf745ce743baf5e7acba43453e869bb6efe77c4c15aaf68e8c38b01ea3d0237",
+      "matches": [
+        {
+          "line": 684,
+          "text": " * Given a type, the XNU signature type system (__builtin_xnu_type_signature)"
+        },
+        {
+          "line": 721,
+          "text": " * The XNU type summary (__builtin_xnu_type_summary) produces a 32-bit"
+        },
+        {
+          "line": 756,
+          "text": " * Note: you should never have to use __builtin_xnu_type_summary"
+        },
+        {
+          "line": 763,
+          "text": "\t(__builtin_xnu_type_summary(type) & KT_SUMMARY_MASK_TYPE_BITS)"
+        },
+        {
+          "line": 815,
+          "text": " * on the @c __builtin_xnu_types_compatible builtin, and the value returned"
+        },
+        {
+          "line": 827,
+          "text": "\t(__builtin_xnu_types_compatible(__typeof__(*(ptr)), type) ||   \\"
+        },
+        {
+          "line": 828,
+          "text": "\t    __builtin_xnu_types_compatible(__typeof__(*(ptr)), void))  \\"
+        },
+        {
+          "line": 1484,
+          "text": "\t\"\" : __builtin_xnu_type_signature(sig_type)"
+        }
+      ]
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full\\osfmk\\mach\\kmod.h",
+      "sha256": "449732f7c306e26ccba8cd4df18eeef8d26281de06a333b31eedc2d39c2587af",
+      "matches": [
+        {
+          "line": 51,
+          "text": "#define KMOD_MAX_NAME    64"
+        },
+        {
+          "line": 58,
+          "text": "struct  kmod_info;"
+        },
+        {
+          "line": 59,
+          "text": "typedef kern_return_t kmod_start_func_t(struct kmod_info * ki, void * data);"
+        },
+        {
+          "line": 60,
+          "text": "typedef kern_return_t kmod_stop_func_t(struct kmod_info * ki, void * data);"
+        },
+        {
+          "line": 68,
+          "text": "* All structures must be #pragma pack(4)."
+        },
+        {
+          "line": 70,
+          "text": "#pragma pack(push, 4)"
+        },
+        {
+          "line": 75,
+          "text": "\tstruct kmod_info      * info;"
+        },
+        {
+          "line": 79,
+          "text": "* Warning: Any changes to the kmod_info structure affect the"
+        },
+        {
+          "line": 83,
+          "text": "/* The kmod_info_t structure is only safe to use inside the running"
+        },
+        {
+          "line": 84,
+          "text": " * kernel.  If you need to work with a kmod_info_t structure outside"
+        },
+        {
+          "line": 87,
+          "text": "typedef struct kmod_info {"
+        },
+        {
+          "line": 88,
+          "text": "\tstruct kmod_info  * next;"
+        },
+        {
+          "line": 91,
+          "text": "\tchar                name[KMOD_MAX_NAME];"
+        },
+        {
+          "line": 92,
+          "text": "\tchar                version[KMOD_MAX_NAME];"
+        },
+        {
+          "line": 95,
+          "text": "\tvm_address_t        address;            // starting address"
+        },
+        {
+          "line": 98,
+          "text": "\tkmod_start_func_t * start;"
+        },
+        {
+          "line": 99,
+          "text": "\tkmod_stop_func_t  * stop;"
+        },
+        {
+          "line": 100,
+          "text": "} kmod_info_t;"
+        },
+        {
+          "line": 102,
+          "text": "/* A compatibility definition of kmod_info_t for 32-bit kexts."
+        },
+        {
+          "line": 104,
+          "text": "typedef struct kmod_info_32_v1 {"
+        },
+        {
+          "line": 108,
+          "text": "\tuint8_t             name[KMOD_MAX_NAME];"
+        },
+        {
+          "line": 109,
+          "text": "\tuint8_t             version[KMOD_MAX_NAME];"
+        },
+        {
+          "line": 115,
+          "text": "\tuint32_t            start_addr;"
+        },
+        {
+          "line": 116,
+          "text": "\tuint32_t            stop_addr;"
+        },
+        {
+          "line": 117,
+          "text": "} kmod_info_32_v1_t;"
+        },
+        {
+          "line": 119,
+          "text": "/* A compatibility definition of kmod_info_t for 64-bit kexts."
+        },
+        {
+          "line": 121,
+          "text": "typedef struct kmod_info_64_v1 {"
+        },
+        {
+          "line": 125,
+          "text": "\tuint8_t             name[KMOD_MAX_NAME];"
+        },
+        {
+          "line": 126,
+          "text": "\tuint8_t             version[KMOD_MAX_NAME];"
+        },
+        {
+          "line": 132,
+          "text": "\tuint64_t            start_addr;"
+        },
+        {
+          "line": 133,
+          "text": "\tuint64_t            stop_addr;"
+        },
+        {
+          "line": 134,
+          "text": "} kmod_info_64_v1_t;"
+        },
+        {
+          "line": 136,
+          "text": "#pragma pack(pop)"
+        },
+        {
+          "line": 144,
+          "text": "#define KMOD_INFO_NAME       kmod_info"
+        },
+        {
+          "line": 148,
+          "text": "    static kmod_start_func_t name ## _module_start;               \\"
+        },
+        {
+          "line": 149,
+          "text": "    static kmod_stop_func_t  name ## _module_stop;                \\"
+        },
+        {
+          "line": 150,
+          "text": "    kmod_info_t KMOD_INFO_NAME = { 0, KMOD_INFO_VERSION, -1U,      \\"
+        },
+        {
+          "line": 152,
+          "text": "\t                   name ## _module_start,                 \\"
+        },
+        {
+          "line": 153,
+          "text": "\t                   name ## _module_stop };"
+        },
+        {
+          "line": 155,
+          "text": "#define KMOD_EXPLICIT_DECL(name, version, start, stop)            \\"
+        },
+        {
+          "line": 156,
+          "text": "    kmod_info_t KMOD_INFO_NAME = { 0, KMOD_INFO_VERSION, -1U,      \\"
+        },
+        {
+          "line": 158,
+          "text": "\t                   start, stop };"
+        },
+        {
+          "line": 193,
+          "text": "typedef kmod_info_t * kmod_info_array_t;"
+        }
+      ]
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full\\bsd\\kern\\syscalls.master",
+      "sha256": "e9c69fd8269b43209981e9c90b9d519c5ae7dce3e8ee9ff8a0c836464a7a144a",
+      "matches": [
+        {
+          "line": 49,
+          "text": "4\tAUE_NULL\tALL\t{ user_ssize_t write(int fd, user_addr_t cbuf, user_size_t nbyte); }"
+        },
+        {
+          "line": 50,
+          "text": "5\tAUE_OPEN_RWTC\tALL\t{ int open(user_addr_t path, int flags, int mode) NO_SYSCALL_STUB; }"
+        },
+        {
+          "line": 51,
+          "text": "6\tAUE_CLOSE\tALL\t{ int sys_close(int fd); }"
+        },
+        {
+          "line": 153,
+          "text": "95\tAUE_FSYNC\tALL\t{ int fsync(int fd); }"
+        },
+        {
+          "line": 199,
+          "text": "121\tAUE_WRITEV\tALL\t{ user_ssize_t writev(int fd, struct iovec *iovp, u_int iovcnt); }"
+        },
+        {
+          "line": 201,
+          "text": "123\tAUE_FCHOWN\tALL\t{ int fchown(int fd, int uid, int gid); }"
+        },
+        {
+          "line": 202,
+          "text": "124\tAUE_FCHMOD\tALL\t{ int fchmod(int fd, int mode) NO_SYSCALL_STUB; }"
+        },
+        {
+          "line": 220,
+          "text": "136\tAUE_MKDIR\tALL\t{ int mkdir(user_addr_t path, int mode); }"
+        },
+        {
+          "line": 520,
+          "text": "339\tAUE_FSTAT64\tALL\t{ int sys_fstat64(int fd, user_addr_t ub); }"
+        },
+        {
+          "line": 591,
+          "text": "397\tAUE_NULL\tALL\t{ user_ssize_t write_nocancel(int fd, user_addr_t cbuf, user_size_t nbyte) NO_SYSCALL_STUB; }"
+        },
+        {
+          "line": 617,
+          "text": "412\tAUE_WRITEV\tALL\t{ user_ssize_t writev_nocancel(int fd, struct iovec *iovp, u_int iovcnt) NO_SYSCALL_STUB; }"
+        }
+      ]
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU-sheng\\scripts\\build-boot-progress.py",
+      "sha256": "984e9a29863bf92197e3dac4938f7f91ef9e80577618fe9f62d6c48a50c30c59",
+      "matches": [
+        {
+          "line": 11,
+          "text": "record = json.loads((ROOT / 'build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/startup.o.json').read_text().strip().rstrip(','))"
+        },
+        {
+          "line": 12,
+          "text": "source = ROOT / 'kits/sheng/BootProgress.c'"
+        },
+        {
+          "line": 15,
+          "text": "args = record['arguments']"
+        },
+        {
+          "line": 19,
+          "text": "    if arg == record['file']:"
+        },
+        {
+          "line": 34,
+          "text": "            '-I', str(ROOT / 'uefi-sheng/Silicon/Silicium/SiliciumPkg/Library/FrameBufferSerialPortLib')]"
+        },
+        {
+          "line": 35,
+          "text": "subprocess.run(command, cwd=record['directory'], check=True, timeout=90)"
+        },
+        {
+          "line": 36,
+          "text": "(OUT / 'compile-command.json').write_text(json.dumps(command,indent=2)+'\\n')"
+        },
+        {
+          "line": 37,
+          "text": "fault_source = ROOT / 'kits/sheng/BootFaultProbe.c'"
+        },
+        {
+          "line": 39,
+          "text": "fault_command = [str(fault_source) if arg == str(source) else str(fault_obj) if arg == str(obj) else arg for arg in command]"
+        },
+        {
+          "line": 40,
+          "text": "subprocess.run(fault_command, cwd=record['directory'], check=True, timeout=90)"
+        },
+        {
+          "line": 41,
+          "text": "policy_source = ROOT / 'kits/sheng/BootWatchdogPolicy.c'"
+        },
+        {
+          "line": 43,
+          "text": "policy_record = json.loads((ROOT / 'build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/bsd/DEVELOPMENT/kern_exec.o.json').read_text().strip().rstrip(','))"
+        },
+        {
+          "line": 45,
+          "text": "policy_args = policy_record['arguments']"
+        },
+        {
+          "line": 49,
+          "text": "    if arg == policy_record['file']:"
+        },
+        {
+          "line": 50,
+          "text": "        policy_command.append(str(policy_source))"
+        },
+        {
+          "line": 60,
+          "text": "subprocess.run(policy_command, cwd=policy_record['directory'], check=True, timeout=90)"
+        },
+        {
+          "line": 64,
+          "text": "subprocess.run(['xcrun', 'ar', 'rcs', str(archive), str(obj), str(fault_obj), str(policy_obj)], check=True, timeout=30)"
+        },
+        {
+          "line": 65,
+          "text": "(OUT / 'build-report.json').write_text(json.dumps({"
+        },
+        {
+          "line": 66,
+          "text": "    'watchdog_policy_sha256': hashlib.sha256(policy_source.read_bytes()).hexdigest(),"
+        },
+        {
+          "line": 67,
+          "text": "    'fault_sha256': hashlib.sha256(fault_source.read_bytes()).hexdigest(),"
+        }
+      ]
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU-sheng\\scripts\\build-sheng-platform-power.py",
+      "sha256": "2385d87655273bb0b64acb665ede5f36c1b5a80a0940bc83c7c3f14d4def5b68",
+      "matches": [
+        {
+          "line": 36,
+          "text": "for i in range(177, 340):"
+        },
+        {
+          "line": 72,
+          "text": "require(build_version == [(2, 0x110000)], 'Require iOS17 build target')"
+        },
+        {
+          "line": 89,
+          "text": "entries = [relocations.get(vtable + 16 + i * 8) for i in range(340)]"
+        },
+        {
+          "line": 90,
+          "text": "require(all(entries) and vtable + 16 + 340 * 8 not in relocations, 'Exact 340-entry provider table')"
+        },
+        {
+          "line": 107,
+          "text": "bindings = {'__ZN9ApplePMGRC2EPK11OSMetaClass': 0xfffffff0049f003c,"
+        },
+        {
+          "line": 111,
+          "text": "    if slot in (0, 1, 7) or 168 <= slot < 340 and slot not in (320, 321):"
+        },
+        {
+          "line": 115,
+          "text": "        bindings[name] = ptr(0xfffffff005ce26d8 + slot * 8)"
+        },
+        {
+          "line": 120,
+          "text": "require(undefined == set(bindings), 'All and only audited original base imports')"
+        },
+        {
+          "line": 121,
+          "text": "bindings.update({'_sheng_original_pmgr_nub_create': 0xfffffff004a22568,"
+        },
+        {
+          "line": 124,
+          "text": "asm = OUT / 'original-bindings.S'"
+        },
+        {
+          "line": 125,
+          "text": "asm.write_text(''.join(f'.globl {name}\\n.set {name}, {va:#x}\\n' for name, va in bindings.items()))"
+        },
+        {
+          "line": 126,
+          "text": "sdk = run(['xcrun', '--sdk', 'iphoneos', '--show-sdk-path'], text=True).strip()"
+        },
+        {
+          "line": 127,
+          "text": "run(['xcrun', 'clang', '-target', 'arm64-apple-ios17.0', '-isysroot', sdk, '-c', asm, '-o', OUT / 'original-bindings.o'])"
+        },
+        {
+          "line": 141,
+          "text": "run(['xcrun', 'ar', 'rcs', archive, late, OUT / 'original-bindings.o'])"
+        },
+        {
+          "line": 144,
+          "text": "          'bindings': {name: hex(va) for name, va in bindings.items()}, 'virtual_entries': 340,"
+        },
+        {
+          "line": 148,
+          "text": "print('PASS: ordinary ARM64/iOS17 build; exact native and original bindings; unimplemented power slots stop')"
+        }
+      ]
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU-sheng\\package\\BootWatchdogPolicy.c",
+      "sha256": "4b3a3b8ff2ab0177f547ff318bc9f3b60b7a87561f85a82d4b52aa23e8721224",
+      "matches": [
+        {
+          "line": 3,
+          "text": "// Runs after writable scratch Data mounts, before the unchanged launchd exec."
+        },
+        {
+          "line": 16,
+          "text": "static const char policy_watchdogd[]=\"<key>com.apple.watchdogd</key><true/>\";"
+        },
+        {
+          "line": 18,
+          "text": "// cycle of synchronous XPC waits. A disabled job makes its Mach service lookups fail instead of hang."
+        },
+        {
+          "line": 21,
+          "text": "static char policy[768],jobs[200];"
+        },
+        {
+          "line": 24,
+          "text": "int sheng_boot_watchdog_policy(void *process, uint64_t scratch) {"
+        },
+        {
+          "line": 27,
+          "text": " PE_parse_boot_argn(\"sheng-disable-watchdogd\",&enabled,sizeof(enabled));"
+        },
+        {
+          "line": 32,
+          "text": " policy[0]=0;strlcat(policy,policy_head,sizeof(policy));"
+        },
+        {
+          "line": 33,
+          "text": " if(enabled)strlcat(policy,policy_watchdogd,sizeof(policy));"
+        },
+        {
+          "line": 39,
+          "text": "   memcpy(policy+at,c,(size_t)(e-c));policy[at+(size_t)(e-c)]=0;"
+        },
+        {
+          "line": 46,
+          "text": " const char *path=\"/private/var/db/com.apple.xpc.launchd/disabled.plist\";"
+        },
+        {
+          "line": 47,
+          "text": " if((error=copyout(directory,scratch,strlen(directory)+1)))goto done;"
+        },
+        {
+          "line": 48,
+          "text": " struct mkdir_args md={.path=scratch,.mode=0755};"
+        },
+        {
+          "line": 51,
+          "text": " if((error=copyout(path,scratch,strlen(path)+1)))goto done;"
+        },
+        {
+          "line": 53,
+          "text": " struct open_args op={.path=scratch,.flags=O_WRONLY|O_CREAT|O_EXCL|O_NOFOLLOW,.mode=0644};"
+        },
+        {
+          "line": 56,
+          "text": " if((error=copyout(policy,scratch+0x200,strlen(policy))))goto done;"
+        },
+        {
+          "line": 57,
+          "text": " struct write_args wr={.fd=fd,.cbuf=scratch+0x200,.nbyte=strlen(policy)};"
+        },
+        {
+          "line": 68,
+          "text": " struct fstat64_args sa={.fd=fd,.ub=scratch+0x800};struct stat64 st={0};"
+        },
+        {
+          "line": 75,
+          "text": "  const char *marker=\"/private/var/db/com.apple.xpc.launchd/disabled.migrated\";"
+        },
+        {
+          "line": 76,
+          "text": "  error=copyout(marker,scratch,strlen(marker)+1);"
+        },
+        {
+          "line": 78,
+          "text": "   struct open_args mark={.path=scratch,.flags=O_WRONLY|O_CREAT|O_EXCL|O_NOFOLLOW,.mode=0644};"
+        },
+        {
+          "line": 85,
+          "text": " printf(\"sheng bring-up watchdogd launch policy: %d (hardware watchdog not implemented)\\n\",error);"
+        }
+      ]
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU\\kits\\NativePrelink\\emit_prelink.py",
+      "sha256": "4cbd97a7ca231cb56d8d7c6a02d09b86af33b5af3d05dba41edd00e51cd3a36a",
+      "matches": [
+        {
+          "line": 117,
+          "text": "def emit(native_data, original_data, roots, slide, early_security_init=None):"
+        },
+        {
+          "line": 121,
+          "text": "              if '_kalloc_sparse_prelink_index_version' in names]"
+        },
+        {
+          "line": 137,
+          "text": "    early_security_init = early_security_init or {}"
+        },
+        {
+          "line": 138,
+          "text": "    if early_security_init:"
+        },
+        {
+          "line": 140,
+          "text": "                   if '_native_prelink_security_init_version' in names]"
+        },
+        {
+          "line": 146,
+          "text": "    report['early_security_initializers'] = {}"
+        },
+        {
+          "line": 147,
+          "text": "    for identifier, address in early_security_init.items():"
+        },
+        {
+          "line": 156,
+          "text": "        report['early_security_initializers'][identifier] = address + slide"
+        },
+        {
+          "line": 232,
+          "text": "        address, = struct.unpack_from('<Q', original_data, at + 156)"
+        },
+        {
+          "line": 236,
+          "text": "            struct.pack_into('<Q', output, new_offset(va + slide + 156, 8), address + slide)"
+        },
+        {
+          "line": 257,
+          "text": "        if identifier in early_security_init:"
+        },
+        {
+          "line": 258,
+          "text": "            entry['_NativePrelinkEarlySecurityInit'] = early_security_init[identifier] + slide"
+        },
+        {
+          "line": 282,
+          "text": "            blob.extend(struct.pack('<16s16sQQ8I', b'__macho_list', b'__PRELINK_TEXT',"
+        },
+        {
+          "line": 320,
+          "text": "    for request in args.early_security_init:"
+        }
+      ]
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU\\kits\\NativePrelink\\native_prelink.py",
+      "sha256": "5bd80b8c63deec29b747c28253e02308a56d5f8cdb37c9d315e7c8af7012d017",
+      "matches": [
+        {
+          "line": 17,
+          "text": "    magic, cpu, subtype, kind, count, size = struct.unpack_from('<6I', data, at)"
+        },
+        {
+          "line": 18,
+          "text": "    if (magic, cpu, subtype) != (0xfeedfacf, 0x100000c, 0):"
+        },
+        {
+          "line": 122,
+          "text": "def unique_kernel_binding(address, original_exports, native_by_name):"
+        },
+        {
+          "line": 124,
+          "text": "    choices = {new for name in names for new in native_by_name.get(name, set())}"
+        },
+        {
+          "line": 125,
+          "text": "    if len(choices) != 1:"
+        },
+        {
+          "line": 126,
+          "text": "        raise ValueError(f'Kernel target {address:#x} has {len(choices)} native address candidates: {names}')"
+        },
+        {
+          "line": 127,
+          "text": "    return next(iter(choices))"
+        },
+        {
+          "line": 131,
+          "text": "    if slide % 4096:"
+        },
+        {
+          "line": 135,
+          "text": "        raise ValueError('Expected MH_EXECUTE kernel images')"
+        },
+        {
+          "line": 221,
+          "text": "            replacement = unique_kernel_binding(target, original_symbols, native_symbols)"
+        }
+      ]
+    }
+  ],
+  "callback_matrix": [
+    {
+      "name": "boot_progress_init",
+      "declaration": [
+        "+void boot_progress_init(void);"
+      ],
+      "reference_definitions": [
+        {
+          "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU-sheng\\package\\BootProgress.c",
+          "line": 502,
+          "text": "void boot_progress_init(void) {"
+        }
+      ],
+      "nuwa_source_matches": [],
+      "abi_compiled": false
+    },
+    {
+      "name": "boot_progress_start",
+      "declaration": [
+        "+void boot_progress_start(void);"
+      ],
+      "reference_definitions": [
+        {
+          "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU-sheng\\package\\BootProgress.c",
+          "line": 965,
+          "text": "void boot_progress_start(void) {"
+        }
+      ],
+      "nuwa_source_matches": [],
+      "abi_compiled": false
+    },
+    {
+      "name": "boot_progress_active",
+      "declaration": [
+        "+int boot_progress_active(void);"
+      ],
+      "reference_definitions": [
+        {
+          "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU-sheng\\package\\BootProgress.c",
+          "line": 470,
+          "text": "int boot_progress_active(void) {"
+        }
+      ],
+      "nuwa_source_matches": [],
+      "abi_compiled": false
+    },
+    {
+      "name": "boot_progress_bind",
+      "declaration": [
+        "+void boot_progress_bind(uintptr_t, unsigned, unsigned, unsigned, unsigned);"
+      ],
+      "reference_definitions": [
+        {
+          "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU-sheng\\package\\BootProgress.c",
+          "line": 513,
+          "text": "void boot_progress_bind(uintptr_t base,unsigned w,unsigned h,unsigned rb,unsigned depth) {"
+        }
+      ],
+      "nuwa_source_matches": [],
+      "abi_compiled": false
+    },
+    {
+      "name": "boot_progress_putc",
+      "declaration": [
+        "+void boot_progress_putc(char);"
+      ],
+      "reference_definitions": [
+        {
+          "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU-sheng\\package\\BootProgress.c",
+          "line": 535,
+          "text": "void boot_progress_putc(char c) {"
+        }
+      ],
+      "nuwa_source_matches": [],
+      "abi_compiled": false
+    },
+    {
+      "name": "boot_progress_stage",
+      "declaration": [
+        "+void boot_progress_stage(const char *);"
+      ],
+      "reference_definitions": [
+        {
+          "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU-sheng\\package\\BootProgress.c",
+          "line": 542,
+          "text": "void boot_progress_stage(const char *text) {"
+        }
+      ],
+      "nuwa_source_matches": [],
+      "abi_compiled": false
+    },
+    {
+      "name": "boot_progress_irq",
+      "declaration": [
+        "+void boot_progress_irq(uint64_t, uint64_t, uint64_t);"
+      ],
+      "reference_definitions": [
+        {
+          "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU-sheng\\package\\BootProgress.c",
+          "line": 575,
+          "text": "void boot_progress_irq(uint64_t pc,uint64_t psr,uint64_t sp) {"
+        }
+      ],
+      "nuwa_source_matches": [],
+      "abi_compiled": false
+    },
+    {
+      "name": "boot_progress_poll",
+      "declaration": [
+        "+void boot_progress_poll(void);"
+      ],
+      "reference_definitions": [
+        {
+          "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU-sheng\\package\\BootProgress.c",
+          "line": 598,
+          "text": "void boot_progress_poll(void) {"
+        }
+      ],
+      "nuwa_source_matches": [],
+      "abi_compiled": false
+    },
+    {
+      "name": "boot_progress_user_breakpoint",
+      "declaration": [
+        "+void boot_progress_user_breakpoint(void *, unsigned);"
+      ],
+      "reference_definitions": [
+        {
+          "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU-sheng\\package\\BootFaultProbe.c",
+          "line": 36,
+          "text": "void boot_progress_user_breakpoint(void *saved,unsigned esr) {"
+        }
+      ],
+      "nuwa_source_matches": [],
+      "abi_compiled": false
+    },
+    {
+      "name": "boot_progress_user_abort",
+      "declaration": [
+        "+void boot_progress_user_abort(void *, unsigned, uint64_t);"
+      ],
+      "reference_definitions": [
+        {
+          "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU-sheng\\package\\BootFaultProbe.c",
+          "line": 37,
+          "text": "void boot_progress_user_abort(void *saved,unsigned esr,uint64_t far) {"
+        }
+      ],
+      "nuwa_source_matches": [],
+      "abi_compiled": false
+    },
+    {
+      "name": "boot_progress_critical_exit",
+      "declaration": [
+        "+void boot_progress_critical_exit(int, char *, unsigned long);"
+      ],
+      "reference_definitions": [
+        {
+          "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU-sheng\\package\\BootFaultProbe.c",
+          "line": 77,
+          "text": "void boot_progress_critical_exit(int pid, char *out, unsigned long capacity) {"
+        }
+      ],
+      "nuwa_source_matches": [],
+      "abi_compiled": false
+    },
+    {
+      "name": "boot_progress_process_stage",
+      "declaration": [
+        "+void boot_progress_process_stage(int, const char *, const char *);"
+      ],
+      "reference_definitions": [
+        {
+          "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU-sheng\\package\\BootProgress.c",
+          "line": 555,
+          "text": "void boot_progress_process_stage(int pid,const char *name,const char *text) {"
+        }
+      ],
+      "nuwa_source_matches": [],
+      "abi_compiled": false
+    },
+    {
+      "name": "boot_progress_exit",
+      "declaration": [
+        "+void boot_progress_exit(int, const char *, int, unsigned, uint64_t);"
+      ],
+      "reference_definitions": [
+        {
+          "path": "D:\\Code\\PortingiOS\\common\\sources\\UniXNU-sheng\\package\\BootProgress.c",
+          "line": 563,
+          "text": "void boot_progress_exit(int pid,const char *name,int status,unsigned ns,uint64_t code) {"
+        }
+      ],
+      "nuwa_source_matches": [],
+      "abi_compiled": false
+    }
+  ],
+  "build_script_resolution": [
+    {
+      "path": "scripts/build-boot-progress.py",
+      "base": false,
+      "sheng": true,
+      "nuwa": false
+    },
+    {
+      "path": "scripts/build-firehose.sh",
+      "base": true,
+      "sheng": false,
+      "nuwa": false
+    },
+    {
+      "path": "scripts/prepare-xnu-source.py",
+      "base": true,
+      "sheng": false,
+      "nuwa": false
+    },
+    {
+      "path": "scripts/seal-source-crypto-kernel.py",
+      "base": true,
+      "sheng": false,
+      "nuwa": false
+    }
+  ],
+  "kernel_archives_consumers": [],
+  "watchdog_scratch_case": {
+    "mode": "Host string arithmetic only; no policy file written, no kernel run",
+    "jobs": "com.apple.t0,com.apple.t1,com.apple.t2,com.apple.t3,com.apple.t4,com.apple.t5,com.apple.t6,com.apple.t7,com.apple.t8,com.apple.t9,com.apple.t10,com.apple.t11",
+    "jobs_bytes": 157,
+    "policy_bytes": 584,
+    "fits_jobs_200": true,
+    "fits_policy_768": true,
+    "copyout_start": "0x200",
+    "copyout_end_exclusive": "0x448",
+    "environment_string_start": "0x400",
+    "overlaps_environment": true
+  },
+  "kmod64_layout": {
+    "mode": "Host model of source pack(4) and explicit 64-bit fields; not target ABI certification",
+    "address": 156,
+    "start": 180,
+    "stop": 188,
+    "sizeof": 196
+  },
+  "board_sha256": "8601b3e5352ab4656e9aefdc22a03d22d531cbb8d465ca11e27fd9aa9d4d38d5",
+  "base_feeds_sha256": "dec145fe25ed9cf1c50292a1e16ccbaa690b450a1de9e1ed687395e5fef88294"
+}
