@@ -4,7 +4,7 @@
 
 ## 当前结论
 
-第五至七轮失败证据均已取得；AST与processor目标对象已实际生成，后续t_kpc初始化首错及同类关闭性能模块后的入口已补条件。第八轮为合并明确源码缺口而取消，不作验证。57项225 hunks静态检查通过；修复4dd55f0已发布，[第九轮39736926012](https://github.com/wh1stl3/UniXNU/actions/runs/39736926012)已启动。完整内核构建仍未通过，见[取证分析](operations/2026-10-22-ci-fifth-failure.md)。
+第五至七轮失败证据均已取得；AST与processor目标对象已实际生成，后续t_kpc初始化首错及同类关闭性能模块后的入口已补条件。第八轮为合并明确源码缺口而取消，不作验证。57项225 hunks静态检查通过；修复4dd55f0已发布，[第九轮39736926012](https://github.com/wh1stl3/UniXNU/actions/runs/39736926012)已启动。第九轮已进入最终链接，失败于单个可选display probe符号；正在整理修复证据。完整内核构建仍未通过，见[取证分析](operations/2026-10-22-ci-fifth-failure.md)。
 
 ## 当前边界
 
@@ -29,6 +29,10 @@
 2. 成功后只读检查普通ARM64 MH_EXECUTE、版本/符号、NativePrelink两项标记，区分构建、静态接口与实机结论；ARM64页大小是运行时初始化，不从文件零值推断。
 3. 完成Darwin22 archive、boot-progress/watchdog、nuwa defconfig及donor kernelcache解析，接回正式-D入口；feed切换独立处理。
 4. 命中四类硬停先写NEED-REVIEW再停；只差实体按键的项写PENDING-HUMAN继续。
+
+## 新增参考
+
+用户提供的HackiOS开源对照报告已归档，并核验IIG替代、Linux兼容头、PMU不可用实现和返回加载器边界，见[核验记录](operations/2026-10-22-hackios-reference-review.md)。作为独立参考，不自动变更UniXNU主线、donor或验收条件。
 
 ## 其余缺口
 

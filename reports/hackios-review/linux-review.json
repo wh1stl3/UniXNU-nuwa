@@ -1,0 +1,160 @@
+{
+  "repo": "oosexgang/hackios-xnu-kernel",
+  "ref": "8e61187098f2c26c5daee8f9f72b6416aa64b9ab",
+  "files": [
+    {
+      "path": "xnu/files/osfmk/arm64/kpc.c",
+      "sha256": "31cd51ee78b5cc06eb5787ee18bf22b75a9592c1dbff758c461ab445521f1365",
+      "selected_lines": [
+        {
+          "line": 3,
+          "text": "* cores. Apple does not publish its arm64 kpc.c. This version reports a PMU"
+        },
+        {
+          "line": 21,
+          "text": "return 0;"
+        },
+        {
+          "line": 25,
+          "text": "kpc_get_pmu_version(void)"
+        },
+        {
+          "line": 27,
+          "text": "return KPC_PMU_ERROR;"
+        },
+        {
+          "line": 33,
+          "text": "return ENOTSUP;"
+        },
+        {
+          "line": 49,
+          "text": "return 0;"
+        },
+        {
+          "line": 55,
+          "text": "return 0;"
+        },
+        {
+          "line": 61,
+          "text": "return 0;"
+        },
+        {
+          "line": 67,
+          "text": "return FALSE;"
+        },
+        {
+          "line": 73,
+          "text": "return FALSE;"
+        },
+        {
+          "line": 79,
+          "text": "return 0;"
+        },
+        {
+          "line": 85,
+          "text": "return 0;"
+        },
+        {
+          "line": 91,
+          "text": "return 0;"
+        },
+        {
+          "line": 97,
+          "text": "return 0;"
+        },
+        {
+          "line": 101,
+          "text": "kpc_rawpmu_config_count(void)"
+        },
+        {
+          "line": 103,
+          "text": "return 0;"
+        },
+        {
+          "line": 109,
+          "text": "return 0;"
+        },
+        {
+          "line": 115,
+          "text": "return 0;"
+        },
+        {
+          "line": 119,
+          "text": "kpc_get_rawpmu_config(kpc_config_t *configv __unused)"
+        },
+        {
+          "line": 121,
+          "text": "return 0;"
+        }
+      ],
+      "lines": 152
+    },
+    {
+      "path": "xnu-deps/host/bin/xnu-clang",
+      "sha256": "17949bbd912ac1282799b11f89103cab88666adb3d0bd5ff16cab93e71002939",
+      "selected_lines": [
+        {
+          "line": 2,
+          "text": "# clang wrapper for cross-building XNU on Linux:"
+        },
+        {
+          "line": 3,
+          "text": "#  - forces an Apple Mach-O target (stock Linux clang defaults to ELF)"
+        },
+        {
+          "line": 4,
+          "text": "#  - drops flags only Apple's clang understands"
+        },
+        {
+          "line": 7,
+          "text": "case \"$(basename \"$0\")\" in *++) drv=clang++; extra=(-fno-use-cxa-atexit);; *) drv=clang; extra=();; esac"
+        },
+        {
+          "line": 11,
+          "text": "-enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang) ;;"
+        },
+        {
+          "line": 17,
+          "text": "exec /usr/bin/$drv -include \"$HB/../../hostinc/xnu_clang_compat.h\" -target arm64-apple-ios${XNU_SDK_VERSION:-16.5} --ld-path=\"$HB/ld64\" \\"
+        }
+      ],
+      "lines": 18
+    },
+    {
+      "path": "xnu-deps/hostinc/xnu_clang_compat.h",
+      "sha256": "aa94db87e8e0a0d283264ffd90339f95968ce7bb4480d20d3783c240aee04e52",
+      "selected_lines": [
+        {
+          "line": 3,
+          "text": "* (non-Apple) clang. Apple's clang has builtins that describe the pointer/data"
+        },
+        {
+          "line": 10,
+          "text": "#if !__has_builtin(__builtin_xnu_type_signature)"
+        },
+        {
+          "line": 11,
+          "text": "#define XNU_NO_TYPE_BUILTINS                     1"
+        },
+        {
+          "line": 12,
+          "text": "#define __builtin_xnu_type_signature(type)       \"12\""
+        },
+        {
+          "line": 13,
+          "text": "#define __builtin_xnu_type_summary(type)         ((1U << 1) | (1U << 2))"
+        },
+        {
+          "line": 15,
+          "text": "#define __builtin_xnu_types_compatible(a, b)     __is_same(a, b)"
+        },
+        {
+          "line": 17,
+          "text": "#define __builtin_xnu_types_compatible(a, b)     __builtin_types_compatible_p(a, b)"
+        }
+      ],
+      "lines": 21
+    }
+  ],
+  "executed_source": false
+}

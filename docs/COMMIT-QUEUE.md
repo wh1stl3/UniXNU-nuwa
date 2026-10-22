@@ -301,3 +301,13 @@
 [Evidence] reports/kernel-ci/39736351595/run.json、cancel-request.json；reports/kernel-ci/39736926012/run.json、api-publish.json；https://github.com/wh1stl3/UniXNU/actions/runs/39736926012，device_ref=4dd55f0ec8c72e08946c6f597bb3ca3389b65dbd。
 [Risk] 第九轮最终编译/链接未验证，取消不是构建验收；完整driver/donor ABI、QEMU及实机未验证，feed/board不变。
 ```
+
+## Q-031 · HackiOS用户报告与原始来源核验
+
+```text
+[unixnu-nuwa][docs] 归档HackiOS开源对照报告并核验可复用边界
+
+[Change] 收录用户提供报告及来源哈希，读取固定提交公开实现，区分真实源码、IIG替代/类型描述降级、PMU不可用行为与可返回加载器；保持当前基座和验收边界。
+[Evidence] docs/operations/2026-10-22-hackios-reference-review.md；reports/hackios-review/原始来源hash和短摘录；kernel 8e611870、userland 906425b固定提交。
+[Risk] 未执行上游代码或独立复现实机，不推导nuwa硬件、完整RPC或供体ABI通过；报告建议不作执行指令，无板值、feed、镜像或设备修改。
+```
