@@ -251,3 +251,13 @@
 [Evidence] reports/kernel-ci/39733594660/diagnostics.txt原始行352764/352771/352784；timer_call.h:211-217；compatibility-check.json为53项213 hunks通过，单项git apply --check及配方语法检查通过。
 [Risk] AST旧错未再观察到但本轮无该对象产物清单；完整编译/链接待第七轮，driver/donor ABI、QEMU及实机未验证；feed/board不变，无镜像或设备动作。
 ```
+
+## Q-026 · 第七轮源构建启动
+
+```text
+[unixnu-nuwa][build] 发布定时器表修复并启动第七轮源构建
+
+[Change] 记录484b97c已发布与第七轮精确输入，继续跟踪最终编译和链接结果。
+[Evidence] reports/kernel-ci/39734939751/run.json、api-publish.json；https://github.com/wh1stl3/UniXNU/actions/runs/39734939751；device_ref=484b97c57fc2be0a6b5b0455bcca44b5246e0278。
+[Risk] 记录时仍运行中，尚无完整编译/链接或ABI成功证据；feed/board不变，无镜像或设备动作。
+```

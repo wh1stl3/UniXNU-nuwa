@@ -41,3 +41,7 @@ build.json记录51个真实生成实现、51份适配记录，总共1296次模�
 同一符号引用审查：timer_call.h:211-217已对RUNNING_TIMER_KPERF枚举使用KPERF条件，kperf.h中的回调声明属于受限KPERF接口；其余调用位于可选kperf/kptimer.c。processor.c:149-154的表项漏条件。disabled-kperf-timer.patch只给该表项加同样#if KPERF，保留RUNNING_TIMER_QUANTUM和原static_assert，不填假函数或放松断言。
 
 单项git apply --check通过；完整53项213 hunks精确顺序及适配配方bash语法检查通过。修复待第七轮实际编译。为区分辅助对象与目标对象，下一轮build.json将额外记录XNU目标目录对象数、ast.o/processor.o的实际路径/字节数/哈希，原全build计数继续保留。
+
+## 第七轮启动
+
+484b97c57fc2be0a6b5b0455bcca44b5246e0278已发布，第七轮39734939751已启动；实际结果未验证，构建入口将记录目标对象数量和ast.o/processor.o证据，保留所有原始失败退出码。
