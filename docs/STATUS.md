@@ -6,7 +6,7 @@
 
 **咱们的源内核已真实链接 ArmCpu、ArmDTPlatform；加载器源码候选已接线，尚未生成或验证本仓启动镜像。** CI15 [39755850870](https://github.com/wh1stl3/UniXNU/actions/runs/39755850870) success，下载内核20,187,888字节、SHA a9e08c693fec4034f613cd554ea94e5855b25b727b4bfb4af46a4103f565bc7a，五平台导出、零undefined。仅构建与静态检查通过，未QEMU、未在手机执行本仓XNU。
 
-**当前停在 [R-004](NEED-REVIEW.md) 镜像生成审批门。** 倾向先只编译四个加载器模块与FD/BootShim并审计产物；没有触发新的固件CI或设备操作。
+**R-004 A已获用户明确批准，受限固件CI准备发布。** 只编译四个EFI模块、FD与BootShim并检查产物；不打boot.img、不操作手机。
 
 ## 本轮结果
 
@@ -17,8 +17,8 @@
 
 ## 下一步
 
-1. R-004等待选择：A（倾向）先批准受限固件编译，验证四模块真实构建、FV内容/容量和BootShim头；B继续纯源码/ABI及内存语义工作，推迟生成。审批前不生成EFI/FD/boot镜像，不启动相应CI。
-2. A获批后只在独立云端构建树应用固定补丁，包路径按config/loader-candidate.json接入；不改board/feed或板地址，不部署。按首个真实编译错误推进并保存日志。所有实际启动仍需后续单独硬停范围。
+1. 发布并触发firmware-candidate.yml；固定三个来源及LF归一化输入hash，仅在Actions RUNNER_TEMP的独立树应用补丁。取实际日志，按首错推进。
+2. 下载EFI/FD/BootShim及报告，核对AARCH64 PE、GUID/DEPEX、FV内容、FD大小和shim头。通过前不声称完整固件可启动；源内核不包含在此固件构建中。设备执行/boot.img/板值仍为后续独立审批范围。
 3. 在任何XNU负载/启动镜像组装前，继续核验CI15 runtime crypto/pthread provider、ARCH_TIMER/startup/GIC/PSCI、13项boot-progress及watchdog scratch；新内核的NativePrelink布局和12处Libm外部PC编码仍待审查，旧CI13只读plan不能直接继承。
 4. 原厂NoMap/AddDynamicMem语义、RamManager最终EFI map、initrd保留/映射与FAT挂载、DarwinBoot连续分配均为TODO；按D-002先512MiB–1GiB过阶段5，再抬容量。板字段修改仍单独审阅。
 

@@ -110,3 +110,5 @@
 2026-10-22 17:49 · CI15两平台库真实重链接成功，下载五导出/零undefined核对，65348 donor绑定零失败；运行配置和硬件仍待验证 · 本提交（Q-049） · reports/kernel-ci/39755850870/；reports/donor-compat/ci15-kernel-bindings.json
 
 2026-10-22 18:04 · 固定CI15内核并完成四模块加载器/只读initrd源码接线与BootShim修正，独立提取原厂cfg；75项静态检查和两来源apply检查通过，停于R-004固件产物生成门 · 本提交（Q-050） · reports/loader-integration/；docs/operations/2026-10-22-loader-source-integration.md
+
+2026-10-22 18:10 · R-004 A获批，准备只构建EFI/FD/BootShim的独立Actions流程及固定输入闸门；实际构建待启动 · 本提交（Q-051） · .github/workflows/firmware-candidate.yml；scripts/ci/build-firmware-candidate.py；config/firmware-ci-inputs.json

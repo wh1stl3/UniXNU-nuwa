@@ -508,3 +508,14 @@
 [Evidence] reports/loader-integration含75项静态检查、两来源树git apply --check退出0、8342字节原文及来源hash；config/loader-candidate.json固定所有输入，board/feed不变。
 [Risk] 固件编译/分派、initrd映射保留、动态内存语义、XNU运行provider及预链接ABI未验证；无新镜像或设备动作，后续生成停于R-004。
 ```
+
+
+## Q-051 · 获批的受限固件构建入口
+
+```text
+[unixnu-nuwa][firmware] 按R-004 A接入独立EFI与FD构建流程
+
+[Change] 记录用户批准，固定三个来源与跨平台LF哈希，在Actions临时树应用接线补丁并直接构建四模块EFI、FD和BootShim，始终归档日志与批准范围内产物。
+[Evidence] config/firmware-ci-inputs.json、.github/workflows/firmware-candidate.yml、scripts/ci/build-firmware-candidate.py；Python语法及workflow结构检查通过。
+[Risk] 真实编译/模块产物检查待CI，运行/内存所有权未验证；不打boot.img、不生成预链接或负载、不改board/feed或操作设备。
+```

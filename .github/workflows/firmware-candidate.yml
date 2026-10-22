@@ -1,0 +1,37 @@
+name: nuwa EFI FD BootShim candidate
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  firmware:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      GIT_LFS_SKIP_SMUDGE: '1'
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install build tools
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends build-essential uuid-dev nasm clang lld llvm gcc-aarch64-linux-gnu mono-devel gettext python3-venv
+          python3 -m venv "$RUNNER_TEMP/firmware-venv"
+          echo "$RUNNER_TEMP/firmware-venv/bin" >> "$GITHUB_PATH"
+      - name: Build approved candidate only
+        run: python3 scripts/ci/build-firmware-candidate.py
+      - name: Preserve evidence and approved artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuwa-firmware-${{ github.run_id }}
+          path: out/firmware-ci
+          if-no-files-found: error
+          compression-level: 6
+          retention-days: 14

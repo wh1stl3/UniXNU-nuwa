@@ -1,0 +1,156 @@
+{
+  "approval": "R-004 A: EFI/FD/BootShim build and static inspection only",
+  "sources": {
+    "firmware": {
+      "repository": "Project-Silicium/Mu-Silicium",
+      "commit": "6c6755012728c9f7de748228758bad94d1e9a660"
+    },
+    "unixnu": {
+      "repository": "UniXNU/UniXNU",
+      "commit": "75bc13dd34dc4e403826793739e316a264ce00dd"
+    },
+    "sheng": {
+      "repository": "UniXNU/uefi-sheng",
+      "commit": "329b473df1e53a3bfa64b2b39b79670c4c02279b"
+    }
+  },
+  "inputs": [
+    {
+      "root": "firmware",
+      "path": "BootShim/BootShim.S",
+      "lf_sha256": "0f412999b77f8daa884d0a26b3875306b1387c9e40cd599caadb060c252075a4"
+    },
+    {
+      "root": "firmware",
+      "path": "Platforms/Xiaomi/nuwaPkg/nuwa.dsc",
+      "lf_sha256": "676c05a1a292555c54a152825eea4700a77f594ef1a7291bfd330455043059a4"
+    },
+    {
+      "root": "firmware",
+      "path": "Platforms/Xiaomi/nuwaPkg/nuwa.fdf",
+      "lf_sha256": "812e16803aac96c9ff988b091b834b5ea19ec8f0400162c001ea2f1cc01b7129"
+    },
+    {
+      "root": "firmware",
+      "path": "Platforms/Xiaomi/nuwaPkg/DeviceBuild.py",
+      "lf_sha256": "f34249049696d91b2a6e427bbe3b9069205a1c3f85104fbb6bc57b89839ac04a"
+    },
+    {
+      "root": "firmware",
+      "path": "Platforms/Xiaomi/nuwaPkg/Library/MemoryMapLib/MemoryMapLib.c",
+      "lf_sha256": "051c431a43b94ae83dac8868ca6a617b0e21763a132440b92d4417b745d7d00e"
+    },
+    {
+      "root": "firmware",
+      "path": "Platforms/Xiaomi/nuwaPkg/Library/ConfigurationMapLib/ConfigurationMapLib.c",
+      "lf_sha256": "6cbe08f783c8f16dbef390234c73f008426f237ae634ffcc5eccd70c15637f8c"
+    },
+    {
+      "root": "firmware",
+      "path": "Silicon/Silicium/SiliciumPkg/Include/Library/MemoryMapLib.h",
+      "lf_sha256": "c60c4b80e81388d40148cc014a25f22a20a89a1722c6dd0f1e784efa3268816b"
+    },
+    {
+      "root": "firmware",
+      "path": "Silicon/Silicium/SiliciumPkg/Drivers/RamManagerDxe/RamManager.c",
+      "lf_sha256": "f21045e2ca73208d3dc55a1bcadae71bcf55cd2c60baafd68d6664a51398e527"
+    },
+    {
+      "root": "firmware",
+      "path": "Silicon/Silicium/SiliciumPkg/Library/MemoryInitPeiLib/MemoryInitPei.c",
+      "lf_sha256": "dced274a5e31484b647e643fa255439a9a6f6eb5fc210671233614ed80ef2edb"
+    },
+    {
+      "root": "firmware",
+      "path": "Mu_Basecore/MdePkg/Library/BaseFdtLib/BaseFdtLib.inf",
+      "lf_sha256": "be1db880ad6d3ea848ff961215ac82d142e62902c977d5ad47ec70c8ee5e248d"
+    },
+    {
+      "root": "unixnu",
+      "path": "package/UniXNUPkg/Application/UniXNU/UniXNU.inf",
+      "lf_sha256": "8afae643b8f99a923e9c89ed371538f15895ab974a639e894da9a36f7fc5efad"
+    },
+    {
+      "root": "unixnu",
+      "path": "package/UniXNUPkg/Driver/UniXNUDxe/UniXNUDxe.inf",
+      "lf_sha256": "077045b9876cf528cf9f9b9e21fd5c5ed857798fd009ff265966c81d86e1249c"
+    },
+    {
+      "root": "unixnu",
+      "path": "drivers/DarwinBoot/DarwinBootPkg/Driver/DarwinBoot.inf",
+      "lf_sha256": "cb10851277b53b355794c1bca3fa16d3bf18a0dc2dee857091837b63599019df"
+    },
+    {
+      "root": "unixnu",
+      "path": "package/UniXNUPkg/UniXNUPkg.dec",
+      "lf_sha256": "200f6071625fc7b988cda1479e7357bbb8419cefb710c1907620de6c17211dfb"
+    },
+    {
+      "root": "unixnu",
+      "path": "package/UniXNUPkg/Library/UniXNULib/UniXNULib.inf",
+      "lf_sha256": "c141b4fbbd0e9c91e5b798db7e372000e6395f03ad67513155b14d54e5d7b381"
+    },
+    {
+      "root": "unixnu",
+      "path": "package/UniXNUPkg/Library/UniXNULib/Boot.c",
+      "lf_sha256": "674f34b0ea51b7a077e79a130c8f85d41638160fbaf7238dd120fd888222b6d3"
+    },
+    {
+      "root": "unixnu",
+      "path": "package/UniXNUPkg/Driver/UniXNUDxe/UniXNUDxe.c",
+      "lf_sha256": "963f11e21e5cd467217d216b64c3097875e4464a8245fc46508bb6540f66923d"
+    },
+    {
+      "root": "unixnu",
+      "path": "drivers/DarwinBoot/DarwinBootPkg/Driver/DarwinBoot.c",
+      "lf_sha256": "cd141d002f24b951d3dfa7773f29cf645712be3c71f4b6e801d1114eb81b5c0a"
+    },
+    {
+      "root": "unixnu",
+      "path": "scripts/unixnu/bootimg.py",
+      "lf_sha256": "466c29e14332381c4506b4ccbafd437159a4fe575f888b8f26ba13026e26da6f"
+    },
+    {
+      "root": "firmware",
+      "path": "Resources/Configs/nuwa.toml",
+      "lf_sha256": "3068e1d37aafff8c32d9037c3a376723a0672f9a0ee954735b1775fa17e8db0c"
+    },
+    {
+      "root": "firmware",
+      "path": ".gitmodules",
+      "lf_sha256": "86fb199bcc333e142654fe47c3dd9c7f946bdced8dd3835bd5a40573302dc1aa"
+    },
+    {
+      "root": "firmware",
+      "path": "Platforms/Xiaomi/nuwaPkg/Include/DXE.inc",
+      "lf_sha256": "635325a16e60b639daf0d65a345d3291e3b84b027708389e5f2c5c97259a0272"
+    },
+    {
+      "root": "firmware",
+      "path": "Silicon/Qualcomm/QcomPkg/Library/PlatformBootManagerLib/PlatformBootManager.c",
+      "lf_sha256": "d367183efe317e1c92958ab97761dae236efdf478b44fbc01c67f82c303367ff"
+    },
+    {
+      "root": "firmware",
+      "path": "Silicon/Qualcomm/QcomPkg/Library/PlatformBootOptionsLib/PlatformBootOptions.c",
+      "lf_sha256": "b56fdd27d64ddc4118fd29fce53f70f88c613c69242e28c00fd2306d6be50fe3"
+    },
+    {
+      "root": "sheng",
+      "path": "Platforms/Xiaomi/shengPkg/Drivers/ShengBootMemoryDxe/ShengBootMemoryDxe.c",
+      "lf_sha256": "060a248a44fd06dc36af48b84f7b077e4d773255b38d7ba169750f04a1171bd4"
+    },
+    {
+      "root": "sheng",
+      "path": "Platforms/Xiaomi/shengPkg/Drivers/ShengBootMemoryDxe/ShengBootMemoryDxe.inf",
+      "lf_sha256": "554e3a36407c11710bbc0b111ae5b36a78932011d2cd502b717bd3eed56e17f0"
+    },
+    {
+      "root": "sheng",
+      "path": "README.md",
+      "lf_sha256": "92ab1a7a0e239d062d27c2bb651ad3f568219f79f7e3d50d9dfa399e6faf9286"
+    }
+  ],
+  "board_lf_sha256": "8601b3e5352ab4656e9aefdc22a03d22d531cbb8d465ca11e27fd9aa9d4d38d5",
+  "feed_lf_sha256": "dec145fe25ed9cf1c50292a1e16ccbaa690b450a1de9e1ed687395e5fef88294"
+}

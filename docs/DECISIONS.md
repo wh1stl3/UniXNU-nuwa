@@ -318,3 +318,6 @@ D-012补充（2026-10-22 17:49）：CI15实际重链接成功，ArmCpu/ArmDTPlat
 - 证据：operations/2026-10-22-loader-source-integration.md；config/loader-candidate.json；reports/loader-integration/。
 
 当前内核输入固定为CI15 SHA a9e08c69（ArmCpu/ArmDTPlatform真实链接），不以隔壁预链接内核或旧FAT代替。复用BootShim长度修正、UniXNU应用/注册器/DarwinBoot协议链及sheng只读initrd BlockIo实现，后者移除DRAM/GCD扩展，只保留发布功能并检查入口HOB长度。原厂XBL配置以独立提取的8342字节原文为准；NoMap/AddDynamicMem、FD拆分和参考高地址策略分别审查，不整表套用或推翻D-002。源码候选不构成编译/分派/内存所有权/硬件通过；下一镜像生成步骤按R-004硬停。
+
+
+D-015补充：用户明确批准R-004 A，允许独立Actions临时源树生成四模块EFI、nuwa FD及BootShim并静态检查；不包含boot.img/负载/预链接镜像、设备执行或板内存地址修改。来源由config/firmware-ci-inputs.json钉版并记录LF归一化哈希，固件入口直接调用DeviceBuild，避开build_uefi.py的boot打包阶段。
