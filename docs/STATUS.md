@@ -1,6 +1,6 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 17:29（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-22 17:34（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
@@ -9,13 +9,13 @@
 ## 本轮结果
 
 - ArmCpu、ArmDTPlatform、ArmVirtPlatform三库真实编译成功，复位noreturn修复生效；CI14未把三库链接回内核。[来源和下一链接门](operations/2026-10-22-driver-reuse-and-platform-link.md)。
-- 下一轮将原make实际argv保持不变，仅追加ArmCpu和ArmDTPlatform真实库及依赖，验证最终内核五项导出和零undefined；7项命令保护测试、完整源输入和shell语法检查通过，真实重链接待CI。
+- 下一轮将原make实际argv保持不变，仅追加ArmCpu和ArmDTPlatform真实库及依赖，验证最终内核五项导出和零undefined；7项命令保护测试、完整源输入和shell语法检查通过，[第十五轮39755850870](https://github.com/wh1stl3/UniXNU/actions/runs/39755850870)已触发，device_ref=ca8db300bf68ebc4853e023f08b920da0eab5de0，实际重链接待取证。
 - 复用驱动优先采用UniXNU和已有开源实现，固定提交/许可/依赖。同SoC不代替nuwa板级证据。已清点fuxi/vermeer来源，不复制上游树。
 - 用户提供已root的Android ADB：只读采集已确认fts_touch_spi绑定SPI0.0、DT compatible=st,spi，固件名st_fts_m2.ftb；Adreno740v2、KIOXIA UFS及1440x3200 DSI模式已记录。精确芯片/面板及开源对照继续核对，所有板配置保持原值。证据reports/android-driver-evidence/20261022T092529Z/（尚未作为XNU验收）。
 
 ## 下一步
 
-1. 发布两库重链接验证并触发第十五轮，以实际链接日志/产物核对结果，失败按第一处真实error推进。
+1. 跟踪第十五轮39755850870，以实际链接日志/产物核对结果，失败按第一处真实error推进。
 2. 用只读ADB的驱动绑定/DT与MiCode源码固定提交对照，确定触控/面板及UFS/GPU可复用模块；DT内存在节点不等于实际绑定，未知项TODO。
 3. 继续DarwinBoot/UniXNU入口、boot-progress 13回调/watchdog scratch与真实crypto/pthread接口审查，再接-D正式配置。
 4. 保持donor PC-relative/完整ABI门；改板级内存/地址、生成镜像或fastboot boot前先NEED-REVIEW硬停。

@@ -464,3 +464,14 @@
 [Evidence] reports/kernel-ci/39750542014下载内核29810101与runner一致，三库编译和符号名闭包通过；reports/driver-reuse为固定来源与7项命令保护测试、60项源输入静态检查。
 [Risk] 下一重链接仍待实际CI，完整ABI/时钟/crypto与硬件未验证；feed/board不变，无预链接/固件镜像或_verified=true。
 ```
+
+
+## Q-047 · 第十五轮真实平台链接启动
+
+```text
+[unixnu-nuwa][build] 发布两库重链接审查并启动第十五轮
+
+[Change] 保存ca8db30同Git对象非强制发布及第十五轮精确输入，跟踪真实源内核和平台链接。
+[Evidence] reports/kernel-ci/39755850870/run.json与api-publish.json；https://github.com/wh1stl3/UniXNU/actions/runs/39755850870，device_ref=ca8db300bf68ebc4853e023f08b920da0eab5de0。
+[Risk] 本轮真实链接结果待取证，完整ABI/硬件未验证；feed/board不变，无镜像生成或_verified=true。
+```
