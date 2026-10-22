@@ -152,3 +152,5 @@
 2026-10-22 23:05 · 完成独立固件profile与本地D:/Code/uefi-nuwa，31项输入/接线检查和完整Git fsck通过，移除共享缓存依赖；source-import成功且secret已删除，新内核CI成功但两次产物下载EOF待核验，未生成镜像或访问设备 · 本提交（Q-068） · reports/uefi-nuwa/；reports/kernel-ci/39793231214/
 
 2026-10-22 23:18 · 分块取回合并版内核及三archive，实际SHA/五导出/零undefined/65348项donor指针检查通过；调度独立固件CI39802617878，尚无设备执行 · 本提交（Q-069） · reports/kernel-ci/39793231214/；reports/firmware-ci/39802617878/
+
+2026-10-22 23:27 · nuwa Android=1只读FDT确认splash/initrd与ramoops-FD重叠；固件CI因Azure依赖下载阻塞取消，补有限超时和镜像替换，未进入固件编译 · 本提交（Q-070） · reports/firmware-ci/39802617878/

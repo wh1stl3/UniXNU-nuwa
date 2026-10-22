@@ -1,0 +1,28 @@
+{
+  "scope": "read-only identity inventory, no reboot or image operation",
+  "records": [
+    {
+      "tool": "adb",
+      "exit_code": 0,
+      "targets": [
+        {
+          "mode": "device",
+          "ro.product.device": "enuma",
+          "ro.product.vendor.device": "enuma",
+          "sys.boot_completed": "1"
+        },
+        {
+          "mode": "device",
+          "ro.product.device": "nuwa",
+          "ro.product.vendor.device": "mivendor",
+          "sys.boot_completed": "1"
+        }
+      ]
+    },
+    {
+      "tool": "fastboot",
+      "exit_code": 0,
+      "targets": []
+    }
+  ]
+}

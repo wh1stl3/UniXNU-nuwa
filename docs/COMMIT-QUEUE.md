@@ -720,3 +720,13 @@
 [Evidence] 39793231214实际内核SHA77742999、五导出零undefined，三archive哈希与65348项donor指针检查通过，完整ZIP摘要未验证。
 [Risk] 仍为静态检查，未执行预链接或设备；39802617878固件尚在构建，CI15候选与board/feed保持。
 ```
+
+## Q-070 · 实机DT映射与固件CI依赖阻塞
+
+```text
+[unixnu-nuwa][build] 保存nuwa实机映射并限制固件CI依赖下载等待
+
+[Change] 增加只读FDT采集与固件区域交集报告；runner Ubuntu镜像改archive HTTPS，安装设有限超时重试和非交互模式。
+[Evidence] nuwa boot_completed=1，FDT SHAf4636276；39802617878日志为Azure cross-GCC包Get/Ign阻塞后取消，未进入编译；更新安装脚本Bash语法通过。
+[Risk] 未生成新固件或执行镜像；候选ABL交接映射、日志持久性及新镜像下载效果仍未验证，board/feed不变。
+```

@@ -18,10 +18,22 @@ jobs:
         with:
           persist-credentials: false
       - name: Install build tools
+        timeout-minutes: 10
         run: |
           set -euo pipefail
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends build-essential uuid-dev nasm clang lld llvm gcc-aarch64-linux-gnu mono-devel gettext python3-venv
+          # Previous runner stalled while fetching cross-GCC from the Azure mirror.
+          # Keep Ubuntu's signed repositories and change only that mirror hostname.
+          test -f /etc/apt/sources.list.d/ubuntu.sources
+          sudo sed -i -E 's@https?://azure.archive.ubuntu.com/ubuntu@https://archive.ubuntu.com/ubuntu@g' /etc/apt/sources.list.d/ubuntu.sources
+          grep '^URIs:' /etc/apt/sources.list.d/ubuntu.sources
+          sudo env DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \
+            timeout --signal=TERM --kill-after=30s 180s \
+            apt-get -o Acquire::Retries=2 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update
+          sudo env DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a \
+            timeout --signal=TERM --kill-after=30s 360s \
+            apt-get -o DPkg::Lock::Timeout=60 -o Acquire::Retries=2 \
+            -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 \
+            install -y --no-install-recommends build-essential uuid-dev nasm clang lld llvm gcc-aarch64-linux-gnu mono-devel gettext python3-venv
           python3 -m venv "$RUNNER_TEMP/firmware-venv"
           echo "$RUNNER_TEMP/firmware-venv/bin" >> "$GITHUB_PATH"
       - name: Build approved candidate only

@@ -1,10 +1,10 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-22 23:18（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-22 23:27（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
-**三仓已齐；合并版内核独立核验通过，独立固件CI39802617878构建中。**
+**三仓已齐；合并版内核独立核验通过，独立固件CI39802617878因依赖镜像下载阻塞已取消，有限超时与镜像修复待下一轮。**
 
 | 仓库 | 当前输入与状态 |
 | --- | --- |
@@ -28,7 +28,7 @@ CI15实际DWARF为608B CommandLine/0x2e0 boot_args，尾字段0x2d0/0x2d8；上�
 
 ## 实机、入口与恢复
 
-用户已明确恢复本仓实机访问；本轮完成内核下载/静态核验并调度已批准固件构建，没有设备操作。当前设备状态未知，任何下一设备动作先重新核对nuwa身份和模式。
+用户已明确恢复本仓实机访问；本轮只读确认ADB的nuwa/Android boot_completed=1，同时存在enuma；只采集nuwa FDT，没有重启或镜像操作。当前观测nuwa为Android=1；以后改变模式前仍重新核对身份，排除enuma。
 
 历史固件CI39764322744的四EFI/FD/BootShim编译与静态检查通过；该旧FD无XNU。v4包3153920B/SHA12864ac6…实际Sending/Booting OKAY、用户黑屏，约29秒fastboot持续可见，BootShim/SEC/DXE/BDS均缺执行证据。20:19最后确认原厂临时boot恢复Android=1，不能代表其他轮操作后的现状；A槽持久unbootable未修复，H-001按键演练仍待办。[实机记录](operations/2026-10-22-v4-firmware-trial.md)。
 
@@ -36,7 +36,7 @@ CI15实际DWARF为608B CommandLine/0x2e0 boot_args，尾字段0x2d0/0x2d8；上�
 
 ## 下一步
 
-1. 读取独立固件CI39802617878的实际首错/结果；R-004 A范围已调度四EFI/FD/BootShim，当前安装构建工具。下载后独立核对产物，不将源码或CI状态代替二进制审查。
+1. 重新调度独立固件：39802617878安装依赖时Azure镜像跨GCC下载长期Get/Ign，已取消且未编译。workflow改官方Ubuntu镜像、有限超时/重试与非交互模式；下一轮取实际首错，不将网络阻塞归为固件编译失败。
 2. 合并版内核独立静态核验已完成；保留CI15候选输入，后续以明确profile逐步接入新内核，不自动混用不同来源或生成预链接。完整运行ABI/provider/ARCH_TIMER仍待审查。
 3. 新固件产物检查用--publisher-name NuwaBootMemoryDxe；legacy默认仍支持旧ShengBootMemoryDxe产物。本地子模块未初始化，31项检查中Mu_Basecore文件借用同固定提交的只读缓存，不能称完整本地构建工具已就绪。
 4. 继续ABL/FDT/splash/x0/initrd保留与早期日志回收，审查SM8550 USB许可/4K/DMA/SMMU依赖、UEFI SerialIo桥接；provider/ARCH_TIMER/GIC/PSCI、13项boot-progress、watchdog和NativePrelink完整ABI仍待验收。
@@ -47,3 +47,5 @@ CI15实际DWARF为608B CommandLine/0x2e0 boot_args，尾字段0x2d0/0x2d8；上�
 board/feed及所有_verified标志不变；4KiB，iPhone10,3/d22ap/iOS16.7.16/20H392、8796.141.3，ipad_identity=true为安全属性。D-002先512MiB–1GiB过阶段5，上限8GiB。未知值TODO，不抄其他donor prelink数值；两个旧仓保持只读。用户要求独立本地固件仓后，允许在D:/Code/uefi-nuwa维护固件，AGENTS目录表已更新。
 
 官方72中文页/144路由复核与既有日志出口方案见operations对应报告；本机触控ST FTS SPI、同SoC不替代本板验收。iOS用户态、完整本地内核构建和新固件实机运行仍未验证。
+
+本轮当前FDT938828B/SHAf4636276：splash B8000000/02B00000、initrd B5FB2000–B7FFF1D4。ramoops A7000000/00400000与固件FD Reserved/UEFI FD重叠，不能直接作为固件持久日志区；这是跨阶段所有权问题，不是黑屏根因证明。[实机只读复核](operations/2026-10-22-live-dt-and-firmware-map.md)。

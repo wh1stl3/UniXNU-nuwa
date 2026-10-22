@@ -1,0 +1,861 @@
+{
+  "scope": "Live Android FDT only; not candidate ABL handoff or UEFI map validation",
+  "argv": [
+    "adb",
+    "-s",
+    "<selected-nuwa>",
+    "exec-out",
+    "su -c 'cat /sys/firmware/fdt'"
+  ],
+  "bytes": 938828,
+  "sha256": "f4636276599dd5b8c483692745994d1a8285542c30943e901f2717e23378f8a8",
+  "selected_nodes": [
+    {
+      "node": "/",
+      "properties": {
+        "model": {
+          "bytes": 38,
+          "hex": "5175616c636f6d6d20546563686e6f6c6f676965732c20496e632e2038353530206e75776100"
+        },
+        "compatible": {
+          "bytes": 37,
+          "hex": "71636f6d2c6b616c616d612d6d74700071636f6d2c6b616c616d610071636f6d2c6d747000"
+        }
+      }
+    },
+    {
+      "node": "/memory",
+      "properties": {
+        "device_type": {
+          "bytes": 7,
+          "hex": "6d656d6f727900"
+        },
+        "reg": {
+          "bytes": 144,
+          "hex": "00000000800000000000000000e0000000000000811d00000000000056e3000000000000d8140000000000000002000000000000d8800000000000000000000000000000e7cb0000000000001835000000000008800000000000000039d0000000000008c000000000000000c00000000000000980000000000000018000000000000008b9f000000000000001e00000"
+        }
+      }
+    },
+    {
+      "node": "/chosen",
+      "properties": {
+        "linux,initrd-end": {
+          "bytes": 8,
+          "hex": "00000000b7fff1d4"
+        },
+        "linux,initrd-start": {
+          "bytes": 8,
+          "hex": "00000000b5fb2000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/gunyah_hyp_region@80000000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "00000000800000000000000000a00000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/cpusys_vm_region@80a00000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "0000000080a000000000000000400000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/xbl_dt_log_merged@81a00000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/aop_cmd_db_region@81c60000",
+      "properties": {
+        "compatible": {
+          "bytes": 12,
+          "hex": "71636f6d2c636d642d646200"
+        },
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "0000000081c600000000000000020000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/aop_config_merged_region@81c80000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "0000000081c800000000000000074000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/smem_region@81d00000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "0000000081d000000000000000200000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/adsp_mhi_region@81f00000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "0000000081f000000000000000020000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/global_sync_region@82600000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "00000000826000000000000000100000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/tz_stat_region@82700000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "00000000827000000000000000100000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/mpss_region@89800000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "000000008a8000000000000010800000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/q6_mpss_dtb_region@9b000000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "000000009b0000000000000000080000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/ipa_fw_region@9b080000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "000000009b0800000000000000010000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/ipa_gsi_region@9b090000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "000000009b090000000000000000a000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/gpu_micro_code_region@9b09a000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "000000009b09a0000000000000002000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/spss_region_region@9b100000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "000000009b1000000000000000180000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/spu_tz_shared_mem@9b280000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "000000009b2800000000000000060000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/spu_modem_shared_mem@9b2e0000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "000000009b2e00000000000000020000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/camera_region@9b300000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "000000009b3000000000000000800000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/video_region@9bb00000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "000000009bb000000000000000700000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/cvp_region@9c200000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "000000009c2000000000000000700000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/cdsp_region@9c900000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "000000009c9000000000000002000000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/q6_cdsp_dtb_region@9e900000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "000000009e9000000000000000080000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/q6_adsp_dtb_region@9e980000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "000000009e9800000000000000080000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/adspslpi_region@9ea00000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "000000009ea000000000000004680000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/dump_display_region@a4a80000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "00000000a4a800000000000000000800"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/mpss_dsm_region@d4d00000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "00000000d4d000000000000003300000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/xbl_sc_region@d8100000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "00000000d81000000000000000040000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/cpucp_fw_region@d8140000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "00000000d814000000000000001c0000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/qtee_region@d8300000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "00000000d83000000000000000500000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/hwfence-shmem",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "00000000e644000000000000002dd000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/trust_ui_vm_region@f3800000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/trust_ui_vm_dump@0xf78ee000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/trust_ui_vm_qrtr@0xf78ef000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/trust_ui_vm_vblk0_ring@0xf78f8000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/trust_ui_vm_vblk1_ring@0xf78fc000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/trust_ui_vm_swiotlb@0xf7900000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/oem_vm_vblk0_ring@f7afc000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/oem_vm_swiotlb@f7b00000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/oem_vm_region@f7c00000",
+      "properties": {
+        "compatible": {
+          "bytes": 16,
+          "hex": "7368617265642d646d612d706f6f6c00"
+        },
+        "reusable": {
+          "bytes": 0,
+          "hex": ""
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/llcc_lpi_region@ff800000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "00000000ff8000000000000000600000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/va_md_mem_region",
+      "properties": {
+        "compatible": {
+          "bytes": 16,
+          "hex": "7368617265642d646d612d706f6f6c00"
+        },
+        "reusable": {
+          "bytes": 0,
+          "hex": ""
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/sp_region",
+      "properties": {
+        "compatible": {
+          "bytes": 16,
+          "hex": "7368617265642d646d612d706f6f6c00"
+        },
+        "reusable": {
+          "bytes": 0,
+          "hex": ""
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/cdsp_eva_region",
+      "properties": {
+        "compatible": {
+          "bytes": 16,
+          "hex": "7368617265642d646d612d706f6f6c00"
+        },
+        "reusable": {
+          "bytes": 0,
+          "hex": ""
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/adsp_heap_region",
+      "properties": {
+        "compatible": {
+          "bytes": 16,
+          "hex": "7368617265642d646d612d706f6f6c00"
+        },
+        "reusable": {
+          "bytes": 0,
+          "hex": ""
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/user_contig_region",
+      "properties": {
+        "compatible": {
+          "bytes": 16,
+          "hex": "7368617265642d646d612d706f6f6c00"
+        },
+        "reusable": {
+          "bytes": 0,
+          "hex": ""
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/qseecom_region",
+      "properties": {
+        "compatible": {
+          "bytes": 16,
+          "hex": "7368617265642d646d612d706f6f6c00"
+        },
+        "reusable": {
+          "bytes": 0,
+          "hex": ""
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/secure_cdsp_region",
+      "properties": {
+        "compatible": {
+          "bytes": 16,
+          "hex": "7368617265642d646d612d706f6f6c00"
+        },
+        "reusable": {
+          "bytes": 0,
+          "hex": ""
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/non_secure_display_region",
+      "properties": {
+        "compatible": {
+          "bytes": 16,
+          "hex": "7368617265642d646d612d706f6f6c00"
+        },
+        "reusable": {
+          "bytes": 0,
+          "hex": ""
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/demura_heap_region",
+      "properties": {
+        "compatible": {
+          "bytes": 16,
+          "hex": "7368617265642d646d612d706f6f6c00"
+        },
+        "reusable": {
+          "bytes": 0,
+          "hex": ""
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/qseecom_ta_region",
+      "properties": {
+        "compatible": {
+          "bytes": 16,
+          "hex": "7368617265642d646d612d706f6f6c00"
+        },
+        "reusable": {
+          "bytes": 0,
+          "hex": ""
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/qmc_dma_region",
+      "properties": {
+        "compatible": {
+          "bytes": 16,
+          "hex": "7368617265642d646d612d706f6f6c00"
+        },
+        "reusable": {
+          "bytes": 0,
+          "hex": ""
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/ramoops_region",
+      "properties": {
+        "compatible": {
+          "bytes": 8,
+          "hex": "72616d6f6f707300"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/audio_cma_region",
+      "properties": {
+        "compatible": {
+          "bytes": 16,
+          "hex": "7368617265642d646d612d706f6f6c00"
+        },
+        "reusable": {
+          "bytes": 0,
+          "hex": ""
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/sdsp_region",
+      "properties": {
+        "compatible": {
+          "bytes": 16,
+          "hex": "7368617265642d646d612d706f6f6c00"
+        },
+        "reusable": {
+          "bytes": 0,
+          "hex": ""
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/linux,cma",
+      "properties": {
+        "compatible": {
+          "bytes": 16,
+          "hex": "7368617265642d646d612d706f6f6c00"
+        },
+        "reusable": {
+          "bytes": 0,
+          "hex": ""
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/debug_kinfo_region",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/mem_dump_region",
+      "properties": {
+        "compatible": {
+          "bytes": 16,
+          "hex": "7368617265642d646d612d706f6f6c00"
+        },
+        "reusable": {
+          "bytes": 0,
+          "hex": ""
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/cnss_wlan_region",
+      "properties": {
+        "reusable": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "compatible": {
+          "bytes": 16,
+          "hex": "7368617265642d646d612d706f6f6c00"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/ramoops@0xa7000000",
+      "properties": {
+        "compatible": {
+          "bytes": 8,
+          "hex": "72616d6f6f707300"
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "00000000a70000000000000000400000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/xbl_dt_log@81a00000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "0000000081a000000000000000040000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/aop_image_region@81c00000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "0000000081c000000000000000060000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/xbl_ramdump_region@81200000",
+      "properties": {
+        "no-map": {
+          "bytes": 0,
+          "hex": ""
+        },
+        "reg": {
+          "bytes": 16,
+          "hex": "00000000812000000000000000280000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/splash_region",
+      "properties": {
+        "reg": {
+          "bytes": 16,
+          "hex": "00000000b80000000000000002b00000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/demura_region_0",
+      "properties": {
+        "reg": {
+          "bytes": 16,
+          "hex": "00000000000000000000000000000000"
+        }
+      }
+    },
+    {
+      "node": "/reserved-memory/demura_region_1",
+      "properties": {
+        "reg": {
+          "bytes": 16,
+          "hex": "00000000000000000000000000000000"
+        }
+      }
+    }
+  ],
+  "boot_completed": {
+    "command": "getprop sys.boot_completed",
+    "exit_code": 0,
+    "stdout": "1"
+  },
+  "bootreason": {
+    "command": "getprop ro.boot.bootreason",
+    "exit_code": 0,
+    "stdout": "bootloader"
+  },
+  "boot_slot": {
+    "command": "getprop ro.boot.slot_suffix",
+    "exit_code": 0,
+    "stdout": "_a"
+  }
+}
