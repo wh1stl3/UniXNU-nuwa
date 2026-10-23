@@ -1,27 +1,37 @@
-# 主线交接（2026-10-24更新）
+# 主线交接（2026-10-24 01:40更新）
 
-先读AGENTS、STATUS和DECISIONS。设备仓本轮基线5b782d9；固件codex/nuwa-sec-handoff-trace@00a37d9。两旧资料库只读，不设置_verified或未知板值。
+## 停止原因与边界
 
-## 当前实机事实
+用户原话“先停下 落实文档”。现在暂停主线；完成本次文档/证据提交后不继续构建、分析或设备动作。无新鲜录像确认，不能把此前其他包的许可用于新包。只有用户明确续接后恢复工作；临时启动还需该轮录像和恢复门。先读AGENTS/STATUS/DECISIONS，两旧资料库只读；不设置_verified或未知板值。
 
-最后试验87b14624/3153920B，CI39988591973/source b4f9075，FD70b266b3。两原图确认4MiB FV发布Success及唯一NUWA VOLUME PROBE配置菜单。包无XNU/ADT；timeout60/action exit解释回固件/无OS。原chosen封装依旧absent。证据reports/embedded-probe-trial/2026-10-24/。
+## 当前提交与完整构建
 
-本轮recovery.json及postcondition.json记录Android完成1、nuwa/kalama、slot_a、三分区SHA与preflight一致；实际查询时间取postcondition.at。人工恢复已闭环。没有flash/erase/改槽。
+设备构建源84c88f8057a808670fc84d151ad0b4128ce91013（本次文档提交在其后）；固件分支codex/nuwa-sec-handoff-trace，固定6176a822e66b846620b5bcd2739a0666814ee663，已推送。CI39995937843 success：https://github.com/wh1stl3/UniXNU-nuwa/actions/runs/39995937843 。独立profile boot-input-audit；正常固件DSC/FDF没有改动，新模块由设备补丁0017选择。
 
-## 本轮离线进展
+准备好的包：reports/boot-input-audit/39995937843/package.json。
+镜像：out/trial-boot/boot-input-audit-39995937843/boot-fv-probe-v4.img。
+SHA256 a2dc8195b4368da37276a4618dca90fd556f1d5de72fd58faff0b600936ba65b，3153920B。
+FD SHA256 bfb02a6334f201778467ecc1f1a9042396dc1a3dcd2014c8c4118b88664f106b，3145728B。
+BootShim仍8a3b54765c895a0366539130fdf6e4e4a01e364fe7de067a38d0193606f9d462，112B，text_offset=0。
 
-当前77742999＋donor2ec297ba生成分析候选5a128fb2/58335232B。65348项绑定逐项读回一致，30段组件及native执行字节不变；DarwinBoot主机ParseKernel接受15非零段/74174464B跨度；20解析正反例与4项常量池反向测试通过。Libm精确1224B指纹补丁仅在内存应用固定工具，不改只读源码。
+实际模块/DEPEX/标记、FV RAW 4MiB FAT16 c097413d精确资源、41行2952B SEC内存表7694de6c一致通过。包按原始boot头+固定shim/FD重建逐字节一致，缺preflight时设备子进程调用0。10项固件C宿主UBSan测试及2项拒绝门回归通过。证据reports/boot-input-audit/；memory-map-identical报告firmware_commit是表布局参考源ddd794f，实际候选源以package/inputs.json的6176a82为准。
 
-早期安全initializer为空、完整ABI未验收，loadable=false，不能直接加入设备菜单。完整二进制和大报告在out/native-prelink-current/analysis；精简报告reports/native-prelink-current/emission.json及loader-parser.json。细节operations/2026-10-24-current-native-prelink.md。
+## 真实设备状态及尚未完成
 
-## 直接续接
+最近一次确认时间UTC 2026-10-23T16:56:45.092564（北京时间10-24 00:56:45），来自reports/embedded-probe-trial/2026-10-24/postcondition.json；nuwa/kalama、Android完成1、slot_a、三分区SHA与preflight一致。本轮没有设备查询，不能声称实时状态不变。没有flash/erase/改槽位。
 
-- 复现常量区证据：`python -B scripts/qualify-libm-literal-pool.py --output reports/native-prelink-current/<fresh>.json`。
-- 复现分析候选：`python -B scripts/emit-current-prelink-analysis.py --work out/native-prelink-current/<fresh> --output reports/native-prelink-current/<fresh>.json`。
-- 继续独立UEFI运行内存/CPU入口审查，形成具体连续窗口和目标Apple ADT方案；不使用总DRAM/其他板地址作为分配证据。
-- 新包构建/完整产物校验可直接进行；启动前须新鲜用户录像、唯一nuwa身份、包复验及具体恢复门，通知后执行。仅一般“继续”不替代录像可用性。
-- 源内核、分析用prelink、真实ADT、阶段入口、根存储/iOS运行分别验收。CPU Vectors、TZ/SPSS/Rsc独立问题仍未修复，不因配置发现成功自动关闭。
+87b14624/CI39988591973/固件00a37d9已实测4MiB FV配置卷发现；菜单60秒action exit，无XNU/ADT。新a2dc8195仍只含该配置探针，加ReadyToBoot一次性只读EL、MPIDR、CNTFRQ和ConventionalMemory快照，打印后停10秒，再进入探针菜单。不分配/预留XNU窗口，不执行ExitBootServices。快照含自身map缓冲区，稍后释放；不代表后续AllocatePages成功或窗口所有权。新模块回调/快照尚未实测。保留至少120秒录像，需读取ready、conventional、summary、largest及最后结果，不能用USB ACK当阶段日志。
 
-## 启动输入诊断续接
+77742999当前内核分析候选5a128fb2/58335232B已完成65348项绑定读回、30段组件和native代码保持、固定DarwinBoot主机ParseKernel接受15非零段/74174464B跨度。early_security_initializers为空、完整ABI未验收、loadable=false，不得加入设备菜单。详见operations/2026-10-24-current-native-prelink.md。CPU Vectors/TZ/SPSS/Rsc独立问题未修复。
 
-新增独立boot-input-audit，固件6176a82；46输入9补丁12后哈希已验，完整CI待触发。命令：`gh workflow run firmware-candidate.yml --repo wh1stl3/UniXNU-nuwa --ref main -f profile=boot-input-audit`。打包 `scripts/embedded_probe_package.py RUN --profile boot-input-audit`；新包仍需新的录像确认。无本轮设备动作，最近postcondition仍为embedded-probe-trial/2026-10-24。
+## 用户明确恢复后可用命令
+
+以下是续接说明，不是当前执行许可。Windows使用bundled Python并设PYTHONUTF8=1，平台工具PATH加D:/Code/PortingiOS/common/tools/platform-tools；选择真实nuwa/kalama，绝不操作enuma。
+
+1. 纯离线包复验：`python -B -c "import sys;sys.path.insert(0,'scripts');from embedded_probe_package import validate;print(validate('reports/boot-input-audit/39995937843/package.json')['image_sha256'])"`。
+2. 取得本轮用户明确录像/按键可用答复；不可用则保持不启动。先检查实际Android身份/完成1/三分区并保存新preflight：`python -B scripts/record-nuwa-trial-state.py --output reports/boot-input-audit-trial/<fresh>/preflight.json --package reports/boot-input-audit/39995937843/package.json --capture-confirmation '<本轮真实答复>'`。
+3. 立即通知开始录像，再执行：`python -B scripts/trial-v4-firmware.py launch --evidence reports/boot-input-audit-trial/<fresh>/launch.json --package reports/boot-input-audit/39995937843/package.json --preflight reports/boot-input-audit-trial/<fresh>/preflight.json --observation-seconds 120`。
+4. 保存屏幕结果后回fastboot，执行原Android临时恢复：`python -B scripts/trial-v4-firmware.py recover --evidence reports/boot-input-audit-trial/<fresh>/recovery.json --package reports/boot-input-audit/39995937843/package.json`。
+5. Android实际完成1后 `python -B scripts/record-nuwa-trial-state.py --output reports/boot-input-audit-trial/<fresh>/postcondition.json --before reports/boot-input-audit-trial/<fresh>/preflight.json`。若等待实体键，记录待办并继续离线工作（仅在用户已恢复主线时）。
+
+每轮证据必须fresh；不得覆盖旧记录。窗口/board/bringup内存基址及_verified仍另受AGENTS硬停审阅约束。
