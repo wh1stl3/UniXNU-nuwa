@@ -28,4 +28,6 @@ recovery.json曾等待180秒超时。2026-10-24已只读ADB确认nuwa/kalama、A
 
 2026-10-24T00:15:19.951531+08:00：复查19至35秒抽帧仍无可读卷结果，不宣称驱动未调度或定位根因。固件bc38be0实现错误传播/分阶段日志，8项主机C测试通过；volume-status独立profile静态41输入/7补丁/10后哈希通过。正常构建无停留，0015诊断profile最终状态停留5秒；完整CI及产物核验待完成。
 
-直接续接：`python -B scripts/check-volume-status.py`；`gh workflow run firmware-candidate.yml --repo wh1stl3/UniXNU-nuwa --ref main -f profile=volume-status`。运行后记录run id，实际FD/EFI/BootShim验收后使用`python -B scripts/volume_probe_package.py <run> --profile volume-status`打包。新增scope尚未接入设备启动工具，不使用旧scope绕过。新鲜用户录像门尚未确认，当前只做离线构建。细节见2026-10-24-volume-publisher-status.md。
+直接续接：`python -B scripts/check-volume-status.py`；`gh workflow run firmware-candidate.yml --repo wh1stl3/UniXNU-nuwa --ref main -f profile=volume-status`。运行后记录run id，实际FD/EFI/BootShim验收后使用`python -B scripts/volume_probe_package.py <run> --profile volume-status`打包。新scope VOLUME-STATUS-OFFLINE已接入原严格包校验/录像/恢复门；不使用旧scope绕过。新鲜用户录像门尚未确认，当前只做离线构建。细节见2026-10-24-volume-publisher-status.md。
+
+2026-10-24T00:17:00.937798+08:00：CI39985245383/source b8e6e2a构建中；固件bc38be0。旧产物冒充/录像空值2项反向测试及原5项MMU门回归通过。
