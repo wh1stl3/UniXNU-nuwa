@@ -18,7 +18,7 @@ def main():
     args = cli.parse_args()
     if args.package:
         metadata = json.loads(args.package.read_text())
-        if metadata.get('approval') == 'SEC-HANDOFF-OFFLINE':
+        if metadata.get('approval') in ('SEC-HANDOFF-OFFLINE', 'CONSTRUCTOR-TRACE-OFFLINE'):
             from sec_handoff_package import validate
             validate(args.package)
     output = args.output.resolve()
@@ -59,7 +59,8 @@ def main():
     if args.package:
         package=args.package.resolve()
         scopes = {'R-010 A': ROOT/'reports/dxe-allocation', 'R-011 A': ROOT/'reports/factory-heap',
-                  'SEC-HANDOFF-OFFLINE': ROOT/'reports/sec-handoff'}
+                  'SEC-HANDOFF-OFFLINE': ROOT/'reports/sec-handoff',
+                  'CONSTRUCTOR-TRACE-OFFLINE': ROOT/'reports/constructor-trace'}
         approval = json.loads(package.read_text())['approval']
         if approval not in scopes or not package.is_relative_to(scopes[approval]):
             raise ValueError('Unexpected allocation trial package report')

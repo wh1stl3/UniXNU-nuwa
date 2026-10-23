@@ -1,0 +1,44 @@
+{
+  "at": "2026-10-23T19:26:45+08:00",
+  "result": "CI and downloaded artifacts/container static checks passed",
+  "run_id": 39943865806,
+  "device_commit": "7ebb58dbd718783402f97aca79360403fc23f1af",
+  "firmware_commit": "ddd794fc07e9bc64057222a9bffa4d79c8553af8",
+  "constructor_patch_sha256": "76f614fac9bc0c1919487b63e32587b6a1ab236c6c782b8eb628b1232dff16c4",
+  "inventory_files": 666,
+  "fd": {
+    "bytes": 3145728,
+    "sha256": "a47d8289b8c954bf7004c038489f97c8c23f470d95a19e8c7e439b6a69170573"
+  },
+  "sec_sha256": "20b7768119a096ec86d4e4f024a1641091d9e3b15352e11ca432c110ebe24e37",
+  "actual_constructor_markers": {
+    "[NUWA-CTOR] Debug enter": true,
+    "[NUWA-CTOR] Debug leave status=%r": true,
+    "[NUWA-CTOR] Extract enter": true,
+    "[NUWA-CTOR] Extract leave status=%r": true,
+    "[NUWA-CTOR] Mmu enter": true,
+    "[NUWA-CTOR] Mmu leave status=%r": true,
+    "[NUWA-CTOR] Lzma enter": true,
+    "[NUWA-CTOR] Lzma leave status=%r": true
+  },
+  "memory_table_compared_bytes": 2952,
+  "shim_sha256": "8a3b54765c895a0366539130fdf6e4e4a01e364fe7de067a38d0193606f9d462",
+  "dxe_core_sha256": "45570d705dc4b075bd799751d2c984d92e8cd81034b41f7e8ab2481159c2d8cb",
+  "package": {
+    "path": "out/trial-boot/constructor-trace-39943865806/boot-constructor-trace-v4.img",
+    "bytes": 3153920,
+    "sha256": "530f56b49c8b6f785c9869612af338bc4ef64098dcad4051b4bd723460784d50"
+  },
+  "strict_gate_pure_file_validation_passed": true,
+  "prior_sec_package_regression_passed": true,
+  "device_accessed": false,
+  "workflow_log_sha256": "3b441e4e93b573ac1e32344183de9c874c7157f812738e36d5832ba76d1bd361",
+  "commands": [
+    "gh run view 39943865806 --repo wh1stl3/UniXNU-nuwa --json status,conclusion,jobs",
+    "gh run download 39943865806 --repo wh1stl3/UniXNU-nuwa --dir out/firmware-ci/39943865806",
+    "python scripts/ci/inspect-firmware-candidate.py out/firmware-ci/39943865806/nuwa-firmware-39943865806 --publisher-name NuwaBootMemoryDxe --require-sec-trace --require-no-auto-abl --require-allocation-trace --allocation-profile constructor-trace --output reports/constructor-trace/39943865806/artifact-inspection.json",
+    "python scripts/audit-sec-handoff-artifact.py out/firmware-ci/39943865806/nuwa-firmware-39943865806 --output reports/constructor-trace/39943865806/descriptor-comparison.json",
+    "python scripts/prepare-pil-no-auto-boot.py 39943865806 --profile constructor-trace"
+  ],
+  "limitation": "Diagnostics only, no FAT/ADT/XNU; next trial needs fresh process-log/capture and recovery gate"
+}

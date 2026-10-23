@@ -3,6 +3,7 @@
 Reads fixed artifacts only; does not generate firmware or access a device.
 Preferred RVAs in the output are not observed runtime PCs or board settings.
 """
+import argparse
 import hashlib
 import importlib.util
 import json
@@ -18,7 +19,14 @@ from capstone.arm64 import ARM64_OP_REG, ARM64_OP_IMM
 
 
 def main():
-    output = ROOT / 'reports/sec-handoff/actual-path.json'
+    cli = argparse.ArgumentParser(description=__doc__)
+    cli.add_argument('--artifact', type=Path, default=ROOT / 'out/firmware-ci/39835052901/nuwa-firmware-39835052901')
+    cli.add_argument('--output', type=Path, default=ROOT / 'reports/sec-handoff/actual-path.json')
+    cli.add_argument('--fd-sha256', default='aca853390666e48dfd3901bdfca2a9deab0d7978a02152c4ad497564f0b8b4d6')
+    args = cli.parse_args()
+    output = args.output.resolve()
+    if not output.is_relative_to(ROOT / 'reports'):
+        raise ValueError('Repo report output required')
     if output.exists():
         raise ValueError('Fresh evidence required')
     spec = importlib.util.spec_from_file_location('actual_sec_reader', ROOT / 'scripts/ci/inspect-firmware-candidate.py')
@@ -27,9 +35,9 @@ def main():
     images = []
     original = reader.heap_descriptors
     reader.heap_descriptors = lambda data: (images.append(data), original(data))[1]
-    artifact = ROOT / 'out/firmware-ci/39835052901/nuwa-firmware-39835052901'
+    artifact = args.artifact.resolve()
     raw = (artifact / 'build/FV/SILICIUM_UEFI.fd').read_bytes()
-    if hashlib.sha256(raw).hexdigest() != 'aca853390666e48dfd3901bdfca2a9deab0d7978a02152c4ad497564f0b8b4d6':
+    if hashlib.sha256(raw).hexdigest() != args.fd_sha256:
         raise ValueError('Unexpected actual FD')
     fw = reader.Firmware()
     fw.volume(raw, 'Pinned R-011 FD')
@@ -53,7 +61,8 @@ def main():
     strings = {}
     for match in re.finditer(rb'[ -~]{6,}', data):
         if any(term in match.group() for term in (b'platform-hobs status=', b'before-fv-decompress',
-                                                  b'before-platform-hobs')):
+                                                  b'before-platform-hobs', b'before-library-constructors',
+                                                  b'after-library-constructors', b'[NUWA-CTOR]')):
             section = next(s for s in ranges if s['raw_at'] <= match.start() < s['raw_at'] + s['raw_size'])
             strings[base + section['rva'] + match.start() - section['raw_at']] = match.group().decode()
     map_path = artifact / 'build/FV/Ffs/9AFFB503-E643-4141-8B90-17E8588B1D35Sec/9AFFB503-E643-4141-8B90-17E8588B1D35.map'

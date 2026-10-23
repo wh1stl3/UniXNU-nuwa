@@ -1,8 +1,10 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-23T18:59:02+08:00（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-23T19:26:45+08:00（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
+
+**下一轮更细诊断包已离线准备：CI39943865806成功、8条逐构造日志入实际SEC，41行内存表2952B不变；v4包530f56b4/3153920B，尚未实机启动。本轮没有设备操作。** [新包与实测清单](operations/2026-10-23-constructor-trace-ready.md)。
 
 **晚上2d833461诊断包已完成一次实机临时启动。更正照片明确显示入口HOB创建返回非空data=BAB013B8、list=BAB00000，最后为before-library-constructors；未观察到构造返回、解压、DXE或SHENGMEM。** 现已将范围收窄至库构造调用/相关日志路径，尚未定位具体函数或运行PC，不排除输出通道失效。
 
@@ -36,10 +38,10 @@ XNU源内核已编译，尚未实机进入XNU；上午R-011曾到UniXNU菜单，
 
 ## 下一步
 
-1. 四构造源码审查及共享库日志候选已准备，39项输入/调用返回静态检查通过；FrameBuffer SerialPortInitialize只有return SUCCESS，无重置显示代码。先构建constructor-trace并核验实际8条marker、旧门和全部41行表；本轮无设备操作。见[构造诊断](operations/2026-10-23-constructor-trace.md)。
-2. 新构建/产物检查通过后再安排单构造定位实测，具体照片日志/恢复门仍需刷新；不重复旧包、不跳过构造。共享库日志也影响其他消费者，需记录新DXE核心实际哈希，不沿用旧值。
-3. SHENGMEM、真实initrd范围和载荷卷挂载尚未取得；保持FAT探针→当前内核prelink/ADT→EL1入口→原生根卷顺序，不猜偏移或改板值。
-4. Android完成1及三分区未变已确认。H-009拍摄配合完成（新照片已取得、完整视频未交付）；历史独立按键演练不混称完成。
+1. 新constructor-trace固件CI39943865806已编译并完成666个清单文件/8条marker/旧门及2952B全表静态回归，严格scope接线和旧包回归通过。无须再次构建；下次人在场时先通知录像，刷新身份/Android完成1/分区/原boot/具体恢复门。
+2. 只临时启动新包530f56b4，记录Debug/Extract/Mmu/Lzma enter/leave和status；若四库均返回再取FV/DXE/SHENGMEM。旧2d833461不重复，无依据跳过/重排构造。新共享库日志影响其他消费者，DXE核心为45570d70，不能沿用旧哈希。
+3. 完整记录后恢复Android完成1及三分区SHA。当前仅有18:30:39实际恢复证据，未进行第二轮启动或设备查询。
+4. SHENGMEM、真实initrd和载荷卷仍缺，保持FAT探针→当前prelink/ADT→EL1→原生根卷顺序，不猜偏移/板值。新诊断无XNU负载，不把阶段定位当内核通过。
 
 ## 后续系统卷／启动载荷预研
 

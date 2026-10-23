@@ -48,11 +48,12 @@ def main():
         package_path = args.package.resolve()
         scopes = {'R-007 A': ROOT / 'reports/sec-trace', 'R-008 A': ROOT / 'reports/relative-offset',
                   'R-009 A': ROOT / 'reports/pil-no-auto', 'R-010 A': ROOT / 'reports/dxe-allocation', 'R-011 A': ROOT / 'reports/factory-heap',
-                  'SEC-HANDOFF-OFFLINE': ROOT / 'reports/sec-handoff'}
+                  'SEC-HANDOFF-OFFLINE': ROOT / 'reports/sec-handoff',
+                  'CONSTRUCTOR-TRACE-OFFLINE': ROOT / 'reports/constructor-trace'}
         package_raw = package_path.read_bytes()
         package = json.loads(package_raw)
         approval = package.get('approval')
-        if approval == 'SEC-HANDOFF-OFFLINE':
+        if approval in ('SEC-HANDOFF-OFFLINE', 'CONSTRUCTOR-TRACE-OFFLINE'):
             from sec_handoff_package import validate
             validate(package_path)
         if (approval not in scopes or not package_path.is_relative_to(scopes[approval])
@@ -119,7 +120,7 @@ def main():
                   'User explicitly approved temporary prepared v4 candidate trial; original recovery authorized',
                   candidate_sha256=candidate_sha, candidate_package_sha256=package_sha,
                   recovery_sha256=HASHES[ORIGINAL], preflight=gate)
-    if args.package and package['approval'] == 'SEC-HANDOFF-OFFLINE':
+    if args.package and package['approval'] in ('SEC-HANDOFF-OFFLINE', 'CONSTRUCTOR-TRACE-OFFLINE'):
         report['authorization'] = 'User requested offline preparation and joint evening testing; launch requires fresh D-021 log/recovery gate and immediate capture notice'
 
     def save():
