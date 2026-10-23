@@ -205,3 +205,5 @@
 2026-10-23T09:08:42+08:00 · CI39835052901成功，实际SEC确认209.75MiB，41条表仅获批字段变化，临时包8e852150及试前门检查通过 · Q-093（提交后以git log定位） · reports/factory-heap/39835052901/
 
 2026-10-23T09:22:59+08:00 · R-011用户实机确认UniXNU三项菜单后BDS无OS，已恢复Android完成1且三分区未变；转入系统卷发现审查 · Q-094（提交后以git log定位） · reports/factory-heap/39835052901/user-observation.json；recovery.json；postcondition.json
+
+2026-10-23T09:31:37+08:00 · 完成系统卷发现契约及Android v4头只读审查；33870292B initrd非整扇区，候选实际映射仍TODO，未再启动 · Q-095（提交后以git log定位） · docs/operations/2026-10-23-system-volume-discovery.md；reports/system-volume-audit/inputs.json

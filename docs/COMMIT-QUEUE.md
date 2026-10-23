@@ -1010,3 +1010,13 @@
 [Evidence] 8e852150命令接受，用户确认Return to firmware/Restart/Power off菜单；Config.c与BootManager.c/NoBootOS.bmp对应；09:14:28 nuwa Android完成1、三分区SHA不变。
 [Risk] 无本轮完整分配计数/照片日志，不保证所有SPSS问题消失；未执行XNU，当前包无FAT或系统负载，实际initrd和系统卷链路仍待验证。
 ```
+
+## Q-095 · 系统卷发现与v4输入契约
+
+```text
+[unixnu-nuwa][loader] 固定系统卷发现契约并区分Android与候选initrd证据
+
+[Change] 保存只读Android启动头、vendor fragment table和DT摘要，记录配置查找及整段512B BlockIo限制，明确菜单后BDS无OS的阶段归属。
+[Evidence] 固定AOSP头SHA276f565d；Android initrd33870292B模512余468，vendor单fragment30899943B，当前R-011包无FAT/XNU；命令与摘要见system-volume-audit。
+[Risk] 候选实际x0/chosen和安装ABL临时v4拼接未验证；不据Android地址构造板值，系统卷、Apple ADT及XNU执行仍待验证；无新增设备启动。
+```

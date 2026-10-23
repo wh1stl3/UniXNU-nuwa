@@ -1,0 +1,192 @@
+{
+  "at": "2026-10-23T01:27:04.716592+00:00",
+  "scope": "Read-only Android post-recovery and pinned source contract, not candidate x0/initrd capture",
+  "primary_header_schema": {
+    "repository": "platform/system/tools/mkbootimg",
+    "commit": "808d42e197506319ee65eb078d3defd9602e2ac2",
+    "url": "https://android.googlesource.com/platform/system/tools/mkbootimg/+/808d42e197506319ee65eb078d3defd9602e2ac2/include/bootimg/bootimg.h",
+    "git_blob_sha1": "784499eae06f45ec7e4917d86e54eb5dbc40599a",
+    "license": "Apache-2.0",
+    "sha256": "276f565d67d2e78375b2099a66945ddd7f17a16e248c9f321bcbe58b6e476da3"
+  },
+  "commands": [
+    {
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'cat /sys/firmware/devicetree/base/model; cat /sys/firmware/devicetree/base/compatible'"
+      ],
+      "exit_code": 0,
+      "bytes": 75,
+      "sha256": "6d886ee5713352e659cf7e1309c40927295af4b8f4f718b9a8edead41ec31702",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "getprop sys.boot_completed"
+      ],
+      "exit_code": 0,
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'dd if=/dev/block/by-name/boot_a bs=4096 count=1 2>/dev/null'"
+      ],
+      "exit_code": 0,
+      "bytes": 4096,
+      "sha256": "15e0bf5eed7190fb3d05944e4864256caebc1350ef3b200263bbcc52452dec89",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'dd if=/dev/block/by-name/init_boot_a bs=4096 count=1 2>/dev/null'"
+      ],
+      "exit_code": 0,
+      "bytes": 4096,
+      "sha256": "353061b13da80d866ffb2959b1460a8907638fb7c3525bcac19f5dafce38f3cc",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'dd if=/dev/block/by-name/vendor_boot_a bs=4096 count=1 2>/dev/null'"
+      ],
+      "exit_code": 0,
+      "bytes": 4096,
+      "sha256": "5a4f7e480d0c21fb98997d0398ebe6dca712f656f2ff29f3d4e4fbb08378291d",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'dd if=/dev/block/by-name/vendor_boot_a bs=4096 skip=1 count=1 2>/dev/null'"
+      ],
+      "exit_code": 0,
+      "bytes": 4096,
+      "sha256": "5cc596209350c48f5b5754938fb020a5453c39a574bc9e30fe43f2f994abe623",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'dd if=/dev/block/by-name/vendor_boot_a bs=1 skip=34791424 count=108 2>/dev/null'"
+      ],
+      "exit_code": 0,
+      "bytes": 108,
+      "sha256": "1a01050221bf0097a2eb953bbbd8344794682ca55465bdf851812a352484410f",
+      "stderr": ""
+    }
+  ],
+  "partitions": {
+    "boot_a": {
+      "header_version": 4,
+      "kernel_bytes": 40417792,
+      "ramdisk_bytes": 0,
+      "header_sha256": "15e0bf5eed7190fb3d05944e4864256caebc1350ef3b200263bbcc52452dec89"
+    },
+    "init_boot_a": {
+      "header_version": 4,
+      "kernel_bytes": 0,
+      "ramdisk_bytes": 2969050,
+      "header_sha256": "353061b13da80d866ffb2959b1460a8907638fb7c3525bcac19f5dafce38f3cc"
+    },
+    "vendor_boot_a": {
+      "header_version": 4,
+      "page_bytes": 4096,
+      "header_bytes": 2128,
+      "vendor_ramdisk_bytes": 30899943,
+      "dtb_bytes": 3885003,
+      "table_bytes": 108,
+      "table_entries": 1,
+      "table_entry_bytes": 108,
+      "bootconfig_bytes": 113,
+      "header_sha256": "5a4f7e480d0c21fb98997d0398ebe6dca712f656f2ff29f3d4e4fbb08378291d",
+      "declared_addresses_not_runtime": {
+        "kernel": "0x8000",
+        "ramdisk": "0x1000000",
+        "dtb": "0x1f00000"
+      },
+      "first_vendor_ramdisk_prefix_hex": "02214c18400b2800e030373037303130",
+      "table_sha256": "1a01050221bf0097a2eb953bbbd8344794682ca55465bdf851812a352484410f",
+      "fragments": [
+        {
+          "bytes": 30899943,
+          "offset": 0,
+          "type": 1,
+          "name": ""
+        }
+      ]
+    }
+  },
+  "android_initrd": {
+    "start": "0xb5fb2000",
+    "end_exclusive": "0xb7fff1d4",
+    "bytes": 33870292,
+    "mod512": 468,
+    "publisher_whole_sector_precondition_passes": false,
+    "source_dt_sha256": "e7217b1575c7a7c2ca4bd758ab7fc20f580533cae4ea85631608997fede51e1d"
+  },
+  "current_trial_package": {
+    "ramdisk_bytes": 0,
+    "fat_included": false,
+    "xnu_included": false
+  },
+  "source_contracts": [
+    {
+      "root": "firmware",
+      "commit": "1ccf760d667b9eec6dd3491c90cc04ebb7c58340",
+      "path": "Platforms/Xiaomi/nuwaPkg/Drivers/NuwaBootMemoryDxe/NuwaBootMemoryDxe.c",
+      "meaning": "Publishes whole chosen initrd, requires positive length divisible by512; does not strip cpio/vendor prefix"
+    },
+    {
+      "root": "unixnu",
+      "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+      "path": "package/UniXNUPkg/UniXNUPkg.dec",
+      "meaning": "Configuration path is EFI/UniXNU/unixnu.toml"
+    },
+    {
+      "root": "unixnu",
+      "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+      "path": "package/UniXNUPkg/Library/UniXNULib/Config.c",
+      "meaning": "Search loaded volume then SimpleFileSystem volumes; no config -> built-in actions and fallback loader scan"
+    }
+  ],
+  "conclusions": [
+    "Current diagnostic package has no supplied FAT or operating-system payload",
+    "Historical/current Android initrd is not automatically a sector-aligned standalone FAT volume",
+    "Vendor fragment selection/generic initrd/bootconfig assembly must be accounted for before a FAT transport is claimed"
+  ],
+  "todo": [
+    "Actual candidate FDT chosen initrd and SHENGMEM outcome",
+    "Exact installed ABL v4 fragment selection/assembly for fastboot boot",
+    "Real target ADT/prelinked kernel ABI completion"
+  ],
+  "image_generated": false,
+  "device_mode_changed": false,
+  "board_feed_changed": false
+}

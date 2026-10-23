@@ -1,6 +1,6 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-23T09:22:59+08:00（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-23T09:31:37+08:00（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
@@ -30,9 +30,13 @@
 
 真实系统入口仍需可发现的卷、\EFI\UniXNU\unixnu.toml、符合Darwin22的预链接内核及目标ADT。当前NuwaBootMemoryDxe只发布/chosen的整个initrd范围为只读512B BlockIo，并要求总长整扇区；GKI v4的vendor_boot/init_boot拼接及实际候选范围尚未验证，不能把FAT随意追加便称系统卷可用。
 
+## 本次系统卷审查
+
+只读读取恢复后 Android 的 v4 boot/init_boot/vendor_boot 头和 fragment table；Android chosen initrd 为33870292B、模512余468，不满足现有整段BlockIo发布条件。此结果不代表R-011候选的实际initrd，当前不能靠追加FAT或猜偏移完成接线。固定AOSP头与采集摘要、未知项见[审查报告](operations/2026-10-23-system-volume-discovery.md)及reports/system-volume-audit/inputs.json。无新镜像、无新增启动或模式切换。
+
 ## 下一步
 
-1. 离线固定核对UniXNU配置查找、BlockIo/FAT及ABL ramdisk拼接契约，检查当前与历史头字段/DT证据，记录具体缺口；继续复用同SoC实现，未知地址TODO。
+1. 当前配置查找/BlockIo与Android头字段审查已完成；从已有录像补取SHENGMEM行，继续固定安装ABL对临时v4包的fragment/generic ramdisk/bootconfig拼接路径。候选实际x0/chosen仍TODO，不以Android快照替代。
 2. 先验证系统卷发现链路，再接真实Darwin22预链接负载/ADT；本轮未新增FAT或第二次试启动，生成镜像本身无需停，但任何设备动作仍需具体日志和已确认恢复路径。
 3. 不把本轮菜单观察写成XNU/完整阶段5通过。实际分配剩余量/失败计数、所有SPSS/协议问题状态、DarwinBoot协议调用及候选x0 DT/initrd均仍未验证。
 
