@@ -45,7 +45,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--work', type=Path, default=WORK, help='Fresh scratch directory under repo out/')
     parser.add_argument('--output', type=Path, default=REPORT, help='Fresh report under repo reports/')
+    parser.add_argument('--kernel', type=Path, help='Explicit analysis candidate under out/')
+    parser.add_argument('--kernel-sha256', help='Required exact digest with --kernel')
     options = parser.parse_args()
+    if bool(options.kernel) != bool(options.kernel_sha256):
+        raise ValueError('Explicit kernel path and SHA256 must be supplied together')
     WORK = options.work.resolve()
     REPORT = options.output.resolve()
     if not WORK.is_relative_to((ROOT / 'out').resolve()):
@@ -180,9 +184,12 @@ int main(int argc,char **argv){
         if result['accepted'] != accepted:
             raise ValueError('Parser result differs: ' + name)
         results.append(dict(name=name, input_bytes=len(data), sha256=sha(data), expected=accepted, result=result))
-    kernel = next((ROOT / 'out/kernel-ci/39793231214').glob('**/mach.development.bcm2837.unstripped'))
+    kernel = (options.kernel.resolve() if options.kernel else next((ROOT / 'out/kernel-ci/39793231214').glob('**/mach.development.bcm2837.unstripped')))
+    if not kernel.resolve().is_relative_to(ROOT / 'out'):
+        raise ValueError('Analysis kernel must be repo-local under out/')
     kernel_sha = sha(kernel.read_bytes())
-    if kernel_sha != '77742999fc1c1b6a94c9603664d946553070f73c6eed83ce9fcca06d70d73ac8':
+    expected_kernel_sha = options.kernel_sha256 or '77742999fc1c1b6a94c9603664d946553070f73c6eed83ce9fcca06d70d73ac8'
+    if kernel_sha != expected_kernel_sha:
         raise ValueError('Current kernel differs')
     kernel_result = json.loads(run([wsl(binary), '--kernel', wsl(kernel)]))
     if not kernel_result['accepted']:

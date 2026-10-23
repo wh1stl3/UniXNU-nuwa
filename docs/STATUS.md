@@ -1,11 +1,9 @@
 # STATUS
 
-> 87b14624实机确认FV→只读BlockIo→FAT→unixnu.toml发现通过，已出现目标NUWA VOLUME PROBE菜单。尚无XNU入口或iOS执行证据；本轮Android恢复和三分区核验已闭环。
+> FV配置卷发现已实机通过且Android恢复闭环。当前77742999内核已生成分析用预链接候选，静态绑定与DarwinBoot主机解析通过；尚未执行XNU。
 
-用户两原图确认NuwaEmbeddedVolumeDxe发布4MiB块设备Success及精确探针配置/菜单项。包无内核/ADT；timeout=60、唯一action=exit，用户所述停留后无OS/回充电界面符合探针退出路径，非完整系统引导验收。原chosen仍envelope absent，与大负载运输问题分开记录。
+新候选5a128fb2/58335232B，65348项重定位写后读回一致，30段donor与native可执行字节未变。Libm原12处拒绝已由完整1224B常量池指纹及数据引用/边界/无直接分支或重定位指针入口证据处理；4项拒绝回归通过。固定DarwinBoot主机ParseKernel接受15个非零段/74174464B跨度，20项ADT解析正反例通过。早期安全initializer未配置，完整donor ABI未验收，loadable=false，不用于设备启动。
 
-来源：CI39988591973/source b4f9075、固件00a37d9、包87b14624e95a4b608435da96c4a7f939893bef7c94186af9d2f157eacef0e496/3153920B。实际资源SHA和全部41行内存表保持一致，9项固件主机测试/新scope门及严格容器通过；未改board/bringup/内存图或_verified。
+最近实机仍为87b14624/CI39988591973/固件00a37d9：4MiB FV→BlockIo→FAT→唯一探针配置通过。recovery/postcondition确认nuwa/kalama、Android完成1及三分区SHA不变。当前无设备试验或刷写；内存图/board/bringup/_verified未改。
 
-87b本轮完成120秒USB观察后，recovery.json已确认本轮Android完成1；postcondition.json确认nuwa/kalama及三分区SHA与本轮preflight一致。没有flash/erase/改槽。照片、preflight/launch/recovery/postcondition见reports/embedded-probe-trial/2026-10-24/。
-
-下一主线：真实Darwin22负载/NativePrelink ABI与目标Apple ADT、连续可分配内存窗口和条件sidecars。现有源内核仅主机ParseKernel通过，不能充当完整可启动prelink。CPU Vectors缺项和TZ/SPSS/Rsc独立问题保留跟进。详见operations/2026-10-24-embedded-volume-trial.md；主线交接同步。
+下一步：在独立诊断profile取得临近OS加载时UEFI可分配连续范围与CPU只读入口信息，形成有证据的窗口/目标Apple ADT方案；随后解决真实安全初始化/预链接ABI和大负载运输。详见operations/2026-10-24-current-native-prelink.md，证据reports/native-prelink-current/。

@@ -1,0 +1,18 @@
+{
+  "at": "2026-10-24T01:21:43.762242+08:00",
+  "argv": [
+    "C:/Users/Administrator/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_libm_literal_pool.py",
+    "-v"
+  ],
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "test_changed_byte_with_unchanged_prefix_is_rejected (test_libm_literal_pool.LiteralPoolTests.test_changed_byte_with_unchanged_prefix_is_rejected) ... ok\ntest_exact_complete_pool_is_recognized (test_libm_literal_pool.LiteralPoolTests.test_exact_complete_pool_is_recognized) ... ok\ntest_instruction_after_the_pool_is_not_exempted (test_libm_literal_pool.LiteralPoolTests.test_instruction_after_the_pool_is_not_exempted) ... ok\ntest_unknown_external_code_without_pool_is_rejected (test_libm_literal_pool.LiteralPoolTests.test_unknown_external_code_without_pool_is_rejected) ... ok\n\n----------------------------------------------------------------------\nRan 4 tests in 0.260s\n\nOK\n"
+}

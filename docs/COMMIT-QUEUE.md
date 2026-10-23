@@ -1390,3 +1390,13 @@
 [Evidence] recovery确认Android完成1；postcondition确认nuwa/kalama与三分区SHA和本轮preflight一致。
 [Risk] 已通过的是小配置卷发现，真实XNU/ADT/NativePrelink及大负载运输仍待完成。
 ```
+
+## Q-132 · 当前内核预链接分析
+
+```text
+[unixnu-nuwa][kernel] 生成当前内核的严格常量池预链接分析候选
+
+[Change] 固定完整Libm常量区指纹与原工具补丁，生成当前native分析候选并复验所有绑定，扩展显式候选解析入口。
+[Evidence] 65348重定位逐项读回、30段组件/native代码保持；4项拒绝测试和20项ADT回归通过，固定ParseKernel接受5a128fb2。
+[Risk] 早期安全initializer为空，完整ABI/目标ADT/运行内存和运输未完成；loadable=false，未操作设备。
+```

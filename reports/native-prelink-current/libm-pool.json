@@ -1,0 +1,130 @@
+{
+  "scope": "Static complete-pool qualification only; not runtime or full donor ABI",
+  "native_sha256": "77742999fc1c1b6a94c9603664d946553070f73c6eed83ce9fcca06d70d73ac8",
+  "donor_sha256": "2ec297bac95bcba01046fd0148e97e7e5885c05a6c18827f39f534ba375c1221",
+  "pool": {
+    "module": "com.apple.kec.Libm",
+    "start": "0xfffffff005b8c054",
+    "end_exclusive": "0xfffffff005b8c51c",
+    "bytes": 1224,
+    "sha256": "12d22dca8e3a79e476ab128f73e28f630bf902d5189ed1d5317589930c0c8622"
+  },
+  "boundary": {
+    "previous_instruction": "RET",
+    "padding_bytes": 4,
+    "next_prologue": "STP X29,X30; MOV X29,SP"
+  },
+  "data_references": [
+    {
+      "address": "0xfffffff005b8be68",
+      "bytes": "e1120010",
+      "role": "ADR x1 -> indexed table 0xfffffff005b8c0c4"
+    },
+    {
+      "address": "0xfffffff005b8be6c",
+      "bytes": "2010008b",
+      "role": "ADD x0,x1,x0,LSL4"
+    },
+    {
+      "address": "0xfffffff005b8be70",
+      "bytes": "0414406d",
+      "role": "LDP d4,d5,[x0]"
+    },
+    {
+      "address": "0xfffffff005b8bf5c",
+      "bytes": "422b005c",
+      "role": "LDR d2 -> scalar at 0xfffffff005b8c4c4"
+    },
+    {
+      "address": "0xfffffff005b8bf78",
+      "bytes": "a12a0010",
+      "role": "ADR x1 -> coefficient block 0xfffffff005b8c4cc"
+    }
+  ],
+  "layout": {
+    "scalar_and_coefficients_bytes": 112,
+    "indexed_table_start": "0xfffffff005b8c0c4",
+    "indexed_table_entries": 64,
+    "indexed_entry_bytes": 16,
+    "indexed_table_bytes": 1024,
+    "scalar_tail_bytes": 8,
+    "vector_coefficients_start": "0xfffffff005b8c4cc",
+    "vector_coefficients_bytes": 80
+  },
+  "external_sites_resolved": 12,
+  "selected_module_direct_branches_into_pool": [],
+  "relocation_pointer_targets_into_pool": [],
+  "complete_hash_required": true,
+  "unknown_external_instruction_policy": "unchanged: reject",
+  "patched_instruction_inventory": {
+    "pc_relative_encodings_preserved": 236892,
+    "known_inline_data": [
+      {
+        "module": "com.apple.AppleFSCompression.AppleFSCompressionTypeZlib",
+        "va": 18446744005097607424,
+        "size": 528,
+        "sha256": "f7bb30778915b574b63a17573babfdeb97251ae92fb57e7302e69783f454f92a"
+      },
+      {
+        "module": "com.apple.AppleFSCompression.AppleFSCompressionTypeZlib",
+        "va": 18446744005097644000,
+        "size": 40,
+        "sha256": "48bdf8e57f8647f2ef3cfda5b500209c4be9b5742632db0ff3614aca8d7ee63d"
+      },
+      {
+        "module": "com.apple.kec.Libm",
+        "va": 18446744005086068820,
+        "size": 1224,
+        "sha256": "12d22dca8e3a79e476ab128f73e28f630bf902d5189ed1d5317589930c0c8622"
+      },
+      {
+        "module": "com.apple.kec.Libm",
+        "va": 18446744005086065680,
+        "size": 2160,
+        "sha256": "1a5eb119b57d453a6123eb839b259b96f2ff4f687fc8aabfdcf965ded106df81"
+      },
+      {
+        "module": "com.apple.kec.Libm",
+        "va": 18446744005086071140,
+        "size": 2188,
+        "sha256": "c103ce1f2e204bbbfcc2069de79758b0ea399e5e7b39b2b8337cbf3d3f7f960a"
+      },
+      {
+        "module": "com.apple.kec.Libm",
+        "va": 18446744005086073544,
+        "size": 1088,
+        "sha256": "22b9e038ad1cbdef1265a71f9213354287637a561eaa52f9ec25f90d10bd0a7c"
+      },
+      {
+        "module": "com.apple.kec.Libm",
+        "va": 18446744005086075116,
+        "size": 212,
+        "sha256": "43ef8598a507444b21d8a2abbe4065554baaa3b6a29dbe390465cc0ba0dfbe28"
+      },
+      {
+        "module": "com.apple.kec.Libm",
+        "va": 18446744005086077168,
+        "size": 56,
+        "sha256": "e874aeba59eebdebdf68d18b1196d1ca6aeee12b110985a856f8fe404e0c76ee"
+      },
+      {
+        "module": "com.apple.kec.corecrypto",
+        "va": 18446744005080897040,
+        "size": 256,
+        "sha256": "74ef7306e7452d6859b6463ce496b8df30925f69e1b2969e1f3f34bbc9c6af04"
+      },
+      {
+        "module": "com.apple.kec.corecrypto",
+        "va": 18446744005080916064,
+        "size": 256,
+        "sha256": "74ef7306e7452d6859b6463ce496b8df30925f69e1b2969e1f3f34bbc9c6af04"
+      }
+    ],
+    "register_dataflow_qualified": false
+  },
+  "limitations": [
+    "No LC_DATA_IN_CODE or function-start command in this module",
+    "Direct branch/pointer scans do not prove every indirect control-flow target",
+    "No component code bytes rewritten; ABI and actual execution remain unqualified"
+  ]
+}
