@@ -1,0 +1,29 @@
+{
+  "scope": "Exact candidate range/guard/helper and one-shot hook host test, register/cache operations recorded by test adapters; not real cache execution",
+  "patch_sha256": "2090fe546a228d2c5c894e060b90fde40cdd60e9211008ba04b773a4bb8cbdcb",
+  "helper_sha256": "8f068453a694f2fb6462f3421751b5e0e211157e7b081b2df38aa9176597d09c",
+  "host_stdin_sha256": "64e9bbb8ac3d34d7bf66235ff9fed9271196e38136c3ab45c56bd4e7338d4030",
+  "compile_command": [
+    "wsl",
+    "-d",
+    "Ubuntu-22.04",
+    "--",
+    "clang",
+    "-x",
+    "c",
+    "-std=gnu11",
+    "-O1",
+    "-g",
+    "-fsanitize=address,undefined",
+    "-fno-sanitize-recover=all",
+    "-fno-pie",
+    "-no-pie",
+    "-o",
+    "/mnt/d/Code/UniXNU-nuwa/out/hob-cache-handoff/host-handoff",
+    "-"
+  ],
+  "compile_stderr": "",
+  "stdout": "PASS 8192 alignments, observed FF0->1000 extent, invalid states cause zero maintenance, DSB/IVAC/DSB/ISB order, byte-unchanged HOB, one-shot/default/failure callback\n",
+  "stderr": "",
+  "exit_code": 0
+}

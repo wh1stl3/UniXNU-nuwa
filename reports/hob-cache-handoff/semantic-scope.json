@@ -1,0 +1,14 @@
+{
+  "original_hob_guard_byte_identical": true,
+  "mmu_source_equal_after_removing_one_shot_hook": true,
+  "heap_or_memory_map_changed": false,
+  "changed_paths": [
+    "Mu_Basecore/EmbeddedPkg/Library/PrePiHobLib/Hob.c",
+    "Mu_Basecore/UefiCpuPkg/Library/ArmMmuLib/AArch64/ArmMmuLibCore.c",
+    "Silicon/Silicium/SiliciumPkg/Library/MemoryInitPeiLib/MemoryInitPei.c",
+    "Mu_Basecore/EmbeddedPkg/Library/PrePiHobLib/PrePiHobLib.inf"
+  ],
+  "hook_location": "after complete table fill, before MAIR/TTBR; callback consumed once",
+  "maintenance": "DSB; aligned owned active HOB IVAC; DSB; ISB",
+  "not_device_executed": true
+}

@@ -6,11 +6,11 @@ sys.path.insert(0,str(ROOT/'out/python-tools'))
 import capstone
 
 def main():
- cli=argparse.ArgumentParser(description=__doc__);cli.add_argument('run',type=int);args=cli.parse_args()
- artifact=ROOT/f'out/firmware-ci/{args.run}/nuwa-firmware-{args.run}';output=ROOT/f'reports/hob-stage-audit/{args.run}/sec-call-audit.json'
+ cli=argparse.ArgumentParser(description=__doc__);cli.add_argument('run',type=int);cli.add_argument('--profile',choices=('hob-stage-audit','hob-cache-handoff'),default='hob-stage-audit');args=cli.parse_args()
+ artifact=ROOT/f'out/firmware-ci/{args.run}/nuwa-firmware-{args.run}';output=ROOT/f'reports/{args.profile}/{args.run}/sec-call-audit.json'
  if output.exists():raise ValueError('Fresh audit required')
  spec=importlib.util.spec_from_file_location('stage_reader',ROOT/'scripts/ci/inspect-firmware-candidate.py');reader=importlib.util.module_from_spec(spec);spec.loader.exec_module(reader)
- inspected=reader.inspect(artifact,'NuwaBootMemoryDxe',True,True,True,'hob-stage-audit')
+ inspected=reader.inspect(artifact,'NuwaBootMemoryDxe',True,True,True,args.profile)
  captured=[];original=reader.heap_descriptors
  def capture(data):captured.append(data);return original(data)
  reader.heap_descriptors=capture;reader.Firmware().volume((artifact/'build/FV/SILICIUM_UEFI.fd').read_bytes(),'Actual FD')

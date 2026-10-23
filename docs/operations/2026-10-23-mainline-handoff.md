@@ -1,14 +1,12 @@
 # 主线交接（2026-10-24T02:14:14.358409+08:00）
 
-## 当前结果与执行门（2026-10-24T02:26:06.995875+08:00）
+## 当前结果与执行门（2026-10-24T02:38:56.760611+08:00）
 
-2273bdec本轮新鲜录像/门/通知后已单次实测，120秒观察完成；原图首次失败after-mmu，不能重复旧launch。before-mmu有效56条/endBAB00AA8；函数内最后create-after有效84条/endBAB00FE8/context20030；ArmConfigureMmu返回Success后reason2/off718/type0/len0。坏链可见区间定位到最后分配检查之后至MMU函数返回之间，未到PlatformPeim/库构造/DXE。
+用户已要求按缓存交接遗漏准备单变量候选，只做离线验证和构建，实测前通知录像。新增hob-cache-handoff/0019，以2273bdec为基线，固件6176a82/Mu cfb93724不变；原HOB扫描/坏条目保护逐字节保留、Heap/地址/属性不改。私有一次性回调在建表完成后、MAIR/TTBR前维护完整对齐的已拥有HOB使用范围；要求EL1/2且SCTLR.M/C均0，否则停住。
 
-本轮已恢复原Android，postcondition.at=2026-10-23T18:20:52.568611+00:00，nuwa/kalama、Android完成1、slot_a、三分区SHA与preflight一致。证据reports/hob-stage-audit-trial/2026-10-24/。不借旧postcondition，不再需按键。
+51输入/11补丁/15后哈希和精确新增C的8192对齐/拒绝/序列/HOB不变/一次性回调主机ASan/UBSan通过。完整CI待触发；无新包SHA，不执行手机。续接推送后 `gh workflow run firmware-candidate.yml --repo wh1stl3/UniXNU-nuwa --ref main -f profile=hob-cache-handoff`，下载实际SEC/全表/严格容器验收后才通知录像。详见operations/2026-10-24-hob-cache-handoff.md。
 
-用户要求结合公开资料大胆判断。已核对源码、实际ArmDisable/EnableDataCache指令和Linux v6.12/ARM64维护者说明：首嫌是HOB缓存/地址转换交接遗漏，尤其非缓存创建后重新启用cache读到旧行；次嫌TTBR/TCR/MAIR或页表映射问题。当前EL/SCTLR/实际页表未测，不写已确定根因。文档operations/2026-10-24-hob-stage-audit-trial.md包含引用及具体证伪方案。
-
-下一项离线准备单变量HOB范围维护/屏障候选，先核对运行级寄存器、cache-line覆盖和所有权，不盲目clean旧行，不改Heap/板值/保护；若失败再走表。此次没有实施新缓存维护或生成修复包。新包实际试验仍须完整验收和新鲜录像门。下面2273bdec信息保留为证据/参考，流程已执行完毕，不再执行其命令。
+最近真实设备仍2273bdec本轮postcondition.at=2026-10-23T18:20:52.568611+00:00（北京时间02:20:52），Android完成1、三分区不变，本轮无查询/设备动作。缓存机制是工作判断，未宣称修复成功；不重复启动旧包。下方旧构建和已完成流程仅供历史参考。
 
 设备构建源a6e9a4c9766c05bd25c07e481b98e61c246ba8d5（后续文档/审计脚本提交不改变该产物）；固件分支codex/nuwa-sec-handoff-trace，固定6176a822e66b846620b5bcd2739a0666814ee663；Mu cfb93724a06ff86ff5ba971413368a7809ee42a5；上游UniXNU 75bc13dd34dc4e403826793739e316a264ce00dd。CI40000310916 success：https://github.com/wh1stl3/UniXNU-nuwa/actions/runs/40000310916 。源码和证据均已按里程碑提交，勿混入原先无关untracked。
 

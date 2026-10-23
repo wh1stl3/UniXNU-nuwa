@@ -1,0 +1,145 @@
+--- a/Mu_Basecore/EmbeddedPkg/Library/PrePiHobLib/Hob.c
++++ b/Mu_Basecore/EmbeddedPkg/Library/PrePiHobLib/Hob.c
+@@ -10,6 +10,8 @@
+ #include <PiPei.h>
+ 
+ #include <Library/BaseLib.h>
++#include <Library/ArmLib.h>
++#include <Library/CacheMaintenanceLib.h>
+ #include <Library/BaseMemoryLib.h>
+ #include <Library/DebugLib.h>
+ #include <Library/PeCoffLib.h>
+@@ -153,6 +155,66 @@
+   NuwaHobAuditCheckpoint ("hob-constructor", 0, TRUE);
+ }
+ 
++
++// NUWA_HOB_CACHE_BEGIN: only the owned active HOB extent, never the whole Heap.
++STATIC BOOLEAN
++NuwaHobCacheExtent (UINTN Base, UINTN Limit, UINTN UsedEnd, UINTN Line, UINTN *Span)
++{
++  UINTN Rounded;
++  if (Span == NULL) { return FALSE; }
++  *Span = 0;
++  if ((Base == 0) || (Limit <= Base) || (UsedEnd <= Base) || (UsedEnd > Limit) ||
++      (Line < 16) || (Line > 4096) || ((Line & (Line - 1)) != 0) ||
++      ((Base & (Line - 1)) != 0) || (UsedEnd > MAX_UINTN - (Line - 1))) { return FALSE; }
++  Rounded = (UsedEnd + Line - 1) & ~(Line - 1);
++  if (Rounded > Limit) { return FALSE; }
++  *Span = Rounded - Base;
++  return TRUE;
++}
++
++EFI_STATUS EFIAPI NuwaHobCacheHandoff (VOID);
++
++EFI_STATUS EFIAPI
++NuwaHobCacheHandoff (VOID)
++{
++  UINTN El;
++  UINTN Sctlr;
++  UINTN Line;
++  UINTN Span;
++  El = ArmReadCurrentEL ();
++  if ((El != AARCH64_EL1) && (El != AARCH64_EL2)) {
++    DEBUG ((EFI_D_ERROR, "[NUWA-HOB-CACHE] unsupported el=0x%lx\n", (UINT64)El));
++    CpuDeadLoop ();
++    return EFI_UNSUPPORTED;
++  }
++  Sctlr = ArmReadSctlr ();
++  if ((mNuwaAuditBase == 0) || ((Sctlr & 5) != 0)) {
++    DEBUG ((EFI_D_ERROR, "[NUWA-HOB-CACHE] refused el=%lu sctlr=0x%lx arena=0x%lx\n",
++            (UINT64)(El >> 2), (UINT64)Sctlr, (UINT64)mNuwaAuditBase));
++    CpuDeadLoop ();
++    return EFI_UNSUPPORTED;
++  }
++  NuwaHobAuditCheckpoint ("cache-handoff-before", 0, TRUE);
++  Line = ArmDataCacheLineLength ();
++  if (!NuwaHobCacheExtent (mNuwaAuditBase, mNuwaAuditLimit, mNuwaLastEnd + 8, Line, &Span)) {
++    DEBUG ((EFI_D_ERROR, "[NUWA-HOB-CACHE] rejected extent base=0x%lx end=0x%lx line=%lu\n",
++            (UINT64)mNuwaAuditBase, (UINT64)mNuwaLastEnd, (UINT64)Line));
++    CpuDeadLoop ();
++    return EFI_COMPROMISED_DATA;
++  }
++  DEBUG ((EFI_D_ERROR, "[NUWA-HOB-CACHE] invalidate el=%lu sctlr=0x%lx base=0x%lx bytes=0x%lx line=%lu\n",
++          (UINT64)(El >> 2), (UINT64)Sctlr, (UINT64)mNuwaAuditBase, (UINT64)Span, (UINT64)Line));
++  // Uncached writes must complete before DC IVAC; never clean stale HOB lines.
++  // The pinned InvalidateDataCacheRange performs IVAC per aligned line then DSB SY.
++  ArmDataSynchronizationBarrier ();
++  InvalidateDataCacheRange ((VOID *)mNuwaAuditBase, Span);
++  ArmDataSynchronizationBarrier ();
++  ArmInstructionSynchronizationBarrier ();
++  // No HOB writes, allocations or logging between maintenance and MMU installation.
++  return EFI_SUCCESS;
++}
++// NUWA_HOB_CACHE_END
++
+ VOID
+ BuildMemoryTypeInformationHob (
+   VOID
+--- a/Mu_Basecore/UefiCpuPkg/Library/ArmMmuLib/AArch64/ArmMmuLibCore.c
++++ b/Mu_Basecore/UefiCpuPkg/Library/ArmMmuLib/AArch64/ArmMmuLibCore.c
+@@ -32,6 +32,17 @@
+ #include "ArmMmuLibInternal.h"
+ 
+ STATIC  ARM_REPLACE_LIVE_TRANSLATION_ENTRY  mReplaceLiveEntryFunc = ArmReplaceLiveTranslationEntry;
++
++// Candidate-only one-shot hook. Other library instances remain NULL.
++typedef EFI_STATUS (EFIAPI *NUWA_MMU_BEFORE_INSTALL)(VOID);
++STATIC NUWA_MMU_BEFORE_INSTALL mNuwaBeforeMmuInstall;
++VOID EFIAPI NuwaSetMmuBeforeInstallCallback (NUWA_MMU_BEFORE_INSTALL Callback);
++VOID EFIAPI
++NuwaSetMmuBeforeInstallCallback (NUWA_MMU_BEFORE_INSTALL Callback)
++{
++  mNuwaBeforeMmuInstall = Callback;
++}
++
+ 
+ /**
+   Whether the current translation regime is either EL1&0 or EL2&0, and
+@@ -866,6 +877,15 @@
+     MemoryTable++;
+   }
+ 
++  // NUWA_HOB_CACHE_HOOK_BEGIN: after all page-table/HOB allocation, before MAIR/TTBR.
++  if (mNuwaBeforeMmuInstall != NULL) {
++    NUWA_MMU_BEFORE_INSTALL Callback = mNuwaBeforeMmuInstall;
++    mNuwaBeforeMmuInstall = NULL;
++    Status = Callback ();
++    if (EFI_ERROR (Status)) { goto FreeTranslationTable; }
++  }
++  // NUWA_HOB_CACHE_HOOK_END
++
+   //
+   // EFI_MEMORY_UC ==> MAIR_ATTR_DEVICE_MEMORY
+   // EFI_MEMORY_WC ==> MAIR_ATTR_NORMAL_MEMORY_NON_CACHEABLE
+--- a/Silicon/Silicium/SiliciumPkg/Library/MemoryInitPeiLib/MemoryInitPei.c
++++ b/Silicon/Silicium/SiliciumPkg/Library/MemoryInitPeiLib/MemoryInitPei.c
+@@ -14,6 +14,9 @@
+ // Opt-in candidate diagnostic; implementation is in the linked PrePiHobLib.
+ VOID EFIAPI NuwaHobAuditCheckpoint (CONST CHAR8 *Phase, UINTN Context, BOOLEAN Announce);
+ VOID EFIAPI NuwaHobAuditInit (VOID *Base, UINTN Length);
++typedef EFI_STATUS (EFIAPI *NUWA_MMU_BEFORE_INSTALL)(VOID);
++VOID EFIAPI NuwaSetMmuBeforeInstallCallback (NUWA_MMU_BEFORE_INSTALL Callback);
++EFI_STATUS EFIAPI NuwaHobCacheHandoff (VOID);
+ 
+ VOID
+ BuildMemoryTypeInformationHob ();
+@@ -150,6 +153,7 @@
+ 
+   // Configure MMU
+   NuwaHobAuditCheckpoint ("before-mmu", 0, TRUE);
++  NuwaSetMmuBeforeInstallCallback (NuwaHobCacheHandoff);
+   Status = ArmConfigureMmu (MemoryTable, &TranslationTableBase, &TranslationTableSize);
+   NuwaHobAuditCheckpoint ("after-mmu", (UINTN)Status, TRUE);
+   if (EFI_ERROR (Status)) {
+--- a/Mu_Basecore/EmbeddedPkg/Library/PrePiHobLib/PrePiHobLib.inf
++++ b/Mu_Basecore/EmbeddedPkg/Library/PrePiHobLib/PrePiHobLib.inf
+@@ -32,6 +32,8 @@
+ 
+ 
+ [LibraryClasses]
++  ArmLib
++  CacheMaintenanceLib
+   BaseLib
+   BaseMemoryLib
+   DebugLib

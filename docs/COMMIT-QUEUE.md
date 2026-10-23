@@ -1460,3 +1460,13 @@
 [Evidence] before-mmu56条/末次create84条有效，返回Success后off718/type0/len0；Android完成1/三分区不变；关闭缓存函数无DC维护指令。
 [Risk] 缓存交接是首要工作假设，运行寄存器/映射未测；未实施修复或新增启动，未执行XNU。
 ```
+
+## Q-139 · HOB缓存交接修复候选
+
+```text
+[unixnu-nuwa][firmware] 准备保持Heap和坏条目保护的HOB缓存交接候选
+
+[Change] 独立0019在建表完成后按完整cache行失效已拥有HOB，保持原MMU ABI和默认路径、一次性回调及M/C关闭守卫。
+[Evidence] 51输入11补丁15后哈希通过，原保护块保留及MMU去钩子等价；精确C主机8192对齐/拒绝/屏障顺序/字节不变/一次性消费通过。
+[Risk] 主机不执行真实cache操作，完整CI/实际包/实机待验；缓存假设未闭环，无设备动作。
+```

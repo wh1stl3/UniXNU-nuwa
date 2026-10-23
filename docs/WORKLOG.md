@@ -299,3 +299,5 @@
 2026-10-24T02:17:23.691609+08:00 · 用户新鲜录像确认后preflight通过，已即时通知并单次临时启动2273bdec/ACK0，120秒USB观察中；阶段与恢复待验 · Q-138 · reports/hob-stage-audit-trial/2026-10-24/
 
 2026-10-24T02:26:06.995875+08:00 · 2273bdec原图定位last-create有效到after-mmu坏链，off718/type0/len0；Android完成1/三分区不变；公开资料+源码/实际指令支持首嫌HOB缓存交接，尚未实施修复 · Q-138 · reports/hob-stage-audit-trial/2026-10-24/
+
+2026-10-24T02:38:56.760611+08:00 · 准备HOB使用范围IVAC交接0019，保留Heap/坏条目保护；51输入11补丁15后哈希和精确C主机边界/顺序/字节不变验证通过，完整CI待验，无设备动作 · Q-139 · reports/hob-cache-handoff/
