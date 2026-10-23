@@ -1240,3 +1240,13 @@
 [Evidence] NuwaBootMemoryDxe打印not a whole number of sectors；后续DXE MMU leave Success；UniXNU.efi与四条FAT挂载日志可见。
 [Risk] 地址未可靠转录，拒绝条件包含逆序或非整扇区长度；四个FAT来源未确定，无XNU入口或本轮恢复完成证据。
 ```
+
+## Q-117 · 有界系统卷传输构建
+
+```text
+[unixnu-nuwa][firmware] 接入独立固件仓的有界卷传输profile
+
+[Change] 固定uefi-nuwa@150b5ec的封装接收驱动，接入volume-envelope CI和实际驱动标记检查。
+[Evidence] 41项输入、5个补丁、9项补丁后哈希通过；旧HOB二进制冒充profile被拒绝；固件仓7项C主机测试通过。
+[Risk] 完整固件待构建；当前仅传输实现，ABL载荷选择与实机映射仍未验证，无XNU入口。
+```

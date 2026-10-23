@@ -1,0 +1,14 @@
+{
+  "firmware_commit": "150b5ecd72ac961410a9dfc402b140817928882a",
+  "source_evidence": "reports/hob-query-trial/2026-10-23-evening/initrd-observation.json",
+  "host_tests": {
+    "command": "wsl -d Ubuntu-22.04 -- python3 /mnt/d/Code/uefi-nuwa/tests/test_nuwa_volume.py",
+    "passed": 7,
+    "includes_randomized_placements": 200,
+    "scope": "Exact C parser on host; not target runtime"
+  },
+  "memory_map_changed": false,
+  "board_changed": false,
+  "transport": "64-byte versioned CRC32 envelope inside bounded chosen extent, reserved Kernel map only",
+  "device_trial_performed": false
+}
