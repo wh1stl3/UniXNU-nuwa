@@ -1160,3 +1160,13 @@
 [Evidence] 实测原图及postcondition确认Mmu enter边界和Android恢复；branch-proposal标记未编译，gh远端ref确认d056fb9已发布。
 [Risk] 未定位具体故障指令，新分支日志未编译或实测；本轮仅文档，无新设备状态采样或镜像生成。
 ```
+
+## Q-109 · MMU分支日志集成
+
+```text
+[unixnu-nuwa][firmware] 接入0012独立MMU分支profile和CI产物检查
+
+[Change] 新增mmu-branches profile、五条日志实际SEC检查、独立打包scope和新鲜录像确认门。
+[Evidence] 39项固定输入通过；0012删日志精确还原父源码，post pin704ba022；旧constructor包严格验证通过。
+[Risk] 新固件尚待CI及实际产物验收；共享库日志影响时序，实机前须通知用户并刷新恢复门。
+```

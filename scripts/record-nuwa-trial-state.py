@@ -15,12 +15,15 @@ def main():
     cli.add_argument('--output', type=Path, required=True)
     cli.add_argument('--package', type=Path, help='Enable R-010 preflight using the user capture confirmation')
     cli.add_argument('--before', type=Path, help='Compare final partition hashes with this prior record')
+    cli.add_argument('--capture-confirmation', help='Fresh user confirmation for this specific trial')
     args = cli.parse_args()
     if args.package:
         metadata = json.loads(args.package.read_text())
-        if metadata.get('approval') in ('SEC-HANDOFF-OFFLINE', 'CONSTRUCTOR-TRACE-OFFLINE'):
+        if metadata.get('approval') in ('SEC-HANDOFF-OFFLINE', 'CONSTRUCTOR-TRACE-OFFLINE', 'MMU-BRANCHES-OFFLINE'):
             from sec_handoff_package import validate
             validate(args.package)
+        if metadata.get('approval') == 'MMU-BRANCHES-OFFLINE' and not args.capture_confirmation:
+            raise ValueError('Fresh user capture confirmation required before MMU trial preflight')
     output = args.output.resolve()
     if not output.is_relative_to(ROOT/'reports') or output.exists():
         raise ValueError('Fresh reports file required')
@@ -60,7 +63,8 @@ def main():
         package=args.package.resolve()
         scopes = {'R-010 A': ROOT/'reports/dxe-allocation', 'R-011 A': ROOT/'reports/factory-heap',
                   'SEC-HANDOFF-OFFLINE': ROOT/'reports/sec-handoff',
-                  'CONSTRUCTOR-TRACE-OFFLINE': ROOT/'reports/constructor-trace'}
+                  'CONSTRUCTOR-TRACE-OFFLINE': ROOT/'reports/constructor-trace',
+                  'MMU-BRANCHES-OFFLINE': ROOT/'reports/mmu-branches'}
         approval = json.loads(package.read_text())['approval']
         if approval not in scopes or not package.is_relative_to(scopes[approval]):
             raise ValueError('Unexpected allocation trial package report')
@@ -71,8 +75,8 @@ def main():
             raise ValueError('Concrete prior recovery evidence absent')
         report.update(package_sha256=hashlib.sha256(package.read_bytes()).hexdigest(),
             process_log_method='framebuffer photographed or recorded by user',
-            human_capture_confirmation='可以，启动前通知我',
-            human_capture_source='User confirmed capture on notice, supplied R-010 photos and approved R-011 A; notify immediately before launch',
+            human_capture_confirmation=args.capture_confirmation or '可以，启动前通知我',
+            human_capture_source=('Fresh user confirmation supplied for this trial; notify immediately before launch' if args.capture_confirmation else 'User confirmed capture on notice, supplied R-010 photos and approved R-011 A; notify immediately before launch'),
             recovery_path='Power plus volume down to fastboot (R-010 completed); reset bootloader and temporarily load pinned original boot; confirm Android completion',
             original_boot_sha256=ORIGINAL_SHA,
             recovery_evidence=dict(path=recovery.relative_to(ROOT).as_posix(),sha256=hashlib.sha256(recovery.read_bytes()).hexdigest()))

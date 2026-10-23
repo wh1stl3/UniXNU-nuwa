@@ -15,6 +15,7 @@ on:
           - factory-heap
           - sec-handoff
           - constructor-trace
+          - mmu-branches
 
 permissions:
   contents: read
@@ -58,6 +59,13 @@ jobs:
           echo "$RUNNER_TEMP/firmware-venv/bin" >> "$GITHUB_PATH"
       - name: Build approved candidate only
         run: python3 scripts/ci/build-firmware-candidate.py --profile "$FW_PROFILE"
+      - name: Inspect MMU branch diagnostic firmware
+        if: env.FW_PROFILE == 'mmu-branches'
+        run: >-
+          python3 scripts/ci/inspect-firmware-candidate.py out/firmware-ci
+          --output out/firmware-ci/artifact-inspection.json
+          --publisher-name NuwaBootMemoryDxe --require-sec-trace
+          --require-no-auto-abl --require-allocation-trace --allocation-profile mmu-branches
       - name: Preserve evidence and approved artifacts
         if: always()
         uses: actions/upload-artifact@v4
