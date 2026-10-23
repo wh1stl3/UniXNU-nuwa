@@ -1,0 +1,35 @@
+{
+  "candidate_sha256": "47b5c4b171d7a0635bb494a8d0e70e9f5159b269aff3b68a66b2fd3868c0de50",
+  "photo": {
+    "path": "user-hob-dxe.jpg",
+    "sha256": "6cddd1c1da26a328ae08c5b793f8edac3ebb0e7d83e4a10a7b0e4d15cda283f7"
+  },
+  "transcription_method": "Human visual reading; only legible semantic markers retained; uncertain addresses omitted",
+  "visible_markers": [
+    "[NUWA-HOB] row=93",
+    "[NUWA-HOB] row=94",
+    "[NUWA-HOB] row=95",
+    "[NUWA-HOB] row=96",
+    "[NUWA-HOB] row=97",
+    "[NUWA-HOB] row=98",
+    "[NUWA-HOB] row=99",
+    "[NUWA-HOB] matched",
+    "[NUWA-HOB] query-leave result=<address>",
+    "[NUWA-ENTRY] fv-decompress status=Success",
+    "[NUWA-ENTRY] before-dxe-core",
+    "Loading DxeCore",
+    "[NUWA-CTOR] Debug enter",
+    "[NUWA-CTOR] Debug leave status=Success",
+    "HOBLIST address in DXE",
+    "Memory Allocation"
+  ],
+  "user_report": "进入unixnu菜单 之后显示failed to find an operating system 然后回到Android的充电界面",
+  "conclusions": [
+    "A visible HOB query returned a matched result and execution reached DXE",
+    "User reports UniXNU menu followed by no operating system",
+    "This image does not identify the query GUID or show SHENGMEM/initrd discovery",
+    "Logging-only build changed observable progress; root cause and repeatability unresolved"
+  ],
+  "xnu_entry_observed": false,
+  "recovery_status": "pending: recovery wait timed out; later read-only postcondition attempt found no unique nuwa ADB target; charging screen is not Android boot completion"
+}

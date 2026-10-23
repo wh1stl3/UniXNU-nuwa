@@ -247,3 +247,5 @@
 2026-10-23T21:35:31.355085+08:00 · 首版HOB CI39961551151成功未实测，日志上限提高128避免过早截断；更新人工恢复不阻塞离线工作约定 · Q-113（git log定位） · docs/operations/2026-10-23-hob-query-trace.md；AGENTS.md
 
 2026-10-23T21:44:02.567733+08:00 · HOB CI39962464061成功，47b5c4b1静态包验收通过，待实测 · Q-114（git log定位） · reports/hob-query/39962464061/
+
+2026-10-23晚 · HOB诊断包实机到DXE，用户报告UniXNU菜单无OS；原图6cddd1c1已保存，恢复仍待确认，不推断MMU根因已修复 · Q-115 · reports/hob-query-trial/2026-10-23-evening/screen-observation.json

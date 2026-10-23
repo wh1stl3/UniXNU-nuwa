@@ -1,9 +1,9 @@
 # STATUS
 
-> 当前唯一真相；HOB查询诊断包已构建核验，准备实测。
+> 当前唯一真相：47b5c4b1实机照片确认HOB查询返回并进入DXE，用户报告进入UniXNU菜单；尚未进入XNU。
 
-CI39962464061（4d4571b）成功，包47b5c4b1/3153920B，FD fb28d9ee。实际SEC九条HOB及前序MMU/CTOR/HANDOFF齐备；41行内存表与R-011一致，严格容器校验通过。见[诊断记录](operations/2026-10-23-hob-query-trace.md)。
+CI39962464061（4d4571b）包47b5c4b1/3153920B、FD fb28d9ee已临时启动。照片6cddd1c1显示row=93至99、matched、query-leave、fv-decompress Success及DxeCore加载。用户报告随后failed to find an operating system并回充电界面。证据reports/hob-query-trial/2026-10-23-evening/screen-observation.json；不能由一次进展认定MMU故障根因已修复。
 
-最新实机仍为2b203afa最后Mmu enter，无MMU新日志；21:22:57Android恢复完成1及三分区不变。用户确认通知后录像，下一步刷新身份/恢复门并通知启动47b5c4b1。
+恢复等待超时，后续只读检查仍未识别到唯一nuwa ADB；Android完成1与三分区哈希尚待补齐。人工恢复不阻塞离线分析/构建，未确认恢复时不启动下一包。
 
-人工恢复待办不阻塞离线分析和构建，未确认恢复时不启动下一包。目标继续进入XNU；4KiB/iOS16/8796/board example=true、板值与验证标记不变。
+下一步从录像取得SHENGMEM的FDT/chosen/initrd日志，接通有边界的系统卷运输。当前包不含FAT/ADT/XNU；现有64MiB FAT探针仅离线组件，不能把ABL拼接后的整个initrd直接当FAT。固件来源uefi-nuwa，诊断CI暂仍由设备仓驱动。4KiB/iOS16/8796/board example=true及板值与验证标记不变。

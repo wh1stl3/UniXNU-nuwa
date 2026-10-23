@@ -1220,3 +1220,13 @@
 [Evidence] 实际SEC九条HOB和前序日志齐备，41行2952B全表相同；包3153920B/SHA47b5c4b1。
 [Risk] 编译静态检查不代表运行通过，HOB链与打印路径仍待实机区分。
 ```
+
+## Q-115 · HOB实机进入DXE
+
+```text
+[unixnu-nuwa][device] 保存HOB查询返回及DXE加载的实机证据
+
+[Change] 保存47b5c4b1临时启动、原图、保守日志转录及恢复等待超时记录，更新当前状态。
+[Evidence] 原图6cddd1c1显示row93至99、matched、query-leave、FV解压成功与DxeCore加载；用户报告UniXNU菜单后无OS。
+[Risk] 未取得SHENGMEM日志或XNU入口；Android恢复及三分区哈希待补齐；日志改变进展不能证明MMU根因已修复。
+```
