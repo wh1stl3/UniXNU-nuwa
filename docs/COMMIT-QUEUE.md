@@ -1280,3 +1280,13 @@
 [Evidence] 原图BAB00718 type0 len0重复；原遍历不推进；41输入6补丁9后哈希检查通过，Android完成1及三分区不变。
 [Risk] 尚未定位零条目的来源；新行为只诊断不修复，待完整构建和实机。
 ```
+
+## Q-121 · 硬停落档与交接更新
+
+```text
+[unixnu-nuwa][docs] 落实硬停时同步进度与交接的用户要求
+
+[Change] 将落档规则写入AGENTS，重写过期主线交接，记录真实设备恢复和新CI及续接步骤。
+[Evidence] postcondition确认Android及三分区；CI39973030321 success，产物尚未本地验收。
+[Risk] 交接记录不替代新一轮日志/恢复门，XNU尚未进入。
+```

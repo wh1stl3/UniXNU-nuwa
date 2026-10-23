@@ -9,3 +9,5 @@
 0014候选补丁在异常长度处打印并CpuDeadLoop，查询入口打印GUID及PHIT end/bottom/top；不跳过条目或伪造查询结果。hob-integrity独立profile的41输入/6补丁/9后哈希静态通过。新增诊断待CI和完整包核验，实机前通知并刷新门。
 
 固件接收驱动仍来自uefi-nuwa@150b5ec。64MiB卷探针及完整C主机解析已通过离线检查；ABL运输尚未实机验证。板值与_verified不变，等待人工操作不阻塞离线工作。
+
+CI39973030321已成功；新产物尚待下载、实际新标记核验及独立打包scope接入。当前续接入口见operations/2026-10-23-mainline-handoff.md。用户要求每次硬停落档已纳入AGENTS。
