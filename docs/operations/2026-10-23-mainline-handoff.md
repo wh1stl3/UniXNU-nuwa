@@ -1,4 +1,4 @@
-# 主线交接（2026-10-24T02:48:52.565741+08:00）
+# 主线交接（2026-10-24T02:58:55.763501+08:00）
 
 ## 当前结果与执行门
 
@@ -31,13 +31,17 @@ MemoryPeim只新增登记私有一次性回调；ArmConfigureMmu ABI/默认空�
 
 上轮postcondition.at=2026-10-23T18:20:52.568611+00:00，即北京时间10-24 02:20:52；nuwa/kalama、Android完成1、slot_a、三分区SHA与当轮preflight一致，恢复闭环。本轮启动前新鲜preflight.at=2026-10-23T18:50:04.648494+00:00，Android完成1及基线已取得；本轮postcondition.at=2026-10-23T18:55:45.904383+00:00，恢复后Android完成1且三分区SHA一致，已闭环。分析预链接5a128fb2仍loadable=false，无真实ADT/窗口/XNU执行证据。
 
-## 本轮执行记录与后续恢复流程
+固件仓文档已推送b569e4a（前序899ede3），仅同步集成/运输/输入审计状态；构建源仍固定6176a82，不将文档HEAD冒充实际镜像来源。设备仓本轮决策D-025已追加。
 
-第1至3步本轮已完成，禁止重复运行或覆盖现有证据；第4步等待原始画面，第5至6步本轮恢复/核验已完成；不要重复执行。Windows bundled Python设PYTHONUTF8=1，PATH加D:/Code/PortingiOS/common/tools/platform-tools；始终唯一选择nuwa/kalama，不操作enuma。证据文件必须fresh，不覆盖旧记录。
+## 已完成执行与下一步
 
-1. 离线复验：`python -B -c "import sys;sys.path.insert(0,'scripts');from embedded_probe_package import validate;print(validate('reports/hob-cache-handoff/40005057158/package.json')['image_sha256'])"`。
-2. 用户确认26ef8efd连续录像≥120秒和必要时按键回fastboot可用后，`python -B scripts/record-nuwa-trial-state.py --output reports/hob-cache-handoff-trial/2026-10-24/preflight.json --package reports/hob-cache-handoff/40005057158/package.json --capture-confirmation '<该轮真实答复>'`。若无唯一Android完成1，先恢复并识别，不绕过门。
-3. 即时通知开始录像，再单次启动：`python -B scripts/trial-v4-firmware.py launch --evidence reports/hob-cache-handoff-trial/2026-10-24/launch.json --package reports/hob-cache-handoff/40005057158/package.json --preflight reports/hob-cache-handoff-trial/2026-10-24/preflight.json --observation-seconds 120`。
-4. 保留[NUWA-HOB-CACHE] el/sctlr/base/bytes/line，或refused/unsupported，以及after-mmu、bad/last-good、后续构造/菜单结果。若维护前已拒绝，则未进入假设路径，不把它当维护无效；若跨过MMU也只证明本轮推进，仍需重复性和后续验收。不得用USB代替阶段画面。
-5. 保存画面后必要时电源＋音量下回fastboot；`python -B scripts/trial-v4-firmware.py recover --evidence reports/hob-cache-handoff-trial/2026-10-24/recovery.json --package reports/hob-cache-handoff/40005057158/package.json`。
-6. Android实际完成1后 `python -B scripts/record-nuwa-trial-state.py --output reports/hob-cache-handoff-trial/2026-10-24/postcondition.json --before reports/hob-cache-handoff-trial/2026-10-24/preflight.json`。人工按键可等待并继续离线；未恢复或日志不足不启动下一包。
+本轮preflight、launch、recovery、postcondition均已完成，原始证据不得覆盖；747d8fcc7368778a4af6ff49bf3d845e5154cf2e已推送。用户录像确认只用于本轮一次启动。当前无需按键，不要重新运行launch或恢复流程。
+
+1. 接收并原样归档本轮缓存日志/菜单照片或录像，记录SHA256及来源。只有用户文字“进入了unixnu菜单”，尚无本轮图像。
+2. 核对HOB-CACHE el/sctlr/base/bytes/line，以及cache-handoff-before、after-mmu和后续阶段。缺行写未验证，不从菜单倒推具体寄存器值或每个checkpoint。
+3. 若原图支持跨越MMU，则将结论限定为单次候选阶段推进；仍有代码布局/时序混杂。若仍坏或维护被拒绝，依实际日志转向状态/映射诊断，保留Heap与保护。
+4. 无需因等画面停止离线核对；不在本次“落实文档”请求下新增包或启动。后续设备试验必须新鲜录像确认、包复验、唯一nuwa/kalama、恢复门及即时通知。
+
+## 后续试验命令模板（未执行，不含启动授权）
+
+使用新的证据目录，例如reports/hob-cache-handoff-trial/<新的轮次>/；禁止复用本轮文件。配置PYTHONUTF8=1，PATH加入只读platform-tools，使用bundled Python。先执行record-nuwa-trial-state.py --output <新目录>/preflight.json --package <经严格验收的package.json> --capture-confirmation <本轮真实答复>。只有满足所有门且即时通知后，才执行trial-v4-firmware.py launch --evidence <新目录>/launch.json --package <同一包> --preflight <新目录>/preflight.json --observation-seconds 120。观察后按需recover --evidence <新目录>/recovery.json --package <同一包>，再record-nuwa-trial-state.py --output <新目录>/postcondition.json --before <新目录>/preflight.json。模板本身不是许可。

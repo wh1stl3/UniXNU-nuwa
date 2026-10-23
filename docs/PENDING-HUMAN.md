@@ -3,9 +3,15 @@
 > 只差用户本人按键/在场的待办。**不阻塞主线**：记一条，继续下一项。
 > 只有「会改变设备内容且必须用户在场」的动作才升级为 `NEED-HUMAN.md` 并停机。
 
+## 当前有效待办（2026-10-24）
+
+- 26ef8efd：待提供本轮HOB-CACHE、after-mmu和菜单原图或录像；已有菜单文字观察。无需再次按键，Android及三分区恢复已闭环。
+- 当前不等待新启动许可；本轮录像确认已用于一次启动，后续试验重新确认。
+- 下方为历史记录：历史open项不自动授权重启；H-003早期首屏录像仍缺，不能用本轮菜单文字替代。
+
 | 编号 | 待办 | 为什么必须本人 | 提报时间 | 状态 |
 | --- | --- | --- | --- | --- |
-| H-001 | C3 长按电源键强制重启恢复演练 | 需要实体按键 + 人在设备旁观察 | 2026-10-22 00:44（继承自旧仓） | open |
+| H-001 | C3 长按电源键强制重启恢复演练 | 需要实体按键 + 人在设备旁观察 | 2026-10-22 00:44（继承自旧仓） | completed（R-010恢复路径已演练，见reports/dxe-allocation/39829943950/recovery.json；不重复要求演练） |
 | H-002 | 进 bootloader 用 `fastboot getvar unlocked` 核实能否 flash（`verifiedbootstate=orange` 与 `flash_locked=1` 矛盾） | 2026-10-22已读fastboot unlocked=yes；普通reboot回fastboot后，原厂boot临时加载回Android且boot_completed=1。证据reports/trial-boot-preflight/，未实际flash验收 | 2026-10-22 02:55 | completed（19:06） |
 
 | H-003 | 同包试启动的连续录像：包含首个NUWA-ENTRY或启动横幅至最后panic | 用户已提供清晰PIL末屏照片；首屏和时序需人在设备旁录像，当前归属仍未确定 | 2026-10-23 00:50 | open（末屏照片已取得；不阻塞静态分析） |

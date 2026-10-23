@@ -408,3 +408,10 @@ D-023执行补充（2026-10-23 09:14）：CI39835052901及实际SEC表检查通�
 - 证据：固件00a37d9、CI39988591973、包87b14624；reports/embedded-probe-trial/2026-10-24/screen-observation.json与两原图。
 
 临时v4 ramdisk中的67108928B探针未出现在chosen，a22e9a44原图证明封装absent；因此采用既有文档备选B，将固定4MiB配置FAT作为独立FV RAW资源，分配后校验大小/CRC，发布只读BlockIo并保留池内存。87b14624实际出现发布Success及唯一目标配置菜单，支持发现链实机通过。正常profile保持原路，新增profile独立；内存表未更改。未来完整内核、ADT及大负载运输须单独验收，不能用小探针替代系统就绪。
+
+# D-025 · 以HOB使用范围缓存交接作为独立候选
+
+- 状态：accepted for diagnostic candidate；用户授权保持Heap/坏条目保护的单变量方向，已实现、离线验收并单次临时实测；根因与正式修复未确认。
+- 证据：patches/firmware-candidates/0019-hob-cache-handoff.patch、CI40005057158、reports/hob-cache-handoff/40005057158/、reports/hob-cache-handoff-trial/2026-10-24/；构建源bdcf4a2，实测记录提交747d8fcc7368778a4af6ff49bf3d845e5154cf2e。
+
+最后建表分配完成后、MAIR/TTBR安装之前，仅在EL1/2、SCTLR.M/C关闭、可信arena及完整HOB链有效时，对已使用HOB范围按完整cache行执行DSB/IVAC/DSB/ISB；保留原Heap/板值/属性、HOB扫描和停机保护。不得以删守卫或改变Heap作为同候选修复。用户报告进入菜单支持阶段推进；未取得本轮缓存原图、重复性及映射数据，布局/时序仍是混杂因素。候选不升格为正常profile或_verified=true；先核对本轮画面，新增设备试验另过日志/恢复门。

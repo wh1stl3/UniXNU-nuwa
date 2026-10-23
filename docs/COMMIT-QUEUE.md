@@ -1490,3 +1490,13 @@
 [Evidence] preflight/launch/recovery/postcondition完整；用户报告进入UniXNU菜单，Android完成1且三分区SHA一致。
 [Risk] 缓存阶段原图未收，EL/SCTLR/after-mmu仍待核对；单次菜单观察不等于根因证明或XNU执行。
 ```
+
+## Q-142 · 本轮全量文档对齐
+
+```text
+[unixnu-nuwa][docs] 落实缓存候选实测状态决策及安全续接文档
+
+[Change] 对齐README、候选及基线后续、当前状态/交接/人工待办，补D-025；历史时间线保留，已执行命令改为独立新轮次模板。
+[Evidence] 747d8fc及本轮preflight/launch/recovery/postcondition，用户菜单文字；文档一致性审计记录原始证据哈希和阶段缺项。
+[Risk] 本轮缓存阶段原图与重复性仍缺，未确认根因或XNU执行；仅文档整理，无新增设备动作。
+```

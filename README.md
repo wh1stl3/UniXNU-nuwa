@@ -2,6 +2,10 @@
 
 以 **UniXNU** 为底座，改造使 **nuwa（小米 13 Pro / SM8550 / 12 GB）** 运行 **iOS 16**。
 
+## 当前入口（2026-10-24）
+
+缓存交接候选26ef8efd已完成离线验收和单次临时启动，用户报告进入UniXNU菜单；Android恢复完成1、三个启动分区SHA不变。缓存阶段原图和根因确认仍待补，尚未执行XNU/iOS。续接先读[STATUS](docs/STATUS.md)、[主线交接](docs/operations/2026-10-23-mainline-handoff.md)和[本轮实测](docs/operations/2026-10-24-hob-cache-handoff-trial.md)。不要重复执行已完成的启动命令。
+
 ## 为什么单开一个仓库
 
 旧仓 `D:\Code\PortingiOS` 走的是自建 P16/16K 链路，已转为**只读资料库**（上游源码副本、实测记录、旧报告都在里面）。
@@ -9,14 +13,14 @@
 
 ## 先读什么
 
-1. `AGENTS.md` —— 只读边界、版本管理、文档五件套、硬停四类。**动手前必读**。
+1. `AGENTS.md` —— 只读边界、版本管理、文档五件套、硬停边界。**动手前必读**。
 2. `docs/STATUS.md` —— 现在做到哪、下一步、已知坑。
 3. `docs/DECISIONS.md` —— 已定决策：D-002内存窗口、4KiB、iPhone donor与8796路线，带证据。
 4. `docs/inherited/unixnu-official-2026-10-22.md` —— 官方移植指南摘录、board schema与bring-up契约；旧handoff-route仅作历史参照。
 
 ## 仓库与构建
 
-[UniXNU基座fork](https://github.com/wh1stl3/UniXNU)承载Actions，本仓是独立设备输入；固件仍规划为单独uefi-nuwa。正式构建从基座用`-D ../UniXNU-nuwa`接入，当前board保持example=true，尚不能作为完整设备构建配置。
+[UniXNU基座fork](https://github.com/wh1stl3/UniXNU)承载Actions，本仓是独立设备输入；固件已迁入独立[uefi-nuwa仓](https://github.com/wh1stl3/uefi-nuwa)，设备仓固定引用固件提交并管理诊断补丁。正式构建从基座用`-D ../UniXNU-nuwa`接入，当前board保持example=true，尚不能作为完整设备构建配置。
 
 首轮云端源内核入口见`docs/operations/2026-10-22-source-kernel-ci.md`。它复用固定75bc基座配方，编译8796源码，不运行donor预链接或镜像打包。构建状态只以`docs/STATUS.md`及原始CI日志为准；源编译与QEMU结果均不能当成实机通过。
 

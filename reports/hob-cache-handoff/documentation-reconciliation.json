@@ -1,0 +1,37 @@
+{
+  "at": "2026-10-24T03:00:32.606809+08:00",
+  "scope": "Documentation reconciliation only; no device actions",
+  "trial_commit": "747d8fcc7368778a4af6ff49bf3d845e5154cf2e",
+  "firmware_docs_head": "b569e4a",
+  "build_firmware_pin_unchanged": "6176a822e66b846620b5bcd2739a0666814ee663",
+  "checks": {
+    "observation_at_least_120s": true,
+    "android_completed_1": true,
+    "three_partition_hashes_match": true,
+    "menu_source": "user text only",
+    "cache_stage_images_received": false,
+    "root_cause_confirmed": false,
+    "xnu_executed": false
+  },
+  "evidence_sha256": {
+    "reports/hob-cache-handoff-trial/2026-10-24/launch.json": "88057d606f5b335df18bb0be2c5a98404c57f9a56c57cc96651cc0ffbb823f78",
+    "reports/hob-cache-handoff-trial/2026-10-24/postcondition.json": "cc28438bfd74e02d514ccd0db24b6c6d0ce5013b0c3ed753a79332bef337237f",
+    "reports/hob-cache-handoff-trial/2026-10-24/preflight.json": "e9181079dddc92298887652414a4882169bf199ec85bc7e9a4e9d958708a618e",
+    "reports/hob-cache-handoff-trial/2026-10-24/recovery.json": "18ca2e95a579c680474089f236bd451d3222971da69c61cbaa22e7a35652fcb2",
+    "reports/hob-cache-handoff-trial/2026-10-24/user-observation.json": "dba310055ace31643f8e7777c0ae845013c24163e448489e086e7a0285e772a4"
+  },
+  "documents_reviewed": [
+    "README.md",
+    "docs/STATUS.md",
+    "docs/DECISIONS.md",
+    "docs/PENDING-HUMAN.md",
+    "docs/WORKLOG.md",
+    "docs/COMMIT-QUEUE.md",
+    "docs/operations/2026-10-23-mainline-handoff.md",
+    "docs/operations/2026-10-24-hob-cache-handoff.md",
+    "docs/operations/2026-10-24-hob-stage-audit-trial.md",
+    "docs/operations/2026-10-24-hob-cache-handoff-trial.md"
+  ],
+  "history_policy": "Append-only WORKLOG and previous queue messages preserved; historical phase statements explicitly superseded in current documents",
+  "new_device_actions": false
+}

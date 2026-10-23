@@ -31,3 +31,7 @@ recovery实际送回原Android，postcondition.at=2026-10-23T18:20:52.568611+00:
 准备单变量缓存交接候选：先记录实际EL及适当级别SCTLR/TTBR/TCR/MAIR，确认缓存/MMU状态和HOB所有权；在最后一次建表完成、缓存重新启用之前，对已拥有且按缓存行覆盖的HOB范围审查失效与屏障顺序，再比较前后头链与原始字节。保持Heap/板内存/HOB扫描和失败保护不变。只有该变量改变且可重复消除故障，才提高根因置信度；若失败则转向映射/页表校验。
 
 不把Clean、Invalidate混为一谈：[Arm说明](https://community.arm.com/forums/f/architectures-and-processors-forum/3731/clean-and-invalidate-cache-memory/10061)指出clean会写回脏行，invalidate消除缓存命中。对可能保存旧内容的行盲目clean可能覆盖刚重建的数据；部分行边界及当前缓存状态必须先核对。此次只记录方案，尚未实施新的cache维护、生成修复包或进行第二次启动。新包仍需完整离线验收和新一轮录像门。
+
+## 后续状态（不改写上述基线实测）
+
+后续已按0019实现HOB范围缓存交接候选26ef8efd，完成离线验收和一次临时启动；用户报告进入UniXNU菜单，Android恢复完成1/三分区SHA不变。详见[候选说明](2026-10-24-hob-cache-handoff.md)及[实测记录](2026-10-24-hob-cache-handoff-trial.md)。实际候选守卫读取EL/SCTLR，未增加TTBR/TCR/MAIR运行转储，不得将上文计划写成寄存器均已采集。缓存阶段原图及重复性待补，未确认根因。
