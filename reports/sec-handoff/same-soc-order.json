@@ -1,0 +1,23 @@
+{
+  "repository": "UniXNU/uefi-sheng",
+  "commit": "329b473df1e53a3bfa64b2b39b79670c4c02279b",
+  "path": "Silicon/Silicium/SiliciumPkg/Sec/Sec.c",
+  "sha256": "960823c3c59fd7cbf5f235468989bf4e06d8fef37658ec302c2228b611a1fb25",
+  "license": "BSD-2-Clause-Patent",
+  "callsite_lines": [
+    {
+      "line": 131,
+      "text": "Status = PlatformPeim ();"
+    },
+    {
+      "line": 141,
+      "text": "BuildGuidDataHob (&gSiliciumEntryArgHobGuid, &EntryArg, sizeof (EntryArg));"
+    },
+    {
+      "line": 145,
+      "text": "ProcessLibraryConstructorList ();"
+    }
+  ],
+  "applicability": "Compare SEC handoff ordering only; no memory or board values adopted",
+  "validation": "Static source only, no nuwa runtime proof"
+}

@@ -23,6 +23,10 @@ SEC_TRACE_MARKERS = ('[NUWA-ENTRY]', 'C-before-platform', 'C-after-platform', 'b
                      'before-platform-hobs', 'before-fv-decompress', 'before-dxe-core',
                      'memory status=%r', 'platform-hobs status=%r', 'fv-decompress status=%r',
                      'dxe-core returned=%r')
+HANDOFF_MARKERS = ('[NUWA-HANDOFF] before-entry-arg-hob list=%p',
+                   '[NUWA-HANDOFF] after-entry-arg-hob data=%p',
+                   '[NUWA-HANDOFF] before-library-constructors',
+                   '[NUWA-HANDOFF] after-library-constructors')
 PCD_GUID = "13a3f0f6-264a-3ef0-f2e0-dec512342f34"
 PCD_DRIVER_GUID = "80cf7257-87ab-47f9-a3fe-d50b76d89541"
 PIL_GUID = '1d317734-4083-47c6-83ea-e3a42f2a6bff'
@@ -171,7 +175,8 @@ class Firmware:
                 detail["sec_te"] = dict(bytes=len(body), sha256=sha(body),
                                          entry_hob_guid_present=uuid.UUID(ENTRY_HOB_GUID).bytes_le in body,
                                          trace_markers={marker: marker.encode() in body for marker in SEC_TRACE_MARKERS},
-                                         heap_descriptors=heap_descriptors(body))
+                                         heap_descriptors=heap_descriptors(body),
+                                         handoff_markers={marker: marker.encode() in body for marker in HANDOFF_MARKERS})
             elif kind == 0x19 and owner['guid'] == PIL_CONFIG_GUID:
                 text = body.rstrip(b'\0').decode('ascii')
                 active, entries = False, []
@@ -290,7 +295,7 @@ def inspect(artifact, publisher_name='ShengBootMemoryDxe', require_sec_trace=Fal
     need(offset == expected_offset and image_size == len(shim) + len(data), "Shim header length/relative-offset mismatch")
     pil_check = None
     if require_no_auto_abl:
-        need(inputs['profile'] in ('pil-no-auto', 'dxe-allocation', 'factory-heap') and expected_offset == 0, 'Wrong R-009 build profile/header')
+        need(inputs['profile'] in ('pil-no-auto', 'dxe-allocation', 'factory-heap', 'sec-handoff') and expected_offset == 0, 'Wrong R-009 build profile/header')
         configs = [s['pil_config'] for f in fv.files if f['guid'] == PIL_CONFIG_GUID
                    for s in f['sections'] if 'pil_config' in s]
         need(len(configs) == 1 and configs[0]['auto_entries'] == []
@@ -304,19 +309,24 @@ def inspect(artifact, publisher_name='ShengBootMemoryDxe', require_sec_trace=Fal
     allocation_trace = None
     if require_allocation_trace:
         profile = json.loads((ROOT / f'config/firmware-{allocation_profile}-profile.json').read_text())
-        need(allocation_profile in ('dxe-allocation', 'factory-heap') and inputs['profile'] == allocation_profile and inputs['recipe'] == profile['recipe'],
+        need(allocation_profile in ('dxe-allocation', 'factory-heap', 'sec-handoff') and inputs['profile'] == allocation_profile and inputs['recipe'] == profile['recipe'],
              'Wrong R-010 source/input profile')
         cores = [s['allocation_trace'] for f in fv.files if f['guid'] == DXE_CORE_GUID and f['type'] == 5
                  for s in f['sections'] if 'allocation_trace' in s]
         need(len(cores) == 1 and all(cores[0]['markers'].values()), 'Actual DXE core lacks allocation diagnostics')
         allocation_trace = cores[0]
     factory_heap = None
-    if require_allocation_trace and allocation_profile == 'factory-heap':
+    if require_allocation_trace and allocation_profile in ('factory-heap', 'sec-handoff'):
         descriptors = sec_te[0]['heap_descriptors']
         need(len(descriptors) == 1 and descriptors[0]['base'] == '0xbab00000'
              and descriptors[0]['bytes'] == 0x0d1c0000,
              'Actual SEC did not embed the exact same-device factory Heap descriptor')
         factory_heap = descriptors[0]
+    if inputs['profile'] == 'sec-handoff':
+        need(require_sec_trace and require_no_auto_abl and require_allocation_trace,
+             'SEC handoff profile requires all baseline diagnostic checks')
+        need(all(sec_te[0]['handoff_markers'].values()),
+             'New handoff boundary logs absent from actual SEC TE')
     symbols = (artifact / "shim/symbols.txt").read_text()
     payload = next(int(line.split()[0], 16) for line in symbols.splitlines() if line.endswith(" _Payload"))
     need(payload == len(shim), "Shim literal pool/padding separates payload")
@@ -339,7 +349,7 @@ def main():
     parser.add_argument('--require-sec-trace', action='store_true')
     parser.add_argument('--require-no-auto-abl', action='store_true')
     parser.add_argument('--require-allocation-trace', action='store_true')
-    parser.add_argument('--allocation-profile', choices=('dxe-allocation', 'factory-heap'), default='dxe-allocation')
+    parser.add_argument('--allocation-profile', choices=('dxe-allocation', 'factory-heap', 'sec-handoff'), default='dxe-allocation')
     args = parser.parse_args()
     output = args.output.resolve()
     need(output.is_relative_to(ROOT) and output.suffix == ".json", "Evidence output must be repo-local JSON")

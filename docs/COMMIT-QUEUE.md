@@ -1060,3 +1060,23 @@
 [Evidence] 候选8e852150及前置身份/恢复输入核对通过；原照片47637c0e最后为platform-hobs Success/x0 B5DB1000，实际SEC含同一日期时间；12:18:42 Android完成1、三分区SHA未变。
 [Risk] 未取得本轮DXE或SHENGMEM证据，具体阻塞函数及同包差异未定位；无XNU运行结论，无flash/erase/改槽，下一步只离线审查。
 ```
+
+## FW-012 · SEC handoff边界诊断源码
+
+```text
+[unixnu-nuwa][firmware] 细化入口参数HOB和库构造前后诊断
+
+[Change] 仅在SEC的入口参数HOB与库构造前后加四处ERROR级日志，保持调用顺序和所有内存表、PIL及BootShim。
+[Evidence] 中午原包照片末行为platform-hobs Success；实际SEC与固定Mu库审查尚不能定位唯一函数，同SoC也采用相同调用顺序。
+[Risk] 诊断不是修复，新二进制编译及运行未验证；不操作设备，不改板值、ADT或验证标志。
+```
+
+## Q-100 · SEC handoff边界诊断与离线构建准备
+
+```text
+[unixnu-nuwa][firmware] 固定SEC真实调用链并准备HOB与库构造边界诊断
+
+[Change] 新增四条SEC日志的独立固件来源与CI profile，保持工厂Heap及PIL/shim；检查器核验新日志实际入TE，保存同SoC顺序及Mu依赖证据。
+[Evidence] firmware ddd794fc单文件变更，35项固定输入静态检查通过；旧R-011实际FD回归通过，实际TE与link-map核对表明最后画面不能唯一定位故障。
+[Risk] 新构建和实机执行待验证，原帧缓冲通道仍可能失效；本轮无设备动作，晚上刷新日志/恢复门后再试，不改board/feed或验证标志。
+```

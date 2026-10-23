@@ -215,3 +215,5 @@
 2026-10-23T11:20:07+08:00 · 固定DarwinBoot纯解析函数主机20项检查通过，当前内核格式被接受；复查符号闭包并从缓存DT提取CPU/GIC/PSCI输入，未生成目标ADT或操作设备 · Q-098（提交后以git log定位） · docs/operations/2026-10-23-darwin22-entry-input-contracts.md；reports/darwin22-input-contracts/
 
 2026-10-23T14:16:46+08:00 · R-011同包复测照片停于SEC平台HOB成功，未取得SHENGMEM；12:18:42恢复Android完成1且三分区未变，转离线HOB/构造审查 · Q-099（提交后以git log定位） · reports/initrd-retest/2026-10-23-noon/；docs/operations/2026-10-23-initrd-retest-sec-stop.md
+
+2026-10-23T15:02:06+08:00 · SEC真实调用与同SoC顺序审查完成，四条边界日志源码ddd794fc已发布，35项输入与旧FD静态回归通过；新构建待执行，本轮无设备动作 · Q-100（提交后以git log定位）；FW-012 ddd794fc · docs/operations/2026-10-23-sec-handoff-diagnostic.md；reports/sec-handoff/

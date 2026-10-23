@@ -1,0 +1,194 @@
+{
+  "scope": "Pinned source-only constructor/HOB dependency inspection, not execution",
+  "sources": [
+    {
+      "repository": "microsoft/mu_basecore",
+      "commit": "cfb93724a06ff86ff5ba971413368a7809ee42a5",
+      "path": "EmbeddedPkg/Library/PrePiHobLib/Hob.c",
+      "sha256": "fa94f385a5f908407822ed7fddd536cb7e4feb06b6fe5fa86c3dd1fca6556f73",
+      "license": "BSD-2-Clause-Patent per selected file headers",
+      "url": "https://raw.githubusercontent.com/microsoft/mu_basecore/cfb93724a06ff86ff5ba971413368a7809ee42a5/EmbeddedPkg/Library/PrePiHobLib/Hob.c",
+      "matching_lines": {
+        "BuildGuidDataHob": [
+          534,
+          865,
+          886,
+          911
+        ],
+        "GetHobList (": [
+          40,
+          44,
+          111,
+          309,
+          375,
+          394,
+          414,
+          785
+        ],
+        "PrePeiGetHobList": [
+          44
+        ],
+        "PrePeiSetHobList": [
+          59
+        ],
+        "BaseDebugLibSerialPortConstructor": [],
+        "ExtractGuidedSectionLibConstructor": [],
+        "ArmMmuBaseLibConstructor": [],
+        "LzmaDecompressLibConstructor": [],
+        "AllocatePool": [],
+        "SerialPortInitialize": [],
+        "CONSTRUCTOR": []
+      }
+    },
+    {
+      "repository": "microsoft/mu_basecore",
+      "commit": "cfb93724a06ff86ff5ba971413368a7809ee42a5",
+      "path": "ArmPlatformPkg/Library/PrePiHobListPointerLib/PrePiHobListPointer.c",
+      "sha256": "45c9bdc109dd1b717bf540ecad22e1ca8e48da956e7d61e9d3c026bd0e4362ad",
+      "license": "BSD-2-Clause-Patent per selected file headers",
+      "url": "https://raw.githubusercontent.com/microsoft/mu_basecore/cfb93724a06ff86ff5ba971413368a7809ee42a5/ArmPlatformPkg/Library/PrePiHobListPointerLib/PrePiHobListPointer.c",
+      "matching_lines": {
+        "BuildGuidDataHob": [],
+        "GetHobList (": [
+          24
+        ],
+        "PrePeiGetHobList": [
+          24
+        ],
+        "PrePeiSetHobList": [
+          39
+        ],
+        "BaseDebugLibSerialPortConstructor": [],
+        "ExtractGuidedSectionLibConstructor": [],
+        "ArmMmuBaseLibConstructor": [],
+        "LzmaDecompressLibConstructor": [],
+        "AllocatePool": [],
+        "SerialPortInitialize": [],
+        "CONSTRUCTOR": []
+      }
+    },
+    {
+      "repository": "microsoft/mu_basecore",
+      "commit": "cfb93724a06ff86ff5ba971413368a7809ee42a5",
+      "path": "MdePkg/Library/BaseDebugLibSerialPort/DebugLib.c",
+      "sha256": "47020b50980ccfae3ef1d46a93aa13e21d84ee76258aa714e6a4d0d0a9a68bac",
+      "license": "BSD-2-Clause-Patent per selected file headers",
+      "url": "https://raw.githubusercontent.com/microsoft/mu_basecore/cfb93724a06ff86ff5ba971413368a7809ee42a5/MdePkg/Library/BaseDebugLibSerialPort/DebugLib.c",
+      "matching_lines": {
+        "BuildGuidDataHob": [],
+        "GetHobList (": [],
+        "PrePeiGetHobList": [],
+        "PrePeiSetHobList": [],
+        "BaseDebugLibSerialPortConstructor": [
+          43
+        ],
+        "ExtractGuidedSectionLibConstructor": [],
+        "ArmMmuBaseLibConstructor": [],
+        "LzmaDecompressLibConstructor": [],
+        "AllocatePool": [],
+        "SerialPortInitialize": [
+          47
+        ],
+        "CONSTRUCTOR": []
+      }
+    },
+    {
+      "repository": "microsoft/mu_basecore",
+      "commit": "cfb93724a06ff86ff5ba971413368a7809ee42a5",
+      "path": "EmbeddedPkg/Library/PrePiExtractGuidedSectionLib/PrePiExtractGuidedSectionLib.c",
+      "sha256": "b8238e943d867b4edd5d1e757c9adf65903dce5efbc177ae93704e2eea41873d",
+      "license": "BSD-2-Clause-Patent per selected file headers",
+      "url": "https://raw.githubusercontent.com/microsoft/mu_basecore/cfb93724a06ff86ff5ba971413368a7809ee42a5/EmbeddedPkg/Library/PrePiExtractGuidedSectionLib/PrePiExtractGuidedSectionLib.c",
+      "matching_lines": {
+        "BuildGuidDataHob": [
+          253
+        ],
+        "GetHobList (": [],
+        "PrePeiGetHobList": [],
+        "PrePeiSetHobList": [],
+        "BaseDebugLibSerialPortConstructor": [],
+        "ExtractGuidedSectionLibConstructor": [
+          223
+        ],
+        "ArmMmuBaseLibConstructor": [],
+        "LzmaDecompressLibConstructor": [],
+        "AllocatePool": [
+          233,
+          238,
+          243
+        ],
+        "SerialPortInitialize": [],
+        "CONSTRUCTOR": []
+      }
+    },
+    {
+      "repository": "microsoft/mu_basecore",
+      "commit": "cfb93724a06ff86ff5ba971413368a7809ee42a5",
+      "path": "UefiCpuPkg/Library/ArmMmuLib/AArch64/ArmMmuLibCore.c",
+      "sha256": "bf3be06245f00c6d1b24b94eb0068f607387780966297070836799fea2aa3521",
+      "license": "BSD-2-Clause-Patent per selected file headers",
+      "url": "https://raw.githubusercontent.com/microsoft/mu_basecore/cfb93724a06ff86ff5ba971413368a7809ee42a5/UefiCpuPkg/Library/ArmMmuLib/AArch64/ArmMmuLibCore.c",
+      "matching_lines": {
+        "BuildGuidDataHob": [],
+        "GetHobList (": [],
+        "PrePeiGetHobList": [],
+        "PrePeiSetHobList": [],
+        "BaseDebugLibSerialPortConstructor": [],
+        "ExtractGuidedSectionLibConstructor": [],
+        "ArmMmuBaseLibConstructor": [
+          931
+        ],
+        "LzmaDecompressLibConstructor": [],
+        "AllocatePool": [],
+        "SerialPortInitialize": [],
+        "CONSTRUCTOR": []
+      }
+    },
+    {
+      "repository": "microsoft/mu_basecore",
+      "commit": "cfb93724a06ff86ff5ba971413368a7809ee42a5",
+      "path": "MdeModulePkg/Library/LzmaCustomDecompressLib/GuidedSectionExtraction.c",
+      "sha256": "313d76720e317eb6b1b561ba1e5cd67e31c2328cddd7b23b72c439b90f35b6aa",
+      "license": "BSD-2-Clause-Patent per selected file headers",
+      "url": "https://raw.githubusercontent.com/microsoft/mu_basecore/cfb93724a06ff86ff5ba971413368a7809ee42a5/MdeModulePkg/Library/LzmaCustomDecompressLib/GuidedSectionExtraction.c",
+      "matching_lines": {
+        "BuildGuidDataHob": [],
+        "GetHobList (": [],
+        "PrePeiGetHobList": [],
+        "PrePeiSetHobList": [],
+        "BaseDebugLibSerialPortConstructor": [],
+        "ExtractGuidedSectionLibConstructor": [],
+        "ArmMmuBaseLibConstructor": [],
+        "LzmaDecompressLibConstructor": [
+          193
+        ],
+        "AllocatePool": [],
+        "SerialPortInitialize": [],
+        "CONSTRUCTOR": []
+      }
+    },
+    {
+      "repository": "microsoft/mu_basecore",
+      "commit": "cfb93724a06ff86ff5ba971413368a7809ee42a5",
+      "path": "EmbeddedPkg/Library/PrePiHobLib/PrePiHobLib.inf",
+      "sha256": "8edadcf60166f15223729ae4ed528e9438a09826cb1bec0ca07c4d730803173d",
+      "license": "BSD-2-Clause-Patent per selected file headers",
+      "url": "https://raw.githubusercontent.com/microsoft/mu_basecore/cfb93724a06ff86ff5ba971413368a7809ee42a5/EmbeddedPkg/Library/PrePiHobLib/PrePiHobLib.inf",
+      "matching_lines": {
+        "BuildGuidDataHob": [],
+        "GetHobList (": [],
+        "PrePeiGetHobList": [],
+        "PrePeiSetHobList": [],
+        "BaseDebugLibSerialPortConstructor": [],
+        "ExtractGuidedSectionLibConstructor": [],
+        "ArmMmuBaseLibConstructor": [],
+        "LzmaDecompressLibConstructor": [],
+        "AllocatePool": [],
+        "SerialPortInitialize": [],
+        "CONSTRUCTOR": []
+      }
+    }
+  ],
+  "hob_lib_constructor_declared": false,
+  "limitation": "HobLib is already used by successful memory/platform HOB creation; no constructor-order defect established"
+}

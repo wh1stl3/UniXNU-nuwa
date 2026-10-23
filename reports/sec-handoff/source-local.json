@@ -1,0 +1,17 @@
+{
+  "repository": "wh1stl3/uefi-nuwa",
+  "base": "1ccf760d667b9eec6dd3491c90cc04ebb7c58340",
+  "commit": "ddd794fc07e9bc64057222a9bffa4d79c8553af8",
+  "branch": "codex/nuwa-sec-handoff-trace",
+  "changed_paths": [
+    "Silicon/Silicium/SiliciumPkg/Sec/Sec.c"
+  ],
+  "source": "Silicon/Silicium/SiliciumPkg/Sec/Sec.c",
+  "old_lf_sha256": "6af8dd4d45476fb3b0a387b8d85913765c6d6b1bcdab99f3c6275cc9a5b1efaa",
+  "new_lf_sha256": "04cee4c1ccc896e0ce1c4af55688869a2d96243b725281a379761106d32a172e",
+  "patch": "patches/firmware-candidates/0010-sec-handoff-trace.patch",
+  "patch_sha256": "a68b0d22b1325bd1531418c18ab998157c2aecbda0194c4ed41c92d3b6592c5a",
+  "scope": "SEC logging only; no memory/configuration/call-order changes",
+  "authorization": "User requested continued offline mainline; image generation no longer requires hard stop",
+  "device_accessed": false
+}

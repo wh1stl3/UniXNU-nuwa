@@ -1,6 +1,6 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-23T14:16:46+08:00（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-23T15:02:06+08:00（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
@@ -52,12 +52,16 @@
 
 从已有Android FDT快照取得8个CPU reg（0、0x100…0x700）、GIC显式总线映射、0x40000 redistributor stride、timer声明19.2MHz和PSCI smc。只是报告输入，不生成nuwa ADT、不改板值或内存窗口；CPU编号映射及运行行为仍待验证。见[入口契约报告](operations/2026-10-23-darwin22-entry-input-contracts.md)和reports/darwin22-input-contracts/。
 
+## SEC handoff离线诊断
+
+实际SEC反汇编、固定Mu依赖及同SoC sheng顺序审查完成。无依据重排构造或归因initrd；新固件ddd794fc只在入口参数HOB和库构造前后加四条日志，原Heap/PIL/shim保持。35项输入静态检查、旧实际FD回归通过；新profile sec-handoff构建及下载检查待执行。本轮不操作手机，留待晚上统一实测。见[诊断报告](operations/2026-10-23-sec-handoff-diagnostic.md)、reports/sec-handoff/。
+
 ## 下一步
 
-1. 离线核对当前实际SEC TE与link-map，审查BuildGuidDataHob和ProcessLibraryConstructorList之间的真实指令、PrePiHobLib及构造函数依赖；不把源码行间范围误判为唯一故障点。
-2. 细化SEC诊断点后才安排新构建及静态产物核验，保留已获批Heap、PIL和shim；当前不再试启动。SHENGMEM候选映射未取得，卷运输/挂载继续待证据，不猜偏移。
-3. 已有DarwinBoot主机解析及缓存CPU/GIC证据可以继续支持离线ADT/CPU编号审查；目标ADT、NativePrelink运行ABI、实际连续内存分配和EL1交接未通过。
-4. 生成诊断组件无需硬停，设备动作仍按AGENTS§3核对具体日志与恢复条件；board/feed/bringup-plan和所有_verified保持。
+1. 发布设备仓本轮证据与sec-handoff工作流，构建新EFI/FD/BootShim；下载后核验实际SEC四条新日志与全部旧门，再准备临时包。诊断不是根因修复。
+2. 晚上用户在场后，先通知录像并刷新目标身份、日志与恢复门；录像覆盖至少120秒及完整阶段，标注相对时间。当前不试启动。
+3. SHENGMEM候选映射仍待证据；卷运输/挂载、目标ADT、完整NativePrelink ABI、连续分配及EL1交接均未通过，不猜initrd偏移或移用Android快照。
+4. 镜像生成无需硬停，设备缺具体过程日志/恢复依据及AGENTS§3其他边界仍硬停；board/feed/bringup-plan及_verified保持。
 
 ## 对照基线与固定约定
 
