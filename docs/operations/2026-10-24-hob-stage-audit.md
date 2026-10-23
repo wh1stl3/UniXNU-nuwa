@@ -18,6 +18,12 @@ HobConstructor及PrePeiSetHobList后，以InitializeMemory已经选出的arena�
 
 同SoC参照沿用已核验UniXNU/uefi-sheng@329b473df1e53a3bfa64b2b39b79670c4c02279b，Sec.c SHA960823c3/BSD-2-Clause-Patent及PrePi依赖；其PlatformPeim→EntryArg HOB→constructors顺序与nuwa一致，仅为顺序参照，不提供坏HOB修复依据，不引入其板地址。证据reports/sec-handoff/same-soc-order.json。
 
-完整固件CI、实际SEC标记/阶段代码/失败路径、41行内存表及容器复验待验。新包不含XNU/ADT；只做离线诊断及构建，实际试验前另通知用户并确认该轮录像/恢复门。
+完整固件CI40000310916、实际SEC标记/阶段代码/失败路径、41行内存表及容器复验已通过。新包不含XNU/ADT；只做离线诊断及构建，实际试验前另通知用户并确认该轮录像/恢复门。
 
 主机验证补充：最初PIE+ASan二进制偶发exit139；verbose输出止于ASan信号处理器安装、尚未到Init done，未产生检查器报告。改为仅主机测试的-fno-pie/-no-pie，保留同一候选C、保护页及ASan/UBSan，单测和同一二进制连续20次均exit0。该变更不影响固件编译，不声称已解决WSL/ASan初始化根因；证据host-startup-review.json。
+
+## 新包离线验收
+
+CI40000310916/source a6e9a4c成功，profile固定6176a82+0018。实际SEC CreateHob有2次checkpoint调用、GetFirstGuidHob有1次，checkpoint错误路径含CpuDeadLoop；直接调用未出现allocator/cache维护或间接分支（不代表完整传递调用图）。所有stage标记通过，41行2952B内存表7694de6c与基线相同。
+
+包2273bdecab25410dc290df84b031871f1f18d8dd2dbe57eea89dffd741813d61/3153920B，FD74ad39a67305944849b09935b80e457ac46e3016fa74e3ea22a93a9636d34051/3MiB；严格重建逐字节一致，缺preflight实际包在任何设备子进程前拒绝。证据reports/hob-stage-audit/40000310916/。新包尚未实测，需要通知用户并取得本轮录像确认后刷新preflight/通知/临时启动/恢复闭环；不从离线验证宣称HOB根因已定位。

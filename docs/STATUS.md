@@ -1,9 +1,11 @@
 # STATUS
 
-> 正在按用户要求离线定位HOB首次异常，已准备独立hob-stage-audit候选及有界检查，主机验证通过；完整CI与新包验收待完成。本轮未操作设备。
+> HOB阶段诊断的离线检查、完整固件构建和新包验收已完成。新包2273bdec尚未实测；下一步通知用户确认录像，再刷新设备与恢复门。
 
-0018追加HOB创建/填充、MMU前后、平台和构造边界检查：可信arena/PHIT终点、长度/推进/结束/上限全部验证，错误输出首次检测阶段与last-good，并保留CpuDeadLoop；不修补、跳过HOB或改变缓存/Heap。47输入10补丁14后哈希通过；精确C检查器及包装的保护页/ASan/UBSan、336截断及原图+0x118零长等主机验证通过；旧包冒充/空录像门通过。详见operations/2026-10-24-hob-stage-audit.md。
+独立hob-stage-audit，CI40000310916成功，构建源a6e9a4c9766c05bd25c07e481b98e61c246ba8d5，固件6176a822e66b846620b5bcd2739a0666814ee663加0018。包SHA256 2273bdecab25410dc290df84b031871f1f18d8dd2dbe57eea89dffd741813d61，3153920B；FD74ad39a6/3MiB。实际SEC全部阶段标记、CreateHob两次/查询一次检查调用及CpuDeadLoop分支通过；41行2952B内存表与基线相同。严格整包重建一致，新包缺preflight在设备子进程前拒绝。
 
-上轮a2dc8195在SEC Mmu构造发现BAB00118/type4/len0，未到ReadyToBoot。旧成功87b14624与该包SEC仅构建时间4字节不同，根因未定。本轮最近设备证据仍reports/boot-input-audit-trial/2026-10-24/postcondition.json：UTC2026-10-23T17:48:19.683937（北京时间01:48:19），nuwa/kalama、Android完成1、三分区SHA不变。本轮无实时查询，不借历史状态声称当前已刷新。
+诊断在可信arena/PHIT边界内检查HOB创建/填充、MMU前后、平台和构造边界；异常输出bad/last-good/有限原始头并停机，不修补或跳过。47输入10补丁14后哈希、精确新增C保护页/ASan/UBSan及原图零长等通过；主机改非PIE后连续20次通过，启动检测器偶发失败的记录保留。旧FD冒充/空录像门通过。证据reports/hob-stage-audit/及operations/2026-10-24-hob-stage-audit.md。
 
-下一步完整CI与实际产物/SEC表/严格包复验；包就绪后通知用户准备录像，未确认前不启动。当前无新包SHA或实机阶段结论。分析预链接5a128fb2仍loadable=false；内核ABI/ADT/窗口/大负载运输未完成。board/bringup内存值及_verified未改。
+本轮无ADB/fastboot命令。最近真实设备证据仍reports/boot-input-audit-trial/2026-10-24/postcondition.json：UTC2026-10-23T17:48:19.683937（北京时间01:48:19），nuwa/kalama、Android完成1、三分区SHA不变；不是此刻实时查询。上轮a2dc8195在SEC Mmu构造发现BAB00118/type4/len0，未到ReadyToBoot，根因仍未确定。新增诊断影响时序，首次检测区间不等于写坏者。
+
+用户要求包就绪后再通知录像；尚未取得2273bdec本轮录像确认。确认后需即时通知、单次临时启动、至少120秒记录bad/last-good及结尾、恢复Android完成1/三分区核验。board/bringup内存值、缓存策略、Heap和_verified未改。分析内核5a128fb2仍loadable=false，未执行XNU/iOS。

@@ -1,0 +1,33 @@
+{
+  "result": "actual SEC tables identical; all four new log markers present",
+  "descriptor_count": 41,
+  "stride": 72,
+  "compared_bytes": 2952,
+  "baseline": {
+    "fd_sha256": "aca853390666e48dfd3901bdfca2a9deab0d7978a02152c4ad497564f0b8b4d6",
+    "sec_sha256": "9f59f4473b6d2d09bf10ebcbdfa27df70ffb26ce0321c3b2635632687b81285c",
+    "table_sha256": "7694de6cf91ac305c82b3a2a82ad717a3155f88d59a185093a2a74a1a42bbdda",
+    "table_offset": 56120,
+    "handoff_markers": {
+      "[NUWA-HANDOFF] before-entry-arg-hob list=%p": false,
+      "[NUWA-HANDOFF] after-entry-arg-hob data=%p": false,
+      "[NUWA-HANDOFF] before-library-constructors": false,
+      "[NUWA-HANDOFF] after-library-constructors": false
+    }
+  },
+  "candidate": {
+    "fd_sha256": "74ad39a67305944849b09935b80e457ac46e3016fa74e3ea22a93a9636d34051",
+    "sec_sha256": "2a500a2f78becd47739cf81b035b58e39302d44d4688a71eeca8229a501648be",
+    "table_sha256": "7694de6cf91ac305c82b3a2a82ad717a3155f88d59a185093a2a74a1a42bbdda",
+    "table_offset": 64312,
+    "handoff_markers": {
+      "[NUWA-HANDOFF] before-entry-arg-hob list=%p": true,
+      "[NUWA-HANDOFF] after-entry-arg-hob data=%p": true,
+      "[NUWA-HANDOFF] before-library-constructors": true,
+      "[NUWA-HANDOFF] after-library-constructors": true
+    }
+  },
+  "firmware_commit": "ddd794fc07e9bc64057222a9bffa4d79c8553af8",
+  "device_executed": false,
+  "limitation": "Static binary consistency only; not HOB correctness, runtime logger availability or XNU execution"
+}

@@ -1,41 +1,41 @@
-# 主线交接（2026-10-24 01:40更新）
+# 主线交接（2026-10-24T02:14:14.358409+08:00）
 
-## 当前执行状态（2026-10-24T02:01:55.720812+08:00）
+## 当前结果与执行门
 
-用户要求先完成离线诊断和新包构建，实测时再通知录像。新增独立hob-stage-audit，固件固定6176a82，追加0018有界HOB阶段检查。47输入/10补丁/14后哈希、精确新增C诊断ASan/UBSan/保护页、336截断/原图坏头等主机检查及旧FD冒充/空录像拒绝通过；完整CI待触发。详见operations/2026-10-24-hob-stage-audit.md。
+用户要求“继续定位HOB首次变坏的位置，先完成离线诊断和新包构建，需要实机测试时再通知我录像”。本轮仅离线，已完成新hob-stage-audit包2273bdec验收；尚无该包录像确认，没有ADB/fastboot命令。不自动启动。先读AGENTS/STATUS/DECISIONS，两个旧资料库严格只读；不改板内存/基址或_verified。
 
-最近真实设备仍为a2dc8195试验的postcondition：UTC2026-10-23T17:48:19.683937，北京时间01:48:19，nuwa/kalama、Android完成1、三分区SHA不变。此次离线工作无设备查询/动作。HOB根因未知；不跳过检查，不改缓存/Heap/板内存。旧SEC差分和坏头原图见reports/boot-input-audit-trial/2026-10-24/。
+设备构建源a6e9a4c9766c05bd25c07e481b98e61c246ba8d5（后续文档/审计脚本提交不改变该产物）；固件分支codex/nuwa-sec-handoff-trace，固定6176a822e66b846620b5bcd2739a0666814ee663；Mu cfb93724a06ff86ff5ba971413368a7809ee42a5；上游UniXNU 75bc13dd34dc4e403826793739e316a264ce00dd。CI40000310916 success：https://github.com/wh1stl3/UniXNU-nuwa/actions/runs/40000310916 。源码和证据均已按里程碑提交，勿混入原先无关untracked。
 
-直接续接：推送后 `gh workflow run firmware-candidate.yml --repo wh1stl3/UniXNU-nuwa --ref main -f profile=hob-stage-audit`；完整下载检查及41行表对比后 `python -B scripts/embedded_probe_package.py RUN --profile hob-stage-audit`。包就绪后新鲜录像/唯一nuwa/原Android恢复门及即时通知齐备才可单次试验。下方旧a2dc8195内容是历史事实/流程参考，不重启旧包。
+## 严格新包与静态证据
 
-## 当前提交与完整构建
+报告reports/hob-stage-audit/40000310916/package.json。
+镜像out/trial-boot/hob-stage-audit-40000310916/boot-fv-probe-v4.img。
+SHA256 2273bdecab25410dc290df84b031871f1f18d8dd2dbe57eea89dffd741813d61，3153920B。
+FD74ad39a67305944849b09935b80e457ac46e3016fa74e3ea22a93a9636d34051，3145728B。
+Shim8a3b54765c895a0366539130fdf6e4e4a01e364fe7de067a38d0193606f9d462，112B、text_offset0；FAT资源c097413d/4MiB仅配置，无XNU/ADT/追加DTB或ramdisk。
 
-设备构建源84c88f8057a808670fc84d151ad0b4128ce91013（本次文档提交在其后）；固件分支codex/nuwa-sec-handoff-trace，固定6176a822e66b846620b5bcd2739a0666814ee663，已推送。CI39995937843 success：https://github.com/wh1stl3/UniXNU-nuwa/actions/runs/39995937843 。独立profile boot-input-audit；正常固件DSC/FDF没有改动，新模块由设备补丁0017选择。
+47原始输入、10补丁、14后哈希整链通过。精确新增C及包装的ASan/UBSan/保护页覆盖336截断、原图+0x118零长、长度/终点/条数上限、可信PHIT关系及失败不更新last-good。主机PIE+ASan最初偶发exit139，verbose止于初始化；仅主机改-fno-pie/-no-pie后单测及同一二进制20次通过。未借此更改目标固件，未声称定位宿主启动器根因。
 
-准备好的包：reports/boot-input-audit/39995937843/package.json。
-镜像：out/trial-boot/boot-input-audit-39995937843/boot-fv-probe-v4.img。
-SHA256 a2dc8195b4368da37276a4618dca90fd556f1d5de72fd58faff0b600936ba65b，3153920B。
-FD SHA256 bfb02a6334f201778467ecc1f1a9042396dc1a3dcd2014c8c4118b88664f106b，3145728B。
-BootShim仍8a3b54765c895a0366539130fdf6e4e4a01e364fe7de067a38d0193606f9d462，112B，text_offset=0。
+实际SEC全部HOB阶段字符串、CreateHob前后两次检查、GetFirstGuidHob入口一次检查、错误到CpuDeadLoop直接分支均通过；检查器直接调用未发现allocator/cache维护或间接分支（不是完整传递调用图证明）。实际SEC表41行2952B SHA7694de6cf91ac305c82b3a2a82ad717a3155f88d59a185093a2a74a1a42bbdda与基线一致。memory-map-identical内firmware_commit是表布局参考ddd794f；本候选源6176a82见package/inputs。整包头+shim+FD+填充逐字节重建一致，缺preflight新包在设备子进程前拒绝。所有报告reports/hob-stage-audit/；仅静态/主机，未实测。
 
-实际模块/DEPEX/标记、FV RAW 4MiB FAT16 c097413d精确资源、41行2952B SEC内存表7694de6c一致通过。包按原始boot头+固定shim/FD重建逐字节一致，缺preflight时设备子进程调用0。10项固件C宿主UBSan测试及2项拒绝门回归通过。证据reports/boot-input-audit/；memory-map-identical报告firmware_commit是表布局参考源ddd794f，实际候选源以package/inputs.json的6176a82为准。
+## 要拍的阶段与结果边界
 
-## 真实设备状态及尚未完成
+0018使用InitializeMemory已有arena初始化可信边界，阶段为hob-constructor、create-before/create-after、resource-filled/allocation-filled、before-mmu/after-mmu、memory-peim-return、before-platform/after-platform、entry-arg-filled、before-constructors/after-constructors、guid-query。坏头输出[NUWA-HOB-STAGE] bad phase/context/reason/off/type/len、last-good phase/context/count/end/hash、PHIT及最多4个界内原始8字节字，然后停机。非里程碑成功检查保持安静，避免逐条刷屏；原0014保护仍保留。
 
-最近一次确认时间UTC 2026-10-23T16:56:45.092564（北京时间10-24 00:56:45），来自reports/embedded-probe-trial/2026-10-24/postcondition.json；nuwa/kalama、Android完成1、slot_a、三分区SHA与preflight一致。本轮没有设备查询，不能声称实时状态不变。没有flash/erase/改槽位。
+record context在create阶段为(type<<16)|length；resource/allocation为现有描述符地址。reason1格式/跨度、2坏长度、3跨终点、4结束不符、5计数上限、6PHIT关系。hash为头部FNV32辅助，非全内容或无碰撞证明。额外扫描/日志可能改变时序，不复现不等于修复；首次检测区间不等于首次写坏指令。未改变Heap、TTBR、缓存策略、MMIO或HOB内容。
 
-87b14624/CI39988591973/固件00a37d9已实测4MiB FV配置卷发现；菜单60秒action exit，无XNU/ADT。新a2dc8195仍只含该配置探针，加ReadyToBoot一次性只读EL、MPIDR、CNTFRQ和ConventionalMemory快照，打印后停10秒，再进入探针菜单。不分配/预留XNU窗口，不执行ExitBootServices。快照含自身map缓冲区，稍后释放；不代表后续AllocatePages成功或窗口所有权。本轮SEC停点导致新模块回调/快照尚未执行。保留至少120秒录像，需读取ready、conventional、summary、largest及最后结果，不能用USB ACK当阶段日志。
+## 最近真实设备状态
 
-77742999当前内核分析候选5a128fb2/58335232B已完成65348项绑定读回、30段组件和native代码保持、固定DarwinBoot主机ParseKernel接受15非零段/74174464B跨度。early_security_initializers为空、完整ABI未验收、loadable=false，不得加入设备菜单。详见operations/2026-10-24-current-native-prelink.md。CPU Vectors/TZ/SPSS/Rsc独立问题未修复。
+a2dc8195上轮单次临时boot，原图BAB00118/type4/len0触发保护，未到ReadyToBoot。与旧成功87b14624实际SEC仅构建时间字符串4字节不同，掩蔽8字节时间后全SEC一致，根因未定。照片/差分见reports/boot-input-audit-trial/2026-10-24/。postcondition.at=2026-10-23T17:48:19.683937+00:00，即北京时间10-24 01:48:19；nuwa/kalama、Android完成1、slot_a、三分区SHA和当轮preflight一致，恢复闭环。不能当此刻实时状态。
 
-## 用户明确恢复后可用命令
+## 新鲜录像确认后的续接命令
 
-下列a2dc8195步骤本轮已全部完成（失败画面及恢复闭环均已归档），禁止自动重复launch/recover。留作流程参考；新一轮仍需新包及新鲜录像。Windows使用bundled Python并设PYTHONUTF8=1，平台工具PATH加D:/Code/PortingiOS/common/tools/platform-tools；选择真实nuwa/kalama，绝不操作enuma。
+下列只是待执行流程；不得把用户本轮离线授权当录像可用。使用bundled Python，设PYTHONUTF8=1；PATH加D:/Code/PortingiOS/common/tools/platform-tools。始终唯一选择nuwa/kalama，不操作同时接入的enuma。脚本要求fresh路径，不覆盖旧证据。
 
-1. 纯离线包复验：`python -B -c "import sys;sys.path.insert(0,'scripts');from embedded_probe_package import validate;print(validate('reports/boot-input-audit/39995937843/package.json')['image_sha256'])"`。
-2. 取得本轮用户明确录像/按键可用答复；不可用则保持不启动。先检查实际Android身份/完成1/三分区并保存新preflight：`python -B scripts/record-nuwa-trial-state.py --output reports/boot-input-audit-trial/<fresh>/preflight.json --package reports/boot-input-audit/39995937843/package.json --capture-confirmation '<本轮真实答复>'`。
-3. 立即通知开始录像，再执行：`python -B scripts/trial-v4-firmware.py launch --evidence reports/boot-input-audit-trial/<fresh>/launch.json --package reports/boot-input-audit/39995937843/package.json --preflight reports/boot-input-audit-trial/<fresh>/preflight.json --observation-seconds 120`。
-4. 保存屏幕结果后回fastboot，执行原Android临时恢复：`python -B scripts/trial-v4-firmware.py recover --evidence reports/boot-input-audit-trial/<fresh>/recovery.json --package reports/boot-input-audit/39995937843/package.json`。
-5. Android实际完成1后 `python -B scripts/record-nuwa-trial-state.py --output reports/boot-input-audit-trial/<fresh>/postcondition.json --before reports/boot-input-audit-trial/<fresh>/preflight.json`。若等待实体键，记录待办并继续离线工作（仅在用户已恢复主线时）。
+1. 离线复验：`python -B -c "import sys;sys.path.insert(0,'scripts');from embedded_probe_package import validate;print(validate('reports/hob-stage-audit/40000310916/package.json')['image_sha256'])"`。
+2. 用户确认该包连续录像至少120秒及按键回fastboot可用后：`python -B scripts/record-nuwa-trial-state.py --output reports/hob-stage-audit-trial/2026-10-24/preflight.json --package reports/hob-stage-audit/40000310916/package.json --capture-confirmation '<本轮真实答复>'`。若无实际Android完成1或唯一nuwa，先识别并恢复，不绕过门。
+3. 即时通知开始录像后：`python -B scripts/trial-v4-firmware.py launch --evidence reports/hob-stage-audit-trial/2026-10-24/launch.json --package reports/hob-stage-audit/40000310916/package.json --preflight reports/hob-stage-audit-trial/2026-10-24/preflight.json --observation-seconds 120`。照片/录像读bad、last-good、raw及最后结果；USB不替代具体阶段日志。
+4. 保存画面，必要时电源＋音量下回fastboot；`python -B scripts/trial-v4-firmware.py recover --evidence reports/hob-stage-audit-trial/2026-10-24/recovery.json --package reports/hob-stage-audit/40000310916/package.json`。
+5. 实际Android完成1后：`python -B scripts/record-nuwa-trial-state.py --output reports/hob-stage-audit-trial/2026-10-24/postcondition.json --before reports/hob-stage-audit-trial/2026-10-24/preflight.json`。
 
-每轮证据必须fresh；不得覆盖旧记录。窗口/board/bringup内存基址及_verified仍另受AGENTS硬停审阅约束。
+人工按键可等待，同时继续离线；恢复/日志未确认不启动下一包。无后续真实窗口/Apple ADT或XNU成功证据；分析预链接5a128fb2早期security initializer空、ABI未验收、loadable=false，不得加入菜单。
