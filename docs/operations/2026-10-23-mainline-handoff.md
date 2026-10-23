@@ -41,3 +41,7 @@ MemoryPeim只新增登记私有一次性回调；ArmConfigureMmu ABI/默认空�
 2. 缓存遗漏为首嫌，映射/属性、布局时序仍是备选。后续独立重复试验须新鲜录像确认、包复验、唯一nuwa/kalama、恢复证据及即时通知，不复用本轮preflight或录像许可。
 3. 不包含XNU/ADT的配置探针退出后找不到OS符合设计；无需为此删守卫或改Heap。固件仓文档/规则e7a2284已推送，实际构建源仍6176a82。
 4. 原始记录不覆盖。新轮次使用新证据目录；试验结束恢复Android完成1并核对三分区SHA。
+
+## 最新离线续接（2026-10-24T03:17:12.549163+08:00）
+
+固定DarwinBoot RunEnd/AllocateWindow主机ASan/UBSan12项通过；分析内核真实VA同余偏移0x1c8000，在照片最大合并区子集上计算0x8c01c8000，不写board、不称实际分配。详见2026-10-24-loader-window-offline.md。4MiB配置卷不能容纳约58MiB分析内核；直接启动的主阻塞是运输/ADT/初始化与ABI而非当前已越过的HOB。下一步独立文件读取/长度/SHA诊断优先，USB host或大FV均尚未qualified。无新包/设备动作，恢复状态仍此前证据。

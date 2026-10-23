@@ -309,3 +309,5 @@
 2026-10-24T02:58:55.763501+08:00 · 用户要求落实所有文档：同步README/STATUS/主线交接/候选说明/基线后续/实测/PENDING及D-025；历史原始证据保留，移除当前交接的重复启动命令，菜单文字与阶段原图区分；无新增设备动作 · Q-142（续接747d8fc） · docs/operations/2026-10-24-hob-cache-handoff-trial.md
 
 2026-10-24T03:08:47.513216+08:00 · 五原图确认HOB维护后after-mmu与ReadyToBoot/菜单阶段实机通过；无OS符合exit探针，末尾充电为用户报告；补强缓存首因判断并将公开资料/明确排序要求写AGENTS第8节，无新设备动作 · Q-143（续接772465b） · reports/hob-cache-handoff-trial/2026-10-24/screen-observation.json
+
+2026-10-24T03:17:12.549163+08:00 · OS入口离线续接：固定分配函数主机ASan/UBSan12项通过/高PA不截断，核对分析内核真实同余偏移；4MiB运输容量不足及prelink资格/ADT缺口明确，无板值或设备动作 · Q-144 · reports/loader-window-host/results.json、reports/os-entry-next-step/continuation.json

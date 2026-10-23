@@ -1510,3 +1510,13 @@
 [Evidence] after-mmu ok/count84、memory Success、ReadyToBoot和唯一菜单；探针exit/无OS，既有恢复完成1/分区SHA一致。
 [Risk] 单次对照存在布局时序混杂，缓存唯一根因和稳定性未闭环；9GiB仅快照，未执行XNU，无新设备动作。
 ```
+
+## Q-144 · OS入口分配与运输离线续接
+
+```text
+[unixnu-nuwa][loader] 执行固定分配选择主机验证并明确真实负载运输缺口
+
+[Change] 原函数内存提取并校验当前补丁文本，新增主机分配记录适配器及OS入口合同审计，更新状态和续接。
+[Evidence] ASan/UBSan12项通过，真实分析内核VA偏移0x1c8000，高地址选择0x8c01c8000；4MiB卷小于58MB候选。
+[Risk] 主机服务不执行UEFI分配，照片范围为子集；loadable=false/ADT/ABI/运输待落实，无手机或板值修改。
+```

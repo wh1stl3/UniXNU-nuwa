@@ -1,0 +1,694 @@
+{
+  "at": "2026-10-24T03:17:12.549163+08:00",
+  "scope": "Offline continuation after cache candidate success, no phone action or boot package",
+  "loader_source_contracts": [
+    {
+      "repository": "UniXNU/UniXNU",
+      "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+      "path": "drivers/DarwinBoot/DarwinBootPkg/Driver/DarwinBoot.c",
+      "sha256": "cd141d002f24b951d3dfa7773f29cf645712be3c71f4b6e801d1114eb81b5c0a",
+      "license": "BSD-2-Clause-Patent (DarwinBoot/pipeline); ArmCpu/ArmDTPlatform retain their own LICENSE notices; no code copied",
+      "anchors": [
+        {
+          "line": 185,
+          "text": "AdtNode (CONST UINT8 *Data, UINTN Size, UINTN *Offset, UINTN Depth, UINTN ParentPath, UINTN *RamdiskOffset, UINTN *TrustCacheOffset, UINT64 *WindowSize, BOOLEAN *KeepPacked)"
+        },
+        {
+          "line": 219,
+          "text": "if ((AsciiStrCmp ((CONST CHAR8 *)(Data + *Offset - 36), \"RAMDisk\") == 0) ||"
+        },
+        {
+          "line": 220,
+          "text": "(AsciiStrCmp ((CONST CHAR8 *)(Data + *Offset - 36), \"PackedRAMDisk\") == 0)) {"
+        },
+        {
+          "line": 221,
+          "text": "if (AsciiStrCmp ((CONST CHAR8 *)(Data + *Offset - 36), \"PackedRAMDisk\") == 0) {"
+        },
+        {
+          "line": 228,
+          "text": "if (AsciiStrCmp ((CONST CHAR8 *)(Data + *Offset - 36), \"TrustCache\") == 0) {"
+        },
+        {
+          "line": 232,
+          "text": "if (AsciiStrCmp ((CONST CHAR8 *)(Data + *Offset - 36), \"darwinboot-memory-size\") == 0) {"
+        },
+        {
+          "line": 249,
+          "text": "if (*TrustCacheOffset != MAX_UINTN) { return FALSE; }"
+        },
+        {
+          "line": 250,
+          "text": "*TrustCacheOffset = TrustCandidate;"
+        },
+        {
+          "line": 259,
+          "text": "if (!AdtNode (Data, Size, Offset, Depth + 1, Path, RamdiskOffset, TrustCacheOffset, WindowSize, KeepPacked)) { return FALSE; }"
+        },
+        {
+          "line": 266,
+          "text": "ValidTrustCaches (CONST UINT8 *Data, UINTN Size)"
+        },
+        {
+          "line": 390,
+          "text": "AllocateWindow (KERNEL *Kernel, UINT64 WindowSize, EFI_PHYSICAL_ADDRESS *Address)"
+        },
+        {
+          "line": 423,
+          "text": "Status = gBS->AllocatePages (AllocateAddress, EfiLoaderCode, EFI_SIZE_TO_PAGES (WindowSize), &Candidate);"
+        },
+        {
+          "line": 457,
+          "text": "VOID                            *TrustCaches;"
+        },
+        {
+          "line": 460,
+          "text": "UINTN                           TrustCacheSize;"
+        },
+        {
+          "line": 477,
+          "text": "UINTN                           TrustCacheOffset;"
+        },
+        {
+          "line": 478,
+          "text": "UINT64                          TrustCacheAddress;"
+        },
+        {
+          "line": 510,
+          "text": "TrustCaches = NULL;"
+        },
+        {
+          "line": 519,
+          "text": "Status = ReadFile (Root, Request->KernelPath, SIZE_128MB, &Image, &ImageSize);"
+        },
+        {
+          "line": 528,
+          "text": "Status = ReadFile (Root, TreePath, SIZE_16MB, &Tree, &TreeSize);"
+        },
+        {
+          "line": 532,
+          "text": "TrustCacheOffset = MAX_UINTN;"
+        },
+        {
+          "line": 535,
+          "text": "if (!AdtNode (Tree, TreeSize, &Offset, 0, 3, &RamdiskOffset, &TrustCacheOffset, &WindowSize, &KeepPacked) || (Offset != TreeSize)) { Status = EFI_COMPROMISED_DATA; goto Fail; }"
+        },
+        {
+          "line": 548,
+          "text": "Status = ReadFile (Root, TreePath, SIZE_16MB, &TrustCaches, &TrustCacheSize);"
+        },
+        {
+          "line": 550,
+          "text": "if (TrustCaches != NULL) {"
+        },
+        {
+          "line": 551,
+          "text": "if ((TrustCacheOffset == MAX_UINTN) || (U64 ((UINT8 *)Tree + TrustCacheOffset) != 0) ||"
+        },
+        {
+          "line": 552,
+          "text": "(U64 ((UINT8 *)Tree + TrustCacheOffset + 8) != 0) || !ValidTrustCaches (TrustCaches, TrustCacheSize)) {"
+        },
+        {
+          "line": 556,
+          "text": "} else if (TrustCacheOffset != MAX_UINTN) {"
+        },
+        {
+          "line": 562,
+          "text": "Status = AllocateWindow (&Kernel, WindowSize, &Address);"
+        },
+        {
+          "line": 568,
+          "text": "TrustCacheAddress = RamdiskAddress + RamdiskBytes;"
+        },
+        {
+          "line": 569,
+          "text": "Used = ALIGN_VALUE (TrustCacheAddress + TrustCacheSize, SIZE_16KB) - Address;"
+        },
+        {
+          "line": 595,
+          "text": "if (TrustCaches != NULL) {"
+        },
+        {
+          "line": 596,
+          "text": "CopyMem ((VOID *)(UINTN)TrustCacheAddress, TrustCaches, TrustCacheSize);"
+        },
+        {
+          "line": 597,
+          "text": "WriteUnaligned64 ((UINT64 *)(UINTN)(TreeAddress + TrustCacheOffset), TrustCacheAddress);"
+        },
+        {
+          "line": 598,
+          "text": "WriteUnaligned64 ((UINT64 *)(UINTN)(TreeAddress + TrustCacheOffset + 8), TrustCacheSize);"
+        },
+        {
+          "line": 599,
+          "text": "FreePool (TrustCaches); TrustCaches = NULL;"
+        },
+        {
+          "line": 640,
+          "text": "Status = gBS->ExitBootServices (mImage, Key);"
+        },
+        {
+          "line": 653,
+          "text": "if (TrustCaches != NULL) { FreePool (TrustCaches); }"
+        }
+      ]
+    },
+    {
+      "repository": "UniXNU/UniXNU",
+      "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+      "path": "drivers/DarwinBoot/DarwinBootPkg/Driver/Entry.S",
+      "sha256": "72d63bede2d0eac7179ac4f1048a5312d97f210c8362111dafb71e289b403f56",
+      "license": "BSD-2-Clause-Patent (DarwinBoot/pipeline); ArmCpu/ArmDTPlatform retain their own LICENSE notices; no code copied",
+      "anchors": []
+    },
+    {
+      "repository": "UniXNU/UniXNU",
+      "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+      "path": "scripts/unixnu/payload.py",
+      "sha256": "a1fca76dd87209df1a0becce6bf16bb84efe1f57e99a766e3b3d0d2b083d3ca9",
+      "license": "BSD-2-Clause-Patent (DarwinBoot/pipeline); ArmCpu/ArmDTPlatform retain their own LICENSE notices; no code copied",
+      "anchors": [
+        {
+          "line": 128,
+          "text": "('chip_id', '--chip-id'), ('cpu_regs', '--cpu-regs'), ('psci_method', '--psci-method')):"
+        }
+      ]
+    },
+    {
+      "repository": "UniXNU/UniXNU",
+      "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+      "path": "drivers/ArmDTPlatform/ArmDTPlatform.cpp",
+      "sha256": "07f96a42bdd638022960f5fcaf9e3a07dd73a82c869a70815781cac6d4873b3b",
+      "license": "BSD-2-Clause-Patent (DarwinBoot/pipeline); ArmCpu/ArmDTPlatform retain their own LICENSE notices; no code copied",
+      "anchors": [
+        {
+          "line": 65,
+          "text": "OSData *bankSize = OSDynamicCast (OSData, chosen->getProperty (\"nvram-bank-size\"));"
+        },
+        {
+          "line": 66,
+          "text": "OSData *proxyData = OSDynamicCast (OSData, chosen->getProperty (\"nvram-proxy-data\"));"
+        },
+        {
+          "line": 85,
+          "text": "// GIC lives here, and the UFS host/PHY nodes must be visible to their native"
+        },
+        {
+          "line": 114,
+          "text": "// PSCI SYSTEM_RESET via the same SMC conduit as the entry reset probe."
+        },
+        {
+          "line": 170,
+          "text": "OSData *type = OSDynamicCast (OSData, child->getProperty (\"device_type\"));"
+        }
+      ]
+    },
+    {
+      "repository": "UniXNU/UniXNU",
+      "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+      "path": "drivers/ArmCpu/ArmCpu.cpp",
+      "sha256": "3c87b3bd617be5582a6a24ff797c359497ee9feaa702ee883ecee4270db21c9f",
+      "license": "BSD-2-Clause-Patent (DarwinBoot/pipeline); ArmCpu/ArmDTPlatform retain their own LICENSE notices; no code copied",
+      "anchors": [
+        {
+          "line": 24,
+          "text": "volatile uint32_t armcpu_gic_ready = 0;"
+        },
+        {
+          "line": 29,
+          "text": "// Boot core's own GIC registers read back once after enabling (own frame, the same one just written): 0 IGROUPR0, 1 ISENABLER0, 2 GICD_CTLR,"
+        },
+        {
+          "line": 30,
+          "text": "// 3 GICD_TYPER, 4 IGRPMODR0, 5 ICC_PMR_EL1, 6 ICC_IGRPEN1_EL1, 7 ICC_SRE_EL1."
+        },
+        {
+          "line": 31,
+          "text": "volatile uint32_t armcpu_gic_boot[8];"
+        },
+        {
+          "line": 32,
+          "text": "volatile uint32_t armcpu_core_timer[8], armcpu_core_sgi[8];   // per logical core: architectural timer interrupts and SGI 0 taken"
+        },
+        {
+          "line": 38,
+          "text": "// 4 PSCI CPU_ON issued, 5 entered initCPU on the new core, 6 GIC redistributor ready, 7 running."
+        },
+        {
+          "line": 43,
+          "text": "volatile int32_t armcpu_smp_psci_rc[8];"
+        },
+        {
+          "line": 62,
+          "text": "uint32_t logicalId = 0;"
+        },
+        {
+          "line": 89,
+          "text": "// Redistributor ISENABLER0: SGIs 0..15 (only SGI 0 is used by the kernel; the others let the self-SGI probe tell which INTIDs the GIC accepts) and PPI 27."
+        },
+        {
+          "line": 92,
+          "text": "static const uint32_t kIpiSpiBase = 1008;   // INTIDs 1008..1015 stand for 'IPI to logical core 0..7'"
+        },
+        {
+          "line": 104,
+          "text": "// Distributor side of the software IPI of logical core `core`: group 1, edge-triggered, priority 0x80, routed to affinity `aff`, enabled."
+        },
+        {
+          "line": 145,
+          "text": "// GIC state shared by all CPU nubs. The boot CPU maps the distributor and redistributor frames; a secondary core"
+        },
+        {
+          "line": 152,
+          "text": "static uint64_t gRedistStride = 0; // DT redistributor-stride; 0 = infer from GICR_TYPER.VLPIS"
+        },
+        {
+          "line": 153,
+          "text": "volatile uint32_t armcpu_gic_stride = 0, armcpu_gic_typer_probe[2];"
+        },
+        {
+          "line": 159,
+          "text": "static bool gRemoteGic = false; // sheng-smp-gic=1: the boot CPU prepares a new core's redistributor before CPU_ON"
+        },
+        {
+          "line": 161,
+          "text": "// Shared peripheral interrupts (GICv3 SPIs, INTID 32..1019). A driver attaches a handler for one INTID; the line is set to"
+        },
+        {
+          "line": 162,
+          "text": "// Group 1 non-secure, priority 0xa0, the given trigger and routed to the boot CPU (GICD_IROUTER, affinity routing is on),"
+        },
+        {
+          "line": 177,
+          "text": "OSData *type = OSDynamicCast (OSData, provider->getProperty (\"device_type\"));"
+        },
+        {
+          "line": 178,
+          "text": "OSData *reg = OSDynamicCast (OSData, provider->getProperty (\"reg\"));"
+        },
+        {
+          "line": 199,
+          "text": "IORegistryEntry *gic = IORegistryEntry::fromPath (\"/arm-io/intc\", gIODTPlane);"
+        },
+        {
+          "line": 200,
+          "text": "if ((soc == nullptr) || (gic == nullptr)) {"
+        },
+        {
+          "line": 202,
+          "text": "if (gic != nullptr) { gic->release (); }"
+        },
+        {
+          "line": 205,
+          "text": "OSData *ranges = OSDynamicCast (OSData, soc->getProperty (\"ranges\"));"
+        },
+        {
+          "line": 206,
+          "text": "OSData *reg = OSDynamicCast (OSData, gic->getProperty (\"reg\"));"
+        },
+        {
+          "line": 207,
+          "text": "OSData *compatible = OSDynamicCast (OSData, gic->getProperty (\"compatible\"));"
+        },
+        {
+          "line": 213,
+          "text": "(memcmp (compatible->getBytesNoCopy (), \"arm,gic-v3\", 11) == 0);"
+        },
+        {
+          "line": 218,
+          "text": "OSData *strideProperty = OSDynamicCast (OSData, gic->getProperty (\"redistributor-stride\"));"
+        },
+        {
+          "line": 223,
+          "text": "armcpu_gic_stride = static_cast<uint32_t> (gRedistStride);"
+        },
+        {
+          "line": 225,
+          "text": "gic->release ();"
+        },
+        {
+          "line": 281,
+          "text": "// from the DT affinity, so the new core never needs GIC MMIO of its own."
+        },
+        {
+          "line": 286,
+          "text": "armcpu_gic_typer_probe[0] = static_cast<uint32_t> (offset);"
+        },
+        {
+          "line": 288,
+          "text": "armcpu_gic_typer_probe[1] = static_cast<uint32_t> (typer);"
+        },
+        {
+          "line": 326,
+          "text": "if ((value & 1) == 0) { panic (\"ArmCpu: GICv3 system register interface unavailable\"); }"
+        },
+        {
+          "line": 346,
+          "text": "armcpu_gic_boot[0] = read32 (redist + 0x10000, 0x80);"
+        },
+        {
+          "line": 347,
+          "text": "armcpu_gic_boot[1] = read32 (redist + 0x10000, 0x100);"
+        },
+        {
+          "line": 348,
+          "text": "armcpu_gic_boot[2] = read32 (dist, 0);"
+        },
+        {
+          "line": 349,
+          "text": "armcpu_gic_boot[3] = read32 (dist, 4);"
+        },
+        {
+          "line": 350,
+          "text": "armcpu_gic_boot[4] = read32 (redist + 0x10000, 0xd00);"
+        },
+        {
+          "line": 351,
+          "text": "armcpu_gic_boot[5] = static_cast<uint32_t> (pmr);"
+        },
+        {
+          "line": 352,
+          "text": "armcpu_gic_boot[6] = static_cast<uint32_t> (ig);"
+        },
+        {
+          "line": 353,
+          "text": "armcpu_gic_boot[7] = static_cast<uint32_t> (sre);"
+        },
+        {
+          "line": 355,
+          "text": "armcpu_gic_ready = 1;"
+        },
+        {
+          "line": 362,
+          "text": "PE_parse_boot_argn (\"armcpu-skip-gic\", &skip, sizeof (skip));"
+        },
+        {
+          "line": 374,
+          "text": "OSData *reg = OSDynamicCast (OSData, provider->getProperty (\"reg\"));"
+        },
+        {
+          "line": 376,
+          "text": "logicalId = static_cast<uint32_t> (ml_get_cpu_number (physical));"
+        },
+        {
+          "line": 377,
+          "text": "secondary = logicalId != static_cast<uint32_t> (ml_get_boot_cpu_number ());"
+        },
+        {
+          "line": 380,
+          "text": "armcpu_smp_step[logicalId] = 1;"
+        },
+        {
+          "line": 382,
+          "text": "armcpu_smp_mpidr[logicalId] = physical;"
+        },
+        {
+          "line": 386,
+          "text": "__atomic_store_n (&gPending[logicalId], this, __ATOMIC_RELEASE);"
+        },
+        {
+          "line": 400,
+          "text": "info.log_id = logicalId;"
+        },
+        {
+          "line": 405,
+          "text": "if (status != KERN_SUCCESS) { panic (\"ArmCpu: CPU %u registration failed: %d\", logicalId, status); }"
+        },
+        {
+          "line": 412,
+          "text": "PE_parse_boot_argn (\"sheng-smp-gic\", &remote, sizeof (remote));"
+        },
+        {
+          "line": 422,
+          "text": "if (controller->registerInterrupt (provider, logicalId, this, &ArmCpu::dispatch, nullptr) != kIOReturnSuccess) {"
+        },
+        {
+          "line": 446,
+          "text": "if (gRemoteGic && !wakeRedistributor (false)) { armcpu_smp_fail[logicalId] = 3; return false; }"
+        },
+        {
+          "line": 450,
+          "text": "info.log_id = logicalId;"
+        },
+        {
+          "line": 455,
+          "text": "if (status != KERN_SUCCESS) { armcpu_smp_fail[logicalId] = 4; return false; }"
+        },
+        {
+          "line": 457,
+          "text": "armcpu_smp_step[logicalId] = 2;"
+        },
+        {
+          "line": 464,
+          "text": "// PSCI conduit comes from the /psci node of the device tree (\"smc\" or \"hvc\"); no default is assumed."
+        },
+        {
+          "line": 465,
+          "text": "static bool psciConduit (bool *hvc)"
+        },
+        {
+          "line": 467,
+          "text": "IORegistryEntry *psci = IORegistryEntry::fromPath (\"/psci\", gIODTPlane);"
+        },
+        {
+          "line": 468,
+          "text": "if (psci == nullptr) { return false; }"
+        },
+        {
+          "line": 469,
+          "text": "OSData *method = OSDynamicCast (OSData, psci->getProperty (\"method\"));"
+        },
+        {
+          "line": 476,
+          "text": "psci->release ();"
+        },
+        {
+          "line": 480,
+          "text": "static int64_t psciCall (bool hvc, uint64_t function, uint64_t a, uint64_t b, uint64_t c)"
+        },
+        {
+          "line": 497,
+          "text": "armcpu_smp_step[self->logicalId] = 3;"
+        },
+        {
+          "line": 507,
+          "text": "armcpu_smp_psci_rc[logicalId] = -1000;"
+        },
+        {
+          "line": 517,
+          "text": "armcpu_smp_step[logicalId] = 5;"
+        },
+        {
+          "line": 520,
+          "text": "armcpu_smp_seen_mpidr[logicalId] = static_cast<uint32_t> (mpidr);"
+        },
+        {
+          "line": 522,
+          "text": "if ((mpidr & 0xffff) != (affinity & 0xffff)) { armcpu_smp_fail[logicalId] = 1; for (;;) { __asm__ volatile (\"wfe\"); } }"
+        },
+        {
+          "line": 523,
+          "text": "if (!gRemoteGic && !wakeRedistributor (true)) { armcpu_smp_fail[logicalId] = 2; for (;;) { __asm__ volatile (\"wfe\"); } }"
+        },
+        {
+          "line": 524,
+          "text": "armcpu_smp_step[logicalId] = 6;"
+        },
+        {
+          "line": 526,
+          "text": "if (gSpiIpi) { spiIpiConfigure (gDist, logicalId, affinity); }"
+        },
+        {
+          "line": 529,
+          "text": "ml_install_interrupt_handler (this, static_cast<int> (logicalId), this, reinterpret_cast<IOInterruptHandler> (&ArmCpu::dispatch), nullptr);"
+        },
+        {
+          "line": 532,
+          "text": "armcpu_smp_step[logicalId] = 7;"
+        },
+        {
+          "line": 541,
+          "text": "// Explicit A/B hardware diagnostic: do not touch GIC MMIO or enable an"
+        },
+        {
+          "line": 547,
+          "text": "if (gSpiIpi) { spiIpiConfigure (gDist, logicalId, affinity); }"
+        },
+        {
+          "line": 570,
+          "text": "armcpu_core_timer[logicalId & 7] = armcpu_core_timer[logicalId & 7] + 1;"
+        },
+        {
+          "line": 576,
+          "text": "armcpu_core_sgi[logicalId & 7] = armcpu_core_sgi[logicalId & 7] + 1;"
+        },
+        {
+          "line": 582,
+          "text": "armcpu_core_sgi[logicalId & 7] = armcpu_core_sgi[logicalId & 7] + 1;"
+        },
+        {
+          "line": 620,
+          "text": "if (gSpiIpi) { spiIpiSend (gDist, peer->logicalId & 7); return; }"
+        },
+        {
+          "line": 627,
+          "text": "// Read-only snapshot of the GIC state that decides whether SGI 0 reaches the core with MPIDR affinity aff: its redistributor's SGI frame and"
+        },
+        {
+          "line": 628,
+          "text": "// the distributor control register. out: 0 IGROUPR0, 1 ISENABLER0, 2 ISPENDR0, 3 IGRPMODR0, 4 GICR_WAKER, 5 GICD_CTLR, 6 IPRIORITYR0, 7 found(1)."
+        },
+        {
+          "line": 629,
+          "text": "// armcpu_gic_diag_stage names the access in progress, so a read that never returns is identified from another thread:"
+        },
+        {
+          "line": 630,
+          "text": "// 0x100+frame walk, 2 IGROUPR0, 3 ISENABLER0, 4 ISPENDR0, 5 IGRPMODR0, 6 WAKER, 7 GICD_CTLR, 8 IPRIORITYR0, 9 done, 0xe not found."
+        },
+        {
+          "line": 631,
+          "text": "volatile uint32_t armcpu_gic_diag_stage = 0;"
+        },
+        {
+          "line": 632,
+          "text": "extern \"C\" void armcpu_gic_diag (uint64_t aff, uint32_t *out)"
+        },
+        {
+          "line": 635,
+          "text": "if (gDist == 0 || gFrames == 0) { armcpu_gic_diag_stage = 0xe; return; }"
+        },
+        {
+          "line": 638,
+          "text": "armcpu_gic_diag_stage = 0x100 + static_cast<uint32_t> (offset >> 16);"
+        },
+        {
+          "line": 642,
+          "text": "armcpu_gic_diag_stage = 2; out[0] = read32 (sgi, 0x80);"
+        },
+        {
+          "line": 643,
+          "text": "armcpu_gic_diag_stage = 3; out[1] = read32 (sgi, 0x100);"
+        },
+        {
+          "line": 644,
+          "text": "armcpu_gic_diag_stage = 4; out[2] = read32 (sgi, 0x200);"
+        },
+        {
+          "line": 645,
+          "text": "armcpu_gic_diag_stage = 5; out[3] = read32 (sgi, 0xd00);"
+        },
+        {
+          "line": 646,
+          "text": "armcpu_gic_diag_stage = 6; out[4] = read32 (redist, 0x14);"
+        },
+        {
+          "line": 647,
+          "text": "armcpu_gic_diag_stage = 7; out[5] = read32 (gDist, 0);"
+        },
+        {
+          "line": 648,
+          "text": "armcpu_gic_diag_stage = 8; out[6] = read32 (sgi, 0x400);"
+        },
+        {
+          "line": 650,
+          "text": "armcpu_gic_diag_stage = 9;"
+        },
+        {
+          "line": 656,
+          "text": "armcpu_gic_diag_stage = 0xe;"
+        },
+        {
+          "line": 659,
+          "text": "// Does an SGI sent to the calling core itself become pending at its own CPU interface, and which INTIDs? Only system registers are used (no GIC"
+        },
+        {
+          "line": 732,
+          "text": "if(diagnosePower)panic(\"ArmCpu: unsupported quiesce requested before timer/GIC disable caller=%p halt=%u timer=%llu phase=%u\",__builtin_return_address(0),armcpu_halt_calls,armcpu_timer_interrupts,armcpu_irq_phase);"
+        },
+        {
+          "line": 764,
+          "text": "if (!psciConduit (&hvc)) { armcpu_smp_psci_rc[logicalId] = -1001; return KERN_NOT_SUPPORTED; }"
+        },
+        {
+          "line": 766,
+          "text": "// PSCI 0.2 CPU_ON (SMC64 function id); the entry point is the kernel's physical reset vector page, whose reset"
+        },
+        {
+          "line": 772,
+          "text": "armcpu_smp_step[logicalId] = 4;"
+        },
+        {
+          "line": 773,
+          "text": "int64_t result = psciCall (hvc, 0xc4000003ULL, affinity & 0xff00ffffffULL, entry, 0);"
+        },
+        {
+          "line": 774,
+          "text": "armcpu_smp_psci_rc[logicalId] = static_cast<int32_t> (result);"
+        },
+        {
+          "line": 787,
+          "text": "if (gDist == 0 || armcpu_gic_ready == 0 || handler == nullptr) { return kIOReturnNotReady; }"
+        }
+      ]
+    }
+  ],
+  "memory_selection_host_report": "reports/loader-window-host/results.json",
+  "public_spec": {
+    "url": "https://uefi.org/specs/UEFI/2.10_A/07_Services_Boot_Services.html#efi-boot-services-allocatepages",
+    "version": "2.10 Errata A",
+    "reviewed": "AllocatePages requires contiguous pages and successful service return; attributes are capabilities, not necessarily active settings"
+  },
+  "transport": {
+    "current_fv_fat_bytes": 4194304,
+    "current_analysis_kernel_bytes": 58335232,
+    "kernel_alone_larger_than_current_volume": true,
+    "current_profile_cannot_carry_kernel_unchanged": true,
+    "chosen_initrd_previous_trial": "Envelope absent in actual photographed trial; do not reuse generic v4 ramdisk assumptions",
+    "preferred_next": "Separate SimpleFileSystem large-file read/hash diagnostic; no XNU entry, no trusted ADT required",
+    "alternatives": [
+      {
+        "path": "external USB mass storage FAT",
+        "strength": "Keeps firmware FD small; reuses real filesystem/loader read path",
+        "missing": "nuwa host/OTG/device discovery evidence, current photo shows UFP not host; no blanket host-mode guarantee"
+      },
+      {
+        "path": "dedicated embedded large FV transport diagnostic",
+        "strength": "Reuses proven embedded block publication",
+        "missing": "3MiB FD compression/build budget and DXE peak-memory budget; cannot assume scaling4MiB to64MiB"
+      },
+      {
+        "path": "device UFS FAT partition",
+        "strength": "Potential installed storage source",
+        "missing": "No target filesystem/write destination authorized or qualified; no writes this turn"
+      }
+    ]
+  },
+  "current_prelink": {
+    "sha256": "5a128fb282009fa7f24fc35574d2199baa010edb650c50c5f903b8351e61f5e6",
+    "loadable": false,
+    "runtime_qualified": false,
+    "early_security_initializers": {},
+    "blockers": [
+      "Early security initializer identity/call ABI not qualified or configured",
+      "Complete donor/native C++ and structure ABI not qualified",
+      "Real nuwa Apple ADT and runtime allocation window not supplied",
+      "Large-payload transport from firmware configuration probe remains separate"
+    ]
+  },
+  "root_provider_exports_historical_inventory": {
+    "_armcpu_registered": true,
+    "_armdt_platform_configured": true,
+    "_native_ufs_probe_calls": false,
+    "_native_ram_block_ready": false,
+    "_native_ram_block_volume_seed": false,
+    "_sheng_pmgr_run": false
+  },
+  "root_provider_inventory_limitation": "Existing native export evidence, not rerun/full component-driver ABI proof",
+  "adt_next": "Audit target properties against ArmCpu/ArmDTPlatform and actual nuwa Android DT, rather than cloning donor/sheng board values",
+  "board_modified": false,
+  "device_accessed": false,
+  "image_generated": false
+}

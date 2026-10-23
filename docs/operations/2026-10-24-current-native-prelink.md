@@ -21,3 +21,7 @@
 组件/slide沿用既有只读分析选择，slide=-16MiB仅为虚拟布局分析，不写board或物理地址配置。没有采纳旧候选AMFI initializer：本次early_security_initializers为空，未完成initializer身份/调用ABI，不把它称可启动预链接。loadable=false，runtime_qualified=false。真实Apple ADT、连续可分配内存窗口、大负载运输及donor/native结构和C++ ABI仍是缺口。
 
 下一项先取得UEFI在临近OS加载时的真实可分配内存描述符和CPU入口只读寄存器，再据此准备具体窗口/ADT方案；不从Android物理DRAM总量推导连续可用窗口，不改board/bringup/验证标志。新实机动作另需新鲜录像与恢复门。本轮没有设备命令或模式切换。
+
+## 后续续接更新（2026-10-24）
+
+26ef8efd照片已取得ReadyToBoot EL1与最大9GiB常规范围，但明确只快照未分配。固定分配函数主机12项通过，分析内核VA同余偏移0x1c8000，高地址选择不截断；实际页分配和入口仍未验证。运输/ADT/初始化与ABI缺口见2026-10-24-loader-window-offline.md，原loadable=false结论保持。

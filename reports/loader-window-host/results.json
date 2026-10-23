@@ -1,0 +1,83 @@
+{
+  "at": "2026-10-23T19:15:30.871585+00:00",
+  "scope": "Exact pinned allocation-selection functions with host service adapters; not device/EFI allocation",
+  "source": {
+    "repository": "UniXNU/UniXNU",
+    "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+    "path": "drivers/DarwinBoot/DarwinBootPkg/Driver/DarwinBoot.c",
+    "sha256": "cd141d002f24b951d3dfa7773f29cf645712be3c71f4b6e801d1114eb81b5c0a",
+    "license": "BSD-2-Clause-Patent",
+    "post_patch_sha256": "1d2917aacdd8bd14a16adde289333fdda2f723720fd88f33f963ad1f07bdf8dc",
+    "function_sha256": {
+      "RunEnd": "8eeffbf7fff4b33d27af82bf9907e1565e63dfc8ab0ae7599808257460065933",
+      "AllocateWindow": "5a7731007efe8eb2e5e81272030ad8a4db7887ecd606348c3b7a02ffb7685392"
+    }
+  },
+  "snapshot_source": "reports/hob-cache-handoff-trial/2026-10-24/ready-to-boot-map.png",
+  "fixture": "Only photographed largest merged conventional run plus explicitly synthetic perturbations, not all128 original descriptors",
+  "analysis_kernel": {
+    "sha256": "5a128fb282009fa7f24fc35574d2199baa010edb650c50c5f903b8351e61f5e6",
+    "virtual_base": "0xfffffff003dc8000",
+    "allocation_congruence": "0x1c8000",
+    "loadable": false
+  },
+  "result": {
+    "cases_passed": 12,
+    "high_address_selection": "0x8c01c8000",
+    "actual_uefi_allocation": false
+  },
+  "commands": [
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "clang",
+        "-x",
+        "c",
+        "-std=c11",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-pie",
+        "-no-pie",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/loader-window-host-v2/probe"
+      ],
+      "stdin_sha256": "085c892b7a5becfdaf1ad260661a2991f47783a95cd6967e8fab4ef962fa67d7",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/loader-window-host-v2/probe"
+      ],
+      "stdin_sha256": null,
+      "exit_code": 0,
+      "stdout": "{\"cases_passed\":12,\"high_address_selection\":\"0x8c01c8000\",\"actual_uefi_allocation\":false}\n",
+      "stderr": ""
+    }
+  ],
+  "findings": [
+    "No 32-bit physical address truncation in allocation selection",
+    "Kernel 2MiB congruence adds an offset; a run as large as a requested window may still be too small",
+    "AllocatePages failure propagates, GetMemoryMap visibility does not guarantee allocation",
+    "RunEnd merges adjacent conventional descriptors without comparing Attribute; audit separately before policy adoption"
+  ],
+  "limitations": [
+    "No full Boot(), copy, ExitBootServices, page-table, cache or XNU execution",
+    "Host allocation adapter records requests; does not reserve real physical memory",
+    "No board/bringup values, real target ADT or verified flags changed"
+  ]
+}
