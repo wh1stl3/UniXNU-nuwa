@@ -1,0 +1,182 @@
+{
+  "scope": "Actual upstream VM/memory code with upstream authored software IOKit/register fixtures; no GPU or physical cache execution",
+  "commit": "b686b9054f57d393c80195b82568a09f8ca106a2",
+  "commands": [
+    {
+      "argv": [
+        "clang",
+        "-std=c11",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-pie",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-c",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K/ArmSmmu4K.c",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/ArmSmmu4K.o"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "clang",
+        "-std=c11",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-pie",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-c",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K/ArmSmmu4KContext.c",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/ArmSmmu4KContext.o"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "clang",
+        "-std=c11",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-pie",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-c",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K/ArmSmmu4KProgram.c",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/ArmSmmu4KProgram.o"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "clang",
+        "-std=c11",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-pie",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-c",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K/ArmSmmu4KLive.c",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/ArmSmmu4KLive.o"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "clang",
+        "-std=c11",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-pie",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-c",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K/ArmSmmu4KStreams.c",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/ArmSmmu4KStreams.o"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "clang++",
+        "-std=c++17",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-pie",
+        "-no-pie",
+        "-I",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/include",
+        "-I",
+        "/mnt/d/Code/UniXNU-integration/drivers/NativeAdreno/tests",
+        "-I",
+        "/mnt/d/Code/UniXNU-integration/drivers/NativeAdreno",
+        "-I",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K",
+        "/mnt/d/Code/UniXNU-integration/drivers/NativeAdreno/NativeAdrenoMemory.cpp",
+        "/mnt/d/Code/UniXNU-integration/drivers/NativeAdreno/NativeAdrenoSmmuMemory.cpp",
+        "/mnt/d/Code/UniXNU-integration/drivers/NativeAdreno/NativeAdrenoVm.cpp",
+        "/mnt/d/Code/UniXNU-integration/drivers/NativeAdreno/tests/test_vm.cpp",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/ArmSmmu4K.o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/ArmSmmu4KContext.o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/ArmSmmu4KProgram.o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/ArmSmmu4KLive.o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/ArmSmmu4KStreams.o",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/gpu-vm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "/mnt/d/Code/UniXNU-integration/drivers/NativeAdreno/NativeAdrenoMemory.cpp:167:70: error: unknown type name 'IODirection'\nstatic IOMemoryDescriptor *importRange(uint64_t address,size_t bytes,IODirection direction,void *task)\n                                                                     ^\n/mnt/d/Code/UniXNU-integration/drivers/NativeAdreno/NativeAdrenoMemory.cpp:170:90: error: use of undeclared identifier 'kIOMemoryPersistent'\n    IOMemoryDescriptor *range=IOMemoryDescriptor::withAddressRange(address,bytes,options|kIOMemoryPersistent,static_cast<task_t>(task));\n                                                                                         ^\n2 errors generated.\n"
+    },
+    {
+      "argv": [
+        "clang++",
+        "-std=c++17",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-pie",
+        "-no-pie",
+        "-I",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/include",
+        "-I",
+        "/mnt/d/Code/UniXNU-integration/drivers/NativeAdreno/tests",
+        "-I",
+        "/mnt/d/Code/UniXNU-integration/drivers/NativeAdreno",
+        "-I",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K",
+        "/mnt/d/Code/UniXNU-integration/drivers/NativeAdreno/NativeAdrenoMemory.cpp",
+        "/mnt/d/Code/UniXNU-integration/drivers/NativeAdreno/NativeAdrenoSmmuMemory.cpp",
+        "/mnt/d/Code/UniXNU-integration/drivers/NativeAdreno/NativeAdrenoVm.cpp",
+        "/mnt/d/Code/UniXNU-integration/drivers/NativeAdreno/tests/test_vm.cpp",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/ArmSmmu4K.o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/ArmSmmu4KContext.o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/ArmSmmu4KProgram.o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/ArmSmmu4KLive.o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/ArmSmmu4KStreams.o",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/gpu-vm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "/mnt/d/Code/UniXNU-integration/drivers/NativeAdreno/NativeAdrenoMemory.cpp:118:57: error: invalid instruction mnemonic 'dsb'\n                if(pool.write_combined)__asm__ volatile(\"dsb sy\":::\"memory\");\n                                                        ^\n<inline asm>:1:2: note: instantiated into assembly here\n        dsb sy\n        ^~~\n1 error generated.\n"
+    }
+  ],
+  "passed": false,
+  "adapter_correction": {
+    "reason": "Upstream host fixture lacks newly used IODirection and kIOMemoryPersistent declarations; definitions added only to ignored host include adapter",
+    "definition_reference": "fixed xnu8796 iokit/IOKit/IOMemoryDescriptor.h:86 and120",
+    "target_driver_changed": false,
+    "persistent_page_lifetime_behavior_qualified": false,
+    "adapter_sha256": "ad1fc4b11e63b62f6c119c611a73474c3d2ca5c189ad3030c331e33716afa9b4"
+  }
+}

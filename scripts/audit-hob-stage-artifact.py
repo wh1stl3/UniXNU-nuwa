@@ -6,8 +6,9 @@ sys.path.insert(0,str(ROOT/'out/python-tools'))
 import capstone
 
 def main():
- cli=argparse.ArgumentParser(description=__doc__);cli.add_argument('run',type=int);cli.add_argument('--profile',choices=('hob-stage-audit','hob-cache-handoff'),default='hob-stage-audit');args=cli.parse_args()
- artifact=ROOT/f'out/firmware-ci/{args.run}/nuwa-firmware-{args.run}';output=ROOT/f'reports/{args.profile}/{args.run}/sec-call-audit.json'
+ cli=argparse.ArgumentParser(description=__doc__);cli.add_argument('run',type=int);cli.add_argument('--profile',choices=('hob-stage-audit','hob-cache-handoff','upstream-merged'),default='hob-stage-audit');cli.add_argument('--artifact',type=Path);args=cli.parse_args()
+ artifact=args.artifact.resolve() if args.artifact else ROOT/f'out/firmware-ci/{args.run}/nuwa-firmware-{args.run}';output=ROOT/f'reports/{args.profile}/{args.run}/sec-call-audit.json'
+ if not artifact.resolve().is_relative_to((ROOT/'out').resolve()):raise ValueError('Artifact must stay under out/')
  if output.exists():raise ValueError('Fresh audit required')
  spec=importlib.util.spec_from_file_location('stage_reader',ROOT/'scripts/ci/inspect-firmware-candidate.py');reader=importlib.util.module_from_spec(spec);spec.loader.exec_module(reader)
  inspected=reader.inspect(artifact,'NuwaBootMemoryDxe',True,True,True,args.profile)

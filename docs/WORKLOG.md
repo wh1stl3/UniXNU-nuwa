@@ -315,3 +315,5 @@
 2026-10-24T03:28:17.252417+08:00 · 查最新上游主仓1a01c2af/12模块及同SoC：GPU/HID/显示实质更新，CPU/平台/Prelink实现未变；0005对新DarwinBoot内存apply通过，未采用或构建，无设备动作 · Q-145 · reports/upstream-review/2026-10-24/review.json
 
 2026-10-24T03:46:17.280839+08:00 · 用户授权全部合并：基座e553e46真实merge推送，54冲突落实完整上游+3工作流，21模块固定；设备接入新固件/内核profile，63补丁/固件整链静态通过，CI待验 · Q-146 · reports/upstream-integration/2026-10-24/
+
+2026-10-24T04:00:31.761882+08:00 · 固件40014018074成功，SEC与26ef8efd字节一致；主机解析24/packed/SMMU通过。内核首轮因漏前置zzw授权辅助函数链接失败，补真实实现并核验64项序列，待重建；GPU主机架构限制未验 · Q-147 · reports/upstream-integration/2026-10-24/

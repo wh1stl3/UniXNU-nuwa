@@ -41,12 +41,13 @@ def tree(window=0x20000000, chosen_props=(), map_props=(), root_props=()):
 
 
 def main():
-    global WORK, REPORT
+    global WORK, REPORT, BASE, PIN
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--work', type=Path, default=WORK, help='Fresh scratch directory under repo out/')
     parser.add_argument('--output', type=Path, default=REPORT, help='Fresh report under repo reports/')
     parser.add_argument('--kernel', type=Path, help='Explicit analysis candidate under out/')
     parser.add_argument('--kernel-sha256', help='Required exact digest with --kernel')
+    parser.add_argument('--source-profile', choices=('baseline', 'upstream-merged'), default='baseline')
     options = parser.parse_args()
     if bool(options.kernel) != bool(options.kernel_sha256):
         raise ValueError('Explicit kernel path and SHA256 must be supplied together')
@@ -58,9 +59,23 @@ def main():
         raise ValueError('Evidence must stay under repo reports/')
     if WORK.exists() or REPORT.exists():
         raise ValueError('Fresh output required')
+    merged_profile = None
+    if options.source_profile == 'upstream-merged':
+        merged_profile = json.loads((ROOT / 'config/firmware-upstream-merged-profile.json').read_text())
+        BASE = Path('D:/Code/UniXNU-integration')
+        PIN = merged_profile['recipe']['sources']['unixnu']['commit']
+        for relative, expected in {'.': PIN, **merged_profile['recipe']['unixnu_submodules']}.items():
+            actual = subprocess.check_output([GIT, '-C', str(BASE / relative), 'rev-parse', 'HEAD']).decode().strip()
+            if actual != expected:
+                raise ValueError('Source/module pin changed: ' + relative)
     sources = {}
     for path in (C_PATH, 'drivers/DarwinBoot/DarwinBootPkg/Driver/WindowSize.h'):
-        pinned = subprocess.check_output([GIT, '-c', f'safe.directory={BASE}', '-C', str(BASE), 'show', PIN + ':' + path])
+        if merged_profile:
+            relative = path.removeprefix('drivers/DarwinBoot/')
+            pinned = subprocess.check_output([GIT, '-C', str(BASE / 'drivers/DarwinBoot'),
+                                             'show', merged_profile['recipe']['unixnu_submodules']['drivers/DarwinBoot'] + ':' + relative])
+        else:
+            pinned = subprocess.check_output([GIT, '-c', f'safe.directory={BASE}', '-C', str(BASE), 'show', PIN + ':' + path])
         current = (BASE / path).read_bytes().replace(b'\r\n', b'\n')
         if pinned.replace(b'\r\n', b'\n') != current:
             raise ValueError('Pinned source differs')
@@ -69,7 +84,8 @@ def main():
     patch = ROOT / 'patches/loader-candidates/0005-darwin22-boot-args.patch'
     virtual.apply(patch.read_text())
     source = virtual.read(C_PATH)
-    expected = next(x['lf_sha256'] for x in json.loads((ROOT / 'config/loader-candidate.json').read_text())['post_patch_inputs'] if x['path'] == C_PATH)
+    candidate = merged_profile['candidate'] if merged_profile else json.loads((ROOT / 'config/loader-candidate.json').read_text())
+    expected = next(x['lf_sha256'] for x in candidate['post_patch_inputs'] if x['path'] == C_PATH)
     if sha(source.encode()) != expected:
         raise ValueError('Post-patch loader differs from compiled recipe')
     types = source[source.index('typedef struct {'):source.index('STATIC EFI_HANDLE  mImage;')]
@@ -131,6 +147,11 @@ int main(int argc,char **argv){
   }free(d);return 0;
 }
 '''
+    if merged_profile:
+        wrapper = wrapper.replace('UINTN o=0,r=MAX_UINTN,t=MAX_UINTN;',
+                                  'UINTN o=0,r=MAX_UINTN,t=MAX_UINTN,a=MAX_UINTN;')
+        wrapper = wrapper.replace('AdtNode(d,n,&o,0,3,&r,&t,&w,&p)',
+                                  'AdtNode(d,n,&o,0,3,&r,&t,&a,&w,&p)')
     harness = '\n'.join((host, window_header, types, kernel_parser, adt_parser, wrapper))
     WORK.mkdir(parents=True)
     commands = []
@@ -176,6 +197,13 @@ int main(int argc,char **argv){
         ('truncated_header', b'\0' * 7, False), ('trailing_bytes', tree() + b'\0\0\0\0', False),
         ('linux_fdt_magic_is_not_adt', bytes.fromhex('d00dfeed') + bytes(36), False),
     ]
+    if merged_profile:
+        cases += [
+            ('gpu_addon_placeholder', tree(map_props=[('GpuAddon', bytes(16))]), True),
+            ('gpu_and_trust_placeholders', tree(map_props=[('GpuAddon', bytes(16)), ('TrustCache', bytes(16))]), True),
+            ('short_gpu_addon_slot', tree(map_props=[('GpuAddon', bytes(8))]), False),
+            ('duplicate_gpu_addon_slot', tree(map_props=[('GpuAddon', bytes(16)), ('GpuAddon', bytes(16))]), False),
+        ]
     results = []
     for name, data, accepted in cases:
         path = WORK / (name + '.adt')

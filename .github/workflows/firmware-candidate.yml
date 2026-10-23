@@ -6,7 +6,7 @@ on:
       profile:
         description: Approved firmware build profile
         type: choice
-        default: dedicated
+        default: upstream-merged
         options:
           - dedicated
           - sec-trace
@@ -36,7 +36,7 @@ jobs:
     env:
       GIT_LFS_SKIP_SMUDGE: '1'
       PYTHONUNBUFFERED: '1'
-      FW_PROFILE: ${{ inputs.profile || 'dedicated' }}
+      FW_PROFILE: ${{ inputs.profile || 'upstream-merged' }}
     steps:
       - uses: actions/checkout@v4
         with:

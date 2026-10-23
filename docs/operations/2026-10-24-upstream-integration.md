@@ -13,3 +13,11 @@ kernel-merged-profile改指合并源与21模块；最新签名哈希缓存补丁
 ## 证据及待完成
 
 reports/upstream-integration/2026-10-24/merge.json、firmware-profile-check.json、kernel-patch-check.json；新固件与Darwin22编译结果待后续归档。原始审查reports/upstream-review/2026-10-24/review.json。收到用户合并指令后替代此前“不采用”审查决定，历史审查原文保留。完成编译前不宣称更新已通过，实际启动另需本轮录像/恢复门。
+
+## 固件成功、首轮内核修复与主机核验
+
+固件CI40014018074/source5abdde1成功，697项实际产物检查通过，FD2d606985ad768dcfaab66c2b28073c0a4c2820126b42b23286623fdc450e848f/3MiB，shim8a3b5476/112B。新旧SEC SHA7192fd3f相同，整个SEC逐字节一致，包含Heap/内存表/HOB保护；实际DSB/IVAC/DSB/ISB、CreateHob2次/查询1次checkpoint与失败停机复核通过。默认固件profile切为upstream-merged，旧profile保留作历史。
+
+主机：最新Darwin22解析24项含GpuAddon、新分析内核5a128fb2解析通过；实际packed C解析/拷贝与Python稀疏打包、1TiB逻辑边界/13拒绝通过；SMMU真实页表/stream软件夹具ASan/UBSan通过。额外GPU VM完整主机执行未通过：最新上游夹具缺IODirection/持久内存常量，在忽略输出适配中按固定8796头补声明后，x86编译仍因实际AArch64 dsb指令拒绝；未删除目标屏障，不称GPU通过或真实持久内存生命周期已验。失败和适配范围原样存gpu-vm-host.json。
+
+首轮内核CI40014023191在最终链接失败，唯一缺符号native_sandbox_grant(IOService*)。原因是接入清单漏了新增set-properties补丁的前置zzw-native-adreno-sandbox-grant，不是弱化链接规则可解的问题。现补入完整真实上游实现及SHA，64项完整词法序列和唯一辅助函数定义在内存通过；接下来重建内核。首轮失败记录kernel-first-failure.json不覆盖。尚不把整次内核编译写成成功。

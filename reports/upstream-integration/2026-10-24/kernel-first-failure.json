@@ -1,0 +1,15 @@
+{
+  "run": 40014023191,
+  "source_device_commit": "5abdde12bc217984d9a6694553f93e0ea61969e1",
+  "failure": "Missing upstream prerequisite patch zzw-native-adreno-sandbox-grant, consumer included without helper",
+  "raw_error_excerpt": [
+    "kernel\tCompile and link 8796 source kernel\t2026-10-23T19:52:14.0083730Z /Users/runner/work/_temp/nuwa-8796-source/.cache/xnu-work/iokit/Kernel/IOUserClient.cpp:3961:13: warning: function 'native_sandbox_grant' has internal linkage but is not defined [-Wundefined-internal]",
+    "kernel\tCompile and link 8796 source kernel\t2026-10-23T19:52:14.0086420Z  3961 | static bool native_sandbox_grant(IOService * service);",
+    "kernel\tCompile and link 8796 source kernel\t2026-10-23T19:52:14.0091170Z  3999 |                 else if (!(OSDynamicCast(IOService, entry) && native_sandbox_grant(OSDynamicCast(IOService, entry)))",
+    "kernel\tCompile and link 8796 source kernel\t2026-10-23T19:57:42.6526710Z Undefined symbols for architecture arm64:",
+    "kernel\tCompile and link 8796 source kernel\t2026-10-23T19:57:42.6808020Z   \"native_sandbox_grant(IOService*)\", referenced from:",
+    "kernel\tCompile and link 8796 source kernel\t2026-10-23T19:57:42.6811460Z ld: symbol(s) not found for architecture arm64"
+  ],
+  "resolution": "Include real upstream grant implementation with fixed SHA, not a stub or disabled linker errors",
+  "device_accessed": false
+}

@@ -1,0 +1,137 @@
+{
+  "scope": "Upstream tests with software fixtures and host sanitizers only; no actual cache/SMMU/GPU/device execution",
+  "commands": [
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "python3",
+        "-B",
+        "/mnt/d/Code/UniXNU-integration/drivers/DarwinBoot/Test/test-packed-ramdisk.py"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS: actual C parser/copy, sparse round-trip, 1 TiB boundary, 13 refusal cases\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "clang",
+        "-std=c11",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-pie",
+        "-no-pie",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K/ArmSmmu4K.c",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K/test_tables.c",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/tables"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/tables"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS: native 4K leaves, independent table graph/walk, 2M/1G/512G boundaries, IAS32..48, six OAS widths, transactional refusals\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "clang",
+        "-std=c11",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-pie",
+        "-no-pie",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K/ArmSmmu4K.c",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K/ArmSmmu4KContext.c",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K/ArmSmmu4KProgram.c",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K/ArmSmmu4KLive.c",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K/ArmSmmu4KStreams.c",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K/ArmSmmu4KMmio.c",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K/test_streams.c",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/streams"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K/ArmSmmu4KMmio.c:4:2: error: Direct SMMUv2 MMIO binding requires little-endian AArch64\n#error Direct SMMUv2 MMIO binding requires little-endian AArch64\n ^\n1 error generated.\n"
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "clang",
+        "-std=c11",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-pie",
+        "-no-pie",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K/ArmSmmu4K.c",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K/ArmSmmu4KContext.c",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K/ArmSmmu4KProgram.c",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K/ArmSmmu4KLive.c",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K/ArmSmmu4KStreams.c",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K/test_streams.c",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/streams"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/streams"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS: legacy/EXIDS stream attachment and quarantine, 368 per-call I/O failure cases, 32 pre-write refusals, 2 attachments without GCFGFRE/GCFGFIE, actual context readback and unrelated-route isolation (software registers only)\n",
+      "stderr": ""
+    }
+  ],
+  "all_commands_passed": false,
+  "modules": {
+    "DarwinBoot": "d099354d0eab34df5088ca1ba89c9c88bc3260bb",
+    "ArmSmmu4K": "4d0d6598b1a36aeec3de01091893fa6660e49388"
+  },
+  "host_harness_correction": "Initial overly broad source list included direct AArch64 MMIO binding, correctly refused on x86. Corrected host fixture build excludes direct hardware binding; target guards unchanged.",
+  "selected_tests_passed": true
+}

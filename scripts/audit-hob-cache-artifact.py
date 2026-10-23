@@ -4,9 +4,10 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'out/python-tools'));import capstone
 
 def main():
- cli=argparse.ArgumentParser(description=__doc__);cli.add_argument('run',type=int);args=cli.parse_args();artifact=ROOT/f'out/firmware-ci/{args.run}/nuwa-firmware-{args.run}';out=ROOT/f'reports/hob-cache-handoff/{args.run}/cache-code-audit.json'
+ cli=argparse.ArgumentParser(description=__doc__);cli.add_argument('run',type=int);cli.add_argument('--profile',choices=('hob-cache-handoff','upstream-merged'),default='hob-cache-handoff');cli.add_argument('--artifact',type=Path);args=cli.parse_args();artifact=args.artifact.resolve() if args.artifact else ROOT/f'out/firmware-ci/{args.run}/nuwa-firmware-{args.run}';out=ROOT/f'reports/{args.profile}/{args.run}/cache-code-audit.json'
+ if not artifact.resolve().is_relative_to((ROOT/'out').resolve()):raise ValueError('Artifact must stay under out/')
  if out.exists():raise ValueError('Fresh audit required')
- spec=importlib.util.spec_from_file_location('cache_reader',ROOT/'scripts/ci/inspect-firmware-candidate.py');reader=importlib.util.module_from_spec(spec);spec.loader.exec_module(reader);checked=reader.inspect(artifact,'NuwaBootMemoryDxe',True,True,True,'hob-cache-handoff')
+ spec=importlib.util.spec_from_file_location('cache_reader',ROOT/'scripts/ci/inspect-firmware-candidate.py');reader=importlib.util.module_from_spec(spec);spec.loader.exec_module(reader);checked=reader.inspect(artifact,'NuwaBootMemoryDxe',True,True,True,args.profile)
  captured=[];original=reader.heap_descriptors
  def capture(data):captured.append(data);return original(data)
  reader.heap_descriptors=capture;reader.Firmware().volume((artifact/'build/FV/SILICIUM_UEFI.fd').read_bytes(),'Actual FD');assert len(captured)==1;data=captured[0];strip=struct.unpack_from('<H',data,6)[0];base=struct.unpack_from('<Q',data,16)[0];sections=[]
