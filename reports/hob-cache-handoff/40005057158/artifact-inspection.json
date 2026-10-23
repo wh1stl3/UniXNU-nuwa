@@ -1,0 +1,1363 @@
+{
+  "result": "downloaded EFI/FD/BootShim static inspection passed",
+  "inventory_files": 696,
+  "fd": {
+    "bytes": 3145728,
+    "sha256": "0e90473e1526d29cfda8f0c285f3b3e7db4ee0862e81b3f138dac604860ba225"
+  },
+  "shim": {
+    "bytes": 112,
+    "image_size": 3145840,
+    "sha256": "8a3b54765c895a0366539130fdf6e4e4a01e364fe7de067a38d0193606f9d462",
+    "payload_offset": 112,
+    "copy_count": 3145728,
+    "text_offset": 0
+  },
+  "pil_no_auto": {
+    "config": {
+      "bytes": 6930,
+      "sha256": "dbc9ee6e4c7728b32245453322f348c32d6a5eef0107f8c07662918bc3c23fdd",
+      "auto_entries": []
+    },
+    "retained_driver": {
+      "machine": "0xaa64",
+      "subsystem": 11,
+      "entry_rva": "0x1000",
+      "image_size": 126976,
+      "sections": 3,
+      "bytes": 126976,
+      "sha256": "89e030af07847bdc596f0c213bdce0ac430be66e572db55b434d7ec66ad9afcb",
+      "loader_protocol_guid_present": false,
+      "entry_hob_guid_present": false,
+      "volume_markers": {
+        "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": false,
+        "[NUWA-VOLUME] rejected initrd extent": false,
+        "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": false,
+        "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": false
+      },
+      "volume_status_markers": {
+        "[NUWA-VOLUME] publisher enter": false,
+        "[NUWA-VOLUME] publisher exit status=%r": false,
+        "[NUWA-VOLUME] entry dtb=0x%lx": false,
+        "[NUWA-VOLUME] dtb header outside reserved Kernel map": false,
+        "[NUWA-VOLUME] malformed dtb header": false
+      },
+      "embedded_probe_markers": {
+        "[NUWA-FV-PROBE] enter": false,
+        "[NUWA-FV-PROBE] read resource %r": false,
+        "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": false
+      },
+      "boot_input_markers": {
+        "[NUWA-BOOT-AUDIT] registered %r": false,
+        "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": false,
+        "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": false,
+        "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": false
+      },
+      "application_guid_present": false
+    }
+  },
+  "allocation_trace": {
+    "bytes": 167936,
+    "sha256": "45570d705dc4b075bd799751d2c984d92e8cd81034b41f7e8ab2481159c2d8cb",
+    "markers": {
+      "[NUWA-MEM]": true,
+      "first-pool-failure": true,
+      "missing-arch-before-assert": true,
+      "request type=%u pages=%lu align=%lu guard=%u caller=%p": true,
+      "free=%lu largest=%lu": true
+    }
+  },
+  "factory_heap": {
+    "offset": 65968,
+    "base": "0xbab00000",
+    "bytes": 219938816,
+    "mib": 209.75,
+    "descriptor_prefix_sha256": "813ee45c1b9fe89fd44e65d586651f499b200e34a609ca1947db994e18634447"
+  },
+  "volumes": [
+    {
+      "label": "FD/FVMAIN_COMPACT",
+      "bytes": 3145728,
+      "header_bytes": 72,
+      "sha256": "0e90473e1526d29cfda8f0c285f3b3e7db4ee0862e81b3f138dac604860ba225"
+    },
+    {
+      "label": "FD/FVMAIN_COMPACT/9e21fd93-9c72-4c15-8c4b-e77f1db2d792/FV",
+      "bytes": 14176256,
+      "header_bytes": 72,
+      "sha256": "983ba9100532d0c856051f13616a2c35d2cb52dd9329f2147ed8b64baa54a0e9"
+    }
+  ],
+  "compression": [
+    {
+      "guid": "ee4e5898-3914-4259-9d6e-dc7bd79403cf",
+      "attributes": 1,
+      "encoded_bytes": 1705207,
+      "decoded_bytes": 14176264,
+      "decoded_sha256": "0fc6d14b33f1e602537198b3f100d2b2dda3d805da0c0a1412cac5dc33b5153c"
+    }
+  ],
+  "modules": [
+    {
+      "name": "UniXNU",
+      "guid": "9b665204-a133-47a2-9396-9e2b370a4e25",
+      "ffs": {
+        "guid": "9b665204-a133-47a2-9396-9e2b370a4e25",
+        "type": 9,
+        "bytes": 97840,
+        "volume": "FD/FVMAIN_COMPACT/9e21fd93-9c72-4c15-8c4b-e77f1db2d792/FV",
+        "offset": 7724520,
+        "sections": [
+          {
+            "type": "0x15",
+            "bytes": 18
+          },
+          {
+            "type": "0x10",
+            "bytes": 97796,
+            "pe": {
+              "machine": "0xaa64",
+              "subsystem": 10,
+              "entry_rva": "0x1050",
+              "image_size": 110592,
+              "sections": 5,
+              "bytes": 97792,
+              "sha256": "70a5d2ae2716ef41cb7db3e1bb6a60b6b6d0deb4f1393e21a0ce9ccbd56fcd98",
+              "loader_protocol_guid_present": true,
+              "entry_hob_guid_present": false,
+              "volume_markers": {
+                "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": false,
+                "[NUWA-VOLUME] rejected initrd extent": false,
+                "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": false,
+                "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": false
+              },
+              "volume_status_markers": {
+                "[NUWA-VOLUME] publisher enter": false,
+                "[NUWA-VOLUME] publisher exit status=%r": false,
+                "[NUWA-VOLUME] entry dtb=0x%lx": false,
+                "[NUWA-VOLUME] dtb header outside reserved Kernel map": false,
+                "[NUWA-VOLUME] malformed dtb header": false
+              },
+              "embedded_probe_markers": {
+                "[NUWA-FV-PROBE] enter": false,
+                "[NUWA-FV-PROBE] read resource %r": false,
+                "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": false
+              },
+              "boot_input_markers": {
+                "[NUWA-BOOT-AUDIT] registered %r": false,
+                "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": false,
+                "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": false,
+                "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": false
+              },
+              "application_guid_present": false
+            },
+            "pcd_protocol_guid_present": false
+          }
+        ]
+      },
+      "standalone": [
+        {
+          "path": "build/AARCH64/UniXNU.efi",
+          "machine": "0xaa64",
+          "subsystem": 10,
+          "entry_rva": "0x1050",
+          "image_size": 110592,
+          "sections": 5,
+          "bytes": 97792,
+          "sha256": "70a5d2ae2716ef41cb7db3e1bb6a60b6b6d0deb4f1393e21a0ce9ccbd56fcd98",
+          "loader_protocol_guid_present": true,
+          "entry_hob_guid_present": false,
+          "volume_markers": {
+            "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": false,
+            "[NUWA-VOLUME] rejected initrd extent": false,
+            "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": false,
+            "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": false
+          },
+          "volume_status_markers": {
+            "[NUWA-VOLUME] publisher enter": false,
+            "[NUWA-VOLUME] publisher exit status=%r": false,
+            "[NUWA-VOLUME] entry dtb=0x%lx": false,
+            "[NUWA-VOLUME] dtb header outside reserved Kernel map": false,
+            "[NUWA-VOLUME] malformed dtb header": false
+          },
+          "embedded_probe_markers": {
+            "[NUWA-FV-PROBE] enter": false,
+            "[NUWA-FV-PROBE] read resource %r": false,
+            "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": false
+          },
+          "boot_input_markers": {
+            "[NUWA-BOOT-AUDIT] registered %r": false,
+            "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": false,
+            "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": false,
+            "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": false
+          },
+          "application_guid_present": false
+        },
+        {
+          "path": "build/AARCH64/UniXNUPkg/Application/UniXNU/UniXNU/DEBUG/UniXNU.efi",
+          "machine": "0xaa64",
+          "subsystem": 10,
+          "entry_rva": "0x1050",
+          "image_size": 110592,
+          "sections": 5,
+          "bytes": 97792,
+          "sha256": "70a5d2ae2716ef41cb7db3e1bb6a60b6b6d0deb4f1393e21a0ce9ccbd56fcd98",
+          "loader_protocol_guid_present": true,
+          "entry_hob_guid_present": false,
+          "volume_markers": {
+            "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": false,
+            "[NUWA-VOLUME] rejected initrd extent": false,
+            "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": false,
+            "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": false
+          },
+          "volume_status_markers": {
+            "[NUWA-VOLUME] publisher enter": false,
+            "[NUWA-VOLUME] publisher exit status=%r": false,
+            "[NUWA-VOLUME] entry dtb=0x%lx": false,
+            "[NUWA-VOLUME] dtb header outside reserved Kernel map": false,
+            "[NUWA-VOLUME] malformed dtb header": false
+          },
+          "embedded_probe_markers": {
+            "[NUWA-FV-PROBE] enter": false,
+            "[NUWA-FV-PROBE] read resource %r": false,
+            "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": false
+          },
+          "boot_input_markers": {
+            "[NUWA-BOOT-AUDIT] registered %r": false,
+            "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": false,
+            "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": false,
+            "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": false
+          },
+          "application_guid_present": false
+        },
+        {
+          "path": "build/AARCH64/UniXNUPkg/Application/UniXNU/UniXNU/OUTPUT/UniXNU.efi",
+          "machine": "0xaa64",
+          "subsystem": 10,
+          "entry_rva": "0x1050",
+          "image_size": 110592,
+          "sections": 5,
+          "bytes": 97792,
+          "sha256": "70a5d2ae2716ef41cb7db3e1bb6a60b6b6d0deb4f1393e21a0ce9ccbd56fcd98",
+          "loader_protocol_guid_present": true,
+          "entry_hob_guid_present": false,
+          "volume_markers": {
+            "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": false,
+            "[NUWA-VOLUME] rejected initrd extent": false,
+            "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": false,
+            "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": false
+          },
+          "volume_status_markers": {
+            "[NUWA-VOLUME] publisher enter": false,
+            "[NUWA-VOLUME] publisher exit status=%r": false,
+            "[NUWA-VOLUME] entry dtb=0x%lx": false,
+            "[NUWA-VOLUME] dtb header outside reserved Kernel map": false,
+            "[NUWA-VOLUME] malformed dtb header": false
+          },
+          "embedded_probe_markers": {
+            "[NUWA-FV-PROBE] enter": false,
+            "[NUWA-FV-PROBE] read resource %r": false,
+            "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": false
+          },
+          "boot_input_markers": {
+            "[NUWA-BOOT-AUDIT] registered %r": false,
+            "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": false,
+            "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": false,
+            "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": false
+          },
+          "application_guid_present": false
+        }
+      ],
+      "embedded_matches_standalone": true
+    },
+    {
+      "name": "UniXNUDxe",
+      "guid": "29b950cf-586d-49ea-9d71-f88645ccdaf6",
+      "ffs": {
+        "guid": "29b950cf-586d-49ea-9d71-f88645ccdaf6",
+        "type": 7,
+        "bytes": 22640,
+        "volume": "FD/FVMAIN_COMPACT/9e21fd93-9c72-4c15-8c4b-e77f1db2d792/FV",
+        "offset": 7822360,
+        "sections": [
+          {
+            "type": "0x13",
+            "bytes": 58,
+            "depex": [
+              {
+                "op": "PUSH",
+                "guid": "1e5668e2-8481-11d4-bcf1-0080c73c8881"
+              },
+              {
+                "op": "PUSH",
+                "guid": "6441f818-6362-4e44-b570-7dba31dd2453"
+              },
+              {
+                "op": "PUSH",
+                "guid": "13a3f0f6-264a-3ef0-f2e0-dec512342f34"
+              },
+              {
+                "op": "AND"
+              },
+              {
+                "op": "AND"
+              },
+              {
+                "op": "END"
+              }
+            ]
+          },
+          {
+            "type": "0x10",
+            "bytes": 22532,
+            "pe": {
+              "machine": "0xaa64",
+              "subsystem": 11,
+              "entry_rva": "0x1050",
+              "image_size": 36864,
+              "sections": 4,
+              "bytes": 22528,
+              "sha256": "9850de2c6cc11cd530ab90ac7cf93b9e0498d03b0492783a6ec1ea4cbae105f9",
+              "loader_protocol_guid_present": false,
+              "entry_hob_guid_present": false,
+              "volume_markers": {
+                "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": false,
+                "[NUWA-VOLUME] rejected initrd extent": false,
+                "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": false,
+                "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": false
+              },
+              "volume_status_markers": {
+                "[NUWA-VOLUME] publisher enter": false,
+                "[NUWA-VOLUME] publisher exit status=%r": false,
+                "[NUWA-VOLUME] entry dtb=0x%lx": false,
+                "[NUWA-VOLUME] dtb header outside reserved Kernel map": false,
+                "[NUWA-VOLUME] malformed dtb header": false
+              },
+              "embedded_probe_markers": {
+                "[NUWA-FV-PROBE] enter": false,
+                "[NUWA-FV-PROBE] read resource %r": false,
+                "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": false
+              },
+              "boot_input_markers": {
+                "[NUWA-BOOT-AUDIT] registered %r": false,
+                "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": false,
+                "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": false,
+                "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": false
+              },
+              "application_guid_present": true
+            },
+            "pcd_protocol_guid_present": false
+          },
+          {
+            "type": "0x15",
+            "bytes": 24
+          }
+        ]
+      },
+      "standalone": [
+        {
+          "path": "build/AARCH64/UniXNUDxe.efi",
+          "machine": "0xaa64",
+          "subsystem": 11,
+          "entry_rva": "0x1050",
+          "image_size": 36864,
+          "sections": 4,
+          "bytes": 22528,
+          "sha256": "9850de2c6cc11cd530ab90ac7cf93b9e0498d03b0492783a6ec1ea4cbae105f9",
+          "loader_protocol_guid_present": false,
+          "entry_hob_guid_present": false,
+          "volume_markers": {
+            "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": false,
+            "[NUWA-VOLUME] rejected initrd extent": false,
+            "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": false,
+            "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": false
+          },
+          "volume_status_markers": {
+            "[NUWA-VOLUME] publisher enter": false,
+            "[NUWA-VOLUME] publisher exit status=%r": false,
+            "[NUWA-VOLUME] entry dtb=0x%lx": false,
+            "[NUWA-VOLUME] dtb header outside reserved Kernel map": false,
+            "[NUWA-VOLUME] malformed dtb header": false
+          },
+          "embedded_probe_markers": {
+            "[NUWA-FV-PROBE] enter": false,
+            "[NUWA-FV-PROBE] read resource %r": false,
+            "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": false
+          },
+          "boot_input_markers": {
+            "[NUWA-BOOT-AUDIT] registered %r": false,
+            "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": false,
+            "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": false,
+            "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": false
+          },
+          "application_guid_present": true
+        },
+        {
+          "path": "build/AARCH64/UniXNUPkg/Driver/UniXNUDxe/UniXNUDxe/DEBUG/UniXNUDxe.efi",
+          "machine": "0xaa64",
+          "subsystem": 11,
+          "entry_rva": "0x1050",
+          "image_size": 36864,
+          "sections": 4,
+          "bytes": 22528,
+          "sha256": "9850de2c6cc11cd530ab90ac7cf93b9e0498d03b0492783a6ec1ea4cbae105f9",
+          "loader_protocol_guid_present": false,
+          "entry_hob_guid_present": false,
+          "volume_markers": {
+            "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": false,
+            "[NUWA-VOLUME] rejected initrd extent": false,
+            "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": false,
+            "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": false
+          },
+          "volume_status_markers": {
+            "[NUWA-VOLUME] publisher enter": false,
+            "[NUWA-VOLUME] publisher exit status=%r": false,
+            "[NUWA-VOLUME] entry dtb=0x%lx": false,
+            "[NUWA-VOLUME] dtb header outside reserved Kernel map": false,
+            "[NUWA-VOLUME] malformed dtb header": false
+          },
+          "embedded_probe_markers": {
+            "[NUWA-FV-PROBE] enter": false,
+            "[NUWA-FV-PROBE] read resource %r": false,
+            "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": false
+          },
+          "boot_input_markers": {
+            "[NUWA-BOOT-AUDIT] registered %r": false,
+            "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": false,
+            "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": false,
+            "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": false
+          },
+          "application_guid_present": true
+        },
+        {
+          "path": "build/AARCH64/UniXNUPkg/Driver/UniXNUDxe/UniXNUDxe/OUTPUT/UniXNUDxe.efi",
+          "machine": "0xaa64",
+          "subsystem": 11,
+          "entry_rva": "0x1050",
+          "image_size": 36864,
+          "sections": 4,
+          "bytes": 22528,
+          "sha256": "9850de2c6cc11cd530ab90ac7cf93b9e0498d03b0492783a6ec1ea4cbae105f9",
+          "loader_protocol_guid_present": false,
+          "entry_hob_guid_present": false,
+          "volume_markers": {
+            "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": false,
+            "[NUWA-VOLUME] rejected initrd extent": false,
+            "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": false,
+            "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": false
+          },
+          "volume_status_markers": {
+            "[NUWA-VOLUME] publisher enter": false,
+            "[NUWA-VOLUME] publisher exit status=%r": false,
+            "[NUWA-VOLUME] entry dtb=0x%lx": false,
+            "[NUWA-VOLUME] dtb header outside reserved Kernel map": false,
+            "[NUWA-VOLUME] malformed dtb header": false
+          },
+          "embedded_probe_markers": {
+            "[NUWA-FV-PROBE] enter": false,
+            "[NUWA-FV-PROBE] read resource %r": false,
+            "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": false
+          },
+          "boot_input_markers": {
+            "[NUWA-BOOT-AUDIT] registered %r": false,
+            "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": false,
+            "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": false,
+            "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": false
+          },
+          "application_guid_present": true
+        }
+      ],
+      "embedded_matches_standalone": true
+    },
+    {
+      "name": "DarwinBoot",
+      "guid": "1b64af87-8415-4b57-9b16-680d70913b9f",
+      "ffs": {
+        "guid": "1b64af87-8415-4b57-9b16-680d70913b9f",
+        "type": 7,
+        "bytes": 31286,
+        "volume": "FD/FVMAIN_COMPACT/9e21fd93-9c72-4c15-8c4b-e77f1db2d792/FV",
+        "offset": 7845000,
+        "sections": [
+          {
+            "type": "0x10",
+            "bytes": 31236,
+            "pe": {
+              "machine": "0xaa64",
+              "subsystem": 11,
+              "entry_rva": "0x1050",
+              "image_size": 45056,
+              "sections": 5,
+              "bytes": 31232,
+              "sha256": "5ca5d36ce6400c979b5a083d252b29c407c44ebcbd27765aa2c7b9f25c0a0a58",
+              "loader_protocol_guid_present": true,
+              "entry_hob_guid_present": false,
+              "volume_markers": {
+                "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": false,
+                "[NUWA-VOLUME] rejected initrd extent": false,
+                "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": false,
+                "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": false
+              },
+              "volume_status_markers": {
+                "[NUWA-VOLUME] publisher enter": false,
+                "[NUWA-VOLUME] publisher exit status=%r": false,
+                "[NUWA-VOLUME] entry dtb=0x%lx": false,
+                "[NUWA-VOLUME] dtb header outside reserved Kernel map": false,
+                "[NUWA-VOLUME] malformed dtb header": false
+              },
+              "embedded_probe_markers": {
+                "[NUWA-FV-PROBE] enter": false,
+                "[NUWA-FV-PROBE] read resource %r": false,
+                "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": false
+              },
+              "boot_input_markers": {
+                "[NUWA-BOOT-AUDIT] registered %r": false,
+                "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": false,
+                "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": false,
+                "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": false
+              },
+              "application_guid_present": false
+            },
+            "pcd_protocol_guid_present": false
+          },
+          {
+            "type": "0x15",
+            "bytes": 26
+          }
+        ]
+      },
+      "standalone": [
+        {
+          "path": "build/AARCH64/DarwinBoot.efi",
+          "machine": "0xaa64",
+          "subsystem": 11,
+          "entry_rva": "0x1050",
+          "image_size": 45056,
+          "sections": 5,
+          "bytes": 31232,
+          "sha256": "5ca5d36ce6400c979b5a083d252b29c407c44ebcbd27765aa2c7b9f25c0a0a58",
+          "loader_protocol_guid_present": true,
+          "entry_hob_guid_present": false,
+          "volume_markers": {
+            "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": false,
+            "[NUWA-VOLUME] rejected initrd extent": false,
+            "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": false,
+            "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": false
+          },
+          "volume_status_markers": {
+            "[NUWA-VOLUME] publisher enter": false,
+            "[NUWA-VOLUME] publisher exit status=%r": false,
+            "[NUWA-VOLUME] entry dtb=0x%lx": false,
+            "[NUWA-VOLUME] dtb header outside reserved Kernel map": false,
+            "[NUWA-VOLUME] malformed dtb header": false
+          },
+          "embedded_probe_markers": {
+            "[NUWA-FV-PROBE] enter": false,
+            "[NUWA-FV-PROBE] read resource %r": false,
+            "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": false
+          },
+          "boot_input_markers": {
+            "[NUWA-BOOT-AUDIT] registered %r": false,
+            "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": false,
+            "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": false,
+            "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": false
+          },
+          "application_guid_present": false
+        },
+        {
+          "path": "build/AARCH64/DarwinBootPkg/Driver/DarwinBoot/DEBUG/DarwinBoot.efi",
+          "machine": "0xaa64",
+          "subsystem": 11,
+          "entry_rva": "0x1050",
+          "image_size": 45056,
+          "sections": 5,
+          "bytes": 31232,
+          "sha256": "5ca5d36ce6400c979b5a083d252b29c407c44ebcbd27765aa2c7b9f25c0a0a58",
+          "loader_protocol_guid_present": true,
+          "entry_hob_guid_present": false,
+          "volume_markers": {
+            "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": false,
+            "[NUWA-VOLUME] rejected initrd extent": false,
+            "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": false,
+            "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": false
+          },
+          "volume_status_markers": {
+            "[NUWA-VOLUME] publisher enter": false,
+            "[NUWA-VOLUME] publisher exit status=%r": false,
+            "[NUWA-VOLUME] entry dtb=0x%lx": false,
+            "[NUWA-VOLUME] dtb header outside reserved Kernel map": false,
+            "[NUWA-VOLUME] malformed dtb header": false
+          },
+          "embedded_probe_markers": {
+            "[NUWA-FV-PROBE] enter": false,
+            "[NUWA-FV-PROBE] read resource %r": false,
+            "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": false
+          },
+          "boot_input_markers": {
+            "[NUWA-BOOT-AUDIT] registered %r": false,
+            "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": false,
+            "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": false,
+            "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": false
+          },
+          "application_guid_present": false
+        },
+        {
+          "path": "build/AARCH64/DarwinBootPkg/Driver/DarwinBoot/OUTPUT/DarwinBoot.efi",
+          "machine": "0xaa64",
+          "subsystem": 11,
+          "entry_rva": "0x1050",
+          "image_size": 45056,
+          "sections": 5,
+          "bytes": 31232,
+          "sha256": "5ca5d36ce6400c979b5a083d252b29c407c44ebcbd27765aa2c7b9f25c0a0a58",
+          "loader_protocol_guid_present": true,
+          "entry_hob_guid_present": false,
+          "volume_markers": {
+            "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": false,
+            "[NUWA-VOLUME] rejected initrd extent": false,
+            "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": false,
+            "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": false
+          },
+          "volume_status_markers": {
+            "[NUWA-VOLUME] publisher enter": false,
+            "[NUWA-VOLUME] publisher exit status=%r": false,
+            "[NUWA-VOLUME] entry dtb=0x%lx": false,
+            "[NUWA-VOLUME] dtb header outside reserved Kernel map": false,
+            "[NUWA-VOLUME] malformed dtb header": false
+          },
+          "embedded_probe_markers": {
+            "[NUWA-FV-PROBE] enter": false,
+            "[NUWA-FV-PROBE] read resource %r": false,
+            "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": false
+          },
+          "boot_input_markers": {
+            "[NUWA-BOOT-AUDIT] registered %r": false,
+            "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": false,
+            "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": false,
+            "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": false
+          },
+          "application_guid_present": false
+        }
+      ],
+      "embedded_matches_standalone": true
+    },
+    {
+      "name": "NuwaBootAuditDxe",
+      "guid": "79a20f57-5e17-4bea-8f17-5ebc93e8ac10",
+      "ffs": {
+        "guid": "79a20f57-5e17-4bea-8f17-5ebc93e8ac10",
+        "type": 7,
+        "bytes": 18522,
+        "volume": "FD/FVMAIN_COMPACT/9e21fd93-9c72-4c15-8c4b-e77f1db2d792/FV",
+        "offset": 7920520,
+        "sections": [
+          {
+            "type": "0x13",
+            "bytes": 22,
+            "depex": [
+              {
+                "op": "PUSH",
+                "guid": "13a3f0f6-264a-3ef0-f2e0-dec512342f34"
+              },
+              {
+                "op": "END"
+              }
+            ]
+          },
+          {
+            "type": "0x10",
+            "bytes": 18436,
+            "pe": {
+              "machine": "0xaa64",
+              "subsystem": 11,
+              "entry_rva": "0x1050",
+              "image_size": 28672,
+              "sections": 4,
+              "bytes": 18432,
+              "sha256": "f11ed47ac5d24ce151d54bff34e2bff1812784b9d4128183dad952f4261630c0",
+              "loader_protocol_guid_present": false,
+              "entry_hob_guid_present": false,
+              "volume_markers": {
+                "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": false,
+                "[NUWA-VOLUME] rejected initrd extent": false,
+                "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": false,
+                "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": false
+              },
+              "volume_status_markers": {
+                "[NUWA-VOLUME] publisher enter": false,
+                "[NUWA-VOLUME] publisher exit status=%r": false,
+                "[NUWA-VOLUME] entry dtb=0x%lx": false,
+                "[NUWA-VOLUME] dtb header outside reserved Kernel map": false,
+                "[NUWA-VOLUME] malformed dtb header": false
+              },
+              "embedded_probe_markers": {
+                "[NUWA-FV-PROBE] enter": false,
+                "[NUWA-FV-PROBE] read resource %r": false,
+                "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": false
+              },
+              "boot_input_markers": {
+                "[NUWA-BOOT-AUDIT] registered %r": true,
+                "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": true,
+                "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": true,
+                "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": true
+              },
+              "application_guid_present": false
+            },
+            "pcd_protocol_guid_present": false
+          },
+          {
+            "type": "0x15",
+            "bytes": 38
+          }
+        ]
+      },
+      "standalone": [
+        {
+          "path": "build/AARCH64/NuwaBootAuditDxe.efi",
+          "machine": "0xaa64",
+          "subsystem": 11,
+          "entry_rva": "0x1050",
+          "image_size": 28672,
+          "sections": 4,
+          "bytes": 18432,
+          "sha256": "f11ed47ac5d24ce151d54bff34e2bff1812784b9d4128183dad952f4261630c0",
+          "loader_protocol_guid_present": false,
+          "entry_hob_guid_present": false,
+          "volume_markers": {
+            "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": false,
+            "[NUWA-VOLUME] rejected initrd extent": false,
+            "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": false,
+            "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": false
+          },
+          "volume_status_markers": {
+            "[NUWA-VOLUME] publisher enter": false,
+            "[NUWA-VOLUME] publisher exit status=%r": false,
+            "[NUWA-VOLUME] entry dtb=0x%lx": false,
+            "[NUWA-VOLUME] dtb header outside reserved Kernel map": false,
+            "[NUWA-VOLUME] malformed dtb header": false
+          },
+          "embedded_probe_markers": {
+            "[NUWA-FV-PROBE] enter": false,
+            "[NUWA-FV-PROBE] read resource %r": false,
+            "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": false
+          },
+          "boot_input_markers": {
+            "[NUWA-BOOT-AUDIT] registered %r": true,
+            "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": true,
+            "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": true,
+            "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": true
+          },
+          "application_guid_present": false
+        },
+        {
+          "path": "build/AARCH64/nuwaPkg/Drivers/NuwaBootAuditDxe/NuwaBootAuditDxe/DEBUG/NuwaBootAuditDxe.efi",
+          "machine": "0xaa64",
+          "subsystem": 11,
+          "entry_rva": "0x1050",
+          "image_size": 28672,
+          "sections": 4,
+          "bytes": 18432,
+          "sha256": "f11ed47ac5d24ce151d54bff34e2bff1812784b9d4128183dad952f4261630c0",
+          "loader_protocol_guid_present": false,
+          "entry_hob_guid_present": false,
+          "volume_markers": {
+            "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": false,
+            "[NUWA-VOLUME] rejected initrd extent": false,
+            "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": false,
+            "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": false
+          },
+          "volume_status_markers": {
+            "[NUWA-VOLUME] publisher enter": false,
+            "[NUWA-VOLUME] publisher exit status=%r": false,
+            "[NUWA-VOLUME] entry dtb=0x%lx": false,
+            "[NUWA-VOLUME] dtb header outside reserved Kernel map": false,
+            "[NUWA-VOLUME] malformed dtb header": false
+          },
+          "embedded_probe_markers": {
+            "[NUWA-FV-PROBE] enter": false,
+            "[NUWA-FV-PROBE] read resource %r": false,
+            "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": false
+          },
+          "boot_input_markers": {
+            "[NUWA-BOOT-AUDIT] registered %r": true,
+            "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": true,
+            "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": true,
+            "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": true
+          },
+          "application_guid_present": false
+        },
+        {
+          "path": "build/AARCH64/nuwaPkg/Drivers/NuwaBootAuditDxe/NuwaBootAuditDxe/OUTPUT/NuwaBootAuditDxe.efi",
+          "machine": "0xaa64",
+          "subsystem": 11,
+          "entry_rva": "0x1050",
+          "image_size": 28672,
+          "sections": 4,
+          "bytes": 18432,
+          "sha256": "f11ed47ac5d24ce151d54bff34e2bff1812784b9d4128183dad952f4261630c0",
+          "loader_protocol_guid_present": false,
+          "entry_hob_guid_present": false,
+          "volume_markers": {
+            "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": false,
+            "[NUWA-VOLUME] rejected initrd extent": false,
+            "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": false,
+            "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": false
+          },
+          "volume_status_markers": {
+            "[NUWA-VOLUME] publisher enter": false,
+            "[NUWA-VOLUME] publisher exit status=%r": false,
+            "[NUWA-VOLUME] entry dtb=0x%lx": false,
+            "[NUWA-VOLUME] dtb header outside reserved Kernel map": false,
+            "[NUWA-VOLUME] malformed dtb header": false
+          },
+          "embedded_probe_markers": {
+            "[NUWA-FV-PROBE] enter": false,
+            "[NUWA-FV-PROBE] read resource %r": false,
+            "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": false
+          },
+          "boot_input_markers": {
+            "[NUWA-BOOT-AUDIT] registered %r": true,
+            "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": true,
+            "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": true,
+            "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": true
+          },
+          "application_guid_present": false
+        }
+      ],
+      "embedded_matches_standalone": true
+    },
+    {
+      "name": "NuwaEmbeddedVolumeDxe",
+      "guid": "d6366842-3c85-42ed-b150-f0326e391286",
+      "ffs": {
+        "guid": "d6366842-3c85-42ed-b150-f0326e391286",
+        "type": 7,
+        "bytes": 19556,
+        "volume": "FD/FVMAIN_COMPACT/9e21fd93-9c72-4c15-8c4b-e77f1db2d792/FV",
+        "offset": 7900960,
+        "sections": [
+          {
+            "type": "0x13",
+            "bytes": 22,
+            "depex": [
+              {
+                "op": "PUSH",
+                "guid": "13a3f0f6-264a-3ef0-f2e0-dec512342f34"
+              },
+              {
+                "op": "END"
+              }
+            ]
+          },
+          {
+            "type": "0x10",
+            "bytes": 19460,
+            "pe": {
+              "machine": "0xaa64",
+              "subsystem": 11,
+              "entry_rva": "0x1050",
+              "image_size": 32768,
+              "sections": 5,
+              "bytes": 19456,
+              "sha256": "893a9ef9eedb3ca6332ae5721a3e3749185a538cfb87143440a7b2db9df47813",
+              "loader_protocol_guid_present": false,
+              "entry_hob_guid_present": false,
+              "volume_markers": {
+                "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": false,
+                "[NUWA-VOLUME] rejected initrd extent": false,
+                "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": false,
+                "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": false
+              },
+              "volume_status_markers": {
+                "[NUWA-VOLUME] publisher enter": false,
+                "[NUWA-VOLUME] publisher exit status=%r": false,
+                "[NUWA-VOLUME] entry dtb=0x%lx": false,
+                "[NUWA-VOLUME] dtb header outside reserved Kernel map": false,
+                "[NUWA-VOLUME] malformed dtb header": false
+              },
+              "embedded_probe_markers": {
+                "[NUWA-FV-PROBE] enter": true,
+                "[NUWA-FV-PROBE] read resource %r": true,
+                "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": true
+              },
+              "boot_input_markers": {
+                "[NUWA-BOOT-AUDIT] registered %r": false,
+                "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": false,
+                "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": false,
+                "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": false
+              },
+              "application_guid_present": false
+            },
+            "pcd_protocol_guid_present": false
+          },
+          {
+            "type": "0x15",
+            "bytes": 48
+          }
+        ]
+      },
+      "standalone": [
+        {
+          "path": "build/AARCH64/NuwaEmbeddedVolumeDxe.efi",
+          "machine": "0xaa64",
+          "subsystem": 11,
+          "entry_rva": "0x1050",
+          "image_size": 32768,
+          "sections": 5,
+          "bytes": 19456,
+          "sha256": "893a9ef9eedb3ca6332ae5721a3e3749185a538cfb87143440a7b2db9df47813",
+          "loader_protocol_guid_present": false,
+          "entry_hob_guid_present": false,
+          "volume_markers": {
+            "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": false,
+            "[NUWA-VOLUME] rejected initrd extent": false,
+            "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": false,
+            "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": false
+          },
+          "volume_status_markers": {
+            "[NUWA-VOLUME] publisher enter": false,
+            "[NUWA-VOLUME] publisher exit status=%r": false,
+            "[NUWA-VOLUME] entry dtb=0x%lx": false,
+            "[NUWA-VOLUME] dtb header outside reserved Kernel map": false,
+            "[NUWA-VOLUME] malformed dtb header": false
+          },
+          "embedded_probe_markers": {
+            "[NUWA-FV-PROBE] enter": true,
+            "[NUWA-FV-PROBE] read resource %r": true,
+            "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": true
+          },
+          "boot_input_markers": {
+            "[NUWA-BOOT-AUDIT] registered %r": false,
+            "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": false,
+            "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": false,
+            "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": false
+          },
+          "application_guid_present": false
+        },
+        {
+          "path": "build/AARCH64/nuwaPkg/Drivers/NuwaEmbeddedVolumeDxe/NuwaEmbeddedVolumeDxe/DEBUG/NuwaEmbeddedVolumeDxe.efi",
+          "machine": "0xaa64",
+          "subsystem": 11,
+          "entry_rva": "0x1050",
+          "image_size": 32768,
+          "sections": 5,
+          "bytes": 19456,
+          "sha256": "893a9ef9eedb3ca6332ae5721a3e3749185a538cfb87143440a7b2db9df47813",
+          "loader_protocol_guid_present": false,
+          "entry_hob_guid_present": false,
+          "volume_markers": {
+            "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": false,
+            "[NUWA-VOLUME] rejected initrd extent": false,
+            "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": false,
+            "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": false
+          },
+          "volume_status_markers": {
+            "[NUWA-VOLUME] publisher enter": false,
+            "[NUWA-VOLUME] publisher exit status=%r": false,
+            "[NUWA-VOLUME] entry dtb=0x%lx": false,
+            "[NUWA-VOLUME] dtb header outside reserved Kernel map": false,
+            "[NUWA-VOLUME] malformed dtb header": false
+          },
+          "embedded_probe_markers": {
+            "[NUWA-FV-PROBE] enter": true,
+            "[NUWA-FV-PROBE] read resource %r": true,
+            "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": true
+          },
+          "boot_input_markers": {
+            "[NUWA-BOOT-AUDIT] registered %r": false,
+            "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": false,
+            "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": false,
+            "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": false
+          },
+          "application_guid_present": false
+        },
+        {
+          "path": "build/AARCH64/nuwaPkg/Drivers/NuwaEmbeddedVolumeDxe/NuwaEmbeddedVolumeDxe/OUTPUT/NuwaEmbeddedVolumeDxe.efi",
+          "machine": "0xaa64",
+          "subsystem": 11,
+          "entry_rva": "0x1050",
+          "image_size": 32768,
+          "sections": 5,
+          "bytes": 19456,
+          "sha256": "893a9ef9eedb3ca6332ae5721a3e3749185a538cfb87143440a7b2db9df47813",
+          "loader_protocol_guid_present": false,
+          "entry_hob_guid_present": false,
+          "volume_markers": {
+            "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": false,
+            "[NUWA-VOLUME] rejected initrd extent": false,
+            "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": false,
+            "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": false
+          },
+          "volume_status_markers": {
+            "[NUWA-VOLUME] publisher enter": false,
+            "[NUWA-VOLUME] publisher exit status=%r": false,
+            "[NUWA-VOLUME] entry dtb=0x%lx": false,
+            "[NUWA-VOLUME] dtb header outside reserved Kernel map": false,
+            "[NUWA-VOLUME] malformed dtb header": false
+          },
+          "embedded_probe_markers": {
+            "[NUWA-FV-PROBE] enter": true,
+            "[NUWA-FV-PROBE] read resource %r": true,
+            "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": true
+          },
+          "boot_input_markers": {
+            "[NUWA-BOOT-AUDIT] registered %r": false,
+            "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": false,
+            "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": false,
+            "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": false
+          },
+          "application_guid_present": false
+        }
+      ],
+      "embedded_matches_standalone": true
+    },
+    {
+      "name": "NuwaBootMemoryDxe",
+      "guid": "5c0e4b7a-31d2-4e8f-9a66-0b1f7d2c8e43",
+      "ffs": {
+        "guid": "5c0e4b7a-31d2-4e8f-9a66-0b1f7d2c8e43",
+        "type": 7,
+        "bytes": 24668,
+        "volume": "FD/FVMAIN_COMPACT/9e21fd93-9c72-4c15-8c4b-e77f1db2d792/FV",
+        "offset": 7876288,
+        "sections": [
+          {
+            "type": "0x13",
+            "bytes": 22,
+            "depex": [
+              {
+                "op": "PUSH",
+                "guid": "13a3f0f6-264a-3ef0-f2e0-dec512342f34"
+              },
+              {
+                "op": "END"
+              }
+            ]
+          },
+          {
+            "type": "0x10",
+            "bytes": 24580,
+            "pe": {
+              "machine": "0xaa64",
+              "subsystem": 11,
+              "entry_rva": "0x1050",
+              "image_size": 40960,
+              "sections": 5,
+              "bytes": 24576,
+              "sha256": "e91ae1730533934fa80431aa544e2e4b9ef4afbd81e4ac8a9a3ccbeaeec07af3",
+              "loader_protocol_guid_present": false,
+              "entry_hob_guid_present": true,
+              "volume_markers": {
+                "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": true,
+                "[NUWA-VOLUME] rejected initrd extent": true,
+                "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": true,
+                "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": true
+              },
+              "volume_status_markers": {
+                "[NUWA-VOLUME] publisher enter": true,
+                "[NUWA-VOLUME] publisher exit status=%r": true,
+                "[NUWA-VOLUME] entry dtb=0x%lx": true,
+                "[NUWA-VOLUME] dtb header outside reserved Kernel map": true,
+                "[NUWA-VOLUME] malformed dtb header": true
+              },
+              "embedded_probe_markers": {
+                "[NUWA-FV-PROBE] enter": false,
+                "[NUWA-FV-PROBE] read resource %r": false,
+                "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": false
+              },
+              "boot_input_markers": {
+                "[NUWA-BOOT-AUDIT] registered %r": false,
+                "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": false,
+                "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": false,
+                "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": false
+              },
+              "application_guid_present": false
+            },
+            "pcd_protocol_guid_present": false
+          },
+          {
+            "type": "0x15",
+            "bytes": 40
+          }
+        ]
+      },
+      "standalone": [
+        {
+          "path": "build/AARCH64/NuwaBootMemoryDxe.efi",
+          "machine": "0xaa64",
+          "subsystem": 11,
+          "entry_rva": "0x1050",
+          "image_size": 40960,
+          "sections": 5,
+          "bytes": 24576,
+          "sha256": "e91ae1730533934fa80431aa544e2e4b9ef4afbd81e4ac8a9a3ccbeaeec07af3",
+          "loader_protocol_guid_present": false,
+          "entry_hob_guid_present": true,
+          "volume_markers": {
+            "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": true,
+            "[NUWA-VOLUME] rejected initrd extent": true,
+            "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": true,
+            "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": true
+          },
+          "volume_status_markers": {
+            "[NUWA-VOLUME] publisher enter": true,
+            "[NUWA-VOLUME] publisher exit status=%r": true,
+            "[NUWA-VOLUME] entry dtb=0x%lx": true,
+            "[NUWA-VOLUME] dtb header outside reserved Kernel map": true,
+            "[NUWA-VOLUME] malformed dtb header": true
+          },
+          "embedded_probe_markers": {
+            "[NUWA-FV-PROBE] enter": false,
+            "[NUWA-FV-PROBE] read resource %r": false,
+            "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": false
+          },
+          "boot_input_markers": {
+            "[NUWA-BOOT-AUDIT] registered %r": false,
+            "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": false,
+            "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": false,
+            "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": false
+          },
+          "application_guid_present": false
+        },
+        {
+          "path": "build/AARCH64/nuwaPkg/Drivers/NuwaBootMemoryDxe/NuwaBootMemoryDxe/DEBUG/NuwaBootMemoryDxe.efi",
+          "machine": "0xaa64",
+          "subsystem": 11,
+          "entry_rva": "0x1050",
+          "image_size": 40960,
+          "sections": 5,
+          "bytes": 24576,
+          "sha256": "e91ae1730533934fa80431aa544e2e4b9ef4afbd81e4ac8a9a3ccbeaeec07af3",
+          "loader_protocol_guid_present": false,
+          "entry_hob_guid_present": true,
+          "volume_markers": {
+            "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": true,
+            "[NUWA-VOLUME] rejected initrd extent": true,
+            "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": true,
+            "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": true
+          },
+          "volume_status_markers": {
+            "[NUWA-VOLUME] publisher enter": true,
+            "[NUWA-VOLUME] publisher exit status=%r": true,
+            "[NUWA-VOLUME] entry dtb=0x%lx": true,
+            "[NUWA-VOLUME] dtb header outside reserved Kernel map": true,
+            "[NUWA-VOLUME] malformed dtb header": true
+          },
+          "embedded_probe_markers": {
+            "[NUWA-FV-PROBE] enter": false,
+            "[NUWA-FV-PROBE] read resource %r": false,
+            "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": false
+          },
+          "boot_input_markers": {
+            "[NUWA-BOOT-AUDIT] registered %r": false,
+            "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": false,
+            "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": false,
+            "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": false
+          },
+          "application_guid_present": false
+        },
+        {
+          "path": "build/AARCH64/nuwaPkg/Drivers/NuwaBootMemoryDxe/NuwaBootMemoryDxe/OUTPUT/NuwaBootMemoryDxe.efi",
+          "machine": "0xaa64",
+          "subsystem": 11,
+          "entry_rva": "0x1050",
+          "image_size": 40960,
+          "sections": 5,
+          "bytes": 24576,
+          "sha256": "e91ae1730533934fa80431aa544e2e4b9ef4afbd81e4ac8a9a3ccbeaeec07af3",
+          "loader_protocol_guid_present": false,
+          "entry_hob_guid_present": true,
+          "volume_markers": {
+            "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": true,
+            "[NUWA-VOLUME] rejected initrd extent": true,
+            "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": true,
+            "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": true
+          },
+          "volume_status_markers": {
+            "[NUWA-VOLUME] publisher enter": true,
+            "[NUWA-VOLUME] publisher exit status=%r": true,
+            "[NUWA-VOLUME] entry dtb=0x%lx": true,
+            "[NUWA-VOLUME] dtb header outside reserved Kernel map": true,
+            "[NUWA-VOLUME] malformed dtb header": true
+          },
+          "embedded_probe_markers": {
+            "[NUWA-FV-PROBE] enter": false,
+            "[NUWA-FV-PROBE] read resource %r": false,
+            "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": false
+          },
+          "boot_input_markers": {
+            "[NUWA-BOOT-AUDIT] registered %r": false,
+            "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": false,
+            "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": false,
+            "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": false
+          },
+          "application_guid_present": false
+        }
+      ],
+      "embedded_matches_standalone": true
+    }
+  ],
+  "pcd_provider": {
+    "guid": "80cf7257-87ab-47f9-a3fe-d50b76d89541",
+    "type": 7,
+    "bytes": 36634,
+    "volume": "FD/FVMAIN_COMPACT/9e21fd93-9c72-4c15-8c4b-e77f1db2d792/FV",
+    "offset": 169464,
+    "sections": [
+      {
+        "type": "0x19",
+        "bytes": 212
+      },
+      {
+        "type": "0x13",
+        "bytes": 22
+      },
+      {
+        "type": "0x10",
+        "bytes": 36356,
+        "pe": {
+          "machine": "0xaa64",
+          "subsystem": 11,
+          "entry_rva": "0x1050",
+          "image_size": 49152,
+          "sections": 5,
+          "bytes": 36352,
+          "sha256": "9950675aefa084e7ec243fb9f8dea094947c71a3c5031bd21e7acb87aec4bb0b",
+          "loader_protocol_guid_present": false,
+          "entry_hob_guid_present": false,
+          "volume_markers": {
+            "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": false,
+            "[NUWA-VOLUME] rejected initrd extent": false,
+            "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": false,
+            "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": false
+          },
+          "volume_status_markers": {
+            "[NUWA-VOLUME] publisher enter": false,
+            "[NUWA-VOLUME] publisher exit status=%r": false,
+            "[NUWA-VOLUME] entry dtb=0x%lx": false,
+            "[NUWA-VOLUME] dtb header outside reserved Kernel map": false,
+            "[NUWA-VOLUME] malformed dtb header": false
+          },
+          "embedded_probe_markers": {
+            "[NUWA-FV-PROBE] enter": false,
+            "[NUWA-FV-PROBE] read resource %r": false,
+            "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": false
+          },
+          "boot_input_markers": {
+            "[NUWA-BOOT-AUDIT] registered %r": false,
+            "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": false,
+            "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": false,
+            "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": false
+          },
+          "application_guid_present": false
+        },
+        "pcd_protocol_guid_present": true
+      },
+      {
+        "type": "0x15",
+        "bytes": 18
+      }
+    ]
+  },
+  "sec_entry_hob_producer": {
+    "bytes": 73384,
+    "sha256": "7192fd3f3f37061ebaf466d2e98ef0e661abf29fe5b38eaa60cba99f0d40fd90",
+    "entry_hob_guid_present": true,
+    "trace_markers": {
+      "[NUWA-ENTRY]": true,
+      "C-before-platform": true,
+      "C-after-platform": true,
+      "before-memory": true,
+      "before-platform-hobs": true,
+      "before-fv-decompress": true,
+      "before-dxe-core": true,
+      "memory status=%r": true,
+      "platform-hobs status=%r": true,
+      "fv-decompress status=%r": true,
+      "dxe-core returned=%r": true
+    },
+    "heap_descriptors": [
+      {
+        "offset": 65968,
+        "base": "0xbab00000",
+        "bytes": 219938816,
+        "mib": 209.75,
+        "descriptor_prefix_sha256": "813ee45c1b9fe89fd44e65d586651f499b200e34a609ca1947db994e18634447"
+      }
+    ],
+    "handoff_markers": {
+      "[NUWA-HANDOFF] before-entry-arg-hob list=%p": true,
+      "[NUWA-HANDOFF] after-entry-arg-hob data=%p": true,
+      "[NUWA-HANDOFF] before-library-constructors": true,
+      "[NUWA-HANDOFF] after-library-constructors": true
+    },
+    "constructor_markers": {
+      "[NUWA-CTOR] Debug enter": true,
+      "[NUWA-CTOR] Debug leave status=%r": true,
+      "[NUWA-CTOR] Extract enter": true,
+      "[NUWA-CTOR] Extract leave status=%r": true,
+      "[NUWA-CTOR] Mmu enter": true,
+      "[NUWA-CTOR] Mmu leave status=%r": true,
+      "[NUWA-CTOR] Lzma enter": true,
+      "[NUWA-CTOR] Lzma leave status=%r": true
+    },
+    "mmu_markers": {
+      "[NUWA-MMU] after-guid-query hob=%p": true,
+      "[NUWA-MMU] before-hob-function-read": true,
+      "[NUWA-MMU] after-hob-function-read": true,
+      "[NUWA-MMU] before-cache helper=%p bytes=%u": true,
+      "[NUWA-MMU] after-cache": true
+    },
+    "hob_markers": {
+      "[NUWA-HOB] query-enter": true,
+      "[NUWA-HOB] list=%p": true,
+      "[NUWA-HOB] scan-start ptr=%p": true,
+      "[NUWA-HOB] row=%u ptr=%p type=%x len=%x": true,
+      "[NUWA-HOB] before-compare ptr=%p": true,
+      "[NUWA-HOB] matched": true,
+      "[NUWA-HOB] different": true,
+      "[NUWA-HOB] log-limit; traversal unchanged": true,
+      "[NUWA-HOB] query-leave result=%p": true
+    },
+    "hob_check_markers": {
+      "[NUWA-HOB-CHECK] invalid ptr=%p type=%x len=%x target=%x": true,
+      "[NUWA-HOB-CHECK] query guid=%g list=%p end=0x%lx bottom=0x%lx top=0x%lx": true
+    },
+    "hob_stage_markers": {
+      "[NUWA-HOB-STAGE] bad phase=%a context=0x%lx reason=%u off=0x%lx type=%x len=%x": true,
+      "[NUWA-HOB-STAGE] last-good phase=%a context=0x%lx count=%u end=0x%lx hash=%x": true,
+      "[NUWA-HOB-STAGE] phit list=0x%lx end=0x%lx bottom=0x%lx top=0x%lx": true,
+      "[NUWA-HOB-STAGE] raw off=0x%lx qword=0x%lx": true,
+      "[NUWA-HOB-STAGE] ok phase=%a context=0x%lx count=%u end=0x%lx hash=%x": true,
+      "[NUWA-HOB-STAGE] invalid trusted arena": true,
+      "hob-constructor": true,
+      "create-before": true,
+      "create-after": true,
+      "resource-filled": true,
+      "allocation-filled": true,
+      "before-mmu": true,
+      "after-mmu": true,
+      "memory-peim-return": true,
+      "before-platform": true,
+      "after-platform": true,
+      "entry-arg-filled": true,
+      "before-constructors": true,
+      "after-constructors": true,
+      "guid-query": true
+    },
+    "hob_cache_markers": {
+      "[NUWA-HOB-CACHE] unsupported el=0x%lx": true,
+      "[NUWA-HOB-CACHE] refused el=%lu sctlr=0x%lx arena=0x%lx": true,
+      "[NUWA-HOB-CACHE] rejected extent base=0x%lx end=0x%lx line=%lu": true,
+      "[NUWA-HOB-CACHE] invalidate el=%lu sctlr=0x%lx base=0x%lx bytes=0x%lx line=%lu": true,
+      "cache-handoff-before": true
+    }
+  },
+  "device_executed": false,
+  "unverified": [
+    "DXE dispatch and protocol installation",
+    "initrd mapping/reservation and FAT mount",
+    "UEFI memory map and XNU window",
+    "XNU and iOS execution"
+  ]
+}

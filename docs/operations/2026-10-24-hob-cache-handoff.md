@@ -10,4 +10,10 @@ NuwaHobCacheHandoff确认EL1/EL2、适当级别SCTLR.M/C均0和已初始化可�
 
 公开机制依据及原始实测见2026-10-24-hob-stage-audit-trial.md：Linux v6.12 head.S与ARM64维护者说明支持非缓存写入后失效旧缓存的方向；没有直接复制Linux代码。同SoC顺序参照仍为uefi-sheng@329b473d（same-soc-order.json），不搬其地址或扩展本次改动。
 
-完整CI、实际回调位置/IVAC/屏障/保护和41行内存表、严格容器复验待验。需要完整验收后通知用户确认新包录像，再刷新恢复门；本轮仅离线，无设备动作，不声明故障已修复。
+完整CI40005057158、实际IVAC/屏障/保护和41行内存表、严格容器复验已通过；回调插入位置由完整固定源码链验证。需要完整验收后通知用户确认新包录像，再刷新恢复门；本轮仅离线，无设备动作，不声明故障已修复。
+
+## 完整固件与新包验收
+
+CI40005057158/source bdcf4a2成功。下载实际SEC中NuwaHobCacheHandoff的显式调用序列为DSB→InvalidateDataCacheRange→DSB→ISB；范围函数将行操作指针传给CacheRangeOperation，实际地址解析为ArmInvalidateDataCacheEntryByMVA，内含DC IVAC。实际DSB SY/ISB与失败CpuDeadLoop通过。原CreateHob前后两次/查询入口一次checkpoint及失败分支仍存在；41行2952B SEC表7694de6c相同。证据cache-code-audit.json、sec-call-audit.json、memory-map-identical.json。
+
+新包26ef8efdc034f726df23f7bb2998d9e980e52e706e914ba9a415ca088dba2051/3153920B；FD0e90473e1526d29cfda8f0c285f3b3e7db4ee0862e81b3f138dac604860ba225/3MiB，严格容器逐字节重建通过。实际包缺preflight在任何设备子进程前拒绝，调用0；报告reports/hob-cache-handoff/40005057158/。本轮未操作设备，修复效果未实测；需通知并取得本轮录像确认后刷新门，启动前再次即时通知。若拒绝M/C状态，则优先核查实际入口，不能删守卫强行继续。

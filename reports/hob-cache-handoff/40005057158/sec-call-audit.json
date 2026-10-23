@@ -1,0 +1,285 @@
+{
+  "scope": "Static actual SEC direct-branch audit; not runtime PCs or complete transitive call graph",
+  "fd_sha256": "0e90473e1526d29cfda8f0c285f3b3e7db4ee0862e81b3f138dac604860ba225",
+  "sec_sha256": "7192fd3f3f37061ebaf466d2e98ef0e661abf29fe5b38eaa60cba99f0d40fd90",
+  "map_sha256": "12198ffd9ca1a2757baa6bf120db9fbec585e9883c30454338752baec32f3c35",
+  "functions": [
+    {
+      "symbol": "NuwaHobAuditCheckpoint",
+      "address": "0xa71036a4",
+      "bytes": 824,
+      "sha256": "42d91c684d4b7c5e19c0b9696ad813c7f8c0db0dc5bd39ef954a508b13bff63b",
+      "branches": [
+        {
+          "address": "0xa71036f0",
+          "op": "bl",
+          "target": "0xa7104444",
+          "symbols": [
+            "ZeroMem"
+          ]
+        },
+        {
+          "address": "0xa71036f4",
+          "op": "bl",
+          "target": "0xa7109f70",
+          "symbols": [
+            "ArmReadTpidrurw"
+          ]
+        },
+        {
+          "address": "0xa7103798",
+          "op": "bl",
+          "target": "0xa71032b8",
+          "symbols": [
+            "DebugPrint"
+          ]
+        },
+        {
+          "address": "0xa71037d4",
+          "op": "bl",
+          "target": "0xa71032b8",
+          "symbols": [
+            "DebugPrint"
+          ]
+        },
+        {
+          "address": "0xa71037f0",
+          "op": "bl",
+          "target": "0xa71032b8",
+          "symbols": [
+            "DebugPrint"
+          ]
+        },
+        {
+          "address": "0xa710380c",
+          "op": "bl",
+          "target": "0xa7104354",
+          "symbols": [
+            "CpuDeadLoop"
+          ]
+        },
+        {
+          "address": "0xa7103864",
+          "op": "bl",
+          "target": "0xa71044b4",
+          "symbols": [
+            "ReadUnaligned64"
+          ]
+        },
+        {
+          "address": "0xa710387c",
+          "op": "bl",
+          "target": "0xa71032b8",
+          "symbols": [
+            "DebugPrint"
+          ]
+        },
+        {
+          "address": "0xa7103884",
+          "op": "b",
+          "target": "0xa7103844",
+          "symbols": []
+        },
+        {
+          "address": "0xa71038a0",
+          "op": "bl",
+          "target": "0xa7104444",
+          "symbols": [
+            "ZeroMem"
+          ]
+        },
+        {
+          "address": "0xa7103914",
+          "op": "b",
+          "target": "0xa71038f8",
+          "symbols": []
+        },
+        {
+          "address": "0xa7103958",
+          "op": "b",
+          "target": "0xa71038d4",
+          "symbols": []
+        },
+        {
+          "address": "0xa7103960",
+          "op": "b",
+          "target": "0xa7103774",
+          "symbols": []
+        },
+        {
+          "address": "0xa71039a0",
+          "op": "bl",
+          "target": "0xa71032b8",
+          "symbols": [
+            "DebugPrint"
+          ]
+        },
+        {
+          "address": "0xa71039c8",
+          "op": "b",
+          "target": "0xa7103810",
+          "symbols": []
+        },
+        {
+          "address": "0xa71039d0",
+          "op": "b",
+          "target": "0xa7103774",
+          "symbols": []
+        },
+        {
+          "address": "0xa71039d8",
+          "op": "b",
+          "target": "0xa7103774",
+          "symbols": []
+        }
+      ],
+      "indirect_branch_addresses": [],
+      "checkpoint_branches": 0
+    },
+    {
+      "symbol": "CreateHob",
+      "address": "0xa7103b80",
+      "bytes": 160,
+      "sha256": "72bed7fcece42d334c239c9a9f562615817fb9001b21d61b2abbfe5cdf0ed88a",
+      "branches": [
+        {
+          "address": "0xa7103ba8",
+          "op": "bl",
+          "target": "0xa71036a4",
+          "symbols": [
+            "NuwaHobAuditCheckpoint"
+          ]
+        },
+        {
+          "address": "0xa7103bac",
+          "op": "bl",
+          "target": "0xa7109f70",
+          "symbols": [
+            "ArmReadTpidrurw"
+          ]
+        },
+        {
+          "address": "0xa7103bcc",
+          "op": "b",
+          "target": "0xa7103c10",
+          "symbols": []
+        },
+        {
+          "address": "0xa7103c0c",
+          "op": "bl",
+          "target": "0xa71036a4",
+          "symbols": [
+            "NuwaHobAuditCheckpoint"
+          ]
+        }
+      ],
+      "indirect_branch_addresses": [],
+      "checkpoint_branches": 2
+    },
+    {
+      "symbol": "GetFirstGuidHob",
+      "address": "0xa7103dc8",
+      "bytes": 352,
+      "sha256": "dfd6365aa3db271dd18d78a03bc3e808ff39b20861378135b330943808e86f2c",
+      "branches": [
+        {
+          "address": "0xa7103df4",
+          "op": "bl",
+          "target": "0xa71036a4",
+          "symbols": [
+            "NuwaHobAuditCheckpoint"
+          ]
+        },
+        {
+          "address": "0xa7103e04",
+          "op": "bl",
+          "target": "0xa71032b8",
+          "symbols": [
+            "DebugPrint"
+          ]
+        },
+        {
+          "address": "0xa7103e08",
+          "op": "bl",
+          "target": "0xa7109f70",
+          "symbols": [
+            "ArmReadTpidrurw"
+          ]
+        },
+        {
+          "address": "0xa7103e2c",
+          "op": "bl",
+          "target": "0xa71032b8",
+          "symbols": [
+            "DebugPrint"
+          ]
+        },
+        {
+          "address": "0xa7103e40",
+          "op": "bl",
+          "target": "0xa71032b8",
+          "symbols": [
+            "DebugPrint"
+          ]
+        },
+        {
+          "address": "0xa7103e6c",
+          "op": "bl",
+          "target": "0xa7103c74",
+          "symbols": [
+            "GetNextHob"
+          ]
+        },
+        {
+          "address": "0xa7103e9c",
+          "op": "bl",
+          "target": "0xa71032b8",
+          "symbols": [
+            "DebugPrint"
+          ]
+        },
+        {
+          "address": "0xa7103ea8",
+          "op": "bl",
+          "target": "0xa710463c",
+          "symbols": [
+            "CompareGuid"
+          ]
+        },
+        {
+          "address": "0xa7103ed0",
+          "op": "bl",
+          "target": "0xa71032b8",
+          "symbols": [
+            "DebugPrint"
+          ]
+        },
+        {
+          "address": "0xa7103edc",
+          "op": "b",
+          "target": "0xa7103e64",
+          "symbols": []
+        },
+        {
+          "address": "0xa7103ef0",
+          "op": "bl",
+          "target": "0xa71032b8",
+          "symbols": [
+            "DebugPrint"
+          ]
+        },
+        {
+          "address": "0xa7103f0c",
+          "op": "bl",
+          "target": "0xa71032b8",
+          "symbols": [
+            "DebugPrint"
+          ]
+        }
+      ],
+      "indirect_branch_addresses": [],
+      "checkpoint_branches": 1
+    }
+  ],
+  "device_accessed": false
+}
