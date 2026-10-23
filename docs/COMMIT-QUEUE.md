@@ -1100,3 +1100,13 @@
 [Evidence] 当前77742999无NativeUfs/NativeRamBlock/PMGR对应导出；既定donor七组件在本机，两trust模块重新哈希且v2格式检查通过；固定loader逻辑上限2GiB，参考prelink输入89d8ff86不同。
 [Risk] 大DMG未重新全文件哈希，raw大小/UUID、当前prelink及硬件运行均未验收；官网本轮404用固定缓存，不改board/feed或镜像，不操作设备，晚间包2d833461保持。
 ```
+
+## Q-103 · 晚间SEC构造边界实测
+
+```text
+[unixnu-nuwa][device] 实测入口HOB返回并收窄至库构造边界后确认Android恢复
+
+[Change] 保存晚间唯一2d833461临时启动、120秒USB采样和更正原图，旧误发图片排除；关闭拍摄待办并更新下一步构造链审查。
+[Evidence] 新图f3cf9558显示list BAB00000/data BAB013B8及before-library-constructors，后标记未见；18:30:39实际nuwa完成1，三分区SHA与试前一致。
+[Risk] 具体构造函数/运行PC和日志失效未区分，视频未交付，未到DXE/SHENGMEM或XNU；本次恢复仅检测Android，不宣称发送原boot，无flash/改槽/板值变更。
+```

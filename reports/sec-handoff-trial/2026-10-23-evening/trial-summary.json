@@ -1,0 +1,22 @@
+{
+  "at": "2026-10-23T18:36:32+08:00",
+  "scope": "One temporary SEC diagnostic trial and Android recovery",
+  "candidate_sha256": "2d8334613a415c24574f93c0bcb30ba50d32175ff062d8ec2cc149651bcde846",
+  "boot_ack_exit_code": 0,
+  "usb_samples": 59,
+  "observed_usb_seconds": 120.0,
+  "photo_sha256": "f3cf95585d78cc4b41ac50850a6046b36ba7837634ff1949788e6c24a6914458",
+  "last_visible": "before-library-constructors",
+  "hob_list": "0xbab00000",
+  "entry_hob_data": "0xbab013b8",
+  "conclusions": [
+    "Entry-argument HOB call returned non-null data",
+    "Before-library-constructors log visible",
+    "After-library-constructors, decompression, DXE and SHENGMEM not observed this trial"
+  ],
+  "limitation": "No sampled runtime PC; individual constructor and root cause not identified; logger failure not excluded",
+  "wrong_first_photo": "User corrected previous image; same file as noon, not current trial evidence",
+  "android_boot_completed": "1",
+  "three_partition_hashes_unchanged": true,
+  "flash_erase_slot_change": false
+}

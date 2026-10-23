@@ -1,14 +1,14 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-23T17:03:32+08:00（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-23T18:36:32+08:00（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
-**晚上实测候选已离线准备完成：CI39915967862成功，四条新HANDOFF日志进入实际SEC，41条内存描述符2952B与R-011逐字节相同。唯一v4包3153920B、SHA2d833461，尚未实机启动。本轮没有ADB/fastboot命令。** 用户要求留晚上一起实测。
+**晚上2d833461诊断包已完成一次实机临时启动。更正照片明确显示入口HOB创建返回非空data=BAB013B8、list=BAB00000，最后为before-library-constructors；未观察到构造返回、解压、DXE或SHENGMEM。** 现已将范围收窄至库构造调用/相关日志路径，尚未定位具体函数或运行PC，不排除输出通道失效。
 
-**XNU源内核已经编译成功，尚未实机进入XNU。** 上午R-011同包曾由用户观察到UniXNU三项菜单，随后NoBootOS；中午同包照片最后可见platform-hobs status=Success，未取得本次DXE/SHENGMEM/菜单证据。最后可见行不等于实际PC，输出失效或执行阻塞仍未区分，不能称稳定进入UniXNU。
+**18:30:39电脑已确认nuwa/kalama回Android、sys.boot_completed=1；后置三分区SHA与试前相同。** 本轮恢复脚本只检测到Android，没有发送原boot；回返方式未独立记录。无flash/erase/改槽，不再启动第二包。用户先误发旧图后已更正，旧图不作为本次阶段证据。[晚间报告](operations/2026-10-23-sec-handoff-evening-trial.md)，reports/sec-handoff-trial/2026-10-23-evening/。
 
-最近一次恢复为中午12:18:42：实际nuwa/kalama Android boot_completed=1、后置三分区SHA与试前相同，无flash/erase/改槽；这不替代晚上新鲜前置条件。[中午报告](operations/2026-10-23-initrd-retest-sec-stop.md)。
+XNU源内核已编译，尚未实机进入XNU；上午R-011曾到UniXNU菜单，中午未稳定复现。晚间新图只证明上述SEC边界，不能混为本次菜单成功。
 
 ## 新诊断固件与包
 
@@ -32,16 +32,14 @@
 
 只补before/after-entry-arg-hob及before/after-library-constructors，记录list/data而不额外解引用，不绕过错误。[分析与来源](operations/2026-10-23-sec-handoff-diagnostic.md)，reports/sec-handoff/保留固定提交、SHA、许可、适用性及35项输入检查。
 
-严格新scope已接入trial/preflight，纯文件校验通过：重查固定recipe、实际产物、包metadata和整个原头/内容。SEC-HANDOFF-OFFLINE及ready_to_execute=false表示包不替代运行前门。USB观察默认120秒（范围120—600），每条附ACK后相对时间；USB枚举不是具体过程日志。本轮只做纯文件/语法/CLI帮助检查，未启动新包或查询设备。
+严格新scope已接入trial/preflight，纯文件校验通过：重查固定recipe、实际产物、包metadata和整个原头/内容。SEC-HANDOFF-OFFLINE及ready_to_execute=false表示包不替代运行前门。USB观察默认120秒（范围120—600），每条附ACK后相对时间；USB枚举不是具体过程日志。下午完成纯文件/语法检查；晚上已按fresh门试一次，具体结果以上方晚间报告为准。
 
-## 下一步（晚上）
+## 下一步
 
-1. 用户在场后通知录像，使用reports/sec-handoff/39915967862/package.json刷新目标nuwa/kalama、Android完成1、三分区SHA、原boot及实际恢复证据，生成独立fresh preflight；不得复用中午记录冒充当晚门。
-2. 门通过后只临时启动2d833461候选；录像覆盖至少120秒完整阶段，标注相对时间，读取四条HANDOFF最后可见项及list/data。具体失败先记录再恢复，不为凑时长延迟恢复；缺失日志仍不能自动判为精确阻塞点。
-3. 若到DXE/UniXNU，取得SHENGMEM的x0/initrd范围及发布状态；无系统负载时NoBootOS符合当前包。若未到则按边界证据定位，不盲猜initrd或改内存表。
-4. 结束后仅恢复已校验原Android boot，确认sys.boot_completed=1和三分区SHA不变；视频/照片及过程写入独立reports目录。H-009为晚上拍摄待办。
-
-设备前缺具体过程日志或恢复依据则按AGENTS§3写审阅并硬停；镜像生成本身无需硬停。本轮不需要改板值、身份、内存参数或_verified。
+1. 离线核查实际SEC四个构造调用及各库依赖，优先检查DebugLib输出重初始化、提取器分配/HOB和ArmMmu缓存路径；不凭最后画面确定具体函数，不跳过或重排构造。
+2. 需要新诊断时只细化单构造前后边界，独立构建/静态产物核验；本轮不再启动新包，之后测试仍刷新具体日志和恢复门。
+3. SHENGMEM、真实initrd范围和载荷卷挂载尚未取得；保持FAT探针→当前内核prelink/ADT→EL1入口→原生根卷顺序，不猜偏移或改板值。
+4. Android完成1及三分区未变已确认。H-009拍摄配合完成（新照片已取得、完整视频未交付）；历史独立按键演练不混称完成。
 
 ## 后续系统卷／启动载荷预研
 
