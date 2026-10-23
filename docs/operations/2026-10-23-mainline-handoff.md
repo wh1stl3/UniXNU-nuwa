@@ -1,6 +1,6 @@
-# 主线交接：dd1ef825实测后（2026-10-23）
+# 主线交接：卷发布状态诊断（更新2026-10-24）
 
-先读AGENTS、STATUS、DECISIONS。设备仓文档前基线c69f538；固件仓codex/nuwa-sec-handoff-trace@150b5ec。用户目标持续推进至XNU，人工恢复不阻塞离线工作。每次硬停必须同步本文、STATUS和NEED-REVIEW/PENDING-HUMAN。
+先读AGENTS、STATUS、DECISIONS。设备仓文档前基线c69f538；固件仓codex/nuwa-sec-handoff-trace@bc38be0（卷状态修正；原实测包仍为150b5ec）。用户目标持续推进至XNU，人工恢复不阻塞离线工作。每次硬停必须同步本文、STATUS和NEED-REVIEW/PENDING-HUMAN。
 
 ## 实际进度
 
@@ -12,7 +12,7 @@ CI39973030321/source4139464构建成功，本地实际新标记、全41行内存
 
 ## 设备状态与待人工
 
-本轮recovery.json等待180秒超时；尚无本轮Android完成1/三分区postcondition。视频Android标志不替代ADB核验。前轮ae9a445a的恢复已完成，但不得当本轮恢复。没有flash/erase/改槽。
+recovery.json曾等待180秒超时。2026-10-24已只读ADB确认nuwa/kalama、Android完成1/slot_a及本轮三分区与preflight一致；新postcondition.json记录实际查询时间与命令，恢复闭环已补齐。没有flash/erase/改槽。
 
 ## 续接命令及工作
 
@@ -23,3 +23,9 @@ CI39973030321/source4139464构建成功，本地实际新标记、全41行内存
 - 每次新设备启动前重新确认用户录像、真实nuwa身份、包复验及恢复门，立即通知后启动。只差人工恢复时继续离线，不复试旧包。
 
 两只读旧资料库边界、board/bringup地址容量身份及_verified审阅边界继续有效。固件源码在uefi-nuwa，设备仓固定引用、配置、补丁、证据。当前无要求更改未知板值的操作，不虚构新审批；设备恢复未确认限制下一次启动。
+
+## 2026-10-24离线推进
+
+2026-10-24T00:15:19.951531+08:00：复查19至35秒抽帧仍无可读卷结果，不宣称驱动未调度或定位根因。固件bc38be0实现错误传播/分阶段日志，8项主机C测试通过；volume-status独立profile静态41输入/7补丁/10后哈希通过。正常构建无停留，0015诊断profile最终状态停留5秒；完整CI及产物核验待完成。
+
+直接续接：`python -B scripts/check-volume-status.py`；`gh workflow run firmware-candidate.yml --repo wh1stl3/UniXNU-nuwa --ref main -f profile=volume-status`。运行后记录run id，实际FD/EFI/BootShim验收后使用`python -B scripts/volume_probe_package.py <run> --profile volume-status`打包。新增scope尚未接入设备启动工具，不使用旧scope绕过。新鲜用户录像门尚未确认，当前只做离线构建。细节见2026-10-24-volume-publisher-status.md。

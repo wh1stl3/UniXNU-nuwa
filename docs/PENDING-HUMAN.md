@@ -33,3 +33,5 @@
 - HOB试验恢复已完成：postcondition.json确认Android完成1及三分区哈希不变；此前恢复待办关闭。下一轮新包需通知录像。
 
 - dd1ef825本轮待恢复闭环：recovery.json等待超时；录像末尾Android标志不是完成1。需确认真实nuwa Android ADB及三分区postcondition，必要时实体键回fastboot后接管。录像已收到并归档摘要/关键帧；离线卷发现分析继续。
+
+- 2026-10-24T00:15:19.951531+08:00 · dd1ef825恢复待办完成：postcondition.json确认本轮nuwa/kalama、Android完成1及三分区SHA与preflight一致。新包录像待产物就绪后确认，离线构建继续。

@@ -1310,3 +1310,13 @@
 [Evidence] 两处list同为BAB00000、目标GUID不同；BAB00718 type3 len0x30；35秒内置菜单无启动项；恢复等待超时。
 [Risk] 无XNU入口或目标卷发现证据；HOB间歇异常根因未定位，本轮Android和分区postcondition待补。
 ```
+
+## Q-124 · 卷发布状态诊断
+
+```text
+[unixnu-nuwa][firmware] 修正卷发布错误传播并补齐上轮恢复
+
+[Change] 固定bc38be0发布器和独立volume-status诊断profile，补Android恢复与三分区核验。
+[Evidence] 8项C主机测试、41输入7补丁10后哈希通过；postcondition确认Android完成1且三分区不变。
+[Risk] 完整构建和实机诊断待完成；目标卷及XNU未确认，下一设备动作须新鲜录像门。
+```

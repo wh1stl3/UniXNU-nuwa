@@ -265,3 +265,5 @@
 2026-10-23晚 · dd1ef825新诊断包全表/新标记/容器核验通过，独立scope接入并刷新录像及设备门 · Q-122 · reports/hob-integrity/39973030321/
 
 2026-10-23晚 · 归档dd1ef825录像摘要/两原图/菜单关键帧，记录同链不同GUID查询及BAB00718正常推进；重写进度和交接，本轮恢复未闭环 · Q-123 · docs/operations/2026-10-23-hob-integrity-trial.md
+
+2026-10-24T00:15:19.951531+08:00 · 接手并补齐dd1ef825恢复闭环；修正卷发布错误传播，8项主机测试/新profile静态通过，准备CI · Q-124（提交后git log定位） · docs/operations/2026-10-24-volume-publisher-status.md；reports/volume-status/profile-check.json

@@ -18,7 +18,7 @@ def sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
-PROFILES = {"VOLUME-PROBE-OFFLINE": "volume-envelope", "HOB-INTEGRITY-OFFLINE": "hob-integrity"}
+PROFILES = {"VOLUME-PROBE-OFFLINE": "volume-envelope", "HOB-INTEGRITY-OFFLINE": "hob-integrity", "VOLUME-STATUS-OFFLINE": "volume-status"}
 
 
 def recipe(run, profile_name="volume-envelope"):

@@ -1,9 +1,9 @@
 # STATUS
 
-> 当前唯一真相：dd1ef825实测越过HOB查询进入UniXNU内置菜单；目标卷探针未被确认，尚未进入XNU。
+> dd1ef825实测进入UniXNU内置菜单，目标卷和XNU尚未确认。2026-10-24已补齐Android恢复和三分区核验；正在构建卷发布状态诊断。
 
-CI39973030321/source4139464，包dd1ef825/70266880B已核验并临时启动。原图两处query共用list=BAB00000但GUID不同，属于不同调用；BAB00718本次type3 len0x30并正常推进。前包零长度循环未复现，根因未确定，未宣称修复。录像35秒内置菜单no boot entry found，无探针标题；45秒USB回退；71.6秒Android标志。
+最新只读ADB确认nuwa/kalama、Android boot_completed=1、slot_a，三个启动分区SHA与上轮preflight一致；证据reports/hob-integrity-trial/2026-10-23-evening/postcondition.json。原恢复等待超时保留为历史，不再作为当前设备状态。
 
-本轮恢复等待超时，Android完成1及三分区postcondition待补。前轮恢复完成不替代本轮。人工恢复等待不阻塞离线分析，未闭环时不启动新包。
+固件固定bc38be0：发布器错误传播/分阶段日志、可选5秒诊断停留，8项C主机测试通过。新volume-status profile的41输入/7补丁/10后哈希静态检查通过；完整CI/实际产物核验待完成，无新设备试验。未改板值、映射及_verified。
 
-证据reports/hob-integrity-trial/2026-10-23-evening/；分析operations/2026-10-23-hob-integrity-trial.md。下一步从原视频逐帧读取NuwaBootMemoryDxe的NUWA-VOLUME/SHENGMEM日志，定位目标卷未发现路径；同时保留HOB间歇异常待查。板值及_verified不变。接续见operations/2026-10-23-mainline-handoff.md。
+录像抽帧未取得可读NUWA-VOLUME结果，不能从缺失确定根因。下一步构建并验收新profile；新包启动须重新确认录像、日志/恢复门并通知用户。详见operations/2026-10-24-volume-publisher-status.md和operations/2026-10-23-mainline-handoff.md。

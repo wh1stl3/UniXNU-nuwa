@@ -1,0 +1,11 @@
+--- a/Platforms/Xiaomi/nuwaPkg/Drivers/NuwaBootMemoryDxe/NuwaBootMemoryDxe.c
++++ b/Platforms/Xiaomi/nuwaPkg/Drivers/NuwaBootMemoryDxe/NuwaBootMemoryDxe.c
+@@ -22,7 +22,7 @@
+ 
+ // A diagnostic build may hold the final checkpoint for a bounded recording window.
+ #ifndef NUWA_VOLUME_DIAGNOSTIC_PAUSE_US
+-#define NUWA_VOLUME_DIAGNOSTIC_PAUSE_US  0
++#define NUWA_VOLUME_DIAGNOSTIC_PAUSE_US  5000000
+ #endif
+ 
+ STATIC
