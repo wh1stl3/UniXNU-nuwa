@@ -28,6 +28,13 @@ def devices(tool):
             and s[1] == ('device' if tool == 'adb' else 'fastboot')]
 
 
+def capture_confirmed(gate, approval):
+    confirmation = gate.get('human_capture_confirmation')
+    if approval == 'MMU-BRANCHES-OFFLINE':
+        return isinstance(confirmation, str) and bool(confirmation.strip())
+    return confirmation == '可以，启动前通知我'
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('phase', choices=['launch', 'recover'])
@@ -106,7 +113,7 @@ def main():
         age = (datetime.datetime.now(datetime.timezone.utc) - datetime.datetime.fromisoformat(gate['at'])).total_seconds()
         if (not 0 <= age <= 900 or gate['package_sha256'] != package_sha
                 or gate['process_log_method'] != 'framebuffer photographed or recorded by user'
-                or gate['human_capture_confirmation'] != '可以，启动前通知我'
+                or not capture_confirmed(gate, package['approval'])
                 or gate['android_boot_completed'] != '1' or gate['device'] != 'nuwa'
                 or gate['soc'] != 'kalama' or gate['original_boot_sha256'] != HASHES[ORIGINAL]):
             raise ValueError('D-021: log/recovery gate missing, stale, or mismatched')

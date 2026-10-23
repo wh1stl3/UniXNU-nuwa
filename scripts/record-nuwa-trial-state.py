@@ -22,7 +22,7 @@ def main():
         if metadata.get('approval') in ('SEC-HANDOFF-OFFLINE', 'CONSTRUCTOR-TRACE-OFFLINE', 'MMU-BRANCHES-OFFLINE'):
             from sec_handoff_package import validate
             validate(args.package)
-        if metadata.get('approval') == 'MMU-BRANCHES-OFFLINE' and not args.capture_confirmation:
+        if metadata.get('approval') == 'MMU-BRANCHES-OFFLINE' and not (args.capture_confirmation or '').strip():
             raise ValueError('Fresh user capture confirmation required before MMU trial preflight')
     output = args.output.resolve()
     if not output.is_relative_to(ROOT/'reports') or output.exists():

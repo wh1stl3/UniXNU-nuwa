@@ -1170,3 +1170,13 @@
 [Evidence] 39项固定输入通过；0012删日志精确还原父源码，post pin704ba022；旧constructor包严格验证通过。
 [Risk] 新固件尚待CI及实际产物验收；共享库日志影响时序，实机前须通知用户并刷新恢复门。
 ```
+
+## Q-110 · MMU分支诊断包就绪
+
+```text
+[unixnu-nuwa][firmware] 完成MMU分支CI构建及诊断包静态验收
+
+[Change] 保存CI39958974666、实际产物/全表/容器证据与五项离线测试；补齐新鲜录像确认兼容。
+[Evidence] 包2b203afa/3153920B，实际SEC五MMU八CTOR四HANDOFF；41行2952B与R-011一致；整头载荷填充严格重建通过。
+[Risk] ready_to_execute=false，无设备操作；运行分支与故障指令未验证，实机前通知用户并刷新日志恢复门。
+```

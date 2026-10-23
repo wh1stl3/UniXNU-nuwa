@@ -1,0 +1,23 @@
+{
+  "at": "2026-10-23T21:18:05.100423+08:00",
+  "result": "offline package validation passed",
+  "run_id": 39958974666,
+  "device_commit": "ee98dfe6c0263d17741c45327383791c26bd51c8",
+  "image_sha256": "2b203afa8372e99ebd9049b276c41984fa16db4d92a92a6cea0f3b4904c403dd",
+  "image_bytes": 3153920,
+  "inventory_files": 666,
+  "mmu_markers": 5,
+  "constructor_markers": 8,
+  "handoff_markers": 4,
+  "all_41_memory_rows_identical": true,
+  "exact_original_header_payload_padding": true,
+  "negative_tests_passed": [
+    "old FD relabeled as new profile rejected",
+    "baseline checks cannot be omitted",
+    "fresh capture empty values rejected",
+    "changed padding with updated hash rejected",
+    "launch/preflight gates reject before any subprocess"
+  ],
+  "device_accessed": false,
+  "ready_to_execute": false
+}
