@@ -1,0 +1,31 @@
+{
+  "reviewed_at": "2026-10-24T02:26:06.995875+08:00",
+  "sources": [
+    {
+      "title": "Linux ARM64 maintainer explanation: stale cache entries after uncached boot writes",
+      "url": "https://lists.infradead.org/pipermail/linux-arm/2020-August/000605.html",
+      "kind": "Primary author technical explanation",
+      "relevance": "Explicitly explains why data written with MMU/cache disabled may be hidden by old cache lines when re-enabled",
+      "limitation": "General ARM64 mechanism; not a nuwa diagnosis"
+    },
+    {
+      "title": "Linux v6.12 ARM64 head.S",
+      "url": "https://github.com/torvalds/linux/blob/v6.12/arch/arm64/kernel/head.S",
+      "raw_url": "https://raw.githubusercontent.com/torvalds/linux/v6.12/arch/arm64/kernel/head.S",
+      "license": "GPL-2.0-only",
+      "anchors": [
+        "primary_entry: non-cacheable page-table writes followed by barrier and dcache_inval_poc",
+        "preserve_boot_args: MMU-off writes followed by dmb sy and dcache_inval_poc"
+      ],
+      "relevance": "Real implementation addressing this class of uncached-write versus cached-read handoff",
+      "limitation": "Reference only, no Linux code copied or executed"
+    },
+    {
+      "title": "Arm employee: Clean and Invalidate Cache Memory",
+      "url": "https://community.arm.com/forums/f/architectures-and-processors-forum/3731/clean-and-invalidate-cache-memory/10061",
+      "kind": "Primary technical explanation",
+      "relevance": "Clean writes dirty cached data; invalidate discards cache hits; these are not interchangeable",
+      "limitation": "Must establish ownership/alignment/current cache state before selecting a maintenance operation"
+    }
+  ]
+}

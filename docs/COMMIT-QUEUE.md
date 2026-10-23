@@ -1450,3 +1450,13 @@
 [Evidence] 2273bdec/3153920B逐字节重建一致，CreateHob2次/查询1次调用和CpuDeadLoop存在，41行2952B表一致；缺preflight设备子进程0。
 [Risk] 新包未实测，诊断可能改变时序；首次检测区间不等于写坏者，未取得本轮录像确认，未操作设备。
 ```
+
+## Q-138 · HOB首次异常区间与根因判断
+
+```text
+[unixnu-nuwa][device] 定位MMU切换后首次坏链并完成恢复及缓存机制审查
+
+[Change] 归档2273bdec原图/120秒观察/恢复，核对缓存控制实际指令与公开主来源，明确首嫌及单变量证伪路径。
+[Evidence] before-mmu56条/末次create84条有效，返回Success后off718/type0/len0；Android完成1/三分区不变；关闭缓存函数无DC维护指令。
+[Risk] 缓存交接是首要工作假设，运行寄存器/映射未测；未实施修复或新增启动，未执行XNU。
+```

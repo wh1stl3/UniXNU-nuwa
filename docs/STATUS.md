@@ -1,11 +1,11 @@
 # STATUS
 
-> HOB阶段诊断的离线检查、完整固件构建和新包验收已完成。新包2273bdec尚未实测；下一步通知用户确认录像，再刷新设备与恢复门。
+> 2273bdec实机已把首次坏链可见区间定位至ArmConfigureMmu末段/返回之间；Android恢复和三分区核验闭环。首要工作判断是HOB缓存/地址转换交接缺陷，尚未确认具体机制。
 
-独立hob-stage-audit，CI40000310916成功，构建源a6e9a4c9766c05bd25c07e481b98e61c246ba8d5，固件6176a822e66b846620b5bcd2739a0666814ee663加0018。包SHA256 2273bdecab25410dc290df84b031871f1f18d8dd2dbe57eea89dffd741813d61，3153920B；FD74ad39a6/3MiB。实际SEC全部阶段标记、CreateHob两次/查询一次检查调用及CpuDeadLoop分支通过；41行2952B内存表与基线相同。严格整包重建一致，新包缺preflight在设备子进程前拒绝。
+本轮原图before-mmu有效：56条/endBAB00AA8；MMU函数中最后一次create-after有效：84条/endBAB00FE8/context20030。返回Success后的after-mmu首次读坏：reason2/off718/type0/len0。未到平台HOB、库构造或DXE；未执行XNU。照片/转录/源码及实际缓存控制反汇编在reports/hob-stage-audit-trial/2026-10-24/。
 
-诊断在可信arena/PHIT边界内检查HOB创建/填充、MMU前后、平台和构造边界；异常输出bad/last-good/有限原始头并停机，不修补或跳过。47输入10补丁14后哈希、精确新增C保护页/ASan/UBSan及原图零长等通过；主机改非PIE后连续20次通过，启动检测器偶发失败的记录保留。旧FD冒充/空录像门通过。证据reports/hob-stage-audit/及operations/2026-10-24-hob-stage-audit.md。
+本轮postcondition于2026-10-23T18:20:52.568611+00:00实际确认nuwa/kalama、Android完成1、slot_a、三分区SHA与preflight一致。原Android恢复闭环，无flash/erase/改槽位。
 
-本轮无ADB/fastboot命令。最近真实设备证据仍reports/boot-input-audit-trial/2026-10-24/postcondition.json：UTC2026-10-23T17:48:19.683937（北京时间01:48:19），nuwa/kalama、Android完成1、三分区SHA不变；不是此刻实时查询。上轮a2dc8195在SEC Mmu构造发现BAB00118/type4/len0，未到ReadyToBoot，根因仍未确定。新增诊断影响时序，首次检测区间不等于写坏者。
+源码及实际指令显示SEC关闭D-cache后只失效Stack/FD，HOB Heap未覆盖；MMU库建表后切MAIR/TTBR并条件重新启用D-cache/MMU。Linux ARM64公开启动实现/维护者说明支持关闭缓存期间写数据、开启后旧cache遮蔽的机制。因此首嫌缓存交接，次嫌VA→PA/属性/页表问题；不是已确认根因，实际EL/SCTLR/TTBR未取得。
 
-用户要求包就绪后再通知录像；尚未取得2273bdec本轮录像确认。确认后需即时通知、单次临时启动、至少120秒记录bad/last-good及结尾、恢复Android完成1/三分区核验。board/bringup内存值、缓存策略、Heap和_verified未改。分析内核5a128fb2仍loadable=false，未执行XNU/iOS。
+下一步离线准备单变量的HOB缓存交接候选：核对实际寄存器路径、HOB所有权和cache-line覆盖及屏障/失效顺序，保持Heap/板值及保护不变；若不奏效，走表核验映射。尚无修复包，不重复启动2273bdec。详见operations/2026-10-24-hob-stage-audit-trial.md。board/bringup内存值及_verified未改；分析预链接5a128fb2仍loadable=false。

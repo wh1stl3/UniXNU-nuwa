@@ -1,0 +1,43 @@
+{
+  "source": "User original after-mmu-screen.jpg",
+  "photo_sha256": "3b4b9b3efe41288cae06678320cddd860aa1de26d3262b2df4102106a0fe135d",
+  "before_mmu": {
+    "valid": true,
+    "count": 56,
+    "end": "0xbab00aa8"
+  },
+  "last_good": {
+    "phase": "create-after",
+    "context": "0x20030",
+    "count": 84,
+    "end": "0xbab00fe8"
+  },
+  "bad": {
+    "phase": "after-mmu",
+    "context": 0,
+    "reason": 2,
+    "offset": "0x718",
+    "hob_type": 0,
+    "hob_length": 0
+  },
+  "phit": {
+    "list": "0xbab00000",
+    "end": "0xbab00fe8",
+    "free_bottom": "0xbab00ff0",
+    "free_top": "0xc7ca4000"
+  },
+  "raw_qwords": {
+    "0x718": "0x0",
+    "0x720": "0xa7600000",
+    "0x728": "0x1000",
+    "0x730": "0x4"
+  },
+  "observed_interval": "After last successful CreateHob during ArmConfigureMmu and before its caller after-mmu checkpoint",
+  "root_cause_status": "Working hypothesis, not proven: HOB stale D-cache/translation attribute transition",
+  "runtime_el_sctlr_ttbr_measured": false,
+  "xnu_executed": false,
+  "usb_observed_seconds": 120.0,
+  "android_boot_completed": "1",
+  "three_partition_hashes_unchanged": true,
+  "postcondition_at": "2026-10-23T18:20:52.568611+00:00"
+}

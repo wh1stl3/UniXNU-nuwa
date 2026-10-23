@@ -1,8 +1,14 @@
 # 主线交接（2026-10-24T02:14:14.358409+08:00）
 
-## 当前结果与执行门
+## 当前结果与执行门（2026-10-24T02:26:06.995875+08:00）
 
-用户要求“继续定位HOB首次变坏的位置，先完成离线诊断和新包构建，需要实机测试时再通知我录像”。本轮仅离线，已完成新hob-stage-audit包2273bdec验收；尚无该包录像确认，没有ADB/fastboot命令。不自动启动。先读AGENTS/STATUS/DECISIONS，两个旧资料库严格只读；不改板内存/基址或_verified。
+2273bdec本轮新鲜录像/门/通知后已单次实测，120秒观察完成；原图首次失败after-mmu，不能重复旧launch。before-mmu有效56条/endBAB00AA8；函数内最后create-after有效84条/endBAB00FE8/context20030；ArmConfigureMmu返回Success后reason2/off718/type0/len0。坏链可见区间定位到最后分配检查之后至MMU函数返回之间，未到PlatformPeim/库构造/DXE。
+
+本轮已恢复原Android，postcondition.at=2026-10-23T18:20:52.568611+00:00，nuwa/kalama、Android完成1、slot_a、三分区SHA与preflight一致。证据reports/hob-stage-audit-trial/2026-10-24/。不借旧postcondition，不再需按键。
+
+用户要求结合公开资料大胆判断。已核对源码、实际ArmDisable/EnableDataCache指令和Linux v6.12/ARM64维护者说明：首嫌是HOB缓存/地址转换交接遗漏，尤其非缓存创建后重新启用cache读到旧行；次嫌TTBR/TCR/MAIR或页表映射问题。当前EL/SCTLR/实际页表未测，不写已确定根因。文档operations/2026-10-24-hob-stage-audit-trial.md包含引用及具体证伪方案。
+
+下一项离线准备单变量HOB范围维护/屏障候选，先核对运行级寄存器、cache-line覆盖和所有权，不盲目clean旧行，不改Heap/板值/保护；若失败再走表。此次没有实施新缓存维护或生成修复包。新包实际试验仍须完整验收和新鲜录像门。下面2273bdec信息保留为证据/参考，流程已执行完毕，不再执行其命令。
 
 设备构建源a6e9a4c9766c05bd25c07e481b98e61c246ba8d5（后续文档/审计脚本提交不改变该产物）；固件分支codex/nuwa-sec-handoff-trace，固定6176a822e66b846620b5bcd2739a0666814ee663；Mu cfb93724a06ff86ff5ba971413368a7809ee42a5；上游UniXNU 75bc13dd34dc4e403826793739e316a264ce00dd。CI40000310916 success：https://github.com/wh1stl3/UniXNU-nuwa/actions/runs/40000310916 。源码和证据均已按里程碑提交，勿混入原先无关untracked。
 
@@ -28,9 +34,9 @@ record context在create阶段为(type<<16)|length；resource/allocation为现有
 
 a2dc8195上轮单次临时boot，原图BAB00118/type4/len0触发保护，未到ReadyToBoot。与旧成功87b14624实际SEC仅构建时间字符串4字节不同，掩蔽8字节时间后全SEC一致，根因未定。照片/差分见reports/boot-input-audit-trial/2026-10-24/。postcondition.at=2026-10-23T17:48:19.683937+00:00，即北京时间10-24 01:48:19；nuwa/kalama、Android完成1、slot_a、三分区SHA和当轮preflight一致，恢复闭环。不能当此刻实时状态。
 
-## 新鲜录像确认后的续接命令
+## 已完成的2273bdec流程参考（勿重复执行）
 
-下列只是待执行流程；不得把用户本轮离线授权当录像可用。使用bundled Python，设PYTHONUTF8=1；PATH加D:/Code/PortingiOS/common/tools/platform-tools。始终唯一选择nuwa/kalama，不操作同时接入的enuma。脚本要求fresh路径，不覆盖旧证据。
+下列本轮已执行完毕，仅留作新包流程参考；新包不得复用本轮录像许可。使用bundled Python，设PYTHONUTF8=1；PATH加D:/Code/PortingiOS/common/tools/platform-tools。始终唯一选择nuwa/kalama，不操作同时接入的enuma。脚本要求fresh路径，不覆盖旧证据。
 
 1. 离线复验：`python -B -c "import sys;sys.path.insert(0,'scripts');from embedded_probe_package import validate;print(validate('reports/hob-stage-audit/40000310916/package.json')['image_sha256'])"`。
 2. 用户确认该包连续录像至少120秒及按键回fastboot可用后：`python -B scripts/record-nuwa-trial-state.py --output reports/hob-stage-audit-trial/2026-10-24/preflight.json --package reports/hob-stage-audit/40000310916/package.json --capture-confirmation '<本轮真实答复>'`。若无实际Android完成1或唯一nuwa，先识别并恢复，不绕过门。

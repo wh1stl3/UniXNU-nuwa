@@ -1,0 +1,548 @@
+{
+  "scope": "Actual target cache-control disassembly and pinned source audit; runtime SCTLR/EL/TTBR not measured",
+  "functions": [
+    {
+      "name": "ArmDisableDataCache",
+      "address": "0xa71096a4",
+      "sha256": "1147791ba52a8a447beef9d4591c5feffca36d8f9cf0192b405601995318b3ce",
+      "instructions": [
+        {
+          "address": "0xa71096a4",
+          "mnemonic": "mrs",
+          "operands": "x1, currentel"
+        },
+        {
+          "address": "0xa71096a8",
+          "mnemonic": "cmp",
+          "operands": "x1, #8"
+        },
+        {
+          "address": "0xa71096ac",
+          "mnemonic": "b.gt",
+          "operands": "#0xa71096ac"
+        },
+        {
+          "address": "0xa71096b0",
+          "mnemonic": "b.eq",
+          "operands": "#0xa71096c4"
+        },
+        {
+          "address": "0xa71096b4",
+          "mnemonic": "cbnz",
+          "operands": "x1, #0xa71096bc"
+        },
+        {
+          "address": "0xa71096b8",
+          "mnemonic": "b",
+          "operands": "#0xa71096b8"
+        },
+        {
+          "address": "0xa71096bc",
+          "mnemonic": "mrs",
+          "operands": "x0, sctlr_el1"
+        },
+        {
+          "address": "0xa71096c0",
+          "mnemonic": "b",
+          "operands": "#0xa71096c8"
+        },
+        {
+          "address": "0xa71096c4",
+          "mnemonic": "mrs",
+          "operands": "x0, sctlr_el2"
+        },
+        {
+          "address": "0xa71096c8",
+          "mnemonic": "and",
+          "operands": "x0, x0, #0xfffffffffffffffb"
+        },
+        {
+          "address": "0xa71096cc",
+          "mnemonic": "mrs",
+          "operands": "x1, currentel"
+        },
+        {
+          "address": "0xa71096d0",
+          "mnemonic": "cmp",
+          "operands": "x1, #8"
+        },
+        {
+          "address": "0xa71096d4",
+          "mnemonic": "b.gt",
+          "operands": "#0xa71096d4"
+        },
+        {
+          "address": "0xa71096d8",
+          "mnemonic": "b.eq",
+          "operands": "#0xa71096ec"
+        },
+        {
+          "address": "0xa71096dc",
+          "mnemonic": "cbnz",
+          "operands": "x1, #0xa71096e4"
+        },
+        {
+          "address": "0xa71096e0",
+          "mnemonic": "b",
+          "operands": "#0xa71096e0"
+        },
+        {
+          "address": "0xa71096e4",
+          "mnemonic": "msr",
+          "operands": "sctlr_el1, x0"
+        },
+        {
+          "address": "0xa71096e8",
+          "mnemonic": "b",
+          "operands": "#0xa71096f0"
+        },
+        {
+          "address": "0xa71096ec",
+          "mnemonic": "msr",
+          "operands": "sctlr_el2, x0"
+        },
+        {
+          "address": "0xa71096f0",
+          "mnemonic": "dsb",
+          "operands": "sy"
+        },
+        {
+          "address": "0xa71096f4",
+          "mnemonic": "isb",
+          "operands": ""
+        },
+        {
+          "address": "0xa71096f8",
+          "mnemonic": "ret",
+          "operands": ""
+        }
+      ],
+      "cache_maintenance_instructions": []
+    },
+    {
+      "name": "ArmEnableDataCache",
+      "address": "0xa7109894",
+      "sha256": "30a7acf117cafc2f3af8f0fad13d606fd6cf489ecdb78f3faf132d86f9ddd6c3",
+      "instructions": [
+        {
+          "address": "0xa7109894",
+          "mnemonic": "mrs",
+          "operands": "x1, currentel"
+        },
+        {
+          "address": "0xa7109898",
+          "mnemonic": "cmp",
+          "operands": "x1, #8"
+        },
+        {
+          "address": "0xa710989c",
+          "mnemonic": "b.gt",
+          "operands": "#0xa710989c"
+        },
+        {
+          "address": "0xa71098a0",
+          "mnemonic": "b.eq",
+          "operands": "#0xa71098b4"
+        },
+        {
+          "address": "0xa71098a4",
+          "mnemonic": "cbnz",
+          "operands": "x1, #0xa71098ac"
+        },
+        {
+          "address": "0xa71098a8",
+          "mnemonic": "b",
+          "operands": "#0xa71098a8"
+        },
+        {
+          "address": "0xa71098ac",
+          "mnemonic": "mrs",
+          "operands": "x0, sctlr_el1"
+        },
+        {
+          "address": "0xa71098b0",
+          "mnemonic": "b",
+          "operands": "#0xa71098b8"
+        },
+        {
+          "address": "0xa71098b4",
+          "mnemonic": "mrs",
+          "operands": "x0, sctlr_el2"
+        },
+        {
+          "address": "0xa71098b8",
+          "mnemonic": "orr",
+          "operands": "x0, x0, #4"
+        },
+        {
+          "address": "0xa71098bc",
+          "mnemonic": "mrs",
+          "operands": "x1, currentel"
+        },
+        {
+          "address": "0xa71098c0",
+          "mnemonic": "cmp",
+          "operands": "x1, #8"
+        },
+        {
+          "address": "0xa71098c4",
+          "mnemonic": "b.gt",
+          "operands": "#0xa71098c4"
+        },
+        {
+          "address": "0xa71098c8",
+          "mnemonic": "b.eq",
+          "operands": "#0xa71098dc"
+        },
+        {
+          "address": "0xa71098cc",
+          "mnemonic": "cbnz",
+          "operands": "x1, #0xa71098d4"
+        },
+        {
+          "address": "0xa71098d0",
+          "mnemonic": "b",
+          "operands": "#0xa71098d0"
+        },
+        {
+          "address": "0xa71098d4",
+          "mnemonic": "msr",
+          "operands": "sctlr_el1, x0"
+        },
+        {
+          "address": "0xa71098d8",
+          "mnemonic": "b",
+          "operands": "#0xa71098e0"
+        },
+        {
+          "address": "0xa71098dc",
+          "mnemonic": "msr",
+          "operands": "sctlr_el2, x0"
+        },
+        {
+          "address": "0xa71098e0",
+          "mnemonic": "dsb",
+          "operands": "sy"
+        },
+        {
+          "address": "0xa71098e4",
+          "mnemonic": "isb",
+          "operands": ""
+        },
+        {
+          "address": "0xa71098e8",
+          "mnemonic": "ret",
+          "operands": ""
+        }
+      ],
+      "cache_maintenance_instructions": []
+    },
+    {
+      "name": "ArmEnableMmu",
+      "address": "0xa7109968",
+      "sha256": "7f85add0c0ae0424a7fa83bf468e14aa59a16f057c0768d52325e30ca28c631a",
+      "instructions": [
+        {
+          "address": "0xa7109968",
+          "mnemonic": "mrs",
+          "operands": "x1, currentel"
+        },
+        {
+          "address": "0xa710996c",
+          "mnemonic": "cmp",
+          "operands": "x1, #8"
+        },
+        {
+          "address": "0xa7109970",
+          "mnemonic": "b.gt",
+          "operands": "#0xa7109970"
+        },
+        {
+          "address": "0xa7109974",
+          "mnemonic": "b.eq",
+          "operands": "#0xa7109988"
+        },
+        {
+          "address": "0xa7109978",
+          "mnemonic": "cbnz",
+          "operands": "x1, #0xa7109980"
+        },
+        {
+          "address": "0xa710997c",
+          "mnemonic": "b",
+          "operands": "#0xa710997c"
+        },
+        {
+          "address": "0xa7109980",
+          "mnemonic": "mrs",
+          "operands": "x0, sctlr_el1"
+        },
+        {
+          "address": "0xa7109984",
+          "mnemonic": "b",
+          "operands": "#0xa710998c"
+        },
+        {
+          "address": "0xa7109988",
+          "mnemonic": "mrs",
+          "operands": "x0, sctlr_el2"
+        },
+        {
+          "address": "0xa710998c",
+          "mnemonic": "orr",
+          "operands": "x0, x0, #1"
+        },
+        {
+          "address": "0xa7109990",
+          "mnemonic": "mrs",
+          "operands": "x1, currentel"
+        },
+        {
+          "address": "0xa7109994",
+          "mnemonic": "cmp",
+          "operands": "x1, #8"
+        },
+        {
+          "address": "0xa7109998",
+          "mnemonic": "b.gt",
+          "operands": "#0xa7109998"
+        },
+        {
+          "address": "0xa710999c",
+          "mnemonic": "b.eq",
+          "operands": "#0xa71099bc"
+        },
+        {
+          "address": "0xa71099a0",
+          "mnemonic": "cbnz",
+          "operands": "x1, #0xa71099a8"
+        },
+        {
+          "address": "0xa71099a4",
+          "mnemonic": "b",
+          "operands": "#0xa71099a4"
+        },
+        {
+          "address": "0xa71099a8",
+          "mnemonic": "tlbi",
+          "operands": "vmalle1"
+        },
+        {
+          "address": "0xa71099ac",
+          "mnemonic": "dsb",
+          "operands": "nsh"
+        },
+        {
+          "address": "0xa71099b0",
+          "mnemonic": "isb",
+          "operands": ""
+        },
+        {
+          "address": "0xa71099b4",
+          "mnemonic": "msr",
+          "operands": "sctlr_el1, x0"
+        },
+        {
+          "address": "0xa71099b8",
+          "mnemonic": "b",
+          "operands": "#0xa71099cc"
+        },
+        {
+          "address": "0xa71099bc",
+          "mnemonic": "tlbi",
+          "operands": "alle2"
+        },
+        {
+          "address": "0xa71099c0",
+          "mnemonic": "dsb",
+          "operands": "nsh"
+        },
+        {
+          "address": "0xa71099c4",
+          "mnemonic": "isb",
+          "operands": ""
+        },
+        {
+          "address": "0xa71099c8",
+          "mnemonic": "msr",
+          "operands": "sctlr_el2, x0"
+        },
+        {
+          "address": "0xa71099cc",
+          "mnemonic": "isb",
+          "operands": ""
+        },
+        {
+          "address": "0xa71099d0",
+          "mnemonic": "ret",
+          "operands": ""
+        }
+      ],
+      "cache_maintenance_instructions": []
+    },
+    {
+      "name": "ArmSetTTBR0",
+      "address": "0xa710a058",
+      "sha256": "77b1525f5071c7024438ee91407db85ae528819c27263ebd043abaaedf974dc7",
+      "instructions": [
+        {
+          "address": "0xa710a058",
+          "mnemonic": "mrs",
+          "operands": "x1, currentel"
+        },
+        {
+          "address": "0xa710a05c",
+          "mnemonic": "cmp",
+          "operands": "x1, #8"
+        },
+        {
+          "address": "0xa710a060",
+          "mnemonic": "b.gt",
+          "operands": "#0xa710a060"
+        },
+        {
+          "address": "0xa710a064",
+          "mnemonic": "b.eq",
+          "operands": "#0xa710a078"
+        },
+        {
+          "address": "0xa710a068",
+          "mnemonic": "cbnz",
+          "operands": "x1, #0xa710a070"
+        },
+        {
+          "address": "0xa710a06c",
+          "mnemonic": "b",
+          "operands": "#0xa710a06c"
+        },
+        {
+          "address": "0xa710a070",
+          "mnemonic": "msr",
+          "operands": "ttbr0_el1, x0"
+        },
+        {
+          "address": "0xa710a074",
+          "mnemonic": "b",
+          "operands": "#0xa710a07c"
+        },
+        {
+          "address": "0xa710a078",
+          "mnemonic": "msr",
+          "operands": "ttbr0_el2, x0"
+        },
+        {
+          "address": "0xa710a07c",
+          "mnemonic": "isb",
+          "operands": ""
+        },
+        {
+          "address": "0xa710a080",
+          "mnemonic": "ret",
+          "operands": ""
+        }
+      ],
+      "cache_maintenance_instructions": []
+    }
+  ],
+  "sources": [
+    {
+      "commit": "6176a822e66b846620b5bcd2739a0666814ee663",
+      "path": "Silicon/Silicium/SiliciumPkg/Sec/Sec.c",
+      "sha256": "04cee4c1ccc896e0ce1c4af55688869a2d96243b725281a379761106d32a172e",
+      "anchors": [
+        {
+          "line": 169,
+          "text": "ArmDisableDataCache ();"
+        },
+        {
+          "line": 178,
+          "text": "InvalidateDataCacheRange ((VOID *)FixedPcdGet64 (PcdCPUCoresStackBase), FixedPcdGet32 (PcdCPUCorePrimaryStackSize));"
+        },
+        {
+          "line": 179,
+          "text": "InvalidateDataCacheRange ((VOID *)FixedPcdGet64 (PcdFdBaseAddress),     FixedPcdGet32 (PcdFdSize));"
+        }
+      ]
+    },
+    {
+      "commit": "cfb93724a06ff86ff5ba971413368a7809ee42a5",
+      "path": "UefiCpuPkg/Library/ArmMmuLib/AArch64/ArmMmuLibCore.c",
+      "sha256": "bf3be06245f00c6d1b24b94eb0068f607387780966297070836799fea2aa3521",
+      "anchors": [
+        {
+          "line": 392,
+          "text": "InvalidateDataCacheRange (TranslationTable, EFI_PAGE_SIZE);"
+        },
+        {
+          "line": 546,
+          "text": "FillTranslationTable ("
+        },
+        {
+          "line": 852,
+          "text": "InvalidateDataCacheRange ("
+        },
+        {
+          "line": 861,
+          "text": "Status = FillTranslationTable (TranslationTable, MemoryTable, ArmLpa2Enabled ());"
+        },
+        {
+          "line": 875,
+          "text": "ArmSetMAIR ("
+        },
+        {
+          "line": 883,
+          "text": "ArmSetTTBR0 ("
+        },
+        {
+          "line": 889,
+          "text": "ArmSetTTBR0 (TranslationTable);"
+        },
+        {
+          "line": 896,
+          "text": "ArmEnableDataCache ();"
+        },
+        {
+          "line": 898,
+          "text": "ArmEnableMmu ();"
+        }
+      ]
+    },
+    {
+      "commit": "cfb93724a06ff86ff5ba971413368a7809ee42a5",
+      "path": "MdePkg/Library/ArmLib/AArch64/AArch64Support.S",
+      "sha256": "6e32fb4c582a345d0b2ea18ccfd40b632548c766a7b3c4cbaa68a9f93a710a2b",
+      "anchors": [
+        {
+          "line": 17,
+          "text": ".set CTRL_C_BIT,      (1 << 2)"
+        },
+        {
+          "line": 53,
+          "text": "ASM_FUNC(ArmEnableMmu)"
+        },
+        {
+          "line": 95,
+          "text": "4: mov     x1, #~(CTRL_M_BIT | CTRL_C_BIT | CTRL_I_BIT)  // Disable MMU, D & I caches"
+        },
+        {
+          "line": 115,
+          "text": "ASM_FUNC(ArmEnableDataCache)"
+        },
+        {
+          "line": 120,
+          "text": "4: orr     x0, x0, #CTRL_C_BIT  // Set C bit"
+        },
+        {
+          "line": 130,
+          "text": "ASM_FUNC(ArmDisableDataCache)"
+        },
+        {
+          "line": 135,
+          "text": "4: and     x0, x0, #~CTRL_C_BIT  // Clear C bit"
+        }
+      ]
+    }
+  ],
+  "inference": "Highest-priority working hypothesis: stale HOB cache state becomes visible after translation/cache transition; not established root cause",
+  "runtime_registers_measured": false
+}
