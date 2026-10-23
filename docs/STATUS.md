@@ -1,6 +1,6 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-23T19:50:49+08:00（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-23T20:34:35+08:00（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
@@ -36,8 +36,8 @@
 
 ## 下一步
 
-1. 离线核对ArmMmuBaseLibConstructor实际HOB查询/函数指针及cache分支，检查ArmReplaceLiveTranslationEntry地址/size、缓存行维护与异常级别；不跳过缓存同步、重排构造或伪造成功。
-2. 若需新日志，按HOB查询前后→分支→cache前后细化，先构建并核验实际TE/内存表，再安排刷新录像/身份/恢复门的下一轮实测；本轮不再启动。
+1. 实际TE/helper/cache/HOB审查完成：helper240B，合法行步长不为零，构造不执行helper的页表替换代码；HOB查询是否返回未知。0012五条分支日志候选内存应用和逆验通过，尚未接入CI或编译，见[MMU审查](operations/2026-10-23-mmu-constructor-audit.md)。
+2. 下一步接入0012独立profile及post-patch pin，构建并核验实际TE/全部内存表，再刷新用户录像/身份/恢复门试新包；本轮无设备操作，不跳过cache同步。
 3. 530f56b4与2d833461各自保留实测图和配方，MMU leave未见不能写成唯一故障指令已定。精确倒计时不可靠，之后明确通知准备录像并在实际发送后报告，不承诺秒级启动。
 4. SHENGMEM及真实initrd/载荷卷仍缺；保持FAT探针→当前prelink/ADT→EL1→原生根卷顺序，未进入XNU。Android完成1及三分区未变本轮已复核，无待处理恢复动作。
 

@@ -1,0 +1,13 @@
+{
+  "parent_profile": "constructor-trace",
+  "apply_after": "0011-mu-constructor-trace.patch",
+  "patch": "patches/firmware-candidates/0012-mmu-constructor-branches.patch",
+  "sha256": "bdc5ea65fafe9df46206cdd9a7c80c57569cea27e639df6d4580ece250b929a8",
+  "source_path": "Mu_Basecore/UefiCpuPkg/Library/ArmMmuLib/AArch64/ArmMmuLibCore.c",
+  "pre_lf_sha256": "14c73a0b1611bae120e298aced9cabfdc32ce7590b4eafb264a409c9932941eb",
+  "post_lf_sha256": "704ba022be7a9b0ea496e9eec3c9e152d13bf55922545c79e625fd0a6188f0f4",
+  "memory_exact_context_apply_passed": true,
+  "removing_new_logs_restores_exact_parent": true,
+  "compiled": false,
+  "device_executed": false
+}

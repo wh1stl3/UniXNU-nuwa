@@ -1,0 +1,25 @@
+--- a/Mu_Basecore/UefiCpuPkg/Library/ArmMmuLib/AArch64/ArmMmuLibCore.c
++++ b/Mu_Basecore/UefiCpuPkg/Library/ArmMmuLib/AArch64/ArmMmuLibCore.c
+@@ -938,17 +938,22 @@
+   DEBUG ((EFI_D_ERROR, "[NUWA-CTOR] Mmu enter\n"));
+ 
+   Hob = GetFirstGuidHob (&gArmMmuReplaceLiveTranslationEntryFuncGuid);
++  DEBUG ((EFI_D_ERROR, "[NUWA-MMU] after-guid-query hob=%p\n", Hob));
+   if (Hob != NULL) {
++    DEBUG ((EFI_D_ERROR, "[NUWA-MMU] before-hob-function-read\n"));
+     mReplaceLiveEntryFunc = *(ARM_REPLACE_LIVE_TRANSLATION_ENTRY *)GET_GUID_HOB_DATA (Hob);
++    DEBUG ((EFI_D_ERROR, "[NUWA-MMU] after-hob-function-read\n"));
+   } else {
+     //
+     // The ArmReplaceLiveTranslationEntry () helper function may be invoked
+     // with the MMU off so we have to ensure that it gets cleaned to the PoC
+     //
++    DEBUG ((EFI_D_ERROR, "[NUWA-MMU] before-cache helper=%p bytes=%u\n", ArmReplaceLiveTranslationEntry, ArmReplaceLiveTranslationEntrySize));
+     WriteBackDataCacheRange (
+       (VOID *)(UINTN)ArmReplaceLiveTranslationEntry,
+       ArmReplaceLiveTranslationEntrySize
+       );
++    DEBUG ((EFI_D_ERROR, "[NUWA-MMU] after-cache\n"));
+   }
+ 
+   DEBUG ((EFI_D_ERROR, "[NUWA-CTOR] Mmu leave status=%r\n", RETURN_SUCCESS));

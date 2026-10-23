@@ -1140,3 +1140,13 @@
 [Evidence] 原图520bdded显示Debug/Extract leave Success、最后Mmu enter；19:46:21实际Android完成1、三分区SHA与试前相同，无原boot发送或flash/改槽。
 [Risk] Mmu内具体分支/运行PC未取得，缓存与日志故障仍待区分；未见DXE/SHENGMEM或XNU，不改board/feed/验证标志，不继续第二包。
 ```
+
+## Q-107 · MMU分支离线审查
+
+```text
+[unixnu-nuwa][firmware] 核验MMU实际helper和缓存循环并准备分支日志候选
+
+[Change] 保存HOB/cache/helper实际反汇编与固定Mu来源，准备五条查询/读取/cache分支日志，不改调用返回。
+[Evidence] 实际helper240B/SHAf615b9f4，行步长4左移字段；0012内存应用通过，去除日志逐字节还原父源码。
+[Risk] 运行PC/寄存器/具体分支未知，新候选未编译；无设备/板值/feed修改，前一提交API推送401未解决。
+```
