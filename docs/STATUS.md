@@ -8,4 +8,6 @@
 
 其他错误已逐项审查：CPU Vectors是明确命名契约缺口；TZ/FeatureEnabler、SPSS和RscDxe真实失败保留追踪，未证实导致本次封装缺失；USB是后续回退失败。见operations/2026-10-24-error-triage-and-initboot.md。
 
-下一步embedded-probe独立profile：固件00a37d9、确定性4MiB FAT16/精确VFAT配置路径；9项C主机测试、WSL精确文件读回和43输入/8补丁/12后哈希通过，完整CI待执行。内存表/board/bringup/_verified未改。小探针不解决完整XNU运输。下轮设备动作另刷新录像、身份、包复验与恢复门并通知。详见operations/2026-10-24-embedded-volume-probe.md和主线交接。
+下一步embedded-probe独立profile：固件00a37d9、确定性4MiB FAT16/精确VFAT配置路径；9项C主机测试、WSL精确文件读回和43输入/8补丁/12后哈希通过，CI39988591973/source b4f9075成功。内存表/board/bringup/_verified未改。小探针不解决完整XNU运输。下轮设备动作另刷新录像、身份、包复验与恢复门并通知。详见operations/2026-10-24-embedded-volume-probe.md和主线交接。
+
+新包87b14624e95a4b608435da96c4a7f939893bef7c94186af9d2f157eacef0e496/3153920B已完整复验；嵌入RAW SHA匹配、全部41行内存表相同、缺日志门设备子进程前拒绝。用户已本轮确认“可以，继续录像测试”，准备刷新preflight并通知后临时启动一次。尚无新包实测结果。

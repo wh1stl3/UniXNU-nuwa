@@ -19,13 +19,16 @@ def main():
     args = cli.parse_args()
     if args.package:
         metadata = json.loads(args.package.read_text())
+        if metadata.get('approval') == 'EMBEDDED-PROBE-OFFLINE':
+            from embedded_probe_package import validate
+            validate(args.package)
         if metadata.get("approval") in ("VOLUME-PROBE-OFFLINE", "HOB-INTEGRITY-OFFLINE", "VOLUME-STATUS-OFFLINE"):
             from volume_probe_package import validate
             validate(args.package)
         if metadata.get('approval') in ('SEC-HANDOFF-OFFLINE', 'CONSTRUCTOR-TRACE-OFFLINE', 'MMU-BRANCHES-OFFLINE', 'HOB-QUERY-OFFLINE'):
             from sec_handoff_package import validate
             validate(args.package)
-        if metadata.get('approval') in ('MMU-BRANCHES-OFFLINE', 'HOB-QUERY-OFFLINE', 'VOLUME-PROBE-OFFLINE', 'HOB-INTEGRITY-OFFLINE', 'VOLUME-STATUS-OFFLINE') and not (args.capture_confirmation or '').strip():
+        if metadata.get('approval') in ('MMU-BRANCHES-OFFLINE', 'HOB-QUERY-OFFLINE', 'VOLUME-PROBE-OFFLINE', 'HOB-INTEGRITY-OFFLINE', 'VOLUME-STATUS-OFFLINE', 'EMBEDDED-PROBE-OFFLINE') and not (args.capture_confirmation or '').strip():
             raise ValueError('Fresh user capture confirmation required before MMU trial preflight')
     output = args.output.resolve()
     if not output.is_relative_to(ROOT/'reports') or output.exists():
@@ -71,7 +74,8 @@ def main():
                   'HOB-QUERY-OFFLINE': ROOT/'reports/hob-query',
                   'VOLUME-PROBE-OFFLINE': ROOT/'reports/volume-envelope',
                   'HOB-INTEGRITY-OFFLINE': ROOT/'reports/hob-integrity',
-                  'VOLUME-STATUS-OFFLINE': ROOT/'reports/volume-status'}
+                  'VOLUME-STATUS-OFFLINE': ROOT/'reports/volume-status',
+                  'EMBEDDED-PROBE-OFFLINE': ROOT/'reports/embedded-probe'}
         approval = json.loads(package.read_text())['approval']
         if approval not in scopes or not package.is_relative_to(scopes[approval]):
             raise ValueError('Unexpected allocation trial package report')

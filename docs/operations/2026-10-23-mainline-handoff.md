@@ -39,3 +39,5 @@ recovery.json曾等待180秒超时。2026-10-24已只读ADB确认nuwa/kalama、A
 2026-10-24T00:27:22.419670+08:00：本轮a22e9a44在新鲜用户录像确认、preflight及通知后临时启动，fastboot boot exit0，00:26:15（UTC+8）完成120秒USB采样；具体屏幕结果尚待。最后无nuwa fastboot，ADB总数1不当作nuwa或完成1。recovery工具已启动，尚无本轮postcondition，不借用上轮恢复；必要时只差人工按键，继续离线但不启动新包。证据reports/volume-status-trial/2026-10-24/。
 
 2026-10-24T00:39:15.327331+08:00：收到六张原图，确认publisher执行且envelope absent，DTB b5db1000/938800B，chosen [b5fb2000,b7fff1d4)/33870292B。原厂boot恢复后本轮postcondition完成1及三分区SHA一致；恢复待办关闭。固定ABL init_boot选择离线数据流已补，其他报错逐项审查见2026-10-24-error-triage-and-initboot.md。下一步独立embedded-probe（固件00a37d9），43输入/8补丁/12后哈希与9项主机测试通过，CI待启动；不复试旧包。
+
+2026-10-24T00:48:14.773032+08:00：CI39988591973/source b4f9075成功，实际新驱动DEPEX/PE和完整RAW资源SHA通过，FD70b266b3；41行2952B内存表与dd1ef825相同。包87b14624e95a4b608435da96c4a7f939893bef7c94186af9d2f157eacef0e496/3153920B（ramdisk0，FV内含4MiB FAT16）逐字节复验通过。新EMBEDDED-PROBE-OFFLINE scope校验和缺录像/预检时设备子进程前拒绝通过；新增旧包冒充/空录像2项回归通过。用户已本轮确认“可以，继续录像测试”，下一动作刷新preflight、通知后临时启动一次。目标为NUWA-FV-PROBE block Success和探针配置菜单；不是XNU。新证据目录reports/embedded-probe-trial/2026-10-24/。

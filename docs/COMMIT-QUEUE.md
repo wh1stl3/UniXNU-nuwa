@@ -1360,3 +1360,13 @@
 [Evidence] chosen范围与历史Android一致且result0，Android完成1及三分区不变；9项C测试、mtype精确路径、43输入8补丁12后哈希通过。
 [Risk] ABL选择仅静态支持，FV完整构建/实机待验；无真实XNU负载，CPU Vectors等独立问题未修。
 ```
+
+## Q-129 · 内嵌卷探针就绪
+
+```text
+[unixnu-nuwa][firmware] 验收内嵌FAT资源与严格临时启动包
+
+[Change] 完成FV资源/新驱动/容器核验，接入独立scope严格录像与恢复门。
+[Evidence] CI39988591973成功，87b14624/3153920B逐字节复验，41行内存表一致；缺门在设备子进程前拒绝，用户已本轮确认录像。
+[Risk] 尚无新包实机结果；无XNU/ADT，不将小探针发现当完整系统运输成功。
+```
