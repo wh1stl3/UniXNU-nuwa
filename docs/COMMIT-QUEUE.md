@@ -1020,3 +1020,13 @@
 [Evidence] 固定AOSP头SHA276f565d；Android initrd33870292B模512余468，vendor单fragment30899943B，当前R-011包无FAT/XNU；命令与摘要见system-volume-audit。
 [Risk] 候选实际x0/chosen和安装ABL临时v4拼接未验证；不据Android地址构造板值，系统卷、Apple ADT及XNU执行仍待验证；无新增设备启动。
 ```
+
+## Q-096 · 离线ABL拼接与系统卷探针
+
+```text
+[unixnu-nuwa][loader] 固定ABL拼接指令并离线制成只含配置的FAT32探针
+
+[Change] 增加不覆盖旧证据的定向反汇编输出，记录同SoC发布器适用性；用固定UniXNU制卷方法生成标记菜单探针，登记中午录像待办。
+[Evidence] 安装版ABL38a837fa/PEb489faff固定，14处复制及bootconfig指令核对通过；WSL FAT32 64MiB/bc0b3eae，配置逐字节读回和fsck.fat -n退出0。
+[Risk] 只有离线静态检查，探针未接入固件/完整启动包，候选chosen和UEFI挂载未验证；无设备命令、板值/feed变更或XNU运行结论。
+```

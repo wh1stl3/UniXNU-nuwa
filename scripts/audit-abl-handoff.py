@@ -48,10 +48,21 @@ def main():
     cli = argparse.ArgumentParser(description=__doc__)
     cli.add_argument('--range', action='append', default=[], dest='ranges', help='Preferred VA start:end')
     cli.add_argument('--quiet', action='store_true')
+    cli.add_argument('--output', type=Path, help='New report path under reports/; existing evidence is never overwritten')
+    cli.add_argument('--focus-ranges', action='store_true', help='Keep only xrefs inside requested code ranges')
     cli.add_argument('--value', action='append', default=[], help='Preferred VA:type, type u32/u64/utf16/ascii/guid')
     cli.add_argument('--calls-to', action='append', default=[], type=lambda value: int(value,0))
     args = cli.parse_args()
+    destination = ROOT / 'reports/abl-handoff/disassembly.json'
+    if args.output is not None:
+        destination = args.output.resolve()
+        if not destination.is_relative_to((ROOT / 'reports').resolve()):
+            raise ValueError('Additional evidence must stay under reports/')
+        if destination.exists():
+            raise ValueError('Refusing to overwrite existing evidence')
     ranges = [tuple(int(value, 0) for value in pair.split(':')) for pair in args.ranges]
+    if args.focus_ranges and not ranges:
+        raise ValueError('Focused evidence requires code ranges')
     raw = ABL.read_bytes()
     if hashlib.sha256(raw).hexdigest() != ABL_SHA:
         raise ValueError('Archived ABL changed')
@@ -173,16 +184,21 @@ def main():
                         xrefs.append(dict(address=hex(instruction.address), string_address=hex(target),
                                           text=wanted[target], instructions=[dict(address=hex(i.address),
                                           bytes=i.bytes.hex(), mnemonic=i.mnemonic, operands=i.op_str) for i in nearby]))
+        if args.focus_ranges:
+            xrefs = [x for x in xrefs if any(start <= int(x['address'], 16) < end for start, end in ranges)]
+            referenced = {int(x['string_address'], 16) for x in xrefs}
+            wanted = {a: t for a, t in wanted.items() if a in referenced}
         reports.append(dict(guid=owner['guid'], name=owner.get('ui_name'), bytes=len(data),
                             sha256=hashlib.sha256(data).hexdigest(), preferred_base=hex(base), entry_rva=hex(entry),
                             sections=sections, selected_strings=[dict(address=hex(a),text=t) for a,t in wanted.items()],
                             string_xrefs=xrefs, requested_code_ranges=slices, selected_constants=reads,
                             requested_callers=callers))
     report = dict(scope='Static disassembly of hash-matched installed ABL; no runtime trace',
+                  requested_ranges=args.ranges, focused_ranges=args.focus_ranges,
                   abl_sha256=ABL_SHA, capstone_version=capstone.__version__, volumes=reader.volumes,
                   pe_images=reports, image_generated=False, device_mode_changed=False,
                   limitation='String xrefs are local code evidence; not a proof that the branch ran')
-    destination = ROOT / 'reports/abl-handoff/disassembly.json'
+    destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
     print(json.dumps([{'guid':i['guid'],'name':i['name'],'bytes':i['bytes'],
                        'strings':len(i['selected_strings']),'xrefs':len(i['string_xrefs'])} for i in reports]))

@@ -1,0 +1,154 @@
+{
+  "at": "2026-10-23T01:51:09.581099+00:00",
+  "scope": "Offline FAT tool execution and byte checks only; no firmware or device execution",
+  "source": {
+    "repository": "UniXNU/UniXNU",
+    "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+    "license": "BSD-2-Clause-Patent",
+    "normalized_source_sha256": {
+      "scripts/unixnu/payload.py": "a1fca76dd87209df1a0becce6bf16bb84efe1f57e99a766e3b3d0d2b083d3ca9",
+      "package/UniXNUPkg/Library/UniXNULib/Config.c": "8b17c343a5c3816b4646a0c206c36565abf1d7b3586fadbeb7435c0ebb601037"
+    }
+  },
+  "commands": [
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "env",
+        "TZ=UTC",
+        "MTOOLS_SKIP_CHECK=1",
+        "mformat",
+        "-V"
+      ],
+      "exit_code": 0,
+      "stdout": "mformat (GNU mtools) 4.0.32\nconfigured with the following options: enable-xdf disable-vold disable-new-vold disable-debug enable-raw-term \n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "env",
+        "TZ=UTC",
+        "MTOOLS_SKIP_CHECK=1",
+        "mformat",
+        "-C",
+        "-F",
+        "-T",
+        "131072",
+        "-v",
+        "NUWAPROBE",
+        "-N",
+        "50524f42",
+        "-i",
+        "/mnt/d/Code/UniXNU-nuwa/out/volume-probe/volume-probe.fat.img",
+        "::"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "env",
+        "TZ=UTC",
+        "MTOOLS_SKIP_CHECK=1",
+        "mcopy",
+        "-i",
+        "/mnt/d/Code/UniXNU-nuwa/out/volume-probe/volume-probe.fat.img",
+        "-s",
+        "-Q",
+        "-m",
+        "/mnt/d/Code/UniXNU-nuwa/out/volume-probe/stage/EFI",
+        "::/"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "env",
+        "TZ=UTC",
+        "MTOOLS_SKIP_CHECK=1",
+        "mdir",
+        "-i",
+        "/mnt/d/Code/UniXNU-nuwa/out/volume-probe/volume-probe.fat.img",
+        "-/",
+        "::/"
+      ],
+      "exit_code": 0,
+      "stdout": " Volume in drive : is NUWAPROBE  \n Volume Serial Number is 5052-4F42\nDirectory for ::/\n\nEFI          <DIR>     1980-01-01   0:00 \n        1 file                    0 bytes\n\nDirectory for ::/EFI\n\n.            <DIR>     1980-01-01   0:00 \n..           <DIR>     1980-01-01   0:00 \nUNIXNU       <DIR>     1980-01-01   0:00  UniXNU\n        3 files                   0 bytes\n\nDirectory for ::/EFI/UniXNU\n\n.            <DIR>     1980-01-01   0:00 \n..           <DIR>     1980-01-01   0:00 \nUNIXNU~1 TOM       237 1980-01-01   0:00  unixnu.toml\n        3 files                 237 bytes\n\nTotal files listed:\n        7 files                 237 bytes\n                         66 057 216 bytes free\n\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "env",
+        "TZ=UTC",
+        "MTOOLS_SKIP_CHECK=1",
+        "mtype",
+        "-i",
+        "/mnt/d/Code/UniXNU-nuwa/out/volume-probe/volume-probe.fat.img",
+        "::/EFI/UniXNU/unixnu.toml"
+      ],
+      "exit_code": 0,
+      "stdout": "version = 1\n\n[boot]\ntimeout = 60\ndefault = \"probe-exit\"\n\n[kits]\nautoload = false\n\n[ui]\ntitle = \"NUWA VOLUME PROBE - NO XNU\"\n\n[[entry]]\nid = \"probe-exit\"\ntitle = \"Volume config loaded - Return to firmware\"\ntype = \"action\"\naction = \"exit\"\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "env",
+        "TZ=UTC",
+        "MTOOLS_SKIP_CHECK=1",
+        "fsck.fat",
+        "-n",
+        "/mnt/d/Code/UniXNU-nuwa/out/volume-probe/volume-probe.fat.img"
+      ],
+      "exit_code": 0,
+      "stdout": "fsck.fat 4.2 (2021-01-31)\n/mnt/d/Code/UniXNU-nuwa/out/volume-probe/volume-probe.fat.img: 4 files, 4/129022 clusters\n",
+      "stderr": ""
+    }
+  ],
+  "image": {
+    "path": "out\\volume-probe\\volume-probe.fat.img",
+    "bytes": 67108864,
+    "sha256": "bc0b3eae88e0dd8a528b3469d0fa9c3fa21c99097af842cab42c28cfa5068ff2",
+    "sector_bytes": 512,
+    "clusters": 129022,
+    "label": "NUWAPROBE"
+  },
+  "config_sha256": "31ffbccbfa8f241ec8dc02f30279c9efda59d8ff8513754d2442ff6fd7b31584",
+  "config_round_trip_equal": true,
+  "boot_entries": "One exit action; no OS entry",
+  "kernel_included": false,
+  "adt_included": false,
+  "firmware_transport_integrated": false,
+  "hardware_tested": false,
+  "device_mode_changed": false,
+  "limitations": [
+    "No candidate ABL chosen mapping",
+    "No UEFI BlockIo/FAT runtime proof",
+    "No DarwinBoot or XNU execution"
+  ]
+}

@@ -1,0 +1,17 @@
+version = 1
+
+[boot]
+timeout = 60
+default = "probe-exit"
+
+[kits]
+autoload = false
+
+[ui]
+title = "NUWA VOLUME PROBE - NO XNU"
+
+[[entry]]
+id = "probe-exit"
+title = "Volume config loaded - Return to firmware"
+type = "action"
+action = "exit"

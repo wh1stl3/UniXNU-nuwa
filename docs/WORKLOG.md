@@ -207,3 +207,5 @@
 2026-10-23T09:22:59+08:00 · R-011用户实机确认UniXNU三项菜单后BDS无OS，已恢复Android完成1且三分区未变；转入系统卷发现审查 · Q-094（提交后以git log定位） · reports/factory-heap/39835052901/user-observation.json；recovery.json；postcondition.json
 
 2026-10-23T09:31:37+08:00 · 完成系统卷发现契约及Android v4头只读审查；33870292B initrd非整扇区，候选实际映射仍TODO，未再启动 · Q-095（提交后以git log定位） · docs/operations/2026-10-23-system-volume-discovery.md；reports/system-volume-audit/inputs.json
+
+2026-10-23T09:56:34+08:00 · 离线固定ABL前置段/generic/bootconfig复制路径及14处指令；WSL制成仅配置FAT32探针，读回/fsck通过，未接入固件或操作设备 · Q-096（提交后以git log定位） · docs/operations/2026-10-23-offline-initrd-and-volume-probe.md；reports/system-volume-audit/volume-probe.json

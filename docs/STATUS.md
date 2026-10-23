@@ -1,6 +1,6 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-23T09:31:37+08:00（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-23T09:56:34+08:00（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
@@ -30,15 +30,21 @@
 
 真实系统入口仍需可发现的卷、\EFI\UniXNU\unixnu.toml、符合Darwin22的预链接内核及目标ADT。当前NuwaBootMemoryDxe只发布/chosen的整个initrd范围为只读512B BlockIo，并要求总长整扇区；GKI v4的vendor_boot/init_boot拼接及实际候选范围尚未验证，不能把FAT随意追加便称系统卷可用。
 
-## 本次系统卷审查
+## 本次离线进展
 
-只读读取恢复后 Android 的 v4 boot/init_boot/vendor_boot 头和 fragment table；Android chosen initrd 为33870292B、模512余468，不满足现有整段BlockIo发布条件。此结果不代表R-011候选的实际initrd，当前不能靠追加FAT或猜偏移完成接线。固定AOSP头与采集摘要、未知项见[审查报告](operations/2026-10-23-system-volume-discovery.md)及reports/system-volume-audit/inputs.json。无新镜像、无新增启动或模式切换。
+用户暂不在设备旁，中午可配合；SHENGMEM未取得，本轮没有ADB/fastboot、切换模式或启动设备。安装版ABL固定哈希反汇编已找到前置段→generic段→bootconfig辅助路径，14处指令核对通过；这不是候选运行跟踪，实际x0/chosen/分支仍TODO。
+
+只读Android头审查已确认其initrd33870292B模512余468；不能据此把追加FAT直接当整段磁盘，也不能从Android快照填候选地址。已评估同SoC sheng发布器：它也要求整段整扇区，未提供nuwa v4拆分方案，不复制其DRAM/GCD策略。
+
+本机WSL已生成独立64MiB FAT32配置探针，SHA bc0b3eae88e0dd8a528b3469d0fa9c3fa21c99097af842cab42c28cfa5068ff2；mtools逐字节读回及fsck.fat -n退出0。只有标记菜单和exit动作，无XNU/ADT。**尚未接入固件或完整启动包，不能直接实机启动，也未验证UEFI挂载。** 产物只在out，不提交二进制。
+
+[离线报告与候选路径](operations/2026-10-23-offline-initrd-and-volume-probe.md)，reports/system-volume-audit/含固定指令、同SoC依赖/许可和工具命令。[前轮输入审查](operations/2026-10-23-system-volume-discovery.md)保留。
 
 ## 下一步
 
-1. 当前配置查找/BlockIo与Android头字段审查已完成；从已有录像补取SHENGMEM行，继续固定安装ABL对临时v4包的fragment/generic ramdisk/bootconfig拼接路径。候选实际x0/chosen仍TODO，不以Android快照替代。
-2. 先验证系统卷发现链路，再接真实Darwin22预链接负载/ADT；本轮未新增FAT或第二次试启动，生成镜像本身无需停，但任何设备动作仍需具体日志和已确认恢复路径。
-3. 不把本轮菜单观察写成XNU/完整阶段5通过。实际分配剩余量/失败计数、所有SPSS/协议问题状态、DarwinBoot协议调用及候选x0 DT/initrd均仍未验证。
+1. 中午用户在场后，通知录像并刷新身份、恢复输入/日志门，再考虑现有已验收包的定向日志复测；优先捕获SHENGMEM的DT、initrd范围及发布状态。当前没有自动/定时启动，未准备新完整试启动包。
+2. 离线运输方案优先沿用chosen initrd但要求明确边界/保留策略；FV内嵌小探针是备选，尚未实现。由运行映射决定，不能猜前缀、向上取整越界或盲搜FAT字符串。
+3. 探针菜单只能验收卷与配置发现，再接真实Darwin22预链接及Apple ADT；DarwinBoot协议、分配计数和XNU执行均未验证。生成组件无需硬停，任何设备动作仍按AGENTS§3检查。
 
 ## 对照基线与固定约定
 

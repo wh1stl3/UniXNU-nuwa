@@ -1,0 +1,41 @@
+{
+  "scope": "Read-only pinned same-SoC contract comparison, no board values adopted",
+  "sources": [
+    {
+      "root": "D:/Code/PortingiOS/common/sources/uefi-sheng",
+      "commit": "329b473df1e53a3bfa64b2b39b79670c4c02279b",
+      "path": "Platforms/Xiaomi/shengPkg/Drivers/ShengBootMemoryDxe/ShengBootMemoryDxe.c",
+      "sha256": "060a248a44fd06dc36af48b84f7b077e4d773255b38d7ba169750f04a1171bd4",
+      "contract": {
+        "whole_initrd": true,
+        "sector_bytes": 512,
+        "length_mod_check": true,
+        "has_dram_extension_policy": true
+      },
+      "repository": "UniXNU/uefi-sheng",
+      "license": "BSD-2-Clause per pinned README License (outside GPL directories)",
+      "dependency": "FDT entry-argument HOB, BlockIo and DevicePath; unadapted source also has DRAM/GCD policy",
+      "nuwa_applicability": "Only previously trimmed initrd publisher; no borrowed DRAM policy or board values",
+      "validation": "Static source inspection, no nuwa FAT runtime proof"
+    },
+    {
+      "repository": "UniXNU/UniXNU-sheng",
+      "root": "D:/Code/PortingiOS/common/sources/UniXNU-sheng",
+      "commit": "a599a1a8a92093b5077543e071b72130769eb325",
+      "path": "board.toml",
+      "sha256": "245a5cfe9dbe8d077f839af6f99dd17fcdc7981c8fdd70e8b428a92d0d7479dd",
+      "selected_structure": {
+        "bootimg_image_keys": [],
+        "header_version": null
+      },
+      "license": "TODO: license for this board metadata not determined in this audit; no code or board values copied",
+      "dependency": "Its own board and ABL, not nuwa",
+      "nuwa_applicability": "Header/layout comparison only, no adoption of base/offset or prelink constants",
+      "validation": "Static pinned configuration inspection"
+    }
+  ],
+  "limitations": [
+    "Sheng has distinct board memory policy; nuwa retains only its previously adapted initrd publisher",
+    "Header version alone does not prove installed nuwa ABL behavior"
+  ]
+}

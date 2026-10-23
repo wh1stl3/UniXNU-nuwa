@@ -1,0 +1,117 @@
+{
+  "scope": "Static preferred-VA disassembly validation, not execution",
+  "source_reports": [
+    {
+      "path": "abl-initrd-focused.json",
+      "sha256": "e7f06a806d1692213ca019d3d96613e13f191211574d9d2bb39ebddd0ca78d92"
+    },
+    {
+      "path": "abl-initrd-fields.json",
+      "sha256": "e2aaefd0ada6e28a4e341bf80997e3f5655bad5d7c0cdcca95df67a42f257c4d"
+    }
+  ],
+  "selected_instruction_checks": 14,
+  "checks": [
+    {
+      "address": "0xc8a8",
+      "bytes": "085944b9",
+      "mnemonic": "ldr",
+      "operands": "w8, [x8, #0x458]"
+    },
+    {
+      "address": "0xc8ac",
+      "bytes": "080d0071",
+      "mnemonic": "subs",
+      "operands": "w8, w8, #3"
+    },
+    {
+      "address": "0xc8d8",
+      "bytes": "299540b9",
+      "mnemonic": "ldr",
+      "operands": "w9, [x9, #0x94]"
+    },
+    {
+      "address": "0xc8e0",
+      "bytes": "00013fd6",
+      "mnemonic": "blr",
+      "operands": "x8"
+    },
+    {
+      "address": "0xc8f4",
+      "bytes": "0801098b",
+      "mnemonic": "add",
+      "operands": "x8, x8, x9"
+    },
+    {
+      "address": "0xc990",
+      "bytes": "2b7d40b9",
+      "mnemonic": "ldr",
+      "operands": "w11, [x9, #0x7c]"
+    },
+    {
+      "address": "0xc998",
+      "bytes": "297940b9",
+      "mnemonic": "ldr",
+      "operands": "w9, [x9, #0x78]"
+    },
+    {
+      "address": "0xc9a0",
+      "bytes": "00013fd6",
+      "mnemonic": "blr",
+      "operands": "x8"
+    },
+    {
+      "address": "0xcbec",
+      "bytes": "230d0054",
+      "mnemonic": "b.lo",
+      "operands": "#0xcd90"
+    },
+    {
+      "address": "0xcc40",
+      "bytes": "00013fd6",
+      "mnemonic": "blr",
+      "operands": "x8"
+    },
+    {
+      "address": "0xcc68",
+      "bytes": "1aa70194",
+      "mnemonic": "bl",
+      "operands": "#0x768d0"
+    },
+    {
+      "address": "0x7696c",
+      "bytes": "085100f1",
+      "mnemonic": "subs",
+      "operands": "x8, x8, #0x14"
+    },
+    {
+      "address": "0x76bd4",
+      "bytes": "080540b2",
+      "mnemonic": "orr",
+      "operands": "x8, x8, #3"
+    },
+    {
+      "address": "0x76bd8",
+      "bytes": "08050091",
+      "mnemonic": "add",
+      "operands": "x8, x8, #1"
+    }
+  ],
+  "interpretation": [
+    "Header-version>=3 branch copies info+0x94 bytes from its vendor-side buffer first, advances destination by that unrounded count",
+    "Generic-side copy uses info+0x78 bytes after the preceding range, with optional recovery-side copy in between",
+    "Header-version>=4 branch calls bootconfig helper0x768d0 after copying info+0x90 bytes",
+    "Helper conditionally removes a20-byte old trailer and regenerates four-byte-aligned bootconfig metadata; it does not impose512-byte disk geometry"
+  ],
+  "semantic_limit": "Internal field names are inferred from their use; no candidate runtime branch, fragment-selection outcome, destination or final size proven",
+  "android_header_example": {
+    "vendor_bytes": 30899943,
+    "vendor_mod512": 231,
+    "generic_bytes": 2969050,
+    "declared_sum": 33868993,
+    "observed_chosen_bytes": 33870292,
+    "unassigned_difference": 1299
+  },
+  "conclusion": "Do not publish a blindly appended FAT as the whole chosen initrd",
+  "device_mode_changed": false
+}
