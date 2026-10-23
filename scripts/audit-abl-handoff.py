@@ -138,7 +138,7 @@ def main():
                     'text_offset', 'text offset', 'Jumping', 'StartLinux', 'LoadImage', 'StartImage',
                     'boot.img', 'Failed to load/authenticate', 'Fastboot mode', 'DeviceTree Load',
                     'ExitBoot', 'shutdown', 'handoff', 'Launching', 'Entry Point', 'HLOS',
-                    'ramdisk', 'dtb', 'kernel', 'offset')):
+                    'ramdisk', 'dtb', 'kernel', 'offset', 'init_boot', 'InitBoot')):
                 section = next((s for s in sections if s['raw_at'] <= match.start() < s['raw_at']+s['raw_size']), None)
                 if section:
                     wanted[base+section['rva']+match.start()-section['raw_at']] = value

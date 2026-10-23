@@ -1,0 +1,68 @@
+{
+  "scope": "Offline attribution of user photographs, not runtime causality",
+  "vendor_inputs": [
+    {
+      "repository": "Project-Silicium/Device-Binaries",
+      "commit": "a1501e0c2e642d6ac0d8f52c85af2a67b75a7799",
+      "path": "nuwa/QcomPkg/Drivers/EnvDxe/EnvDxe.efi",
+      "bytes": 69632,
+      "sha256": "c138c7cb697f4d66734a93fcf4794e83362d2b529f0b2ec36b3487828fb38d72",
+      "term_presence": {
+        "CPU Vectors": true,
+        "ERROR: CPU Vectors region not present in cfg file !": true
+      },
+      "limitation": "Pinned binary/strings only; no source-level failure-path attribution"
+    },
+    {
+      "repository": "Project-Silicium/Device-Binaries",
+      "commit": "a1501e0c2e642d6ac0d8f52c85af2a67b75a7799",
+      "path": "nuwa/QcomPkg/Drivers/SPSSDxe/SPSSDxe.efi",
+      "bytes": 53248,
+      "sha256": "a5af723223d959dd6ccd86c8831845b93d53a8dce113d9ab8a15ff0d0ef07ad4",
+      "term_presence": {
+        "MDT": false,
+        "metadata": false,
+        "SPSS": true
+      },
+      "limitation": "Pinned binary/strings only; no source-level failure-path attribution"
+    },
+    {
+      "repository": "Project-Silicium/Device-Binaries",
+      "commit": "a1501e0c2e642d6ac0d8f52c85af2a67b75a7799",
+      "path": "nuwa/QcomPkg/Drivers/FeatureEnablerDxe/FeatureEnablerDxe.efi",
+      "bytes": 32768,
+      "sha256": "55d5ba6f74b03e17d34ca02e92de46080d527b21cdf84bf1935e099673ed60ea",
+      "term_presence": {
+        "featenabler": true,
+        "Qsee": true,
+        "TA": true
+      },
+      "limitation": "Pinned binary/strings only; no source-level failure-path attribution"
+    },
+    {
+      "repository": "Project-Silicium/Device-Binaries",
+      "commit": "a1501e0c2e642d6ac0d8f52c85af2a67b75a7799",
+      "path": "nuwa/QcomPkg/Drivers/RscDxe/RscDxe.efi",
+      "bytes": 36864,
+      "sha256": "190a122ded8541f6abe9a809da309a8e9974f207a025cd92df9e02638d0e951b",
+      "term_presence": {
+        "RSC": false,
+        "Rsc": true
+      },
+      "limitation": "Pinned binary/strings only; no source-level failure-path attribution"
+    }
+  ],
+  "config": {
+    "path": "nuwa/RawFiles/uefiplat.cfg",
+    "commit": "a1501e0c2e642d6ac0d8f52c85af2a67b75a7799",
+    "sha256": "3208aee1f7a0c1264c5166dc14d1f026f9c64754c99c551b70888f26843a6cbb",
+    "vector_row": "0xA7600000, 0x00001000, \"CPU Vectors\",       AddMem, SYS_MEM, SYS_MEM_CAP, BsData, WRITE_BACK"
+  },
+  "current_map": {
+    "sha256": "b6cfda2e2385234ae243159ee258419c43b68a2c1c34484c2bc7f383daa32ccb",
+    "cpu_vectors_row_present": false
+  },
+  "device_changed": false,
+  "map_changed": false,
+  "conclusion": "Real vector-name contract gap exists; do not dismiss as harmless, do not borrow another board address. Its effect on current boot and whether this archived raw config matches installed xbl_config require separate validation."
+}

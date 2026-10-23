@@ -1350,3 +1350,13 @@
 [Evidence] preflight身份/恢复门通过；fastboot boot exit0，launch记录120秒观察。
 [Risk] 屏幕结果和本轮恢复尚待，USB不替代卷发现或XNU执行证据。
 ```
+
+## Q-128 · 实测归因与FV探针
+
+```text
+[unixnu-nuwa][firmware] 明确chosen封装缺失并接入独立FV配置探针
+
+[Change] 归档原图/恢复/错误审查，固定00a37d9嵌入探针驱动和确定性FAT16生成及独立profile。
+[Evidence] chosen范围与历史Android一致且result0，Android完成1及三分区不变；9项C测试、mtype精确路径、43输入8补丁12后哈希通过。
+[Risk] ABL选择仅静态支持，FV完整构建/实机待验；无真实XNU负载，CPU Vectors等独立问题未修。
+```

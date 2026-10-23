@@ -3,7 +3,7 @@
   "package_sha256": "a22e9a44561c85c52aa5697d0452c38dc8bdd1f5b2c7c7a40e79f5396a27f9f0",
   "launch_command_exit": 0,
   "observation_seconds": 120,
-  "screen_result": "awaiting user recording/observation",
+  "screen_result": "Publisher completed, envelope absent; chosen bounds equal historical Android",
   "last_usb_observation": {
     "at": "2026-10-23T16:26:15.117161+00:00",
     "seconds_after_ack": 120.0,
@@ -11,5 +11,6 @@
     "adb_device_count": 1
   },
   "device_execution_stage": "not determined from fastboot ACK or USB",
-  "android_recovery": "in progress; no postcondition yet"
+  "android_recovery": "completed; recovery-after-keys and postcondition confirm Android 1 and three partition hashes unchanged",
+  "screen_evidence": "screen-observation.json"
 }

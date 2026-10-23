@@ -1,0 +1,71 @@
+{
+  "at": "2026-10-24T00:34:06.760277+08:00",
+  "source": "User supplied stills for notified a22e9a44 trial; not full video timeline",
+  "photos": [
+    {
+      "file": "reports/volume-status-trial/2026-10-24/user-volume-first.jpg",
+      "bytes": 1215312,
+      "sha256": "80701949da6804de1ebe2c4e6a0f160577f3beeeb7c9f3df35dc80160aaa37d8"
+    },
+    {
+      "file": "reports/volume-status-trial/2026-10-24/user-usb-fallback.jpg",
+      "bytes": 379156,
+      "sha256": "30f8dcb94fd8e3781449a005bbb1048dfeda34a5b9a7edc80c29150bfe9f53ae"
+    },
+    {
+      "file": "reports/volume-status-trial/2026-10-24/user-cpu-vectors.jpg",
+      "bytes": 1157559,
+      "sha256": "9e561425eaedf6ef0c6e55ed70a07dba3aee4608d46b8ebac4fa64cfa1c5e5b0"
+    },
+    {
+      "file": "reports/volume-status-trial/2026-10-24/user-tz-spss.jpg",
+      "bytes": 1321441,
+      "sha256": "85a282eaedfbb15b8a635c2f0ea793561d070cd1cd72b3821e982818ecd4ee5b"
+    },
+    {
+      "file": "reports/volume-status-trial/2026-10-24/user-volume-rsc.jpg",
+      "bytes": 1085373,
+      "sha256": "a3aad95a1ea16c76b8eaad5169cbce3a88f5480dfa0ad2d464d16a2629704981"
+    },
+    {
+      "file": "reports/volume-status-trial/2026-10-24/user-fat-mounts.jpg",
+      "bytes": 387399,
+      "sha256": "5462a029f84cd10c0aab84ff17003569a21e9b4b496b94a5af4d2377add16e85"
+    }
+  ],
+  "dtb": {
+    "address": "0xb5db1000",
+    "bytes": 938800
+  },
+  "chosen": {
+    "start": "0xb5fb2000",
+    "end_exclusive": "0xb7fff1d4",
+    "bytes": 33870292
+  },
+  "envelope": {
+    "result": 0,
+    "offset": 0,
+    "bytes": 0,
+    "status": "Not Found"
+  },
+  "temporary_package_ramdisk_bytes": 67108928,
+  "historical_android_initrd": {
+    "start": "0xb5fb2000",
+    "end_exclusive": "0xb7fff1d4",
+    "bytes": 33870292,
+    "mod512": 468,
+    "publisher_whole_sector_precondition_passes": false,
+    "source_dt_sha256": "e7217b1575c7a7c2ca4bd758ab7fc20f580533cae4ea85631608997fede51e1d"
+  },
+  "same_chosen_bounds_as_historical_android": true,
+  "fact": "Publisher ran and rejected no mapping or CRC here: parser returned absent; no BlockIo installed by this publisher",
+  "inference": "Temporary v4 ramdisk did not reach this chosen extent; installed init_boot selection is a candidate explanation, not a runtime trace or byte-identity proof",
+  "other_observed_errors": [
+    "CPU Vectors region not present in cfg file",
+    "TZ target unsupported and FeatureEnabler TA failure",
+    "SPSS MDT/metadata Load Error",
+    "RscDxe No mapping",
+    "USB fallback no handles/devices"
+  ],
+  "fat_mount_limitation": "Four FAT mount messages do not identify the target probe; publisher did not install its BlockIo"
+}

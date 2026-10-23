@@ -26,7 +26,7 @@ def save(name, obj):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--profile', choices=('legacy', 'dedicated', 'sec-trace', 'pil-no-auto', 'dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status'), default='legacy')
+    parser.add_argument('--profile', choices=('legacy', 'dedicated', 'sec-trace', 'pil-no-auto', 'dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe'), default='legacy')
     args = parser.parse_args()
     if os.environ.get("GITHUB_ACTIONS") != "true":
         raise RuntimeError("Only the approved disposable Actions build environment is supported")
@@ -36,7 +36,7 @@ def main():
         raise RuntimeError("Fresh source/build tree required; refusing to overwrite")
     work.mkdir()
     OUT.mkdir(parents=True, exist_ok=False)
-    if args.profile in ('dedicated', 'sec-trace', 'pil-no-auto', 'dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status'):
+    if args.profile in ('dedicated', 'sec-trace', 'pil-no-auto', 'dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe'):
         filename = {'dedicated': 'firmware-dedicated-profile.json',
                     'sec-trace': 'firmware-sec-trace-profile.json',
                     'pil-no-auto': 'firmware-pil-no-auto-profile.json',
@@ -47,6 +47,7 @@ def main():
                     'volume-envelope': 'firmware-volume-envelope-profile.json',
                     'hob-integrity': 'firmware-hob-integrity-profile.json',
                     'volume-status': 'firmware-volume-status-profile.json',
+                    'embedded-probe': 'firmware-embedded-probe-profile.json',
                     'mmu-branches': 'firmware-mmu-branches-profile.json',
                     'constructor-trace': 'firmware-constructor-trace-profile.json'}[args.profile]
         profile = json.loads((ROOT / 'config' / filename).read_text())
@@ -88,7 +89,7 @@ def main():
              "Silicon/Silicium/OpensslPkg/Library/OpensslLib/openssl", "Binaries"], fw, log="submodules.log")
         # Patching Mu before stuart --setup makes its checkout dirty; that helper
         # can skip recursive initialization. Resolve pinned gitlinks first.
-        if args.profile in ('dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status'):
+        if args.profile in ('dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe'):
             run(['git', 'submodule', 'update', '--init', '--recursive', '--depth', '1'],
                 fw / 'Mu_Basecore', log='mu-submodules.log')
         checked = []
@@ -145,6 +146,16 @@ def main():
         for item in candidate["post_patch_inputs"]:
             if digest(sources[item["root"]] / item["path"], True) != item["lf_sha256"]:
                 raise ValueError("Patched input mismatch: " + item["path"])
+        if args.profile == 'embedded-probe':
+            resource = candidate['embedded_probe']
+            generator = ROOT / 'scripts/build-embedded-probe.py'
+            if digest(generator) != resource['generator_sha256']:
+                raise ValueError('Embedded probe generator changed')
+            target = fw / resource['path']
+            run([sys.executable, generator, '--output', target])
+            if target.stat().st_size != resource['bytes'] or digest(target) != resource['sha256']:
+                raise ValueError('Embedded probe resource differs from pinned fixture')
+            save('embedded-probe.json', resource)
         (fw / ".unixnu-packages").mkdir()
         for name, target in candidate["package_links"].items():
             path = Path(target.format(**{k: str(v) for k, v in sources.items()}))

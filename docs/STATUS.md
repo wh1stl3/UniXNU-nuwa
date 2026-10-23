@@ -1,9 +1,11 @@
 # STATUS
 
-> a22e9a44已临时启动并完成120秒USB观察；具体屏幕结果待用户录像，当前恢复进行中，尚无本轮Android postcondition。XNU尚未确认。
+> a22e9a44实测已确定：chosen内没有封装卷，publisher返回Not Found。Android恢复和三分区核验完成；转独立FV小探针离线构建。无XNU入口证据。
 
-CI39985245383/source b8e6e2a成功，固件bc38be0。包SHA a22e9a44561c85c52aa5697d0452c38dc8bdd1f5b2c7c7a40e79f5396a27f9f0/70266880B，新旧诊断标记及完整容器复验通过，41行2952B内存表与dd1ef825逐字节相同。8项固件主机测试、2项新scope反向检查及5项MMU门通过。无XNU/ADT负载。
+原图：DTB b5db1000/938800B，initrd [b5fb2000,b7fff1d4)/33870292B，envelope result0，与历史Android范围相同；不能仅凭地址长度宣称字节相同。固定ABL中有版本>=4的init_boot选择路径，支持运输/选择方向但不是动态执行证明。六张原图及转录在reports/volume-status-trial/2026-10-24/。
 
-用户本轮确认录像与按键恢复准备；刷新nuwa/kalama、Android完成1及原boot恢复门后通知并临时启动。fastboot发送/启动exit0，120秒只记录USB，不替代过程日志；最后无nuwa fastboot，ADB计数1不能当nuwa恢复。没有flash/erase/改槽。
+恢复：recovery-after-keys确认Android完成1，postcondition确认nuwa/kalama及三分区SHA与本轮preflight一致。首次超时记录保留，不代表当前状态。无flash/erase/改槽。
 
-恢复工具等待nuwa返回Android或fastboot；必要时仅差用户按键。上一轮dd1ef825恢复已闭环但不代替本轮。恢复等待不阻塞离线工作，不执行新包启动。下一步取得本轮NUWA-VOLUME阶段日志、完成Android完成1和三分区postcondition。证据reports/volume-status-trial/2026-10-24/；详细交接见operations/2026-10-23-mainline-handoff.md。
+其他错误已逐项审查：CPU Vectors是明确命名契约缺口；TZ/FeatureEnabler、SPSS和RscDxe真实失败保留追踪，未证实导致本次封装缺失；USB是后续回退失败。见operations/2026-10-24-error-triage-and-initboot.md。
+
+下一步embedded-probe独立profile：固件00a37d9、确定性4MiB FAT16/精确VFAT配置路径；9项C主机测试、WSL精确文件读回和43输入/8补丁/12后哈希通过，完整CI待执行。内存表/board/bringup/_verified未改。小探针不解决完整XNU运输。下轮设备动作另刷新录像、身份、包复验与恢复门并通知。详见operations/2026-10-24-embedded-volume-probe.md和主线交接。

@@ -273,3 +273,5 @@
 2026-10-24T00:23:43.134759+08:00 · CI39985245383成功，新包a22e9a44/70266880B完整复验，41行内存表相同，用户已本轮确认录像，准备试验 · Q-126（git log定位） · reports/volume-status/39985245383/
 
 2026-10-24T00:27:22.419670+08:00 · a22e9a44在新鲜录像门后临时启动ACK成功，120秒USB观察完成，屏幕与本轮恢复待补 · Q-127（git log定位） · reports/volume-status-trial/2026-10-24/
+
+2026-10-24T00:39:15.327331+08:00 · 六原图确认chosen封装缺失、补init_boot静态选择证据与错误分级，恢复闭环；FV小探针源码/生成及主机检查通过 · Q-128（git log定位） · docs/operations/2026-10-24-error-triage-and-initboot.md；reports/embedded-probe/
