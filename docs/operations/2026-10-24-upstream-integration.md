@@ -21,3 +21,15 @@ reports/upstream-integration/2026-10-24/merge.json、firmware-profile-check.json
 主机：最新Darwin22解析24项含GpuAddon、新分析内核5a128fb2解析通过；实际packed C解析/拷贝与Python稀疏打包、1TiB逻辑边界/13拒绝通过；SMMU真实页表/stream软件夹具ASan/UBSan通过。额外GPU VM完整主机执行未通过：最新上游夹具缺IODirection/持久内存常量，在忽略输出适配中按固定8796头补声明后，x86编译仍因实际AArch64 dsb指令拒绝；未删除目标屏障，不称GPU通过或真实持久内存生命周期已验。失败和适配范围原样存gpu-vm-host.json。
 
 首轮内核CI40014023191在最终链接失败，唯一缺符号native_sandbox_grant(IOService*)。原因是接入清单漏了新增set-properties补丁的前置zzw-native-adreno-sandbox-grant，不是弱化链接规则可解的问题。现补入完整真实上游实现及SHA，64项完整词法序列和唯一辅助函数定义在内存通过；接下来重建内核。首轮失败记录kernel-first-failure.json不覆盖。尚不把整次内核编译写成成功。
+
+## 最终闭环
+
+第二轮内核40015845083/source6070627成功。独立下载检查bf14e5305a9f764c6852c2d3a69e81edc9c6199bc870c7b08160d55610616dea/20188216B，Darwin22.6.0/iOS16.0、零未定义符号，ArmCpu/ArmDTPlatform五个导出及三份实际归档哈希与runner报告一致。内核尚未预链接/实机运行。新源内核的后续analysis不能直接沿用7774旧绑定；旧5a128fb2保留为历史分析，未修改其loadable=false。
+
+上文x86 GPU执行限制后来通过保留目标DSB的AArch64交叉链接和用户态QEMU软件夹具补充验证：8192-span别名/属性拒绝、映射/持有/释放、13前置拒绝和poison隔离通过。运行时包仅提取到忽略out目录，未安装系统包或改目标驱动；夹具补了8796真实头中IODirection和持久选项声明，不证明真实持久页生命周期。首轮失败报告保留，gpu-vm-a64-link.json/gpu-vm-qemu-user.json记最终范围。
+
+NativePrelink工具入口改用合并源e553e46/独立2b6ffb50模块，只读git对象加载；两个工具源SHA仍与原实现相同，常量池4项回归通过。9项真实grant助手字符串策略主机测试通过，不等于实际sandbox/IOKit调用。24项解析为主机，不是目标ADT。
+
+全部21模块和上游源码更新已合入可复现基线；这不意味着开启全部硬件/根卷功能。实际make参数仍CS_HASH_CACHE=0、owner/Data/RamBlock分支为0，相关导出为空与此一致；kernel-new-feature-exports.json保留实测。没有通过默认profile构建来声称这些未开启分支已编译或运行。后续逐项功能激活仍需真实nuwa配置、ABI与存储保护资格。
+
+固件默认upstream-merged；新FD和新内核都没有执行实机测试，既有录像/恢复门不放宽。固件仓ca2f043文档已同步。最终结构化结论integration-result.json、当前入口STATUS和主线交接已全文对齐。

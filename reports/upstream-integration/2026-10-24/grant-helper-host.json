@@ -1,0 +1,62 @@
+{
+  "scope": "Exact upstream helper string policy with authored host property/name adapters; not actual sandbox grants",
+  "source_commit": "e553e467ebfe7642e9f483d3977a57066c6d1aef",
+  "patch_sha256": "07992b1f83014191fcf422d6924fa53b3008560d9eb73a4d2cf340941e564c56",
+  "function_sha256": "536328cae400a3c3b6d7c574079e0c1d52b224b142301decfe485710c61be2bb",
+  "commands": [
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "clang++",
+        "-x",
+        "c++",
+        "-std=c++17",
+        "-O1",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-pie",
+        "-no-pie",
+        "-",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/grant"
+      ],
+      "stdin_sha256": "09b5713c76406b862cd74edb91bc6713d905d9b20f09a6ed560c814925fb0fab",
+      "exit_code": 0,
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "clang++",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/grant"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "/usr/bin/ld: /usr/bin/ld: DWARF error: invalid or unhandled FORM value: 0x22\n/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/grant:(.rodata+0x0): multiple definition of `_IO_stdin_used'; /lib/x86_64-linux-gnu/Scrt1.o:(.rodata.cst4+0x0): first defined here\n/usr/bin/ld: /mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/grant: in function `data_start':\n(.data+0x8): multiple definition of `__dso_handle'; /usr/bin/../lib/gcc/x86_64-linux-gnu/11/crtbeginS.o:(.data.rel.local+0x0): first defined here\n/usr/bin/ld: /mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/grant: in function `_fini':\n(.fini+0x0): multiple definition of `_fini'; /lib/x86_64-linux-gnu/crti.o:(.fini+0x0): first defined here\n/usr/bin/ld: /mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/grant: in function `_start':\n(.text+0x80): multiple definition of `_start'; /lib/x86_64-linux-gnu/Scrt1.o:(.text+0x0): first defined here\n/usr/bin/ld: /mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/grant: in function `_init':\n(.init+0x0): multiple definition of `_init'; /lib/x86_64-linux-gnu/crti.o:(.init+0x0): first defined here\n/usr/bin/ld: /mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/grant: in function `data_start':\n(.data+0x0): multiple definition of `__data_start'; /lib/x86_64-linux-gnu/Scrt1.o:(.data+0x0): first defined here\n/usr/bin/ld: /usr/bin/../lib/gcc/x86_64-linux-gnu/11/crtendS.o:(.tm_clone_table+0x0): multiple definition of `__TMC_END__'; /mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/grant:(.data+0x2fa0): first defined here\n/usr/bin/ld: cannot use executable file '/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/grant' as input to a link\nclang: error: linker command failed with exit code 1 (use -v to see invocation)\n"
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/grant"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS: 9 exact upstream service-property/process-list cases; no real sandbox or IOKit execution\n",
+      "stderr": ""
+    }
+  ],
+  "passed": true,
+  "adapter_runner_correction": "First runner accidentally passed executable to clang++ again; corrected direct execution command. Source/compiler output unchanged."
+}

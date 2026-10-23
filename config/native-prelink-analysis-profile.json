@@ -1,7 +1,7 @@
 {
-  "scope": "Static Libm literal-pool qualification and analysis-only current-kernel prelink; not device ready",
-  "source_repository": "UniXNU/UniXNU",
-  "source_commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+  "scope": "Updated merged tool source; existing7774-kernel analysis fixture remains historical and not device-ready",
+  "source_repository": "wh1stl3/UniXNU",
+  "source_commit": "e553e467ebfe7642e9f483d3977a57066c6d1aef",
   "source_sha256": {
     "kits/NativePrelink/native_prelink.py": "5bd80b8c63deec29b747c28253e02308a56d5f8cdb37c9d315e7c8af7012d017",
     "kits/NativePrelink/emit_prelink.py": "4cbd97a7ca231cb56d8d7c6a02d09b86af33b5af3d05dba41edd00e51cd3a36a"
@@ -24,5 +24,10 @@
   "slide": -16777216,
   "slide_scope": "Existing analytical layout only; not board or physical memory configuration",
   "early_security_initializers": {},
-  "loadable": false
+  "loadable": false,
+  "source_module": {
+    "path": "kits/NativePrelink",
+    "repository": "UniXNU/NativePrelink",
+    "commit": "2b6ffb50117eee820b98aca9bd51b5c7dfb2970e"
+  }
 }

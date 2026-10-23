@@ -1,0 +1,32 @@
+{
+  "scope": "Update current tool provenance, preserve historical kernel/donor analytical inputs",
+  "source_repository": "wh1stl3/UniXNU",
+  "source_commit": "e553e467ebfe7642e9f483d3977a57066c6d1aef",
+  "module": {
+    "path": "kits/NativePrelink",
+    "repository": "UniXNU/NativePrelink",
+    "commit": "2b6ffb50117eee820b98aca9bd51b5c7dfb2970e"
+  },
+  "tool_hash_checks": [
+    {
+      "path": "kits/NativePrelink/native_prelink.py",
+      "sha256": "5bd80b8c63deec29b747c28253e02308a56d5f8cdb37c9d315e7c8af7012d017",
+      "code_identical_to_previous_tool": true
+    },
+    {
+      "path": "kits/NativePrelink/emit_prelink.py",
+      "sha256": "4cbd97a7ca231cb56d8d7c6a02d09b86af33b5af3d05dba41edd00e51cd3a36a",
+      "code_identical_to_previous_tool": true
+    }
+  ],
+  "patched_emitter_expected": "e5b4a9ffa70455e9b86611bee5c9d98c5ff3fdb08853e5c2161f232fe5da4c85",
+  "tests": {
+    "command": "bundled-python -B -m unittest discover -s tests -p test_libm_literal_pool.py -v",
+    "exit_code": 0,
+    "count": 4,
+    "output": "test_changed_byte_with_unchanged_prefix_is_rejected (test_libm_literal_pool.LiteralPoolTests.test_changed_byte_with_unchanged_prefix_is_rejected) ... ok\ntest_exact_complete_pool_is_recognized (test_libm_literal_pool.LiteralPoolTests.test_exact_complete_pool_is_recognized) ... ok\ntest_instruction_after_the_pool_is_not_exempted (test_libm_literal_pool.LiteralPoolTests.test_instruction_after_the_pool_is_not_exempted) ... ok\ntest_unknown_external_code_without_pool_is_rejected (test_libm_literal_pool.LiteralPoolTests.test_unknown_external_code_without_pool_is_rejected) ... ok\n\n----------------------------------------------------------------------\nRan 4 tests in 0.284s\n\nOK\n"
+  },
+  "new_kernel_prelinked": false,
+  "old_analysis_fixture_retained": true,
+  "device_accessed": false
+}

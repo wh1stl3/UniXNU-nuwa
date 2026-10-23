@@ -1,0 +1,138 @@
+{
+  "scope": "AArch64 Linux cross compile/link of real upstream GPU VM/memory test using upstream software fixtures and two declaration adapters; not XNU ABI or hardware execution",
+  "target_barrier_retained": true,
+  "passed": true,
+  "executed": false,
+  "commands": [
+    {
+      "argv": [
+        "aarch64-linux-gnu-gcc",
+        "-std=c11",
+        "-O1",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-c",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K/ArmSmmu4K.c",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/ArmSmmu4K-a64.o"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "aarch64-linux-gnu-gcc",
+        "-std=c11",
+        "-O1",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-c",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K/ArmSmmu4KContext.c",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/ArmSmmu4KContext-a64.o"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "aarch64-linux-gnu-gcc",
+        "-std=c11",
+        "-O1",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-c",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K/ArmSmmu4KProgram.c",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/ArmSmmu4KProgram-a64.o"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "aarch64-linux-gnu-gcc",
+        "-std=c11",
+        "-O1",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-c",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K/ArmSmmu4KLive.c",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/ArmSmmu4KLive-a64.o"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "aarch64-linux-gnu-gcc",
+        "-std=c11",
+        "-O1",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-c",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K/ArmSmmu4KStreams.c",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/ArmSmmu4KStreams-a64.o"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "aarch64-linux-gnu-g++",
+        "-std=c++17",
+        "-O1",
+        "-g",
+        "-static",
+        "-I",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/include",
+        "-I",
+        "/mnt/d/Code/UniXNU-integration/drivers/NativeAdreno/tests",
+        "-I",
+        "/mnt/d/Code/UniXNU-integration/drivers/NativeAdreno",
+        "-I",
+        "/mnt/d/Code/UniXNU-integration/kits/ArmSmmu4K",
+        "/mnt/d/Code/UniXNU-integration/drivers/NativeAdreno/NativeAdrenoMemory.cpp",
+        "/mnt/d/Code/UniXNU-integration/drivers/NativeAdreno/NativeAdrenoSmmuMemory.cpp",
+        "/mnt/d/Code/UniXNU-integration/drivers/NativeAdreno/NativeAdrenoVm.cpp",
+        "/mnt/d/Code/UniXNU-integration/drivers/NativeAdreno/tests/test_vm.cpp",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/ArmSmmu4K-a64.o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/ArmSmmu4KContext-a64.o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/ArmSmmu4KProgram-a64.o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/ArmSmmu4KLive-a64.o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/ArmSmmu4KStreams-a64.o",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/gpu-vm-a64"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "file",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/gpu-vm-a64"
+      ],
+      "exit_code": 0,
+      "stdout": "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/gpu-vm-a64: ELF 64-bit LSB executable, ARM aarch64, version 1 (GNU/Linux), statically linked, BuildID[sha1]=dca57ae21b2dbb820221ceff99d3353302fbb2c4, for GNU/Linux 3.7.0, with debug_info, not stripped\n",
+      "stderr": ""
+    }
+  ]
+}

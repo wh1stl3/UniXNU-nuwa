@@ -1,0 +1,16 @@
+{
+  "scope": "Actual updated-kernel export inventory; not runtime feature execution",
+  "kernel_sha256": "bf14e5305a9f764c6852c2d3a69e81edc9c6199bc870c7b08160d55610616dea",
+  "new_feature_markers": {
+    "_cs_native4k_read_ticks": null,
+    "_cs_native4k_hash_ticks": null,
+    "_cs_native4k_bytes": null,
+    "_native_lookup_count": "0xfffffff007a86548",
+    "_native_gpu_addon_stage": null
+  },
+  "actual_make_feature_arguments": [
+    "ubc_subr.o_CFLAGS_ADD=-DXNU_NATIVE_CS_HASH_CACHE=0",
+    "kern_exec.o_CFLAGS_ADD=-DXNU_NATIVE_AIR_INIT=0 -DXNU_OWNER_CACHE_MOUNT=0 -DXNU_OWNER_CACHE_STARTUP=0 -DXNU_OWNER_BOOT_MANIFEST=0 -DXNU_OWNER_DATA_MOUNT=0 -DXNU_NATIVE_RAM_BLOCK=0 -DXNU_OWNER_CRYPTEX_FILES=0 -DXNU_OWNER_UNION_SYSTEMOS=0 -include /Users/runner/work/_temp/nuwa-8796-source/build/xnu/owner-data-volume.h"
+  ],
+  "interpretation": "Optional CS hash cache and owner/Data/GPU addon branches remain disabled under inherited source-only qualification policy. Null exports do not mean patches were absent; feature branch compilation/runtime is not claimed."
+}

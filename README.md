@@ -4,7 +4,9 @@
 
 ## 当前入口（2026-10-24）
 
-缓存交接候选26ef8efd已完成离线验收和单次临时启动，五张原图确认after-mmu检查成功并到达ReadyToBoot/UniXNU菜单；Android恢复完成1、三个启动分区SHA不变。缓存交接主因判断获得强支持，重复性及唯一根因仍待验，尚未执行XNU/iOS。续接先读[STATUS](docs/STATUS.md)、[主线交接](docs/operations/2026-10-23-mainline-handoff.md)和[本轮实测](docs/operations/2026-10-24-hob-cache-handoff-trial.md)。不要重复执行已完成的启动命令。
+全部已审查上游源码更新已合并到基座e553e46，21模块固定；新固件CI40014018074、Darwin22/iOS16源内核CI40015845083通过，实际二进制/平台归档已复核。GPU VM软件夹具通过用户态QEMU，硬件激活和实机兼容性仍单独验收。新FD/内核未在手机启动；既有26ef8efd缓存候选已实测跨过MMU到配置菜单并恢复Android。
+
+续接先读[STATUS](docs/STATUS.md)、[主线交接](docs/operations/2026-10-23-mainline-handoff.md)和[全量更新记录](docs/operations/2026-10-24-upstream-integration.md)。实际ADT/OS窗口/大负载运输与新内核预链接仍待完成，不重复已结束的设备试验。
 
 ## 为什么单开一个仓库
 

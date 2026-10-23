@@ -1,0 +1,58 @@
+{
+  "at": "2026-10-24T04:19:54.495058+08:00",
+  "scope": "All reviewed upstream sources merged; default-profile build qualification, no hardware activation or phone execution",
+  "base_merge": "e553e467ebfe7642e9f483d3977a57066c6d1aef",
+  "upstream": "1a01c2afa197d975d04da892325c56b6b14aaecb",
+  "module_count": 21,
+  "device_build_sources": {
+    "firmware": "5abdde12bc217984d9a6694553f93e0ea61969e1",
+    "kernel": "60706271a36ce19b549af5281e88a842e6558183"
+  },
+  "firmware": {
+    "ci": 40014018074,
+    "result": "success",
+    "fd_sha256": "2d606985ad768dcfaab66c2b28073c0a4c2820126b42b23286623fdc450e848f",
+    "bytes": 3145728,
+    "sec_identical_to_previous_physical_trial": true,
+    "hardware_executed": false
+  },
+  "kernel": {
+    "ci": 40015845083,
+    "result": "success",
+    "sha256": "bf14e5305a9f764c6852c2d3a69e81edc9c6199bc870c7b08160d55610616dea",
+    "bytes": 20188216,
+    "darwin": "22.6.0",
+    "minimum_os": "16.0.0",
+    "undefined_global_count": 0,
+    "armcpu_armdtplatform_exports_and_archives_rechecked": true,
+    "prelinked": false,
+    "hardware_executed": false
+  },
+  "checks": {
+    "firmware_inputs": 51,
+    "firmware_patches": 11,
+    "firmware_post_hashes": 15,
+    "kernel_ordered_patches": 64,
+    "parser_cases": 24,
+    "literal_pool_tests": 4,
+    "sandbox_policy_cases": 9,
+    "packed_sparse_tests": "actual C/Python and 1TiB logical bound/13 refusals passed",
+    "smmu_fixture_tests": "page graph/walk and stream isolation ASan/UBSan passed",
+    "gpu_vm_fixture": "AArch64 cross-link and user QEMU passed; not hardware/cache or XNU ABI proof"
+  },
+  "activation_policy": "All21 module sources fixed and available; existing source-only kernel profile retains optional root/CS-hash/GPU activation flags at0. No all-feature compilation or runtime claim.",
+  "unchanged_boundaries": [
+    "board memory/addresses/IPSW identity",
+    "Heap and HOB protections",
+    "ST FTS hardware route",
+    "all existing verified flags",
+    "read-only old repositories"
+  ],
+  "known_remaining": [
+    "New FD/kernel not device-tested",
+    "New kernel prelink/initializer/ABI qualification pending",
+    "Real nuwa ADT, allocated OS window and full payload transport pending"
+  ],
+  "firmware_docs_commit": "ca2f04303331651b371ac89e9d71a0055a9c4233",
+  "phone_commands_executed": false
+}

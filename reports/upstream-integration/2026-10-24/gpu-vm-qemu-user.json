@@ -1,0 +1,40 @@
+{
+  "scope": "AArch64 user-mode QEMU execution of upstream software IOKit/SMMU/register fixtures only; no real GPU/cache/SMMU/IOKit or XNU ABI execution",
+  "target_barrier_retained": true,
+  "runtime_package": {
+    "file": "qemu-user_1%3a6.2+dfsg-2ubuntu6.31_amd64.deb",
+    "sha256": "fe186b3646936a0bb02c809b093f9c743085bec8f7539e39d2f78c573859911d",
+    "installation": "Extracted to ignored out only; no system package installation"
+  },
+  "passed": true,
+  "commands": [
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "dpkg-deb",
+        "-x",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/qemu-runtime/qemu-user_1%3a6.2+dfsg-2ubuntu6.31_amd64.deb",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/qemu-runtime"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/qemu-runtime/usr/bin/qemu-aarch64",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/qemu-runtime/../gpu-vm-a64"
+      ],
+      "exit_code": 0,
+      "stdout": "VM alias preflight diagnostic: 8192 x 8192 different-class spans, 3556 host us (not hardware timing)\nPASS: VM alias index/fallback preserve attribute-class refusals before MMIO/ownership; 8192-span different-class map/unmap\nPASS: 1 native map/hold/unmap transaction, 13 pre-ownership refusals, 1 scattered-span ordering and capacity case and 1 post-hold poison/retention case over a software SMMU register peer\n",
+      "stderr": ""
+    }
+  ]
+}

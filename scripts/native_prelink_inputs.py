@@ -27,8 +27,16 @@ def inputs():
 def tools(patched=False):
     profile=json.loads((ROOT/'config/native-prelink-analysis-profile.json').read_text())
     tree=Tree(ROOT/'out/nonexistent-source')
+    module=profile.get('source_module')
+    source=Path('D:/Code/UniXNU-integration') if module else BASE
+    if module:
+        actual=subprocess.check_output(['git','-C',str(source),'rev-parse','HEAD']).decode().strip()
+        if actual!=profile['source_commit']:raise ValueError('Merged source pin changed')
     for path,expected in profile['source_sha256'].items():
-        raw=subprocess.check_output(['git','--no-optional-locks','-c',f'safe.directory={BASE}','-C',str(BASE),'show',profile['source_commit']+':'+path]).replace(b'\r\n',b'\n')
+        repo=source/module['path'] if module else source
+        revision=module['commit'] if module else profile['source_commit']
+        relative=path.removeprefix(module['path']+'/') if module else path
+        raw=subprocess.check_output(['git','--no-optional-locks','-c',f'safe.directory={repo}','-C',str(repo),'show',revision+':'+relative]).replace(b'\r\n',b'\n')
         if sha(raw)!=expected:raise ValueError('Pinned tool source changed')
         tree.files[path]=raw.decode()
     if patched:
