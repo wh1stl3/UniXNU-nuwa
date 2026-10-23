@@ -1130,3 +1130,13 @@
 [Evidence] 666项清单核验、实际SEC8条CTOR及4条HANDOFF、41行2952B表不变检查通过；shim/PIL保持，实际DXE核心45570d70保留分配诊断，两包纯文件回归通过。
 [Risk] 新包未实机启动，共享日志改变其他模块及时序；下次仍须刷新日志/恢复门，本轮无设备命令或板值/feed修改，无XNU执行结论。
 ```
+
+## Q-106 · MMU构造边界实测
+
+```text
+[unixnu-nuwa][device] 实测Debug与Extract成功返回并定位至MMU构造可见边界
+
+[Change] 保存530f56b4唯一临时启动、120秒采样和原图，更新MMU内部HOB/cache离线检查及可靠通知方式。
+[Evidence] 原图520bdded显示Debug/Extract leave Success、最后Mmu enter；19:46:21实际Android完成1、三分区SHA与试前相同，无原boot发送或flash/改槽。
+[Risk] Mmu内具体分支/运行PC未取得，缓存与日志故障仍待区分；未见DXE/SHENGMEM或XNU，不改board/feed/验证标志，不继续第二包。
+```

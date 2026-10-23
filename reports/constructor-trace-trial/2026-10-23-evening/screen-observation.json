@@ -1,0 +1,26 @@
+{
+  "at": "2026-10-23T11:46:21.786002+00:00",
+  "source": "user supplied current constructor-trace photo",
+  "photo": "screen.jpg",
+  "bytes": 9894395,
+  "sha256": "520bdded72db7ec796f422356ae22ebfa1aded59a180c1a9b6581d8431dffb92",
+  "lines": [
+    "before-entry-arg-hob list=BAB00000",
+    "after-entry-arg-hob data=BAB013B8",
+    "before-library-constructors",
+    "Debug enter",
+    "Debug leave status=Success",
+    "Extract enter",
+    "Extract leave status=Success",
+    "Mmu enter"
+  ],
+  "last_visible": "Mmu enter",
+  "not_visible": [
+    "Mmu leave",
+    "Lzma enter",
+    "after-library-constructors",
+    "DXE",
+    "SHENGMEM"
+  ],
+  "limitation": "Observed entry and previous constructors returning success; no runtime PC or inner MMU branch observed"
+}

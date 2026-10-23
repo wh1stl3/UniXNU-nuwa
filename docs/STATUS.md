@@ -1,16 +1,14 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-23T19:26:45+08:00（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-23T19:50:49+08:00（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
-**下一轮更细诊断包已离线准备：CI39943865806成功、8条逐构造日志入实际SEC，41行内存表2952B不变；v4包530f56b4/3153920B，尚未实机启动。本轮没有设备操作。** [新包与实测清单](operations/2026-10-23-constructor-trace-ready.md)。
+**530f56b4逐构造包已完成一次实机临时启动：新图确认Debug leave=Success、Extract leave=Success，最后Mmu enter，未见Mmu leave/Lzma或DXE。** 已将可见范围收窄至MMU构造内部/相关日志路径，具体HOB分支、缓存指令与运行PC仍未确定，不以屏幕最后一行代替指令定位。
 
-**晚上2d833461诊断包已完成一次实机临时启动。更正照片明确显示入口HOB创建返回非空data=BAB013B8、list=BAB00000，最后为before-library-constructors；未观察到构造返回、解压、DXE或SHENGMEM。** 现已将范围收窄至库构造调用/相关日志路径，尚未定位具体函数或运行PC，不排除输出通道失效。
+**19:46:21电脑已确认实际nuwa/kalama Android完成1，随后三分区SHA与本轮试前相同，A槽未变。** 本轮恢复脚本直接检测Android，没有发送原boot；回返机制未独立记录。无flash/erase/改槽，不再启动第二个包。[构造实测报告](operations/2026-10-23-constructor-trace-trial.md)，reports/constructor-trace-trial/2026-10-23-evening/。
 
-**18:30:39电脑已确认nuwa/kalama回Android、sys.boot_completed=1；后置三分区SHA与试前相同。** 本轮恢复脚本只检测到Android，没有发送原boot；回返方式未独立记录。无flash/erase/改槽，不再启动第二包。用户先误发旧图后已更正，旧图不作为本次阶段证据。[晚间报告](operations/2026-10-23-sec-handoff-evening-trial.md)，reports/sec-handoff-trial/2026-10-23-evening/。
-
-XNU源内核已编译，尚未实机进入XNU；上午R-011曾到UniXNU菜单，中午未稳定复现。晚间新图只证明上述SEC边界，不能混为本次菜单成功。
+此前2d833461包已证明入口HOB返回非空，最后总构造前日志；本次更细日志进一步定位。新候选8条日志和全部41行表的静态检查见[构建报告](operations/2026-10-23-constructor-trace-ready.md)。XNU源内核已编译，尚未实机进入XNU。
 
 ## 新诊断固件与包
 
@@ -38,10 +36,10 @@ XNU源内核已编译，尚未实机进入XNU；上午R-011曾到UniXNU菜单，
 
 ## 下一步
 
-1. 新constructor-trace固件CI39943865806已编译并完成666个清单文件/8条marker/旧门及2952B全表静态回归，严格scope接线和旧包回归通过。无须再次构建；下次人在场时先通知录像，刷新身份/Android完成1/分区/原boot/具体恢复门。
-2. 只临时启动新包530f56b4，记录Debug/Extract/Mmu/Lzma enter/leave和status；若四库均返回再取FV/DXE/SHENGMEM。旧2d833461不重复，无依据跳过/重排构造。新共享库日志影响其他消费者，DXE核心为45570d70，不能沿用旧哈希。
-3. 完整记录后恢复Android完成1及三分区SHA。当前仅有18:30:39实际恢复证据，未进行第二轮启动或设备查询。
-4. SHENGMEM、真实initrd和载荷卷仍缺，保持FAT探针→当前prelink/ADT→EL1→原生根卷顺序，不猜偏移/板值。新诊断无XNU负载，不把阶段定位当内核通过。
+1. 离线核对ArmMmuBaseLibConstructor实际HOB查询/函数指针及cache分支，检查ArmReplaceLiveTranslationEntry地址/size、缓存行维护与异常级别；不跳过缓存同步、重排构造或伪造成功。
+2. 若需新日志，按HOB查询前后→分支→cache前后细化，先构建并核验实际TE/内存表，再安排刷新录像/身份/恢复门的下一轮实测；本轮不再启动。
+3. 530f56b4与2d833461各自保留实测图和配方，MMU leave未见不能写成唯一故障指令已定。精确倒计时不可靠，之后明确通知准备录像并在实际发送后报告，不承诺秒级启动。
+4. SHENGMEM及真实initrd/载荷卷仍缺；保持FAT探针→当前prelink/ADT→EL1→原生根卷顺序，未进入XNU。Android完成1及三分区未变本轮已复核，无待处理恢复动作。
 
 ## 后续系统卷／启动载荷预研
 

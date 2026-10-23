@@ -1,0 +1,28 @@
+{
+  "at": "2026-10-23T19:50:49+08:00",
+  "scope": "One temporary constructor diagnostic trial and Android postcondition",
+  "candidate_sha256": "530f56b49c8b6f785c9869612af338bc4ef64098dcad4051b4bd723460784d50",
+  "photo_sha256": "520bdded72db7ec796f422356ae22ebfa1aded59a180c1a9b6581d8431dffb92",
+  "observed": [
+    "Entry HOB returned data BAB013B8, list BAB00000",
+    "Debug leave status=Success",
+    "Extract leave status=Success",
+    "Mmu enter"
+  ],
+  "not_observed": [
+    "Mmu leave",
+    "Lzma enter",
+    "after-library-constructors",
+    "FV decompression",
+    "DXE",
+    "SHENGMEM"
+  ],
+  "usb_observation_seconds": 120.0,
+  "usb_samples": 59,
+  "android_boot_completed": "1",
+  "three_partition_hashes_unchanged": true,
+  "recovery_image_sent_this_trial": false,
+  "device_return_mechanism": "not independently recorded",
+  "flash_erase_slot_change": false,
+  "limitation": "Narrows visible boundary to MMU constructor path; does not locate instruction or distinguish HOB scan/cache maintenance/logger failure"
+}

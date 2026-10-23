@@ -1,0 +1,40 @@
+{
+  "phase": "recover",
+  "started_at": "2026-10-23T11:46:21.099030+00:00",
+  "commands": [
+    {
+      "at": "2026-10-23T11:46:21.424585+00:00",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'cat /sys/firmware/devicetree/base/model; cat /sys/firmware/devicetree/base/compatible'"
+      ],
+      "exit_code": 0,
+      "stdout": "Qualcomm Technologies, Inc. 8550 nuwa\u0000qcom,kalama-mtp\u0000qcom,kalama\u0000qcom,mtp\u0000",
+      "stderr": ""
+    },
+    {
+      "at": "2026-10-23T11:46:21.490214+00:00",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "shell",
+        "getprop sys.boot_completed"
+      ],
+      "exit_code": 0,
+      "stdout": "1\n",
+      "stderr": ""
+    }
+  ],
+  "observations": [],
+  "authorization": "User requested offline preparation and joint evening testing; launch requires fresh D-021 log/recovery gate and immediate capture notice",
+  "candidate_sha256": "530f56b49c8b6f785c9869612af338bc4ef64098dcad4051b4bd723460784d50",
+  "candidate_package_sha256": "77eeef55f56b27e4a7cc21f98a0412094587fc472b5b88dbc0ef38aead5fb530",
+  "recovery_sha256": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+  "preflight": null,
+  "android_boot_completed": "1",
+  "ended_at": "2026-10-23T11:46:21.490842+00:00"
+}
