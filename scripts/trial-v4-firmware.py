@@ -30,7 +30,7 @@ def devices(tool):
 
 def capture_confirmed(gate, approval):
     confirmation = gate.get('human_capture_confirmation')
-    if approval in ('MMU-BRANCHES-OFFLINE', 'HOB-QUERY-OFFLINE', 'VOLUME-PROBE-OFFLINE'):
+    if approval in ('MMU-BRANCHES-OFFLINE', 'HOB-QUERY-OFFLINE', 'VOLUME-PROBE-OFFLINE', 'HOB-INTEGRITY-OFFLINE'):
         return isinstance(confirmation, str) and bool(confirmation.strip())
     return confirmation == '可以，启动前通知我'
 
@@ -59,11 +59,12 @@ def main():
                   'CONSTRUCTOR-TRACE-OFFLINE': ROOT / 'reports/constructor-trace',
                   'MMU-BRANCHES-OFFLINE': ROOT / 'reports/mmu-branches',
                   'HOB-QUERY-OFFLINE': ROOT / 'reports/hob-query',
-                  'VOLUME-PROBE-OFFLINE': ROOT / 'reports/volume-envelope'}
+                  'VOLUME-PROBE-OFFLINE': ROOT / 'reports/volume-envelope',
+                  'HOB-INTEGRITY-OFFLINE': ROOT / 'reports/hob-integrity'}
         package_raw = package_path.read_bytes()
         package = json.loads(package_raw)
         approval = package.get('approval')
-        if approval == "VOLUME-PROBE-OFFLINE":
+        if approval in ("VOLUME-PROBE-OFFLINE", "HOB-INTEGRITY-OFFLINE"):
             from volume_probe_package import validate
             validate(package_path)
         if approval in ('SEC-HANDOFF-OFFLINE', 'CONSTRUCTOR-TRACE-OFFLINE', 'MMU-BRANCHES-OFFLINE', 'HOB-QUERY-OFFLINE'):
@@ -71,7 +72,7 @@ def main():
             validate(package_path)
         if (approval not in scopes or not package_path.is_relative_to(scopes[approval])
                 or package['header_version'] != 4
-                or package['xnu_included'] or (package['fat_included'] and approval != 'VOLUME-PROBE-OFFLINE') or package['appended_dtb']
+                or package['xnu_included'] or (package['fat_included'] and approval not in ('VOLUME-PROBE-OFFLINE', 'HOB-INTEGRITY-OFFLINE')) or package['appended_dtb']
                 or package['original_boot_sha256'] != HASHES[ORIGINAL]):
             raise ValueError('Package is outside the approved trial scope')
         if approval == 'R-008 A' and (package['shim_text_offset'] != 0

@@ -30,3 +30,10 @@
 D:/Code/PortingiOS和PortingiOSWithUniXNU只读；固件源码在uefi-nuwa，设备仓存固定引用、补丁和证据。board/bringup内存地址容量及身份、*_verified不得默改。无flash/erase/改槽。
 
 用户要求：每次硬停先落档STATUS、本文、NEED-REVIEW/PENDING-HUMAN，说明原因、设备状态、证据、待办和续接命令；人工恢复等待期间继续离线工作。每次设备试验先确认可拍摄日志与可恢复路径，通知后才启动。
+
+
+## HOB完整性包本地验收更新
+
+CI39973030321已下载并通过实际SEC新标记及全固件检查。新包dd1ef82517d256a44b05b5d72e132fe4a37078e2e12cf82f40302b408886034e，70266880B；FD8e37ba79。41行2952B内存表相同，完整容器逐字节复验通过。独立HOB-INTEGRITY-OFFLINE scope已接入打包、preflight和trial；旧volume-envelope包仍按旧scope复验。原5项MMU门测试通过。
+
+用户本轮确认通知后录像，preflight确认真实nuwa/kalama Android完成1及A槽/三分区摘要。包待立即通知并临时启动；屏幕和恢复未发生，不宣称实机通过。证据reports/hob-integrity/39973030321/与reports/hob-integrity-trial/2026-10-23-evening/。旧交接中的“尚未本地核验/未接入scope”被本节取代。继续关注query GUID/PHIT及invalid行，不跳过损坏条目。

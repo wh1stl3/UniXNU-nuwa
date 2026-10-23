@@ -11,3 +11,10 @@
 固件接收驱动仍来自uefi-nuwa@150b5ec。64MiB卷探针及完整C主机解析已通过离线检查；ABL运输尚未实机验证。板值与_verified不变，等待人工操作不阻塞离线工作。
 
 CI39973030321已成功；新产物尚待下载、实际新标记核验及独立打包scope接入。当前续接入口见operations/2026-10-23-mainline-handoff.md。用户要求每次硬停落档已纳入AGENTS。
+
+
+## HOB完整性包本地验收更新
+
+CI39973030321已下载并通过实际SEC新标记及全固件检查。新包dd1ef82517d256a44b05b5d72e132fe4a37078e2e12cf82f40302b408886034e，70266880B；FD8e37ba79。41行2952B内存表相同，完整容器逐字节复验通过。独立HOB-INTEGRITY-OFFLINE scope已接入打包、preflight和trial；旧volume-envelope包仍按旧scope复验。原5项MMU门测试通过。
+
+用户本轮确认通知后录像，preflight确认真实nuwa/kalama Android完成1及A槽/三分区摘要。包待立即通知并临时启动；屏幕和恢复未发生，不宣称实机通过。证据reports/hob-integrity/39973030321/与reports/hob-integrity-trial/2026-10-23-evening/。旧交接中的“尚未本地核验/未接入scope”被本节取代。继续关注query GUID/PHIT及invalid行，不跳过损坏条目。

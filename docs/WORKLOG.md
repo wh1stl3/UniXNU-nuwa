@@ -261,3 +261,5 @@
 2026-10-23晚 · 卷探针实测发现BAB00718零长度HOB原地循环，恢复Android及哈希闭环；加入0014查询GUID/PHIT及异常长度停止诊断，独立profile静态通过 · Q-120 · reports/hob-integrity/
 
 2026-10-23晚 · 落实每次硬停同步交接/进度要求，重写主线交接并明确CI39973030321成功及未完成本地验收 · Q-121 · docs/operations/2026-10-23-mainline-handoff.md
+
+2026-10-23晚 · dd1ef825新诊断包全表/新标记/容器核验通过，独立scope接入并刷新录像及设备门 · Q-122 · reports/hob-integrity/39973030321/

@@ -18,16 +18,21 @@ def sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
-def recipe(run):
+PROFILES = {"VOLUME-PROBE-OFFLINE": "volume-envelope", "HOB-INTEGRITY-OFFLINE": "hob-integrity"}
+
+
+def recipe(run, profile_name="volume-envelope"):
+    if profile_name not in PROFILES.values():
+        raise ValueError("Unsupported profile")
     artifact = ROOT / f'out/firmware-ci/{run}/nuwa-firmware-{run}'
-    profile = json.loads((ROOT/'config/firmware-volume-envelope-profile.json').read_text())
+    profile = json.loads((ROOT/f'config/firmware-{profile_name}-profile.json').read_text())
     inputs = json.loads((artifact/'inputs.json').read_text())
     if inputs['recipe'] != profile['recipe'] or inputs['run_id'] != str(run):
         raise ValueError('Wrong build source or run')
     spec = importlib.util.spec_from_file_location('volume_inspector', ROOT/'scripts/ci/inspect-firmware-candidate.py')
     inspector = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(inspector)
-    inspected = inspector.inspect(artifact, 'NuwaBootMemoryDxe', True, True, True, 'volume-envelope')
+    inspected = inspector.inspect(artifact, 'NuwaBootMemoryDxe', True, True, True, profile_name)
     stock = STOCK.read_bytes()
     fat = (ROOT/'out/volume-probe/volume-probe.fat.img').read_bytes()
     if sha(stock) != STOCK_SHA or sha(fat) != FAT_SHA or len(fat) != 67108864:
@@ -48,12 +53,12 @@ def recipe(run):
     ramdisk = MAGIC + struct.pack('<IIQI28x', 1, 64, len(fat), zlib.crc32(fat)) + fat
     struct.pack_into('<II', header, 8, len(kernel), len(ramdisk))
     image = bytes(header) + kernel + bytes(-len(kernel) % 4096) + ramdisk + bytes(-len(ramdisk) % 4096)
-    metadata = dict(approval='VOLUME-PROBE-OFFLINE', run_id=run,
+    metadata = dict(approval=next(key for key, value in PROFILES.items() if value == profile_name), run_id=run,
         device_commit=inputs['device_commit'], firmware_commit=profile['recipe']['sources']['firmware']['commit'],
         original_boot_sha256=STOCK_SHA, image_sha256=sha(image), image_bytes=len(image),
         fd_sha256=sha(fd), shim_sha256=sha(shim), fat_sha256=sha(fat), fat_bytes=len(fat),
         ramdisk_sha256=sha(ramdisk), ramdisk_bytes=len(ramdisk), kernel_bytes=len(kernel),
-        image_path=f'out/trial-boot/volume-envelope-{run}/boot-volume-probe-v4.img',
+        image_path=f'out/trial-boot/{profile_name}-{run}/boot-volume-probe-v4.img',
         header_version=4, signature_bytes=0, fat_included=True, appended_dtb=False, xnu_included=False, adt_included=False,
         probe_title='NUWA VOLUME PROBE - NO XNU', device_executed=False,
         inspection_fd_sha256=inspected['fd']['sha256'])
@@ -62,13 +67,16 @@ def recipe(run):
 
 def validate(path):
     path = Path(path).resolve()
-    if path.name != 'package.json' or path.parent.parent != ROOT/'reports/volume-envelope':
+    if path.name != 'package.json' or path.parent.parent.name not in PROFILES.values() or path.parent.parent.parent != ROOT/'reports':
         raise ValueError('Unexpected package report location')
     report = json.loads(path.read_text())
     run = report['run_id']
     if type(run) is not int or path.parent.name != str(run):
         raise ValueError('Run mismatch')
-    image, expected = recipe(run)
+    profile_name = PROFILES.get(report.get("approval"))
+    if profile_name != path.parent.parent.name:
+        raise ValueError("Profile scope mismatch")
+    image, expected = recipe(run, profile_name)
     if report != expected or (ROOT/expected['image_path']).read_bytes() != image:
         raise ValueError('Package metadata, header, payload or padding changed')
     return report
@@ -77,10 +85,11 @@ def validate(path):
 def main():
     cli = argparse.ArgumentParser(description=__doc__)
     cli.add_argument('run', type=int)
+    cli.add_argument("--profile", choices=tuple(PROFILES.values()), default="volume-envelope")
     args = cli.parse_args()
-    image, report = recipe(args.run)
+    image, report = recipe(args.run, args.profile)
     dest = ROOT/report['image_path']
-    evidence = ROOT/f'reports/volume-envelope/{args.run}/package.json'
+    evidence = ROOT/f'reports/{args.profile}/{args.run}/package.json'
     if dest.parent.exists() or evidence.exists():
         raise ValueError('Fresh output required')
     dest.parent.mkdir(parents=True)

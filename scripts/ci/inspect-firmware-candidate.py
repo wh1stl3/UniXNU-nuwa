@@ -32,6 +32,7 @@ CONSTRUCTOR_MARKERS = tuple(f'[NUWA-CTOR] {label} {boundary}'
                             for boundary in ('enter', 'leave status=%r'))
 MMU_MARKERS = ('[NUWA-MMU] after-guid-query hob=%p', '[NUWA-MMU] before-hob-function-read', '[NUWA-MMU] after-hob-function-read', '[NUWA-MMU] before-cache helper=%p bytes=%u', '[NUWA-MMU] after-cache')
 HOB_MARKERS = ('[NUWA-HOB] query-enter', '[NUWA-HOB] list=%p', '[NUWA-HOB] scan-start ptr=%p', '[NUWA-HOB] row=%u ptr=%p type=%x len=%x', '[NUWA-HOB] before-compare ptr=%p', '[NUWA-HOB] matched', '[NUWA-HOB] different', '[NUWA-HOB] log-limit; traversal unchanged', '[NUWA-HOB] query-leave result=%p')
+HOB_CHECK_MARKERS = ("[NUWA-HOB-CHECK] invalid ptr=%p type=%x len=%x target=%x", "[NUWA-HOB-CHECK] query guid=%g list=%p end=0x%lx bottom=0x%lx top=0x%lx")
 PCD_GUID = "13a3f0f6-264a-3ef0-f2e0-dec512342f34"
 PCD_DRIVER_GUID = "80cf7257-87ab-47f9-a3fe-d50b76d89541"
 PIL_GUID = '1d317734-4083-47c6-83ea-e3a42f2a6bff'
@@ -189,7 +190,8 @@ class Firmware:
                                          handoff_markers={marker: marker.encode() in body for marker in HANDOFF_MARKERS},
                                          constructor_markers={marker: marker.encode() in body for marker in CONSTRUCTOR_MARKERS},
                                          mmu_markers={marker: marker.encode() in body for marker in MMU_MARKERS},
-                                         hob_markers={marker: marker.encode() in body for marker in HOB_MARKERS})
+                                         hob_markers={marker: marker.encode() in body for marker in HOB_MARKERS},
+                                         hob_check_markers={marker: marker.encode() in body for marker in HOB_CHECK_MARKERS})
             elif kind == 0x19 and owner['guid'] == PIL_CONFIG_GUID:
                 text = body.rstrip(b'\0').decode('ascii')
                 active, entries = False, []
@@ -349,6 +351,8 @@ def inspect(artifact, publisher_name='ShengBootMemoryDxe', require_sec_trace=Fal
         need(all(sec_te[0]['mmu_markers'].values()), 'MMU branch logs absent from actual SEC TE')
     if inputs['profile'] in ('hob-query', 'volume-envelope', 'hob-integrity'):
         need(all(sec_te[0]['hob_markers'].values()), 'HOB query logs absent from actual SEC TE')
+    if inputs['profile'] == 'hob-integrity':
+        need(all(sec_te[0]['hob_check_markers'].values()), 'HOB integrity logs absent from actual SEC TE')
     symbols = (artifact / "shim/symbols.txt").read_text()
     payload = next(int(line.split()[0], 16) for line in symbols.splitlines() if line.endswith(" _Payload"))
     need(payload == len(shim), "Shim literal pool/padding separates payload")

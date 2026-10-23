@@ -1290,3 +1290,13 @@
 [Evidence] postcondition确认Android及三分区；CI39973030321 success，产物尚未本地验收。
 [Risk] 交接记录不替代新一轮日志/恢复门，XNU尚未进入。
 ```
+
+## Q-122 · HOB完整性包就绪
+
+```text
+[unixnu-nuwa][firmware] 核验HOB完整性诊断并接入独立试验scope
+
+[Change] 实际SEC强制新标记检查，扩展严格探针容器和设备门，更新交接及进度。
+[Evidence] dd1ef825完整容器逐字节校验，41行2952B表一致，5项MMU门回归通过；新鲜用户录像确认及nuwa Android门通过。
+[Risk] 新包未实测；HOB异常起因未知，诊断停在异常现场不修复链。
+```
