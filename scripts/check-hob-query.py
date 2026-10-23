@@ -71,7 +71,7 @@ def main():
         raise ValueError('Traversal or return expressions changed')
     report = dict(result='40 pins, complete patch chain and original traversal static checks passed',
                   inputs=len(profile['recipe']['inputs']), post_patch_inputs=len(profile['candidate']['post_patch_inputs']),
-                  log_rows_per_query=64, additional_header_length_reads=True,
+                  log_rows_per_query=128, additional_header_length_reads=True,
                   timing_and_logger_effects_unverified=True, device_accessed=False, compiled=False)
     (ROOT / 'reports/hob-query/profile-check.json').write_text(json.dumps(report, indent=2) + '\n')
     print(json.dumps(report))

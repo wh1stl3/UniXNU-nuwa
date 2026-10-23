@@ -15,17 +15,17 @@
    ASSERT (HobStart != NULL);
  
    Hob.Raw = (UINT8 *)HobStart;
-+  if (mNuwaHobTraceActive && mNuwaHobTraceCount < 64) {
++  if (mNuwaHobTraceActive && mNuwaHobTraceCount < 128) {
 +    DEBUG ((EFI_D_ERROR, "[NUWA-HOB] scan-start ptr=%p\n", Hob.Raw));
 +  }
    //
    // Parse the HOB list until end of list or matching type is found.
    //
    while (!END_OF_HOB_LIST (Hob)) {
-+    if (mNuwaHobTraceActive && mNuwaHobTraceCount < 64) {
++    if (mNuwaHobTraceActive && mNuwaHobTraceCount < 128) {
 +      DEBUG ((EFI_D_ERROR, "[NUWA-HOB] row=%u ptr=%p type=%x len=%x\n", (UINT32)mNuwaHobTraceCount, Hob.Raw, Hob.Header->HobType, Hob.Header->HobLength));
 +      mNuwaHobTraceCount++;
-+      if (mNuwaHobTraceCount == 64) {
++      if (mNuwaHobTraceCount == 128) {
 +        DEBUG ((EFI_D_ERROR, "[NUWA-HOB] log-limit; traversal unchanged\n"));
 +      }
 +    }
@@ -36,16 +36,16 @@
  
    GuidHob.Raw = (UINT8 *)HobStart;
    while ((GuidHob.Raw = GetNextHob (EFI_HOB_TYPE_GUID_EXTENSION, GuidHob.Raw)) != NULL) {
-+    if (mNuwaHobTraceActive && mNuwaHobTraceCount < 64) {
++    if (mNuwaHobTraceActive && mNuwaHobTraceCount < 128) {
 +      DEBUG ((EFI_D_ERROR, "[NUWA-HOB] before-compare ptr=%p\n", GuidHob.Raw));
 +    }
      if (CompareGuid (Guid, &GuidHob.Guid->Name)) {
-+      if (mNuwaHobTraceActive && mNuwaHobTraceCount < 64) {
++      if (mNuwaHobTraceActive && mNuwaHobTraceCount < 128) {
 +        DEBUG ((EFI_D_ERROR, "[NUWA-HOB] matched\n"));
 +      }
        break;
 +    }
-+    if (mNuwaHobTraceActive && mNuwaHobTraceCount < 64) {
++    if (mNuwaHobTraceActive && mNuwaHobTraceCount < 128) {
 +      DEBUG ((EFI_D_ERROR, "[NUWA-HOB] different\n"));
      }
  

@@ -4,10 +4,12 @@
 
 实际SEC（FD ea0277e8）的GetFirstGuidHob/GetNextHob和SerialPortWrite反汇编已保存reports/hob-query/audit.json，源码Mu cfb93724、BSD-2-Clause-Patent。GetHobList读TPIDR，遍历读取HobType/HobLength；没有零步长和边界保护。FrameBuffer日志在写字后仍调用缓存维护，因此最后可见日志不证明其调用已返回。尚无运行PC或坏HOB证据。
 
-0013-prepi-hob-query-trace.patch只改PrePiHobLib/Hob.c，GetFirstGuidHob入口、list、查询返回及GetNextHob逐项/比较日志；每次查询最多64条row，达到上限只停日志、不改遍历。新增header length读取可能影响异常位置，日志影响时序。不会伪造HOB、跳过cache或把缺失GUID改为成功。
+0013-prepi-hob-query-trace.patch只改PrePiHobLib/Hob.c，GetFirstGuidHob入口、list、查询返回及GetNextHob逐项/比较日志；每次查询最多128条row，达到上限只停日志、不改遍历。新增header length读取可能影响异常位置，日志影响时序。不会伪造HOB、跳过cache或把缺失GUID改为成功。
 
 独立hob-query profile保留0011/0012，新增第40项原始输入和第9项post-patch输入；完整补丁链内存检查通过。诊断块删除后遍历与返回表达式一致。既有5项MMU离线测试通过。
 
 同SoC参照仍为reports/sec-handoff/same-soc-order.json固定uefi-sheng@329b473d；其SEC同样在PlatformPeim和EntryArg HOB后执行构造，只支持顺序参照，不说明nuwa运行HOB有效；本次未移植其他板内存值。
 
 CI/实际产物/全表/打包尚待。下一次实测须通知录像并刷新恢复门，当前Android恢复已确认。
+
+第一版CI39961551151成功但未打包或实测。39个有资源HOB的描述符加系统内存分配HOB，以及ArmMmuLib AllocatePages页表分配、平台/Extract HOB，可能超出64条日志；将上限改为128再构建。128仍是日志上限，不是运行链有效性限制；达到上限不改变遍历。
