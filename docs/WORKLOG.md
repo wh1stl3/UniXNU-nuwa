@@ -241,3 +241,5 @@
 2026-10-23T21:18:05.100423+08:00 · CI39958974666成功，新包2b203afa静态核验通过，41行全表一致、五项离线测试通过，无设备操作 · Q-110（提交后git log定位） · reports/mmu-branches/39958974666/；docs/operations/2026-10-23-mmu-branches-build.md
 
 2026-10-23T21:23:58.332786+08:00 · 新包2b203afa实测最后Mmu enter，无新增MMU；解释固定编译时间；原厂boot恢复Android完成1及三分区一致 · Q-111（提交后git log定位） · reports/mmu-branches-trial/2026-10-23-evening/
+
+2026-10-23T21:28:57.597878+08:00 · 实际SEC HOB查询/日志尾部核对，0013独立profile40输入及完整补丁链通过，待CI · Q-112（git log定位） · reports/hob-query/；docs/operations/2026-10-23-hob-query-trace.md

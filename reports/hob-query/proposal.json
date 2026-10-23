@@ -1,0 +1,13 @@
+{
+  "source_commit": "cfb93724a06ff86ff5ba971413368a7809ee42a5",
+  "path": "EmbeddedPkg/Library/PrePiHobLib/Hob.c",
+  "license": "BSD-2-Clause-Patent",
+  "pre_sha256": "ee7f9274fe83de32e07f63097d3045949f2a7429bdc6c8151481193aa575c199",
+  "post_sha256": "5de74af7c65c80218b2f75e946a20d36d99aa12f3c836110080a5dd52148839d",
+  "patch": "patches/firmware-candidates/0013-prepi-hob-query-trace.patch",
+  "patch_sha256": "04114ffb4919bf68999270cc60ca5f34fdc11126fb7827bdf45eb09dc2487078",
+  "log_cap": 64,
+  "scope": "All PrePi GetFirstGuidHob queries; unchanged GetNextHob/GetNextGuidHob traversal and result; new logging reads header length",
+  "device_accessed": false,
+  "compiled": false
+}

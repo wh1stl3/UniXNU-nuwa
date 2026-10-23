@@ -18,10 +18,10 @@ def sha(data):
 def main():
     cli = argparse.ArgumentParser(description=__doc__)
     cli.add_argument('run_id', type=int)
-    cli.add_argument('--profile', choices=('pil-no-auto', 'dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches'), default='pil-no-auto')
+    cli.add_argument('--profile', choices=('pil-no-auto', 'dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query'), default='pil-no-auto')
     args = cli.parse_args()
     approval = {'pil-no-auto': 'R-009 A', 'dxe-allocation': 'R-010 A', 'factory-heap': 'R-011 A',
-                'sec-handoff': 'SEC-HANDOFF-OFFLINE', 'constructor-trace': 'CONSTRUCTOR-TRACE-OFFLINE', 'mmu-branches': 'MMU-BRANCHES-OFFLINE'}[args.profile]
+                'sec-handoff': 'SEC-HANDOFF-OFFLINE', 'constructor-trace': 'CONSTRUCTOR-TRACE-OFFLINE', 'mmu-branches': 'MMU-BRANCHES-OFFLINE', 'hob-query': 'HOB-QUERY-OFFLINE'}[args.profile]
     artifact = ROOT / f'out/firmware-ci/{args.run_id}/nuwa-firmware-{args.run_id}'
     output = ROOT / f'out/trial-boot/{args.profile}-{args.run_id}'
     report = ROOT / f'reports/{args.profile}/{args.run_id}'
@@ -36,7 +36,7 @@ def main():
     inspector = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(inspector)
     inspection = inspector.inspect(artifact, 'NuwaBootMemoryDxe', require_sec_trace=True, require_no_auto_abl=True,
-                                   require_allocation_trace=args.profile in ('dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches'),
+                                   require_allocation_trace=args.profile in ('dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query'),
                                    allocation_profile=args.profile if args.profile != 'pil-no-auto' else 'dxe-allocation')
     original = STOCK.read_bytes()
     if sha(original) != STOCK_SHA:
@@ -86,20 +86,23 @@ def main():
                 'appended_dtb': False, 'fat_included': False, 'xnu_included': False,
                 'dt_source': 'Installed nuwa vendor_boot via ABL; actual candidate handoff unverified',
                 'candidate_device_executed': False, 'recovery_required': True}
-    if args.profile in ('sec-handoff', 'constructor-trace', 'mmu-branches'):
+    if args.profile in ('sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query'):
         metadata.update(handoff_markers=inspection['sec_entry_hob_producer']['handoff_markers'],
                         ready_to_execute=False,
                         authorization='User requested offline preparation and evening joint trial; no device action in this session',
                         execution_gate='Refresh identity/recovery/capture evidence and notify user in evening; strict candidate validation alone does not permit launch')
-    if args.profile in ('constructor-trace', 'mmu-branches'):
+    if args.profile in ('constructor-trace', 'mmu-branches', 'hob-query'):
         metadata.update(constructor_markers=inspection['sec_entry_hob_producer']['constructor_markers'],
                         constructor_patch_sha256=next(p['sha256'] for p in profile['candidate']['patches'] if p['path'].endswith('0011-mu-constructor-trace.patch')),
                         execution_gate='Offline package only; integrate strict constructor profile gate and refresh capture/recovery evidence before a new trial')
-    if args.profile == 'mmu-branches':
+    if args.profile in ('mmu-branches', 'hob-query'):
         metadata.update(mmu_markers=inspection['sec_entry_hob_producer']['mmu_markers'],
-                        mmu_patch_sha256=profile['candidate']['patches'][-1]['sha256'],
+                        mmu_patch_sha256=next(p['sha256'] for p in profile['candidate']['patches'] if p['path'].endswith('0012-mmu-constructor-branches.patch')),
                         authorization='Offline build/package authorized; notify user before device testing',
                         execution_gate='Notify user and refresh identity, capture and recovery evidence before launch')
+    if args.profile == 'hob-query':
+        metadata.update(hob_markers=inspection['sec_entry_hob_producer']['hob_markers'],
+                        hob_patch_sha256=profile['candidate']['patches'][-1]['sha256'])
     report.mkdir(parents=True, exist_ok=True)
     (report / 'artifact-inspection.json').write_text(json.dumps(inspection, indent=2) + '\n', encoding='utf-8')
     for destination in (report / 'package.json', output / 'package.json'):

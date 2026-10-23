@@ -12,7 +12,7 @@ APPROVAL = 'SEC-HANDOFF-OFFLINE'
 def validate(package_path):
     path = Path(package_path).resolve()
     package = json.loads(path.read_text())
-    profiles = {'SEC-HANDOFF-OFFLINE': 'sec-handoff', 'CONSTRUCTOR-TRACE-OFFLINE': 'constructor-trace', 'MMU-BRANCHES-OFFLINE': 'mmu-branches'}
+    profiles = {'SEC-HANDOFF-OFFLINE': 'sec-handoff', 'CONSTRUCTOR-TRACE-OFFLINE': 'constructor-trace', 'MMU-BRANCHES-OFFLINE': 'mmu-branches', 'HOB-QUERY-OFFLINE': 'hob-query'}
     profile_name = profiles.get(package.get('approval'))
     if profile_name is None or not path.is_relative_to(ROOT / 'reports' / profile_name) or path.name != 'package.json':
         raise ValueError('SEC diagnostic report outside its scope')
@@ -40,12 +40,15 @@ def validate(package_path):
                         if p['path'] == 'patches/firmware-candidates/0008-nuwa-dxe-allocation-trace.patch'),
                     header_version=4, page_bytes=4096, kernel_bytes=3145840, ramdisk_bytes=0, signature_bytes=0,
                     image_bytes=3153920, appended_dtb=False, fat_included=False, xnu_included=False)
-    if profile_name in ('constructor-trace', 'mmu-branches'):
+    if profile_name in ('constructor-trace', 'mmu-branches', 'hob-query'):
         expected.update(constructor_patch_sha256=next(p['sha256'] for p in profile['candidate']['patches'] if p['path'].endswith('0011-mu-constructor-trace.patch')),
                         constructor_markers=actual['sec_entry_hob_producer']['constructor_markers'])
-    if profile_name == 'mmu-branches':
+    if profile_name in ('mmu-branches', 'hob-query'):
         expected.update(mmu_markers=actual['sec_entry_hob_producer']['mmu_markers'],
-                        mmu_patch_sha256=profile['candidate']['patches'][-1]['sha256'])
+                        mmu_patch_sha256=next(p['sha256'] for p in profile['candidate']['patches'] if p['path'].endswith('0012-mmu-constructor-branches.patch')))
+    if profile_name == 'hob-query':
+        expected.update(hob_markers=actual['sec_entry_hob_producer']['hob_markers'],
+                        hob_patch_sha256=profile['candidate']['patches'][-1]['sha256'])
     if any(package.get(key) != value for key, value in expected.items()):
         raise ValueError('SEC candidate exceeds inspected offline scope')
     image = (ROOT / package['image_path']).resolve()

@@ -1190,3 +1190,13 @@
 [Evidence] 新包实际发送成功；原图e1bc997f最后Mmu enter，无MMU新日志；原厂boot恢复后Android完成1和三分区SHA一致。
 [Risk] 单张照片非连续录像；查询或输出路径尚未区分，无故障PC证据，未启动第二包。
 ```
+
+## Q-112 · HOB查询诊断
+
+```text
+[unixnu-nuwa][firmware] 加入有界HOB查询日志以区分MMU入口后的路径
+
+[Change] 新增0013 PrePi HOB诊断与hob-query独立profile、CI及严格scope，保留前序日志。
+[Evidence] 实际SEC查询/SerialPortWrite反汇编；40项固定输入和完整补丁链通过，删除诊断后遍历返回表达式一致。
+[Risk] 新日志额外读取header length并影响时序；新固件未编译或实测，不改cache/HOB返回与板值。
+```

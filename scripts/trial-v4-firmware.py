@@ -30,7 +30,7 @@ def devices(tool):
 
 def capture_confirmed(gate, approval):
     confirmation = gate.get('human_capture_confirmation')
-    if approval == 'MMU-BRANCHES-OFFLINE':
+    if approval in ('MMU-BRANCHES-OFFLINE', 'HOB-QUERY-OFFLINE'):
         return isinstance(confirmation, str) and bool(confirmation.strip())
     return confirmation == '可以，启动前通知我'
 
@@ -57,11 +57,12 @@ def main():
                   'R-009 A': ROOT / 'reports/pil-no-auto', 'R-010 A': ROOT / 'reports/dxe-allocation', 'R-011 A': ROOT / 'reports/factory-heap',
                   'SEC-HANDOFF-OFFLINE': ROOT / 'reports/sec-handoff',
                   'CONSTRUCTOR-TRACE-OFFLINE': ROOT / 'reports/constructor-trace',
-                  'MMU-BRANCHES-OFFLINE': ROOT / 'reports/mmu-branches'}
+                  'MMU-BRANCHES-OFFLINE': ROOT / 'reports/mmu-branches',
+                  'HOB-QUERY-OFFLINE': ROOT / 'reports/hob-query'}
         package_raw = package_path.read_bytes()
         package = json.loads(package_raw)
         approval = package.get('approval')
-        if approval in ('SEC-HANDOFF-OFFLINE', 'CONSTRUCTOR-TRACE-OFFLINE', 'MMU-BRANCHES-OFFLINE'):
+        if approval in ('SEC-HANDOFF-OFFLINE', 'CONSTRUCTOR-TRACE-OFFLINE', 'MMU-BRANCHES-OFFLINE', 'HOB-QUERY-OFFLINE'):
             from sec_handoff_package import validate
             validate(package_path)
         if (approval not in scopes or not package_path.is_relative_to(scopes[approval])
@@ -128,7 +129,7 @@ def main():
                   'User explicitly approved temporary prepared v4 candidate trial; original recovery authorized',
                   candidate_sha256=candidate_sha, candidate_package_sha256=package_sha,
                   recovery_sha256=HASHES[ORIGINAL], preflight=gate)
-    if args.package and package['approval'] in ('SEC-HANDOFF-OFFLINE', 'CONSTRUCTOR-TRACE-OFFLINE', 'MMU-BRANCHES-OFFLINE'):
+    if args.package and package['approval'] in ('SEC-HANDOFF-OFFLINE', 'CONSTRUCTOR-TRACE-OFFLINE', 'MMU-BRANCHES-OFFLINE', 'HOB-QUERY-OFFLINE'):
         report['authorization'] = 'Offline diagnostic preparation authorized; launch requires fresh D-021 log/recovery gate and immediate user capture notice'
 
     def save():
