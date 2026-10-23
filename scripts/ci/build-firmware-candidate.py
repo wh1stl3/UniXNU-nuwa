@@ -26,7 +26,7 @@ def save(name, obj):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--profile', choices=('legacy', 'dedicated', 'sec-trace', 'pil-no-auto', 'dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope'), default='legacy')
+    parser.add_argument('--profile', choices=('legacy', 'dedicated', 'sec-trace', 'pil-no-auto', 'dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity'), default='legacy')
     args = parser.parse_args()
     if os.environ.get("GITHUB_ACTIONS") != "true":
         raise RuntimeError("Only the approved disposable Actions build environment is supported")
@@ -36,7 +36,7 @@ def main():
         raise RuntimeError("Fresh source/build tree required; refusing to overwrite")
     work.mkdir()
     OUT.mkdir(parents=True, exist_ok=False)
-    if args.profile in ('dedicated', 'sec-trace', 'pil-no-auto', 'dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope'):
+    if args.profile in ('dedicated', 'sec-trace', 'pil-no-auto', 'dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity'):
         filename = {'dedicated': 'firmware-dedicated-profile.json',
                     'sec-trace': 'firmware-sec-trace-profile.json',
                     'pil-no-auto': 'firmware-pil-no-auto-profile.json',
@@ -45,6 +45,7 @@ def main():
                     'sec-handoff': 'firmware-sec-handoff-profile.json',
                     'hob-query': 'firmware-hob-query-profile.json',
                     'volume-envelope': 'firmware-volume-envelope-profile.json',
+                    'hob-integrity': 'firmware-hob-integrity-profile.json',
                     'mmu-branches': 'firmware-mmu-branches-profile.json',
                     'constructor-trace': 'firmware-constructor-trace-profile.json'}[args.profile]
         profile = json.loads((ROOT / 'config' / filename).read_text())
@@ -86,7 +87,7 @@ def main():
              "Silicon/Silicium/OpensslPkg/Library/OpensslLib/openssl", "Binaries"], fw, log="submodules.log")
         # Patching Mu before stuart --setup makes its checkout dirty; that helper
         # can skip recursive initialization. Resolve pinned gitlinks first.
-        if args.profile in ('dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope'):
+        if args.profile in ('dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity'):
             run(['git', 'submodule', 'update', '--init', '--recursive', '--depth', '1'],
                 fw / 'Mu_Basecore', log='mu-submodules.log')
         checked = []

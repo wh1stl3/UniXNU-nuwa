@@ -18,6 +18,7 @@ on:
           - mmu-branches
           - hob-query
           - volume-envelope
+          - hob-integrity
 
 permissions:
   contents: read
@@ -62,7 +63,7 @@ jobs:
       - name: Build approved candidate only
         run: python3 scripts/ci/build-firmware-candidate.py --profile "$FW_PROFILE"
       - name: Inspect MMU branch diagnostic firmware
-        if: env.FW_PROFILE == 'mmu-branches' || env.FW_PROFILE == 'hob-query' || env.FW_PROFILE == 'volume-envelope'
+        if: env.FW_PROFILE == 'mmu-branches' || env.FW_PROFILE == 'hob-query' || env.FW_PROFILE == 'volume-envelope' || env.FW_PROFILE == 'hob-integrity'
         run: >-
           python3 scripts/ci/inspect-firmware-candidate.py out/firmware-ci
           --output out/firmware-ci/artifact-inspection.json

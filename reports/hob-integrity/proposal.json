@@ -1,0 +1,10 @@
+{
+  "photo": "reports/volume-envelope-trial/2026-10-23-evening/user-zero-hob.jpg",
+  "observed_pointer": "0xbab00718",
+  "observed_type": 0,
+  "observed_length": 0,
+  "conclusion": "Zero length makes original GET_NEXT_HOB remain at same address",
+  "root_cause": "Unresolved: creation, overwrite, stale visibility or pointer boundary",
+  "behavior_change": "Malformed entry logs and CpuDeadLoop; no fabricated HOB or skipped traversal",
+  "trial_performed": false
+}

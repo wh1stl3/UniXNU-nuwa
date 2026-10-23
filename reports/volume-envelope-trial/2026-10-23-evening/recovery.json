@@ -1,0 +1,27 @@
+{
+  "phase": "recover",
+  "started_at": "2026-10-23T14:10:12.111966+00:00",
+  "commands": [
+    {
+      "at": "2026-10-23T14:12:20.759516+00:00",
+      "argv": [
+        "fastboot",
+        "-s",
+        "<selected-nuwa>",
+        "getvar",
+        "product"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "product: enuma\nFinished. Total time: 0.009s\n"
+    }
+  ],
+  "observations": [],
+  "authorization": "VOLUME-PROBE-OFFLINE explicit diagnostic trial/recovery approval",
+  "candidate_sha256": "ae9a445a119fd98f386f79a177b2cdef73f086a57d1e398edde75c7049f57132",
+  "candidate_package_sha256": "ef4db652779dab5db6f0810dd59b12dc4c8e14d74b87fa4ac2138692721447a0",
+  "recovery_sha256": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+  "preflight": null,
+  "error": "Android completion not observed; recovery remains pending",
+  "ended_at": "2026-10-23T14:13:16.916928+00:00"
+}

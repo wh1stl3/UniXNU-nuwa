@@ -279,7 +279,7 @@ def inspect(artifact, publisher_name='ShengBootMemoryDxe', require_sec_trace=Fal
         if name == publisher_name:
             need(deps == [[dict(op="PUSH", guid=PCD_GUID), dict(op="END")]], "Initrd publisher DEPEX mismatch")
             need(images[0]["entry_hob_guid_present"], "Publisher HOB GUID absent from image")
-            if inputs["profile"] == "volume-envelope":
+            if inputs["profile"] in ("volume-envelope", "hob-integrity"):
                 need(all(images[0]["volume_markers"].values()), "Volume envelope publisher markers absent")
         outputs = []
         for path in artifact.rglob(name + ".efi"):
@@ -310,7 +310,7 @@ def inspect(artifact, publisher_name='ShengBootMemoryDxe', require_sec_trace=Fal
     need(offset == expected_offset and image_size == len(shim) + len(data), "Shim header length/relative-offset mismatch")
     pil_check = None
     if require_no_auto_abl:
-        need(inputs['profile'] in ('pil-no-auto', 'dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope') and expected_offset == 0, 'Wrong R-009 build profile/header')
+        need(inputs['profile'] in ('pil-no-auto', 'dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity') and expected_offset == 0, 'Wrong R-009 build profile/header')
         configs = [s['pil_config'] for f in fv.files if f['guid'] == PIL_CONFIG_GUID
                    for s in f['sections'] if 'pil_config' in s]
         need(len(configs) == 1 and configs[0]['auto_entries'] == []
@@ -324,30 +324,30 @@ def inspect(artifact, publisher_name='ShengBootMemoryDxe', require_sec_trace=Fal
     allocation_trace = None
     if require_allocation_trace:
         profile = json.loads((ROOT / f'config/firmware-{allocation_profile}-profile.json').read_text())
-        need(allocation_profile in ('dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope') and inputs['profile'] == allocation_profile and inputs['recipe'] == profile['recipe'],
+        need(allocation_profile in ('dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity') and inputs['profile'] == allocation_profile and inputs['recipe'] == profile['recipe'],
              'Wrong R-010 source/input profile')
         cores = [s['allocation_trace'] for f in fv.files if f['guid'] == DXE_CORE_GUID and f['type'] == 5
                  for s in f['sections'] if 'allocation_trace' in s]
         need(len(cores) == 1 and all(cores[0]['markers'].values()), 'Actual DXE core lacks allocation diagnostics')
         allocation_trace = cores[0]
     factory_heap = None
-    if require_allocation_trace and allocation_profile in ('factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope'):
+    if require_allocation_trace and allocation_profile in ('factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity'):
         descriptors = sec_te[0]['heap_descriptors']
         need(len(descriptors) == 1 and descriptors[0]['base'] == '0xbab00000'
              and descriptors[0]['bytes'] == 0x0d1c0000,
              'Actual SEC did not embed the exact same-device factory Heap descriptor')
         factory_heap = descriptors[0]
-    if inputs['profile'] in ('sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope'):
+    if inputs['profile'] in ('sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity'):
         need(require_sec_trace and require_no_auto_abl and require_allocation_trace,
              'SEC handoff profile requires all baseline diagnostic checks')
         need(all(sec_te[0]['handoff_markers'].values()),
              'New handoff boundary logs absent from actual SEC TE')
-    if inputs['profile'] in ('constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope'):
+    if inputs['profile'] in ('constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity'):
         need(all(sec_te[0]['constructor_markers'].values()),
              'Per-constructor logs absent from actual SEC TE')
-    if inputs['profile'] in ('mmu-branches', 'hob-query', 'volume-envelope'):
+    if inputs['profile'] in ('mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity'):
         need(all(sec_te[0]['mmu_markers'].values()), 'MMU branch logs absent from actual SEC TE')
-    if inputs['profile'] in ('hob-query', 'volume-envelope'):
+    if inputs['profile'] in ('hob-query', 'volume-envelope', 'hob-integrity'):
         need(all(sec_te[0]['hob_markers'].values()), 'HOB query logs absent from actual SEC TE')
     symbols = (artifact / "shim/symbols.txt").read_text()
     payload = next(int(line.split()[0], 16) for line in symbols.splitlines() if line.endswith(" _Payload"))
@@ -371,7 +371,7 @@ def main():
     parser.add_argument('--require-sec-trace', action='store_true')
     parser.add_argument('--require-no-auto-abl', action='store_true')
     parser.add_argument('--require-allocation-trace', action='store_true')
-    parser.add_argument('--allocation-profile', choices=('dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope'), default='dxe-allocation')
+    parser.add_argument('--allocation-profile', choices=('dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity'), default='dxe-allocation')
     args = parser.parse_args()
     output = args.output.resolve()
     need(output.is_relative_to(ROOT) and output.suffix == ".json", "Evidence output must be repo-local JSON")

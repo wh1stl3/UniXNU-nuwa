@@ -1,0 +1,28 @@
+--- a/Mu_Basecore/EmbeddedPkg/Library/PrePiHobLib/Hob.c
++++ b/Mu_Basecore/EmbeddedPkg/Library/PrePiHobLib/Hob.c
+@@ -284,6 +284,12 @@
+   // Parse the HOB list until end of list or matching type is found.
+   //
+   while (!END_OF_HOB_LIST (Hob)) {
++    if ((Hob.Header->HobLength < sizeof (EFI_HOB_GENERIC_HEADER)) ||
++        ((Hob.Header->HobLength & 7) != 0)) {
++      DEBUG ((EFI_D_ERROR, "[NUWA-HOB-CHECK] invalid ptr=%p type=%x len=%x target=%x\n",
++              Hob.Raw, Hob.Header->HobType, Hob.Header->HobLength, Type));
++      CpuDeadLoop ();
++    }
+     if (mNuwaHobTraceActive && mNuwaHobTraceCount < 128) {
+       DEBUG ((EFI_D_ERROR, "[NUWA-HOB] row=%u ptr=%p type=%x len=%x\n", (UINT32)mNuwaHobTraceCount, Hob.Raw, Hob.Header->HobType, Hob.Header->HobLength));
+       mNuwaHobTraceCount++;
+@@ -399,6 +405,12 @@
+ 
+   DEBUG ((EFI_D_ERROR, "[NUWA-HOB] query-enter\n"));
+   HobList = GetHobList ();
++  {
++    EFI_HOB_HANDOFF_INFO_TABLE *Phit;
++    Phit = (EFI_HOB_HANDOFF_INFO_TABLE *)HobList;
++    DEBUG ((EFI_D_ERROR, "[NUWA-HOB-CHECK] query guid=%g list=%p end=0x%lx bottom=0x%lx top=0x%lx\n",
++            Guid, HobList, Phit->EfiEndOfHobList, Phit->EfiFreeMemoryBottom, Phit->EfiFreeMemoryTop));
++  }
+   DEBUG ((EFI_D_ERROR, "[NUWA-HOB] list=%p\n", HobList));
+   mNuwaHobTraceCount = 0;
+   mNuwaHobTraceActive = TRUE;
