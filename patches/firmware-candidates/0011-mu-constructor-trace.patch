@@ -1,0 +1,97 @@
+--- a/Mu_Basecore/MdePkg/Library/BaseDebugLibSerialPort/DebugLib.c
++++ b/Mu_Basecore/MdePkg/Library/BaseDebugLibSerialPort/DebugLib.c
+@@ -44,7 +44,12 @@
+   VOID
+   )
+ {
+-  return SerialPortInitialize ();
++  RETURN_STATUS Status;
++
++  DEBUG ((EFI_D_ERROR, "[NUWA-CTOR] Debug enter\n"));
++  Status = SerialPortInitialize ();
++  DEBUG ((EFI_D_ERROR, "[NUWA-CTOR] Debug leave status=%r\n", Status));
++  return Status;
+ }
+ 
+ /**
+--- a/Mu_Basecore/EmbeddedPkg/Library/PrePiExtractGuidedSectionLib/PrePiExtractGuidedSectionLib.c
++++ b/Mu_Basecore/EmbeddedPkg/Library/PrePiExtractGuidedSectionLib/PrePiExtractGuidedSectionLib.c
+@@ -227,21 +227,26 @@
+   PRE_PI_EXTRACT_GUIDED_SECTION_DATA  SavedData;
+   GUID                                HobGuid = PRE_PI_EXTRACT_GUIDED_SECTION_DATA_GUID;
+ 
++  DEBUG ((EFI_D_ERROR, "[NUWA-CTOR] Extract enter\n"));
++
+   //
+   // Allocate global pool space to store the registered handler and its guid value.
+   //
+   SavedData.ExtractHandlerGuidTable = (GUID *)AllocatePool (PcdGet32 (PcdMaximumGuidedExtractHandler) * sizeof (GUID));
+   if (SavedData.ExtractHandlerGuidTable == NULL) {
++    DEBUG ((EFI_D_ERROR, "[NUWA-CTOR] Extract leave status=%r\n", RETURN_OUT_OF_RESOURCES));
+     return RETURN_OUT_OF_RESOURCES;
+   }
+ 
+   SavedData.ExtractDecodeHandlerTable = (EXTRACT_GUIDED_SECTION_DECODE_HANDLER *)AllocatePool (PcdGet32 (PcdMaximumGuidedExtractHandler) * sizeof (EXTRACT_GUIDED_SECTION_DECODE_HANDLER));
+   if (SavedData.ExtractDecodeHandlerTable == NULL) {
++    DEBUG ((EFI_D_ERROR, "[NUWA-CTOR] Extract leave status=%r\n", RETURN_OUT_OF_RESOURCES));
+     return RETURN_OUT_OF_RESOURCES;
+   }
+ 
+   SavedData.ExtractGetInfoHandlerTable = (EXTRACT_GUIDED_SECTION_GET_INFO_HANDLER *)AllocatePool (PcdGet32 (PcdMaximumGuidedExtractHandler) * sizeof (EXTRACT_GUIDED_SECTION_GET_INFO_HANDLER));
+   if (SavedData.ExtractGetInfoHandlerTable == NULL) {
++    DEBUG ((EFI_D_ERROR, "[NUWA-CTOR] Extract leave status=%r\n", RETURN_OUT_OF_RESOURCES));
+     return RETURN_OUT_OF_RESOURCES;
+   }
+ 
+@@ -252,5 +257,6 @@
+ 
+   BuildGuidDataHob (&HobGuid, &SavedData, sizeof (SavedData));
+ 
++  DEBUG ((EFI_D_ERROR, "[NUWA-CTOR] Extract leave status=%r\n", RETURN_SUCCESS));
+   return RETURN_SUCCESS;
+ }
+--- a/Mu_Basecore/UefiCpuPkg/Library/ArmMmuLib/AArch64/ArmMmuLibCore.c
++++ b/Mu_Basecore/UefiCpuPkg/Library/ArmMmuLib/AArch64/ArmMmuLibCore.c
+@@ -935,6 +935,8 @@
+   extern UINT32  ArmReplaceLiveTranslationEntrySize;
+   VOID           *Hob;
+ 
++  DEBUG ((EFI_D_ERROR, "[NUWA-CTOR] Mmu enter\n"));
++
+   Hob = GetFirstGuidHob (&gArmMmuReplaceLiveTranslationEntryFuncGuid);
+   if (Hob != NULL) {
+     mReplaceLiveEntryFunc = *(ARM_REPLACE_LIVE_TRANSLATION_ENTRY *)GET_GUID_HOB_DATA (Hob);
+@@ -949,6 +951,7 @@
+       );
+   }
+ 
++  DEBUG ((EFI_D_ERROR, "[NUWA-CTOR] Mmu leave status=%r\n", RETURN_SUCCESS));
+   return RETURN_SUCCESS;
+ }
+ 
+--- a/Mu_Basecore/MdeModulePkg/Library/LzmaCustomDecompressLib/GuidedSectionExtraction.c
++++ b/Mu_Basecore/MdeModulePkg/Library/LzmaCustomDecompressLib/GuidedSectionExtraction.c
+@@ -9,6 +9,7 @@
+ **/
+ 
+ #include "LzmaDecompressLibInternal.h"
++#include <Library/DebugLib.h>
+ 
+ /**
+   Examines a GUIDed section and returns the size of the decoded buffer and the
+@@ -194,9 +195,14 @@
+   VOID
+   )
+ {
+-  return ExtractGuidedSectionRegisterHandlers (
++  EFI_STATUS Status;
++
++  DEBUG ((EFI_D_ERROR, "[NUWA-CTOR] Lzma enter\n"));
++  Status = ExtractGuidedSectionRegisterHandlers (
+            &gLzmaCustomDecompressGuid,
+            LzmaGuidedSectionGetInfo,
+            LzmaGuidedSectionExtraction
+            );
++  DEBUG ((EFI_D_ERROR, "[NUWA-CTOR] Lzma leave status=%r\n", Status));
++  return Status;
+ }

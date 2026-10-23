@@ -225,3 +225,5 @@
 2026-10-23T17:03:32+08:00 · 完成系统卷/启动载荷/内核/iOS16预研，固定donor七组件、v2 trust及当前根卷后端缺口；确认packed 2GiB限制与参考native不匹配，无镜像/设备/板值变化 · Q-102（提交后以git log定位） · docs/operations/2026-10-23-ios16-system-payload-research.md；reports/ios16-payload-research/
 
 2026-10-23T18:36:32+08:00 · 晚间唯一诊断包实测新图确认入口HOB已返回，最后构造前日志；18:30:39 Android完成1、三分区不变，无第二次启动 · Q-103（提交后以git log定位） · docs/operations/2026-10-23-sec-handoff-evening-trial.md；reports/sec-handoff-trial/2026-10-23-evening/
+
+2026-10-23T18:59:02+08:00 · 四构造源码审查，Debug初始化为无重置实现；39项静态检查通过，8条共享库日志候选待CI，不操作设备 · Q-104（提交后以git log定位） · docs/operations/2026-10-23-constructor-trace.md；reports/constructor-trace/

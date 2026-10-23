@@ -1,0 +1,93 @@
+{
+  "scope": "Offline constructor boundary logging; shared Mu instances affect SEC and other consumers",
+  "mu_repository": "microsoft/mu_basecore",
+  "mu_commit": "cfb93724a06ff86ff5ba971413368a7809ee42a5",
+  "license": "BSD-2-Clause-Patent per changed file headers",
+  "firmware_commit": "ddd794fc07e9bc64057222a9bffa4d79c8553af8",
+  "files": [
+    {
+      "path": "Mu_Basecore/MdePkg/Library/BaseDebugLibSerialPort/DebugLib.c",
+      "constructor": "BaseDebugLibSerialPortConstructor",
+      "label": "Debug",
+      "original_lf_sha256": "215edfd87b2859b4a0e9180dd7ccf5481e80ed2392051f417078271d5dd020fb",
+      "post_lf_sha256": "a232788d582d38d815b686efa1aa6a4b1055f3b7d562d806788a5f5b30483bff",
+      "source_lines": {
+        "start": 46,
+        "end": 48
+      },
+      "markers": [
+        "[NUWA-CTOR] Debug enter",
+        "[NUWA-CTOR] Debug leave status=%r"
+      ]
+    },
+    {
+      "path": "Mu_Basecore/EmbeddedPkg/Library/PrePiExtractGuidedSectionLib/PrePiExtractGuidedSectionLib.c",
+      "constructor": "ExtractGuidedSectionLibConstructor",
+      "label": "Extract",
+      "original_lf_sha256": "537a55744ece61de94142c57e2542ad762a40bb895358a808e7fc1d5aece7390",
+      "post_lf_sha256": "09f5a0760f7678bff421cbc13e4b46204b6b7b8befe97f4708827d4e6bae338b",
+      "source_lines": {
+        "start": 226,
+        "end": 256
+      },
+      "markers": [
+        "[NUWA-CTOR] Extract enter",
+        "[NUWA-CTOR] Extract leave status=%r"
+      ]
+    },
+    {
+      "path": "Mu_Basecore/UefiCpuPkg/Library/ArmMmuLib/AArch64/ArmMmuLibCore.c",
+      "constructor": "ArmMmuBaseLibConstructor",
+      "label": "Mmu",
+      "original_lf_sha256": "2739853e384b87e935716fc3a2dccd018e5bd001eb9c113ec3db08b0b80a9a45",
+      "post_lf_sha256": "14c73a0b1611bae120e298aced9cabfdc32ce7590b4eafb264a409c9932941eb",
+      "source_lines": {
+        "start": 934,
+        "end": 953
+      },
+      "markers": [
+        "[NUWA-CTOR] Mmu enter",
+        "[NUWA-CTOR] Mmu leave status=%r"
+      ]
+    },
+    {
+      "path": "Mu_Basecore/MdeModulePkg/Library/LzmaCustomDecompressLib/GuidedSectionExtraction.c",
+      "constructor": "LzmaDecompressLibConstructor",
+      "label": "Lzma",
+      "original_lf_sha256": "d56ce0516b7cfda98503ffdc0a2c7e56d7cd5eefec33db598fa5e6960d31967c",
+      "post_lf_sha256": "41832e8922bf6302100f7f4a0e5a2207334bc1fd4cca7ff35c7c9e3f380d4e8a",
+      "source_lines": {
+        "start": 196,
+        "end": 202
+      },
+      "markers": [
+        "[NUWA-CTOR] Lzma enter",
+        "[NUWA-CTOR] Lzma leave status=%r"
+      ]
+    }
+  ],
+  "markers": [
+    "[NUWA-CTOR] Debug enter",
+    "[NUWA-CTOR] Debug leave status=%r",
+    "[NUWA-CTOR] Extract enter",
+    "[NUWA-CTOR] Extract leave status=%r",
+    "[NUWA-CTOR] Mmu enter",
+    "[NUWA-CTOR] Mmu leave status=%r",
+    "[NUWA-CTOR] Lzma enter",
+    "[NUWA-CTOR] Lzma leave status=%r"
+  ],
+  "patch": "patches/firmware-candidates/0011-mu-constructor-trace.patch",
+  "patch_sha256": "76f614fac9bc0c1919487b63e32587b6a1ab236c6c782b8eb628b1232dff16c4",
+  "exact_context_memory_apply_passed": true,
+  "source_calls_preserved": true,
+  "serial_port": {
+    "path": "Silicon/Silicium/SiliciumPkg/Library/FrameBufferSerialPortLib/FrameBufferSerialPortLib.c",
+    "sha256": "85e7dba58a1022e042e72a56aff01a09d1fcf7360e5801ce73fa750e253ab7fe",
+    "body": "{\n  return EFI_SUCCESS;\n}"
+  },
+  "generated_autogen_untouched": true,
+  "memory_tables_untouched": true,
+  "shared_library_scope_warning": "Mu patches also affect linked DXE/other instances, so this is not a SEC-only binary delta",
+  "compiled": false,
+  "device_accessed": false
+}

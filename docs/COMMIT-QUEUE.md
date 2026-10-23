@@ -1110,3 +1110,13 @@
 [Evidence] 新图f3cf9558显示list BAB00000/data BAB013B8及before-library-constructors，后标记未见；18:30:39实际nuwa完成1，三分区SHA与试前一致。
 [Risk] 具体构造函数/运行PC和日志失效未区分，视频未交付，未到DXE/SHENGMEM或XNU；本次恢复仅检测Android，不宣称发送原boot，无flash/改槽/板值变更。
 ```
+
+## Q-104 · 四构造日志候选
+
+```text
+[unixnu-nuwa][firmware] 审查实际构造依赖并准备逐库进入返回诊断
+
+[Change] 添加四个Mu库构造的8条日志候选与独立CI profile，保留调用顺序/返回值/错误分支；记录共享库影响范围及实测目标。
+[Evidence] 固定帧缓冲SerialPortInitialize仅返回成功；39项源码输入和去除日志后的原调用/返回检查通过，内存严格补丁应用一致。
+[Risk] 新构建与运行未验证，共享库修改不限SEC且可能影响时序/日志；本轮不操作设备，不改内存表/board/feed或验证标志。
+```
