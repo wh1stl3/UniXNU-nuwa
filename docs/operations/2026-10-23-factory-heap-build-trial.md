@@ -22,3 +22,14 @@ factory-heap profile由R-010直接派生，只变固件提交及MemoryMapLib输�
 actualSEC Heap唯一记录BAB00000/219938816B=209.75MiB；新旧实际SEC按固定72B结构核对41条，除Heap Address/Length16字节外表内其他字节完全一致，memory-table-comparison.json有新旧完整表SHA。该结果只证明实际二进制表，不证明运行所有权或dispatch。
 
 v4临时包3153920B SHA8e85215011248b3e9462cace9a92133d4d58f33957ea2534fcb487a401e283c0，无XNU/FAT/新DTB/ramdisk，原header仅kernel_size变化。2026-10-23T01:07:31.572290+00:00重新读取唯一nuwa/kalama Android完成1、A槽和三个分区摘要，原Android恢复输入完整SHA再次校验，D-021前置记录preflight.json已就绪；当前尚未启动候选，须先通知用户录像。
+
+
+## 实机唯一对照及恢复完成
+
+本轮临时包8e852150 Sending3080KB/Booting均OKAY，15次fastboot采样均不可见；ACK仅作接受证据。用户先说“进入unixnu了 failed to find an operating system”，经核对并追问后明确“先看到上述菜单再报错”，所指是Return to firmware / Restart / Power off三项。该组标题对应固定UniXNU75bc13dd Config.c:35-56的内置配置，不以固件标志或单独NoOS图标代替应用执行证据。
+
+精确提示的图形来源为固定固件NoBootOS.bmp（hash见user-observation.json），由BootManager.c:210 UnableToBoot显示。UniXNU无配置时加入三项action，默认退出后BDS无法找到系统，符合本轮无FAT/XNU负载设计。用户菜单观察支持已越过此前DxeCore断言并进入应用；本轮未取得完整SHENGMEM/NUWA-MEM日志，不写零分配失败、SPSS全解决或XNU已运行。此前仅凭报错文字曾暂称UniXNU入口，已先核对图形来源再以用户确认菜单补足阶段归属。
+
+已请求录完后回fastboot，恢复等待脚本随后检测到nuwa通道，复位bootloader后只临时加载原boot ef558db2；Sending196608KB 4.488s/Booting0.117s均OKAY，09:14:28实际nuwa/kalama Android完成1，postcondition三个分区SHA与试前一致，用户另确认“已经回到Android”。回到fastboot的具体按键/自动路径未记录，不补造；H-006完成，不再需按键。无flash/erase/改槽或额外候选试验。
+
+下一步离线审查系统卷发现，尤其v4 boot/vendor_boot/init_boot拼接、FDT实际initrd及512B对齐，不先把FAT盲目追加进ramdisk或借Android DT冒充Apple ADT。

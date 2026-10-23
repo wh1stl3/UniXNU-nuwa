@@ -1,0 +1,45 @@
+{
+  "source": "Explicit user text observations during this R-011 trial; screenshot/video not yet received",
+  "user_reports": [
+    {
+      "text": "进入unixnu了 failed to find an operating system",
+      "meaning": "Reported UniXNU and final no-OS screen"
+    },
+    {
+      "text": "先看到上述菜单再报错",
+      "question": "Return to firmware / Restart / Power off menu appeared before the error"
+    },
+    {
+      "text": "已经回到Android",
+      "meaning": "User confirmed Android return"
+    }
+  ],
+  "supported_result": "User-observed UniXNU built-in three-action menu followed by firmware BDS no-OS fallback; no XNU payload execution",
+  "source_correlation": [
+    {
+      "path": "package/UniXNUPkg/Library/UniXNULib/Config.c",
+      "lines": "35-56, 1517-1548",
+      "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+      "meaning": "Built-in action menu, default exit, no-boot-entry fallback"
+    },
+    {
+      "path": "Silicon/Silicium/SiliciumPkg/Library/BootManagerLib/BootManager.c",
+      "line": 210,
+      "commit": "1ccf760d667b9eec6dd3491c90cc04ebb7c58340",
+      "meaning": "UnableToBoot displays BG_NO_BOOT_OS then waits and shuts down"
+    }
+  ],
+  "no_os_resource": {
+    "path": "D:\\Code\\uefi-nuwa\\Silicon\\Silicium\\SiliciumPkg\\Include\\Resources\\NoBootOS.bmp",
+    "sha256": "d602b490756db178117647f4032e6556694e9eff1b0db8044c87d225feba5ed7",
+    "visible_text": "Failed to Find an Operating System!"
+  },
+  "xnu_included_in_package": false,
+  "fat_included_in_package": false,
+  "unverified": [
+    "Exact current runtime free/largest/failure count",
+    "Whether every earlier SPSS/protocol issue disappeared",
+    "DarwinBoot loader protocol execution",
+    "Actual candidate ABL x0 DT and initrd extent"
+  ]
+}

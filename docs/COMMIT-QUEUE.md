@@ -1000,3 +1000,13 @@
 [Evidence] CI6m51s成功，666项检查通过；实际SEC Heap为BAB00000/209.75MiB，41条描述符仅Heap地址/长度变化；包8e852150，试前nuwa Android完成1。
 [Risk] 当前仅编译及静态产物通过，R-011尚未启动，实际所有权、分配/协议和BDS/XNU均待运行证据。
 ```
+
+## Q-094 · 原厂Heap实机菜单与恢复结果
+
+```text
+[unixnu-nuwa][device] 实机观察到UniXNU菜单并恢复Android后转入系统卷接线
+
+[Change] 记录用户先见三项UniXNU菜单后BDS无OS的明确观察，区分NoBootOS图形与应用执行；保存唯一临时加载及恢复，关闭H-006。
+[Evidence] 8e852150命令接受，用户确认Return to firmware/Restart/Power off菜单；Config.c与BootManager.c/NoBootOS.bmp对应；09:14:28 nuwa Android完成1、三分区SHA不变。
+[Risk] 无本轮完整分配计数/照片日志，不保证所有SPSS问题消失；未执行XNU，当前包无FAT或系统负载，实际initrd和系统卷链路仍待验证。
+```

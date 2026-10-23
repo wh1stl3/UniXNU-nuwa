@@ -397,3 +397,6 @@ D-021补充：本轮日志/恢复门实际通过；用户按键回fastboot后，
 - 证据：source-local/source-publish.json、firmware@1ccf760d667b9eec6dd3491c90cc04ebb7c58340、factory-heap-proposal.json、同机抽取表SHA2adc494b；R-010清晰实机资源快照。
 
 只恢复DXE Heap至同机原厂BAB00000/0D1C0000，其他行/属性不变；不从同SoC其他板复制额外bank。此Heap为UEFI临时分配，与D-002的XNU窗口分开。实际SEC描述符/运行快照须分别验收；静态无重叠不证明实际ABL x0或所有权，不承诺全部协议/SPSS错误消失。
+
+
+D-023执行补充（2026-10-23 09:14）：CI39835052901及实际SEC表检查通过，R-011唯一临时对照由用户明确观察到UniXNU内置三项菜单后返回NoBootOS；支持已越过旧资源断言，但未取得新运行free/failure计数，不保证全部协议/SPSS问题消失。原Android恢复完成1且三分区SHA不变。系统负载发现作为下一主线，未宣称XNU运行。
