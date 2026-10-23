@@ -54,7 +54,7 @@ def recipe(run):
         fd_sha256=sha(fd), shim_sha256=sha(shim), fat_sha256=sha(fat), fat_bytes=len(fat),
         ramdisk_sha256=sha(ramdisk), ramdisk_bytes=len(ramdisk), kernel_bytes=len(kernel),
         image_path=f'out/trial-boot/volume-envelope-{run}/boot-volume-probe-v4.img',
-        header_version=4, signature_bytes=0, xnu_included=False, adt_included=False,
+        header_version=4, signature_bytes=0, fat_included=True, appended_dtb=False, xnu_included=False, adt_included=False,
         probe_title='NUWA VOLUME PROBE - NO XNU', device_executed=False,
         inspection_fd_sha256=inspected['fd']['sha256'])
     return image, metadata

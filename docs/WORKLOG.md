@@ -255,3 +255,5 @@
 2026-10-23晚 · 在独立固件仓实现有界卷封装接收，接入volume-envelope profile；主机C测试及完整输入补丁链通过 · Q-117 · reports/volume-envelope/
 
 2026-10-23晚 · 补齐HOB实测恢复，完成严格卷探针打包脚本与真实64MiB FAT的C主机解析；新固件CI39966008923运行中 · Q-118 · reports/volume-envelope/full-size-host-parser.json
+
+2026-10-23晚 · CI39966008923成功，ae9a445a完整卷探针核验并通知录像后临时启动；等待屏幕结果，未宣称卷发现或XNU通过 · Q-119 · reports/volume-envelope-trial/2026-10-23-evening/

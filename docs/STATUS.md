@@ -1,13 +1,9 @@
 # STATUS
 
-> 当前唯一真相：47b5c4b1实机照片确认HOB查询返回并进入DXE，用户报告进入UniXNU菜单；尚未进入XNU。
+> 当前唯一真相：有界启动卷探针ae9a445a已临时启动，等待屏幕结果；尚未进入XNU。
 
-CI39962464061（4d4571b）包47b5c4b1/3153920B、FD fb28d9ee已临时启动。照片6cddd1c1显示row=93至99、matched、query-leave、fv-decompress Success及DxeCore加载。用户报告随后failed to find an operating system并回充电界面。证据reports/hob-query-trial/2026-10-23-evening/screen-observation.json；不能由一次进展认定MMU故障根因已修复。
+uefi-nuwa@150b5ec实现有界封装接收，CI39966008923成功。实际FD 3c653d1e，完整v4包ae9a445a/70266880B，包含原64MiB FAT配置探针，标题NUWA VOLUME PROBE - NO XNU。完整容器逐字节重建校验通过，41行2952B内存表与基线一致。实际C主机7项测试和真实64MiB解析通过。
 
-本轮恢复已补齐：postcondition.json确认真实nuwa/kalama、Android完成1、A槽位及三分区哈希与试验前一致。人工恢复不阻塞离线分析/构建，未确认恢复时不启动下一包。
+用户确认通知后录像；刷新真实nuwa Android完成1、原boot及三分区门后已通知并临时启动，fastboot发送/Booting成功。屏幕结果待用户回报，USB ACK不等于卷发现成功。证据reports/volume-envelope-trial/2026-10-23-evening/。
 
-新照片已取得SHENGMEM：识别FDT，但initrd被“not a whole number of sectors”分支拒绝；后续DXE MMU after-cache/Mmu leave Success，UniXNU.efi启动并出现四条FAT挂载日志。未由模糊地址计算实际长度，FAT来源尚未确定。下一步接通有明确边界的载荷运输，不向上取整整个chosen范围。当前包不含FAT/ADT/XNU；现有64MiB FAT探针仅离线组件，不能把ABL拼接后的整个initrd直接当FAT。固件来源uefi-nuwa，诊断CI暂仍由设备仓驱动。4KiB/iOS16/8796/board example=true及板值与验证标记不变。
-
-启动卷接入实现：uefi-nuwa@150b5ec新增有界封装解析，7项真实C主机测试通过；设备仓volume-envelope profile核验41项输入/5个补丁/9项补丁后哈希，旧HOB固件冒充新profile被拒绝。完整固件待CI，未生成或启动新实机包。
-
-CI39966008923正在构建volume-envelope。打包脚本volume_probe_package.py已完成，限定原64MiB配置探针及原厂v4头，仅更新kernel/ramdisk长度并复验完整容器。真实FAT配合模拟30899943B前缀的完整C解析通过；ABL运行运输待验收。
+前轮HOB包照片确认进入DXE、NuwaBootMemoryDxe拒绝整initrd扇区长度，UniXNU启动；前轮postcondition确认Android恢复及三分区未变。本轮恢复待后续执行。人工恢复不阻塞离线分析；下一包仍需日志/恢复门。板级地址/容量、身份及_verified保持原值。
