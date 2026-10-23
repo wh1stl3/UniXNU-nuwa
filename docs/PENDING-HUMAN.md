@@ -29,3 +29,5 @@
 - HOB查询试验更新：用户已提供HOB到DXE原图；报告菜单无OS后回充电界面。恢复脚本180秒等待超时，后续ADB未识别；待正常Android或fastboot恢复及三分区核验。录像SHENGMEM段待补取，离线分析继续。
 
 - SHENGMEM补取已完成：收到initrd拒绝与UniXNU/FAT原图，见initrd-observation.json；Android恢复状态仍待确认。
+
+- HOB试验恢复已完成：postcondition.json确认Android完成1及三分区哈希不变；此前恢复待办关闭。下一轮新包需通知录像。
