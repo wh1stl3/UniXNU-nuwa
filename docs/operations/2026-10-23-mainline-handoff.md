@@ -2,7 +2,7 @@
 
 ## 当前结果与执行门
 
-用户要求“继续，按缓存交接遗漏这个方向准备单变量修复候选，先完成离线验证和新包构建，保持Heap和坏条目保护不变，需要实测时再通知我录像”。本轮已完成hob-cache-handoff离线构建验收，没有ADB/fastboot查询或模式切换。新包26ef8efd录像尚未确认，不自动启动、不复用2273bdec录像许可。先读AGENTS/STATUS/DECISIONS，两个旧资料库只读；不改板内存/基址或_verified。
+用户要求“继续，按缓存交接遗漏这个方向准备单变量修复候选，先完成离线验证和新包构建，保持Heap和坏条目保护不变，需要实测时再通知我录像”。本轮hob-cache-handoff已在用户新鲜确认录像后，完成preflight并即时通知后单次临时启动，ACK=0。120秒观察已结束，用户直接报告“进入了unixnu菜单”；缓存阶段原图待补；recovery/postcondition已确认Android完成1与三分区SHA不变，当前无需按键。不要重复启动，不以ACK认定缓存修复。实测记录目录reports/hob-cache-handoff-trial/2026-10-24/。先读AGENTS/STATUS/DECISIONS，两个旧资料库只读；不改板内存/基址或_verified。
 
 ## 来源与准备好的包
 
@@ -29,11 +29,11 @@ MemoryPeim只新增登记私有一次性回调；ArmConfigureMmu ABI/默认空�
 
 2273bdec上轮before-mmu56条/endBAB00AA8有效，函数内末次create-after84条/endBAB00FE8/context20030有效，返回Success后after-mmu首次off718/type0/len0。未到PlatformPeim/构造/DXE。公开资料及源码/实际指令支持首嫌缓存交接遗漏，次嫌映射/属性；不认定已证明具体机制。照片/审查reports/hob-stage-audit-trial/2026-10-24/。
 
-上轮postcondition.at=2026-10-23T18:20:52.568611+00:00，即北京时间10-24 02:20:52；nuwa/kalama、Android完成1、slot_a、三分区SHA与当轮preflight一致，恢复闭环。此次离线未更新设备状态，不将历史当实时查询。分析预链接5a128fb2仍loadable=false，无真实ADT/窗口/XNU执行证据。
+上轮postcondition.at=2026-10-23T18:20:52.568611+00:00，即北京时间10-24 02:20:52；nuwa/kalama、Android完成1、slot_a、三分区SHA与当轮preflight一致，恢复闭环。本轮启动前新鲜preflight.at=2026-10-23T18:50:04.648494+00:00，Android完成1及基线已取得；本轮postcondition.at=2026-10-23T18:55:45.904383+00:00，恢复后Android完成1且三分区SHA一致，已闭环。分析预链接5a128fb2仍loadable=false，无真实ADT/窗口/XNU执行证据。
 
-## 本轮新鲜录像确认后的待执行流程
+## 本轮执行记录与后续恢复流程
 
-以下是待执行说明，不是录像许可。Windows bundled Python设PYTHONUTF8=1，PATH加D:/Code/PortingiOS/common/tools/platform-tools；始终唯一选择nuwa/kalama，不操作enuma。证据文件必须fresh，不覆盖旧记录。
+第1至3步本轮已完成，禁止重复运行或覆盖现有证据；第4步等待原始画面，第5至6步本轮恢复/核验已完成；不要重复执行。Windows bundled Python设PYTHONUTF8=1，PATH加D:/Code/PortingiOS/common/tools/platform-tools；始终唯一选择nuwa/kalama，不操作enuma。证据文件必须fresh，不覆盖旧记录。
 
 1. 离线复验：`python -B -c "import sys;sys.path.insert(0,'scripts');from embedded_probe_package import validate;print(validate('reports/hob-cache-handoff/40005057158/package.json')['image_sha256'])"`。
 2. 用户确认26ef8efd连续录像≥120秒和必要时按键回fastboot可用后，`python -B scripts/record-nuwa-trial-state.py --output reports/hob-cache-handoff-trial/2026-10-24/preflight.json --package reports/hob-cache-handoff/40005057158/package.json --capture-confirmation '<该轮真实答复>'`。若无唯一Android完成1，先恢复并识别，不绕过门。

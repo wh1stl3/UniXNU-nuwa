@@ -1,0 +1,72 @@
+{
+  "at": "2026-10-23T18:50:04.648494+00:00",
+  "commands": [
+    {
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'cat /sys/firmware/devicetree/base/model; cat /sys/firmware/devicetree/base/compatible'"
+      ],
+      "exit_code": 0,
+      "stdout": "Qualcomm Technologies, Inc. 8550 nuwa\nqcom,kalama-mtp\nqcom,kalama\nqcom,mtp",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "getprop sys.boot_completed"
+      ],
+      "exit_code": 0,
+      "stdout": "1",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "getprop ro.boot.slot_suffix"
+      ],
+      "exit_code": 0,
+      "stdout": "_a",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'sha256sum /dev/block/by-name/boot_a /dev/block/by-name/vendor_boot_a /dev/block/by-name/init_boot_a'"
+      ],
+      "exit_code": 0,
+      "stdout": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31  /dev/block/by-name/boot_a\n5ad2a9dc751870fa3c367fa2833582147541f5b62b880dcbdf525003ad68cc23  /dev/block/by-name/vendor_boot_a\n19e95d952ded5172e8a17bd1af907a8d6b08b29734881c370961b09bbaf78f96  /dev/block/by-name/init_boot_a",
+      "stderr": ""
+    }
+  ],
+  "device": "nuwa",
+  "soc": "kalama",
+  "android_boot_completed": "1",
+  "slot": "_a",
+  "partition_hashes": {
+    "/dev/block/by-name/boot_a": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+    "/dev/block/by-name/vendor_boot_a": "5ad2a9dc751870fa3c367fa2833582147541f5b62b880dcbdf525003ad68cc23",
+    "/dev/block/by-name/init_boot_a": "19e95d952ded5172e8a17bd1af907a8d6b08b29734881c370961b09bbaf78f96"
+  },
+  "package_sha256": "95ef783ac3d1b92fe5e04d57f62077284581216297201c4ca0f3ce30156a562f",
+  "process_log_method": "framebuffer photographed or recorded by user",
+  "human_capture_confirmation": "\u53ef\u4ee5\uff0c\u73b0\u5728\u51c6\u5907\u5f55\u50cf",
+  "human_capture_source": "Fresh user confirmation supplied for this trial; notify immediately before launch",
+  "recovery_path": "Power plus volume down to fastboot (R-010 completed); reset bootloader and temporarily load pinned original boot; confirm Android completion",
+  "original_boot_sha256": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+  "recovery_evidence": {
+    "path": "reports/dxe-allocation/39829943950/recovery.json",
+    "sha256": "4d3a8e2f2f3cf5a296101edaaa5acffdb4b45a459761f2e34c1dfa6aee44ee0a"
+  }
+}

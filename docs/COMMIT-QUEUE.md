@@ -1480,3 +1480,13 @@
 [Evidence] 26ef8efd/3153920B逐字节重建，实际DSB/IVAC/DSB/ISB与原坏条目保护通过；41行2952B表相同，缺门设备子进程0。
 [Risk] 尚未实测缓存效果或闭环根因；回调/日志影响布局时序，新包录像未确认，无设备动作。
 ```
+
+## Q-141 · 缓存交接候选实测与恢复
+
+```text
+[unixnu-nuwa][device] 记录缓存候选进入菜单的用户观察并闭环Android恢复
+
+[Change] 新鲜录像确认后单次临时启动26ef8efd，归档120秒USB记录、用户菜单观察及本轮Android恢复核验。
+[Evidence] preflight/launch/recovery/postcondition完整；用户报告进入UniXNU菜单，Android完成1且三分区SHA一致。
+[Risk] 缓存阶段原图未收，EL/SCTLR/after-mmu仍待核对；单次菜单观察不等于根因证明或XNU执行。
+```
