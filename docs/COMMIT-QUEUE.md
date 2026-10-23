@@ -1230,3 +1230,13 @@
 [Evidence] 原图6cddd1c1显示row93至99、matched、query-leave、FV解压成功与DxeCore加载；用户报告UniXNU菜单后无OS。
 [Risk] 未取得SHENGMEM日志或XNU入口；Android恢复及三分区哈希待补齐；日志改变进展不能证明MMU根因已修复。
 ```
+
+## Q-116 · initrd发布拒绝证据
+
+```text
+[unixnu-nuwa][device] 确认initrd发布拒绝及UniXNU加载的屏幕证据
+
+[Change] 保存两张原图及保守转录，更新SHENGMEM取证完成状态。
+[Evidence] NuwaBootMemoryDxe打印not a whole number of sectors；后续DXE MMU leave Success；UniXNU.efi与四条FAT挂载日志可见。
+[Risk] 地址未可靠转录，拒绝条件包含逆序或非整扇区长度；四个FAT来源未确定，无XNU入口或本轮恢复完成证据。
+```

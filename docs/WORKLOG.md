@@ -249,3 +249,5 @@
 2026-10-23T21:44:02.567733+08:00 · HOB CI39962464061成功，47b5c4b1静态包验收通过，待实测 · Q-114（git log定位） · reports/hob-query/39962464061/
 
 2026-10-23晚 · HOB诊断包实机到DXE，用户报告UniXNU菜单无OS；原图6cddd1c1已保存，恢复仍待确认，不推断MMU根因已修复 · Q-115 · reports/hob-query-trial/2026-10-23-evening/screen-observation.json
+
+2026-10-23晚 · 用户两张照片确认NuwaBootMemoryDxe拒绝initrd范围、DXE MMU返回Success及UniXNU加载/FAT挂载；原图地址未可靠转录，不宣称XNU或系统卷发现通过 · Q-116 · reports/hob-query-trial/2026-10-23-evening/initrd-observation.json

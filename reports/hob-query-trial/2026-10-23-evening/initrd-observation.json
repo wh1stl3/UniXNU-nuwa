@@ -1,0 +1,36 @@
+{
+  "candidate_sha256": "47b5c4b171d7a0635bb494a8d0e70e9f5159b269aff3b68a66b2fd3868c0de50",
+  "photos": [
+    {
+      "path": "user-initrd-mmu.jpg",
+      "sha256": "c8d90b9ac109d32aa083bbe136d442a214e2d26e58fcb38c7392b6d734e278bb"
+    },
+    {
+      "path": "user-unixnu-fat.jpg",
+      "sha256": "0e4d0cb71a28e36b311d4e76fe7265be46b3020cc3e90abf877b51fbc34c8240"
+    }
+  ],
+  "transcription_method": "Visual transcription; uncertain numerical addresses omitted",
+  "visible_lines": [
+    "Loading driver ... NuwaBootMemoryDxe.efi",
+    "SHENGMEM: device tree at <address>, <size> bytes",
+    "SHENGMEM: initrd <start>-<end> is not a whole number of sectors",
+    "Loading driver ... RamManagerDxe.efi",
+    "[NUWA-CTOR] Mmu enter",
+    "[NUWA-MMU] after-guid-query hob=0",
+    "[NUWA-MMU] before-cache helper=<address> bytes=240",
+    "[NUWA-MMU] after-cache",
+    "[NUWA-CTOR] Mmu leave status=Success",
+    "[Bds]Booting UniXNU",
+    "Loading driver ... UniXNU.efi",
+    "Installed Fat filesystem on <handle> (four lines)"
+  ],
+  "interpretation": [
+    "NuwaBootMemoryDxe reached PublishInitrd after valid FDT and chosen properties",
+    "Driver rejected the initrd range at the combined End<=Start or length%512 check; photo alone does not reliably establish exact numeric endpoints",
+    "Non-sector-aligned concatenated initrd is consistent with prior pinned ABL analysis, but exact length is not transcribed from this photo",
+    "MMU markers are in later DXE constructor context; they do not identify the earlier SEC query GUID",
+    "UniXNU.efi ran and four FAT mounts were logged; their handles do not identify the source volumes or prove unixnu.toml/XNU was present"
+  ],
+  "xnu_entry_observed": false
+}
