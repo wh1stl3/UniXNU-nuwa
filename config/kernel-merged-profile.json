@@ -1,16 +1,62 @@
 {
   "repository": "wh1stl3/UniXNU",
-  "commit": "76dd64142decca55f6594b860565e848de71d271",
+  "commit": "e553e467ebfe7642e9f483d3977a57066c6d1aef",
   "baseline_sha256": "d4e4e63291cd044c22ec11e61ec1bb246ecea77e2261f88c19aabc4137e59fbe",
   "modules": {
     "drivers/ArmCpu": "1951cc8444b340d7d8879e9418220cf29eb711d7",
     "drivers/ArmDTPlatform": "0d544705c2e89725caabc0542bb96bc8febd8c70",
     "drivers/ArmVirtPlatform": "532de8c017e394e69a0b48dc0ffc4ac0d0701177",
-    "kits/NativePrelink": "2b6ffb50117eee820b98aca9bd51b5c7dfb2970e"
+    "drivers/DarwinBoot": "d099354d0eab34df5088ca1ba89c9c88bc3260bb",
+    "drivers/NativeAES": "a34964b8c2fec2e83c8e4f68fb7d6fb7e4b2227b",
+    "drivers/NativeAdreno": "b686b9054f57d393c80195b82568a09f8ca106a2",
+    "drivers/NativeGeniSpi": "b5399b5646c4d7415deec6d887fd51715a97a024",
+    "drivers/NativeHidInput": "ba03e5d147452b2166aab7435d219fa10877672b",
+    "drivers/NativeKeyStoreEvents": "e59bac4ad1ac8825919ae94da8440a64d8ab90b3",
+    "drivers/NativeMetal": "c6d29caad6d880cc8204ebe3bc34d77479a3255d",
+    "drivers/NativeMobileDisplay": "8666a9950c9699b368931d18cac92c0fdb2ce9c0",
+    "drivers/NativeRamBlock": "d4d22d9819b0162eda49f6402235dddc2279410d",
+    "drivers/NativeUfs": "af785c1777161a62931425c2faaa536ce0bebd5b",
+    "drivers/NativeVirtioBlock": "98909eb9198a4360d7a43be831887cb8b74d814d",
+    "drivers/NativeVirtioConsole": "066f9bded311233ed56824e13a5628077619efda",
+    "kits/AdrenoFirmware": "40fdb8ea87606612ac6f1e80bbb49955d0ce4051",
+    "kits/AdrenoPM4": "445f8fe6d115738352b9d78dc70af6d61aa7f62f",
+    "kits/AirNir": "032a867b5dc3121164bbd706e4e81e3b9fcd2b8f",
+    "kits/ArmSmmu4K": "4d0d6598b1a36aeec3de01091893fa6660e49388",
+    "kits/NativePrelink": "2b6ffb50117eee820b98aca9bd51b5c7dfb2970e",
+    "kits/VerifiedRoot": "2854c61f6c4dfda870ac3d93e1f03d9181edb041"
   },
   "selection_evidence": "reports/xnu-8796-sequence/results.json",
-  "input_review": "reports/upstream-merge/kernel-input-review.json",
-  "patch_policy": "Preserve all 48 reviewed bytes; device candidates override changed upstream patches",
+  "input_review": "reports/upstream-integration/2026-10-24/merge.json",
+  "patch_policy": "Preserve reviewed Darwin22 ports; explicit hash-cache update, complete latest GPU addon port and three new upstream fixes",
   "feed_policy": "Do not modify feeds.toml; isolated source build uses explicit pinned environment inputs and does not copy feeds.toml",
-  "scope": "Source kernel, platform static archives and link only; no prelink, firmware or boot image"
+  "scope": "All updated upstream modules fixed and available; Darwin22 kernel build keeps separately qualified patch/driver activation policy",
+  "updated_patch_inputs": {
+    "native-4k-signature-hash-cache.patch": {
+      "root": "base",
+      "path": "patches/xnu/native-4k-signature-hash-cache.patch",
+      "sha256": "a12be973c4eb525cb4309c759d5bae970b158f2928f284615ba6d6969f445eb4"
+    },
+    "zzy-native-gpu-addon-mount.patch": {
+      "root": "device",
+      "path": "patches/xnu-8796-upstream/zzy-native-gpu-addon-mount.patch",
+      "sha256": "60b7a1982979dee97cc2d06a91a5c5fedb5c483c7aa4fbd12ffd8ea55f1cf7a1"
+    }
+  },
+  "extra_patch_inputs": [
+    {
+      "root": "base",
+      "path": "patches/xnu/native-lookup-trace.patch",
+      "sha256": "59f9e7beed2c48e32c18410c144ee4a8d54494bb584f34f7a344964ddfb4d0fc"
+    },
+    {
+      "root": "base",
+      "path": "patches/xnu/native-union-lower-directory.patch",
+      "sha256": "b39e077b190134caae1842d07758795bf15b408eb637701a41b603825e5d563b"
+    },
+    {
+      "root": "base",
+      "path": "patches/xnu/zzwb-native-sandbox-grant-set-properties.patch",
+      "sha256": "20ceb08c197d4da0f30e59a42db6a0ab8a2a3109218c3204e67ee2956423381b"
+    }
+  ]
 }

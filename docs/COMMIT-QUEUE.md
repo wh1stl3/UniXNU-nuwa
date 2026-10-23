@@ -1530,3 +1530,13 @@
 [Evidence] GPU/HID/显示实质更新，CPU/平台/Prelink代码blob不变；0005对DarwinBoot d099354d严格内存apply通过。
 [Risk] 主仓分叉，未整仓升级或变更任何源码pin；新驱动未构建/实测，ST FTS不能套Novatek，无手机操作。
 ```
+
+## Q-146 · 全部上游更新接入
+
+```text
+[unixnu-nuwa][build] 接入完整上游合并与21模块并迁移Darwin22补丁
+
+[Change] 基座真实merge e553e46已推送；新增继承缓存保护的upstream-merged固件profile、kernel新源与三新增补丁及完整GpuAddon移植。
+[Evidence] 合并树等于完整上游+3工作流，21固定模块；63补丁词法序列与固件51输入11补丁15后哈希通过。
+[Risk] 固件/内核完整CI待验，新驱动不等于已激活硬件；未改板值/Heap/身份/验证标志，无手机动作。
+```

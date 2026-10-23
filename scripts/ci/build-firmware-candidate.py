@@ -26,7 +26,7 @@ def save(name, obj):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--profile', choices=('legacy', 'dedicated', 'sec-trace', 'pil-no-auto', 'dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff'), default='legacy')
+    parser.add_argument('--profile', choices=('legacy', 'dedicated', 'sec-trace', 'pil-no-auto', 'dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged'), default='legacy')
     args = parser.parse_args()
     if os.environ.get("GITHUB_ACTIONS") != "true":
         raise RuntimeError("Only the approved disposable Actions build environment is supported")
@@ -36,7 +36,7 @@ def main():
         raise RuntimeError("Fresh source/build tree required; refusing to overwrite")
     work.mkdir()
     OUT.mkdir(parents=True, exist_ok=False)
-    if args.profile in ('dedicated', 'sec-trace', 'pil-no-auto', 'dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff'):
+    if args.profile in ('dedicated', 'sec-trace', 'pil-no-auto', 'dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged'):
         filename = {'dedicated': 'firmware-dedicated-profile.json',
                     'sec-trace': 'firmware-sec-trace-profile.json',
                     'pil-no-auto': 'firmware-pil-no-auto-profile.json',
@@ -51,6 +51,7 @@ def main():
                     'boot-input-audit': 'firmware-boot-input-audit-profile.json',
                     'hob-stage-audit': 'firmware-hob-stage-audit-profile.json',
                     'hob-cache-handoff': 'firmware-hob-cache-handoff-profile.json',
+                    'upstream-merged': 'firmware-upstream-merged-profile.json',
                     'mmu-branches': 'firmware-mmu-branches-profile.json',
                     'constructor-trace': 'firmware-constructor-trace-profile.json'}[args.profile]
         profile = json.loads((ROOT / 'config' / filename).read_text())
@@ -87,12 +88,20 @@ def main():
             head = subprocess.check_output(["git", "log", "-1", "--format=%H"], cwd=dest, text=True).strip()
             if head != info["commit"]:
                 raise ValueError("Wrong source commit")
+        if recipe.get('unixnu_submodules'):
+            run(['git', 'submodule', 'update', '--init', '--depth', '1', '--jobs', '4', '--',
+                 *recipe['unixnu_submodules']], sources['unixnu'], log='unixnu-submodules.log')
+            for relative, expected in recipe['unixnu_submodules'].items():
+                actual = subprocess.check_output(['git', 'rev-parse', 'HEAD'],
+                    cwd=sources['unixnu'] / relative, text=True).strip()
+                if actual != expected:
+                    raise ValueError('Upstream module pin differs: ' + relative)
         run(["git", "submodule", "update", "--init", "--depth", "1", "--",
              "Common/Mu", "Common/Mu_OEM_Sample", "Mu_Basecore", "Silicium-ACPI",
              "Silicon/Silicium/OpensslPkg/Library/OpensslLib/openssl", "Binaries"], fw, log="submodules.log")
         # Patching Mu before stuart --setup makes its checkout dirty; that helper
         # can skip recursive initialization. Resolve pinned gitlinks first.
-        if args.profile in ('dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff'):
+        if args.profile in ('dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged'):
             run(['git', 'submodule', 'update', '--init', '--recursive', '--depth', '1'],
                 fw / 'Mu_Basecore', log='mu-submodules.log')
         checked = []
@@ -149,7 +158,7 @@ def main():
         for item in candidate["post_patch_inputs"]:
             if digest(sources[item["root"]] / item["path"], True) != item["lf_sha256"]:
                 raise ValueError("Patched input mismatch: " + item["path"])
-        if args.profile in ('embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff'):
+        if args.profile in ('embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged'):
             resource = candidate['embedded_probe']
             generator = ROOT / 'scripts/build-embedded-probe.py'
             if digest(generator) != resource['generator_sha256']:

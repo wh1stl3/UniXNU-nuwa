@@ -55,6 +55,8 @@ def inputs(base, profile='baseline'):
     if not evidence['complete_sequence'] or len(selection) != 48:
         raise ValueError('Need the complete reviewed 48-patch selection')
     patches = []
+    merged_inputs = (json.loads((DEVICE / 'config/kernel-merged-profile.json').read_text())
+                     if profile == 'merged' else {})
     for item in selection:
         name = item['patch']
         if Path(name).name != name or not name.endswith('.patch'):
@@ -63,8 +65,17 @@ def inputs(base, profile='baseline'):
         if not candidate.exists():
             directory = 'kits/NativePrelink/patches' if name.startswith('xnu-10063.') else 'patches/xnu'
             candidate = base / directory / name
-        if sha(candidate) != item['sha256']:
+        update = merged_inputs.get('updated_patch_inputs', {}).get(name)
+        if update:
+            candidate = (DEVICE if update['root'] == 'device' else base) / update['path']
+        expected = update['sha256'] if update else item['sha256']
+        if sha(candidate) != expected:
             raise ValueError(f'Reviewed patch changed: {name}')
+        patches.append(candidate)
+    for item in merged_inputs.get('extra_patch_inputs', []):
+        candidate = (DEVICE if item['root'] == 'device' else base) / item['path']
+        if sha(candidate) != item['sha256']:
+            raise ValueError('New upstream patch changed: ' + item['path'])
         patches.append(candidate)
     baseline = base / 'scripts/build-xnu-4k-baseline.sh'
     firehose = base / 'scripts/build-firehose.sh'

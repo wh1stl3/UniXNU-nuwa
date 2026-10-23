@@ -49,3 +49,7 @@ MemoryPeim只新增登记私有一次性回调；ArmConfigureMmu ABI/默认空�
 ## 上游审查续接（2026-10-24T03:28:17.252417+08:00）
 
 用户要求查最新驱动，完成主仓1a01c2af/12模块/同SoC的固定对照，报告reports/upstream-review/2026-10-24/review.json。GPU/HID/显示等实质更新，CPU/平台/预链接工具代码无新实现；推荐独立评估DarwinBoot d099354d+RamBlock d4d22d98。0005对最新DarwinBoot严格内存apply通过，未构建/采用。主仓diverged，不pull或替换固定75bc；nuwa ST FTS不改成Novatek。详见2026-10-24-upstream-driver-review.md。手机和板值均未操作。
+
+## 用户合并授权与执行（2026-10-24T03:46:17.280839+08:00）
+
+用户明确要求合并所有更新，现已合并并推送基座e553e46，树与upstream1a01c2af+三nuwa工作流相同，21模块固定。设备新增upstream-merged固件profile并更新kernel-merged；63项内核完整patch与固件整链静态通过，待完整CI。本节替代前文“不整体升级/未采用”当前决定，不改历史证据。新包尚无实机，旧26ef8efd仍唯一缓存候选恢复闭环。完整命令/状态见2026-10-24-upstream-integration.md。

@@ -30,7 +30,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: wh1stl3/UniXNU
-          ref: 76dd64142decca55f6594b860565e848de71d271
+          ref: e553e467ebfe7642e9f483d3977a57066c6d1aef
           path: base
           persist-credentials: false
       - name: Checkout nuwa input
@@ -62,23 +62,23 @@ jobs:
           } 2>&1 | tee "$RUNNER_TEMP/nuwa-host/toolchain.log"
       - name: Install base host dependencies
         run: brew install cmake ninja unifdef
-      - name: Fetch only the four pinned source modules
+      - name: Fetch all pinned upstream source modules
         shell: bash
         run: |
           set -euo pipefail
-          git -C base submodule update --init --depth 1 -- drivers/ArmCpu drivers/ArmDTPlatform drivers/ArmVirtPlatform kits/NativePrelink
+          git -C base submodule update --init --depth 1 --jobs 4
       - name: Validate fixed source inputs
         shell: bash
         run: |
           [[ "$DEVICE_REF" =~ ^[0-9a-f]{40}$ ]]
           test "$DEVICE_REF" = "$(git -C device rev-parse HEAD)"
-          test "$(git -C base rev-parse HEAD)" = 76dd64142decca55f6594b860565e848de71d271
+          test "$(git -C base rev-parse HEAD)" = e553e467ebfe7642e9f483d3977a57066c6d1aef
           python3 -B device/scripts/ci/build-8796-source.py --base base --profile merged --check
       - name: Compile and link 8796 source kernel
         shell: bash
         run: |
           set -o pipefail
-          python3 -u -B device/scripts/ci/build-8796-source.py --base base --profile merged \
+          GITHUB_TOKEN=${{ github.token }} python3 -u -B device/scripts/ci/build-8796-source.py --base base --profile merged \
             2>&1 | tee "$RUNNER_TEMP/nuwa-host/kernel-console.log"
       - name: Collect build evidence
         if: always()
