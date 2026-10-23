@@ -45,3 +45,7 @@ MemoryPeim只新增登记私有一次性回调；ArmConfigureMmu ABI/默认空�
 ## 最新离线续接（2026-10-24T03:17:12.549163+08:00）
 
 固定DarwinBoot RunEnd/AllocateWindow主机ASan/UBSan12项通过；分析内核真实VA同余偏移0x1c8000，在照片最大合并区子集上计算0x8c01c8000，不写board、不称实际分配。详见2026-10-24-loader-window-offline.md。4MiB配置卷不能容纳约58MiB分析内核；直接启动的主阻塞是运输/ADT/初始化与ABI而非当前已越过的HOB。下一步独立文件读取/长度/SHA诊断优先，USB host或大FV均尚未qualified。无新包/设备动作，恢复状态仍此前证据。
+
+## 上游审查续接（2026-10-24T03:28:17.252417+08:00）
+
+用户要求查最新驱动，完成主仓1a01c2af/12模块/同SoC的固定对照，报告reports/upstream-review/2026-10-24/review.json。GPU/HID/显示等实质更新，CPU/平台/预链接工具代码无新实现；推荐独立评估DarwinBoot d099354d+RamBlock d4d22d98。0005对最新DarwinBoot严格内存apply通过，未构建/采用。主仓diverged，不pull或替换固定75bc；nuwa ST FTS不改成Novatek。详见2026-10-24-upstream-driver-review.md。手机和板值均未操作。

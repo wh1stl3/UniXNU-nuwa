@@ -1,0 +1,2107 @@
+{
+  "at": "2026-10-23T19:25:08.901716+00:00",
+  "upstream_head": "1a01c2afa197d975d04da892325c56b6b14aaecb",
+  "head_date": "2026-10-23T15:24:05Z",
+  "head_message": "UniXNU Docs: individual pages for the remaining community ports",
+  "baseline": "75bc13dd34dc4e403826793739e316a264ce00dd",
+  "comparison": {
+    "status": "diverged",
+    "ahead_by": 186,
+    "behind_by": 36,
+    "total_commits": 186
+  },
+  "merge_base": "dec4c7b5b64f35c8a95a828fb0f8375d91eae6a5",
+  "main_recent_commits": [
+    {
+      "sha": "1a01c2afa197d975d04da892325c56b6b14aaecb",
+      "date": "2026-10-23T15:24:05Z",
+      "message": "UniXNU Docs: individual pages for the remaining community ports"
+    },
+    {
+      "sha": "cbee05d90d56810bf74dc96d9fab5b4b7572652c",
+      "date": "2026-10-23T15:23:49Z",
+      "message": "docs: add individual pages for the remaining community ports"
+    },
+    {
+      "sha": "41780f71bd2d6f741c917d2eb7a50a4290142404",
+      "date": "2026-10-23T15:00:13Z",
+      "message": "Merge pull request #94 from UniXNU/docs/community-repository-index\n\ndocs: complete the community repository index"
+    },
+    {
+      "sha": "6f95803ec53def8eda870bb5bfd2e7e5c233a223",
+      "date": "2026-10-23T14:59:57Z",
+      "message": "docs: complete the community repository index"
+    },
+    {
+      "sha": "c13003fef8942e2180e599cf0c98e873cc88a4eb",
+      "date": "2026-10-23T13:47:37Z",
+      "message": "Merge pull request #93 from UniXNU/docs/a04br3-port\n\ndocs: add the Benesse TAB-A04-BR3 port"
+    },
+    {
+      "sha": "c6100f92dccb223c10f7ca57e6f6c4d92bb606b5",
+      "date": "2026-10-23T13:47:23Z",
+      "message": "docs: add the Benesse TAB-A04-BR3 port"
+    },
+    {
+      "sha": "35f7a9ed6a74fdb98b119c5ebcc4dcd4ea55f871",
+      "date": "2026-10-23T12:47:50Z",
+      "message": "Merge pull request #92 from UniXNU/docs/myron-port\n\ndocs: add the myron core and driver forks"
+    },
+    {
+      "sha": "f5c0d663c2288d3a053a54f2f5a4a9992e784e16",
+      "date": "2026-10-23T12:47:37Z",
+      "message": "docs: add the myron core and driver forks"
+    },
+    {
+      "sha": "3bba4e77b7f066f6a358d84ff1f647ecd43c3c75",
+      "date": "2026-10-23T12:33:51Z",
+      "message": "Merge pull request #91 from UniXNU/docs/pong-port\n\ndocs: add the Nothing Phone (2) pong port"
+    },
+    {
+      "sha": "f833f05e7a9e9f2e3da9eff14f69c09abdd546b5",
+      "date": "2026-10-23T12:33:37Z",
+      "message": "docs: add the Nothing Phone (2) pong port"
+    },
+    {
+      "sha": "52d18cef78f362d7ca0c72865fc97d1b98bf4a15",
+      "date": "2026-10-23T10:02:24Z",
+      "message": "feat(scripts): key the shader cache to the translator build and allow paths in kernel arguments\n\nThe bridge build applies the padded-row alias patch and passes a runtime id derived from the translator pin and its patches, so primed shaders survive until the translator changes. Kernel argument values may now contain a slash."
+    },
+    {
+      "sha": "cb0749940c598f2bd7fb113c1a660fcc2fd825ce",
+      "date": "2026-10-23T10:02:24Z",
+      "message": "fix(xnu): search only a directory of the lower layer in a union lookup\n\nA name that is a symlink in the base system and a directory in the mounted system made the union lookup fall into the symlink and fail with ENOTDIR. Add the matching lookup trace."
+    },
+    {
+      "sha": "b9ecfdbbfa6c6b8e8a239b95bdff5e322d885669",
+      "date": "2026-10-23T09:36:40Z",
+      "message": "feat(debug): integrate USB terminal capture and screen controls"
+    },
+    {
+      "sha": "40d23772d91e30debed43247cb104a95de19c1e4",
+      "date": "2026-10-23T09:18:56Z",
+      "message": "docs: update device states and the macOS runner guide"
+    },
+    {
+      "sha": "878ddd87b53a31aac25a8ccb29e49aeac16555b2",
+      "date": "2026-10-23T09:14:53Z",
+      "message": "Merge pull request #80 from reAAAq/docs/umi-port\n\ndocs: add Xiaomi Mi 10 (umi) community port"
+    },
+    {
+      "sha": "cd25db47fda9a1ca7ace3d9ff73acb756f953783",
+      "date": "2026-10-23T09:14:53Z",
+      "message": "Merge pull request #89 from Dracen-W/docs/merlinx-port\n\ndocs: add the Redmi Note 9 (merlinx) port"
+    },
+    {
+      "sha": "ce83e49dacca7da29ec66ecff35f460ed14ed040",
+      "date": "2026-10-23T09:14:20Z",
+      "message": "Merge pull request #87 from xVanTuring/perf/signature-hash-cache\n\nperf(patches): read signed files in 1 MiB pieces, the dyld cache uncached"
+    },
+    {
+      "sha": "ab0de81a386df4dba7f9d18e8263272ff3b396d3",
+      "date": "2026-10-23T09:14:20Z",
+      "message": "Merge pull request #86 from xVanTuring/fix/gpu-addon-parent\n\nfix(patches): create /private/var/ngpu itself for the GPU addon"
+    },
+    {
+      "sha": "80cc44de6702281dc050d1c0d81f556e2bacbbf4",
+      "date": "2026-10-23T06:53:42Z",
+      "message": "docs(umi): mark XNU touch as hardware verified"
+    },
+    {
+      "sha": "6a6101c6c77a7a2a3401ba1df0a1241c017597db",
+      "date": "2026-10-23T01:58:56Z",
+      "message": "docs: clarify the merlinx key mapping and boot partition"
+    },
+    {
+      "sha": "ea81ada03e56033e7fa59401491e8b212972f43c",
+      "date": "2026-10-23T01:47:44Z",
+      "message": "docs: add the Redmi Note 9 (merlinx) port"
+    },
+    {
+      "sha": "f4916f7db0dbfb6f3c43fa7881093e86d312e6f1",
+      "date": "2026-10-23T01:09:26Z",
+      "message": "chore(deps): take the Metal plugin whose scanout thread runs at user-interactive priority"
+    },
+    {
+      "sha": "477e530a8689af4a09eacb4eb9bdb878c737d8b6",
+      "date": "2026-10-22T23:43:23Z",
+      "message": "perf(patches): read signed files in 1 MiB pieces, the dyld cache uncached\n\ncs_native4k_prepare reads the whole signed range of a file with 16K\npage hashes before its signature is published. For the 3 GB dyld\nshared cache that happens in launchd at every boot, and the cached\n16 KiB reads filled the page cache: on the TB128FU free memory went\nfrom 3.4 GB to 170 MB in the 42 s before the first daemon started, and\nthose daemons then started under memory pressure.\n\nRead 1 MiB per vn_rdwr and use IO_NOCACHE for files above 32 MiB\n(executables are faulted in right after their signature is added and\nstay cached). Export the time spent in the reads and in the hashing\nand the bytes read (cs_native4k_read_ticks, cs_native4k_hash_ticks,\ncs_native4k_bytes) so a board can show what the boot pays.\n\nTB128FU: free memory stays at 3.3 GB through the stall and the first\nframe moved from 96 s to 86 s. The counters show 3141 MiB in 53 files,\n28.9 s in the reads and 11.0 s hashing: the stall itself is bound by\nthe storage driver, so larger reads alone do not shorten it."
+    },
+    {
+      "sha": "119d7dcba12b1ab59a5f6741e67c5e2d06070106",
+      "date": "2026-10-22T23:43:21Z",
+      "message": "fix(patches): create /private/var/ngpu itself for the GPU addon\n\nnative_gpu_addon_parents starts its mkdir walk after\n\"/private/var/ngpu/\", so it creates the directories below ngpu but\nnever ngpu. A Data seed that never had add-gpu-plugin-data.py applied\nhas no ngpu, every file of the payload's addon then fails with ENOENT\nand the overlay mounts fail too, although make-gpu-addon.py says the\nkernel creates missing directories. Start the walk at the slash after\nngpu so ngpu is created first (EEXIST when it is there).\n\nSeen on the TB128FU (skip-setup seed without the plugin data):\nfiles=9 written=0 failed=9 error=2, mounts 1.2/1.2; with the fix\nwritten=9 and both mounts 5.0, the Metal plugin loads in backboardd."
+    },
+    {
+      "sha": "4abaef821c907215fba6a9625a9fbf848188543a",
+      "date": "2026-10-22T23:10:43Z",
+      "message": "chore(deps): take the display driver that retires a GPU-copied swap early"
+    },
+    {
+      "sha": "f5b7c8a01e3a80e06f664a8620353edf432576ef",
+      "date": "2026-10-22T21:59:58Z",
+      "message": "fix(gpu): render in system memory with non-coherent render targets"
+    },
+    {
+      "sha": "89adc8ec0db9a1c79ed7782538d3808090931d6a",
+      "date": "2026-10-22T20:46:51Z",
+      "message": "ci(macos): publish only redacted text logs\n\nThe workflow is a build check. Kernels are linked against Apple's\nkernelcache, payloads carry the platform seed and Apple content, and\nuserdata holds Apple's disk images, so none of them may be uploaded to a\npublic repository.\n\n- Remove the kernel, payload and userdata uploads and the\n  upload_userdata input.\n- Upload only *.log files of the build, on success and failure, for 7\n  days, after replacing the chip ID, the trust cache and Data seed URLs\n  and signed URLs with ***, and skipping binary files.\n- Write a step summary with the result of each build step."
+    },
+    {
+      "sha": "caad2d73692ea8aac8ce82141a1e09b7025740fe",
+      "date": "2026-10-22T20:46:51Z",
+      "message": "ci(macos): rewrite the macOS build workflow\n\n- Pin the runner to macos-26 and select Xcode by input (default 26.6)\n  instead of the moving macos-latest label.\n- Pass the workflow token to the kernel build so the DriverKit header\n  listing is not rate limited.\n- Install lld (no longer part of the llvm formula; the payload links\n  the panic screen with ld.lld) and keep Homebrew LLVM off PATH, as on\n  the development machines.\n- Key the concurrency group on ref, device repository, device ref and\n  defconfig, and stop cancelling running builds.\n- Check the inputs, the defconfig, the Xcode path and the platform seed\n  secret before installing or building anything.\n- Read the trust cache and Data seed URLs from the event payload and\n  mask them, so they do not appear in public logs.\n- Drop the explicit fetch; the build step fetches the references it\n  needs and no longer rewrites the device unixnu.lock.\n- Let seed-data-grow.py find its submodule and build directory.\n- Default to the kernel step and offer kernel plus payload without the\n  userdata image.\n- Upload the logs on failure, name artifacts per board and attempt,\n  leave the skip-setup seed copy out of the payload artifact and store\n  userdata uncompressed.\n- Pin the actions to commits of their Node 24 releases and run steps\n  with bash -eo pipefail."
+    },
+    {
+      "sha": "d12c96bf2cf6f80dce33017b677b668324bacd05",
+      "date": "2026-10-22T20:46:51Z",
+      "message": "fix(kernel): authenticate the DriverKit header listing when a token is set\n\nprepare-xnu-source.py lists Apple's xnu tree through the GitHub API without credentials. Hosted runners share the anonymous per-address quota and the bootstrap pass stops with HTTP 403 rate limit exceeded. Send GITHUB_TOKEN or GH_TOKEN, when set, to api.github.com and raw.githubusercontent.com only."
+    },
+    {
+      "sha": "dc21175e5a6ff462547abf99d33981cade15a3ed",
+      "date": "2026-10-22T20:46:51Z",
+      "message": "fix(gpu): render without hardware binning"
+    },
+    {
+      "sha": "6da796fef59706cb9828fb2f62fb772601601ea3",
+      "date": "2026-10-22T20:30:48Z",
+      "message": "Merge pull request #82 from UniXNU/docs/negroni-gta4l-bars\n\ndocs: add negroni and the second gta4l repository"
+    },
+    {
+      "sha": "3445e09a4df8914eaaf3ca1b2bfbc8356ae7162f",
+      "date": "2026-10-22T20:27:18Z",
+      "message": "docs: add negroni and the second gta4l repository"
+    },
+    {
+      "sha": "2eeed3ba64026f476a657a038d4246dc820ee808",
+      "date": "2026-10-22T19:15:12Z",
+      "message": "docs: add Xiaomi Mi 10 (umi) community port"
+    },
+    {
+      "sha": "bad2c6ba098a436c794c6859734cc375fc5f1562",
+      "date": "2026-10-22T18:55:22Z",
+      "message": "fix(payload): keep Restart and Power off in the payload's boot menu\n\nThe payload's unixnu.toml replaces the built-in menu, which held the only Restart and Power off entries; the generated configuration now ends with both."
+    },
+    {
+      "sha": "df43ee1da1e9036d93fcbc4f348b94c3e7474fab",
+      "date": "2026-10-22T18:55:22Z",
+      "message": "feat(payload): add a confirmed install entry to the boot menu\n\nboard.toml [payload.install] adds a second boot menu entry with the same\nkernel and Data seed behind a confirmation; each confirmation choice\nappends its boot argument (the sheng board uses it for the Data reset)."
+    },
+    {
+      "sha": "a861794a94bf840336761b5cabce633debdb4240",
+      "date": "2026-10-22T18:55:17Z",
+      "message": "fix(package): show UniXNU once in the landscape menu header\n\nThe logo's wordmark already reads UniXNU; as in the portrait header, the landscape header draws the title only without the logo or when it says something else, and its provenance line reads version and source."
+    },
+    {
+      "sha": "47af8710e65d6bdf18fab93c070ae60cbcd77196",
+      "date": "2026-10-22T18:37:26Z",
+      "message": "chore(touch): update the NativeHidInput pointer\n\nBrings in multi-finger collection dispatch, finger validity and lifts by identifier."
+    },
+    {
+      "sha": "11c818217b7ba90fb8d3e356d4f1ede88f952cf6",
+      "date": "2026-10-22T18:36:30Z",
+      "message": "feat(xnu): let a service's sandbox grant cover setting its properties\n\nA service that names a process in NativeSandboxGrantProcess now also lets that process set its properties when the sandbox profile would refuse it, as the grant already does for opening its user client."
+    },
+    {
+      "sha": "9fd45ef70cc78df7b59ad4656ff84e17a70da911",
+      "date": "2026-10-22T18:04:03Z",
+      "message": "fix(storage): make backups optional and support macOS self-tests"
+    },
+    {
+      "sha": "1c71ba013687cbc80b204a5a68b852680efbcccf",
+      "date": "2026-10-22T18:04:03Z",
+      "message": "feat(storage): add experimental dual-system partitioning"
+    },
+    {
+      "sha": "b2360badaeaa9a732d3d53be5c5b975a5f6061b1",
+      "date": "2026-10-22T16:26:29Z",
+      "message": "Merge pull request #73 from ShueiTsuki/docs/pandora-port\n\ndocs: add Xiaomi 17 Pro (pandora) community port"
+    },
+    {
+      "sha": "86740fd459340fdd0ab01dfdaeec09ac8299cc6f",
+      "date": "2026-10-22T16:25:41Z",
+      "message": "Merge pull request #74 from UniXNU/docs/qemu-metal\n\ndocs: record the QEMU Metal device on the Mac GPU"
+    },
+    {
+      "sha": "2b1e3a9aee2fca96115451092927ac896dfd53d1",
+      "date": "2026-10-22T16:25:30Z",
+      "message": "docs: record the QEMU Metal device on the Mac GPU"
+    },
+    {
+      "sha": "f91542814c99dbabbc0e76fd0103d2e81e949a8d",
+      "date": "2026-10-22T16:12:04Z",
+      "message": "docs: add Xiaomi 17 Pro (pandora) community port\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+    },
+    {
+      "sha": "e19e517448432ae2d60676a31caf9c7299884f81",
+      "date": "2026-10-22T15:28:35Z",
+      "message": "Merge pull request #72 from UniXNU/docs/sort-devices-by-completion\n\ndocs: sort community ports by completion"
+    },
+    {
+      "sha": "3a430bc086dc00d05e6c18e339e8e73634a64b48",
+      "date": "2026-10-22T15:28:21Z",
+      "message": "docs: sort community ports by completion"
+    },
+    {
+      "sha": "8383686a2e47060459292e209b9f79988bc70404",
+      "date": "2026-10-22T15:18:23Z",
+      "message": "chore(gpu): update the NativeMetal pointer\n\nMetal processes render in system memory without concurrent binning,\nwhich removes the GPU stall that froze the display."
+    },
+    {
+      "sha": "1bb87bd28912b6e0b3e95c549507cfc60f2aafae",
+      "date": "2026-10-22T15:13:32Z",
+      "message": "Merge pull request #70 from UniXNU/docs/latest-device-updates\n\ndocs: record the latest community device updates"
+    },
+    {
+      "sha": "fb756b11a3193323a45e2bbc99c9c5820e2d57e2",
+      "date": "2026-10-22T15:13:19Z",
+      "message": "docs: record the latest community device updates"
+    },
+    {
+      "sha": "7d296968cad6676bcdc7ab9885b7bf729d969a2e",
+      "date": "2026-10-22T13:32:03Z",
+      "message": "Merge pull request #68 from UniXNU/docs/device-status-scan\n\ndocs: update community device states from repository changes"
+    },
+    {
+      "sha": "4340f431ff06b503baa76d1c00f47e30b9c97fc5",
+      "date": "2026-10-22T13:31:49Z",
+      "message": "docs: update community device states from repository changes"
+    },
+    {
+      "sha": "a969863781e38e530c08cd64e65c326c01f8fc4a",
+      "date": "2026-10-22T13:23:41Z",
+      "message": "Merge pull request #56 from xVanTuring/docs/tb128fu-port\n\ndocs: add the tb128fu port"
+    },
+    {
+      "sha": "86c177b9bba09c27da3cf11f44e8c2b7acb74665",
+      "date": "2026-10-22T13:23:41Z",
+      "message": "Merge pull request #66 from xVanTuring/feat/entry-probe-reset\n\nfeat(payload): keep the entry probe's timed reset from the board file"
+    },
+    {
+      "sha": "1ce0f8d98e60518888b36a39f7d1c71398be6a97",
+      "date": "2026-10-22T13:23:41Z",
+      "message": "Merge pull request #62 from xVanTuring/feat/skip-setup-args\n\nfeat(payload): pass board arguments to the skip-setup tool, add --no-auto-dim"
+    },
+    {
+      "sha": "b6c2d7682139a98df36846cc867a1f7ff89bbe32",
+      "date": "2026-10-22T13:23:41Z",
+      "message": "Merge pull request #60 from xVanTuring/feat/owner-cache-volume-uuid\n\nfeat(patches): take the owner SystemOS volume UUID from the configuration"
+    },
+    {
+      "sha": "3292b231137f3743543d35711b8319e32b195676",
+      "date": "2026-10-22T13:23:41Z",
+      "message": "Merge pull request #59 from xVanTuring/feat/bridge-manifest-only\n\nfeat(scripts): write the bridge manifest without building"
+    },
+    {
+      "sha": "e4612fab11acee0ee49a7573fc72451b5208410c",
+      "date": "2026-10-22T12:59:06Z",
+      "message": "docs: list the target IPSWs in the setup guide"
+    },
+    {
+      "sha": "d4d9d2819b0d49979becf8c3c9bf0b131a61d757",
+      "date": "2026-10-22T12:26:25Z",
+      "message": "feat(payload): keep the entry probe's timed reset from the board file\n\nThe payload ran patch-xnu-entry-probe.py only for panic_screen, always\nwith --no-reset. [payload] entry_probe_reset_delay now keeps the reset\n(--reset-delay), and entry_probe_reset_after, _in, _occurrence and\n_before move it after a given call (--reset-after, --in, --occurrence,\n--reset-before), with or without the panic screen. Before the kernel\ncan draw, a reboot after the delay is the only sign that it got that\nfar. Without the new keys the call is unchanged."
+    },
+    {
+      "sha": "31506f7e6fd0bbb7fd596f928c9251761743af3a",
+      "date": "2026-10-22T11:34:34Z",
+      "message": "Merge pull request #63 from UniXNU/fix/bindfs-force-root\n\nfix(xnu): restore the bindfs force-root definition and getattr hunk"
+    },
+    {
+      "sha": "bdeb1347755834e0e8ca1a6d2ab9b9dbe7d128eb",
+      "date": "2026-10-22T11:33:44Z",
+      "message": "fix(xnu): restore the bindfs force-root definition and getattr hunk"
+    },
+    {
+      "sha": "12c5d446e3797f46945fa3b60feb4cd45307e873",
+      "date": "2026-10-22T11:04:37Z",
+      "message": "feat(payload): pass board arguments to the skip-setup tool, add --no-auto-dim\n\n[payload] skip_setup_args (optional) is passed to skip_setup_tool after\nthe two paths, and the edited seed is cached by the hash of the base and\nof those arguments.\n\nseed-data-skip-setup.py --no-auto-dim also sets SBDisableAutoDim,\nSBDontDimOrLockOnAC and SBDisableIdleSleep in com.apple.springboard, as\nUniXNU-qemu's build-os-root.py does: a board without buttons or a working\nidle timer otherwise turns its display off about 30 seconds after\nSpringBoard starts and puts the system to sleep."
+    },
+    {
+      "sha": "d07f3c3fc44fe3932be47af3cd5f3c169a531ee4",
+      "date": "2026-10-22T11:04:36Z",
+      "message": "fix(gpu): let Turnip bind host-import images at any offset\n\nTurnip asked a dedicated allocation of every image made for external\nmemory, so an image over a no-copy buffer's host pages could not be\nbound inside the buffer's import and each such texture fell back to a\nshadow image copied in and out per pass. Ask it only for handle types\nthat carry per-image metadata, as the host-allocation format query\nalready reports."
+    },
+    {
+      "sha": "bb385622c8ef4cbede7f047caa1f17e8d1e3c86c",
+      "date": "2026-10-22T11:02:21Z",
+      "message": "feat(patches): take the owner SystemOS volume UUID from the configuration\n\noffline-owner-systemos-mount.patch mounted the SystemOS cryptex volume\nby the sheng image's UUID. XNU_OWNER_CACHE_VOLUME_UUID\n(CONFIG_XNU_OWNER_CACHE_VOLUME_UUID) now names it; the build writes it\ninto owner-data-volume.h next to the Data volume UUID and rebuilds\nkern_exec.o when it changes. Without it the sheng value stays the\ndefault."
+    },
+    {
+      "sha": "4fb7a931577069c67fb1579a50cd560b5d67834d",
+      "date": "2026-10-22T11:01:04Z",
+      "message": "feat(scripts): write the bridge manifest without building\n\nbuild-native-metal-bridge.py --manifest-only writes\nbuild/native-metal-bridge/Cargo.toml exactly as the build does (patched\ntranslator source, fixtures) and stops before cargo, so the crates can\nbe fetched once (cargo fetch --manifest-path ...) and later builds run\noffline."
+    },
+    {
+      "sha": "6539ad0269b4c34c7207d1aa3468b66950f950de",
+      "date": "2026-10-22T10:51:12Z",
+      "message": "docs: add the tb128fu port\n\nThe Lenovo Xiaoxin Pad 2022 (TB128FU, SM6225) port by xVanTuring:\nUniXNU-tb128fu and uefi-tb128fu. iPadOS 17.7.11 reaches the home screen\nwith touch, drawn on the CPU; the Adreno 610 runs under NativeAdreno."
+    },
+    {
+      "sha": "f32d937e987bab8c71bcd61f3021a4ad55461862",
+      "date": "2026-10-22T10:43:30Z",
+      "message": "Merge pull request #54 from UniXNU/docs/mobilegestalt-identity\n\ndocs: document MobileGestalt identity and gestures"
+    },
+    {
+      "sha": "a33f96af715e0a30342b81842583dfe641a38048",
+      "date": "2026-10-22T10:43:02Z",
+      "message": "docs: document MobileGestalt identity and gestures"
+    },
+    {
+      "sha": "1640f6fe699fb67ec3e9cc269caecc8d4c2517cf",
+      "date": "2026-10-22T10:16:31Z",
+      "message": "fix(gpu): update NativeMetal for two-plane surface textures\n\nNativeMetal now makes textures on two-plane IOSurfaces, which widget\nsnapshots are drawn into, and reports why a surface texture was\nrefused. The bridge build applies the runtime patch that accepts the\ntwo-plane RGB surface format."
+    },
+    {
+      "sha": "9f27821fc508ebf049bfbcb4307ff575584ab263",
+      "date": "2026-10-22T08:36:52Z",
+      "message": "docs: add the nuwa and nx729j ports"
+    },
+    {
+      "sha": "eeb23d090dd52217b23d96eec8c70a5477f1a194",
+      "date": "2026-10-22T08:20:29Z",
+      "message": "feat(gpu): build the unified log export into adrenoprobed\n\nThe probe daemon links NativeOsLogExport.mm and carries the logging\ngrants it needs to read the whole unified log for the diagnostic export."
+    },
+    {
+      "sha": "e90b050e6532723c688d71adbc7b4fa2baef3d82",
+      "date": "2026-10-22T08:20:29Z",
+      "message": "feat(gpu): carry the shader prime list in the addon and the plugin\n\nmake-gpu-addon.py --prime-list FILE adds the OS image's .metallib paths\nas addons/NativeAdrenoMetal.primelist. The plugin build also links\nbuild/prime-list.txt into the executable's __DATA,__primelist section,\nsince the render server's sandbox may refuse to read the file."
+    },
+    {
+      "sha": "2e22eb8acefcf85988e56ab790ac379728b409fd",
+      "date": "2026-10-22T08:20:29Z",
+      "message": "chore(drivers): bump NativeAdreno, NativeMetal and NativeHidInput\n\n- NativeAdreno: 4096 GPU objects, imported pages held through a memory\n  entry, live import records.\n- NativeMetal: shader priming from the prime list, no-copy deallocators\n  run when the import is freed, core image memory sizes, unified log\n  export.\n- NativeHidInput: power and volume buttons."
+    },
+    {
+      "sha": "9acb29c3dffe6d9480b5523315c39f0fdae54a3d",
+      "date": "2026-10-22T06:55:25Z",
+      "message": "docs: add the cheeseburger, zeta, raphael and fajita ports"
+    },
+    {
+      "sha": "453f1a893a923c81c99efc2ca08a4f4bd69312d3",
+      "date": "2026-10-22T04:35:41Z",
+      "message": "fix(scripts): apply the bridge patch that skips draws without a pipeline\n\nNativeMetal carries 0006-skip-draws-without-a-pipeline.patch since\n495d3df, but build-native-metal-bridge.py never applied it."
+    },
+    {
+      "sha": "625daadce4dc9b852e31b74e63df9262c8584577",
+      "date": "2026-10-22T04:29:23Z",
+      "message": "fix(patches): grant the gpu user client to a list of processes\n\nNativeSandboxGrantProcess becomes a comma-separated list of process\nnames, so the processes beside the render server that run the Metal\nplugin (iconservicesagent, WidgetRenderer, PosterBoard) open the native\nGPU user client too. Entries longer than a process name's 16 characters\nare compared by their first 16."
+    },
+    {
+      "sha": "52678b5574329052907ec018360936963b7bb882",
+      "date": "2026-10-22T00:17:02Z",
+      "message": "chore(drivers): update NativeAdreno for metal clients beside the render server\n\nPicks up the user client change that serves Metal clients next to the\nrender server."
+    },
+    {
+      "sha": "aef9becad09f345baa5222fa50f2d87caf21795b",
+      "date": "2026-10-22T00:16:09Z",
+      "message": "feat(patches): copy the staged system apps into the data volume\n\nThe deletable system apps (Weather, Notes, Calendar and the rest) ship in\nthe OS volume's /private/var/staged_system_apps; a restore copies them\ninto Data, where the first-boot data migration installs them. The owner\nData mount hides that directory, so the apps and their widgets were\nmissing. With boot argument sheng-staged-apps=1 the kernel copies it once,\nbefore launchd starts, through the vnode the Data mount covers, owned by\nmobile (installcoordinationd moves the bundles as mobile). The walk is\niterative and every file is synced; /private/var/db/.sheng-staged-apps\nmarks a complete copy.\n\nThe payload passes --persistent-data to the ADT tool for boards that set\n[payload.adt] persistent_data."
+    },
+    {
+      "sha": "910a19dfaa12b32544a7596ef8f0e3e05fe59cae",
+      "date": "2026-10-22T00:15:47Z",
+      "message": "feat(payload): replace the default wallpaper's heic images with png\n\nPosterBoard renders the iPad7,1 variant of wallpaper 7570, a layered\nanimation whose two HEIC images ImageIO cannot decode without a hardware\nHEVC decoder, so the wallpaper stayed black.\n\nscripts/make-wallpaper-overlay.py converts both images to 2732 pixel PNG\nand points a copy of main.caml at them. make-gpu-addon.py --wallpaper\npacks that directory into the addon. The kernel now creates missing\ndirectories below /private/var/ngpu while it writes the addon, and\nmounts /private/var/ngpu/wallpaper as a read-only union over the\nanimation's directory."
+    },
+    {
+      "sha": "0e17699d18ba1afae638f553589ad34550ee97f0",
+      "date": "2026-10-22T00:13:47Z",
+      "message": "fix(payload): pass the text fixups after the ipad identity flag\n\nThe text fixup loop landed inside the ipad_identity condition, between\nthe if and its body, which leaves payload.py unparsable. Move it after\nthe --ipad-identity append."
+    },
+    {
+      "sha": "7d0835dc1819524e67040afea1b390e5211a56cf",
+      "date": "2026-10-22T00:13:11Z",
+      "message": "feat(payload): pass signed-text fixups in the device tree\n\nA board lists its fixups of signed file text in board.toml [payload]\ntext_fixups. The payload passes them to the ADT tool, which stores them\nNUL-separated in /chosen/text-fixups, so they take no space on the\n1000-byte command line. The kernel reads that table before the\ntext-fixup0..7 boot arguments and now holds up to 32 fixups."
+    }
+  ],
+  "submodules": [
+    {
+      "repository": "UniXNU/ArmCpu",
+      "linked_pin": "1951cc8444b340d7d8879e9418220cf29eb711d7",
+      "latest": "1951cc8444b340d7d8879e9418220cf29eb711d7",
+      "latest_date": "2026-10-20T10:16:20Z",
+      "latest_message": "docs: describe the current module state",
+      "latest_matches_main_pin": true,
+      "license": {
+        "key": "other",
+        "name": "Other",
+        "spdx_id": "NOASSERTION",
+        "url": null,
+        "node_id": "MDc6TGljZW5zZTA="
+      },
+      "baseline_file_count": 3,
+      "latest_file_count": 4,
+      "changes": [
+        {
+          "path": "README.md",
+          "status": "added"
+        }
+      ],
+      "recent_commits": [
+        {
+          "sha": "1951cc8444b340d7d8879e9418220cf29eb711d7",
+          "date": "2026-10-20T10:16:20Z",
+          "message": "docs: describe the current module state"
+        },
+        {
+          "sha": "ea85868996b56b22c5c3c40a03a0e457199956a3",
+          "date": "2026-10-20T10:10:51Z",
+          "message": "Import ArmCpu"
+        }
+      ],
+      "latest_commit_files": [
+        {
+          "path": "README.md",
+          "status": "modified",
+          "patch_sha256": "40c8298e1d232237b5e0496647c77ca866f4ff3439a358d5af1c5c5c19cd90ce",
+          "patch_saved_in_full": false
+        }
+      ],
+      "metadata_files": [
+        {
+          "path": "README.md",
+          "sha256": "bfc710355e4896edcad9d7fcae29d1c3a5939919e73b3e679e5ef7743e9b4a87",
+          "git_blob": "761a0492360f31e11037731c40cbf44e42784c1f",
+          "license_first_lines": [],
+          "readme_relevant_lines": [
+            "Current state: starts the CPU, GIC and timer on sheng and on the QEMU virt machine."
+          ]
+        },
+        {
+          "path": "LICENSE",
+          "sha256": "9e18e2c43ae4e51da2d11fd777b5b11056476d6ba395e5e2270467dbf02d0adf",
+          "git_blob": "6110342d021ed71bc40e6ecbc098376de546cd9d",
+          "license_first_lines": [
+            "Copyright (c) 2026, ArmCpu contributors. All rights reserved.",
+            "",
+            "SPDX-License-Identifier: BSD-2-Clause-Patent",
+            ""
+          ],
+          "readme_relevant_lines": []
+        }
+      ]
+    },
+    {
+      "repository": "UniXNU/ArmDTPlatform",
+      "linked_pin": "0d544705c2e89725caabc0542bb96bc8febd8c70",
+      "latest": "0d544705c2e89725caabc0542bb96bc8febd8c70",
+      "latest_date": "2026-10-20T10:16:23Z",
+      "latest_message": "docs: describe the current module state",
+      "latest_matches_main_pin": true,
+      "license": {
+        "key": "other",
+        "name": "Other",
+        "spdx_id": "NOASSERTION",
+        "url": null,
+        "node_id": "MDc6TGljZW5zZTA="
+      },
+      "baseline_file_count": 3,
+      "latest_file_count": 4,
+      "changes": [
+        {
+          "path": "README.md",
+          "status": "added"
+        }
+      ],
+      "recent_commits": [
+        {
+          "sha": "0d544705c2e89725caabc0542bb96bc8febd8c70",
+          "date": "2026-10-20T10:16:23Z",
+          "message": "docs: describe the current module state"
+        },
+        {
+          "sha": "50312d4d27a0e4aae84c244b9ea1e49a4357cde0",
+          "date": "2026-10-20T10:10:56Z",
+          "message": "Import ArmDTPlatform"
+        }
+      ],
+      "latest_commit_files": [
+        {
+          "path": "README.md",
+          "status": "modified",
+          "patch_sha256": "2af5b87cb4db12361814901a2fcfe78d87f745b1d363abe1fdf4dc939d2508da",
+          "patch_saved_in_full": false
+        }
+      ],
+      "metadata_files": [
+        {
+          "path": "README.md",
+          "sha256": "dbdf2dd31fb191be721fc7ae5e165f1d27e08ae6f5498128b2753eb22b3409be",
+          "git_blob": "4fd508d926fb54ffaff95f64fb198a21db02ab25",
+          "license_first_lines": [],
+          "readme_relevant_lines": [
+            "Current state: used by the sheng port for its device tree."
+          ]
+        },
+        {
+          "path": "LICENSE",
+          "sha256": "03a8ab50f4b3b4c65f070d07302a3522e7badbf54dde090cca59bb3e746bba3f",
+          "git_blob": "217b4df4b4037c3b6cd4522a3909d3223f1ec1ac",
+          "license_first_lines": [
+            "Copyright (c) 2026, ArmVirtPlatform contributors. All rights reserved.",
+            "",
+            "SPDX-License-Identifier: BSD-2-Clause-Patent",
+            ""
+          ],
+          "readme_relevant_lines": []
+        }
+      ]
+    },
+    {
+      "repository": "UniXNU/DarwinBoot",
+      "linked_pin": "d099354d0eab34df5088ca1ba89c9c88bc3260bb",
+      "latest": "d099354d0eab34df5088ca1ba89c9c88bc3260bb",
+      "latest_date": "2026-10-21T18:00:10Z",
+      "latest_message": "feat(boot): place the gpu addon after the trust caches\n\nRead <kernel>.gpuaddon from the payload (at most 64 MiB), check its\nNGPUADD2 magic and total size, copy it 16 KiB aligned after the trust\ncaches inside the kernel's memory and record its range as\n/chosen/memory-map/GpuAddon. The kernel installs its files at boot, so\nthe Metal plugin no longer has to live inside the Data seed.",
+      "latest_matches_main_pin": true,
+      "license": {
+        "key": "other",
+        "name": "Other",
+        "spdx_id": "NOASSERTION",
+        "url": null,
+        "node_id": "MDc6TGljZW5zZTA="
+      },
+      "baseline_file_count": 17,
+      "latest_file_count": 18,
+      "changes": [
+        {
+          "path": "DarwinBootPkg/Driver/DarwinBoot.c",
+          "status": "modified"
+        },
+        {
+          "path": "DarwinBootPkg/Driver/PackedRamdisk.h",
+          "status": "modified"
+        },
+        {
+          "path": "README.md",
+          "status": "added"
+        },
+        {
+          "path": "Test/packed_ramdisk.py",
+          "status": "modified"
+        },
+        {
+          "path": "Test/test-packed-ramdisk.py",
+          "status": "modified"
+        }
+      ],
+      "recent_commits": [
+        {
+          "sha": "d099354d0eab34df5088ca1ba89c9c88bc3260bb",
+          "date": "2026-10-21T18:00:10Z",
+          "message": "feat(boot): place the gpu addon after the trust caches\n\nRead <kernel>.gpuaddon from the payload (at most 64 MiB), check its\nNGPUADD2 magic and total size, copy it 16 KiB aligned after the trust\ncaches inside the kernel's memory and record its range as\n/chosen/memory-map/GpuAddon. The kernel installs its files at boot, so\nthe Metal plugin no longer has to live inside the Data seed."
+        },
+        {
+          "sha": "85332b317ee80898fc78939ea64e6ca52d3837a3",
+          "date": "2026-10-20T19:31:34Z",
+          "message": "feat(boot): accept a packed ramdisk of up to 1 TiB\n\nThe native sparse block driver keeps only the nonzero pages, so the\nlogical size is bounded by the format and not by memory. A dense\nexpansion still has to fit the owned window, which the loader checks.\nThe packer reads only the data regions of a sparse image and gives a\ndisk above 2 GiB an identity over its size and nonzero pages."
+        },
+        {
+          "sha": "12bc9e23fb5f9a7d2715a9e30c021a883db0a310",
+          "date": "2026-10-20T10:16:27Z",
+          "message": "docs: describe the current module state"
+        },
+        {
+          "sha": "09c60e61b16540c6ca968cd6c7cb3a5a0855db68",
+          "date": "2026-10-20T10:11:15Z",
+          "message": "Import DarwinBoot"
+        }
+      ],
+      "latest_commit_files": [
+        {
+          "path": "DarwinBootPkg/Driver/DarwinBoot.c",
+          "status": "modified",
+          "patch_sha256": "0c87f1f2ea46670b43015ddbbf8c1354367da1deb820fbdbc29b15b1c705c74a",
+          "patch_saved_in_full": false
+        }
+      ],
+      "metadata_files": [
+        {
+          "path": "README.md",
+          "sha256": "7633854c8805f8ec507c2e338b52253aeacc75b90a116c91c4f4e1a8a0bfbada",
+          "git_blob": "13b9c7415eb708fc4fda037b5c70f9ad2f563669",
+          "license_first_lines": [],
+          "readme_relevant_lines": [
+            "# DarwinBoot",
+            "Current state: boots from the firmware volume and supports the packed RAM disk handoff.",
+            "Built as part of the firmware volume."
+          ]
+        },
+        {
+          "path": "LICENSE",
+          "sha256": "513308769e962347c3b987ddac32f5f5c9849acced235e5580ab2c7ebf067900",
+          "git_blob": "4a71558d51ed029463a356c0824417185c106455",
+          "license_first_lines": [
+            "Copyright (c) 2026, DarwinBoot contributors. All rights reserved.",
+            "",
+            "SPDX-License-Identifier: BSD-2-Clause-Patent",
+            ""
+          ],
+          "readme_relevant_lines": []
+        }
+      ]
+    },
+    {
+      "repository": "UniXNU/NativeAdreno",
+      "linked_pin": "b686b9054f57d393c80195b82568a09f8ca106a2",
+      "latest": "b686b9054f57d393c80195b82568a09f8ca106a2",
+      "latest_date": "2026-10-22T21:58:10Z",
+      "latest_message": "fix(vm): map GPU-written imports non-coherent and skip their per-submission cache work\n\nImports the GPU writes (render targets) are mapped non-cacheable instead of\nwrite-back inner-shareable: the GPU stopped inside its end-of-pass cache clean\nwhen system memory passes wrote them coherently. The owner's CPU does not touch\ntheir pixels while the GPU owns them, so they were cleaned and invalidated at\nmap time and need no maintenance on every submission (about 60 ms per frame).\nRead-only imports stay coherent.",
+      "latest_matches_main_pin": true,
+      "license": {
+        "key": "mit",
+        "name": "MIT License",
+        "spdx_id": "MIT",
+        "url": "https://api.github.com/licenses/mit",
+        "node_id": "MDc6TGljZW5zZTEz"
+      },
+      "baseline_file_count": 84,
+      "latest_file_count": 91,
+      "changes": [
+        {
+          "path": "NativeAdrenoCpu.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "NativeAdrenoGpuContext.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "NativeAdrenoGpuContext.h",
+          "status": "modified"
+        },
+        {
+          "path": "NativeAdrenoMemory.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "NativeAdrenoMemory.h",
+          "status": "modified"
+        },
+        {
+          "path": "NativeAdrenoPublish.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "NativeAdrenoRing.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "NativeAdrenoRing.h",
+          "status": "modified"
+        },
+        {
+          "path": "NativeAdrenoService.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "NativeAdrenoSmmuContext.h",
+          "status": "modified"
+        },
+        {
+          "path": "NativeAdrenoSmmuMemory.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "NativeAdrenoSubmit.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "NativeAdrenoSubmit.h",
+          "status": "modified"
+        },
+        {
+          "path": "NativeAdrenoUserClient.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "NativeAdrenoUserClient.h",
+          "status": "modified"
+        },
+        {
+          "path": "NativeAdrenoVm.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "NativeAdrenoVm.h",
+          "status": "modified"
+        },
+        {
+          "path": "NativeAdrenoVmAlias.h",
+          "status": "added"
+        },
+        {
+          "path": "README.md",
+          "status": "added"
+        },
+        {
+          "path": "tests/XnuMemoryFixture.h",
+          "status": "modified"
+        },
+        {
+          "path": "tests/hostsim/builtin_cache.cpp",
+          "status": "added"
+        },
+        {
+          "path": "tests/hostsim/deferred_bo.cpp",
+          "status": "added"
+        },
+        {
+          "path": "tests/hostsim/host_gpu_service.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "tests/hostsim/host_iokit_shim.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "tests/hostsim/pipeline_cache.cpp",
+          "status": "added"
+        },
+        {
+          "path": "tests/hostsim/pipeline_cache_ios.cpp",
+          "status": "added"
+        },
+        {
+          "path": "tests/test_client.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "tests/test_gmuconfig.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "tests/test_gmuctx.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "tests/test_gmumap.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "tests/test_gmumem.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "tests/test_memory.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "tests/test_smmu_memory.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "tests/test_smmuctx.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "tests/test_submit.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "tests/test_userclient.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "tests/test_vm.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "tests/test_vm_alias.cpp",
+          "status": "added"
+        }
+      ],
+      "recent_commits": [
+        {
+          "sha": "b686b9054f57d393c80195b82568a09f8ca106a2",
+          "date": "2026-10-22T21:58:10Z",
+          "message": "fix(vm): map GPU-written imports non-coherent and skip their per-submission cache work\n\nImports the GPU writes (render targets) are mapped non-cacheable instead of\nwrite-back inner-shareable: the GPU stopped inside its end-of-pass cache clean\nwhen system memory passes wrote them coherently. The owner's CPU does not touch\ntheir pixels while the GPU owns them, so they were cleaned and invalidated at\nmap time and need no maintenance on every submission (about 60 ms per frame).\nRead-only imports stay coherent."
+        },
+        {
+          "sha": "26220f1ab79fec643517336fbd81574bd1e0d05a",
+          "date": "2026-10-22T13:43:27Z",
+          "message": "fix(gmu): keep IFPC off until its restore list and fenced writes exist"
+        },
+        {
+          "sha": "cedcaa2949c795e71a47e78ae413c8a41b17d7d0",
+          "date": "2026-10-22T08:13:35Z",
+          "message": "fix(memory): hold imported pages through a memory entry\n\nCore Animation unmaps an image's Shmem once its no-copy buffer is\nreleased, which can come before the runtime frees the import. The\nrender thread of backboardd then stayed in vm_deallocate while the\nimport still had the pages wired by its UPL, and the desktop froze.\n\nAn import of user memory now asks for kIOMemoryPersistent, so the\ndescriptor keeps a memory entry and with it a reference on the VM\nobject; the owner's unmap leaves the object to the import until it\ncompletes. A range no memory entry can be made of is imported as\nbefore. Two counters tell the cases apart."
+        },
+        {
+          "sha": "4fed9a1a446bd181bb907f42afefc67f64c8780d",
+          "date": "2026-10-22T08:13:35Z",
+          "message": "feat(userclient): record live imports and refused frees\n\nA render server thread waited inside vm_deallocate for minutes on\nint-233 and int-234. To tell whether an import of user pages is still\nheld over that range, the client now keeps the count of live imports,\nthe frees of an import it refused with the last status, and the eight\nnewest imports (address, owner pid, bytes, handle, state)."
+        },
+        {
+          "sha": "a9f9ff222a926b22f0f72fc0429ba9d19ce3fafb",
+          "date": "2026-10-22T07:12:27Z",
+          "message": "fix(vm): raise the GPU object limits to 4096\n\nThe shared VM mapping table held 1024 objects. int-237 filled it twice\n(BoMap refused with kIOReturnNoResources at objects=1024): Turnip turned\nthe refusal into VK_ERROR_OUT_OF_DEVICE_MEMORY inside a command stream\nreservation it does not check, and backboardd crashed writing through a\nNULL stream pointer; the other run froze with the same refusals.\n\nRaise the VM table, the per-client entry table and the per-client view\ncache to 4096, and record per client slot the live objects, their peak,\nrefused BoAllocs and the window's highest mapped end\n(native_adreno_client_stats).\n\nClaude-Session: https://claude.ai/code/session_01Ci5sg8z8jkQHR4QoXMBqfY"
+        },
+        {
+          "sha": "5cf11357a1b35ca8424baa2721e4578df1890bde",
+          "date": "2026-10-21T18:00:10Z",
+          "message": "fix(userclient): serve metal clients beside the render server\n\n- Four client windows: the render server keeps 1 GiB, and the\n  wallpaper, icon and widget processes share the rest of the aperture\n  (170 MiB each).\n- A client that owns no queue range yet is no longer refused by\n  setScope, held up in close or waited on in releaseAll because the\n  render server has jobs in flight in the default range 0 (int-200).\n  New regression block in the user-client host test.\n- BoCpuUnmap keeps the shared CPU view while another mapping lease of\n  the same BO is held; dropping it unmapped the other holder's pages\n  and crashed the render server in vkCmdCopyBuffer (int-177).\n- Diagnostics: the reason the latest mount failed, mappings that fall\n  outside a client window, a text row per non-render-server process\n  and a name for the mailbox poller thread."
+        }
+      ],
+      "latest_commit_files": [
+        {
+          "path": "NativeAdrenoUserClient.cpp",
+          "status": "modified",
+          "patch_sha256": "ad8b7daa030da1234304e9705c1bf810ae22484ad6e1f4740564c32826378cd4",
+          "patch_saved_in_full": false
+        },
+        {
+          "path": "NativeAdrenoVm.cpp",
+          "status": "modified",
+          "patch_sha256": "511cfed99842dbb010331e0ace44975a1f4f1ba7b3042ee9ef0ad06a458327dd",
+          "patch_saved_in_full": false
+        }
+      ],
+      "metadata_files": [
+        {
+          "path": "README.md",
+          "sha256": "0dab347b689812fe87c2d882324e693136d1c4c3de9afb8af3a9d735396ad63b",
+          "git_blob": "c22e2488ce6cc1f44c5e1539e7ce2072b87a6ca0",
+          "license_first_lines": [],
+          "readme_relevant_lines": [
+            "# NativeAdreno",
+            "Native XNU Adreno 740 driver. Owns GMU startup, the CP ring, BOs, native 4 KiB SMMU contexts, fences and cache maintenance.",
+            "Current state: GPU commands and the scanout copy run on sheng hardware. Shader compilation is slow and there is no complete precompiled UI pack."
+          ]
+        },
+        {
+          "path": "LICENSE",
+          "sha256": "16fbc0170994a48f60938d9f0d992d3bad113383cf90882f75c206e079c2a2dc",
+          "git_blob": "8803ca3258ca670bd45c3ee0d411aa8297932a73",
+          "license_first_lines": [
+            "MIT License",
+            "",
+            "Copyright (c) 2026 NativeAdreno contributors",
+            ""
+          ],
+          "readme_relevant_lines": []
+        }
+      ]
+    },
+    {
+      "repository": "UniXNU/NativeGeniSpi",
+      "linked_pin": "b5399b5646c4d7415deec6d887fd51715a97a024",
+      "latest": "b5399b5646c4d7415deec6d887fd51715a97a024",
+      "latest_date": "2026-10-20T10:16:35Z",
+      "latest_message": "docs: describe the current module state",
+      "latest_matches_main_pin": true,
+      "license": {
+        "key": "other",
+        "name": "Other",
+        "spdx_id": "NOASSERTION",
+        "url": null,
+        "node_id": "MDc6TGljZW5zZTA="
+      },
+      "baseline_file_count": 4,
+      "latest_file_count": 5,
+      "changes": [
+        {
+          "path": "README.md",
+          "status": "added"
+        }
+      ],
+      "recent_commits": [
+        {
+          "sha": "b5399b5646c4d7415deec6d887fd51715a97a024",
+          "date": "2026-10-20T10:16:35Z",
+          "message": "docs: describe the current module state"
+        },
+        {
+          "sha": "7688e07650b6ee7a7e7328a176653f31bbe5c253",
+          "date": "2026-10-20T10:11:41Z",
+          "message": "Import NativeGeniSpi"
+        }
+      ],
+      "latest_commit_files": [
+        {
+          "path": "README.md",
+          "status": "modified",
+          "patch_sha256": "b98543dfb2785f646f6caa198f00a13e509a6f0e45ecbd94ffadd6967ddb0694",
+          "patch_saved_in_full": false
+        }
+      ],
+      "metadata_files": [
+        {
+          "path": "README.md",
+          "sha256": "7cfd142d7ee9a710dda3a9649eabe8c51dcbeab18083f83d66d0c3df6d3d475d",
+          "git_blob": "8e7ddf0d3ed25c1b877962092331914f8f0d2406",
+          "license_first_lines": [],
+          "readme_relevant_lines": []
+        },
+        {
+          "path": "LICENSE",
+          "sha256": "45e326bc5ca67488a547a30fbb713f1303d2770b3340443ebcf38717a62534f9",
+          "git_blob": "cd608b2abea8027f8c70a6de0b789441998bf1b7",
+          "license_first_lines": [
+            "Copyright (c) 2026, NativeGeniSpi contributors. All rights reserved.",
+            "",
+            "SPDX-License-Identifier: BSD-2-Clause-Patent",
+            ""
+          ],
+          "readme_relevant_lines": []
+        }
+      ]
+    },
+    {
+      "repository": "UniXNU/NativeHidInput",
+      "linked_pin": "ba03e5d147452b2166aab7435d219fa10877672b",
+      "latest": "ba03e5d147452b2166aab7435d219fa10877672b",
+      "latest_date": "2026-10-22T18:33:50Z",
+      "latest_message": "fix(touch): dispatch each report's fingers as one digitizer collection",
+      "latest_matches_main_pin": true,
+      "license": {
+        "key": "other",
+        "name": "Other",
+        "spdx_id": "NOASSERTION",
+        "url": null,
+        "node_id": "MDc6TGljZW5zZTA="
+      },
+      "baseline_file_count": 2,
+      "latest_file_count": 3,
+      "changes": [
+        {
+          "path": "NativeHidInput.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "README.md",
+          "status": "added"
+        }
+      ],
+      "recent_commits": [
+        {
+          "sha": "ba03e5d147452b2166aab7435d219fa10877672b",
+          "date": "2026-10-22T18:33:50Z",
+          "message": "fix(touch): dispatch each report's fingers as one digitizer collection"
+        },
+        {
+          "sha": "22f2dd454e8742f0639a737065f59ab42927a165",
+          "date": "2026-10-22T18:33:50Z",
+          "message": "fix(touch): report every finger as a confident finger, not a palm"
+        },
+        {
+          "sha": "e43c2541133e25bdb48df564a4283888b64cc231",
+          "date": "2026-10-22T18:33:50Z",
+          "message": "chore(touch): count multi-finger reports and lifts of vanished fingers"
+        },
+        {
+          "sha": "75efe1c5ee32b2da3ef8dc978adbdc683eef11a8",
+          "date": "2026-10-22T18:33:50Z",
+          "message": "fix(touch): lift vanished fingers by identifier instead of by slot"
+        },
+        {
+          "sha": "28f9b463b48e862f2def91d29c11b9143785715e",
+          "date": "2026-10-22T08:18:43Z",
+          "message": "feat(input): report the power and volume buttons\n\nReport 2 grows from Consumer Menu alone to four Consumer bits: Menu,\nPower, Volume Increment and Volume Decrement. A board button driver\nregisters through the weak native_buttons_set_sink and gets a callback\nfor every change of the pressed set; the device sends the report on its\nwork loop and keeps the held bits in the Home timer's reports."
+        },
+        {
+          "sha": "588c96fe3b1bf079d4d9a9f1847456d2c9e76793",
+          "date": "2026-10-21T11:09:35Z",
+          "message": "feat(touch): send reports when the touch thread publishes a frame (#1)\n\ntouchTimer woke the work loop every 8 ms to check the seqlock, whether\nor not a finger was down. Register touchNotify with\nnative_touch_set_sink instead; the touch thread calls it after it\npublishes a frame and the report is sent from the work loop through\nrunAction. The sink is cleared in stop()."
+        }
+      ],
+      "latest_commit_files": [
+        {
+          "path": "NativeHidInput.cpp",
+          "status": "modified",
+          "patch_sha256": "1b56bcd9f28ac65be14ff53d43bbc1abb5a569084ecdd3734c16f326cd490cff",
+          "patch_saved_in_full": false
+        }
+      ],
+      "metadata_files": [
+        {
+          "path": "README.md",
+          "sha256": "b163126e85958d01678c5249efe50d08c21911bf6b61c4632e4fdceee3b0ec93",
+          "git_blob": "346abc29b0e111bfb4d6a9f4d8ce9dbabb749c6e",
+          "license_first_lines": [],
+          "readme_relevant_lines": [
+            "Current state: used by the sheng touch path."
+          ]
+        },
+        {
+          "path": "LICENSE",
+          "sha256": "fc56b096347b83da4a300f97ad6182484941bbeff8becf91914b7fdc203d5a9f",
+          "git_blob": "72878ee0579c326c58d3743c3feb9a519efd37f3",
+          "license_first_lines": [
+            "Copyright (c) 2026, NativeHidInput contributors. All rights reserved.",
+            "",
+            "SPDX-License-Identifier: BSD-2-Clause-Patent",
+            ""
+          ],
+          "readme_relevant_lines": []
+        }
+      ]
+    },
+    {
+      "repository": "UniXNU/NativeMetal",
+      "linked_pin": "c6d29caad6d880cc8204ebe3bc34d77479a3255d",
+      "latest": "c6d29caad6d880cc8204ebe3bc34d77479a3255d",
+      "latest_date": "2026-10-23T01:09:15Z",
+      "latest_message": "perf(present): run the scanout thread at user-interactive priority\n\nThe thread that copies each frame to the screen shared the default priority with launching apps' threads and waited behind them; frame intervals above 40 ms at the 90th percentile dropped by about 5 ms.",
+      "latest_matches_main_pin": true,
+      "license": {
+        "key": "mit",
+        "name": "MIT License",
+        "spdx_id": "MIT",
+        "url": "https://api.github.com/licenses/mit",
+        "node_id": "MDc6TGljZW5zZTEz"
+      },
+      "baseline_file_count": 43,
+      "latest_file_count": 84,
+      "changes": [
+        {
+          "path": "CacheExport.h",
+          "status": "added"
+        },
+        {
+          "path": "ExceptionDiag.h",
+          "status": "added"
+        },
+        {
+          "path": "GpuScanoutClient.h",
+          "status": "added"
+        },
+        {
+          "path": "GpuScanoutPresenter.h",
+          "status": "added"
+        },
+        {
+          "path": "NativeAdrenoMetalPlugin.mm",
+          "status": "modified"
+        },
+        {
+          "path": "NativeAdrenoProbeDaemon.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "NativeAdrenoUserTest.h",
+          "status": "modified"
+        },
+        {
+          "path": "NativeBridgeMetalFrontend.h",
+          "status": "modified"
+        },
+        {
+          "path": "NativeBridgeMetalFrontend.mm",
+          "status": "modified"
+        },
+        {
+          "path": "NativeMetalBridgePhase.h",
+          "status": "modified"
+        },
+        {
+          "path": "NativeOsLogExport.mm",
+          "status": "added"
+        },
+        {
+          "path": "PrimeShaders.h",
+          "status": "added"
+        },
+        {
+          "path": "README.md",
+          "status": "added"
+        },
+        {
+          "path": "bridge/FrontendChecks.h",
+          "status": "modified"
+        },
+        {
+          "path": "bridge/NativeMetalObjects.h",
+          "status": "modified"
+        },
+        {
+          "path": "bridge/NativeMetalObjects.rs",
+          "status": "modified"
+        },
+        {
+          "path": "bridge/archive_host.mm",
+          "status": "added"
+        },
+        {
+          "path": "bridge/cache_export_host.cpp",
+          "status": "added"
+        },
+        {
+          "path": "bridge/carenderer_host.mm",
+          "status": "added"
+        },
+        {
+          "path": "bridge/compute_archive_host.mm",
+          "status": "added"
+        },
+        {
+          "path": "bridge/driver_cache_host.cpp",
+          "status": "added"
+        },
+        {
+          "path": "bridge/frontend_host.mm",
+          "status": "modified"
+        },
+        {
+          "path": "bridge/graphics_cache_loader.cpp",
+          "status": "added"
+        },
+        {
+          "path": "bridge/import_count_loader.cpp",
+          "status": "added"
+        },
+        {
+          "path": "bridge/nil_args_host.mm",
+          "status": "added"
+        },
+        {
+          "path": "bridge/no_copy_import_host.mm",
+          "status": "added"
+        },
+        {
+          "path": "bridge/patches/0001-optional-constant-output-members.patch",
+          "status": "added"
+        },
+        {
+          "path": "bridge/patches/0002-resource-wait-storage-dependencies.patch",
+          "status": "added"
+        },
+        {
+          "path": "bridge/patches/0003-cache-device-entry-point-priming.patch",
+          "status": "added"
+        },
+        {
+          "path": "bridge/patches/0004-fold-constant-global-field-loads.patch",
+          "status": "added"
+        },
+        {
+          "path": "bridge/patches/0005-keep-module-decodes-and-profile-fingerprints.patch",
+          "status": "added"
+        },
+        {
+          "path": "bridge/patches/0006-skip-draws-without-a-pipeline.patch",
+          "status": "added"
+        },
+        {
+          "path": "bridge/patches/0007-accept-two-plane-rgb-surfaces.patch",
+          "status": "added"
+        },
+        {
+          "path": "bridge/pipeline_timing_host.mm",
+          "status": "added"
+        },
+        {
+          "path": "bridge/present_host.mm",
+          "status": "added"
+        },
+        {
+          "path": "bridge/priming_cache_host.cpp",
+          "status": "added"
+        },
+        {
+          "path": "bridge/priming_cache_ios.cpp",
+          "status": "added"
+        },
+        {
+          "path": "bridge/priming_cache_loader.cpp",
+          "status": "added"
+        },
+        {
+          "path": "bridge/quartzcore_blur_host.mm",
+          "status": "added"
+        },
+        {
+          "path": "bridge/quartzcore_cache.mm",
+          "status": "added"
+        },
+        {
+          "path": "bridge/quartzcore_cache_ios.cpp",
+          "status": "added"
+        },
+        {
+          "path": "bridge/quartzcore_cache_provisioned_ios.cpp",
+          "status": "added"
+        },
+        {
+          "path": "bridge/register_host.mm",
+          "status": "added"
+        },
+        {
+          "path": "bridge/resource_lifetime_host.mm",
+          "status": "added"
+        },
+        {
+          "path": "bridge/resource_wait_host.mm",
+          "status": "added"
+        },
+        {
+          "path": "bridge/scheduled_host.mm",
+          "status": "added"
+        },
+        {
+          "path": "bridge/selector_coverage_host.mm",
+          "status": "added"
+        },
+        {
+          "path": "bridge/surface_flush_host.mm",
+          "status": "added"
+        },
+        {
+          "path": "bridge/surface_import_host.mm",
+          "status": "added"
+        },
+        {
+          "path": "bridge/telemetry_host.mm",
+          "status": "added"
+        },
+        {
+          "path": "bridge/uber_diff_host.mm",
+          "status": "added"
+        }
+      ],
+      "recent_commits": [
+        {
+          "sha": "c6d29caad6d880cc8204ebe3bc34d77479a3255d",
+          "date": "2026-10-23T01:09:15Z",
+          "message": "perf(present): run the scanout thread at user-interactive priority\n\nThe thread that copies each frame to the screen shared the default priority with launching apps' threads and waited behind them; frame intervals above 40 ms at the 90th percentile dropped by about 5 ms."
+        },
+        {
+          "sha": "eed65758722bd4a1219de5161a8ed9ef0bc547da",
+          "date": "2026-10-22T21:58:28Z",
+          "message": "fix(plugin): render in system memory again\n\nRevert the nobin setting: with GPU-written imports mapped non-coherent the system\nmemory passes no longer stall, and they take about 10 ms of GPU time per frame\nagainst about 17 ms for tile memory passes without binning."
+        },
+        {
+          "sha": "dce1bdc468716bfa9e8f58ac05bfacdec6b6128a",
+          "date": "2026-10-22T20:46:25Z",
+          "message": "fix(plugin): render without hardware binning\n\nEvery Metal process now starts Turnip with TU_DEBUG=nobin,nocb. A binned pass\nhands its visibility work to the BV thread, and with BV and BR waiting on each\nother inside a pass the GPU stalled and the display froze. Without binning a\npass stays on BR and renders in tile memory; over two 7 minute runs of scripted\nswipes no submission stalled."
+        },
+        {
+          "sha": "a96feceda55e8fed1e20c0a2998736cef7aab006",
+          "date": "2026-10-22T15:17:58Z",
+          "message": "fix(plugin): render in system memory without concurrent binning\n\nEvery Metal process now starts Turnip with TU_DEBUG=sysmem,nocb. In\nGMEM passes, and with concurrent binning in system memory passes too,\nthe BV thread runs ahead of BR across passes; on this GPU the two\nstopped waiting on each other inside an IB (GPU idle, BR at the start of\nthe submission, BV near its end), which froze the display. With both\noff no submission stalled over long manual sessions."
+        },
+        {
+          "sha": "bcbbc707cf112026ace2a11fa0ed62260b4e16b0",
+          "date": "2026-10-22T10:16:00Z",
+          "message": "fix(frontend): make textures on two-plane IOSurfaces\n\nWidget snapshots are drawn into the render server's two-plane RGB\nsurfaces ('_RB4') as RGB8_444_2P textures. The frontend imported every\nsurface plane as a single-plane texture, so the runtime refused them\nand the widgets stayed white. Surfaces with two planes now go through\na new bridge call that passes the surface's format, size and second\nplane, and the runtime accepts '_RB4' as an 8-bit 4:4:4 surface. The\nSR row also prints the surface format in hex."
+        },
+        {
+          "sha": "26637eae4283d22f7ddab5806bec220426f0b6a7",
+          "date": "2026-10-22T10:16:00Z",
+          "message": "feat(frontend): report why a surface texture was refused\n\nThe texture status row counted refused IOSurface textures but not the\ncheck that refused them. An SR row now shows the last refusal's step,\nthe surface's pixel format, plane, plane offset, row bytes and\nallocation, and the descriptor's size and pixel format."
+        }
+      ],
+      "latest_commit_files": [
+        {
+          "path": "NativeMetalBridgePhase.h",
+          "status": "modified",
+          "patch_sha256": "f4913e4d60bd2c6b8b021fc11fecfc9876124c60d0b5df2b74b142f31bed4b94",
+          "patch_saved_in_full": false
+        }
+      ],
+      "metadata_files": [
+        {
+          "path": "README.md",
+          "sha256": "c2e9fd1817fbf94e4a4c3d66785fb04ca92b54cafead84439e4982205477a0a2",
+          "git_blob": "ba4c71b33693b19ad8ae0dcaa81cd4afcfef107c",
+          "license_first_lines": [],
+          "readme_relevant_lines": [
+            "Metal API frontend. Publishes a Metal device through `MTLAddDevice`, translates AIR with metal2vulkan and submits through Turnip and NativeAdreno.",
+            "Current state: the GPU-composited desktop runs on sheng hardware. First-use shader compilation is slow and there is no complete precompiled UI pack."
+          ]
+        },
+        {
+          "path": "LICENSE",
+          "sha256": "c51a32dfc2140d3d56f796a3a7010e574f2e3649b97c42e010303ad57f848265",
+          "git_blob": "424da216ddc4d56df417662d28fd4a1b7f171bdc",
+          "license_first_lines": [
+            "MIT License",
+            "",
+            "Copyright (c) 2026 NativeMetal contributors",
+            ""
+          ],
+          "readme_relevant_lines": []
+        }
+      ]
+    },
+    {
+      "repository": "UniXNU/NativeMobileDisplay",
+      "linked_pin": "8666a9950c9699b368931d18cac92c0fdb2ce9c0",
+      "latest": "8666a9950c9699b368931d18cac92c0fdb2ce9c0",
+      "latest_date": "2026-10-22T09:16:55Z",
+      "latest_message": "feat(display): retire a GPU-copied swap when the client takes it\n\nThe compositor renders the next frame only after the current swap\nretires. Retiring after the hand-off copy finished serialized render\nand copy. The swap now retires as soon as the GPU client accepts the\nframe; the next frame is still held until the copy completes.\nsheng-early-retire=0 restores retirement after the copy.",
+      "latest_matches_main_pin": true,
+      "license": {
+        "key": "other",
+        "name": "Other",
+        "spdx_id": "NOASSERTION",
+        "url": null,
+        "node_id": "MDc6TGljZW5zZTA="
+      },
+      "baseline_file_count": 8,
+      "latest_file_count": 9,
+      "changes": [
+        {
+          "path": "NativeGOPPresenter.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "NativeGOPWire.h",
+          "status": "modified"
+        },
+        {
+          "path": "NativeLegacyDisplay.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "README.md",
+          "status": "added"
+        }
+      ],
+      "recent_commits": [
+        {
+          "sha": "8666a9950c9699b368931d18cac92c0fdb2ce9c0",
+          "date": "2026-10-22T09:16:55Z",
+          "message": "feat(display): retire a GPU-copied swap when the client takes it\n\nThe compositor renders the next frame only after the current swap\nretires. Retiring after the hand-off copy finished serialized render\nand copy. The swap now retires as soon as the GPU client accepts the\nframe; the next frame is still held until the copy completes.\nsheng-early-retire=0 restores retirement after the copy."
+        },
+        {
+          "sha": "c99046af4ac1cecfcef2575bb0025d2e21e005a4",
+          "date": "2026-10-22T08:15:49Z",
+          "message": "feat(display): report one fixed refresh rate on request\n\nThe panel runs at one rate, but the reported maximum refresh interval\nstays at the original 1/24 s, so the render server sees a 24 to 144 Hz\nrange and may pace frames anywhere in it. With sheng-vsync-fixed=1 the\nmaximum interval equals the minimum."
+        },
+        {
+          "sha": "c031d882b9721d943383d11f66dc4748252ce929",
+          "date": "2026-10-21T19:50:06Z",
+          "message": "feat(display): report the panel refresh rate\n\nThe render server paces its display timer by displayMinRefreshInterval\nin IOMFBDisplayRefresh, and without that property it keeps its own\n1/60 s heartbeat. Nothing in the original family publishes it (its\nplatform subclass does), and the generic slot 301 fixes the minimum at\n1/60 s. With sheng-vsync=<Hz> the display now overrides slot 301\n(getRefreshAttributes) with the panel's rate and calls the original\nsetDisplayRefreshProperties before registerService. int-211 showed\nframes 8 to 9 ms apart at 144 Hz.\n\nThe same boot argument starts a work-loop timer that sends the\nfamily's original vsync message (type 5) while a client has vsync\nnotifications enabled. The render server on this target uses its own\ndisplay timer and never registers, so the timer stays idle for now."
+        },
+        {
+          "sha": "eb9c949164826c2e52f2771eac19e4b8bd8a3dae",
+          "date": "2026-10-20T16:08:22Z",
+          "message": "fix(gop): re-kick the swap queue after each retirement\n\nA waiting swap is offered at once instead of on the next event."
+        },
+        {
+          "sha": "fa80ac8c957832d0229b989d18346b779126eec7",
+          "date": "2026-10-20T16:08:22Z",
+          "message": "feat(gop): add a swap stage timeline hook\n\nPer-stage timestamps of each swap for offline frame timing analysis."
+        },
+        {
+          "sha": "72cebdaecbfefd50e42e75f90c6b5f2c43ee353c",
+          "date": "2026-10-20T16:08:22Z",
+          "message": "fix(gop): report the firmware-lit panel as powered and keep several swaps pending\n\nSeveral validated swaps may now wait in the queue."
+        }
+      ],
+      "latest_commit_files": [
+        {
+          "path": "NativeLegacyDisplay.cpp",
+          "status": "modified",
+          "patch_sha256": "a921839ab6348df02639ea4d96297d8e7acc6f3013a2c5e229ff3d151ea0383d",
+          "patch_saved_in_full": false
+        }
+      ],
+      "metadata_files": [
+        {
+          "path": "README.md",
+          "sha256": "6f205d892ef3c1272832fbc198083299f991c484d2a24040dc23adcb842a9979",
+          "git_blob": "acb33315e93ea9cafe2579f2c5d0c19241b1c2d9",
+          "license_first_lines": [],
+          "readme_relevant_lines": [
+            "Mobile display driver and GPU scanout hand-off. Validates swaps, retires frames and drives the firmware framebuffer.",
+            "Current state: the CPU and GPU scanout paths work. The GOP scanout has no vblank interrupt; with `sheng-vsync=<Hz>` a work-loop timer sends the original family's vsync message to the compositor."
+          ]
+        },
+        {
+          "path": "LICENSE",
+          "sha256": "03a8ab50f4b3b4c65f070d07302a3522e7badbf54dde090cca59bb3e746bba3f",
+          "git_blob": "217b4df4b4037c3b6cd4522a3909d3223f1ec1ac",
+          "license_first_lines": [
+            "Copyright (c) 2026, ArmVirtPlatform contributors. All rights reserved.",
+            "",
+            "SPDX-License-Identifier: BSD-2-Clause-Patent",
+            ""
+          ],
+          "readme_relevant_lines": []
+        }
+      ]
+    },
+    {
+      "repository": "UniXNU/NativeRamBlock",
+      "linked_pin": "d4d22d9819b0162eda49f6402235dddc2279410d",
+      "latest": "d4d22d9819b0162eda49f6402235dddc2279410d",
+      "latest_date": "2026-10-21T18:00:10Z",
+      "latest_message": "feat(ram): expose the loader's gpu addon range\n\nnative_ram_block_gpu_addon() returns the bytes of the addon the loader\nrecorded at /chosen/memory-map/GpuAddon, bounds checked against the\nphysical memory and capped at 64 MiB, for the kernel's boot-time addon\ninstall. Boot memory, never freed.",
+      "latest_matches_main_pin": true,
+      "license": {
+        "key": "other",
+        "name": "Other",
+        "spdx_id": "NOASSERTION",
+        "url": null,
+        "node_id": "MDc6TGljZW5zZTA="
+      },
+      "baseline_file_count": 6,
+      "latest_file_count": 13,
+      "changes": [
+        {
+          "path": "DirectDisk.h",
+          "status": "added"
+        },
+        {
+          "path": "LICENSE",
+          "status": "added"
+        },
+        {
+          "path": "NativeRamBlock.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "PersistOverlay.h",
+          "status": "modified"
+        },
+        {
+          "path": "README.md",
+          "status": "added"
+        },
+        {
+          "path": "SeedDisk.h",
+          "status": "added"
+        },
+        {
+          "path": "SparseDisk.h",
+          "status": "modified"
+        },
+        {
+          "path": "Test/direct.cpp",
+          "status": "added"
+        },
+        {
+          "path": "Test/persist.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "Test/seed-identity.cpp",
+          "status": "added"
+        },
+        {
+          "path": "Test/seeddisk.cpp",
+          "status": "added"
+        }
+      ],
+      "recent_commits": [
+        {
+          "sha": "d4d22d9819b0162eda49f6402235dddc2279410d",
+          "date": "2026-10-21T18:00:10Z",
+          "message": "feat(ram): expose the loader's gpu addon range\n\nnative_ram_block_gpu_addon() returns the bytes of the addon the loader\nrecorded at /chosen/memory-map/GpuAddon, bounds checked against the\nphysical memory and capped at 64 MiB, for the kernel's boot-time addon\ninstall. Boot memory, never freed."
+        },
+        {
+          "sha": "7194961a668e59018323b626be4fd7ce0a91e78f",
+          "date": "2026-10-20T19:31:28Z",
+          "message": "fix(ram): read a large disk from its seed before the store attaches\n\nAPFS probes the disk for its volume UUID long before the kernel asks\nfor the Data volume, which is what attaches the store. Reads are served\nfrom the seed until then, and writes wait."
+        },
+        {
+          "sha": "908b9a54c1592b1823a507d9d6a081f994d68ddc",
+          "date": "2026-10-20T19:31:28Z",
+          "message": "feat(ram): keep only the nonzero pages of a seed above 2 GiB\n\nSeedDisk holds the nonzero pages of a large seed sorted by index, so\na disk of hundreds of GiB costs memory in proportion to its content.\nSuch a disk has no volatile mode and needs the store open read-write.\nIts identity hashes the size and the nonzero pages with their index."
+        },
+        {
+          "sha": "6bbbb2f8116453b96b9f9aefac8a80346c8930c0",
+          "date": "2026-10-20T19:31:19Z",
+          "message": "feat(ram): accept sheng-data-reset=2 as a reset\n\nValue 2 also asks the board to show the Setup page on that boot."
+        },
+        {
+          "sha": "959c888e1011b66de679de9b38ab04dbf3b726c4",
+          "date": "2026-10-20T19:31:19Z",
+          "message": "feat(ram): serve the data disk straight from the store window\n\nChanged pages are read from and written to UFS and none are kept in\nRAM, which frees about 2 GiB of memory for the system."
+        },
+        {
+          "sha": "1db57fe05cbaed7dfd471b410005f6fb9c48c66e",
+          "date": "2026-10-20T19:31:19Z",
+          "message": "feat(ram): name the overlay reset argument sheng-data-reset\n\nsheng-data-reset=1 drops the stored overlay and starts from the seed."
+        }
+      ],
+      "latest_commit_files": [
+        {
+          "path": "NativeRamBlock.cpp",
+          "status": "modified",
+          "patch_sha256": "0ccc431746ddca7f6c262e22fc13a86bde9c61df80d5a715486352b786f8a1d5",
+          "patch_saved_in_full": false
+        }
+      ],
+      "metadata_files": [
+        {
+          "path": "README.md",
+          "sha256": "c04a84cc6b2856f4eef207527d71f300ae00b8bd14ec8ca0f6f1e3676a90c76b",
+          "git_blob": "de63f3f0ce7dcd1229fc9add8c2d19c7ef5d13ca",
+          "license_first_lines": [],
+          "readme_relevant_lines": []
+        },
+        {
+          "path": "LICENSE",
+          "sha256": "5b1d3d911103cb0f41641ec0964c5ac1f7e229f57aa072b6ac38bae913a1307b",
+          "git_blob": "f63d2a6e4c80c3bf8d44b047458468289927593d",
+          "license_first_lines": [
+            "Copyright (c) 2026, UniXNU contributors. All rights reserved.",
+            "",
+            "SPDX-License-Identifier: BSD-2-Clause-Patent",
+            ""
+          ],
+          "readme_relevant_lines": []
+        }
+      ]
+    },
+    {
+      "repository": "UniXNU/NativeUfs",
+      "linked_pin": "af785c1777161a62931425c2faaa536ce0bebd5b",
+      "latest": "af785c1777161a62931425c2faaa536ce0bebd5b",
+      "latest_date": "2026-10-20T19:31:05Z",
+      "latest_message": "feat(ufs): size the end-of-disk reserve with sheng-log-reserve\n\nThe Data store ends below a reserve at the end of userdata instead of\na quarter of the partition. The log and its export region sit inside\nthe reserve (default 1024 MiB). The log is refused when the reserve is\nsmaller than they need.",
+      "latest_matches_main_pin": true,
+      "license": {
+        "key": "bsd-2-clause",
+        "name": "BSD 2-Clause \"Simplified\" License",
+        "spdx_id": "BSD-2-Clause",
+        "url": "https://api.github.com/licenses/bsd-2-clause",
+        "node_id": "MDc6TGljZW5zZTQ="
+      },
+      "baseline_file_count": 29,
+      "latest_file_count": 30,
+      "changes": [
+        {
+          "path": "NativeUfs.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "README.md",
+          "status": "added"
+        },
+        {
+          "path": "RootCommands.h",
+          "status": "modified"
+        },
+        {
+          "path": "SmmuTakeover.h",
+          "status": "modified"
+        },
+        {
+          "path": "tests/RootCommandsBridge.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "tests/SmmuTakeover.cpp",
+          "status": "modified"
+        },
+        {
+          "path": "tests/check_arm64_root_commands.py",
+          "status": "modified"
+        },
+        {
+          "path": "tests/check_qemu_root_commands.py",
+          "status": "modified"
+        }
+      ],
+      "recent_commits": [
+        {
+          "sha": "af785c1777161a62931425c2faaa536ce0bebd5b",
+          "date": "2026-10-20T19:31:05Z",
+          "message": "feat(ufs): size the end-of-disk reserve with sheng-log-reserve\n\nThe Data store ends below a reserve at the end of userdata instead of\na quarter of the partition. The log and its export region sit inside\nthe reserve (default 1024 MiB). The log is refused when the reserve is\nsmaller than they need."
+        },
+        {
+          "sha": "33d9f648d0c5477b426b5abfea98ccfdd7485362",
+          "date": "2026-10-20T19:31:04Z",
+          "message": "feat(ufs): write the data store window with forced unit access\n\nStore writes set FUA, so a page is on the medium when its command\ncompletes and the overlay needs no cache flush."
+        },
+        {
+          "sha": "04b748e613d6d34f6e7868d714db36184722924d",
+          "date": "2026-10-20T11:00:55Z",
+          "message": "feat(ufs): add the diagnostic log window and export region\n\nCarry the bounded UFS log window, the export region below it and the\nread-only import checks from the board bring-up work.\n\nCo-authored-by: rpone <rponeawa@qq.com>"
+        },
+        {
+          "sha": "6015ffdf315697761f09d957673f184831968d94",
+          "date": "2026-10-20T10:21:38Z",
+          "message": "docs: mark the native UFS root as working"
+        },
+        {
+          "sha": "7a482e4d6459f48e7bda509ba31a5836a95bca65",
+          "date": "2026-10-20T10:21:38Z",
+          "message": "docs: describe the current module state"
+        },
+        {
+          "sha": "31155a6db21678df3c89d9d25b5711466d229369",
+          "date": "2026-10-20T10:21:38Z",
+          "message": "Import NativeUfs\n\nCo-authored-by: rpone <rponeawa@qq.com>"
+        }
+      ],
+      "latest_commit_files": [
+        {
+          "path": "NativeUfs.cpp",
+          "status": "modified",
+          "patch_sha256": "6b203096bd03e66d1e3601d5a68230b1724bedc989aebd37e4fa8f159d11b65e",
+          "patch_saved_in_full": false
+        }
+      ],
+      "metadata_files": [
+        {
+          "path": "README.md",
+          "sha256": "8c5048b7903c3e5286a91ba61a27e4e472f0a483cb87c634c5f87be0792d8c70",
+          "git_blob": "74e604e6161e640c7aa18789042c31b05d4a9b1d",
+          "license_first_lines": [],
+          "readme_relevant_lines": [
+            "Native UFS storage driver. Owns the host controller, SMMU, queues and the root read path.",
+            "Current state: the native UFS root works on sheng."
+          ]
+        },
+        {
+          "path": "LICENSE",
+          "sha256": "d3cdce3b19df47f2e4dcafdfd54909eb9bc64ac722645ceb1feae58695c97b09",
+          "git_blob": "52a23a0ee6084ff047e0cef045efb8eb19518192",
+          "license_first_lines": [
+            "BSD 2-Clause License",
+            "",
+            "Copyright (c) 2026, blu-sharky",
+            "All rights reserved."
+          ],
+          "readme_relevant_lines": []
+        }
+      ]
+    },
+    {
+      "repository": "UniXNU/ArmSmmu4K",
+      "linked_pin": "4d0d6598b1a36aeec3de01091893fa6660e49388",
+      "latest": "4d0d6598b1a36aeec3de01091893fa6660e49388",
+      "latest_date": "2026-10-20T15:12:13Z",
+      "latest_message": "fix(live): observe the context only on whole-verification updates\n\nUpdates between the whole-verification ones (every 64th) no longer read\nthe context image and faults around the stores. A map of invalid leaves\nskips TLB invalidation, as Linux io-pgtable does. An unmap there syncs\nits ASID with ArmSmmu4KSyncContextTlb at the offset the last whole\nupdate observed.",
+      "latest_matches_main_pin": true,
+      "license": {
+        "key": "mit",
+        "name": "MIT License",
+        "spdx_id": "MIT",
+        "url": "https://api.github.com/licenses/mit",
+        "node_id": "MDc6TGljZW5zZTEz"
+      },
+      "baseline_file_count": 24,
+      "latest_file_count": 26,
+      "changes": [
+        {
+          "path": "ArmSmmu4KLive.c",
+          "status": "modified"
+        },
+        {
+          "path": "ArmSmmu4KLive.h",
+          "status": "modified"
+        },
+        {
+          "path": "ArmSmmu4KProgram.c",
+          "status": "modified"
+        },
+        {
+          "path": "ArmSmmu4KProgram.h",
+          "status": "modified"
+        },
+        {
+          "path": "ArmSmmu4KStreams.c",
+          "status": "modified"
+        },
+        {
+          "path": "ArmSmmu4KStreams.h",
+          "status": "modified"
+        },
+        {
+          "path": "README.md",
+          "status": "added"
+        },
+        {
+          "path": "test_alias.c",
+          "status": "added"
+        },
+        {
+          "path": "test_live.c",
+          "status": "modified"
+        },
+        {
+          "path": "test_streams.c",
+          "status": "modified"
+        }
+      ],
+      "recent_commits": [
+        {
+          "sha": "4d0d6598b1a36aeec3de01091893fa6660e49388",
+          "date": "2026-10-20T15:12:13Z",
+          "message": "fix(live): observe the context only on whole-verification updates\n\nUpdates between the whole-verification ones (every 64th) no longer read\nthe context image and faults around the stores. A map of invalid leaves\nskips TLB invalidation, as Linux io-pgtable does. An unmap there syncs\nits ASID with ArmSmmu4KSyncContextTlb at the offset the last whole\nupdate observed."
+        },
+        {
+          "sha": "960de2c6e2f3653cdbfdc1c911a64faa759efb72",
+          "date": "2026-10-20T15:12:13Z",
+          "message": "fix(streams): observe owned routes without the all-slot scan\n\nArmSmmu4KObserveOwnedStreams reads only the global fault policy, the\nenabled context image and the owned SMR/S2CR pairs, a fixed count\nwhatever the SMMU size. The full ArmSmmu4KObserveStreams scan stays for\nperiodic audits."
+        },
+        {
+          "sha": "29f386aea7a8a01798921178ee6055aa756ac049",
+          "date": "2026-10-20T10:21:41Z",
+          "message": "docs: describe the current module state"
+        },
+        {
+          "sha": "15dcb86d95e7009658c9dec5ffe1865dfb5dca24",
+          "date": "2026-10-20T10:21:41Z",
+          "message": "Import ArmSmmu4K\n\nCo-authored-by: rpone <rponeawa@qq.com>"
+        }
+      ],
+      "latest_commit_files": [
+        {
+          "path": "ArmSmmu4KLive.c",
+          "status": "modified",
+          "patch_sha256": "ffd1a8159b326a2e54be70666f88b9614200f809d4bc842406fa3c47dd310200",
+          "patch_saved_in_full": false
+        },
+        {
+          "path": "ArmSmmu4KLive.h",
+          "status": "modified",
+          "patch_sha256": "9a2684fd45a6cbb3d61210ccbbbbe023199e5a608c345267adeadb58c6ae54ae",
+          "patch_saved_in_full": false
+        },
+        {
+          "path": "ArmSmmu4KProgram.c",
+          "status": "modified",
+          "patch_sha256": "974a546cd528b4df423c86c0778a9ac0a4317aac168f0ac143e766b0f0892bb5",
+          "patch_saved_in_full": false
+        },
+        {
+          "path": "ArmSmmu4KProgram.h",
+          "status": "modified",
+          "patch_sha256": "6953149d04f00a139a5d7ed7b4369425dce0dfa53daeaa70e0c86f38439a7527",
+          "patch_saved_in_full": false
+        },
+        {
+          "path": "test_live.c",
+          "status": "modified",
+          "patch_sha256": "e716912df2f5f5b447a456bc649e0c175b917f840ac505e2353975f36979c0d1",
+          "patch_saved_in_full": false
+        }
+      ],
+      "metadata_files": [
+        {
+          "path": "README.md",
+          "sha256": "774b6f2c5150d464587d5859d4056353386e589e6f32106ea4df8d2b24bbf805",
+          "git_blob": "906970c4b226cfead8cd9ea37d97a9109cc95f3f",
+          "license_first_lines": [],
+          "readme_relevant_lines": [
+            "# ArmSmmu4K",
+            "ARM SMMUv2 native 4 KiB table kit. Builds stage-1 tables, context and streams, updates live mappings and performs TLB maintenance.",
+            "Current state: used by the GPU and storage SMMU paths on sheng.",
+            "Built into the kernel with the sheng storage and GPU stacks."
+          ]
+        },
+        {
+          "path": "LICENSE",
+          "sha256": "7a730b868c1ff986cdfc210a7b140ab4e0a31bf7db1d15db901427973efaa70f",
+          "git_blob": "f5c414937b4ed3a6ab74952b5c2f29ad4471f563",
+          "license_first_lines": [
+            "MIT License",
+            "",
+            "Copyright (c) 2026 ArmSmmu4K contributors",
+            ""
+          ],
+          "readme_relevant_lines": []
+        }
+      ]
+    },
+    {
+      "repository": "UniXNU/NativePrelink",
+      "linked_pin": "2b6ffb50117eee820b98aca9bd51b5c7dfb2970e",
+      "latest": "2b6ffb50117eee820b98aca9bd51b5c7dfb2970e",
+      "latest_date": "2026-10-21T11:22:23Z",
+      "latest_message": "chore: ignore Python caches (#1)\n\nThe tests and tools write __pycache__ next to the sources.",
+      "latest_matches_main_pin": true,
+      "license": {
+        "key": "other",
+        "name": "Other",
+        "spdx_id": "NOASSERTION",
+        "url": null,
+        "node_id": "MDc6TGljZW5zZTA="
+      },
+      "baseline_file_count": 7,
+      "latest_file_count": 10,
+      "changes": [
+        {
+          "path": ".gitignore",
+          "status": "added"
+        },
+        {
+          "path": "LICENSE",
+          "status": "added"
+        },
+        {
+          "path": "README.md",
+          "status": "added"
+        }
+      ],
+      "recent_commits": [
+        {
+          "sha": "2b6ffb50117eee820b98aca9bd51b5c7dfb2970e",
+          "date": "2026-10-21T11:22:23Z",
+          "message": "chore: ignore Python caches (#1)\n\nThe tests and tools write __pycache__ next to the sources."
+        },
+        {
+          "sha": "3380d3006068cdaab69454b37668e6b532ed2584",
+          "date": "2026-10-20T10:17:11Z",
+          "message": "docs: describe the current module state"
+        },
+        {
+          "sha": "0dbb4fae98a23ffc623dd6f0f7284d95799ec2d4",
+          "date": "2026-10-20T10:14:24Z",
+          "message": "Import NativePrelink"
+        }
+      ],
+      "latest_commit_files": [
+        {
+          "path": ".gitignore",
+          "status": "added",
+          "patch_sha256": "819c2a8341290d80f4a97816fe178757932483b6009b40461102c3d563563fd6",
+          "patch_saved_in_full": false
+        }
+      ],
+      "metadata_files": [
+        {
+          "path": "README.md",
+          "sha256": "0832a5793b38d851b140a8917d55afa12d5bc7b95a8fc66a7bed2dbee871d497",
+          "git_blob": "159adeb1cfa1db0e80645d73fab3625ada47901c",
+          "license_first_lines": [],
+          "readme_relevant_lines": [
+            "Current state: used by the kernel build and the sheng payload step."
+          ]
+        },
+        {
+          "path": "LICENSE",
+          "sha256": "5b1d3d911103cb0f41641ec0964c5ac1f7e229f57aa072b6ac38bae913a1307b",
+          "git_blob": "f63d2a6e4c80c3bf8d44b047458468289927593d",
+          "license_first_lines": [
+            "Copyright (c) 2026, UniXNU contributors. All rights reserved.",
+            "",
+            "SPDX-License-Identifier: BSD-2-Clause-Patent",
+            ""
+          ],
+          "readme_relevant_lines": []
+        }
+      ]
+    }
+  ],
+  "read_only_upstream": true,
+  "pins_changed": false,
+  "same_soc_updates": {
+    "sheng": {
+      "sha": "251b291adf941b9953fe3ae66a808b9b626e164d",
+      "date": "2026-10-22T23:09:59Z",
+      "commits": [
+        {
+          "sha": "251b291adf941b9953fe3ae66a808b9b626e164d",
+          "date": "2026-10-22T23:09:59Z",
+          "message": "perf(config): start only the boot core and the five big cores\n\nThe two other little cores (A510) were handed work as often as a big core and ran it several times slower. The payload now lists the boot core plus the A715, A710 and X3 cores."
+        },
+        {
+          "sha": "19960fa2d583c5f31d1d9c5b8bfc98d9e02f37ea",
+          "date": "2026-10-22T23:01:25Z",
+          "message": "perf(sched): keep the boot core busy so work lands on the big cores\n\nThe scheduler sees six equal cores and hands work to the lowest idle core number first, which is the little A510 boot core. A lowest-priority thread bound to that core keeps it occupied while any big core is idle and yields to real work when none is. Compositing in the heavy swipe scenes went from a 21 ms to a 16 ms median frame interval (40 to 55 fps). sheng-cpu0-park=0 turns it off.\n\nThe profile rows also show, per busy process, how its samples spread over the cores."
+        },
+        {
+          "sha": "9c88b90155ea5e400f5f75d06104dee96260619a",
+          "date": "2026-10-22T21:59:43Z",
+          "message": "fix(probe): remove the merge markers left in the swipe script\n\nThe previous commit carried unresolved merge markers. The scripted run keeps the Control\nCenter, Notification Center and app open and close scenes, the tracking ids within the\npanel's range, and a scripted contact the panel's empty frames cannot lift."
+        },
+        {
+          "sha": "559a133ba64f9e43e451fcdf8f814e0c2c93825f",
+          "date": "2026-10-22T21:58:45Z",
+          "message": "feat(probe): script Control Center, Notification Center and app open and close in the swipe run\n\nThe scripted run now pulls down Control Center and Notification Center and opens and\ncloses the Clock app before the page swipes, and logs the time range of each scene in a\n[swipe2] row. Empty frames from the panel no longer lift the scripted contact."
+        },
+        {
+          "sha": "cbc14724dcae7c0ed5d2f2feec28ecf2bde1e35e",
+          "date": "2026-10-22T18:55:27Z",
+          "message": "feat(board): add the Install and boot menu entry\n\nA second boot menu entry, behind a confirmation, erases the Data seed's persistent store and boots with or without the Hello pages (sheng-data-reset=1 or 2)."
+        },
+        {
+          "sha": "ab3121e766f68832c90370ae2dd007284d9510d8",
+          "date": "2026-10-22T18:37:21Z",
+          "message": "chore(touch): update the NativeNovatekTouch pointer\n\nBrings in finger tracking through rests, panel drift and close contacts, with optimal finger-to-blob matching."
+        },
+        {
+          "sha": "684e926097314d803fe0bd9394f19a88eb1ca4ad",
+          "date": "2026-10-22T18:36:35Z",
+          "message": "fix(backlight): stop the GENI TX watermark interrupt storm\n\nTurn the level TX watermark off in the interrupt handler and enable only the M_IRQ bits the I2C core handles, so the line drops once the status is read. Log interrupts with an empty status and the last status seen."
+        },
+        {
+          "sha": "35214637d5a4a1438de75080e66e93d04302a80b",
+          "date": "2026-10-22T18:36:35Z",
+          "message": "fix(brightness): carry brightness requests to the work loop on a timer and log the request path"
+        },
+        {
+          "sha": "5b0e9c38ce94f1a7c4eb6042cd2f86db69ddcc37",
+          "date": "2026-10-22T18:36:35Z",
+          "message": "fix(brightness): hand brightness requests to the work loop without blocking the caller"
+        },
+        {
+          "sha": "fb4839d665f39cc1c7fc2586b9a576ed4e4b6e04",
+          "date": "2026-10-22T18:36:35Z",
+          "message": "fix(brightness): let backboardd set the backlight's brightness and fade period"
+        }
+      ]
+    },
+    "NativeNovatekTouch": {
+      "sha": "717c866fca652407117447df7a7c7d5addc7bfc6",
+      "date": "2026-10-22T18:32:55Z",
+      "commits": [
+        {
+          "sha": "717c866fca652407117447df7a7c7d5addc7bfc6",
+          "message": "fix(touch): match fingers to blobs by least total distance from their predicted positions"
+        },
+        {
+          "sha": "8b4aa47152037c98bc879a5bf1207420fdb9480d",
+          "message": "fix(touch): track the panel's drift and keep the strongest maxima\n\nThe reference was taken once at startup, so the raw values drifted until faint maxima appeared all over the panel. They filled the peak table in scan order and a finger found after them was dropped, which broke multi-finger touch. The reference now follows the panel in frames without a finger, and a full table gives up its weakest maximum for a stronger one. New counters report the largest number of maxima in a frame, the overflowing frames and the frames that moved the reference."
+        },
+        {
+          "sha": "19468bdefa9e70685e15995f6948b62f2b6c0ca2",
+          "message": "fix(touch): smooth positions with an adaptive filter instead of a rest lock\n\nA slow finger was held at rest until it was 20 px away and then jumped there, so slow movements and pauses reached SpringBoard as stops and jumps. Positions now go through a low-pass filter whose cutoff rises with the finger's speed: a still finger keeps its place through the centroid noise and a moving one is followed every frame. The log counters report the steps left after smoothing."
+        },
+        {
+          "sha": "6e66b43b51ae29fdb1654a9be1117f26fa37a50b",
+          "message": "fix(touch): fold a finger's second maximum into its stronger one"
+        },
+        {
+          "sha": "d8838dd0eb481ffc507ec8f2200f5e96e1701d5e",
+          "message": "fix(touch): lock a resting finger and weigh only the blob's core\n\nThe centroid now weighs nodes above 30% of the blob's peak, so fringe\nnodes that come and go with noise no longer move it. A resting finger is\nlocked until it moves 20 px away, a moving one locks again once its\nlast six positions span less than that, and frames below the down\nthreshold (a finger lifting off) leave the position unchanged. The core\ncounts rests and unlocks."
+        },
+        {
+          "sha": "88751d4e329c9a4f31007d7a119bcd5cd2a5713f",
+          "message": "fix(touch): hold a finger through a few frames without its blob\n\nA tracked finger that matches no blob is kept and reported at its last\nposition for up to three frames before it counts as lifted, so a single\nweak or missing frame no longer ends a swipe. The core counts bridged\ngaps, lifts by miss reason and frames by type."
+        },
+        {
+          "sha": "08275ac19bc20eb2991ab5bf15c659bf0420de2a",
+          "message": "fix(touch): hold a resting finger's position with a fuzz filter\n\nEvery frame reported the raw centroid, whose noise made a resting finger\nlook like it was still moving. iPadOS opens the app switcher only when a\nswipe up pauses with near-zero velocity, so the gesture always went\nhome.\n\nEach axis now passes through a fuzz filter: steps within half the fuzz\n(0.5 mm) keep the reported position, steps up to twice the fuzz are\nblended in, larger ones pass. Tracking still uses the raw position. The\ncore also counts the raw step size of resting and slow contacts, so the\nfuzz can be checked against the panel's real noise."
+        }
+      ]
+    }
+  },
+  "darwin22_patch_against_latest": {
+    "patch": "patches/loader-candidates/0005-darwin22-boot-args.patch",
+    "patch_sha256": "8532237ec7774c9315ef0c2226e17df56935a1e32811400e741a4e1d502fdc87",
+    "module_pin": "d099354d0eab34df5088ca1ba89c9c88bc3260bb",
+    "inputs": [
+      {
+        "path": "DarwinBootPkg/Driver/BootArgs.h",
+        "sha256": "1d6b172a306bf5d3fc409d22bd7e674d166e5fde92652c4135de5c79f3eddd16"
+      },
+      {
+        "path": "DarwinBootPkg/Driver/DarwinBoot.c",
+        "sha256": "db189a520fb7af3decb80f6ad65e2b7ab2aa9e3e6c5ab6e2286a23df6108d8f2"
+      }
+    ],
+    "result": {
+      "strict_virtual_apply": true,
+      "semantics_and_build_qualified": false
+    }
+  },
+  "selected_source_hashes": [
+    {
+      "repository": "UniXNU/DarwinBoot",
+      "commit": "d099354d0eab34df5088ca1ba89c9c88bc3260bb",
+      "path": "DarwinBootPkg/Driver/DarwinBoot.c",
+      "sha256": "db189a520fb7af3decb80f6ad65e2b7ab2aa9e3e6c5ab6e2286a23df6108d8f2",
+      "git_blob": "25ce2d24a74ba98348ccb287882a692a2c1a90b1",
+      "bytes": 30733
+    },
+    {
+      "repository": "UniXNU/DarwinBoot",
+      "commit": "d099354d0eab34df5088ca1ba89c9c88bc3260bb",
+      "path": "DarwinBootPkg/Driver/PackedRamdisk.h",
+      "sha256": "8b3a326062baee88a179274e92df05a3a07792d25ef84daa23b71aa47b4a2326",
+      "git_blob": "f34485a2bee779727181b9acd2dc82c988d25db1",
+      "bytes": 2829
+    },
+    {
+      "repository": "UniXNU/NativeAdreno",
+      "commit": "b686b9054f57d393c80195b82568a09f8ca106a2",
+      "path": "NativeAdrenoUserClient.cpp",
+      "sha256": "246192e878dbb1ace67b73b4f4028753eaca09fe84b4939a2aa4eae0f4d4e2f8",
+      "git_blob": "8651b055eeeafcf0175497915b4a68e19a3114fa",
+      "bytes": 34038
+    },
+    {
+      "repository": "UniXNU/NativeAdreno",
+      "commit": "b686b9054f57d393c80195b82568a09f8ca106a2",
+      "path": "NativeAdrenoVm.cpp",
+      "sha256": "2b8af29039d900d171a2b07649898be7c967651440e5910678fd80ab98ec863b",
+      "git_blob": "5a72a9323139a2edafde53f33402d3f2cc087efc",
+      "bytes": 25605
+    },
+    {
+      "repository": "UniXNU/NativeHidInput",
+      "commit": "ba03e5d147452b2166aab7435d219fa10877672b",
+      "path": "NativeHidInput.cpp",
+      "sha256": "0445e5f451ffcc827bdd603e822180444d998427fa3a6d63559b1a7b8f850998",
+      "git_blob": "82a0cf5e9007408bc08446e6b302307f378ed7fc",
+      "bytes": 20809
+    },
+    {
+      "repository": "UniXNU/NativeMetal",
+      "commit": "c6d29caad6d880cc8204ebe3bc34d77479a3255d",
+      "path": "NativeAdrenoMetalPlugin.mm",
+      "sha256": "ee50d6f53be375a951574d11a439b082acee62bacb7f2d6f0655034624628258",
+      "git_blob": "73d6eb03c109c67e517bac9206f5de8020f1f90d",
+      "bytes": 24746
+    },
+    {
+      "repository": "UniXNU/NativeMobileDisplay",
+      "commit": "8666a9950c9699b368931d18cac92c0fdb2ce9c0",
+      "path": "NativeGOPPresenter.cpp",
+      "sha256": "7fcf53e5a971ad07d9259b93cc8eb4ecbce6962e5a1356c9cc7b39b1264becc0",
+      "git_blob": "83dae5ee8c62fc4801d3da9f4e1853f4be857ed9",
+      "bytes": 19241
+    },
+    {
+      "repository": "UniXNU/NativeRamBlock",
+      "commit": "d4d22d9819b0162eda49f6402235dddc2279410d",
+      "path": "NativeRamBlock.cpp",
+      "sha256": "e2ace3522943df38806ef2006525371691beaf0199f971266bd849d4f5253391",
+      "git_blob": "4b96ff895ed62dcffa59fa00cb6a57f7b32f02bf",
+      "bytes": 23637
+    },
+    {
+      "repository": "UniXNU/NativeRamBlock",
+      "commit": "d4d22d9819b0162eda49f6402235dddc2279410d",
+      "path": "SeedDisk.h",
+      "sha256": "d8a654529b5d56703bcf491c3834b407590995eebcb7a26004448990c200e4a0",
+      "git_blob": "5f5d374ebc25a8f36042ddc0d2e0abda755d97ce",
+      "bytes": 3933
+    },
+    {
+      "repository": "UniXNU/NativeUfs",
+      "commit": "af785c1777161a62931425c2faaa536ce0bebd5b",
+      "path": "NativeUfs.cpp",
+      "sha256": "24f549be5006ab5c463c67aa01ee38511b185853f878e12b4bb70830313ae9ed",
+      "git_blob": "bdf3df5c457acd2c46de29e8bac3380366bf466e",
+      "bytes": 85251
+    },
+    {
+      "repository": "UniXNU/NativeUfs",
+      "commit": "af785c1777161a62931425c2faaa536ce0bebd5b",
+      "path": "SmmuTakeover.h",
+      "sha256": "54868bf0745ee6093627e73ba8cec9ac3c574446955c359463507d0f122f90a8",
+      "git_blob": "c30f5a91666369ea78e33d0dfa0959e72bc2d98d",
+      "bytes": 5786
+    },
+    {
+      "repository": "UniXNU/ArmSmmu4K",
+      "commit": "4d0d6598b1a36aeec3de01091893fa6660e49388",
+      "path": "ArmSmmu4KLive.c",
+      "sha256": "a50375331e7e3affc1b4ff9048508a75c080a468eff7c8f513b1f9937e2ba010",
+      "git_blob": "a400d3f5e50ead2b089defd43af6a65a4b0131e1",
+      "bytes": 30352
+    }
+  ],
+  "nuwa_decision": {
+    "adopted": false,
+    "baseline_unchanged": true,
+    "priorities": [
+      "Evaluate DarwinBoot plus NativeRamBlock together for logical seed formats/transport contracts; not a firmware FAT transport solution",
+      "Retain ArmCpu/ArmDTPlatform/NativePrelink current implementation pins while current ABI/ADT qualification continues",
+      "Queue NativeHidInput generic HID fixes for ST FTS integration, not NativeNovatekTouch board replacement",
+      "Evaluate Adreno/Metal/display/SMMU as matched stack after XNU/board prerequisites",
+      "NativeUfs write/reserve geometry needs nuwa disk/ABI review; do not reuse sheng userdata layout"
+    ],
+    "no_device_actions": true,
+    "evidence_touch": "docs/operations/2026-10-22-android-driver-evidence.md confirms ST FTS SPI, not Novatek"
+  }
+}

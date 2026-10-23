@@ -13,3 +13,5 @@ CI40005057158/source bdcf4a2f02f86dca5b7ad88e24377912f3612b0e；固件固定6176
 新增离线进展：固定DarwinBoot分配选择函数在主机ASan/UBSan下12项通过，当前分析内核同余偏移0x1c8000，照片大区子集能产生完整64位候选；不代表实际UEFI分配。4MiB配置卷装不下58,335,232B分析预链接，且它仍未具备启动资格。[离线分配与运输缺口](operations/2026-10-24-loader-window-offline.md)，reports/loader-window-host/results.json及reports/os-entry-next-step/continuation.json。
 
 下一步保持Heap/保护，准备独立大文件读取/长度/SHA诊断，再落实真实ADT和实际窗口分配；未来设备动作另过新鲜录像/包/恢复门。当前native分析预链接5a128fb2仍loadable=false，ABI/ADT/OS窗口/大负载运输未验；本包无XNU/ADT，未执行iOS。board/bringup内存/_verified未改，无flash/erase/改槽位。两个旧资料库只读。[当前交接](operations/2026-10-23-mainline-handoff.md)。
+
+上游最新驱动审查已完成：主仓1a01c2af与12模块/同SoC更新已固定对照；GPU/Metal/显示/HID有实质改动，ArmCpu/ArmDTPlatform/Prelink工具实现未变。Darwin22补丁对最新DarwinBoot严格内存apply通过但未构建。主仓已分叉，不整体升级；优先独立评估DarwinBoot+RamBlock，nuwa ST FTS不套Novatek。[审查记录](operations/2026-10-24-upstream-driver-review.md)。当前固定源码和实机候选保持，无设备动作。

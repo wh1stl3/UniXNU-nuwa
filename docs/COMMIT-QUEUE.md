@@ -1520,3 +1520,13 @@
 [Evidence] ASan/UBSan12项通过，真实分析内核VA偏移0x1c8000，高地址选择0x8c01c8000；4MiB卷小于58MB候选。
 [Risk] 主机服务不执行UEFI分配，照片范围为子集；loadable=false/ADT/ABI/运输待落实，无手机或板值修改。
 ```
+
+## Q-145 · 上游驱动更新审查
+
+```text
+[unixnu-nuwa][docs] 固定核对最新独立驱动及nuwa适用性保留当前基线
+
+[Change] 记录主仓/12模块/同SoC最新提交、文件差异及许可哈希，核对Darwin22补丁并给出配套引入顺序。
+[Evidence] GPU/HID/显示实质更新，CPU/平台/Prelink代码blob不变；0005对DarwinBoot d099354d严格内存apply通过。
+[Risk] 主仓分叉，未整仓升级或变更任何源码pin；新驱动未构建/实测，ST FTS不能套Novatek，无手机操作。
+```

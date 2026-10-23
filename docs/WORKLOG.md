@@ -311,3 +311,5 @@
 2026-10-24T03:08:47.513216+08:00 · 五原图确认HOB维护后after-mmu与ReadyToBoot/菜单阶段实机通过；无OS符合exit探针，末尾充电为用户报告；补强缓存首因判断并将公开资料/明确排序要求写AGENTS第8节，无新设备动作 · Q-143（续接772465b） · reports/hob-cache-handoff-trial/2026-10-24/screen-observation.json
 
 2026-10-24T03:17:12.549163+08:00 · OS入口离线续接：固定分配函数主机ASan/UBSan12项通过/高PA不截断，核对分析内核真实同余偏移；4MiB运输容量不足及prelink资格/ADT缺口明确，无板值或设备动作 · Q-144 · reports/loader-window-host/results.json、reports/os-entry-next-step/continuation.json
+
+2026-10-24T03:28:17.252417+08:00 · 查最新上游主仓1a01c2af/12模块及同SoC：GPU/HID/显示实质更新，CPU/平台/Prelink实现未变；0005对新DarwinBoot内存apply通过，未采用或构建，无设备动作 · Q-145 · reports/upstream-review/2026-10-24/review.json
