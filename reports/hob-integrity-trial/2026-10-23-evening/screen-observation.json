@@ -1,0 +1,35 @@
+{
+  "candidate_sha256": "dd1ef82517d256a44b05b5d72e132fe4a37078e2e12cf82f40302b408886034e",
+  "photos": [
+    {
+      "path": "user-query-mmu.jpg",
+      "sha256": "bc19841287ec737e241470e7affc163e3ba083258f97eef0aaf9b9958c063865"
+    },
+    {
+      "path": "user-query-decompress.jpg",
+      "sha256": "43f6e0696e2fea2bba0ec5abac3fad1e9909f81c9886289f2452a21a49b32ed6"
+    },
+    {
+      "path": "video-35s-builtin-menu.jpg",
+      "sha256": "ab9a3985875c2f63c1c33734548aea58c4fa9624e4773b75e43c935bae1b303d"
+    },
+    {
+      "path": "video-45s-usb-fallback.jpg",
+      "sha256": "db4675492bc56dd77fbe3ec2417491906e86078c705878eb0e70871f9a250fbc"
+    }
+  ],
+  "observation_method": "Human visual reading of original user photos and extracted video frames; uncertain GUID and PHIT digits not transcribed",
+  "observations": [
+    "User photos show query lines at MMU constructor and before FV decompression, both list=BAB00000",
+    "BAB00718 appears as type=3 len=30 hex and traversal advances to BAB00748",
+    "Lzma leave status=Success and after-library-constructors visible",
+    "Video35s shows UniXNU built-in configuration, three actions, no boot entry found",
+    "Video45s shows fallback USB boot with no USB devices",
+    "Video71.6s shows Xiaomi Android boot logo; this is not sys.boot_completed proof"
+  ],
+  "invalid_marker": "User reports none seen; no invalid marker in reviewed frames; not a claim about all frames",
+  "probe_title_seen": false,
+  "xnu_entry_seen": false,
+  "recovery": "recovery.json timed out, Android completion and postcondition not confirmed for this trial",
+  "interpretation": "Two query calls traverse the same list for different GUID targets. This run advances past previously zero BAB00718, so persistent corruption and root-cause repair are not established."
+}

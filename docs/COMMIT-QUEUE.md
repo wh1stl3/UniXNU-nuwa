@@ -1300,3 +1300,13 @@
 [Evidence] dd1ef825完整容器逐字节校验，41行2952B表一致，5项MMU门回归通过；新鲜用户录像确认及nuwa Android门通过。
 [Risk] 新包未实测；HOB异常起因未知，诊断停在异常现场不修复链。
 ```
+
+## Q-123 · HOB实测及交接落档
+
+```text
+[unixnu-nuwa][docs] 落实同链多次HOB查询和内置菜单实测交接
+
+[Change] 保存原图/录像摘要及关键帧，重写STATUS与交接，明确待恢复及卷发现续接步骤。
+[Evidence] 两处list同为BAB00000、目标GUID不同；BAB00718 type3 len0x30；35秒内置菜单无启动项；恢复等待超时。
+[Risk] 无XNU入口或目标卷发现证据；HOB间歇异常根因未定位，本轮Android和分区postcondition待补。
+```

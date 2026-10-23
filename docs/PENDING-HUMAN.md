@@ -31,3 +31,5 @@
 - SHENGMEM补取已完成：收到initrd拒绝与UniXNU/FAT原图，见initrd-observation.json；Android恢复状态仍待确认。
 
 - HOB试验恢复已完成：postcondition.json确认Android完成1及三分区哈希不变；此前恢复待办关闭。下一轮新包需通知录像。
+
+- dd1ef825本轮待恢复闭环：recovery.json等待超时；录像末尾Android标志不是完成1。需确认真实nuwa Android ADB及三分区postcondition，必要时实体键回fastboot后接管。录像已收到并归档摘要/关键帧；离线卷发现分析继续。
