@@ -1,0 +1,67 @@
+{
+  "at": "2026-10-23T17:03:32+08:00",
+  "scope": "Offline research only; no adoption of board values or device operations",
+  "artifacts": [
+    {
+      "name": "firmware diagnostic container",
+      "state": "CI39915967862 and static checks passed; awaiting evening hardware trial",
+      "sha256": "2d8334613a415c24574f93c0bcb30ba50d32175ff062d8ec2cc149651bcde846"
+    },
+    {
+      "name": "FAT boot payload",
+      "state": "Existing 64MiB marker probe checked in WSL; ABL/BlockIo/FAT runtime transport pending"
+    },
+    {
+      "name": "current source kernel",
+      "state": "CI39793231214 built, static parsing/exports checked",
+      "sha256": "77742999fc1c1b6a94c9603664d946553070f73c6eed83ce9fcca06d70d73ac8"
+    },
+    {
+      "name": "current NativePrelink payload",
+      "state": "TODO: qualified plan/emission for current native plus pinned iPhone donor; 12 external PC-relative sites remain unqualified"
+    },
+    {
+      "name": "nuwa Apple ADT",
+      "state": "TODO: generator, CPU mapping/provider properties, input slots, reviewed memory request; no candidate emitted"
+    },
+    {
+      "name": "iOS16 original trust modules",
+      "state": "Two existing modules rehashed; v2 layout/type/order checks passed; no bundle file emitted"
+    },
+    {
+      "name": "OS/SystemOS/AppOS",
+      "state": "Cached DMGs exist; raw disk extents/hashes and root UUID TODO; large full-file hashes not recomputed this turn"
+    },
+    {
+      "name": "Data seed",
+      "state": "TODO: matching iOS16 APFS seed and mount/provider integration; pinned packed loader logical limit 2GiB"
+    },
+    {
+      "name": "native root providers",
+      "state": "TODO: NativeUfs/NativeRamBlock/PMGR Darwin22 port, board-specific source review and execution evidence"
+    }
+  ],
+  "recommended_order": [
+    "firmware diagnostics",
+    "marker FAT transport",
+    "current prelink plan and ADT review",
+    "DarwinBoot/EL1/XNU entry",
+    "read-only native root storage and APFS",
+    "Data and launchd",
+    "visible iOS services"
+  ],
+  "board_review_before_changes": [
+    "memory request/base fields",
+    "existing IPSW identity fields",
+    "bootimg base/offset"
+  ],
+  "flash_review_dependencies": [
+    "concrete target",
+    "process log capture",
+    "recovery covering actual overwritten contents"
+  ],
+  "apple_signature_status": "not assessed",
+  "device_accessed": false,
+  "images_emitted": false,
+  "board_modified": false
+}

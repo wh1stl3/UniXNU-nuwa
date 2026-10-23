@@ -1,0 +1,33 @@
+{
+  "kernel": {
+    "path": "out\\kernel-ci\\39793231214\\nuwa-8796-source\\build\\xnu\\ios-obj\\DEVELOPMENT_ARM64_BCM2837\\mach.development.bcm2837.unstripped",
+    "sha256": "77742999fc1c1b6a94c9603664d946553070f73c6eed83ce9fcca06d70d73ac8",
+    "bytes": 20187912,
+    "build_version": {
+      "platform": 2,
+      "minimum_os_raw": 1048576,
+      "sdk_raw": 1048576
+    },
+    "undefined_external_symbols": [],
+    "required_driver_exports": {
+      "_armcpu_registered": true,
+      "_armcpu_gic_ready": true,
+      "_armcpu_timer_interrupts": true,
+      "_armdt_platform_configured": true,
+      "_armdt_platform_nvram_proxy": true
+    },
+    "inline_debug_sections": [],
+    "downloaded_dsym_paths": []
+  },
+  "defined_exports": {
+    "_armcpu_registered": true,
+    "_armdt_platform_configured": true,
+    "_native_ufs_probe_calls": false,
+    "_native_ram_block_ready": false,
+    "_native_ram_block_volume_seed": false,
+    "_sheng_pmgr_run": false
+  },
+  "native_ufs_named_symbols": [],
+  "ram_block_named_symbols": [],
+  "limitation": "Export inventory; no driver runtime, full ABI or root-mount proof"
+}

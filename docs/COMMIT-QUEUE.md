@@ -1090,3 +1090,13 @@
 [Evidence] CI abe4be9/firmware ddd794fc成功；666个下载清单文件核验通过，四条新日志入SEC、2952B表完全一致、shim及PIL保持；v4包3153920B/SHA2d833461。
 [Risk] 新包未实机启动，不含系统卷/ADT/XNU；严格scope不替代晚间新鲜日志/恢复门，USB采样不算过程日志；未操作设备或修改board/feed/验证标志。
 ```
+
+## Q-102 · iOS16系统卷及启动载荷预研
+
+```text
+[unixnu-nuwa][docs] 固定iOS16启动载荷与系统根卷后续路线和版本缺口
+
+[Change] 记录FAT载荷、预链接内核/ADT、OS/SystemOS和Data的分层接线，新增只读来源/组件/符号审计和就绪矩阵。
+[Evidence] 当前77742999无NativeUfs/NativeRamBlock/PMGR对应导出；既定donor七组件在本机，两trust模块重新哈希且v2格式检查通过；固定loader逻辑上限2GiB，参考prelink输入89d8ff86不同。
+[Risk] 大DMG未重新全文件哈希，raw大小/UUID、当前prelink及硬件运行均未验收；官网本轮404用固定缓存，不改board/feed或镜像，不操作设备，晚间包2d833461保持。
+```

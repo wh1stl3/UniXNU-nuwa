@@ -1,0 +1,123 @@
+{
+  "version": "16.7.16",
+  "build": "20H392",
+  "product": "iPhone10,3",
+  "device_class": "d22ap",
+  "chip_id": "0x8015",
+  "board_id": "0x06",
+  "manifests": {
+    "BuildManifest.plist": {
+      "sha256": "2d1452103a2f5ad71cb78d94454977fc70632472201980a468c247fba14b10b7"
+    },
+    "Restore.plist": {
+      "sha256": "770bbcb52c853ff298c224f44b1d2ed0380e27a6104d9902252310ac3f6ccbe2"
+    }
+  },
+  "components": [
+    {
+      "component": "KernelCache",
+      "member": "kernelcache.release.iphone10b",
+      "path": "D:\\Code\\PortingiOS\\common\\cache\\donor-ios16\\components\\kernelcache.release.iphone10b",
+      "present": true,
+      "bytes": 18204358,
+      "prior_fetch_sha256": "2d6a13d040aaf87cec09bb6906d43e9bd8cea951e43d1aa1cd62707dfdc5aaec",
+      "prior_fetch_report_sha256": "a0f93c9b830f53b26b7cb47bb140b03cca0c20133f6b8caf6b28920b65916447",
+      "file_hash_recomputed": false
+    },
+    {
+      "component": "DeviceTree",
+      "member": "Firmware/all_flash/DeviceTree.d22ap.im4p",
+      "path": "D:\\Code\\PortingiOS\\common\\cache\\donor-ios16\\components\\DeviceTree.d22ap.im4p",
+      "present": true,
+      "bytes": 33719,
+      "prior_fetch_sha256": "480e8b0888949b4128b7aa2cd254497581c69e1bafa596a760b2fa955a8a6368",
+      "prior_fetch_report_sha256": "a0f93c9b830f53b26b7cb47bb140b03cca0c20133f6b8caf6b28920b65916447",
+      "file_hash_recomputed": false
+    },
+    {
+      "component": "OS",
+      "member": "087-86698-044.dmg",
+      "path": "D:\\Code\\PortingiOS\\common\\cache\\donor-ios16\\components\\087-86698-044.dmg",
+      "present": true,
+      "bytes": 4730814044,
+      "prior_fetch_sha256": "80f426d5b8fca8552f95be427434f1911dbb4c2c6d28aad94f2426ddd0c92483",
+      "prior_fetch_report_sha256": "a0f93c9b830f53b26b7cb47bb140b03cca0c20133f6b8caf6b28920b65916447",
+      "file_hash_recomputed": false,
+      "trailer_signature": "koly",
+      "raw_disk_bytes": "TODO: hdiutil decoded whole-disk extent, not compressed file size",
+      "apfs_volume_uuid": "TODO: read actual decoded APFS metadata"
+    },
+    {
+      "component": "Cryptex1,SystemOS",
+      "member": "087-86593-047.dmg",
+      "path": "D:\\Code\\PortingiOS\\common\\cache\\donor-ios16\\components\\087-86593-047.dmg",
+      "present": true,
+      "bytes": 2743074816,
+      "prior_fetch_sha256": "9cd738f3b0169055549df84ad6d8d13e50a2da39af618ce0522ca4e06df86849",
+      "prior_fetch_report_sha256": "a0f93c9b830f53b26b7cb47bb140b03cca0c20133f6b8caf6b28920b65916447",
+      "file_hash_recomputed": false,
+      "trailer_signature": "\u0000\u0000\u0000\u0000",
+      "raw_disk_bytes": "TODO: hdiutil decoded whole-disk extent, not compressed file size",
+      "apfs_volume_uuid": "TODO: read actual decoded APFS metadata"
+    },
+    {
+      "component": "Cryptex1,AppOS",
+      "member": "087-86715-047.dmg",
+      "path": "D:\\Code\\PortingiOS\\common\\cache\\donor-ios16\\components\\087-86715-047.dmg",
+      "present": true,
+      "bytes": 10485760,
+      "prior_fetch_sha256": "391f2df322c3172b021b2874f6da5c3e78b70b3df8f502e1a4af2b1d715c4608",
+      "prior_fetch_report_sha256": "a0f93c9b830f53b26b7cb47bb140b03cca0c20133f6b8caf6b28920b65916447",
+      "file_hash_recomputed": false,
+      "trailer_signature": "\u0000\u0000\u0000\u0000",
+      "raw_disk_bytes": "TODO: hdiutil decoded whole-disk extent, not compressed file size",
+      "apfs_volume_uuid": "TODO: read actual decoded APFS metadata"
+    },
+    {
+      "component": "StaticTrustCache",
+      "member": "Firmware/087-86698-044.dmg.trustcache",
+      "path": "D:\\Code\\PortingiOS\\common\\cache\\donor-ios16\\components\\087-86698-044.dmg.trustcache",
+      "present": true,
+      "bytes": 66289,
+      "prior_fetch_sha256": "63e01c03b31e1532a5581a24865490673f0b5c297b0199fe0095637c6100ef4b",
+      "prior_fetch_report_sha256": "a0f93c9b830f53b26b7cb47bb140b03cca0c20133f6b8caf6b28920b65916447",
+      "file_hash_recomputed": true,
+      "current_sha256": "63e01c03b31e1532a5581a24865490673f0b5c297b0199fe0095637c6100ef4b",
+      "module_sha256": "b7ab28e0009900326ae685a88748008a9653e6bcbd70674135dac4eb5231ad64",
+      "module_bytes": 66264,
+      "version": 2,
+      "entries": 2760,
+      "hash_types": [
+        1,
+        2
+      ],
+      "static_layout_result": "v2 size/hash-type/order checks passed"
+    },
+    {
+      "component": "Cryptex1,SystemTrustCache",
+      "member": "Firmware/087-86593-047.dmg.trustcache",
+      "path": "D:\\Code\\PortingiOS\\common\\cache\\donor-ios16\\components\\087-86593-047.dmg.trustcache",
+      "present": true,
+      "bytes": 1511,
+      "prior_fetch_sha256": "9cc478fe3525e2683b5b9ea1eea0851eaebebdab21d206556233400e59d2e361",
+      "prior_fetch_report_sha256": "a0f93c9b830f53b26b7cb47bb140b03cca0c20133f6b8caf6b28920b65916447",
+      "file_hash_recomputed": true,
+      "current_sha256": "9cc478fe3525e2683b5b9ea1eea0851eaebebdab21d206556233400e59d2e361",
+      "module_sha256": "8aae4c42fd70770d0d211c080982b3ef9ae5cf2cf98f918fd116fadb095b3f6a",
+      "module_bytes": 1488,
+      "version": 2,
+      "entries": 61,
+      "hash_types": [
+        2
+      ],
+      "static_layout_result": "v2 size/hash-type/order checks passed"
+    }
+  ],
+  "trust_bundle_in_memory": {
+    "bytes": 67764,
+    "sha256": "eb1475f643f45a974ebd40596f6e2b1cdf40205d2ca3c6094d774886099399c3",
+    "emitted": false
+  },
+  "apple_signature_status": "not assessed",
+  "board_modified": false
+}

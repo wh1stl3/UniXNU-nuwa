@@ -221,3 +221,5 @@
 2026-10-23T15:26:32+08:00 · CI39915967862编译和下载静态检查通过，四条新日志入SEC、41行表2952B不变；v4包2d833461离线就绪，晚间刷新日志/恢复门后试，未操作设备 · Q-101（提交后以git log定位） · docs/operations/2026-10-23-sec-handoff-build-ready.md；reports/sec-handoff/39915967862/
 
 2026-10-23T15:50:31+08:00 · 晚间新包严格scope与原头逐字节校验接线完成，观察默认120秒并记录相对时刻；仅纯文件/语法/CLI帮助检查，无设备命令 · Q-101（同一里程碑，提交后以git log定位） · reports/sec-handoff/39915967862/trial-scope-integration.json
+
+2026-10-23T17:03:32+08:00 · 完成系统卷/启动载荷/内核/iOS16预研，固定donor七组件、v2 trust及当前根卷后端缺口；确认packed 2GiB限制与参考native不匹配，无镜像/设备/板值变化 · Q-102（提交后以git log定位） · docs/operations/2026-10-23-ios16-system-payload-research.md；reports/ios16-payload-research/

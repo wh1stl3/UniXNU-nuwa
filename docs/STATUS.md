@@ -1,6 +1,6 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-23 15:55（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-23T17:03:32+08:00（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
@@ -42,6 +42,14 @@
 4. 结束后仅恢复已校验原Android boot，确认sys.boot_completed=1和三分区SHA不变；视频/照片及过程写入独立reports目录。H-009为晚上拍摄待办。
 
 设备前缺具体过程日志或恢复依据则按AGENTS§3写审阅并硬停；镜像生成本身无需硬停。本轮不需要改板值、身份、内存参数或_verified。
+
+## 后续系统卷／启动载荷预研
+
+已固定四层交付关系：FAT启动载荷→Darwin22预链接内核/Apple ADT→只读OS/SystemOS根卷→可写Data及用户态。既定iPhone donor的7项组件在本机，两个trust模块本轮重算SHA并解出v2/2760与61条，静态长度/类型/排序检查通过；未输出bundle、ADT或系统镜像。大DMG只复核长度/UDIF尾签名，raw大小/根卷UUID尚缺，不能直接拼压缩DMG当块盘。
+
+实际77742999内核没有NativeUfs/NativeRamBlock对应命名符号或_sheng_pmgr_run，仍需原生根卷后端适配。隔壁预链接报告使用89d8ff86输入，不能称当前内核预链接已完成。固定75bc13dd的packed输入上限256MiB、逻辑上限2GiB；1TiB文档与iPad17硬编码工具不套用到当前版本。优先小FAT探针→内核入口→原生只读根卷，晚间诊断包不变；改写userdata的恢复证据不能由临时boot恢复推导。
+
+[预研报告](operations/2026-10-23-ios16-system-payload-research.md)，reports/ios16-payload-research/含来源/许可/组件/符号/就绪矩阵；官网本轮7页404，引用10月22日已保存HTML并记录SHA，不称实时官网核验。下一步仍按上方晚间试验推进，后续只读prelink计划、ADT和根卷准备分别实施。
 
 ## 系统卷和内核入口的未完成项
 

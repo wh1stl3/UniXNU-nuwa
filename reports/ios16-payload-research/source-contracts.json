@@ -1,0 +1,626 @@
+[
+  {
+    "repository": "UniXNU/UniXNU",
+    "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+    "path": "scripts/unixnu/payload.py",
+    "sha256": "a1fca76dd87209df1a0becce6bf16bb84efe1f57e99a766e3b3d0d2b083d3ca9",
+    "license": "BSD-2-Clause-Patent repository license; retain original notices",
+    "anchors": [
+      {
+        "line": 39,
+        "text": "def check_native_root(kernel, arguments):"
+      },
+      {
+        "line": 46,
+        "text": "if '1' not in values.get('native-ufs-root', []):"
+      },
+      {
+        "line": 48,
+        "text": "if values.get('sheng-pmgr') != ['2']:"
+      },
+      {
+        "line": 49,
+        "text": "raise Error('native UFS root boot needs exactly one sheng-pmgr=2; the unchanged target AMFI otherwise panics with No PMGR')"
+      },
+      {
+        "line": 68,
+        "text": "tool('hdiutil')"
+      },
+      {
+        "line": 87,
+        "text": "kernel = expand(kernel or getattr(args, 'kernel', None) or ctx.work / 'kernel/kernel.macho')"
+      },
+      {
+        "line": 92,
+        "text": "check_native_root(kernel, arguments)"
+      },
+      {
+        "line": 108,
+        "text": "data = skip_setup_seed(ctx, data, spec['skip_setup_tool'])"
+      },
+      {
+        "line": 118,
+        "text": "shutil.copyfile(kernel, payloads / 'kernel.macho')"
+      },
+      {
+        "line": 120,
+        "text": "run(['python3', ctx.tree / 'scripts/patch-xnu-entry-probe.py', payloads / 'kernel.macho', '--panic-screen', '--no-reset'],"
+      },
+      {
+        "line": 123,
+        "text": "shutil.copyfile(trust, payloads / 'kernel.macho.trustcache')"
+      },
+      {
+        "line": 125,
+        "text": "shutil.copyfile(data, payloads / 'scratch-data.img')"
+      },
+      {
+        "line": 126,
+        "text": "command = ['python3', ctx.tree / adt['tool'], '--output', payloads / 'kernel.macho.adt', '--dram-size', str(spec['dram_size'])]"
+      },
+      {
+        "line": 144,
+        "text": "f'[[entry]]\\nid = \"xnu\"\\ntitle = \"{spec.get(\"title\", \"UniXNU\")}\"\\ntype = \"xnu\"\\npath = \"Payloads/kernel.macho\"\\n{initrd}'"
+      },
+      {
+        "line": 153,
+        "text": "data_report = {'kernel_sha256': sha256_file(kernel), 'payload_kernel_sha256': sha256_file(payloads / 'kernel.macho'),"
+      },
+      {
+        "line": 154,
+        "text": "'adt_sha256': sha256_file(payloads / 'kernel.macho.adt'), 'kernel_args': line,"
+      }
+    ]
+  },
+  {
+    "repository": "UniXNU/UniXNU",
+    "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+    "path": "scripts/unixnu/kernel.py",
+    "sha256": "f29f1f619b360decd66b8a89661407568e6c4991f24626384f8f394eb3530ce3",
+    "license": "BSD-2-Clause-Patent repository license; retain original notices",
+    "anchors": [
+      {
+        "line": 61,
+        "text": "\"\"\"Produce out/<device>/kernel/kernel.macho from the XNU build and the original kernelcache.\"\"\""
+      },
+      {
+        "line": 66,
+        "text": "cache = ctx.option('kernelcache', 'UNIXNU_KERNELCACHE') or (expand(ctx.tree / spec['kernelcache']) if spec.get('kernelcache') else None)"
+      },
+      {
+        "line": 75,
+        "text": "kernel = ctx.tree / spec['kernel']"
+      },
+      {
+        "line": 78,
+        "text": "output = ctx.work / 'kernel/kernel.macho'"
+      },
+      {
+        "line": 80,
+        "text": "command = ['python3', ctx.tree / spec['tool'], '--kernel', kernel, '--prelinked', cache,"
+      },
+      {
+        "line": 81,
+        "text": "f'--slide={spec[\"slide\"]}', '--output', output]"
+      },
+      {
+        "line": 84,
+        "text": "if spec.get('early_security_init'):"
+      },
+      {
+        "line": 85,
+        "text": "command += ['--early-security-init', spec['early_security_init']]"
+      }
+    ]
+  },
+  {
+    "repository": "UniXNU/UniXNU",
+    "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+    "path": "scripts/unixnu/userdata.py",
+    "sha256": "7a6fd735ac3f1b3bdc5f21c445b413a5b1d9824b3107beaa01ce78605bafe1fe",
+    "license": "BSD-2-Clause-Patent repository license; retain original notices",
+    "anchors": [
+      {
+        "line": 4,
+        "text": "(the SHNGROOT layout the native UFS root driver reads):"
+      },
+      {
+        "line": 10,
+        "text": "Manifest (little endian): \"SHNGROOT\", u32 version=1, u32 count, u64 image_bytes, then `count` 128-byte entries"
+      },
+      {
+        "line": 15,
+        "text": "board.toml. The disk images are attached read-only without mounting (macOS hdiutil). Nothing is flashed: the"
+      },
+      {
+        "line": 38,
+        "text": "info = subprocess.run(['hdiutil', 'imageinfo', '-plist', str(dmg)], capture_output=True, check=True).stdout"
+      },
+      {
+        "line": 44,
+        "text": "out = subprocess.run(['hdiutil', 'attach', '-nomount', '-readonly', '-noverify', '-noautofsck', str(dmg)],"
+      },
+      {
+        "line": 58,
+        "text": "tool('hdiutil', 'the disk images are attached with macOS hdiutil')"
+      },
+      {
+        "line": 60,
+        "text": "capacity = (spec['last_lba'] - spec['first_lba'] + 1) * spec.get('lba_bytes', 4096)"
+      },
+      {
+        "line": 62,
+        "text": "for window in spec['windows']:"
+      },
+      {
+        "line": 67,
+        "text": "sources = [(window['name'], source.extract(window['component'])) for window in spec['windows']]"
+      },
+      {
+        "line": 101,
+        "text": "subprocess.run(['hdiutil', 'detach', device], capture_output=True)"
+      },
+      {
+        "line": 105,
+        "text": "header[0:8] = b'SHNGROOT'"
+      }
+    ]
+  },
+  {
+    "repository": "UniXNU/UniXNU",
+    "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+    "path": "scripts/unixnu/bootimg.py",
+    "sha256": "466c29e14332381c4506b4ccbafd437159a4fe575f888b8f26ba13026e26da6f",
+    "license": "BSD-2-Clause-Patent repository license; retain original notices",
+    "anchors": [
+      {
+        "line": 121,
+        "text": "if data[:8] != b'ANDROID!' or second_size or version != image['header_version'] or page != image['pagesize']:"
+      }
+    ]
+  },
+  {
+    "repository": "UniXNU/UniXNU",
+    "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+    "path": "scripts/unixnu/ipsw.py",
+    "sha256": "ac777f1127aca522f5856a615a9d7f70a049785db053be76f411a2d1c989d5e0",
+    "license": "BSD-2-Clause-Patent repository license; retain original notices",
+    "anchors": []
+  },
+  {
+    "repository": "UniXNU/UniXNU",
+    "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+    "path": "scripts/seed-data-skip-setup.py",
+    "sha256": "615111548cff9dafbbf8e878709f42ca0c688dab75e74a7838088db71df5e004",
+    "license": "BSD-2-Clause-Patent repository license; retain original notices",
+    "anchors": [
+      {
+        "line": 7,
+        "text": "BASE is a DBRDISK1 packed APFS container (drivers/DarwinBoot/Test/packed_ramdisk.py format). It is expanded to a raw image, attached"
+      },
+      {
+        "line": 24,
+        "text": "BUILD, VERSION = '21H461', '17.7.11'"
+      },
+      {
+        "line": 54,
+        "text": "['hdiutil', 'attach', '-imagekey', 'diskimage-class=CRawDiskImage', '-nobrowse', '-owners', 'off',"
+      },
+      {
+        "line": 82,
+        "text": "subprocess.run(['hdiutil', 'detach', device], check=True)"
+      }
+    ]
+  },
+  {
+    "repository": "UniXNU/UniXNU",
+    "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+    "path": "scripts/build-original-system-trust.py",
+    "sha256": "cd17f451a8bfca33476836a151a97fff44d0f0115108834a39bb3d907736264c",
+    "license": "BSD-2-Clause-Patent repository license; retain original notices",
+    "anchors": [
+      {
+        "line": 29,
+        "text": "with zipfile.ZipFile(ROOT / 'refer/iPad_Pro_HFR_17.7.11_21H461_Restore.ipsw') as archive:"
+      },
+      {
+        "line": 34,
+        "text": "entry = identities[0]['Manifest']['Cryptex1,SystemTrustCache']"
+      },
+      {
+        "line": 36,
+        "text": "if any(i['Manifest']['Cryptex1,SystemTrustCache']['Digest'] != hashlib.sha384(original).digest() for i in identities):"
+      }
+    ]
+  },
+  {
+    "repository": "UniXNU/UniXNU",
+    "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+    "path": "drivers/NativeUfs/NativeUfs.cpp",
+    "sha256": "3fbd24df8e9517b30d369fe64f4133aa6fb05bd90577d220dab8c58c0f5232f4",
+    "license": "SPDX BSD-2-Clause-Patent",
+    "anchors": [
+      {
+        "line": 45,
+        "text": "volatile uint32_t native_ufs_probe_calls = 0;"
+      },
+      {
+        "line": 111,
+        "text": "native_ufs_probe_calls = native_ufs_probe_calls + 1;"
+      },
+      {
+        "line": 1631,
+        "text": "PE_parse_boot_argn (\"native-ufs-root\", &rootMode, sizeof (rootMode));"
+      }
+    ]
+  },
+  {
+    "repository": "UniXNU/UniXNU",
+    "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+    "path": "drivers/NativeRamBlock/NativeRamBlock.cpp",
+    "sha256": "c52530fad545b936a02ce51f380a98b6b4ee2a72ba50ca9675a21d2672b0bbb5",
+    "license": "SPDX BSD-2-Clause-Patent",
+    "anchors": [
+      {
+        "line": 23,
+        "text": "volatile uint32_t native_ram_block_ready = 0;"
+      },
+      {
+        "line": 184,
+        "text": "OSData *packed = OSDynamicCast(OSData, map->getProperty(\"PackedRAMDisk\"));"
+      },
+      {
+        "line": 185,
+        "text": "OSData *range = OSDynamicCast(OSData, map->getProperty(\"RAMDisk\"));"
+      },
+      {
+        "line": 222,
+        "text": "native_ram_block_ready = 1;"
+      }
+    ]
+  },
+  {
+    "repository": "UniXNU/UniXNU",
+    "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+    "path": "drivers/DarwinBoot/DarwinBootPkg/Driver/PackedRamdisk.h",
+    "sha256": "9501be052befd2865d32026f8c2a6575f6a39db5a55d8ccfbe52a5d35ae949d5",
+    "license": "SPDX BSD-2-Clause-Patent",
+    "anchors": [
+      {
+        "line": 2,
+        "text": "// Little-endian DBRDISK1: version, page size, expanded bytes, extent count;"
+      },
+      {
+        "line": 16,
+        "text": "if ((InputSize > SIZE_256MB) || ((Input == NULL) != (InputSize == 0))) { return FALSE; }"
+      },
+      {
+        "line": 17,
+        "text": "if ((InputSize < 8) || (CompareMem (Input, \"DBRDISK1\", 8) != 0)) { return TRUE; }"
+      },
+      {
+        "line": 22,
+        "text": "if ((Logical == 0) || (Logical > SIZE_2GB) || (Logical & (EFI_PAGE_SIZE - 1)) ||"
+      }
+    ]
+  },
+  {
+    "repository": "UniXNU/UniXNU",
+    "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+    "path": "drivers/DarwinBoot/DarwinBootPkg/Driver/DarwinBoot.c",
+    "sha256": "cd141d002f24b951d3dfa7773f29cf645712be3c71f4b6e801d1114eb81b5c0a",
+    "license": "SPDX BSD-2-Clause-Patent",
+    "anchors": [
+      {
+        "line": 20,
+        "text": "#define WINDOW_SIZE  SIZE_256MB"
+      },
+      {
+        "line": 185,
+        "text": "AdtNode (CONST UINT8 *Data, UINTN Size, UINTN *Offset, UINTN Depth, UINTN ParentPath, UINTN *RamdiskOffset, UINTN *TrustCacheOffset, UINT64 *WindowSize, BOOLEAN *KeepPacked)"
+      },
+      {
+        "line": 219,
+        "text": "if ((AsciiStrCmp ((CONST CHAR8 *)(Data + *Offset - 36), \"RAMDisk\") == 0) ||"
+      },
+      {
+        "line": 220,
+        "text": "(AsciiStrCmp ((CONST CHAR8 *)(Data + *Offset - 36), \"PackedRAMDisk\") == 0)) {"
+      },
+      {
+        "line": 221,
+        "text": "if (AsciiStrCmp ((CONST CHAR8 *)(Data + *Offset - 36), \"PackedRAMDisk\") == 0) {"
+      },
+      {
+        "line": 228,
+        "text": "if (AsciiStrCmp ((CONST CHAR8 *)(Data + *Offset - 36), \"TrustCache\") == 0) {"
+      },
+      {
+        "line": 249,
+        "text": "if (*TrustCacheOffset != MAX_UINTN) { return FALSE; }"
+      },
+      {
+        "line": 250,
+        "text": "*TrustCacheOffset = TrustCandidate;"
+      },
+      {
+        "line": 259,
+        "text": "if (!AdtNode (Data, Size, Offset, Depth + 1, Path, RamdiskOffset, TrustCacheOffset, WindowSize, KeepPacked)) { return FALSE; }"
+      },
+      {
+        "line": 266,
+        "text": "ValidTrustCaches (CONST UINT8 *Data, UINTN Size)"
+      },
+      {
+        "line": 457,
+        "text": "VOID                            *TrustCaches;"
+      },
+      {
+        "line": 460,
+        "text": "UINTN                           TrustCacheSize;"
+      },
+      {
+        "line": 477,
+        "text": "UINTN                           TrustCacheOffset;"
+      },
+      {
+        "line": 478,
+        "text": "UINT64                          TrustCacheAddress;"
+      },
+      {
+        "line": 510,
+        "text": "TrustCaches = NULL;"
+      },
+      {
+        "line": 532,
+        "text": "TrustCacheOffset = MAX_UINTN;"
+      },
+      {
+        "line": 535,
+        "text": "if (!AdtNode (Tree, TreeSize, &Offset, 0, 3, &RamdiskOffset, &TrustCacheOffset, &WindowSize, &KeepPacked) || (Offset != TreeSize)) { Status = EFI_COMPROMISED_DATA; goto Fail; }"
+      },
+      {
+        "line": 548,
+        "text": "Status = ReadFile (Root, TreePath, SIZE_16MB, &TrustCaches, &TrustCacheSize);"
+      },
+      {
+        "line": 550,
+        "text": "if (TrustCaches != NULL) {"
+      },
+      {
+        "line": 551,
+        "text": "if ((TrustCacheOffset == MAX_UINTN) || (U64 ((UINT8 *)Tree + TrustCacheOffset) != 0) ||"
+      },
+      {
+        "line": 552,
+        "text": "(U64 ((UINT8 *)Tree + TrustCacheOffset + 8) != 0) || !ValidTrustCaches (TrustCaches, TrustCacheSize)) {"
+      },
+      {
+        "line": 556,
+        "text": "} else if (TrustCacheOffset != MAX_UINTN) {"
+      },
+      {
+        "line": 568,
+        "text": "TrustCacheAddress = RamdiskAddress + RamdiskBytes;"
+      },
+      {
+        "line": 569,
+        "text": "Used = ALIGN_VALUE (TrustCacheAddress + TrustCacheSize, SIZE_16KB) - Address;"
+      },
+      {
+        "line": 595,
+        "text": "if (TrustCaches != NULL) {"
+      },
+      {
+        "line": 596,
+        "text": "CopyMem ((VOID *)(UINTN)TrustCacheAddress, TrustCaches, TrustCacheSize);"
+      },
+      {
+        "line": 597,
+        "text": "WriteUnaligned64 ((UINT64 *)(UINTN)(TreeAddress + TrustCacheOffset), TrustCacheAddress);"
+      },
+      {
+        "line": 598,
+        "text": "WriteUnaligned64 ((UINT64 *)(UINTN)(TreeAddress + TrustCacheOffset + 8), TrustCacheSize);"
+      },
+      {
+        "line": 599,
+        "text": "FreePool (TrustCaches); TrustCaches = NULL;"
+      },
+      {
+        "line": 653,
+        "text": "if (TrustCaches != NULL) { FreePool (TrustCaches); }"
+      }
+    ]
+  },
+  {
+    "repository": "UniXNU/UniXNU-sheng",
+    "commit": "a599a1a8a92093b5077543e071b72130769eb325",
+    "path": "board.toml",
+    "sha256": "245a5cfe9dbe8d077f839af6f99dd17fcdc7981c8fdd70e8b428a92d0d7479dd",
+    "license": "BSD-2-Clause-Patent repository license; retain original notices",
+    "anchors": [
+      {
+        "line": 31,
+        "text": "windows = ["
+      },
+      {
+        "line": 32,
+        "text": "{ name = \"OS\", component = \"OS\" },"
+      },
+      {
+        "line": 33,
+        "text": "{ name = \"SystemOS\", component = \"Cryptex1,SystemOS\" },"
+      },
+      {
+        "line": 40,
+        "text": "tool = \"kits/NativePrelink/emit_prelink.py\""
+      },
+      {
+        "line": 116,
+        "text": "skip_setup_tool = \"scripts/seed-data-skip-setup.py\"   # used by --skip-setup"
+      },
+      {
+        "line": 123,
+        "text": "kernel_args = ["
+      },
+      {
+        "line": 169,
+        "text": "tool = \"scripts/make-sheng-adt.py\""
+      },
+      {
+        "line": 174,
+        "text": "packed_data_ramdisk = true"
+      }
+    ]
+  },
+  {
+    "repository": "UniXNU/UniXNU",
+    "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+    "path": "drivers/NativeUfs/LICENSE",
+    "sha256": "d3cdce3b19df47f2e4dcafdfd54909eb9bc64ac722645ceb1feae58695c97b09",
+    "license": "BSD-2-Clause file; source SPDX says BSD-2-Clause-Patent, reconcile before redistribution",
+    "anchors": [
+      {
+        "line": 1,
+        "text": "BSD 2-Clause License"
+      },
+      {
+        "line": 3,
+        "text": "Copyright (c) 2026, blu-sharky"
+      }
+    ]
+  },
+  {
+    "repository": "UniXNU/UniXNU",
+    "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+    "path": "LICENSE",
+    "sha256": "5b1d3d911103cb0f41641ec0964c5ac1f7e229f57aa072b6ac38bae913a1307b",
+    "license": "BSD-2-Clause-Patent",
+    "anchors": [
+      {
+        "line": 1,
+        "text": "Copyright (c) 2026, UniXNU contributors. All rights reserved."
+      },
+      {
+        "line": 3,
+        "text": "SPDX-License-Identifier: BSD-2-Clause-Patent"
+      }
+    ]
+  },
+  {
+    "repository": "UniXNU/UniXNU-sheng",
+    "commit": "a599a1a8a92093b5077543e071b72130769eb325",
+    "path": "LICENSE",
+    "sha256": "5b1d3d911103cb0f41641ec0964c5ac1f7e229f57aa072b6ac38bae913a1307b",
+    "license": "BSD-2-Clause-Patent",
+    "anchors": [
+      {
+        "line": 1,
+        "text": "Copyright (c) 2026, UniXNU contributors. All rights reserved."
+      },
+      {
+        "line": 3,
+        "text": "SPDX-License-Identifier: BSD-2-Clause-Patent"
+      }
+    ]
+  },
+  {
+    "repository": "UniXNU/UniXNU",
+    "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+    "path": "drivers/NativeRamBlock/SparseDisk.h",
+    "sha256": "8b1202eda8ae920c6b505d7b97c44691e4cd2b3c7756b20bbd86ade40b8738fd",
+    "license": "BSD-2-Clause-Patent",
+    "anchors": [
+      {
+        "line": 13,
+        "text": "if(!p || n<32 || n>0x10000000 || memcmp(p,\"DBRDISK1\",8) || ramU32(p+8)!=1 || ramU32(p+12)!=4096)return false;"
+      },
+      {
+        "line": 15,
+        "text": "if(!size || size>0x80000000 || (size&4095) || count>65536 || count>(n-32)/16)return false;"
+      }
+    ]
+  },
+  {
+    "repository": "UniXNU/UniXNU",
+    "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+    "path": "scripts/build-xnu-4k-baseline.sh",
+    "sha256": "3486867d8c639eb10d31be16e875dbbdbb1d27afd97aedbb8ba930f0093c6852",
+    "license": "BSD-2-Clause-Patent",
+    "anchors": [
+      {
+        "line": 55,
+        "text": "if [ \"${XNU_NATIVE_UFS:-0}\" != 1 ] || [ \"${XNU_OWNER_ROOT_AUDIT:-0}\" != 1 ] || \\"
+      },
+      {
+        "line": 167,
+        "text": "NATIVE_RAM_BLOCK=${XNU_NATIVE_RAM_BLOCK:-0}"
+      },
+      {
+        "line": 169,
+        "text": "echo 'XNU_NATIVE_RAM_BLOCK must be 0 or 1' >&2"
+      },
+      {
+        "line": 177,
+        "text": "PERSONALITY_CFLAGS=\"$PERSONALITY_CFLAGS -DXNU_NATIVE_RAM_BLOCK=1\""
+      },
+      {
+        "line": 179,
+        "text": "if [ \"${XNU_NATIVE_UFS:-0}\" = 1 ]; then"
+      },
+      {
+        "line": 180,
+        "text": "PERSONALITY_CFLAGS=\"$PERSONALITY_CFLAGS -DXNU_NATIVE_UFS=1\""
+      },
+      {
+        "line": 305,
+        "text": "SHENG_PMGR=${XNU_SHENG_PMGR:-0}"
+      },
+      {
+        "line": 306,
+        "text": "if [ \"$SHENG_PMGR\" != 0 ] && [ \"$SHENG_PMGR\" != 1 ]; then"
+      },
+      {
+        "line": 307,
+        "text": "echo 'XNU_SHENG_PMGR must be 0 or 1' >&2"
+      },
+      {
+        "line": 310,
+        "text": "if [ \"$SHENG_PMGR\" = 1 ] && [ \"${XNU_SOURCE_CORECRYPTO14:-0}\" != 1 ]; then"
+      },
+      {
+        "line": 314,
+        "text": "SHENG_PMGR_STAMP=$ROOT/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/.sheng-pmgr-mode"
+      },
+      {
+        "line": 315,
+        "text": "if [ \"$(cat \"$SHENG_PMGR_STAMP\" 2>/dev/null || echo 0)\" != \"$SHENG_PMGR\" ]; then"
+      },
+      {
+        "line": 317,
+        "text": "printf '%s\\n' \"$SHENG_PMGR\" > \"$SHENG_PMGR_STAMP\""
+      },
+      {
+        "line": 319,
+        "text": "EXTRA_MAKE_ARGS+=(\"bsd_init.o_CFLAGS_ADD=-DXNU_SHENG_PMGR=$SHENG_PMGR -DXNU_VERIFIED_ROOT_PROBE=$OWNER_ROOT_PROBE -DXNU_OWNER_ROOT_AUDIT=$OWNER_ROOT_AUDIT -DXNU_OWNER_ROOT_TRUST=$OWNER_ROOT_TRUST -DXNU_ADRENO_FIRMWARE_PROBE=$ADRENO_FIRMWARE_PROBE -DXNU_ADRENO_PM4_PROBE=$ADRENO_PM4_PROBE -DXNU_SMMU4K_PROBE=$SMMU4K_PROBE -DXNU_CONSTANT_UPLOADS_PROBE=$CONSTANT_UPLOADS_PROBE -DXNU_NATIVE_LEGACY_DISPLAY=${XNU_NATIVE_LEGACY_DISPLAY:-0} -DXNU_NATIVE_OFFLINE_GPU=$NATIVE_OFFLINE_GPU\")"
+      },
+      {
+        "line": 448,
+        "text": "EXTRA_MAKE_ARGS+=(\"kern_exec.o_CFLAGS_ADD=-DXNU_NATIVE_AIR_INIT=$NATIVE_AIR_INIT -DXNU_OWNER_CACHE_MOUNT=$OWNER_CACHE_MOUNT -DXNU_OWNER_CACHE_STARTUP=$OWNER_CACHE_STARTUP -DXNU_OWNER_BOOT_MANIFEST=$OWNER_BOOT_MANIFEST -DXNU_OWNER_DATA_MOUNT=$OWNER_DATA_MOUNT -DXNU_NATIVE_RAM_BLOCK=$NATIVE_RAM_BLOCK -DXNU_OWNER_CRYPTEX_FILES=$OWNER_CRYPTEX_FILES -DXNU_OWNER_UNION_SYSTEMOS=$OWNER_UNION_SYSTEMOS -include $OWNER_DATA_HEADER\")"
+      },
+      {
+        "line": 572,
+        "text": "if [ \"${XNU_NATIVE_UFS:-0}\" = 1 ]; then"
+      },
+      {
+        "line": 701,
+        "text": "if [ \"$SHENG_PMGR\" = 1 ]; then"
+      },
+      {
+        "line": 726,
+        "text": "\"$SHENG_PMGR\" \"$ROOT/build/sheng-platform-power/libShengPlatformPower.a\" \\"
+      }
+    ]
+  }
+]
