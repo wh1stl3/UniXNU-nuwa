@@ -201,3 +201,5 @@
 
 2026-10-23T02:51:01+08:00 · 用户同意R-011 A，独立固件仅恢复同机原厂Heap一行并发布 · 1ccf760d667b（固件） · reports/factory-heap/source-publish.json
 2026-10-23T02:51:01+08:00 · 接入factory-heap CI与实际SEC Heap描述符验收，35项输入及旧FD回归静态检查通过 · Q-092（提交后以git log定位） · reports/factory-heap/profile-check.json；docs/operations/2026-10-23-factory-heap-build-trial.md
+
+2026-10-23T09:08:42+08:00 · CI39835052901成功，实际SEC确认209.75MiB，41条表仅获批字段变化，临时包8e852150及试前门检查通过 · Q-093（提交后以git log定位） · reports/factory-heap/39835052901/

@@ -990,3 +990,13 @@
 [Evidence] 源码完整Git对象发布且旧分支保持，35项输入和严格诊断补丁检查通过；旧实际SEC读取69MiB，要求新SEC精确读出同机209.75MiB。
 [Risk] 新固件尚未编译/试启动，实际ABL x0及扩展范围运行所有权未验证；保留其他内存行、board/feed/ADT及所有_verified。
 ```
+
+## Q-093 · 原厂Heap实际固件验收
+
+```text
+[unixnu-nuwa][firmware] 验收实际209.75MiB Heap与仅单行变化的SEC内存表
+
+[Change] 保存39835052901成功产物与严格核验，新增实际新旧SEC内存表逐字节比较，准备v4临时包和新鲜设备前置记录。
+[Evidence] CI6m51s成功，666项检查通过；实际SEC Heap为BAB00000/209.75MiB，41条描述符仅Heap地址/长度变化；包8e852150，试前nuwa Android完成1。
+[Risk] 当前仅编译及静态产物通过，R-011尚未启动，实际所有权、分配/协议和BDS/XNU均待运行证据。
+```

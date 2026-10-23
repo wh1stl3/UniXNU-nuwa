@@ -1,0 +1,50 @@
+{
+  "approval": "R-011 A",
+  "scope": "factory-heap firmware-only temporary v4 container",
+  "allocation_trace": {
+    "bytes": 167936,
+    "sha256": "8fccb5c9fde79dd38e69a4462adaf0996f629f6e9c8f9187a695a471403e643e",
+    "markers": {
+      "[NUWA-MEM]": true,
+      "first-pool-failure": true,
+      "missing-arch-before-assert": true,
+      "request type=%u pages=%lu align=%lu guard=%u caller=%p": true,
+      "free=%lu largest=%lu": true
+    }
+  },
+  "factory_heap": {
+    "offset": 57776,
+    "base": "0xbab00000",
+    "bytes": 219938816,
+    "mib": 209.75,
+    "descriptor_prefix_sha256": "813ee45c1b9fe89fd44e65d586651f499b200e34a609ca1947db994e18634447"
+  },
+  "device_commit": "2199fa5ed0da36a2698e1ea539cf2ad0a98f2be0",
+  "diagnostic_patch_sha256": "4a859ab6108270229fd305d091deaa6cd2d76c37e62dbce823b7e848c73750e1",
+  "run_id": 39835052901,
+  "firmware_commit": "1ccf760d667b9eec6dd3491c90cc04ebb7c58340",
+  "image_path": "out/trial-boot/factory-heap-39835052901/boot-factory-heap-v4.img",
+  "image_bytes": 3153920,
+  "image_sha256": "8e85215011248b3e9462cace9a92133d4d58f33957ea2534fcb487a401e283c0",
+  "original_boot_sha256": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+  "fd_sha256": "aca853390666e48dfd3901bdfca2a9deab0d7978a02152c4ad497564f0b8b4d6",
+  "shim_sha256": "8a3b54765c895a0366539130fdf6e4e4a01e364fe7de067a38d0193606f9d462",
+  "shim_text_offset": 0,
+  "pil_config_sha256": "dbc9ee6e4c7728b32245453322f348c32d6a5eef0107f8c07662918bc3c23fdd",
+  "pil_auto_entries": [],
+  "pil_driver_sha256": "89e030af07847bdc596f0c213bdce0ac430be66e572db55b434d7ec66ad9afcb",
+  "header_version": 4,
+  "page_bytes": 4096,
+  "kernel_bytes": 3145840,
+  "changed_header_fields": [
+    "kernel_size"
+  ],
+  "ramdisk_bytes": 0,
+  "signature_bytes": 0,
+  "appended_dtb": false,
+  "fat_included": false,
+  "xnu_included": false,
+  "dt_source": "Installed nuwa vendor_boot via ABL; actual candidate handoff unverified",
+  "candidate_device_executed": false,
+  "recovery_required": true
+}

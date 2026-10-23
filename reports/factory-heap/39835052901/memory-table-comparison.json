@@ -1,0 +1,21 @@
+{
+  "result": "actual old/new SEC descriptor comparison passed",
+  "descriptor_count": 41,
+  "stride": 72,
+  "changed_row": "DXE Heap",
+  "old": {
+    "base": "0xbae00000",
+    "bytes": 72351744
+  },
+  "new": {
+    "base": "0xbab00000",
+    "bytes": 219938816
+  },
+  "all_other_descriptor_bytes_identical": true,
+  "all_other_heap_fields_identical": true,
+  "old_table_sha256": "05a59df6257bbeee2a230a78d6431e02600c40053a26a548ffc1385b16107541",
+  "new_table_sha256": "7694de6cf91ac305c82b3a2a82ad717a3155f88d59a185093a2a74a1a42bbdda",
+  "source_commit": "1ccf760d667b9eec6dd3491c90cc04ebb7c58340",
+  "device_executed": false,
+  "limitation": "Binary descriptor consistency only; not runtime ownership, HOB/MMU or successful dispatch"
+}

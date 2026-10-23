@@ -1,12 +1,12 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-23T02:51:01+08:00（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-23T09:08:42+08:00（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
-**用户已批准R-011 A。独立固件仓仅恢复同机原厂DXE Heap一行至209.75MiB，codex/nuwa-factory-heap@1ccf760已发布；原R-010诊断、PIL空AUTO、正确BootShim和其他内存区域保持。35项固定输入静态检查通过，已接入factory-heap独立CI配置，尚未编译或试启动新范围。**
+**R-011 A固件CI39835052901/2199fa5成功（6m51s），666项下载/输入/实际产物静态检查通过。实际SEC Heap为BAB00000/209.75MiB；41条描述符对比仅Heap地址/长度改变，其他字节相同。v4包8e852150已生成，当前重新确认实际nuwa Android完成1，尚未启动本轮候选。**
 
-上轮R-010实机DXE分配失败27次，最终空闲25页/100KiB、最大8页/32KiB、5段，DxeMain.c(586) Not Found断言；BDS/XNU未到。最近Android恢复完成1及三个分区SHA未变为02:30:04/05记录；本轮尚未切换设备状态。
+上轮R-010实机DXE分配失败27次，最终空闲25页/100KiB、最大8页/32KiB、5段，DxeMain.c(586) Not Found断言；BDS/XNU未到。上轮恢复记录为02:30:04/05；本轮09:07再次只读确认nuwa/kalama Android完成1及试前分区摘要，尚未切换设备状态。
 
 [本轮报告](operations/2026-10-23-factory-heap-build-trial.md)，reports/factory-heap/；[上轮完整证据](operations/2026-10-23-dxe-allocation-build-trial.md)。
 
@@ -18,17 +18,16 @@
 | 唯一源码差异 | MemoryMapLib.c:32的DXE Heap，BAE00000/04500000 → BAB00000/0D1C0000；209.75MiB，末端C7CC0000；其他行/属性不变 |
 | 来源 | 同机xbl_config抽取表SHA2adc494b…；不是复制其他板地址；原/后LF哈希051c431a…/b6cfda2e… |
 | CI配置 | firmware-factory-heap-profile.json，35项原始输入；沿用0008分配诊断patch4a859ab6、Darwin22 loader补丁、固定UniXNU75bc13dd和Mu cfb93724 |
-| 实际产物门 | 从真实SEC TE按固定Name[32]/Address/Length布局读取Heap描述符，新值必须精确匹配；旧R-010 FD回归读出69MiB，通过 |
-| 当前验证级别 | 源码/配置/旧产物回归静态检查通过；新FD、描述符、临时包及运行均未验证 |
+| 实际产物门 | 实际SEC读出209.75MiB，41条表只改获批字段；四EFI/SEC/DXE诊断/PIL空AUTO/正确shim通过 |
+| 当前验证级别 | 源码/配置/旧产物回归静态检查通过；新FD/描述符/临时包静态检查通过；运行未验证 |
 
 候选原静态审查：其他源表行无区间重叠，历史同机Android DT覆盖候选，reserved reg/当时initrd均不重叠，未解析节点0。这不证明实际候选ABL x0 DT或范围运行所有权；实际MMU/HOB/分配/协议分派仍需实机对照。
 
 ## 下一步
 
-1. 提交本轮设备CI接线并触发factory-heap构建；按实际首错推进。
-2. 成功后下载逐项核验、确认实际SEC Heap=209.75MiB、DXE诊断/四EFI/SEC/PIL与正确shim保持，再打包同类v4。
-3. 重新读取nuwa身份、Android完成1/三分区SHA，核对日志及恢复门；启动前通知用户录像，一次临时试启动后恢复Android完成1并对比摘要。
-4. 结合实际快照看分配失败和核心协议是否改善；不预先认定扩Heap能解决全部SPSS/协议错误，不增XNU/FAT/新DTB或改其他内存范围。
+1. 当前R-011包已检查，启动前通知用户录像，按既有授权执行唯一一次临时对照；采集末屏/分配快照或菜单/BDS/UniXNU日志，不把ACK当阶段证据。
+2. 测试后只加载已校验原Android boot，确认nuwa/kalama sys.boot_completed=1和三分区摘要；若只差实体按键，记录PENDING-HUMAN并继续独立文档工作。
+3. 结合实际日志判断资源瓶颈/核心协议是否改善。当前没有R-011运行结果，不预先认定全部SPSS/协议错误消失或进入XNU。
 
 ## 已知实机与恢复基线
 
