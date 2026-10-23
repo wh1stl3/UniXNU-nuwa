@@ -277,3 +277,5 @@
 2026-10-24T00:39:15.327331+08:00 · 六原图确认chosen封装缺失、补init_boot静态选择证据与错误分级，恢复闭环；FV小探针源码/生成及主机检查通过 · Q-128（git log定位） · docs/operations/2026-10-24-error-triage-and-initboot.md；reports/embedded-probe/
 
 2026-10-24T00:48:14.773032+08:00 · CI39988591973成功，内嵌探针包87b14624完整复验/41行内存一致，新scope门通过且用户本轮录像确认 · Q-129（git log定位） · reports/embedded-probe/39988591973/
+
+2026-10-24T00:56:02.341592+08:00 · 87b14624原图确认4MiB发布Success及唯一探针配置菜单，FV→FAT→配置发现实机通过，恢复待闭环 · Q-130（git log定位） · docs/operations/2026-10-24-embedded-volume-trial.md；reports/embedded-probe-trial/2026-10-24/

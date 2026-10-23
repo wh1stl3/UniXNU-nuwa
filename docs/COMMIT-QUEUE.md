@@ -1370,3 +1370,13 @@
 [Evidence] CI39988591973成功，87b14624/3153920B逐字节复验，41行内存表一致；缺门在设备子进程前拒绝，用户已本轮确认录像。
 [Risk] 尚无新包实机结果；无XNU/ADT，不将小探针发现当完整系统运输成功。
 ```
+
+## Q-130 · 内嵌配置发现实机通过
+
+```text
+[unixnu-nuwa][device] 以原图确认FV配置卷发现链实机通过
+
+[Change] 归档87b14624的发布Success和目标菜单原图，区分60秒退出探针与真实系统输入，更新决策/交接。
+[Evidence] 4MiB BlockIo Success、config路径和唯一Volume config loaded项；120秒USB记录完成。
+[Risk] 尚无XNU/ADT或完整运输验收；本轮Android恢复/三分区postcondition待补。
+```

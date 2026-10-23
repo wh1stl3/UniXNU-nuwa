@@ -1,13 +1,11 @@
 # STATUS
 
-> a22e9a44实测已确定：chosen内没有封装卷，publisher返回Not Found。Android恢复和三分区核验完成；转独立FV小探针离线构建。无XNU入口证据。
+> 87b14624实机确认FV→只读BlockIo→FAT→unixnu.toml发现通过，已出现目标NUWA VOLUME PROBE菜单。尚无XNU入口或iOS执行证据；本轮Android恢复待闭环。
 
-原图：DTB b5db1000/938800B，initrd [b5fb2000,b7fff1d4)/33870292B，envelope result0，与历史Android范围相同；不能仅凭地址长度宣称字节相同。固定ABL中有版本>=4的init_boot选择路径，支持运输/选择方向但不是动态执行证明。六张原图及转录在reports/volume-status-trial/2026-10-24/。
+用户两原图确认NuwaEmbeddedVolumeDxe发布4MiB块设备Success及精确探针配置/菜单项。包无内核/ADT；timeout=60、唯一action=exit，用户所述停留后无OS/回充电界面符合探针退出路径，非完整系统引导验收。原chosen仍envelope absent，与大负载运输问题分开记录。
 
-恢复：recovery-after-keys确认Android完成1，postcondition确认nuwa/kalama及三分区SHA与本轮preflight一致。首次超时记录保留，不代表当前状态。无flash/erase/改槽。
+来源：CI39988591973/source b4f9075、固件00a37d9、包87b14624e95a4b608435da96c4a7f939893bef7c94186af9d2f157eacef0e496/3153920B。实际资源SHA和全部41行内存表保持一致，9项固件主机测试/新scope门及严格容器通过；未改board/bringup/内存图或_verified。
 
-其他错误已逐项审查：CPU Vectors是明确命名契约缺口；TZ/FeatureEnabler、SPSS和RscDxe真实失败保留追踪，未证实导致本次封装缺失；USB是后续回退失败。见operations/2026-10-24-error-triage-and-initboot.md。
+87b本轮已完成120秒USB观察，恢复工具正在等待Android或fastboot；需补Android完成1和三分区postcondition，a22e9a44已恢复不代替本轮。人工按键等待不阻塞离线分析，不启动下一包。照片、preflight/launch/recovery见reports/embedded-probe-trial/2026-10-24/。
 
-下一步embedded-probe独立profile：固件00a37d9、确定性4MiB FAT16/精确VFAT配置路径；9项C主机测试、WSL精确文件读回和43输入/8补丁/12后哈希通过，CI39988591973/source b4f9075成功。内存表/board/bringup/_verified未改。小探针不解决完整XNU运输。下轮设备动作另刷新录像、身份、包复验与恢复门并通知。详见operations/2026-10-24-embedded-volume-probe.md和主线交接。
-
-新包87b14624e95a4b608435da96c4a7f939893bef7c94186af9d2f157eacef0e496/3153920B已完整复验；嵌入RAW SHA匹配、全部41行内存表相同、缺日志门设备子进程前拒绝。用户已本轮确认“可以，继续录像测试”，准备刷新preflight并通知后临时启动一次。尚无新包实测结果。
+下一主线：真实Darwin22负载/NativePrelink ABI与目标Apple ADT、连续可分配内存窗口和条件sidecars。现有源内核仅主机ParseKernel通过，不能充当完整可启动prelink。CPU Vectors缺项和TZ/SPSS/Rsc独立问题保留跟进。详见operations/2026-10-24-embedded-volume-trial.md；主线交接同步。
