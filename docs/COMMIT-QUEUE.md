@@ -1180,3 +1180,13 @@
 [Evidence] 包2b203afa/3153920B，实际SEC五MMU八CTOR四HANDOFF；41行2952B与R-011一致；整头载荷填充严格重建通过。
 [Risk] ready_to_execute=false，无设备操作；运行分支与故障指令未验证，实机前通知用户并刷新日志恢复门。
 ```
+
+## Q-111 · MMU分支实测与恢复
+
+```text
+[unixnu-nuwa][device] 实测MMU分支包可见边界并恢复Android
+
+[Change] 保存2b203afa启动、120秒USB观察、用户原图及恢复证据，说明固定源码时间戳不是诊断包版本。
+[Evidence] 新包实际发送成功；原图e1bc997f最后Mmu enter，无MMU新日志；原厂boot恢复后Android完成1和三分区SHA一致。
+[Risk] 单张照片非连续录像；查询或输出路径尚未区分，无故障PC证据，未启动第二包。
+```

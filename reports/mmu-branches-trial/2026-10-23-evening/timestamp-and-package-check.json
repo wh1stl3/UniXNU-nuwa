@@ -1,0 +1,27 @@
+{
+  "source_date_epoch": "1792738255",
+  "source_date_utc": "2026-10-23T06:50:55+00:00",
+  "source_commit": "ddd794fc07e9bc64057222a9bffa4d79c8553af8",
+  "source_timestamp_assignment": "scripts/ci/build-firmware-candidate.py:156",
+  "banner_source": "uefi-nuwa/Silicon/Silicium/SiliciumPkg/Sec/Sec.c:38 (__TIME__, __DATE__)",
+  "sent_image": [
+    {
+      "at": "2026-10-23T13:19:03.151592+00:00",
+      "argv": [
+        "fastboot",
+        "-s",
+        "<selected-nuwa>",
+        "boot",
+        "D:\\Code\\UniXNU-nuwa\\out\\trial-boot\\mmu-branches-39958974666\\boot-mmu-branches-v4.img"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Sending 'boot.img' (3080 KB)                       OKAY [  0.075s]\nBooting                                            OKAY [  0.117s]\nFinished. Total time: 0.194s\n"
+    }
+  ],
+  "image_sha256": "2b203afa8372e99ebd9049b276c41984fa16db4d92a92a6cea0f3b4904c403dd",
+  "fd_sha256": "ea0277e8087b036c062866388a67fd75a9cf24f61cb0de0bc2132bc7f2243227",
+  "all_mmu_strings_in_actual_sec": true,
+  "conclusion": "Pinned compiler timestamp is not diagnostic package version; sent new 2b203afa image",
+  "limitation": "Static marker presence and fastboot ACK do not prove runtime reaches marker"
+}

@@ -1,0 +1,21 @@
+{
+  "at": "2026-10-23T21:23:58.332786+08:00",
+  "authorization": "User said 可以开始 after notification about recording; later confirmed 已进入 fastboot",
+  "package_sha256": "2b203afa8372e99ebd9049b276c41984fa16db4d92a92a6cea0f3b4904c403dd",
+  "fastboot_boot_exit_code": 0,
+  "usb_observation_seconds": 120.0,
+  "observation_samples": 59,
+  "last_visible": "[NUWA-CTOR] Mmu enter",
+  "new_mmu_logs_visible": false,
+  "source": "User text and original photo e1bc997f; not a continuous video record",
+  "recovery": "User returned to fastboot; script reset bootloader then temporarily loaded pinned original boot",
+  "android_boot_completed": "1",
+  "three_partition_hashes_unchanged": true,
+  "current_slot": "_a",
+  "next_step": "Offline audit GetHobList/GetNextGuidHob traversal and immediate logging path; no additional trial authorized in this record",
+  "limitations": [
+    "No fault PC or runtime HOB traversal captured",
+    "Photo alone cannot prove screen unchanged for whole observation window",
+    "Absent after-guid-query does not prove query hang or exclude logger failure"
+  ]
+}

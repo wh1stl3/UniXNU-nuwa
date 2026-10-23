@@ -21,3 +21,5 @@
 | H-008 | 中午SEC停点后按键回fastboot，以便只恢复原Android | 用户已回复“已回 fastboot” | 2026-10-23 12:17 | completed（12:18:42 Android完成1，三分区SHA不变） |
 
 | H-009 | 晚上SEC handoff诊断连续录像，拍摄ENTRY/HANDOFF/DXE并标注相对时间 | 用户要求留晚上一起实测；先完成离线构建检查，启动前通知且刷新日志/恢复门；本轮不操作手机 | 2026-10-23T15:02:06+08:00 | completed（18:30:39实际Android完成1，用户更正照片f3cf9558已取得；视频文件未交付，不称完整连续录像取得） |
+
+- 2026-10-23T21:21:52.765772+08:00 · **已完成**：MMU分支包2b203afa实测后用户回fastboot，21:22:57恢复Android完成1，三分区哈希一致。证据reports/mmu-branches-trial/2026-10-23-evening/。
