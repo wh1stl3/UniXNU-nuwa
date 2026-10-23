@@ -33,3 +33,5 @@ uefi-nuwa@79c516a（含测试LF修正固定bc38be0）：NuwaBootMemoryDxe不再�
 ## 实际产物验收与本轮录像
 
 2026-10-24T00:23:43.134759+08:00：CI39985245383成功；实际FD SHA ff218da439aebf32cdbd649c37021e1333ab3efb4d09b2fb454c8ce388644811，新旧日志标记通过，全部41行2952B内存表SHA7694de6c与dd1ef825完全相同。完整包a22e9a44561c85c52aa5697d0452c38dc8bdd1f5b2c7c7a40e79f5396a27f9f0/70266880B逐字节复验通过。实际包缺录像/预检时均在设备子进程前拒绝，证据reports/volume-status/39985245383/。用户本轮确认“可以，现在准备录像”；准备刷新本轮设备门并通知后临时启动，尚未执行。
+
+2026-10-24T00:27:22.419670+08:00：本轮a22e9a44在新鲜用户录像确认、preflight及通知后临时启动，fastboot boot exit0，00:26:15（UTC+8）完成120秒USB采样；具体屏幕结果尚待。最后无nuwa fastboot，ADB总数1不当作nuwa或完成1。recovery工具已启动，尚无本轮postcondition，不借用上轮恢复；必要时只差人工按键，继续离线但不启动新包。证据reports/volume-status-trial/2026-10-24/。

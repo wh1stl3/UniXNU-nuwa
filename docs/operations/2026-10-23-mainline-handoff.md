@@ -35,3 +35,5 @@ recovery.json曾等待180秒超时。2026-10-24已只读ADB确认nuwa/kalama、A
 ## 新包就绪（2026-10-24）
 
 2026-10-24T00:23:43.134759+08:00：CI39985245383成功，FD ff218da4；新状态及全部旧诊断二进制标记通过，41行内存全表与dd1ef825逐字节一致。包a22e9a44561c85c52aa5697d0452c38dc8bdd1f5b2c7c7a40e79f5396a27f9f0/70266880B已复验，reports/volume-status/39985245383/package.json。用户已本轮确认录像/恢复按键准备，刷新preflight后通知并启动。观察窗口>=120秒，恢复和postcondition用新目录reports/volume-status-trial/2026-10-24/，上一轮恢复不代替本轮。
+
+2026-10-24T00:27:22.419670+08:00：本轮a22e9a44在新鲜用户录像确认、preflight及通知后临时启动，fastboot boot exit0，00:26:15（UTC+8）完成120秒USB采样；具体屏幕结果尚待。最后无nuwa fastboot，ADB总数1不当作nuwa或完成1。recovery工具已启动，尚无本轮postcondition，不借用上轮恢复；必要时只差人工按键，继续离线但不启动新包。证据reports/volume-status-trial/2026-10-24/。

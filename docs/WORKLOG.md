@@ -271,3 +271,5 @@
 2026-10-24T00:17:00.937798+08:00 · 启动CI39985245383，接入新scope严格试验门，2项新反向检查及5项原MMU门回归通过 · Q-125（提交后git log定位） · tests/test_volume_status_gate.py；docs/operations/2026-10-24-volume-publisher-status.md
 
 2026-10-24T00:23:43.134759+08:00 · CI39985245383成功，新包a22e9a44/70266880B完整复验，41行内存表相同，用户已本轮确认录像，准备试验 · Q-126（git log定位） · reports/volume-status/39985245383/
+
+2026-10-24T00:27:22.419670+08:00 · a22e9a44在新鲜录像门后临时启动ACK成功，120秒USB观察完成，屏幕与本轮恢复待补 · Q-127（git log定位） · reports/volume-status-trial/2026-10-24/

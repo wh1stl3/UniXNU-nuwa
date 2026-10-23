@@ -35,3 +35,5 @@
 - dd1ef825本轮待恢复闭环：recovery.json等待超时；录像末尾Android标志不是完成1。需确认真实nuwa Android ADB及三分区postcondition，必要时实体键回fastboot后接管。录像已收到并归档摘要/关键帧；离线卷发现分析继续。
 
 - 2026-10-24T00:15:19.951531+08:00 · dd1ef825恢复待办完成：postcondition.json确认本轮nuwa/kalama、Android完成1及三分区SHA与preflight一致。新包录像待产物就绪后确认，离线构建继续。
+
+- 2026-10-24T00:27:22.419670+08:00 · a22e9a44本轮120秒观察已结束；已通知保留录像/末屏并按电源＋音量下回fastboot，恢复工具接管等待。需要本轮NUWA-VOLUME日志、Android完成1及三分区核验，不阻塞离线工作。

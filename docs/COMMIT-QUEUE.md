@@ -1340,3 +1340,13 @@
 [Evidence] a22e9a44/70266880B逐字节复验，41行2952B内存表相同；实际包缺日志门时设备子进程前拒绝。
 [Risk] 新包尚未实测；无目标卷或XNU执行证据，下一步刷新门后临时试验及恢复。
 ```
+
+## Q-127 · 卷状态试验
+
+```text
+[unixnu-nuwa][device] 临时启动卷状态包并保存120秒USB观察
+
+[Change] 本轮新鲜录像确认与通知后试启动a22e9a44，接入原Android恢复流程。
+[Evidence] preflight身份/恢复门通过；fastboot boot exit0，launch记录120秒观察。
+[Risk] 屏幕结果和本轮恢复尚待，USB不替代卷发现或XNU执行证据。
+```
