@@ -1,8 +1,12 @@
 # 主线交接（2026-10-24 01:40更新）
 
-## 停止原因与边界
+## 当前执行状态（2026-10-24T01:54:51.259229+08:00）
 
-用户原话“先停下 落实文档”。现在暂停主线；完成本次文档/证据提交后不继续构建、分析或设备动作。无新鲜录像确认，不能把此前其他包的许可用于新包。只有用户明确续接后恢复工作；临时启动还需该轮录像和恢复门。先读AGENTS/STATUS/DECISIONS，两旧资料库只读；不设置_verified或未知板值。
+用户已恢复主线并确认本轮a2dc8195录像，已通知后单次临时启动，120秒观察完成。原图显示SEC Mmu构造查询HOB时`BAB00118 type4 len0 target4`触发0014保护性停点，未到新DXE模块/ReadyToBoot。新包本轮实测失败，HOB根因未解决；不可重复launch或跳过坏条目。
+
+已实际恢复Android；本轮postcondition时间2026-10-23T17:48:19.683937+00:00确认nuwa/kalama、Android完成1、slot_a、三分区SHA与本轮preflight一致，人工恢复待办关闭。证据reports/boot-input-audit-trial/2026-10-24/。旧成功包与本轮实际SEC仅构建时间4字节不同，掩蔽8字节时间后完全相同；不能把失败直接归因尚未执行的新诊断逻辑。详见operations/2026-10-24-boot-input-audit-trial.md。
+
+后续优先离线HOB创建/填充、MMU前后、构造前后有边界只读阶段定位；不要同时改缓存/Heap，不移除失败保护。当前无后续新包；新实机包另需新鲜录像/通知/恢复门。
 
 ## 当前提交与完整构建
 
@@ -20,13 +24,13 @@ BootShim仍8a3b54765c895a0366539130fdf6e4e4a01e364fe7de067a38d0193606f9d462，11
 
 最近一次确认时间UTC 2026-10-23T16:56:45.092564（北京时间10-24 00:56:45），来自reports/embedded-probe-trial/2026-10-24/postcondition.json；nuwa/kalama、Android完成1、slot_a、三分区SHA与preflight一致。本轮没有设备查询，不能声称实时状态不变。没有flash/erase/改槽位。
 
-87b14624/CI39988591973/固件00a37d9已实测4MiB FV配置卷发现；菜单60秒action exit，无XNU/ADT。新a2dc8195仍只含该配置探针，加ReadyToBoot一次性只读EL、MPIDR、CNTFRQ和ConventionalMemory快照，打印后停10秒，再进入探针菜单。不分配/预留XNU窗口，不执行ExitBootServices。快照含自身map缓冲区，稍后释放；不代表后续AllocatePages成功或窗口所有权。新模块回调/快照尚未实测。保留至少120秒录像，需读取ready、conventional、summary、largest及最后结果，不能用USB ACK当阶段日志。
+87b14624/CI39988591973/固件00a37d9已实测4MiB FV配置卷发现；菜单60秒action exit，无XNU/ADT。新a2dc8195仍只含该配置探针，加ReadyToBoot一次性只读EL、MPIDR、CNTFRQ和ConventionalMemory快照，打印后停10秒，再进入探针菜单。不分配/预留XNU窗口，不执行ExitBootServices。快照含自身map缓冲区，稍后释放；不代表后续AllocatePages成功或窗口所有权。本轮SEC停点导致新模块回调/快照尚未执行。保留至少120秒录像，需读取ready、conventional、summary、largest及最后结果，不能用USB ACK当阶段日志。
 
 77742999当前内核分析候选5a128fb2/58335232B已完成65348项绑定读回、30段组件和native代码保持、固定DarwinBoot主机ParseKernel接受15非零段/74174464B跨度。early_security_initializers为空、完整ABI未验收、loadable=false，不得加入设备菜单。详见operations/2026-10-24-current-native-prelink.md。CPU Vectors/TZ/SPSS/Rsc独立问题未修复。
 
 ## 用户明确恢复后可用命令
 
-以下是续接说明，不是当前执行许可。Windows使用bundled Python并设PYTHONUTF8=1，平台工具PATH加D:/Code/PortingiOS/common/tools/platform-tools；选择真实nuwa/kalama，绝不操作enuma。
+下列a2dc8195步骤本轮已全部完成（失败画面及恢复闭环均已归档），禁止自动重复launch/recover。留作流程参考；新一轮仍需新包及新鲜录像。Windows使用bundled Python并设PYTHONUTF8=1，平台工具PATH加D:/Code/PortingiOS/common/tools/platform-tools；选择真实nuwa/kalama，绝不操作enuma。
 
 1. 纯离线包复验：`python -B -c "import sys;sys.path.insert(0,'scripts');from embedded_probe_package import validate;print(validate('reports/boot-input-audit/39995937843/package.json')['image_sha256'])"`。
 2. 取得本轮用户明确录像/按键可用答复；不可用则保持不启动。先检查实际Android身份/完成1/三分区并保存新preflight：`python -B scripts/record-nuwa-trial-state.py --output reports/boot-input-audit-trial/<fresh>/preflight.json --package reports/boot-input-audit/39995937843/package.json --capture-confirmation '<本轮真实答复>'`。

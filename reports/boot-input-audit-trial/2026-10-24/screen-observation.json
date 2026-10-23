@@ -1,0 +1,23 @@
+{
+  "source": "User original photo and report: 直接停在了hob check invalid ptr",
+  "photo_path": "reports/boot-input-audit-trial/2026-10-24/hob-invalid-screen.jpg",
+  "photo_sha256": "07867a1046f2694e83317ca380bf65d1b7d1835e274a66aa887a215b6439021f",
+  "observed_stage": "SEC ProcessLibraryConstructorList: Mmu constructor GetFirstGuidHob",
+  "last_visible": "[NUWA-HOB-CHECK] invalid ptr=BAB00118 type=4 len=0 target=4",
+  "pointer": "0xbab00118",
+  "hob_type": 4,
+  "hob_length": 0,
+  "requested_type": 4,
+  "hob_list": "0xbab00000",
+  "ready_to_boot_observed": false,
+  "boot_audit_observed": false,
+  "xnu_executed": false,
+  "explanation": "0014 rejects invalid HOB length via CpuDeadLoop; image identifies detection point, not first corrupting writer or runtime exception PC",
+  "root_cause": "Unresolved: creation, overwrite, cache/visibility and other actors not distinguished",
+  "ack_exit": 0,
+  "usb_observed_seconds": 120.0,
+  "usb_scope": "USB presence only; screen video needed for process logs",
+  "postcondition_at": "2026-10-23T17:48:19.683937+00:00",
+  "android_boot_completed": "1",
+  "three_partition_hashes_unchanged": true
+}

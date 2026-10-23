@@ -1,0 +1,88 @@
+{
+  "scope": "Static actual SEC comparison; no runtime cause proven",
+  "records": [
+    {
+      "run": 39988591973,
+      "sec_sha256": "f68a9de1e0c09dce3dd9b7f3ba2b92c67266636fda5de38827c37fc7d7e88fc7",
+      "bytes": 69288,
+      "sections": {
+        ".text": {
+          "bytes": 40960,
+          "sha256": "022ad2000b384298258fa358c5696c3b7d149de656dd323fc35581b60d7772b2"
+        },
+        ".rdata": {
+          "bytes": 12288,
+          "sha256": "61e0781de451e9cae406fe049da8032cb26589b0c5f00896417db39ce9f2ed68"
+        },
+        ".data": {
+          "bytes": 8192,
+          "sha256": "6c5663ca5bfcaeea28e598c9e70016b6d00b7360c5e0e73f0db25c0d1997dea5"
+        },
+        ".pdata": {
+          "bytes": 4096,
+          "sha256": "a953d5d414a1baf94017a1001ac5ca570df7fef0b12f218d2f38f82edcc2c130"
+        },
+        ".reloc": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "run": 39995937843,
+      "sec_sha256": "9becabf19e726082757622e299734dd8b21a2d1466f5491822d39d0aa91c9fa9",
+      "bytes": 69288,
+      "sections": {
+        ".text": {
+          "bytes": 40960,
+          "sha256": "022ad2000b384298258fa358c5696c3b7d149de656dd323fc35581b60d7772b2"
+        },
+        ".rdata": {
+          "bytes": 12288,
+          "sha256": "e56eeb153132aeb0b410e9883dc5231973db338f72c957f7b198bc60d6b06fde"
+        },
+        ".data": {
+          "bytes": 8192,
+          "sha256": "6c5663ca5bfcaeea28e598c9e70016b6d00b7360c5e0e73f0db25c0d1997dea5"
+        },
+        ".pdata": {
+          "bytes": 4096,
+          "sha256": "a953d5d414a1baf94017a1001ac5ca570df7fef0b12f218d2f38f82edcc2c130"
+        },
+        ".reloc": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    }
+  ],
+  "equal_length": true,
+  "entire_sec_equal_after_masking_build_time": true,
+  "build_time": {
+    "offset": "0xbaa8",
+    "old": "16:36:44",
+    "new": "17:25:24"
+  },
+  "differing_bytes": 4,
+  "difference_ranges": [
+    {
+      "offset": "0xbaa9",
+      "bytes": 1,
+      "old_hex": "36",
+      "new_hex": "37"
+    },
+    {
+      "offset": "0xbaab",
+      "bytes": 2,
+      "old_hex": "3336",
+      "new_hex": "3235"
+    },
+    {
+      "offset": "0xbaae",
+      "bytes": 1,
+      "old_hex": "34",
+      "new_hex": "32"
+    }
+  ],
+  "device_accessed": false
+}

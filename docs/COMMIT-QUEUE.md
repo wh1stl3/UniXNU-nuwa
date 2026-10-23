@@ -1420,3 +1420,13 @@
 [Evidence] a2dc8195/3153920B逐字节复验；41行2952B表相同，缺preflight设备子进程0；用户原话先停下落实文档。
 [Risk] 新模块与内存/CPU快照未实测；历史Android完成1不当作当前查询，主线暂停且无设备动作。
 ```
+
+## Q-135 · 启动输入实测与恢复
+
+```text
+[unixnu-nuwa][device] 归档早期HOB异常及本轮Android恢复闭环
+
+[Change] 新鲜录像通知后单次试启动a2dc8195，保存HOB坏长度原图/120秒观察/恢复；加入实际SEC差分审查并更新状态交接。
+[Evidence] BAB00118 type4 len0，未到新DXE；Android完成1及三分区SHA不变；旧成功SEC与本轮掩蔽构建时间后逐字节一致。
+[Risk] HOB首次异常时机与根因未知；ReadyToBoot输入未取得，未修改缓存/Heap或跳过检查，未执行XNU。
+```

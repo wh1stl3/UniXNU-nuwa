@@ -1,11 +1,13 @@
 # STATUS
 
-> 用户明确要求“先停下 落实文档”：主线已暂停。新启动输入诊断包完成离线验收，尚未在手机执行；恢复工作须等用户明确续接，并重新确认本轮录像条件。
+> a2dc8195已单次实测，在SEC Mmu构造的HOB长度检查停住，未到新诊断模块。原Android已恢复，完成1及三分区SHA不变；根因仍待定位。
 
-新包 a2dc8195b4368da37276a4618dca90fd556f1d5de72fd58faff0b600936ba65b，3153920B。CI39995937843成功，构建设备提交84c88f8057a808670fc84d151ad0b4128ce91013，固件6176a822e66b846620b5bcd2739a0666814ee663。实际NuwaBootAuditDxe PE/DEPEX/标记、4MiB FAT资源及容器逐字节复验通过；41行2952B SEC内存表与基线一致。10项固件宿主测试、2项旧包冒充/空录像拒绝通过；实际新包缺preflight在设备子进程前拒绝。全部仅静态/主机检查，ReadyToBoot回调、内存范围、EL/MPIDR/CNTFRQ尚无实机证据。
+CI39995937843/固件6176a82/包a2dc8195/3153920B，本轮新鲜录像、包复验、身份/恢复门及启动前通知已完成。用户原图最后`invalid ptr=BAB00118 type=4 len=0 target=4`，0014检查对此调用CpuDeadLoop。120秒USB观察完成，不能当成ReadyToBoot阶段证据。EL/MPIDR/CNTFRQ/连续内存范围均未取得，不移除检查或跳过异常条目。
 
-最近一次真实设备证据仍是reports/embedded-probe-trial/2026-10-24/postcondition.json：UTC 2026-10-23T16:56:45.092564，即北京时间2026-10-24 00:56:45；nuwa/kalama、Android完成1、slot_a、三分区SHA不变。本轮没有ADB/fastboot命令或模式切换，不能把历史状态当作当前实时查询。87b14624的小配置卷FV→BlockIo→FAT→唯一配置发现已实机通过，未执行XNU。
+reports/boot-input-audit-trial/2026-10-24/postcondition.json于2026-10-23T17:48:19.683937+00:00实际确认nuwa/kalama、Android完成1、slot_a、三分区SHA与本轮preflight一致；本轮恢复闭环，无flash/erase/改槽。
 
-当前77742999内核已生成分析用预链接5a128fb2/58335232B：65348项绑定逐项读回、30段组件/native执行字节保持；DarwinBoot主机解析通过，20项ADT回归和4项常量池拒绝回归通过。早期安全initializer为空、完整ABI未验收，loadable=false；不得放入启动菜单。
+实际SEC对比旧成功包87b14624：所有指令/数据/内存表一致，全SEC仅构建时间字符串4字节变化；掩蔽8字节时间后完全相等。新DXE模块尚未运行，不能把HOB异常直接归因其逻辑；创建、覆盖、缓存可见性等尚未区分。证据sec-differential.json及operations/2026-10-24-boot-input-audit-trial.md。
 
-续接顺序：取得用户恢复工作指令→新鲜录像及恢复门→临时启动a2dc8195采集ReadyToBoot快照→Android完成1/三分区核验→据实准备连续窗口/目标ADT方案；然后完成真实安全初始化、ABI和大负载运输。未修改board/bringup/内存基址或_verified。细节见operations/2026-10-24-boot-input-audit.md和operations/2026-10-23-mainline-handoff.md。
+下一步离线准备创建/填充、MMU前后、构造前后有边界的HOB检查，定位首次异常阶段；保留失败保护，不同时改缓存/Heap。新包需完整构建复验及新的录像门，当前不重复启动。
+
+87b14624的4MiB配置卷发现实机通过。当前77742999内核分析预链接5a128fb2静态绑定/主机解析通过，但早期安全initializer/完整ABI/目标ADT/窗口/大负载运输仍缺，loadable=false。board/bringup内存值与_verified未改，未执行XNU。
