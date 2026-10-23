@@ -1,66 +1,31 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-23T20:34:35+08:00（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；2026-10-23 晚交接。历史见 WORKLOG。
 
 ## 当前结论
 
-**530f56b4逐构造包已完成一次实机临时启动：新图确认Debug leave=Success、Extract leave=Success，最后Mmu enter，未见Mmu leave/Lzma或DXE。** 已将可见范围收窄至MMU构造内部/相关日志路径，具体HOB分支、缓存指令与运行PC仍未确定，不以屏幕最后一行代替指令定位。
+最新实机包 530f56b4 已确认 Debug 和 Extract 构造返回 Success，最后可见 Mmu enter；未见 Mmu leave、Lzma、DXE、SHENGMEM 或 XNU。具体指令、HOB 分支、cache/日志路径尚未确定。[实测报告](operations/2026-10-23-constructor-trace-trial.md)。
 
-**19:46:21电脑已确认实际nuwa/kalama Android完成1，随后三分区SHA与本轮试前相同，A槽未变。** 本轮恢复脚本直接检测Android，没有发送原boot；回返机制未独立记录。无flash/erase/改槽，不再启动第二个包。[构造实测报告](operations/2026-10-23-constructor-trace-trial.md)，reports/constructor-trace-trial/2026-10-23-evening/。
+最近已确认恢复：19:46:21 实际 nuwa Android 完成 1，随后 postcondition 复核 nuwa/kalama、A 槽、boot_a/vendor_boot_a/init_boot_a 三分区 SHA 与试前一致。恢复脚本直接检测 Android，未发送原 boot；回返机制未独立记录。本轮仅文档交接，没有重新读取设备。
 
-此前2d833461包已证明入口HOB返回非空，最后总构造前日志；本次更细日志进一步定位。新候选8条日志和全部41行表的静态检查见[构建报告](operations/2026-10-23-constructor-trace-ready.md)。XNU源内核已编译，尚未实机进入XNU。
+**接手入口：[主线交接文档](operations/2026-10-23-mainline-handoff.md)**，含精确产物、哈希、下一步文件入口、恢复条件、工具及工作区保护。设备仓 Q-106/3f49c80、Q-107/d056fb9 已通过普通 Git 推送，远端 main 复核一致；此前 Git 对象 API 401 不再阻塞发布。
 
-## 新诊断固件与包
+## 已完成与未完成
 
-| 项目 | 核验事实 |
-| --- | --- |
-| 固件源码 | wh1stl3/uefi-nuwa，codex/nuwa-sec-handoff-trace@ddd794fc07e9bc64057222a9bffa4d79c8553af8，父1ccf760；仅Sec.c四处日志，保留调用顺序 |
-| CI | 39915967862，设备脚本abe4be9，15:09:28—15:15:19成功；666个下载清单文件大小/SHA通过 |
-| FD | 3145728B，SHAfcf2f829fb4748034014f8913b967a928cdbafe16836b9992eee5a13d838ac24 |
-| 实际SEC | SHA fad4af6b4c2b8422f4951f71b2ea9f9b00b5813485e9820db668f2f35e5840aa，四条HANDOFF及原ENTRY日志存在 |
-| 内存表 | 全部41条72B描述符共2952B与R-011完全一致；获批同机Heap BAB00000/0D1C0000保持 |
-| 核心/PIL | DXE核心8fccb5c9保留分配诊断，原PILDxe89e030af、空AUTO dbc9ee6e保持，四模块/PCD/DEPEX检查通过 |
-| BootShim | 112B，SHA8a3b54765c895a0366539130fdf6e4e4a01e364fe7de067a38d0193606f9d462，relative offset0保持 |
-| 唯一v4包 | out/trial-boot/sec-handoff-39915967862/boot-sec-handoff-v4.img，3153920B，SHA2d8334613a415c24574f93c0bcb30ba50d32175ff062d8ec2cc149651bcde846 |
-| 容器范围 | 原Android头仅改kernel_size；整个头＋shim＋FD＋零填充重建一致。无FAT/ADT/XNU、新DTB或ramdisk；恢复boot原件ef558db2复查通过 |
-
-[构建与晚间计划](operations/2026-10-23-sec-handoff-build-ready.md)，reports/sec-handoff/39915967862/保存真实run、完整workflow日志、inputs/result/inventory、实际产物检查、内存表对比及package。二进制只留out。
-
-## 停点分析与工具准备
-
-实际SEC TE/link-map核对显示platform-hobs之后存在入口参数HOB和库构造调用。固定Mu@cfb93724的PrePiHobLib通过TPIDR取得列表，提取器构造涉及AllocatePool、GUID HOB，其他构造涉及缓存操作；不能以两行源码或DXE Heap容量排除这些路径。同SoC uefi-sheng@329b473d也采用PlatformPeim→入口HOB→库构造顺序，未取得重排依据。
-
-只补before/after-entry-arg-hob及before/after-library-constructors，记录list/data而不额外解引用，不绕过错误。[分析与来源](operations/2026-10-23-sec-handoff-diagnostic.md)，reports/sec-handoff/保留固定提交、SHA、许可、适用性及35项输入检查。
-
-严格新scope已接入trial/preflight，纯文件校验通过：重查固定recipe、实际产物、包metadata和整个原头/内容。SEC-HANDOFF-OFFLINE及ready_to_execute=false表示包不替代运行前门。USB观察默认120秒（范围120—600），每条附ACK后相对时间；USB枚举不是具体过程日志。下午完成纯文件/语法检查；晚上已按fresh门试一次，具体结果以上方晚间报告为准。
+- CI39943865806 成功；constructor-trace 包 3153920 B/SHA530f56b4，FD a47d8289，实际 SEC 八条 CTOR 和四条 HANDOFF 通过静态检查；41 行内存表保持 R-011，BootShim/PIL 保持。此包没有 FAT/ADT/XNU/ramdisk。[构建记录](operations/2026-10-23-constructor-trace-ready.md)。
+- MMU 实际 helper 240 B；构造不执行 helper 页表替换，只查询 HOB 并读取指针或清理 helper 缓存。合法行步长非零，不代表 runtime cache 操作通过。[离线审查](operations/2026-10-23-mmu-constructor-audit.md)。
+- 0012-mmu-constructor-branches.patch 五条日志草案严格内存应用/还原通过；**未接入 CI、未编译、未打包、未实测**。新日志不在 530f56b4 中。
+- XNU 源内核 CI39793231214 成功，20187912 B/SHA77742999；主机解析通过，当前预链接/ADT/EL1 未验收。R-011 曾进入 UniXNU 菜单，但尚无实机进入 XNU 的证据。
 
 ## 下一步
 
-1. 实际TE/helper/cache/HOB审查完成：helper240B，合法行步长不为零，构造不执行helper的页表替换代码；HOB查询是否返回未知。0012五条分支日志候选内存应用和逆验通过，尚未接入CI或编译，见[MMU审查](operations/2026-10-23-mmu-constructor-audit.md)。
-2. 下一步接入0012独立profile及post-patch pin，构建并核验实际TE/全部内存表，再刷新用户录像/身份/恢复门试新包；本轮无设备操作，不跳过cache同步。
-3. 530f56b4与2d833461各自保留实测图和配方，MMU leave未见不能写成唯一故障指令已定。精确倒计时不可靠，之后明确通知准备录像并在实际发送后报告，不承诺秒级启动。
-4. SHENGMEM及真实initrd/载荷卷仍缺；保持FAT探针→当前prelink/ADT→EL1→原生根卷顺序，未进入XNU。Android完成1及三分区未变本轮已复核，无待处理恢复动作。
+1. 从 constructor-trace 派生独立 MMU 分支 profile，0012 排在 0011 后，更新 ArmMmuLibCore.c post-patch pin；接入 build/workflow/inspect，并保留既有输入与全表检查。
+2. 提交、CI 构建、下载并检查实际 SEC/内存表；随后接入新包严格 scope。不得跳过 cache、伪造 HOB 或复用旧包冒充新日志。
+3. 用户可记录具体日志、真实 nuwa 身份和恢复路径刷新后再试新包。通知准备录像，不承诺秒级倒计时。结束确认 Android 完成 1 和三分区哈希。
+4. 稳定固件后推进 SHENGMEM/实际 initrd → 小 FAT → 当前预链接内核/ADT → EL1/XNU → 根卷/用户态。
 
-## 后续系统卷／启动载荷预研
+## 后续载荷与固定边界
 
-已固定四层交付关系：FAT启动载荷→Darwin22预链接内核/Apple ADT→只读OS/SystemOS根卷→可写Data及用户态。既定iPhone donor的7项组件在本机，两个trust模块本轮重算SHA并解出v2/2760与61条，静态长度/类型/排序检查通过；未输出bundle、ADT或系统镜像。大DMG只复核长度/UDIF尾签名，raw大小/根卷UUID尚缺，不能直接拼压缩DMG当块盘。
+[系统卷和启动载荷预研](operations/2026-10-23-ios16-system-payload-research.md)、[卷发现](operations/2026-10-23-volume-discovery-chain.md)、[入口契约](operations/2026-10-23-darwin22-entry-input-contracts.md) 已保存。64 MiB FAT 探针仅 WSL 验收，尚未入包；原生根卷后端、raw 卷大小/UUID、实际 ABL initrd 范围未验证。隔壁预链接输入不同，不替代当前内核产物。
 
-实际77742999内核没有NativeUfs/NativeRamBlock对应命名符号或_sheng_pmgr_run，仍需原生根卷后端适配。隔壁预链接报告使用89d8ff86输入，不能称当前内核预链接已完成。固定75bc13dd的packed输入上限256MiB、逻辑上限2GiB；1TiB文档与iPad17硬编码工具不套用到当前版本。优先小FAT探针→内核入口→原生只读根卷，晚间诊断包不变；改写userdata的恢复证据不能由临时boot恢复推导。
-
-[预研报告](operations/2026-10-23-ios16-system-payload-research.md)，reports/ios16-payload-research/含来源/许可/组件/符号/就绪矩阵；官网本轮7页404，引用10月22日已保存HTML并记录SHA，不称实时官网核验。下一步仍按上方晚间试验推进，后续只读prelink计划、ADT和根卷准备分别实施。
-
-## 系统卷和内核入口的未完成项
-
-NuwaBootMemoryDxe只把/chosen整个initrd作为只读512B BlockIo，长度必须整扇区；实际FD具有Fat/DiskIo/Partition/English及预连接代码，不等于实机挂载成功。Android快照initrd33870292B模512余468，不能移作候选地址或把追加FAT当整段磁盘；ABL vendor/generic/bootconfig拼接的候选范围仍待证。离线64MiB FAT探针bc0b3eae仅通过WSL读回/fsck，未接入完整包。[卷审查](operations/2026-10-23-volume-discovery-chain.md)。
-
-固定DarwinBoot纯解析函数在WSL主机20例通过，当前77742999源内核ParseKernel接受（10个非零映射段，跨度21037056B）；零未解析外部符号、五个平台观测导出，ArmCpu/ArmDTPlatform来源SHA匹配。13个boot-progress回调未编入，与关闭开关一致，不是当前链接错误。主机解析不是EFI/QEMU/XNU执行。
-
-缓存nuwa FDT已提取CPU affinity 0、0x100…0x700、GIC显式映射/0x40000 stride、timer声明19.2MHz、PSCI smc；仅输入来源，未生成目标ADT。CPU编号映射、中断/定时器/PSCI、完整NativePrelink运行ABI、连续分配及EL1交接均未验收。[入口契约](operations/2026-10-23-darwin22-entry-input-contracts.md)。
-
-## 基线与固定约定
-
-R-010/CI39829943950在Heap69MiB时实机分配失败及DxeMain断言；R-011/CI39835052901恢复获批同机工厂Heap，唯一包8e852150一次到达菜单，中午未稳定复现。两次观察分别保留，不抹去上午结果，不把静态检查写成实机通过。
-
-基座wh1stl3/UniXNU@76dd641保留nuwa补丁；源内核CI39793231214成功，20187912B/SHA77742999fc1c1b6a94c9603664d946553070f73c6eed83ce9fcca06d70d73ac8。当前固件仍固定上游75bc13dd；608B/0x2e0 Darwin22 boot_args补丁已编译，运行未验证；历史payload输入仍CI15 a9e08c69，不混称当前预链接完成。
-
-board/feed/bringup-plan/ADT及_verified保持，board仍example=true，普通基座-D入口未完整打通。4KiB、iPhone10,3/d22ap/iOS16.7.16/20H392、8796.141.3、ipad_identity=true保持；D-002先512MiB—1GiB过阶段5、硬上限8GiB，与UEFI Heap不同。两旧仓只读。Android为原有rooted/custom系统，非完整原厂恢复，A槽标志未改。
+4 KiB、iPhone10,3/d22ap/iOS16.7.16/20H392、8796.141.3、ipad_identity=true 固定。feed/board/bringup-plan/验证标志不变；board 仍 example=true。D-002 初始 XNU 窗口 512 MiB–1 GiB、上限 8 GiB，与 UEFI Heap 不同。两旧仓只读；生成镜像无需硬停，实际启动仍执行日志/恢复前门和 AGENTS.md 其他硬停要求。本交接不触发新构建或实测。

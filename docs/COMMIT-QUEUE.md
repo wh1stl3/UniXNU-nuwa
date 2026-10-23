@@ -1150,3 +1150,13 @@
 [Evidence] 实际helper240B/SHAf615b9f4，行步长4左移字段；0012内存应用通过，去除日志逐字节还原父源码。
 [Risk] 运行PC/寄存器/具体分支未知，新候选未编译；无设备/板值/feed修改，前一提交API推送401未解决。
 ```
+
+## Q-108 · 晚间主线交接
+
+```text
+[unixnu-nuwa][docs] 固化MMU停点和下一轮分支诊断的完整交接
+
+[Change] 编写主线交接入口并重写STATUS，列明产物、补丁未完成状态、恢复门和下一轮文件入口。
+[Evidence] 实测原图及postcondition确认Mmu enter边界和Android恢复；branch-proposal标记未编译，gh远端ref确认d056fb9已发布。
+[Risk] 未定位具体故障指令，新分支日志未编译或实测；本轮仅文档，无新设备状态采样或镜像生成。
+```
