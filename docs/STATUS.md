@@ -1,6 +1,6 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-23T09:56:34+08:00（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-23T10:23:00+08:00（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
@@ -39,6 +39,10 @@
 本机WSL已生成独立64MiB FAT32配置探针，SHA bc0b3eae88e0dd8a528b3469d0fa9c3fa21c99097af842cab42c28cfa5068ff2；mtools逐字节读回及fsck.fat -n退出0。只有标记菜单和exit动作，无XNU/ADT。**尚未接入固件或完整启动包，不能直接实机启动，也未验证UEFI挂载。** 产物只在out，不提交二进制。
 
 [离线报告与候选路径](operations/2026-10-23-offline-initrd-and-volume-probe.md)，reports/system-volume-audit/含固定指令、同SoC依赖/许可和工具命令。[前轮输入审查](operations/2026-10-23-system-volume-discovery.md)保留。
+
+## 文件发现链路离线核验
+
+固定源码8项连接检查通过，实际R-011 FD确认Fat/DiskIo/Partition/English及发布器均存在，正常固件入口已有先ConnectAll再查配置的代码；未发现漏装FAT模块，不等于实机绑定/挂载成功。修正审计描述符ResourceAttribute为32位、MemoryType偏移60，全部41行实际SEC类型与源码一致；旧新表原始字节回归仍只差获批Heap字段。Android快照区间落在Kernel保留描述符，候选实际映射/保留仍未验证。见[链路报告](operations/2026-10-23-volume-discovery-chain.md)。本轮无设备命令或固件变更。
 
 ## 下一步
 

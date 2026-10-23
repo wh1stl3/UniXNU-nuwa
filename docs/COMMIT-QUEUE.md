@@ -1030,3 +1030,13 @@
 [Evidence] 安装版ABL38a837fa/PEb489faff固定，14处复制及bootconfig指令核对通过；WSL FAT32 64MiB/bc0b3eae，配置逐字节读回和fsck.fat -n退出0。
 [Risk] 只有离线静态检查，探针未接入固件/完整启动包，候选chosen和UEFI挂载未验证；无设备命令、板值/feed变更或XNU运行结论。
 ```
+
+## Q-097 · 文件发现链路与描述符布局审查
+
+```text
+[unixnu-nuwa][loader] 核验实际FD的文件系统链路并纠正内存描述符字段解释
+
+[Change] 固定驱动绑定与预连接源码，核验实际FD六个模块；修正ResourceAttribute宽度说明及字段解码，记录候选内存保留边界。
+[Evidence] 八项静态链路检查通过，Fat/DiskIo/Partition/English实际PE存在；Mu PiHob.h定义UINT32，实际SEC41行MemoryType均匹配源码，原始表字节回归仍只差获批Heap字段。
+[Risk] 未执行设备命令；二进制存在和源码路径不证明实际绑定、候选映射或FAT挂载；DarwinBoot及XNU运行仍未验证，未改固件/board/feed。
+```

@@ -26,8 +26,10 @@ def main():
     source=subprocess.check_output(['git','--no-optional-locks','-C','D:/Code/uefi-nuwa','show',commit+':'+path]).decode()
     names=re.findall(r'^\s*\{"([^"]+)",\s*0x',source,re.M)
     if not names or names.count('DXE Heap')!=1:raise ValueError('Unexpected descriptor source layout')
-    # MemoryMapLib.h fixed struct: Name[32], Address/Length, two UINT32 enums,
-    # UINT64 resource attribute, two UINT32 enums -> AARCH64 stride 72.
+    # MemoryMapLib.h fixed struct: Name[32], Address/Length, five UINT32 fields
+    # (HobOption, ResourceType, ResourceAttribute, MemoryType, ArmAttributes),
+    # then four padding bytes -> AARCH64 stride 72. PiHob.h defines the
+    # resource attribute type as UINT32; never interpret padding as a field.
     stride=72;captured=[];original=reader.heap_descriptors
     def capture(data):
         captured.append(data)

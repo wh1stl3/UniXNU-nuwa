@@ -1,0 +1,582 @@
+{
+  "at": "2026-10-23T02:21:08.086373+00:00",
+  "scope": "Pinned source and actual FD static inspection; no target execution",
+  "sources": [
+    {
+      "repository": "UniXNU/UniXNU",
+      "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+      "path": "package/UniXNUPkg/Application/UniXNU/UniXNU.c",
+      "sha256": "81673f58102492d1ed00ac017ac57943d8020fa1478d73bda08f5dd27fd09ba9",
+      "matching_lines": {
+        "mFirmwareMarker": [
+          18,
+          33,
+          34
+        ],
+        "Host = UniXNUHostFirmware": [
+          36
+        ]
+      }
+    },
+    {
+      "repository": "UniXNU/UniXNU",
+      "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+      "path": "package/UniXNUPkg/Driver/UniXNUDxe/UniXNUDxe.c",
+      "sha256": "963f11e21e5cd467217d216b64c3097875e4464a8245fc46508bb6540f66923d",
+      "matching_lines": {
+        "mFirmwareMarker": [
+          35,
+          118,
+          133
+        ],
+        "CopyMem (P, mFirmwareMarker": [
+          133
+        ]
+      }
+    },
+    {
+      "repository": "UniXNU/UniXNU",
+      "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+      "path": "package/UniXNUPkg/Library/UniXNULib/Main.c",
+      "sha256": "db303c6b9a2688e3984fe194faed6af7bba357bfd333222b2d5c064f4961a817",
+      "matching_lines": {
+        "UniXNUHostFirmware": [
+          72,
+          80
+        ],
+        "UniXNUConnectAll ();": [
+          81
+        ],
+        "UniXNUConfigLoad": [
+          84
+        ]
+      }
+    },
+    {
+      "repository": "UniXNU/UniXNU",
+      "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+      "path": "package/UniXNUPkg/Library/UniXNULib/Inject.c",
+      "sha256": "a0072e04b6ff233746aec973d38e288bdcc689481f660f043fbf8f3b8a9d4943",
+      "matching_lines": {
+        "UniXNUConnectAll": [
+          28,
+          133
+        ],
+        "ConnectController": [
+          43,
+          130
+        ],
+        "NeedConnect && Config->ConnectAll": [
+          132
+        ]
+      }
+    },
+    {
+      "repository": "UniXNU/UniXNU",
+      "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+      "path": "package/UniXNUPkg/Library/UniXNULib/Config.c",
+      "sha256": "8b17c343a5c3816b4646a0c206c36565abf1d7b3586fadbeb7435c0ebb601037",
+      "matching_lines": {
+        "TryVolume": [
+          1448,
+          1501,
+          1508
+        ],
+        "gEfiSimpleFileSystemProtocolGuid": [
+          1269,
+          1505
+        ],
+        "TomlParse": [
+          924,
+          1465,
+          1528
+        ],
+        "config: loaded": [
+          1472
+        ]
+      }
+    },
+    {
+      "repository": "wh1stl3/uefi-nuwa",
+      "commit": "1ccf760d667b9eec6dd3491c90cc04ebb7c58340",
+      "path": "Platforms/Xiaomi/nuwaPkg/Drivers/NuwaBootMemoryDxe/NuwaBootMemoryDxe.c",
+      "sha256": "4ad1acce7b3538092a6eaf443a52e3a7c9bd7ce05e6e028f3129d7dd61e3c627",
+      "matching_lines": {
+        "RAM_BLOCK_SIZE": [
+          35,
+          85,
+          89,
+          93,
+          163,
+          175,
+          177
+        ],
+        "InstallMultipleProtocolInterfaces": [
+          180
+        ],
+        "LogicalPartition": [
+          172
+        ],
+        "AllocatePages": []
+      }
+    },
+    {
+      "repository": "wh1stl3/uefi-nuwa",
+      "commit": "1ccf760d667b9eec6dd3491c90cc04ebb7c58340",
+      "path": "Platforms/Xiaomi/nuwaPkg/Drivers/NuwaBootMemoryDxe/NuwaBootMemoryDxe.inf",
+      "sha256": "f83481ac980613d3e33f453706472e94ec9102296a10dd9ca7f1c1510df162fa",
+      "matching_lines": {
+        "[Depex]": [
+          34
+        ],
+        "TRUE": [
+          35
+        ]
+      }
+    },
+    {
+      "repository": "wh1stl3/uefi-nuwa",
+      "commit": "1ccf760d667b9eec6dd3491c90cc04ebb7c58340",
+      "path": "Platforms/Xiaomi/nuwaPkg/nuwa.fdf",
+      "sha256": "04a854f51f46156fbab09569d23281774d1d3f507b82039f8907529d54c16328",
+      "matching_lines": {
+        "APRIORI.inc": [
+          82
+        ],
+        "NuwaBootMemoryDxe.inf": [
+          90
+        ]
+      }
+    },
+    {
+      "repository": "wh1stl3/uefi-nuwa",
+      "commit": "1ccf760d667b9eec6dd3491c90cc04ebb7c58340",
+      "path": "Platforms/Xiaomi/nuwaPkg/Include/APRIORI.inc",
+      "sha256": "1ee375ee19e4c8efe33b166b5e49eb5325869dcdca54a8e9ea31456bf8e8820e",
+      "matching_lines": {
+        "DiskIoDxe.inf": [
+          39
+        ],
+        "PartitionDxe.inf": [
+          40
+        ],
+        "Fat.inf": [
+          46
+        ],
+        "EnglishDxe.inf": [
+          41
+        ]
+      }
+    },
+    {
+      "repository": "wh1stl3/uefi-nuwa",
+      "commit": "1ccf760d667b9eec6dd3491c90cc04ebb7c58340",
+      "path": "Platforms/Xiaomi/nuwaPkg/Library/MemoryMapLib/MemoryMapLib.c",
+      "sha256": "b6cfda2e2385234ae243159ee258419c43b68a2c1c34484c2bc7f383daa32ccb",
+      "matching_lines": {
+        "\"Kernel\"": [
+          30
+        ]
+      }
+    },
+    {
+      "repository": "wh1stl3/uefi-nuwa",
+      "commit": "1ccf760d667b9eec6dd3491c90cc04ebb7c58340",
+      "path": "Silicon/Silicium/SiliciumPkg/Library/MemoryInitPeiLib/MemoryInitPei.c",
+      "sha256": "dced274a5e31484b647e643fa255439a9a6f6eb5fc210671233614ed80ef2edb",
+      "matching_lines": {
+        "BuildMemoryAllocationHob": [
+          98
+        ]
+      }
+    },
+    {
+      "repository": "wh1stl3/uefi-nuwa",
+      "commit": "1ccf760d667b9eec6dd3491c90cc04ebb7c58340",
+      "path": "Silicon/Silicium/SiliciumPkg/Drivers/RamManagerDxe/RamManager.c",
+      "sha256": "f21045e2ca73208d3dc55a1bcadae71bcf55cd2c60baafd68d6664a51398e527",
+      "matching_lines": {
+        "GetEfiMemoryMap": [
+          156,
+          198
+        ],
+        "ParseMemoryRange": [
+          70,
+          216
+        ],
+        "RegionEnd > CurrentRangeBase": [
+          103
+        ]
+      }
+    },
+    {
+      "repository": "microsoft/mu_basecore",
+      "commit": "cfb93724a06ff86ff5ba971413368a7809ee42a5",
+      "path": "FatPkg/EnhancedFatDxe/Fat.inf",
+      "sha256": "8995f1a49dbdc02298a0817b43920e751c6e30eaef487146b4953417352b206b",
+      "url": "https://raw.githubusercontent.com/microsoft/mu_basecore/cfb93724a06ff86ff5ba971413368a7809ee42a5/FatPkg/EnhancedFatDxe/Fat.inf",
+      "license": "BSD-2-Clause-Patent",
+      "matching_lines": {
+        "FILE_GUID": [
+          18
+        ],
+        "gEfiBlockIoProtocolGuid": [
+          80
+        ],
+        "gEfiDiskIoProtocolGuid": [
+          78
+        ],
+        "gEfiSimpleFileSystemProtocolGuid": [
+          81
+        ],
+        "FatAllocateVolume": [],
+        "LogicalPartition": []
+      }
+    },
+    {
+      "repository": "microsoft/mu_basecore",
+      "commit": "cfb93724a06ff86ff5ba971413368a7809ee42a5",
+      "path": "FatPkg/EnhancedFatDxe/Fat.c",
+      "sha256": "0fbc9f1984259744b6ae0e97808895787828ca335349642971162e8e8d7c5cea",
+      "url": "https://raw.githubusercontent.com/microsoft/mu_basecore/cfb93724a06ff86ff5ba971413368a7809ee42a5/FatPkg/EnhancedFatDxe/Fat.c",
+      "license": "BSD-2-Clause-Patent",
+      "matching_lines": {
+        "FILE_GUID": [],
+        "gEfiBlockIoProtocolGuid": [
+          329,
+          389
+        ],
+        "gEfiDiskIoProtocolGuid": [
+          196,
+          303,
+          319,
+          401,
+          446,
+          529
+        ],
+        "gEfiSimpleFileSystemProtocolGuid": [
+          437,
+          503
+        ],
+        "FatAllocateVolume": [
+          424,
+          427
+        ],
+        "LogicalPartition": []
+      }
+    },
+    {
+      "repository": "microsoft/mu_basecore",
+      "commit": "cfb93724a06ff86ff5ba971413368a7809ee42a5",
+      "path": "FatPkg/EnhancedFatDxe/Init.c",
+      "sha256": "7f11ba66cf8dba7dd8218dafea152e5e8ef7e3bc303a7cdc002901a708f130e3",
+      "url": "https://raw.githubusercontent.com/microsoft/mu_basecore/cfb93724a06ff86ff5ba971413368a7809ee42a5/FatPkg/EnhancedFatDxe/Init.c",
+      "license": "BSD-2-Clause-Patent",
+      "matching_lines": {
+        "FILE_GUID": [],
+        "gEfiBlockIoProtocolGuid": [],
+        "gEfiDiskIoProtocolGuid": [],
+        "gEfiSimpleFileSystemProtocolGuid": [
+          111,
+          181
+        ],
+        "FatAllocateVolume": [
+          27
+        ],
+        "LogicalPartition": []
+      }
+    },
+    {
+      "repository": "microsoft/mu_basecore",
+      "commit": "cfb93724a06ff86ff5ba971413368a7809ee42a5",
+      "path": "MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf",
+      "sha256": "13fa0fcf526b6623e5ce7b5f13773a0ca9ec15a8f338b5f82e46b3e0ad1ba977",
+      "url": "https://raw.githubusercontent.com/microsoft/mu_basecore/cfb93724a06ff86ff5ba971413368a7809ee42a5/MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf",
+      "license": "BSD-2-Clause-Patent",
+      "matching_lines": {
+        "FILE_GUID": [
+          20
+        ],
+        "gEfiBlockIoProtocolGuid": [
+          58
+        ],
+        "gEfiDiskIoProtocolGuid": [
+          56
+        ],
+        "gEfiSimpleFileSystemProtocolGuid": [],
+        "FatAllocateVolume": [],
+        "LogicalPartition": []
+      }
+    },
+    {
+      "repository": "microsoft/mu_basecore",
+      "commit": "cfb93724a06ff86ff5ba971413368a7809ee42a5",
+      "path": "MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIo.c",
+      "sha256": "539319483ef97ebb8dd4e401a69d62b62fb9af9d416260fa34dc78db882b4ad4",
+      "url": "https://raw.githubusercontent.com/microsoft/mu_basecore/cfb93724a06ff86ff5ba971413368a7809ee42a5/MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIo.c",
+      "license": "BSD-2-Clause-Patent",
+      "matching_lines": {
+        "FILE_GUID": [],
+        "gEfiBlockIoProtocolGuid": [
+          80,
+          95,
+          137,
+          225,
+          335
+        ],
+        "gEfiDiskIoProtocolGuid": [
+          195,
+          204,
+          270,
+          306,
+          315
+        ],
+        "gEfiSimpleFileSystemProtocolGuid": [],
+        "FatAllocateVolume": [],
+        "LogicalPartition": []
+      }
+    },
+    {
+      "repository": "microsoft/mu_basecore",
+      "commit": "cfb93724a06ff86ff5ba971413368a7809ee42a5",
+      "path": "MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf",
+      "sha256": "91fb1a154796ccaac93aa761c88c5ee0b5d2073dd729d54e9afa410a289f3603",
+      "url": "https://raw.githubusercontent.com/microsoft/mu_basecore/cfb93724a06ff86ff5ba971413368a7809ee42a5/MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf",
+      "license": "BSD-2-Clause-Patent",
+      "matching_lines": {
+        "FILE_GUID": [
+          23
+        ],
+        "gEfiBlockIoProtocolGuid": [
+          75
+        ],
+        "gEfiDiskIoProtocolGuid": [
+          83
+        ],
+        "gEfiSimpleFileSystemProtocolGuid": [],
+        "FatAllocateVolume": [],
+        "LogicalPartition": []
+      }
+    },
+    {
+      "repository": "microsoft/mu_basecore",
+      "commit": "cfb93724a06ff86ff5ba971413368a7809ee42a5",
+      "path": "MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf",
+      "sha256": "4e23b5bfc748561a435cc8ca67c4844659c887ed8b41e11c6e0549a888ac006d",
+      "url": "https://raw.githubusercontent.com/microsoft/mu_basecore/cfb93724a06ff86ff5ba971413368a7809ee42a5/MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf",
+      "license": "BSD-2-Clause-Patent",
+      "matching_lines": {
+        "FILE_GUID": [
+          19
+        ],
+        "gEfiBlockIoProtocolGuid": [],
+        "gEfiDiskIoProtocolGuid": [],
+        "gEfiSimpleFileSystemProtocolGuid": [],
+        "FatAllocateVolume": [],
+        "LogicalPartition": []
+      }
+    },
+    {
+      "repository": "microsoft/mu_basecore",
+      "commit": "cfb93724a06ff86ff5ba971413368a7809ee42a5",
+      "path": "MdePkg/Include/Pi/PiHob.h",
+      "sha256": "9ac0bad9ac740a7847003427c11304730549fcd2fcdacd2c92d1cd7975efc984",
+      "url": "https://raw.githubusercontent.com/microsoft/mu_basecore/cfb93724a06ff86ff5ba971413368a7809ee42a5/MdePkg/Include/Pi/PiHob.h",
+      "license": "BSD-2-Clause-Patent",
+      "matching_lines": {
+        "FILE_GUID": [],
+        "gEfiBlockIoProtocolGuid": [],
+        "gEfiDiskIoProtocolGuid": [],
+        "gEfiSimpleFileSystemProtocolGuid": [],
+        "FatAllocateVolume": [],
+        "LogicalPartition": []
+      }
+    },
+    {
+      "repository": "microsoft/mu_basecore",
+      "commit": "cfb93724a06ff86ff5ba971413368a7809ee42a5",
+      "path": "MdePkg/Include/Uefi/UefiMultiPhase.h",
+      "sha256": "d4ca140abf49811bcad80bf9274d65278fe46b7d9ee51cb5c7cb7f590e938550",
+      "url": "https://raw.githubusercontent.com/microsoft/mu_basecore/cfb93724a06ff86ff5ba971413368a7809ee42a5/MdePkg/Include/Uefi/UefiMultiPhase.h",
+      "license": "BSD-2-Clause-Patent",
+      "matching_lines": {
+        "FILE_GUID": [],
+        "gEfiBlockIoProtocolGuid": [],
+        "gEfiDiskIoProtocolGuid": [],
+        "gEfiSimpleFileSystemProtocolGuid": [],
+        "FatAllocateVolume": [],
+        "LogicalPartition": []
+      }
+    },
+    {
+      "repository": "wh1stl3/uefi-nuwa",
+      "commit": "1ccf760d667b9eec6dd3491c90cc04ebb7c58340",
+      "path": "Silicon/Silicium/SiliciumPkg/Include/Library/MemoryMapLib.h",
+      "sha256": "c60c4b80e81388d40148cc014a25f22a20a89a1722c6dd0f1e784efa3268816b",
+      "matching_lines": {
+        "#define Reserv": [
+          92
+        ],
+        "EFI_RESOURCE_ATTRIBUTE_TYPE": [
+          48
+        ],
+        "EFI_MEMORY_TYPE": [
+          49
+        ]
+      }
+    }
+  ],
+  "actual_fd_sha256": "aca853390666e48dfd3901bdfca2a9deab0d7978a02152c4ad497564f0b8b4d6",
+  "modules": [
+    {
+      "path": "FatPkg/EnhancedFatDxe/Fat.inf",
+      "guid": "961578fe-b6b7-44c3-af35-6bc705cd2b1f",
+      "ui_name": "Fat",
+      "image": {
+        "machine": "0xaa64",
+        "subsystem": 11,
+        "entry_rva": "0x11dc",
+        "image_size": 69632,
+        "sections": 5,
+        "bytes": 52224,
+        "sha256": "4108867baff1e39b2b1a5c8dc43fca41bd895bf81079f90d5fb969cba20cd2d2",
+        "loader_protocol_guid_present": false,
+        "entry_hob_guid_present": false,
+        "application_guid_present": false
+      }
+    },
+    {
+      "path": "MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf",
+      "guid": "6b38f7b4-ad98-40e9-9093-aca2b5a253c4",
+      "ui_name": "DiskIoDxe",
+      "image": {
+        "machine": "0xaa64",
+        "subsystem": 11,
+        "entry_rva": "0x1050",
+        "image_size": 45056,
+        "sections": 5,
+        "bytes": 28160,
+        "sha256": "345133618034f2e49c445775587b8d8bf39c0f0e5060f66fd2a9a4d474aa1da1",
+        "loader_protocol_guid_present": false,
+        "entry_hob_guid_present": false,
+        "application_guid_present": false
+      }
+    },
+    {
+      "path": "MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf",
+      "guid": "1fa1f39e-feff-4aae-bd7b-38a070a3b609",
+      "ui_name": "PartitionDxe",
+      "image": {
+        "machine": "0xaa64",
+        "subsystem": 11,
+        "entry_rva": "0x1050",
+        "image_size": 49152,
+        "sections": 5,
+        "bytes": 36352,
+        "sha256": "ddb3833b4c5d4f62e0c29b61c5c6831eebdfcaf05a111c5a91ed20aa79f781ab",
+        "loader_protocol_guid_present": false,
+        "entry_hob_guid_present": false,
+        "application_guid_present": false
+      }
+    },
+    {
+      "path": "MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf",
+      "guid": "cd3bafb6-50fb-4fe8-8e4e-ab74d2c1a600",
+      "ui_name": "EnglishDxe",
+      "image": {
+        "machine": "0xaa64",
+        "subsystem": 11,
+        "entry_rva": "0x1050",
+        "image_size": 32768,
+        "sections": 5,
+        "bytes": 17920,
+        "sha256": "20b4b6ea7860c2306c2089bb00c4d57c5ebc6909c20b364cf3ea5183a7174564",
+        "loader_protocol_guid_present": false,
+        "entry_hob_guid_present": false,
+        "application_guid_present": false
+      }
+    },
+    {
+      "guid": "5c0e4b7a-31d2-4e8f-9a66-0b1f7d2c8e43",
+      "ui_name": "NuwaBootMemoryDxe",
+      "image": {
+        "machine": "0xaa64",
+        "subsystem": 11,
+        "entry_rva": "0x1050",
+        "image_size": 40960,
+        "sections": 5,
+        "bytes": 23040,
+        "sha256": "2a234e0ef5381a34f020da8c04de52943a42772d774b0f7efef235c48ca02bf7",
+        "loader_protocol_guid_present": false,
+        "entry_hob_guid_present": true,
+        "application_guid_present": false
+      }
+    },
+    {
+      "guid": "9b665204-a133-47a2-9396-9e2b370a4e25",
+      "ui_name": "UniXNU",
+      "image": {
+        "machine": "0xaa64",
+        "subsystem": 10,
+        "entry_rva": "0x1050",
+        "image_size": 110592,
+        "sections": 5,
+        "bytes": 97792,
+        "sha256": "a47305cece03fc4e0aa2908f686f20e8b22297ac3ec0a46b5786c08053286014",
+        "loader_protocol_guid_present": true,
+        "entry_hob_guid_present": false,
+        "application_guid_present": false
+      }
+    }
+  ],
+  "source_checks": {
+    "firmware_marker_registered_and_recognized": true,
+    "connect_before_config": true,
+    "recursive_connect": true,
+    "disk_drivers_apriori": true,
+    "publisher_in_fv": true,
+    "fat_binding_no_logical_partition_gate": true,
+    "fat_requires_diskio": true,
+    "fat_installs_simplefs": true
+  },
+  "descriptor_layout": {
+    "stride": 72,
+    "resource_attribute_bytes": 4,
+    "memory_type_offset": 60,
+    "arm_attributes_offset": 64,
+    "trailing_padding_bytes": 4,
+    "all_source_memory_types_checked": 41
+  },
+  "android_snapshot_only": {
+    "initrd": {
+      "start": "0xb5fb2000",
+      "end_exclusive": "0xb7fff1d4",
+      "bytes": 33870292,
+      "mod512": 468,
+      "publisher_whole_sector_precondition_passes": false,
+      "source_dt_sha256": "e7217b1575c7a7c2ca4bd758ab7fc20f580533cae4ea85631608997fede51e1d"
+    },
+    "covering_actual_sec_descriptors": [
+      {
+        "name": "Kernel",
+        "start": 2818572288,
+        "end_exclusive": 3087007744,
+        "memory_type": 0
+      }
+    ]
+  },
+  "conclusions": [
+    "No missing DiskIo/FAT/English module found in actual R-011 FD",
+    "Registered firmware-entry source connects controllers before config discovery",
+    "No partition table is demanded by the inspected FAT binding solely because LogicalPartition is false",
+    "Publisher does not independently validate or reserve candidate memory; actual mapping/lifetime still needs evidence"
+  ],
+  "unverified": [
+    "Candidate host/load options and controller connect results",
+    "Candidate initrd mapping/cache attributes/ownership",
+    "Runtime FAT mount and target config parser"
+  ],
+  "device_commands_executed": false,
+  "firmware_modified": false,
+  "board_feed_changed": false
+}
