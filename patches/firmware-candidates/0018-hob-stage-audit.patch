@@ -1,0 +1,256 @@
+--- a/Mu_Basecore/EmbeddedPkg/Library/PrePiHobLib/Hob.c
++++ b/Mu_Basecore/EmbeddedPkg/Library/PrePiHobLib/Hob.c
+@@ -26,6 +26,133 @@
+ STATIC BOOLEAN mNuwaHobTraceActive;
+ STATIC UINTN   mNuwaHobTraceCount;
+ 
++// NUWA_HOB_AUDIT_PURE_BEGIN: bounded header scan, no allocation or logging.
++typedef struct {
++  UINTN Offset;
++  UINTN Count;
++  UINT16 Type;
++  UINT16 Length;
++  UINT32 Hash;
++} NUWA_HOB_AUDIT_SCAN;
++
++STATIC UINT32
++NuwaAuditHobBuffer (CONST VOID *Buffer, UINTN Bytes, UINTN End, NUWA_HOB_AUDIT_SCAN *Scan)
++{
++  CONST UINT8 *Data;
++  CONST EFI_HOB_GENERIC_HEADER *Header;
++  UINTN At;
++  UINTN Index;
++  if (Scan == NULL) { return 1; }
++  ZeroMem (Scan, sizeof (*Scan));
++  Scan->Hash = 2166136261U;
++  if ((Buffer == NULL) || (((UINTN)Buffer & 7) != 0) || (End > 1048576) ||
++      ((End & 7) != 0) || (Bytes < sizeof (EFI_HOB_GENERIC_HEADER)) ||
++      (End > Bytes - sizeof (EFI_HOB_GENERIC_HEADER))) { return 1; }
++  Data = Buffer;
++  At = 0;
++  for (;;) {
++    Scan->Offset = At;
++    if (Scan->Count == 4096) { return 5; }
++    Header = (CONST EFI_HOB_GENERIC_HEADER *)(Data + At);
++    Scan->Type = Header->HobType;
++    Scan->Length = Header->HobLength;
++    for (Index = 0; Index < sizeof (*Header); Index++) {
++      Scan->Hash = (Scan->Hash ^ Data[At + Index]) * 16777619U;
++    }
++    if (At == End) {
++      return ((Header->HobType == EFI_HOB_TYPE_END_OF_HOB_LIST) &&
++              (Header->HobLength == sizeof (*Header))) ? 0 : 4;
++    }
++    if (Header->HobType == EFI_HOB_TYPE_END_OF_HOB_LIST) { return 4; }
++    if ((Header->HobLength < sizeof (*Header)) || ((Header->HobLength & 7) != 0)) { return 2; }
++    if (Header->HobLength > End - At) { return 3; }
++    At += Header->HobLength;
++    Scan->Count++;
++  }
++}
++// NUWA_HOB_AUDIT_PURE_END
++
++STATIC UINTN mNuwaAuditBase;
++STATIC UINTN mNuwaAuditLimit;
++STATIC CONST CHAR8 *mNuwaLastPhase;
++STATIC UINTN mNuwaLastContext;
++STATIC UINTN mNuwaLastEnd;
++STATIC UINTN mNuwaLastCount;
++STATIC UINT32 mNuwaLastHash;
++
++VOID EFIAPI NuwaHobAuditCheckpoint (CONST CHAR8 *Phase, UINTN Context, BOOLEAN Announce);
++VOID EFIAPI NuwaHobAuditInit (VOID *Base, UINTN Length);
++
++VOID EFIAPI
++NuwaHobAuditCheckpoint (CONST CHAR8 *Phase, UINTN Context, BOOLEAN Announce)
++{
++  EFI_HOB_HANDOFF_INFO_TABLE *Phit;
++  NUWA_HOB_AUDIT_SCAN Scan;
++  UINTN End;
++  UINTN Bytes;
++  UINTN Raw;
++  UINTN Index;
++  UINT32 Reason;
++  if (mNuwaAuditBase == 0) { return; } // Other PrePi consumers never enable this diagnostic.
++  Phit = (VOID *)mNuwaAuditBase;
++  End = (UINTN)Phit->EfiEndOfHobList;
++  ZeroMem (&Scan, sizeof (Scan));
++  Reason = 6;
++  Bytes = 0;
++  if ((GetHobList () == Phit) && (Phit->Header.HobType == EFI_HOB_TYPE_HANDOFF) &&
++      (Phit->Header.HobLength == sizeof (*Phit)) &&
++      (Phit->EfiMemoryBottom == mNuwaAuditBase) && (Phit->EfiMemoryTop == mNuwaAuditLimit) &&
++      (End >= mNuwaAuditBase + sizeof (*Phit)) && (End <= mNuwaAuditLimit - 8) &&
++      (Phit->EfiFreeMemoryBottom == End + 8) &&
++      (Phit->EfiFreeMemoryTop >= Phit->EfiFreeMemoryBottom) &&
++      (Phit->EfiFreeMemoryTop <= mNuwaAuditLimit)) {
++    Bytes = End - mNuwaAuditBase + 8;
++    Reason = NuwaAuditHobBuffer (Phit, Bytes, End - mNuwaAuditBase, &Scan);
++  }
++  if (Reason != 0) {
++    DEBUG ((EFI_D_ERROR, "[NUWA-HOB-STAGE] bad phase=%a context=0x%lx reason=%u off=0x%lx type=%x len=%x\n",
++            Phase, (UINT64)Context, Reason, (UINT64)Scan.Offset, Scan.Type, Scan.Length));
++    DEBUG ((EFI_D_ERROR, "[NUWA-HOB-STAGE] last-good phase=%a context=0x%lx count=%u end=0x%lx hash=%x\n",
++            mNuwaLastPhase == NULL ? "none" : mNuwaLastPhase, (UINT64)mNuwaLastContext,
++            (UINT32)mNuwaLastCount, (UINT64)mNuwaLastEnd, mNuwaLastHash));
++    DEBUG ((EFI_D_ERROR, "[NUWA-HOB-STAGE] phit list=0x%lx end=0x%lx bottom=0x%lx top=0x%lx\n",
++            (UINT64)mNuwaAuditBase, (UINT64)End, Phit->EfiFreeMemoryBottom, Phit->EfiFreeMemoryTop));
++    if ((Bytes >= 8) && (Bytes <= 1048584) && (Scan.Offset <= Bytes - 8)) {
++      Raw = mNuwaAuditBase + Scan.Offset;
++      for (Index = 0; (Index < 4) && (Bytes - Scan.Offset >= (Index + 1) * 8); Index++) {
++        DEBUG ((EFI_D_ERROR, "[NUWA-HOB-STAGE] raw off=0x%lx qword=0x%lx\n",
++                (UINT64)(Scan.Offset + Index * 8), ReadUnaligned64 ((CONST UINT64 *)(Raw + Index * 8))));
++      }
++    }
++    CpuDeadLoop (); // Preserve fail-closed behavior; never repair or skip a HOB.
++    return;
++  }
++  if (Announce) {
++    DEBUG ((EFI_D_ERROR, "[NUWA-HOB-STAGE] ok phase=%a context=0x%lx count=%u end=0x%lx hash=%x\n",
++            Phase, (UINT64)Context, (UINT32)Scan.Count, (UINT64)End, Scan.Hash));
++  }
++  mNuwaLastPhase = Phase;
++  mNuwaLastContext = Context;
++  mNuwaLastEnd = End;
++  mNuwaLastCount = Scan.Count;
++  mNuwaLastHash = Scan.Hash;
++}
++
++VOID EFIAPI
++NuwaHobAuditInit (VOID *Base, UINTN Length)
++{
++  if ((Base == NULL) || (((UINTN)Base & 7) != 0) ||
++      (Length < sizeof (EFI_HOB_HANDOFF_INFO_TABLE) + 8) ||
++      ((UINTN)Base > MAX_UINTN - Length)) {
++    DEBUG ((EFI_D_ERROR, "[NUWA-HOB-STAGE] invalid trusted arena\n"));
++    CpuDeadLoop ();
++    return;
++  }
++  mNuwaAuditBase = (UINTN)Base;
++  mNuwaAuditLimit = (UINTN)Base + Length;
++  NuwaHobAuditCheckpoint ("hob-constructor", 0, TRUE);
++}
++
+ VOID
+ BuildMemoryTypeInformationHob (
+   VOID
+@@ -112,6 +239,7 @@
+   EFI_PHYSICAL_ADDRESS        FreeMemory;
+   VOID                        *Hob;
+ 
++  NuwaHobAuditCheckpoint ("create-before", ((UINTN)HobType << 16) | HobLength, FALSE);
+   HandOffHob = GetHobList ();
+ 
+   //
+@@ -143,6 +271,7 @@
+   HobEnd++;
+   HandOffHob->EfiFreeMemoryBottom = (EFI_PHYSICAL_ADDRESS)(UINTN)HobEnd;
+ 
++  NuwaHobAuditCheckpoint ("create-after", ((UINTN)HobType << 16) | HobLength, FALSE);
+   return Hob;
+ }
+ 
+@@ -403,6 +532,7 @@
+ 
+   VOID  *Result;
+ 
++  NuwaHobAuditCheckpoint ("guid-query", 0, TRUE);
+   DEBUG ((EFI_D_ERROR, "[NUWA-HOB] query-enter\n"));
+   HobList = GetHobList ();
+   {
+--- a/Silicon/Silicium/SiliciumPkg/Library/MemoryInitPeiLib/MemoryInitPei.c
++++ b/Silicon/Silicium/SiliciumPkg/Library/MemoryInitPeiLib/MemoryInitPei.c
+@@ -10,6 +10,10 @@
+ #include <Library/MemoryMapLib.h>
+ #include <Library/DebugLib.h>
+ #include <Library/HobLib.h>
++
++// Opt-in candidate diagnostic; implementation is in the linked PrePiHobLib.
++VOID EFIAPI NuwaHobAuditCheckpoint (CONST CHAR8 *Phase, UINTN Context, BOOLEAN Announce);
++VOID EFIAPI NuwaHobAuditInit (VOID *Base, UINTN Length);
+ 
+ VOID
+ BuildMemoryTypeInformationHob ();
+@@ -91,11 +95,13 @@
+   // Build Resource Descriptor HOB
+   if (HobOption == AddMem || HobOption == AddDev || HobOption == HobOnlyNoCacheSetting) {
+     BuildResourceDescriptorHob (MemoryRegion.ResourceType, MemoryRegion.ResourceAttribute, MemoryRegion.Address, MemoryRegion.Length);
++    NuwaHobAuditCheckpoint ("resource-filled", (UINTN)MemoryRegion.Address, FALSE);
+   }
+ 
+   // Build Memory Allocation HOB
+   if (MemoryRegion.ResourceType == EFI_RESOURCE_SYSTEM_MEMORY || MemoryRegion.MemoryType == EfiRuntimeServicesData) {
+     BuildMemoryAllocationHob (MemoryRegion.Address, MemoryRegion.Length, MemoryRegion.MemoryType);
++    NuwaHobAuditCheckpoint ("allocation-filled", (UINTN)MemoryRegion.Address, FALSE);
+   }
+ }
+ 
+@@ -143,7 +149,9 @@
+   }
+ 
+   // Configure MMU
++  NuwaHobAuditCheckpoint ("before-mmu", 0, TRUE);
+   Status = ArmConfigureMmu (MemoryTable, &TranslationTableBase, &TranslationTableSize);
++  NuwaHobAuditCheckpoint ("after-mmu", (UINTN)Status, TRUE);
+   if (EFI_ERROR (Status)) {
+     DEBUG ((EFI_D_ERROR, "Failed to Configure MMU! Status = %r\n", Status));
+     return Status;
+@@ -152,6 +160,7 @@
+   // Build Memory Type Info HOB
+   if (FeaturePcdGet (PcdPrePiProduceMemoryTypeInformationHob)) {
+     BuildMemoryTypeInformationHob ();
++    NuwaHobAuditCheckpoint ("memory-type-filled", 0, TRUE);
+   }
+ 
+   return EFI_SUCCESS;
+--- a/Silicon/Silicium/SiliciumPkg/Sec/Sec.c
++++ b/Silicon/Silicium/SiliciumPkg/Sec/Sec.c
+@@ -18,6 +18,10 @@
+ 
+ #include "Sec.h"
+ 
++// Opt-in candidate diagnostic; implementation is in the linked PrePiHobLib.
++VOID EFIAPI NuwaHobAuditCheckpoint (CONST CHAR8 *Phase, UINTN Context, BOOLEAN Announce);
++VOID EFIAPI NuwaHobAuditInit (VOID *Base, UINTN Length);
++
+ // First argument (x0) of the previous stage, saved by ModuleEntryPoint.S
+ extern UINT64  gSecEntryArg0;
+ 
+@@ -65,9 +69,11 @@
+   // Initialize HOB List
+   HobList = HobConstructor ((VOID *)UefiMemoryBase, UefiMemorySize, (VOID *)UefiMemoryBase, (VOID *)(UefiMemoryBase + UefiMemorySize));
+   PrePeiSetHobList (HobList);
++  NuwaHobAuditInit ((VOID *)UefiMemoryBase, UefiMemorySize);
+ 
+   // Initialize MMU & Memory HOBs
+   Status = MemoryPeim (UefiMemoryBase, UefiMemorySize);
++  NuwaHobAuditCheckpoint ("memory-peim-return", (UINTN)Status, TRUE);
+   if (EFI_ERROR (Status)) {
+     return Status;
+   }
+@@ -121,7 +127,9 @@
+ 
+   // Initialize Platform HOBs
+   NUWA_ENTRY_TRACE ("before-platform-hobs");
++  NuwaHobAuditCheckpoint ("before-platform", 0, TRUE);
+   Status = PlatformPeim ();
++  NuwaHobAuditCheckpoint ("after-platform", (UINTN)Status, TRUE);
+   DEBUG ((EFI_D_WARN, "[NUWA-ENTRY] platform-hobs status=%r\n", Status));
+   if (EFI_ERROR (Status)) {
+     return;
+@@ -136,12 +144,15 @@
+     DEBUG ((EFI_D_ERROR, "[NUWA-HANDOFF] before-entry-arg-hob list=%p\n", GetHobList ()));
+     EntryArgHob = BuildGuidDataHob (&gSiliciumEntryArgHobGuid, &EntryArg, sizeof (EntryArg));
+     (VOID)EntryArgHob;
++    NuwaHobAuditCheckpoint ("entry-arg-filled", 0, TRUE);
+     DEBUG ((EFI_D_ERROR, "[NUWA-HANDOFF] after-entry-arg-hob data=%p\n", EntryArgHob));
+   }
+ 
+   // Run Library Cconstructors
+   DEBUG ((EFI_D_ERROR, "[NUWA-HANDOFF] before-library-constructors\n"));
++  NuwaHobAuditCheckpoint ("before-constructors", 0, TRUE);
+   ProcessLibraryConstructorList ();
++  NuwaHobAuditCheckpoint ("after-constructors", 0, TRUE);
+   DEBUG ((EFI_D_ERROR, "[NUWA-HANDOFF] after-library-constructors\n"));
+ 
+   // Decompress all FVs

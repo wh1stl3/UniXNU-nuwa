@@ -291,3 +291,5 @@
 2026-10-24T01:44:39.161097+08:00 · 用户恢复并明确本轮录像许可；a2dc8195包/Android身份/恢复门复验后通知并单次临时启动ACK0，120秒USB观察中，阶段与恢复待验 · Q-135 · reports/boot-input-audit-trial/2026-10-24/
 
 2026-10-24T01:54:51.259229+08:00 · a2dc8195本轮原图确认BAB00118/type4/len0保护性停点，未到ReadyToBoot；120秒观察后Android完成1/三分区不变；实际SEC与旧成功包仅构建时间4字节差异，根因未定 · Q-135 · reports/boot-input-audit-trial/2026-10-24/
+
+2026-10-24T02:01:55.720812+08:00 · 离线加入可信arena的HOB创建/MMU/构造阶段诊断，47输入10补丁14后哈希及精确C主机保护页/ASan/UBSan通过，完整CI待验，无设备动作 · Q-136 · reports/hob-stage-audit/

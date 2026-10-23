@@ -1430,3 +1430,13 @@
 [Evidence] BAB00118 type4 len0，未到新DXE；Android完成1及三分区SHA不变；旧成功SEC与本轮掩蔽构建时间后逐字节一致。
 [Risk] HOB首次异常时机与根因未知；ReadyToBoot输入未取得，未修改缓存/Heap或跳过检查，未执行XNU。
 ```
+
+## Q-136 · HOB阶段诊断候选
+
+```text
+[unixnu-nuwa][firmware] 增加有界HOB创建与MMU阶段失败定位
+
+[Change] 独立profile追加0018诊断可信arena、PHIT和HOB链，记录首次检测与上次有效阶段，接入CI/严格打包及录像门。
+[Evidence] 47输入10补丁14后哈希通过；精确C主机保护页/ASan/UBSan覆盖336截断、原图零长及边界失败；旧FD冒充/空录像拒绝通过。
+[Risk] 诊断影响时序，首次检测不等于写坏者；完整CI/实机未验，不改缓存/Heap，不绕过HOB检查。
+```

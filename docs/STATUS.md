@@ -1,13 +1,9 @@
 # STATUS
 
-> a2dc8195已单次实测，在SEC Mmu构造的HOB长度检查停住，未到新诊断模块。原Android已恢复，完成1及三分区SHA不变；根因仍待定位。
+> 正在按用户要求离线定位HOB首次异常，已准备独立hob-stage-audit候选及有界检查，主机验证通过；完整CI与新包验收待完成。本轮未操作设备。
 
-CI39995937843/固件6176a82/包a2dc8195/3153920B，本轮新鲜录像、包复验、身份/恢复门及启动前通知已完成。用户原图最后`invalid ptr=BAB00118 type=4 len=0 target=4`，0014检查对此调用CpuDeadLoop。120秒USB观察完成，不能当成ReadyToBoot阶段证据。EL/MPIDR/CNTFRQ/连续内存范围均未取得，不移除检查或跳过异常条目。
+0018追加HOB创建/填充、MMU前后、平台和构造边界检查：可信arena/PHIT终点、长度/推进/结束/上限全部验证，错误输出首次检测阶段与last-good，并保留CpuDeadLoop；不修补、跳过HOB或改变缓存/Heap。47输入10补丁14后哈希通过；精确C检查器及包装的保护页/ASan/UBSan、336截断及原图+0x118零长等主机验证通过；旧包冒充/空录像门通过。详见operations/2026-10-24-hob-stage-audit.md。
 
-reports/boot-input-audit-trial/2026-10-24/postcondition.json于2026-10-23T17:48:19.683937+00:00实际确认nuwa/kalama、Android完成1、slot_a、三分区SHA与本轮preflight一致；本轮恢复闭环，无flash/erase/改槽。
+上轮a2dc8195在SEC Mmu构造发现BAB00118/type4/len0，未到ReadyToBoot。旧成功87b14624与该包SEC仅构建时间4字节不同，根因未定。本轮最近设备证据仍reports/boot-input-audit-trial/2026-10-24/postcondition.json：UTC2026-10-23T17:48:19.683937（北京时间01:48:19），nuwa/kalama、Android完成1、三分区SHA不变。本轮无实时查询，不借历史状态声称当前已刷新。
 
-实际SEC对比旧成功包87b14624：所有指令/数据/内存表一致，全SEC仅构建时间字符串4字节变化；掩蔽8字节时间后完全相等。新DXE模块尚未运行，不能把HOB异常直接归因其逻辑；创建、覆盖、缓存可见性等尚未区分。证据sec-differential.json及operations/2026-10-24-boot-input-audit-trial.md。
-
-下一步离线准备创建/填充、MMU前后、构造前后有边界的HOB检查，定位首次异常阶段；保留失败保护，不同时改缓存/Heap。新包需完整构建复验及新的录像门，当前不重复启动。
-
-87b14624的4MiB配置卷发现实机通过。当前77742999内核分析预链接5a128fb2静态绑定/主机解析通过，但早期安全initializer/完整ABI/目标ADT/窗口/大负载运输仍缺，loadable=false。board/bringup内存值与_verified未改，未执行XNU。
+下一步完整CI与实际产物/SEC表/严格包复验；包就绪后通知用户准备录像，未确认前不启动。当前无新包SHA或实机阶段结论。分析预链接5a128fb2仍loadable=false；内核ABI/ADT/窗口/大负载运输未完成。board/bringup内存值及_verified未改。

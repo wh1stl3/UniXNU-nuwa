@@ -12,7 +12,7 @@ STOCK_SHA='ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31'
 
 def sha(data):return hashlib.sha256(data).hexdigest()
 
-PROFILES={'embedded-probe':'EMBEDDED-PROBE-OFFLINE','boot-input-audit':'BOOT-INPUT-AUDIT-OFFLINE'}
+PROFILES={'embedded-probe':'EMBEDDED-PROBE-OFFLINE','boot-input-audit':'BOOT-INPUT-AUDIT-OFFLINE','hob-stage-audit':'HOB-STAGE-AUDIT-OFFLINE'}
 
 def recipe(run, profile_name='embedded-probe'):
     if profile_name not in PROFILES:raise ValueError('Unknown diagnostic profile')

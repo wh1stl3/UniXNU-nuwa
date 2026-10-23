@@ -1,0 +1,29 @@
+{
+  "scope": "Exact candidate diagnostic on host with ASan/UBSan and guard pages; not firmware or device execution",
+  "patch_sha256": "f44a6d603789a320aff0a981e5fb7949886a965e585f0cf217090e92c78d2e1b",
+  "helper_sha256": "52fc61cc6bbef8b6339a719ea652643aced91642cf2fbf1b250c907fafadcb67",
+  "host_stdin_sha256": "20aac70f34ba8e3997d1cc9adba36f2b150c26aa8b6da23c8fcdad249f6708af",
+  "compile_command": [
+    "wsl",
+    "-d",
+    "Ubuntu-22.04",
+    "--",
+    "clang",
+    "-x",
+    "c",
+    "-std=gnu11",
+    "-O1",
+    "-g",
+    "-fsanitize=address,undefined",
+    "-fno-sanitize-recover=all",
+    "-fno-pie",
+    "-no-pie",
+    "-o",
+    "/mnt/d/Code/UniXNU-nuwa/out/hob-stage-audit/host-audit",
+    "-"
+  ],
+  "compile_stderr": "",
+  "exit_code": 0,
+  "stdout": "PASS guard pages; 336 truncations; observed +0x118 zero length; malformed/oversized/early-end/count cap; trusted PHIT and no failed-state update\n",
+  "stderr": ""
+}

@@ -1,12 +1,12 @@
 # 主线交接（2026-10-24 01:40更新）
 
-## 当前执行状态（2026-10-24T01:54:51.259229+08:00）
+## 当前执行状态（2026-10-24T02:01:55.720812+08:00）
 
-用户已恢复主线并确认本轮a2dc8195录像，已通知后单次临时启动，120秒观察完成。原图显示SEC Mmu构造查询HOB时`BAB00118 type4 len0 target4`触发0014保护性停点，未到新DXE模块/ReadyToBoot。新包本轮实测失败，HOB根因未解决；不可重复launch或跳过坏条目。
+用户要求先完成离线诊断和新包构建，实测时再通知录像。新增独立hob-stage-audit，固件固定6176a82，追加0018有界HOB阶段检查。47输入/10补丁/14后哈希、精确新增C诊断ASan/UBSan/保护页、336截断/原图坏头等主机检查及旧FD冒充/空录像拒绝通过；完整CI待触发。详见operations/2026-10-24-hob-stage-audit.md。
 
-已实际恢复Android；本轮postcondition时间2026-10-23T17:48:19.683937+00:00确认nuwa/kalama、Android完成1、slot_a、三分区SHA与本轮preflight一致，人工恢复待办关闭。证据reports/boot-input-audit-trial/2026-10-24/。旧成功包与本轮实际SEC仅构建时间4字节不同，掩蔽8字节时间后完全相同；不能把失败直接归因尚未执行的新诊断逻辑。详见operations/2026-10-24-boot-input-audit-trial.md。
+最近真实设备仍为a2dc8195试验的postcondition：UTC2026-10-23T17:48:19.683937，北京时间01:48:19，nuwa/kalama、Android完成1、三分区SHA不变。此次离线工作无设备查询/动作。HOB根因未知；不跳过检查，不改缓存/Heap/板内存。旧SEC差分和坏头原图见reports/boot-input-audit-trial/2026-10-24/。
 
-后续优先离线HOB创建/填充、MMU前后、构造前后有边界只读阶段定位；不要同时改缓存/Heap，不移除失败保护。当前无后续新包；新实机包另需新鲜录像/通知/恢复门。
+直接续接：推送后 `gh workflow run firmware-candidate.yml --repo wh1stl3/UniXNU-nuwa --ref main -f profile=hob-stage-audit`；完整下载检查及41行表对比后 `python -B scripts/embedded_probe_package.py RUN --profile hob-stage-audit`。包就绪后新鲜录像/唯一nuwa/原Android恢复门及即时通知齐备才可单次试验。下方旧a2dc8195内容是历史事实/流程参考，不重启旧包。
 
 ## 当前提交与完整构建
 

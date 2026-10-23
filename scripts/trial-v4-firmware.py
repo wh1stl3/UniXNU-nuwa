@@ -30,7 +30,7 @@ def devices(tool):
 
 def capture_confirmed(gate, approval):
     confirmation = gate.get('human_capture_confirmation')
-    if approval in ('MMU-BRANCHES-OFFLINE', 'HOB-QUERY-OFFLINE', 'VOLUME-PROBE-OFFLINE', 'HOB-INTEGRITY-OFFLINE', 'VOLUME-STATUS-OFFLINE', 'EMBEDDED-PROBE-OFFLINE', 'BOOT-INPUT-AUDIT-OFFLINE'):
+    if approval in ('MMU-BRANCHES-OFFLINE', 'HOB-QUERY-OFFLINE', 'VOLUME-PROBE-OFFLINE', 'HOB-INTEGRITY-OFFLINE', 'VOLUME-STATUS-OFFLINE', 'EMBEDDED-PROBE-OFFLINE', 'BOOT-INPUT-AUDIT-OFFLINE', 'HOB-STAGE-AUDIT-OFFLINE'):
         return isinstance(confirmation, str) and bool(confirmation.strip())
     return confirmation == '可以，启动前通知我'
 
@@ -63,11 +63,12 @@ def main():
                   'HOB-INTEGRITY-OFFLINE': ROOT / 'reports/hob-integrity',
                   'VOLUME-STATUS-OFFLINE': ROOT / 'reports/volume-status',
                   'EMBEDDED-PROBE-OFFLINE': ROOT / 'reports/embedded-probe',
-                  'BOOT-INPUT-AUDIT-OFFLINE': ROOT/'reports/boot-input-audit'}
+                  'BOOT-INPUT-AUDIT-OFFLINE': ROOT/'reports/boot-input-audit',
+                  'HOB-STAGE-AUDIT-OFFLINE': ROOT/'reports/hob-stage-audit'}
         package_raw = package_path.read_bytes()
         package = json.loads(package_raw)
         approval = package.get('approval')
-        if approval in ('EMBEDDED-PROBE-OFFLINE', 'BOOT-INPUT-AUDIT-OFFLINE'):
+        if approval in ('EMBEDDED-PROBE-OFFLINE', 'BOOT-INPUT-AUDIT-OFFLINE', 'HOB-STAGE-AUDIT-OFFLINE'):
             from embedded_probe_package import validate
             validate(package_path)
         if approval in ("VOLUME-PROBE-OFFLINE", "HOB-INTEGRITY-OFFLINE", "VOLUME-STATUS-OFFLINE"):
@@ -78,7 +79,7 @@ def main():
             validate(package_path)
         if (approval not in scopes or not package_path.is_relative_to(scopes[approval])
                 or package['header_version'] != 4
-                or package['xnu_included'] or (package['fat_included'] and approval not in ('VOLUME-PROBE-OFFLINE', 'HOB-INTEGRITY-OFFLINE', 'VOLUME-STATUS-OFFLINE', 'EMBEDDED-PROBE-OFFLINE', 'BOOT-INPUT-AUDIT-OFFLINE')) or package['appended_dtb']
+                or package['xnu_included'] or (package['fat_included'] and approval not in ('VOLUME-PROBE-OFFLINE', 'HOB-INTEGRITY-OFFLINE', 'VOLUME-STATUS-OFFLINE', 'EMBEDDED-PROBE-OFFLINE', 'BOOT-INPUT-AUDIT-OFFLINE', 'HOB-STAGE-AUDIT-OFFLINE')) or package['appended_dtb']
                 or package['original_boot_sha256'] != HASHES[ORIGINAL]):
             raise ValueError('Package is outside the approved trial scope')
         if approval == 'R-008 A' and (package['shim_text_offset'] != 0
