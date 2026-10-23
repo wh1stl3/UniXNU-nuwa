@@ -245,3 +245,5 @@
 2026-10-23T21:28:57.597878+08:00 · 实际SEC HOB查询/日志尾部核对，0013独立profile40输入及完整补丁链通过，待CI · Q-112（git log定位） · reports/hob-query/；docs/operations/2026-10-23-hob-query-trace.md
 
 2026-10-23T21:35:31.355085+08:00 · 首版HOB CI39961551151成功未实测，日志上限提高128避免过早截断；更新人工恢复不阻塞离线工作约定 · Q-113（git log定位） · docs/operations/2026-10-23-hob-query-trace.md；AGENTS.md
+
+2026-10-23T21:44:02.567733+08:00 · HOB CI39962464061成功，47b5c4b1静态包验收通过，待实测 · Q-114（git log定位） · reports/hob-query/39962464061/
