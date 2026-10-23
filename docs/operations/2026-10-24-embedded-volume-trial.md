@@ -26,3 +26,5 @@ RscDxe No mapping与原chosen Not Found仍出现，未宣称修复；前者没�
 进入实际内核输入阶段，保持已通过的小卷作对照。当前内核仅源编译/ParseKernel主机解析通过，完整NativePrelink donor运行ABI、目标Apple ADT、可用连续内存窗口及条件sidecars未验收；不能往菜单随意挂一个kernel文件就称可启动。应先核对真实负载、ADT消费者和运行内存证据，再形成可审阅构建候选，不沿用其他板地址或未知占位值。
 
 本轮恢复及postcondition见reports/embedded-probe-trial/2026-10-24/；当前恢复工具正在等待nuwa返回Android或fastboot，上一包恢复不替代本轮。人工按键等待不阻塞离线分析，未闭环不启动下一包。
+
+2026-10-24T00:57:15.571203+08:00：87b14624本轮恢复闭环完成。recovery.json确认Android完成1；postcondition.json确认nuwa/kalama、slot_a及boot/vendor_boot/init_boot三个分区SHA与本轮preflight一致。无需继续人工恢复；新包试验另需新鲜日志/恢复门，不沿用本轮确认。配置发现已实机通过，XNU/真实ADT/NativePrelink仍未验收。

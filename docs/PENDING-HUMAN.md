@@ -41,3 +41,5 @@
 - 2026-10-24T00:39:15.327331+08:00 · a22e9a44本轮恢复/照片待办完成：用户六张原图取得；recovery-after-keys及postcondition确认Android完成1、三分区SHA一致。后续新包需另确认录像。
 
 - 2026-10-24T00:56:02.341592+08:00 · 87b14624本轮已取得发布Success和探针菜单原图；恢复程序等待Android/fastboot，已通知保留录像后按键回fastboot。本轮完成1/三分区postcondition待补，离线主线继续。
+
+- 2026-10-24T00:57:15.571203+08:00 · 87b14624本轮恢复待办完成：recovery.json实际Android完成1，postcondition三分区SHA一致；不再需按键。

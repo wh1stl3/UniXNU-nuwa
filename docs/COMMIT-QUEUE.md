@@ -1380,3 +1380,13 @@
 [Evidence] 4MiB BlockIo Success、config路径和唯一Volume config loaded项；120秒USB记录完成。
 [Risk] 尚无XNU/ADT或完整运输验收；本轮Android恢复/三分区postcondition待补。
 ```
+
+## Q-131 · FV探针恢复闭环
+
+```text
+[unixnu-nuwa][device] 完成配置卷实测后的Android恢复与分区核验
+
+[Change] 补齐87b14624本轮恢复证据，关闭人工恢复待办并同步当前状态和交接。
+[Evidence] recovery确认Android完成1；postcondition确认nuwa/kalama与三分区SHA和本轮preflight一致。
+[Risk] 已通过的是小配置卷发现，真实XNU/ADT/NativePrelink及大负载运输仍待完成。
+```

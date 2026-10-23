@@ -43,3 +43,5 @@ recovery.json曾等待180秒超时。2026-10-24已只读ADB确认nuwa/kalama、A
 2026-10-24T00:48:14.773032+08:00：CI39988591973/source b4f9075成功，实际新驱动DEPEX/PE和完整RAW资源SHA通过，FD70b266b3；41行2952B内存表与dd1ef825相同。包87b14624e95a4b608435da96c4a7f939893bef7c94186af9d2f157eacef0e496/3153920B（ramdisk0，FV内含4MiB FAT16）逐字节复验通过。新EMBEDDED-PROBE-OFFLINE scope校验和缺录像/预检时设备子进程前拒绝通过；新增旧包冒充/空录像2项回归通过。用户已本轮确认“可以，继续录像测试”，下一动作刷新preflight、通知后临时启动一次。目标为NUWA-FV-PROBE block Success和探针配置菜单；不是XNU。新证据目录reports/embedded-probe-trial/2026-10-24/。
 
 2026-10-24T00:56:02.341592+08:00：87b14624本轮用户原图确认FV发布4MiB BlockIo Success且探针配置菜单实际加载，FV→FAT→配置发现链实机通过；没有内核/ADT。配置timeout60/action exit解释用户菜单长留后回无OS路径；无精确录像时长。120秒USB观察结束，恢复工具接管等待，尚需本轮postcondition；人工按键不阻塞离线分析，不复试。下一主线真实XNU预链接/ADT/连续窗口，细节2026-10-24-embedded-volume-trial.md。
+
+2026-10-24T00:57:15.571203+08:00：87b14624本轮恢复闭环完成。recovery.json确认Android完成1；postcondition.json确认nuwa/kalama、slot_a及boot/vendor_boot/init_boot三个分区SHA与本轮preflight一致。无需继续人工恢复；新包试验另需新鲜日志/恢复门，不沿用本轮确认。配置发现已实机通过，XNU/真实ADT/NativePrelink仍未验收。

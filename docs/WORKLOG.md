@@ -279,3 +279,5 @@
 2026-10-24T00:48:14.773032+08:00 · CI39988591973成功，内嵌探针包87b14624完整复验/41行内存一致，新scope门通过且用户本轮录像确认 · Q-129（git log定位） · reports/embedded-probe/39988591973/
 
 2026-10-24T00:56:02.341592+08:00 · 87b14624原图确认4MiB发布Success及唯一探针配置菜单，FV→FAT→配置发现实机通过，恢复待闭环 · Q-130（git log定位） · docs/operations/2026-10-24-embedded-volume-trial.md；reports/embedded-probe-trial/2026-10-24/
+
+2026-10-24T00:57:15.571203+08:00 · 87b14624本轮原Android恢复完成1及三分区SHA一致，FV配置发现里程碑收尾，转真实XNU/ADT输入 · Q-131（git log定位） · reports/embedded-probe-trial/2026-10-24/{recovery,postcondition}.json
