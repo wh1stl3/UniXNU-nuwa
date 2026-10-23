@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-23T15:50:31+08:00",
+  "result": "strict offline package and original-header reconstruction checks passed",
+  "package_sha256": "ba61db2680a553ef4c9f0d00e57751a624119c7ae9aa3f30985450b61841a1bd",
+  "previous_package_metadata_sha256": "36f87f610e035edc29f34aaaa462467ced9ab6b5afb2669ebbce54d9ad3f887f",
+  "metadata_change": "execution_gate description updated after strict trial scope integration; image bytes unchanged",
+  "image_sha256": "2d8334613a415c24574f93c0bcb30ba50d32175ff062d8ec2cc149651bcde846",
+  "image_bytes": 3153920,
+  "validator": "scripts/sec_handoff_package.py:validate",
+  "trial_scope": "SEC-HANDOFF-OFFLINE accepted only with original D-021 fresh process-log/recovery preflight",
+  "observation_seconds_default": 120,
+  "observation_seconds_range": [
+    120,
+    600
+  ],
+  "usb_presence_is_not_process_logs": true,
+  "device_accessed": false,
+  "execution_performed": false,
+  "gate_refreshed": false
+}

@@ -217,3 +217,7 @@
 2026-10-23T14:16:46+08:00 · R-011同包复测照片停于SEC平台HOB成功，未取得SHENGMEM；12:18:42恢复Android完成1且三分区未变，转离线HOB/构造审查 · Q-099（提交后以git log定位） · reports/initrd-retest/2026-10-23-noon/；docs/operations/2026-10-23-initrd-retest-sec-stop.md
 
 2026-10-23T15:02:06+08:00 · SEC真实调用与同SoC顺序审查完成，四条边界日志源码ddd794fc已发布，35项输入与旧FD静态回归通过；新构建待执行，本轮无设备动作 · Q-100（提交后以git log定位）；FW-012 ddd794fc · docs/operations/2026-10-23-sec-handoff-diagnostic.md；reports/sec-handoff/
+
+2026-10-23T15:26:32+08:00 · CI39915967862编译和下载静态检查通过，四条新日志入SEC、41行表2952B不变；v4包2d833461离线就绪，晚间刷新日志/恢复门后试，未操作设备 · Q-101（提交后以git log定位） · docs/operations/2026-10-23-sec-handoff-build-ready.md；reports/sec-handoff/39915967862/
+
+2026-10-23T15:50:31+08:00 · 晚间新包严格scope与原头逐字节校验接线完成，观察默认120秒并记录相对时刻；仅纯文件/语法/CLI帮助检查，无设备命令 · Q-101（同一里程碑，提交后以git log定位） · reports/sec-handoff/39915967862/trial-scope-integration.json

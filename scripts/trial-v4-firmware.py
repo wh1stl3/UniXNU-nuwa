@@ -34,7 +34,11 @@ def main():
     parser.add_argument('--evidence', type=Path, required=True)
     parser.add_argument('--package', type=Path, help='R-007/R-008/R-009 approved hash-pinned package report')
     parser.add_argument('--preflight', type=Path, help='Fresh D-021 process-log/recovery gate evidence, required for launch')
+    parser.add_argument('--observation-seconds', type=int, default=120,
+                        help='USB observation window after ACK, 120-600 seconds; not a process-log substitute')
     args = parser.parse_args()
+    if not 120 <= args.observation_seconds <= 600:
+        raise ValueError('Observation window must be 120-600 seconds')
     evidence = args.evidence.resolve()
     if not evidence.is_relative_to(ROOT / 'reports') or evidence.exists():
         raise ValueError('Evidence must be a fresh reports file')
@@ -43,10 +47,14 @@ def main():
     if args.package:
         package_path = args.package.resolve()
         scopes = {'R-007 A': ROOT / 'reports/sec-trace', 'R-008 A': ROOT / 'reports/relative-offset',
-                  'R-009 A': ROOT / 'reports/pil-no-auto', 'R-010 A': ROOT / 'reports/dxe-allocation', 'R-011 A': ROOT / 'reports/factory-heap'}
+                  'R-009 A': ROOT / 'reports/pil-no-auto', 'R-010 A': ROOT / 'reports/dxe-allocation', 'R-011 A': ROOT / 'reports/factory-heap',
+                  'SEC-HANDOFF-OFFLINE': ROOT / 'reports/sec-handoff'}
         package_raw = package_path.read_bytes()
         package = json.loads(package_raw)
         approval = package.get('approval')
+        if approval == 'SEC-HANDOFF-OFFLINE':
+            from sec_handoff_package import validate
+            validate(package_path)
         if (approval not in scopes or not package_path.is_relative_to(scopes[approval])
                 or package['header_version'] != 4
                 or package['xnu_included'] or package['fat_included'] or package['appended_dtb']
@@ -111,6 +119,8 @@ def main():
                   'User explicitly approved temporary prepared v4 candidate trial; original recovery authorized',
                   candidate_sha256=candidate_sha, candidate_package_sha256=package_sha,
                   recovery_sha256=HASHES[ORIGINAL], preflight=gate)
+    if args.package and package['approval'] == 'SEC-HANDOFF-OFFLINE':
+        report['authorization'] = 'User requested offline preparation and joint evening testing; launch requires fresh D-021 log/recovery gate and immediate capture notice'
 
     def save():
         evidence.write_text(json.dumps(report, indent=2) + '\n')
@@ -190,13 +200,18 @@ def main():
             report['fastboot_boot_exit_code'] = boot.returncode
             save()
             # A returned success is command acceptance, not proof of SEC/DXE.
-            for _ in range(15 if boot.returncode == 0 else 1):
+            observed_from = time.monotonic()
+            report['observation_scope'] = 'USB presence only; screen video needed for process logs'
+            report['requested_observation_seconds'] = args.observation_seconds
+            while True:
                 report['observations'].append(dict(at=now(),
+                    seconds_after_ack=round(time.monotonic() - observed_from, 3),
                     selected_nuwa_in_fastboot=serial in devices('fastboot'),
                     adb_device_count=len(devices('adb'))))
                 save()
-                if boot.returncode == 0:
-                    time.sleep(2)
+                if boot.returncode or time.monotonic() - observed_from >= args.observation_seconds:
+                    break
+                time.sleep(max(0, min(2, args.observation_seconds - (time.monotonic() - observed_from))))
         else:
             if serial:
                 serial = reset_bootloader(serial)

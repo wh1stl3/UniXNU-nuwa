@@ -16,6 +16,11 @@ def main():
     cli.add_argument('--package', type=Path, help='Enable R-010 preflight using the user capture confirmation')
     cli.add_argument('--before', type=Path, help='Compare final partition hashes with this prior record')
     args = cli.parse_args()
+    if args.package:
+        metadata = json.loads(args.package.read_text())
+        if metadata.get('approval') == 'SEC-HANDOFF-OFFLINE':
+            from sec_handoff_package import validate
+            validate(args.package)
     output = args.output.resolve()
     if not output.is_relative_to(ROOT/'reports') or output.exists():
         raise ValueError('Fresh reports file required')
@@ -53,7 +58,8 @@ def main():
             raise ValueError('Partition hash changed')
     if args.package:
         package=args.package.resolve()
-        scopes = {'R-010 A': ROOT/'reports/dxe-allocation', 'R-011 A': ROOT/'reports/factory-heap'}
+        scopes = {'R-010 A': ROOT/'reports/dxe-allocation', 'R-011 A': ROOT/'reports/factory-heap',
+                  'SEC-HANDOFF-OFFLINE': ROOT/'reports/sec-handoff'}
         approval = json.loads(package.read_text())['approval']
         if approval not in scopes or not package.is_relative_to(scopes[approval]):
             raise ValueError('Unexpected allocation trial package report')

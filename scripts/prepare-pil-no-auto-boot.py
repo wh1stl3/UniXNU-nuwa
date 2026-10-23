@@ -18,9 +18,10 @@ def sha(data):
 def main():
     cli = argparse.ArgumentParser(description=__doc__)
     cli.add_argument('run_id', type=int)
-    cli.add_argument('--profile', choices=('pil-no-auto', 'dxe-allocation', 'factory-heap'), default='pil-no-auto')
+    cli.add_argument('--profile', choices=('pil-no-auto', 'dxe-allocation', 'factory-heap', 'sec-handoff'), default='pil-no-auto')
     args = cli.parse_args()
-    approval = {'pil-no-auto': 'R-009 A', 'dxe-allocation': 'R-010 A', 'factory-heap': 'R-011 A'}[args.profile]
+    approval = {'pil-no-auto': 'R-009 A', 'dxe-allocation': 'R-010 A', 'factory-heap': 'R-011 A',
+                'sec-handoff': 'SEC-HANDOFF-OFFLINE'}[args.profile]
     artifact = ROOT / f'out/firmware-ci/{args.run_id}/nuwa-firmware-{args.run_id}'
     output = ROOT / f'out/trial-boot/{args.profile}-{args.run_id}'
     report = ROOT / f'reports/{args.profile}/{args.run_id}'
@@ -35,7 +36,7 @@ def main():
     inspector = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(inspector)
     inspection = inspector.inspect(artifact, 'NuwaBootMemoryDxe', require_sec_trace=True, require_no_auto_abl=True,
-                                   require_allocation_trace=args.profile in ('dxe-allocation', 'factory-heap'),
+                                   require_allocation_trace=args.profile in ('dxe-allocation', 'factory-heap', 'sec-handoff'),
                                    allocation_profile=args.profile if args.profile != 'pil-no-auto' else 'dxe-allocation')
     original = STOCK.read_bytes()
     if sha(original) != STOCK_SHA:
@@ -71,7 +72,7 @@ def main():
     metadata = {'approval': approval, 'scope': args.profile + ' firmware-only temporary v4 container',
                 'allocation_trace': inspection['allocation_trace'], 'factory_heap': inspection['factory_heap'],
                 'device_commit': inputs['device_commit'],
-                'diagnostic_patch_sha256': profile['candidate']['patches'][-1]['sha256'] if args.profile in ('dxe-allocation', 'factory-heap') else None,
+                'diagnostic_patch_sha256': profile['candidate']['patches'][-1]['sha256'] if args.profile in ('dxe-allocation', 'factory-heap', 'sec-handoff') else None,
                 'run_id': args.run_id, 'firmware_commit': profile['recipe']['sources']['firmware']['commit'],
                 'image_path': path.relative_to(ROOT).as_posix(), 'image_bytes': len(image), 'image_sha256': sha(image),
                 'original_boot_sha256': STOCK_SHA, 'fd_sha256': sha(fd), 'shim_sha256': sha(shim),
@@ -84,6 +85,11 @@ def main():
                 'appended_dtb': False, 'fat_included': False, 'xnu_included': False,
                 'dt_source': 'Installed nuwa vendor_boot via ABL; actual candidate handoff unverified',
                 'candidate_device_executed': False, 'recovery_required': True}
+    if args.profile == 'sec-handoff':
+        metadata.update(handoff_markers=inspection['sec_entry_hob_producer']['handoff_markers'],
+                        ready_to_execute=False,
+                        authorization='User requested offline preparation and evening joint trial; no device action in this session',
+                        execution_gate='Refresh identity/recovery/capture evidence and notify user in evening; strict candidate validation alone does not permit launch')
     report.mkdir(parents=True, exist_ok=True)
     (report / 'artifact-inspection.json').write_text(json.dumps(inspection, indent=2) + '\n', encoding='utf-8')
     for destination in (report / 'package.json', output / 'package.json'):

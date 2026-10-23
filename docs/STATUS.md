@@ -1,72 +1,60 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-23T15:02:06+08:00（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-23 15:55（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
-**中午原R-011包8e852150定向复测，用户照片最后可见SEC的platform-hobs status=Success，x0=0xB5DB1000；本次未取得DXE/SHENGMEM/菜单证据。上午同包到达UniXNU菜单的用户观察仍有效，但不能视为稳定复现。尚未进入XNU。**
+**晚上实测候选已离线准备完成：CI39915967862成功，四条新HANDOFF日志进入实际SEC，41条内存描述符2952B与R-011逐字节相同。唯一v4包3153920B、SHA2d833461，尚未实机启动。本轮没有ADB/fastboot命令。** 用户要求留晚上一起实测。
 
-**12:18:42已恢复nuwa/kalama Android boot_completed=1，后置三分区SHA与本次试前相同。** 一次同包临时启动，无flash/erase/改槽，原照片SHA47637c0e与SEC banner校验已保存。用户现要求继续离线分析，本轮不再操作实机。
+**XNU源内核已经编译成功，尚未实机进入XNU。** 上午R-011同包曾由用户观察到UniXNU三项菜单，随后NoBootOS；中午同包照片最后可见platform-hobs status=Success，未取得本次DXE/SHENGMEM/菜单证据。最后可见行不等于实际PC，输出失效或执行阻塞仍未区分，不能称稳定进入UniXNU。
 
-[中午复测报告](operations/2026-10-23-initrd-retest-sec-stop.md)，reports/initrd-retest/2026-10-23-noon/；[上午R-011报告](operations/2026-10-23-factory-heap-build-trial.md)保留。下一条before-fv-decompress之前有入口参数HOB及库构造，具体故障尚未定位，不能判为initrd或解压失败。
+最近一次恢复为中午12:18:42：实际nuwa/kalama Android boot_completed=1、后置三分区SHA与试前相同，无flash/erase/改槽；这不替代晚上新鲜前置条件。[中午报告](operations/2026-10-23-initrd-retest-sec-stop.md)。
 
-## 已完成的R-011
+## 新诊断固件与包
 
-| 项目 | 结果 |
+| 项目 | 核验事实 |
 | --- | --- |
-| 固件源码 | codex/nuwa-factory-heap@1ccf760d667b9eec6dd3491c90cc04ebb7c58340，父2ab6827d；只改Heap一行，其余源码保持 |
-| Heap来源 | 同机xbl_config抽取表SHA2adc494b；BAB00000/0D1C0000=209.75MiB，末端C7CC0000，非其他板数值 |
-| CI39835052901 | 设备2199fa5，6m51s成功，666项下载/输入/实际固件静态检查通过 |
-| 实际SEC | Heap唯一记录为获批值；新旧41条72B描述符除Heap地址/长度外字节完全相同 |
-| FD / 核心 | FD3145728B SHAaca853390666e48dfd3901bdfca2a9deab0d7978a02152c4ad497564f0b8b4d6；DXE核心8fccb5c9保留分配诊断 |
-| shim / PIL | shim112B/8a3b5476、relative offset0保持，原PILDxe89e030af及空AUTO配置dbc9ee6e保持 |
-| 唯一v4临时包 | 3153920B SHA8e85215011248b3e9462cace9a92133d4d58f33957ea2534fcb487a401e283c0，仅shim+FD，无FAT/XNU/新DTB/ramdisk |
-| 实机观察 | 用户明确先见三项UniXNU内置菜单，后见Failed to Find an Operating System；非完整runtime计数日志 |
-| 恢复 | 等待脚本检测fastboot，复位后仅临时加载原Android boot ef558db2；完成1、三分区SHA不变；具体回fastboot方式未捕获，未臆测自动/按键 |
+| 固件源码 | wh1stl3/uefi-nuwa，codex/nuwa-sec-handoff-trace@ddd794fc07e9bc64057222a9bffa4d79c8553af8，父1ccf760；仅Sec.c四处日志，保留调用顺序 |
+| CI | 39915967862，设备脚本abe4be9，15:09:28—15:15:19成功；666个下载清单文件大小/SHA通过 |
+| FD | 3145728B，SHAfcf2f829fb4748034014f8913b967a928cdbafe16836b9992eee5a13d838ac24 |
+| 实际SEC | SHA fad4af6b4c2b8422f4951f71b2ea9f9b00b5813485e9820db668f2f35e5840aa，四条HANDOFF及原ENTRY日志存在 |
+| 内存表 | 全部41条72B描述符共2952B与R-011完全一致；获批同机Heap BAB00000/0D1C0000保持 |
+| 核心/PIL | DXE核心8fccb5c9保留分配诊断，原PILDxe89e030af、空AUTO dbc9ee6e保持，四模块/PCD/DEPEX检查通过 |
+| BootShim | 112B，SHA8a3b54765c895a0366539130fdf6e4e4a01e364fe7de067a38d0193606f9d462，relative offset0保持 |
+| 唯一v4包 | out/trial-boot/sec-handoff-39915967862/boot-sec-handoff-v4.img，3153920B，SHA2d8334613a415c24574f93c0bcb30ba50d32175ff062d8ec2cc149651bcde846 |
+| 容器范围 | 原Android头仅改kernel_size；整个头＋shim＋FD＋零填充重建一致。无FAT/ADT/XNU、新DTB或ramdisk；恢复boot原件ef558db2复查通过 |
 
-## 当前系统发现结论
+[构建与晚间计划](operations/2026-10-23-sec-handoff-build-ready.md)，reports/sec-handoff/39915967862/保存真实run、完整workflow日志、inputs/result/inventory、实际产物检查、内存表对比及package。二进制只留out。
 
-同源UniXNU Config.c内置配置只有exit/reset/shutdown三项，无配置时搜索SimpleFileSystem卷与\EFI\BOOT\BOOTAA64.EFI；默认退出返回固件。固件BootManager.c:210在UnableToBoot显示BG_NO_BOOT_OS（NoBootOS.bmp文字与用户报告匹配）。因此本次“菜单→找不到系统”符合无系统负载的当前包，不能把最终图标误判为XNU panic或未进入UniXNU。
+## 停点分析与工具准备
 
-真实系统入口仍需可发现的卷、\EFI\UniXNU\unixnu.toml、符合Darwin22的预链接内核及目标ADT。当前NuwaBootMemoryDxe只发布/chosen的整个initrd范围为只读512B BlockIo，并要求总长整扇区；GKI v4的vendor_boot/init_boot拼接及实际候选范围尚未验证，不能把FAT随意追加便称系统卷可用。
+实际SEC TE/link-map核对显示platform-hobs之后存在入口参数HOB和库构造调用。固定Mu@cfb93724的PrePiHobLib通过TPIDR取得列表，提取器构造涉及AllocatePool、GUID HOB，其他构造涉及缓存操作；不能以两行源码或DXE Heap容量排除这些路径。同SoC uefi-sheng@329b473d也采用PlatformPeim→入口HOB→库构造顺序，未取得重排依据。
 
-## 本次离线进展
+只补before/after-entry-arg-hob及before/after-library-constructors，记录list/data而不额外解引用，不绕过错误。[分析与来源](operations/2026-10-23-sec-handoff-diagnostic.md)，reports/sec-handoff/保留固定提交、SHA、许可、适用性及35项输入检查。
 
-用户暂不在设备旁，中午可配合；SHENGMEM未取得，本轮没有ADB/fastboot、切换模式或启动设备。安装版ABL固定哈希反汇编已找到前置段→generic段→bootconfig辅助路径，14处指令核对通过；这不是候选运行跟踪，实际x0/chosen/分支仍TODO。
+严格新scope已接入trial/preflight，纯文件校验通过：重查固定recipe、实际产物、包metadata和整个原头/内容。SEC-HANDOFF-OFFLINE及ready_to_execute=false表示包不替代运行前门。USB观察默认120秒（范围120—600），每条附ACK后相对时间；USB枚举不是具体过程日志。本轮只做纯文件/语法/CLI帮助检查，未启动新包或查询设备。
 
-只读Android头审查已确认其initrd33870292B模512余468；不能据此把追加FAT直接当整段磁盘，也不能从Android快照填候选地址。已评估同SoC sheng发布器：它也要求整段整扇区，未提供nuwa v4拆分方案，不复制其DRAM/GCD策略。
+## 下一步（晚上）
 
-本机WSL已生成独立64MiB FAT32配置探针，SHA bc0b3eae88e0dd8a528b3469d0fa9c3fa21c99097af842cab42c28cfa5068ff2；mtools逐字节读回及fsck.fat -n退出0。只有标记菜单和exit动作，无XNU/ADT。**尚未接入固件或完整启动包，不能直接实机启动，也未验证UEFI挂载。** 产物只在out，不提交二进制。
+1. 用户在场后通知录像，使用reports/sec-handoff/39915967862/package.json刷新目标nuwa/kalama、Android完成1、三分区SHA、原boot及实际恢复证据，生成独立fresh preflight；不得复用中午记录冒充当晚门。
+2. 门通过后只临时启动2d833461候选；录像覆盖至少120秒完整阶段，标注相对时间，读取四条HANDOFF最后可见项及list/data。具体失败先记录再恢复，不为凑时长延迟恢复；缺失日志仍不能自动判为精确阻塞点。
+3. 若到DXE/UniXNU，取得SHENGMEM的x0/initrd范围及发布状态；无系统负载时NoBootOS符合当前包。若未到则按边界证据定位，不盲猜initrd或改内存表。
+4. 结束后仅恢复已校验原Android boot，确认sys.boot_completed=1和三分区SHA不变；视频/照片及过程写入独立reports目录。H-009为晚上拍摄待办。
 
-[离线报告与候选路径](operations/2026-10-23-offline-initrd-and-volume-probe.md)，reports/system-volume-audit/含固定指令、同SoC依赖/许可和工具命令。[前轮输入审查](operations/2026-10-23-system-volume-discovery.md)保留。
+设备前缺具体过程日志或恢复依据则按AGENTS§3写审阅并硬停；镜像生成本身无需硬停。本轮不需要改板值、身份、内存参数或_verified。
 
-## 文件发现链路离线核验
+## 系统卷和内核入口的未完成项
 
-固定源码8项连接检查通过，实际R-011 FD确认Fat/DiskIo/Partition/English及发布器均存在，正常固件入口已有先ConnectAll再查配置的代码；未发现漏装FAT模块，不等于实机绑定/挂载成功。修正审计描述符ResourceAttribute为32位、MemoryType偏移60，全部41行实际SEC类型与源码一致；旧新表原始字节回归仍只差获批Heap字段。Android快照区间落在Kernel保留描述符，候选实际映射/保留仍未验证。见[链路报告](operations/2026-10-23-volume-discovery-chain.md)。本轮无设备命令或固件变更。
+NuwaBootMemoryDxe只把/chosen整个initrd作为只读512B BlockIo，长度必须整扇区；实际FD具有Fat/DiskIo/Partition/English及预连接代码，不等于实机挂载成功。Android快照initrd33870292B模512余468，不能移作候选地址或把追加FAT当整段磁盘；ABL vendor/generic/bootconfig拼接的候选范围仍待证。离线64MiB FAT探针bc0b3eae仅通过WSL读回/fsck，未接入完整包。[卷审查](operations/2026-10-23-volume-discovery-chain.md)。
 
-## Darwin22入口离线核验
+固定DarwinBoot纯解析函数在WSL主机20例通过，当前77742999源内核ParseKernel接受（10个非零映射段，跨度21037056B）；零未解析外部符号、五个平台观测导出，ArmCpu/ArmDTPlatform来源SHA匹配。13个boot-progress回调未编入，与关闭开关一致，不是当前链接错误。主机解析不是EFI/QEMU/XNU执行。
 
-固定DarwinBoot纯函数在本机WSL执行，20个ADT解析正反例符合预期；当前77742999源内核通过其ParseKernel（10个非零映射段，跨度21037056B）。这是主机解析/静态检查，不是EFI/QEMU或内核启动。官方原文缓存与源码确认sidecar槽位逐输入匹配，不能无条件添加RAMDisk/PackedRAMDisk/TrustCache三个槽。
+缓存nuwa FDT已提取CPU affinity 0、0x100…0x700、GIC显式映射/0x40000 stride、timer声明19.2MHz、PSCI smc；仅输入来源，未生成目标ADT。CPU编号映射、中断/定时器/PSCI、完整NativePrelink运行ABI、连续分配及EL1交接均未验收。[入口契约](operations/2026-10-23-darwin22-entry-input-contracts.md)。
 
-当前实际符号表复查为零未解析外部符号、五个平台观测导出存在；13个boot-progress回调未编入，与关闭开关一致，不是当前链接失败。ArmCpu/ArmDTPlatform源码SHA与本次CI匹配。完整预链接及当前内核DWARF ABI尚未验收。
+## 基线与固定约定
 
-从已有Android FDT快照取得8个CPU reg（0、0x100…0x700）、GIC显式总线映射、0x40000 redistributor stride、timer声明19.2MHz和PSCI smc。只是报告输入，不生成nuwa ADT、不改板值或内存窗口；CPU编号映射及运行行为仍待验证。见[入口契约报告](operations/2026-10-23-darwin22-entry-input-contracts.md)和reports/darwin22-input-contracts/。
+R-010/CI39829943950在Heap69MiB时实机分配失败及DxeMain断言；R-011/CI39835052901恢复获批同机工厂Heap，唯一包8e852150一次到达菜单，中午未稳定复现。两次观察分别保留，不抹去上午结果，不把静态检查写成实机通过。
 
-## SEC handoff离线诊断
+基座wh1stl3/UniXNU@76dd641保留nuwa补丁；源内核CI39793231214成功，20187912B/SHA77742999fc1c1b6a94c9603664d946553070f73c6eed83ce9fcca06d70d73ac8。当前固件仍固定上游75bc13dd；608B/0x2e0 Darwin22 boot_args补丁已编译，运行未验证；历史payload输入仍CI15 a9e08c69，不混称当前预链接完成。
 
-实际SEC反汇编、固定Mu依赖及同SoC sheng顺序审查完成。无依据重排构造或归因initrd；新固件ddd794fc只在入口参数HOB和库构造前后加四条日志，原Heap/PIL/shim保持。35项输入静态检查、旧实际FD回归通过；新profile sec-handoff构建及下载检查待执行。本轮不操作手机，留待晚上统一实测。见[诊断报告](operations/2026-10-23-sec-handoff-diagnostic.md)、reports/sec-handoff/。
-
-## 下一步
-
-1. 发布设备仓本轮证据与sec-handoff工作流，构建新EFI/FD/BootShim；下载后核验实际SEC四条新日志与全部旧门，再准备临时包。诊断不是根因修复。
-2. 晚上用户在场后，先通知录像并刷新目标身份、日志与恢复门；录像覆盖至少120秒及完整阶段，标注相对时间。当前不试启动。
-3. SHENGMEM候选映射仍待证据；卷运输/挂载、目标ADT、完整NativePrelink ABI、连续分配及EL1交接均未通过，不猜initrd偏移或移用Android快照。
-4. 镜像生成无需硬停，设备缺具体过程日志/恢复依据及AGENTS§3其他边界仍硬停；board/feed/bringup-plan及_verified保持。
-
-## 对照基线与固定约定
-
-R-010/CI39829943950：Heap69MiB时实机在DxeMain.c(586)断言；清晰照片末阶段27次失败、25页/100KiB总空闲、最大8页/32KiB、5段。R-011一次单行恢复后达到菜单，支持原资源瓶颈已被越过，但不替代完整泄漏/性能统计。H-006完成；H-001独立按键演练/H-003历史可选连续录像保持独立待办。
-
-基座wh1stl3/UniXNU@76dd641保留nuwa补丁，8796内核CI39793231214成功，源内核20187912B/SHA77742999fc1c1b6a94c9603664d946553070f73c6eed83ce9fcca06d70d73ac8。五平台导出、零undefined、三archive哈希和65348项donor指针零失败；完整NativePrelink/运行ABI仍未验收，历史payload输入仍CI15 a9e08c69。608B/0x2e0 boot_args已真实编译DarwinBoot EFI，运行未验证。ADT/provider/定时器/watchdog/13回调仍待验收，ARCH_TIMER/BOOT_PROGRESS仍0。
-
-board/feed/bringup-plan/ADT及_verified不变，board仍example=true，普通基座-D入口未完整打通。4KiB、iPhone10,3/d22ap/iOS16.7.16/20H392、8796.141.3、ipad_identity=true保持；D-002先512MiB–1GiB过阶段5、硬上限8GiB，与UEFI Heap不同。两个旧仓只读；Git/GitHub/workflow持续授权；镜像生成无需硬停，设备缺具体日志/恢复路径及其他AGENTS§3边界仍硬停。Android为原有rooted/custom系统，非完整原厂恢复，A槽标志未改。
+board/feed/bringup-plan/ADT及_verified保持，board仍example=true，普通基座-D入口未完整打通。4KiB、iPhone10,3/d22ap/iOS16.7.16/20H392、8796.141.3、ipad_identity=true保持；D-002先512MiB—1GiB过阶段5、硬上限8GiB，与UEFI Heap不同。两旧仓只读。Android为原有rooted/custom系统，非完整原厂恢复，A槽标志未改。

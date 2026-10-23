@@ -1,0 +1,86 @@
+{
+  "at": "2026-10-23T15:26:32+08:00",
+  "result": "CI build and downloaded firmware/container static checks passed",
+  "ci_run": 39915967862,
+  "workflow_commit": "abe4be9ddc1073ff42a5824c57fd4b6afa340b57",
+  "firmware_commit": "ddd794fc07e9bc64057222a9bffa4d79c8553af8",
+  "inventory_files": 666,
+  "fd": {
+    "bytes": 3145728,
+    "sha256": "fcf2f829fb4748034014f8913b967a928cdbafe16836b9992eee5a13d838ac24"
+  },
+  "sec_sha256": "fad4af6b4c2b8422f4951f71b2ea9f9b00b5813485e9820db668f2f35e5840aa",
+  "shim": {
+    "bytes": 112,
+    "image_size": 3145840,
+    "sha256": "8a3b54765c895a0366539130fdf6e4e4a01e364fe7de067a38d0193606f9d462",
+    "payload_offset": 112,
+    "copy_count": 3145728,
+    "text_offset": 0
+  },
+  "image_path": "out/trial-boot/sec-handoff-39915967862/boot-sec-handoff-v4.img",
+  "image_bytes": 3153920,
+  "image_sha256": "2d8334613a415c24574f93c0bcb30ba50d32175ff062d8ec2cc149651bcde846",
+  "descriptors_identical_bytes": 2952,
+  "handoff_markers": {
+    "[NUWA-HANDOFF] before-entry-arg-hob list=%p": true,
+    "[NUWA-HANDOFF] after-entry-arg-hob data=%p": true,
+    "[NUWA-HANDOFF] before-library-constructors": true,
+    "[NUWA-HANDOFF] after-library-constructors": true
+  },
+  "workflow_log_bytes": 237715,
+  "workflow_log_sha256": "e2e44ad245362d1108d22acf8044ad47b2d031edab8ae005bf97e10b0479938d",
+  "commands": {
+    "run_view": [
+      "gh",
+      "run",
+      "view",
+      "39915967862",
+      "--repo",
+      "wh1stl3/UniXNU-nuwa",
+      "--json",
+      "databaseId,headSha,status,conclusion,createdAt,updatedAt,url,jobs"
+    ],
+    "run_download": [
+      "gh",
+      "run",
+      "download",
+      "39915967862",
+      "--repo",
+      "wh1stl3/UniXNU-nuwa",
+      "--dir",
+      "out/firmware-ci/39915967862"
+    ],
+    "inspect": [
+      "python",
+      "scripts/ci/inspect-firmware-candidate.py",
+      "out\\firmware-ci\\39915967862\\nuwa-firmware-39915967862",
+      "--publisher-name",
+      "NuwaBootMemoryDxe",
+      "--require-sec-trace",
+      "--require-no-auto-abl",
+      "--require-allocation-trace",
+      "--allocation-profile",
+      "sec-handoff",
+      "--output",
+      "reports/sec-handoff/39915967862/artifact-inspection.json"
+    ],
+    "compare": [
+      "python",
+      "scripts/audit-sec-handoff-artifact.py",
+      "out\\firmware-ci\\39915967862\\nuwa-firmware-39915967862",
+      "--output",
+      "reports/sec-handoff/39915967862/descriptor-comparison.json"
+    ],
+    "package": [
+      "python",
+      "scripts/prepare-pil-no-auto-boot.py",
+      "39915967862",
+      "--profile",
+      "sec-handoff"
+    ]
+  },
+  "device_executed": false,
+  "night_preflight_pending": true,
+  "limitation": "Static inspection only; diagnostic image has no FAT/ADT/XNU; no kernel execution claimed"
+}
