@@ -1,0 +1,17 @@
+{
+  "container_rebuilt_byte_identical": true,
+  "image_sha256": "a22e9a44561c85c52aa5697d0452c38dc8bdd1f5b2c7c7a40e79f5396a27f9f0",
+  "gate_checks": [
+    {
+      "script": "trial-v4-firmware.py",
+      "result": "rejected before any device subprocess",
+      "reason": "D-021: package and fresh process-log/recovery preflight required before device action"
+    },
+    {
+      "script": "record-nuwa-trial-state.py",
+      "result": "rejected before any device subprocess",
+      "reason": "Fresh user capture confirmation required before MMU trial preflight"
+    }
+  ],
+  "device_executed": false
+}

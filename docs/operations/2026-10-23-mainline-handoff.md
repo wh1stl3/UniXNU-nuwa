@@ -31,3 +31,7 @@ recovery.json曾等待180秒超时。2026-10-24已只读ADB确认nuwa/kalama、A
 直接续接：`python -B scripts/check-volume-status.py`；`gh workflow run firmware-candidate.yml --repo wh1stl3/UniXNU-nuwa --ref main -f profile=volume-status`。运行后记录run id，实际FD/EFI/BootShim验收后使用`python -B scripts/volume_probe_package.py <run> --profile volume-status`打包。新scope VOLUME-STATUS-OFFLINE已接入原严格包校验/录像/恢复门；不使用旧scope绕过。新鲜用户录像门尚未确认，当前只做离线构建。细节见2026-10-24-volume-publisher-status.md。
 
 2026-10-24T00:17:00.937798+08:00：CI39985245383/source b8e6e2a构建中；固件bc38be0。旧产物冒充/录像空值2项反向测试及原5项MMU门回归通过。
+
+## 新包就绪（2026-10-24）
+
+2026-10-24T00:23:43.134759+08:00：CI39985245383成功，FD ff218da4；新状态及全部旧诊断二进制标记通过，41行内存全表与dd1ef825逐字节一致。包a22e9a44561c85c52aa5697d0452c38dc8bdd1f5b2c7c7a40e79f5396a27f9f0/70266880B已复验，reports/volume-status/39985245383/package.json。用户已本轮确认录像/恢复按键准备，刷新preflight后通知并启动。观察窗口>=120秒，恢复和postcondition用新目录reports/volume-status-trial/2026-10-24/，上一轮恢复不代替本轮。

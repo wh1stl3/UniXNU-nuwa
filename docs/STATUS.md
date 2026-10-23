@@ -1,11 +1,9 @@
 # STATUS
 
-> dd1ef825实测进入UniXNU内置菜单，目标卷和XNU尚未确认。2026-10-24已补齐Android恢复和三分区核验；正在构建卷发布状态诊断。
+> 卷状态诊断包a22e9a44已构建/静态验收，用户已确认本轮录像；尚未启动新包，XNU尚未进入。
 
-最新只读ADB确认nuwa/kalama、Android boot_completed=1、slot_a，三个启动分区SHA与上轮preflight一致；证据reports/hob-integrity-trial/2026-10-23-evening/postcondition.json。原恢复等待超时保留为历史，不再作为当前设备状态。
+CI39985245383/source b8e6e2a成功，固件bc38be0。发布器错误传播/阶段日志及5秒诊断停留已入实际EFI，新旧诊断标记检查通过；41行2952B内存表与dd1ef825完全相同。v4包SHA256 a22e9a44561c85c52aa5697d0452c38dc8bdd1f5b2c7c7a40e79f5396a27f9f0，70266880B，仍只含64MiB配置探针，无XNU/ADT；容器逐字节复验通过。
 
-固件固定bc38be0：发布器错误传播/分阶段日志、可选5秒诊断停留，8项C主机测试通过。新volume-status profile的41输入/7补丁/10后哈希静态检查通过；CI39985245383/source b8e6e2a已启动，实际产物核验待完成，无新设备试验。未改板值、映射及_verified。
+2026-10-24补齐dd1ef825恢复：nuwa/kalama、Android完成1及三分区SHA不变。8项固件主机测试、2项新scope反向检查和5项MMU门回归通过；实际新包缺录像/预检时在任何设备子进程前拒绝。
 
-录像抽帧未取得可读NUWA-VOLUME结果，不能从缺失确定根因。下一步构建并验收新profile；新包启动须重新确认录像、日志/恢复门并通知用户。详见operations/2026-10-24-volume-publisher-status.md和operations/2026-10-23-mainline-handoff.md。
-
-新scope的包校验、录像确认和恢复门已接入；2项旧产物冒充/空录像拒绝测试及5项MMU门回归通过，未执行设备命令。
+用户本轮已回复“可以，现在准备录像”，准备刷新preflight后通知并临时启动一次；后续必须记录120秒观察、具体过程画面及Android恢复/三分区核验。当前阶段未宣称卷发现或XNU实机通过。详见operations/2026-10-24-volume-publisher-status.md与主线交接。
