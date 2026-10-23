@@ -1,0 +1,291 @@
+{
+  "at": "2026-10-23T03:10:56.883079+00:00",
+  "scope": "Existing Android FDT snapshot only; no new device reads or target ADT generated",
+  "source": {
+    "path": "out\\live-nuwa-dt\\android-dt-after-r011\\android-live.dtb",
+    "sha256": "e7217b1575c7a7c2ca4bd758ab7fc20f580533cae4ea85631608997fede51e1d",
+    "original_observation": "reports/system-volume-audit/android-dt-after-r011.json"
+  },
+  "cpus": [
+    {
+      "node": "/cpus/cpu@0",
+      "linux_reg": "0x0",
+      "compatible": [
+        "qcom,kryo"
+      ],
+      "enable_method": [
+        "psci"
+      ],
+      "properties": {
+        "reg": {
+          "bytes": 8,
+          "hex": "0000000000000000"
+        },
+        "capacity-dmips-mhz": {
+          "bytes": 4,
+          "hex": "00000334"
+        }
+      }
+    },
+    {
+      "node": "/cpus/cpu@100",
+      "linux_reg": "0x100",
+      "compatible": [
+        "qcom,kryo"
+      ],
+      "enable_method": [
+        "psci"
+      ],
+      "properties": {
+        "reg": {
+          "bytes": 8,
+          "hex": "0000000000000100"
+        },
+        "capacity-dmips-mhz": {
+          "bytes": 4,
+          "hex": "00000334"
+        }
+      }
+    },
+    {
+      "node": "/cpus/cpu@200",
+      "linux_reg": "0x200",
+      "compatible": [
+        "qcom,kryo"
+      ],
+      "enable_method": [
+        "psci"
+      ],
+      "properties": {
+        "reg": {
+          "bytes": 8,
+          "hex": "0000000000000200"
+        },
+        "capacity-dmips-mhz": {
+          "bytes": 4,
+          "hex": "00000334"
+        }
+      }
+    },
+    {
+      "node": "/cpus/cpu@300",
+      "linux_reg": "0x300",
+      "compatible": [
+        "qcom,kryo"
+      ],
+      "enable_method": [
+        "psci"
+      ],
+      "properties": {
+        "reg": {
+          "bytes": 8,
+          "hex": "0000000000000300"
+        },
+        "capacity-dmips-mhz": {
+          "bytes": 4,
+          "hex": "00000708"
+        }
+      }
+    },
+    {
+      "node": "/cpus/cpu@400",
+      "linux_reg": "0x400",
+      "compatible": [
+        "qcom,kryo"
+      ],
+      "enable_method": [
+        "psci"
+      ],
+      "properties": {
+        "reg": {
+          "bytes": 8,
+          "hex": "0000000000000400"
+        },
+        "capacity-dmips-mhz": {
+          "bytes": 4,
+          "hex": "00000708"
+        }
+      }
+    },
+    {
+      "node": "/cpus/cpu@500",
+      "linux_reg": "0x500",
+      "compatible": [
+        "qcom,kryo"
+      ],
+      "enable_method": [
+        "psci"
+      ],
+      "properties": {
+        "reg": {
+          "bytes": 8,
+          "hex": "0000000000000500"
+        },
+        "capacity-dmips-mhz": {
+          "bytes": 4,
+          "hex": "00000708"
+        }
+      }
+    },
+    {
+      "node": "/cpus/cpu@600",
+      "linux_reg": "0x600",
+      "compatible": [
+        "qcom,kryo"
+      ],
+      "enable_method": [
+        "psci"
+      ],
+      "properties": {
+        "reg": {
+          "bytes": 8,
+          "hex": "0000000000000600"
+        },
+        "capacity-dmips-mhz": {
+          "bytes": 4,
+          "hex": "00000708"
+        }
+      }
+    },
+    {
+      "node": "/cpus/cpu@700",
+      "linux_reg": "0x700",
+      "compatible": [
+        "qcom,kryo"
+      ],
+      "enable_method": [
+        "psci"
+      ],
+      "properties": {
+        "reg": {
+          "bytes": 8,
+          "hex": "0000000000000700"
+        },
+        "capacity-dmips-mhz": {
+          "bytes": 4,
+          "hex": "00000766"
+        }
+      }
+    }
+  ],
+  "gics": [
+    {
+      "node": "/soc/interrupt-controller@17100000",
+      "compatible": [
+        "arm,gic-v3"
+      ],
+      "reg_names": [],
+      "parent_cells": {
+        "address": 1,
+        "size": 1
+      },
+      "reg_ranges": [
+        {
+          "index": 0,
+          "bus_address": "0x17100000",
+          "bytes": 65536
+        },
+        {
+          "index": 1,
+          "bus_address": "0x17180000",
+          "bytes": 2097152
+        }
+      ],
+      "physical_ranges_from_explicit_root_mapping": [
+        {
+          "index": 0,
+          "physical_address": "0x17100000",
+          "bytes": 65536
+        },
+        {
+          "index": 1,
+          "physical_address": "0x17180000",
+          "bytes": 2097152
+        }
+      ],
+      "declared_redistributor_stride": 262144,
+      "parent_bus_properties": {
+        "ranges": {
+          "bytes": 16,
+          "hex": "000000000000000000000000ffffffff"
+        },
+        "#address-cells": {
+          "bytes": 4,
+          "hex": "00000001"
+        },
+        "#size-cells": {
+          "bytes": 4,
+          "hex": "00000001"
+        }
+      },
+      "properties": {
+        "#interrupt-cells": {
+          "bytes": 4,
+          "hex": "00000003"
+        },
+        "#redistributor-regions": {
+          "bytes": 4,
+          "hex": "00000001"
+        },
+        "redistributor-stride": {
+          "bytes": 8,
+          "hex": "0000000000040000"
+        },
+        "interrupts": {
+          "bytes": 12,
+          "hex": "000000010000000900000004"
+        }
+      }
+    }
+  ],
+  "timers": [
+    {
+      "node": "/soc/timer",
+      "compatible": [
+        "arm,armv8-timer"
+      ],
+      "declared_clock_frequency": 19200000,
+      "properties": {
+        "interrupts": {
+          "bytes": 48,
+          "hex": "000000010000000d0000ff08000000010000000e0000ff08000000010000000b0000ff08000000010000000c0000ff08"
+        },
+        "clock-frequency": {
+          "bytes": 4,
+          "hex": "0124f800"
+        },
+        "always-on": {
+          "bytes": 0,
+          "hex": ""
+        }
+      }
+    }
+  ],
+  "psci": [
+    {
+      "node": "/soc/psci",
+      "compatible": [
+        "arm,psci-1.0"
+      ],
+      "method": [
+        "smc"
+      ]
+    }
+  ],
+  "apple_consumer_contract": {
+    "cpu_device_type": "cpu plus NUL, exactly4bytes",
+    "cpu_reg": "consumer reads first little-endian u32; physical-ID mapping must be qualified",
+    "arm_io_ranges_bytes": 24,
+    "intc_reg_bytes": 32,
+    "intc_compatible": "arm,gic-v3 plus NUL, exactly11bytes"
+  },
+  "todo": [
+    "Qualify GICD/GICR selection and runtime ownership before any Apple reg/ranges emission",
+    "Qualify MPIDR/physical-ID mapping against XNU CPU registration",
+    "Counter frequency, interrupt delivery and PSCI runtime behavior remain unverified",
+    "Do not infer candidate ABL x0 tree from this Android snapshot"
+  ],
+  "device_accessed": false,
+  "adt_generated": false,
+  "board_feed_changed": false
+}

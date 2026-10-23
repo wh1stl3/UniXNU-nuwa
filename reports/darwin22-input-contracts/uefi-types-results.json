@@ -1,0 +1,681 @@
+{
+  "at": "2026-10-23T02:58:38.827568+00:00",
+  "scope": "Native Linux host execution of fixed pure parser functions only; not EFI/QEMU/device execution",
+  "source": {
+    "repository": "UniXNU/UniXNU",
+    "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+    "source_sha256": {
+      "drivers/DarwinBoot/DarwinBootPkg/Driver/DarwinBoot.c": "cd141d002f24b951d3dfa7773f29cf645712be3c71f4b6e801d1114eb81b5c0a",
+      "drivers/DarwinBoot/DarwinBootPkg/Driver/WindowSize.h": "6f78303c54252eae722be7c9b33869e4e8251ee3569736511790170d499b58cb"
+    },
+    "applied_patch_sha256": "8532237ec7774c9315ef0c2226e17df56935a1e32811400e741a4e1d502fdc87",
+    "post_patch_c_sha256": "1d2917aacdd8bd14a16adde289333fdda2f723720fd88f33f963ad1f07bdf8dc",
+    "license": "BSD-2-Clause-Patent",
+    "harness_stdin_sha256": "ddcef9d1a4b91bda510d37f2996c059859020c36d9f7b335abfc45f57ee5c244",
+    "parser_function_sha256": {
+      "ParseKernel": "d671e0dda6323a2e88c74dbaf061fc99489ae7ce3bdf21118dca063fe6410e32",
+      "AdtNode": "5de0ee1390f15d869c5077efbe76ce93b6170f813ef4537cc08a85e87fea7ffb"
+    }
+  },
+  "commands": [
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "clang",
+        "--version"
+      ],
+      "stdin_sha256": null,
+      "exit_code": 0,
+      "stdout": "Ubuntu clang version 14.0.0-1ubuntu1.1\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/bin\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "clang",
+        "-x",
+        "c",
+        "-std=c11",
+        "-O1",
+        "-g",
+        "-fsanitize=undefined",
+        "-fno-sanitize-recover=all",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/darwin-parser-host"
+      ],
+      "stdin_sha256": "ddcef9d1a4b91bda510d37f2996c059859020c36d9f7b335abfc45f57ee5c244",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/darwin-parser-host",
+        "--adt",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/no_optional_sidecars.adt"
+      ],
+      "stdin_sha256": null,
+      "exit_code": 0,
+      "stdout": "{\"accepted\":true,\"consumed\":216,\"ramdisk_found\":false,\"trustcache_found\":false,\"window_bytes\":536870912,\"keep_packed\":false}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/darwin-parser-host",
+        "--adt",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/ramdisk_placeholder.adt"
+      ],
+      "stdin_sha256": null,
+      "exit_code": 0,
+      "stdout": "{\"accepted\":true,\"consumed\":268,\"ramdisk_found\":true,\"trustcache_found\":false,\"window_bytes\":536870912,\"keep_packed\":false}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/darwin-parser-host",
+        "--adt",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/packed_placeholder.adt"
+      ],
+      "stdin_sha256": null,
+      "exit_code": 0,
+      "stdout": "{\"accepted\":true,\"consumed\":268,\"ramdisk_found\":true,\"trustcache_found\":false,\"window_bytes\":536870912,\"keep_packed\":true}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/darwin-parser-host",
+        "--adt",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/trustcache_placeholder.adt"
+      ],
+      "stdin_sha256": null,
+      "exit_code": 0,
+      "stdout": "{\"accepted\":true,\"consumed\":268,\"ramdisk_found\":false,\"trustcache_found\":true,\"window_bytes\":536870912,\"keep_packed\":false}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/darwin-parser-host",
+        "--adt",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/minimum_window.adt"
+      ],
+      "stdin_sha256": null,
+      "exit_code": 0,
+      "stdout": "{\"accepted\":true,\"consumed\":216,\"ramdisk_found\":false,\"trustcache_found\":false,\"window_bytes\":268435456,\"keep_packed\":false}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/darwin-parser-host",
+        "--adt",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/maximum_window.adt"
+      ],
+      "stdin_sha256": null,
+      "exit_code": 0,
+      "stdout": "{\"accepted\":true,\"consumed\":216,\"ramdisk_found\":false,\"trustcache_found\":false,\"window_bytes\":8589934592,\"keep_packed\":false}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/darwin-parser-host",
+        "--adt",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/below_window_minimum.adt"
+      ],
+      "stdin_sha256": null,
+      "exit_code": 0,
+      "stdout": "{\"accepted\":false,\"consumed\":160,\"ramdisk_found\":false,\"trustcache_found\":false,\"window_bytes\":266338304,\"keep_packed\":false}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/darwin-parser-host",
+        "--adt",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/above_window_maximum.adt"
+      ],
+      "stdin_sha256": null,
+      "exit_code": 0,
+      "stdout": "{\"accepted\":false,\"consumed\":160,\"ramdisk_found\":false,\"trustcache_found\":false,\"window_bytes\":8592031744,\"keep_packed\":false}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/darwin-parser-host",
+        "--adt",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/unaligned_window.adt"
+      ],
+      "stdin_sha256": null,
+      "exit_code": 0,
+      "stdout": "{\"accepted\":false,\"consumed\":160,\"ramdisk_found\":false,\"trustcache_found\":false,\"window_bytes\":536870913,\"keep_packed\":false}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/darwin-parser-host",
+        "--adt",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/duplicate_window.adt"
+      ],
+      "stdin_sha256": null,
+      "exit_code": 0,
+      "stdout": "{\"accepted\":false,\"consumed\":196,\"ramdisk_found\":false,\"trustcache_found\":false,\"window_bytes\":0,\"keep_packed\":false}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/darwin-parser-host",
+        "--adt",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/wrong_window_width.adt"
+      ],
+      "stdin_sha256": null,
+      "exit_code": 0,
+      "stdout": "{\"accepted\":false,\"consumed\":152,\"ramdisk_found\":false,\"trustcache_found\":false,\"window_bytes\":0,\"keep_packed\":false}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/darwin-parser-host",
+        "--adt",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/window_outside_chosen.adt"
+      ],
+      "stdin_sha256": null,
+      "exit_code": 0,
+      "stdout": "{\"accepted\":false,\"consumed\":108,\"ramdisk_found\":false,\"trustcache_found\":false,\"window_bytes\":0,\"keep_packed\":false}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/darwin-parser-host",
+        "--adt",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/short_ramdisk_slot.adt"
+      ],
+      "stdin_sha256": null,
+      "exit_code": 0,
+      "stdout": "{\"accepted\":false,\"consumed\":252,\"ramdisk_found\":false,\"trustcache_found\":false,\"window_bytes\":536870912,\"keep_packed\":false}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/darwin-parser-host",
+        "--adt",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/short_trustcache_slot.adt"
+      ],
+      "stdin_sha256": null,
+      "exit_code": 0,
+      "stdout": "{\"accepted\":false,\"consumed\":252,\"ramdisk_found\":false,\"trustcache_found\":false,\"window_bytes\":536870912,\"keep_packed\":false}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/darwin-parser-host",
+        "--adt",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/both_ramdisk_names.adt"
+      ],
+      "stdin_sha256": null,
+      "exit_code": 0,
+      "stdout": "{\"accepted\":false,\"consumed\":304,\"ramdisk_found\":false,\"trustcache_found\":false,\"window_bytes\":536870912,\"keep_packed\":true}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/darwin-parser-host",
+        "--adt",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/duplicate_node_name.adt"
+      ],
+      "stdin_sha256": null,
+      "exit_code": 0,
+      "stdout": "{\"accepted\":false,\"consumed\":100,\"ramdisk_found\":false,\"trustcache_found\":false,\"window_bytes\":0,\"keep_packed\":false}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/darwin-parser-host",
+        "--adt",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/unterminated_key.adt"
+      ],
+      "stdin_sha256": null,
+      "exit_code": 0,
+      "stdout": "{\"accepted\":false,\"consumed\":8,\"ramdisk_found\":false,\"trustcache_found\":false,\"window_bytes\":0,\"keep_packed\":false}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/darwin-parser-host",
+        "--adt",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/truncated_header.adt"
+      ],
+      "stdin_sha256": null,
+      "exit_code": 0,
+      "stdout": "{\"accepted\":false,\"consumed\":0,\"ramdisk_found\":false,\"trustcache_found\":false,\"window_bytes\":0,\"keep_packed\":false}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/darwin-parser-host",
+        "--adt",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/trailing_bytes.adt"
+      ],
+      "stdin_sha256": null,
+      "exit_code": 0,
+      "stdout": "{\"accepted\":false,\"consumed\":216,\"ramdisk_found\":false,\"trustcache_found\":false,\"window_bytes\":536870912,\"keep_packed\":false}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/darwin-parser-host",
+        "--adt",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/linux_fdt_magic_is_not_adt.adt"
+      ],
+      "stdin_sha256": null,
+      "exit_code": 0,
+      "stdout": "{\"accepted\":false,\"consumed\":8,\"ramdisk_found\":false,\"trustcache_found\":false,\"window_bytes\":0,\"keep_packed\":false}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/darwin22-input-contracts/host-probe-uefi-types/darwin-parser-host",
+        "--kernel",
+        "/mnt/d/Code/UniXNU-nuwa/out/kernel-ci/39793231214/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped"
+      ],
+      "stdin_sha256": null,
+      "exit_code": 0,
+      "stdout": "{\"accepted\":true,\"segments\":10,\"span_bytes\":21037056}\n",
+      "stderr": ""
+    }
+  ],
+  "cases": [
+    {
+      "name": "no_optional_sidecars",
+      "input_bytes": 216,
+      "sha256": "dfdcb5615ffda56fecdee40fed9495f706488a06075c997eb6c4ce4391c025a1",
+      "expected": true,
+      "result": {
+        "accepted": true,
+        "consumed": 216,
+        "ramdisk_found": false,
+        "trustcache_found": false,
+        "window_bytes": 536870912,
+        "keep_packed": false
+      }
+    },
+    {
+      "name": "ramdisk_placeholder",
+      "input_bytes": 268,
+      "sha256": "a9062056efe3c2697f1561261befac4cd758fe0424f35f8dbd24312f8f3a086c",
+      "expected": true,
+      "result": {
+        "accepted": true,
+        "consumed": 268,
+        "ramdisk_found": true,
+        "trustcache_found": false,
+        "window_bytes": 536870912,
+        "keep_packed": false
+      }
+    },
+    {
+      "name": "packed_placeholder",
+      "input_bytes": 268,
+      "sha256": "37d407364322b26e1942ce4a462e805a6150dd576451d3033f75c2403764d243",
+      "expected": true,
+      "result": {
+        "accepted": true,
+        "consumed": 268,
+        "ramdisk_found": true,
+        "trustcache_found": false,
+        "window_bytes": 536870912,
+        "keep_packed": true
+      }
+    },
+    {
+      "name": "trustcache_placeholder",
+      "input_bytes": 268,
+      "sha256": "bb2d431e3239a021c3796b678ad9ecdf7df019c265e15eb7ce80741fd9014da7",
+      "expected": true,
+      "result": {
+        "accepted": true,
+        "consumed": 268,
+        "ramdisk_found": false,
+        "trustcache_found": true,
+        "window_bytes": 536870912,
+        "keep_packed": false
+      }
+    },
+    {
+      "name": "minimum_window",
+      "input_bytes": 216,
+      "sha256": "47880790abf27a1ca732a176741a014e5a2fb3417b627bd934e2251303ffd9d3",
+      "expected": true,
+      "result": {
+        "accepted": true,
+        "consumed": 216,
+        "ramdisk_found": false,
+        "trustcache_found": false,
+        "window_bytes": 268435456,
+        "keep_packed": false
+      }
+    },
+    {
+      "name": "maximum_window",
+      "input_bytes": 216,
+      "sha256": "8a5159c8e107cf7baf6e3ea2a869f43f06dc9fcb05bf8dbf4c1b0a905d980b87",
+      "expected": true,
+      "result": {
+        "accepted": true,
+        "consumed": 216,
+        "ramdisk_found": false,
+        "trustcache_found": false,
+        "window_bytes": 8589934592,
+        "keep_packed": false
+      }
+    },
+    {
+      "name": "below_window_minimum",
+      "input_bytes": 216,
+      "sha256": "9dcc16aa2fa8b4ef2c300553f2c8271a575ad48c2301c4d8c21a98264bdacef2",
+      "expected": false,
+      "result": {
+        "accepted": false,
+        "consumed": 160,
+        "ramdisk_found": false,
+        "trustcache_found": false,
+        "window_bytes": 266338304,
+        "keep_packed": false
+      }
+    },
+    {
+      "name": "above_window_maximum",
+      "input_bytes": 216,
+      "sha256": "e5d48424b4ff6cbdb56461b3f5385b889dd97f072e659d51161cc303b4f5e8a8",
+      "expected": false,
+      "result": {
+        "accepted": false,
+        "consumed": 160,
+        "ramdisk_found": false,
+        "trustcache_found": false,
+        "window_bytes": 8592031744,
+        "keep_packed": false
+      }
+    },
+    {
+      "name": "unaligned_window",
+      "input_bytes": 216,
+      "sha256": "9b85e9f496023035bf710f6733bf5dc9b6549ab0ef43da389e4601cecafc9172",
+      "expected": false,
+      "result": {
+        "accepted": false,
+        "consumed": 160,
+        "ramdisk_found": false,
+        "trustcache_found": false,
+        "window_bytes": 536870913,
+        "keep_packed": false
+      }
+    },
+    {
+      "name": "duplicate_window",
+      "input_bytes": 260,
+      "sha256": "c5f9c60e73bd87a9760833e1db3d4740c008b641872ba98fc21aec1652cdbc05",
+      "expected": false,
+      "result": {
+        "accepted": false,
+        "consumed": 196,
+        "ramdisk_found": false,
+        "trustcache_found": false,
+        "window_bytes": 0,
+        "keep_packed": false
+      }
+    },
+    {
+      "name": "wrong_window_width",
+      "input_bytes": 212,
+      "sha256": "c2d1b62dedcf5bb33c930ff35b242865d7a64a451df496d6047a8e902d40a96e",
+      "expected": false,
+      "result": {
+        "accepted": false,
+        "consumed": 152,
+        "ramdisk_found": false,
+        "trustcache_found": false,
+        "window_bytes": 0,
+        "keep_packed": false
+      }
+    },
+    {
+      "name": "window_outside_chosen",
+      "input_bytes": 216,
+      "sha256": "254252c7e546105d395e3eeff2451622e0575af0976cfba23c93aa0efd24ce19",
+      "expected": false,
+      "result": {
+        "accepted": false,
+        "consumed": 108,
+        "ramdisk_found": false,
+        "trustcache_found": false,
+        "window_bytes": 0,
+        "keep_packed": false
+      }
+    },
+    {
+      "name": "short_ramdisk_slot",
+      "input_bytes": 260,
+      "sha256": "b5dfd162062abb0c863733d55036e218ebf8ddedced141788fd5f0fe370d1e9a",
+      "expected": false,
+      "result": {
+        "accepted": false,
+        "consumed": 252,
+        "ramdisk_found": false,
+        "trustcache_found": false,
+        "window_bytes": 536870912,
+        "keep_packed": false
+      }
+    },
+    {
+      "name": "short_trustcache_slot",
+      "input_bytes": 260,
+      "sha256": "01d2e5c9d726f0115b2e38ebca1686e3972b17ad3662f81e1827825786779e4a",
+      "expected": false,
+      "result": {
+        "accepted": false,
+        "consumed": 252,
+        "ramdisk_found": false,
+        "trustcache_found": false,
+        "window_bytes": 536870912,
+        "keep_packed": false
+      }
+    },
+    {
+      "name": "both_ramdisk_names",
+      "input_bytes": 320,
+      "sha256": "1e6de4d7dc9b5d1dac3b7640f7b981ace6716049a91296149af69232b892a915",
+      "expected": false,
+      "result": {
+        "accepted": false,
+        "consumed": 304,
+        "ramdisk_found": false,
+        "trustcache_found": false,
+        "window_bytes": 536870912,
+        "keep_packed": true
+      }
+    },
+    {
+      "name": "duplicate_node_name",
+      "input_bytes": 108,
+      "sha256": "4790c99e7e72f36966fa7f54e13edeed0a1e8655242c478d690d2f6dfa8ca3ad",
+      "expected": false,
+      "result": {
+        "accepted": false,
+        "consumed": 100,
+        "ramdisk_found": false,
+        "trustcache_found": false,
+        "window_bytes": 0,
+        "keep_packed": false
+      }
+    },
+    {
+      "name": "unterminated_key",
+      "input_bytes": 44,
+      "sha256": "eb5fce81f6f1aef716e088b73a3bdb6d1598403f57f478c489670f78fad33e65",
+      "expected": false,
+      "result": {
+        "accepted": false,
+        "consumed": 8,
+        "ramdisk_found": false,
+        "trustcache_found": false,
+        "window_bytes": 0,
+        "keep_packed": false
+      }
+    },
+    {
+      "name": "truncated_header",
+      "input_bytes": 7,
+      "sha256": "837885c8f8091aeaeb9ec3c3f85a6ff470a415e610b8ba3e49f9b33c9cf9d619",
+      "expected": false,
+      "result": {
+        "accepted": false,
+        "consumed": 0,
+        "ramdisk_found": false,
+        "trustcache_found": false,
+        "window_bytes": 0,
+        "keep_packed": false
+      }
+    },
+    {
+      "name": "trailing_bytes",
+      "input_bytes": 220,
+      "sha256": "d623771eacd287515d6feda8716781812a2fb97a20851a87786d4d70047526aa",
+      "expected": false,
+      "result": {
+        "accepted": false,
+        "consumed": 216,
+        "ramdisk_found": false,
+        "trustcache_found": false,
+        "window_bytes": 536870912,
+        "keep_packed": false
+      }
+    },
+    {
+      "name": "linux_fdt_magic_is_not_adt",
+      "input_bytes": 40,
+      "sha256": "349bc9014a17abd78aeafd7c6fd5cbc5157d678c35beb4dd45b8313c96fdc6eb",
+      "expected": false,
+      "result": {
+        "accepted": false,
+        "consumed": 8,
+        "ramdisk_found": false,
+        "trustcache_found": false,
+        "window_bytes": 0,
+        "keep_packed": false
+      }
+    }
+  ],
+  "cases_passed": 20,
+  "actual_kernel": {
+    "sha256": "77742999fc1c1b6a94c9603664d946553070f73c6eed83ce9fcca06d70d73ac8",
+    "bytes": 20187912,
+    "parser_result": {
+      "accepted": true,
+      "segments": 10,
+      "span_bytes": 21037056
+    }
+  },
+  "caller_contracts": [
+    "RAMDisk/PackedRAMDisk slot required only when Request->Ramdisk is supplied; no ramdisk with a slot is unsupported",
+    "PackedRAMDisk also requires packed input; slot must start as sixteen zero bytes",
+    "TrustCache slot and actual valid trustcache file must agree; stray slot is compromised data"
+  ],
+  "limitations": [
+    "No full Boot() execution, allocation, EL1 transition or platform-driver configure()",
+    "Synthetic parser trees are not nuwa DTs and do not supply kernel-required platform nodes",
+    "No native prelink component ABI or current compiled boot_args DWARF qualification",
+    "No board/feed/bringup-plan or verified flag changed"
+  ],
+  "device_accessed": false
+}

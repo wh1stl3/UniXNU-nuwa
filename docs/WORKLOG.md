@@ -211,3 +211,5 @@
 2026-10-23T09:56:34+08:00 · 离线固定ABL前置段/generic/bootconfig复制路径及14处指令；WSL制成仅配置FAT32探针，读回/fsck通过，未接入固件或操作设备 · Q-096（提交后以git log定位） · docs/operations/2026-10-23-offline-initrd-and-volume-probe.md；reports/system-volume-audit/volume-probe.json
 
 2026-10-23T10:23:00+08:00 · 核验实际FD文件系统驱动与预连接源码，修正32位ResourceAttribute布局并核对41行类型；原始内存表差分回归通过，无设备动作 · Q-097（提交后以git log定位） · docs/operations/2026-10-23-volume-discovery-chain.md；reports/system-volume-audit/discovery-chain.json
+
+2026-10-23T11:20:07+08:00 · 固定DarwinBoot纯解析函数主机20项检查通过，当前内核格式被接受；复查符号闭包并从缓存DT提取CPU/GIC/PSCI输入，未生成目标ADT或操作设备 · Q-098（提交后以git log定位） · docs/operations/2026-10-23-darwin22-entry-input-contracts.md；reports/darwin22-input-contracts/

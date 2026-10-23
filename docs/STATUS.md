@@ -1,6 +1,6 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-23T10:23:00+08:00（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-23T11:20:07+08:00（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
@@ -44,11 +44,20 @@
 
 固定源码8项连接检查通过，实际R-011 FD确认Fat/DiskIo/Partition/English及发布器均存在，正常固件入口已有先ConnectAll再查配置的代码；未发现漏装FAT模块，不等于实机绑定/挂载成功。修正审计描述符ResourceAttribute为32位、MemoryType偏移60，全部41行实际SEC类型与源码一致；旧新表原始字节回归仍只差获批Heap字段。Android快照区间落在Kernel保留描述符，候选实际映射/保留仍未验证。见[链路报告](operations/2026-10-23-volume-discovery-chain.md)。本轮无设备命令或固件变更。
 
+## Darwin22入口离线核验
+
+固定DarwinBoot纯函数在本机WSL执行，20个ADT解析正反例符合预期；当前77742999源内核通过其ParseKernel（10个非零映射段，跨度21037056B）。这是主机解析/静态检查，不是EFI/QEMU或内核启动。官方原文缓存与源码确认sidecar槽位逐输入匹配，不能无条件添加RAMDisk/PackedRAMDisk/TrustCache三个槽。
+
+当前实际符号表复查为零未解析外部符号、五个平台观测导出存在；13个boot-progress回调未编入，与关闭开关一致，不是当前链接失败。ArmCpu/ArmDTPlatform源码SHA与本次CI匹配。完整预链接及当前内核DWARF ABI尚未验收。
+
+从已有Android FDT快照取得8个CPU reg（0、0x100…0x700）、GIC显式总线映射、0x40000 redistributor stride、timer声明19.2MHz和PSCI smc。只是报告输入，不生成nuwa ADT、不改板值或内存窗口；CPU编号映射及运行行为仍待验证。见[入口契约报告](operations/2026-10-23-darwin22-entry-input-contracts.md)和reports/darwin22-input-contracts/。
+
 ## 下一步
 
 1. 中午用户在场后，通知录像并刷新身份、恢复输入/日志门，再考虑现有已验收包的定向日志复测；优先捕获SHENGMEM的DT、initrd范围及发布状态。当前没有自动/定时启动，未准备新完整试启动包。
 2. 离线运输方案优先沿用chosen initrd但要求明确边界/保留策略；FV内嵌小探针是备选，尚未实现。由运行映射决定，不能猜前缀、向上取整越界或盲搜FAT字符串。
-3. 探针菜单只能验收卷与配置发现，再接真实Darwin22预链接及Apple ADT；DarwinBoot协议、分配计数和XNU执行均未验证。生成组件无需硬停，任何设备动作仍按AGENTS§3检查。
+3. 离线继续审查CPU affinity与XNU编号映射、GIC/PSCI输入转换规则；确认后才形成目标ADT候选，未知项保留TODO。NativePrelink运行ABI、回调/硬件watchdog另行验收。
+4. 探针菜单只能验收卷与配置发现；真正进入XNU前还需匹配的负载/ADT、实际连续内存分配和EL1交接。不能由解析检查推导今日启动时间。生成组件无需硬停，设备动作仍按AGENTS§3检查。
 
 ## 对照基线与固定约定
 

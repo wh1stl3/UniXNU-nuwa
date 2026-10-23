@@ -1040,3 +1040,13 @@
 [Evidence] 八项静态链路检查通过，Fat/DiskIo/Partition/English实际PE存在；Mu PiHob.h定义UINT32，实际SEC41行MemoryType均匹配源码，原始表字节回归仍只差获批Heap字段。
 [Risk] 未执行设备命令；二进制存在和源码路径不证明实际绑定、候选映射或FAT挂载；DarwinBoot及XNU运行仍未验证，未改固件/board/feed。
 ```
+
+## Q-098 · Darwin22入口输入离线检查
+
+```text
+[unixnu-nuwa][loader] 验证固定加载器解析当前内核并固定ADT条件输入与CPU来源
+
+[Change] 在WSL主机执行原样纯解析函数，核对当前内核真实符号和编译驱动来源；从缓存nuwa FDT提取CPU/GIC/timer/PSCI，展开官方逐输入占位符契约。
+[Evidence] 20个正反例全部符合预期且UBSan无报错；77742999内核ParseKernel接受、10个映射段、零未解析外部符号；FDT e7217b15记录8个affinity、stride0x40000、声明19.2MHz和smc。
+[Risk] 主机解析不等于EFI或XNU执行；目标ADT、完整NativePrelink ABI、CPU编号及硬件中断/PSCI均未验证；13回调和早期timer仍关闭，未操作设备或修改board/feed。
+```

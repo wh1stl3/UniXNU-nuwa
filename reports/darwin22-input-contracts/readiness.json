@@ -1,0 +1,282 @@
+{
+  "at": "2026-10-23T03:00:40.398605+00:00",
+  "scope": "Actual kernel symbol and fixed consumer-source audit; not complete ABI or boot qualification",
+  "kernel": {
+    "path": "out\\kernel-ci\\39793231214\\nuwa-8796-source\\build\\xnu\\ios-obj\\DEVELOPMENT_ARM64_BCM2837\\mach.development.bcm2837.unstripped",
+    "sha256": "77742999fc1c1b6a94c9603664d946553070f73c6eed83ce9fcca06d70d73ac8",
+    "bytes": 20187912,
+    "build_version": {
+      "platform": 2,
+      "minimum_os_raw": 1048576,
+      "sdk_raw": 1048576
+    },
+    "undefined_external_symbols": [],
+    "required_driver_exports": {
+      "_armcpu_registered": true,
+      "_armcpu_gic_ready": true,
+      "_armcpu_timer_interrupts": true,
+      "_armdt_platform_configured": true,
+      "_armdt_platform_nvram_proxy": true
+    },
+    "inline_debug_sections": [],
+    "downloaded_dsym_paths": []
+  },
+  "compiled_driver_sources": [
+    {
+      "component": "ArmCpu",
+      "sha256": "3c87b3bd617be5582a6a24ff797c359497ee9feaa702ee883ecee4270db21c9f",
+      "linked_in_current_kernel": true
+    },
+    {
+      "component": "ArmDTPlatform",
+      "sha256": "07f96a42bdd638022960f5fcaf9e3a07dd73a82c869a70815781cac6d4873b3b",
+      "linked_in_current_kernel": true
+    },
+    {
+      "component": "ArmVirtPlatform",
+      "sha256": "34213e235425bfc201e7348aecdebbb861cb3c7492c3ebbf1d5eeefa20ece8a3",
+      "linked_in_current_kernel": false
+    }
+  ],
+  "sources": [
+    {
+      "repository": "UniXNU/UniXNU",
+      "commit": "75bc13dd34dc4e403826793739e316a264ce00dd",
+      "path": "drivers/ArmDTPlatform/ArmDTPlatform.cpp",
+      "sha256": "07f96a42bdd638022960f5fcaf9e3a07dd73a82c869a70815781cac6d4873b3b",
+      "license": "BSD-2-Clause-Patent"
+    },
+    {
+      "repository": "UniXNU/UniXNU-sheng",
+      "commit": "a599a1a8a92093b5077543e071b72130769eb325",
+      "path": "package/BootProgress.c",
+      "sha256": "efa2bbecd1942e4241a6c48d590fbb7029a883eaa85babb7c1f1703e8f610e95",
+      "license": "MIT"
+    },
+    {
+      "repository": "UniXNU/UniXNU-sheng",
+      "commit": "a599a1a8a92093b5077543e071b72130769eb325",
+      "path": "package/BootFaultProbe.c",
+      "sha256": "64ab996a458265def45c81d53d7a209b60a01b3983f4a02ec35050fab6ee1b8a",
+      "license": "MIT"
+    },
+    {
+      "repository": "UniXNU/UniXNU-sheng",
+      "commit": "a599a1a8a92093b5077543e071b72130769eb325",
+      "path": "package/BootWatchdogPolicy.c",
+      "sha256": "4b3a3b8ff2ab0177f547ff318bc9f3b60b7a87561f85a82d4b52aa23e8721224",
+      "license": "MIT"
+    }
+  ],
+  "runtime_flags": [
+    "CFLAGS_EXTRA=-Wno-reserved-identifier -Wno-pre-c11-compat -Wno-missing-designated-field-initializers -Wno-suggest-override -Wno-unnecessary-virtual-specifier -Wno-suggest-destructor-override -Wno-ms-bitfield-padding -DXNU_NATIVE_PAN=0 -DXNU_BOOT_PROGRESS=0",
+    "start.o_SFLAGS_ADD=-DXNU_NATIVE_ARCH_TIMER=0"
+  ],
+  "callbacks": [
+    {
+      "name": "boot_progress_init",
+      "defined_in_actual_kernel": false,
+      "nuwa_definition_files": [],
+      "same_soc_reference": [
+        {
+          "path": "package/BootProgress.c",
+          "line": 502
+        }
+      ],
+      "enabled_in_current_build": false
+    },
+    {
+      "name": "boot_progress_start",
+      "defined_in_actual_kernel": false,
+      "nuwa_definition_files": [],
+      "same_soc_reference": [
+        {
+          "path": "package/BootProgress.c",
+          "line": 965
+        }
+      ],
+      "enabled_in_current_build": false
+    },
+    {
+      "name": "boot_progress_active",
+      "defined_in_actual_kernel": false,
+      "nuwa_definition_files": [],
+      "same_soc_reference": [
+        {
+          "path": "package/BootProgress.c",
+          "line": 470
+        }
+      ],
+      "enabled_in_current_build": false
+    },
+    {
+      "name": "boot_progress_bind",
+      "defined_in_actual_kernel": false,
+      "nuwa_definition_files": [],
+      "same_soc_reference": [
+        {
+          "path": "package/BootProgress.c",
+          "line": 513
+        }
+      ],
+      "enabled_in_current_build": false
+    },
+    {
+      "name": "boot_progress_putc",
+      "defined_in_actual_kernel": false,
+      "nuwa_definition_files": [],
+      "same_soc_reference": [
+        {
+          "path": "package/BootProgress.c",
+          "line": 535
+        }
+      ],
+      "enabled_in_current_build": false
+    },
+    {
+      "name": "boot_progress_stage",
+      "defined_in_actual_kernel": false,
+      "nuwa_definition_files": [],
+      "same_soc_reference": [
+        {
+          "path": "package/BootProgress.c",
+          "line": 542
+        }
+      ],
+      "enabled_in_current_build": false
+    },
+    {
+      "name": "boot_progress_irq",
+      "defined_in_actual_kernel": false,
+      "nuwa_definition_files": [],
+      "same_soc_reference": [
+        {
+          "path": "package/BootProgress.c",
+          "line": 575
+        }
+      ],
+      "enabled_in_current_build": false
+    },
+    {
+      "name": "boot_progress_poll",
+      "defined_in_actual_kernel": false,
+      "nuwa_definition_files": [],
+      "same_soc_reference": [
+        {
+          "path": "package/BootProgress.c",
+          "line": 598
+        }
+      ],
+      "enabled_in_current_build": false
+    },
+    {
+      "name": "boot_progress_user_breakpoint",
+      "defined_in_actual_kernel": false,
+      "nuwa_definition_files": [],
+      "same_soc_reference": [
+        {
+          "path": "package/BootFaultProbe.c",
+          "line": 36
+        }
+      ],
+      "enabled_in_current_build": false
+    },
+    {
+      "name": "boot_progress_user_abort",
+      "defined_in_actual_kernel": false,
+      "nuwa_definition_files": [],
+      "same_soc_reference": [
+        {
+          "path": "package/BootFaultProbe.c",
+          "line": 37
+        }
+      ],
+      "enabled_in_current_build": false
+    },
+    {
+      "name": "boot_progress_critical_exit",
+      "defined_in_actual_kernel": false,
+      "nuwa_definition_files": [],
+      "same_soc_reference": [
+        {
+          "path": "package/BootFaultProbe.c",
+          "line": 77
+        }
+      ],
+      "enabled_in_current_build": false
+    },
+    {
+      "name": "boot_progress_process_stage",
+      "defined_in_actual_kernel": false,
+      "nuwa_definition_files": [],
+      "same_soc_reference": [
+        {
+          "path": "package/BootProgress.c",
+          "line": 555
+        }
+      ],
+      "enabled_in_current_build": false
+    },
+    {
+      "name": "boot_progress_exit",
+      "defined_in_actual_kernel": false,
+      "nuwa_definition_files": [],
+      "same_soc_reference": [
+        {
+          "path": "package/BootProgress.c",
+          "line": 563
+        }
+      ],
+      "enabled_in_current_build": false
+    }
+  ],
+  "adt_platform_requirements": [
+    {
+      "path": "/chosen",
+      "source_line": 61
+    },
+    {
+      "path": "/arm-io",
+      "source_line": 75
+    },
+    {
+      "path": "/cpus",
+      "source_line": 125
+    },
+    {
+      "path": "/arm-io",
+      "source_line": 126
+    },
+    {
+      "path": "/defaults",
+      "source_line": 127
+    },
+    {
+      "path": "/options",
+      "source_line": 128
+    }
+  ],
+  "nvram_requirement": {
+    "path": "/chosen",
+    "bank_size_bytes": 4,
+    "proxy_data": "nonempty; full CHRP semantics also require IODTNVRAM validation"
+  },
+  "watchdog": {
+    "reference_policy_defined_in_kernel": false,
+    "reference_role": "Writes launchd scratch-Data policy before launchd; not a hardware watchdog driver",
+    "nuwa_hardware_backend": "TODO: source selection, real resources and Darwin22 ABI/runtime evidence"
+  },
+  "blockers": [
+    "Real target Apple ADT and matching conditional sidecars are not supplied",
+    "Complete native prelink donor/component runtime ABI not qualified",
+    "Architectural timer and boot-progress hooks remain disabled; absence is not a current link failure",
+    "BootProgress reference is MIT same-SoC source, not an adopted nuwa hardware driver"
+  ],
+  "unchanged": [
+    "board.toml",
+    "feeds.toml",
+    "bringup-plan.json",
+    "all verified flags"
+  ],
+  "device_accessed": false
+}
