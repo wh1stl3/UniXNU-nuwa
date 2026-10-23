@@ -35,3 +35,7 @@ recovery实际送回原Android，postcondition.at=2026-10-23T18:20:52.568611+00:
 ## 后续状态（不改写上述基线实测）
 
 后续已按0019实现HOB范围缓存交接候选26ef8efd，完成离线验收和一次临时启动；用户报告进入UniXNU菜单，Android恢复完成1/三分区SHA不变。详见[候选说明](2026-10-24-hob-cache-handoff.md)及[实测记录](2026-10-24-hob-cache-handoff-trial.md)。实际候选守卫读取EL/SCTLR，未增加TTBR/TCR/MAIR运行转储，不得将上文计划写成寄存器均已采集。缓存阶段原图及重复性待补，未确认根因。
+
+## 五图证据更新（2026-10-24）
+
+本轮原图已取得：HOB-CACHE维护标记后after-mmu ok/count84，随后memory Success、ReadyToBoot及唯一配置菜单。缓存交接方向获得强支持，本轮阶段实机通过，重复性/唯一根因仍待验。最大9GiB仅GetMemoryMap快照，未分配OS窗口；最后Not Found与探针action=exit及无OS负载相符。旧“尚未收到原图”描述仅代表此前阶段，已由[实测记录](2026-10-24-hob-cache-handoff-trial.md)和screen-observation.json取代。

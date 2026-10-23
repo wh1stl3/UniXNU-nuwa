@@ -4,7 +4,7 @@
 
 ## 当前入口（2026-10-24）
 
-缓存交接候选26ef8efd已完成离线验收和单次临时启动，用户报告进入UniXNU菜单；Android恢复完成1、三个启动分区SHA不变。缓存阶段原图和根因确认仍待补，尚未执行XNU/iOS。续接先读[STATUS](docs/STATUS.md)、[主线交接](docs/operations/2026-10-23-mainline-handoff.md)和[本轮实测](docs/operations/2026-10-24-hob-cache-handoff-trial.md)。不要重复执行已完成的启动命令。
+缓存交接候选26ef8efd已完成离线验收和单次临时启动，五张原图确认after-mmu检查成功并到达ReadyToBoot/UniXNU菜单；Android恢复完成1、三个启动分区SHA不变。缓存交接主因判断获得强支持，重复性及唯一根因仍待验，尚未执行XNU/iOS。续接先读[STATUS](docs/STATUS.md)、[主线交接](docs/operations/2026-10-23-mainline-handoff.md)和[本轮实测](docs/operations/2026-10-24-hob-cache-handoff-trial.md)。不要重复执行已完成的启动命令。
 
 ## 为什么单开一个仓库
 

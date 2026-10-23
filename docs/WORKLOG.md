@@ -307,3 +307,5 @@
 2026-10-24T02:56:24.080562+08:00 · 26ef8efd用户确认录像后单次临时启动/120秒观察，用户报告进入UniXNU菜单；原Android恢复完成1/三分区SHA不变；缓存阶段原图待补，未宣布根因或iOS执行 · Q-141 · reports/hob-cache-handoff-trial/2026-10-24/
 
 2026-10-24T02:58:55.763501+08:00 · 用户要求落实所有文档：同步README/STATUS/主线交接/候选说明/基线后续/实测/PENDING及D-025；历史原始证据保留，移除当前交接的重复启动命令，菜单文字与阶段原图区分；无新增设备动作 · Q-142（续接747d8fc） · docs/operations/2026-10-24-hob-cache-handoff-trial.md
+
+2026-10-24T03:08:47.513216+08:00 · 五原图确认HOB维护后after-mmu与ReadyToBoot/菜单阶段实机通过；无OS符合exit探针，末尾充电为用户报告；补强缓存首因判断并将公开资料/明确排序要求写AGENTS第8节，无新设备动作 · Q-143（续接772465b） · reports/hob-cache-handoff-trial/2026-10-24/screen-observation.json

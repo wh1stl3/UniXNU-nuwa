@@ -1500,3 +1500,13 @@
 [Evidence] 747d8fc及本轮preflight/launch/recovery/postcondition，用户菜单文字；文档一致性审计记录原始证据哈希和阶段缺项。
 [Risk] 本轮缓存阶段原图与重复性仍缺，未确认根因或XNU执行；仅文档整理，无新增设备动作。
 ```
+
+## Q-143 · 五原图与故障判断规则
+
+```text
+[unixnu-nuwa][device] 归档缓存后HOB与ReadyToBoot通过原图并落实原因判断规则
+
+[Change] 保存五原图和SHA，更新阶段通过及无OS原因，AGENTS增加公开资料结合实况主动排序判断要求。
+[Evidence] after-mmu ok/count84、memory Success、ReadyToBoot和唯一菜单；探针exit/无OS，既有恢复完成1/分区SHA一致。
+[Risk] 单次对照存在布局时序混杂，缓存唯一根因和稳定性未闭环；9GiB仅快照，未执行XNU，无新设备动作。
+```

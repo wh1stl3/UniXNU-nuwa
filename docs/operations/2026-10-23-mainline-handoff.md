@@ -1,8 +1,8 @@
-# 主线交接（2026-10-24T02:58:55.763501+08:00）
+# 主线交接（2026-10-24T03:08:47.513216+08:00）
 
 ## 当前结果与执行门
 
-用户要求“继续，按缓存交接遗漏这个方向准备单变量修复候选，先完成离线验证和新包构建，保持Heap和坏条目保护不变，需要实测时再通知我录像”。本轮hob-cache-handoff已在用户新鲜确认录像后，完成preflight并即时通知后单次临时启动，ACK=0。120秒观察已结束，用户直接报告“进入了unixnu菜单”；缓存阶段原图待补；recovery/postcondition已确认Android完成1与三分区SHA不变，当前无需按键。不要重复启动，不以ACK认定缓存修复。实测记录目录reports/hob-cache-handoff-trial/2026-10-24/。先读AGENTS/STATUS/DECISIONS，两个旧资料库只读；不改板内存/基址或_verified。
+五张用户原图已归档：维护后after-mmu ok/count84、memory Success、ReadyToBoot及唯一配置菜单，本轮阶段实机通过。缓存遗漏为首要原因判断，重复性及唯一根因未验。最后无OS/用户报告充电与探针action=exit/无OS负载相符。原Android完成1/三分区SHA一致已闭环；当前不需按键/本轮补图，不新增启动。AGENTS第8节落实用户主动结合公开资料作明确判断要求。
 
 ## 来源与准备好的包
 
@@ -31,17 +31,13 @@ MemoryPeim只新增登记私有一次性回调；ArmConfigureMmu ABI/默认空�
 
 上轮postcondition.at=2026-10-23T18:20:52.568611+00:00，即北京时间10-24 02:20:52；nuwa/kalama、Android完成1、slot_a、三分区SHA与当轮preflight一致，恢复闭环。本轮启动前新鲜preflight.at=2026-10-23T18:50:04.648494+00:00，Android完成1及基线已取得；本轮postcondition.at=2026-10-23T18:55:45.904383+00:00，恢复后Android完成1且三分区SHA一致，已闭环。分析预链接5a128fb2仍loadable=false，无真实ADT/窗口/XNU执行证据。
 
-固件仓文档已推送b569e4a（前序899ede3），仅同步集成/运输/输入审计状态；构建源仍固定6176a82，不将文档HEAD冒充实际镜像来源。设备仓本轮决策D-025已追加。
+固件仓文档/规则已推送e7a2284（前序6770fb9、b569e4a），仅同步集成/运输/输入审计状态；构建源仍固定6176a82，不将文档HEAD冒充实际镜像来源。设备仓本轮决策D-025已追加。
 
-## 已完成执行与下一步
+## 已完成与下一步
 
-本轮preflight、launch、recovery、postcondition均已完成，原始证据不得覆盖；747d8fcc7368778a4af6ff49bf3d845e5154cf2e已推送。用户录像确认只用于本轮一次启动。当前无需按键，不要重新运行launch或恢复流程。
+本轮preflight/launch/recovery/postcondition及五原图完整，screen-observation.json记录SHA及逐图转录；SCTLR全值不强读。详见2026-10-24-hob-cache-handoff-trial.md，历史“原图待补”由新证据取代，不重跑设备动作。
 
-1. 接收并原样归档本轮缓存日志/菜单照片或录像，记录SHA256及来源。只有用户文字“进入了unixnu菜单”，尚无本轮图像。
-2. 核对HOB-CACHE el/sctlr/base/bytes/line，以及cache-handoff-before、after-mmu和后续阶段。缺行写未验证，不从菜单倒推具体寄存器值或每个checkpoint。
-3. 若原图支持跨越MMU，则将结论限定为单次候选阶段推进；仍有代码布局/时序混杂。若仍坏或维护被拒绝，依实际日志转向状态/映射诊断，保留Heap与保护。
-4. 无需因等画面停止离线核对；不在本次“落实文档”请求下新增包或启动。后续设备试验必须新鲜录像确认、包复验、唯一nuwa/kalama、恢复门及即时通知。
-
-## 后续试验命令模板（未执行，不含启动授权）
-
-使用新的证据目录，例如reports/hob-cache-handoff-trial/<新的轮次>/；禁止复用本轮文件。配置PYTHONUTF8=1，PATH加入只读platform-tools，使用bundled Python。先执行record-nuwa-trial-state.py --output <新目录>/preflight.json --package <经严格验收的package.json> --capture-confirmation <本轮真实答复>。只有满足所有门且即时通知后，才执行trial-v4-firmware.py launch --evidence <新目录>/launch.json --package <同一包> --preflight <新目录>/preflight.json --observation-seconds 120。观察后按需recover --evidence <新目录>/recovery.json --package <同一包>，再record-nuwa-trial-state.py --output <新目录>/postcondition.json --before <新目录>/preflight.json。模板本身不是许可。
+1. 保持Heap、HOB保护、板内存及_verified，继续真实OS运输/ADT/窗口实际分配离线准备。ReadyToBoot最大9GiB仅快照，不据此填所有权或分配成功。
+2. 缓存遗漏为首嫌，映射/属性、布局时序仍是备选。后续独立重复试验须新鲜录像确认、包复验、唯一nuwa/kalama、恢复证据及即时通知，不复用本轮preflight或录像许可。
+3. 不包含XNU/ADT的配置探针退出后找不到OS符合设计；无需为此删守卫或改Heap。固件仓文档/规则e7a2284已推送，实际构建源仍6176a82。
+4. 原始记录不覆盖。新轮次使用新证据目录；试验结束恢复Android完成1并核对三分区SHA。

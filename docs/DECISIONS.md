@@ -415,3 +415,5 @@ D-023执行补充（2026-10-23 09:14）：CI39835052901及实际SEC表检查通�
 - 证据：patches/firmware-candidates/0019-hob-cache-handoff.patch、CI40005057158、reports/hob-cache-handoff/40005057158/、reports/hob-cache-handoff-trial/2026-10-24/；构建源bdcf4a2，实测记录提交747d8fcc7368778a4af6ff49bf3d845e5154cf2e。
 
 最后建表分配完成后、MAIR/TTBR安装之前，仅在EL1/2、SCTLR.M/C关闭、可信arena及完整HOB链有效时，对已使用HOB范围按完整cache行执行DSB/IVAC/DSB/ISB；保留原Heap/板值/属性、HOB扫描和停机保护。不得以删守卫或改变Heap作为同候选修复。用户报告进入菜单支持阶段推进；未取得本轮缓存原图、重复性及映射数据，布局/时序仍是混杂因素。候选不升格为正常profile或_verified=true；先核对本轮画面，新增设备试验另过日志/恢复门。
+
+D-025执行更新（2026-10-24）：五张用户原图取得，HOB维护后after-mmu ok/count84并达ReadyToBoot/菜单，本轮阶段实机通过；缓存遗漏主因判断明显增强，重复性/稳定性仍未验。最大9GiB为快照不授权窗口；最终无OS符合action=exit和无OS负载。详见screen-observation.json。用户要求主动结合公开资料作明确排序判断，已落实AGENTS第8节；不放宽证据或设备边界。

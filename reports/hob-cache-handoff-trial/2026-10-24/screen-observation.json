@@ -1,0 +1,93 @@
+{
+  "at": "2026-10-24T03:04:53.783195+08:00",
+  "candidate_image_sha256": "26ef8efdc034f726df23f7bb2998d9e980e52e706e914ba9a415ca088dba2051",
+  "source": "Five original user screenshots supplied after the trial; manual visual transcription",
+  "images": [
+    {
+      "file": "reports/hob-cache-handoff-trial/2026-10-24/cache-after-mmu.png",
+      "sha256": "f0aa41920814eb6f87547b7d8d25d658d399fee2d555cd8fafd86e09ad19622a",
+      "bytes": 370207,
+      "source": "user attachment, copied unchanged"
+    },
+    {
+      "file": "reports/hob-cache-handoff-trial/2026-10-24/fv-and-boot-audit.png",
+      "sha256": "c6c159b7509530c4c0aa614caeb6ad46360a8c6bfd130ed0d3c93393ad3972ad",
+      "bytes": 501966,
+      "source": "user attachment, copied unchanged"
+    },
+    {
+      "file": "reports/hob-cache-handoff-trial/2026-10-24/ready-to-boot-map.png",
+      "sha256": "128b42c94e44b168ca19c022c7a4fe14966aae139b4a6375e4b74ee2b748a46a",
+      "bytes": 498575,
+      "source": "user attachment, copied unchanged"
+    },
+    {
+      "file": "reports/hob-cache-handoff-trial/2026-10-24/volume-probe-menu.png",
+      "sha256": "541b609c47f1d976ed9f3ed608f4cc45d88d07f038b68a2d45296560f3908b7b",
+      "bytes": 605408,
+      "source": "user attachment, copied unchanged"
+    },
+    {
+      "file": "reports/hob-cache-handoff-trial/2026-10-24/no-os-usb-fallback.png",
+      "sha256": "a2021a24a4ec1b59e3e4d07cb577234a3d573f51cdbdaba8db91ba4c3ce5ecc1",
+      "bytes": 210338,
+      "source": "user attachment, copied unchanged"
+    }
+  ],
+  "screen_1": {
+    "before_mmu": "ok count=56",
+    "cache_handoff_before": "ok count=84",
+    "cache_invalidate_marker_visible": true,
+    "cache_el": 1,
+    "cache_line_bytes": 64,
+    "cache_sctlr_exact": "not transcribed: insufficient legibility for all digits",
+    "cache_base_and_span_exact": "not independently transcribed from low-resolution image",
+    "after_mmu": "ok phase=after-mmu context=0x0 count=84",
+    "after_mmu_location": "Immediately below the invalidate log and its wrapped line=64, above memory-peim-return",
+    "memory_peim_return": "ok count=85",
+    "memory_status": "Success",
+    "hash_exact": "not transcribed"
+  },
+  "screen_2": {
+    "embedded_block_device_bytes": "0x400000",
+    "embedded_block_device_status": "Success",
+    "boot_audit_registration": "Success",
+    "legacy_volume_publisher": "Not Found; separate embedded fallback succeeds",
+    "mmu_constructor": "leave status=Success"
+  },
+  "screen_3": {
+    "ready_el": 1,
+    "mpidr": "0x81000000",
+    "cntfrq": "19200000",
+    "map_bytes": 6144,
+    "descriptor_stride": 48,
+    "map_version": 1,
+    "descriptors": 128,
+    "conventional": 17,
+    "merged": 17,
+    "largest_base": "0x8C0000000",
+    "largest_bytes": "0x240000000",
+    "largest_writeback_base": "0x8C0000000",
+    "largest_writeback_bytes": "0x240000000",
+    "explicit_limitation": "snapshot only: no window allocated or reserved"
+  },
+  "screen_4": {
+    "unique_configuration_menu": "NUWA VOLUME PROBE",
+    "entry": "Volume config loaded - action",
+    "driver_counts": "0 loaded / 0 failed"
+  },
+  "screen_5": {
+    "image_return_status": "Not Found",
+    "usb_fallback": "No handles survived filtering; no USB devices found on first attempt"
+  },
+  "terminal_state_user_report": "最后进入充电界面",
+  "charging_screen_image_provided": false,
+  "interpretation": {
+    "cache_candidate_stage_result": "实机通过: this trial shows cache maintenance marker, after-mmu ok, ReadyToBoot and unique config menu",
+    "root_cause": "Cache handoff omission strongly supported as leading explanation; single trial and layout/timing confounding remain",
+    "full_os_execution": false,
+    "charging_explanation": "Consistent with configured timeout=60/action=exit and absent OS payload; screenshot proves fallback, charging is user-reported",
+    "memory_ownership": "GetMemoryMap snapshot only; no OS allocation/reservation proven"
+  },
+  "recovery_evidence": "postcondition.json records Android=1 and unchanged three boot partitions at 2026-10-23T18:55:45.904383+00:00; no new phone command for screenshot processing"
+}

@@ -21,3 +21,7 @@ CI40005057158/source bdcf4a2成功。下载实际SEC中NuwaHobCacheHandoff的显
 ## 实测状态更新（2026-10-24）
 
 候选26ef8efd已单次临时启动并完成至少120秒USB观察，用户直接报告“进入了unixnu菜单”。恢复和postcondition确认Android完成1、槽_a与三分区SHA不变。原始缓存阶段画面尚未收到，EL/SCTLR/维护范围、after-mmu链完整性及重复性未验证。菜单观察增强缓存交接假设，但不能排除布局/时序因素，也不代表XNU或iOS执行。详细证据见[实测记录](2026-10-24-hob-cache-handoff-trial.md)；当前交接以[主线交接](2026-10-23-mainline-handoff.md)为准。
+
+## 五图证据更新（2026-10-24）
+
+本轮原图已取得：HOB-CACHE维护标记后after-mmu ok/count84，随后memory Success、ReadyToBoot及唯一配置菜单。缓存交接方向获得强支持，本轮阶段实机通过，重复性/唯一根因仍待验。最大9GiB仅GetMemoryMap快照，未分配OS窗口；最后Not Found与探针action=exit及无OS负载相符。旧“尚未收到原图”描述仅代表此前阶段，已由[实测记录](2026-10-24-hob-cache-handoff-trial.md)和screen-observation.json取代。
