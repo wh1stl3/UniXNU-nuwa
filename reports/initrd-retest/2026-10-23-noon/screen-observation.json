@@ -1,0 +1,27 @@
+{
+  "source": "User original photo and explicit text for this retest",
+  "photo": {
+    "path": "reports/initrd-retest/2026-10-23-noon/sec-last-screen.jpg",
+    "bytes": 6699911,
+    "sha256": "47637c0e2b45f9f21e3c67464437231cab66d8060c3bc3106d8377aa10914211"
+  },
+  "last_visible_line": "[NUWA-ENTRY] platform-hobs status=Success",
+  "visible_entry_arg0": "0xb5db1000",
+  "visible_banner_build_time": "18:47:10",
+  "visible_banner_build_date": "Oct 22 2026",
+  "actual_pinned_sec_sha256": "9f59f4473b6d2d09bf10ebcbdfa27df70ffb26ce0321c3b2635632687b81285c",
+  "actual_pinned_sec_build_strings": [
+    "Oct 22 2026",
+    "18:47:10"
+  ],
+  "stage": "SEC platform HOB returned Success; subsequent execution not observed",
+  "not_observed": [
+    "before-fv-decompress",
+    "DXE",
+    "SHENGMEM",
+    "UniXNU menu",
+    "XNU"
+  ],
+  "limitation": "Last visible line does not uniquely identify the stopped function; image date correlation must be checked",
+  "banner_matches_actual_pinned_sec": true
+}

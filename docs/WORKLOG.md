@@ -213,3 +213,5 @@
 2026-10-23T10:23:00+08:00 · 核验实际FD文件系统驱动与预连接源码，修正32位ResourceAttribute布局并核对41行类型；原始内存表差分回归通过，无设备动作 · Q-097（提交后以git log定位） · docs/operations/2026-10-23-volume-discovery-chain.md；reports/system-volume-audit/discovery-chain.json
 
 2026-10-23T11:20:07+08:00 · 固定DarwinBoot纯解析函数主机20项检查通过，当前内核格式被接受；复查符号闭包并从缓存DT提取CPU/GIC/PSCI输入，未生成目标ADT或操作设备 · Q-098（提交后以git log定位） · docs/operations/2026-10-23-darwin22-entry-input-contracts.md；reports/darwin22-input-contracts/
+
+2026-10-23T14:16:46+08:00 · R-011同包复测照片停于SEC平台HOB成功，未取得SHENGMEM；12:18:42恢复Android完成1且三分区未变，转离线HOB/构造审查 · Q-099（提交后以git log定位） · reports/initrd-retest/2026-10-23-noon/；docs/operations/2026-10-23-initrd-retest-sec-stop.md

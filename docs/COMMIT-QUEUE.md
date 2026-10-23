@@ -1050,3 +1050,13 @@
 [Evidence] 20个正反例全部符合预期且UBSan无报错；77742999内核ParseKernel接受、10个映射段、零未解析外部符号；FDT e7217b15记录8个affinity、stride0x40000、声明19.2MHz和smc。
 [Risk] 主机解析不等于EFI或XNU执行；目标ADT、完整NativePrelink ABI、CPU编号及硬件中断/PSCI均未验证；13回调和早期timer仍关闭，未操作设备或修改board/feed。
 ```
+
+## Q-099 · 同包复测SEC停点与恢复
+
+```text
+[unixnu-nuwa][device] 记录同包复测SEC末屏并确认原Android完整恢复
+
+[Change] 保存一次R-011原包定向复测、用户原照片及SEC banner关联，区分上午菜单到达与本次SEC停点，关闭本轮按键恢复待办。
+[Evidence] 候选8e852150及前置身份/恢复输入核对通过；原照片47637c0e最后为platform-hobs Success/x0 B5DB1000，实际SEC含同一日期时间；12:18:42 Android完成1、三分区SHA未变。
+[Risk] 未取得本轮DXE或SHENGMEM证据，具体阻塞函数及同包差异未定位；无XNU运行结论，无flash/erase/改槽，下一步只离线审查。
+```

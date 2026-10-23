@@ -1,14 +1,14 @@
 # STATUS
 
-> 当前唯一真相；更新：2026-10-23T11:20:07+08:00（Asia/Shanghai）。历史见WORKLOG。
+> 当前唯一真相；更新：2026-10-23T14:16:46+08:00（Asia/Shanghai）。历史见WORKLOG。
 
 ## 当前结论
 
-**R-011 A已完成：恢复同机原厂209.75MiB DXE Heap后，用户实机观察到UniXNU的Return to firmware / Restart / Power off内置菜单，随后返回BDS的NoBootOS页面。已越过R-010的DxeCore断言位置；这不是XNU启动，当前包没有FAT或XNU负载。**
+**中午原R-011包8e852150定向复测，用户照片最后可见SEC的platform-hobs status=Success，x0=0xB5DB1000；本次未取得DXE/SHENGMEM/菜单证据。上午同包到达UniXNU菜单的用户观察仍有效，但不能视为稳定复现。尚未进入XNU。**
 
-**09:14:28命令确认nuwa/kalama Android boot_completed=1，postcondition三个分区SHA与试前相同，用户亦确认已回Android。** 无flash/erase/改槽或额外候选试验。当前继续离线审查系统卷发现与ABL initrd链路，不直接猜ramdisk位置或把Android DT当Apple ADT。
+**12:18:42已恢复nuwa/kalama Android boot_completed=1，后置三分区SHA与本次试前相同。** 一次同包临时启动，无flash/erase/改槽，原照片SHA47637c0e与SEC banner校验已保存。用户现要求继续离线分析，本轮不再操作实机。
 
-[本轮报告](operations/2026-10-23-factory-heap-build-trial.md)，证据reports/factory-heap/39835052901/。本轮画面证据目前为用户明确文字描述，未收到照片/录像；不捏造完整日志、零分配失败或SPSS问题均已解决。
+[中午复测报告](operations/2026-10-23-initrd-retest-sec-stop.md)，reports/initrd-retest/2026-10-23-noon/；[上午R-011报告](operations/2026-10-23-factory-heap-build-trial.md)保留。下一条before-fv-decompress之前有入口参数HOB及库构造，具体故障尚未定位，不能判为initrd或解压失败。
 
 ## 已完成的R-011
 
@@ -54,10 +54,10 @@
 
 ## 下一步
 
-1. 中午用户在场后，通知录像并刷新身份、恢复输入/日志门，再考虑现有已验收包的定向日志复测；优先捕获SHENGMEM的DT、initrd范围及发布状态。当前没有自动/定时启动，未准备新完整试启动包。
-2. 离线运输方案优先沿用chosen initrd但要求明确边界/保留策略；FV内嵌小探针是备选，尚未实现。由运行映射决定，不能猜前缀、向上取整越界或盲搜FAT字符串。
-3. 离线继续审查CPU affinity与XNU编号映射、GIC/PSCI输入转换规则；确认后才形成目标ADT候选，未知项保留TODO。NativePrelink运行ABI、回调/硬件watchdog另行验收。
-4. 探针菜单只能验收卷与配置发现；真正进入XNU前还需匹配的负载/ADT、实际连续内存分配和EL1交接。不能由解析检查推导今日启动时间。生成组件无需硬停，设备动作仍按AGENTS§3检查。
+1. 离线核对当前实际SEC TE与link-map，审查BuildGuidDataHob和ProcessLibraryConstructorList之间的真实指令、PrePiHobLib及构造函数依赖；不把源码行间范围误判为唯一故障点。
+2. 细化SEC诊断点后才安排新构建及静态产物核验，保留已获批Heap、PIL和shim；当前不再试启动。SHENGMEM候选映射未取得，卷运输/挂载继续待证据，不猜偏移。
+3. 已有DarwinBoot主机解析及缓存CPU/GIC证据可以继续支持离线ADT/CPU编号审查；目标ADT、NativePrelink运行ABI、实际连续内存分配和EL1交接未通过。
+4. 生成诊断组件无需硬停，设备动作仍按AGENTS§3核对具体日志与恢复条件；board/feed/bringup-plan和所有_verified保持。
 
 ## 对照基线与固定约定
 
