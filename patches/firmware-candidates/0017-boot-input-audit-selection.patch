@@ -1,0 +1,20 @@
+--- a/Platforms/Xiaomi/nuwaPkg/nuwa.dsc
++++ b/Platforms/Xiaomi/nuwaPkg/nuwa.dsc
+@@ -88,6 +88,7 @@
+   DarwinBootPkg/Driver/DarwinBoot.inf
+   nuwaPkg/Drivers/NuwaBootMemoryDxe/NuwaBootMemoryDxe.inf
+   nuwaPkg/Drivers/NuwaEmbeddedVolumeDxe/NuwaEmbeddedVolumeDxe.inf
++  nuwaPkg/Drivers/NuwaBootAuditDxe/NuwaBootAuditDxe.inf
+ 
+   #
+   # ACPI Tables
+--- a/Platforms/Xiaomi/nuwaPkg/nuwa.fdf
++++ b/Platforms/Xiaomi/nuwaPkg/nuwa.fdf
+@@ -89,6 +89,7 @@
+   INF DarwinBootPkg/Driver/DarwinBoot.inf
+   INF nuwaPkg/Drivers/NuwaBootMemoryDxe/NuwaBootMemoryDxe.inf
+   INF nuwaPkg/Drivers/NuwaEmbeddedVolumeDxe/NuwaEmbeddedVolumeDxe.inf
++  INF nuwaPkg/Drivers/NuwaBootAuditDxe/NuwaBootAuditDxe.inf
+ 
+   # Generated, hash-pinned configuration-only FAT resource.
+   FILE FREEFORM = 3F056471-ED81-4B72-B150-F0326E391286 {

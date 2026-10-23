@@ -21,3 +21,7 @@
 - 继续独立UEFI运行内存/CPU入口审查，形成具体连续窗口和目标Apple ADT方案；不使用总DRAM/其他板地址作为分配证据。
 - 新包构建/完整产物校验可直接进行；启动前须新鲜用户录像、唯一nuwa身份、包复验及具体恢复门，通知后执行。仅一般“继续”不替代录像可用性。
 - 源内核、分析用prelink、真实ADT、阶段入口、根存储/iOS运行分别验收。CPU Vectors、TZ/SPSS/Rsc独立问题仍未修复，不因配置发现成功自动关闭。
+
+## 启动输入诊断续接
+
+新增独立boot-input-audit，固件6176a82；46输入9补丁12后哈希已验，完整CI待触发。命令：`gh workflow run firmware-candidate.yml --repo wh1stl3/UniXNU-nuwa --ref main -f profile=boot-input-audit`。打包 `scripts/embedded_probe_package.py RUN --profile boot-input-audit`；新包仍需新的录像确认。无本轮设备动作，最近postcondition仍为embedded-probe-trial/2026-10-24。

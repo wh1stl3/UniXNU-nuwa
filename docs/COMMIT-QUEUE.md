@@ -1400,3 +1400,13 @@
 [Evidence] 65348重定位逐项读回、30段组件/native代码保持；4项拒绝测试和20项ADT回归通过，固定ParseKernel接受5a128fb2。
 [Risk] 早期安全initializer为空，完整ABI/目标ADT/运行内存和运输未完成；loadable=false，未操作设备。
 ```
+
+## Q-133 · 启动输入快照候选
+
+```text
+[unixnu-nuwa][firmware] 接入独立ReadyToBoot内存与CPU只读诊断
+
+[Change] 固定6176a82诊断驱动并接入独立构建、实际模块检查与严格打包/录像门。
+[Evidence] 46输入9补丁12后哈希校验通过；共享C汇总函数宿主UBSan通过，正常固件选择不变。
+[Risk] 完整CI与实机尚待；快照不代表XNU窗口分配或所有权，不含XNU/ADT。
+```
