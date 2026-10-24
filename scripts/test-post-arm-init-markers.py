@@ -146,8 +146,16 @@ def main():
         check('_current_percpu_base marker paints its band', pixels['496'] == '0xff8000ff')
         check('_current_percpu_base marker is the first new marker reached',
               reached.get('cpu_base') == min(v for k, v in reached.items() if k not in ('cyan', 'white')))
-        check('Execution still stops at the same per-CPU null dereference',
-              f'{best[1]}+{pc-best[0]:#x}' == NULL_DEREF)
+        tpidr = None
+        for read in (lambda: uc.reg_read(UC_ARM64_REG_TPIDR_EL1),
+                     lambda: uc.cpr_read(3, 0, 13, 0, 3)):
+            try:
+                value = read()
+                if value: tpidr = value; break
+            except Exception: pass
+        check('TPIDR_EL1 shim points at the zeroed per-CPU page', tpidr == int(report['probe_zero'], 16))
+        check('With the shim the model advances past the per-CPU null dereference',
+              f'{best[1]}+{pc-best[0]:#x}' == '_cpu_number+0x10')
         check('No invalid memory access other than the reported stop', all(b['pc'] == hex(pc) for b in bad))
         check('VBAR_EL1 was redirected to the probe vector page identity address',
               vbar.get('at_cpu_base') == hex(PA + int(report['probe']['va'], 16) - base))

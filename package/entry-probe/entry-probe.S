@@ -221,6 +221,13 @@ probe_mmu_on_replay:
 .global probe_arm_init
 probe_arm_init:
     BAND_SNAPSHOT 448, 0xffffffff
+    // Mainline shim, not a measurement: the platform-expert path reads the per-CPU
+    // base through TPIDR_EL1 before XNU has built cpu_data_t, and start.s clears
+    // TPIDR_EL1 after enabling the MMU. Point it at a zeroed page: cpu_number at
+    // +0xe8 then reads 0, which is the correct answer for the boot CPU. XNU
+    // overwrites TPIDR_EL1 with the real per-CPU data later in cpu_bootstrap.
+    adr         x15, probe_zero
+    msr         TPIDR_EL1, x15
 .global probe_arm_init_replay
 probe_arm_init_replay:
     .inst original_arm_init_word
@@ -340,3 +347,8 @@ hex_font:
     .word 0x99f11, 0xf8f1f, 0xf8f9f, 0xf1244
     .word 0xf9f9f, 0xf9f1f, 0xf9f99, 0xe9e9e
     .word 0xf888f, 0xe999e, 0xf8f8f, 0xf8f88
+
+.balign 4096
+.global probe_zero
+probe_zero:
+    .space 4096

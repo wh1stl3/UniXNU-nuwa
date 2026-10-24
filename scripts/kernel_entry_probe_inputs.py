@@ -48,7 +48,7 @@ def validate(meta,kernel_sha):
         if len(before)!=len(after) or new & covered or off<0 or off+len(after)>len(original) or original[off:off+len(before)]!=before:raise ValueError('Probe patch bounds, overlap or preimage differs')
         covered|=new;expected[off:off+len(after)]=after
     probe=build['probe'];offset=probe['file_offset']
-    if offset!=builder.align(len(original)) or len(raw)!=offset+4096 or probe['segment_bytes']!=4096:raise ValueError('Probe page extent differs')
+    if offset!=builder.align(len(original)) or len(raw)!=offset+8192 or probe['segment_bytes']!=8192:raise ValueError('Probe segment extent differs (expected two pages)')
     payload=raw[offset:]
     if sha(payload)!=probe['sha256'] or raw[:len(original)]!=expected or any(raw[len(original):offset]):raise ValueError('Kernel has bytes outside recorded diagnostic changes')
     m=builder.macho(raw)
