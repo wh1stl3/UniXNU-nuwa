@@ -37,6 +37,10 @@
 
 `scripts/test-kernel-entry-probe.py` 已能把**真实候选从入口连续执行穿过 MMU 到 `_arm_init`**：模型需先置入 AArch64 高异常级状态（`SCR_EL3.NS|RW`、`HCR_EL2.RW`）；默认状态保留为负对照。42 项通过，含负对照、占槽场景，以及三项钉死绑定：SCR_EL3/HCR_EL2 读回、页表摘要 `682cb477…`、停止点等于 white 回放地址。此前"引擎不支持、只能合成进入"是测试初始化错误，已作废。
 
+## 实机流程约定（2026-10-25 04:07 起）
+
+**实机试验不再需要逐次用户批准**；只需在需要录像前给用户发一个提醒问题（"可以开始录像了吗"），并遵守既有硬停条件：新鲜 preflight、唯一 nuwa/kalama、完成 1、三分区基线、即时通知、180 秒观察、恢复后 postcondition 三 SHA 一致。离线改动（构建/测试/打包/文档）无需征询。
+
 ## 当前状态：v7 已试验并闭环；v8 已把色带改成等高等距，待打包
 
 **entry-probe-03（v7 `af6e1b5f`）单次实机已闭环**：2026-10-24T17:16:20Z preflight → 17:22Z 恢复 Android 完成 1 → 17:25:11Z postcondition，三分区 SHA 与试前完全一致；原图 `out/trial-evidence/entry-probe-03/screen-01.jpg`（`dc310fb1…`）。

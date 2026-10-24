@@ -412,3 +412,5 @@
 2026-10-25 04:10 · 更正 panic 文本读数（用户给出正确值）：1088 行十六进制是 25733A20696E7661 → 字节 25 73 3A 20 69 6E 76 61 = "%s: inva"，即 XNU 的 panic("%s: invalid …", __func__, …)，第一个 %s 就是出问题的函数名——我们缺的正是这一格。v19 拟：抓第一个变参(__func__)两行十六进制 + 格式串两行，并修我们自己的隐患（HEXROW_VAL 用 x21–x28 被调用者保存寄存器，函数入口钩子里渲染会破坏内核状态）。· 本里程碑提交 · reports/xnu-entry-probe-trial/2026-10-25-10/screen-evidence.json
 
 2026-10-25 04:20 · v19 实现后未通过测试，已回退到 v18（.S 与两个测试脚本 git checkout），仓内无半成品。定位：v19 的 panic 块让探针代码多占一页，把 probe_flags（守卫标志页）挤到段尾；模型里第一个带守卫的带（416 _current_percpu_base）没画且在到达前抛异常 ⇒ flags 页很可能不在内核启动页表的映射范围内，守卫 ldrb 踩空。v19 重做：flags 页放到确定被映射的位置；抓 __func__ 变参两行 + 格式串两行；给 HEXROW_VAL 外加 x19-x28 保存/恢复。· 本里程碑提交 · docs/STATUS.md、docs/WORKLOG.md
+
+2026-10-25 04:10 · 新增长期约定（用户）：实机试验不再需要逐次批准，只需在需要录像前发问题提醒；离线构建/测试/打包/文档照旧自主推进。硬停条件（新鲜preflight、唯一nuwa/kalama、完成1、三SHA基线、即时通知、180秒观察、恢复后postcondition三SHA一致）不变。· 本里程碑提交 · docs/STATUS.md
