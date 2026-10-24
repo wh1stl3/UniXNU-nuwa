@@ -89,11 +89,22 @@ snapshot only; no window allocated or reserved
 
 分析内核 `1aeebf13` / `eb66542c` 的 `loadable` 仍为 `false`（人工资格化标志），但**实机已证明其可被加载并跳转**。
 
+## 本轮追加（2026-10-24 20:1x，实机 fastboot 取证）
+
+对上一轮"下一步 1"做了实测，结论已写死：
+
+- 小米 bootloader **不导出** reboot-reason 类变量 —— `fastboot getvar all` 共 296 行，除分区表外仅 40 余项，无重启原因。
+- `fetch` 不被支持（`Device does not support fetch command`），无法只读导出 `uefivarstore`（0x80000）。
+- **新发现：`slot-retry-count:a:6`**，`slot-successful:a:yes` / `slot-unbootable:a:no`。槽位 a 已累计 6 次重试计数，与内核启动失败后反复重启回 bootloader 吻合 —— 这是目前唯一能在重启后读到的、与本次失败直接相关的持久化痕迹。
+- 另有 `has-slot:system:no` / `current-slot:a` / `kernel:uefi`，确认引导链是 UEFI。
+
+设备已 `fastboot reboot` 送回 Android，`sys.boot_completed=1`，恢复闭环完成。证据 `reports/xnu-first-entry-video/2026-10-24/fastboot-varall.txt`。
+
 ## 下一步
 
-1. **取证改道 fastboot getvar。** 屏幕这条路已走到尽头 —— 内核就是不打印。`fastboot getvar` 不需要 root 也不需要串口，是当前唯一"重启后仍可读"的通道，可读 bootloader 的 reboot-reason 之类变量。上一轮没做，值得先试。
-2. **解决非 root 读取 UEFI 变量分区。** `scripts/audit-live-uefi-variables.py` 依赖 `su -c`，但设备是 user build（`adb root` 被拒），`/dev/block/by-name/uefi_a` 读不到。要么找非 root 路径，要么在 UEFI 侧主动把内核交接后的状态写进可读分区。
-3. **评估 `amfi-only-platform-code` 与启动链锁的关系。** 确认是否能在不依赖 Apple 硬件信任链的前提下让内核继续往前走 —— 这属于改变启动语义，需先立 NEED-REVIEW 条目再动手。
+1. **在 UEFI 侧主动落盘内核交接状态。** 屏幕路径已走到尽头（内核不打印），fastboot 侧也没有重启原因变量，而设备是 user build（`adb root` 被拒、`su` 不可用、`/sys/fs/pstore` 与 `/proc/cmdline` 均 Permission denied），**`scripts/audit-live-uefi-variables.py` 依赖 `su -c`，当前跑不通**。可行路径是在 DarwinBoot 交接时把状态写进一个 Android 侧可读分区。
+2. **评估 `amfi-only-platform-code` 与启动链锁的关系。** 确认是否能在不依赖 Apple 硬件信任链的前提下让内核继续往前走 —— 这属于改变启动语义，需先立 NEED-REVIEW 条目再动手。
+3. **跟踪 `slot-retry-count` 增长。** 该计数随失败次数累加，可作为后续试验是否复现同一失败的快速判据。
 
 board 剩余 TODO：`[ipsw]` url/chip_id/board_id/sha256、`[payload]` volume/size_mib/kernel_args、`[kernel]` defconfig/archives/prelink、`[firmware]`、`[bootimg.image]`。
 

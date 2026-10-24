@@ -272,8 +272,12 @@ App Log Flush : 0 ms
 
 ### 下一步（按性价比排序）
 
-1. **改走 panic 捕获而不是屏幕捕获。** 屏幕这条路已经走到尽头 —— 内核就是不打印。改从 UEFI 侧取：设备重启后 UEFI 会重新初始化，`uefi_a/uefi_b` 分区里可能有上一次启动留下的变量。但 `adb` 在这台机器上是 user build，`su` 不可用，`/dev/block/by-name/uefi_a` 读不到（`scripts/audit-live-uefi-variables.py` 依赖 `su -c`）。**需要先解决非 root 读取 UEFI 变量分区**，或者在 UEFI 侧主动把内核交接后的状态写进一个可读分区。
-2. **用 fastboot 侧证据替代串口。** `fastboot getvar` 能读到的 bootloader 变量（`reboot-reason` 之类）不需要 root，也不需要串口，是当前唯一"重启后仍可读"的通道。上一轮没做，值得先试。
+1. **改走 panic 捕获而不是屏幕捕获。** 屏幕这条路已经走到尽头 —— 内核就是不打印。改从 UEFI 侧取：`uefi_a/uefi_b` 分区里可能有上一次启动留下的变量。障碍已探明：`adb` 在这台机器上是 user build（`adb root` 返回 "adbd cannot run as root in production builds"），`su` 不可用，`/sys/fs/pstore` 与 `/proc/cmdline` 均 Permission denied，**`scripts/audit-live-uefi-variables.py` 依赖 `su -c`，因此当前跑不通**。出路只有两条：在 UEFI 侧主动把内核交接后的状态写进一个可读分区，或者找到非 root 的 uefivarstore 读取路径。
+2. **fastboot 侧证据（已试，结论如下）。** 本轮已实测 `fastboot getvar all`（nuwa 已解锁，`unlocked:yes`）：
+   - 小米 bootloader **不导出** `reboot-reason` / `boot-reason` 类变量，`getvar all` 的 296 行里除分区表外只有 40 余项，无重启原因。
+   - `fetch` 命令不被支持（`Device does not support fetch command`），无法只读导出 `uefivarstore`（0x80000 字节）。
+   - **新发现：`slot-retry-count:a:6`，而 `slot-successful:a:yes` / `slot-unbootable:a:no`。** 槽位 a 已累计 6 次重试计数，与内核启动失败后反复重启回 bootloader 的行为吻合。这是目前唯一能在重启后读到的、与本次失败直接相关的持久化痕迹。
+   - 另有 `has-slot:system:no` / `current-slot:a` / `kernel:uefi`，说明引导链是 UEFI。
 3. **评估 `amfi-only-platform-code`。** ADT 里这个属性与启动链锁的关系仍未查清。如果内核是因为缺 Apple 硬件信任链而在安全锁阶段退出，那么绕过或放宽它可能是让内核继续往前走的最短路径 —— 但这属于改变启动语义，需要先立 NEED-REVIEW 条目再动手。
 
 ## 六、产物
@@ -289,3 +293,4 @@ App Log Flush : 0 ms
 - `reports/xnu-first-entry-video/2026-10-24/si-splash-frame45.png` —— 录像第 45 帧的 Si splash 放大（与上图逐元素一致）
 - `reports/xnu-first-entry-video/2026-10-24/grid-frame45.png` / `grid-frame60.png` —— 带坐标网格的整帧，用于定位屏幕边界
 - `scripts/analyze-first-entry-video.py` —— 时间线分析脚本
+- `reports/xnu-first-entry-video/2026-10-24/fastboot-varall.txt` —— nuwa bootloader 全量变量导出（296 行）
