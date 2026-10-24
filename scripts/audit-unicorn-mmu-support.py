@@ -28,10 +28,11 @@ def run(argv, env=None):
 
 def hosts():
     yield 'windows-unicorn-2.1.4', {**os.environ, 'PYTHONPATH': str(ROOT/'out/python-tools')}, \
-        lambda script: [sys.executable, '-B', str(script)]
+        lambda script, flags=(): [sys.executable, '-B', str(script), *flags]
     yield 'wsl-ubuntu-22.04-unicorn-2.1.4', None, \
-        lambda script: ['wsl', '-d', 'Ubuntu-22.04', '--', 'bash', '-c',
-                        f'cd /mnt/d/Code/UniXNU-nuwa && python3 -B {script.relative_to(ROOT).as_posix()}']
+        lambda script, flags=(): ['wsl', '-d', 'Ubuntu-22.04', '--', 'bash', '-c',
+                                  'cd /mnt/d/Code/UniXNU-nuwa && python3 -B '
+                                  + script.relative_to(ROOT).as_posix() + ' ' + ' '.join(flags)]
 
 
 def main():
@@ -44,6 +45,7 @@ def main():
               'hosts': []}
     for name, env, argv in hosts():
         single = run(argv(PROBES['single']), env)
+        single_aarch64 = run(argv(PROBES['single'], ['--aarch64-state']), env)
         matrix = run(argv(PROBES['matrix']), env)
         try:
             # Unicorn prints a deprecation warning before our JSON on one host.
@@ -51,20 +53,25 @@ def main():
             matrix_json = json.loads(tail[-1]) if tail else None
         except json.JSONDecodeError:
             matrix_json = None
-        report['hosts'].append({'host': name, 'single': single, 'matrix_run': matrix, 'matrix': matrix_json})
+        report['hosts'].append({'host': name, 'single_default_state': single,
+                                'single_aarch64_state': single_aarch64,
+                                'matrix_run': matrix, 'matrix': matrix_json})
     matrices = [h['matrix'] for h in report['hosts'] if h['matrix']]
     report['summary'] = {
-        'single_case': sorted({h['single']['classification'] for h in report['hosts']}),
+        'default_state': sorted({h['single_default_state']['classification'] for h in report['hosts']}),
+        'aarch64_state': sorted({h['single_aarch64_state']['classification'] for h in report['hosts']}),
         'l2_root_works_only_for_t0sz26': all(m['l2_root_works_only_for_t0sz26'] for m in matrices) if matrices else None,
         'high_va_translatable_with_t0sz26': any(m['high_va_translatable_with_t0sz26'] for m in matrices) if matrices else None,
     }
     report['conclusion'] = (
-        'Translation itself works, but this build starts the T0SZ=26 walk at level 2 and therefore '
-        'cannot address the kernel VA: low VAs translate with an L2 root while 0x40000000 and '
-        '0x8c37c7378 do not. XNU uses T0SZ=26 with an L1 root, so the real cold path cannot cross '
-        'here and no harness-side re-rooting can fix it; a transition test needs another engine or hardware.'
-        if matrices and not report['summary']['high_va_translatable_with_t0sz26']
-        else 'High VAs translated on at least one host: a real transition test may be possible')
+        'AArch64 instruction translation works once the model is put into the execution state the '
+        'kernel runs in: SCR_EL3.NS|RW (and HCR_EL2.RW) make arm_el_is_aa64() true. With Unicorn\'s '
+        'default SCR_EL3=0/HCR_EL2=0 the walk takes the AArch32 branch, reads T0SZ & 7 = 2 and starts '
+        'at L2, which is why the real T0SZ=26 tables looked untranslatable. The earlier "no fetch '
+        'translation" reading was a harness initialisation error, not an engine limitation; the '
+        'default-state failure stays as the negative control.'
+        if report['summary']['aarch64_state'] == ['translated'] else
+        'The AArch64 high-EL state did not translate either: investigate further before claiming a crossing')
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
     print(json.dumps({'summary': report['summary'], 'output': str(output)}))

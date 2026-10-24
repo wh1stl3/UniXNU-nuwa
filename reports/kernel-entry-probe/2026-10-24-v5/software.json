@@ -1,5 +1,5 @@
 {
-  "scope": "Unicorn ARM64 instruction execution with sparse RAM/framebuffer model; the cold path stops before the SCTLR MMU enable and the two post-MMU hooks are entered directly with the real tables and scratch, so no hardware translation/cache/device model and no nuwa execution",
+  "scope": "Unicorn ARM64 instruction execution with sparse RAM/framebuffer model. An AArch64 high-EL model state (SCR_EL3.NS|RW, HCR_EL2.RW) lets the real cold path cross the SCTLR write and reach the arm_init hook; the default state stays as the negative control. No hardware cache/device model and no nuwa execution",
   "unicorn_version": "2.1.4",
   "candidate_sha256": "8515068dcd6bd699a4301109b76b80022fb07120e6167b65b6169d52aeffcb6a",
   "checks": [
@@ -100,7 +100,27 @@
       "passed": true
     },
     {
-      "name": "Pre-occupied slot draws nothing and does not fault",
+      "name": "Continuous run crosses the SCTLR write with AArch64 high-EL state",
+      "passed": true
+    },
+    {
+      "name": "Continuous run draws cyan and white under real translation",
+      "passed": true
+    },
+    {
+      "name": "Continuous run used the kernel own TCR/TTBR/MAIR/SCTLR values",
+      "passed": true
+    },
+    {
+      "name": "Default SCR/HCR state remains the negative control (stops right after the SCTLR write)",
+      "passed": true
+    },
+    {
+      "name": "Continuous run leaves only the diagnostic L1 slot changed",
+      "passed": true
+    },
+    {
+      "name": "With a pre-occupied slot the continuous run still reaches arm_init and paints nothing",
       "passed": true
     },
     {
@@ -297,6 +317,54 @@
     },
     "pc": "0x8c4889220",
     "bad_memory": []
+  },
+  "continuous": {
+    "model": "aarch64",
+    "error": null,
+    "reached": true,
+    "instructions": 374399,
+    "pc": "0xfffffff008489220",
+    "bad_memory": [],
+    "sctlr": "0x3454593d",
+    "tcr": "0x22a51a251a",
+    "ttbr0": "0x8c355e000",
+    "ttbr1": "0x8c355f000",
+    "mair": "0xc08044f00bb44ff",
+    "tables_pa": "0x8c355e000",
+    "tables_before_sha256": "f851ae4a554b2867f0ce5f050ee5a505804498479309c988f4b12822398f732d",
+    "tables_after_sha256": "682cb477a6574e9e107de81570e339336eb60c81a156cf1bb1bdf6eff4d1bfa8",
+    "tables_slot2": "0x6000008000040d",
+    "pixels": {
+      "256": "0xff0080ff",
+      "352": "0xffffff00",
+      "448": "0xffff00ff",
+      "736": "0xff00ffff",
+      "832": "0xffffffff"
+    }
+  },
+  "negative_control": {
+    "model": "default",
+    "error": "Unhandled CPU exception (UC_ERR_EXCEPTION)",
+    "reached": false,
+    "instructions": 236121,
+    "pc": "0x8c37c7378",
+    "bad_memory": [],
+    "sctlr": "0x3454593d",
+    "tcr": "0x22a51a251a",
+    "ttbr0": "0x8c355e000",
+    "ttbr1": "0x8c355f000",
+    "mair": "0xc08044f00bb44ff",
+    "tables_pa": "0x8c355e000",
+    "tables_before_sha256": "f851ae4a554b2867f0ce5f050ee5a505804498479309c988f4b12822398f732d",
+    "tables_after_sha256": "682cb477a6574e9e107de81570e339336eb60c81a156cf1bb1bdf6eff4d1bfa8",
+    "tables_slot2": "0x6000008000040d",
+    "pixels": {
+      "256": "0xff0080ff",
+      "352": "0xffffff00",
+      "448": "0xffff00ff",
+      "736": "0x0",
+      "832": "0x0"
+    }
   },
   "pixels": {
     "256": "0xff0080ff",

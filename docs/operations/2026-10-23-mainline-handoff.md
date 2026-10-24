@@ -221,3 +221,9 @@ python3 scripts/compare-prelink-candidates.py --old out/native-prelink-merged/an
 未验证/边界：无红条不等于无异常（MMU 后 VBAR 已是内核 KVA 向量）；内核随后返回或复位回固件菜单并重新倒计时，`arm_vm_init`/pmap 停点未知，返回/panic/watchdog 未区分；固件可能自行重入同一内核（fastboot 只发一次）。
 
 下一步：① C 内打点（arm_vm_init/pmap_bootstrap/kernel_bootstrap 首指令，沿用探针页+快照）；② magenta 钩子把 VBAR_EL1 换成探针页恒等地址，捕获 MMU 后 ESR/ELR/FAR；③ 串口/QEMU 仅作后备。任何新包仍须打包校验、新鲜 preflight、即时通知与用户对本包的录像确认。证据 operations/2026-10-25-entry-probe-02-trial.md。
+
+## 软件侧补强：连续穿越 MMU 的测试（2026-10-25 00:55，main）
+
+复核源码级定位：`arm_el_is_aa64()`（qemu/target/arm/cpu.h:2030）在默认 `SCR_EL3=0`/`HCR_EL2=0` 下为假，页表遍历走 AArch32 分支（helper.c:9925 取 T0SZ&7），这才是此前"T0SZ=26 走 L2、≥1GiB VA 不可译"的原因，不是引擎限制。设置 `SCR_EL3.NS|RW` 与 `HCR_EL2.RW` 后，真实 v5 候选从入口连续穿过 MMU 到达 `_arm_init`（374,399 条指令，两宿主一致），页表仅多诊断 slot 2、候选 SHA 不变，默认态保留为负对照。`software.json` 38 项通过。
+
+这不改变实机结论（青/白已由真机确认），只是把"后 MMU 代码路径"从"合成进入"升级为"连续执行"，两者互相印证。仍未执行 arm_init 正文/arm_vm_init/kext/iOS。

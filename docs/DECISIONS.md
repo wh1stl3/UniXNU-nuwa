@@ -469,3 +469,7 @@ D-034 第二次更正（2026-10-25 00:35，经复核可执行反例）：上一�
 边界：无红条不等于无异常（MMU 后 VBAR 已是内核 KVA 向量）；内核随后返回/复位回固件菜单，`arm_vm_init`/pmap 的停点未验证；固件菜单会在内核返回后重新倒计时，可能重入同一内核，故"单次启动"按 fastboot 动作与固件自行重入分开记。恢复闭环：16:43:30Z 三分区 SHA 与 preflight 完全相同、Android 完成 1。
 
 下一步选定 C 内打点（`arm_vm_init`/`pmap_bootstrap`/`kernel_bootstrap` 首指令，沿用探针页+快照），并在 magenta 钩子把 `VBAR_EL1` 换成探针页恒等地址以捕获 MMU 后异常 ESR/ELR/FAR；串口/QEMU 仅作后备。证据 operations/2026-10-25-entry-probe-02-trial.md。
+
+D-034 第三次更正（2026-10-25 00:55，经复核源码级定位）：第二次更正里"本构建在 T0SZ=26 时从 L2 起走、≥1GiB VA 不可译"仍是表象，根因在测试模型初始化：Unicorn 默认 `SCR_EL3=0`、`HCR_EL2=0`，`arm_el_is_aa64()`（qemu/target/arm/cpu.h:2030）因此为假，页表遍历走 AArch32 分支（helper.c:9925 只取 T0SZ 低三位，26&7=2 → 输入宽度 30 位 → 起始层 L2，helper.c:10046）。把模型置入内核真实所在的高异常级 AArch64 状态（`SCR_EL3.NS|RW=0x401`、`HCR_EL2.RW=1<<31`）后，AArch64 解释为 64-26=38 位、起始层 L1，真实 v5 候选可以从入口连续执行穿过 `msr sctlr_el1` 到达 `_arm_init` 钩子（KVA），两个宿主一致，374,399 条指令回调，cyan/white 像素正确、页表仅多出诊断用的 L1 slot 2、候选 SHA 未变。默认状态保留为负对照（在 MSR+4 处 UC_ERR_EXCEPTION）。
+
+因此"由于引擎不支持只能合成进入"作废，`test-kernel-entry-probe.py` 已改用连续穿越测试（38 项，含负对照与占槽场景）。仍不成立的推论：这不是实机证据；arm_init 正文、arm_vm_init、kext、iOS 仍未执行。实机青/白与本模型结论一致（见 operations/2026-10-25-entry-probe-02-trial.md）。
