@@ -84,6 +84,25 @@ v9 候选 **`b5db0f1e5793a2557efa99af735a59ca1c923ed1ae9e461f712a5a79163ac348`**
 
 **下一轮**：在 `arm_vm_init` 内部再插 2–3 个点（它开头就是内存映射/DT 解析，`SecureDTGetProperty(memory_map,"TrustCache"/"AuxKC")` 附近），把断点从"函数入口"推进到具体语句；同时保留红带自报。模型侧需先绕过 `msr TPIDRRO_EL0` 才能继续预演。
 
+## 当前状态：v10 已带 arm_vm_init 内部与 panic 路径插桩，待打包
+
+上一轮 entry-probe-04 的读数（用户确认）：绿 → 蓝256 → 黄304 → 品红352 → 青400 → 白448 → **棕544（最后一条）**，**没有紫(496)**，也没有青绿(592)/橙(640)/红(688)。
+
+**对"没有紫"的分析**：模型里 `_current_percpu_base` 的调用者 LR 是 `_panic_trap_to_debugger+0x54`——它是从 **panic 路径**进去的。实机没画紫却画了棕（`_arm_vm_init`），说明实机在 `PE_init_platform` 期间走的那条路**没有调用** `_current_percpu_base`（与模型路径不同），因此 per-CPU 垫片很可能根本没被用到，不是决定性因素。
+
+**下一轮的解决方案（已做进 v10 `f0ae0d40`，32 补丁）**：
+
+| 行 | 颜色 | 钩子 | 含义 |
+| --- | --- | --- | --- |
+| 880 | 青灰 | `arm_vm_init+0x54` | 已从 boot_args 读到 virtBase/physBase/memSize |
+| 928 | 橄榄 | `arm_vm_init+0xa4` | 到达 "Unsupported memory configuration" 判断处 |
+| 976 | 亮粉 | `_panic` | **内核调用了 panic** |
+| 1024 | 亮紫 | `_panic_trap_to_debugger` | panic 进入 debugger 路径 |
+
+这样下一拍能直接回答：**到底有没有 panic**（976/1024），以及**卡在 `arm_vm_init` 的哪一段**（880/928 之后、592 之前）。探针段随代码增长自适应为"代码页 + 一页零"（现为 16 KiB，零页在 `0xfffffff00848c000`），打包绑定同步改为按报告推导并校验填充页为零。
+
+v10 已通过 42 项固定测试（含连续穿越与三组钉死绑定）。**未打包、未启动。**
+
 ## 构建支线
 
 `codex/pr100-linux-8796`（`b8872cb`）保持独立、未合入；其平台链接产物 `89a30cfb` 仍是链路资格，不是可启动镜像。

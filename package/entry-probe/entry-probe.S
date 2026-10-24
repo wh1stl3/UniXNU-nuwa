@@ -264,6 +264,40 @@ probe_kernel_bootstrap:
 probe_kernel_bootstrap_replay:
     .inst original_kernel_bootstrap_word
     b original_kernel_bootstrap_resume
+.balign 4
+// Inside arm_vm_init, at fixed offsets whose instruction words are pinned by the
+// builder. They localise where execution stops before pmap_bootstrap is called.
+.global probe_avm_bases
+probe_avm_bases:
+    BAND_SNAPSHOT 880, 0xff008080
+.global probe_avm_bases_replay
+probe_avm_bases_replay:
+    .inst original_avm_bases_word
+    b original_avm_bases_resume
+.global probe_avm_memcheck
+probe_avm_memcheck:
+    BAND_SNAPSHOT 928, 0xff808000
+.global probe_avm_memcheck_replay
+probe_avm_memcheck_replay:
+    .inst original_avm_memcheck_word
+    b original_avm_memcheck_resume
+// The panic path. In the model _current_percpu_base was reached from
+// panic_trap_to_debugger+0x54 and on hardware that band never appeared, so the
+// next round observes the panic path itself instead of assuming it.
+.global probe_panic
+probe_panic:
+    BAND_SNAPSHOT 976, 0xffff1493
+.global probe_panic_replay
+probe_panic_replay:
+    .inst original_panic_word
+    b original_panic_resume
+.global probe_panic_trap
+probe_panic_trap:
+    BAND_SNAPSHOT 1024, 0xff9400d3
+.global probe_panic_trap_replay
+probe_panic_trap_replay:
+    .inst original_panic_trap_word
+    b original_panic_trap_resume
 .balign 8
 .global probe_scratch
 probe_scratch:

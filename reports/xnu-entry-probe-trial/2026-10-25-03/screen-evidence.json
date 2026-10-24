@@ -16,7 +16,7 @@
     {
       "row": null,
       "color": "green",
-      "owner": "firmware DarwinEnter breadcrumb (top 1/16 = 200 rows)",
+      "owner": "firmware DarwinEnter breadcrumb",
       "means": "EBS done"
     },
     {
@@ -37,7 +37,7 @@
     {
       "row": 400,
       "color": "cyan",
-      "means": "msr sctlr_el1 + replayed isb; band drawn with the MMU on"
+      "means": "msr sctlr_el1 + replayed isb; drawn with the MMU on"
     },
     {
       "row": 448,
@@ -45,17 +45,17 @@
       "means": "_arm_init entered at the KVA"
     },
     {
-      "row": 496,
-      "color": "purple",
-      "means": "_current_percpu_base entered - the per-CPU shim is effective on hardware"
-    },
-    {
       "row": 544,
       "color": "brown",
-      "means": "_arm_vm_init entered - LAST BAND VISIBLE"
+      "means": "_arm_vm_init entered - LAST BAND (measured position matches row 544 in four columns)"
     }
   ],
   "bands_not_observed": [
+    {
+      "row": 496,
+      "color": "purple",
+      "means": "_current_percpu_base - NOT drawn; the predicted rows are dark in every sampled column"
+    },
     {
       "row": 592,
       "color": "teal",
@@ -72,7 +72,7 @@
       "means": "exception reporter - did not fire"
     }
   ],
-  "conclusion": "The per-CPU base shim works on hardware: execution passed _current_percpu_base and entered _arm_vm_init, which the model could not reach. It stopped inside arm_vm_init before pmap_bootstrap, and no exception was delivered to the probe vectors.",
+  "conclusion": "Execution entered _arm_vm_init on hardware - further than the model could reach. The _current_percpu_base band was NOT drawn, so the hardware path diverges from the model (which called it during PE_init_platform); the per-CPU shim therefore was not the deciding factor. It stopped inside arm_vm_init before pmap_bootstrap, with no exception delivered to the probe vectors.",
   "not_proven": [
     "why execution stopped inside arm_vm_init",
     "whether it was a reset, a panic path or a hang",
@@ -83,5 +83,6 @@
     "path": "out/trial-evidence/entry-probe-04/screen-01.jpg",
     "sha256": "e6dedeb05197736c30e2f812aa3f3ef70a53b3ae106ad2d9370bcb1f1f2f2d39",
     "bytes": 332704
-  }
+  },
+  "spacing_note": "The gap between white(448) and brown(544) spans two pitches because the 496 band is absent; this is what the user observed as \"the last brown band has different spacing above it\"."
 }

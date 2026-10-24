@@ -48,13 +48,15 @@ def validate(meta,kernel_sha):
         if len(before)!=len(after) or new & covered or off<0 or off+len(after)>len(original) or original[off:off+len(before)]!=before:raise ValueError('Probe patch bounds, overlap or preimage differs')
         covered|=new;expected[off:off+len(after)]=after
     probe=build['probe'];offset=probe['file_offset']
-    if offset!=builder.align(len(original)) or len(raw)!=offset+8192 or probe['segment_bytes']!=8192:raise ValueError('Probe segment extent differs (expected two pages)')
+    if offset!=builder.align(len(original)) or probe['segment_bytes']%4096 or probe['segment_bytes']<8192:raise ValueError('Probe segment extent differs')
+    if len(raw)!=offset+probe['segment_bytes']:raise ValueError('Candidate length differs from the probe segment')
+    if any(raw[len(original)+i*4096:len(original)+(i+1)*4096] for i in range(1,probe['segment_bytes']//4096)):raise ValueError('Padding pages must be zero')
     payload=raw[offset:]
     if sha(payload)!=probe['sha256'] or raw[:len(original)]!=expected or any(raw[len(original):offset]):raise ValueError('Kernel has bytes outside recorded diagnostic changes')
     m=builder.macho(raw)
     if m['entry']!=builder.macho(original)['entry']:raise ValueError('Kernel original entry changed')
     segment=next(s for s in m['segments'] if s['name']=='__NUWA_PROBE')
-    if segment['va']!=int(probe['va'],16) or segment['fileoff']!=offset or segment['size']!=8192:raise ValueError('Probe segment changed')
+    if segment['va']!=int(probe['va'],16) or segment['fileoff']!=offset or segment['size']!=probe['segment_bytes']:raise ValueError('Probe segment changed')
     bcm=next(p for p in build['patches'] if 'Suppress BCM' in p['reason'])
     if bcm['before']!='010000b9' or bcm['after']!='1f2003d5':raise ValueError('BCM correction differs')
     return dict(kernel_sha256=kernel_sha,patches=len(build['patches']),software_checks=len(software['checks']))

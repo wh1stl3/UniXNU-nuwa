@@ -384,3 +384,5 @@
 2026-10-25 01:45 · v9打包为entry-probe-04并校验：镜像7b81126b/70,266,880B，kernel b5db0f1e、ADT 57e04fc9，--validate通过；随包ADT重跑8项仍通过。菜单标识PROBE 04。用户批准打包，启动前先确认录像；未启动 · 本里程碑提交 · reports/xnu-first-entry/entry-probe-04.json、reports/kernel-entry-probe/2026-10-24-v9/post-arm-init-markers-shipped-adt.json
 
 2026-10-25 01:55 · entry-probe-04(v9)实机闭环：preflight 17:45:50Z、恢复17:51:16Z Android完成1、postcondition 17:51:58Z三SHA一致。色带（行号取代码）：绿→蓝256→黄304→品红352→青400→白448→紫496→棕544（最后一条）。⇒ per-CPU垫片在实机生效（模型没走到的一步），执行进入_arm_vm_init；未见青绿592/橙640/红688，即停在arm_vm_init内、pmap_bootstrap之前，且无异常落入向量页。原图e6dedeb0。我一度按自动比色说"十条全出现"，被用户纠正为最后一条是棕色，已按用户读数重记。未再启动 · 本里程碑提交 · reports/xnu-entry-probe-trial/2026-10-25-03/screen-evidence.json
+
+2026-10-25 02:05 · v10：为"没有紫色带"带入分析与解决方案。模型里_current_percpu_base的调用者LR在_panic_trap_to_debugger+0x54，即它属于panic路径；实机无紫却有棕(_arm_vm_init)，说明实机该路径未调用它，per-CPU垫片很可能未被用到。v10(f0ae0d40，32补丁)新增四个钩子：arm_vm_init+0x54(880)、arm_vm_init+0xa4(928)、_panic(976)、_panic_trap_to_debugger(1024)，下一拍可直接判定是否panic及卡在arm_vm_init哪一段。探针段改为"代码页+一页零"自适应（现16KiB，零页0xfffffff00848c000），打包绑定同步。42项固定测试通过。未打包未启动 · 本里程碑提交 · reports/kernel-entry-probe/2026-10-24-v10/
