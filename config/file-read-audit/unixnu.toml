@@ -1,0 +1,17 @@
+version = 1
+
+[boot]
+timeout = 5
+default = "file-audit"
+
+[kits]
+autoload = false
+
+[ui]
+title = "NUWA FILE SHA PROBE - NO XNU EXECUTION"
+
+[[entry]]
+id = "file-audit"
+title = "Read 58 MB data and verify SHA256"
+type = "efi"
+path = "Payloads/FILEAUDIT.EFI"

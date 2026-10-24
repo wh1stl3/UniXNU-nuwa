@@ -1600,3 +1600,13 @@
 [Evidence] 原图envelope result=1/0x4000000块Success及先于embedded的FAT挂载；offset-64=30899943精确匹配vendor ramdisk；120秒观察，postcondition完成1/三分区SHA不变。
 [Risk] 仅此运输阶段实机通过，非运行时SHA/真实大文件读取/XNU或iOS通过；同固件v4对照与重复性未验，无第二候选启动。
 ```
+
+## Q-153 · 58MiB文件只读SHA应用与USB候选
+
+```text
+[unixnu-nuwa][loader] 构建独立EFI大文件SHA探针并通过完整UEFI QEMU文件读取
+
+[Change] 固件不变，通过type=efi执行只读校验app；复用固定MIT SHA实现，分析MachO仅作READTEST数据，新增严格数据用途scope/完整包校验。
+[Evidence] app def33a4a/6144B；最终包18ebd838/70266880B；13协议场景/3SHA向量/15门控通过，完整UEFI QEMU从最终FAT读58335232B和SHA通过后返回。
+[Risk] nuwa实际EFI加载/分配/文件SHA待实测；分析文件loadable=false，未执行内核/ADT/OS；本轮无新手机动作，Heap/HOB/板值不变。
+```

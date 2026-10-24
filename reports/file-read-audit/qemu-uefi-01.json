@@ -1,0 +1,21 @@
+{
+  "scope": "Full AArch64 QEMU UEFI application PE loading and FAT read; not nuwa hardware",
+  "efi_sha256": "def33a4add6f162a5726bba050a4c143c8ba38ea25f436f46ce4331811bb469f",
+  "firmware_path": "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd",
+  "firmware_sha256": "092388aafcb52093866968c603c0347253484dc032da4f2212b6fe80cdd2a6a0",
+  "log_sha256": "50bba334bf99c4e79cb73a47128eb1231c4dacf96e872fbe12b1296eab46b78c",
+  "markers": [
+    "[NUWA-FILE-SHA] PASS exact length, EOF and SHA256",
+    "actual sha256=eb66542cc9b6c34f369c07229900408ab67288152f561be63fa6061efce9ffca",
+    "final bytes=0x00000000037a2000 read calls=0x0000000000000038",
+    "BdsDxe: starting Boot0000"
+  ],
+  "data_bytes": 58335232,
+  "read_calls": 56,
+  "sha256_matched": true,
+  "returned_to_boot_manager": true,
+  "external_timeout_seconds": 55,
+  "tool_reported_exit_code": 1,
+  "termination_note": "QEMU was externally time-limited after application returned; pass is established by stage log, not process exit",
+  "device_accessed": false
+}

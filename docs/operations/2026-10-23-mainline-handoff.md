@@ -1,6 +1,6 @@
 # 主线交接（2026-10-24，USB v3实测闭环）
 
-当前设备仓main：准备提交9cfaacd5b35d1c15b31e5b807d56b062a8829bef，Q-152待提交本轮执行证据。先读AGENTS.md和STATUS.md。两旧资料库只读；firmware工作源D:/Code/uefi-nuwa，独立upstream检出D:/Code/UniXNU-integration。当前无需用户按键/补录像，没有下一次设备启动在运行。
+当前设备仓main：运输实测已提交8de7b98bedd0778e7cf9b69544bf7a2cd6f8a113，新文件SHA探针Q-153待提交。先读AGENTS.md和STATUS.md。两旧资料库只读；firmware工作源D:/Code/uefi-nuwa，独立upstream检出D:/Code/UniXNU-integration。上轮恢复闭环，无需按键；新文件包未启动，待新鲜录像条件。
 
 ## 最新实际状态
 
@@ -29,3 +29,13 @@ FD2d606985ad768dcfaab66c2b28073c0a4c2820126b42b23286623fdc450e848f/3145728B，sh
 先在已通过USB v3上准备真实大文件只读读取/SHA诊断，不执行分析内核；继续AMFI构造/start间接调用和回调ABI、真实ADT及实际连续窗口资格。9GiB仅快照，不是已分配窗口。ST FTS路线保持，不照搬sheng板值/Novatek/存储清空动作；board/bringup身份/内存及任何_verified不变。
 
 用户现有OTG线并授权择优，USB v3已通过所以当前不用OTG，保留备选。任何新包都需新鲜用户录像条件、严格包校验、唯一nuwa/kalama、Android完成1/三分区基线与具体恢复路径，启动前即时通知；结束恢复完成1及三SHA一致。当前轮次文件不可覆盖或复用，不自动做v4对照/第二候选。
+
+## 已完成下一步离线准备：文件SHA包18ebd838
+
+Q-153新增独立6144B ARM64 EFI app def33a4a，菜单type=efi，来源卷固定路径READTEST.BIN为原分析MachO的58335232B普通数据（eb66542c），不执行数据。无新FD源码/镜像行为，正常AllocatePool完整缓冲/最大1MiB每读/4096调用，精确长度+EOF+SHA，释放关闭后结果保留30秒并返回。复用原样NativeAdreno b686b905 MIT SHA，许可随最终FAT。实际28个Mu头固定git对象校验。
+
+完整系统AArch64 QEMU以QEMU_EFI.fd加载真实PE，从最终fat-02读取全部数据/SHA匹配/返回Boot0000，13软件协议场景/3向量/15门控通过；不等于nuwa EFI加载策略/文件阶段通过。最终包18ebd83865eb0026655fddbfcea6a4f824c80cd4f65bf692528726d06a2389a8/70266880B，out/trial-boot/file-read-audit-02/boot-file-audit-v3.img；严格报告reports/file-read-audit/package-02/package.json。FAT b44d22bc/64MiB，app/数据/config/MIT均完整读回相同。早期fat-01/包01由含许可fat-02/包02取代，不可用于后续启动。
+
+续接先 bundled Python -B scripts/file_audit_package.py --validate reports/file-read-audit/package-02/package.json。新scope USB-FILE-SHA-OFFLINE元数据如实xnu_included=true，但strict验证只允许该固定文件作数据、kernel_execution_enabled=false/无XNU entry/无ADT，不能编辑JSON启用OS。原trial脚本其他scope仍禁止XNU。当前无新手机查询，最近实际恢复仍本轮v3-01北京时间15:41:49。
+
+需本包新鲜录像≥120秒/必要时按键回fastboot确认，之后刷新preflight并即时通知再单次launch。计划新轮目录reports/file-read-audit-trial/2026-10-24-01/，不得用旧v3-01 preflight。应拍FILE SHA新菜单和NUWA-FILE-SHA实际SHA/PASS/final bytes，旧embedded菜单不算成功；正常返回也需原恢复+postcondition三SHA闭环。更详细源码/证据/命令和未验边界见2026-10-24-file-read-audit.md。当前不需要OTG，无新启动已在运行。

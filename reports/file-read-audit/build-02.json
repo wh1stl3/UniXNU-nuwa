@@ -1,0 +1,331 @@
+{
+  "scope": "Standalone EFI application built offline; no firmware or device modification",
+  "efi_path": "out/file-read-audit/build-02/FILEAUDIT.EFI",
+  "efi_sha256": "def33a4add6f162a5726bba050a4c143c8ba38ea25f436f46ce4331811bb469f",
+  "efi_bytes": 6144,
+  "read_fixture": {
+    "path": "out/native-prelink-merged/analysis/kernel-prelinked-analysis.macho",
+    "sha256": "eb66542cc9b6c34f369c07229900408ab67288152f561be63fa6061efce9ffca",
+    "bytes": 58335232,
+    "role": "Read-only bytes; never execute or infer OS qualification"
+  },
+  "upstream_sha256_source": [
+    {
+      "path": "NativeAdrenoSha256.h",
+      "sha256": "4c4f1a23f146c1370615ee52912b9bb0c2a3b919ccf14e07314460ffcdb34a74",
+      "commit": "b686b9054f57d393c80195b82568a09f8ca106a2",
+      "repository": "https://github.com/UniXNU/NativeAdreno",
+      "license": "MIT"
+    },
+    {
+      "path": "NativeAdrenoSha256.cpp",
+      "sha256": "ee624a483a075b8ca44f1dff2efd66acee38c5ccd784192c23614cdb6605db1f",
+      "commit": "b686b9054f57d393c80195b82568a09f8ca106a2",
+      "repository": "https://github.com/UniXNU/NativeAdreno",
+      "license": "MIT"
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "16fbc0170994a48f60938d9f0d992d3bad113383cf90882f75c206e079c2a2dc",
+      "commit": "b686b9054f57d393c80195b82568a09f8ca106a2",
+      "repository": "https://github.com/UniXNU/NativeAdreno",
+      "license": "MIT"
+    }
+  ],
+  "uefi_headers": {
+    "repository": "https://github.com/microsoft/mu_basecore",
+    "commit": "cfb93724a06ff86ff5ba971413368a7809ee42a5",
+    "consumed": [
+      {
+        "path": "MdePkg/Include/AArch64/ProcessorBind.h",
+        "lf_sha256": "299a747e278c2d879b435ad5802347d5f5a7bf363a53eb8f3812657c82ec6b34"
+      },
+      {
+        "path": "MdePkg/Include/Base.h",
+        "lf_sha256": "788600e15cbb1c5b036d53808f6a19a6dfeac4f7f36b253b4fd57db3beaa22fc"
+      },
+      {
+        "path": "MdePkg/Include/Guid/FileInfo.h",
+        "lf_sha256": "7be60dedab28d1990e2ebfa31ea96f30de04a9b9f96accf3b2a3527f6bab4ced"
+      },
+      {
+        "path": "MdePkg/Include/Guid/HiiFormMapMethodGuid.h",
+        "lf_sha256": "88e0af9f0e2ad9b481a34d3b7347805792e97c10d2de9e354b385a3a2f5bb363"
+      },
+      {
+        "path": "MdePkg/Include/Guid/PcAnsi.h",
+        "lf_sha256": "c496ba6d9ba053d0c445d6b40d579bb97a8b2b3ab325dbeaf65056760b5647f7"
+      },
+      {
+        "path": "MdePkg/Include/Guid/WinCertificate.h",
+        "lf_sha256": "c5545abd730b8d22ac1f843dd3dd480a26263592c6a342656bc22c97c6896a92"
+      },
+      {
+        "path": "MdePkg/Include/IndustryStandard/Acpi10.h",
+        "lf_sha256": "90d53ed16dcb24c1e7c7050a6d3f54fe8f7b175f0c06010579443414f7a32732"
+      },
+      {
+        "path": "MdePkg/Include/IndustryStandard/Acpi20.h",
+        "lf_sha256": "9f78e89396d5c542a251012bbc78a9315a7b0922002a851316497f711e79e243"
+      },
+      {
+        "path": "MdePkg/Include/IndustryStandard/Acpi30.h",
+        "lf_sha256": "d7a727f9cc0e84bb2fd8c05d798219b3446a227d93054dce0350272974aeae36"
+      },
+      {
+        "path": "MdePkg/Include/IndustryStandard/Acpi40.h",
+        "lf_sha256": "dc2f0688c15743dced18087b48a5842c75a8e2327f58103b62f2cb0fa5b0cf9e"
+      },
+      {
+        "path": "MdePkg/Include/IndustryStandard/Acpi50.h",
+        "lf_sha256": "4fbeceb051679a96a4ac2e07382050079d2db9c000e734f36a3ddd77625d9767"
+      },
+      {
+        "path": "MdePkg/Include/IndustryStandard/Acpi51.h",
+        "lf_sha256": "2db0f5c524c85c48cd88eeb0833e1d2ea40a90e958f6bc84744148501c9aa6f3"
+      },
+      {
+        "path": "MdePkg/Include/IndustryStandard/Acpi60.h",
+        "lf_sha256": "4e4661e9b3b01ab563b445f6d48091056b1efdc2024972b0b98a42bec0541ede"
+      },
+      {
+        "path": "MdePkg/Include/IndustryStandard/AcpiAml.h",
+        "lf_sha256": "e33cf97ee6b8ac5c4a05392587669e6be86dc760792939707c8b190504b2f8da"
+      },
+      {
+        "path": "MdePkg/Include/IndustryStandard/Bluetooth.h",
+        "lf_sha256": "aa7b70ca9ceb454eaed90b3e764cf3919310933c0446d444baea8307e43cb52d"
+      },
+      {
+        "path": "MdePkg/Include/Protocol/DevicePath.h",
+        "lf_sha256": "dac520824a707c44113215bc490c9894811c034eff1e793806521aa75f8bdcad"
+      },
+      {
+        "path": "MdePkg/Include/Protocol/LoadedImage.h",
+        "lf_sha256": "e6d96e2e3d771a2531ece80ac1f974a05902cfda8a4c7f726f260ca72d16bbe0"
+      },
+      {
+        "path": "MdePkg/Include/Protocol/SimpleFileSystem.h",
+        "lf_sha256": "454f5149998197f24b4cba033a31486d381657604f4563dc9b09d17c730078e7"
+      },
+      {
+        "path": "MdePkg/Include/Protocol/SimpleTextIn.h",
+        "lf_sha256": "bffb3976008a9e25645c19edd193742b42c74efe168944bccc96f3cb77b1d82a"
+      },
+      {
+        "path": "MdePkg/Include/Protocol/SimpleTextInEx.h",
+        "lf_sha256": "a08a1d97f5fc61b1457acbf93a8b2a8134318d9af5a613abb5398dc2e0db6246"
+      },
+      {
+        "path": "MdePkg/Include/Protocol/SimpleTextOut.h",
+        "lf_sha256": "9fb8fc1b56b2b0761f8a6b8e8e86fe79022cb1cd10045e8aecf461a068a83730"
+      },
+      {
+        "path": "MdePkg/Include/Uefi.h",
+        "lf_sha256": "8f72d8246e9bce0398f792e3e79a78cbf5a062b5d0a7d47ab6e89577a2b60404"
+      },
+      {
+        "path": "MdePkg/Include/Uefi/UefiBaseType.h",
+        "lf_sha256": "af178050f98850de60272de30107073d40b33d6e5ed3acb5a9ec98d8a97c75d4"
+      },
+      {
+        "path": "MdePkg/Include/Uefi/UefiGpt.h",
+        "lf_sha256": "e66e17a0471b5c4732cb86506629b27d28f40b25a4882a0d4376305b64574c18"
+      },
+      {
+        "path": "MdePkg/Include/Uefi/UefiInternalFormRepresentation.h",
+        "lf_sha256": "908fe38b02be9bc792cf250ba539dfcd29fddfbffd11ed34b44da98fce6987d6"
+      },
+      {
+        "path": "MdePkg/Include/Uefi/UefiMultiPhase.h",
+        "lf_sha256": "d79b51f602bc7c7e4c831c3760e2c267e6961af4698a0c8a0cac13b4202d8201"
+      },
+      {
+        "path": "MdePkg/Include/Uefi/UefiPxe.h",
+        "lf_sha256": "f81780f96daa983bd7e0be1768a9f137f0df5ae30c9fea638ab3da3520eb959c"
+      },
+      {
+        "path": "MdePkg/Include/Uefi/UefiSpec.h",
+        "lf_sha256": "198bb2a5148f573842ba839d49fca78bd8c9da1c50f6935b16eaee1d29350882"
+      }
+    ]
+  },
+  "own_sources": [
+    {
+      "path": "package/NuwaFileAudit/FileAudit.cpp",
+      "sha256": "78b3311a27f50eefddf122653726bbeae8845d4125afdaaa30e1350c4f0445f2"
+    },
+    {
+      "path": "package/NuwaFileAudit/Memory.cpp",
+      "sha256": "7217eddd5bcc9f457904799d244eadf242b7b53f3065aa52f6ac3642c1d073fa"
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "clang++",
+        "--target=aarch64-pc-windows-msvc",
+        "-std=c++17",
+        "-ffreestanding",
+        "-fno-builtin",
+        "-fno-exceptions",
+        "-fno-rtti",
+        "-fno-stack-protector",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wno-unused-parameter",
+        "-MMD",
+        "-MF",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/build-02/0.d",
+        "-I",
+        "/mnt/d/Code/UniXNU-nuwa/package/NuwaFileAudit/include",
+        "-I",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/build-02",
+        "-I",
+        "/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include",
+        "-I",
+        "/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/AArch64",
+        "-c",
+        "/mnt/d/Code/UniXNU-nuwa/package/NuwaFileAudit/FileAudit.cpp",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/build-02/0.obj"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "clang++",
+        "--target=aarch64-pc-windows-msvc",
+        "-std=c++17",
+        "-ffreestanding",
+        "-fno-builtin",
+        "-fno-exceptions",
+        "-fno-rtti",
+        "-fno-stack-protector",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wno-unused-parameter",
+        "-MMD",
+        "-MF",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/build-02/1.d",
+        "-I",
+        "/mnt/d/Code/UniXNU-nuwa/package/NuwaFileAudit/include",
+        "-I",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/build-02",
+        "-I",
+        "/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include",
+        "-I",
+        "/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/AArch64",
+        "-c",
+        "/mnt/d/Code/UniXNU-nuwa/package/NuwaFileAudit/Memory.cpp",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/build-02/1.obj"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "clang++",
+        "--target=aarch64-pc-windows-msvc",
+        "-std=c++17",
+        "-ffreestanding",
+        "-fno-builtin",
+        "-fno-exceptions",
+        "-fno-rtti",
+        "-fno-stack-protector",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wno-unused-parameter",
+        "-MMD",
+        "-MF",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/build-02/2.d",
+        "-I",
+        "/mnt/d/Code/UniXNU-nuwa/package/NuwaFileAudit/include",
+        "-I",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/build-02",
+        "-I",
+        "/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include",
+        "-I",
+        "/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/AArch64",
+        "-c",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/build-02/NativeAdrenoSha256.cpp",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/build-02/2.obj"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "lld-link",
+        "/subsystem:efi_application",
+        "/entry:EfiMain",
+        "/machine:arm64",
+        "/nodefaultlib",
+        "/timestamp:0",
+        "/opt:ref",
+        "/out:/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/build-02/FILEAUDIT.EFI",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/build-02/0.obj",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/build-02/1.obj",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/build-02/2.obj"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "llvm-readobj",
+        "--file-headers",
+        "--coff-imports",
+        "--coff-basereloc",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/build-02/FILEAUDIT.EFI"
+      ],
+      "exit_code": 0,
+      "stdout": "\nFile: /mnt/d/Code/UniXNU-nuwa/out/file-read-audit/build-02/FILEAUDIT.EFI\nFormat: COFF-ARM64\nArch: aarch64\nAddressSize: 64bit\nImageFileHeader {\n  Machine: IMAGE_FILE_MACHINE_ARM64 (0xAA64)\n  SectionCount: 3\n  TimeDateStamp: 1970-01-01 00:00:00 (0x0)\n  PointerToSymbolTable: 0x0\n  SymbolCount: 0\n  StringTableSize: 0\n  OptionalHeaderSize: 240\n  Characteristics [ (0x22)\n    IMAGE_FILE_EXECUTABLE_IMAGE (0x2)\n    IMAGE_FILE_LARGE_ADDRESS_AWARE (0x20)\n  ]\n}\nImageOptionalHeader {\n  Magic: 0x20B\n  MajorLinkerVersion: 14\n  MinorLinkerVersion: 0\n  SizeOfCode: 3072\n  SizeOfInitializedData: 2048\n  SizeOfUninitializedData: 0\n  AddressOfEntryPoint: 0x1000\n  BaseOfCode: 0x1000\n  ImageBase: 0x140000000\n  SectionAlignment: 4096\n  FileAlignment: 512\n  MajorOperatingSystemVersion: 6\n  MinorOperatingSystemVersion: 0\n  MajorImageVersion: 0\n  MinorImageVersion: 0\n  MajorSubsystemVersion: 6\n  MinorSubsystemVersion: 0\n  SizeOfImage: 16384\n  SizeOfHeaders: 1024\n  Subsystem: IMAGE_SUBSYSTEM_EFI_APPLICATION (0xA)\n  Characteristics [ (0x8160)\n    IMAGE_DLL_CHARACTERISTICS_DYNAMIC_BASE (0x40)\n    IMAGE_DLL_CHARACTERISTICS_HIGH_ENTROPY_VA (0x20)\n    IMAGE_DLL_CHARACTERISTICS_NX_COMPAT (0x100)\n    IMAGE_DLL_CHARACTERISTICS_TERMINAL_SERVER_AWARE (0x8000)\n  ]\n  SizeOfStackReserve: 1048576\n  SizeOfStackCommit: 4096\n  SizeOfHeapReserve: 1048576\n  SizeOfHeapCommit: 4096\n  NumberOfRvaAndSize: 16\n  DataDirectory {\n    ExportTableRVA: 0x0\n    ExportTableSize: 0x0\n    ImportTableRVA: 0x0\n    ImportTableSize: 0x0\n    ResourceTableRVA: 0x0\n    ResourceTableSize: 0x0\n    ExceptionTableRVA: 0x0\n    ExceptionTableSize: 0x0\n    CertificateTableRVA: 0x0\n    CertificateTableSize: 0x0\n    BaseRelocationTableRVA: 0x0\n    BaseRelocationTableSize: 0x0\n    DebugRVA: 0x0\n    DebugSize: 0x0\n    ArchitectureRVA: 0x0\n    ArchitectureSize: 0x0\n    GlobalPtrRVA: 0x0\n    GlobalPtrSize: 0x0\n    TLSTableRVA: 0x0\n    TLSTableSize: 0x0\n    LoadConfigTableRVA: 0x0\n    LoadConfigTableSize: 0x0\n    BoundImportRVA: 0x0\n    BoundImportSize: 0x0\n    IATRVA: 0x0\n    IATSize: 0x0\n    DelayImportDescriptorRVA: 0x0\n    DelayImportDescriptorSize: 0x0\n    CLRRuntimeHeaderRVA: 0x0\n    CLRRuntimeHeaderSize: 0x0\n    ReservedRVA: 0x0\n    ReservedSize: 0x0\n  }\n}\nDOSHeader {\n  Magic: MZ\n  UsedBytesInTheLastPage: 120\n  FileSizeInPages: 1\n  NumberOfRelocationItems: 0\n  HeaderSizeInParagraphs: 4\n  MinimumExtraParagraphs: 0\n  MaximumExtraParagraphs: 0\n  InitialRelativeSS: 0\n  InitialSP: 0\n  Checksum: 0\n  InitialIP: 0\n  InitialRelativeCS: 0\n  AddressOfRelocationTable: 64\n  OverlayNumber: 0\n  OEMid: 0\n  OEMinfo: 0\n  AddressOfNewExeHeader: 120\n}\nBaseReloc [\n]\n",
+      "stderr": ""
+    }
+  ],
+  "system_pool_allocation_bytes": 58335232,
+  "read_chunk_bytes": 1048576,
+  "max_read_calls": 4096,
+  "payload_packaged": false,
+  "device_accessed": false,
+  "runtime_verified": false,
+  "limitations": [
+    "Real EFI image load policy, file read and AllocatePool need a separately captured trial",
+    "No early initializer mapping, Apple ADT, OS window or kernel execution",
+    "SHA256 implementation is unchanged upstream, not a FIPS validated cryptographic module"
+  ]
+}

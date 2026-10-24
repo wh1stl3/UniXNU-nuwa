@@ -85,3 +85,5 @@
 2026-10-24 v3-01观察结束 · 已完成120秒；用户文字“菜单显示 booting volume config loaded”已记observation.json，原图/录像尚未提交。已通知保存录像，必要时按电源＋音量下回fastboot；recovery程序正在等nuwa恢复，Android完成1及三分区postcondition待补。人工恢复待办不阻断离线工作，不安排第二轮启动。
 
 2026-10-24T15:41:49+08:00 · **v3-01本轮全部待办关闭**：两张原图已归档，独立64MiB封装/块Success/FAT挂载实机证据取得；recovery/postcondition确认nuwa/kalama、Android完成1/A槽及三分区SHA与试前一致。不再需要按键/补录像，不自动安排OTG或第二候选。下次新包另过本轮录像门。
+
+2026-10-24 文件SHA候选 · 新包18ebd838完成离线构建/全包验收及完整UEFI QEMU文件SHA/返回验证；待本包新鲜连续录像≥120秒和必要时电源＋音量下恢复条件确认。确认前不启动，启动前即时通知，仅原USB线无需OTG。期望NUWA FILE SHA PROBE及NUWA-FILE-SHA actual SHA/PASS，旧菜单不作成功。最近手机恢复仍15:41:49，本轮无新设备动作。

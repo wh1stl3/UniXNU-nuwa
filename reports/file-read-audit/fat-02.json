@@ -1,0 +1,348 @@
+{
+  "scope": "Offline FAT fixture; data file is never an executable menu entry",
+  "image_path": "out/file-read-audit/fat-02/file-audit.fat.img",
+  "bytes": 67108864,
+  "sha256": "b44d22bcf599414e29f940872506fc2215f359e4ff82228c0a010be3d0772166",
+  "app_sha256": "def33a4add6f162a5726bba050a4c143c8ba38ea25f436f46ce4331811bb469f",
+  "data_sha256": "eb66542cc9b6c34f369c07229900408ab67288152f561be63fa6061efce9ffca",
+  "data_bytes": 58335232,
+  "config_lf_sha256": "0f87b477c046578ad63a6a8e3f7fe6bf1b2dffa9441813837b0ad844d51f6484",
+  "config": {
+    "version": 1,
+    "boot": {
+      "timeout": 5,
+      "default": "file-audit"
+    },
+    "kits": {
+      "autoload": false
+    },
+    "ui": {
+      "title": "NUWA FILE SHA PROBE - NO XNU EXECUTION"
+    },
+    "entry": [
+      {
+        "id": "file-audit",
+        "title": "Read 58 MB data and verify SHA256",
+        "type": "efi",
+        "path": "Payloads/FILEAUDIT.EFI"
+      }
+    ]
+  },
+  "fallback_boot_path": "EFI/BOOT/BOOTAA64.EFI is the same read-only audit application",
+  "full_fat_file_readback": true,
+  "commands": [
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "env",
+        "TZ=UTC",
+        "MTOOLS_SKIP_CHECK=1",
+        "mformat",
+        "-C",
+        "-F",
+        "-T",
+        "131072",
+        "-v",
+        "NUWAFILE",
+        "-N",
+        "46494c45",
+        "-i",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/fat-02/file-audit.fat.img",
+        "::"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "env",
+        "TZ=UTC",
+        "MTOOLS_SKIP_CHECK=1",
+        "mmd",
+        "-i",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/fat-02/file-audit.fat.img",
+        "::/EFI"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "env",
+        "TZ=UTC",
+        "MTOOLS_SKIP_CHECK=1",
+        "mmd",
+        "-i",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/fat-02/file-audit.fat.img",
+        "::/EFI/BOOT"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "env",
+        "TZ=UTC",
+        "MTOOLS_SKIP_CHECK=1",
+        "mmd",
+        "-i",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/fat-02/file-audit.fat.img",
+        "::/EFI/UniXNU"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "env",
+        "TZ=UTC",
+        "MTOOLS_SKIP_CHECK=1",
+        "mmd",
+        "-i",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/fat-02/file-audit.fat.img",
+        "::/EFI/UniXNU/Payloads"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "env",
+        "TZ=UTC",
+        "MTOOLS_SKIP_CHECK=1",
+        "mcopy",
+        "-m",
+        "-i",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/fat-02/file-audit.fat.img",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/fat-02/stage-unixnu.toml",
+        "::/EFI/UniXNU/unixnu.toml"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "env",
+        "TZ=UTC",
+        "MTOOLS_SKIP_CHECK=1",
+        "mcopy",
+        "-i",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/fat-02/file-audit.fat.img",
+        "::/EFI/UniXNU/unixnu.toml",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/fat-02/readback-unixnu.toml"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "env",
+        "TZ=UTC",
+        "MTOOLS_SKIP_CHECK=1",
+        "mcopy",
+        "-m",
+        "-i",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/fat-02/file-audit.fat.img",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/fat-02/stage-FILEAUDIT.EFI",
+        "::/EFI/UniXNU/Payloads/FILEAUDIT.EFI"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "env",
+        "TZ=UTC",
+        "MTOOLS_SKIP_CHECK=1",
+        "mcopy",
+        "-i",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/fat-02/file-audit.fat.img",
+        "::/EFI/UniXNU/Payloads/FILEAUDIT.EFI",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/fat-02/readback-FILEAUDIT.EFI"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "env",
+        "TZ=UTC",
+        "MTOOLS_SKIP_CHECK=1",
+        "mcopy",
+        "-m",
+        "-i",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/fat-02/file-audit.fat.img",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/fat-02/stage-BOOTAA64.EFI",
+        "::/EFI/BOOT/BOOTAA64.EFI"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "env",
+        "TZ=UTC",
+        "MTOOLS_SKIP_CHECK=1",
+        "mcopy",
+        "-i",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/fat-02/file-audit.fat.img",
+        "::/EFI/BOOT/BOOTAA64.EFI",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/fat-02/readback-BOOTAA64.EFI"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "env",
+        "TZ=UTC",
+        "MTOOLS_SKIP_CHECK=1",
+        "mcopy",
+        "-m",
+        "-i",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/fat-02/file-audit.fat.img",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/fat-02/stage-READTEST.BIN",
+        "::/EFI/UniXNU/Payloads/READTEST.BIN"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "env",
+        "TZ=UTC",
+        "MTOOLS_SKIP_CHECK=1",
+        "mcopy",
+        "-i",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/fat-02/file-audit.fat.img",
+        "::/EFI/UniXNU/Payloads/READTEST.BIN",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/fat-02/readback-READTEST.BIN"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "env",
+        "TZ=UTC",
+        "MTOOLS_SKIP_CHECK=1",
+        "mcopy",
+        "-m",
+        "-i",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/fat-02/file-audit.fat.img",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/fat-02/stage-SHA256-LICENSE.TXT",
+        "::/EFI/UniXNU/Payloads/SHA256-LICENSE.TXT"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "env",
+        "TZ=UTC",
+        "MTOOLS_SKIP_CHECK=1",
+        "mcopy",
+        "-i",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/fat-02/file-audit.fat.img",
+        "::/EFI/UniXNU/Payloads/SHA256-LICENSE.TXT",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/fat-02/readback-SHA256-LICENSE.TXT"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "env",
+        "TZ=UTC",
+        "MTOOLS_SKIP_CHECK=1",
+        "mdir",
+        "-i",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/fat-02/file-audit.fat.img",
+        "-/",
+        "::/"
+      ],
+      "exit_code": 0,
+      "stdout": " Volume in drive : is NUWAFILE   \n Volume Serial Number is 4649-4C45\nDirectory for ::/\n\nEFI          <DIR>     2026-10-24   7:59 \n        1 file                    0 bytes\n\nDirectory for ::/EFI\n\n.            <DIR>     2026-10-24   7:59 \n..           <DIR>     2026-10-24   7:59 \nBOOT         <DIR>     2026-10-24   7:59 \nUNIXNU       <DIR>     2026-10-24   7:59  UniXNU\n        4 files                   0 bytes\n\nDirectory for ::/EFI/BOOT\n\n.            <DIR>     2026-10-24   7:59 \n..           <DIR>     2026-10-24   7:59 \nBOOTAA64 EFI      6144 1980-01-01   0:00 \n        3 files               6 144 bytes\n\nDirectory for ::/EFI/UniXNU\n\n.            <DIR>     2026-10-24   7:59 \n..           <DIR>     2026-10-24   7:59 \nPAYLOADS     <DIR>     2026-10-24   7:59  Payloads\nUNIXNU~1 TOM       253 1980-01-01   0:00  unixnu.toml\n        4 files                 253 bytes\n\nDirectory for ::/EFI/UniXNU/Payloads\n\n.            <DIR>     2026-10-24   7:59 \n..           <DIR>     2026-10-24   7:59 \nFILEAU~1 EFI      6144 1980-01-01   0:00  FILEAUDIT.EFI\nREADTEST BIN  58335232 1980-01-01   0:00 \nSHA256~1 TXT      1082 1980-01-01   0:00  SHA256-LICENSE.TXT\n        5 files          58 342 458 bytes\n\nTotal files listed:\n       17 files          58 348 855 bytes\n                          7 707 136 bytes free\n\n",
+      "stderr": ""
+    }
+  ],
+  "device_accessed": false
+}

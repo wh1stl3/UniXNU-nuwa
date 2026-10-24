@@ -1,0 +1,49 @@
+{
+  "scope": "Actual app with software UEFI protocol callbacks under user QEMU; not real firmware protocol or device",
+  "commands": [
+    {
+      "argv": [
+        "aarch64-linux-gnu-g++",
+        "-std=c++17",
+        "-static",
+        "-O2",
+        "-fshort-wchar",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wno-unused-parameter",
+        "-I",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/build-02",
+        "-I",
+        "/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include",
+        "-I",
+        "/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/AArch64",
+        "/mnt/d/Code/UniXNU-nuwa/tests/file_audit_host.cpp",
+        "/mnt/d/Code/UniXNU-nuwa/package/NuwaFileAudit/FileAudit.cpp",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/build-02/NativeAdrenoSha256.cpp",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/build-02/host-test-recorded"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/qemu-runtime/usr/bin/qemu-aarch64",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/build-02/host-test-recorded",
+        "/mnt/d/Code/UniXNU-nuwa/out/native-prelink-merged/analysis/kernel-prelinked-analysis.macho"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS actual EFI app: 13 file/protocol cases, all allocations closed; 3 SHA256 vectors\n",
+      "stderr": ""
+    }
+  ],
+  "cases": 13,
+  "known_sha_vectors": 3,
+  "harness_sha256": "bb19d187d43773ed6ab40f597186266d8cc9e1a48d3a79d730ca80d75dade2a5",
+  "all_allocations_freed_and_file_handles_closed": true,
+  "separately_exercised_freestanding_memory_helpers": false,
+  "limitation": "Host fixture uses libc memory primitives; target freestanding helpers are exercised by full UEFI QEMU PE load instead",
+  "device_accessed": false
+}

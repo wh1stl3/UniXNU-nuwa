@@ -1,0 +1,43 @@
+{
+  "scope": "Full AArch64 QEMU UEFI application PE loading and FAT read; not nuwa hardware",
+  "efi_sha256": "def33a4add6f162a5726bba050a4c143c8ba38ea25f436f46ce4331811bb469f",
+  "firmware_path": "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd",
+  "firmware_sha256": "092388aafcb52093866968c603c0347253484dc032da4f2212b6fe80cdd2a6a0",
+  "log_sha256": "f6ebb337620ab3a093f11484a8e189c24d31079d6e24637576b931091d9e2f00",
+  "markers": [
+    "[NUWA-FILE-SHA] PASS exact length, EOF and SHA256",
+    "actual sha256=eb66542cc9b6c34f369c07229900408ab67288152f561be63fa6061efce9ffca",
+    "final bytes=0x00000000037a2000 read calls=0x0000000000000038",
+    "BdsDxe: starting Boot0000"
+  ],
+  "data_bytes": 58335232,
+  "read_calls": 56,
+  "sha256_matched": true,
+  "returned_to_boot_manager": true,
+  "external_timeout_seconds": 50,
+  "tool_reported_exit_code": 1,
+  "termination_note": "QEMU was externally time-limited after application returned; pass is established by stage log, not process exit",
+  "device_accessed": false,
+  "fat_sha256": "b44d22bcf599414e29f940872506fc2215f359e4ff82228c0a010be3d0772166",
+  "complete_command": [
+    "timeout",
+    "50s",
+    "qemu-system-aarch64",
+    "-M",
+    "virt",
+    "-cpu",
+    "cortex-a72",
+    "-m",
+    "512",
+    "-nographic",
+    "-nodefaults",
+    "-serial",
+    "mon:stdio",
+    "-bios",
+    "/usr/share/qemu-efi-aarch64/QEMU_EFI.fd",
+    "-drive",
+    "if=none,format=raw,readonly=on,file=/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/fat-02/file-audit.fat.img,id=fs",
+    "-device",
+    "virtio-blk-device,drive=fs"
+  ]
+}

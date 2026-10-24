@@ -431,3 +431,7 @@ D-026验收更新（2026-10-24）：e553e46全部21模块已合并，固件40014
 D-027条件更新：用户在准备期间取得OTG线并授权选择更快稳健路径。先测已验收v3，因不新增host角色/供电/介质枚举变量；OTG线作为可用备选，U盘/host未验证。此更新不授权没有新鲜录像条件的自动试启动，也不把线缆可用写成介质或固件USB host通过。
 
 D-027实测验收（2026-10-24）：8177783e单次临时v3试验取得独立64MiB封装Found/块Success和先于embedded的FAT挂载原图，运输阶段实机通过。offset0x1d77f27减64B精确等于vendor ramdisk30899943B，增强v4 init_boot替代/旧缺卷首因判断；匹配同固件v4未实测，不称唯一根因或重复性通过。Android于UTC07:41:49.163107/北京时间15:41:49完成1且三分区SHA不变。继续USB v3，无需OTG前置；下一阶段为真实大文件只读读取/SHA，不直接执行loadable=false分析内核。证据reports/usb-ramdisk-trial/2026-10-24-v3-01/。
+
+# D-028 · 用独立EFI应用验证真实大文件，不改已通过运输固件
+
+在USB v3已实测的64MiB FAT中放入独立type=efi校验应用，与58,335,232B分析预链接普通数据READTEST.BIN；复用NativeAdreno固定b686b905 MIT原样SHA实现并随包许可，应用同来源卷只读、长度/EOF/SHA、正常AllocatePool失败返回，不执行数据、不改内存图/Heap/HOB保护。真实PE完整UEFI QEMU及13软件协议场景/3向量/15门控通过；最终包18ebd838仍需独立nuwa录像。xnu_included=true如实承认文件字节，strict scope限定data-only/kernel_execution=false，不借此开放真正XNU启动。证据reports/file-read-audit/，操作记录2026-10-24-file-read-audit.md。
