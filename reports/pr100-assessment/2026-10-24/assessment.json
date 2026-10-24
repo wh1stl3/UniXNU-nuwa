@@ -1,0 +1,581 @@
+{
+  "at": "2026-10-24T13:19:16.356762+00:00",
+  "scope": "PR100 suitability assessment for nuwa Darwin22/XNU8796; no installer, toolchain/kernel build or phone actions",
+  "recommendation": "Adopt as an isolated WSL build workstream after Darwin22 adaptation; retain qualified macOS CI until full acceptance",
+  "upstream_commit": "bd127c008cdc584b83cf00eaea269e4f1adf3cc8",
+  "current_base": "e553e467ebfe7642e9f483d3977a57066c6d1aef",
+  "current_xnu": "1b191cb58250d0705d8a51287127505aa4bc0789",
+  "pr": {
+    "body": "Hi,\n\nI am a linux user. It seems the ci pipeline does not publish artifacts and I don't have a Mac.\n\nI have added an alternative setup solution for linux user, which can also be containerized in the future,",
+    "files": [
+      {
+        "path": "docs/building.md",
+        "additions": 21,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "docs/guide/requirements.md",
+        "additions": 15,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "docs/zh/building.md",
+        "additions": 21,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "docs/zh/guide/requirements.md",
+        "additions": 15,
+        "deletions": 1,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "patches/xnu/offline-component-load-probes.patch",
+        "additions": 4,
+        "deletions": 2,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "scripts/build-corecrypto-14.py",
+        "additions": 7,
+        "deletions": 2,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "scripts/build-firehose.sh",
+        "additions": 29,
+        "deletions": 6,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "scripts/build-xnu-4k-baseline.sh",
+        "additions": 24,
+        "deletions": 5,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "scripts/linux/TargetConditionals.h",
+        "additions": 136,
+        "deletions": 0,
+        "changeType": "ADDED"
+      },
+      {
+        "path": "scripts/linux/cc",
+        "additions": 3,
+        "deletions": 0,
+        "changeType": "ADDED"
+      },
+      {
+        "path": "scripts/linux/clang",
+        "additions": 34,
+        "deletions": 0,
+        "changeType": "ADDED"
+      },
+      {
+        "path": "scripts/linux/clang++",
+        "additions": 4,
+        "deletions": 0,
+        "changeType": "ADDED"
+      },
+      {
+        "path": "scripts/linux/codesign",
+        "additions": 5,
+        "deletions": 0,
+        "changeType": "ADDED"
+      },
+      {
+        "path": "scripts/linux/gm4",
+        "additions": 3,
+        "deletions": 0,
+        "changeType": "ADDED"
+      },
+      {
+        "path": "scripts/linux/iig-port-darwin-target.patch",
+        "additions": 124,
+        "deletions": 0,
+        "changeType": "ADDED"
+      },
+      {
+        "path": "scripts/linux/install",
+        "additions": 16,
+        "deletions": 0,
+        "changeType": "ADDED"
+      },
+      {
+        "path": "scripts/linux/llvm-xnu-builtin-type.patch",
+        "additions": 648,
+        "deletions": 0,
+        "changeType": "ADDED"
+      },
+      {
+        "path": "scripts/linux/plutil",
+        "additions": 108,
+        "deletions": 0,
+        "changeType": "ADDED"
+      },
+      {
+        "path": "scripts/linux/prepare-xnu.py",
+        "additions": 140,
+        "deletions": 0,
+        "changeType": "ADDED"
+      },
+      {
+        "path": "scripts/linux/setup-toolchain.py",
+        "additions": 319,
+        "deletions": 0,
+        "changeType": "ADDED"
+      },
+      {
+        "path": "scripts/linux/xcrun",
+        "additions": 66,
+        "deletions": 0,
+        "changeType": "ADDED"
+      },
+      {
+        "path": "scripts/pbxproj.py",
+        "additions": 90,
+        "deletions": 0,
+        "changeType": "ADDED"
+      },
+      {
+        "path": "scripts/unixnu/cli.py",
+        "additions": 6,
+        "deletions": 2,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "scripts/unixnu/ipsw.py",
+        "additions": 11,
+        "deletions": 3,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "scripts/unixnu/kernel.py",
+        "additions": 38,
+        "deletions": 6,
+        "changeType": "MODIFIED"
+      }
+    ],
+    "mergeCommit": {
+      "oid": "bd127c008cdc584b83cf00eaea269e4f1adf3cc8"
+    },
+    "mergedAt": "2026-10-24T11:48:53Z",
+    "number": 100,
+    "title": "Build kernel on linux",
+    "url": "https://github.com/UniXNU/UniXNU/pull/100",
+    "metadata_source": "Earlier pinned GitHub API record; redundant GraphQL refresh returned EOF, so no fresh CI status is claimed"
+  },
+  "fixtures": {
+    "checks": 32,
+    "all_pass": true
+  },
+  "strict_patch_contexts": [
+    {
+      "patch": "C:\\Users\\Administrator\\Documents\\Codex\\2026-10-24\\ios-nuwa-d-code-unixnu-nuwa-2\\work\\pr100\\scripts\\linux\\llvm-xnu-builtin-type.patch",
+      "passed": true
+    },
+    {
+      "patch": "C:\\Users\\Administrator\\Documents\\Codex\\2026-10-24\\ios-nuwa-d-code-unixnu-nuwa-2\\work\\pr100\\scripts\\linux\\iig-port-darwin-target.patch",
+      "passed": true
+    }
+  ],
+  "source_references": [
+    {
+      "path": "scripts/unixnu/kernel.py",
+      "lines": [
+        {
+          "line": 43,
+          "text": "extra = [d for d in ('/opt/homebrew/opt/llvm/bin', '/opt/homebrew/opt/lld/bin', '/usr/local/opt/llvm/bin', '/usr/local/opt/lld/bin')"
+        },
+        {
+          "line": 60,
+          "text": "xctoolchain / 'bin/iig', Path('/usr/bin/xcrun'), toolchain / 'bin/lzfse'):"
+        },
+        {
+          "line": 61,
+          "text": "if not path.exists():"
+        },
+        {
+          "line": 67,
+          "text": "'UNIXNU_SDKROOT': str(fakeroot), 'UNIXNU_SDK_VERSION': '17.0',"
+        },
+        {
+          "line": 69,
+          "text": "'CROSS_CLANG': str(toolchain / 'llvm/bin/clang'), 'DARWIN_TRIPLE': 'arm64-apple-ios17.0',"
+        }
+      ]
+    },
+    {
+      "path": "scripts/build-firehose.sh",
+      "lines": [
+        {
+          "line": 1,
+          "text": "#!/usr/bin/env bash"
+        },
+        {
+          "line": 14,
+          "text": "s = s.replace('$(SDKROOT)/usr/local/include', '$(FAKEROOT_DIR)/usr/local/include')"
+        },
+        {
+          "line": 18,
+          "text": "lines[index] += (' $(SDKROOT)/usr/include $(FAKEROOT_DIR)/usr/local/include'"
+        },
+        {
+          "line": 30,
+          "text": "mkdir -p build/firehose/obj \"$FAKEROOT/usr/local/lib/kernel\" \"$FAKEROOT/usr/local/include/kernel/os\""
+        },
+        {
+          "line": 31,
+          "text": "xcrun --sdk iphoneos clang -target arm64-apple-ios17.0 -std=gnu11 -Os -g \\"
+        },
+        {
+          "line": 37,
+          "text": "-I\"$FAKEROOT/usr/local/include/os\" -I\"$FAKEROOT/usr/local/include/firehose\" \\"
+        },
+        {
+          "line": 38,
+          "text": "-I\"$FAKEROOT/usr/include\" -I\"$FAKEROOT/usr/local/include\" -I\"$WORK/../xnu-work/EXTERNAL_HEADERS\" \\"
+        },
+        {
+          "line": 40,
+          "text": "rm -f \"$FAKEROOT/usr/local/lib/kernel/libfirehose_kernel.a\""
+        },
+        {
+          "line": 41,
+          "text": "xcrun libtool -static -o \"$FAKEROOT/usr/local/lib/kernel/libfirehose_kernel.a\" build/firehose/obj/firehose_buffer.o"
+        },
+        {
+          "line": 43,
+          "text": "-o \"$FAKEROOT/usr/local/include/kernel/os/firehose_buffer_private.h\" \\"
+        },
+        {
+          "line": 48,
+          "text": "ARCHS=arm64 VALID_ARCHS=arm64 ONLY_ACTIVE_ARCH=NO IPHONEOS_DEPLOYMENT_TARGET=17.0 \\"
+        },
+        {
+          "line": 53,
+          "text": "if [ -f .cache/fakeroot/usr/local/lib/kernel/liblibfirehose_kernel.a ]; then"
+        },
+        {
+          "line": 54,
+          "text": "cp .cache/fakeroot/usr/local/lib/kernel/liblibfirehose_kernel.a \\"
+        },
+        {
+          "line": 55,
+          "text": ".cache/fakeroot/usr/local/lib/kernel/libfirehose_kernel.a"
+        },
+        {
+          "line": 57,
+          "text": "xcrun lipo -info .cache/fakeroot/usr/local/lib/kernel/libfirehose_kernel.a"
+        }
+      ]
+    },
+    {
+      "path": "scripts/linux/prepare-xnu.py",
+      "lines": [
+        {
+          "line": 1,
+          "text": "#!/usr/bin/env python3"
+        },
+        {
+          "line": 22,
+          "text": "LLVM_COMMIT = '58c46bae21181fb4240cf964461bea738d96d50e'"
+        },
+        {
+          "line": 23,
+          "text": "LIBC_COMMIT = '899a3b2d52d95d75e05fb286a5e64975ec3de757'   # Libc-1592.100.35"
+        },
+        {
+          "line": 115,
+          "text": "fetch(src / 'llvm-project', 'https://github.com/llvm/llvm-project', LLVM_COMMIT,"
+        },
+        {
+          "line": 117,
+          "text": "fetch(src / 'Libc', 'https://github.com/apple-oss-distributions/Libc.git', LIBC_COMMIT, 'include')"
+        },
+        {
+          "line": 123,
+          "text": "subprocess.run(['xcrun', 'clang', '-target', 'arm64-apple-ios17.0', '-arch', 'arm64', '-isysroot', FAKEROOT,"
+        }
+      ]
+    },
+    {
+      "path": "scripts/linux/setup-toolchain.py",
+      "lines": [
+        {
+          "line": 1,
+          "text": "#!/usr/bin/env python3"
+        },
+        {
+          "line": 13,
+          "text": "codesign shims in /usr/bin, libmacho.a and libstuff.a in /usr/lib, libdispatch (which ld64 needs) in /usr/local, and"
+        },
+        {
+          "line": 25,
+          "text": "LLVM_VERSION = '24'"
+        },
+        {
+          "line": 26,
+          "text": "LLVM_COMMIT = '58c46bae21181fb4240cf964461bea738d96d50e'"
+        },
+        {
+          "line": 30,
+          "text": "IIG_PORT_COMMIT = 'ea6d147d668ca15d490da638012243fcd705f30d'"
+        },
+        {
+          "line": 104,
+          "text": "--ld-path=/usr/bin/ld {arch_defs} \\\\"
+        },
+        {
+          "line": 126,
+          "text": "def has_xnu_builtins(command, env=None):"
+        },
+        {
+          "line": 141,
+          "text": "suite = f'llvm-toolchain-{codename}-{LLVM_VERSION}'"
+        },
+        {
+          "line": 148,
+          "text": "run(['apt-get', 'install', '-y', '--no-install-recommends', f'clang-{LLVM_VERSION}', f'lld-{LLVM_VERSION}',"
+        },
+        {
+          "line": 149,
+          "text": "f'llvm-{LLVM_VERSION}', f'libclang-{LLVM_VERSION}-dev'], env=env)"
+        },
+        {
+          "line": 155,
+          "text": "if not clang.exists():"
+        },
+        {
+          "line": 157,
+          "text": "git_checkout(src, 'https://github.com/llvm/llvm-project', LLVM_COMMIT)"
+        },
+        {
+          "line": 164,
+          "text": "f'-DCMAKE_C_COMPILER=clang-{LLVM_VERSION}', f'-DCMAKE_CXX_COMPILER=clang++-{LLVM_VERSION}',"
+        },
+        {
+          "line": 168,
+          "text": "if not has_xnu_builtins([clang, '-target', 'arm64e-apple-macos26.0']):"
+        },
+        {
+          "line": 175,
+          "text": "for name, directory in [(n, clt / 'bin') for n in CLT_SHIMS] + [(n, Path('/usr/bin')) for n in USR_BIN_SHIMS]:"
+        },
+        {
+          "line": 182,
+          "text": "if not has_xnu_builtins(['xcrun', 'clang'], env):"
+        },
+        {
+          "line": 190,
+          "text": "if (clt / 'bin/ld').exists():"
+        },
+        {
+          "line": 192,
+          "text": "env = dict(os.environ, CC=f'clang-{LLVM_VERSION}', CXX=f'clang++-{LLVM_VERSION}')"
+        },
+        {
+          "line": 196,
+          "text": "# configure finds it in /usr/local."
+        },
+        {
+          "line": 197,
+          "text": "if not Path('/usr/local/lib/libdispatch.so').exists():"
+        },
+        {
+          "line": 204,
+          "text": "run(['ldconfig'])   # the loader finds /usr/local/lib only through ld.so.cache"
+        },
+        {
+          "line": 218,
+          "text": "# cctools-port builds but does not install. /usr/lib is on the host linker's default path, as libmacho is part"
+        },
+        {
+          "line": 221,
+          "text": "shutil.copy2(tree / name, '/usr/lib/')"
+        },
+        {
+          "line": 227,
+          "text": "if (clt / 'libexec/migcom').exists():"
+        },
+        {
+          "line": 229,
+          "text": "if not (include / 'foreign/mach/message.h').exists():"
+        },
+        {
+          "line": 243,
+          "text": "run([f'clang-{LLVM_VERSION}', *arch, '-Ulinux', f'-DMIG_VERSION=\"{BOOTSTRAP_CMDS_TAG}\"',"
+        },
+        {
+          "line": 252,
+          "text": "if (xctoolchain / 'bin/iig').exists():"
+        },
+        {
+          "line": 254,
+          "text": "llvm_config = shutil.which(f'llvm-config-{LLVM_VERSION}') or shutil.which('llvm-config')"
+        },
+        {
+          "line": 258,
+          "text": "git_checkout(src, 'https://github.com/Nyktis/iig-port', IIG_PORT_COMMIT)"
+        },
+        {
+          "line": 272,
+          "text": "clangs = sorted(Path('/usr/lib').glob('llvm-*/bin/clang'), key=lambda p: int(p.parts[-3].split('-')[1]))"
+        },
+        {
+          "line": 273,
+          "text": "clang = str(clangs[-1]) if clangs else shutil.which('cc') or '/usr/bin/cc'"
+        },
+        {
+          "line": 284,
+          "text": "if (prefix / 'bin/lzfse').exists():"
+        },
+        {
+          "line": 297,
+          "text": "jobs = os.cpu_count() or 4"
+        },
+        {
+          "line": 299,
+          "text": "os.environ['PATH'] = f'/usr/lib/llvm-{LLVM_VERSION}/bin' + os.pathsep + os.environ.get('PATH', '')"
+        },
+        {
+          "line": 313,
+          "text": "if not tool.exists():"
+        }
+      ]
+    }
+  ],
+  "iig": {
+    "repository": "Nyktis/iig-port",
+    "commit": "ea6d147d668ca15d490da638012243fcd705f30d",
+    "sha256": "d0184312dfa77dc83c41f5cead494ddde9bf822597a38e79e22d476ae68ad194",
+    "references": [
+      {
+        "line": 27,
+        "text": "const char kIIGVersion[] = \"DriverKit-440\";"
+      },
+      {
+        "line": 37,
+        "text": "std::string deployment_target;"
+      },
+      {
+        "line": 361,
+        "text": "opt.deployment_target = argv[++i];"
+      },
+      {
+        "line": 362,
+        "text": "if (!valid_deployment_target(opt.deployment_target)) {"
+      },
+      {
+        "line": 3079,
+        "text": "out << \"        const struct \" << prefix << \"_Msg_Content * kernelContent;\\n\";"
+      },
+      {
+        "line": 3467,
+        "text": "out << \"    IORPCMessage * msg = rpc.kernelContent;\\n\";"
+      },
+      {
+        "line": 3510,
+        "text": "out << \"    IORPCMessage * msg = rpc.kernelContent;\\n\";"
+      },
+      {
+        "line": 3841,
+        "text": "out << \"    rpc.kernelContent = &msg->content.__hdr;\\n\";"
+      },
+      {
+        "line": 3890,
+        "text": "out << \"    IORPC rpc = { .message = &buf.msg.mach, .reply = &buf.rpl.rpl.mach, .sendSize = sizeof(buf.msg), .replySize = sizeof(buf.rpl), .kernelContent = &buf.msg.content.__hdr };\\n\";"
+      },
+      {
+        "line": 3892,
+        "text": "out << \"    IORPC rpc = { .message = &buf.msg.mach, .reply = NULL, .sendSize = sizeof(*msg), .replySize = 0, .kernelContent = &buf.msg.content.__hdr };\\n\";"
+      },
+      {
+        "line": 3954,
+        "text": "out << \"            message = rpc.kernelContent;\\n\";"
+      },
+      {
+        "line": 4098,
+        "text": "out << \"    const \" << prefix << \"_Msg_Content * messageContent = rpc.kernelContent;\\n\";"
+      },
+      {
+        "line": 4289,
+        "text": "out << \"    replyMessage = rpc.rpc.kernelContent;\\n\";"
+      },
+      {
+        "line": 4449,
+        "text": "out << \"    IORPCMessage * msg = rpc.kernelContent;\\n\";"
+      },
+      {
+        "line": 4472,
+        "text": "out << \"    IORPCMessage * msg = rpc.kernelContent;\\n\";"
+      },
+      {
+        "line": 4533,
+        "text": "out << \"/* iig(\" << kIIGVersion << \") generated from \""
+      },
+      {
+        "line": 4973,
+        "text": "std::puts(kIIGVersion);"
+      }
+    ],
+    "conclusion": "deployment_target is declared, parsed and validated but not used to select a Darwin22 generation ABI; kernelContent generation is present"
+  },
+  "host": {
+    "machine": "x86_64",
+    "os": {
+      "NAME": "Ubuntu",
+      "ID": "ubuntu",
+      "PRETTY_NAME": "Ubuntu 22.04.5 LTS",
+      "VERSION_ID": "22.04",
+      "VERSION": "22.04.5 LTS (Jammy Jellyfish)",
+      "VERSION_CODENAME": "jammy",
+      "ID_LIKE": "debian",
+      "HOME_URL": "https://www.ubuntu.com/",
+      "SUPPORT_URL": "https://help.ubuntu.com/",
+      "BUG_REPORT_URL": "https://bugs.launchpad.net/ubuntu/",
+      "PRIVACY_POLICY_URL": "https://www.ubuntu.com/legal/terms-and-policies/privacy-policy",
+      "UBUNTU_CODENAME": "jammy"
+    },
+    "cpus": 16,
+    "tools": {
+      "clang": "/usr/bin/clang",
+      "clang-24": null,
+      "llvm-config-24": null,
+      "ld64.lld": null,
+      "ninja": "/usr/bin/ninja",
+      "cmake": "/usr/bin/cmake",
+      "unifdef": "/usr/bin/unifdef",
+      "bison": "/usr/bin/bison",
+      "flex": "/usr/bin/flex",
+      "xcrun": null
+    },
+    "paths": {
+      "/opt/unixnu-linux/llvm/bin/clang": false,
+      "/usr/bin/xcrun": false,
+      "/usr/local/lib/libdispatch.so": false
+    },
+    "memory": [
+      "MemTotal:       16201620 kB",
+      "MemFree:        14358740 kB",
+      "MemAvailable:   15456880 kB",
+      "Buffers:           38364 kB"
+    ]
+  },
+  "acceptance": [
+    "Use isolated native Linux filesystem and package/compiler source identity manifests",
+    "Pin all target/version/runtime dependencies to the Darwin22 profile, including helper explicit targets",
+    "Qualify IIG-generated inline RPC and IORPC layout against the known Darwin22 outputs and real headers",
+    "Run C and C++ type signature/summary/compatible semantics fixtures using built patched clang",
+    "Build real8796 kernel with the complete reviewed patch sequence and ArmCpu/ArmDTPlatform archives; audit version, symbol closure, boot_args and exported ABI",
+    "Prelink/package and perform a separately gated nuwa trial before replacing the known macOS artifact"
+  ],
+  "limits": [
+    "32 fixtures and strict patch context checks are not a full toolchain or kernel build",
+    "No source baseline/module pins/board fields/verified flags changed",
+    "No evidence yet for exact bitwise equivalence or nuwa bootability"
+  ]
+}

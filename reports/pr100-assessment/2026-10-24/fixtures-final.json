@@ -1,0 +1,435 @@
+{
+  "scope": "Pinned PR100 source/shim and original8796 three-file rewrite fixtures; no patched LLVM/IIG/whole-kernel build, no system install or device action",
+  "checks": [
+    {
+      "name": "Selected fixed PR100 input hashes match",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Python syntax scripts/build-corecrypto-14.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Python syntax scripts/linux/prepare-xnu.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Python syntax scripts/linux/setup-toolchain.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Python syntax scripts/pbxproj.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Python syntax scripts/unixnu/cli.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Python syntax scripts/unixnu/ipsw.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Python syntax scripts/unixnu/kernel.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Shell syntax clang",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Shell syntax clang++",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Shell syntax xcrun",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Shell syntax install",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Shell syntax codesign",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Shell syntax cc",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Shell syntax gm4",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "xcrun accepts Darwin22 SDK override",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "xcrun accepts iOS16 build override",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "xcrun rejects absent tool",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "clang wrapper can target arm64 iOS16 explicitly",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Explicit helper iOS17 flag overrides wrapper iOS16 (expected porting risk)",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "TargetConditionals reflects actual iOS16 target",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Host clang14 lacks required XNU builtins (expected blocker)",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Existing clang14 cannot replace PR100 clang (expected blocker)",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "BSD install flags produce real GNU copy",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Install mode is0644 on native Linux filesystem",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "codesign is intentionally no-op, not signature proof",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "plutil converts real plist",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "plutil rejects unknown options",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "PR100 rewrites run on original XNU8796 sources",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "PR100 source rewrites are idempotent on XNU8796",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "8796 ISA condition admits non-Apple clang",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "8796 kextsymboltool exact seek replacement applied",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "/mnt/c/Users/Administrator/Documents/Codex/2026-10-24/ios-nuwa-d-code-unixnu-nuwa-2/work/pr100/scripts/linux/clang"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "/mnt/c/Users/Administrator/Documents/Codex/2026-10-24/ios-nuwa-d-code-unixnu-nuwa-2/work/pr100/scripts/linux/clang++"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "/mnt/c/Users/Administrator/Documents/Codex/2026-10-24/ios-nuwa-d-code-unixnu-nuwa-2/work/pr100/scripts/linux/xcrun"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "/mnt/c/Users/Administrator/Documents/Codex/2026-10-24/ios-nuwa-d-code-unixnu-nuwa-2/work/pr100/scripts/linux/install"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "/mnt/c/Users/Administrator/Documents/Codex/2026-10-24/ios-nuwa-d-code-unixnu-nuwa-2/work/pr100/scripts/linux/codesign"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "/mnt/c/Users/Administrator/Documents/Codex/2026-10-24/ios-nuwa-d-code-unixnu-nuwa-2/work/pr100/scripts/linux/cc"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "/mnt/c/Users/Administrator/Documents/Codex/2026-10-24/ios-nuwa-d-code-unixnu-nuwa-2/work/pr100/scripts/linux/gm4"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/mnt/c/Users/Administrator/Documents/Codex/2026-10-24/ios-nuwa-d-code-unixnu-nuwa-2/work/pr100/scripts/linux/xcrun",
+        "--sdk",
+        "iphoneos",
+        "--show-sdk-version"
+      ],
+      "exit_code": 0,
+      "stdout": "16.0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/mnt/c/Users/Administrator/Documents/Codex/2026-10-24/ios-nuwa-d-code-unixnu-nuwa-2/work/pr100/scripts/linux/xcrun",
+        "--sdk",
+        "iphoneos",
+        "--show-sdk-build-version"
+      ],
+      "exit_code": 0,
+      "stdout": "20H392\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/mnt/c/Users/Administrator/Documents/Codex/2026-10-24/ios-nuwa-d-code-unixnu-nuwa-2/work/pr100/scripts/linux/xcrun",
+        "--find",
+        "nuwa-pr100-nonexistent-tool"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/mnt/c/Users/Administrator/Documents/Codex/2026-10-24/ios-nuwa-d-code-unixnu-nuwa-2/work/pr100/scripts/linux/clang",
+        "-ffreestanding",
+        "-fsyntax-only",
+        "-x",
+        "c",
+        "-"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/mnt/c/Users/Administrator/Documents/Codex/2026-10-24/ios-nuwa-d-code-unixnu-nuwa-2/work/pr100/scripts/linux/clang",
+        "-target",
+        "arm64-apple-ios17.0",
+        "-E",
+        "-P",
+        "-x",
+        "c",
+        "-"
+      ],
+      "exit_code": 0,
+      "stdout": "170000\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/mnt/c/Users/Administrator/Documents/Codex/2026-10-24/ios-nuwa-d-code-unixnu-nuwa-2/work/pr100/scripts/linux/clang",
+        "-E",
+        "-P",
+        "-x",
+        "c",
+        "-"
+      ],
+      "exit_code": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/usr/bin/clang",
+        "-target",
+        "arm64-apple-ios16.0",
+        "-E",
+        "-P",
+        "-x",
+        "c",
+        "-"
+      ],
+      "exit_code": 0,
+      "stdout": "SIG=0\nSUM=0\nCMP=0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/mnt/c/Users/Administrator/Documents/Codex/2026-10-24/ios-nuwa-d-code-unixnu-nuwa-2/work/pr100/scripts/linux/clang",
+        "-c",
+        "-x",
+        "c",
+        "-",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/pr100-fixtures-04/sample.o"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "clang (LLVM option parsing): Unknown command line argument '-disable-atexit-based-global-dtor-lowering'.  Try: 'clang (LLVM option parsing) --help'\nclang (LLVM option parsing): Did you mean '--disable-interleaved-load-combine'?\n"
+    },
+    {
+      "argv": [
+        "/mnt/c/Users/Administrator/Documents/Codex/2026-10-24/ios-nuwa-d-code-unixnu-nuwa-2/work/pr100/scripts/linux/install",
+        "-c",
+        "-S",
+        "-m",
+        "0644",
+        "/mnt/d/Code/UniXNU-nuwa/out/pr100-fixtures-04/copy.in",
+        "/mnt/d/Code/UniXNU-nuwa/out/pr100-fixtures-04/copy.out"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/mnt/c/Users/Administrator/Documents/Codex/2026-10-24/ios-nuwa-d-code-unixnu-nuwa-2/work/pr100/scripts/linux/install",
+        "-c",
+        "-S",
+        "-m",
+        "0644",
+        "/mnt/d/Code/UniXNU-nuwa/out/pr100-fixtures-04/copy.in",
+        "/tmp/nuwa-pr100-qj_n_a_5/copy.out"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "observation": "DrvFS file mode after install",
+      "path": "/mnt/d/Code/UniXNU-nuwa/out/pr100-fixtures-04/copy.out",
+      "mode": "0o777",
+      "limitation": "Windows mount permissions may not reflect requested POSIX modes; use native Linux build/toolchain paths"
+    },
+    {
+      "argv": [
+        "/mnt/c/Users/Administrator/Documents/Codex/2026-10-24/ios-nuwa-d-code-unixnu-nuwa-2/work/pr100/scripts/linux/codesign",
+        "--verify",
+        "/nuwa-pr100-nonexistent"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "python3",
+        "/mnt/c/Users/Administrator/Documents/Codex/2026-10-24/ios-nuwa-d-code-unixnu-nuwa-2/work/pr100/scripts/linux/plutil",
+        "-convert",
+        "binary1",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/pr100-fixtures-04/sample.binary.plist",
+        "/mnt/d/Code/UniXNU-nuwa/out/pr100-fixtures-04/sample.plist"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "python3",
+        "/mnt/c/Users/Administrator/Documents/Codex/2026-10-24/ios-nuwa-d-code-unixnu-nuwa-2/work/pr100/scripts/linux/plutil",
+        "--nuwa-unsupported",
+        "/mnt/d/Code/UniXNU-nuwa/out/pr100-fixtures-04/sample.plist"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "plutil: unsupported option --nuwa-unsupported (UniXNU shim)\n"
+    }
+  ],
+  "xnu_original_source_sha256": {
+    "bsd/kern/makesyscalls.sh": "5161a0a4af8d0ec1420d53613bacca5bdd43f08816a8f03b6115edc247d4823d",
+    "osfmk/arm64/corecrypto/arm64_isa_compatibility.h": "434720ddc7127f148cf36fc7111458c72cd24cbdcecd82216bedbc93aa237348",
+    "SETUP/kextsymboltool/kextsymboltool.c": "88b4a571d84ea615294b6715db1840a1a26bd1d1cd25f157b00a1d1002cf836f"
+  },
+  "host": {
+    "machine": "x86_64",
+    "os": {
+      "NAME": "Ubuntu",
+      "ID": "ubuntu",
+      "PRETTY_NAME": "Ubuntu 22.04.5 LTS",
+      "VERSION_ID": "22.04",
+      "VERSION": "22.04.5 LTS (Jammy Jellyfish)",
+      "VERSION_CODENAME": "jammy",
+      "ID_LIKE": "debian",
+      "HOME_URL": "https://www.ubuntu.com/",
+      "SUPPORT_URL": "https://help.ubuntu.com/",
+      "BUG_REPORT_URL": "https://bugs.launchpad.net/ubuntu/",
+      "PRIVACY_POLICY_URL": "https://www.ubuntu.com/legal/terms-and-policies/privacy-policy",
+      "UBUNTU_CODENAME": "jammy"
+    }
+  },
+  "limitations": [
+    "Syntax/shim behavior is not toolchain or kernel qualification",
+    "Original8796 fixture does not replay the full64-patch device sequence",
+    "codesign no-op acceptance is documented host behavior, not target signing"
+  ]
+}

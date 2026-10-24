@@ -1,0 +1,85 @@
+{
+  "scope": "Strict patch context checks against fixed upstream source files; no compiler build or IIG execution",
+  "files": [
+    {
+      "repository": "llvm/llvm-project",
+      "revision": "58c46bae21181fb4240cf964461bea738d96d50e",
+      "path": "clang/include/clang/Basic/Attr.td",
+      "bytes": 207164,
+      "sha256": "b2c57bc3a68bbb116efb24f51e7834ec63900e94dc462c1565a458888bee1435",
+      "url": "https://raw.githubusercontent.com/llvm/llvm-project/58c46bae21181fb4240cf964461bea738d96d50e/clang/include/clang/Basic/Attr.td"
+    },
+    {
+      "repository": "llvm/llvm-project",
+      "revision": "58c46bae21181fb4240cf964461bea738d96d50e",
+      "path": "clang/include/clang/Basic/BuiltinTraits.td",
+      "bytes": 15163,
+      "sha256": "8e997645514626029883a0853e4bb22ed5ce3cefdf20b6a24588631534dec728",
+      "url": "https://raw.githubusercontent.com/llvm/llvm-project/58c46bae21181fb4240cf964461bea738d96d50e/clang/include/clang/Basic/BuiltinTraits.td"
+    },
+    {
+      "repository": "llvm/llvm-project",
+      "revision": "58c46bae21181fb4240cf964461bea738d96d50e",
+      "path": "clang/include/clang/Basic/DiagnosticSemaKinds.td",
+      "bytes": 745987,
+      "sha256": "ce2023b5ba5fadfb5e20b2b66233348728aa0299f6887105b607a514fe3a3500",
+      "url": "https://raw.githubusercontent.com/llvm/llvm-project/58c46bae21181fb4240cf964461bea738d96d50e/clang/include/clang/Basic/DiagnosticSemaKinds.td"
+    },
+    {
+      "repository": "llvm/llvm-project",
+      "revision": "58c46bae21181fb4240cf964461bea738d96d50e",
+      "path": "clang/lib/AST/CMakeLists.txt",
+      "bytes": 3310,
+      "sha256": "fe0cc84d4058f3087461feb7e87371203c7404d2cca05d193b59973e2d2cd4be",
+      "url": "https://raw.githubusercontent.com/llvm/llvm-project/58c46bae21181fb4240cf964461bea738d96d50e/clang/lib/AST/CMakeLists.txt"
+    },
+    {
+      "repository": "llvm/llvm-project",
+      "revision": "58c46bae21181fb4240cf964461bea738d96d50e",
+      "path": "clang/lib/Parse/ParseExprCXX.cpp",
+      "bytes": 142339,
+      "sha256": "a5a60383b2a134f44d4ed293aa157cd3af766e81b7d2a8abd55d453c0e7c88a2",
+      "url": "https://raw.githubusercontent.com/llvm/llvm-project/58c46bae21181fb4240cf964461bea738d96d50e/clang/lib/Parse/ParseExprCXX.cpp"
+    },
+    {
+      "repository": "llvm/llvm-project",
+      "revision": "58c46bae21181fb4240cf964461bea738d96d50e",
+      "path": "clang/lib/Sema/SemaDeclAttr.cpp",
+      "bytes": 323597,
+      "sha256": "5ee57dced156bbabc2ef35b52e790d350c89a7cb8c186ac58681e4f57a74c2d3",
+      "url": "https://raw.githubusercontent.com/llvm/llvm-project/58c46bae21181fb4240cf964461bea738d96d50e/clang/lib/Sema/SemaDeclAttr.cpp"
+    },
+    {
+      "repository": "llvm/llvm-project",
+      "revision": "58c46bae21181fb4240cf964461bea738d96d50e",
+      "path": "clang/lib/Sema/SemaTypeTraits.cpp",
+      "bytes": 105298,
+      "sha256": "c4e6787950457657419ae2bcc030a9b817e000f298cec82dddd216490a7ac452",
+      "url": "https://raw.githubusercontent.com/llvm/llvm-project/58c46bae21181fb4240cf964461bea738d96d50e/clang/lib/Sema/SemaTypeTraits.cpp"
+    },
+    {
+      "repository": "Nyktis/iig-port",
+      "revision": "ea6d147d668ca15d490da638012243fcd705f30d",
+      "path": "iig.cpp",
+      "bytes": 161312,
+      "sha256": "d0184312dfa77dc83c41f5cead494ddde9bf822597a38e79e22d476ae68ad194",
+      "url": "https://raw.githubusercontent.com/Nyktis/iig-port/ea6d147d668ca15d490da638012243fcd705f30d/iig.cpp"
+    }
+  ],
+  "checks": [
+    {
+      "directory": "C:\\Users\\Administrator\\Documents\\Codex\\2026-10-24\\ios-nuwa-d-code-unixnu-nuwa-2\\work\\pr100\\llvm-context",
+      "patch": "C:\\Users\\Administrator\\Documents\\Codex\\2026-10-24\\ios-nuwa-d-code-unixnu-nuwa-2\\work\\pr100\\scripts\\linux\\llvm-xnu-builtin-type.patch",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "directory": "C:\\Users\\Administrator\\Documents\\Codex\\2026-10-24\\ios-nuwa-d-code-unixnu-nuwa-2\\work\\pr100\\iig-context",
+      "patch": "C:\\Users\\Administrator\\Documents\\Codex\\2026-10-24\\ios-nuwa-d-code-unixnu-nuwa-2\\work\\pr100\\scripts\\linux\\iig-port-darwin-target.patch",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ]
+}

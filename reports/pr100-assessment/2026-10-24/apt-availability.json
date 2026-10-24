@@ -1,0 +1,22 @@
+{
+  "at": "2026-10-24T13:15:03.932967+00:00",
+  "scope": "Read-only release metadata check; no apt config or install",
+  "results": [
+    {
+      "url": "https://apt.llvm.org/jammy/dists/llvm-toolchain-jammy-24/Release",
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "url": "https://apt.llvm.org/jammy/dists/llvm-toolchain-jammy/Release",
+      "status": 200,
+      "bytes": 5951,
+      "sha256": "86c58a109c38c97542409426136333304a9b36e2092a8aac18da0fda7a947a4e",
+      "headers": [
+        "Codename: llvm-toolchain-jammy",
+        "Date: Sat, 24 Oct 2026 07:04:57 UTC",
+        "Architectures: amd64 i386 s390x arm64",
+        "Components: main"
+      ]
+    }
+  ]
+}

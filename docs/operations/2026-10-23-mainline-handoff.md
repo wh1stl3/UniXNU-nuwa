@@ -183,3 +183,7 @@ python3 scripts/compare-prelink-candidates.py --old out/native-prelink-merged/an
 ## 上游日志方案审阅追加
 
 2026-10-24：main@bd127c0未找到二维码日志实现/PR；PR88是giulia协议的主机USB终端，PR100为Linux构建且默认iOS17。当前工作树仍e553e467，未采用变更，无新设备动作。下一步继续正式入口修正与早期C诊断；Linux/USB分别资格化。证据和决定见2026-10-24-upstream-debug-review.md。
+
+## PR100完整适用性评估追加
+
+推荐隔离WSL支线，保留已验收macOS CI。32局部fixture和LLVM/IIG两份严格上下文通过；当前工具链未安装。关键阻塞为新IIG split RPC与Darwin22适配、helper显式iOS17及新clang类型语义/完整8796验收。原PREFIX仍写系统路径，建议独立环境+原生ext4。不把工具链迁移当MMU实机修复；无新设备动作。完整证据在operations/2026-10-24-pr100-assessment.md和reports/pr100-assessment/2026-10-24/。

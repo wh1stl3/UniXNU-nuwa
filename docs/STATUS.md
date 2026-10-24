@@ -33,3 +33,7 @@ R-012已批准的dram_size=0x240000000和owned_memory_size=0x40000000保持，bo
 ## 最新上游审阅
 
 上游main@bd127c0最新PR100是Linux内核构建支持；PR88是电脑端USB日志/屏幕工具。未找到二维码日志PR或实现，整树关键词只命中文档可选依赖。Linux目标默认iOS17，需另做Darwin22/8796适配；USB工具需nuwa设备端协议，不能即装即用。本轮仅fetch/diff，未merge、安装或操作手机，详见[审阅](operations/2026-10-24-upstream-debug-review.md)。
+
+## PR100评估结论
+
+有条件采用为隔离WSL构建路线，保留macOS CI。32项隔离检查及LLVM/IIG严格补丁上下文通过，Ubuntu22.04滚动源存在所需LLVM24包；但IIG-port只解析deployment-target、不选择Darwin22 RPC ABI，部分helper显式iOS17会覆盖外层iOS16，必须适配并完成新clang语义与完整8796构建验收。PREFIX不能隔离安装器的系统路径写入，当前未安装/合入/操作手机。详见[评估](operations/2026-10-24-pr100-assessment.md)。
