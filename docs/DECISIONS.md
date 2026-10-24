@@ -443,3 +443,5 @@ D-028实测更新：18ebd838新菜单返回Access Denied，未取得文件SHA实
 承接用户继续准备固件内入口，选NuwaFileAuditDxe而非关闭SecureBoot/修改db。新profile固定a155c495，57输入/12补丁/15后哈希；原11项保护补丁完全保留。只一次ReadyToBoot有界枚举/唯一文件/长度EOF/SHA，普通pool无地址猜测，不执行数据；目标复用BaseCryptLib。19实际C源软件场景+一次性回调通过，实际CI必须再证SEC字节完全相同/原认证库与0x04策略/目标SHA链接。新包和实机未完成，不升格为正式profile或_verified。证据reports/fv-file-audit/，操作2026-10-24-fv-file-audit.md。
 
 D-029离线验收更新：首轮40078257763编译成功/包装名检查因LTO失败保留；改用实际PE Ready四次BL/572B压缩体及真实BaseCryptLib/OpenSSL非Null模块报告验证，移除调用/短stub回归拒绝。第二轮40080439083/source dbbdc02完整success，独立710项/7模块和完整SEC7192fd3f字节相同、原认证库/介质0x04策略通过。最终USB v3数据包6b3e5bfd/70266880B固定绿色来源，不含外部EFI app，仅普通数据和退出菜单；ReadyToBoot自动检查。实机文件SHA仍未验，需新包录像/恢复门，不改_verified。
+
+D-029 实测补充（2026-10-24）：6b3e5bfd在保留认证策略的固件内完成文件精确长度/EOF/SHA256 PASS，三张原图和Android恢复三SHA见reports/fv-file-audit-trial/2026-10-24-01/。USB大文件数据链可继续作为主路线；外部EFI认证拒绝仍为旧Access Denied首因推断，未捕获精确API，不当成唯一证明。下一步推进内核执行前资格，仍不执行loadable=false分析文件。

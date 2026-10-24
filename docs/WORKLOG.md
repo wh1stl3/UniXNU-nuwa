@@ -337,3 +337,5 @@
 2026-10-24 · CI40078257763固件编译成功但原包装符号检查因LTO失败，保留原日志；按实际Ready四次BL→572B SHA体和模块真实crypto链接修正并独立验收FD52ab071e/SEC7192fd3f逐字节相同及全部原保护/认证策略。纯数据FAT5ea19e90与首轮离线包6b3e5bfd已验收，待完整CI重跑，不启动手机 · Q-156（首轮源2b7328b） · reports/fv-file-audit/40078257763/
 
 2026-10-24 · 第二轮40080439083/source dbbdc02完整成功；独立710项产物/7模块检查通过，FD52ab071e与首轮相同、SEC7192fd3f与已实测固件全同；原认证库/0x04和真实crypto调用保留。最终包6b3e5bfd/70266880B完整复验，23门控/19软件场景已有证据，待本包新录像，不要求Enter/键盘/OTG，本轮无新设备动作 · Q-157 · reports/fv-file-audit/40080439083/acceptance.json
+
+2026-10-24 18:09 北京时间 · 6b3e5bfd单次实机58MB精确长度/EOF/SHA256 PASS，原厂恢复Android1及三分区SHA不变 · Q-158（本里程碑提交） · reports/fv-file-audit-trial/2026-10-24-01/。

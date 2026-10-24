@@ -45,3 +45,13 @@ CI40078257763/source2b7328b固件编译成功，最初artifact inspection失败�
 目前只待本包新鲜录像≥120秒和必要时按键恢复条件确认；确认后刷新preflight并即时通知再单次临时启动。检查自动在ReadyToBoot执行，不要求用户按Enter/接键盘或OTG；重点录像NUWA-FV-FILE enter/unique/read/actual SHA/PASS/exit。菜单只是退出，不能以菜单或USB ACK验收。目标SHA和完整OS资格仍分别处理，不能由固件静态验收称nuwa文件SHA或iOS通过。
 
 复验：bundled Python -B scripts/fv_file_audit_package.py --validate reports/fv-file-audit/40080439083/package.json。首轮compile-success/check-fail日志和第二轮green/local-independent记录均保留，后续启动另建reports/fv-file-audit-trial/<新轮次>/，不可复用18ebd838 preflight或录像许可。
+
+## 6b3e5bfd首次实机结果（2026-10-24）
+
+用户确认本包录像条件后刷新preflight，身份nuwa/kalama、Android1、槽_a及三SHA均通过；明确通知录像后临时启动一次。launch.json记录09:59:13 UTC开始、10:01:31结束的120秒USB观察；USB观察不当作视频。用户三张原图已归档，screen-evidence.json记录文件SHA和可读文字，未收到完整视频文件。
+
+实机画面显示固件内入口、唯一文件打开、正常分配/分块读取、**PASS exact length, EOF and SHA256**、final status=Success、exit status=Success；ReadyToBoot随后也Success，进入data-only菜单。数据为58335232B/eb66542c。图片完整digest略模糊，不伪造逐字转录；固定源码仅在完整digest相等后输出PASS。故可确认本轮完整文件校验实机通过，不能推导内核执行或重复性已资格化。
+
+用户报告已回fastboot后临时加载固定原厂boot。postcondition.json时间2026-10-24T10:09:48.744209+00:00（北京时间18:09:48），Android完成1、槽_a、三个启动分区SHA与本轮preflight完全一致；无flash/erase/改槽。初次launch命令误把evidence参数指向目录，脚本在设备动作前拒绝；修正为launch.json后仅一次候选boot，避免隐去调用错误或当成两次硬件测试。
+
+故障排序更新：上一外部EFI Access Denied首因仍为镜像认证拒绝，置信较高，保留原认证策略的固件内实现成功加强此判断；文件运输/普通分配/完整读取问题不再是该数据链路的主要疑点。精确失败API/runtime SecureBoot及一般外部EFI能力仍未捕获。下一边界是内核执行前资格，真实ADT/实际OS窗口/初始化与完整ABI尚待离线闭合；不从PASS推导iOS启动。

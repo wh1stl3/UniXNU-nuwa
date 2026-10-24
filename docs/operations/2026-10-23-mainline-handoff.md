@@ -79,3 +79,11 @@ recover实际临时加载原厂v4 boot，postcondition.at=2026-10-24T08:14:06.60
 续接先 bundled Python -B scripts/fv_file_audit_package.py --validate reports/fv-file-audit/40080439083/package.json。需新包录像≥120秒及必要时按键恢复条件；刷新record-nuwa-trial-state.py --package <本报告> --capture-confirmation <本轮答复> --output reports/fv-file-audit-trial/2026-10-24-01/preflight.json，唯一nuwa/kalama、Android完成1/三SHA新基线及恢复路径通过后，即时通知再单次trial-v4-firmware.py launch。旧18ebd838/任何之前preflight不可复用，尚未取得本包录像确认，禁止现在启动。
 
 目标画面NUWA-FV-FILE Ready/unique/read/actual SHA eb66542c/PASS/final bytes0x37a2000与exit状态，保留30秒后继续退出菜单。只有菜单/ACK不算通过，失败按具体阶段留证。结束用本包recover及record --before刷新Android完成1/三SHA相同。最近真实手机恢复仍2026-10-24T08:14:06.606976+00:00（北京时间16:14:06），本轮全离线无新设备查询。新诊断驱动实机/完整OS仍未验，不改Heap/HOB/板值/_verified或认证策略。
+
+## 最新实机闭环：6b3e5bfd文件SHA通过
+
+6b3e5bfd已单次实机PASS exact length/EOF/SHA256，固件内读取退出Success，data-only菜单出现。证据reports/fv-file-audit-trial/2026-10-24-01/含preflight/launch/三原图/screen-evidence/recovery/postcondition；源和构建仍a155c495、CI40080439083/dbbdc02，包报告不变。用户本包录像条件确认并已提前通知启动，120秒USB观察不冒充视频。首次evidence目录误参被设备前拒绝，随后仅一次候选启动。
+
+最新实际状态2026-10-24T10:09:48.744209+00:00/北京时间18:09:48：nuwa/kalama、Android1、槽_a、boot/vendor_boot/init_boot SHA与试前一致，无flash/erase/改槽。无需再回fastboot或按Enter。原认证/Heap/HOB/板值不变，分析MachO仍数据文件，不执行。
+
+下一步离线检查原生内核加载链、ADT、实际OS窗口与初始化/ABI资格。不要重复文件探针或从文件PASS直接执行loadable=false分析内核；新包先离线验收，新录像/恢复门及即时启动通知。具体实测和旧认证拒绝首因判断更新见operations/2026-10-24-fv-file-audit.md。

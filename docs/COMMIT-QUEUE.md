@@ -1650,3 +1650,13 @@
 [Evidence] 710实际inventory/7模块，FD52ab071e与首轮相同，SEC7192fd3f与已实测固件全字节一致；真实crypto四BL/原认证0x04保留，70266880B包逐字节复验。
 [Risk] NuwaFileAuditDxe实机调度/文件SHA未验，下一轮需新录像/恢复门；数据仍不执行，未改Heap/HOB/板值或验签策略。
 ```
+
+## Q-158 · FV文件SHA实机与恢复闭环
+
+```text
+[unixnu-nuwa][device] 记录6b3e5bfd实机文件SHA通过并完成Android恢复核验
+
+[Change] 保存本轮preflight/单次启动/三原图/屏幕事实和原厂恢复证据，同步当前状态、决策和交接。
+[Evidence] 原图PASS exact length EOF SHA256及exit Success；18:09:48 Android完成1、槽_a、三个启动分区SHA与试前一致。
+[Risk] 单次文件数据链通过不等于内核或iOS执行，未收到完整连续视频；实际OS窗口、ADT及初始化/完整ABI仍未资格化。
+```

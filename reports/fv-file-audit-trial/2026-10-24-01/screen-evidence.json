@@ -1,0 +1,46 @@
+{
+  "package_sha256": "6b3e5bfd3a8e1d5a8e8abbda3268872a6fc69b287c144df70387012d46a41dc7",
+  "scope": "One physical read-only file audit; not kernel execution or repeatability qualification",
+  "screen_facts": [
+    "NUWA-FV-FILE BootServices entry: FV driver, no external EFI load",
+    "unique file found; file-open succeeded",
+    "allocated; reading fixed data file (no execution)",
+    "PASS exact length, EOF and SHA256",
+    "final status=Success",
+    "exit status=Success; hold 30s",
+    "ReadyToBoot ready enter and exit status=Success",
+    "UniXNU data-only audit menu visible"
+  ],
+  "expected_file_bytes": 58335232,
+  "expected_file_sha256": "eb66542cc9b6c34f369c07229900408ab67288152f561be63fa6061efce9ffca",
+  "digest_transcription": "PASS visible; full photographed digest not independently transcribed because of blur. Actual digest comparison is established by fixed source PASS branch.",
+  "photos": [
+    {
+      "path": "user-menu.jpg",
+      "bytes": 828844,
+      "sha256": "d3c61a2ac41edc67937419d45ba4ea6467e203815b101f11d3023be20894a2b8"
+    },
+    {
+      "path": "user-ready-exit.jpg",
+      "bytes": 1041791,
+      "sha256": "d048b5900842a3d5b9618661f901136ebb888c2bc1f2f460a914a6ae88bee7d6"
+    },
+    {
+      "path": "user-sha-pass.jpg",
+      "bytes": 738815,
+      "sha256": "e6df1393a08e213d009a03dbaf55b858c88d6fa492aeede1e8965699ab3cfb5f"
+    }
+  ],
+  "continuous_video_file_received": false,
+  "android_postcondition": {
+    "at": "2026-10-24T10:09:48.744209+00:00",
+    "boot_completed": "1",
+    "slot": "_a",
+    "three_partition_hashes_unchanged": true
+  },
+  "inference": {
+    "chief_cause_previous_access_denied": "External unsigned EFI authentication rejection remains leading explanation; working firmware-contained reader with unchanged policy strengthens it. Exact failing API/runtime SecureBoot was not captured.",
+    "next_boundary": "Native kernel loading requirements, ADT, allocated OS memory window and initializer/ABI qualification remain open."
+  },
+  "tool_invocation_note": "First launch invocation supplied an existing directory as --evidence; rejected before device action. Corrected to fresh launch.json; one candidate fastboot boot performed."
+}
