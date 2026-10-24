@@ -402,3 +402,5 @@
 2026-10-25 03:45 · v16（清屏+密阶梯）完成并打包为entry-probe-09：入口用boot_args几何把0-1152行清黑；两个PE_init_platform钩子去掉16位hex渲染改回普通色带；行距32、25槽位并新增configure_timer_apple_regs/wfe_timeout_configure/wfe_timeout_init/configure_misc_apple_boot_args/configure_misc_apple_regs五个阶段钩子（early_random因无空槽移除）。候选6e1ba192/镜像b981c50b/ADT ba6969aa，validate通过，42+9+2项全通过。未启动 · 本里程碑提交 · reports/kernel-entry-probe/2026-10-24-v16/、reports/xnu-first-entry/entry-probe-09.json
 
 2026-10-25 04:45 · entry-probe-09(v16带清屏)实机闭环：19:36:21Z preflight、恢复完成1、19:42:08Z三SHA一致。用户60fps录像353帧读数=蓝256黄304品红320三条带，停在青带352（msr sctlr_el1）之前；绿色EBS面包屑被清屏抹掉；无panic带无异常带、固件菜单事后重画⇒形态像看门狗/超时复位。v16在青带之前只多了清屏这一件事（41万次16字节写6.6MB，MMU前），故v17=密阶梯保留、清屏去掉。本轮改.S误伤MAP_FB宏定义，已整体回退到已提交v16，仓内无半成品。· 本里程碑提交 · reports/xnu-entry-probe-trial/2026-10-25-08/screen-evidence.json
+
+2026-10-25 04:55 · v17=密阶梯去掉清屏，完成并打包为entry-probe-10：只删CLEAR_BAND_AREA宏与其调用，其余（密阶梯25槽、恒等VBAR、per-CPU垫片、五个阶段钩子、panic文本）全部保留。候选30daa426/镜像a7858f89/ADT dec3067b，validate通过，42+9+2项全通过。目的是验证上一轮"只画三条带就静默停在msr sctlr_el1之前"是否由清屏的41万次设备写引起；去掉清屏后绿色EBS面包屑也回来了。未启动 · 本里程碑提交 · reports/kernel-entry-probe/2026-10-24-v17/、reports/xnu-first-entry/entry-probe-10.json

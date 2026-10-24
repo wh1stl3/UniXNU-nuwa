@@ -159,29 +159,6 @@
 .Lno_device\@:
 .endm
 
-.macro CLEAR_BAND_AREA
-    ldr         x9, [x0, #0x28]
-    cbz         x9, .Lclear_done\@
-    ldr         x10, [x0, #0x38]
-    cbz         x10, .Lclear_done\@
-    ldr         x11, [x0, #0x48]
-    mov         x12, #1152
-    cmp         x11, x12
-    csel        x12, x11, x12, lo
-.Lclear_row\@:
-    mov         x15, #0
-.Lclear_px\@:
-    add         x16, x9, x15
-    stp         xzr, xzr, [x16]
-    add         x15, x15, #16
-    cmp         x15, x10
-    b.lo        .Lclear_px\@
-    add         x9, x9, x10
-    subs        x12, x12, #1
-    cbnz        x12, .Lclear_row\@
-    dsb         sy
-.Lclear_done\@:
-.endm
 
 .text
 .balign 4096
@@ -260,7 +237,6 @@ exception_stop:
 .endm
 .global probe_entry
 probe_entry:
-        CLEAR_BAND_AREA
     BAND x0, 256, 0xff0080ff
     b original_first_cpu
 .global probe_tables
