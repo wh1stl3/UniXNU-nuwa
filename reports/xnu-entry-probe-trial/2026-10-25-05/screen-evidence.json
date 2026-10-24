@@ -1,0 +1,125 @@
+{
+  "scope": "Single fastboot boot of entry-probe-06 (v13 kernel f557149d, dense markers); recovery closed",
+  "package": {
+    "report": "reports/xnu-first-entry/entry-probe-06.json",
+    "image_sha256": "d4c069f54849b9203fae29746d69aa52943f8e404b48a5e429d4e456a832ee93",
+    "kernel_sha256": "f557149d31c19e545ca55afd7daf63314de678f91edc96428acee786fa970546",
+    "adt_sha256": "92efef6249fc35103b40d6d9b8b969003e008f5d34a673e4585fe16f4cdad340"
+  },
+  "window": {
+    "preflight_at": "2026-10-24T18:30:12.362710+00:00",
+    "postcondition_at": "2026-10-24T18:34:49.532291+00:00",
+    "partition_hashes_unchanged": true,
+    "android_boot_completed": "1",
+    "slot": "_a"
+  },
+  "reading_method": "Bands read from a clean column at 78% width (right of the logo). Photo rows mapped to screen rows with the five known early bands: photo_y = 247 + 0.596 * (row - 256). Every observed band lands on a slot of the .S layout to within 3 rows.",
+  "bands_observed": [
+    {
+      "row": 256,
+      "color": "blue",
+      "photo_y": 247,
+      "means": "__start branch and diagnostic entry"
+    },
+    {
+      "row": 304,
+      "color": "yellow",
+      "photo_y": 276,
+      "means": "bootstrap page tables generated"
+    },
+    {
+      "row": 352,
+      "color": "magenta",
+      "photo_y": 304,
+      "means": "BCM write suppressed; reached the SCTLR value build"
+    },
+    {
+      "row": 400,
+      "color": "cyan",
+      "photo_y": 331,
+      "means": "msr sctlr_el1 + replayed isb; drawn with the MMU on"
+    },
+    {
+      "row": 448,
+      "color": "white",
+      "photo_y": 360,
+      "means": "_arm_init entered at the KVA"
+    },
+    {
+      "row": 544,
+      "color": "brown",
+      "photo_y": 416,
+      "means": "_arm_vm_init entered"
+    },
+    {
+      "row": 656,
+      "color": "teal-gray",
+      "photo_y": 489,
+      "means": "arm_vm_init+0x54: boot_args virtBase/physBase/memSize read"
+    },
+    {
+      "row": 848,
+      "color": "cyan-gray",
+      "photo_y": 599,
+      "means": "pe_arm_get_soc_base_phys called - the ADT arm-io entry was found"
+    }
+  ],
+  "bands_not_observed": [
+    {
+      "row": 496,
+      "color": "purple",
+      "means": "_current_percpu_base - absent this round (present in the previous round)"
+    },
+    {
+      "row": 592,
+      "color": "teal",
+      "means": "_pmap_bootstrap - not reached"
+    },
+    {
+      "row": 624,
+      "color": "orange",
+      "means": "_kernel_bootstrap - not reached"
+    },
+    {
+      "row": 688,
+      "color": "olive",
+      "means": "arm_vm_init+0xa4 - NOT reached, so the stop is between +0x54 and +0xa4"
+    },
+    {
+      "row": 976,
+      "color": "hot-pink",
+      "means": "panic - not observed"
+    },
+    {
+      "row": 1008,
+      "color": "bright-pink",
+      "means": "panic_with_options - not observed"
+    },
+    {
+      "row": 1040,
+      "color": "violet",
+      "means": "panic_trap_to_debugger - not observed this round"
+    },
+    {
+      "row": 1072,
+      "color": "hex glyphs",
+      "means": "panic format string - not observed"
+    },
+    {
+      "row": 1104,
+      "color": "red",
+      "means": "our exception reporter - did not fire"
+    }
+  ],
+  "conclusion": "The kernel entered arm_vm_init and got as far as +0x54, then stopped before +0xa4, with no panic hook, no panic text and no exception report. That points at a hang or a reset inside arm_vm_init rather than a panic. pe_arm_get_soc_base_phys fired, so the ADT arm-io entry was found this round. The previous round showed a panic instead and this round does not, and the purple band appeared only in the previous round: the post-arm_init behaviour varies between boots, most likely through the random physmap slide from early_random().",
+  "not_proven": [
+    "whether the stop is a hang, a watchdog reset or an unhandled fault",
+    "the exact statement in arm_vm_init between +0x54 and +0xa4",
+    "the colours of the two lower bands, which the photo records at 656 and 848 by position but with a green cast; the user reading of the photo is the authority"
+  ],
+  "image": {
+    "path": "out/trial-evidence/entry-probe-06/screen-01.jpg",
+    "sha256": "b24fec01523f22d54c20e4243b11bdb1e81708d20993e6cb1dd4da8834ac574e",
+    "bytes": 386453
+  }
+}
