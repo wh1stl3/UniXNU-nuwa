@@ -226,8 +226,8 @@ def main():
         global UNIXNU_TOML
         # Bump this label whenever the band set changes so a recording cannot be
         # mistaken for an earlier package.
-        UNIXNU_TOML = UNIXNU_TOML.replace('NUWA XNU FIRST ENTRY - ANALYSIS BUILD', 'NUWA XNU ENTRY PROBE 06')
-        UNIXNU_TOML = UNIXNU_TOML.replace('Enter UniXNU iOS 16 kernel (analysis prelink)', 'XNU ENTRY PROBE 06 - DENSE MARKERS WITH PANIC TEXT')
+        UNIXNU_TOML = UNIXNU_TOML.replace('NUWA XNU FIRST ENTRY - ANALYSIS BUILD', 'NUWA XNU ENTRY PROBE 08')
+        UNIXNU_TOML = UNIXNU_TOML.replace('Enter UniXNU iOS 16 kernel (analysis prelink)', 'XNU ENTRY PROBE 08 - GUARD IN DEVICE WINDOW')
     if sha(fd) != FD_SHA or len(fd) != 3145728:
         raise ValueError('Firmware FD changed')
     if sha(shim) != SHIM_SHA:
