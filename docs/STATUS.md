@@ -33,11 +33,17 @@
 - ParseKernel 夹具串行复跑也出现过 rc=139，根因未查（此前「并行内存压力」的推断已撤回）。
 - 未验证：arm_init 返回、arm_vm_init、kext start、iOS。
 
+## 当前状态：v5 已打包，preflight 通过，等待录像后单次启动
+
+- 镜像 **`af5862be01126c5cf67e13b3fb36a9a5e8be3d6f028271f49ebc088d03876031`**，70,266,880 B，菜单标识 `XNU ENTRY PROBE 02 - BLUE YELLOW MAGENTA CYAN WHITE`；报告 `reports/xnu-first-entry/entry-probe-02.json`，`--validate` 已从出货 FAT 读回 kernel `8515068d` 与 ADT `ed7235cb` 通过。
+- preflight（2026-10-24T16:36:45Z）：唯一 nuwa/kalama、Android 完成 1、槽_a，boot_a `ef558db2`、vendor_boot_a `5ad2a9dc`、init_boot_a `19e95d95` 与基线一致；证据 `reports/xnu-entry-probe-trial/2026-10-25-01/preflight.json`。
+- 用户 2026-10-25 00:35 答复「跑V5 可以录像」为**本包**授权；`ab3c092b` 的许可已作废。启动前仍需即时通知，结束后必须恢复 Android 并核三 SHA。
+
 ## 下一步
 
-1. 评估 QEMU system mode 作为第二条执行通道（优先级高于继续在 Unicorn 上找开关）。
-2. 打包 `build_xnu_boot_package.py --entry-probe` 指向 v5 报告 + 严格包校验；启动前须新鲜 preflight（唯一 nuwa/kalama、完成 1、三分区 SHA、恢复路径）、即时通知、用户对本包的录像确认。`ab3c092b` 的许可不可复用。
-3. 判读：有 cyan 无 white → 查 `ret` 到 arm_init 的 KVA 切换；两者皆无 → 查 MMU 开启本身；有 white → 转 pmap/arm_vm_init。
+1. 单次 `fastboot boot`（180 秒观察，全程录像），随后 `recover` + postcondition 三 SHA。
+2. 判读：有 cyan 无 white → 查 `ret` 到 arm_init 的 KVA 切换；两者皆无 → 查 MMU 开启本身；有 white → 转 pmap/arm_vm_init。
+3. 若实机连"异常向量都没抓到"，再评估 QEMU system mode（注意同源 QEMU 对 T0SZ=26 的处理需先验证）。
 
 最近实机事实仍是 2026-10-24T12:53:19Z（北京时间20:53:19）nuwa/kalama、Android 完成 1、槽_a、三 SHA 与试前一致；本轮未刷新设备状态。
 

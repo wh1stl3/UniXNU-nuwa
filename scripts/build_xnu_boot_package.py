@@ -224,8 +224,10 @@ def main():
         probe = metadata(args.entry_probe)
         validate_probe(probe, sha(kernel))
         global UNIXNU_TOML
-        UNIXNU_TOML = UNIXNU_TOML.replace('NUWA XNU FIRST ENTRY - ANALYSIS BUILD', 'NUWA XNU ENTRY PROBE 01')
-        UNIXNU_TOML = UNIXNU_TOML.replace('Enter UniXNU iOS 16 kernel (analysis prelink)', 'XNU ENTRY PROBE 01 - BLUE YELLOW MAGENTA')
+        # Bump this label whenever the band set changes so a recording cannot be
+        # mistaken for an earlier package.
+        UNIXNU_TOML = UNIXNU_TOML.replace('NUWA XNU FIRST ENTRY - ANALYSIS BUILD', 'NUWA XNU ENTRY PROBE 02')
+        UNIXNU_TOML = UNIXNU_TOML.replace('Enter UniXNU iOS 16 kernel (analysis prelink)', 'XNU ENTRY PROBE 02 - BLUE YELLOW MAGENTA CYAN WHITE')
     if sha(fd) != FD_SHA or len(fd) != 3145728:
         raise ValueError('Firmware FD changed')
     if sha(shim) != SHIM_SHA:
