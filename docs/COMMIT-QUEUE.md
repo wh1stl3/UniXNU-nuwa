@@ -1620,3 +1620,13 @@
 [Evidence] 原图returned Access Denied；实际SecurityStub链接验证库/介质policy0x04、app证书表0；postcondition UTC08:14:06完成1/A槽/三SHA不变。
 [Risk] 精确拒绝API/runtime SecureBoot值未捕获，认证拒绝为首因推断；无文件SHA实机成功，不重复同包或关闭验签，新固件候选尚未实现。
 ```
+
+## Q-155 · 固件内文件SHA诊断profile与CI接入
+
+```text
+[unixnu-nuwa][firmware] 接入保留验签策略的ReadyToBoot文件SHA诊断与严格产物检查
+
+[Change] 固定固件a155c495及独立模块selection，新profile/CI保持默认和认证策略；显式沿用旧epoch避免无关SEC变化。
+[Evidence] 57输入/12补丁/15后哈希静态通过，原11guard补丁和原保护post-image相同；实际C源AArch64 QEMU 19场景加一次性回调通过。
+[Risk] 实际固件编译/SEC逐字节/目标crypto链接和nuwa执行待验，新包未生成，无新手机动作。
+```

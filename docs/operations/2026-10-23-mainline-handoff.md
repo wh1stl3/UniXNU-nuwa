@@ -53,3 +53,11 @@ Q-153新增独立6144B ARM64 EFI app def33a4a，菜单type=efi，来源卷固定
 recover实际临时加载原厂v4 boot，postcondition.at=2026-10-24T08:14:06.606976+00:00（北京时间16:14:06），完成1/nuwa/kalama/A槽和三分区SHA相同；当前恢复已闭环，无需按键/键盘/录像。不要重复18ebd838试验，不启动第二候选。详细操作2026-10-24-file-audit-access-denied.md，目录reports/file-read-audit-trial/2026-10-24-01/。
 
 下一步离线优先评估将同一只读校验核心纳入独立固件诊断profile、沿既有认证启动链运行，继续读取外来FAT；另一个方案为已有信任链签名资格/准确API状态，不能假造签名或改信任变量。当前尚未实现/构建新固件包，不默认关闭Secure Boot/放宽policy，不改Heap/HOB/板值；新包需重新SEC/保护验收及新鲜录像确认。
+
+## 最新离线实现：FV文件诊断待实际CI
+
+固件源a155c495c863e06d400b515315e3b8f7791dc308已推送（NuwaFileAuditDxe/INF/docs），19实际C源AArch64软件协议场景+一次性Ready回调通过，空枚举清理亦覆盖。设备新增独立fv-file-audit profile，前11guard补丁与全部非选择post-image保持，57输入/12补丁/15后哈希通过；新增0020仅选择新驱动。SOURCE_DATE_EPOCH显式1792776324与真实旧build-settings一致，避免无关SEC日期变化。认证库/keys/拒绝policy源固定，不关闭SecureBoot。
+
+实际CI尚待验收：必须新模块GUID/PE/DEPEX/屏幕marker、SEC SHA7192fd3f逐字节一致、实际认证库/介质0x04策略和驱动map Sha256HashAll。软件fixture用NativeAdreno SHA回调而目标链接BaseCryptLib，不能混为目标库已执行。相关scripts/check-fv-file-audit.py、test-fv-file-audit.py和reports/fv-file-audit/；操作2026-10-24-fv-file-audit.md。
+
+当前没有新镜像包/设备动作；18ebd838失败和Android16:14:06恢复仍为最近实机真相。下一步触发firmware-candidate.yml profile=fv-file-audit，检查失败保留日志且修复，不能跳过新增检查。CI后才准备USB v3数据FAT+退出菜单包，避免重复执行外部app；新包另需严格scope/录像/恢复门。不要重复启动旧18ebd838，不要求用户键盘/OTG。

@@ -1,0 +1,18 @@
+{
+  "command": [
+    "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_*gate.py",
+    "-v"
+  ],
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "test_empty_capture_rejected (test_boot_input_audit_gate.BootAuditGate.test_empty_capture_rejected) ... ok\ntest_old_fv_cannot_claim_audit_profile (test_boot_input_audit_gate.BootAuditGate.test_old_fv_cannot_claim_audit_profile) ... ok\ntest_empty_capture_rejected (test_embedded_probe_gate.EmbeddedGate.test_empty_capture_rejected) ... ok\ntest_old_fd_cannot_claim_embedded_profile (test_embedded_probe_gate.EmbeddedGate.test_old_fd_cannot_claim_embedded_profile) ... ok\ntest_empty_capture_rejected (test_file_audit_gate.FileAuditGate.test_empty_capture_rejected) ... ok\ntest_metadata_cannot_enable_kernel_entry (test_file_audit_gate.FileAuditGate.test_metadata_cannot_enable_kernel_entry) ... ok\ntest_missing_capture_blocks_preflight_before_enumeration (test_file_audit_gate.FileAuditGate.test_missing_capture_blocks_preflight_before_enumeration) ... ok\ntest_missing_preflight_blocks_launch_before_device (test_file_audit_gate.FileAuditGate.test_missing_preflight_blocks_launch_before_device) ... ok\ntest_package_preserves_data_only_identity (test_file_audit_gate.FileAuditGate.test_package_preserves_data_only_identity) ... ok\ntest_prior_fd_missing_fv_driver_is_refused (test_fv_file_audit_gate.FvFileAuditGate.test_prior_fd_missing_fv_driver_is_refused) ... ok\ntest_empty_capture_rejected (test_hob_cache_handoff_gate.CacheHandoffGate.test_empty_capture_rejected) ... ok\ntest_old_fv_cannot_claim_audit_profile (test_hob_cache_handoff_gate.CacheHandoffGate.test_old_fv_cannot_claim_audit_profile) ... ok\ntest_empty_capture_rejected (test_hob_stage_audit_gate.HobStageGate.test_empty_capture_rejected) ... ok\ntest_old_fv_cannot_claim_audit_profile (test_hob_stage_audit_gate.HobStageGate.test_old_fv_cannot_claim_audit_profile) ... ok\ntest_new_scope_requires_capture_confirmation (test_volume_status_gate.VolumeStatusGate.test_new_scope_requires_capture_confirmation) ... ok\ntest_old_publisher_rejected_even_if_profile_metadata_is_spoofed (test_volume_status_gate.VolumeStatusGate.test_old_publisher_rejected_even_if_profile_metadata_is_spoofed) ... ok\n\n----------------------------------------------------------------------\nRan 16 tests in 8.917s\n\nOK\n",
+  "device_accessed": false
+}

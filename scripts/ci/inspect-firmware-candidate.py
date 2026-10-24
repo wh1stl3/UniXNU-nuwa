@@ -13,6 +13,7 @@ MODULES = {
     "29b950cf-586d-49ea-9d71-f88645ccdaf6": ("UniXNUDxe", 11, 7),
     "1b64af87-8415-4b57-9b16-680d70913b9f": ("DarwinBoot", 11, 7),
     "79a20f57-5e17-4bea-8f17-5ebc93e8ac10": ("NuwaBootAuditDxe", 11, 7),
+    "45b28639-79a9-456d-afc5-edcfe78cdae1": ("NuwaFileAuditDxe", 11, 7),
     "d6366842-3c85-42ed-b150-f0326e391286": ("NuwaEmbeddedVolumeDxe", 11, 7),
     "5c0e4b7a-31d2-4e8f-9a66-0b1f7d2c8e43": ("ShengBootMemoryDxe", 11, 7),
 }
@@ -109,6 +110,12 @@ def pe(data):
                     "[NUWA-BOOT-AUDIT] registered %r", "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu",
                     "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx",
                     "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved")},
+                fv_file_markers={m: m.encode('utf-16-le') in data for m in (
+                    'ReadyToBoot enter; FV driver, no external EFI load',
+                    'unique file found; file-open succeeded',
+                    '[NUWA-FV-FILE] actual sha256=%s\r\n',
+                    'PASS exact length, EOF and SHA256',
+                    '[NUWA-FV-FILE] exit status=%r; hold 30s\r\n')},
                 application_guid_present=uuid.UUID("9b665204-a133-47a2-9396-9e2b370a4e25").bytes_le in data)
 
 
@@ -291,9 +298,11 @@ def inspect(artifact, publisher_name='ShengBootMemoryDxe', require_sec_trace=Fal
     fv.volume(data, "FD/FVMAIN_COMPACT")
     modules = []
     for guid, (name, subsystem, kind) in MODULES.items():
-        if name == 'NuwaEmbeddedVolumeDxe' and inputs['profile'] not in ('embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged'):
+        if name == 'NuwaFileAuditDxe' and inputs['profile'] != 'fv-file-audit':
             continue
-        if name == 'NuwaBootAuditDxe' and inputs['profile'] not in ('boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged'):
+        if name == 'NuwaEmbeddedVolumeDxe' and inputs['profile'] not in ('embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged', 'fv-file-audit'):
+            continue
+        if name == 'NuwaBootAuditDxe' and inputs['profile'] not in ('boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged', 'fv-file-audit'):
             continue
         if name == 'ShengBootMemoryDxe':
             name = publisher_name
@@ -326,6 +335,12 @@ def inspect(artifact, publisher_name='ShengBootMemoryDxe', require_sec_trace=Fal
         if name == 'NuwaBootAuditDxe':
             need(all(images[0]['boot_input_markers'].values()), 'Boot input audit markers absent')
             need(deps == [[dict(op="PUSH", guid=PCD_GUID), dict(op="END")]], 'Boot input audit DEPEX mismatch')
+        if name == 'NuwaFileAuditDxe':
+            need(deps == [[dict(op='PUSH', guid=PCD_GUID), dict(op='END')]], 'FV file audit DEPEX mismatch')
+            # Check actual PE bytes for screen checkpoints and the expected data digest.
+            sections = [s for s in item['sections'] if 'pe' in s]
+            need(len(sections) == 1, 'FV file audit image duplicated')
+            need(all(images[0]['fv_file_markers'].values()), 'FV file audit checkpoints absent')
         outputs = []
         for path in artifact.rglob(name + ".efi"):
             parsed = pe(path.read_bytes())
@@ -355,7 +370,7 @@ def inspect(artifact, publisher_name='ShengBootMemoryDxe', require_sec_trace=Fal
     need(offset == expected_offset and image_size == len(shim) + len(data), "Shim header length/relative-offset mismatch")
     pil_check = None
     if require_no_auto_abl:
-        need(inputs['profile'] in ('pil-no-auto', 'dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged') and expected_offset == 0, 'Wrong R-009 build profile/header')
+        need(inputs['profile'] in ('pil-no-auto', 'dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged', 'fv-file-audit') and expected_offset == 0, 'Wrong R-009 build profile/header')
         configs = [s['pil_config'] for f in fv.files if f['guid'] == PIL_CONFIG_GUID
                    for s in f['sections'] if 'pil_config' in s]
         need(len(configs) == 1 and configs[0]['auto_entries'] == []
@@ -369,38 +384,50 @@ def inspect(artifact, publisher_name='ShengBootMemoryDxe', require_sec_trace=Fal
     allocation_trace = None
     if require_allocation_trace:
         profile = json.loads((ROOT / f'config/firmware-{allocation_profile}-profile.json').read_text())
-        need(allocation_profile in ('dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged') and inputs['profile'] == allocation_profile and inputs['recipe'] == profile['recipe'],
+        need(allocation_profile in ('dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged', 'fv-file-audit') and inputs['profile'] == allocation_profile and inputs['recipe'] == profile['recipe'],
              'Wrong R-010 source/input profile')
         cores = [s['allocation_trace'] for f in fv.files if f['guid'] == DXE_CORE_GUID and f['type'] == 5
                  for s in f['sections'] if 'allocation_trace' in s]
         need(len(cores) == 1 and all(cores[0]['markers'].values()), 'Actual DXE core lacks allocation diagnostics')
         allocation_trace = cores[0]
     factory_heap = None
-    if require_allocation_trace and allocation_profile in ('factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged'):
+    if inputs['profile'] == 'fv-file-audit':
+        audit_profile = json.loads((ROOT/'config/firmware-fv-file-audit-profile.json').read_text())
+        expected_sec = audit_profile['candidate']['file_audit']['expected_sec_sha256']
+        need(sec_te[0]['sha256'] == expected_sec, 'FV diagnostic changed actual SEC bytes')
+        build_report = (artifact/'BUILD_REPORT.txt').read_text(errors='replace')
+        need('DxeImageVerificationLib.inf' in build_report, 'Actual target image verification library absent')
+        for policy in ('PcdFixedMediaImageVerificationPolicy', 'PcdRemovableMediaImageVerificationPolicy'):
+            need(any(policy in line and '0x04 (4)' in line for line in build_report.splitlines()),
+                 'Image verification deny policy changed: ' + policy)
+        crypto_maps = list(artifact.rglob('NuwaFileAuditDxe.map'))
+        need(crypto_maps and any('Sha256HashAll' in p.read_text(errors='replace') for p in crypto_maps),
+             'Target SHA256 implementation evidence absent from driver map')
+    if require_allocation_trace and allocation_profile in ('factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged', 'fv-file-audit'):
         descriptors = sec_te[0]['heap_descriptors']
         need(len(descriptors) == 1 and descriptors[0]['base'] == '0xbab00000'
              and descriptors[0]['bytes'] == 0x0d1c0000,
              'Actual SEC did not embed the exact same-device factory Heap descriptor')
         factory_heap = descriptors[0]
-    if inputs['profile'] in ('sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged'):
+    if inputs['profile'] in ('sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged', 'fv-file-audit'):
         need(require_sec_trace and require_no_auto_abl and require_allocation_trace,
              'SEC handoff profile requires all baseline diagnostic checks')
         need(all(sec_te[0]['handoff_markers'].values()),
              'New handoff boundary logs absent from actual SEC TE')
-    if inputs['profile'] in ('constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged'):
+    if inputs['profile'] in ('constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged', 'fv-file-audit'):
         need(all(sec_te[0]['constructor_markers'].values()),
              'Per-constructor logs absent from actual SEC TE')
-    if inputs['profile'] in ('mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged'):
+    if inputs['profile'] in ('mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged', 'fv-file-audit'):
         need(all(sec_te[0]['mmu_markers'].values()), 'MMU branch logs absent from actual SEC TE')
-    if inputs['profile'] in ('hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged'):
+    if inputs['profile'] in ('hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged', 'fv-file-audit'):
         need(all(sec_te[0]['hob_markers'].values()), 'HOB query logs absent from actual SEC TE')
-    if inputs['profile'] in ('hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged'):
+    if inputs['profile'] in ('hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged', 'fv-file-audit'):
         need(all(sec_te[0]['hob_check_markers'].values()), 'HOB integrity logs absent from actual SEC TE')
-    if inputs['profile'] in ('hob-stage-audit', 'hob-cache-handoff', 'upstream-merged'):
+    if inputs['profile'] in ('hob-stage-audit', 'hob-cache-handoff', 'upstream-merged', 'fv-file-audit'):
         need(all(sec_te[0]['hob_stage_markers'].values()), 'HOB stage markers absent from actual SEC TE')
-    if inputs['profile'] in ('hob-cache-handoff', 'upstream-merged'):
+    if inputs['profile'] in ('hob-cache-handoff', 'upstream-merged', 'fv-file-audit'):
         need(all(sec_te[0]['hob_cache_markers'].values()), 'HOB cache handoff markers absent from actual SEC TE')
-    if inputs['profile'] in ('embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged'):
+    if inputs['profile'] in ('embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged', 'fv-file-audit'):
         resources = [s['embedded_probe_resource'] for f in fv.files for s in f['sections'] if 'embedded_probe_resource' in s]
         expected = json.loads((ROOT/'config/firmware-embedded-probe-profile.json').read_text())['candidate']['embedded_probe']
         need(resources == [dict(bytes=expected['bytes'], sha256=expected['sha256'])], 'Embedded FAT resource mismatch')
@@ -426,7 +453,7 @@ def main():
     parser.add_argument('--require-sec-trace', action='store_true')
     parser.add_argument('--require-no-auto-abl', action='store_true')
     parser.add_argument('--require-allocation-trace', action='store_true')
-    parser.add_argument('--allocation-profile', choices=('dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged'), default='dxe-allocation')
+    parser.add_argument('--allocation-profile', choices=('dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged', 'fv-file-audit'), default='dxe-allocation')
     args = parser.parse_args()
     output = args.output.resolve()
     need(output.is_relative_to(ROOT) and output.suffix == ".json", "Evidence output must be repo-local JSON")

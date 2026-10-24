@@ -1,0 +1,90 @@
+{
+  "scope": "Actual driver in AArch64 software UEFI protocol fixture; target BaseCryptLib is not linked here",
+  "driver_sha256": "eb8822fee7687160fc8848a949217e70058ad70d5a156623a329cf2c516d443e",
+  "harness_sha256": "0b62c4f624f141764629451e6ff4245cae2db9c762630af40076b320ded5ea35",
+  "cases": 19,
+  "one_shot_callback_passed": true,
+  "pools_and_handles_balanced": true,
+  "commands": [
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "aarch64-linux-gnu-gcc",
+        "-DMDEPKG_NDEBUG",
+        "-fshort-wchar",
+        "-ffunction-sections",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wno-unused-parameter",
+        "-I",
+        "/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include",
+        "-I",
+        "/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/AArch64",
+        "-I",
+        "/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/CryptoPkg/Include",
+        "-c",
+        "/mnt/d/Code/UniXNU-nuwa/out/fv-file-audit/test-01/adapter.c",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/fv-file-audit/test-01/driver.o"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "aarch64-linux-gnu-g++",
+        "-std=c++17",
+        "-static",
+        "-O2",
+        "-Wl,--gc-sections",
+        "-fshort-wchar",
+        "-ffunction-sections",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wno-unused-parameter",
+        "-I",
+        "/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include",
+        "-I",
+        "/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/AArch64",
+        "-I",
+        "/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/CryptoPkg/Include",
+        "-I",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/build-02",
+        "/mnt/d/Code/UniXNU-nuwa/tests/fv_file_audit_host.cpp",
+        "/mnt/d/Code/UniXNU-nuwa/out/fv-file-audit/test-01/driver.o",
+        "/mnt/d/Code/UniXNU-nuwa/out/file-read-audit/build-02/NativeAdrenoSha256.cpp",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/fv-file-audit/test-01/test"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/qemu-runtime/usr/bin/qemu-aarch64",
+        "/mnt/d/Code/UniXNU-nuwa/out/fv-file-audit/test-01/test",
+        "/mnt/d/Code/UniXNU-nuwa/out/native-prelink-merged/analysis/kernel-prelinked-analysis.macho"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS actual FV driver: 19 file/volume/crypto cases plus ReadyToBoot once; pools and handles balanced\n",
+      "stderr": ""
+    }
+  ],
+  "crypto_callback": "Pinned NativeAdreno hash for software fixture; real firmware library checked separately in CI",
+  "device_accessed": false
+}

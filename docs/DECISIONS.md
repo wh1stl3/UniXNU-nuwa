@@ -437,3 +437,7 @@ D-027实测验收（2026-10-24）：8177783e单次临时v3试验取得独立64Mi
 在USB v3已实测的64MiB FAT中放入独立type=efi校验应用，与58,335,232B分析预链接普通数据READTEST.BIN；复用NativeAdreno固定b686b905 MIT原样SHA实现并随包许可，应用同来源卷只读、长度/EOF/SHA、正常AllocatePool失败返回，不执行数据、不改内存图/Heap/HOB保护。真实PE完整UEFI QEMU及13软件协议场景/3向量/15门控通过；最终包18ebd838仍需独立nuwa录像。xnu_included=true如实承认文件字节，strict scope限定data-only/kernel_execution=false，不借此开放真正XNU启动。证据reports/file-read-audit/，操作记录2026-10-24-file-read-audit.md。
 
 D-028实测更新：18ebd838新菜单返回Access Denied，未取得文件SHA实机成功。实际固件SecurityStub链接DxeImageVerificationLib、介质policy0x04与app证书表0支持外部EFI认证拒绝首因；QEMU环境未覆盖这一差异。准确API与运行时SecureBoot变量仍未捕获，不默认关闭策略；后续先评估固件内诊断入口/既有信任链资格，当前无新实现。该轮Android北京时间16:14:06完成1/三SHA相同。证据reports/file-read-audit-trial/2026-10-24-01/，不能沿用菜单待输入或文件SHA通过的错误判断。
+
+# D-029 · 独立FV诊断profile保留认证策略，ReadyToBoot只读文件SHA
+
+承接用户继续准备固件内入口，选NuwaFileAuditDxe而非关闭SecureBoot/修改db。新profile固定a155c495，57输入/12补丁/15后哈希；原11项保护补丁完全保留。只一次ReadyToBoot有界枚举/唯一文件/长度EOF/SHA，普通pool无地址猜测，不执行数据；目标复用BaseCryptLib。19实际C源软件场景+一次性回调通过，实际CI必须再证SEC字节完全相同/原认证库与0x04策略/目标SHA链接。新包和实机未完成，不升格为正式profile或_verified。证据reports/fv-file-audit/，操作2026-10-24-fv-file-audit.md。

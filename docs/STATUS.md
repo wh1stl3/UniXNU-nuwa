@@ -1,6 +1,6 @@
 # STATUS
 
-> 文件SHA包18ebd838实测新菜单明确returned Access Denied，条目已尝试执行；不是等待Enter，文件SHA未实机通过。外部未签名EFI认证拒绝为首因判断。Android于北京时间16:14:06恢复完成1/三SHA不变，无需按键。
+> 固件内文件SHA诊断已实现并接CI：源a155c495，57输入/12补丁/15后哈希和19软件场景+一次性回调通过；SecureBoot/原Heap-HOB保护保持。实际固件CI/SEC字节/目标crypto链接待验，新包未生成，无新实机。
 
 USB v3运输阶段已实机通过：8177783e单次原图显示独立64MiB envelope result=1、块设备Success，FAT挂载先于embedded 4MiB卷。offset0x1d77f27减64B恰等于历史vendor ramdisk30899943B，明显支持vendor+临时generic拼接，增强v4 init_boot替代为此前缺卷首因的判断；同固件v4匹配对照/重复性未验。菜单fallback不作运输证据。[实测记录](operations/2026-10-24-usb-v3-trial.md)。
 
@@ -18,4 +18,6 @@ FD2d606985ad768dcfaab66c2b28073c0a4c2820126b42b23286623fdc450e848f/3145728B，sh
 
 内核bf14e5305a9f764c6852c2d3a69e81edc9c6199bc870c7b08160d55610616dea/20188216B，64补丁、Darwin22.6.0/iOS16.0、零未定义及5平台导出/归档一致。分析eb66542cc9b6c34f369c07229900408ab67288152f561be63fa6061efce9ffca/58335232B，65348绑定读回、30 donor/native代码范围保持、24解析通过，loadable=false/initializer空。AMFI注册/局部conf80B/23写入到335槽有静态依据，12源码时序检查下调单纯DATA_CONST写保护风险；完整构造/start/once-guard/回调及C++ABI、真实ADT和实际OS窗口仍待资格。9GiB只是快照，不是分配；文件SHA通过也不等于内核/iOS执行。[AMFI记录](operations/2026-10-24-amfi-phase-and-slots.md)。
 
-下一步离线评估保留认证策略的固件内只读诊断入口，或补齐外部EFI既有信任链签名资格；新包尚未实现/构建，不默认关闭Secure Boot、不改db信任变量、不重复18ebd838。原图表明条目已尝试执行并返回Access Denied，无需键盘确认；准确拒绝API/runtime SecureBoot变量未捕获，外部未签名认证拒绝为高置信首因。详见operations/2026-10-24-file-audit-access-denied.md。
+下一步触发并验收独立fv-file-audit固件CI：新模块GUID/PE/DEPEX/屏幕marker、实际SEC7192fd3f字节完全相同、原认证库及0x04拒绝policy、目标map中Sha256HashAll。不关闭策略、不改keys/Heap/HOB/板值。通过后才准备USB v3数据FAT和退出菜单的新诊断包；当前新包未生成。18ebd838原图Access Denied仍为最近实机文件结果，具体拒绝API/runtime SecureBoot值未捕获，不重复旧包。
+
+当前固件内实现：NuwaFileAuditDxe ReadyToBoot只一次，最多64卷/唯一文件、GetInfo上限4KiB/精确58335232B/普通pool/最多1MiB读与4096次/EOF/原固件BaseCryptLib SHA；直接屏幕enter/read/hash/PASS/exit，停留30秒。固定源a155c495，57输入/12补丁/15后哈希，原11保护patch完全相同；16项设备门控回归通过。软件19场景用替身协议/crypto，不等于目标固件或硬件通过。详见operations/2026-10-24-fv-file-audit.md。

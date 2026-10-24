@@ -331,3 +331,5 @@
 2026-10-24 · 运输实测已提交8de7b98；新独立EFI文件SHA app def33a4a/6KiB，复用固定MIT SHA、28项UEFI头pin；最终USB v3包18ebd838/70266880B含58,335,232B分析数据但无XNU执行项。13协议场景/3向量/15门控通过，完整UEFI QEMU从最终FAT实际读完/哈希匹配并返回。nuwa文件阶段待本包新录像，无新手机操作，原FD/Heap/HOB保护不变 · Q-153 · reports/file-read-audit/、docs/operations/2026-10-24-file-read-audit.md
 
 2026-10-24T16:14:06+08:00 · 18ebd838单次实测：新菜单原图returned Access Denied，纠正等Enter判断；实际构建镜像验证库/0x04拒绝policy和PE无签名支持认证拒绝首因，文件SHA未实机通过。120秒观察后原厂v4恢复完成1/A槽/三SHA不变，无第二候选或策略改动；下一步离线保留认证入口诊断 · Q-154（包准备ab7e4b9） · reports/file-read-audit-trial/2026-10-24-01/、docs/operations/2026-10-24-file-audit-access-denied.md
+
+2026-10-24 · 固件内NuwaFileAuditDxe源a155c495推送，新独立fv-file-audit profile及CI/模块和SEC/认证policy检查接入；57输入/12补丁/15后哈希通过，原guard保持，19实际C源AArch64 QEMU场景及一次性回调通过。实际固件CI/目标crypto/SEC同字节待验，无新手机动作或新试验包 · Q-155 · reports/fv-file-audit/、docs/operations/2026-10-24-fv-file-audit.md

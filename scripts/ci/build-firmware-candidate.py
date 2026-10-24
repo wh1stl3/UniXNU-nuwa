@@ -26,7 +26,7 @@ def save(name, obj):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--profile', choices=('legacy', 'dedicated', 'sec-trace', 'pil-no-auto', 'dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged'), default='legacy')
+    parser.add_argument('--profile', choices=('legacy', 'dedicated', 'sec-trace', 'pil-no-auto', 'dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged', 'fv-file-audit'), default='legacy')
     args = parser.parse_args()
     if os.environ.get("GITHUB_ACTIONS") != "true":
         raise RuntimeError("Only the approved disposable Actions build environment is supported")
@@ -36,7 +36,7 @@ def main():
         raise RuntimeError("Fresh source/build tree required; refusing to overwrite")
     work.mkdir()
     OUT.mkdir(parents=True, exist_ok=False)
-    if args.profile in ('dedicated', 'sec-trace', 'pil-no-auto', 'dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged'):
+    if args.profile in ('dedicated', 'sec-trace', 'pil-no-auto', 'dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged', 'fv-file-audit'):
         filename = {'dedicated': 'firmware-dedicated-profile.json',
                     'sec-trace': 'firmware-sec-trace-profile.json',
                     'pil-no-auto': 'firmware-pil-no-auto-profile.json',
@@ -52,6 +52,7 @@ def main():
                     'hob-stage-audit': 'firmware-hob-stage-audit-profile.json',
                     'hob-cache-handoff': 'firmware-hob-cache-handoff-profile.json',
                     'upstream-merged': 'firmware-upstream-merged-profile.json',
+                    'fv-file-audit': 'firmware-fv-file-audit-profile.json',
                     'mmu-branches': 'firmware-mmu-branches-profile.json',
                     'constructor-trace': 'firmware-constructor-trace-profile.json'}[args.profile]
         profile = json.loads((ROOT / 'config' / filename).read_text())
@@ -101,7 +102,7 @@ def main():
              "Silicon/Silicium/OpensslPkg/Library/OpensslLib/openssl", "Binaries"], fw, log="submodules.log")
         # Patching Mu before stuart --setup makes its checkout dirty; that helper
         # can skip recursive initialization. Resolve pinned gitlinks first.
-        if args.profile in ('dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged'):
+        if args.profile in ('dxe-allocation', 'factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged', 'fv-file-audit'):
             run(['git', 'submodule', 'update', '--init', '--recursive', '--depth', '1'],
                 fw / 'Mu_Basecore', log='mu-submodules.log')
         checked = []
@@ -158,7 +159,7 @@ def main():
         for item in candidate["post_patch_inputs"]:
             if digest(sources[item["root"]] / item["path"], True) != item["lf_sha256"]:
                 raise ValueError("Patched input mismatch: " + item["path"])
-        if args.profile in ('embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged'):
+        if args.profile in ('embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged', 'fv-file-audit'):
             resource = candidate['embedded_probe']
             generator = ROOT / 'scripts/build-embedded-probe.py'
             if digest(generator) != resource['generator_sha256']:
@@ -180,7 +181,13 @@ def main():
         fd_base, fd_size = config["uefi_fd"]["base"], config["uefi_fd"]["size"]
         env = dict(os.environ, ENABLE_SECUREBOOT="1", FD_BASE=hex(fd_base), FD_SIZE=hex(fd_size),
                    FD_BLOCKS=hex(fd_size // 4096), DEVICE_MODEL="nuwa", CLANGPDB_AARCH64_PREFIX="aarch64-linux-gnu-")
-        env["SOURCE_DATE_EPOCH"] = subprocess.check_output(["git", "log", "-1", "--format=%ct"], cwd=fw, text=True).strip()
+        if args.profile == 'fv-file-audit':
+            if (recipe.get('source_date_epoch') != 1792776324 or
+                recipe.get('source_date_epoch_origin') != '6176a822e66b846620b5bcd2739a0666814ee663'):
+                raise ValueError('Unreviewed FV diagnostic timestamp source')
+            env['SOURCE_DATE_EPOCH'] = str(recipe['source_date_epoch'])
+        else:
+            env["SOURCE_DATE_EPOCH"] = subprocess.check_output(["git", "log", "-1", "--format=%ct"], cwd=fw, text=True).strip()
         save("build-settings.json", dict(fd_base=hex(fd_base), fd_size=fd_size, target="DEBUG", toolchain="CLANGPDB",
                                          source_date_epoch=env["SOURCE_DATE_EPOCH"], approval=recipe['approval'],
                                          source_config_sha256=digest(fw / "Resources/Configs/nuwa.toml")))
