@@ -32,6 +32,37 @@ blocker 1 原文是"Early security initializer identity/call ABI not qualified o
 
 **配置前后对比。** 带配置的候选 `1aeebf13`（58335232 B）与不带的 `eb66542c`（同长度）逐字节比较：408983 字节差异**全部落在 `__PRELINK_INFO`**，`__TEXT_EXEC`/`__PLK_TEXT_EXEC`/`__PRELINK_TEXT` **零差异**。插入一个 metadata 键会让序列化后的 plist 整体位移，所以差异字节数看着很大，但代码一个字节没动。
 
+## 注册调用的 ABI 核对
+
+身份确定后再看调用本身。初始化函数在 `0x5703fa4` 调 `_mac_policy_register`，调用现场是：
+
+```
+0x5703f5c  adrp x0, 0x6cb7000 / add x0, x0, #0x8a0   ; x0 = 0x6cb78a0  &mac_policy_conf
+0x5703f98  adrp x1, 0x6cb6000 / add x1, x1, #0xe1c   ; x1 = 0x6cb6e1c  &policy handle
+0x5703fa0  mov  x2, #0
+0x5703fa4  bl   _mac_policy_register
+0x5703fa8  cbnz w0, <error>
+```
+
+三参数形式。对照固定源码 `security/mac_policy.h:6225`：`int mac_policy_register(struct mac_policy_conf *mpc, mac_policy_handle_t *handlep, void *xd)` —— **参数个数与顺序一致**，返回值按 `int` 判非零。native bf14e530 也确实导出 `mac_policy_register`（`0xfffffff00790a66c`）。
+
+结构布局逐字段核对，`struct mac_policy_conf`（`security/mac_policy.h:6205-6216`，arm64 80 字节）的 8 个字段在调用前全部写入，偏移逐个对上：
+
+| 偏移 | 字段 | 写入 |
+| --- | --- | --- |
+| `0x00` | `mpc_name` | `stp` 前半 |
+| `0x08` | `mpc_fullname` | `stp` 后半 |
+| `0x10` | `mpc_labelnames` | `str` |
+| `0x18` | `mpc_labelname_count` | `str w20`（=1） |
+| `0x20` | `mpc_ops` | `str x8`（`0x6cb6e28`） |
+| `0x28` | `mpc_loadtime_flags` | `str wzr`（=0） |
+| `0x30` | `mpc_field_off` | `str x8`（`0x6cb6e20`） |
+| `0x38` | `mpc_runtime_flags` | `str wzr`（=0） |
+
+`mpc_ops` 存的 `0x6cb6e28` 正是 `amfi-ops-slots.json` 里记录的 `original_ops_address`，两条独立路径互相印证。`mpc_list`/`mpc_data`（`0x40`/`0x48`）留给 `mac_policy_register` 自己填，符合语义。
+
+**所以"call ABI"这一项的静态证据是成立的**：签名、参数位置、结构字段偏移三者都对得上 native 8796 的声明。这仍不等于运行时注册成功 —— 参数指向的字符串、ops 表内容与策略生命周期都还没有执行证据。
+
 ## 产物
 
 | 文件 | 内容 |
@@ -39,6 +70,7 @@ blocker 1 原文是"Early security initializer identity/call ABI not qualified o
 | `reports/native-prelink-merged/amfi-callgraph.json` | 构造/桩/槽/调用点全部锚点与覆盖说明 |
 | `reports/native-prelink-merged/early-security-init.json` | ABI marker、五项前置条件、emit 结果与记录值 |
 | `reports/native-prelink-merged/earlysec-diff.json` | 两候选按段差异统计 |
+| `reports/native-prelink-merged/amfi-register-call.json` | 注册调用的参数寄存器、8 个 conf 字段、native 导出 |
 | `out/earlysec-2026-10-24/kernel-prelinked-earlysec.macho` | 带 early_security_init 的分析候选（不启动） |
 
 复现：
@@ -46,16 +78,18 @@ blocker 1 原文是"Early security initializer identity/call ABI not qualified o
 ```bash
 python3 scripts/audit-amfi-callgraph.py --output reports/<新路径>/amfi-callgraph.json
 python3 scripts/audit-early-security-init.py --work out/<新目录> --output reports/<新路径>/early-security-init.json
+python3 scripts/audit-amfi-register-call.py --output reports/<新路径>/amfi-register-call.json
 python3 scripts/compare-prelink-candidates.py --old <旧候选> --new <新候选> --output reports/<新路径>/diff.json
 ```
 
 ## 仍然没证明的
 
-- **调用 ABI 未资格化。** 证明了 emit 接受这个地址，没证明内核按什么约定调用它、返回值怎么解释、`0x5703c54` 的完整构造/`start` 间接路径是否真会执行到策略注册。这是 blocker 1 剩下的部分。
+- **运行时未验证。** 证明了签名与结构布局对得上，没证明 `mac_policy_register` 在 nuwa 上真被执行、也没证明 ops 表里 23 个回调能正常工作。这是 blocker 1 剩下的部分。
 - `loadable` 仍是 `false`。`emit_current` 与 `emit_prelink` 都把它作为人工资格化标志，本轮没有也不应该改。
-- blocker 2（C++/结构 ABI）、blocker 3（真实 ADT 与运行时窗口）、blocker 4（大负载装载）不受本轮影响。
+- 字段偏移来自固定源码声明，不是本轮 DWARF 读回（`amfi-ops-slots.json` 已覆盖 ops 表那侧）。
+- blocker 2（C++/结构 ABI 的其余部分）、blocker 3（真实 ADT 与运行时窗口）、blocker 4（大负载装载）不受本轮影响。
 - 两候选只在元数据上不同，**不代表新候选更接近可启动** —— 它只是证明配置通路成立。
 
 ## 下一步
 
-优先做 0x5703c54 的调用约定与返回语义核对（结合已定位的 23 项 ops 槽位与 `mac_policy_register` 导入），再决定是否把这个配置接入 `emit-current-prelink-analysis.py`（当前它仍硬编码空映射，属有意保留的历史行为）。任何实机动作前仍须离线验收、新鲜录像与恢复门。
+blocker 1 的静态部分已基本清空，剩下的是运行时资格化，需要实机或 QEMU 级别的执行证据。离线可继续的方向：核对 `mpc_name`/`mpc_fullname`/`mpc_labelnames` 指向的字符串内容与 `0x6cb6e20`（`mpc_field_off`）的实际用途，确认策略声明完整；再把 `early_security_init` 是否接入 `emit-current-prelink-analysis.py`（当前硬编码空映射属有意保留）作为一次单独的决策。任何实机动作前仍须离线验收、新鲜录像与恢复门。

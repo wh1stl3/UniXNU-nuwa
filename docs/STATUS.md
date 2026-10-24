@@ -29,20 +29,21 @@ blocker 1 的"not configured"部分已解，qualification 仍缺。关键发现�
 - **初始化由 `[kernel.prelink] early_security_init` 驱动**：`emit_prelink.py:138-156` 要求 native 导出 `_native_prelink_security_init_version == 1`；bf14e530 **有且为 1**（`0xfffffff007021760`）。
 - **配置后 emit 全部前置检查通过**，记录 `0xfffffff004703c54`（= 原 VA `0x5703c54` + slide）。根因是 `scripts/emit-current-prelink-analysis.py:18,43` 硬编码空映射，这张表从未配置过。
 - 新候选 `1aeebf13` 与 `eb66542c` 同长度，408983 字节差异**全在 `__PRELINK_INFO`**，三个可执行段**零差异**。
+- **注册调用的 ABI 静态核对通过**：`0x5703fa4` 调 `_mac_policy_register`，x0=`&mac_policy_conf`(0x6cb78a0)、x1=`&handle`(0x6cb6e1c)、x2=0，与 `security/mac_policy.h:6225` 的三参数签名一致；conf 8 个字段（0x00..0x38）偏移逐个对上，`mpc_ops`@+0x20 = `0x6cb6e28` 与 `amfi-ops-slots.json` 的 `original_ops_address` 互相印证；native 导出 `mac_policy_register`（0x790a66c），返回值按 int 判。
 
-证据 `reports/native-prelink-merged/{amfi-callgraph,early-security-init,earlysec-diff}.json`。记录：[早期安全初始化器](operations/2026-10-24-early-security-init.md)。
+证据 `reports/native-prelink-merged/{amfi-callgraph,early-security-init,earlysec-diff,amfi-register-call}.json`。记录：[早期安全初始化器](operations/2026-10-24-early-security-init.md)。
 
 **方法论教训（已写入脚本注释）**：全段一次性 `capstone.disasm` 会在首个无法解码字节处静默停止，本轮首轮扫描因此得出"注册函数无人调用"的错误结论；改为 `array` 按位模式逐字检查后才正确。`scripts/audit-amfi-callgraph.py` 现在对每个区段报告覆盖方式。
 
 ## OS 入口四个 blocker（仍未解）
 
-`reports/os-entry-next-step/continuation.json`：① 早期安全初始化器 —— "未配置"已解，"调用 ABI / 返回语义 / 构造与 start 间接路径"仍未资格化；② donor/native 完整 C++ 与结构 ABI；③ 真实 ADT 与运行时分配窗口（生成器与板值已就位，**窗口能否被固件满足仍未验证**）；④ 大负载装载（读取已通过，装载未做）。
+`reports/os-entry-next-step/continuation.json`：① 早期安全初始化器 —— "未配置"已解，**静态调用 ABI 已核对通过**（三参数签名 + conf 8 字段偏移 + native 导出），只剩运行时执行证据；② donor/native 完整 C++ 与结构 ABI；③ 真实 ADT 与运行时分配窗口（生成器与板值已就位，**窗口能否被固件满足仍未验证**）；④ 大负载装载（读取已通过，装载未做）。
 
-分析内核 `eb66542c` 与带初始化的 `1aeebf13` 均 **`loadable=false`**、`runtime_qualified=false`，不作实机 OS 包。**文件 SHA PASS 不等于执行许可。**
+分析内核 `eb66542c` 与带初始化的 `1aeebf13` 均 **`loadable=false`**、`runtime_qualified=false`，不作实机 OS 包。**静态 ABI 一致与文件 SHA PASS 都不等于执行许可。**
 
 ## 下一步
 
-1. 核对 `0x5703c54` 的调用约定与返回语义（结合 23 项 ops 槽位与 `mac_policy_register` 导入），补完 blocker 1。
+1. blocker 1 只剩运行时资格化（需实机或 QEMU 级执行证据）。离线可继续：核对 `mpc_name`/`mpc_fullname`/`mpc_labelnames` 指向的字符串与 `mpc_field_off`(0x6cb6e20) 的用途，确认策略声明完整。
 2. 再评估是否把 `early_security_init` 接入 `emit-current-prelink-analysis.py`（当前硬编码空映射属有意保留）。
 3. 其余 board TODO：`[ipsw]` url/chip_id/board_id/sha256、`[payload]` volume/size_mib/kernel_args、`[kernel]` defconfig/archives/prelink、`[firmware]`、`[bootimg.image]`。
 

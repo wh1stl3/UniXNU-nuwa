@@ -1,0 +1,102 @@
+{
+  "scope": "static call-ABI comparison for the AMFI early security initializer; no code executed",
+  "donor_sha256": "2ec297bac95bcba01046fd0148e97e7e5885c05a6c18827f39f534ba375c1221",
+  "native_sha256": "bf14e5305a9f764c6852c2d3a69e81edc9c6199bc870c7b08160d55610616dea",
+  "initializer_original_va": "0xfffffff005703c54",
+  "registration_call": {
+    "at": "0xfffffff005703fa4",
+    "stub_symbol": "_mac_policy_register"
+  },
+  "argument_registers": {
+    "x0": {
+      "value": "0xfffffff006cb78a0",
+      "at": "0xfffffff005703f60"
+    },
+    "x1": {
+      "value": "0xfffffff006cb6e1c",
+      "at": "0xfffffff005703f9c"
+    },
+    "x2": {
+      "value": "0x0",
+      "at": "0xfffffff005703fa0"
+    }
+  },
+  "conf_size_expected": "0x50",
+  "conf_field_stores": [
+    {
+      "at": "0xfffffff005703f6c",
+      "offset": "0x0",
+      "field": "mpc_name",
+      "instruction": "stp x19, x9, [x0]"
+    },
+    {
+      "at": "0xfffffff005703f6c",
+      "offset": "0x8",
+      "field": "mpc_fullname",
+      "instruction": "stp x19, x9, [x0]"
+    },
+    {
+      "at": "0xfffffff005703f78",
+      "offset": "0x10",
+      "field": "mpc_labelnames",
+      "instruction": "str x9, [x0, #0x10]"
+    },
+    {
+      "at": "0xfffffff005703f7c",
+      "offset": "0x18",
+      "field": "mpc_labelname_count",
+      "instruction": "str w20, [x0, #0x18]"
+    },
+    {
+      "at": "0xfffffff005703f80",
+      "offset": "0x20",
+      "field": "mpc_ops",
+      "instruction": "str x8, [x0, #0x20]"
+    },
+    {
+      "at": "0xfffffff005703f84",
+      "offset": "0x28",
+      "field": "mpc_loadtime_flags",
+      "instruction": "str wzr, [x0, #0x28]"
+    },
+    {
+      "at": "0xfffffff005703f90",
+      "offset": "0x30",
+      "field": "mpc_field_off",
+      "instruction": "str x8, [x0, #0x30]"
+    },
+    {
+      "at": "0xfffffff005703f94",
+      "offset": "0x38",
+      "field": "mpc_runtime_flags",
+      "instruction": "str wzr, [x0, #0x38]"
+    }
+  ],
+  "conf_offsets_all_known": true,
+  "conf_ops_store": {
+    "at": "0xfffffff005703f80",
+    "offset": "0x20",
+    "field": "mpc_ops",
+    "instruction": "str x8, [x0, #0x20]"
+  },
+  "return_value_checked": {
+    "at": "0xfffffff005703fa8",
+    "instruction": "cbnz w0, #0xfffffff00570406c"
+  },
+  "native_exports_mac_policy_register": [
+    {
+      "address": "0xfffffff00790a66c",
+      "names": [
+        "_mac_policy_register"
+      ]
+    }
+  ],
+  "native_declares_three_argument_form": true,
+  "abi_verdict": "three-argument form matches native declaration",
+  "limitations": [
+    "Field offsets come from the pinned xnu-8796.141.3 declaration, not from DWARF in this run",
+    "Argument register recovery is linear and stops at the first adrp per register inside the window",
+    "A matching ABI proves the call is well-formed, not that the policy registers at runtime"
+  ],
+  "device_accessed": false
+}
