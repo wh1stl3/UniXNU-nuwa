@@ -1,0 +1,366 @@
+{
+  "at": "2026-10-24T13:06:26.332004+00:00",
+  "scope": "Read-only latest upstream PR and source review; fetch updates refs only; no merge/build/install/device actions",
+  "upstream_head": "bd127c008cdc584b83cf00eaea269e4f1adf3cc8",
+  "working_head": "e553e467ebfe7642e9f483d3977a57066c6d1aef",
+  "queries": [
+    {
+      "argv": [
+        "C:/Program Files/GitHub CLI/gh.exe",
+        "api",
+        "search/issues?q=org%3AUniXNU+type%3Apr+QR&per_page=30"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "result": {
+        "total_count": 0,
+        "incomplete_results": false,
+        "items": [],
+        "search_type": "lexical"
+      }
+    },
+    {
+      "argv": [
+        "C:/Program Files/GitHub CLI/gh.exe",
+        "api",
+        "search/issues?q=UniXNU+%E4%BA%8C%E7%BB%B4%E7%A0%81&per_page=30"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "result": {
+        "total_count": 0,
+        "incomplete_results": false,
+        "items": [],
+        "search_type": "lexical"
+      }
+    },
+    {
+      "argv": [
+        "C:/Program Files/GitHub CLI/gh.exe",
+        "api",
+        "search/issues?q=UniXNU+QR+type%3Apr&per_page=30"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "result": {
+        "total_count": 0,
+        "incomplete_results": false,
+        "items": [],
+        "search_type": "lexical"
+      }
+    }
+  ],
+  "prs": [
+    {
+      "argv": [
+        "C:/Program Files/GitHub CLI/gh.exe",
+        "pr",
+        "view",
+        "88",
+        "--repo",
+        "UniXNU/UniXNU",
+        "--json",
+        "number,title,body,mergedAt,mergeCommit,files,url"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "result": {
+        "body": "The USB debugging tools currently live in the giulia device repository. This brings their host-side terminal into the shared tree so compatible device ports can capture logs, issue bounded diagnostics, and use the framebuffer viewer from the same checkout.\n\n- Add the Python terminal, Windows CMD launcher, pinned pySerial dependency, GSC1 decoder, PNG capture, and localhost screen/input viewer.\n- Preserve protocol 2 diagnostics, explicit MMIO commands, PTY transitions, and acknowledged Fastboot reset handling. Require an explicit port or complete VID/PID/serial identity instead of hard-coded Ace 5 discovery.\n- Restrict periodic polling to read-only status queries, including a regression test for GPU HFI and input commands that must not be repeated automatically.\n- Add bilingual usage/compatibility documentation and a Python 3.10/3.14 test matrix on Windows, Linux, and macOS.\n\nDevice-side drivers, boot arguments, GPU bring-up changes, and shell installation remain in the device repository, following CONTRIBUTING.md. The initial backend retains the GIULIA protocol markers and GSC1 limits; selecting another USB identity does not make an unrelated kernel compatible. Source: tycykp/UniXNU-OnePlus-Ace5 at 694b39e plus the local terminal/screen work.\n\nValidation on Windows / Python 3.14.6:\n- `python -m unittest discover -s tests/terminal -v`: 45 tests, 44 passed; the optional device C-sender fixture test was skipped because its fixture was not provided.\n- `python scripts/debug_terminal.py --help` and `--list`: passed.\n- `git diff --cached --check`: passed before commit.\n- `npm ci --ignore-scripts` and `npm run build` in docs: passed (existing dependency audit and bundle-size warnings).\n- Workflow YAML parsed successfully; cross-platform execution is delegated to the added CI matrix.\n\nNo hardware commands were sent during this integration. PTY shell hardware validation remains outstanding; the documentation distinguishes host tests from device readiness.\r\n",
+        "files": [
+          {
+            "path": ".github/workflows/terminal.yml",
+            "additions": 30,
+            "deletions": 0,
+            "changeType": "ADDED"
+          },
+          {
+            "path": "docs/guide/debugging.md",
+            "additions": 48,
+            "deletions": 0,
+            "changeType": "MODIFIED"
+          },
+          {
+            "path": "docs/zh/guide/debugging.md",
+            "additions": 48,
+            "deletions": 0,
+            "changeType": "MODIFIED"
+          },
+          {
+            "path": "scripts/debug-terminal.cmd",
+            "additions": 9,
+            "deletions": 0,
+            "changeType": "ADDED"
+          },
+          {
+            "path": "scripts/debug_screen.py",
+            "additions": 508,
+            "deletions": 0,
+            "changeType": "ADDED"
+          },
+          {
+            "path": "scripts/debug_screen_viewer.html",
+            "additions": 336,
+            "deletions": 0,
+            "changeType": "ADDED"
+          },
+          {
+            "path": "scripts/debug_terminal.py",
+            "additions": 685,
+            "deletions": 0,
+            "changeType": "ADDED"
+          },
+          {
+            "path": "scripts/terminal-requirements.txt",
+            "additions": 1,
+            "deletions": 0,
+            "changeType": "ADDED"
+          },
+          {
+            "path": "tests/terminal/test_screen.py",
+            "additions": 291,
+            "deletions": 0,
+            "changeType": "ADDED"
+          },
+          {
+            "path": "tests/terminal/test_screen_control.py",
+            "additions": 243,
+            "deletions": 0,
+            "changeType": "ADDED"
+          },
+          {
+            "path": "tests/terminal/test_terminal.py",
+            "additions": 321,
+            "deletions": 0,
+            "changeType": "ADDED"
+          }
+        ],
+        "mergeCommit": {
+          "oid": "141d16a43bfe46859487f32c0519c428cc473a49"
+        },
+        "mergedAt": "2026-10-23T09:36:41Z",
+        "number": 88,
+        "title": "feat(debug): integrate USB terminal capture and screen controls",
+        "url": "https://github.com/UniXNU/UniXNU/pull/88"
+      }
+    },
+    {
+      "argv": [
+        "C:/Program Files/GitHub CLI/gh.exe",
+        "pr",
+        "view",
+        "100",
+        "--repo",
+        "UniXNU/UniXNU",
+        "--json",
+        "number,title,body,mergedAt,mergeCommit,files,url"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "result": {
+        "body": "Hi,\n\nI am a linux user. It seems the ci pipeline does not publish artifacts and I don't have a Mac.\n\nI have added an alternative setup solution for linux user, which can also be containerized in the future,",
+        "files": [
+          {
+            "path": "docs/building.md",
+            "additions": 21,
+            "deletions": 1,
+            "changeType": "MODIFIED"
+          },
+          {
+            "path": "docs/guide/requirements.md",
+            "additions": 15,
+            "deletions": 1,
+            "changeType": "MODIFIED"
+          },
+          {
+            "path": "docs/zh/building.md",
+            "additions": 21,
+            "deletions": 1,
+            "changeType": "MODIFIED"
+          },
+          {
+            "path": "docs/zh/guide/requirements.md",
+            "additions": 15,
+            "deletions": 1,
+            "changeType": "MODIFIED"
+          },
+          {
+            "path": "patches/xnu/offline-component-load-probes.patch",
+            "additions": 4,
+            "deletions": 2,
+            "changeType": "MODIFIED"
+          },
+          {
+            "path": "scripts/build-corecrypto-14.py",
+            "additions": 7,
+            "deletions": 2,
+            "changeType": "MODIFIED"
+          },
+          {
+            "path": "scripts/build-firehose.sh",
+            "additions": 29,
+            "deletions": 6,
+            "changeType": "MODIFIED"
+          },
+          {
+            "path": "scripts/build-xnu-4k-baseline.sh",
+            "additions": 24,
+            "deletions": 5,
+            "changeType": "MODIFIED"
+          },
+          {
+            "path": "scripts/linux/TargetConditionals.h",
+            "additions": 136,
+            "deletions": 0,
+            "changeType": "ADDED"
+          },
+          {
+            "path": "scripts/linux/cc",
+            "additions": 3,
+            "deletions": 0,
+            "changeType": "ADDED"
+          },
+          {
+            "path": "scripts/linux/clang",
+            "additions": 34,
+            "deletions": 0,
+            "changeType": "ADDED"
+          },
+          {
+            "path": "scripts/linux/clang++",
+            "additions": 4,
+            "deletions": 0,
+            "changeType": "ADDED"
+          },
+          {
+            "path": "scripts/linux/codesign",
+            "additions": 5,
+            "deletions": 0,
+            "changeType": "ADDED"
+          },
+          {
+            "path": "scripts/linux/gm4",
+            "additions": 3,
+            "deletions": 0,
+            "changeType": "ADDED"
+          },
+          {
+            "path": "scripts/linux/iig-port-darwin-target.patch",
+            "additions": 124,
+            "deletions": 0,
+            "changeType": "ADDED"
+          },
+          {
+            "path": "scripts/linux/install",
+            "additions": 16,
+            "deletions": 0,
+            "changeType": "ADDED"
+          },
+          {
+            "path": "scripts/linux/llvm-xnu-builtin-type.patch",
+            "additions": 648,
+            "deletions": 0,
+            "changeType": "ADDED"
+          },
+          {
+            "path": "scripts/linux/plutil",
+            "additions": 108,
+            "deletions": 0,
+            "changeType": "ADDED"
+          },
+          {
+            "path": "scripts/linux/prepare-xnu.py",
+            "additions": 140,
+            "deletions": 0,
+            "changeType": "ADDED"
+          },
+          {
+            "path": "scripts/linux/setup-toolchain.py",
+            "additions": 319,
+            "deletions": 0,
+            "changeType": "ADDED"
+          },
+          {
+            "path": "scripts/linux/xcrun",
+            "additions": 66,
+            "deletions": 0,
+            "changeType": "ADDED"
+          },
+          {
+            "path": "scripts/pbxproj.py",
+            "additions": 90,
+            "deletions": 0,
+            "changeType": "ADDED"
+          },
+          {
+            "path": "scripts/unixnu/cli.py",
+            "additions": 6,
+            "deletions": 2,
+            "changeType": "MODIFIED"
+          },
+          {
+            "path": "scripts/unixnu/ipsw.py",
+            "additions": 11,
+            "deletions": 3,
+            "changeType": "MODIFIED"
+          },
+          {
+            "path": "scripts/unixnu/kernel.py",
+            "additions": 38,
+            "deletions": 6,
+            "changeType": "MODIFIED"
+          }
+        ],
+        "mergeCommit": {
+          "oid": "bd127c008cdc584b83cf00eaea269e4f1adf3cc8"
+        },
+        "mergedAt": "2026-10-24T11:48:53Z",
+        "number": 100,
+        "title": "Build kernel on linux",
+        "url": "https://github.com/UniXNU/UniXNU/pull/100"
+      }
+    }
+  ],
+  "source_qr_search": {
+    "argv": [
+      "git",
+      "-C",
+      "D:/Code/UniXNU-integration",
+      "grep",
+      "-n",
+      "-i",
+      "-E",
+      "qr.?code|二维码|QR log|QR trace|matrix barcode",
+      "bd127c008cdc584b83cf00eaea269e4f1adf3cc8"
+    ],
+    "exit_code": 0,
+    "stdout": "bd127c008cdc584b83cf00eaea269e4f1adf3cc8:docs/package-lock.json:1939:        \"qrcode\": \"^1.5\",\nbd127c008cdc584b83cf00eaea269e4f1adf3cc8:docs/package-lock.json:1971:        \"qrcode\": {\n",
+    "stderr": ""
+  },
+  "sources": [
+    {
+      "path": "docs/zh/guide/debugging.md",
+      "sha256": "8fc5aaa9ad8aee263fb95c69713e7f37cc8dc945a25e82ff03aa597b6db85c94",
+      "url": "https://github.com/UniXNU/UniXNU/blob/bd127c008cdc584b83cf00eaea269e4f1adf3cc8/docs/zh/guide/debugging.md"
+    },
+    {
+      "path": "docs/zh/guide/requirements.md",
+      "sha256": "8f30757adb842a385abe748c98297a8cd8f9328709136e9b2481790b5dcc4249",
+      "url": "https://github.com/UniXNU/UniXNU/blob/bd127c008cdc584b83cf00eaea269e4f1adf3cc8/docs/zh/guide/requirements.md"
+    },
+    {
+      "path": "scripts/unixnu/kernel.py",
+      "sha256": "90f38bb29519607f63b932c50d9cba1d1658f99fa3971333ea85ffddcd616920",
+      "url": "https://github.com/UniXNU/UniXNU/blob/bd127c008cdc584b83cf00eaea269e4f1adf3cc8/scripts/unixnu/kernel.py"
+    },
+    {
+      "path": "scripts/linux/setup-toolchain.py",
+      "sha256": "3ca47e4f130f2f2f1a31a720e374134e94adfda1788e5fe016545dc680f99512",
+      "url": "https://github.com/UniXNU/UniXNU/blob/bd127c008cdc584b83cf00eaea269e4f1adf3cc8/scripts/linux/setup-toolchain.py"
+    }
+  ],
+  "conclusions": [
+    "No QR log PR found in the recorded queries; full current main source matches only optional qrcode dependency entries in docs/package-lock.json",
+    "PR88 merged at 2026-10-23T09:36:41Z: host USB terminal/screen tools; giulia protocol requires device-side porting, no plug-in compatibility with nuwa",
+    "PR100 merged at 2026-10-24T11:48:53Z: Linux kernel build; Linux environment currently declares iOS17 target, so Darwin22/8796 must be adapted and validated before adoption"
+  ]
+}

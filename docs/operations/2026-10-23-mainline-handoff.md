@@ -179,3 +179,7 @@ python3 scripts/compare-prelink-candidates.py --old out/native-prelink-merged/an
 包与证据：`reports/xnu-first-entry/package-01.json`（镜像 `aa2dfb5d…`、内核 `1aeebf13…`、ADT `e7a03577…`、FAT `f0cec54b…`）；`reports/xnu-first-entry-trial/2026-10-24/{preflight,launch,postcondition}.json` 与 `screen-01.jpg`（SHA256 86b7d300…）+ 三张放大裁剪图。操作记录 `operations/2026-10-24-xnu-first-entry.md`。
 
 
+
+## 上游日志方案审阅追加
+
+2026-10-24：main@bd127c0未找到二维码日志实现/PR；PR88是giulia协议的主机USB终端，PR100为Linux构建且默认iOS17。当前工作树仍e553e467，未采用变更，无新设备动作。下一步继续正式入口修正与早期C诊断；Linux/USB分别资格化。证据和决定见2026-10-24-upstream-debug-review.md。

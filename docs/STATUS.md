@@ -29,3 +29,7 @@
 R-012已批准的dram_size=0x240000000和owned_memory_size=0x40000000保持，board仍example=true；其余TODO与donor/native完整ABI尚未解决。Heap/HOB、认证/AMFI策略、板值、所有_verified不变。
 
 详细代码、SHA、软件与实机界限、恢复命令见 [本轮操作记录](operations/2026-10-24-kernel-entry-probe.md)；[主线交接](operations/2026-10-23-mainline-handoff.md)顶部有效，旧条目仅保留历史。
+
+## 最新上游审阅
+
+上游main@bd127c0最新PR100是Linux内核构建支持；PR88是电脑端USB日志/屏幕工具。未找到二维码日志PR或实现，整树关键词只命中文档可选依赖。Linux目标默认iOS17，需另做Darwin22/8796适配；USB工具需nuwa设备端协议，不能即装即用。本轮仅fetch/diff，未merge、安装或操作手机，详见[审阅](operations/2026-10-24-upstream-debug-review.md)。
