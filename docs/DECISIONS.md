@@ -445,3 +445,7 @@ D-028实测更新：18ebd838新菜单返回Access Denied，未取得文件SHA实
 D-029离线验收更新：首轮40078257763编译成功/包装名检查因LTO失败保留；改用实际PE Ready四次BL/572B压缩体及真实BaseCryptLib/OpenSSL非Null模块报告验证，移除调用/短stub回归拒绝。第二轮40080439083/source dbbdc02完整success，独立710项/7模块和完整SEC7192fd3f字节相同、原认证库/介质0x04策略通过。最终USB v3数据包6b3e5bfd/70266880B固定绿色来源，不含外部EFI app，仅普通数据和退出菜单；ReadyToBoot自动检查。实机文件SHA仍未验，需新包录像/恢复门，不改_verified。
 
 D-029 实测补充（2026-10-24）：6b3e5bfd在保留认证策略的固件内完成文件精确长度/EOF/SHA256 PASS，三张原图和Android恢复三SHA见reports/fv-file-audit-trial/2026-10-24-01/。USB大文件数据链可继续作为主路线；外部EFI认证拒绝仍为旧Access Denied首因推断，未捕获精确API，不当成唯一证明。下一步推进内核执行前资格，仍不执行loadable=false分析文件。
+
+# D-030 · 用内核内标记确认入口，诊断隔离BCM2837 MMIO
+
+固定1aeebf13实际含0x40000040 Core Timers路由写入，因XNU_NATIVE_ARCH_TIMER=0保留；先以单条NOP诊断隔离，不提前启用native timer或以空驱动替代。新增单页RX入口/页表后/MMU前标记及物理早期异常显示；不改board/固件/认证/AMFI/_verified。16软件与原版对照、5实际ParseKernel源体用例通过，单次ab3c092b实机原图5716899a确认蓝黄品红且Android三SHA恢复闭环。该结果支持优先排除BCM依赖，不证明唯一根因、MMU开启或完整ABI；正式路线仍需真实架构定时器/ArmCpu提供者。证据见operations/2026-10-24-kernel-entry-probe.md。

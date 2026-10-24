@@ -1,3 +1,9 @@
+> **最新闭环（2026-10-24 20:53:19，北京时间）：** 入口探针ab3c092b单次临时启动，原图5716899a独立确认绿/蓝/黄/品红，入口首字与候选一致；实机确认到XNU页表生成后、开启MMU前。recovery/postcondition确认Android1/A槽/三SHA与本轮preflight一致，无flash/erase/改槽，无需继续按键。原图约10MB在out/trial-evidence/kernel-entry-probe-01/，元数据在reports/kernel-entry-probe-trial/2026-10-24-01/screen-evidence.json。当前代码里程碑为本轮新增入口探针提交，固件仍旧已验收CI40014018074。下一步离线准备MMU后/C入口标记；不重启本包，不复用旧录像许可。下方进行中条目为历史。
+
+> **本轮已取得XNU入口实机观察：** 用户报告绿/蓝/黄/品红四色，证明新探针的内核入口、页表生成后与开启MMU前路径执行；MMU成功开启/C初始化/iOS未验证。180秒观察完成，原图录像待交付，恢复程序已运行；若仍停画面用户保存后按键回fastboot。用户电源键可当Enter的现场观察已记，不再沿用旧绝对否定。见screen-observation.json及入口探针操作记录。
+
+> **2026-10-24 20:4x 本轮进行中：** 单次临时启动入口探针ab3c092b（内核b1f532c1，FD仍2d606985/CI40014018074），用户已确认本包录像≥180秒及按键恢复，preflight新鲜Android1/A槽/三SHA。原内核含BCM2837专用0x40000040写入，软件对照已定位；新候选仅NOP专用写入及增加内核内色带/早期异常显示，16软件/5解析/31ADT检查通过。ACK0不是内核证据，正在观察；只读本轮画面并recover/postcondition，不再自动启动。命令、所有SHA和证据见 [入口探针记录](2026-10-24-kernel-entry-probe.md)。
+
 > **2026-10-24 20:25 接手纠错，优先于下方历史条目：** SecurityLock/LockCapsuleInterface 已固定来源为Mu CapsuleRuntimeDxe的ExitBootServices回调；不是Apple安全链失败。实际DarwinEnter绿色写入早于br x1，不能证明XNU开始执行；slot-retry-count是剩余次数，不是累计失败数。当前确认到UEFI加载/窗口/DarwinEnter写屏，内核第一指令/退出口待定位。14项静态审计通过，见 [接手审计](2026-10-24-first-entry-provenance.md) 和 ../STATUS.md。本轮无设备动作、新包或新录像确认；最近设备事实仅继承下方旧记录，不当作当前查询。后续先离线设计交接尾部与XNU入口的独立标记，保留所有启动前日志/恢复门。
 
 # 主线交接（2026-10-24，USB v3实测闭环）

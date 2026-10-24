@@ -128,6 +128,9 @@ def validate(path):
     script's own bookkeeping.
     """
     report = json.loads(path.read_text(encoding='utf-8'))
+    if 'entry_probe' in report:
+        from kernel_entry_probe_inputs import validate as validate_probe
+        validate_probe(report['entry_probe'], report['kernel_sha256'])
     if report.get('approval') != APPROVAL:
         raise ValueError('Unexpected approval for the XNU entry package')
     if (report.get('header_version') != 3 or not report.get('xnu_included')
@@ -194,6 +197,8 @@ def main():
                      default=ROOT / 'out/earlysec-2026-10-24/kernel-prelinked-earlysec.macho')
     cli.add_argument('--validate', action='store_true',
                      help='Re-derive and re-read an existing package report instead of building')
+    cli.add_argument('--entry-probe', type=Path,
+                     help='Bind a diagnostic kernel to its static and software-execution reports')
     args = cli.parse_args()
 
     if args.validate:
@@ -213,6 +218,14 @@ def main():
     shim = (FIRMWARE / 'shim/shim.bin').read_bytes()
     stock = transport.STOCK.read_bytes()
     kernel = args.kernel.read_bytes()
+    probe = None
+    if args.entry_probe:
+        from kernel_entry_probe_inputs import metadata, validate as validate_probe
+        probe = metadata(args.entry_probe)
+        validate_probe(probe, sha(kernel))
+        global UNIXNU_TOML
+        UNIXNU_TOML = UNIXNU_TOML.replace('NUWA XNU FIRST ENTRY - ANALYSIS BUILD', 'NUWA XNU ENTRY PROBE 01')
+        UNIXNU_TOML = UNIXNU_TOML.replace('Enter UniXNU iOS 16 kernel (analysis prelink)', 'XNU ENTRY PROBE 01 - BLUE YELLOW MAGENTA')
     if sha(fd) != FD_SHA or len(fd) != 3145728:
         raise ValueError('Firmware FD changed')
     if sha(shim) != SHIM_SHA:
@@ -298,6 +311,13 @@ def main():
         'device_executed': False,
     }
     output.parent.mkdir(parents=True, exist_ok=True)
+    if probe:
+        report['entry_probe'] = probe
+        report['scope'] = 'Diagnostic XNU entry probe with BCM-only MMIO suppressed and early exception display; no device action'
+        report['kernel_source']['source'] = 'hash-pinned early-security prelink plus bounded native entry diagnostic patches'
+        report['success_requires'] = 'Blue band at row 256 proves the XNU entry branch executed; yellow row 352 and magenta row 448 identify later pre-MMU stages. Red row 544 captures ESR/ELR/FAR. Green/menu/ACK alone do not prove XNU execution.'
+        report['expected_screen_outcomes'] = [report['success_requires'], 'Any later XNU text or panic requires separate attribution; no band proves MMU enabled or iOS started']
+        report['not_proven'] = ['Real nuwa execution of this candidate', 'MMU activation and arm_init', 'Native timer/interrupt driver readiness', 'Full donor/native ABI or iOS boot']
     output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     print(json.dumps({'image_bytes': len(image), 'image_sha256': sha(image),
                       'kernel_sha256': sha(kernel), 'adt_sha256': sha(adt),

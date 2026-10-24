@@ -1,0 +1,101 @@
+{
+  "scope": "Software-generated bootstrap page-table walk before MMU; not hardware MMU behavior",
+  "candidate_sha256": "b1f532c14e3d9428c167fe9d541fdd5799e87445cd5aa37bcff1f2474565eda2",
+  "snapshots": [
+    {
+      "tcr": "0x22a51a251a",
+      "ttbr0": "0x8c355e000",
+      "ttbr1": "0x8c355f000",
+      "sp": "0xfffffff007b34000",
+      "lr": "0xfffffff007972848",
+      "vbar": "0xfffffff0073c2000",
+      "walks": [
+        {
+          "va": "0x8c37c7374",
+          "mapped": true,
+          "pa": "0x8c37c7374",
+          "rows": [
+            {
+              "level": 1,
+              "address": "0x8c355e118",
+              "descriptor": "0x8c3560003"
+            },
+            {
+              "level": 2,
+              "address": "0x8c35600d8",
+              "descriptor": "0x8c3600601"
+            }
+          ]
+        },
+        {
+          "va": "0xfffffff007972848",
+          "mapped": true,
+          "pa": "0x8c3d72848",
+          "rows": [
+            {
+              "level": 1,
+              "address": "0x8c355f600",
+              "descriptor": "0x8c3561003"
+            },
+            {
+              "level": 2,
+              "address": "0x8c35611e0",
+              "descriptor": "0x8c3c00601"
+            }
+          ]
+        },
+        {
+          "va": "0xfffffff007b33ff8",
+          "mapped": true,
+          "pa": "0x8c3f33ff8",
+          "rows": [
+            {
+              "level": 1,
+              "address": "0x8c355f600",
+              "descriptor": "0x8c3561003"
+            },
+            {
+              "level": 2,
+              "address": "0x8c35611e8",
+              "descriptor": "0x8c3e00601"
+            }
+          ]
+        },
+        {
+          "va": "0xfffffff0073c2000",
+          "mapped": true,
+          "pa": "0x8c37c2000",
+          "rows": [
+            {
+              "level": 1,
+              "address": "0x8c355f600",
+              "descriptor": "0x8c3561003"
+            },
+            {
+              "level": 2,
+              "address": "0x8c35611c8",
+              "descriptor": "0x8c3600601"
+            }
+          ]
+        },
+        {
+          "va": "0xfffffff013dc8000",
+          "mapped": true,
+          "pa": "0x8d01c8000",
+          "rows": [
+            {
+              "level": 1,
+              "address": "0x8c355f600",
+              "descriptor": "0x8c3561003"
+            },
+            {
+              "level": 2,
+              "address": "0x8c35614f0",
+              "descriptor": "0x8d0000601"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

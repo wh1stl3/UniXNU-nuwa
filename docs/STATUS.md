@@ -1,30 +1,31 @@
 # STATUS
 
-更新：2026-10-24 20:25（北京时间），接手离线审计；没有新设备动作。
+更新：2026-10-24 20:53（北京时间）。**nuwa实机已确认执行XNU入口、完成bootstrap页表生成，并到达开启MMU的指令前。iOS尚未启动。**
 
-**iOS 尚未启动。已确认 UEFI 负载准备和 DarwinEnter 绿色帧缓冲写入；XNU 首条指令及初始化是否执行仍待独立证据。** 旧“Apple 安全链锁导致退出”的判断已被固定版本固件源码反证，详见 [接手审计](operations/2026-10-24-first-entry-provenance.md)。
+## 本轮结果
 
-## 当前有效事实
+- 设备仓本轮基线cd5e987，原生内核CI40015845083/bf14e530加早期安全初始化预链接1aeebf13。固件仍用已验收CI40014018074/FD2d606985；固件仓codex/nuwa-sec-handoff-trace@a155c495未修改。
+- 定位实际XNU入口保留BCM2837专用0x40000040写入（XNU_NATIVE_ARCH_TIMER=0）。软件对照：原版在该地址失败，单条NOP后到达开启MMU的MSR前。这是支持首因的诊断证据，不是唯一根因或正式定时器驱动。
+- 新候选内核b1f532c14e3d9428c167fe9d541fdd5799e87445cd5aa37bcff1f2474565eda2，仅记录的93个原字节变化及追加单页RX探针；donor段保持。三个内核内阶段标记及早期异常ESR/ELR/FAR显示已实现，资格标志仍loadable=false/runtime_qualified=false。
+- 16项软件执行检查、5项实际ParseKernel源体ASan/UBSan用例、ADT21节点/31检查及整包FAT导出验收通过。软件执行止于MMU开启前，不证明硬件翻译、缓存、中断或iOS。
+- 包ab3c092b1ce5fa44475fbe40c3dc5b044963db8f0e664586178ff46ccf9ec149，70266880B，reports/xnu-first-entry/entry-probe-01.json；原固件/shim和USB-v3封装保持。
 
-- 设备仓 D:/Code/UniXNU-nuwa，远程 wh1stl3/UniXNU-nuwa；接手基线 main@b295013，比远程 main@54b3674 超前两个提交。原有三个未跟踪项保留。
-- 固件仓 D:/Code/uefi-nuwa，远程 wh1stl3/uefi-nuwa；codex/nuwa-sec-handoff-trace@a155c495，与远程同分支一致，工作区干净。
-- 首次入口试验使用包 aa2dfb5d、内核 1aeebf13、FD 2d606985（CI40014018074）。内核资格标志仍 loadable=false/runtime_qualified=false；不修改 _verified。
-- 1 GiB 窗口被分配，负载加载调用成功，绿色横条出现；录像显示随后黑屏约19秒，再进入 Android。原始画面和时间线保留在 reports/xnu-first-entry-trial/2026-10-24/ 与 reports/xnu-first-entry-video/2026-10-24/。
-- 首次试验 postcondition 时间 2026-10-24T11:33:59Z（北京时间19:33:59），Android完成1/A槽/三分区SHA与试前一致。其后交接记载 fastboot 只读取证并恢复 Android完成1，来源 fastboot-varall.txt 和旧工作日志；本轮没有刷新设备状态，不能称手机“当前在线”。
-- R-012 A 已批准并落地 dram_size=0x240000000、owned_memory_size=0x40000000。ADT生成器、board参数重放、FDT输入核对、10用例通过；board仍 example=true，其余TODO保留。
-- 文件运输/SHA已在独立FV诊断实机通过；native Darwin22内核构建成功、零未定义符号。donor/native C++及结构ABI仍未完整资格化。
+## 实机证据与恢复
 
-## 本轮纠错
+用户本包录像/必要时按键恢复已确认；新鲜preflight唯一nuwa/kalama、Android1/A槽/三SHA基线通过。即时通知后单次fastboot boot，180秒USB观察完成，无flash/erase/改槽。
 
-1. SecurityLock/LockCapsuleInterface 是 Project Mu 的 CapsuleRuntimeDxe 在 ExitBootServices 中关闭 Capsule 接口的审计，不是 Apple/SEP 故障。GUID正确值42857F0A-13F2-4B21-8A23-53D3F714B840。
-2. 实际DarwinEnter反汇编证明绿色写入发生在缓存处理、关MMU和br x1之前。绿条不证明XNU已执行，旧“内核静默退出”改为“交接后黑屏，退出位置未定位”。
-3. slot-retry-count:a:6 是剩余次数，不是累计6次失败；无前后差分，不能关联本次故障。
-4. App Log Flush有Qualcomm固件启动实录来源，不能当XNU日志。kext加载Success不等于初始化或ABI验证。旧AppleARMPlatform/IODTNVRAM转录仍须独立核对。
+用户原图独立确认绿、蓝、黄、品红四色；入口首字14430E1E与候选patch一致：蓝行256为XNU入口，黄行352为页表生成后，品红行448在SCTLR_EL1开启MMU前。未见红色异常区。**品红是最远插桩位置，不是已定位故障PC；不证明MMU已开启或arm_init已执行。**
 
-复核：scripts/audit-first-entry-provenance.py 14项静态检查通过；报告 reports/xnu-first-entry-provenance/2026-10-24/audit.json 含固定源码URL/哈希/行号、实际FD一致性与148字节完整反汇编。无新构建或实机通过声明。
+原图SHA5716899a991f424c9a2adb5e520e356a1cc147eb3dc191d740c64f09ebbd056a，约10MB，保存在忽略的out/trial-evidence/kernel-entry-probe-01/screen-01.jpg；元数据/判读存reports/kernel-entry-probe-trial/2026-10-24-01/screen-evidence.json。完整录像可后补，不阻断离线工作。
 
-## 下一步
+**20:53:19 postcondition确认恢复Android完成1、槽_a，boot_a/vendor_boot_a/init_boot_a三SHA与本轮试前完全一致；无需继续按键。** 本轮su只读查询实际成功，旧“su不可用”记录已过期。用户报告电源键可当Enter，按下后倒计时停止并完成此次启动，已留原话；未捕获EFI输入码，不再沿用实体键不能触发的绝对否定。
 
-主线改为定位 **DarwinEnter交接尾部 → XNU首条指令 → 早期建表/初始化** 的实际执行边界。先设计各阶段独立标记和异常记录，再离线构建与验收；当前不因错误归属的SecurityLock调整AMFI或认证策略，也不向Android分区写日志。
+## 当前判断与下一步
 
-受审内存/基址、Heap/HOB保护、认证策略与_verified保持。新包启动前仍需本包录像与恢复条件、离线验收和即时通知；结束恢复Android完成1并核对三分区。旧交接历史由 [主线交接](operations/2026-10-23-mainline-handoff.md) 保留，本状态及其顶部纠错优先。
+旧SecurityLock已定位为Mu CapsuleRuntimeDxe的EBS软件锁审计，slot-retry-count是剩余次数；二者均不支持旧“Apple安全链失败/累计6次”的判断。见 [来源纠错](operations/2026-10-24-first-entry-provenance.md)。
+
+本轮首要排查范围是**开启MMU到arm_init/更早C初始化**，也保留更后阶段无日志的可能。追加软件页表walk显示PC恒等映射、arm_init KVA、栈、VBAR、boot_args KVA五处有条目，不能替代实机MMU验收。下一步先离线增加MMU开启后与C入口的独立标记/异常保存，再准备新候选；不自动重复本包，不复用旧录像确认。
+
+R-012已批准的dram_size=0x240000000和owned_memory_size=0x40000000保持，board仍example=true；其余TODO与donor/native完整ABI尚未解决。Heap/HOB、认证/AMFI策略、板值、所有_verified不变。
+
+详细代码、SHA、软件与实机界限、恢复命令见 [本轮操作记录](operations/2026-10-24-kernel-entry-probe.md)；[主线交接](operations/2026-10-23-mainline-handoff.md)顶部有效，旧条目仅保留历史。

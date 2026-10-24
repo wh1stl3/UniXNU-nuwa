@@ -13,3 +13,7 @@ reports/loader-integration/factory-uefiplatLA-original.txt -text -whitespace
 reports/firmware-ci/39764322744/BUILD_REPORT.txt -text -whitespace
 # Diagnostic patch retains the pinned Mu blobs' CRLF context for strict apply checks.
 patches/firmware-candidates/0008-nuwa-dxe-allocation-trace.patch -text
+# Preserve the exact report bytes bound by the physical entry-probe package/preflight.
+reports/kernel-entry-probe/2026-10-24/build-v3.json -text -whitespace
+reports/kernel-entry-probe/2026-10-24/software.json -text -whitespace
+reports/xnu-first-entry/entry-probe-01.json -text -whitespace

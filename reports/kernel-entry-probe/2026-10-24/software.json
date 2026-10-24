@@ -1,0 +1,138 @@
+{
+  "scope": "Unicorn ARM64 instruction execution with sparse RAM/framebuffer model; stops before SCTLR MMU enable, no actual translation/cache/device/interrupt model and no nuwa execution",
+  "unicorn_version": "2.1.4",
+  "candidate_sha256": "b1f532c14e3d9428c167fe9d541fdd5799e87445cd5aa37bcff1f2474565eda2",
+  "checks": [
+    {
+      "name": "Pinned baseline",
+      "passed": true
+    },
+    {
+      "name": "Candidate digest",
+      "passed": true
+    },
+    {
+      "name": "Baseline reaches BCM-only unmapped write",
+      "passed": true
+    },
+    {
+      "name": "Single-store correction reaches MMU enable instruction",
+      "passed": true
+    },
+    {
+      "name": "Instrumented kernel reaches MMU enable instruction",
+      "passed": true
+    },
+    {
+      "name": "Live registers preserved",
+      "passed": true
+    },
+    {
+      "name": "Bootstrap tables match minimal corrected kernel",
+      "passed": true
+    },
+    {
+      "name": "Boot args untouched",
+      "passed": true
+    },
+    {
+      "name": "Entry blue band",
+      "passed": true
+    },
+    {
+      "name": "Tables yellow band",
+      "passed": true
+    },
+    {
+      "name": "Pre-MMU magenta band",
+      "passed": true
+    },
+    {
+      "name": "Missing framebuffer still reaches MMU",
+      "passed": true
+    },
+    {
+      "name": "Missing framebuffer writes no bands",
+      "passed": true
+    },
+    {
+      "name": "Early vector enters fault logger",
+      "passed": true
+    },
+    {
+      "name": "Fault red band",
+      "passed": true
+    },
+    {
+      "name": "ESR ELR FAR glyphs independently decode",
+      "passed": true
+    }
+  ],
+  "baseline": {
+    "error": "Invalid memory write (UC_ERR_WRITE_UNMAPPED)",
+    "trace": [
+      "0x8c37c705c",
+      "0x8c37c7288",
+      "0x8c37c732c"
+    ],
+    "bad_memory": [
+      {
+        "access": 20,
+        "address": "0x40000040",
+        "size": 4,
+        "pc": "0x8c37c732c"
+      }
+    ],
+    "pc": "0x8c37c732c",
+    "boot_args_unchanged": true
+  },
+  "minimal_corrected": {
+    "stop": "before-sctlr",
+    "trace": [
+      "0x8c37c705c",
+      "0x8c37c7288",
+      "0x8c37c732c",
+      "0x8c37c7374"
+    ],
+    "bad_memory": [],
+    "pc": "0x8c37c7374",
+    "boot_args_unchanged": true
+  },
+  "instrumented": {
+    "stop": "before-sctlr",
+    "trace": [
+      "0x8c37c705c",
+      "0x8c37c7288",
+      "0x8c37c732c",
+      "0x8c37c7374"
+    ],
+    "bad_memory": [],
+    "pc": "0x8c37c7374",
+    "boot_args_unchanged": true
+  },
+  "pixels": {
+    "256": "0xff0080ff",
+    "352": "0xffffff00",
+    "448": "0xffff00ff",
+    "544": "0x0"
+  },
+  "fault_injection": {
+    "stop": "fault-stop",
+    "trace": [],
+    "bad_memory": [],
+    "pc": "0x8c4889388",
+    "boot_args_unchanged": true,
+    "decoded_hex": {
+      "ESR_EL1": "0000000096000040",
+      "ELR_EL1": "00000008C37C732C",
+      "FAR_EL1": "0000000040000040"
+    },
+    "expected_hex": {
+      "ESR_EL1": "0000000096000040",
+      "ELR_EL1": "00000008C37C732C",
+      "FAR_EL1": "0000000040000040"
+    }
+  },
+  "live_registers_equal": true,
+  "bootstrap_table_sha256": "f851ae4a554b2867f0ce5f050ee5a505804498479309c988f4b12822398f732d"
+}

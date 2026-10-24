@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-24T12:52:55.317557+00:00",
+  "evidence_kind": "user original image, visually inspected",
+  "photo": {
+    "path": "out/trial-evidence/kernel-entry-probe-01/screen-01.jpg",
+    "bytes": 10337304,
+    "sha256": "5716899a991f424c9a2adb5e520e356a1cc147eb3dc191d740c64f09ebbd056a",
+    "version_control": "Original 10337304-byte user image preserved locally under ignored out to respect the approximate 10MB binary limit; original SHA remains in this tracked report"
+  },
+  "visible": {
+    "menu": "XNU ENTRY PROBE 01; BLUE YELLOW MAGENTA",
+    "bands": [
+      "green",
+      "blue",
+      "yellow",
+      "magenta"
+    ],
+    "red_fault_band": false,
+    "entry_words_first": "14430E1E",
+    "kernel_pa": "0x8C01C8000",
+    "entry_pa": "0x8C37C5488",
+    "window_bytes": "0x40000000",
+    "video": "0xB8000000 / 1440x3200 / row5760 / depth32",
+    "entry_word_matches_candidate_patch": false
+  },
+  "conclusion": "Actual XNU __start hook, bootstrap table completion hook and pre-SCTLR hook executed on nuwa",
+  "limits": [
+    "No post-SCTLR/arm_init marker exists in this candidate",
+    "No panic or ESR output visible",
+    "Frozen menu countdown at 46s does not measure kernel survival duration or prove raw EFI key mapping"
+  ]
+}

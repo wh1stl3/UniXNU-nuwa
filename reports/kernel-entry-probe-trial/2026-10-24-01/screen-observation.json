@@ -1,0 +1,19 @@
+{
+  "at": "2026-10-24T12:50:14.595677+00:00",
+  "evidence_kind": "fresh user text report during this exact trial",
+  "candidate_sha256": "ab3c092b1ce5fa44475fbe40c3dc5b044963db8f0e664586178ff46ccf9ec149",
+  "user_text": "实机实验发现电源键可以当做enter用 按下后倒计时停止 看到了绿 蓝 黄 品红 四条色带",
+  "reported_bands": [
+    "loader-green",
+    "xnu-entry-blue",
+    "bootstrap-tables-yellow",
+    "pre-mmu-magenta"
+  ],
+  "conclusion": "User observed the instrumented XNU entry and pre-MMU stages on nuwa; magenta hook precedes MSR SCTLR_EL1, so MMU activation/arm_init remain unproven",
+  "power_key_observation": "User reports power key acts as enter in practice; countdown stopped after press; raw EFI key code and whether press selects or only cancels timer are not captured",
+  "limitations": [
+    "No original photo/video file received yet",
+    "No claim of MMU activation, C initialization, stable timer, or iOS boot",
+    "No change to any *_verified field"
+  ]
+}
