@@ -68,6 +68,15 @@ v9 候选 **`b5db0f1e5793a2557efa99af735a59ca1c923ed1ae9e461f712a5a79163ac348`**
 
 探针段从一页扩到两页（第 2 页整页零），打包绑定已同步改为 8192。
 
+## 当前状态：v9 已打包为 entry-probe-04 并校验，等待录像后单次启动
+
+- 镜像 **`7b81126ba4aeb5387e42ec2a3cbd6aa9b2d5ea13efcce57dc55d3e6830767bda`**，70,266,880 B，菜单标识 `XNU ENTRY PROBE 04 - BLUE YELLOW MAGENTA CYAN WHITE PURPLE RED`；报告 `reports/xnu-first-entry/entry-probe-04.json`，`--validate` 从出货 FAT 读回 kernel `b5db0f1e` 与 ADT `57e04fc9` 通过。
+- 内核：v9 `b5db0f1e`（28 补丁，等距布局 + 恒等 VBAR 向量 + per-CPU 基址垫片）。
+- 随包 ADT（`57e04fc9`）上重跑 8 项仍通过。
+- 用户 2026-10-25 01:42 批准打包；**启动前会先确认录像，当前未启动、未碰设备。**
+
+判读（行距 48，首行 256）：绿(固件) → 256蓝 → 304黄 → 352品红 → 400青 → 448白 → 496紫(`_current_percpu_base`) → 544棕(`_arm_vm_init`) → 592青绿(`_pmap_bootstrap`) → 640橙(`_kernel_bootstrap`)；若中途异常则 688红 + 736/784/832 三行 ESR/ELR/FAR。**垫片若生效，最少应看到 544 棕带**；只到 496 说明垫片没解决问题，红带会给出原因。
+
 ## 构建支线
 
 `codex/pr100-linux-8796`（`b8872cb`）保持独立、未合入；其平台链接产物 `89a30cfb` 仍是链路资格，不是可启动镜像。

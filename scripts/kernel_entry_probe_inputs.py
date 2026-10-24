@@ -54,7 +54,7 @@ def validate(meta,kernel_sha):
     m=builder.macho(raw)
     if m['entry']!=builder.macho(original)['entry']:raise ValueError('Kernel original entry changed')
     segment=next(s for s in m['segments'] if s['name']=='__NUWA_PROBE')
-    if segment['va']!=int(probe['va'],16) or segment['fileoff']!=offset or segment['size']!=4096:raise ValueError('Probe segment changed')
+    if segment['va']!=int(probe['va'],16) or segment['fileoff']!=offset or segment['size']!=8192:raise ValueError('Probe segment changed')
     bcm=next(p for p in build['patches'] if 'Suppress BCM' in p['reason'])
     if bcm['before']!='010000b9' or bcm['after']!='1f2003d5':raise ValueError('BCM correction differs')
     return dict(kernel_sha256=kernel_sha,patches=len(build['patches']),software_checks=len(software['checks']))
