@@ -56,12 +56,17 @@ probe_tables:
     movk        x14, #0xffff, lsl #32
     and         x13, x13, x14                    // V=P L1 table physical address
     ldr         x15, [x13, #16]                  // L1 slot 2 covers 0x80000000
-    cbnz        x15, .Lmap_done\@                  // occupied: leave mappings alone
+    cbnz        x15, .Lmap_skip\@                 // occupied: leave mappings alone
     movz        x15, #0x040d                      // valid block, AF, AttrIndx 3
     movk        x15, #0x8000, lsl #16             // 0x80000000
     movk        x15, #0x0060, lsl #48             // PXN | UXN
     str         x15, [x13, #16]
     dsb         ish
+    b           .Lmap_done\@
+.Lmap_skip\@:
+    // The slot already maps something we did not audit: report "no framebuffer"
+    // so SNAP_VIDEO stores nothing and the post-MMU hooks draw nothing.
+    mov         x15, #0
 .Lmap_done\@:
 .endm
 .macro SNAP_VIDEO
@@ -93,9 +98,9 @@ probe_mmu:
     b original_mmu_resume
 
 // After "msr sctlr_el1" the PC is still a physical address, kept valid by the
-// V=P mapping, and this page is reachable at the same offset by PC-relative
-// addressing. Cyan means the translation control write executed and the next
-// fetch was translated.
+// V=P mapping. The original isb is replayed FIRST so the SCTLR write is
+// architecturally synchronised before anything is drawn; then the band is drawn
+// and control returns to the instruction after the isb.
 .macro BAND_SNAPSHOT y, color
     adr         x15, probe_scratch
     ldr         x9, [x15]
@@ -115,10 +120,10 @@ probe_mmu:
 .endm
 .global probe_mmu_on
 probe_mmu_on:
+    .inst original_mmu_on_word
     BAND_SNAPSHOT 736, 0xff00ffff
 .global probe_mmu_on_replay
 probe_mmu_on_replay:
-    .inst original_mmu_on_word
     b original_mmu_on_resume
 
 // arm_init is entered at the KVA, so this hook also proves the TTBR1 mapping is

@@ -20,7 +20,7 @@ FB_DESCRIPTOR=0x006000008000040d
 def snapshot(uc):return {str(i):uc.reg_read(getattr(sys.modules[__name__],f'UC_ARM64_REG_X{i}')) for i in PRESERVED}
 
 
-def run(raw,report,video=True,start=None,fault=False,stub=None):
+def run(raw,report,video=True,start=None,fault=False,stub=None,preoccupy=None):
     m=B.macho(raw);base=min(s['va'] for s in m['segments'] if s['size']);end=max(s['va']+s['size'] for s in m['segments']);first=m['symbols']['_start_first_cpu'];uc=U.Uc(U.UC_ARCH_ARM64,U.UC_MODE_ARM)
     uc.mem_map(PA,B.align(end-base));uc.mem_map(ARGS,0x1000);uc.mem_map(FB,0x1200000)
     for s in m['segments']:
@@ -40,6 +40,15 @@ def run(raw,report,video=True,start=None,fault=False,stub=None):
         if stub and addr==stub_state.get('entry'):trace.append('stub:'+stub)
     def invalid(uc,access,addr,size,value,_):bad.append(dict(access=access,address=hex(addr),size=size,pc=hex(uc.reg_read(UC_ARM64_REG_PC))));return False
     uc.hook_add(U.UC_HOOK_CODE,code);uc.hook_add(U.UC_HOOK_MEM_INVALID,invalid)
+    if preoccupy is not None:
+        # Occupy V=P L1 slot 2 just after the bootstrap tables exist (x25 holds their
+        # physical address) and before the magenta hook installs anything.
+        tables_site=PA+first+0x22c-base
+        def plant(uc,addr,size,_):
+            if addr==tables_site:
+                table=uc.reg_read(UC_ARM64_REG_X25)
+                uc.mem_write(table+16,struct.pack('<Q',preoccupy))
+        uc.hook_add(U.UC_HOOK_CODE,plant)
     begin=PA+(start if start is not None else m['entry'])-base
     try:uc.emu_start(begin,0,count=2000000)
     except U.UcError as e:state['error']=str(e)
@@ -100,6 +109,17 @@ def main():
     check('arm_init hook executes to its replay point',whitestub.get('reached') and not whitestub.get('error') and not whitestub['bad_memory'])
     check('White arm_init band',whitepixels['832']==0xffffffff)
     check('arm_init hook preserves live registers',whitestub['before']==whitestub['after'])
+    probe_off=report['probe']['file_offset'];probe_va=int(report['probe']['va'],16)
+    on_off=probe_off+int(report['probe']['symbols']['probe_mmu_on'],16)-probe_va
+    check('Cyan hook replays the original isb before anything is drawn',
+          struct.unpack_from('<I',candidate,on_off)[0]==0xd5033fdf)
+    sentinel=0x8c3000403
+    occ,_,occpixels,occtables,occstub=run(candidate,report,preoccupy=sentinel,stub='probe_mmu_on')
+    check('Pre-occupied L1 slot 2 is left untouched',occtables['slot2']==hex(sentinel))
+    check('Pre-occupied slot yields no geometry snapshot',occstub.get('scratch')==(0,0))
+    check('Pre-occupied slot draws nothing and does not fault',
+          occstub.get('reached') and not occstub['bad_memory']
+          and (occpixels['736'],occpixels['832'])==(0,0))
     null,_,nullpixels,nulltables,_=run(candidate,report,video=False);check('Missing framebuffer still reaches MMU',null.get('stop')=='before-sctlr' and not null['bad_memory']);check('Missing framebuffer writes no bands',all(v==0 for v in nullpixels.values()))
     check('Missing framebuffer still installs the diagnostic mapping only',nulltables['slot2']==hex(FB_DESCRIPTOR))
     novideo,_,novideopixels,_,novideostub=run(candidate,report,video=False,stub='probe_mmu_on')

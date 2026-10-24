@@ -1,0 +1,40 @@
+{
+  "scope": "Whether this host can execute an ARM64 instruction fetch through stage-1 translation; a negative answer blocks any real MMU-crossing test here",
+  "probe_script": {
+    "path": "scripts\\probe-unicorn-mmu.py",
+    "sha256": "94aff53bfaba59dbfb597d37d75bf78614a68696c59cbe704d047a5f09bc7c7d"
+  },
+  "cases": [
+    {
+      "name": "windows-unicorn-2.1.4-out/python-tools",
+      "result": {
+        "argv": [
+          "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+          "-B",
+          "D:\\Code\\UniXNU-nuwa\\scripts\\probe-unicorn-mmu.py"
+        ],
+        "exit_code": 1,
+        "stdout": "REFUSED Unhandled CPU exception (UC_ERR_EXCEPTION) unicorn 2.1.4",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "wsl-ubuntu-22.04-unicorn-2.1.4",
+      "result": {
+        "argv": [
+          "wsl",
+          "-d",
+          "Ubuntu-22.04",
+          "--",
+          "bash",
+          "-c",
+          "cd /mnt/d/Code/UniXNU-nuwa && python3 -B scripts/probe-unicorn-mmu.py"
+        ],
+        "exit_code": 1,
+        "stdout": "REFUSED Unhandled CPU exception (UC_ERR_EXCEPTION) unicorn 2.1.4",
+        "stderr": ""
+      }
+    }
+  ],
+  "conclusion": "Every probed build refuses the textbook non-identity page table: this environment does not translate ARM64 instruction fetches, so the post-MMU hooks can only be entered directly. A real transition test needs another emulator or hardware."
+}

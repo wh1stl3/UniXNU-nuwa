@@ -35,6 +35,13 @@ def validate(meta,kernel_sha):
     if not {'probe_entry','probe_tables','probe_mmu'}<=hooks:raise ValueError('Required entry/tables/MMU hooks missing')
     # Two header edits, one branch per hooked site, the BCM NOP and sixteen early vectors.
     if len(build['patches'])!=2+len(hooks)+1+16:raise ValueError('Patch set shape differs from the recorded hook set')
+    # The checks that carry a hook's evidence must actually be present: deleting
+    # them and re-sealing the reports must not produce an acceptable package.
+    names={c['name'] for c in software['checks']}
+    required={'Entry blue band','Tables yellow band','Pre-MMU magenta band'}
+    if 'probe_mmu_on' in hooks:required|={'Post-SCTLR hook executes to its replay point','Cyan post-MMU band'}
+    if 'probe_arm_init' in hooks:required|={'arm_init hook executes to its replay point','White arm_init band'}
+    if not required<=names:raise ValueError('Probe software checks missing: '+', '.join(sorted(required-names)))
     covered=set()
     for patch in build['patches']:
         off=patch['file_offset'];before=bytes.fromhex(patch['before']);after=bytes.fromhex(patch['after']);new=set(range(off,off+len(after)))

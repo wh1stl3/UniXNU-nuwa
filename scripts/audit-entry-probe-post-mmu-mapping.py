@@ -51,7 +51,8 @@ def main():
                     if level == 3 or not desc & 2:
                         pa = (desc & 0x0000fffffffff000 & ~((1 << shift) - 1)) | (va & ((1 << shift) - 1))
                         return {'label': label, 'va': hex(va), 'mapped': True, 'pa': hex(pa),
-                                'block': (desc >> 1) & 3 == 1 or level == 2, 'rows': rows}
+                                'type': 'block' if (desc & 3) == 1 else 'page',
+                                'level': level, 'rows': rows}
                     table = desc & 0x0000fffffffff000
                 return {'label': label, 'va': hex(va), 'mapped': False, 'rows': rows}
 

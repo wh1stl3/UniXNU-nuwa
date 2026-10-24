@@ -199,3 +199,15 @@ python3 scripts/compare-prelink-candidates.py --old out/native-prelink-merged/an
 证据 `reports/kernel-entry-probe/2026-10-24-v4/`：software.json 29 项（两钩子以真实页表+真实快照直接进入）、mapping.json（装映射后 FB 变恒等可译，独立复核）、loader.json（5 用例）。界限：Unicorn 拒绝执行 `msr sctlr_el1`，开启 MMU 本身无软件执行证据；cyan/white 只在实机出现才算。
 
 下一步：① 打包 `build_xnu_boot_package.py --entry-probe` 指向本报告并做严格包校验（离线可做）；② 启动前须新鲜 preflight、即时通知、用户对本包的录像/恢复确认，`ab3c092b` 许可不可复用；③ 结果判读：有 cyan 无 white → 查 `ret` 到 arm_init 的 KVA 切换；两者皆无 → 查 MMU 开启本身；有 white → 转 pmap/arm_vm_init。PR100 Linux 构建支线独立在 `codex/pr100-linux-8796`（`b8872cb`），未合入。证据操作记录 `operations/2026-10-24-post-mmu-markers.md`。
+
+## 入口探针v5：复核修正（2026-10-25 00:20，main）
+
+全离线，无设备动作；最近真实设备状态仍是 2026-10-24T12:53:19Z（北京时间20:53:19）nuwa/kalama、Android 完成 1、槽_a、三 SHA 与试前一致。
+
+独立复核对 v4 提出六点，其中三点是真缺陷并已修：占槽失败分支仍会保存几何并绘制（现 `x15=0` 关闭）、cyan 先画带后回放 isb（现改为先 isb）、walker 把 L1 block 记为 block:false（现按 desc&3 判定）。另修打包绑定：删掉 cyan/white 检查曾仍能通过，现要求具体检查名存在。
+
+新候选 **8515068dcd6bd699a4301109b76b80022fb07120e6167b65b6169d52aeffcb6a**/58,339,328 B/24 补丁，`loadable=false` 未改；`software.json` 33 项（新增占槽哨兵场景与 isb 顺序静态断言）、`mapping.json`（装映射后 FB 恒等可译）、`loader.json` 5 用例、`unicorn-mmu-support.json` 三组实测。
+
+归因更正：MSR 本身能执行，限制是**本环境 Unicorn 2.1.4 不做 ARM64 取指翻译**（教科书 4KiB 页表在 Windows 与 WSL 两构建均失败；M=1 时连映射内恒等取指都失败，M=0 立即恢复）。故「真正穿过 MMU 切换」的测试**本轮未交付**，已列为阻塞；两个后 MMU 钩子仍是带真实页表的合成进入。复核给出的 Unicorn 正例无脚本可对跑，差异未定位。`ParseKernel rc=139` 的原因撤回「并行内存压力」推断，未验证。
+
+下一步：① 评估 QEMU system mode 作为第二执行通道（优先于继续调 Unicorn）；② 打包 v5 + 严格包校验，启动前须新鲜 preflight、即时通知、用户对本包的录像与恢复确认（`ab3c092b` 许可不可复用）；③ 判读规则不变。证据 `operations/2026-10-25-probe-v5-corrections.md`；v4 记录已标「被取代」。

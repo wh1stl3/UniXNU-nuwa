@@ -1,35 +1,44 @@
 # STATUS
 
-更新：2026-10-24 23:55（北京时间），分支 `main`。**实机已证到开启 MMU 之前；本轮把内核内标记推进到 SCTLR 写入之后与 arm_init 入口，离线资格完成，未打包、未启动。** iOS 尚未启动。
+更新：2026-10-25 00:20（北京时间），分支 `main`。**实机已证到开启 MMU 之前；离线标记已推进到 SCTLR 写入之后与 arm_init 入口，v5 修正了复核发现的缺陷。未打包、未启动。** iOS 尚未启动。
 
-## 本轮做了什么
+## 当前候选（v5，取代 v4）
 
-候选 `db4aa1723c8c5c4f253452e6e74b44f9a1e421fecf9c68d80d7f0e04c1fa2b11`（58,339,328 B），在 `1aeebf13` 早期安全预链接上追加 24 处补丁：2 头部 + 5 钩子 + BCM 2837 专写 NOP + 16 早期向量。`loadable=false`/`runtime_qualified=false` 未改。
+**`8515068dcd6bd699a4301109b76b80022fb07120e6167b65b6169d52aeffcb6a`**（58,339,328 B，24 补丁），在 `1aeebf13` 早期安全预链接上追加：2 头部 + 5 钩子 + BCM2837 专写 NOP + 16 早期向量。`loadable=false`/`runtime_qualified=false` 未改。
 
-- 新增 **cyan（y=736）**：钩在 `msr sctlr_el1, x0` 之后的 `isb`。出现即说明 SCTLR 写入执行、其后取指已翻译（V=P 恒等）。
-- 新增 **white（y=832）**：钩在 `_arm_init` 第一条指令。该段在 KVA 上取指，出现即说明 TTBR1 映射与取指可用、控制权已进入 C 入口。
-- 原有 blue(256)/yellow(352)/magenta(448)、red(544)+ESR/ELR/FAR(608/640/672) 保持。
+- blue(256) 入口、yellow(352) 页表生成后、magenta(448) 开 MMU 前、red(544)+ESR/ELR/FAR 早期异常：与 v3/v4 相同。
+- **cyan(736)**：钩在 `msr sctlr_el1` 之后的 `isb`。**先回放 isb，再画带**——出现即说明 SCTLR 变更已同步、其后取指在该状态下完成。
+- **white(832)**：钩在 `_arm_init` 首指令，该段在 KVA 上取指——出现即说明 TTBR1 取指可用、控制权进了 C 入口。
+- MMU 后 framebuffer 原本不可译，故 magenta 钩子（pre-MMU）在 V=P L1 **slot 2 为空时**装 1 GiB 恒等设备块（`0x6000008000040d`），并把屏幕几何快照进探针页；**槽被占用则不装、不存快照、不画**（v4 此处有缺陷，已修）。
 
-## 关键发现（决定实现方式）
+## 本轮修正（独立复核后）
 
-1. MMU 后 **framebuffer 未映射**：软件页表 walk 显示 `0xB8000000` 不可译，而 PC 恒等地址、`_arm_init` KVA、探针页 KVA 均已映射。所以不能"照旧往屏幕写"。
-2. 因此 magenta 钩子（pre-MMU）在 V=P L1 **slot 2 为空时**装一条 1 GiB 恒等设备块（`0x6000008000040d`，AttrIndx 3 = Device-nGnRnE，PXN|UXN），并把 framebuffer 基址与行跨度快照进探针页；两个 post-MMU 钩子只读探针页，**不依赖 boot_args 物理地址**，无快照就不画。
-3. `arm_init` 入口 x0 是 boot_args 的 KVA、x20 是 PA（`KASAN` 关闭）；这也是选"快照进探针页"而不是继续用 x20 的原因。
+| 项 | 原状 | 现状 |
+| --- | --- | --- |
+| 占槽分支 | 跳过时仍会保存几何并绘制 | `x15=0`，快照与绘制一起关闭，并有常驻用例 |
+| cyan 语义 | 先画带后回放 isb，语义过强 | 先 isb 后画带，语义收窄为「已同步」 |
+| walker | 把 L1 block 记为 `block:false` | 按 `desc&3` 判 block/page，记录 `type`/`level` |
+| 打包绑定 | 检查数只要 ≥16，删掉关键检查仍能过 | 按钩子集合要求**具体检查名**必须存在 |
+| Unicorn 归因 | 「拒绝 MSR/无 MMU 模型」 | MSR 能执行；**本环境 Unicorn 不做 ARM64 取指翻译**（三组实测） |
 
-## 离线证据
+## 离线证据（`reports/kernel-entry-probe/2026-10-24-v5/`）
 
-`reports/kernel-entry-probe/2026-10-24-v4/`：`software.json` **29 项全通过**（含两个新钩子在真实页表+真实快照下直接进入：到达回放点、无非法访存、像素正确、x0-x8/x18-x30 不变；表比对改为屏蔽 slot 2 后一致并单独断言两个内核的 slot2 值；无 framebuffer 时快照为 0 且不画）；`mapping.json` 显示装完映射后 `0xB8000000` 变为恒等可译（独立复核，不是读回常量）；`loader.json` 固定 `ParseKernel` 源体 5 用例通过。
+`software.json` **33 项通过**（含占槽场景与 isb 顺序的静态断言）；`mapping.json` 装映射后 FB 恒等可译、未装时不可译；`loader.json` 5 用例通过；`unicorn-mmu-support.json` 记录三组实测：教科书 4 KiB 页表取指失败（Windows 与 WSL 两个构建都失败）、冷启动 MSR 执行成功但首条翻译取指失败、`M=0` 时同址取指立刻成功。
 
 ## 明确的界限
 
-Unicorn 拒绝执行 `msr sctlr_el1`，所以**开启 MMU 这一步没有软件执行证据**；两个新钩子是带真实页表直接进入的合成执行。cyan/white 在真机是否出现才是 MMU/arm_init 的证据。未验证：arm_init 返回、arm_vm_init、kext start、iOS。那条 1 GiB 设备块是诊断用，slot 被占用时不改映射也不画。
+- **「真正穿过 MMU 切换」的测试本轮做不到**：当前 Unicorn 不实现取指翻译，两个 post-MMU 钩子是「带真实页表与真实快照直接进入」的合成执行，只证明钩子逻辑、映射安装与寄存器契约。要穿越需另一条执行通道（QEMU system mode 跑真实内核，或实机）。
+- 复核给出的 Unicorn 正例与我的最小用例冲突，对方脚本未提供、差异未定位；我的最小用例已入库（`scripts/probe-unicorn-mmu.py`）可复现。
+- 1 GiB 设备块覆盖 `0x80000000-0xBFFFFFFF`；已知内核 V=P 窗口、boot_args、栈、VBAR、探针页都不在该区间，但 arm_init→arm_vm_init 之间的全部访存未穷尽。
+- ParseKernel 夹具串行复跑也出现过 rc=139，根因未查（此前「并行内存压力」的推断已撤回）。
+- 未验证：arm_init 返回、arm_vm_init、kext start、iOS。
 
 ## 下一步
 
-1. 打包（`build_xnu_boot_package.py --entry-probe` 指向本报告）+ 严格包校验，属离线可做。
-2. 启动前必须：新鲜 preflight（唯一 nuwa/kalama、Android 完成 1、boot/vendor_boot/init_boot 三 SHA、可恢复路径）、即时通知、用户对本包的录像确认。`ab3c092b` 的许可不可复用。
-3. 目标画面：若出现 cyan 而不出现 white，首个嫌疑落在 `ret` 到 arm_init 的 KVA 切换或 C 入口前；若两个都无，重点转向 MMU 开启本身的硬件/属性问题；若出现 white，下一阶段转 pmap/arm_vm_init。
+1. 评估 QEMU system mode 作为第二条执行通道（优先级高于继续在 Unicorn 上找开关）。
+2. 打包 `build_xnu_boot_package.py --entry-probe` 指向 v5 报告 + 严格包校验；启动前须新鲜 preflight（唯一 nuwa/kalama、完成 1、三分区 SHA、恢复路径）、即时通知、用户对本包的录像确认。`ab3c092b` 的许可不可复用。
+3. 判读：有 cyan 无 white → 查 `ret` 到 arm_init 的 KVA 切换；两者皆无 → 查 MMU 开启本身；有 white → 转 pmap/arm_vm_init。
 
-最近实机事实仍是 2026-10-24T12:53:19Z（北京时间20:53:19）nuwa/kalama、Android 完成 1、槽_a、三 SHA 与试前一致；本轮未刷新设备状态、未操作手机。
+最近实机事实仍是 2026-10-24T12:53:19Z（北京时间20:53:19）nuwa/kalama、Android 完成 1、槽_a、三 SHA 与试前一致；本轮未刷新设备状态。
 
-细节与复现命令见 [MMU后标记操作记录](operations/2026-10-24-post-mmu-markers.md)；PR100 Linux 构建支线保持在 `codex/pr100-linux-8796`（`b8872cb`），未合入本线。
+细节见 [v5 修正记录](operations/2026-10-25-probe-v5-corrections.md)；v4 记录仅作历史（[已标注取代](operations/2026-10-24-post-mmu-markers.md)）。PR100 Linux 构建支线独立在 `codex/pr100-linux-8796`（`b8872cb`），未合入。
