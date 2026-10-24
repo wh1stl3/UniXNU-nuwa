@@ -128,4 +128,26 @@ python3 scripts/audit-nuwa-adt-inputs.py --fdt out/live-nuwa-dt/android-dt-after
 
 ADT 侧已齐备。board 剩余 TODO：`[ipsw]` url/chip_id/board_id/sha256、`[payload]` volume/size_mib/kernel_args、`[kernel]` defconfig/archives/prelink、`[firmware]`、`[bootimg.image]`。下一主线为原生内核加载链与初始化/ABI 资格审查，以及 owned 窗口 1 GiB 可用性的 UEFI 证据。**窗口可用性、XNU 是否接受该树、驱动是否绑定均未验证。**
 
+## 最新：早期安全初始化器通路打通，blocker 1 只剩 ABI 资格
+
+全离线，无设备动作；最近真实手机状态仍是北京时间 18:09:48 Android 完成 1。
+
+三条实证（详见 operations/2026-10-24-early-security-init.md）：① 228 个 kext 的 `_PrelinkKmodInfo.start` 全是跳转桩，桩从 `__DATA/__common` 取地址；AMFI/IONetworkingFamily/AppleARMPlatform 的槽静态为 0，corecrypto 的槽是真实函数 —— **空槽即"无 kmod_start"**，AMFI 初始化不走这条路；② 三个 `__mod_init_func` 只调用 `OSMetaClass` 构造函数，与策略注册无关；③ 初始化由 `[kernel.prelink] early_security_init` 驱动，native bf14e530 导出 `_native_prelink_security_init_version = 1`（`0xfffffff007021760`）。
+
+根因：`scripts/emit-current-prelink-analysis.py:18` 传 `{}`、第 43 行写死 `early_security_initializers={}`，这张表从未配置。用 `scripts/audit-early-security-init.py` 显式配置后，emit 的五项前置检查（marker/AppleSecurityExtension/RX 段/对齐/溢出）全过，记录 `0xfffffff004703c54` = 原 VA `0x5703c54` + slide `-0x1000000`；候选 `1aeebf13`/58335232 B 与 `eb66542c` 同长度，408983 字节差异全在 `__PRELINK_INFO`，三个可执行段零差异（`scripts/compare-prelink-candidates.py`）。
+
+**方法论警告**：把 23 MB 段一次性交给 `capstone.disasm()` 会在首个无法解码字节处静默停止，本轮首轮扫描因此错误地得出"注册函数无人调用"。现改为 `array` 按位模式逐字检查并报告覆盖方式；负结果必须带覆盖率才可信。另注意 `adrp`+`add` 的地址一律用代码相加，手打多写一位会读到不受段覆盖的区域。
+
+仍未验证：`0x5703c54` 的调用约定与返回语义、完整构造/start 间接路径、C++ 结构 ABI（blocker 2）、owned 窗口可用性（blocker 3）、大负载装载（blocker 4）。两个候选 `loadable` 均 false。
+
+续接命令（全离线）：
+
+```bash
+python3 scripts/audit-amfi-callgraph.py --output reports/<新路径>/amfi-callgraph.json
+python3 scripts/audit-early-security-init.py --work out/<新目录> --output reports/<新路径>/early-security-init.json
+python3 scripts/compare-prelink-candidates.py --old out/native-prelink-merged/analysis/kernel-prelinked-analysis.macho --new out/earlysec-2026-10-24/kernel-prelinked-earlysec.macho --output reports/<新路径>/diff.json
+```
+
+下一步：核对 `0x5703c54` 调用约定与返回语义（结合 23 项 ops 槽位与 `mac_policy_register` 导入），再决定是否把配置接入 `emit-current-prelink-analysis.py`。任何实机动作前仍须离线验收、新鲜录像与恢复门、即时通知。
+
 

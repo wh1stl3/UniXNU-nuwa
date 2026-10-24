@@ -20,14 +20,30 @@
 
 三处判断留档：① 根 `compatible` 采用实机值（`ArmDTPlatform::configure()` 不匹配该属性，`ArmDTPlatform.cpp:123-142`）；② iomem 的 System RAM 比 FDT 描述只少最后一个 4 KiB 页（`0x1000`），此前"少 55 MiB"的印象是取整错误；③ 修正旧实现强制 `--unique-chip-id`/`--chip-id` 成对的契约不兼容 —— 基座独立传参，board 的 `chip_id` 仍是 TODO，成对校验会让 payload exit 2。
 
+## 本轮（2026-10-24 深夜，全离线）：早期安全初始化器通路打通
+
+blocker 1 的"not configured"部分已解，qualification 仍缺。关键发现：
+
+- **AMFI 没有 kmod_start。** 228 个 kext 的 start 全是跳转桩（读 `__DATA/__common` 全局槽），AMFI/IONetworkingFamily/AppleARMPlatform 的槽静态为 **0**，corecrypto 的槽是真实函数 —— 空槽即"无 start"。
+- **三个 `__mod_init_func` 只做 `OSMetaClass` 静态注册**，与策略注册无关。
+- **初始化由 `[kernel.prelink] early_security_init` 驱动**：`emit_prelink.py:138-156` 要求 native 导出 `_native_prelink_security_init_version == 1`；bf14e530 **有且为 1**（`0xfffffff007021760`）。
+- **配置后 emit 全部前置检查通过**，记录 `0xfffffff004703c54`（= 原 VA `0x5703c54` + slide）。根因是 `scripts/emit-current-prelink-analysis.py:18,43` 硬编码空映射，这张表从未配置过。
+- 新候选 `1aeebf13` 与 `eb66542c` 同长度，408983 字节差异**全在 `__PRELINK_INFO`**，三个可执行段**零差异**。
+
+证据 `reports/native-prelink-merged/{amfi-callgraph,early-security-init,earlysec-diff}.json`。记录：[早期安全初始化器](operations/2026-10-24-early-security-init.md)。
+
+**方法论教训（已写入脚本注释）**：全段一次性 `capstone.disasm` 会在首个无法解码字节处静默停止，本轮首轮扫描因此得出"注册函数无人调用"的错误结论；改为 `array` 按位模式逐字检查后才正确。`scripts/audit-amfi-callgraph.py` 现在对每个区段报告覆盖方式。
+
 ## OS 入口四个 blocker（仍未解）
 
-`reports/os-entry-next-step/continuation.json`：① 早期安全初始化器身份与调用 ABI（AMFI 注册入口已静态定位、23 项槽位与 12 项时序通过，构造/kmod start 间接路径与 C++ ABI 仍缺）；② donor/native 完整 C++ 与结构 ABI；③ 真实 ADT 与运行时分配窗口（本轮只解掉"生成器缺失"与"板值未定"，**窗口能否被固件满足仍未验证**）；④ 大负载装载（读取已通过，装载未做）。
+`reports/os-entry-next-step/continuation.json`：① 早期安全初始化器 —— "未配置"已解，"调用 ABI / 返回语义 / 构造与 start 间接路径"仍未资格化；② donor/native 完整 C++ 与结构 ABI；③ 真实 ADT 与运行时分配窗口（生成器与板值已就位，**窗口能否被固件满足仍未验证**）；④ 大负载装载（读取已通过，装载未做）。
 
-分析内核 `eb66542c`（58335232 B）仍 `loadable=false`、`runtime_qualified=false`，不作实机 OS 包。**文件 SHA PASS 不等于执行许可。**
+分析内核 `eb66542c` 与带初始化的 `1aeebf13` 均 **`loadable=false`**、`runtime_qualified=false`，不作实机 OS 包。**文件 SHA PASS 不等于执行许可。**
 
 ## 下一步
 
-ADT 侧已齐备，board 剩余 TODO 集中在 `[ipsw]` url/chip_id/board_id/sha256、`[payload]` volume/size_mib/kernel_args、`[kernel]` defconfig/archives/prelink、`[firmware]` 与 `[bootimg.image]`。主线回到原生内核加载链与初始化/ABI 资格审查，并准备连续内存分配的 UEFI 证据（owned 窗口 1 GiB 的可用性仍未证）。
+1. 核对 `0x5703c54` 的调用约定与返回语义（结合 23 项 ops 槽位与 `mac_policy_register` 导入），补完 blocker 1。
+2. 再评估是否把 `early_security_init` 接入 `emit-current-prelink-analysis.py`（当前硬编码空映射属有意保留）。
+3. 其余 board TODO：`[ipsw]` url/chip_id/board_id/sha256、`[payload]` volume/size_mib/kernel_args、`[kernel]` defconfig/archives/prelink、`[firmware]`、`[bootimg.image]`。
 
 任何新包仍需离线验收、新鲜录像与恢复门、启动前即时通知，结束恢复 Android 完成 1 并核对三分区。原 Heap/HOB 保护、认证策略与所有 `_verified` 保持原状。[交接](operations/2026-10-23-mainline-handoff.md)。

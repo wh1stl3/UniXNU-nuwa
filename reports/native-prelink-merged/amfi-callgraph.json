@@ -1,0 +1,225 @@
+{
+  "scope": "static provenance and call-graph trace of the pinned donor AMFI module; no component code invoked",
+  "donor_sha256": "2ec297bac95bcba01046fd0148e97e7e5885c05a6c18827f39f534ba375c1221",
+  "native_sha256": "bf14e5305a9f764c6852c2d3a69e81edc9c6199bc870c7b08160d55610616dea",
+  "module": "com.apple.driver.AppleMobileFileIntegrity",
+  "registration_candidate": "0xfffffff005703c54",
+  "constructors": [
+    {
+      "slot": "0xfffffff006cb5e20",
+      "entry": "0xfffffff0056fbe08",
+      "section": "__TEXT_EXEC/__text",
+      "calls": [
+        "0xfffffff005717e10"
+      ],
+      "imports": [
+        "__ZN11OSMetaClassC2EPKcPKS_j"
+      ],
+      "calls_registration": false,
+      "first_instructions": [
+        [
+          "stp",
+          "x29, x30, [sp, #-0x10]!"
+        ],
+        [
+          "mov",
+          "x29, sp"
+        ],
+        [
+          "adrp",
+          "x0, #0xfffffff007a11000"
+        ],
+        [
+          "add",
+          "x0, x0, #0xa70"
+        ],
+        [
+          "adrp",
+          "x1, #0xfffffff004e24000"
+        ],
+        [
+          "add",
+          "x1, x1, #0x368"
+        ]
+      ]
+    },
+    {
+      "slot": "0xfffffff006cb5e28",
+      "entry": "0xfffffff00570003c",
+      "section": "__TEXT_EXEC/__text",
+      "calls": [
+        "0xfffffff005717e1c"
+      ],
+      "imports": [
+        "__ZN11OSMetaClassC2EPKcPKS_jPP4zoneS1_19zone_create_flags_t"
+      ],
+      "calls_registration": false,
+      "first_instructions": [
+        [
+          "stp",
+          "x29, x30, [sp, #-0x10]!"
+        ],
+        [
+          "mov",
+          "x29, sp"
+        ],
+        [
+          "adrp",
+          "x0, #0xfffffff007a11000"
+        ],
+        [
+          "add",
+          "x0, x0, #0xaa8"
+        ],
+        [
+          "adrp",
+          "x1, #0xfffffff004e26000"
+        ],
+        [
+          "add",
+          "x1, x1, #0x2cf"
+        ]
+      ]
+    },
+    {
+      "slot": "0xfffffff006cb5e30",
+      "entry": "0xfffffff005707998",
+      "section": "__TEXT_EXEC/__text",
+      "calls": [
+        "0xfffffff005717e10"
+      ],
+      "imports": [
+        "__ZN11OSMetaClassC2EPKcPKS_j"
+      ],
+      "calls_registration": false,
+      "first_instructions": [
+        [
+          "stp",
+          "x29, x30, [sp, #-0x10]!"
+        ],
+        [
+          "mov",
+          "x29, sp"
+        ],
+        [
+          "adrp",
+          "x0, #0xfffffff007a11000"
+        ],
+        [
+          "add",
+          "x0, x0, #0xae8"
+        ],
+        [
+          "adrp",
+          "x1, #0xfffffff004e25000"
+        ],
+        [
+          "add",
+          "x1, x1, #0xe14"
+        ]
+      ]
+    }
+  ],
+  "kmod": {
+    "start": "0xfffffff00570b798",
+    "stop": "0xfffffff00570b7b4",
+    "stub": {
+      "address": "0xfffffff00570b798",
+      "section": "__TEXT_EXEC/__text",
+      "instructions": [
+        [
+          "0xfffffff00570b798",
+          "adrp",
+          "x8, #0xfffffff007a11000"
+        ],
+        [
+          "0xfffffff00570b79c",
+          "add",
+          "x8, x8, #0xa60"
+        ],
+        [
+          "0xfffffff00570b7a0",
+          "ldr",
+          "x2, [x8]"
+        ],
+        [
+          "0xfffffff00570b7a4",
+          "cbz",
+          "x2, #0xfffffff00570b7ac"
+        ],
+        [
+          "0xfffffff00570b7a8",
+          "br",
+          "x2"
+        ],
+        [
+          "0xfffffff00570b7ac",
+          "mov",
+          "w0, #0"
+        ],
+        [
+          "0xfffffff00570b7b0",
+          "ret",
+          ""
+        ],
+        [
+          "0xfffffff00570b7b4",
+          "adrp",
+          "x8, #0xfffffff007a11000"
+        ]
+      ],
+      "global_slot": "0xfffffff007a11a60",
+      "slot_section": "__DATA/__common",
+      "static_value": "0x0",
+      "slot_writers": [],
+      "adrp_to_slot_page": 188,
+      "callers": [],
+      "stop_stub": "0xfffffff00570b7b4",
+      "stop_callers": []
+    }
+  },
+  "registration_callers": [
+    {
+      "site": "0xfffffff005703bd8",
+      "kind": "bl",
+      "enclosing_function": "0xfffffff005703bb0",
+      "enclosing_section": "__TEXT_EXEC/__text",
+      "callers_of_enclosing": []
+    },
+    {
+      "site": "0xfffffff005704328",
+      "kind": "bl",
+      "enclosing_function": "0xfffffff005704320",
+      "enclosing_section": "__TEXT_EXEC/__text",
+      "callers_of_enclosing": []
+    }
+  ],
+  "registration_reachable_from_kmod_start_stub": false,
+  "coverage": {
+    "__TEXT_EXEC": {
+      "base": "0xfffffff0071b4000",
+      "bytes": 6815744,
+      "branch_and_adrp_instructions": 240510,
+      "note": "every 4-byte word is examined by bit pattern; no disasm truncation possible"
+    },
+    "__PRELINK_TEXT": {
+      "base": "0xfffffff004dc8000",
+      "bytes": 8142848,
+      "branch_and_adrp_instructions": 21263,
+      "note": "every 4-byte word is examined by bit pattern; no disasm truncation possible"
+    },
+    "__PLK_TEXT_EXEC": {
+      "base": "0xfffffff00558c000",
+      "bytes": 23937024,
+      "branch_and_adrp_instructions": 885356,
+      "note": "every 4-byte word is examined by bit pattern; no disasm truncation possible"
+    }
+  },
+  "limitations": [
+    "Function extents are a prologue/BL-target heuristic, not a CFG or debug-info proof",
+    "Indirect calls through vtables or function pointers are not followed",
+    "The kmod start stub only forwards through a global slot; whether XNU fills that slot at load time is outside this scan",
+    "A found path proves reachability in code, not that the path executes on nuwa"
+  ],
+  "device_accessed": false
+}

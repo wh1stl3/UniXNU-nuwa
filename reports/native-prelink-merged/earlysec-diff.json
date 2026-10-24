@@ -1,0 +1,73 @@
+{
+  "scope": "byte comparison of two offline prelink candidates; no device, no boot",
+  "old": {
+    "path": "out\\native-prelink-merged\\analysis\\kernel-prelinked-analysis.macho",
+    "bytes": 58335232,
+    "sha256": "eb66542cc9b6c34f369c07229900408ab67288152f561be63fa6061efce9ffca"
+  },
+  "new": {
+    "path": "out\\earlysec-2026-10-24\\kernel-prelinked-earlysec.macho",
+    "bytes": 58335232,
+    "sha256": "1aeebf1352a86b0d31612a6bd6e77bd7292f676ad2ce43a99ec4a8f3999eedb6"
+  },
+  "same_length": true,
+  "differing_bytes": 408983,
+  "differing_runs": 14510,
+  "differing_bytes_per_segment": {
+    "__PRELINK_INFO": 408983
+  },
+  "executable_segments_with_differences": [],
+  "executable_text_unchanged": true,
+  "largest_runs": [
+    {
+      "file_offset": "0x3740957",
+      "bytes": 295,
+      "segment": "__PRELINK_INFO"
+    },
+    {
+      "file_offset": "0x3747eda",
+      "bytes": 254,
+      "segment": "__PRELINK_INFO"
+    },
+    {
+      "file_offset": "0x3791e1e",
+      "bytes": 250,
+      "segment": "__PRELINK_INFO"
+    },
+    {
+      "file_offset": "0x373d187",
+      "bytes": 238,
+      "segment": "__PRELINK_INFO"
+    },
+    {
+      "file_offset": "0x374a1e4",
+      "bytes": 238,
+      "segment": "__PRELINK_INFO"
+    },
+    {
+      "file_offset": "0x377670f",
+      "bytes": 222,
+      "segment": "__PRELINK_INFO"
+    },
+    {
+      "file_offset": "0x3748e2e",
+      "bytes": 208,
+      "segment": "__PRELINK_INFO"
+    },
+    {
+      "file_offset": "0x3797e5e",
+      "bytes": 202,
+      "segment": "__PRELINK_INFO"
+    },
+    {
+      "file_offset": "0x3747647",
+      "bytes": 196,
+      "segment": "__PRELINK_INFO"
+    },
+    {
+      "file_offset": "0x37812d3",
+      "bytes": 195,
+      "segment": "__PRELINK_INFO"
+    }
+  ]
+}

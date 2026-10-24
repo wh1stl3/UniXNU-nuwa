@@ -1,0 +1,45 @@
+{
+  "scope": "offline analysis prelink exercising emit_prelink early-security checks; not a boot payload",
+  "native_sha256": "bf14e5305a9f764c6852c2d3a69e81edc9c6199bc870c7b08160d55610616dea",
+  "donor_sha256": "2ec297bac95bcba01046fd0148e97e7e5885c05a6c18827f39f534ba375c1221",
+  "reference_selection_sha256": "e9fe59f236e37966a3babe5c0cb4f7a1ddcfbd9e3aaf4b980382afc70d9b0dfd",
+  "slide": -16777216,
+  "configured_initializer": {
+    "bundle": "com.apple.driver.AppleMobileFileIntegrity",
+    "original_va": "0xfffffff005703c54",
+    "expected_slid_va": "0xfffffff004703c54"
+  },
+  "abi_marker": {
+    "found": true,
+    "addresses": [
+      "0xfffffff007021760"
+    ],
+    "value": 1
+  },
+  "preconditions": {
+    "bundle_selected": true,
+    "apple_security_extension": true,
+    "aligned": true,
+    "sum_within_64_bits": true,
+    "inside_rx_text_exec": true,
+    "segment": {
+      "va": "0xfffffff0056fb000",
+      "size": "0x1d788",
+      "initprot": 5,
+      "maxprot": 5
+    }
+  },
+  "emit_accepted": true,
+  "emit_error": null,
+  "loadable": false,
+  "loadable_note": "loadable stays false: the emitter flag is set by hand after hardware qualification, and this run only proves the early-security preconditions hold",
+  "device_accessed": false,
+  "emitted_early_security_initializers": {
+    "com.apple.driver.AppleMobileFileIntegrity": "0xfffffff004703c54"
+  },
+  "emitted_value_matches_expected": true,
+  "candidate": {
+    "bytes": 58335232,
+    "sha256": "1aeebf1352a86b0d31612a6bd6e77bd7292f676ad2ce43a99ec4a8f3999eedb6"
+  }
+}
