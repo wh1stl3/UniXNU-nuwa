@@ -37,12 +37,26 @@
 
 `scripts/test-kernel-entry-probe.py` 已能把**真实候选从入口连续执行穿过 MMU 到 `_arm_init`**：模型需先置入 AArch64 高异常级状态（`SCR_EL3.NS|RW`、`HCR_EL2.RW`）；默认状态保留为负对照。42 项通过，含负对照、占槽场景，以及三项钉死绑定：SCR_EL3/HCR_EL2 读回、页表摘要 `682cb477…`、停止点等于 white 回放地址。此前"引擎不支持、只能合成进入"是测试初始化错误，已作废。
 
-## 当前状态：v7 已打包并校验，等待录像后单次启动
+## 当前状态：v7 已试验并闭环；v8 已把色带改成等高等距，待打包
 
-- 镜像 **`1684358edd0034af9482bc7702a694df40ce9646c61c3a35908e3e3f643ab554`**，70,266,880 B，菜单标识 `XNU ENTRY PROBE 03 - BLUE YELLOW MAGENTA CYAN WHITE PURPLE RED`；报告 `reports/xnu-first-entry/entry-probe-03.json`，`--validate` 已从出货 FAT 读回 kernel `af6e1b5f` 与 ADT `07b75eda` 通过。
-- 内核：v7 `af6e1b5f`（28 补丁，含恒等 VBAR + 页内 16 向量 + 四个 C 入口标记）。
-- 离线资格：42 项固定测试 + 带 ADT 7 项 + 处理器合成执行 2 项，全部通过；其中带 ADT 的验证用的是**随包这份 ADT**（`07b75eda`）。
-- 用户 2026-10-25 01:12 指示：已批准打包，启动前会先问录像。**尚未启动，未碰设备。**
+**entry-probe-03（v7 `af6e1b5f`）单次实机已闭环**：2026-10-24T17:16:20Z preflight → 17:22Z 恢复 Android 完成 1 → 17:25:11Z postcondition，三分区 SHA 与试前完全一致；原图 `out/trial-evidence/entry-probe-03/screen-01.jpg`（`dc310fb1…`）。
+
+- 可确认：绿（固件面包屑）+ 蓝/黄/品红/青/白，即 **MMU 已开、进入 `_arm_init`**（与 v5 结论一致）。
+- **不能从这张斜拍照片确认**：紫(496)/棕(544)/青绿(592)/橙(640)/红(688)与三行十六进制。所以"是否走到 `_current_percpu_base`、异常是否自报"仍是未知——照片有反光、色带又细，这正是要做等距布局的原因。
+
+**v8（`c3c39839…`，28 补丁）把布局改成等高等距**：所有带高 32 行不变，行距统一 48 行，首行 256：
+
+| 行 | 颜色 | 含义 |
+| --- | --- | --- |
+| 256 / 304 / 352 | 蓝 / 黄 / 品红 | 入口 / 页表生成 / 开 MMU 前 |
+| 400 / 448 | 青 / 白 | SCTLR+isb 之后 / 进入 `_arm_init` |
+| 496 / 544 / 592 / 640 | 紫 / 棕 / 青绿 / 橙 | `_current_percpu_base` / `_arm_vm_init` / `_pmap_bootstrap` / `_kernel_bootstrap` |
+| 688 | 红 | 异常 |
+| 736 / 784 / 832 | ESR / ELR / FAR | 十六进制 |
+
+最上面的绿色粗条**不是我们的代码**：是固件 `DarwinBootPkg/Driver/Entry.S` 的 `DarwinEnter` 面包屑，占帧缓冲顶部 1/16 = 200 行，写在 hash 钉死的固件里，按规矩不动；它占 0–199 行，与我们的 256 行起不重叠。
+
+v8 离线资格：42 项固定测试 + 带 ADT 7 项 + 处理器合成 2 项，全部通过。**尚未打包、未启动。**
 
 ## 构建支线
 

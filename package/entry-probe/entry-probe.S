@@ -105,6 +105,13 @@
 .Lhex_done\@:
 .endm
 
+// Band layout: every band is 32 rows tall with a 48-row pitch (16 rows of gap),
+// starting at row 256. Hex rows use the same pitch and are 20 rows of glyphs.
+//   256 blue (__start)      304 yellow (page tables)  352 magenta (before SCTLR)
+//   400 cyan (after SCTLR+isb)  448 white (_arm_init)  496 purple (_current_percpu_base)
+//   544 brown (_arm_vm_init) 592 teal (_pmap_bootstrap) 640 orange (_kernel_bootstrap)
+//   688 red (exception)      736 ESR_EL1  784 ELR_EL1  832 FAR_EL1
+// The snapshot height check is 864; the screen is 3200 rows tall.
 .text
 .balign 4096
 .global probe_vectors
@@ -119,10 +126,10 @@ probe_exception:
     adr         x15, probe_scratch
     ldr         x9, [x15]
     cbz         x9, exception_stop
-    BAND_SNAPSHOT 1216, 0xffff0000
-    HEXROW_SNAP esr_el1, 1280
-    HEXROW_SNAP elr_el1, 1312
-    HEXROW_SNAP far_el1, 1344
+    BAND_SNAPSHOT 688, 0xffff0000
+    HEXROW_SNAP esr_el1, 736
+    HEXROW_SNAP elr_el1, 784
+    HEXROW_SNAP far_el1, 832
     dsb         sy
 .global exception_stop
 exception_stop:
@@ -186,12 +193,12 @@ probe_entry:
     b original_first_cpu
 .global probe_tables
 probe_tables:
-    BAND x20, 352, 0xffffff00
+    BAND x20, 304, 0xffffff00
     .inst original_tables_word
     b original_tables_resume
 .global probe_mmu
 probe_mmu:
-    BAND x20, 448, 0xffff00ff
+    BAND x20, 352, 0xffff00ff
     MAP_FB
     SNAP_VIDEO
     .inst original_mmu_word
@@ -204,7 +211,7 @@ probe_mmu:
 .global probe_mmu_on
 probe_mmu_on:
     .inst original_mmu_on_word
-    BAND_SNAPSHOT 736, 0xff00ffff
+    BAND_SNAPSHOT 400, 0xff00ffff
 .global probe_mmu_on_replay
 probe_mmu_on_replay:
     b original_mmu_on_resume
@@ -213,7 +220,7 @@ probe_mmu_on_replay:
 // live and usable for instruction fetch.
 .global probe_arm_init
 probe_arm_init:
-    BAND_SNAPSHOT 832, 0xffffffff
+    BAND_SNAPSHOT 448, 0xffffffff
 .global probe_arm_init_replay
 probe_arm_init_replay:
     .inst original_arm_init_word
@@ -224,28 +231,28 @@ probe_arm_init_replay:
 // the tables.
 .global probe_cpu_base
 probe_cpu_base:
-    BAND_SNAPSHOT 896, 0xff8000ff
+    BAND_SNAPSHOT 496, 0xff8000ff
 .global probe_cpu_base_replay
 probe_cpu_base_replay:
     .inst original_cpu_base_word
     b original_cpu_base_resume
 .global probe_arm_vm
 probe_arm_vm:
-    BAND_SNAPSHOT 960, 0xff804000
+    BAND_SNAPSHOT 544, 0xff804000
 .global probe_arm_vm_replay
 probe_arm_vm_replay:
     .inst original_arm_vm_word
     b original_arm_vm_resume
 .global probe_pmap
 probe_pmap:
-    BAND_SNAPSHOT 1024, 0xff00ff80
+    BAND_SNAPSHOT 592, 0xff00ff80
 .global probe_pmap_replay
 probe_pmap_replay:
     .inst original_pmap_word
     b original_pmap_resume
 .global probe_kernel_bootstrap
 probe_kernel_bootstrap:
-    BAND_SNAPSHOT 1088, 0xffff8040
+    BAND_SNAPSHOT 640, 0xffff8040
 .global probe_kernel_bootstrap_replay
 probe_kernel_bootstrap_replay:
     .inst original_kernel_bootstrap_word
@@ -306,7 +313,7 @@ probe_fault:
     ldr x9, [x20, #0x28]
     cbz x9, fault_stop
     ldr x10, [x20, #0x48]
-    cmp x10, #704
+    cmp x10, #864
     b.lo fault_stop
     ldr x10, [x20, #0x38]
     cmp x10, #1536
@@ -319,10 +326,10 @@ probe_fault:
     and x10, x10, #255
     cmp x10, #32
     b.ne fault_stop
-    BAND x20, 544, 0xffff0000
-    HEXROW esr_el1, 608
-    HEXROW elr_el1, 640
-    HEXROW far_el1, 672
+    BAND x20, 688, 0xffff0000
+    HEXROW esr_el1, 736
+    HEXROW elr_el1, 784
+    HEXROW far_el1, 832
     dsb sy
 .global fault_stop
 fault_stop:

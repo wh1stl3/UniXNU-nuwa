@@ -48,10 +48,10 @@ def handler_checks(report, candidate, checks):
     uc.hook_add(U.UC_HOOK_CODE, code)
     try: uc.emu_start(entry, 0, count=2000000)
     except U.UcError as e: raise AssertionError('handler execution failed: %s' % e)
-    red = struct.unpack('<I', uc.mem_read(FB+1216*ROW, 4))[0]
+    red = struct.unpack('<I', uc.mem_read(FB+688*ROW, 4))[0]
     lookup = {bits: format(i, 'X') for i, bits in enumerate(FONT)}
     decoded = {}
-    for name, y in (('ESR_EL1', 1280), ('ELR_EL1', 1312), ('FAR_EL1', 1344)):
+    for name, y in (('ESR_EL1', 736), ('ELR_EL1', 784), ('FAR_EL1', 832)):
         text = ''
         for digit in range(16):
             bits = ''.join('1' if struct.unpack('<I', uc.mem_read(FB+(y+r*4)*ROW+digit*24*4+c*16, 4))[0] == 0xffffffff else '0'
@@ -136,14 +136,14 @@ def main():
     except U.UcError as e: error = str(e)
     pc = uc.reg_read(UC_ARM64_REG_PC)
     best = max((v, k) for k, v in m['symbols'].items() if v <= pc)
-    pixels = {str(y): hex(struct.unpack('<I', uc.mem_read(FB+y*ROW, 4))[0]) for y in (256, 352, 448, 736, 832, 896, 960, 1024, 1088)}
+    pixels = {str(y): hex(struct.unpack('<I', uc.mem_read(FB+y*ROW, 4))[0]) for y in (256, 304, 352, 400, 448, 496, 544, 592, 640)}
     reached = {watch[k]: hits[k] for k in hits}
 
     if args.no_adt:
         check('Without the ADT the run still reaches the arm_init hook', 'white' in reached)
     else:
-        check('Cyan and white still correct', (pixels['736'], pixels['832']) == ('0xff00ffff', '0xffffffff'))
-        check('_current_percpu_base marker paints its band', pixels['896'] == '0xff8000ff')
+        check('Cyan and white still correct', (pixels['400'], pixels['448']) == ('0xff00ffff', '0xffffffff'))
+        check('_current_percpu_base marker paints its band', pixels['496'] == '0xff8000ff')
         check('_current_percpu_base marker is the first new marker reached',
               reached.get('cpu_base') == min(v for k, v in reached.items() if k not in ('cyan', 'white')))
         check('Execution still stops at the same per-CPU null dereference',
