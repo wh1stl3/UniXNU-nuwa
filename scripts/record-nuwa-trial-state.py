@@ -24,6 +24,11 @@ def main():
             validate(args.package)
             if not (args.capture_confirmation or '').strip():
                 raise ValueError('Fresh FV file-audit capture confirmation required before device query')
+        if metadata.get('approval') == 'XNU-FIRST-ENTRY-ANALYSIS':
+            from build_xnu_boot_package import validate
+            validate(args.package)
+            if not (args.capture_confirmation or '').strip():
+                raise ValueError('Fresh XNU first-entry capture confirmation required before device query')
         if metadata.get('approval') == 'USB-FILE-SHA-OFFLINE':
             from file_audit_package import validate
             validate(args.package)
@@ -96,7 +101,8 @@ def main():
                   'HOB-CACHE-HANDOFF-OFFLINE': ROOT/'reports/hob-cache-handoff',
                   'USB-RAMDISK-V3-OFFLINE': ROOT/'reports/usb-ramdisk',
                   'USB-FILE-SHA-OFFLINE': ROOT/'reports/file-read-audit',
-                  'FV-FILE-SHA-OFFLINE': ROOT/'reports/fv-file-audit'}
+                  'FV-FILE-SHA-OFFLINE': ROOT/'reports/fv-file-audit',
+                  'XNU-FIRST-ENTRY-ANALYSIS': ROOT/'reports/xnu-first-entry'}
         approval = json.loads(package.read_text())['approval']
         if approval not in scopes or not package.is_relative_to(scopes[approval]):
             raise ValueError('Unexpected allocation trial package report')
