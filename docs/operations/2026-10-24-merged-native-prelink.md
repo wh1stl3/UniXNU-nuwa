@@ -23,3 +23,5 @@ Apple同版本[mac_base.c](https://github.com/apple-oss-distributions/xnu/blob/x
 下一步继续追踪可写期/调用阶段，并准备独立大文件读取SHA探针，读取可来自任意SimpleFileSystem；OTG介质可用性已向用户询问，不自动写介质或启动。Heap/HOB保护、板内存/身份/_verified不改，本轮无设备查询或模式切换。
 
 复现：bundled Python -B scripts/emit-current-prelink-analysis.py --work <out下新目录> --output <reports下新文件>；audit-amfi-initializer.py --output <reports下新文件>。dSYM命令与实际输出见mac-policy-abi.json/native-mac-policy-layout.txt。原始产物不覆盖。
+
+2026-10-24 15:16续审修正：DATA_CONST文件initprot不能当作早期实际页表权限。成功CI相同64补丁重建后，12项源码时序检查确认早期安全加载在最终保护之前；实际dSYM335槽/23项原AMFI常量写入对应。风险排序和无OTG条件以[后续记录](2026-10-24-amfi-phase-and-slots.md)为准，原始审计报告保留历史，不adopt initializer。

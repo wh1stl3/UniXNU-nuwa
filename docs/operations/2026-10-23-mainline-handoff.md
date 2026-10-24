@@ -28,3 +28,13 @@ Heap/HOB保护、ST FTS硬件路线、内存/地址/身份/_verified不改。she
 ## 最新预链接续接（2026-10-24T15:04:24.918562+08:00）
 
 bf14新核已生成eb66542c分析候选，65348绑定读回/30 donor代码范围不变/24项解析通过，仍loadable=false。新profile和输出独立，不覆盖7774/5a历史。AMFI旧reference地址是已slide结果，原始候选逆解0xfffffff005703c54并含_mac_policy_register导入，3构造函数不同；实际native dSYM局部mac_policy_conf80B偏移与donor写入对应。DATA_CONST写入时序/完整ABI未验，不adopt initializer映射。下一步独立大文件读取SHA探针和阶段追踪；用户OTG问题待答，不构成新启动许可。详见2026-10-24-merged-native-prelink.md，无设备动作。
+
+## 当前有效续接（2026-10-24 15:16 +08:00）
+
+Q-150：用户已答暂无OTG，问项关闭，不要求购买、不等待录像/按键。本轮仅离线审计，无新固件/内核行为，不重建相同镜像；新探针及介质镜像尚未构建。最近Android恢复与SHA仍沿用上文历史来源，未冒充新查询。
+
+修正上节DATA_CONST风险：对成功CI相同64补丁、六文件内存重建，12项源码检查确认早期安全加载/正常构造/start先于MAC置late和最终lockdown；平台初始RWNX后收紧RNX。Mach-O initprot=1不单独证明早期不可写。原AMFI直线注册块23项存储全部对应实际新核dSYM的335槽/0xa78表，目标全部原AMFI RX；不证明完整回调/对象ABI或运行时页表。
+
+新增证据reports/native-prelink-merged/init-phase-final.json、amfi-ops-slots.json；操作记录2026-10-24-amfi-phase-and-slots.md。新源/产物SHA/Heap/HOB/板值及空initializer映射、loadable=false保持；当前“菜单后充电”首因仍配置退出/无OS负载，不能归因未执行过的AMFI。
+
+可直接执行：bundled Python -B scripts/audit-prelink-init-phase.py --output reports/<新路径>.json；audit-amfi-ops-slots.py同参数（需WSL llvm-dwarfdump）。下一步追踪三构造/start间接槽和once-guard、关键回调参数；并行的逻辑工作是离线读取核心/无OTG现有启动链运输审查，不能默认写UFS或扩大内存窗口。设备启动门按上节保持，每个新包重新确认日志并即时通知。

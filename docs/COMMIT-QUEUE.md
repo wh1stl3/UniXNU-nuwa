@@ -1570,3 +1570,13 @@
 [Evidence] eb66542c/65348绑定逐项读回/30 donor可执行范围不变/24解析；真实mac_policy_register导入和native dSYM80B策略结构偏移对应。
 [Risk] 初始化DATA_CONST可写期、完整ABI/ADT/运输/窗口未验，未采用initializer映射，loadable=false；无手机动作。
 ```
+
+## Q-150 · AMFI可写阶段修正及实际策略槽位核对
+
+```text
+[unixnu-nuwa][loader] 核对早期安全加载顺序和AMFI回调槽位并修正保护风险排序
+
+[Change] 新增只读固定补丁阶段审计及donor常量写入到实际native DWARF槽位审计，同步无OTG条件和主线交接。
+[Evidence] 与成功CI相同64补丁/12项源码顺序检查通过；335项native策略槽、23项AMFI常量写入和RX目标对应；公开Apple同版本实现支持。
+[Risk] 完整CFG/回调及C++ABI、真实ADT/分配窗口/大文件运输仍未资格；初始化映射为空/loadable=false，无设备动作或新实测包。
+```

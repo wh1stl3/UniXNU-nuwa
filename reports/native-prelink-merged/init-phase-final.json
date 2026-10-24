@@ -1,0 +1,233 @@
+{
+  "scope": "Offline source-order audit, not a runtime page-table or complete CFG proof",
+  "source_commit": "1b191cb58250d0705d8a51287127505aa4bc0789",
+  "merged_commit": "e553e467ebfe7642e9f483d3977a57066c6d1aef",
+  "kernel_sha256": "bf14e5305a9f764c6852c2d3a69e81edc9c6199bc870c7b08160d55610616dea",
+  "ci_run": 40015845083,
+  "actual_ci_patch_sequence_sha256": "6b42f15ff1e0dae6fe1db26a29708d434c613bb0104212ac1fb35fb00740cab6",
+  "patch_count": 64,
+  "selected_source_hashes": {
+    "osfmk/arm64/arm_vm_init.c": {
+      "original_lf_sha256": "3aef6df1e86fea3061ef4b5b83053502e2c50bf2e636d6949c4d55a58181e3f5",
+      "reconstructed_lf_sha256": "9f274c4c4070a8f84bae916bedc4b19ed142eb99275115defa7df11410ef60de"
+    },
+    "osfmk/arm64/machine_routines.c": {
+      "original_lf_sha256": "663b25f0d52c811dc09a646ab8a5c904826f4312a1bfd23c2d3a9744cb3eb2a1",
+      "reconstructed_lf_sha256": "663b25f0d52c811dc09a646ab8a5c904826f4312a1bfd23c2d3a9744cb3eb2a1"
+    },
+    "osfmk/kern/startup.c": {
+      "original_lf_sha256": "5247178d4525c857e11f8ce960d5776c6ae136bb1307d97f97908440abcb5eff",
+      "reconstructed_lf_sha256": "186f2775f32b0405091364f1e5edd557409133f5d35cfb45c819a66c19a282eb"
+    },
+    "security/mac_base.c": {
+      "original_lf_sha256": "f08d89d1fc4af73c642f38f658411f2cc63e6e528c5ebd8a8a3e7386c9acbe2a",
+      "reconstructed_lf_sha256": "f08d89d1fc4af73c642f38f658411f2cc63e6e528c5ebd8a8a3e7386c9acbe2a"
+    },
+    "libkern/c++/OSKext.cpp": {
+      "original_lf_sha256": "4cf0c03620d0f9bed90660bb44f5525f65c17381533f46d9cf72f8272a202e43",
+      "reconstructed_lf_sha256": "7a19afba181b487b9b52f8bbd54c5952f56daf13ebe0c1cc69fc292ac7214fb7"
+    },
+    "libsa/bootstrap.cpp": {
+      "original_lf_sha256": "12b0df9a60ce3381989fda1454aec3860763a3f6bf5fb230b1289569f80ba0a7",
+      "reconstructed_lf_sha256": "12b0df9a60ce3381989fda1454aec3860763a3f6bf5fb230b1289569f80ba0a7"
+    }
+  },
+  "relevant_patch_applications": [
+    {
+      "patch": "native-trust-cache-runtime.patch",
+      "hunks": [
+        {
+          "path": "osfmk/kern/startup.c",
+          "hunk": 1,
+          "line": 734
+        }
+      ]
+    },
+    {
+      "patch": "non-apple-cache-monitor.patch",
+      "hunks": [
+        {
+          "path": "osfmk/arm64/arm_vm_init.c",
+          "hunk": 1,
+          "line": 2143
+        }
+      ]
+    },
+    {
+      "patch": "zzz-boot-progress.patch",
+      "hunks": [
+        {
+          "path": "osfmk/kern/startup.c",
+          "hunk": 1,
+          "line": 1
+        },
+        {
+          "path": "osfmk/kern/startup.c",
+          "hunk": 2,
+          "line": 222
+        },
+        {
+          "path": "osfmk/kern/startup.c",
+          "hunk": 3,
+          "line": 233
+        },
+        {
+          "path": "osfmk/kern/startup.c",
+          "hunk": 4,
+          "line": 645
+        }
+      ]
+    },
+    {
+      "patch": "xnu-10063.141.1-security-init.patch",
+      "hunks": [
+        {
+          "path": "libkern/c++/OSKext.cpp",
+          "hunk": 1,
+          "line": 73
+        },
+        {
+          "path": "libkern/c++/OSKext.cpp",
+          "hunk": 2,
+          "line": 8289
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "name": "Coalesced DATA_CONST starts RWNX and finalizes RNX",
+      "passed": true
+    },
+    {
+      "name": "Bootstrap security policy phase precedes machine lockdown",
+      "passed": true
+    },
+    {
+      "name": "Machine lockdown calls platform VM protection finalizer",
+      "passed": true
+    },
+    {
+      "name": "Security extensions load before mac_late is set",
+      "passed": true
+    },
+    {
+      "name": "Bootstrap installs real security extension callback",
+      "passed": true
+    },
+    {
+      "name": "Security extension selection uses AppleSecurityExtension property",
+      "passed": true
+    },
+    {
+      "name": "Security extensions use normal OSKext loading",
+      "passed": true
+    },
+    {
+      "name": "Installed callback invokes actual security extension loader",
+      "passed": true
+    },
+    {
+      "name": "Optional initializer follows constructors and successful kmod start",
+      "passed": true
+    },
+    {
+      "name": "Optional initializer refuses late MAC phase",
+      "passed": true
+    },
+    {
+      "name": "Split prelinked kext protections defer to platform path",
+      "passed": true
+    },
+    {
+      "name": "Initializer mapping remains empty and loadable remains false",
+      "passed": true
+    }
+  ],
+  "evidence": [
+    {
+      "path": "osfmk/arm64/arm_vm_init.c",
+      "claim": "Coalesced DATA_CONST starts RWNX and finalizes RNX",
+      "sites": [
+        {
+          "line": 1373,
+          "token": "arm_vm_page_granular_RWNX(segPLKDATACONSTB, segSizePLKDATACONST,"
+        },
+        {
+          "line": 1617,
+          "token": "arm_vm_prot_finalize(boot_args *"
+        },
+        {
+          "line": 1648,
+          "token": "arm_vm_page_granular_RNX(segPLKDATACONSTB, segSizePLKDATACONST,"
+        }
+      ]
+    },
+    {
+      "path": "osfmk/kern/startup.c",
+      "claim": "Bootstrap security policy phase precedes machine lockdown",
+      "sites": [
+        {
+          "line": 723,
+          "token": "mac_policy_initmach();"
+        },
+        {
+          "line": 764,
+          "token": "machine_lockdown();"
+        }
+      ]
+    },
+    {
+      "path": "security/mac_base.c",
+      "claim": "Security extensions load before mac_late is set",
+      "sites": [
+        {
+          "line": 375,
+          "token": "load_security_extensions_function();"
+        },
+        {
+          "line": 377,
+          "token": "mac_late = 1;"
+        }
+      ]
+    },
+    {
+      "path": "libkern/c++/OSKext.cpp",
+      "claim": "Optional initializer follows constructors and successful kmod start",
+      "sites": [
+        {
+          "line": 8289,
+          "token": "result = OSRuntimeInitializeCPP(this);"
+        },
+        {
+          "line": 8291,
+          "token": "result = startfunc(kmod_info, kmodStartData);"
+        },
+        {
+          "line": 8299,
+          "token": "getPropertyForHostArch(\"_NativePrelinkEarlySecurityInit\")"
+        },
+        {
+          "line": 8324,
+          "token": "((void (*)(void))target)();"
+        }
+      ]
+    }
+  ],
+  "finding": "Mach-O initprot=READ alone does not imply DATA_CONST is unwritable during early security start; platform initially maps coalesced DATA_CONST RWNX and lockdown follows MAC early load",
+  "remaining": [
+    "Donor constructor/start/indirect registration and once-guard complete control flow",
+    "Full donor/native mac_policy_ops and C++ ABI",
+    "Actual runtime page-table attributes and stage completion",
+    "Qualified ADT, allocated OS window and large-file transport"
+  ],
+  "initializer_adopted": false,
+  "configuration_changed": false,
+  "device_accessed": false,
+  "public_sources": [
+    "https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/osfmk/arm64/arm_vm_init.c",
+    "https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/libkern/c%2B%2B/OSKext.cpp",
+    "https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/osfmk/kern/startup.c",
+    "https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/security/mac_base.c"
+  ]
+}

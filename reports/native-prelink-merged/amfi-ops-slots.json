@@ -1,0 +1,201 @@
+{
+  "scope": "Straight-line constant-store and actual native DWARF slot correspondence only",
+  "donor_sha256": "2ec297bac95bcba01046fd0148e97e7e5885c05a6c18827f39f534ba375c1221",
+  "native_sha256": "bf14e5305a9f764c6852c2d3a69e81edc9c6199bc870c7b08160d55610616dea",
+  "native_dwarf_sha256": "1d68cd3d2820a4f55235b386e622d656d9faa27bfdc02e9c58aa136933dee033",
+  "command": [
+    "wsl",
+    "-d",
+    "Ubuntu-22.04",
+    "--",
+    "llvm-dwarfdump",
+    "--debug-info=0x01015cf8",
+    "--show-children",
+    "/mnt/d/Code/UniXNU-nuwa/out/upstream-kernel-40015845083-final/nuwa-8796-merged-40015845083/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.dSYM/Contents/Resources/DWARF/mach.development.bcm2837"
+  ],
+  "dwarf_dump_sha256": "0a10f175622a6d1649fb713a0df9af283e9ef433a2c056c5409f078fd41fcc14",
+  "native_ops_size": 2680,
+  "native_ops_slots": 335,
+  "original_ops_address": "0xfffffff006cb6e28",
+  "next_conf_address": "0xfffffff006cb78a0",
+  "gap_to_conf": 2680,
+  "gap_matches_native_ops_size": true,
+  "original_nonzero_slots": [],
+  "analyzed_block": {
+    "start": "0xfffffff005703e4c",
+    "end": "0xfffffff005703f5c",
+    "instructions": 68,
+    "sha256": "5d3c419bdbfce6daf85f85f2096472a1d909680ec3b476b1bac0515d68c12a34"
+  },
+  "constant_stores": [
+    {
+      "instruction": "0xfffffff005703e5c",
+      "offset": 48,
+      "name": "mpo_cred_check_label_update_execve",
+      "type": "mpo_cred_check_label_update_execve_t *",
+      "original_target": "0xfffffff0057047cc"
+    },
+    {
+      "instruction": "0xfffffff005703e68",
+      "offset": 104,
+      "name": "mpo_cred_label_destroy",
+      "type": "mpo_cred_label_destroy_t *",
+      "original_target": "0xfffffff005704838"
+    },
+    {
+      "instruction": "0xfffffff005703e74",
+      "offset": 128,
+      "name": "mpo_cred_label_init",
+      "type": "mpo_cred_label_init_t *",
+      "original_target": "0xfffffff0057048c8"
+    },
+    {
+      "instruction": "0xfffffff005703e80",
+      "offset": 144,
+      "name": "mpo_cred_label_update_execve",
+      "type": "mpo_cred_label_update_execve_t *",
+      "original_target": "0xfffffff005702f8c"
+    },
+    {
+      "instruction": "0xfffffff005703e8c",
+      "offset": 952,
+      "name": "mpo_proc_check_inherit_ipc_ports",
+      "type": "mpo_proc_check_inherit_ipc_ports_t *",
+      "original_target": "0xfffffff0057048d8"
+    },
+    {
+      "instruction": "0xfffffff005703e98",
+      "offset": 2432,
+      "name": "mpo_vnode_check_signature",
+      "type": "mpo_vnode_check_signature_t *",
+      "original_target": "0xfffffff005704c14"
+    },
+    {
+      "instruction": "0xfffffff005703ea4",
+      "offset": 512,
+      "name": "mpo_file_check_library_validation",
+      "type": "mpo_file_check_library_validation_t *",
+      "original_target": "0xfffffff00570660c"
+    },
+    {
+      "instruction": "0xfffffff005703eb0",
+      "offset": 928,
+      "name": "mpo_policy_initbsd",
+      "type": "mpo_policy_initbsd_t *",
+      "original_target": "0xfffffff005706678"
+    },
+    {
+      "instruction": "0xfffffff005703ebc",
+      "offset": 936,
+      "name": "mpo_policy_syscall",
+      "type": "mpo_policy_syscall_t *",
+      "original_target": "0xfffffff00570667c"
+    },
+    {
+      "instruction": "0xfffffff005703ec8",
+      "offset": 792,
+      "name": "mpo_proc_check_task_id_token_get_task",
+      "type": "mpo_proc_check_task_id_token_get_task_t *",
+      "original_target": "0xfffffff005706e18"
+    },
+    {
+      "instruction": "0xfffffff005703edc",
+      "offset": 80,
+      "name": "mpo_cred_label_associate_kernel",
+      "type": "mpo_cred_label_associate_kernel_t *",
+      "original_target": "0xfffffff005706f34"
+    },
+    {
+      "instruction": "0xfffffff005703edc",
+      "offset": 88,
+      "name": "mpo_cred_label_associate",
+      "type": "mpo_cred_label_associate_t *",
+      "original_target": "0xfffffff0057047d4"
+    },
+    {
+      "instruction": "0xfffffff005703ee8",
+      "offset": 344,
+      "name": "mpo_proc_check_launch_constraints",
+      "type": "mpo_proc_check_launch_constraints_t *",
+      "original_target": "0xfffffff005700bb4"
+    },
+    {
+      "instruction": "0xfffffff005703ef4",
+      "offset": 1312,
+      "name": "mpo_proc_check_mprotect",
+      "type": "mpo_proc_check_mprotect_t *",
+      "original_target": "0xfffffff005706fc0"
+    },
+    {
+      "instruction": "0xfffffff005703f00",
+      "offset": 2520,
+      "name": "mpo_proc_check_map_anon",
+      "type": "mpo_proc_check_map_anon_t *",
+      "original_target": "0xfffffff005706fc8"
+    },
+    {
+      "instruction": "0xfffffff005703f0c",
+      "offset": 2064,
+      "name": "mpo_vnode_check_exec",
+      "type": "mpo_vnode_check_exec_t *",
+      "original_target": "0xfffffff0057070c0"
+    },
+    {
+      "instruction": "0xfffffff005703f18",
+      "offset": 776,
+      "name": "mpo_proc_check_expose_task_with_flavor",
+      "type": "mpo_proc_check_expose_task_with_flavor_t *",
+      "original_target": "0xfffffff0057070e8"
+    },
+    {
+      "instruction": "0xfffffff005703f24",
+      "offset": 784,
+      "name": "mpo_proc_check_get_task_with_flavor",
+      "type": "mpo_proc_check_get_task_with_flavor_t *",
+      "original_target": "0xfffffff0057070e8"
+    },
+    {
+      "instruction": "0xfffffff005703f28",
+      "offset": 1256,
+      "name": "mpo_proc_check_debug",
+      "type": "mpo_proc_check_debug_t *",
+      "original_target": "0xfffffff005707280"
+    },
+    {
+      "instruction": "0xfffffff005703f3c",
+      "offset": 2456,
+      "name": "mpo_proc_check_run_cs_invalid",
+      "type": "mpo_proc_check_run_cs_invalid_t *",
+      "original_target": "0xfffffff005707288"
+    },
+    {
+      "instruction": "0xfffffff005703f40",
+      "offset": 1512,
+      "name": "mpo_proc_check_get_movable_control_port",
+      "type": "mpo_proc_check_get_movable_control_port_t *",
+      "original_target": "0xfffffff005707350"
+    },
+    {
+      "instruction": "0xfffffff005703f54",
+      "offset": 288,
+      "name": "mpo_file_check_mmap",
+      "type": "mpo_file_check_mmap_t *",
+      "original_target": "0xfffffff005702a8c"
+    },
+    {
+      "instruction": "0xfffffff005703f58",
+      "offset": 2592,
+      "name": "mpo_vnode_notify_open",
+      "type": "mpo_vnode_notify_open_t *",
+      "original_target": "0xfffffff005703400"
+    }
+  ],
+  "all_store_offsets_are_native_slots": true,
+  "all_stored_targets_in_original_amfi_executable": true,
+  "limitations": [
+    "Native slot names do not prove donor intended semantics or callback parameter layouts",
+    "Not a complete constructor/start/registration CFG or all callback body audit",
+    "No initializer adopted, invoked, or code/data rewritten"
+  ],
+  "device_accessed": false
+}

@@ -321,3 +321,5 @@
 2026-10-24T04:19:54.495058+08:00 · 全量上游合并闭环：固件40014018074/FD2d606985、内核40015845083/bf14e530均成功并独立产物检查；64补丁、平台归档/零未定义、24解析/4常量池/9grant与GPU用户QEMU夹具通过；21源码纳入与可选功能激活分开，无手机动作 · Q-148（续接6070627） · reports/upstream-integration/2026-10-24/integration-result.json
 
 2026-10-24T15:04:24.918562+08:00 · bf14新内核生成eb66542c分析预链接：65348绑定读回/30 donor代码范围不变/24解析；AMFI旧地址逆slide后定位真实注册调用，native dSYM局部策略结构一致，写入/调用时序未验仍loadable=false，无设备动作 · Q-149 · reports/native-prelink-merged/
+
+2026-10-24T15:16:00+08:00 · AMFI时序和回调槽位：实际CI同64补丁重建/12源码检查通过，native dSYM335槽与原AMFI23项指针写入对应；DATA_CONST文件只读不等于早期页表只读，风险排序已修正。用户暂无OTG，问项关闭；完整初始化/ABI及运输仍待资格，无新包或设备动作 · Q-150 · reports/native-prelink-merged/init-phase-final.json、amfi-ops-slots.json
