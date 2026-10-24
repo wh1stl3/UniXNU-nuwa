@@ -50,7 +50,7 @@ def validate(meta,kernel_sha):
     probe=build['probe'];offset=probe['file_offset']
     if offset!=builder.align(len(original)) or probe['segment_bytes']%4096 or probe['segment_bytes']<8192:raise ValueError('Probe segment extent differs')
     if len(raw)!=offset+probe['segment_bytes']:raise ValueError('Candidate length differs from the probe segment')
-    if any(raw[len(original)+i*4096:len(original)+(i+1)*4096] for i in range(1,probe['segment_bytes']//4096)):raise ValueError('Padding pages must be zero')
+    if any(raw[offset+probe['code_bytes']:offset+probe['segment_bytes']]):raise ValueError('Bytes after the probe code must be zero (padding and the per-CPU page)')
     payload=raw[offset:]
     if sha(payload)!=probe['sha256'] or raw[:len(original)]!=expected or any(raw[len(original):offset]):raise ValueError('Kernel has bytes outside recorded diagnostic changes')
     m=builder.macho(raw)

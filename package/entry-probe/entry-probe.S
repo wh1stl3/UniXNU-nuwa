@@ -59,12 +59,11 @@
 
 // 16 hex digits of a system register, drawn from the snapshot. 4x4 squares,
 // 24 bytes apart, one row of 5 pixels per hex bit row (same glyphs as hex_font).
-.macro HEXROW_SNAP reg, y
+.macro HEXROW_VAL y
     adr         x15, probe_scratch
     ldr         x21, [x15]
     ldr         x22, [x15, #8]
     cbz         x21, .Lhex_done\@
-    mrs         x23, \reg
     mov         x24, #60
     mov         x25, #\y
     madd        x21, x22, x25, x21
@@ -104,14 +103,24 @@
     b.ge        .Lhex_digit\@
 .Lhex_done\@:
 .endm
+// Same renderer, but the value comes from a system register.
+.macro HEXROW_SNAP reg, y
+    mrs         x23, \reg
+    HEXROW_VAL \y
+.endm
 
 // Band layout: every band is 32 rows tall with a 48-row pitch (16 rows of gap),
 // starting at row 256. Hex rows use the same pitch and are 20 rows of glyphs.
 //   256 blue (__start)      304 yellow (page tables)  352 magenta (before SCTLR)
 //   400 cyan (after SCTLR+isb)  448 white (_arm_init)  496 purple (_current_percpu_base)
-//   544 brown (_arm_vm_init) 592 teal (_pmap_bootstrap) 640 orange (_kernel_bootstrap)
+//   544 brown (_arm_vm_init)  592 teal (_pmap_bootstrap)  640 orange (_kernel_bootstrap)
 //   688 red (exception)      736 ESR_EL1  784 ELR_EL1  832 FAR_EL1
-// The snapshot height check is 864; the screen is 3200 rows tall.
+//   880 teal-gray (arm_vm_init+0x54)  928 olive (arm_vm_init+0xa4)
+//   976 hot pink (panic)  1024 violet (panic_trap_to_debugger)
+//   1072 first eight bytes of the panic format string, as hex
+// The firmware logo is a background layer drawn before the kernel, so bands
+// drawn over it stay visible; the firmware only redraws the menu below row
+// ~1150, so no band may live there. Height check 1104; the screen is 3200 rows.
 .text
 .balign 4096
 .global probe_vectors
@@ -294,6 +303,11 @@ probe_panic_replay:
 .global probe_panic_trap
 probe_panic_trap:
     BAND_SNAPSHOT 1024, 0xff9400d3
+    // x0 is the panic format string. Render its first eight bytes as hex so the
+    // message can be read off the screen: the only output channel we have.
+    ldr         x23, [x0]
+    rev         x23, x23
+    HEXROW_VAL 1072
 .global probe_panic_trap_replay
 probe_panic_trap_replay:
     .inst original_panic_trap_word
@@ -354,7 +368,7 @@ probe_fault:
     ldr x9, [x20, #0x28]
     cbz x9, fault_stop
     ldr x10, [x20, #0x48]
-    cmp x10, #864
+    cmp x10, #1104
     b.lo fault_stop
     ldr x10, [x20, #0x38]
     cmp x10, #1536

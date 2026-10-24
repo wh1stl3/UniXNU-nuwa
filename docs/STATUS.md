@@ -84,24 +84,23 @@ v9 候选 **`b5db0f1e5793a2557efa99af735a59ca1c923ed1ae9e461f712a5a79163ac348`**
 
 **下一轮**：在 `arm_vm_init` 内部再插 2–3 个点（它开头就是内存映射/DT 解析，`SecureDTGetProperty(memory_map,"TrustCache"/"AuxKC")` 附近），把断点从"函数入口"推进到具体语句；同时保留红带自报。模型侧需先绕过 `msr TPIDRRO_EL0` 才能继续预演。
 
-## 当前状态：v10 已带 arm_vm_init 内部与 panic 路径插桩，待打包
+## 当前状态：entry-probe-05 已闭环（内核在 arm_vm_init 里 panic）；v12 加入 panic 文本抓取
 
-上一轮 entry-probe-04 的读数（用户确认）：绿 → 蓝256 → 黄304 → 品红352 → 青400 → 白448 → **棕544（最后一条）**，**没有紫(496)**，也没有青绿(592)/橙(640)/红(688)。
+**entry-probe-05（v10/v11 内核 `f0ae0d40`）单次实机已闭环**：preflight 18:13:29Z → 恢复 18:18:54Z Android 完成 1 → postcondition 18:18:56Z，**三分区 SHA 与试前完全一致**。原图 `out/trial-evidence/entry-probe-05/screen-01.jpg`（`f18d15b6…`），判读 `reports/xnu-entry-probe-trial/2026-10-25-04/screen-evidence.json`。
 
-**对"没有紫"的分析**：模型里 `_current_percpu_base` 的调用者 LR 是 `_panic_trap_to_debugger+0x54`——它是从 **panic 路径**进去的。实机没画紫却画了棕（`_arm_vm_init`），说明实机在 `PE_init_platform` 期间走的那条路**没有调用** `_current_percpu_base`（与模型路径不同），因此 per-CPU 垫片很可能根本没被用到，不是决定性因素。
+**读到的色带**（行号取自 `.S`，用七点标定 photo_y = 228 + 0.521×(row−256) 换算）：蓝256、黄304、品红352、青400、白448、**紫496**、棕544、**青灰880**、**橄榄928**、**紫罗兰1024**。
 
-**下一轮的解决方案（已做进 v10 `f0ae0d40`，32 补丁）**：
+**结论**：
 
-| 行 | 颜色 | 钩子 | 含义 |
-| --- | --- | --- | --- |
-| 880 | 青灰 | `arm_vm_init+0x54` | 已从 boot_args 读到 virtBase/physBase/memSize |
-| 928 | 橄榄 | `arm_vm_init+0xa4` | 到达 "Unsupported memory configuration" 判断处 |
-| 976 | 亮粉 | `_panic` | **内核调用了 panic** |
-| 1024 | 亮紫 | `_panic_trap_to_debugger` | panic 进入 debugger 路径 |
+- 紫(496)=`_current_percpu_base` **这次出现了**（上一轮没有）→ per-CPU 垫片/路径差异确实影响结果；
+- 880/928 出现 → `arm_vm_init` 开头读到了 boot_args 内存基址并到达内存配置判断；
+- **1024=`_panic_trap_to_debugger` 出现 → 内核 panic 了**，位置在 `arm_vm_init` 内、`pmap_bootstrap` 之前；
+- 976=`_panic` 未出现 → 这次 panic 走的不是 `panic()` 包装，而是别的包装（源码注释：panic/panic_with_options 等都汇入 `panic_trap_to_debugger`）；
+- 592/640/688/736/784/832 **全部为空** = 真的没走到（不是被盖：固件 logo 是内核之前画的底层，我们的带子画在它上面；固件只在 1150 行以下重画菜单）。
 
-这样下一拍能直接回答：**到底有没有 panic**（976/1024），以及**卡在 `arm_vm_init` 的哪一段**（880/928 之后、592 之前）。探针段随代码增长自适应为"代码页 + 一页零"（现为 16 KiB，零页在 `0xfffffff00848c000`），打包绑定同步改为按报告推导并校验填充页为零。
+**v12（`dce014ea`，32 补丁）新增**：在 `panic_trap_to_debugger` 钩子里读 x0（panic 格式串指针），把**前 8 个字节按十六进制画在 1072 行**——这是我们唯一的输出通道，能直接读出是 "assertion f…" 还是 "Unsuppor…" 还是 "BOOTSTRAP…"。行号其余部分保持与前几轮一致（带子画在 logo 上方安全区，1150 行以下留给固件菜单）。
 
-v10 已通过 42 项固定测试（含连续穿越与三组钉死绑定）。**未打包、未启动。**
+v12 通过 42 项固定测试 + 带 ADT 8 项 + 处理器合成 2 项。**未打包、未启动。**
 
 ## 构建支线
 

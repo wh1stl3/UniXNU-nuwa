@@ -1,0 +1,102 @@
+{
+  "scope": "Single fastboot boot of entry-probe-05 (v10/v11 kernel f0ae0d40, per-CPU shim + arm_vm_init and panic hooks); recovery closed",
+  "package": {
+    "report": "reports/xnu-first-entry/entry-probe-05.json",
+    "image_sha256": "2dec3334f5f6bc3adea891db6028a47b98341c1e7e21feb33e4efb1fb70e7c40",
+    "kernel_sha256": "f0ae0d406afb2bcf47385c5be8662ebbf7d25cf25571c2c228cc8f251fe1a9b6",
+    "adt_sha256": "73288c4d96b4d288bbad3aaaa4091e07ca306c7e192af12d9254fd7c724da434"
+  },
+  "window": {
+    "preflight_at": "2026-10-24T18:13:29.882031+00:00",
+    "postcondition_at": "2026-10-24T18:18:56.088152+00:00",
+    "partition_hashes_unchanged": true,
+    "android_boot_completed": "1",
+    "slot": "_a"
+  },
+  "bands_observed": [
+    {
+      "row": 256,
+      "color": "blue",
+      "means": "__start branch and diagnostic entry"
+    },
+    {
+      "row": 304,
+      "color": "yellow",
+      "means": "bootstrap page tables generated"
+    },
+    {
+      "row": 352,
+      "color": "magenta",
+      "means": "BCM write suppressed; reached the SCTLR value build"
+    },
+    {
+      "row": 400,
+      "color": "cyan",
+      "means": "msr sctlr_el1 + replayed isb; drawn with the MMU on"
+    },
+    {
+      "row": 448,
+      "color": "white",
+      "means": "_arm_init entered at the KVA"
+    },
+    {
+      "row": 496,
+      "color": "purple",
+      "means": "_current_percpu_base entered - PRESENT this round"
+    },
+    {
+      "row": 544,
+      "color": "brown",
+      "means": "_arm_vm_init entered"
+    },
+    {
+      "row": 880,
+      "color": "teal-gray",
+      "means": "arm_vm_init+0x54: boot_args virtBase/physBase/memSize read"
+    },
+    {
+      "row": 928,
+      "color": "olive",
+      "means": "arm_vm_init+0xa4: reached the Unsupported-memory-configuration check"
+    },
+    {
+      "row": 1024,
+      "color": "violet",
+      "means": "_panic_trap_to_debugger entered - THE KERNEL PANICKED"
+    }
+  ],
+  "bands_not_observed": [
+    {
+      "row": 592,
+      "color": "teal",
+      "means": "_pmap_bootstrap - not reached"
+    },
+    {
+      "row": 640,
+      "color": "orange",
+      "means": "_kernel_bootstrap - not reached"
+    },
+    {
+      "row": 688,
+      "color": "red",
+      "means": "our exception reporter did not fire (the panic went to the debugger path)"
+    },
+    {
+      "row": 976,
+      "color": "hot-pink",
+      "means": "_panic wrapper not taken - the panic came through another wrapper"
+    }
+  ],
+  "reading_method": "Band positions converted to screen rows with a seven-anchor linear fit (photo y = 228 + 0.521 * (row - 256), anchors 256/304/352/400/448/496/544); rows and colours taken from package/entry-probe/entry-probe.S, not inferred from the image",
+  "conclusion": "The kernel reached _arm_vm_init, passed the memory-base read and the memory-config check, and then entered panic_trap_to_debugger: it panicked inside arm_vm_init, before pmap_bootstrap. The _panic wrapper band is absent, so the panic came through panic_with_options or another funnel, not through panic(). The exact assertion is still unknown because the panic text is not captured.",
+  "not_proven": [
+    "which assertion or panic message fired",
+    "why the previous round showed no purple band",
+    "anything past pmap_bootstrap"
+  ],
+  "image": {
+    "path": "out/trial-evidence/entry-probe-05/screen-01.jpg",
+    "sha256": "f18d15b68454f75ab6dc0d60620318117b57cbe64f2017b514f1534a8a0e8bc4",
+    "bytes": 347151
+  }
+}

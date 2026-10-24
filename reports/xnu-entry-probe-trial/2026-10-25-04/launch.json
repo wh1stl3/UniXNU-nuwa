@@ -1,0 +1,733 @@
+{
+  "phase": "launch",
+  "started_at": "2026-10-24T18:13:42.546527+00:00",
+  "commands": [
+    {
+      "at": "2026-10-24T18:13:42.928728+00:00",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'cat /sys/firmware/devicetree/base/model; cat /sys/firmware/devicetree/base/compatible'"
+      ],
+      "exit_code": 0,
+      "stdout": "Qualcomm Technologies, Inc. 8550 nuwa\u0000qcom,kalama-mtp\u0000qcom,kalama\u0000qcom,mtp\u0000",
+      "stderr": ""
+    },
+    {
+      "at": "2026-10-24T18:13:42.988844+00:00",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "shell",
+        "getprop sys.boot_completed"
+      ],
+      "exit_code": 0,
+      "stdout": "1\n",
+      "stderr": ""
+    },
+    {
+      "at": "2026-10-24T18:13:46.566481+00:00",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "reboot",
+        "bootloader"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "at": "2026-10-24T18:13:54.706816+00:00",
+      "argv": [
+        "fastboot",
+        "-s",
+        "<selected-nuwa>",
+        "getvar",
+        "product"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "product: nuwa\nFinished. Total time: 0.004s\n"
+    },
+    {
+      "at": "2026-10-24T18:13:54.732554+00:00",
+      "argv": [
+        "fastboot",
+        "-s",
+        "<selected-nuwa>",
+        "reboot",
+        "bootloader"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Rebooting into bootloader                          OKAY [  0.000s]\nFinished. Total time: 0.000s\n"
+    },
+    {
+      "at": "2026-10-24T18:13:58.816259+00:00",
+      "argv": [
+        "fastboot",
+        "-s",
+        "<selected-nuwa>",
+        "getvar",
+        "product"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "product: nuwa\nFinished. Total time: 0.005s\n"
+    },
+    {
+      "at": "2026-10-24T18:13:58.845933+00:00",
+      "argv": [
+        "fastboot",
+        "-s",
+        "<selected-nuwa>",
+        "getvar",
+        "unlocked"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "unlocked: yes\nFinished. Total time: 0.004s\n"
+    },
+    {
+      "at": "2026-10-24T18:13:58.874722+00:00",
+      "argv": [
+        "fastboot",
+        "-s",
+        "<selected-nuwa>",
+        "getvar",
+        "current-slot"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "current-slot: a\nFinished. Total time: 0.005s\n"
+    },
+    {
+      "at": "2026-10-24T18:14:00.602767+00:00",
+      "argv": [
+        "fastboot",
+        "-s",
+        "<selected-nuwa>",
+        "boot",
+        "D:\\Code\\UniXNU-nuwa\\out\\trial-boot\\xnu-entry-probe-05\\boot-xnu-first-entry.img"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Sending 'boot.img' (68620 KB)                      OKAY [  1.572s]\nBooting                                            OKAY [  0.112s]\nFinished. Total time: 1.701s\n"
+    }
+  ],
+  "observations": [
+    {
+      "at": "2026-10-24T18:14:00.605264+00:00",
+      "seconds_after_ack": 0.0,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:03.998666+00:00",
+      "seconds_after_ack": 3.393,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:06.069513+00:00",
+      "seconds_after_ack": 5.464,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:08.140529+00:00",
+      "seconds_after_ack": 7.535,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:10.208231+00:00",
+      "seconds_after_ack": 9.603,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:12.278020+00:00",
+      "seconds_after_ack": 11.673,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:14.347364+00:00",
+      "seconds_after_ack": 13.742,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:16.418725+00:00",
+      "seconds_after_ack": 15.813,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:18.490207+00:00",
+      "seconds_after_ack": 17.885,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:20.556603+00:00",
+      "seconds_after_ack": 19.951,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:22.626940+00:00",
+      "seconds_after_ack": 22.022,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:24.699395+00:00",
+      "seconds_after_ack": 24.094,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:26.769953+00:00",
+      "seconds_after_ack": 26.165,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:28.839605+00:00",
+      "seconds_after_ack": 28.234,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:30.908210+00:00",
+      "seconds_after_ack": 30.303,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:32.977696+00:00",
+      "seconds_after_ack": 32.372,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:35.048079+00:00",
+      "seconds_after_ack": 34.443,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:37.123660+00:00",
+      "seconds_after_ack": 36.518,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:39.193715+00:00",
+      "seconds_after_ack": 38.588,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:41.266316+00:00",
+      "seconds_after_ack": 40.661,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:43.335976+00:00",
+      "seconds_after_ack": 42.731,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:45.406931+00:00",
+      "seconds_after_ack": 44.802,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:47.479040+00:00",
+      "seconds_after_ack": 46.874,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:49.549327+00:00",
+      "seconds_after_ack": 48.944,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:51.619785+00:00",
+      "seconds_after_ack": 51.015,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:53.690317+00:00",
+      "seconds_after_ack": 53.085,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:55.765333+00:00",
+      "seconds_after_ack": 55.16,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:57.869041+00:00",
+      "seconds_after_ack": 57.264,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:14:59.941922+00:00",
+      "seconds_after_ack": 59.337,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:02.013853+00:00",
+      "seconds_after_ack": 61.409,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:04.082225+00:00",
+      "seconds_after_ack": 63.477,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:06.155199+00:00",
+      "seconds_after_ack": 65.55,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:08.222634+00:00",
+      "seconds_after_ack": 67.617,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:10.294154+00:00",
+      "seconds_after_ack": 69.689,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:12.361390+00:00",
+      "seconds_after_ack": 71.756,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:14.428733+00:00",
+      "seconds_after_ack": 73.823,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:16.498492+00:00",
+      "seconds_after_ack": 75.893,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:18.564791+00:00",
+      "seconds_after_ack": 77.96,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:20.650687+00:00",
+      "seconds_after_ack": 80.045,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:22.718811+00:00",
+      "seconds_after_ack": 82.114,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:24.789886+00:00",
+      "seconds_after_ack": 84.185,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:26.857585+00:00",
+      "seconds_after_ack": 86.252,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:28.922508+00:00",
+      "seconds_after_ack": 88.317,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:30.989731+00:00",
+      "seconds_after_ack": 90.384,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:33.060331+00:00",
+      "seconds_after_ack": 92.455,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:35.130060+00:00",
+      "seconds_after_ack": 94.525,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:37.195889+00:00",
+      "seconds_after_ack": 96.591,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:39.262179+00:00",
+      "seconds_after_ack": 98.657,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:41.330164+00:00",
+      "seconds_after_ack": 100.725,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:43.400814+00:00",
+      "seconds_after_ack": 102.796,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:45.472154+00:00",
+      "seconds_after_ack": 104.867,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:47.543318+00:00",
+      "seconds_after_ack": 106.938,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:49.612675+00:00",
+      "seconds_after_ack": 109.007,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:51.680401+00:00",
+      "seconds_after_ack": 111.075,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:53.751409+00:00",
+      "seconds_after_ack": 113.146,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:55.820225+00:00",
+      "seconds_after_ack": 115.215,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:57.888884+00:00",
+      "seconds_after_ack": 117.284,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:15:59.957517+00:00",
+      "seconds_after_ack": 119.352,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:02.030508+00:00",
+      "seconds_after_ack": 121.425,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:04.109499+00:00",
+      "seconds_after_ack": 123.504,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:06.180399+00:00",
+      "seconds_after_ack": 125.575,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:08.246352+00:00",
+      "seconds_after_ack": 127.641,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:10.315053+00:00",
+      "seconds_after_ack": 129.71,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:12.389413+00:00",
+      "seconds_after_ack": 131.784,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:14.462080+00:00",
+      "seconds_after_ack": 133.857,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:16.529269+00:00",
+      "seconds_after_ack": 135.924,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:18.599334+00:00",
+      "seconds_after_ack": 137.994,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:20.670783+00:00",
+      "seconds_after_ack": 140.066,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:22.741066+00:00",
+      "seconds_after_ack": 142.136,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:24.809497+00:00",
+      "seconds_after_ack": 144.204,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:26.879717+00:00",
+      "seconds_after_ack": 146.274,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:28.957567+00:00",
+      "seconds_after_ack": 148.352,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:31.032793+00:00",
+      "seconds_after_ack": 150.428,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:33.106428+00:00",
+      "seconds_after_ack": 152.501,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:35.171914+00:00",
+      "seconds_after_ack": 154.567,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:37.237309+00:00",
+      "seconds_after_ack": 156.632,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:39.307378+00:00",
+      "seconds_after_ack": 158.702,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:41.375064+00:00",
+      "seconds_after_ack": 160.77,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:43.442639+00:00",
+      "seconds_after_ack": 162.837,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:45.508682+00:00",
+      "seconds_after_ack": 164.903,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:47.583251+00:00",
+      "seconds_after_ack": 166.978,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:49.650561+00:00",
+      "seconds_after_ack": 169.045,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:51.718750+00:00",
+      "seconds_after_ack": 171.114,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:53.784730+00:00",
+      "seconds_after_ack": 173.179,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:55.856409+00:00",
+      "seconds_after_ack": 175.251,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:57.926907+00:00",
+      "seconds_after_ack": 177.322,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:16:59.994689+00:00",
+      "seconds_after_ack": 179.389,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    },
+    {
+      "at": "2026-10-24T18:17:00.605783+00:00",
+      "seconds_after_ack": 180.001,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    }
+  ],
+  "authorization": "XNU-FIRST-ENTRY-ANALYSIS explicit diagnostic trial/recovery approval",
+  "candidate_sha256": "2dec3334f5f6bc3adea891db6028a47b98341c1e7e21feb33e4efb1fb70e7c40",
+  "candidate_package_sha256": "bf8d3712b3991636337db6102d2ad0ba2da67c0cc258e354265c00752bd32968",
+  "recovery_sha256": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+  "preflight": {
+    "at": "2026-10-24T18:13:29.882031+00:00",
+    "commands": [
+      {
+        "argv": [
+          "adb",
+          "-s",
+          "<selected-nuwa>",
+          "exec-out",
+          "su -c 'cat /sys/firmware/devicetree/base/model; cat /sys/firmware/devicetree/base/compatible'"
+        ],
+        "exit_code": 0,
+        "stdout": "Qualcomm Technologies, Inc. 8550 nuwa\nqcom,kalama-mtp\nqcom,kalama\nqcom,mtp",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "adb",
+          "-s",
+          "<selected-nuwa>",
+          "exec-out",
+          "getprop sys.boot_completed"
+        ],
+        "exit_code": 0,
+        "stdout": "1",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "adb",
+          "-s",
+          "<selected-nuwa>",
+          "exec-out",
+          "getprop ro.boot.slot_suffix"
+        ],
+        "exit_code": 0,
+        "stdout": "_a",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "adb",
+          "-s",
+          "<selected-nuwa>",
+          "exec-out",
+          "su -c 'sha256sum /dev/block/by-name/boot_a /dev/block/by-name/vendor_boot_a /dev/block/by-name/init_boot_a'"
+        ],
+        "exit_code": 0,
+        "stdout": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31  /dev/block/by-name/boot_a\n5ad2a9dc751870fa3c367fa2833582147541f5b62b880dcbdf525003ad68cc23  /dev/block/by-name/vendor_boot_a\n19e95d952ded5172e8a17bd1af907a8d6b08b29734881c370961b09bbaf78f96  /dev/block/by-name/init_boot_a",
+        "stderr": ""
+      }
+    ],
+    "device": "nuwa",
+    "soc": "kalama",
+    "android_boot_completed": "1",
+    "slot": "_a",
+    "partition_hashes": {
+      "/dev/block/by-name/boot_a": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+      "/dev/block/by-name/vendor_boot_a": "5ad2a9dc751870fa3c367fa2833582147541f5b62b880dcbdf525003ad68cc23",
+      "/dev/block/by-name/init_boot_a": "19e95d952ded5172e8a17bd1af907a8d6b08b29734881c370961b09bbaf78f96"
+    },
+    "package_sha256": "bf8d3712b3991636337db6102d2ad0ba2da67c0cc258e354265c00752bd32968",
+    "process_log_method": "framebuffer photographed or recorded by user",
+    "human_capture_confirmation": "\u7528\u62372026-10-25 02:07 \u7b54\u590d\uff1a\u5148\u6279\u51c6v10\u4e0a\u673a \u628av10\u505a\u5b8c",
+    "human_capture_source": "Fresh user confirmation supplied for this trial; notify immediately before launch",
+    "recovery_path": "Power plus volume down to fastboot (R-010 completed); reset bootloader and temporarily load pinned original boot; confirm Android completion",
+    "original_boot_sha256": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+    "recovery_evidence": {
+      "path": "reports/dxe-allocation/39829943950/recovery.json",
+      "sha256": "4d3a8e2f2f3cf5a296101edaaa5acffdb4b45a459761f2e34c1dfa6aee44ee0a"
+    }
+  },
+  "fastboot_boot_exit_code": 0,
+  "observation_scope": "USB presence only; screen video needed for process logs",
+  "requested_observation_seconds": 180,
+  "ended_at": "2026-10-24T18:17:00.673344+00:00"
+}
