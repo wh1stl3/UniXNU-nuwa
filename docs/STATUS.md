@@ -19,16 +19,16 @@
 | cyan 语义 | 先画带后回放 isb，语义过强 | 先 isb 后画带，语义收窄为「已同步」 |
 | walker | 把 L1 block 记为 `block:false` | 按 `desc&3` 判 block/page，记录 `type`/`level` |
 | 打包绑定 | 检查数只要 ≥16，删掉关键检查仍能过 | 按钩子集合要求**具体检查名**必须存在 |
-| Unicorn 归因 | 「拒绝 MSR/无 MMU 模型」 | MSR 能执行；**本环境 Unicorn 不做 ARM64 取指翻译**（三组实测） |
+| Unicorn 归因 | 「拒绝 MSR/无 MMU 模型」 | 翻译可用；但本构建在 T0SZ=26 时从 L2 起走且 ≥1 GiB VA 不可译，XNU 恰好是 T0SZ=26+L1 根、内核在 0x8c37c7378 |
 
 ## 离线证据（`reports/kernel-entry-probe/2026-10-24-v5/`）
 
-`software.json` **33 项通过**（含占槽场景与 isb 顺序的静态断言）；`mapping.json` 装映射后 FB 恒等可译、未装时不可译；`loader.json` 5 用例通过；`unicorn-mmu-support.json` 记录三组实测：教科书 4 KiB 页表取指失败（Windows 与 WSL 两个构建都失败）、冷启动 MSR 执行成功但首条翻译取指失败、`M=0` 时同址取指立刻成功。
+`software.json` **33 项通过**（含占槽场景与 isb 顺序的静态断言）；`mapping.json` 装映射后 FB 恒等可译、未装时不可译；`loader.json` 5 用例通过；`unicorn-mmu-support.json` 记录两个宿主上的 A–H 矩阵：T0SZ=25+L1 根可取指、T0SZ=26+L2 根可取指、XNU 真实 TCR 用 L1 根失败，且 T0SZ=26 下 `0x40000000` 与 `0x8c37c7378` 均不可译——机制定位到"起始层 + 高位 VA"，不是"没有翻译"。
 
 ## 明确的界限
 
-- **「真正穿过 MMU 切换」的测试本轮做不到**：当前 Unicorn 不实现取指翻译，两个 post-MMU 钩子是「带真实页表与真实快照直接进入」的合成执行，只证明钩子逻辑、映射安装与寄存器契约。要穿越需另一条执行通道（QEMU system mode 跑真实内核，或实机）。
-- 复核给出的 Unicorn 正例与我的最小用例冲突，对方脚本未提供、差异未定位；我的最小用例已入库（`scripts/probe-unicorn-mmu.py`）可复现。
+- **「真正穿过 MMU 切换」的测试本轮做不到**：本构建在 T0SZ=26 下从 L2 起走且丢弃 ≥1 GiB 的 VA 位，无法表达内核地址；改夹具重挂根表也救不了。两个 post-MMU 钩子仍是「带真实页表与真实快照直接进入」的合成执行，只证明钩子逻辑、映射安装与寄存器契约。
+- 复核给出的 Unicorn 正例已复跑并解释（见 A–H 矩阵）；`scripts/probe-unicorn-mmu.py` 与 `probe-unicorn-start-level.py` 均可复现。
 - 1 GiB 设备块覆盖 `0x80000000-0xBFFFFFFF`；已知内核 V=P 窗口、boot_args、栈、VBAR、探针页都不在该区间，但 arm_init→arm_vm_init 之间的全部访存未穷尽。
 - ParseKernel 夹具串行复跑也出现过 rc=139，根因未查（此前「并行内存压力」的推断已撤回）。
 - 未验证：arm_init 返回、arm_vm_init、kext start、iOS。

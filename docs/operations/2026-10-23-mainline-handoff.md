@@ -208,6 +208,6 @@ python3 scripts/compare-prelink-candidates.py --old out/native-prelink-merged/an
 
 新候选 **8515068dcd6bd699a4301109b76b80022fb07120e6167b65b6169d52aeffcb6a**/58,339,328 B/24 补丁，`loadable=false` 未改；`software.json` 33 项（新增占槽哨兵场景与 isb 顺序静态断言）、`mapping.json`（装映射后 FB 恒等可译）、`loader.json` 5 用例、`unicorn-mmu-support.json` 三组实测。
 
-归因更正：MSR 本身能执行，限制是**本环境 Unicorn 2.1.4 不做 ARM64 取指翻译**（教科书 4KiB 页表在 Windows 与 WSL 两构建均失败；M=1 时连映射内恒等取指都失败，M=0 立即恢复）。故「真正穿过 MMU 切换」的测试**本轮未交付**，已列为阻塞；两个后 MMU 钩子仍是带真实页表的合成进入。复核给出的 Unicorn 正例无脚本可对跑，差异未定位。`ParseKernel rc=139` 的原因撤回「并行内存压力」推断，未验证。
+归因二次更正：翻译本身可用（复核给出 TCR `0x280993519` 的成功取指，我复跑一致）；本构建的限制是 **T0SZ=26 时从 L2 起走且 ≥1 GiB 的 VA 不可译**，而 XNU 正是 T0SZ=26 + L1 根、内核在 `0x8c37c7378`，因此真实冷启动必然在第一条翻译取指处失败，重挂根表也救不了（A–H 矩阵见 `probe-unicorn-start-level.py` 与 `unicorn-mmu-support.json`）。故「真正穿过 MMU 切换」的测试**本轮未交付**，已列为阻塞；两个后 MMU 钩子仍是带真实页表的合成进入。`ParseKernel rc=139` 的原因撤回「并行内存压力」推断，未验证。
 
 下一步：① 评估 QEMU system mode 作为第二执行通道（优先于继续调 Unicorn）；② 打包 v5 + 严格包校验，启动前须新鲜 preflight、即时通知、用户对本包的录像与恢复确认（`ab3c092b` 许可不可复用）；③ 判读规则不变。证据 `operations/2026-10-25-probe-v5-corrections.md`；v4 记录已标「被取代」。

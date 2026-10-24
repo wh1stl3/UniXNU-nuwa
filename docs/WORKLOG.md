@@ -362,3 +362,5 @@
 2026-10-24 23:55 · 入口探针02（main）：新增MMU开启后(cyan y736)与arm_init入口(white y832)两个内核内标记；先量出MMU后framebuffer未映射，改由pre-MMU在V=P L1 slot2装1GiB恒等设备块并把屏幕几何快照进探针页，post-MMU钩子不再依赖boot_args物理地址。候选db4aa172/58,339,328B/24补丁；29项软件执行、4项映射walk、5用例ParseKernel夹具通过；Unicorn无法跨过SCTLR写入，故两个钩子为带真实页表的合成进入，不证明实机MMU。未打包未启动 · 本里程碑提交 · reports/kernel-entry-probe/2026-10-24-v4/{build,software,mapping,loader}.json、operations/2026-10-24-post-mmu-markers.md
 
 2026-10-25 00:20 · 入口探针v5：按独立复核修三处真缺陷（占槽仍绘制、cyan 先画后回放isb、walker类型判定）、打包绑定改为要求具体检查名；纠正Unicorn归因——MSR可执行但本环境Unicorn不做ARM64取指翻译（两个构建的最小用例均失败，M=0立即恢复）。v5候选8515068d/58,339,328B/24补丁，33项软件执行（含占槽哨兵场景）、映射walk、5用例ParseKernel夹具通过；「真正穿过MMU」测试因工具限制未交付，已列为阻塞。未打包未启动 · 本里程碑提交 · reports/kernel-entry-probe/2026-10-24-v5/、operations/2026-10-25-probe-v5-corrections.md
+
+2026-10-25 00:35 · 复核可执行反例后二次更正Unicorn归因：翻译可用，本构建在T0SZ=26时从L2起走且≥1GiB VA不可译（A–H矩阵：T0SZ25+L1根成功、T0SZ26+L2根成功、XNU真实TCR+L1根失败、T0SZ26下0x40000000与0x8c37c7378失败），故真实冷启动无法在该模型穿越且重挂根表无用；审计脚本改为tri-state（0=translated/1=refused/其他=environment-error）。候选与软件证据不变（v5 8515068d/33项），未打包未启动 · 本里程碑提交 · scripts/probe-unicorn-start-level.py、reports/kernel-entry-probe/2026-10-24-v5/unicorn-mmu-support.json
