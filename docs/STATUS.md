@@ -27,7 +27,7 @@
 
 离线分析（[arm_init 之后](operations/2026-10-25-post-arm-init-analysis.md)）给出三条可判定命题：
 
-1. **恒等 VBAR + 页内向量**：magenta 钩子把 `VBAR_EL1` 换成探针页恒等物理地址并放自己的 16 个向量，让 MMU 后异常自报 ESR/ELR/FAR。若实机 FAR 落在 `0xe0` 附近、ELR=`_current_percpu_base+0xc`，则"per-CPU 基址为空导致解引用"在实机成立。
+1. ~~**恒等 VBAR + 页内向量**~~ **已完成（v7）**：magenta 钩子把 `VBAR_EL1` 换成探针页恒等物理地址，页首 16 个向量全指 `probe_exception`；该处理器只读快照（不依赖 x20），画红带(1216) + ESR/ELR/FAR(1280/1312/1344)。待实机判定：若 FAR 落在 `0xe0` 附近、ELR=`_current_percpu_base+0xc`，则"per-CPU 基址为空导致解引用"在实机成立。
 2. **`_current_percpu_base` 入口一条带**：判定是否走到该处（模型里 `TPIDR_EL1=0`，`ldr x0,[x0,#0xe0]` 解引用空）。
 3. **`_arm_vm_init` / `_pmap_bootstrap` / `_kernel_bootstrap` 入口各一条带**：若出现，前线推进到 pmap/kext。
 

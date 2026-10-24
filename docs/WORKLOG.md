@@ -372,3 +372,5 @@
 2026-10-25 01:00 · 正式测试补三项钉死绑定：AArch64态读回(SCR_EL3=0x431/HCR_EL2=0x80000000)、页表摘要682cb477必须匹配、停止点必须等于white回放地址0xfffffff008489220，负对照要求SCR/HCR保持模型默认；software.json 38→42项全通过，打包绑定对v3/v4/v5仍通过、删青色白色检查并重封仍被拒 · 本里程碑提交
 
 2026-10-25 00:56 · arm_init之后路径分析（离线）：模型停在UBSan brk的根因是夹具从未写boot_args->deviceTreeP/Length，导致SecureDTFindEntry("name","arm-io")失败→pe_identify_machine在line60提前返回→时基留0→wfe_timeout_configure的flsll(0)-1下溢（375,270条）；这不是实机根因（DarwinBoot.c:630-631实际传ADT）。补入随包ADT后UBSan消失，改在374,951条停于_current_percpu_base+0xc的ldr x0,[x0,#0xe0]（TPIDR_EL1=0）。v6据此收敛为三条可判定命题（恒等VBAR自报ESR/ELR/FAR、_current_percpu_base入口带、arm_vm_init/pmap_bootstrap/kernel_bootstrap带）。未打包未启动 · 本里程碑提交 · reports/kernel-entry-probe/2026-10-25-post-arm-init/analysis.json、operations/2026-10-25-post-arm-init-analysis.md
+
+2026-10-25 01:10 · v7（恒等VBAR+页内16向量）：异常向量表移到探针页页首，magenta钩子把VBAR_EL1指到该页恒等地址；probe_exception只读快照画红带1216与ESR/ELR/FAR 1280/1312/1344，不再依赖x20；快照高度判据1376。候选af6e1b5f/58,339,328B/28补丁。验证：42项固定测试通过；带ADT 7项通过（VBAR已重定向、向量在页首、cpu_base标记444,079条画出、仍停在_current_percpu_base+0xc）；处理器合成执行2项通过（x20=0xdeadbeef仍正确解出ESR/ELR/FAR）。未打包未启动 · 本里程碑提交 · reports/kernel-entry-probe/2026-10-24-v7/

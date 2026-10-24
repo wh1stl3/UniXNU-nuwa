@@ -2,8 +2,12 @@
 // Stackless diagnostic hooks for the fixed Darwin22 start.s cold-boot path.
 // x0 (entry) / x20 (later hooks) contains the unmodified physical boot_args.
 // x9-x17 are dead at the three selected hook sites; x0-x8/x18-x30 survive.
-.text
-.balign 4
+//
+// Layout is deliberate: the 16-entry exception vector table sits at the very start
+// of this page so that "msr vbar_el1, <page base>" points at it. All entries branch
+// to probe_exception, which reports ESR/ELR/FAR through the geometry snapshot and
+// never relies on x20 (an exception can fire when x20 holds anything).
+
 .macro BAND args, y, color
     ldr x9, [\args, #0x28]
     cbz x9, 9f
@@ -32,15 +36,97 @@
     dsb sy
 9:
 .endm
-.global probe_entry
-probe_entry:
-    BAND x0, 256, 0xff0080ff
-    b original_first_cpu
-.global probe_tables
-probe_tables:
-    BAND x20, 352, 0xffffff00
-    .inst original_tables_word
-    b original_tables_resume
+
+// Snapshot-based drawing: framebuffer base and line stride come from probe_scratch,
+// so it stays valid after the MMU switch and inside an exception where x20 is dead.
+.macro BAND_SNAPSHOT y, color
+    adr         x15, probe_scratch
+    ldr         x9, [x15]
+    cbz         x9, .Ldraw_done\@
+    ldr         x10, [x15, #8]
+    mov         x11, #\y
+    madd        x9, x10, x11, x9
+    lsl         x10, x10, #5
+    mov         w12, #(\color & 0xffff)
+    movk        w12, #((\color >> 16) & 0xffff), lsl #16
+1:
+    stp         w12, w12, [x9], #8
+    subs        x10, x10, #8
+    b.hi        1b
+    dsb         sy
+.Ldraw_done\@:
+.endm
+
+// 16 hex digits of a system register, drawn from the snapshot. 4x4 squares,
+// 24 bytes apart, one row of 5 pixels per hex bit row (same glyphs as hex_font).
+.macro HEXROW_SNAP reg, y
+    adr         x15, probe_scratch
+    ldr         x21, [x15]
+    ldr         x22, [x15, #8]
+    cbz         x21, .Lhex_done\@
+    mrs         x23, \reg
+    mov         x24, #60
+    mov         x25, #\y
+    madd        x21, x22, x25, x21
+.Lhex_digit\@:
+    lsr         x25, x23, x24
+    and         x25, x25, #15
+    adr         x26, hex_font
+    ldr         w27, [x26, x25, lsl #2]
+    mov         x28, #0
+.Lhex_row\@:
+    mov         x17, #0
+.Lhex_col\@:
+    mov         x16, #19
+    sub         x16, x16, x28, lsl #2
+    sub         x16, x16, x17
+    lsr         w15, w27, w16
+    and         w15, w15, #1
+    neg         w15, w15
+    lsl         x14, x28, #2
+    madd        x13, x14, x22, x21
+    add         x13, x13, x17, lsl #4
+    mov         x12, #4
+.Lhex_pixel_row\@:
+    stp         w15, w15, [x13]
+    stp         w15, w15, [x13, #8]
+    add         x13, x13, x22
+    subs        x12, x12, #1
+    b.ne        .Lhex_pixel_row\@
+    add         x17, x17, #1
+    cmp         x17, #4
+    b.lo        .Lhex_col\@
+    add         x28, x28, #1
+    cmp         x28, #5
+    b.lo        .Lhex_row\@
+    add         x21, x21, #24*4
+    subs        x24, x24, #4
+    b.ge        .Lhex_digit\@
+.Lhex_done\@:
+.endm
+
+.text
+.balign 4096
+.global probe_vectors
+probe_vectors:
+    .rept 16
+    .space 124
+    b probe_exception
+    .endr
+.balign 4
+.global probe_exception
+probe_exception:
+    adr         x15, probe_scratch
+    ldr         x9, [x15]
+    cbz         x9, exception_stop
+    BAND_SNAPSHOT 1216, 0xffff0000
+    HEXROW_SNAP esr_el1, 1280
+    HEXROW_SNAP elr_el1, 1312
+    HEXROW_SNAP far_el1, 1344
+    dsb         sy
+.global exception_stop
+exception_stop:
+    b exception_stop
 
 // Pre-MMU preparation for the post-MMU hooks. The bootstrap tables map only the
 // kernel's own physical range, so the framebuffer that is reachable while the
@@ -68,6 +154,11 @@ probe_tables:
     // so SNAP_VIDEO stores nothing and the post-MMU hooks draw nothing.
     mov         x15, #0
 .Lmap_done\@:
+    // Point the exception vectors at this page (its identity address), so an
+    // exception taken while the MMU is on still lands on our reporter. The page
+    // is reachable through the V=P identity mapping until pmap is rebuilt.
+    adr         x13, probe_vectors
+    msr         vbar_el1, x13
 .endm
 .macro SNAP_VIDEO
     cbz         x15, .Lsnap_done\@                  // no mapping, no snapshot
@@ -79,7 +170,7 @@ probe_tables:
     tst         x14, #7
     b.ne        .Lsnap_done\@
     ldr         x9, [x20, #0x48]
-    cmp         x9, #864                          // must cover the white band at 832
+    cmp         x9, #1376                         // must cover the FAR row at 1344
     b.lo        .Lsnap_done\@
     ldr         x9, [x20, #0x50]
     and         x9, x9, #255
@@ -89,6 +180,15 @@ probe_tables:
     stp         x13, x14, [x9]                    // framebuffer base, line stride
 .Lsnap_done\@:
 .endm
+.global probe_entry
+probe_entry:
+    BAND x0, 256, 0xff0080ff
+    b original_first_cpu
+.global probe_tables
+probe_tables:
+    BAND x20, 352, 0xffffff00
+    .inst original_tables_word
+    b original_tables_resume
 .global probe_mmu
 probe_mmu:
     BAND x20, 448, 0xffff00ff
@@ -101,23 +201,6 @@ probe_mmu:
 // V=P mapping. The original isb is replayed FIRST so the SCTLR write is
 // architecturally synchronised before anything is drawn; then the band is drawn
 // and control returns to the instruction after the isb.
-.macro BAND_SNAPSHOT y, color
-    adr         x15, probe_scratch
-    ldr         x9, [x15]
-    cbz         x9, .Ldraw_done\@
-    ldr         x10, [x15, #8]
-    mov         x11, #\y
-    madd        x9, x10, x11, x9
-    lsl         x10, x10, #5
-    mov         w12, #(\color & 0xffff)
-    movk        w12, #((\color >> 16) & 0xffff), lsl #16
-1:
-    stp         w12, w12, [x9], #8
-    subs        x10, x10, #8
-    b.hi        1b
-    dsb         sy
-.Ldraw_done\@:
-.endm
 .global probe_mmu_on
 probe_mmu_on:
     .inst original_mmu_on_word
@@ -172,9 +255,9 @@ probe_kernel_bootstrap_replay:
 probe_scratch:
     .quad 0, 0
 
-// Early exception output: red band, then ESR/ELR/FAR in 16 hex digits each.
-// These hooks replace only the original physical LowExceptionVector self loops.
-// Once the kernel switches to its normal virtual VBAR these hooks are inactive.
+// Early exception output for the kernel's own physical vectors: red band, then
+// ESR/ELR/FAR in 16 hex digits each, read from boot_args through x20. This path
+// is only live before the probe page takes over VBAR.
 .macro HEXROW reg, y
     mrs x23, \reg
     mov x24, #60
