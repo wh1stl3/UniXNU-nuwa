@@ -1,0 +1,32 @@
+{
+  "scope": "Single fastboot boot of entry-probe-10 (v17 kernel 30daa426, dense ladder, clear removed); user video; recovery closed",
+  "package": {
+    "report": "reports/xnu-first-entry/entry-probe-10.json",
+    "image_sha256": "a7858f893195f064da151e4f082b9c803edbffd09304d9ef1e3da6c117a535ff",
+    "kernel_sha256": "30daa426b5adaed6b4504a6d64d2719d8acd146225176ba3990cac6fbe26e740"
+  },
+  "window": {
+    "preflight_at": "2026-10-24T19:48:25.970312+00:00",
+    "postcondition_at": "2026-10-24T19:54:20.726734+00:00",
+    "partition_hashes_unchanged": true,
+    "android_boot_completed": "1",
+    "slot": "_a"
+  },
+  "observed": {
+    "bands": [
+      "blue 256",
+      "yellow 288",
+      "magenta 320"
+    ],
+    "stopped_before": "cyan 352 (the band drawn right after msr sctlr_el1 + isb)",
+    "green_EBS_breadcrumb": "present again (the clear was removed in v17)",
+    "logo_and_menu_backdrop": "present again (no clear)"
+  },
+  "conclusion": "v17 without the screen clear shows the same three bands as v16 with it, so the clear was not the cause of the stop before the MMU switch. The only remaining pre-cyan difference against v13/v14 is where the draw-once guard byte lives: v13/v14 kept it in the probe page and got past the cyan band, v15..v17 moved it to the device window 0x80000000 and never reached the cyan band. Writing to 0x80000000 is therefore the prime suspect (a fatal device access whose handler would write the same address again, giving a silent recursive fault with no red band). v18 moves the guard byte back into the probe page and keeps everything else.",
+  "not_proven": [
+    "that the 0x80000000 write is fatal (inference from the v13..v17 correlation, not measurement)",
+    "the frontier inside the MMU switch"
+  ],
+  "video": "C:/Users/Administrator/Documents/xwechat_files/wxid_i8ayad5f36ws22_4142/msg/video/2026-10/25393e8bda00bb37ce03e29844a7d13a_raw.mp4",
+  "frames_extracted": "out/trial-evidence/entry-probe-10/frames/ (not committed)"
+}

@@ -127,7 +127,7 @@
     adr         x15, probe_scratch
     ldr         x9, [x15]
     cbz         x9, .Lno_device\@
-    movz        x16, #0x8000, lsl #16
+    adr         x16, probe_flags
     ldrb        w17, [x16, #\idx]
     cbnz        w17, 9f
     mov         w17, #1
@@ -146,7 +146,7 @@
     adr         x15, probe_scratch
     ldr         x9, [x15]
     cbz         x9, .Lno_device\@
-    movz        x16, #0x8000, lsl #16
+    adr         x16, probe_flags
     ldrb        w17, [x16, #\idx]
     cmp         w17, #4
     b.hs        9f
