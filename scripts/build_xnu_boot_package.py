@@ -202,8 +202,10 @@ def main():
 
     work = args.work.resolve()
     output = args.output.resolve()
-    if not work.is_relative_to(ROOT / 'out') or work.exists():
-        raise ValueError('fresh work directory under out/ required')
+    if not work.is_relative_to(ROOT / 'out/trial-boot') or work.exists():
+        # The trial driver only loads candidates from out/trial-boot, so the
+        # image has to be produced there rather than in a private directory.
+        raise ValueError('fresh work directory under out/trial-boot required')
     if not output.is_relative_to(ROOT / 'reports') or output.exists():
         raise ValueError('fresh report under reports/ required')
 

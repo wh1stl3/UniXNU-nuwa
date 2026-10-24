@@ -2,13 +2,15 @@
 
 以 **UniXNU** 为底座，改造使 **nuwa（小米 13 Pro / SM8550 / 12 GB）** 运行 **iOS 16**。
 
-## 当前入口（2026-10-24）
+## 当前入口（2026-10-24 19:2x）
 
-**单次实机文件校验通过**：固件内 `NuwaFileAuditDxe` 在 ReadyToBoot 只读 58335232 字节 `READTEST.BIN` 并验证完整 SHA-256，照片确认 `PASS exact length, EOF and SHA256 / exit Success`，30 秒后返回固件；随后恢复到 Android `boot_completed=1`、槽_a、三分区 SHA 与试前一致（北京时间 18:09:48）。产物 `6b3e5bfd…`/70266880 B，CI 40080439083 / dbbdc02，[诊断记录](docs/operations/2026-10-24-fv-file-audit.md)。**这是数据读取与 SHA 通过，不是内核执行。**
+**iOS 16 内核已在 nuwa 上实际执行过。** 内核候选 `1aeebf13` 经 `fastboot boot` 临时启动，DarwinBoot 打印 `Exiting boot services`、屏幕出现绿色横条，XNU 自身输出 `AppleARMPlatform: IODTNVRAM from …`、`SecurityLock::LockType: SOFTWARE_LOCK`、`LockCapsuleInterface`、`App Log Flush : 0 ms`，约 235 秒后设备自动重启回 Android。**iOS 未启动** —— 内核在 Apple 启动链安全锁阶段终止（判断置信中高，缺 SEP/硬件信任链）。恢复闭环完成：Android 完成 1、槽_a、三分区 SHA 未变。详见[首次内核进入](docs/operations/2026-10-24-xnu-first-entry.md)。
 
-同日设备仓 ADT 生成器落地并完成 board 受审字段批准：`scripts/make-nuwa-adt.py` 按基座契约产出 `kernel.macho.adt`，板级常量逐项对回实机 FDT，结构审计与正负例 0 失败；R-012 已批准 A，写入 `dram_size = 0x240000000` 与 `owned_memory_size = 0x40000000`。详见 [ADT 记录](docs/operations/2026-10-24-nuwa-adt.md) 与 [NEED-REVIEW](docs/NEED-REVIEW.md) R-012。board 其余 TODO 未填，仍 `example = true`。
+确切读数：`kernel va 0xfffffff003DC8000 pa 0x8C01C8000`、`window 0x40000000 bytes`（**1 GiB 连续窗口由 UEFI 成功给出**）、`TCR_EL1 0x28003518`（4 KiB granule，与 D-003 一致）、`CurrentEL 1`。
 
-分析内核 `eb66542c`（58335232 B）仍 **`loadable=false`**：早期安全初始化器调用 ABI、donor/native C++ 与结构 ABI、真实 ADT 与运行时分配窗口、大负载装载四项未资格化。文件 SHA PASS 不构成执行许可。
+同日离线完成 ADT 生成器落地（`scripts/make-nuwa-adt.py` 等四个脚本，板级常量逐项对回实机 FDT，结构审计与正负例 0 失败）、R-012 批准 A（写入 `dram_size = 0x240000000` 与 `owned_memory_size = 0x40000000`）、以及早期安全初始化器通路打通（`early_security_init` 被 emitter 接受、注册调用 ABI 静态核对通过）。
+
+分析内核的 `loadable` 标志仍为 `false`（人工资格化字段），但**实机已证明它可被加载并跳转**。
 
 续接先读 [STATUS](docs/STATUS.md) 与[主线交接](docs/operations/2026-10-23-mainline-handoff.md)，再看[全量更新记录](docs/operations/2026-10-24-upstream-integration.md)。不重复已结束的设备试验。
 

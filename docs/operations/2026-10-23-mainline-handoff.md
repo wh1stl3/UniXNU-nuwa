@@ -150,4 +150,22 @@ python3 scripts/compare-prelink-candidates.py --old out/native-prelink-merged/an
 
 下一步：核对 `0x5703c54` 调用约定与返回语义（结合 23 项 ops 槽位与 `mac_policy_register` 导入），再决定是否把配置接入 `emit-current-prelink-analysis.py`。任何实机动作前仍须离线验收、新鲜录像与恢复门、即时通知。
 
+## 最新：首次内核进入实机试验，内核入口执行后在启动链锁阶段重启
+
+本轮有真实设备动作（`fastboot boot` 临时启动，未 flash/erase/改槽）。
+
+**结果**：DarwinBoot 打印 `Exiting boot services. A green bar across the top means the kernel entry code ran.`，屏幕顶部出现绿色横条；XNU 自身输出 `AppleARMPlatform: IODTNVRAM from …`、`SecurityLock::LockType: SOFTWARE_LOCK, Module: 42B57F0A-13F2-4821-8A23-55B3F714B940, Function: LockCapsuleInterface`、`[ML] dump table info not found, Status = (0x0)`、`App Log Flush : 0 ms`，此后无输出；约 235 秒时设备自动重启回 Android。
+
+确切读数（原图 881×1920 裁剪放大，reports/xnu-first-entry-trial/2026-10-24/crop-*.png）：`kernel va 0xfffffff003DC8000 pa 0x8C01C8000`、`args pa 0x4C408000 window 0x40000000 bytes`、`video base 0xB8000000 1440x3200 row 5760 bytes 32 bpp`、`CurrentEL 1 SCTLR_EL1 0x3D0018D0 TCR_EL1 0x28003518`、`ID_AA64MMFR0_EL1 (PARange 2, 4 KiB granule supported)`。
+
+意义：① **1 GiB 连续窗口被 UEFI 成功给出**（ADT 的 `darwinboot-memory-size` 生效），blocker 3 的窗口可用性得到肯定答案；② 内核物理基址落在主 bank `0x8c0000000` 内；③ 4 KiB granule 与 D-003 一致；④ 内核入口代码确实执行了。
+
+恢复：设备自动重启回 Android，无需人工按键；`postcondition.json` 确认 nuwa/kalama/`boot_completed=1`/槽_a 且 boot_a、vendor_boot_a、init_boot_a 三分区 SHA 与试前一致。
+
+失败点判断（置信中高）：内核在 Apple 启动链安全锁阶段终止，最后可见输出是 `SecurityLock::LockType: SOFTWARE_LOCK` 与 `LockCapsuleInterface`，这类校验需要 SEP/硬件密钥/Apple 信任链。**反证空白**：`SecurityLock`、`LockCapsuleInterface`、`SOFTWARE_LOCK`、`App Log Flush`、`dump table info not found` 在 XNU 8796 源码树（全部类型含 blob）、UniXNU 基座源码与补丁、donor kernelcache、native 内核、预链接产物中均搜不到（ASCII 与 UTF-16），来源未定位；主机只有 COM1（ACPI 物理串口），**没有手机 9008 串口**，拿不到 panic 串志。
+
+**下一步**：① 复现时观察窗口延到 600 秒，请用户把镜头对准屏幕直到重启，拍下重启前最后画面（当前照片停在 `App Log Flush`）；② 若能接手机 UART/9008 串口，串志是定位退出口最直接手段；③ 评估 `amfi-only-platform-code` 与启动链锁的关系。
+
+包与证据：`reports/xnu-first-entry/package-01.json`（镜像 `aa2dfb5d…`、内核 `1aeebf13…`、ADT `e7a03577…`、FAT `f0cec54b…`）；`reports/xnu-first-entry-trial/2026-10-24/{preflight,launch,postcondition}.json` 与 `screen-01.jpg`（SHA256 86b7d300…）+ 三张放大裁剪图。操作记录 `operations/2026-10-24-xnu-first-entry.md`。
+
 
