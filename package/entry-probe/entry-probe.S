@@ -225,7 +225,7 @@ exception_stop:
     tst         x14, #7
     b.ne        .Lsnap_done\@
     ldr         x9, [x20, #0x48]
-    cmp         x9, #1248                         // must cover the FAR row at 1216
+    cmp         x9, #1344                         // must cover the panic text row at 1312
     b.lo        .Lsnap_done\@
     ldr         x9, [x20, #0x50]
     and         x9, x9, #255
@@ -437,11 +437,48 @@ probe_panic_options_replay:
 .global probe_panic_trap
 probe_panic_trap:
     BAND_ONCE 19, 1040, 0xff9400ff
-    // x0 is the panic format string: render its first eight bytes as hex so the
-    // message can be read off the screen, the only output channel we have.
-    ldr         x23, [x0]
+    // HEXROW_VAL uses x21..x28, which are callee-saved; this hook runs at a
+    // function entry, so save and restore them around the rendering.
+    stp         x19, x20, [sp, #-80]!
+    stp         x21, x22, [sp, #16]
+    stp         x23, x24, [sp, #32]
+    stp         x25, x26, [sp, #48]
+    stp         x27, x28, [sp, #64]
+    // x1 is the va_list: on Darwin it points at a struct whose first word is the
+    // stack slot of the first variadic argument, which for panic("%s: invalid
+    // ...", __func__, ...) is the name of the function that panicked.
+    // x1 is the va_list pointer: its first word is the stack slot of the first
+    // variadic argument. For panic("%s: invalid ...", __func__, ...) that is the
+    // name of the function that panicked - but other panics pass a number there,
+    // so only dereference it when it really looks like a page aligned kernel
+    // pointer, otherwise fall back to the format string alone.
+    ldr         x11, [x1]
+    cbz         x11, .Lpanic_no_argument
+    ldr         x12, [x11]
+    movz        x13, #0
+    movk        x13, #0xffff, lsl #48
+    cmp         x12, x13
+    b.lo        .Lpanic_no_argument
+    and         x13, x12, #0xfff
+    cbnz        x13, .Lpanic_no_argument
+    ldr         x23, [x12]
     rev         x23, x23
     HEXROW_VAL 1088
+    ldr         x23, [x12, #8]
+    rev         x23, x23
+    HEXROW_VAL 1248
+.Lpanic_no_argument:
+    ldr         x23, [x0]
+    rev         x23, x23
+    HEXROW_VAL 1280
+    ldr         x23, [x0, #8]
+    rev         x23, x23
+    HEXROW_VAL 1312
+    ldp         x27, x28, [sp, #64]
+    ldp         x25, x26, [sp, #48]
+    ldp         x23, x24, [sp, #32]
+    ldp         x21, x22, [sp, #16]
+    ldp         x19, x20, [sp], #80
 .global probe_panic_trap_replay
 probe_panic_trap_replay:
     .inst original_panic_trap_word
@@ -502,7 +539,7 @@ probe_fault:
     ldr x9, [x20, #0x28]
     cbz x9, fault_stop
     ldr x10, [x20, #0x48]
-    cmp x10, #1248
+    cmp x10, #1344
     b.lo fault_stop
     ldr x10, [x20, #0x38]
     cmp x10, #1536
