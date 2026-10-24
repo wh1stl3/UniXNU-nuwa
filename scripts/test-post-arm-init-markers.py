@@ -46,12 +46,12 @@ def handler_checks(report, candidate, checks):
     def code(uc, addr, size, _):
         if addr == stop: uc.emu_stop()
     uc.hook_add(U.UC_HOOK_CODE, code)
-    try: uc.emu_start(entry, 0, count=2000000)
+    try: uc.emu_start(entry, 0, count=12000000)
     except U.UcError as e: raise AssertionError('handler execution failed: %s' % e)
-    red = struct.unpack('<I', uc.mem_read(FB+1104*ROW, 4))[0]
+    red = struct.unpack('<I', uc.mem_read(FB+1120*ROW, 4))[0]
     lookup = {bits: format(i, 'X') for i, bits in enumerate(FONT)}
     decoded = {}
-    for name, y in (('ESR_EL1', 1136), ('ELR_EL1', 1168), ('FAR_EL1', 1200)):
+    for name, y in (('ESR_EL1', 1152), ('ELR_EL1', 1184), ('FAR_EL1', 1216)):
         text = ''
         for digit in range(16):
             bits = ''.join('1' if struct.unpack('<I', uc.mem_read(FB+(y+r*4)*ROW+digit*24*4+c*16, 4))[0] == 0xffffffff else '0'
@@ -132,18 +132,18 @@ def main():
         bad.append(dict(access=access, address=hex(addr), pc=hex(uc.reg_read(UC_ARM64_REG_PC)))); return False
     uc.hook_add(U.UC_HOOK_CODE, code); uc.hook_add(U.UC_HOOK_MEM_INVALID, invalid)
     error = None
-    try: uc.emu_start(PA+m['entry']-base, 0, count=3000000)
+    try: uc.emu_start(PA+m['entry']-base, 0, count=12000000)
     except U.UcError as e: error = str(e)
     pc = uc.reg_read(UC_ARM64_REG_PC)
     best = max((v, k) for k, v in m['symbols'].items() if v <= pc)
-    pixels = {str(y): hex(struct.unpack('<I', uc.mem_read(FB+y*ROW, 4))[0]) for y in (256, 304, 352, 400, 448, 496, 544, 592, 624, 656, 688)}
+    pixels = {str(y): hex(struct.unpack('<I', uc.mem_read(FB+y*ROW, 4))[0]) for y in (256, 288, 320, 352, 384, 416, 448, 480, 512, 544, 576, 608, 640)}
     reached = {watch[k]: hits[k] for k in hits}
 
     if args.no_adt:
         check('Without the ADT the run still reaches the arm_init hook', 'white' in reached)
     else:
-        check('Cyan and white still correct', (pixels['400'], pixels['448']) == ('0xff00ffff', '0xffffffff'))
-        check('_current_percpu_base marker paints its band', pixels['496'] == '0xff8000ff')
+        check('Cyan and white still correct', (pixels['352'], pixels['384']) == ('0xff00ffff', '0xffffffff'))
+        check('_current_percpu_base marker paints its band', pixels['416'] == '0xff8000ff')
         check('_current_percpu_base marker is the first new marker reached',
               reached.get('cpu_base') == min(v for k, v in reached.items() if k not in ('cyan', 'white')))
         tpidr = None

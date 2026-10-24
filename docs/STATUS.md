@@ -84,20 +84,19 @@ v9 候选 **`b5db0f1e5793a2557efa99af735a59ca1c923ed1ae9e461f712a5a79163ac348`**
 
 **下一轮**：在 `arm_vm_init` 内部再插 2–3 个点（它开头就是内存映射/DT 解析，`SecureDTGetProperty(memory_map,"TrustCache"/"AuxKC")` 附近），把断点从"函数入口"推进到具体语句；同时保留红带自报。模型侧需先绕过 `msr TPIDRRO_EL0` 才能继续预演。
 
-## 当前状态：v15 可用（entry-probe-08 已打包）；v16"清屏 + 密阶梯"本轮未完成，已回退
+## 当前状态：v16（清屏 + 密阶梯）已打包为 entry-probe-09，等待录像
 
-**关键更正（用户）**：内核启动是**手动在 UEFI 菜单按电源键触发**的，所以录像里确实包含启动过程；此前我按录像文件时间戳推断"这是三分钟后的终态"是错的。带子与固件日志是**叠加在菜单界面**上的。
+**v16 候选 `6e1ba192f49fc3304c73b5bdddfdba7973fa538e0db4186cd6787f9e45d3c0b7`**（58,355,712 B，33 补丁），镜像 `b981c50bc3e1a7676669efe2cc2052d3f662e04d1aac3d97e783183478a8d721` / 70,266,880 B，ADT `ba6969aa`，`--validate` 从出货 FAT 读回通过。
 
-**v14（entry-probe-07）终态读数**：绿 · 蓝黄品红青白 · 两行 HEX（各 `0000000000000001`），**无棕带(544)** ⇒ v14 停在 `_arm_vm_init` 之前，比 v13 更早；两个计数钩子（`SecureDTLookupEntry`、`pe_arm_get_soc_base_phys`，都在 `PE_init_platform` 里）各只被调用一次。
+三条变化：
 
-**v15（entry-probe-08，已打包）**：把 draw-once 守卫字节从探针段移到自映射的设备窗口 `0x80000000`（Device-nGnRnE 恒可写）。它验证的"探针段只读"假设**已被证伪**（v14 的青/白带是 MMU 后钩子且画出⇒探针页可写），所以它不是对症修复，但无害，可作为对照跑。
+1. **清屏**：第一个钩子（`probe_entry`，MMU 前）用 boot_args 几何（video base `0x28`/stride `0x38`/height `0x48`）把 0–1152 行清成黑 ⇒ 带子落在纯黑上，logo 与菜单底图被抹掉。每行 16 字节一步（约 41 万次存储），实机可接受。
+2. **去掉热点路径的十六进制渲染**：两个 `PE_init_platform` 钩子改回普通色带（v14 唯一多出来的可疑项就是那 16 位 hex 渲染）。
+3. **密阶梯**：行距 32，25 个阶段槽位（256–1024），新增 `configure_timer_apple_regs`、`wfe_timeout_configure`、`wfe_timeout_init`、`configure_misc_apple_boot_args`、`configure_misc_apple_regs` 五个阶段钩子；`early_random` 钩子因无空槽被移除。panic 三兄弟 992/1024/1056、panic 文本 1088、我们的异常自报 1120、ESR/ELR/FAR 1152/1184/1216（后两行可能被固件菜单重画盖住）。
 
-**v16 计划（用户要求更激进 + 清屏）**：
-1. **清屏**：在第一个钩子（`probe_entry`，MMU 前）用 boot_args 的 video base/stride/height 把 0..1152 行清成黑 ⇒ 带子落在纯黑上，logo 与菜单底图被抹掉（固件在 1150 行以下重画菜单，所以我们的带必须 ≤1120 才不会被盖）。
-2. **去掉热点路径的十六进制渲染**：三个 PE_init_platform 钩子改回普通色带（v14 唯一多出来的可疑项就是那 16 位 hex 渲染，约 23000 条写指令）。
-3. **密阶梯**：行距 32，25 个阶段槽位，覆盖 `arm_init`→`arm_vm_init` 之间的每个阶段：`configure_timer_apple_regs`、`wfe_timeout_configure`、`wfe_timeout_init`、`configure_misc_apple_boot_args`、`configure_misc_apple_regs`、`ml_parse_cpu_topology`、`cpu_bootstrap`、`machine_startup`，加上 `arm_vm_init` 内部四个偏移；panic 三兄弟 + panic 文本仍留在 1056/1088。
+v16 离线资格：42 项固定测试 + 带 ADT 9 项 + 处理器合成 2 项**全部通过**。**未启动。**
 
-**本轮 v16 未完成**：我在重排色带块时把 `MAP_FB`/`SNAP_VIDEO` 与 `BAND_SNAPSHOT` 的调用弄丢了（导致 L1 slot2 未装、快照为空、测试失败），且行号重排脚本有 CRLF/正则问题。已**整体回退**到已提交且已复验的 v15（42+9+2 项全通过，候选 `57c5b1d8`），仓里没有半成品。v16 需在下一轮按上面三条重做（用 git 里的上一版 `.S` 作模板改，不要整块重新生成）。
+**判读**：每条带 32 行、行距 32，从 256 起顺次是 蓝/黄/品红/青/白/紫/棕/青/橙/青灰/橄榄/石板/灰/紫罗兰/青灰2/粉/紫罗兰2/青绿2/绿/金/洋红2/青3/橙2/热粉/亮粉/紫罗兰3，最后 1088 是 panic 文本的十六进制。看到哪一条断掉，就知道内核停在哪一步。
 
 ## 构建支线
 

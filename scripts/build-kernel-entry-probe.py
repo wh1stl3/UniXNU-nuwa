@@ -65,7 +65,9 @@ def main():
     for name in ('_current_percpu_base','_arm_vm_init','_pmap_bootstrap','_kernel_bootstrap',
                  '_panic','_panic_trap_to_debugger','_panic_with_options','_early_random',
                  '_SecureDTLookupEntry','_pe_arm_get_soc_base_phys','_ml_parse_cpu_topology',
-                 '_cpu_bootstrap','_machine_startup'):
+                 '_cpu_bootstrap','_machine_startup','_configure_timer_apple_regs',
+                 '_wfe_timeout_configure','_wfe_timeout_init','_configure_misc_apple_boot_args',
+                 '_configure_misc_apple_regs'):
         if not (0xfffffff007000000<=symbols[name]<0xfffffff008000000):raise ValueError(name+' outside the kernel text')
     # Fixed offsets inside arm_vm_init, pinned by instruction word like the start.s sites.
     avm_bases=symbols['_arm_vm_init']+0x54
@@ -108,7 +110,17 @@ def main():
                    original_machine_startup_word=struct.unpack_from('<I',raw,backed(m,symbols['_machine_startup']))[0],
                    original_machine_startup_resume=symbols['_machine_startup']+4,
                    original_panic_options_word=struct.unpack_from('<I',raw,backed(m,symbols['_panic_with_options']))[0],
-                   original_panic_options_resume=symbols['_panic_with_options']+4)
+                   original_panic_options_resume=symbols['_panic_with_options']+4,
+                   original_timer_regs_word=struct.unpack_from('<I',raw,backed(m,symbols['_configure_timer_apple_regs']))[0],
+                   original_timer_regs_resume=symbols['_configure_timer_apple_regs']+4,
+                   original_wfe_timeout_word=struct.unpack_from('<I',raw,backed(m,symbols['_wfe_timeout_configure']))[0],
+                   original_wfe_timeout_resume=symbols['_wfe_timeout_configure']+4,
+                   original_wfe_init_word=struct.unpack_from('<I',raw,backed(m,symbols['_wfe_timeout_init']))[0],
+                   original_wfe_init_resume=symbols['_wfe_timeout_init']+4,
+                   original_misc_boot_args_word=struct.unpack_from('<I',raw,backed(m,symbols['_configure_misc_apple_boot_args']))[0],
+                   original_misc_boot_args_resume=symbols['_configure_misc_apple_boot_args']+4,
+                   original_misc_regs_word=struct.unpack_from('<I',raw,backed(m,symbols['_configure_misc_apple_regs']))[0],
+                   original_misc_regs_resume=symbols['_configure_misc_apple_regs']+4)
     source='\n'.join(f'.equ {k}, {v:#x}' for k,v in constants.items() if k.endswith('_word'))+'\n'+template
     (work/'probe.S').write_text(source,encoding='utf-8',newline='\n')
     commands=[]
@@ -143,7 +155,6 @@ def main():
            (symbols['_kernel_bootstrap'],'probe_kernel_bootstrap'),
            (avm_bases,'probe_avm_bases'),(avm_memcheck,'probe_avm_memcheck'),
            (avm_physmap,'probe_avm_physmap'),(avm_slide,'probe_avm_slide'),
-           (symbols['_early_random'],'probe_early_random'),
            (symbols['_SecureDTLookupEntry'],'probe_dt_lookup'),
            (symbols['_pe_arm_get_soc_base_phys'],'probe_soc_base'),
            (symbols['_ml_parse_cpu_topology'],'probe_cpu_topo'),
@@ -151,7 +162,12 @@ def main():
            (symbols['_machine_startup'],'probe_machine_startup'),
            (symbols['_panic'],'probe_panic'),
            (symbols['_panic_with_options'],'probe_panic_options'),
-           (symbols['_panic_trap_to_debugger'],'probe_panic_trap'))
+           (symbols['_panic_trap_to_debugger'],'probe_panic_trap'),
+           (symbols['_configure_timer_apple_regs'],'probe_timer_regs'),
+           (symbols['_wfe_timeout_configure'],'probe_wfe_timeout'),
+           (symbols['_wfe_timeout_init'],'probe_wfe_init'),
+           (symbols['_configure_misc_apple_boot_args'],'probe_misc_boot_args'),
+           (symbols['_configure_misc_apple_regs'],'probe_misc_regs'))
     for va,name in sites:patch(backed(m,va),branch(va,hooks[name]),name,va)
     patch(backed(m,bcm),struct.pack('<I',0xd503201f),'Suppress BCM2837-only MMIO write; no native timer activation',bcm)
     for index in range(16):

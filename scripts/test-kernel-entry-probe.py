@@ -60,7 +60,7 @@ def run(raw,report,video=True,start=None,fault=False,stub=None,preoccupy=None):
                 uc.mem_write(table+16,struct.pack('<Q',preoccupy))
         uc.hook_add(U.UC_HOOK_CODE,plant)
     begin=PA+(start if start is not None else m['entry'])-base
-    try:uc.emu_start(begin,0,count=2000000)
+    try:uc.emu_start(begin,0,count=12000000)
     except U.UcError as e:state['error']=str(e)
     state.update(trace=trace,bad_memory=bad,pc=hex(uc.reg_read(UC_ARM64_REG_PC)),boot_args_unchanged=bytes(uc.mem_read(ARGS,4096))==bytes(args))
     table=uc.reg_read(UC_ARM64_REG_X25) if not fault else 0
@@ -75,12 +75,12 @@ def run(raw,report,video=True,start=None,fault=False,stub=None,preoccupy=None):
         stub_state.update(reached=stub_state.get('reached_replay',False),after=snapshot(uc),
                           pc=hex(uc.reg_read(UC_ARM64_REG_PC)),bad_memory=list(bad))
     registers=snapshot(uc)
-    pixels={str(y):struct.unpack('<I',uc.mem_read(FB+y*ROW,4))[0] for y in (256,304,352,400,448,496,544,592,624,656,688,1072,1104,1136)}
+    pixels={str(y):struct.unpack('<I',uc.mem_read(FB+y*ROW,4))[0] for y in (256,288,320,352,384,416,448,480,512,544,576,608,640,1056,1088,1120,1152)}
     if fault:
         # Independent glyph sampling from the rendered pixels, not from font bytes.
         font=['11111001100110011111','00100110001000100111','11110001111110001111','11110001111100011111','10011001111100010001','11111000111100011111','11111000111110011111','11110001001001000100','11111001111110011111','11111001111100011111','11111001111110011001','11101001111010011110','11111000100010001111','11101001100110011110','11111000111110001111','11111000111110001000']
         lookup={bits:format(i,'X') for i,bits in enumerate(font)};decoded={}
-        for name,y in (('ESR_EL1',1136),('ELR_EL1',1168),('FAR_EL1',1200)):
+        for name,y in (('ESR_EL1',1152),('ELR_EL1',1184),('FAR_EL1',1216)):
             text=''
             for digit in range(16):
                 bits=''.join('1' if struct.unpack('<I',uc.mem_read(FB+(y+r*4)*ROW+digit*24*4+c*16,4))[0]==0xffffffff else '0' for r in range(5) for c in range(4))
@@ -127,7 +127,7 @@ def run_continuous(raw,report,model='aarch64',preoccupy=None):
         bad.append(dict(access=access,address=hex(addr),size=size,pc=hex(uc.reg_read(UC_ARM64_REG_PC))));return False
     uc.hook_add(U.UC_HOOK_CODE,code);uc.hook_add(U.UC_HOOK_MEM_INVALID,invalid)
     error=None
-    try:uc.emu_start(PA+m['entry']-base,0,count=2000000)
+    try:uc.emu_start(PA+m['entry']-base,0,count=12000000)
     except U.UcError as e:error=str(e)
     after_tables=None
     if st['tables_pa'] is not None:
@@ -145,7 +145,7 @@ def run_continuous(raw,report,model='aarch64',preoccupy=None):
             'tables_after_sha256':hashlib.sha256(after_tables).hexdigest() if after_tables else None,
             'tables_before_bytes':st['tables_before'],'tables_after_bytes':after_tables,
             'tables_slot2':hex(struct.unpack_from('<Q',after_tables,16)[0]) if after_tables else None,
-            'pixels':{str(y):hex(struct.unpack('<I',uc.mem_read(FB+y*ROW,4))[0]) for y in (256,304,352,400,448,496,544,592,624,656,688,1072,1104,1136)}}
+            'pixels':{str(y):hex(struct.unpack('<I',uc.mem_read(FB+y*ROW,4))[0]) for y in (256,288,320,352,384,416,448,480,512,544,576,608,640,1056,1088,1120,1152)}}
 
 
 def main():
@@ -161,16 +161,16 @@ def main():
     probed,regs1,pixels,tables1,_=run(candidate,report);check('Instrumented kernel reaches MMU enable instruction',probed.get('stop')=='before-sctlr' and not probed['bad_memory']);check('Live registers preserved',regs0==regs1)
     check('Bootstrap tables match minimal corrected kernel outside the added slot',tables0['masked_sha256']==tables1['masked_sha256'])
     check('Diagnostic framebuffer 1 GiB block installed in L1 slot 2',tables1['slot2']==hex(FB_DESCRIPTOR));check('Boot args untouched',probed['boot_args_unchanged'])
-    check('Entry blue band',pixels['256']==0xff0080ff);check('Tables yellow band',pixels['304']==0xffffff00);check('Pre-MMU magenta band',pixels['352']==0xffff00ff)
+    check('Entry blue band',pixels['256']==0xff0080ff);check('Tables yellow band',pixels['288']==0xffffff00);check('Pre-MMU magenta band',pixels['320']==0xffff00ff)
     cyan,_,cyanpixels,_,cyanstub=run(candidate,report,stub='probe_mmu_on')
     check('Post-SCTLR hook executes to its replay point',cyanstub.get('reached') and not cyanstub.get('error') and not cyanstub['bad_memory'])
     check('Geometry snapshot matches boot_args',cyanstub['scratch']==(FB,ROW))
-    check('Cyan post-MMU band',cyanpixels['400']==0xff00ffff)
+    check('Cyan post-MMU band',cyanpixels['352']==0xff00ffff)
     check('Post-SCTLR hook preserves live registers',cyanstub['before']==cyanstub['after'])
-    check('Post-SCTLR hook leaves earlier bands intact',(cyanpixels['256'],cyanpixels['352'])==(0xff0080ff,0xffff00ff))
+    check('Post-SCTLR hook leaves earlier bands intact',(cyanpixels['256'],cyanpixels['320'])==(0xff0080ff,0xffff00ff))
     white,_,whitepixels,_,whitestub=run(candidate,report,stub='probe_arm_init')
     check('arm_init hook executes to its replay point',whitestub.get('reached') and not whitestub.get('error') and not whitestub['bad_memory'])
-    check('White arm_init band',whitepixels['448']==0xffffffff)
+    check('White arm_init band',whitepixels['384']==0xffffffff)
     check('arm_init hook preserves live registers',whitestub['before']==whitestub['after'])
     probe_off=report['probe']['file_offset'];probe_va=int(report['probe']['va'],16)
     on_off=probe_off+int(report['probe']['symbols']['probe_mmu_on'],16)-probe_va
@@ -184,7 +184,7 @@ def main():
     check('Continuous run crosses the SCTLR write with AArch64 high-EL state',
           cont['error'] is None and cont['reached'] and not cont['bad_memory'])
     check('Continuous run draws cyan and white under real translation',
-          (cont['pixels']['400'],cont['pixels']['448'])==('0xff00ffff','0xffffffff'))
+          (cont['pixels']['352'],cont['pixels']['384'])==('0xff00ffff','0xffffffff'))
     check('Continuous run used the kernel own TCR/TTBR/MAIR/SCTLR values',
           (cont['tcr'],cont['ttbr0'],cont['ttbr1'],cont['mair'],cont['sctlr'])==
           ('0x22a51a251a','0x8c355e000','0x8c355f000','0xc08044f00bb44ff','0x3454593d'))
@@ -209,14 +209,14 @@ def main():
     occ2=run_continuous(candidate,report,'aarch64',preoccupy=sentinel)
     check('With a pre-occupied slot the continuous run still reaches arm_init and paints nothing',
           occ2['error'] is None and occ2['reached'] and not occ2['bad_memory']
-          and (occ2['pixels']['400'],occ2['pixels']['448'])==('0x0','0x0')
+          and (occ2['pixels']['352'],occ2['pixels']['384'])==('0x0','0x0')
           and occ2['tables_slot2']==hex(sentinel))
     null,_,nullpixels,nulltables,_=run(candidate,report,video=False);check('Missing framebuffer still reaches MMU',null.get('stop')=='before-sctlr' and not null['bad_memory']);check('Missing framebuffer writes no bands',all(v==0 for v in nullpixels.values()))
     check('Missing framebuffer still installs the diagnostic mapping only',nulltables['slot2']==hex(FB_DESCRIPTOR))
     novideo,_,novideopixels,_,novideostub=run(candidate,report,video=False,stub='probe_mmu_on')
     check('Post-MMU hook sees an empty snapshot without a framebuffer',novideostub.get('scratch')==(0,0))
     check('Post-MMU hook draws nothing without a snapshot',novideostub.get('reached') and not novideostub['bad_memory'] and all(v==0 for v in novideopixels.values()))
-    fault,_,faultpixels,_,_=run(candidate,report,start=B.macho(candidate)['symbols']['_LowExceptionVectorBase']+0x200,fault=True);check('Early vector enters fault logger',fault.get('stop')=='fault-stop' and not fault['bad_memory']);check('Fault red band',faultpixels['1104']==0xffff0000);check('ESR ELR FAR glyphs independently decode',fault['decoded_hex']==fault['expected_hex'])
+    fault,_,faultpixels,_,_=run(candidate,report,start=B.macho(candidate)['symbols']['_LowExceptionVectorBase']+0x200,fault=True);check('Early vector enters fault logger',fault.get('stop')=='fault-stop' and not fault['bad_memory']);check('Fault red band',faultpixels['1120']==0xffff0000);check('ESR ELR FAR glyphs independently decode',fault['decoded_hex']==fault['expected_hex'])
     result=dict(scope='Unicorn ARM64 instruction execution with sparse RAM/framebuffer model. An AArch64 high-EL model state (SCR_EL3.NS|RW, HCR_EL2.RW) lets the real cold path cross the SCTLR write and reach the arm_init hook; the default state stays as the negative control. No hardware cache/device model and no nuwa execution',unicorn_version=U.__version__,candidate_sha256=B.sha(candidate),checks=checks,baseline=baseline,minimal_corrected=corrected,instrumented=probed,post_sctlr_stub=cyanstub,arm_init_stub=whitestub,continuous={k:v for k,v in cont.items() if not k.endswith('_bytes')},negative_control={k:v for k,v in negative.items() if not k.endswith('_bytes')},pixels={k:hex(v) for k,v in pixels.items()},pixels_after_stubs=dict(post_sctlr={k:hex(v) for k,v in cyanpixels.items()},arm_init={k:hex(v) for k,v in whitepixels.items()},no_video={k:hex(v) for k,v in novideopixels.items()},null={k:hex(v) for k,v in nullpixels.items()}),fault_injection=fault,live_registers_equal=regs0==regs1,bootstrap_tables=tables1,framebuffer_descriptor=hex(FB_DESCRIPTOR))
     a.output.parent.mkdir(parents=True,exist_ok=True);a.output.write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8');print(json.dumps(dict(checks=len(checks),passed=True,candidate=report['candidate']['sha256'])))
 if __name__=='__main__':main()

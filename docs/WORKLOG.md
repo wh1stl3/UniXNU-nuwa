@@ -398,3 +398,5 @@
 2026-10-25 03:20 · 修正录像解析脚本的两处错：① tail -24 截掉了时间线开头（把渐进出现看成突然全出）；② 统计未限制在屏幕内，环境颜色污染计数。修正后（仅屏幕 x 范围）：屏幕自 t=1.75s 起可读，但录像文件时间戳 02:50:47 vs v14 启动 02:47:37/观察窗 02:50:37 结束 ⇒ 录的是开机三分钟后的菜单终态，不含启动过程，无法排序事件。终态仍确认无棕带。教训：分析输出必须落文件再看，禁止用 tail 截断关键结果 · 本里程碑提交 · out/trial-evidence/entry-probe-07/timeline-screen.txt（未入库）
 
 2026-10-25 03:30 · 用户更正：内核是手动按电源键从UEFI菜单触发的，录像含启动过程；我按文件时间戳推断"三分钟后终态"是错的。v16（清屏+密阶梯+去热点hex）本轮未完成：重排色带块时丢了MAP_FB/SNAP_VIDEO与BAND_SNAPSHOT调用，行号重排脚本又踩CRLF，已整体回退到已提交且复验的v15（57c5b1d8，42+9+2通过），仓内无半成品。v16配方已写入STATUS：① probe_entry用boot_args几何清0..1152行为黑 ② 三个PE_init_platform钩子改回普通色带 ③ 行距32、25槽位、补8个阶段钩子（timer_regs/wfe_timeout/wfe_init/misc_boot_args/misc_regs等），且必须以git里的上一版.S为模板改 · 本里程碑提交 · docs/STATUS.md
+
+2026-10-25 03:45 · v16（清屏+密阶梯）完成并打包为entry-probe-09：入口用boot_args几何把0-1152行清黑；两个PE_init_platform钩子去掉16位hex渲染改回普通色带；行距32、25槽位并新增configure_timer_apple_regs/wfe_timeout_configure/wfe_timeout_init/configure_misc_apple_boot_args/configure_misc_apple_regs五个阶段钩子（early_random因无空槽移除）。候选6e1ba192/镜像b981c50b/ADT ba6969aa，validate通过，42+9+2项全通过。未启动 · 本里程碑提交 · reports/kernel-entry-probe/2026-10-24-v16/、reports/xnu-first-entry/entry-probe-09.json

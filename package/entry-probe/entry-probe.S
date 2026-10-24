@@ -159,6 +159,30 @@
 .Lno_device\@:
 .endm
 
+.macro CLEAR_BAND_AREA
+    ldr         x9, [x0, #0x28]
+    cbz         x9, .Lclear_done\@
+    ldr         x10, [x0, #0x38]
+    cbz         x10, .Lclear_done\@
+    ldr         x11, [x0, #0x48]
+    mov         x12, #1152
+    cmp         x11, x12
+    csel        x12, x11, x12, lo
+.Lclear_row\@:
+    mov         x15, #0
+.Lclear_px\@:
+    add         x16, x9, x15
+    stp         xzr, xzr, [x16]
+    add         x15, x15, #16
+    cmp         x15, x10
+    b.lo        .Lclear_px\@
+    add         x9, x9, x10
+    subs        x12, x12, #1
+    cbnz        x12, .Lclear_row\@
+    dsb         sy
+.Lclear_done\@:
+.endm
+
 .text
 .balign 4096
 .global probe_vectors
@@ -173,10 +197,10 @@ probe_exception:
     adr         x15, probe_scratch
     ldr         x9, [x15]
     cbz         x9, exception_stop
-    BAND_ONCE 0, 1104, 0xffff0000
-    HEXROW_SNAP esr_el1, 1136
-    HEXROW_SNAP elr_el1, 1168
-    HEXROW_SNAP far_el1, 1200
+    BAND_ONCE 0, 1120, 0xffff0000
+    HEXROW_SNAP esr_el1, 1152
+    HEXROW_SNAP elr_el1, 1184
+    HEXROW_SNAP far_el1, 1216
     dsb         sy
 .global exception_stop
 exception_stop:
@@ -224,7 +248,7 @@ exception_stop:
     tst         x14, #7
     b.ne        .Lsnap_done\@
     ldr         x9, [x20, #0x48]
-    cmp         x9, #1232                         // must cover the FAR row at 1200
+    cmp         x9, #1248                         // must cover the FAR row at 1216
     b.lo        .Lsnap_done\@
     ldr         x9, [x20, #0x50]
     and         x9, x9, #255
@@ -236,16 +260,17 @@ exception_stop:
 .endm
 .global probe_entry
 probe_entry:
+        CLEAR_BAND_AREA
     BAND x0, 256, 0xff0080ff
     b original_first_cpu
 .global probe_tables
 probe_tables:
-    BAND x20, 304, 0xffffff00
+    BAND x20, 288, 0xffffff00
     .inst original_tables_word
     b original_tables_resume
 .global probe_mmu
 probe_mmu:
-    BAND x20, 352, 0xffff00ff
+    BAND x20, 320, 0xffff00ff
     MAP_FB
     SNAP_VIDEO
     .inst original_mmu_word
@@ -258,7 +283,7 @@ probe_mmu:
 .global probe_mmu_on
 probe_mmu_on:
     .inst original_mmu_on_word
-    BAND_ONCE 1, 400, 0xff00ffff
+    BAND_ONCE 1, 352, 0xff00ffff
 .global probe_mmu_on_replay
 probe_mmu_on_replay:
     b original_mmu_on_resume
@@ -267,7 +292,7 @@ probe_mmu_on_replay:
 // live and usable for instruction fetch.
 .global probe_arm_init
 probe_arm_init:
-    BAND_ONCE 2, 448, 0xffffffff
+    BAND_ONCE 2, 384, 0xffffffff
     // Mainline shim, not a measurement: the platform-expert path reads the per-CPU
     // base through TPIDR_EL1 before XNU has built cpu_data_t, and start.s clears
     // TPIDR_EL1 after enabling the MMU. Point it at a zeroed page: cpu_number at
@@ -288,56 +313,56 @@ probe_arm_init_replay:
 // pmap_bootstrap, plus the whole panic family.
 .global probe_cpu_base
 probe_cpu_base:
-    BAND_ONCE 3, 496, 0xff8000ff
+    BAND_ONCE 3, 416, 0xff8000ff
 .global probe_cpu_base_replay
 probe_cpu_base_replay:
     .inst original_cpu_base_word
     b original_cpu_base_resume
 .global probe_arm_vm
 probe_arm_vm:
-    BAND_ONCE 4, 544, 0xff804000
+    BAND_ONCE 4, 448, 0xff804000
 .global probe_arm_vm_replay
 probe_arm_vm_replay:
     .inst original_arm_vm_word
     b original_arm_vm_resume
 .global probe_pmap
 probe_pmap:
-    BAND_ONCE 5, 592, 0xff00ff80
+    BAND_ONCE 5, 480, 0xff00ff80
 .global probe_pmap_replay
 probe_pmap_replay:
     .inst original_pmap_word
     b original_pmap_resume
 .global probe_kernel_bootstrap
 probe_kernel_bootstrap:
-    BAND_ONCE 6, 624, 0xffff8040
+    BAND_ONCE 6, 512, 0xffff8040
 .global probe_kernel_bootstrap_replay
 probe_kernel_bootstrap_replay:
     .inst original_kernel_bootstrap_word
     b original_kernel_bootstrap_resume
 .global probe_avm_bases
 probe_avm_bases:
-    BAND_ONCE 7, 656, 0xff008080
+    BAND_ONCE 7, 544, 0xff008080
 .global probe_avm_bases_replay
 probe_avm_bases_replay:
     .inst original_avm_bases_word
     b original_avm_bases_resume
 .global probe_avm_memcheck
 probe_avm_memcheck:
-    BAND_ONCE 8, 688, 0xff808000
+    BAND_ONCE 8, 576, 0xff808000
 .global probe_avm_memcheck_replay
 probe_avm_memcheck_replay:
     .inst original_avm_memcheck_word
     b original_avm_memcheck_resume
 .global probe_avm_physmap
 probe_avm_physmap:
-    BAND_ONCE 9, 720, 0xff8080c0
+    BAND_ONCE 9, 608, 0xff8080c0
 .global probe_avm_physmap_replay
 probe_avm_physmap_replay:
     .inst original_avm_physmap_word
     b original_avm_physmap_resume
 .global probe_avm_slide
 probe_avm_slide:
-    BAND_ONCE 10, 752, 0xff808080
+    BAND_ONCE 10, 640, 0xff808080
 .global probe_avm_slide_replay
 probe_avm_slide_replay:
     .inst original_avm_slide_word
@@ -351,49 +376,84 @@ probe_early_random_replay:
     b original_early_random_resume
 .global probe_dt_lookup
 probe_dt_lookup:
-    COUNT16 12, 816
+    BAND_ONCE 14, 672, 0xff9400d3
 .global probe_dt_lookup_replay
 probe_dt_lookup_replay:
     .inst original_dt_lookup_word
     b original_dt_lookup_resume
 .global probe_soc_base
 probe_soc_base:
-    COUNT16 13, 848
+    BAND_ONCE 15, 704, 0xff00c0c0
 .global probe_soc_base_replay
 probe_soc_base_replay:
     .inst original_soc_base_word
     b original_soc_base_resume
+.global probe_timer_regs
+probe_timer_regs:
+       BAND_ONCE 16, 736, 0xffff80c0
+.global probe_timer_regs_replay
+probe_timer_regs_replay:
+       .inst original_timer_regs_word
+    b original_timer_regs_resume
+.global probe_wfe_timeout
+probe_wfe_timeout:
+       BAND_ONCE 17, 768, 0xff9400d3
+.global probe_wfe_timeout_replay
+probe_wfe_timeout_replay:
+       .inst original_wfe_timeout_word
+    b original_wfe_timeout_resume
+.global probe_wfe_init
+probe_wfe_init:
+       BAND_ONCE 18, 800, 0xff00c0c0
+.global probe_wfe_init_replay
+probe_wfe_init_replay:
+       .inst original_wfe_init_word
+    b original_wfe_init_resume
+.global probe_misc_boot_args
+probe_misc_boot_args:
+       BAND_ONCE 19, 832, 0xff80c000
+.global probe_misc_boot_args_replay
+probe_misc_boot_args_replay:
+       .inst original_misc_boot_args_word
+    b original_misc_boot_args_resume
+.global probe_misc_regs
+probe_misc_regs:
+       BAND_ONCE 20, 864, 0xffffc000
+.global probe_misc_regs_replay
+probe_misc_regs_replay:
+       .inst original_misc_regs_word
+    b original_misc_regs_resume
 .global probe_cpu_topo
 probe_cpu_topo:
-    BAND_ONCE 14, 880, 0xff80c000
+    BAND_ONCE 14, 896, 0xff80c000
 .global probe_cpu_topo_replay
 probe_cpu_topo_replay:
     .inst original_cpu_topo_word
     b original_cpu_topo_resume
 .global probe_cpu_bootstrap
 probe_cpu_bootstrap:
-    BAND_ONCE 15, 912, 0xffffc000
+    BAND_ONCE 15, 928, 0xffffc000
 .global probe_cpu_bootstrap_replay
 probe_cpu_bootstrap_replay:
     .inst original_cpu_bootstrap_word
     b original_cpu_bootstrap_resume
 .global probe_machine_startup
 probe_machine_startup:
-    BAND_ONCE 16, 944, 0xffc000ff
+    BAND_ONCE 16, 960, 0xffc000ff
 .global probe_machine_startup_replay
 probe_machine_startup_replay:
     .inst original_machine_startup_word
     b original_machine_startup_resume
 .global probe_panic
 probe_panic:
-    BAND_ONCE 17, 976, 0xffff1493
+    BAND_ONCE 17, 992, 0xffff1493
 .global probe_panic_replay
 probe_panic_replay:
     .inst original_panic_word
     b original_panic_resume
 .global probe_panic_options
 probe_panic_options:
-    BAND_ONCE 18, 1008, 0xffc000c0
+    BAND_ONCE 18, 1024, 0xffc000c0
 .global probe_panic_options_replay
 probe_panic_options_replay:
     .inst original_panic_options_word
@@ -405,7 +465,7 @@ probe_panic_trap:
     // message can be read off the screen, the only output channel we have.
     ldr         x23, [x0]
     rev         x23, x23
-    HEXROW_VAL 1072
+    HEXROW_VAL 1088
 .global probe_panic_trap_replay
 probe_panic_trap_replay:
     .inst original_panic_trap_word
@@ -466,7 +526,7 @@ probe_fault:
     ldr x9, [x20, #0x28]
     cbz x9, fault_stop
     ldr x10, [x20, #0x48]
-    cmp x10, #1232
+    cmp x10, #1248
     b.lo fault_stop
     ldr x10, [x20, #0x38]
     cmp x10, #1536
@@ -479,10 +539,10 @@ probe_fault:
     and x10, x10, #255
     cmp x10, #32
     b.ne fault_stop
-    BAND_ONCE20 22, 1104, 0xffff0000
-    HEXROW esr_el1, 1136
-    HEXROW elr_el1, 1168
-    HEXROW far_el1, 1200
+    BAND_ONCE20 22, 1120, 0xffff0000
+    HEXROW esr_el1, 1152
+    HEXROW elr_el1, 1184
+    HEXROW far_el1, 1216
     dsb sy
 .global fault_stop
 fault_stop:
