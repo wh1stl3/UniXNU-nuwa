@@ -449,3 +449,11 @@ D-029 实测补充（2026-10-24）：6b3e5bfd在保留认证策略的固件内�
 # D-030 · 用内核内标记确认入口，诊断隔离BCM2837 MMIO
 
 固定1aeebf13实际含0x40000040 Core Timers路由写入，因XNU_NATIVE_ARCH_TIMER=0保留；先以单条NOP诊断隔离，不提前启用native timer或以空驱动替代。新增单页RX入口/页表后/MMU前标记及物理早期异常显示；不改board/固件/认证/AMFI/_verified。16软件与原版对照、5实际ParseKernel源体用例通过，单次ab3c092b实机原图5716899a确认蓝黄品红且Android三SHA恢复闭环。该结果支持优先排除BCM依赖，不证明唯一根因、MMU开启或完整ABI；正式路线仍需真实架构定时器/ArmCpu提供者。证据见operations/2026-10-24-kernel-entry-probe.md。
+
+# D-034 · MMU后标记用诊断映射+探针页快照，不用boot_args物理地址
+
+（编号说明：D-033 由未合入的 codex/pr100-linux-8796 支线占用。）
+
+先量后改：软件页表 walk 证明 MMU 开启后 framebuffer `0xB8000000` 不可译，而 PC 恒等地址、`_arm_init` KVA、探针页 KVA 可译；`arm_init` 入口 x0 为 boot_args KVA、x20 为 PA。因此不采用"MMU 后继续读 x20 画屏"，改为：pre-MMU 的 magenta 钩子在 V=P L1 slot 2 **为空时**安装 1 GiB 恒等设备块（`0x6000008000040d`，MAIR idx 3 = Device-nGnRnE，PXN|UXN），并把 framebuffer base/stride 快照进探针页；两个 post-MMU 钩子只读探针页、无快照不画。全部位置无关（PC 相对 + adr），pre/post MMU 两相执行同一页。
+
+证据与边界：候选 db4aa172（24 补丁）通过 29 项软件执行（两钩子以真实页表+真实快照直接进入，断言回放点/无非法访存/像素/寄存器不变）、4 项映射 walk（装映射后 FB 变恒等可译）与 5 用例 ParseKernel 夹具；Unicorn 拒绝 `msr sctlr_el1`，故"开启 MMU"本身无软件执行证据，cyan/white 只在实机出现才算。槽被占用时不改映射也不画，启动路径不受影响。同时把 `kernel_entry_probe_inputs.py` 的硬编码 22 补丁/16 检查改为按钩子集合推导形状与检查数下限，v3/v4 证据均可验证、篡改摘要仍被拒。证据 `operations/2026-10-24-post-mmu-markers.md`。

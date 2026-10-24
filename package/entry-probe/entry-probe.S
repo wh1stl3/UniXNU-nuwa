@@ -41,11 +41,99 @@ probe_tables:
     BAND x20, 352, 0xffffff00
     .inst original_tables_word
     b original_tables_resume
+
+// Pre-MMU preparation for the post-MMU hooks. The bootstrap tables map only the
+// kernel's own physical range, so the framebuffer that is reachable while the
+// MMU is off is unmapped afterwards. Install one 1 GiB identity block for
+// 0x80000000-0xBFFFFFFF as Device-nGnRnE (MAIR index 3, the index start.s sets
+// from MAIR_DISABLE), never overwriting an existing descriptor, then snapshot
+// the geometry from boot_args into this page so the post-MMU hooks no longer
+// depend on the boot_args physical address.
+.macro MAP_FB
+    mrs         x13, ttbr0_el1
+    movz        x14, #0xf000
+    movk        x14, #0xffff, lsl #16
+    movk        x14, #0xffff, lsl #32
+    and         x13, x13, x14                    // V=P L1 table physical address
+    ldr         x15, [x13, #16]                  // L1 slot 2 covers 0x80000000
+    cbnz        x15, .Lmap_done\@                  // occupied: leave mappings alone
+    movz        x15, #0x040d                      // valid block, AF, AttrIndx 3
+    movk        x15, #0x8000, lsl #16             // 0x80000000
+    movk        x15, #0x0060, lsl #48             // PXN | UXN
+    str         x15, [x13, #16]
+    dsb         ish
+.Lmap_done\@:
+.endm
+.macro SNAP_VIDEO
+    cbz         x15, .Lsnap_done\@                  // no mapping, no snapshot
+    ldr         x13, [x20, #0x28]
+    cbz         x13, .Lsnap_done\@
+    ldr         x14, [x20, #0x38]
+    cmp         x14, #0x10, lsl #12
+    b.hi        .Lsnap_done\@
+    tst         x14, #7
+    b.ne        .Lsnap_done\@
+    ldr         x9, [x20, #0x48]
+    cmp         x9, #864                          // must cover the white band at 832
+    b.lo        .Lsnap_done\@
+    ldr         x9, [x20, #0x50]
+    and         x9, x9, #255
+    cmp         x9, #32
+    b.ne        .Lsnap_done\@
+    adr         x9, probe_scratch
+    stp         x13, x14, [x9]                    // framebuffer base, line stride
+.Lsnap_done\@:
+.endm
 .global probe_mmu
 probe_mmu:
     BAND x20, 448, 0xffff00ff
+    MAP_FB
+    SNAP_VIDEO
     .inst original_mmu_word
     b original_mmu_resume
+
+// After "msr sctlr_el1" the PC is still a physical address, kept valid by the
+// V=P mapping, and this page is reachable at the same offset by PC-relative
+// addressing. Cyan means the translation control write executed and the next
+// fetch was translated.
+.macro BAND_SNAPSHOT y, color
+    adr         x15, probe_scratch
+    ldr         x9, [x15]
+    cbz         x9, .Ldraw_done\@
+    ldr         x10, [x15, #8]
+    mov         x11, #\y
+    madd        x9, x10, x11, x9
+    lsl         x10, x10, #5
+    mov         w12, #(\color & 0xffff)
+    movk        w12, #((\color >> 16) & 0xffff), lsl #16
+1:
+    stp         w12, w12, [x9], #8
+    subs        x10, x10, #8
+    b.hi        1b
+    dsb         sy
+.Ldraw_done\@:
+.endm
+.global probe_mmu_on
+probe_mmu_on:
+    BAND_SNAPSHOT 736, 0xff00ffff
+.global probe_mmu_on_replay
+probe_mmu_on_replay:
+    .inst original_mmu_on_word
+    b original_mmu_on_resume
+
+// arm_init is entered at the KVA, so this hook also proves the TTBR1 mapping is
+// live and usable for instruction fetch.
+.global probe_arm_init
+probe_arm_init:
+    BAND_SNAPSHOT 832, 0xffffffff
+.global probe_arm_init_replay
+probe_arm_init_replay:
+    .inst original_arm_init_word
+    b original_arm_init_resume
+.balign 8
+.global probe_scratch
+probe_scratch:
+    .quad 0, 0
 
 // Early exception output: red band, then ESR/ELR/FAR in 16 hex digits each.
 // These hooks replace only the original physical LowExceptionVector self loops.

@@ -1,0 +1,61 @@
+{
+  "scope": "Host ASan/UBSan execution of pinned ParseKernel source body; not full EFI module or hardware execution",
+  "candidate_sha256": "db4aa1723c8c5c4f253452e6e74b44f9a1e421fecf9c68d80d7f0e04c1fa2b11",
+  "source_path": "D:\\Code\\UniXNU-integration\\drivers\\DarwinBoot\\DarwinBootPkg\\Driver\\DarwinBoot.c",
+  "source_body_sha256": "d671e0dda6323a2e88c74dbaf061fc99489ae7ce3bdf21118dca063fe6410e32",
+  "compile_command": [
+    "wsl",
+    "-d",
+    "Ubuntu-22.04",
+    "--",
+    "clang",
+    "-O1",
+    "-g",
+    "-fsanitize=address,undefined",
+    "/mnt/d/Code/UniXNU-nuwa/out/loader-audit-v4-r1/parse.c",
+    "-o",
+    "/mnt/d/Code/UniXNU-nuwa/out/loader-audit-v4-r1/parse"
+  ],
+  "cases": [
+    {
+      "name": "original",
+      "expected_accept": true,
+      "passed": true,
+      "exit_code": 0,
+      "stdout": "0 15 fffffff003dc8000 fffffff008489000 fffffff0073c5488\n",
+      "stderr": ""
+    },
+    {
+      "name": "candidate",
+      "expected_accept": true,
+      "passed": true,
+      "exit_code": 0,
+      "stdout": "0 16 fffffff003dc8000 fffffff00848a000 fffffff0073c5488\n",
+      "stderr": ""
+    },
+    {
+      "name": "overlapping-probe",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 2,
+      "stdout": "2 16 fffffff003dc8000 fffffff008489000 fffffff0073c5488\n",
+      "stderr": ""
+    },
+    {
+      "name": "command-overrun",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 139,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "probe-file-overrun",
+      "expected_accept": false,
+      "passed": true,
+      "exit_code": 2,
+      "stdout": "2 16 0 0 fffffff0073c5488\n",
+      "stderr": ""
+    }
+  ]
+}

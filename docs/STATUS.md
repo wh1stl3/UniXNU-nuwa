@@ -1,39 +1,35 @@
 # STATUS
 
-更新：2026-10-24 20:53（北京时间）。**nuwa实机已确认执行XNU入口、完成bootstrap页表生成，并到达开启MMU的指令前。iOS尚未启动。**
+更新：2026-10-24 23:55（北京时间），分支 `main`。**实机已证到开启 MMU 之前；本轮把内核内标记推进到 SCTLR 写入之后与 arm_init 入口，离线资格完成，未打包、未启动。** iOS 尚未启动。
 
-## 本轮结果
+## 本轮做了什么
 
-- 设备仓本轮基线cd5e987，原生内核CI40015845083/bf14e530加早期安全初始化预链接1aeebf13。固件仍用已验收CI40014018074/FD2d606985；固件仓codex/nuwa-sec-handoff-trace@a155c495未修改。
-- 定位实际XNU入口保留BCM2837专用0x40000040写入（XNU_NATIVE_ARCH_TIMER=0）。软件对照：原版在该地址失败，单条NOP后到达开启MMU的MSR前。这是支持首因的诊断证据，不是唯一根因或正式定时器驱动。
-- 新候选内核b1f532c14e3d9428c167fe9d541fdd5799e87445cd5aa37bcff1f2474565eda2，仅记录的93个原字节变化及追加单页RX探针；donor段保持。三个内核内阶段标记及早期异常ESR/ELR/FAR显示已实现，资格标志仍loadable=false/runtime_qualified=false。
-- 16项软件执行检查、5项实际ParseKernel源体ASan/UBSan用例、ADT21节点/31检查及整包FAT导出验收通过。软件执行止于MMU开启前，不证明硬件翻译、缓存、中断或iOS。
-- 包ab3c092b1ce5fa44475fbe40c3dc5b044963db8f0e664586178ff46ccf9ec149，70266880B，reports/xnu-first-entry/entry-probe-01.json；原固件/shim和USB-v3封装保持。
+候选 `db4aa1723c8c5c4f253452e6e74b44f9a1e421fecf9c68d80d7f0e04c1fa2b11`（58,339,328 B），在 `1aeebf13` 早期安全预链接上追加 24 处补丁：2 头部 + 5 钩子 + BCM 2837 专写 NOP + 16 早期向量。`loadable=false`/`runtime_qualified=false` 未改。
 
-## 实机证据与恢复
+- 新增 **cyan（y=736）**：钩在 `msr sctlr_el1, x0` 之后的 `isb`。出现即说明 SCTLR 写入执行、其后取指已翻译（V=P 恒等）。
+- 新增 **white（y=832）**：钩在 `_arm_init` 第一条指令。该段在 KVA 上取指，出现即说明 TTBR1 映射与取指可用、控制权已进入 C 入口。
+- 原有 blue(256)/yellow(352)/magenta(448)、red(544)+ESR/ELR/FAR(608/640/672) 保持。
 
-用户本包录像/必要时按键恢复已确认；新鲜preflight唯一nuwa/kalama、Android1/A槽/三SHA基线通过。即时通知后单次fastboot boot，180秒USB观察完成，无flash/erase/改槽。
+## 关键发现（决定实现方式）
 
-用户原图独立确认绿、蓝、黄、品红四色；入口首字14430E1E与候选patch一致：蓝行256为XNU入口，黄行352为页表生成后，品红行448在SCTLR_EL1开启MMU前。未见红色异常区。**品红是最远插桩位置，不是已定位故障PC；不证明MMU已开启或arm_init已执行。**
+1. MMU 后 **framebuffer 未映射**：软件页表 walk 显示 `0xB8000000` 不可译，而 PC 恒等地址、`_arm_init` KVA、探针页 KVA 均已映射。所以不能"照旧往屏幕写"。
+2. 因此 magenta 钩子（pre-MMU）在 V=P L1 **slot 2 为空时**装一条 1 GiB 恒等设备块（`0x6000008000040d`，AttrIndx 3 = Device-nGnRnE，PXN|UXN），并把 framebuffer 基址与行跨度快照进探针页；两个 post-MMU 钩子只读探针页，**不依赖 boot_args 物理地址**，无快照就不画。
+3. `arm_init` 入口 x0 是 boot_args 的 KVA、x20 是 PA（`KASAN` 关闭）；这也是选"快照进探针页"而不是继续用 x20 的原因。
 
-原图SHA5716899a991f424c9a2adb5e520e356a1cc147eb3dc191d740c64f09ebbd056a，约10MB，保存在忽略的out/trial-evidence/kernel-entry-probe-01/screen-01.jpg；元数据/判读存reports/kernel-entry-probe-trial/2026-10-24-01/screen-evidence.json。完整录像可后补，不阻断离线工作。
+## 离线证据
 
-**20:53:19 postcondition确认恢复Android完成1、槽_a，boot_a/vendor_boot_a/init_boot_a三SHA与本轮试前完全一致；无需继续按键。** 本轮su只读查询实际成功，旧“su不可用”记录已过期。用户报告电源键可当Enter，按下后倒计时停止并完成此次启动，已留原话；未捕获EFI输入码，不再沿用实体键不能触发的绝对否定。
+`reports/kernel-entry-probe/2026-10-24-v4/`：`software.json` **29 项全通过**（含两个新钩子在真实页表+真实快照下直接进入：到达回放点、无非法访存、像素正确、x0-x8/x18-x30 不变；表比对改为屏蔽 slot 2 后一致并单独断言两个内核的 slot2 值；无 framebuffer 时快照为 0 且不画）；`mapping.json` 显示装完映射后 `0xB8000000` 变为恒等可译（独立复核，不是读回常量）；`loader.json` 固定 `ParseKernel` 源体 5 用例通过。
 
-## 当前判断与下一步
+## 明确的界限
 
-旧SecurityLock已定位为Mu CapsuleRuntimeDxe的EBS软件锁审计，slot-retry-count是剩余次数；二者均不支持旧“Apple安全链失败/累计6次”的判断。见 [来源纠错](operations/2026-10-24-first-entry-provenance.md)。
+Unicorn 拒绝执行 `msr sctlr_el1`，所以**开启 MMU 这一步没有软件执行证据**；两个新钩子是带真实页表直接进入的合成执行。cyan/white 在真机是否出现才是 MMU/arm_init 的证据。未验证：arm_init 返回、arm_vm_init、kext start、iOS。那条 1 GiB 设备块是诊断用，slot 被占用时不改映射也不画。
 
-本轮首要排查范围是**开启MMU到arm_init/更早C初始化**，也保留更后阶段无日志的可能。追加软件页表walk显示PC恒等映射、arm_init KVA、栈、VBAR、boot_args KVA五处有条目，不能替代实机MMU验收。下一步先离线增加MMU开启后与C入口的独立标记/异常保存，再准备新候选；不自动重复本包，不复用旧录像确认。
+## 下一步
 
-R-012已批准的dram_size=0x240000000和owned_memory_size=0x40000000保持，board仍example=true；其余TODO与donor/native完整ABI尚未解决。Heap/HOB、认证/AMFI策略、板值、所有_verified不变。
+1. 打包（`build_xnu_boot_package.py --entry-probe` 指向本报告）+ 严格包校验，属离线可做。
+2. 启动前必须：新鲜 preflight（唯一 nuwa/kalama、Android 完成 1、boot/vendor_boot/init_boot 三 SHA、可恢复路径）、即时通知、用户对本包的录像确认。`ab3c092b` 的许可不可复用。
+3. 目标画面：若出现 cyan 而不出现 white，首个嫌疑落在 `ret` 到 arm_init 的 KVA 切换或 C 入口前；若两个都无，重点转向 MMU 开启本身的硬件/属性问题；若出现 white，下一阶段转 pmap/arm_vm_init。
 
-详细代码、SHA、软件与实机界限、恢复命令见 [本轮操作记录](operations/2026-10-24-kernel-entry-probe.md)；[主线交接](operations/2026-10-23-mainline-handoff.md)顶部有效，旧条目仅保留历史。
+最近实机事实仍是 2026-10-24T12:53:19Z（北京时间20:53:19）nuwa/kalama、Android 完成 1、槽_a、三 SHA 与试前一致；本轮未刷新设备状态、未操作手机。
 
-## 最新上游审阅
-
-上游main@bd127c0最新PR100是Linux内核构建支持；PR88是电脑端USB日志/屏幕工具。未找到二维码日志PR或实现，整树关键词只命中文档可选依赖。Linux目标默认iOS17，需另做Darwin22/8796适配；USB工具需nuwa设备端协议，不能即装即用。本轮仅fetch/diff，未merge、安装或操作手机，详见[审阅](operations/2026-10-24-upstream-debug-review.md)。
-
-## PR100评估结论
-
-有条件采用为隔离WSL构建路线，保留macOS CI。32项隔离检查及LLVM/IIG严格补丁上下文通过，Ubuntu22.04滚动源存在所需LLVM24包；但IIG-port只解析deployment-target、不选择Darwin22 RPC ABI，部分helper显式iOS17会覆盖外层iOS16，必须适配并完成新clang语义与完整8796构建验收。PREFIX不能隔离安装器的系统路径写入，当前未安装/合入/操作手机。详见[评估](operations/2026-10-24-pr100-assessment.md)。
+细节与复现命令见 [MMU后标记操作记录](operations/2026-10-24-post-mmu-markers.md)；PR100 Linux 构建支线保持在 `codex/pr100-linux-8796`（`b8872cb`），未合入本线。

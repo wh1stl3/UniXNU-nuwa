@@ -24,14 +24,17 @@ def validate(meta,kernel_sha):
     if not candidate.is_relative_to(ROOT/'out'):raise ValueError('Probe candidate path')
     raw=candidate.read_bytes()
     if sha(raw)!=kernel_sha or kernel_sha!=build['candidate']['sha256'] or kernel_sha!=software['candidate_sha256']:raise ValueError('Probe candidate/evidence digest differs')
-    if len(software['checks'])!=16 or any(x['passed'] is not True for x in software['checks']):raise ValueError('Probe software checks incomplete')
+    if len(software['checks'])<16 or any(x['passed'] is not True for x in software['checks']):raise ValueError('Probe software checks incomplete')
     if software['instrumented'].get('stop')!='before-sctlr' or software['instrumented']['bad_memory']:raise ValueError('Probe did not reach pre-MMU stop')
     if build['loadable'] is not False or build['runtime_qualified'] is not False:raise ValueError('Diagnostic qualification flags changed')
     spec=importlib.util.spec_from_file_location('entry_builder',ROOT/'scripts/build-kernel-entry-probe.py');builder=importlib.util.module_from_spec(spec);spec.loader.exec_module(builder)
     original=builder.INPUT.read_bytes()
     if sha(original)!=builder.EXPECTED or build['input_sha256']!=builder.EXPECTED:raise ValueError('Probe baseline changed')
     expected=bytearray(original)
-    if len(build['patches'])!=22:raise ValueError('Expected two header changes and twenty native instruction patches')
+    hooks={p['reason'] for p in build['patches'] if p['reason'].startswith('probe_')}
+    if not {'probe_entry','probe_tables','probe_mmu'}<=hooks:raise ValueError('Required entry/tables/MMU hooks missing')
+    # Two header edits, one branch per hooked site, the BCM NOP and sixteen early vectors.
+    if len(build['patches'])!=2+len(hooks)+1+16:raise ValueError('Patch set shape differs from the recorded hook set')
     covered=set()
     for patch in build['patches']:
         off=patch['file_offset'];before=bytes.fromhex(patch['before']);after=bytes.fromhex(patch['after']);new=set(range(off,off+len(after)))

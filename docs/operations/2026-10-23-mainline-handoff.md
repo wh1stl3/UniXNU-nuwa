@@ -187,3 +187,15 @@ python3 scripts/compare-prelink-candidates.py --old out/native-prelink-merged/an
 ## PR100完整适用性评估追加
 
 推荐隔离WSL支线，保留已验收macOS CI。32局部fixture和LLVM/IIG两份严格上下文通过；当前工具链未安装。关键阻塞为新IIG split RPC与Darwin22适配、helper显式iOS17及新clang类型语义/完整8796验收。原PREFIX仍写系统路径，建议独立环境+原生ext4。不把工具链迁移当MMU实机修复；无新设备动作。完整证据在operations/2026-10-24-pr100-assessment.md和reports/pr100-assessment/2026-10-24/。
+
+## 入口探针02：MMU后与arm_init标记（2026-10-24 23:55，main）
+
+全离线，无手机/USB/固件动作；最近真实设备状态仍是 2026-10-24T12:53:19Z（北京时间20:53:19）nuwa/kalama、Android 完成 1、槽_a、三 SHA 与试前一致，本轮未刷新。
+
+新候选 **db4aa1723c8c5c4f253452e6e74b44f9a1e421fecf9c68d80d7f0e04c1fa2b11**，58,339,328 B，24 补丁（v3 为 22）；`loadable=false`/`runtime_qualified=false` 未改，板值/认证/AMFI/`_verified` 未动。新增 cyan(y=736) 钩在 `msr sctlr_el1` 之后的 `isb`、white(y=832) 钩在 `_arm_init` 首指令；原有四色带与红/ESR/ELR/FAR 保持。
+
+实现前提是先量出来的一条硬事实：MMU 后 framebuffer `0xB8000000` 未映射。因此由 pre-MMU 的 magenta 钩子在 V=P L1 slot 2 为空时装 1 GiB 恒等设备块（`0x6000008000040d`）并把屏幕几何快照进探针页；两个 post-MMU 钩子只读探针页、不依赖 boot_args 物理地址，无快照不画；槽被占用则不改映射。
+
+证据 `reports/kernel-entry-probe/2026-10-24-v4/`：software.json 29 项（两钩子以真实页表+真实快照直接进入）、mapping.json（装映射后 FB 变恒等可译，独立复核）、loader.json（5 用例）。界限：Unicorn 拒绝执行 `msr sctlr_el1`，开启 MMU 本身无软件执行证据；cyan/white 只在实机出现才算。
+
+下一步：① 打包 `build_xnu_boot_package.py --entry-probe` 指向本报告并做严格包校验（离线可做）；② 启动前须新鲜 preflight、即时通知、用户对本包的录像/恢复确认，`ab3c092b` 许可不可复用；③ 结果判读：有 cyan 无 white → 查 `ret` 到 arm_init 的 KVA 切换；两者皆无 → 查 MMU 开启本身；有 white → 转 pmap/arm_vm_init。PR100 Linux 构建支线独立在 `codex/pr100-linux-8796`（`b8872cb`），未合入。证据操作记录 `operations/2026-10-24-post-mmu-markers.md`。

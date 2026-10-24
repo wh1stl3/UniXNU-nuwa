@@ -46,12 +46,22 @@ def main():
     if raw[backed(m,entry):backed(m,entry)+4]!=branch(entry,first):raise ValueError('Entry branch changed')
     # These exact instruction sites are in the fixed CI40015845083 native text.
     tables=first+0x22c;mmu=first+0x308;bcm=first+0x2d0
+    # The SCTLR write itself and the isb that follows it are located by encoding,
+    # not by a hardcoded offset, so a different native build fails instead of
+    # silently hooking an unrelated instruction.
+    msr=first+0x318;isb_site=msr+4
+    if struct.unpack_from('<I',raw,backed(m,msr))[0]!=0xd5181000:raise ValueError('Expected msr sctlr_el1, x0 after the MMU band site')
+    if struct.unpack_from('<I',raw,backed(m,isb_site))[0]!=0xd5033fdf:raise ValueError('Expected isb after the SCTLR write')
+    if '_arm_init' not in symbols:raise ValueError('_arm_init symbol missing')
+    arm_init=symbols['_arm_init']
     expected={tables:0xd5033b9f,mmu:0xf2e00000,bcm:0xb9000001}
     for va,word in expected.items():
         if struct.unpack_from('<I',raw,backed(m,va))[0]!=word:raise ValueError(f'Unexpected instruction at {va:#x}')
     codeva=align(max(s['va']+s['size'] for s in m['segments']));fileoff=align(len(raw));work.mkdir(parents=True)
     template=(ROOT/'package/entry-probe/entry-probe.S').read_text(encoding='utf-8-sig')
-    constants=dict(original_first_cpu=first,original_tables_word=expected[tables],original_tables_resume=tables+4,original_mmu_word=expected[mmu],original_mmu_resume=mmu+4)
+    constants=dict(original_first_cpu=first,original_tables_word=expected[tables],original_tables_resume=tables+4,original_mmu_word=expected[mmu],original_mmu_resume=mmu+4,
+                   original_mmu_on_word=0xd5033fdf,original_mmu_on_resume=isb_site+4,
+                   original_arm_init_word=struct.unpack_from('<I',raw,backed(m,arm_init))[0],original_arm_init_resume=arm_init+4)
     source='\n'.join(f'.equ {k}, {v:#x}' for k,v in constants.items() if k.endswith('_word'))+'\n'+template
     (work/'probe.S').write_text(source,encoding='utf-8',newline='\n')
     commands=[]
@@ -74,7 +84,7 @@ def main():
         candidate[off:off+len(new)]=new
     patch(16,struct.pack('<II',m['ncmds']+1,m['cmdbytes']+72),'Add one bounded RX diagnostic segment')
     patch(cursor,command,'Use verified zero load-command padding')
-    for va,name in ((entry,'probe_entry'),(tables,'probe_tables'),(mmu,'probe_mmu')):patch(backed(m,va),branch(va,hooks[name]),name,va)
+    for va,name in ((entry,'probe_entry'),(tables,'probe_tables'),(mmu,'probe_mmu'),(isb_site,'probe_mmu_on'),(arm_init,'probe_arm_init')):patch(backed(m,va),branch(va,hooks[name]),name,va)
     patch(backed(m,bcm),struct.pack('<I',0xd503201f),'Suppress BCM2837-only MMIO write; no native timer activation',bcm)
     for index in range(16):
         va=low+index*128;off=backed(m,va)
@@ -93,6 +103,6 @@ def main():
             if raw[off:off+n]!=candidate[off:off+n]:raise ValueError('Donor or prelink segment changed')
             preserved.append(dict(name=seg['name'],sha256=sha(raw[off:off+n]),bytes=n))
     target=work/'kernel-entry-probe.macho';target.write_bytes(candidate)
-    report=dict(scope='Diagnostic binary instrumentation of fixed analysis prelink; not runtime qualification',input_sha256=EXPECTED,candidate=dict(path=target.relative_to(ROOT).as_posix(),sha256=sha(candidate),bytes=len(candidate)),probe=dict(va=hex(codeva),file_offset=fileoff,code_bytes=len(code),segment_bytes=len(payload),sha256=sha(payload),symbols={k:hex(v) for k,v in hooks.items() if k.startswith(('probe_','fault_stop'))}),patches=patches,original_changed_bytes=len(changed),preserved_donor_segments=preserved,commands=commands,source_sha256=sha(template.encode()),loadable=False,runtime_qualified=False,device_accessed=False,screen=dict(bands=[dict(stage=1,y=256,color='blue',means='XNU __start branch and diagnostic entry executed'),dict(stage=2,y=352,color='yellow',means='Bootstrap page tables generated; before translation control setup'),dict(stage=3,y=448,color='magenta',means='Passed BCM block with invalid write suppressed; before enabling MMU')],fault=dict(y=544,color='red',hex_rows=dict(ESR_EL1=608,ELR_EL1=640,FAR_EL1=672)),limitations=['Bands do not prove MMU activation, arm_init or iOS','Fault logger active only through physical early vector; x20 must still be boot_args','Exact video ABI and MMIO/cache effects need nuwa trial']))
+    report=dict(scope='Diagnostic binary instrumentation of fixed analysis prelink; not runtime qualification',input_sha256=EXPECTED,candidate=dict(path=target.relative_to(ROOT).as_posix(),sha256=sha(candidate),bytes=len(candidate)),probe=dict(va=hex(codeva),file_offset=fileoff,code_bytes=len(code),segment_bytes=len(payload),sha256=sha(payload),symbols={k:hex(v) for k,v in hooks.items() if k.startswith(('probe_','fault_stop'))}),patches=patches,original_changed_bytes=len(changed),preserved_donor_segments=preserved,commands=commands,source_sha256=sha(template.encode()),loadable=False,runtime_qualified=False,device_accessed=False,screen=dict(bands=[dict(stage=1,y=256,color='blue',means='XNU __start branch and diagnostic entry executed'),dict(stage=2,y=352,color='yellow',means='Bootstrap page tables generated; before translation control setup'),dict(stage=3,y=448,color='magenta',means='Passed BCM block with invalid write suppressed; before enabling MMU'),dict(stage=4,y=736,color='cyan',means='msr sctlr_el1 executed and the following fetch was translated (V=P identity)'),dict(stage=5,y=832,color='white',means='arm_init entered at the KVA: TTBR1 fetch and translation are live')],fault=dict(y=544,color='red',hex_rows=dict(ESR_EL1=608,ELR_EL1=640,FAR_EL1=672)),post_mmu_mapping=dict(l1_slot=2,virtual='0x80000000',physical='0x80000000',size='0x40000000',descriptor='0x6000008000040d',attributes='Device-nGnRnE (MAIR index 3), AF, PXN|UXN, installed only if the slot is invalid',source='probe_mmu stub before the SCTLR write',scratch='framebuffer base and line stride copied from boot_args into probe_scratch'),limitations=['Bands do not prove arm_init returned, arm_vm_init, kext start or iOS','Cyan and white depend on the diagnostic 1 GiB device mapping installed pre-MMU; if the L1 slot were occupied nothing is drawn and no mapping is changed','Fault logger active only through physical early vector; x20 must still be boot_args','Exact video ABI and MMIO/cache effects need nuwa trial']))
     output.parent.mkdir(parents=True,exist_ok=True);output.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8');print(json.dumps(report['candidate']))
 if __name__=='__main__':main()

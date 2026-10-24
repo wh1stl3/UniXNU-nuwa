@@ -357,3 +357,6 @@
 2026-10-24 20:53 · 入口探针01实机里程碑：固定1aeebf13排除BCM2837专用写入并加入内核色带/早期异常；16软件、5解析、31ADT和整包readback通过。单次ab3c092b实机原图5716899a确认蓝黄品红，XNU执行到开启MMU前；Android20:53:19/A槽/三SHA恢复闭环，未证明MMU后或iOS。 · 本里程碑提交 · reports/kernel-entry-probe/2026-10-24/、reports/kernel-entry-probe-trial/2026-10-24-01/、operations/2026-10-24-kernel-entry-probe.md
 2026-10-24 · 上游日志审阅：固定main@bd127c0，API及整树检索未找到二维码日志；PR88为主机USB工具，PR100为默认iOS17的Linux构建。先diff，未merge/安装/操作设备 · 本里程碑提交 · reports/upstream-debug-review/2026-10-24/review.json、operations/2026-10-24-upstream-debug-review.md
 2026-10-24 · PR100评估：32隔离样例、LLVM/IIG固定源严格上下文通过；确认IIG deployment-target未选择生成ABI及显式iOS17覆盖风险，Ubuntu22.04滚动源有LLVM24。建议隔离支线适配，保留macOS CI，未安装/构建内核/操作手机 · 本里程碑提交 · reports/pr100-assessment/2026-10-24/、operations/2026-10-24-pr100-assessment.md
+
+
+2026-10-24 23:55 · 入口探针02（main）：新增MMU开启后(cyan y736)与arm_init入口(white y832)两个内核内标记；先量出MMU后framebuffer未映射，改由pre-MMU在V=P L1 slot2装1GiB恒等设备块并把屏幕几何快照进探针页，post-MMU钩子不再依赖boot_args物理地址。候选db4aa172/58,339,328B/24补丁；29项软件执行、4项映射walk、5用例ParseKernel夹具通过；Unicorn无法跨过SCTLR写入，故两个钩子为带真实页表的合成进入，不证明实机MMU。未打包未启动 · 本里程碑提交 · reports/kernel-entry-probe/2026-10-24-v4/{build,software,mapping,loader}.json、operations/2026-10-24-post-mmu-markers.md
