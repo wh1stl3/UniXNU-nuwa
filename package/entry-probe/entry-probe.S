@@ -135,10 +135,10 @@ probe_exception:
     adr         x15, probe_scratch
     ldr         x9, [x15]
     cbz         x9, exception_stop
-    BAND_SNAPSHOT 688, 0xffff0000
-    HEXROW_SNAP esr_el1, 736
-    HEXROW_SNAP elr_el1, 784
-    HEXROW_SNAP far_el1, 832
+    BAND_SNAPSHOT 1104, 0xffff0000
+    HEXROW_SNAP esr_el1, 1136
+    HEXROW_SNAP elr_el1, 1168
+    HEXROW_SNAP far_el1, 1200
     dsb         sy
 .global exception_stop
 exception_stop:
@@ -186,7 +186,7 @@ exception_stop:
     tst         x14, #7
     b.ne        .Lsnap_done\@
     ldr         x9, [x20, #0x48]
-    cmp         x9, #1376                         // must cover the FAR row at 1344
+    cmp         x9, #1232                         // must cover the FAR row at 1200
     b.lo        .Lsnap_done\@
     ldr         x9, [x20, #0x50]
     and         x9, x9, #255
@@ -245,72 +245,132 @@ probe_arm_init_replay:
 // C-entry markers past arm_init. They share the snapshot so they keep working
 // after MMU is on, and they are the only signal available before pmap rebuilds
 // the tables.
+// Dense markers: one trial answers many questions at once. Every entry below is a
+// function entry (or a pinned offset inside arm_vm_init) on the path from arm_init to
+// pmap_bootstrap, plus the whole panic family.
 .global probe_cpu_base
 probe_cpu_base:
     BAND_SNAPSHOT 496, 0xff8000ff
 .global probe_cpu_base_replay
 probe_cpu_base_replay:
-    .inst original_cpu_base_word
+       .inst original_cpu_base_word
     b original_cpu_base_resume
 .global probe_arm_vm
 probe_arm_vm:
     BAND_SNAPSHOT 544, 0xff804000
 .global probe_arm_vm_replay
 probe_arm_vm_replay:
-    .inst original_arm_vm_word
+       .inst original_arm_vm_word
     b original_arm_vm_resume
 .global probe_pmap
 probe_pmap:
     BAND_SNAPSHOT 592, 0xff00ff80
 .global probe_pmap_replay
 probe_pmap_replay:
-    .inst original_pmap_word
+       .inst original_pmap_word
     b original_pmap_resume
 .global probe_kernel_bootstrap
 probe_kernel_bootstrap:
-    BAND_SNAPSHOT 640, 0xffff8040
+    BAND_SNAPSHOT 624, 0xffff8040
 .global probe_kernel_bootstrap_replay
 probe_kernel_bootstrap_replay:
-    .inst original_kernel_bootstrap_word
+       .inst original_kernel_bootstrap_word
     b original_kernel_bootstrap_resume
-.balign 4
-// Inside arm_vm_init, at fixed offsets whose instruction words are pinned by the
-// builder. They localise where execution stops before pmap_bootstrap is called.
 .global probe_avm_bases
 probe_avm_bases:
-    BAND_SNAPSHOT 880, 0xff008080
+    BAND_SNAPSHOT 656, 0xff008080
 .global probe_avm_bases_replay
 probe_avm_bases_replay:
-    .inst original_avm_bases_word
+       .inst original_avm_bases_word
     b original_avm_bases_resume
 .global probe_avm_memcheck
 probe_avm_memcheck:
-    BAND_SNAPSHOT 928, 0xff808000
+    BAND_SNAPSHOT 688, 0xff808000
 .global probe_avm_memcheck_replay
 probe_avm_memcheck_replay:
-    .inst original_avm_memcheck_word
+       .inst original_avm_memcheck_word
     b original_avm_memcheck_resume
-// The panic path. In the model _current_percpu_base was reached from
-// panic_trap_to_debugger+0x54 and on hardware that band never appeared, so the
-// next round observes the panic path itself instead of assuming it.
+.global probe_avm_physmap
+probe_avm_physmap:
+    BAND_SNAPSHOT 720, 0xff8080c0
+.global probe_avm_physmap_replay
+probe_avm_physmap_replay:
+       .inst original_avm_physmap_word
+    b original_avm_physmap_resume
+.global probe_avm_slide
+probe_avm_slide:
+    BAND_SNAPSHOT 752, 0xff808080
+.global probe_avm_slide_replay
+probe_avm_slide_replay:
+       .inst original_avm_slide_word
+    b original_avm_slide_resume
+.global probe_early_random
+probe_early_random:
+    BAND_SNAPSHOT 784, 0xffff80c0
+.global probe_early_random_replay
+probe_early_random_replay:
+       .inst original_early_random_word
+    b original_early_random_resume
+.global probe_dt_lookup
+probe_dt_lookup:
+    BAND_SNAPSHOT 816, 0xff9400d3
+.global probe_dt_lookup_replay
+probe_dt_lookup_replay:
+       .inst original_dt_lookup_word
+    b original_dt_lookup_resume
+.global probe_soc_base
+probe_soc_base:
+    BAND_SNAPSHOT 848, 0xff00c0c0
+.global probe_soc_base_replay
+probe_soc_base_replay:
+       .inst original_soc_base_word
+    b original_soc_base_resume
+.global probe_cpu_topo
+probe_cpu_topo:
+    BAND_SNAPSHOT 880, 0xff80c000
+.global probe_cpu_topo_replay
+probe_cpu_topo_replay:
+       .inst original_cpu_topo_word
+    b original_cpu_topo_resume
+.global probe_cpu_bootstrap
+probe_cpu_bootstrap:
+    BAND_SNAPSHOT 912, 0xffffc000
+.global probe_cpu_bootstrap_replay
+probe_cpu_bootstrap_replay:
+       .inst original_cpu_bootstrap_word
+    b original_cpu_bootstrap_resume
+.global probe_machine_startup
+probe_machine_startup:
+    BAND_SNAPSHOT 944, 0xffc000ff
+.global probe_machine_startup_replay
+probe_machine_startup_replay:
+       .inst original_machine_startup_word
+    b original_machine_startup_resume
 .global probe_panic
 probe_panic:
     BAND_SNAPSHOT 976, 0xffff1493
 .global probe_panic_replay
 probe_panic_replay:
-    .inst original_panic_word
+       .inst original_panic_word
     b original_panic_resume
+.global probe_panic_options
+probe_panic_options:
+    BAND_SNAPSHOT 1008, 0xffc000c0
+.global probe_panic_options_replay
+probe_panic_options_replay:
+       .inst original_panic_options_word
+    b original_panic_options_resume
 .global probe_panic_trap
 probe_panic_trap:
-    BAND_SNAPSHOT 1024, 0xff9400d3
-    // x0 is the panic format string. Render its first eight bytes as hex so the
-    // message can be read off the screen: the only output channel we have.
+       BAND_SNAPSHOT 1040, 0xff9400ff
+    // x0 is the panic format string: render its first eight bytes as hex so the
+    // message can be read off the screen, the only output channel we have.
     ldr         x23, [x0]
     rev         x23, x23
     HEXROW_VAL 1072
 .global probe_panic_trap_replay
 probe_panic_trap_replay:
-    .inst original_panic_trap_word
+       .inst original_panic_trap_word
     b original_panic_trap_resume
 .balign 8
 .global probe_scratch
@@ -368,7 +428,7 @@ probe_fault:
     ldr x9, [x20, #0x28]
     cbz x9, fault_stop
     ldr x10, [x20, #0x48]
-    cmp x10, #1104
+    cmp x10, #1232
     b.lo fault_stop
     ldr x10, [x20, #0x38]
     cmp x10, #1536
@@ -381,10 +441,10 @@ probe_fault:
     and x10, x10, #255
     cmp x10, #32
     b.ne fault_stop
-    BAND x20, 688, 0xffff0000
-    HEXROW esr_el1, 736
-    HEXROW elr_el1, 784
-    HEXROW far_el1, 832
+    BAND x20, 1104, 0xffff0000
+    HEXROW esr_el1, 1136
+    HEXROW elr_el1, 1168
+    HEXROW far_el1, 1200
     dsb sy
 .global fault_stop
 fault_stop:

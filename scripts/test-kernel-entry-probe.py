@@ -75,12 +75,12 @@ def run(raw,report,video=True,start=None,fault=False,stub=None,preoccupy=None):
         stub_state.update(reached=stub_state.get('reached_replay',False),after=snapshot(uc),
                           pc=hex(uc.reg_read(UC_ARM64_REG_PC)),bad_memory=list(bad))
     registers=snapshot(uc)
-    pixels={str(y):struct.unpack('<I',uc.mem_read(FB+y*ROW,4))[0] for y in (256,304,352,400,448,688)}
+    pixels={str(y):struct.unpack('<I',uc.mem_read(FB+y*ROW,4))[0] for y in (256,304,352,400,448,496,544,592,624,656,688,1072,1104,1136)}
     if fault:
         # Independent glyph sampling from the rendered pixels, not from font bytes.
         font=['11111001100110011111','00100110001000100111','11110001111110001111','11110001111100011111','10011001111100010001','11111000111100011111','11111000111110011111','11110001001001000100','11111001111110011111','11111001111100011111','11111001111110011001','11101001111010011110','11111000100010001111','11101001100110011110','11111000111110001111','11111000111110001000']
         lookup={bits:format(i,'X') for i,bits in enumerate(font)};decoded={}
-        for name,y in (('ESR_EL1',736),('ELR_EL1',784),('FAR_EL1',832)):
+        for name,y in (('ESR_EL1',1136),('ELR_EL1',1168),('FAR_EL1',1200)):
             text=''
             for digit in range(16):
                 bits=''.join('1' if struct.unpack('<I',uc.mem_read(FB+(y+r*4)*ROW+digit*24*4+c*16,4))[0]==0xffffffff else '0' for r in range(5) for c in range(4))
@@ -145,7 +145,7 @@ def run_continuous(raw,report,model='aarch64',preoccupy=None):
             'tables_after_sha256':hashlib.sha256(after_tables).hexdigest() if after_tables else None,
             'tables_before_bytes':st['tables_before'],'tables_after_bytes':after_tables,
             'tables_slot2':hex(struct.unpack_from('<Q',after_tables,16)[0]) if after_tables else None,
-            'pixels':{str(y):hex(struct.unpack('<I',uc.mem_read(FB+y*ROW,4))[0]) for y in (256,304,352,400,448,688)}}
+            'pixels':{str(y):hex(struct.unpack('<I',uc.mem_read(FB+y*ROW,4))[0]) for y in (256,304,352,400,448,496,544,592,624,656,688,1072,1104,1136)}}
 
 
 def main():
@@ -216,7 +216,7 @@ def main():
     novideo,_,novideopixels,_,novideostub=run(candidate,report,video=False,stub='probe_mmu_on')
     check('Post-MMU hook sees an empty snapshot without a framebuffer',novideostub.get('scratch')==(0,0))
     check('Post-MMU hook draws nothing without a snapshot',novideostub.get('reached') and not novideostub['bad_memory'] and all(v==0 for v in novideopixels.values()))
-    fault,_,faultpixels,_,_=run(candidate,report,start=B.macho(candidate)['symbols']['_LowExceptionVectorBase']+0x200,fault=True);check('Early vector enters fault logger',fault.get('stop')=='fault-stop' and not fault['bad_memory']);check('Fault red band',faultpixels['688']==0xffff0000);check('ESR ELR FAR glyphs independently decode',fault['decoded_hex']==fault['expected_hex'])
+    fault,_,faultpixels,_,_=run(candidate,report,start=B.macho(candidate)['symbols']['_LowExceptionVectorBase']+0x200,fault=True);check('Early vector enters fault logger',fault.get('stop')=='fault-stop' and not fault['bad_memory']);check('Fault red band',faultpixels['1104']==0xffff0000);check('ESR ELR FAR glyphs independently decode',fault['decoded_hex']==fault['expected_hex'])
     result=dict(scope='Unicorn ARM64 instruction execution with sparse RAM/framebuffer model. An AArch64 high-EL model state (SCR_EL3.NS|RW, HCR_EL2.RW) lets the real cold path cross the SCTLR write and reach the arm_init hook; the default state stays as the negative control. No hardware cache/device model and no nuwa execution',unicorn_version=U.__version__,candidate_sha256=B.sha(candidate),checks=checks,baseline=baseline,minimal_corrected=corrected,instrumented=probed,post_sctlr_stub=cyanstub,arm_init_stub=whitestub,continuous={k:v for k,v in cont.items() if not k.endswith('_bytes')},negative_control={k:v for k,v in negative.items() if not k.endswith('_bytes')},pixels={k:hex(v) for k,v in pixels.items()},pixels_after_stubs=dict(post_sctlr={k:hex(v) for k,v in cyanpixels.items()},arm_init={k:hex(v) for k,v in whitepixels.items()},no_video={k:hex(v) for k,v in novideopixels.items()},null={k:hex(v) for k,v in nullpixels.items()}),fault_injection=fault,live_registers_equal=regs0==regs1,bootstrap_tables=tables1,framebuffer_descriptor=hex(FB_DESCRIPTOR))
     a.output.parent.mkdir(parents=True,exist_ok=True);a.output.write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8');print(json.dumps(dict(checks=len(checks),passed=True,candidate=report['candidate']['sha256'])))
 if __name__=='__main__':main()

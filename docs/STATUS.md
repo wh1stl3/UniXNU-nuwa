@@ -84,23 +84,30 @@ v9 候选 **`b5db0f1e5793a2557efa99af735a59ca1c923ed1ae9e461f712a5a79163ac348`**
 
 **下一轮**：在 `arm_vm_init` 内部再插 2–3 个点（它开头就是内存映射/DT 解析，`SecureDTGetProperty(memory_map,"TrustCache"/"AuxKC")` 附近），把断点从"函数入口"推进到具体语句；同时保留红带自报。模型侧需先绕过 `msr TPIDRRO_EL0` 才能继续预演。
 
-## 当前状态：entry-probe-05 已闭环（内核在 arm_vm_init 里 panic）；v12 加入 panic 文本抓取
+## 当前状态：v13 密集插桩完成（可见区 27 个观测点），待打包
 
-**entry-probe-05（v10/v11 内核 `f0ae0d40`）单次实机已闭环**：preflight 18:13:29Z → 恢复 18:18:54Z Android 完成 1 → postcondition 18:18:56Z，**三分区 SHA 与试前完全一致**。原图 `out/trial-evidence/entry-probe-05/screen-01.jpg`（`f18d15b6…`），判读 `reports/xnu-entry-probe-trial/2026-10-25-04/screen-evidence.json`。
+**上一轮 entry-probe-05（内核 `f0ae0d40`）已闭环**：18:13:29Z preflight → 18:18:54Z 恢复 Android 完成 1 → 18:18:56Z postcondition，三分区 SHA 与试前完全一致。读数（行号取自 `.S`，七点标定）：蓝256、黄304、品红352、青400、白448、**紫496**、棕544、**青灰880**、**橄榄928**、**紫罗兰1024**。
 
-**读到的色带**（行号取自 `.S`，用七点标定 photo_y = 228 + 0.521×(row−256) 换算）：蓝256、黄304、品红352、青400、白448、**紫496**、棕544、**青灰880**、**橄榄928**、**紫罗兰1024**。
+- 紫496 出现（上一轮没有）→ per-CPU 垫片/路径差异确实影响结果；
+- 880/928 出现 → `arm_vm_init` 开头读到内存基址并到达内存配置判断；
+- **1024=`_panic_trap_to_debugger` 出现 → 内核 panic 了**，位置在 `arm_vm_init` 内、`pmap_bootstrap` 之前；976=`_panic` 未现 → 走的不是 `panic()` 包装；
+- 592/640/688/736/784/832 整段真空 = **真的没走到**（logo 是内核前画的底层，我们的带画在它上面；固件只重画 1150 行以下的菜单）。
 
-**结论**：
+**v13（`f557149d`，41 补丁）按"一次做密"重做插桩**：可见区 592–1200 全部占满，32 行行距，**一次试验 27 个观测点**：
 
-- 紫(496)=`_current_percpu_base` **这次出现了**（上一轮没有）→ per-CPU 垫片/路径差异确实影响结果；
-- 880/928 出现 → `arm_vm_init` 开头读到了 boot_args 内存基址并到达内存配置判断；
-- **1024=`_panic_trap_to_debugger` 出现 → 内核 panic 了**，位置在 `arm_vm_init` 内、`pmap_bootstrap` 之前；
-- 976=`_panic` 未出现 → 这次 panic 走的不是 `panic()` 包装，而是别的包装（源码注释：panic/panic_with_options 等都汇入 `panic_trap_to_debugger`）；
-- 592/640/688/736/784/832 **全部为空** = 真的没走到（不是被盖：固件 logo 是内核之前画的底层，我们的带子画在它上面；固件只在 1150 行以下重画菜单）。
+| 行 | 标记 | 行 | 标记 |
+| --- | --- | --- | --- |
+| 592 | `_pmap_bootstrap` | 848 | `pe_arm_get_soc_base_phys` |
+| 624 | `_kernel_bootstrap` | 880 | `ml_parse_cpu_topology` |
+| 656 | `arm_vm_init+0x54` | 912 | `_cpu_bootstrap` |
+| 688 | `arm_vm_init+0xa4` | 944 | `_machine_startup` |
+| 720 | `arm_vm_init+0x108` | 976 | `panic` |
+| 752 | `arm_vm_init+0x130` | 1008 | `panic_with_options` |
+| 784 | `early_random` | 1040 | `panic_trap_to_debugger` |
+| 816 | `SecureDTLookupEntry` | 1072 | panic 格式串前 8 字节（十六进制） |
+| | | 1104/1136/1168/1200 | 我们的异常自报：红带 + ESR/ELR/FAR |
 
-**v12（`dce014ea`，32 补丁）新增**：在 `panic_trap_to_debugger` 钩子里读 x0（panic 格式串指针），把**前 8 个字节按十六进制画在 1072 行**——这是我们唯一的输出通道，能直接读出是 "assertion f…" 还是 "Unsuppor…" 还是 "BOOTSTRAP…"。行号其余部分保持与前几轮一致（带子画在 logo 上方安全区，1150 行以下留给固件菜单）。
-
-v12 通过 42 项固定测试 + 带 ADT 8 项 + 处理器合成 2 项。**未打包、未启动。**
+v13 通过 42 项固定测试 + 带 ADT 8 项 + 处理器合成 2 项。**未打包、未启动。**
 
 ## 构建支线
 

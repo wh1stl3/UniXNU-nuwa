@@ -63,11 +63,15 @@ def main():
     codeva=align(max(s['va']+s['size'] for s in m['segments']));fileoff=align(len(raw));work.mkdir(parents=True)
     template=(ROOT/'package/entry-probe/entry-probe.S').read_text(encoding='utf-8-sig')
     for name in ('_current_percpu_base','_arm_vm_init','_pmap_bootstrap','_kernel_bootstrap',
-                 '_panic','_panic_trap_to_debugger'):
+                 '_panic','_panic_trap_to_debugger','_panic_with_options','_early_random',
+                 '_SecureDTLookupEntry','_pe_arm_get_soc_base_phys','_ml_parse_cpu_topology',
+                 '_cpu_bootstrap','_machine_startup'):
         if not (0xfffffff007000000<=symbols[name]<0xfffffff008000000):raise ValueError(name+' outside the kernel text')
     # Fixed offsets inside arm_vm_init, pinned by instruction word like the start.s sites.
     avm_bases=symbols['_arm_vm_init']+0x54
     avm_memcheck=symbols['_arm_vm_init']+0xa4
+    avm_physmap=symbols['_arm_vm_init']+0x108
+    avm_slide=symbols['_arm_vm_init']+0x130
     constants=dict(original_first_cpu=first,original_tables_word=expected[tables],original_tables_resume=tables+4,original_mmu_word=expected[mmu],original_mmu_resume=mmu+4,
                    original_mmu_on_word=0xd5033fdf,original_mmu_on_resume=isb_site+4,
                    original_arm_init_word=struct.unpack_from('<I',raw,backed(m,arm_init))[0],original_arm_init_resume=arm_init+4,
@@ -86,7 +90,25 @@ def main():
                    original_panic_word=struct.unpack_from('<I',raw,backed(m,symbols['_panic']))[0],
                    original_panic_resume=symbols['_panic']+4,
                    original_panic_trap_word=struct.unpack_from('<I',raw,backed(m,symbols['_panic_trap_to_debugger']))[0],
-                   original_panic_trap_resume=symbols['_panic_trap_to_debugger']+4)
+                   original_panic_trap_resume=symbols['_panic_trap_to_debugger']+4,
+                   original_avm_physmap_word=struct.unpack_from('<I',raw,backed(m,avm_physmap))[0],
+                   original_avm_physmap_resume=avm_physmap+4,
+                   original_avm_slide_word=struct.unpack_from('<I',raw,backed(m,avm_slide))[0],
+                   original_avm_slide_resume=avm_slide+4,
+                   original_early_random_word=struct.unpack_from('<I',raw,backed(m,symbols['_early_random']))[0],
+                   original_early_random_resume=symbols['_early_random']+4,
+                   original_dt_lookup_word=struct.unpack_from('<I',raw,backed(m,symbols['_SecureDTLookupEntry']))[0],
+                   original_dt_lookup_resume=symbols['_SecureDTLookupEntry']+4,
+                   original_soc_base_word=struct.unpack_from('<I',raw,backed(m,symbols['_pe_arm_get_soc_base_phys']))[0],
+                   original_soc_base_resume=symbols['_pe_arm_get_soc_base_phys']+4,
+                   original_cpu_topo_word=struct.unpack_from('<I',raw,backed(m,symbols['_ml_parse_cpu_topology']))[0],
+                   original_cpu_topo_resume=symbols['_ml_parse_cpu_topology']+4,
+                   original_cpu_bootstrap_word=struct.unpack_from('<I',raw,backed(m,symbols['_cpu_bootstrap']))[0],
+                   original_cpu_bootstrap_resume=symbols['_cpu_bootstrap']+4,
+                   original_machine_startup_word=struct.unpack_from('<I',raw,backed(m,symbols['_machine_startup']))[0],
+                   original_machine_startup_resume=symbols['_machine_startup']+4,
+                   original_panic_options_word=struct.unpack_from('<I',raw,backed(m,symbols['_panic_with_options']))[0],
+                   original_panic_options_resume=symbols['_panic_with_options']+4)
     source='\n'.join(f'.equ {k}, {v:#x}' for k,v in constants.items() if k.endswith('_word'))+'\n'+template
     (work/'probe.S').write_text(source,encoding='utf-8',newline='\n')
     commands=[]
@@ -120,7 +142,16 @@ def main():
            (symbols['_arm_vm_init'],'probe_arm_vm'),(symbols['_pmap_bootstrap'],'probe_pmap'),
            (symbols['_kernel_bootstrap'],'probe_kernel_bootstrap'),
            (avm_bases,'probe_avm_bases'),(avm_memcheck,'probe_avm_memcheck'),
-           (symbols['_panic'],'probe_panic'),(symbols['_panic_trap_to_debugger'],'probe_panic_trap'))
+           (avm_physmap,'probe_avm_physmap'),(avm_slide,'probe_avm_slide'),
+           (symbols['_early_random'],'probe_early_random'),
+           (symbols['_SecureDTLookupEntry'],'probe_dt_lookup'),
+           (symbols['_pe_arm_get_soc_base_phys'],'probe_soc_base'),
+           (symbols['_ml_parse_cpu_topology'],'probe_cpu_topo'),
+           (symbols['_cpu_bootstrap'],'probe_cpu_bootstrap'),
+           (symbols['_machine_startup'],'probe_machine_startup'),
+           (symbols['_panic'],'probe_panic'),
+           (symbols['_panic_with_options'],'probe_panic_options'),
+           (symbols['_panic_trap_to_debugger'],'probe_panic_trap'))
     for va,name in sites:patch(backed(m,va),branch(va,hooks[name]),name,va)
     patch(backed(m,bcm),struct.pack('<I',0xd503201f),'Suppress BCM2837-only MMIO write; no native timer activation',bcm)
     for index in range(16):

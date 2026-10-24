@@ -1,0 +1,15 @@
+{
+  "scope": "Synthetic execution of probe_exception with a snapshot and no usable x20",
+  "build": "reports\\kernel-entry-probe\\2026-10-24-v13\\build.json",
+  "candidate_sha256": "f557149d31c19e545ca55afd7daf63314de678f91edc96428acee786fa970546",
+  "checks": [
+    {
+      "name": "Handler draws the red band from the snapshot",
+      "passed": true
+    },
+    {
+      "name": "Handler decodes ESR/ELR/FAR from the snapshot without x20",
+      "passed": true
+    }
+  ]
+}

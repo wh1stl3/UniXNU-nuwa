@@ -48,10 +48,10 @@ def handler_checks(report, candidate, checks):
     uc.hook_add(U.UC_HOOK_CODE, code)
     try: uc.emu_start(entry, 0, count=2000000)
     except U.UcError as e: raise AssertionError('handler execution failed: %s' % e)
-    red = struct.unpack('<I', uc.mem_read(FB+688*ROW, 4))[0]
+    red = struct.unpack('<I', uc.mem_read(FB+1104*ROW, 4))[0]
     lookup = {bits: format(i, 'X') for i, bits in enumerate(FONT)}
     decoded = {}
-    for name, y in (('ESR_EL1', 736), ('ELR_EL1', 784), ('FAR_EL1', 832)):
+    for name, y in (('ESR_EL1', 1136), ('ELR_EL1', 1168), ('FAR_EL1', 1200)):
         text = ''
         for digit in range(16):
             bits = ''.join('1' if struct.unpack('<I', uc.mem_read(FB+(y+r*4)*ROW+digit*24*4+c*16, 4))[0] == 0xffffffff else '0'
@@ -136,7 +136,7 @@ def main():
     except U.UcError as e: error = str(e)
     pc = uc.reg_read(UC_ARM64_REG_PC)
     best = max((v, k) for k, v in m['symbols'].items() if v <= pc)
-    pixels = {str(y): hex(struct.unpack('<I', uc.mem_read(FB+y*ROW, 4))[0]) for y in (256, 304, 352, 400, 448, 496, 544, 592, 640)}
+    pixels = {str(y): hex(struct.unpack('<I', uc.mem_read(FB+y*ROW, 4))[0]) for y in (256, 304, 352, 400, 448, 496, 544, 592, 624, 656, 688)}
     reached = {watch[k]: hits[k] for k in hits}
 
     if args.no_adt:
