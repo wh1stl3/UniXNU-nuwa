@@ -473,3 +473,9 @@ D-034 第二次更正（2026-10-25 00:35，经复核可执行反例）：上一�
 D-034 第三次更正（2026-10-25 00:55，经复核源码级定位）：第二次更正里"本构建在 T0SZ=26 时从 L2 起走、≥1GiB VA 不可译"仍是表象，根因在测试模型初始化：Unicorn 默认 `SCR_EL3=0`、`HCR_EL2=0`，`arm_el_is_aa64()`（qemu/target/arm/cpu.h:2030）因此为假，页表遍历走 AArch32 分支（helper.c:9925 只取 T0SZ 低三位，26&7=2 → 输入宽度 30 位 → 起始层 L2，helper.c:10046）。把模型置入内核真实所在的高异常级 AArch64 状态（`SCR_EL3.NS|RW=0x401`、`HCR_EL2.RW=1<<31`）后，AArch64 解释为 64-26=38 位、起始层 L1，真实 v5 候选可以从入口连续执行穿过 `msr sctlr_el1` 到达 `_arm_init` 钩子（KVA），两个宿主一致，374,399 条指令回调，cyan/white 像素正确、页表仅多出诊断用的 L1 slot 2、候选 SHA 未变。默认状态保留为负对照（在 MSR+4 处 UC_ERR_EXCEPTION）。
 
 因此"由于引擎不支持只能合成进入"作废，`test-kernel-entry-probe.py` 已改用连续穿越测试（38 项，含负对照与占槽场景）。仍不成立的推论：这不是实机证据；arm_init 正文、arm_vm_init、kext、iOS 仍未执行。实机青/白与本模型结论一致（见 operations/2026-10-25-entry-probe-02-trial.md）。
+
+# D-036 · 模型保真度优先：越过 arm_init 的分析必须先传 ADT
+
+本轮一度把"模型停在 UBSan brk"当成实机线索，实测根因是夹具从未写 `boot_args->deviceTreeP/Length`：`SecureDTFindEntry("name","arm-io")` 失败 → `pe_arm_get_soc_base_phys()` 返回 0（pexpert/arm/pe_identify_machine.c:185-196）→ 该函数在 line 60 提前返回，而时基默认值 24000000 在 line 68 才赋值 → 结构留 BSS 零 → `wfe_timeout_configure` 的 `flsll(0)-1` 下溢 → UBSan `brk #0x1206`（375,270 条）。实机不适用：DarwinBoot.c:630-631 已写入 `Args->DeviceTree/Length`，随包 ADT（ed7235cb）含 `arm-io` 与 `timebase-frequency=19200000`。
+
+补入随包 ADT 后 UBSan 消失，模型改在 374,951 条处停于 `_current_percpu_base+0xc` 的 `ldr x0,[x0,#0xe0]`（`TPIDR_EL1=0`）。规则确立：**凡声称"模型里跑到某处失败"，先核对模型输入是否与实机一致（ADT、boot_args、MMU 映射）**；本轮据此把 v6 定为三条可判定命题而非盲目打点。证据 operations/2026-10-25-post-arm-init-analysis.md。

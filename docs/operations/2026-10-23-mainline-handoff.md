@@ -227,3 +227,9 @@ python3 scripts/compare-prelink-candidates.py --old out/native-prelink-merged/an
 复核源码级定位：`arm_el_is_aa64()`（qemu/target/arm/cpu.h:2030）在默认 `SCR_EL3=0`/`HCR_EL2=0` 下为假，页表遍历走 AArch32 分支（helper.c:9925 取 T0SZ&7），这才是此前"T0SZ=26 走 L2、≥1GiB VA 不可译"的原因，不是引擎限制。设置 `SCR_EL3.NS|RW` 与 `HCR_EL2.RW` 后，真实 v5 候选从入口连续穿过 MMU 到达 `_arm_init`（374,399 条指令，两宿主一致），页表仅多诊断 slot 2、候选 SHA 不变，默认态保留为负对照。`software.json` 38 项通过。
 
 这不改变实机结论（青/白已由真机确认），只是把"后 MMU 代码路径"从"合成进入"升级为"连续执行"，两者互相印证。仍未执行 arm_init 正文/arm_vm_init/kext/iOS。
+
+## arm_init 之后：模型分析结论与 v6 目标（2026-10-25 00:56，main）
+
+全离线。两个结论：① 模型停在 `___ubsan_handle_sub_overflow_minimal`（brk #0x1206）是**夹具缺 ADT** 造成的保真度缺口，不是实机根因（`pe_identify_machine.c:60` 因 `SecureDTFindEntry("name","arm-io")` 失败而提前返回，时基留在 0）；② 补入随包 ADT（`kernel.macho.adt`，ed7235cb）后 UBSan 消失，改在 `_current_percpu_base+0xc` 的 `ldr x0,[x0,#0xe0]` 停（374,951 条，`TPIDR_EL1=0`）。
+
+v6（下一轮，批准后再打包）目标：恒等 VBAR + 页内 16 向量让 MMU 后异常自报 ESR/ELR/FAR；`_current_percpu_base` 入口一条带；`_arm_vm_init`/`_pmap_bootstrap`/`kernel_bootstrap` 各一条带。风险：pmap 重建可能替换 1 GiB 设备映射；探针页或需 2 页。证据 `reports/kernel-entry-probe/2026-10-25-post-arm-init/analysis.json`、`operations/2026-10-25-post-arm-init-analysis.md`。

@@ -1,0 +1,44 @@
+{
+  "scope": "Software-model analysis of the path after _arm_init; not hardware behaviour and not a boot claim",
+  "candidate": {
+    "path": "out/kernel-entry-probe-05/kernel-entry-probe.macho",
+    "sha256": "8515068dcd6bd699a4301109b76b80022fb07120e6167b65b6169d52aeffcb6a"
+  },
+  "model_state": {
+    "scr_el3": "0x431",
+    "hcr_el2": "0x80000000",
+    "pstate": "0x3c5",
+    "note": "AArch64 high-EL state required, see D-034 third correction"
+  },
+  "finding_1_model_fidelity_gap": {
+    "observation": "The harness never set boot_args.deviceTreeP, so SecureDTFindEntry could not find /arm-io",
+    "consequence": "pe_arm_get_soc_base_phys() returns 0 -> pe_identify_machine() returns before bzero/defaults -> gPEClockFrequencyInfo stays BSS zero",
+    "trap": {
+      "function": "___ubsan_handle_sub_overflow_minimal",
+      "instruction": "brk #0x1206",
+      "caller": "_wfe_timeout_configure+0xe0",
+      "instructions_before_trap": 375270
+    },
+    "code_evidence": {
+      "guard": "pexpert/arm/pe_identify_machine.c:60 if (pe_arm_get_soc_base_phys() == 0) return;",
+      "defaults_after_guard": "pexpert/arm/pe_identify_machine.c:68 timebase_frequency_hz = 24000000",
+      "underflow_site": "osfmk/arm64/machine_routines.c:2298 ticks_per_sec = gPEClockFrequencyInfo.timebase_frequency_hz"
+    },
+    "verdict": "This trap is a model-fidelity gap, not evidence about nuwa: the shipped package does pass the ADT (DarwinBoot.c:630-631 sets Args->DeviceTree/Length)"
+  },
+  "finding_2_next_blocker_with_adt": {
+    "observation": "Loading the real kernel.macho.adt at a scratch PA and setting deviceTreeP/Length removes the UBSan trap",
+    "then_stops_at": {
+      "pc": "0xfffffff0073bb19c",
+      "symbol": "_current_percpu_base+0xc",
+      "instruction": "ldr x0, [x0, #0xe0]",
+      "instructions": 374951,
+      "tpidr_el1": "0x0"
+    },
+    "explanation": "The callee returns the per-CPU base from TPIDR_EL1, which start.s zeroes; the following load therefore dereferences 0xe0",
+    "verdict": "Plausible real blocker (a null per-CPU-base dereference), but not proven on hardware: it needs one hardware observation"
+  },
+  "harness_note": "Feeding the ADT is required for any faithful post-arm_init analysis; the pinned crossing test still stops at the arm_init replay point and is unaffected",
+  "next_gate": "v6: identity VBAR + in-page vectors (catch FAR if it faults) plus markers at _current_percpu_base, _arm_vm_init, _pmap_bootstrap, _kernel_bootstrap",
+  "device_accessed": false
+}

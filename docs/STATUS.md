@@ -23,11 +23,15 @@
 3. 固件菜单在内核返回后会重新倒计时，可能再次拉起同一内核；`fastboot boot` 只发过一次、ACK 一次，但"单次启动"要按"fastboot 动作"与"固件自行重入"分开记。
 4. 板值、认证/AMFI、`_verified`、donor/pin 全部未动；本轮没有 flash/erase/改槽。
 
-## 下一步
+## 下一步（v6，目标已收敛）
 
-1. **C 内打点**：把钩子推进到 `arm_vm_init` / `pmap_bootstrap` / `kernel_bootstrap` 首指令，沿用"探针页 + 快照"，把停点收敛到具体函数。
-2. **MMU 后异常自报**：magenta 钩子里把 `VBAR_EL1` 换成探针页恒等地址并放自己的向量，画 ESR/ELR/FAR——"MMU 后能写屏"已有实机证据，风险已降。
-3. 串口/QEMU 作为后备，且先验证同源 QEMU 对 T0SZ=26 的处理。
+离线分析（[arm_init 之后](operations/2026-10-25-post-arm-init-analysis.md)）给出三条可判定命题：
+
+1. **恒等 VBAR + 页内向量**：magenta 钩子把 `VBAR_EL1` 换成探针页恒等物理地址并放自己的 16 个向量，让 MMU 后异常自报 ESR/ELR/FAR。若实机 FAR 落在 `0xe0` 附近、ELR=`_current_percpu_base+0xc`，则"per-CPU 基址为空导致解引用"在实机成立。
+2. **`_current_percpu_base` 入口一条带**：判定是否走到该处（模型里 `TPIDR_EL1=0`，`ldr x0,[x0,#0xe0]` 解引用空）。
+3. **`_arm_vm_init` / `_pmap_bootstrap` / `_kernel_bootstrap` 入口各一条带**：若出现，前线推进到 pmap/kext。
+
+已知风险：`arm_vm_init` 会重建 pmap，可能替换掉那条 1 GiB 设备恒等映射，pmap 之后的标记要么画在重建前，要么先重建写屏通路；探针页可能要扩到 2 页（届时显式放宽单页约束并重记）。任何新包仍需打包校验、新鲜 preflight、即时通知与本包录像确认。
 
 ## 离线测试能力（2026-10-25 00:55 起）
 
