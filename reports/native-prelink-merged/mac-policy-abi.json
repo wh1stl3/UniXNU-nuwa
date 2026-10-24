@@ -1,0 +1,61 @@
+{
+  "scope": "Local mac_policy_conf ABI comparison only; no complete component ABI or runtime phase qualification",
+  "native_kernel_sha256": "bf14e5305a9f764c6852c2d3a69e81edc9c6199bc870c7b08160d55610616dea",
+  "native_actual_dwarf_type": "mac_policy_conf",
+  "native_actual_dwarf_size": 80,
+  "native_actual_field_offsets": {
+    "mpc_name": 0,
+    "mpc_fullname": 8,
+    "mpc_labelnames": 16,
+    "mpc_labelname_count": 24,
+    "mpc_ops": 32,
+    "mpc_loadtime_flags": 40,
+    "mpc_field_off": 48,
+    "mpc_runtime_flags": 56,
+    "mpc_list": 64,
+    "mpc_data": 72
+  },
+  "dwarf_dump_sha256": "c621cc7013e8da082b670d08cbb2700a0dd73b3eb1c0a58e8ca9615c4f01e1da",
+  "donor_registration_call": {
+    "address": "0xfffffff005703fa4",
+    "target": "0xfffffff0057184ac",
+    "imported_stub": {
+      "slot": "0xfffffff006cb5c38",
+      "original_pointer": "0xfffffff007804ef0",
+      "symbols": [
+        "_mac_policy_register"
+      ]
+    }
+  },
+  "donor_original_conf_address": "0xfffffff006cb78a0",
+  "donor_observed_conf_store_offsets": [
+    0,
+    8,
+    16,
+    24,
+    32,
+    40,
+    48,
+    56
+  ],
+  "donor_store_offsets_match_native_fields": true,
+  "donor_conf_segment": "__DATA_CONST",
+  "donor_conf_segment_initial_protection": 1,
+  "runtime_writability_and_lockdown_order": "unverified; code builds policy configuration/ops in donor DATA_CONST, must qualify initialization write phase before adoption",
+  "reference_address_was_slid": true,
+  "reference_original_candidate": "0xfffffff005703c54",
+  "early_initializer_mapping_adopted": false,
+  "public_sources": [
+    "https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/security/mac_base.c",
+    "https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/libkern/c%2B%2B/OSKext.cpp"
+  ],
+  "commands": [
+    "llvm-dwarfdump --name=mac_policy_conf <actual40015845083 dSYM>",
+    "llvm-dwarfdump --debug-info=0x0101dc87 --show-children <same dSYM>"
+  ],
+  "limitations": [
+    "Donor instruction-store offsets manually cross-checked in bounded disassembly",
+    "No all-callback/structure/IOKit compatibility proof",
+    "No initializer called and no native or donor code rewritten"
+  ]
+}

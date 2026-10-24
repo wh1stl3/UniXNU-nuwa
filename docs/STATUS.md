@@ -1,6 +1,8 @@
 # STATUS
 
-> 用户要求的全部已审查上游源码更新已合并并完成默认配置构建验证。基座e553e46/21模块已推送；固件CI40014018074和Darwin22/iOS16源内核CI40015845083均成功。本轮无手机操作，新固件和内核尚未实测。
+> 已用合并后bf14新内核生成eb66542c分析预链接并完成65348绑定读回/24项解析；AMFI入口已追到真实策略注册调用，但初始化可写期与完整ABI未闭环，loadable=false。
+
+用户要求的全部已审查上游源码更新已合并并完成默认配置构建验证。基座e553e46/21模块已推送；固件CI40014018074和Darwin22/iOS16源内核CI40015845083均成功。本轮无手机操作，新固件和内核尚未实测。
 
 源：wh1stl3/UniXNU@e553e467ebfe7642e9f483d3977a57066c6d1aef，真实双亲merge上游1a01c2af，54冲突落实，合并树精确为完整上游+3个nuwa工作流。设备接入提交5abdde1，内核前置依赖修复6070627。全部21模块初始化并固定；两旧资料库只读。固件默认upstream-merged，内核merged与NativePrelink工具入口已切新源。[完整落实记录](operations/2026-10-24-upstream-integration.md)。
 
@@ -12,4 +14,6 @@
 
 最近实机仍26ef8efd：原图确认维护后after-mmu ok/count84、ReadyToBoot和配置菜单，支持缓存交接遗漏为早期HOB首因；唯一性/重复性待验。末尾无OS/充电符合配置探针timeout60/action=exit。原Android恢复证据北京时间02:55:45（postcondition UTC2026-10-23T18:55:45.904383），nuwa/kalama、槽_a、完成1及三分区SHA一致；不冒充本轮新查询。[实测记录](operations/2026-10-24-hob-cache-handoff-trial.md)。
 
-下一步基于新源内核离线重做预链接/初始化与ABI资格，并推进大文件运输、真实nuwa ADT及实际OS窗口分配；旧5a128fb2/7774分析输入仅历史、loadable=false。9GiB为UEFI快照，不是已分配窗口。当前不需按键/录像；任何新实机启动另确认当轮日志/恢复并即时通知。Heap/保护/ST FTS路线、board内存/身份/_verified均未改，无flash/erase/改槽位。[交接](operations/2026-10-23-mainline-handoff.md)。
+新分析eb66542cc9b6c34f369c07229900408ab67288152f561be63fa6061efce9ffca/58335232B已生成，非旧产物改标签；30段donor和native代码保持。历史AMFI地址是已slide结果，已逆解到原始候选并定位_mac_policy_register，dSYM局部策略结构80B/偏移一致；DATA_CONST写入/调用阶段仍待核查，不采用初始化映射。[本轮记录](operations/2026-10-24-merged-native-prelink.md)。
+
+下一步追踪初始化可写期和完整ABI，准备独立大文件读取SHA探针、真实nuwa ADT及实际OS窗口分配；旧5a128fb2/7774分析输入仅历史、loadable=false。9GiB为UEFI快照，不是已分配窗口。当前不需按键/录像；任何新实机启动另确认当轮日志/恢复并即时通知。Heap/保护/ST FTS路线、board内存/身份/_verified均未改，无flash/erase/改槽位。[交接](operations/2026-10-23-mainline-handoff.md)。

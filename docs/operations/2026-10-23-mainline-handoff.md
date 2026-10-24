@@ -24,3 +24,7 @@ Heap/HOB保护、ST FTS硬件路线、内存/地址/身份/_verified不改。she
 2. 继续独立大文件长度/SHA运输诊断、真实ADT属性核对及实际AllocatePages候选。4MiB配置FAT不能装约58MiB分析预链接；USB host/扩大FV/UFS写入均需各自具体依据，不通过删保护/乱换Heap解决。
 3. 复核新固件静态链：bundled Python -B scripts/check-upstream-merged.py。实际二进制已审，不因无变化重复重建。新内核检查见scripts/ci/inspect-source-kernel.py原命令与报告。
 4. 以后需设备动作时先新鲜录像确认/恢复路径、严格包验收、唯一nuwa/kalama并即时通知；使用新轮次目录，禁止覆盖旧preflight/launch/recovery/postcondition。试验结束恢复Android完成1与三分区SHA核验。当前没有新的临时启动授权或启动包实测结果。
+
+## 最新预链接续接（2026-10-24T15:04:24.918562+08:00）
+
+bf14新核已生成eb66542c分析候选，65348绑定读回/30 donor代码范围不变/24项解析通过，仍loadable=false。新profile和输出独立，不覆盖7774/5a历史。AMFI旧reference地址是已slide结果，原始候选逆解0xfffffff005703c54并含_mac_policy_register导入，3构造函数不同；实际native dSYM局部mac_policy_conf80B偏移与donor写入对应。DATA_CONST写入时序/完整ABI未验，不adopt initializer映射。下一步独立大文件读取SHA探针和阶段追踪；用户OTG问题待答，不构成新启动许可。详见2026-10-24-merged-native-prelink.md，无设备动作。

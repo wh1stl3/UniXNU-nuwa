@@ -1,0 +1,35 @@
+{
+  "scope": "Analysis-only prelink of merged iOS16 kernel bf14; initialization/ABI and hardware qualification incomplete",
+  "source_repository": "wh1stl3/UniXNU",
+  "source_commit": "e553e467ebfe7642e9f483d3977a57066c6d1aef",
+  "source_sha256": {
+    "kits/NativePrelink/native_prelink.py": "5bd80b8c63deec29b747c28253e02308a56d5f8cdb37c9d315e7c8af7012d017",
+    "kits/NativePrelink/emit_prelink.py": "4cbd97a7ca231cb56d8d7c6a02d09b86af33b5af3d05dba41edd00e51cd3a36a"
+  },
+  "patch": {
+    "path": "patches/native-prelink-candidates/0001-libm-trig-literal-pool.patch",
+    "sha256": "b78c5a41e26289d39c5671a712adbebb8a3466d846df2fb49150a3029db07792",
+    "post_sha256": "e5b4a9ffa70455e9b86611bee5c9d98c5ff3fdb08853e5c2161f232fe5da4c85"
+  },
+  "native_sha256": "bf14e5305a9f764c6852c2d3a69e81edc9c6199bc870c7b08160d55610616dea",
+  "donor_sha256": "2ec297bac95bcba01046fd0148e97e7e5885c05a6c18827f39f534ba375c1221",
+  "reference_selection_sha256": "e9fe59f236e37966a3babe5c0cb4f7a1ddcfbd9e3aaf4b980382afc70d9b0dfd",
+  "literal_pool": {
+    "module": "com.apple.kec.Libm",
+    "start": "0xfffffff005b8c054",
+    "end_exclusive": "0xfffffff005b8c51c",
+    "bytes": 1224,
+    "sha256": "12d22dca8e3a79e476ab128f73e28f630bf902d5189ed1d5317589930c0c8622"
+  },
+  "slide": -16777216,
+  "slide_scope": "Existing analytical layout only; not board or physical memory configuration",
+  "early_security_initializers": {},
+  "loadable": false,
+  "source_module": {
+    "path": "kits/NativePrelink",
+    "repository": "UniXNU/NativePrelink",
+    "commit": "2b6ffb50117eee820b98aca9bd51b5c7dfb2970e"
+  },
+  "native_path": "out/upstream-kernel-40015845083-final/nuwa-8796-merged-40015845083/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped",
+  "kernel_ci": 40015845083
+}

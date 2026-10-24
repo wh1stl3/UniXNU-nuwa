@@ -6,14 +6,14 @@ import struct
 from native_prelink_inputs import ROOT,sha,inputs,tools,components
 
 def main():
-    cli=argparse.ArgumentParser(description=__doc__);cli.add_argument('--work',type=Path,required=True);cli.add_argument('--output',type=Path,required=True);args=cli.parse_args()
+    cli=argparse.ArgumentParser(description=__doc__);cli.add_argument('--work',type=Path,required=True);cli.add_argument('--output',type=Path,required=True);cli.add_argument('--profile',type=Path,default=ROOT/'config/native-prelink-merged-analysis-profile.json');args=cli.parse_args()
     work=args.work.resolve();output=args.output.resolve()
     if not work.is_relative_to(ROOT/'out') or work.exists() or not output.is_relative_to(ROOT/'reports') or output.exists():raise ValueError('Fresh analysis outputs required')
-    profile,native,donor,selection=inputs()
+    profile,native,donor,selection=inputs(args.profile)
     qualification=json.loads((ROOT/'reports/native-prelink-current/libm-pool.json').read_text())
     if qualification['donor_sha256']!=sha(donor) or qualification['pool']!=profile['literal_pool'] or qualification['external_sites_resolved']!=12:raise ValueError('Pool qualification mismatched')
     roots=selection['components']+selection['codeless_components']
-    with tools(True) as (parser,emitter):
+    with tools(True,args.profile) as (parser,emitter):
         plan=parser.plan(native,donor,roots,profile['slide'])
         image,full=emitter.emit(native,donor,roots,profile['slide'],{})
         parent,metadata,modules=components(parser,donor,selection)

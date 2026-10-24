@@ -1560,3 +1560,13 @@
 [Evidence] CI40015845083成功/bf14e530/iOS16/零未定义及平台归档一致；固件2d606985的SEC与实测旧包字节相同；24解析/4池/9grant通过。
 [Risk] 可选硬件/root/hash-cache分支未全部激活/编译；新FD/内核未实测，新内核预链接/ADT/窗口/运输尚待资格，无设备动作。
 ```
+
+## Q-149 · 合并后新内核预链接与AMFI入口定位
+
+```text
+[unixnu-nuwa][loader] 生成bf14分析预链接并追踪AMFI注册入口与局部ABI
+
+[Change] 新profile/可选输入支持、原始donor有界审计；保留历史分析，定位旧reference地址已slide风险。
+[Evidence] eb66542c/65348绑定逐项读回/30 donor可执行范围不变/24解析；真实mac_policy_register导入和native dSYM80B策略结构偏移对应。
+[Risk] 初始化DATA_CONST可写期、完整ABI/ADT/运输/窗口未验，未采用initializer映射，loadable=false；无手机动作。
+```

@@ -16,16 +16,23 @@ SELECTION=Path('D:/Code/PortingiOSWithUniXNU/.work/kernel-prelinked.json')
 
 def sha(data):return hashlib.sha256(data).hexdigest()
 
-def inputs():
-    profile=json.loads((ROOT/'config/native-prelink-analysis-profile.json').read_text())
-    native,donor,selection=NATIVE.read_bytes(),DONOR.read_bytes(),SELECTION.read_bytes()
+def load_profile(profile_file=None):
+    path=Path(profile_file).resolve() if profile_file else ROOT/'config/native-prelink-analysis-profile.json'
+    if not path.is_relative_to(ROOT/'config'):raise ValueError('Profile must stay under config/')
+    return json.loads(path.read_text())
+
+def inputs(profile_file=None):
+    profile=load_profile(profile_file)
+    native_path=(ROOT/profile['native_path']).resolve() if profile.get('native_path') else NATIVE
+    if not native_path.is_relative_to(ROOT/'out'):raise ValueError('Native input must stay under out/')
+    native,donor,selection=native_path.read_bytes(),DONOR.read_bytes(),SELECTION.read_bytes()
     for raw,key in ((native,'native_sha256'),(donor,'donor_sha256'),(selection,'reference_selection_sha256')):
         if sha(raw)!=profile[key]:raise ValueError('Pinned input changed: '+key)
     return profile,native,donor,json.loads(selection)
 
 @contextmanager
-def tools(patched=False):
-    profile=json.loads((ROOT/'config/native-prelink-analysis-profile.json').read_text())
+def tools(patched=False,profile_file=None):
+    profile=load_profile(profile_file)
     tree=Tree(ROOT/'out/nonexistent-source')
     module=profile.get('source_module')
     source=Path('D:/Code/UniXNU-integration') if module else BASE
