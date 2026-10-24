@@ -1,0 +1,87 @@
+{
+  "scope": "Single fastboot boot of entry-probe-04 (v9 kernel b5db0f1e, per-CPU shim); user photograph; recovery closed",
+  "package": {
+    "report": "reports/xnu-first-entry/entry-probe-04.json",
+    "image_sha256": "7b81126ba4aeb5387e42ec2a3cbd6aa9b2d5ea13efcce57dc55d3e6830767bda",
+    "kernel_sha256": "b5db0f1e5793a2557efa99af735a59ca1c923ed1ae9e461f712a5a79163ac348"
+  },
+  "window": {
+    "preflight_at": "2026-10-24T17:45:50.119531+00:00",
+    "postcondition_at": "2026-10-24T17:51:58.062816+00:00",
+    "partition_hashes_unchanged": true,
+    "android_boot_completed": "1",
+    "slot": "_a"
+  },
+  "bands_observed": [
+    {
+      "row": null,
+      "color": "green",
+      "owner": "firmware DarwinEnter breadcrumb (top 1/16 = 200 rows)",
+      "means": "EBS done"
+    },
+    {
+      "row": 256,
+      "color": "blue",
+      "means": "__start branch and diagnostic entry"
+    },
+    {
+      "row": 304,
+      "color": "yellow",
+      "means": "bootstrap page tables generated"
+    },
+    {
+      "row": 352,
+      "color": "magenta",
+      "means": "BCM write suppressed; reached the SCTLR value build"
+    },
+    {
+      "row": 400,
+      "color": "cyan",
+      "means": "msr sctlr_el1 + replayed isb; band drawn with the MMU on"
+    },
+    {
+      "row": 448,
+      "color": "white",
+      "means": "_arm_init entered at the KVA"
+    },
+    {
+      "row": 496,
+      "color": "purple",
+      "means": "_current_percpu_base entered - the per-CPU shim is effective on hardware"
+    },
+    {
+      "row": 544,
+      "color": "brown",
+      "means": "_arm_vm_init entered - LAST BAND VISIBLE"
+    }
+  ],
+  "bands_not_observed": [
+    {
+      "row": 592,
+      "color": "teal",
+      "means": "_pmap_bootstrap - not reached"
+    },
+    {
+      "row": 640,
+      "color": "orange",
+      "means": "_kernel_bootstrap - not reached"
+    },
+    {
+      "row": 688,
+      "color": "red",
+      "means": "exception reporter - did not fire"
+    }
+  ],
+  "conclusion": "The per-CPU base shim works on hardware: execution passed _current_percpu_base and entered _arm_vm_init, which the model could not reach. It stopped inside arm_vm_init before pmap_bootstrap, and no exception was delivered to the probe vectors.",
+  "not_proven": [
+    "why execution stopped inside arm_vm_init",
+    "whether it was a reset, a panic path or a hang",
+    "anything past pmap_bootstrap"
+  ],
+  "reading_method": "User read the photograph directly; band rows and colours taken from package/entry-probe/entry-probe.S, not inferred from the image",
+  "image": {
+    "path": "out/trial-evidence/entry-probe-04/screen-01.jpg",
+    "sha256": "e6dedeb05197736c30e2f812aa3f3ef70a53b3ae106ad2d9370bcb1f1f2f2d39",
+    "bytes": 332704
+  }
+}

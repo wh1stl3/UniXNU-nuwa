@@ -382,3 +382,5 @@
 2026-10-25 01:50 · v9：等距布局之外推进主线——在arm_init入口把TPIDR_EL1指向探针第二页（整页零），修掉模型里第一个真实阻塞（start.s在开MMU之后才清TPIDR_EL1，平台路径提前读per-CPU基址导致_current_percpu_base+0xc空解引用）；垫片使cpu_number(+0xe8)=0（启动CPU正确值），XNU随后在cpu_bootstrap写入真值。模型验证8项：垫片生效、越过空解引用、前进到_cpu_number+0x10后撞在msr TPIDRRO_EL0（Unicorn不实现），故下一阻塞只能实机暴露。候选b5db0f1e/58,343,424B/28补丁，42+8+2项通过；探针段扩为两页、打包绑定改8192。未打包未启动 · 本里程碑提交 · reports/kernel-entry-probe/2026-10-24-v9/
 
 2026-10-25 01:45 · v9打包为entry-probe-04并校验：镜像7b81126b/70,266,880B，kernel b5db0f1e、ADT 57e04fc9，--validate通过；随包ADT重跑8项仍通过。菜单标识PROBE 04。用户批准打包，启动前先确认录像；未启动 · 本里程碑提交 · reports/xnu-first-entry/entry-probe-04.json、reports/kernel-entry-probe/2026-10-24-v9/post-arm-init-markers-shipped-adt.json
+
+2026-10-25 01:55 · entry-probe-04(v9)实机闭环：preflight 17:45:50Z、恢复17:51:16Z Android完成1、postcondition 17:51:58Z三SHA一致。色带（行号取代码）：绿→蓝256→黄304→品红352→青400→白448→紫496→棕544（最后一条）。⇒ per-CPU垫片在实机生效（模型没走到的一步），执行进入_arm_vm_init；未见青绿592/橙640/红688，即停在arm_vm_init内、pmap_bootstrap之前，且无异常落入向量页。原图e6dedeb0。我一度按自动比色说"十条全出现"，被用户纠正为最后一条是棕色，已按用户读数重记。未再启动 · 本里程碑提交 · reports/xnu-entry-probe-trial/2026-10-25-03/screen-evidence.json

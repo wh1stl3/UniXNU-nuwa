@@ -68,14 +68,21 @@ v9 候选 **`b5db0f1e5793a2557efa99af735a59ca1c923ed1ae9e461f712a5a79163ac348`**
 
 探针段从一页扩到两页（第 2 页整页零），打包绑定已同步改为 8192。
 
-## 当前状态：v9 已打包为 entry-probe-04 并校验，等待录像后单次启动
+## 当前状态：entry-probe-04 已闭环——per-CPU 垫片在实机生效，前线推进到 `arm_vm_init` 内
 
-- 镜像 **`7b81126ba4aeb5387e42ec2a3cbd6aa9b2d5ea13efcce57dc55d3e6830767bda`**，70,266,880 B，菜单标识 `XNU ENTRY PROBE 04 - BLUE YELLOW MAGENTA CYAN WHITE PURPLE RED`；报告 `reports/xnu-first-entry/entry-probe-04.json`，`--validate` 从出货 FAT 读回 kernel `b5db0f1e` 与 ADT `57e04fc9` 通过。
-- 内核：v9 `b5db0f1e`（28 补丁，等距布局 + 恒等 VBAR 向量 + per-CPU 基址垫片）。
-- 随包 ADT（`57e04fc9`）上重跑 8 项仍通过。
-- 用户 2026-10-25 01:42 批准打包；**启动前会先确认录像，当前未启动、未碰设备。**
+单次 `fastboot boot`（内核 v9 `b5db0f1e`）已闭环：preflight 17:45:50Z → 恢复 17:51:16Z Android 完成 1 → postcondition 17:51:58Z，**三分区 SHA 与试前完全一致**。原图 `out/trial-evidence/entry-probe-04/screen-01.jpg`（`e6dedeb0…`），判读记录 `reports/xnu-entry-probe-trial/2026-10-25-03/screen-evidence.json`。
 
-判读（行距 48，首行 256）：绿(固件) → 256蓝 → 304黄 → 352品红 → 400青 → 448白 → 496紫(`_current_percpu_base`) → 544棕(`_arm_vm_init`) → 592青绿(`_pmap_bootstrap`) → 640橙(`_kernel_bootstrap`)；若中途异常则 688红 + 736/784/832 三行 ESR/ELR/FAR。**垫片若生效，最少应看到 544 棕带**；只到 496 说明垫片没解决问题，红带会给出原因。
+**观测到的色带（行号与颜色取自 `.S`，非从照片推断）**：绿（固件）→ 蓝 256 → 黄 304 → 品红 352 → 青 400 → 白 448 → **紫 496** → **棕 544（最后一条）**。
+
+**结论**：
+
+- 紫(496)=`_current_percpu_base` 出现 ⇒ **per-CPU 基址垫片在实机生效**，这是模型没能走到的一步；
+- 棕(544)=`_arm_vm_init` 出现 ⇒ 执行**进入了 `arm_vm_init`**；
+- **未见**青绿(592)=`_pmap_bootstrap`、橙(640)=`_kernel_bootstrap`、红(688)+三行十六进制 ⇒ 停在 `arm_vm_init` 内部、且在调用 `pmap_bootstrap` 之前；没有异常落到我们的向量页。
+
+**未验证**：为什么停在 `arm_vm_init` 里（复位/panic 路径/挂死），以及 `pmap_bootstrap` 之后的一切。红带没出现说明不是"被向量捕获的异常"，更像复位或走进不取异常的路径。
+
+**下一轮**：在 `arm_vm_init` 内部再插 2–3 个点（它开头就是内存映射/DT 解析，`SecureDTGetProperty(memory_map,"TrustCache"/"AuxKC")` 附近），把断点从"函数入口"推进到具体语句；同时保留红带自报。模型侧需先绕过 `msr TPIDRRO_EL0` 才能继续预演。
 
 ## 构建支线
 
