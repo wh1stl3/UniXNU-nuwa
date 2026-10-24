@@ -153,6 +153,10 @@ def main():
                     if source is not None:
                         delta = ops[2].imm if instruction.mnemonic == 'add' else -ops[2].imm
                         registers[instruction.reg_name(ops[0].reg)] = (source + delta) & MASK
+                elif instruction.mnemonic == 'mov' and len(ops) == 2 and ops[1].type == capstone.arm64.ARM64_OP_REG:
+                    source = registers.get(instruction.reg_name(ops[1].reg))
+                    if source is not None:
+                        registers[instruction.reg_name(ops[0].reg)] = source
                 elif instruction.mnemonic.startswith('st'):
                     # str puts the memory operand at index 1; stp puts it at 2,
                     # so locate it instead of assuming a position.
@@ -163,12 +167,34 @@ def main():
                     if register_base is not None and register_base == base:
                         # stp writes two consecutive quadwords; str writes one.
                         spans = (0, 8) if instruction.mnemonic == 'stp' else (0,)
-                        for delta in spans:
+                        for index, delta in enumerate(spans):
                             offset = memory_operand.mem.disp + delta
                             field = next((name for value, name in CONF_FIELDS if value == offset), None)
-                            stores.append({'at': hex(instruction.address), 'offset': hex(offset),
-                                           'field': field,
-                                           'instruction': '%s %s' % (instruction.mnemonic, instruction.op_str)})
+                            entry = {'at': hex(instruction.address), 'offset': hex(offset),
+                                     'field': field,
+                                     'instruction': '%s %s' % (instruction.mnemonic, instruction.op_str)}
+                            # Recover the stored value when it is a known address,
+                            # so pointer fields can be resolved to their strings.
+                            if index < len(ops) and ops[index].type == capstone.arm64.ARM64_OP_REG:
+                                source = registers.get(instruction.reg_name(ops[index].reg))
+                                if source is not None:
+                                    entry['source_value'] = hex(source)
+                                    if field == 'mpc_labelnames':
+                                        # char const * const *: dereference the first entry.
+                                        try:
+                                            first, = struct.unpack('<Q', read(source, 8))
+                                            if first:
+                                                entry['labelnames'] = [
+                                                    read(first, 64).split(b'\0')[0].decode('ascii', 'replace')]
+                                        except ValueError:
+                                            pass
+                                    elif 0xFFFFFFF004000000 <= source < 0xFFFFFFF008000000:
+                                        try:
+                                            text = read(source, 96).split(b'\0')[0]
+                                            entry['source_string'] = text.decode('ascii', 'replace')[:64]
+                                        except ValueError:
+                                            pass
+                            stores.append(entry)
 
         # --- native side -------------------------------------------------
         native_register = [(address, names) for address, names in native_exports.items()

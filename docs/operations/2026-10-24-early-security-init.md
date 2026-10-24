@@ -61,7 +61,9 @@ blocker 1 原文是"Early security initializer identity/call ABI not qualified o
 
 `mpc_ops` 存的 `0x6cb6e28` 正是 `amfi-ops-slots.json` 里记录的 `original_ops_address`，两条独立路径互相印证。`mpc_list`/`mpc_data`（`0x40`/`0x48`）留给 `mac_policy_register` 自己填，符合语义。
 
-**所以"call ABI"这一项的静态证据是成立的**：签名、参数位置、结构字段偏移三者都对得上 native 8796 的声明。这仍不等于运行时注册成功 —— 参数指向的字符串、ops 表内容与策略生命周期都还没有执行证据。
+策略声明本身也解出来了，内容自洽：`mpc_name = "AMFI"`、`mpc_fullname = "Apple Mobile File Integrity"`、`mpc_labelnames[0] = "amfi"`、`mpc_labelname_count = 1`（`mov w20,#1`）、`mpc_loadtime_flags` 与 `mpc_runtime_flags` 均为 0。`struct mac_policy_conf` 在镜像里是 `__DATA/__common` 的 BSS（静态全 0），由这个函数在运行时构造 —— 所以静态读 conf 本身只会得到 0，必须回放寄存器才能拿到这些值。
+
+**所以"call ABI"这一项的静态证据是成立的**：签名、参数位置、结构字段偏移、以及策略名字符串四者都对得上。这仍不等于运行时注册成功 —— ops 表里 23 个回调的行为、策略生命周期、以及 `mac_policy_register` 的实际执行都还没有证据。
 
 ## 产物
 

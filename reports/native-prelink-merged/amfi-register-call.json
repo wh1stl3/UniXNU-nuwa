@@ -27,19 +27,27 @@
       "at": "0xfffffff005703f6c",
       "offset": "0x0",
       "field": "mpc_name",
-      "instruction": "stp x19, x9, [x0]"
+      "instruction": "stp x19, x9, [x0]",
+      "source_value": "0xfffffff004e28018",
+      "source_string": "AMFI"
     },
     {
       "at": "0xfffffff005703f6c",
       "offset": "0x8",
       "field": "mpc_fullname",
-      "instruction": "stp x19, x9, [x0]"
+      "instruction": "stp x19, x9, [x0]",
+      "source_value": "0xfffffff004e280f4",
+      "source_string": "Apple Mobile File Integrity"
     },
     {
       "at": "0xfffffff005703f78",
       "offset": "0x10",
       "field": "mpc_labelnames",
-      "instruction": "str x9, [x0, #0x10]"
+      "instruction": "str x9, [x0, #0x10]",
+      "source_value": "0xfffffff006cb7ee8",
+      "labelnames": [
+        "amfi"
+      ]
     },
     {
       "at": "0xfffffff005703f7c",
@@ -51,7 +59,9 @@
       "at": "0xfffffff005703f80",
       "offset": "0x20",
       "field": "mpc_ops",
-      "instruction": "str x8, [x0, #0x20]"
+      "instruction": "str x8, [x0, #0x20]",
+      "source_value": "0xfffffff006cb6e28",
+      "source_string": ""
     },
     {
       "at": "0xfffffff005703f84",
@@ -63,7 +73,9 @@
       "at": "0xfffffff005703f90",
       "offset": "0x30",
       "field": "mpc_field_off",
-      "instruction": "str x8, [x0, #0x30]"
+      "instruction": "str x8, [x0, #0x30]",
+      "source_value": "0xfffffff006cb6e20",
+      "source_string": ""
     },
     {
       "at": "0xfffffff005703f94",
@@ -77,7 +89,9 @@
     "at": "0xfffffff005703f80",
     "offset": "0x20",
     "field": "mpc_ops",
-    "instruction": "str x8, [x0, #0x20]"
+    "instruction": "str x8, [x0, #0x20]",
+    "source_value": "0xfffffff006cb6e28",
+    "source_string": ""
   },
   "return_value_checked": {
     "at": "0xfffffff005703fa8",
