@@ -67,3 +67,15 @@ recover实际临时加载原厂v4 boot，postcondition.at=2026-10-24T08:14:06.60
 40078257763/source2b7328b编译成功，初始检查要求Sha256HashAll包装名未考虑LTO而失败，保留initial-ci-failure.json。下载产物在修正后的本地强检查通过：FD52ab071e/3MiB，SEC7192fd3f与旧完整字节一致、原Heap/HOB/cache/认证库0x04策略/7模块及真实BaseCryptLib/OpenSSL链接通过。Ready实际四次BL→sha256_block_data_order/572B，crypto-linkage.json记录PE/map/bodySHA；新的检查拒绝移除调用或4B stub，不简单删条件。待新检查CI完整重跑后固定实测包，不将首轮CI写成绿色。
 
 已生成纯数据FAT5ea19e90/64MiB及首轮本地重验包6b3e5bfd/70266880B，严格报告reports/fv-file-audit/40078257763/package.json。无外部app，只READTEST.BIN与退出菜单；FV自动检查无需Enter。fv_file_audit_package.py继承原所有保护并固定数据用途，新scope FV-FILE-SHA-OFFLINE；原脚本加入scope但仍必须新鲜capture/preflight，不能编辑JSON启用XNU。最近手机仍18ebd838失败后Android16:14:06恢复，没有新设备操作。
+
+完整CI第二轮40080439083已在dbbdc02247df0bba08183df97f3775286ef96271触发，profile=fv-file-audit。该版本含LTO实际BL/函数体/真实库检查和23项门控；请等其结果/独立下载复核，不重复触发。首轮40078257763仍保留为检查失败，不改写为成功；当前无新手机动作或下一轮录像确认。
+
+## 最新有效状态：最终6b3e5bfd离线验收完成，待录像
+
+40080439083/source dbbdc02247df0bba08183df97f3775286ef96271完整success并独立下载检查710项/7模块通过。FD52ab071eaa6cdb06f1902464923f1fab11f55d169f0494a58165ceed8894be51/3MiB与首轮完全相同，SEC7192fd3f与旧已实测固件逐字节相同；原Heap/HOB/cache/认证库和0x04介质策略、真实BaseCryptLib/OpenSSL/Ready四次SHA压缩BL通过。acceptance.json、ci.json、crypto-linkage和artifact-inspection在reports/fv-file-audit/40080439083/。旧CI40078257763仍失败，不改记录。
+
+最终包6b3e5bfd3a8e1d5a8e8abbda3268872a6fc69b287c144df70387012d46a41dc7/70266880B，严格报告reports/fv-file-audit/40080439083/package.json，out/trial-boot/fv-file-audit-40080439083/boot-fv-file-audit-v3.img。沿原USB v3，只数据READTEST.BIN和退出菜单，无外部EFI app/XNU启动项；FV ReadyToBoot自动诊断，无需Enter/键盘/OTG。普通数据仍是58335232B分析MachO/eb66542c，loadable=false且不执行。
+
+续接先 bundled Python -B scripts/fv_file_audit_package.py --validate reports/fv-file-audit/40080439083/package.json。需新包录像≥120秒及必要时按键恢复条件；刷新record-nuwa-trial-state.py --package <本报告> --capture-confirmation <本轮答复> --output reports/fv-file-audit-trial/2026-10-24-01/preflight.json，唯一nuwa/kalama、Android完成1/三SHA新基线及恢复路径通过后，即时通知再单次trial-v4-firmware.py launch。旧18ebd838/任何之前preflight不可复用，尚未取得本包录像确认，禁止现在启动。
+
+目标画面NUWA-FV-FILE Ready/unique/read/actual SHA eb66542c/PASS/final bytes0x37a2000与exit状态，保留30秒后继续退出菜单。只有菜单/ACK不算通过，失败按具体阶段留证。结束用本包recover及record --before刷新Android完成1/三SHA相同。最近真实手机恢复仍2026-10-24T08:14:06.606976+00:00（北京时间16:14:06），本轮全离线无新设备查询。新诊断驱动实机/完整OS仍未验，不改Heap/HOB/板值/_verified或认证策略。

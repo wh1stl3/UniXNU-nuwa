@@ -1,25 +1,19 @@
 # STATUS
 
-> 首轮固件编译成功，因LTO内联导致原包装名检查失败；按真实PE调用/目标库修正后独立全检查通过：FD52ab071e、SEC7192fd3f完整相同，原认证策略不变。准备完整CI重跑，尚不实测。
+> 新候选 **6b3e5bfd** 已完成完整 CI 与下载产物独立验收，尚未实机启动。下一步确认本轮录像和恢复条件，再通知用户并临时启动。
 
-USB v3运输阶段已实机通过：8177783e单次原图显示独立64MiB envelope result=1、块设备Success，FAT挂载先于embedded 4MiB卷。offset0x1d77f27减64B恰等于历史vendor ramdisk30899943B，明显支持vendor+临时generic拼接，增强v4 init_boot替代为此前缺卷首因的判断；同固件v4匹配对照/重复性未验。菜单fallback不作运输证据。[实测记录](operations/2026-10-24-usb-v3-trial.md)。
+诊断改为固件内 NuwaFileAuditDxe 的一次性 ReadyToBoot 回调，自动只读 58335232 字节 READTEST.BIN 并验证完整 SHA-256；结果显示 30 秒后返回固件。无需选择菜单、Enter、键盘或 OTG。数据不执行，不调用 ExitBootServices。详见 [诊断记录](operations/2026-10-24-fv-file-audit.md)。
 
-运输实测已提交8de7b98。最近真实手机postcondition.at=2026-10-24T07:41:49.163107+00:00（北京时间15:41:49），nuwa/kalama、Android完成1、槽_a、三个启动分区SHA与试前一致。仅一次候选后临时原厂v4恢复，无flash/erase/改槽位。证据reports/usb-ramdisk-trial/2026-10-24-v3-01/；两原图/文字已收，完整连续视频文件未交付，不把120秒USB观察当视频。本轮后续工作仅离线，无新设备查询。
+最终报告 reports/fv-file-audit/40080439083/package.json；镜像 out/trial-boot/fv-file-audit-40080439083/boot-fv-file-audit-v3.img，70266880 字节，SHA-256 **6b3e5bfd3a8e1d5a8e8abbda3268872a6fc69b287c144df70387012d46a41dc7**。64MiB 数据 FAT 只含固定文件和退出配置，无外部 EFI 应用或 XNU 启动项；xnu_included=true 如实标记 MachO 数据存在，kernel_execution_enabled=false。
 
-新的文件探针：独立ARM64 EFI应用def33a4add6f162a5726bba050a4c143c8ba38ea25f436f46ce4331811bb469f/6144B，以type=efi从LoadedImage来源卷只读READTEST.BIN。数据为原分析预链接eb66542c/58335232B（约58MB），不执行；精确长度/EOF/完整SHA，正常AllocatePool，最多1MiB/次及4096次，分配/读错返回，释放关闭后保留结果30秒再返回固件。固定NativeAdreno b686b905原样MIT SHA及随包许可；28实际Mu头依赖与固定git对象一致。[文件探针记录](operations/2026-10-24-file-read-audit.md)。
+完整 CI **40080439083 / dbbdc02247df0bba08183df97f3775286ef96271 success**；下载后独立复查 710 个 inventory 文件和 7 个模块，整包逐字节重建一致。FD52ab071e/3145728B 与首轮构建相同。首轮40078257763编译成功、原检查因 LTO 内联失败，失败证据保留；修正后检查真实 Ready 回调四次 BL 到 572B SHA 压缩体，并确认驱动专属 BaseCryptLib/OpenSSL 链接。19项软件协议场景及一次性回调、23项门控/拒绝回归通过。静态链接和软件执行均不等于目标固件密码实现或实机文件 SHA 已通过。
 
-离线证据reports/file-read-audit/：13实际app软件协议场景和3已知向量通过；完整AArch64系统QEMU/QEMU_EFI.fd加载真实PE，从最终fat-02实际读58335232B/56次数据Read，额外EOF检查，SHA匹配/打印PASS后返回Boot0000。15项新增/历史门控通过，篡改XNU执行标记、缺新preflight/录像在设备子进程前拒绝。QEMU通过不等于nuwa EFI加载/分配/文件SHA实机通过；下一轮才验证。
+固件源固定 a155c495c863e06d400b515315e3b8f7791dc308；诊断 profile 为57输入/12补丁/15后哈希，原11保护补丁保持。完整 SEC7192fd3f3f37061ebaf466d2e98ef0e661abf29fe5b38eaa60cba99f0d40fd90 与此前实测缓存交接修复逐字节一致。Heap/HOB 坏条目保护、缓存维护、板值及原验签库/0x04拒绝策略均保持，默认 profile 不变。新增 DXE 调度和目标文件校验仍待实机确认。
 
-最终USB v3包18ebd83865eb0026655fddbfcea6a4f824c80cd4f65bf692528726d06a2389a8/70266880B；严格报告reports/file-read-audit/package-02/package.json，镜像out/trial-boot/file-read-audit-02/boot-file-audit-v3.img。FAT64MiB SHA b44d22bcf599414e29f940872506fc2215f359e4ff82228c0a010be3d0772166，数据/两同EFI/config/MIT从FAT完整抽取读回SHA一致。xnu_included=true如实承认MachO数据字节，但strict scope限定data-only/kernel_execution_enabled=false、唯一type=efi无XNU项。最终fat-02/包02取代缺随包许可的中间fat-01/包01，后者不用于实测。
+最近真实手机结果仍为18ebd838外部 EFI 条目返回 Access Denied。首要判断是外部未签名应用被实际固件认证策略拒绝，置信较高；具体拒绝 API/runtime SecureBoot 值未捕获，不作唯一根因证明。此次通过既有固件链内诊断验证文件读取，不关闭策略或修改信任库。最近恢复证据时间 **2026-10-24T08:14:06.606976+00:00（北京时间16:14:06）**，nuwa/kalama、Android完成1、槽_a、boot/vendor_boot/init_boot 三分区 SHA 与试前一致。之后无新设备动作，不冒充当前查询。证据 reports/file-read-audit-trial/2026-10-24-01/；[失败分析](operations/2026-10-24-file-audit-access-denied.md)。
 
-全部已审查上游更新已合并：wh1stl3/UniXNU@e553e467ebfe7642e9f483d3977a57066c6d1aef，双亲merge原76dd6414/上游1a01c2af，树为上游+3工作流、21模块固定。接入5abdde1/前置修复6070627。固件40014018074和内核40015845083 success；原内核40014023191失败因前置缺失已留档。[集成记录](operations/2026-10-24-upstream-integration.md)。
+USB v3 运输8177783e单次实测已通过独立64MiB卷/FAT：envelope result=1、块设备Success；偏移减64B等于历史vendor ramdisk长度，支持拼接路线，v4替代和重复性仍未对照。菜单本身不作数据读取证据。[运输记录](operations/2026-10-24-usb-v3-trial.md)。
 
-FD2d606985ad768dcfaab66c2b28073c0a4c2820126b42b23286623fdc450e848f/3145728B，shim8a3b5476/112B，697静态检查；SEC7192fd3f与已实测26ef8efd逐字节相同，原Heap/HOB保护/DSB-IVAC-DSB-ISB/内存表保持。该FD已实测独立卷/FAT/菜单；新app无需改固件。firmware source pin6176a822+11补丁，不用文档HEAD替代。ST FTS路线、board/bringup内存/身份/_verified不变。
+上游已审查更新固定 UniXNU e553e467ebfe7642e9f483d3977a57066c6d1aef、21模块；固件40014018074和内核40015845083构建通过。内核bf14e530/20188216B为Darwin22.6.0/iOS16.0、64补丁、零未定义。分析预链接eb66542cc9b6c34f369c07229900408ab67288152f561be63fa6061efce9ffca/58335232B，65348绑定和代码范围读回检查通过，但 **loadable=false**。完整初始化/回调/C++ ABI、真实ADT和实际分配的OS内存窗口未资格化，文件校验成功也不等于内核或iOS启动。ST FTS路线、身份和所有_verified保持原状。[集成](operations/2026-10-24-upstream-integration.md)、[AMFI分析](operations/2026-10-24-amfi-phase-and-slots.md)。
 
-内核bf14e5305a9f764c6852c2d3a69e81edc9c6199bc870c7b08160d55610616dea/20188216B，64补丁、Darwin22.6.0/iOS16.0、零未定义及5平台导出/归档一致。分析eb66542cc9b6c34f369c07229900408ab67288152f561be63fa6061efce9ffca/58335232B，65348绑定读回、30 donor/native代码范围保持、24解析通过，loadable=false/initializer空。AMFI注册/局部conf80B/23写入到335槽有静态依据，12源码时序检查下调单纯DATA_CONST写保护风险；完整构造/start/once-guard/回调及C++ABI、真实ADT和实际OS窗口仍待资格。9GiB只是快照，不是分配；文件SHA通过也不等于内核/iOS执行。[AMFI记录](operations/2026-10-24-amfi-phase-and-slots.md)。
-
-下一步触发并验收独立fv-file-audit固件CI：新模块GUID/PE/DEPEX/屏幕marker、实际SEC7192fd3f字节完全相同、原认证库及0x04拒绝policy、目标map中Sha256HashAll。不关闭策略、不改keys/Heap/HOB/板值。通过后才准备USB v3数据FAT和退出菜单的新诊断包；当前新包未生成。18ebd838原图Access Denied仍为最近实机文件结果，具体拒绝API/runtime SecureBoot值未捕获，不重复旧包。
-
-当前固件内实现：NuwaFileAuditDxe ReadyToBoot只一次，最多64卷/唯一文件、GetInfo上限4KiB/精确58335232B/普通pool/最多1MiB读与4096次/EOF/原固件BaseCryptLib SHA；直接屏幕enter/read/hash/PASS/exit，停留30秒。固定源a155c495，57输入/12补丁/15后哈希，原11保护patch完全相同；16项设备门控回归通过。软件19场景用替身协议/crypto，不等于目标固件或硬件通过。详见operations/2026-10-24-fv-file-audit.md。
-
-实际构建40078257763/source2b7328b：编译成功、初始检查失败留档。新实际PE审计Ready四次BL至572B SHA压缩体、驱动专属BaseCryptLib/OpenSSL而非Null、原认证库/0x04及所有模块/保护通过。新数据FAT5ea19e90只含固定文件/退出配置；首轮离线包6b3e5bfd已全包验收但待修正检查CI重跑，FV自动执行，不需Enter。原18ebd838和Android16:14:06仍最近实机真相，无新手机动作。
+下一轮使用绿色CI40080439083报告，不沿用旧包录像确认。启动前新preflight与最近恢复证据核对、唯一nuwa/kalama、至少120秒可录像及按键恢复条件；明确通知后只临时启动。采集 NUWA-FV-FILE 的 read/actual SHA/PASS/final/exit 画面，结束恢复Android完成1并复核三分区哈希。不flash、不erase、不改槽位。[交接](operations/2026-10-23-mainline-handoff.md)。

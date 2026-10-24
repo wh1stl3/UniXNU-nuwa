@@ -1,0 +1,82 @@
+{
+  "conclusion": "success",
+  "headSha": "dbbdc02247df0bba08183df97f3775286ef96271",
+  "jobs": [
+    {
+      "completedAt": "2026-10-24T09:10:19Z",
+      "conclusion": "success",
+      "databaseId": 120832675597,
+      "name": "firmware",
+      "startedAt": "2026-10-24T09:03:26Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-24T09:03:28Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-24T09:03:27Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-24T09:03:34Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4",
+          "number": 2,
+          "startedAt": "2026-10-24T09:03:28Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-24T09:04:43Z",
+          "conclusion": "success",
+          "name": "Install build tools",
+          "number": 3,
+          "startedAt": "2026-10-24T09:03:34Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-24T09:10:02Z",
+          "conclusion": "success",
+          "name": "Build approved candidate only",
+          "number": 4,
+          "startedAt": "2026-10-24T09:04:43Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-24T09:10:02Z",
+          "conclusion": "success",
+          "name": "Inspect MMU branch diagnostic firmware",
+          "number": 5,
+          "startedAt": "2026-10-24T09:10:02Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-24T09:10:05Z",
+          "conclusion": "success",
+          "name": "Preserve evidence and approved artifacts",
+          "number": 6,
+          "startedAt": "2026-10-24T09:10:02Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-24T09:10:05Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4",
+          "number": 12,
+          "startedAt": "2026-10-24T09:10:05Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-24T09:10:05Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 13,
+          "startedAt": "2026-10-24T09:10:05Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/wh1stl3/UniXNU-nuwa/actions/runs/40080439083/job/120832675597"
+    }
+  ],
+  "status": "completed"
+}

@@ -1,0 +1,265 @@
+{
+  "approval": "FV-FILE-SHA-OFFLINE",
+  "run_id": 40080439083,
+  "device_commit": "dbbdc02247df0bba08183df97f3775286ef96271",
+  "firmware_commit": "a155c495c863e06d400b515315e3b8f7791dc308",
+  "source_profile": "fv-file-audit",
+  "original_boot_sha256": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+  "image_path": "out/trial-boot/fv-file-audit-40080439083/boot-fv-file-audit-v3.img",
+  "image_sha256": "6b3e5bfd3a8e1d5a8e8abbda3268872a6fc69b287c144df70387012d46a41dc7",
+  "image_bytes": 70266880,
+  "fd_sha256": "52ab071eaa6cdb06f1902464923f1fab11f55d169f0494a58165ceed8894be51",
+  "shim_sha256": "8a3b54765c895a0366539130fdf6e4e4a01e364fe7de067a38d0193606f9d462",
+  "header_version": 3,
+  "header_size": 1580,
+  "kernel_bytes": 3145840,
+  "ramdisk_bytes": 67108928,
+  "ramdisk_sha256": "7b1108db8e2fb441dddf0f9d7938b69b5d88e7af1aec4b95b5fcfce3113601be",
+  "fat_bytes": 67108864,
+  "fat_sha256": "5ea19e90fa1b44d0f79041663e1b91a9d9e274c34a8beda594ac009d762fb9ed",
+  "signature_bytes": 0,
+  "appended_dtb": false,
+  "fat_included": true,
+  "xnu_included": true,
+  "analytical_macho_data_only": true,
+  "xnu_boot_entry": false,
+  "kernel_execution_enabled": false,
+  "external_efi_application_in_payload": false,
+  "adt_included": false,
+  "read_file_bytes": 58335232,
+  "read_file_sha256": "eb66542cc9b6c34f369c07229900408ab67288152f561be63fa6061efce9ffca",
+  "diagnostic_driver_guid": "45b28639-79a9-456d-afc5-edcfe78cdae1",
+  "diagnostic_driver": {
+    "name": "NuwaFileAuditDxe",
+    "guid": "45b28639-79a9-456d-afc5-edcfe78cdae1",
+    "ffs": {
+      "guid": "45b28639-79a9-456d-afc5-edcfe78cdae1",
+      "type": 7,
+      "bytes": 24666,
+      "volume": "FD/FVMAIN_COMPACT/9e21fd93-9c72-4c15-8c4b-e77f1db2d792/FV",
+      "offset": 7945704,
+      "sections": [
+        {
+          "type": "0x13",
+          "bytes": 22,
+          "depex": [
+            {
+              "op": "PUSH",
+              "guid": "13a3f0f6-264a-3ef0-f2e0-dec512342f34"
+            },
+            {
+              "op": "END"
+            }
+          ]
+        },
+        {
+          "type": "0x10",
+          "bytes": 24580,
+          "pe": {
+            "machine": "0xaa64",
+            "subsystem": 11,
+            "entry_rva": "0x1050",
+            "image_size": 40960,
+            "sections": 5,
+            "bytes": 24576,
+            "sha256": "356d794d47ab0cce25c273501006c2ef8a412a1856916c1429afe8f4ebf3e38a",
+            "loader_protocol_guid_present": false,
+            "entry_hob_guid_present": false,
+            "volume_markers": {
+              "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": false,
+              "[NUWA-VOLUME] rejected initrd extent": false,
+              "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": false,
+              "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": false
+            },
+            "volume_status_markers": {
+              "[NUWA-VOLUME] publisher enter": false,
+              "[NUWA-VOLUME] publisher exit status=%r": false,
+              "[NUWA-VOLUME] entry dtb=0x%lx": false,
+              "[NUWA-VOLUME] dtb header outside reserved Kernel map": false,
+              "[NUWA-VOLUME] malformed dtb header": false
+            },
+            "embedded_probe_markers": {
+              "[NUWA-FV-PROBE] enter": false,
+              "[NUWA-FV-PROBE] read resource %r": false,
+              "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": false
+            },
+            "boot_input_markers": {
+              "[NUWA-BOOT-AUDIT] registered %r": false,
+              "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": false,
+              "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": false,
+              "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": false
+            },
+            "fv_file_markers": {
+              "ReadyToBoot enter; FV driver, no external EFI load": true,
+              "unique file found; file-open succeeded": true,
+              "[NUWA-FV-FILE] actual sha256=%s\r\n": true,
+              "PASS exact length, EOF and SHA256": true,
+              "[NUWA-FV-FILE] exit status=%r; hold 30s\r\n": true
+            },
+            "application_guid_present": false
+          },
+          "pcd_protocol_guid_present": false
+        },
+        {
+          "type": "0x15",
+          "bytes": 38
+        }
+      ]
+    },
+    "standalone": [
+      {
+        "path": "build/AARCH64/NuwaFileAuditDxe.efi",
+        "machine": "0xaa64",
+        "subsystem": 11,
+        "entry_rva": "0x1050",
+        "image_size": 40960,
+        "sections": 5,
+        "bytes": 24576,
+        "sha256": "356d794d47ab0cce25c273501006c2ef8a412a1856916c1429afe8f4ebf3e38a",
+        "loader_protocol_guid_present": false,
+        "entry_hob_guid_present": false,
+        "volume_markers": {
+          "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": false,
+          "[NUWA-VOLUME] rejected initrd extent": false,
+          "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": false,
+          "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": false
+        },
+        "volume_status_markers": {
+          "[NUWA-VOLUME] publisher enter": false,
+          "[NUWA-VOLUME] publisher exit status=%r": false,
+          "[NUWA-VOLUME] entry dtb=0x%lx": false,
+          "[NUWA-VOLUME] dtb header outside reserved Kernel map": false,
+          "[NUWA-VOLUME] malformed dtb header": false
+        },
+        "embedded_probe_markers": {
+          "[NUWA-FV-PROBE] enter": false,
+          "[NUWA-FV-PROBE] read resource %r": false,
+          "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": false
+        },
+        "boot_input_markers": {
+          "[NUWA-BOOT-AUDIT] registered %r": false,
+          "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": false,
+          "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": false,
+          "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": false
+        },
+        "fv_file_markers": {
+          "ReadyToBoot enter; FV driver, no external EFI load": true,
+          "unique file found; file-open succeeded": true,
+          "[NUWA-FV-FILE] actual sha256=%s\r\n": true,
+          "PASS exact length, EOF and SHA256": true,
+          "[NUWA-FV-FILE] exit status=%r; hold 30s\r\n": true
+        },
+        "application_guid_present": false
+      },
+      {
+        "path": "build/AARCH64/nuwaPkg/Drivers/NuwaFileAuditDxe/NuwaFileAuditDxe/DEBUG/NuwaFileAuditDxe.efi",
+        "machine": "0xaa64",
+        "subsystem": 11,
+        "entry_rva": "0x1050",
+        "image_size": 40960,
+        "sections": 5,
+        "bytes": 24576,
+        "sha256": "356d794d47ab0cce25c273501006c2ef8a412a1856916c1429afe8f4ebf3e38a",
+        "loader_protocol_guid_present": false,
+        "entry_hob_guid_present": false,
+        "volume_markers": {
+          "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": false,
+          "[NUWA-VOLUME] rejected initrd extent": false,
+          "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": false,
+          "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": false
+        },
+        "volume_status_markers": {
+          "[NUWA-VOLUME] publisher enter": false,
+          "[NUWA-VOLUME] publisher exit status=%r": false,
+          "[NUWA-VOLUME] entry dtb=0x%lx": false,
+          "[NUWA-VOLUME] dtb header outside reserved Kernel map": false,
+          "[NUWA-VOLUME] malformed dtb header": false
+        },
+        "embedded_probe_markers": {
+          "[NUWA-FV-PROBE] enter": false,
+          "[NUWA-FV-PROBE] read resource %r": false,
+          "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": false
+        },
+        "boot_input_markers": {
+          "[NUWA-BOOT-AUDIT] registered %r": false,
+          "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": false,
+          "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": false,
+          "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": false
+        },
+        "fv_file_markers": {
+          "ReadyToBoot enter; FV driver, no external EFI load": true,
+          "unique file found; file-open succeeded": true,
+          "[NUWA-FV-FILE] actual sha256=%s\r\n": true,
+          "PASS exact length, EOF and SHA256": true,
+          "[NUWA-FV-FILE] exit status=%r; hold 30s\r\n": true
+        },
+        "application_guid_present": false
+      },
+      {
+        "path": "build/AARCH64/nuwaPkg/Drivers/NuwaFileAuditDxe/NuwaFileAuditDxe/OUTPUT/NuwaFileAuditDxe.efi",
+        "machine": "0xaa64",
+        "subsystem": 11,
+        "entry_rva": "0x1050",
+        "image_size": 40960,
+        "sections": 5,
+        "bytes": 24576,
+        "sha256": "356d794d47ab0cce25c273501006c2ef8a412a1856916c1429afe8f4ebf3e38a",
+        "loader_protocol_guid_present": false,
+        "entry_hob_guid_present": false,
+        "volume_markers": {
+          "[NUWA-VOLUME] chosen start=0x%lx end=0x%lx": false,
+          "[NUWA-VOLUME] rejected initrd extent": false,
+          "[NUWA-VOLUME] envelope result=%u offset=0x%lx bytes=0x%lx": false,
+          "[NUWA-VOLUME] block device 0x%lx size 0x%lx %r": false
+        },
+        "volume_status_markers": {
+          "[NUWA-VOLUME] publisher enter": false,
+          "[NUWA-VOLUME] publisher exit status=%r": false,
+          "[NUWA-VOLUME] entry dtb=0x%lx": false,
+          "[NUWA-VOLUME] dtb header outside reserved Kernel map": false,
+          "[NUWA-VOLUME] malformed dtb header": false
+        },
+        "embedded_probe_markers": {
+          "[NUWA-FV-PROBE] enter": false,
+          "[NUWA-FV-PROBE] read resource %r": false,
+          "[NUWA-FV-PROBE] block device bytes=0x%lx status=%r": false
+        },
+        "boot_input_markers": {
+          "[NUWA-BOOT-AUDIT] registered %r": false,
+          "[NUWA-BOOT-AUDIT] ready el=%lu mpidr=0x%lx cntfrq=%lu": false,
+          "[NUWA-BOOT-AUDIT] largest base=0x%lx bytes=0x%lx wb-base=0x%lx wb-bytes=0x%lx": false,
+          "[NUWA-BOOT-AUDIT] snapshot only; no window allocated or reserved": false
+        },
+        "fv_file_markers": {
+          "ReadyToBoot enter; FV driver, no external EFI load": true,
+          "unique file found; file-open succeeded": true,
+          "[NUWA-FV-FILE] actual sha256=%s\r\n": true,
+          "PASS exact length, EOF and SHA256": true,
+          "[NUWA-FV-FILE] exit status=%r; hold 30s\r\n": true
+        },
+        "application_guid_present": false
+      }
+    ],
+    "embedded_matches_standalone": true
+  },
+  "sec_sha256": "7192fd3f3f37061ebaf466d2e98ef0e661abf29fe5b38eaa60cba99f0d40fd90",
+  "image_verification_policy_changes": false,
+  "success_requires": "NUWA-FV-FILE actual SHA256 eb66542c... and PASS exact length EOF SHA256 with final bytes 0x37a2000",
+  "container_readback": {
+    "kernel_offset": 4096,
+    "ramdisk_offset": 3153920,
+    "header_changed_offsets": [
+      8,
+      9,
+      10,
+      11,
+      12,
+      15,
+      20,
+      40
+    ],
+    "original_cmdline_preserved": true
+  },
+  "device_executed": false,
+  "runtime_file_sha_verified": false
+}

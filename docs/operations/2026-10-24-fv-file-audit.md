@@ -35,3 +35,13 @@ CI40078257763/source2b7328b固件编译成功，最初artifact inspection失败�
 新数据FAT64MiB SHA5ea19e90fa1b44d0f79041663e1b91a9d9e274c34a8beda594ac009d762fb9ed，只含READTEST.BIN（58335232B/eb66542c）与60秒退出配置，实际两文件完整抽取SHA一致；没有外部EFI app或XNU执行项。菜单只退出，校验由ReadyToBoot自动执行，不要求键盘或Enter。config/fv-file-audit/unixnu.toml、build-fv-audit-data.py和data-01.json记录输入及命令。
 
 首轮本地重验包6b3e5bfd3a8e1d5a8e8abbda3268872a6fc69b287c144df70387012d46a41dc7/70266880B已完整重建/逐字节读回，reports/fv-file-audit/40078257763/package.json；尚不安排实测，待修正验收CI完整成功后固定最终包。新scope FV-FILE-SHA-OFFLINE严格验证源profile/原全部保护/最终FD/数据卷/数据用途和禁止外部app；无新鲜录像或preflight时在设备子进程前拒绝，不能编辑元数据重启XNU。当前无新设备查询，最近Android恢复仍16:14:06。
+
+## 最终CI和独立验收闭环
+
+第二轮CI **40080439083/source dbbdc02247df0bba08183df97f3775286ef96271 success**，完整编译/检查/产物上传通过，ci.json保留真实状态与步骤。独立下载后重跑严格检查通过：710项inventory、7模块，FD52ab071e与首轮编译结果逐字节相同；SEC7192fd3f与此前已实测固件完整相同，Heap/HOB/cache守卫不变。驱动实际BaseCryptLib/OpenSSL（非Null）、Ready四次BL→572B压缩体、原镜像验证库/介质0x04拒绝策略通过。acceptance.json与crypto-linkage.json保留具体SHA；认证策略源和产物均未放宽。
+
+最终严格包报告 **reports/fv-file-audit/40080439083/package.json**，对应out/trial-boot/fv-file-audit-40080439083/boot-fv-file-audit-v3.img，SHA **6b3e5bfd3a8e1d5a8e8abbda3268872a6fc69b287c144df70387012d46a41dc7** /70266880B。与首轮本地包镜像内容相同，但使用第二轮绿色CI的来源报告；旧首轮CI仍失败，不改其结论。23项设备scope/旧guard/新真实SHA拒绝回归通过；本轮离线无新手机操作。
+
+目前只待本包新鲜录像≥120秒和必要时按键恢复条件确认；确认后刷新preflight并即时通知再单次临时启动。检查自动在ReadyToBoot执行，不要求用户按Enter/接键盘或OTG；重点录像NUWA-FV-FILE enter/unique/read/actual SHA/PASS/exit。菜单只是退出，不能以菜单或USB ACK验收。目标SHA和完整OS资格仍分别处理，不能由固件静态验收称nuwa文件SHA或iOS通过。
+
+复验：bundled Python -B scripts/fv_file_audit_package.py --validate reports/fv-file-audit/40080439083/package.json。首轮compile-success/check-fail日志和第二轮green/local-independent记录均保留，后续启动另建reports/fv-file-audit-trial/<新轮次>/，不可复用18ebd838 preflight或录像许可。
