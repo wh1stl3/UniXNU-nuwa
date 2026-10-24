@@ -4,7 +4,9 @@
 
 ## 当前入口（2026-10-24 19:2x）
 
-**iOS 16 内核已在 nuwa 上实际执行过。** 内核候选 `1aeebf13` 经 `fastboot boot` 临时启动，DarwinBoot 打印 `Exiting boot services`、屏幕出现绿色横条，XNU 自身输出 `AppleARMPlatform: IODTNVRAM from …`、`SecurityLock::LockType: SOFTWARE_LOCK`、`LockCapsuleInterface`、`App Log Flush : 0 ms`，约 235 秒后设备自动重启回 Android。**iOS 未启动** —— 内核在 Apple 启动链安全锁阶段终止（判断置信中高，缺 SEP/硬件信任链）。恢复闭环完成：Android 完成 1、槽_a、三分区 SHA 未变。详见[首次内核进入](docs/operations/2026-10-24-xnu-first-entry.md)。
+**iOS 16 内核已在 nuwa 上实际执行过。** 内核候选 `1aeebf13` 经 `fastboot boot` 临时启动，DarwinBoot 打印 `Exiting boot services`、屏幕出现绿色横条，XNU 自身输出 `AppleARMPlatform: IODTNVRAM from …`、`SecurityLock::LockType: SOFTWARE_LOCK`、`LockCapsuleInterface`、`App Log Flush : 0 ms`，随后设备自动重启回 Android。**iOS 未启动** —— 内核在 Apple 启动链安全锁阶段终止（判断置信中高，缺 SEP/硬件信任链）。恢复闭环完成：Android 完成 1、槽_a、三分区 SHA 未变。
+
+完整录像取证进一步确认：`App Log Flush` 之后**内核静默退出**（19 秒黑屏、无 panic 文本）；绿条只持续 6 秒，不代表内核存活时长。详见[首次内核进入](docs/operations/2026-10-24-xnu-first-entry.md)与[录像取证](docs/operations/2026-10-24-first-entry-video-forensics.md)。
 
 确切读数：`kernel va 0xfffffff003DC8000 pa 0x8C01C8000`、`window 0x40000000 bytes`（**1 GiB 连续窗口由 UEFI 成功给出**）、`TCR_EL1 0x28003518`（4 KiB granule，与 D-003 一致）、`CurrentEL 1`。
 

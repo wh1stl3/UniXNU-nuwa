@@ -154,7 +154,9 @@ python3 scripts/compare-prelink-candidates.py --old out/native-prelink-merged/an
 
 本轮有真实设备动作（`fastboot boot` 临时启动，未 flash/erase/改槽）。
 
-**结果**：DarwinBoot 打印 `Exiting boot services. A green bar across the top means the kernel entry code ran.`，屏幕顶部出现绿色横条；XNU 自身输出 `AppleARMPlatform: IODTNVRAM from …`、`SecurityLock::LockType: SOFTWARE_LOCK, Module: 42B57F0A-13F2-4821-8A23-55B3F714B940, Function: LockCapsuleInterface`、`[ML] dump table info not found, Status = (0x0)`、`App Log Flush : 0 ms`，此后无输出；约 235 秒时设备自动重启回 Android。
+**结果**：DarwinBoot 打印 `Exiting boot services. A green bar across the top means the kernel entry code ran.`，屏幕顶部出现绿色横条；XNU 自身输出 `AppleARMPlatform: IODTNVRAM from …`、`SecurityLock::LockType: SOFTWARE_LOCK, Module: 42857F0A-13F2-4821-8A23-53D3F714B940, Function: LockCapsuleInterface`、`[ML] dump table info not found, Status = (0x0)`、`App Log Flush : 0 ms`，此后无输出；设备自动重启回 Android。
+
+**2026-10-24 20:1x 更正（据完整录像）**：绿条只持续 **6 秒**（118–123 s），不是 235 秒 —— 它只是 ExitBootServices 的瞬时标记，不代表内核存活时长；`Module` UUID 首位应为 `42857F0A`（上轮读作 `42B57F0A`）。录像同时确认 `App Log Flush` 之后**内核静默退出**：124 s 起黑屏 19 秒，无 panic 文本，167 s 回到 Android 桌面。详见[录像取证](2026-10-24-first-entry-video-forensics.md)。
 
 确切读数（原图 881×1920 裁剪放大，reports/xnu-first-entry-trial/2026-10-24/crop-*.png）：`kernel va 0xfffffff003DC8000 pa 0x8C01C8000`、`args pa 0x4C408000 window 0x40000000 bytes`、`video base 0xB8000000 1440x3200 row 5760 bytes 32 bpp`、`CurrentEL 1 SCTLR_EL1 0x3D0018D0 TCR_EL1 0x28003518`、`ID_AA64MMFR0_EL1 (PARange 2, 4 KiB granule supported)`。
 
