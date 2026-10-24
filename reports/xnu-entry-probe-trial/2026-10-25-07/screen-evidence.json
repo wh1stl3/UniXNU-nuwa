@@ -1,0 +1,89 @@
+{
+  "scope": "Single fastboot boot of entry-probe-07 (v14 kernel b6570130, draw-once guards and call counters)",
+  "package": {
+    "report": "reports/xnu-first-entry/entry-probe-07.json",
+    "image_sha256": "1039b3f45d8fd376b320e140772a1a0624c549095b90176c7bd415eaf5be1bed",
+    "kernel_sha256": "b65701300c8ed2aaf29942445e8ab4c2a62aa117a7b186b310a239d2435466a1",
+    "adt_sha256": "4e7deb004da49e698cee0416ac6ccd17ece935562a7469c0aff0e498195f182f"
+  },
+  "window": {
+    "preflight_at": "2026-10-24T18:47:35.335209+00:00",
+    "postcondition_at": "2026-10-24T18:52:32.529141+00:00",
+    "partition_hashes_unchanged": true,
+    "android_boot_completed": "1",
+    "slot": "_a"
+  },
+  "reading_method": "Bands read at 30% and 70% width; photo rows mapped with the five early bands (photo 200/228/255/282/309 = rows 256/304/352/400/448, slope 0.5677 px/row), display edges from the firmware green bar (photo x 325..1127 for 1440 screen px).",
+  "bands_observed": [
+    {
+      "row": 256,
+      "color": "blue",
+      "photo_y": 200
+    },
+    {
+      "row": 304,
+      "color": "yellow",
+      "photo_y": 228
+    },
+    {
+      "row": 352,
+      "color": "magenta",
+      "photo_y": 255
+    },
+    {
+      "row": 400,
+      "color": "cyan",
+      "photo_y": 282
+    },
+    {
+      "row": 448,
+      "color": "white",
+      "photo_y": 309
+    }
+  ],
+  "text_rows_observed": [
+    {
+      "photo_y": 512,
+      "screen_row_estimate": 806,
+      "content": "16 hex digits, the last one reads 1",
+      "meaning": "a COUNT16 hook rendered its call count: those hooks cover early_random(784), SecureDTLookupEntry(816) and pe_arm_get_soc_base_phys(848); a value of 1 means the hook was entered exactly once"
+    },
+    {
+      "photo_y": 530,
+      "screen_row_estimate": 838,
+      "content": "same shape",
+      "meaning": "a second COUNT16 hook, also called once"
+    }
+  ],
+  "bands_not_observed": [
+    496,
+    544,
+    592,
+    624,
+    656,
+    688,
+    720,
+    752,
+    880,
+    912,
+    944,
+    976,
+    1008,
+    1040,
+    1072,
+    1104
+  ],
+  "conclusion": "The draw-once guards and the call counters work: the screen now carries two rows of readable hex digits, each ending in 1, which are the COUNT16 hooks reporting that they were entered exactly once. The early ladder is unchanged (MMU on, _arm_init entered) but no band is visible below the white one in this photograph, so the frontier of this run is not established: either the run stopped before _arm_vm_init, or the lower bands are not readable in this frame. The user reading of the photograph is the authority on which bands are present.",
+  "not_proven": [
+    "which two COUNT16 hooks produced the two text rows",
+    "whether the brown band (_arm_vm_init) is present in this run",
+    "the exact hex values; the font decode from this angled photo did not resolve",
+    "the user supplied a video (D:/Code/Videos-nuwa/\u5fae\u4fe1\u89c6\u98912026-10-25_025047_261.mp4) which may show the transition more clearly"
+  ],
+  "image": {
+    "path": "out/trial-evidence/entry-probe-07/screen-01.jpg",
+    "sha256": "159aa0c02e703d31176edb86d5420b9ed51e1eff14f8498a646b5f28c1a9c473",
+    "bytes": 363946
+  },
+  "video": "D:/Code/Videos-nuwa/\u5fae\u4fe1\u89c6\u98912026-10-25_025047_261.mp4"
+}

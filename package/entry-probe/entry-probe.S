@@ -121,6 +121,40 @@
 // The firmware logo is a background layer drawn before the kernel, so bands
 // drawn over it stay visible; the firmware only redraws the menu below row
 // ~1150, so no band may live there. Height check 1104; the screen is 3200 rows.
+// Draw-once guard: the flag byte lives in the probe's own flag page, so a hook
+// that is hit repeatedly costs one branch instead of a full band redraw.
+.macro BAND_ONCE idx, y, color
+    adr         x16, probe_flags
+    ldrb        w17, [x16, #\idx]
+    cbnz        w17, 9f
+    mov         w17, #1
+    strb        w17, [x16, #\idx]
+    BAND_SNAPSHOT \y, \color
+9:
+.endm
+// Counter hook: renders the call count as hex for the first four calls, then
+// only counts. Cheap enough for hooks that run thousands of times.
+.macro BAND_ONCE20 idx, y, color
+    adr         x16, probe_flags
+    ldrb        w17, [x16, #\idx]
+    cbnz        w17, 9f
+    mov         w17, #1
+    strb        w17, [x16, #\idx]
+    BAND x20, \y, \color
+9:
+.endm
+.macro COUNT16 idx, y
+    adr         x16, probe_flags
+    ldrb        w17, [x16, #\idx]
+    cmp         w17, #4
+    b.hs        9f
+    add         w17, w17, #1
+    strb        w17, [x16, #\idx]
+    mov         x23, x17
+    HEXROW_VAL \y
+9:
+.endm
+
 .text
 .balign 4096
 .global probe_vectors
@@ -135,7 +169,7 @@ probe_exception:
     adr         x15, probe_scratch
     ldr         x9, [x15]
     cbz         x9, exception_stop
-    BAND_SNAPSHOT 1104, 0xffff0000
+    BAND_ONCE 0, 1104, 0xffff0000
     HEXROW_SNAP esr_el1, 1136
     HEXROW_SNAP elr_el1, 1168
     HEXROW_SNAP far_el1, 1200
@@ -220,7 +254,7 @@ probe_mmu:
 .global probe_mmu_on
 probe_mmu_on:
     .inst original_mmu_on_word
-    BAND_SNAPSHOT 400, 0xff00ffff
+    BAND_ONCE 1, 400, 0xff00ffff
 .global probe_mmu_on_replay
 probe_mmu_on_replay:
     b original_mmu_on_resume
@@ -229,7 +263,7 @@ probe_mmu_on_replay:
 // live and usable for instruction fetch.
 .global probe_arm_init
 probe_arm_init:
-    BAND_SNAPSHOT 448, 0xffffffff
+    BAND_ONCE 2, 448, 0xffffffff
     // Mainline shim, not a measurement: the platform-expert path reads the per-CPU
     // base through TPIDR_EL1 before XNU has built cpu_data_t, and start.s clears
     // TPIDR_EL1 after enabling the MMU. Point it at a zeroed page: cpu_number at
@@ -250,119 +284,119 @@ probe_arm_init_replay:
 // pmap_bootstrap, plus the whole panic family.
 .global probe_cpu_base
 probe_cpu_base:
-    BAND_SNAPSHOT 496, 0xff8000ff
+    BAND_ONCE 3, 496, 0xff8000ff
 .global probe_cpu_base_replay
 probe_cpu_base_replay:
-       .inst original_cpu_base_word
+    .inst original_cpu_base_word
     b original_cpu_base_resume
 .global probe_arm_vm
 probe_arm_vm:
-    BAND_SNAPSHOT 544, 0xff804000
+    BAND_ONCE 4, 544, 0xff804000
 .global probe_arm_vm_replay
 probe_arm_vm_replay:
-       .inst original_arm_vm_word
+    .inst original_arm_vm_word
     b original_arm_vm_resume
 .global probe_pmap
 probe_pmap:
-    BAND_SNAPSHOT 592, 0xff00ff80
+    BAND_ONCE 5, 592, 0xff00ff80
 .global probe_pmap_replay
 probe_pmap_replay:
-       .inst original_pmap_word
+    .inst original_pmap_word
     b original_pmap_resume
 .global probe_kernel_bootstrap
 probe_kernel_bootstrap:
-    BAND_SNAPSHOT 624, 0xffff8040
+    BAND_ONCE 6, 624, 0xffff8040
 .global probe_kernel_bootstrap_replay
 probe_kernel_bootstrap_replay:
-       .inst original_kernel_bootstrap_word
+    .inst original_kernel_bootstrap_word
     b original_kernel_bootstrap_resume
 .global probe_avm_bases
 probe_avm_bases:
-    BAND_SNAPSHOT 656, 0xff008080
+    BAND_ONCE 7, 656, 0xff008080
 .global probe_avm_bases_replay
 probe_avm_bases_replay:
-       .inst original_avm_bases_word
+    .inst original_avm_bases_word
     b original_avm_bases_resume
 .global probe_avm_memcheck
 probe_avm_memcheck:
-    BAND_SNAPSHOT 688, 0xff808000
+    BAND_ONCE 8, 688, 0xff808000
 .global probe_avm_memcheck_replay
 probe_avm_memcheck_replay:
-       .inst original_avm_memcheck_word
+    .inst original_avm_memcheck_word
     b original_avm_memcheck_resume
 .global probe_avm_physmap
 probe_avm_physmap:
-    BAND_SNAPSHOT 720, 0xff8080c0
+    BAND_ONCE 9, 720, 0xff8080c0
 .global probe_avm_physmap_replay
 probe_avm_physmap_replay:
-       .inst original_avm_physmap_word
+    .inst original_avm_physmap_word
     b original_avm_physmap_resume
 .global probe_avm_slide
 probe_avm_slide:
-    BAND_SNAPSHOT 752, 0xff808080
+    BAND_ONCE 10, 752, 0xff808080
 .global probe_avm_slide_replay
 probe_avm_slide_replay:
-       .inst original_avm_slide_word
+    .inst original_avm_slide_word
     b original_avm_slide_resume
 .global probe_early_random
 probe_early_random:
-    BAND_SNAPSHOT 784, 0xffff80c0
+    COUNT16 11, 784
 .global probe_early_random_replay
 probe_early_random_replay:
-       .inst original_early_random_word
+    .inst original_early_random_word
     b original_early_random_resume
 .global probe_dt_lookup
 probe_dt_lookup:
-    BAND_SNAPSHOT 816, 0xff9400d3
+    COUNT16 12, 816
 .global probe_dt_lookup_replay
 probe_dt_lookup_replay:
-       .inst original_dt_lookup_word
+    .inst original_dt_lookup_word
     b original_dt_lookup_resume
 .global probe_soc_base
 probe_soc_base:
-    BAND_SNAPSHOT 848, 0xff00c0c0
+    COUNT16 13, 848
 .global probe_soc_base_replay
 probe_soc_base_replay:
-       .inst original_soc_base_word
+    .inst original_soc_base_word
     b original_soc_base_resume
 .global probe_cpu_topo
 probe_cpu_topo:
-    BAND_SNAPSHOT 880, 0xff80c000
+    BAND_ONCE 14, 880, 0xff80c000
 .global probe_cpu_topo_replay
 probe_cpu_topo_replay:
-       .inst original_cpu_topo_word
+    .inst original_cpu_topo_word
     b original_cpu_topo_resume
 .global probe_cpu_bootstrap
 probe_cpu_bootstrap:
-    BAND_SNAPSHOT 912, 0xffffc000
+    BAND_ONCE 15, 912, 0xffffc000
 .global probe_cpu_bootstrap_replay
 probe_cpu_bootstrap_replay:
-       .inst original_cpu_bootstrap_word
+    .inst original_cpu_bootstrap_word
     b original_cpu_bootstrap_resume
 .global probe_machine_startup
 probe_machine_startup:
-    BAND_SNAPSHOT 944, 0xffc000ff
+    BAND_ONCE 16, 944, 0xffc000ff
 .global probe_machine_startup_replay
 probe_machine_startup_replay:
-       .inst original_machine_startup_word
+    .inst original_machine_startup_word
     b original_machine_startup_resume
 .global probe_panic
 probe_panic:
-    BAND_SNAPSHOT 976, 0xffff1493
+    BAND_ONCE 17, 976, 0xffff1493
 .global probe_panic_replay
 probe_panic_replay:
-       .inst original_panic_word
+    .inst original_panic_word
     b original_panic_resume
 .global probe_panic_options
 probe_panic_options:
-    BAND_SNAPSHOT 1008, 0xffc000c0
+    BAND_ONCE 18, 1008, 0xffc000c0
 .global probe_panic_options_replay
 probe_panic_options_replay:
-       .inst original_panic_options_word
+    .inst original_panic_options_word
     b original_panic_options_resume
 .global probe_panic_trap
 probe_panic_trap:
-       BAND_SNAPSHOT 1040, 0xff9400ff
+    BAND_ONCE 19, 1040, 0xff9400ff
     // x0 is the panic format string: render its first eight bytes as hex so the
     // message can be read off the screen, the only output channel we have.
     ldr         x23, [x0]
@@ -370,7 +404,7 @@ probe_panic_trap:
     HEXROW_VAL 1072
 .global probe_panic_trap_replay
 probe_panic_trap_replay:
-       .inst original_panic_trap_word
+    .inst original_panic_trap_word
     b original_panic_trap_resume
 .balign 8
 .global probe_scratch
@@ -441,7 +475,7 @@ probe_fault:
     and x10, x10, #255
     cmp x10, #32
     b.ne fault_stop
-    BAND x20, 1104, 0xffff0000
+    BAND_ONCE20 22, 1104, 0xffff0000
     HEXROW esr_el1, 1136
     HEXROW elr_el1, 1168
     HEXROW far_el1, 1200
@@ -459,4 +493,10 @@ hex_font:
 .balign 4096
 .global probe_zero
 probe_zero:
+    .space 4096
+// The flag page is separate from the per-CPU shim page: the kernel writes into
+// the shim page, which must not corrupt the flags.
+.balign 4096
+.global probe_flags
+probe_flags:
     .space 4096

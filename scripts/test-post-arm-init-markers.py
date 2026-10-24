@@ -156,6 +156,9 @@ def main():
         check('TPIDR_EL1 shim points at the zeroed per-CPU page', tpidr == int(report['probe_zero'], 16))
         check('With the shim the model advances past the per-CPU null dereference',
               f'{best[1]}+{pc-best[0]:#x}' == '_cpu_number+0x10')
+        flags_pa = PA + int(report['probe_flags'], 16) - int(report['probe']['va'], 16)
+        flags = bytes(uc.mem_read(flags_pa, 32))
+        check('The draw-once guard flags record the hooks that fired', any(flags))
         check('No invalid memory access other than the reported stop', all(b['pc'] == hex(pc) for b in bad))
         check('VBAR_EL1 was redirected to the probe vector page identity address',
               vbar.get('at_cpu_base') == hex(PA + int(report['probe']['va'], 16) - base))
