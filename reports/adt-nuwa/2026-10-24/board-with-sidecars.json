@@ -1,8 +1,8 @@
 {
   "scope": "offline structural audit of an Apple-format DT; not a boot, not a QEMU run",
-  "adt": "out\\adt-nuwa\\full.adt",
-  "adt_bytes": 13464,
-  "adt_sha256": "23541a2214f715eebd7450e4508c9e71fb2f854cc901ae46921877f4fc06f9aa",
+  "adt": "out\\adt-nuwa\\board\\board-with-sidecars.adt",
+  "adt_bytes": 13360,
+  "adt_sha256": "0c937e752a479fd80e8025d5c0013b17a648079e1328728dd2d0e65ac56a7c6c",
   "node_count": 21,
   "node_paths": [
     "/device-tree",
@@ -124,11 +124,6 @@
       "ok": true,
       "detail": "present keys: RAMDisk, TrustCache, GpuAddon (legal only when the payload carries no sidecar)",
       "advisory": true
-    },
-    {
-      "check": "text-fixups is NUL-separated and terminated",
-      "ok": true,
-      "detail": "1 entries"
     },
     {
       "check": "cpus has at least one core",

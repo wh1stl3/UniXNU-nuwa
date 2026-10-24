@@ -110,3 +110,22 @@ python3 scripts/audit-nuwa-adt-inputs.py --fdt out/live-nuwa-dt/android-dt-after
 
 未完成：固件能否满足 owned 窗口（需 UEFI 内存图与实际分配）、XNU 是否接受该树（无内核执行）、任何驱动是否绑定（未验证）。启动前仍须离线验收、新鲜录像与恢复条件、即时通知；不得从文件 SHA PASS 直接执行 loadable=false 分析内核。
 
+## 最新：R-012 批准 A，board 受审字段已写入并复核组装
+
+用户 2026-10-24 18:40 回复「批准A继续推进」。按最小范围只写两个字段：`[payload] dram_size = "0x240000000"`、`[payload.adt] owned_memory_size = "0x40000000"`。`example = true`、其余 TODO、所有 `_verified`、bringup-plan/donor/固件/feed/XNU 窗口均未动；无设备动作，最近真实手机状态仍是北京时间 18:09:48 Android 完成 1。
+
+新增 `scripts/check-nuwa-adt-board.py`：基座因 `config.py:103` 拒绝 `example = true` 而跑不起来 payload 步骤，该脚本按 `payload.py:149-170` 的规则从 board.toml 组装同一条命令行离线重放。结果 board-only 21 节点/31 检查、带 sidecar 21 节点/34 检查，0 失败；证据 `reports/adt-nuwa/2026-10-24/board.json`、`board-with-sidecars.json`。
+
+复核中发现并修正一处真实契约不兼容：旧实现强制 `--unique-chip-id` 与 `--chip-id` 成对，但基座分别从命令行/环境变量与 `[payload.adt]` 独立传入，board 的 `chip_id` 仍是 TODO，只给 seed 时会 exit 2 把整条 payload 卡死。已改为允许独立传入、仅告警，两者并存才写身份属性；`test-nuwa-adt.py` 增至 10 用例并加 `seed-without-chip-id` 锁住该行为。
+
+续接命令（全部离线）：
+
+```bash
+python3 scripts/check-nuwa-adt-board.py --seed <hex> --sidecars --output reports/<新路径>/board.json
+python3 scripts/test-nuwa-adt.py --output reports/<新路径>/test.json
+python3 scripts/audit-nuwa-adt-inputs.py --fdt out/live-nuwa-dt/android-dt-after-r011/android-live.dtb --output reports/<新路径>/inputs.json
+```
+
+ADT 侧已齐备。board 剩余 TODO：`[ipsw]` url/chip_id/board_id/sha256、`[payload]` volume/size_mib/kernel_args、`[kernel]` defconfig/archives/prelink、`[firmware]`、`[bootimg.image]`。下一主线为原生内核加载链与初始化/ABI 资格审查，以及 owned 窗口 1 GiB 可用性的 UEFI 证据。**窗口可用性、XNU 是否接受该树、驱动是否绑定均未验证。**
+
+

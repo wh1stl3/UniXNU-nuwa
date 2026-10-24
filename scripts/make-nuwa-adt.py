@@ -27,6 +27,7 @@ can actually satisfy that request is a separate, unverified question.
 import argparse
 import os
 import struct
+import sys
 import zlib
 from pathlib import Path
 
@@ -170,10 +171,18 @@ def main():
     args = parser.parse_args()
 
     # --- argument validation --------------------------------------------
+    # The base passes these independently: --chip-id comes from [payload.adt]
+    # and --unique-chip-id from the command line or UNIXNU_UNIQUE_CHIP_ID
+    # (payload.py:150-155). Rejecting a half pair would block a board that has
+    # only one of them configured, so warn instead: XNU needs both to publish
+    # IOPlatformUUID, and a lone property simply will not produce one.
     if (args.unique_chip_id is None) != (args.chip_id is None):
-        parser.error('--unique-chip-id and --chip-id must be supplied together')
-    if args.unique_chip_id is not None and not (0 < args.unique_chip_id < 1 << 64 and 0 < args.chip_id < 1 << 32):
-        parser.error('--unique-chip-id must fit 8 bytes and --chip-id 4 bytes, both nonzero')
+        print('warning: --unique-chip-id and --chip-id should be supplied together; '
+              'IOPlatformUUID needs both, so the tree will carry only one', file=sys.stderr)
+    if args.unique_chip_id is not None and not 0 < args.unique_chip_id < 1 << 64:
+        parser.error('--unique-chip-id must fit 8 bytes and be nonzero')
+    if args.chip_id is not None and not 0 < args.chip_id < 1 << 32:
+        parser.error('--chip-id must fit 4 bytes and be nonzero')
     if args.owned_memory_size is not None and (
             not OWED_MIN <= args.owned_memory_size <= OWED_MAX
             or args.owned_memory_size % OWED_STEP):
@@ -230,10 +239,10 @@ def main():
     chosen = [
         # A fresh seed on every build: ADT output is intentionally non-reproducible.
         ('random-seed', os.urandom(64)),
-        # Without these XNU never publishes IOPlatformUUID, and callers that ask
-        # gethostuuid() with a zero timeout (configd) block forever.
-        *([('unique-chip-id', u64(args.unique_chip_id)), ('chip-id', u32(args.chip_id))]
-          if args.unique_chip_id is not None else []),
+        # Without both of these XNU never publishes IOPlatformUUID, and callers
+        # that ask gethostuuid() with a zero timeout (configd) block forever.
+        *([('unique-chip-id', u64(args.unique_chip_id))] if args.unique_chip_id is not None else []),
+        *([('chip-id', u32(args.chip_id))] if args.chip_id is not None else []),
         ('osenvironment', b'main\0'),
         # Dev-fused, undemoted board tuple (0,0,1,1) as MobileGestalt reads it,
         # so mobileactivationd takes its native "Hactivation" branch. These are

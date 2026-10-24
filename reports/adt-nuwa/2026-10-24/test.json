@@ -1,6 +1,6 @@
 {
   "scope": "offline generator/checker tests; no device, no boot, no QEMU",
-  "generator_sha256": "b7c16c7c004f95ace4a4df9e86eaa7af746b3b8f8dfb6923daf138daf681a084",
+  "generator_sha256": "917490d102739437680faef12cfc058e8cf1b8b7ff1580ebdf5729d8308a12f2",
   "checker_sha256": "01d6bc9bcfbd8e5848014f345b0ae74d72f45175905cc8fcd89c28d5a0d9e322",
   "cases": [
     {
@@ -27,6 +27,23 @@
       "checks": 21,
       "failures": [],
       "advisories": [],
+      "outcome": "ok"
+    },
+    {
+      "case": "seed-without-chip-id",
+      "expect": "pass",
+      "checks": 20,
+      "failures": [],
+      "advisories": [
+        "memory-map declares at least one sidecar placeholder: present keys: none (legal only when the payload carries no sidecar)"
+      ],
+      "outcome": "ok"
+    },
+    {
+      "case": "seed-without-chip-id-carries-one-property",
+      "expect": "one property",
+      "has_unique_chip_id": true,
+      "has_chip_id": false,
       "outcome": "ok"
     },
     {

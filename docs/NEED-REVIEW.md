@@ -12,9 +12,17 @@
 
 | 编号 | 主题 | 需要用户做什么 |
 | --- | --- | --- |
-| R-012 | ADT 的 `dram_size` / `owned_memory_size` 取值 | 从 A/B/C 中选定一个，批准在 board.toml 写入这两个受审字段 |
+| — | 当前无待批准项；启动前仍核对具体日志及恢复路径 | — |
 
-## R-012 · ADT 的 dram_size / owned_memory_size 取值（待批）
+## R-012 · ADT 的 dram_size / owned_memory_size 取值（approved A，已写入 board.toml）
+
+**执行结果（2026-10-24 18:40）**：用户回复「批准A继续推进」，按批准的最小范围只写入两个受审字段：`[payload] dram_size = "0x240000000"`、`[payload.adt] owned_memory_size = "0x40000000"`。未置任何 `*_verified = true`，未改 bringup-plan/donor/固件/feed/XNU 窗口，`example = true` 保持，本轮无设备动作。
+
+获批后按 `payload.py:149-170` 的传参规则做了离线复核：`scripts/check-nuwa-adt-board.py` 从 board.toml 组装同样的命令行驱动生成器，两种场景（无 sidecar / 带 ramdisk+trustcache+gpuaddon）均产出 21 节点树、31 与 34 项结构检查 0 失败；证据 `reports/adt-nuwa/2026-10-24/board.json`。**这只证明 board 的 ADT 配置能产出合法树，不证明基座 payload 步骤接受该 board（仍被 example=true 拦住），也不证明固件能满足窗口。**
+
+复核中发现并修正一处契约不兼容：原实现强制 `--unique-chip-id` 与 `--chip-id` 成对，而基座是分别从命令行/环境变量与 `[payload.adt]` 独立传入的，board 的 `chip_id` 目前仍是 TODO，强制成对会让 payload 步骤直接失败。已改为允许独立传入、仅告警，并在原因为缺一方时不写该属性。正负例覆盖见 `scripts/test-nuwa-adt.py` 的 `seed-without-chip-id` 用例。
+
+以下保留审批时背景与候选。
 
 背景：2026-10-24 设备仓 ADT 生成器已落地（`scripts/make-nuwa-adt.py`、`scripts/check-nuwa-adt.py`、`scripts/audit-nuwa-adt-inputs.py`），`[payload.adt] tool` 已指向它，板级常量已逐项对回实机 FDT。但 `[payload] dram_size`（`scripts/unixnu/payload.py:149` 直接读取，缺则无法组装 payload）与 `[payload.adt] owned_memory_size` 属于 AGENTS §3.1 的内存/基址受审字段，本轮没有写入，因此 payload 步骤仍不可运行。
 
@@ -273,3 +281,4 @@ ipad_identity = true
 | R-001 | 内存窗口怎么声明（nuwa DRAM 不连续 11.22 GiB） | **answered by D-001 → 修正为 D-002**：单窗口为硬约束，排除「14 段全给」；原 A 提案区间不连续，不成立；首选主 bank `0x8c0000000` / 9216 MiB，退路 A′ 768 MiB。详见 `DECISIONS.md` D-001 |
 | R-002 | 首版 board.toml 最小占位 | **approved，已落地**：用户选择 A；精确内容见上方及根目录 board.toml，未授权其余硬停项。 |
 | R-003 | WSL工具链路线 | **approved A，范围已明确**：用户保持WSL主线；本仓预检/适配计划已落地，工具输入仍未落实；未批准安装或其他目录/源树写入。 |
+| R-012 | ADT 的 `dram_size` / `owned_memory_size` 取值 | **approved A，已写入**：`dram_size = 0x240000000`（实机 FDT `/memory` 最大连续段，与 D-001 吻合）、`owned_memory_size = 0x40000000`（D-002 首版窗口上界）。board 仍 `example = true`，窗口可用性未验证。 |

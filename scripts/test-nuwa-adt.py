@@ -112,6 +112,19 @@ def main():
     record('packed-ramdisk', 'pass', run_generator([
         '--dram-size', '0x240000000', '--packed-data-ramdisk'], 'packed'))
 
+    # The base passes --unique-chip-id and --chip-id independently (payload.py:150-155),
+    # so a lone seed must still yield a valid tree carrying just that property. A hard
+    # pairing requirement here would stall any board whose chip_id is still TODO.
+    seed_only = run_generator(['--dram-size', '0x240000000',
+                               '--unique-chip-id', '0x0123456789abcdef'], 'seed-only')
+    record('seed-without-chip-id', 'pass', seed_only)
+    seed_props = checker.decode(seed_only)['/device-tree/chosen']['properties']
+    results.append({'case': 'seed-without-chip-id-carries-one-property', 'expect': 'one property',
+                    'has_unique_chip_id': 'unique-chip-id' in seed_props,
+                    'has_chip_id': 'chip-id' in seed_props,
+                    'outcome': 'ok' if ('unique-chip-id' in seed_props and 'chip-id' not in seed_props)
+                                          else 'unexpected'})
+
     # --- negative: each breaks exactly one enforced constraint -----------
     record('missing-options', 'fail', broken(with_options=False),
            expect_failure='required node /device-tree/options')

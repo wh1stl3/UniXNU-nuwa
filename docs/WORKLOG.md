@@ -341,3 +341,5 @@
 2026-10-24 18:09 北京时间 · 6b3e5bfd单次实机58MB精确长度/EOF/SHA256 PASS，原厂恢复Android1及三分区SHA不变 · Q-158（本里程碑提交） · reports/fv-file-audit-trial/2026-10-24-01/。
 
 2026-10-24 · 设备仓ADT生成器落地：make-nuwa-adt.py按基座契约补齐--gpu-addon/--text-fixup/--persistent-data，check-nuwa-adt.py独立解码最小12节点/20检查与完整21节点/35检查全通过，audit-nuwa-adt-inputs.py对实机FDT 14项对照10项精确相等0项不符，test-nuwa-adt.py正负例8用例全部符合预期（3生成/4违约树/1参数拒绝）；根compatible采用实机值并说明ArmDTPlatform不匹配该属性，iomem较FDT只少最后4KiB页而非55MiB；dram_size/owned_memory_size属受审字段未写入，提R-012待批，board仍example=true；无设备动作 · Q-159（本里程碑提交） · reports/adt-nuwa/2026-10-24/、docs/operations/2026-10-24-nuwa-adt.md
+
+2026-10-24 · R-012批准A：board写入dram_size=0x240000000（实机FDT /memory最大连续段，与D-001吻合）与owned_memory_size=0x40000000（D-002上界），example=true/其余TODO/所有_verified未动；新增check-nuwa-adt-board.py按payload.py:149-170规则离线重放参数组装，board-only 21节点/31检查、带sidecar 21节点/34检查0失败；修正旧实现--unique-chip-id与--chip-id强制成对的契约不兼容（基座分别独立传参，board的chip_id仍TODO，成对会让payload exit 2），test增至10用例全过；窗口能否被固件满足仍未验证，无设备动作 · Q-160（本里程碑提交） · reports/adt-nuwa/2026-10-24/board.json、docs/NEED-REVIEW.md R-012
