@@ -116,6 +116,22 @@
       "passed": true
     },
     {
+      "name": "Continuous run executes in the AArch64 high-EL state (SCR_EL3=0x431 = NS|RW, HCR_EL2=0x80000000)",
+      "passed": true
+    },
+    {
+      "name": "Continuous run ends exactly at the white replay point",
+      "passed": true
+    },
+    {
+      "name": "Continuous run reproduces the pinned kernel page-table digest",
+      "passed": true
+    },
+    {
+      "name": "Negative control keeps SCR_EL3/HCR_EL2 at the model default",
+      "passed": true
+    },
+    {
       "name": "Continuous run leaves only the diagnostic L1 slot changed",
       "passed": true
     },
@@ -329,6 +345,8 @@
     "tcr": "0x22a51a251a",
     "ttbr0": "0x8c355e000",
     "ttbr1": "0x8c355f000",
+    "scr_el3": "0x431",
+    "hcr_el2": "0x80000000",
     "mair": "0xc08044f00bb44ff",
     "tables_pa": "0x8c355e000",
     "tables_before_sha256": "f851ae4a554b2867f0ce5f050ee5a505804498479309c988f4b12822398f732d",
@@ -353,6 +371,8 @@
     "tcr": "0x22a51a251a",
     "ttbr0": "0x8c355e000",
     "ttbr1": "0x8c355f000",
+    "scr_el3": "0x0",
+    "hcr_el2": "0x0",
     "mair": "0xc08044f00bb44ff",
     "tables_pa": "0x8c355e000",
     "tables_before_sha256": "f851ae4a554b2867f0ce5f050ee5a505804498479309c988f4b12822398f732d",

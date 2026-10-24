@@ -368,3 +368,5 @@
 2026-10-25 00:45 · 入口探针02实机里程碑：单次fastboot boot后用户拍到绿蓝黄品红青白六条带——青证明MMU已开且该带在MMU开启状态下经1GiB设备恒等映射写入framebuffer，白证明到达_arm_init首指令(KVA取指)、进入C入口；内核随后返回/复位回固件菜单，未到iOS，停点未知。镜像af5862be/内核8515068d；原图7030b14c；16:43:19Z恢复Android完成1、16:43:30Z三SHA与preflight完全一致。无flash/erase/改槽 · 本里程碑提交 · reports/xnu-entry-probe-trial/2026-10-25-01/{preflight,launch,recovery,postcondition,screen-evidence}.json、operations/2026-10-25-entry-probe-02-trial.md
 
 2026-10-25 00:55 · 软件侧补强：复核定位到"T0SZ=26 走L2"实为测试模型未置AArch64高异常级状态（SCR_EL3/HCR_EL2=0 → arm_el_is_aa64()假 → AArch32遍历取T0SZ&7）；设置SCR_EL3.NS|RW与HCR_EL2.RW后，真实v5候选连续穿过MMU到达_arm_init，374399条指令、两宿主一致、页表仅多诊断slot2、候选SHA不变，默认态保留为负对照。test-kernel-entry-probe.py 33→38项，software.json 重出；probe-unicorn-mmu.py 增 --aarch64-state，audit脚本同时记录两态 · 本里程碑提交 · reports/kernel-entry-probe/2026-10-24-v5/{software,unicorn-mmu-support}.json
+
+2026-10-25 01:00 · 正式测试补三项钉死绑定：AArch64态读回(SCR_EL3=0x431/HCR_EL2=0x80000000)、页表摘要682cb477必须匹配、停止点必须等于white回放地址0xfffffff008489220，负对照要求SCR/HCR保持模型默认；software.json 38→42项全通过，打包绑定对v3/v4/v5仍通过、删青色白色检查并重封仍被拒 · 本里程碑提交

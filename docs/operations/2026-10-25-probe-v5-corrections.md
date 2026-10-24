@@ -86,16 +86,32 @@ python -B scripts/audit-unicorn-mmu-support.py reports/kernel-entry-probe/2026-1
 2. 打包与实机试验仍按原门：`build_xnu_boot_package.py --entry-probe` 指向 v5 报告，包校验、新鲜 preflight、即时通知、用户对本包的录像与恢复确认，`ab3c092b` 的许可不可复用。
 3. 结果判读（不变）：有 cyan 无 white → 查 `ret` 到 arm_init 的 KVA 切换；两者皆无 → 查 MMU 开启本身；有 white → 转 pmap/arm_vm_init。
 
+
 ## 追加：连续穿越 MMU 的测试（2026-10-25 00:55）
+
+
 
 复核给出源码级根因后，A–H 矩阵的"起始层/L2"现象被解释掉：Unicorn 默认 `SCR_EL3=0`、`HCR_EL2=0`，`arm_el_is_aa64()` 为假，页表遍历走 **AArch32** 分支，只取 `T0SZ & 7`（26&7=2）→ 30 位输入 → 起始层 L2。把模型置入内核真实所在的 AArch64 高异常级状态后：
 
-- `SCR_EL3 = (1<<10)|1`（NS|RW）→ 读回 `0x430`；`HCR_EL2.RW = 1<<31` → 读回 `0x80000000`；
+
+
+- `SCR_EL3 = (1<<10)|1`（NS|RW）→ 读回 `0x431`；`HCR_EL2.RW = 1<<31` → 读回 `0x80000000`；
+
 - 真实 v5 候选从入口连续执行，**穿过 `msr sctlr_el1` 到达 `_arm_init` 钩子（KVA）**，374,399 条指令回调，无 Unicorn 异常；
+
 - 结束时 `TCR/TTBR0/TTBR1/MAIR/SCTLR` 仍是内核自己的值（`0x22a51a251a`/`0x8c355e000`/`0x8c355f000`/`0xc08044f00bb44ff`/`0x3454593d`），候选 SHA 未变；
+
 - 页表前后对比：只有诊断用的 L1 slot 2 变化，其余逐字节相同；
+
 - 默认状态作为**负对照**：仍在 `MSR+4`（`0x8c37c7378`）抛 `UC_ERR_EXCEPTION`。
 
-因此 `test-kernel-entry-probe.py` 的 33 项扩到 **38 项**（新增连续穿越、负对照、连续+占槽三个场景），`software.json` 已重出。`scripts/probe-unicorn-mmu.py` 增加 `--aarch64-state`，`audit-unicorn-mmu-support.py` 同时记录默认态与 AArch64 态，结论按后者判定。
+
+
+钉死的绑定有三组：AArch64 态读回 `SCR_EL3=0x431`/`HCR_EL2=0x80000000`；页表摘要必须等于 `682cb477a6574e9e107de81570e339336eb60c81a156cf1bb1bdf6eff4d1bfa8`（复核方在同一候选/同一状态下得到同一值）；停止点必须等于 `probe_arm_init_replay` 地址 `0xfffffff008489220`。负对照要求 `SCR/HCR` 仍为模型默认。
+
+因此 `test-kernel-entry-probe.py` 的 33 项扩到 **42 项**（新增连续穿越、负对照、连续+占槽三个场景），`software.json` 已重出。`scripts/probe-unicorn-mmu.py` 增加 `--aarch64-state`，`audit-unicorn-mmu-support.py` 同时记录默认态与 AArch64 态，结论按后者判定。
+
+
 
 边界照旧：这是软件模型，不是实机；`arm_init` 第一条原始指令即停止，`arm_vm_init`/pmap/kext/iOS 未执行。但它与实机结果（青+白）互相印证。
+

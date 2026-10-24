@@ -22,6 +22,9 @@ PRESERVED=list(range(9))+list(range(18,31))
 FB_DESCRIPTOR=0x006000008000040d
 SCR_EL3_AARCH64=(1<<10)|1      # NS | RW
 HCR_EL2_RW=1<<31
+# Kernel-built bootstrap page tables after the diagnostic slot is installed. Independent
+# reviewers reproduced this exact digest for the same candidate and the same AArch64 state.
+PINNED_TABLES_SHA256='682cb477a6574e9e107de81570e339336eb60c81a156cf1bb1bdf6eff4d1bfa8'
 
 
 def snapshot(uc):return {str(i):uc.reg_read(getattr(sys.modules[__name__],f'UC_ARM64_REG_X{i}')) for i in PRESERVED}
@@ -135,6 +138,7 @@ def run_continuous(raw,report,model='aarch64',preoccupy=None):
     return {'model':model,'error':error,'reached':st['reached'],'instructions':st['count'],
             'pc':hex(uc.reg_read(UC_ARM64_REG_PC)),'bad_memory':bad,
             'sctlr':sr(3,0,1,0,0),'tcr':sr(3,0,2,0,2),'ttbr0':sr(3,0,2,0,0),'ttbr1':sr(3,0,2,0,1),
+            'scr_el3':sr(3,6,1,1,0),'hcr_el2':sr(3,4,1,1,0),
             'mair':sr(3,0,10,2,0),
             'tables_pa':hex(st['tables_pa']) if st['tables_pa'] else None,
             'tables_before_sha256':hashlib.sha256(st['tables_before']).hexdigest() if st['tables_before'] else None,
@@ -189,6 +193,14 @@ def main():
     check('Default SCR/HCR state remains the negative control (stops right after the SCTLR write)',
           bool(negative['error']) and not negative['reached']
           and negative['pc']==hex(PA+km['symbols']['_start_first_cpu']+0x31c-kbase))
+    check('Continuous run executes in the AArch64 high-EL state (SCR_EL3=0x431 = NS|RW, HCR_EL2=0x80000000)',
+          (cont['scr_el3'],cont['hcr_el2'])==('0x431','0x80000000'))
+    check('Continuous run ends exactly at the white replay point',
+          cont['pc']==report['probe']['symbols']['probe_arm_init_replay'])
+    check('Continuous run reproduces the pinned kernel page-table digest',
+          cont['tables_after_sha256']==PINNED_TABLES_SHA256)
+    check('Negative control keeps SCR_EL3/HCR_EL2 at the model default',
+          (negative['scr_el3'],negative['hcr_el2']) in (('0x0','0x0'),(None,None)))
     check('Continuous run leaves only the diagnostic L1 slot changed',
           cont['tables_slot2']==hex(FB_DESCRIPTOR) and cont['tables_before_sha256']!=cont['tables_after_sha256']
           and cont['tables_before_bytes'] is not None
