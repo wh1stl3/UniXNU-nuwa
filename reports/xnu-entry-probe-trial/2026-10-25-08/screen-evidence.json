@@ -1,0 +1,34 @@
+{
+  "scope": "Single fastboot boot of entry-probe-09 (v16 kernel 6e1ba192, screen clear + dense ladder); user video; recovery closed",
+  "package": {
+    "report": "reports/xnu-first-entry/entry-probe-09.json",
+    "image_sha256": "b981c50bc3e1a7676669efe2cc2052d3f662e04d1aac3d97e783183478a8d721",
+    "kernel_sha256": "6e1ba192f49fc3304c73b5bdddfdba7973fa538e0db4186cd6787f9e45d3c0b7"
+  },
+  "window": {
+    "preflight_at": "2026-10-24T19:36:21.439683+00:00",
+    "postcondition_at": "2026-10-24T19:42:08.380285+00:00",
+    "partition_hashes_unchanged": true,
+    "android_boot_completed": "1",
+    "slot": "_a"
+  },
+  "observed": {
+    "bands": [
+      "blue 256",
+      "yellow 288",
+      "magenta 320"
+    ],
+    "stopped_before": "cyan 352 (the band drawn right after msr sctlr_el1 + isb)",
+    "green_EBS_breadcrumb": "GONE - the clear wiped rows 0..1152 and the firmware bar lives in rows 0..199",
+    "logo_and_menu_backdrop": "wiped (that was the goal)",
+    "firmware_log_text": "still present below, and the firmware redrew its menu afterwards"
+  },
+  "conclusion": "The screen clear works, but it is harmful: it wiped the green EBS breadcrumb and the kernel only drew three bands, stopping before the MMU switch. The clear issues about 415000 sixteen-byte stores (6.6 MB) to the framebuffer before the MMU is on, which is the only pre-cyan change in v16; the silent stop with no panic band and no exception band fits a watchdog or timeout reset caused by that write burst, rather than a fault.",
+  "next_step": "v17 = the same dense ladder without the clear. If the ladder alone restores the cyan and white bands, the clear was the cause; the green breadcrumb then survives as the EBS landmark. A clear of only the logo zone (rows 595..1035) can be tried later as a separate experiment.",
+  "not_proven": [
+    "that the write burst is what stopped the kernel (inference, not measurement)",
+    "the exact frontier inside the MMU switch"
+  ],
+  "video": "C:/Users/Administrator/Documents/xwechat_files/wxid_i8ayad5f36ws22_4142/msg/video/2026-10/10aa8ee56b8302960fa5a530f5c16899_raw.mp4",
+  "frames_extracted": "out/trial-evidence/entry-probe-09/frames/ (not committed)"
+}
