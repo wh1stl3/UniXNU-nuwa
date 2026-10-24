@@ -25,14 +25,15 @@
       "the panic text row at 1088"
     ],
     "key_change": "the cyan band (352) is back, so the kernel got past the MMU switch - unlike v15/v16/v17",
-    "panic_text_hex": "25733A206596E7E66..",
-    "panic_text_bytes": "25 73 3A 20 65 96 E7 E6 -> \"%s: \" followed by UTF-8 Chinese bytes",
-    "green_EBS_breadcrumb": "present"
+    "panic_text_hex": "25733A20696E7661",
+    "panic_text_bytes": "25 73 3A 20 69 6E 76 61 -> \"%s: inva\"",
+    "green_EBS_breadcrumb": "present",
+    "panic_format_meaning": "the format string starts with \"%s: invalid ...\"; in XNU that shape is always panic(\"%s: invalid ...\", __func__, ...) - the first %s is the function name, exactly the piece we do not capture"
   },
-  "conclusion": "Moving the draw-once guard byte out of the device window 0x80000000 and back into the probe page restored the cyan band, so writing to 0x80000000 was fatal on this device (a device access whose own handler would write the same address again, giving a silent recursive fault with no red band). v18 therefore reached the panic path, and the panic format string is now on screen: it starts with \"%s: \" and continues with a Chinese message, so the reason is a %s argument we do not capture yet.",
-  "next_step": "render four rows of sixteen hex digits (32 bytes) of the panic string so the whole message is legible, and/or capture the %s argument separately; then identify the exact panic.",
+  "conclusion": "Moving the draw-once guard byte out of the device window 0x80000000 and back into the probe page restored the cyan band, so writing to 0x80000000 was fatal on this device (a device access whose own handler would write the same address again, giving a silent recursive fault with no red band). v18 therefore reached the panic path, and the panic format string is now on screen: it starts with \"%s: \" and continues with a Chinese message, so the reason is a %s argument we do not capture yet. The panic format is \"%s: invalid ...\" with __func__ as the first argument, so the missing piece is the name of the function that panicked.",
+  "next_step": "v19: capture the first vararg (the __func__ string) as two rows of hex, plus two more rows of the format string, and save/restore x19-x28 around the hex renderer because it currently uses callee-saved registers.",
   "not_proven": [
-    "which panic exactly (only the format string prefix is legible)",
+    "which function panicked (only the format prefix \"%s: inva\" is legible)",
     "the exact ladder slot of every late band in the photograph (read by eye)"
   ],
   "video": "C:/Users/Administrator/Documents/xwechat_files/wxid_i8ayad5f36ws22_4142/msg/video/2026-10/7a445072ee1b090e1b440ff60609adc7_raw.mp4",
