@@ -1,0 +1,102 @@
+{
+  "scope": "Second single fastboot boot of the same entry-probe-06 package, to test whether the post-arm_init behaviour varies between boots",
+  "package": {
+    "report": "reports/xnu-first-entry/entry-probe-06.json",
+    "image_sha256": "d4c069f54849b9203fae29746d69aa52943f8e404b48a5e429d4e456a832ee93",
+    "kernel_sha256": "f557149d31c19e545ca55afd7daf63314de678f91edc96428acee786fa970546",
+    "adt_sha256": "92efef6249fc35103b40d6d9b8b969003e008f5d34a673e4585fe16f4cdad340"
+  },
+  "window": {
+    "preflight_at": "2026-10-24T18:36:43.407319+00:00",
+    "postcondition_at": "2026-10-24T18:42:15.900593+00:00",
+    "partition_hashes_unchanged": true,
+    "android_boot_completed": "1",
+    "slot": "_a"
+  },
+  "bands_observed": [
+    {
+      "row": 256,
+      "color": "blue"
+    },
+    {
+      "row": 304,
+      "color": "yellow"
+    },
+    {
+      "row": 352,
+      "color": "magenta"
+    },
+    {
+      "row": 400,
+      "color": "cyan"
+    },
+    {
+      "row": 448,
+      "color": "white"
+    },
+    {
+      "row": 544,
+      "color": "brown"
+    },
+    {
+      "row": 656,
+      "color": "teal-gray",
+      "means": "arm_vm_init+0x54"
+    },
+    {
+      "row": 848,
+      "color": "cyan-gray",
+      "means": "pe_arm_get_soc_base_phys"
+    }
+  ],
+  "bands_not_observed": [
+    {
+      "row": 496,
+      "color": "purple"
+    },
+    {
+      "row": 592,
+      "color": "teal"
+    },
+    {
+      "row": 624,
+      "color": "orange"
+    },
+    {
+      "row": 688,
+      "color": "olive"
+    },
+    {
+      "row": 976,
+      "color": "hot-pink"
+    },
+    {
+      "row": 1008,
+      "color": "bright-pink"
+    },
+    {
+      "row": 1040,
+      "color": "violet"
+    },
+    {
+      "row": 1072,
+      "color": "panic text"
+    },
+    {
+      "row": 1104,
+      "color": "red"
+    }
+  ],
+  "conclusion": "The second boot of the same package reproduced the first one band for band: the user read the photograph and confirmed the band set is the same, only the camera angle differs. So the post-arm_init behaviour is REPRODUCIBLE, and the earlier claim that it varies between boots was wrong - that comparison was across packages (v11 showed purple and a panic, v13 does not), not across boots of one package. The frontier is stable: arm_vm_init reached, executed to +0x54, no panic hook, no panic text, no exception report.",
+  "hypothesis_for_the_package_difference": "v13 added thirteen more function-entry hooks, among them SecureDTLookupEntry, early_random and pe_arm_get_soc_base_phys, which are called repeatedly. Each call now redraws a 32-row band, which is about 23000 store instructions, so the instrumentation itself may have slowed the kernel enough to change its behaviour, or held it in a long critical section. A draw-once guard per hook is the obvious fix and is not yet implemented or tested.",
+  "not_proven": [
+    "the cause of the v11/v13 difference",
+    "whether the stop is a hang, a watchdog reset or a fault",
+    "the colours of the two lower bands, which the photo places at 656 and 848 by position"
+  ],
+  "image": {
+    "path": "out/trial-evidence/entry-probe-06-r2/screen-01.jpg",
+    "sha256": "6c48a7ace2a7a8e3fbd8e617620abeea5eee2c53f21bf9160a5b5e845efbd233",
+    "bytes": 359530
+  }
+}
