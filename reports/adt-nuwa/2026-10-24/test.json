@@ -1,0 +1,95 @@
+{
+  "scope": "offline generator/checker tests; no device, no boot, no QEMU",
+  "generator_sha256": "b7c16c7c004f95ace4a4df9e86eaa7af746b3b8f8dfb6923daf138daf681a084",
+  "checker_sha256": "01d6bc9bcfbd8e5848014f345b0ae74d72f45175905cc8fcd89c28d5a0d9e322",
+  "cases": [
+    {
+      "case": "minimal-tree",
+      "expect": "pass",
+      "checks": 20,
+      "failures": [],
+      "advisories": [
+        "memory-map declares at least one sidecar placeholder: present keys: none (legal only when the payload carries no sidecar)"
+      ],
+      "outcome": "ok"
+    },
+    {
+      "case": "full-tree",
+      "expect": "pass",
+      "checks": 35,
+      "failures": [],
+      "advisories": [],
+      "outcome": "ok"
+    },
+    {
+      "case": "packed-ramdisk",
+      "expect": "pass",
+      "checks": 21,
+      "failures": [],
+      "advisories": [],
+      "outcome": "ok"
+    },
+    {
+      "case": "missing-options",
+      "expect": "fail",
+      "checks": 20,
+      "failures": [
+        "required node /device-tree/options"
+      ],
+      "advisories": [
+        "memory-map declares at least one sidecar placeholder: present keys: none (legal only when the payload carries no sidecar)"
+      ],
+      "outcome": "ok",
+      "expected_failure": "required node /device-tree/options",
+      "matched_expected_failure": true
+    },
+    {
+      "case": "both-ramdisks",
+      "expect": "fail",
+      "checks": 22,
+      "failures": [
+        "RAMDisk and PackedRAMDisk are not both present"
+      ],
+      "advisories": [],
+      "outcome": "ok",
+      "expected_failure": "RAMDisk and PackedRAMDisk are not both present",
+      "matched_expected_failure": true
+    },
+    {
+      "case": "window-below-floor",
+      "expect": "fail",
+      "checks": 23,
+      "failures": [
+        "owned window is 256 MiB..8 GiB in 2 MiB steps"
+      ],
+      "advisories": [
+        "memory-map declares at least one sidecar placeholder: present keys: none (legal only when the payload carries no sidecar)"
+      ],
+      "outcome": "ok",
+      "expected_failure": "owned window is 256 MiB..8 GiB in 2 MiB steps",
+      "matched_expected_failure": true
+    },
+    {
+      "case": "window-above-dram",
+      "expect": "fail",
+      "checks": 23,
+      "failures": [
+        "owned window fits the advertised DRAM size"
+      ],
+      "advisories": [
+        "memory-map declares at least one sidecar placeholder: present keys: none (legal only when the payload carries no sidecar)"
+      ],
+      "outcome": "ok",
+      "expected_failure": "owned window fits the advertised DRAM size",
+      "matched_expected_failure": true
+    },
+    {
+      "case": "generator-refuses-small-window",
+      "expect": "refuse",
+      "returncode": 2,
+      "outcome": "ok"
+    }
+  ],
+  "unexpected": [],
+  "status": "all_cases_expected"
+}

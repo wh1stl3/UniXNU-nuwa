@@ -339,3 +339,5 @@
 2026-10-24 · 第二轮40080439083/source dbbdc02完整成功；独立710项产物/7模块检查通过，FD52ab071e与首轮相同、SEC7192fd3f与已实测固件全同；原认证库/0x04和真实crypto调用保留。最终包6b3e5bfd/70266880B完整复验，23门控/19软件场景已有证据，待本包新录像，不要求Enter/键盘/OTG，本轮无新设备动作 · Q-157 · reports/fv-file-audit/40080439083/acceptance.json
 
 2026-10-24 18:09 北京时间 · 6b3e5bfd单次实机58MB精确长度/EOF/SHA256 PASS，原厂恢复Android1及三分区SHA不变 · Q-158（本里程碑提交） · reports/fv-file-audit-trial/2026-10-24-01/。
+
+2026-10-24 · 设备仓ADT生成器落地：make-nuwa-adt.py按基座契约补齐--gpu-addon/--text-fixup/--persistent-data，check-nuwa-adt.py独立解码最小12节点/20检查与完整21节点/35检查全通过，audit-nuwa-adt-inputs.py对实机FDT 14项对照10项精确相等0项不符，test-nuwa-adt.py正负例8用例全部符合预期（3生成/4违约树/1参数拒绝）；根compatible采用实机值并说明ArmDTPlatform不匹配该属性，iomem较FDT只少最后4KiB页而非55MiB；dram_size/owned_memory_size属受审字段未写入，提R-012待批，board仍example=true；无设备动作 · Q-159（本里程碑提交） · reports/adt-nuwa/2026-10-24/、docs/operations/2026-10-24-nuwa-adt.md

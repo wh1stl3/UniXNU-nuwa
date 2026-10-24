@@ -1,0 +1,222 @@
+{
+  "scope": "offline structural audit of an Apple-format DT; not a boot, not a QEMU run",
+  "adt": "out\\adt-nuwa\\full.adt",
+  "adt_bytes": 13464,
+  "adt_sha256": "23541a2214f715eebd7450e4508c9e71fb2f854cc901ae46921877f4fc06f9aa",
+  "node_count": 21,
+  "node_paths": [
+    "/device-tree",
+    "/device-tree/arm-io",
+    "/device-tree/arm-io/intc",
+    "/device-tree/arm-io/ufshc",
+    "/device-tree/buttons",
+    "/device-tree/chosen",
+    "/device-tree/chosen/manifest-properties",
+    "/device-tree/chosen/memory-map",
+    "/device-tree/cpus",
+    "/device-tree/cpus/cpu0",
+    "/device-tree/cpus/cpu1",
+    "/device-tree/cpus/cpu2",
+    "/device-tree/cpus/cpu3",
+    "/device-tree/cpus/cpu4",
+    "/device-tree/cpus/cpu5",
+    "/device-tree/cpus/cpu6",
+    "/device-tree/cpus/cpu7",
+    "/device-tree/defaults",
+    "/device-tree/options",
+    "/device-tree/product",
+    "/device-tree/psci"
+  ],
+  "chosen_sha256_properties": {
+    "nvram-bank-count": "67abdd721024f0ff4e0b3f4c2fc13bc5bad42d0b7851d456d88d203d15aaa450",
+    "nvram-bank-size": "5e4af92d1b61923dfb73d2bb1f11c68b0be4b47ac2e0ed8390962c74df7aa6c1",
+    "nvram-current-bank": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119",
+    "nvram-proxy-data": "3c6e675b2f28d917c292a325131c6c868d6ddb82ed8a74fd90c607cdb7fb3525"
+  },
+  "checks": [
+    {
+      "check": "required node /device-tree/chosen",
+      "ok": true,
+      "detail": "ArmDTPlatform::configure() rejects the tree without it"
+    },
+    {
+      "check": "required node /device-tree/cpus",
+      "ok": true,
+      "detail": "ArmDTPlatform::configure() rejects the tree without it"
+    },
+    {
+      "check": "required node /device-tree/arm-io",
+      "ok": true,
+      "detail": "ArmDTPlatform::configure() rejects the tree without it"
+    },
+    {
+      "check": "required node /device-tree/defaults",
+      "ok": true,
+      "detail": "ArmDTPlatform::configure() rejects the tree without it"
+    },
+    {
+      "check": "required node /device-tree/options",
+      "ok": true,
+      "detail": "ArmDTPlatform::configure() rejects the tree without it"
+    },
+    {
+      "check": "chosen has a 64-byte random-seed",
+      "ok": true,
+      "detail": "DarwinBoot/XNU entropy seed"
+    },
+    {
+      "check": "chosen supplies a usable CHRP NVRAM proxy",
+      "ok": true,
+      "detail": "ArmDTPlatform::hasNVRAMProxy() requires both"
+    },
+    {
+      "check": "chosen carries osenvironment",
+      "ok": true,
+      "detail": "reported 'main'"
+    },
+    {
+      "check": "dram-base and dram-size are 64-bit",
+      "ok": true,
+      "detail": "base=0x8c0000000 size=0x240000000"
+    },
+    {
+      "check": "dram window is 4 KiB aligned and non-empty",
+      "ok": true,
+      "detail": "0x8c0000000 + 0x240000000"
+    },
+    {
+      "check": "darwinboot-memory-size is 8 bytes",
+      "ok": true,
+      "detail": "len=8"
+    },
+    {
+      "check": "owned window is 256 MiB..8 GiB in 2 MiB steps",
+      "ok": true,
+      "detail": "0x40000000"
+    },
+    {
+      "check": "owned window fits the advertised DRAM size",
+      "ok": true,
+      "detail": "0x40000000 <= 0x240000000"
+    },
+    {
+      "check": "memory-map placeholder RAMDisk is 16 bytes",
+      "ok": true,
+      "detail": "DarwinBoot writes address+size here"
+    },
+    {
+      "check": "memory-map placeholder TrustCache is 16 bytes",
+      "ok": true,
+      "detail": "DarwinBoot writes address+size here"
+    },
+    {
+      "check": "memory-map placeholder GpuAddon is 16 bytes",
+      "ok": true,
+      "detail": "DarwinBoot writes address+size here"
+    },
+    {
+      "check": "RAMDisk and PackedRAMDisk are not both present",
+      "ok": true,
+      "detail": "DarwinBoot rejects the tree when both are declared"
+    },
+    {
+      "check": "memory-map declares at least one sidecar placeholder",
+      "ok": true,
+      "detail": "present keys: RAMDisk, TrustCache, GpuAddon (legal only when the payload carries no sidecar)",
+      "advisory": true
+    },
+    {
+      "check": "text-fixups is NUL-separated and terminated",
+      "ok": true,
+      "detail": "1 entries"
+    },
+    {
+      "check": "cpus has at least one core",
+      "ok": true,
+      "detail": "8 core(s)"
+    },
+    {
+      "check": "exactly one CPU has reg 0 (the boot CPU)",
+      "ok": true,
+      "detail": "found 1"
+    },
+    {
+      "check": "/device-tree/cpus/cpu0 reports a 32-bit timebase-frequency",
+      "ok": true,
+      "detail": "19200000 Hz"
+    },
+    {
+      "check": "/device-tree/cpus/cpu1 reports a 32-bit timebase-frequency",
+      "ok": true,
+      "detail": "19200000 Hz"
+    },
+    {
+      "check": "/device-tree/cpus/cpu2 reports a 32-bit timebase-frequency",
+      "ok": true,
+      "detail": "19200000 Hz"
+    },
+    {
+      "check": "/device-tree/cpus/cpu3 reports a 32-bit timebase-frequency",
+      "ok": true,
+      "detail": "19200000 Hz"
+    },
+    {
+      "check": "/device-tree/cpus/cpu4 reports a 32-bit timebase-frequency",
+      "ok": true,
+      "detail": "19200000 Hz"
+    },
+    {
+      "check": "/device-tree/cpus/cpu5 reports a 32-bit timebase-frequency",
+      "ok": true,
+      "detail": "19200000 Hz"
+    },
+    {
+      "check": "/device-tree/cpus/cpu6 reports a 32-bit timebase-frequency",
+      "ok": true,
+      "detail": "19200000 Hz"
+    },
+    {
+      "check": "/device-tree/cpus/cpu7 reports a 32-bit timebase-frequency",
+      "ok": true,
+      "detail": "19200000 Hz"
+    },
+    {
+      "check": "more than one CPU requires /psci",
+      "ok": true,
+      "detail": "secondary start needs it"
+    },
+    {
+      "check": "arm-io declares one ranges tuple",
+      "ok": true,
+      "detail": "len=24"
+    },
+    {
+      "check": "arm-io ranges child address is zero",
+      "ok": true,
+      "detail": "0x0"
+    },
+    {
+      "check": "intc matches arm,gic-v3",
+      "ok": true,
+      "detail": "compatible=b'arm,gic-v3\\x00'"
+    },
+    {
+      "check": "intc reg is two base/size pairs",
+      "ok": true,
+      "detail": "len=32"
+    },
+    {
+      "check": "intc windows sit inside the arm-io ranges window",
+      "ok": true,
+      "detail": "dist=0x100000+0x10000 redist=0x180000+0x200000 window=0x17000000..0x1f000000"
+    }
+  ],
+  "failures": [],
+  "advisories": [],
+  "status": "structural_audit_passed",
+  "not_proven": [
+    "that firmware can allocate the advertised or requested window",
+    "that XNU accepts this tree at boot (no kernel execution yet)",
+    "that any driver binds these nodes on hardware"
+  ]
+}

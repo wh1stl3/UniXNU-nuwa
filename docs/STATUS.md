@@ -1,21 +1,32 @@
 # STATUS
 
-> **6b3e5bfd 单次实机文件校验通过**：照片显示 PASS exact length, EOF and SHA256 / exit Success。已恢复 Android完成1、槽_a、三分区SHA不变（北京时间18:09:48）。下一步转入内核执行前资格检查；尚未执行内核。
+> **6b3e5bfd 单次实机文件校验通过**（2026-10-24 18:09:48）：照片 PASS exact length, EOF and SHA256 / exit Success，恢复 Android 完成1、槽_a、三分区SHA不变。**本轮无新设备动作**；内核仍未执行。
 
-诊断改为固件内 NuwaFileAuditDxe 的一次性 ReadyToBoot 回调，自动只读 58335232 字节 READTEST.BIN 并验证完整 SHA-256；结果显示 30 秒后返回固件。无需选择菜单、Enter、键盘或 OTG。数据不执行，不调用 ExitBootServices。详见 [诊断记录](operations/2026-10-24-fv-file-audit.md)。
+## 本轮（2026-10-24 晚，离线）：ADT 生成器落地
 
-最终报告 reports/fv-file-audit/40080439083/package.json；镜像 out/trial-boot/fv-file-audit-40080439083/boot-fv-file-audit-v3.img，70266880 字节，SHA-256 **6b3e5bfd3a8e1d5a8e8abbda3268872a6fc69b287c144df70387012d46a41dc7**。64MiB 数据 FAT 只含固定文件和退出配置，无外部 EFI 应用或 XNU 启动项；xnu_included=true 如实标记 MachO 数据存在，kernel_execution_enabled=false。
+设备仓此前缺 `make-nuwa-adt.py`，`[payload.adt] tool` 一直是 TODO，OS 入口 blocker 3（真实 nuwa ADT 未提供）无从推进。本轮补齐：
 
-完整 CI **40080439083 / dbbdc02247df0bba08183df97f3775286ef96271 success**；下载后独立复查 710 个 inventory 文件和 7 个模块，整包逐字节重建一致。FD52ab071e/3145728B 与首轮构建相同。首轮40078257763编译成功、原检查因 LTO 内联失败，失败证据保留；修正后检查真实 Ready 回调四次 BL 到 572B SHA 压缩体，并确认驱动专属 BaseCryptLib/OpenSSL 链接。19项软件协议场景及一次性回调、23项门控/拒绝回归通过。静态链接和软件执行均不等于目标固件密码实现或实机文件 SHA 已通过。
+- `scripts/make-nuwa-adt.py` —— 按基座契约生成 `kernel.macho.adt`，补上旧路线实现缺的 `--gpu-addon`/`--text-fixup`/`--persistent-data` 三个参数（`payload.py:149-170` 会传）。
+- `scripts/check-nuwa-adt.py` —— 独立有界解码，不复用生成器编码器。最小树 12 节点/20 检查、完整树 21 节点/35 检查，**0 失败**。
+- `scripts/audit-nuwa-adt-inputs.py` —— 生成器常量对回实机 FDT，14 项对照 **10 项精确相等、0 项不符**。
+- `scripts/test-nuwa-adt.py` —— 正负例 8 个用例全部符合预期：真生成器产物必须过，缺 `/options`、双 ramdisk 占位符、窗口越界三类违约树必须被拒。
 
-固件源固定 a155c495c863e06d400b515315e3b8f7791dc308；诊断 profile 为57输入/12补丁/15后哈希，原11保护补丁保持。完整 SEC7192fd3f3f37061ebaf466d2e98ef0e661abf29fe5b38eaa60cba99f0d40fd90 与此前实测缓存交接修复逐字节一致。Heap/HOB 坏条目保护、缓存维护、板值及原验签库/0x04拒绝策略均保持，默认 profile 不变。新增 DXE 调度和目标文件校验本轮单次实机通过，重复性尚未验证。
+证据 `reports/adt-nuwa/2026-10-24/{min,full,inputs,test}.json`，输入 `out/live-nuwa-dt/android-dt-after-r011/android-live.dtb`（4815 节点）。记录：[ADT](operations/2026-10-24-nuwa-adt.md)。
 
-最新实测 reports/fv-file-audit-trial/2026-10-24-01/：自动固件回调打开唯一文件、普通pool分配、读取固定数据、精确长度/EOF/SHA256校验PASS并Success退出；数据菜单随后显示。三张原图及SHA存档，未收到完整连续视频文件。原图摘要略模糊，不逐字转录完整实际digest；固定源码仅在预期digest匹配后打印PASS。单次候选启动，随后用户按键回fastboot，临时原厂恢复。postcondition.at=2026-10-24T10:09:48.744209+00:00（北京时间18:09:48），Android完成1、槽_a、三分区SHA与本轮preflight一致。无flash/erase/改槽。首次命令把--evidence误传成目录，在设备动作前拒绝，修正后只启动一次。
+板级值全部有实机依据：timebase 19200000、GIC `0x17100000/0x10000`+`0x17180000/0x200000`、stride `0x40000`、psci smc、8 核 Affinity1 `0x0..0x700`、ufshc `0x1d84000/0x3000`、DRAM base `0x8c0000000`。`/memory` 9 条合并成 8 段，最大段跨度 `0x240000000`，与 D-001 的 9216 MiB 独立吻合。
 
-工程判断：本轮将USB数据运输、FAT普通文件读取、约58MB普通分配和完整SHA链路提升为单次实机通过。上包18ebd838 Access Denied的首因仍排外部未签名EFI认证拒绝，保留原认证策略的固件内读取成功进一步支持；具体拒绝API/runtime SecureBoot值仍未捕获。认证/LoadImage路径与数据读取应分别处理，不宣称已唯一定位。[失败分析](operations/2026-10-24-file-audit-access-denied.md)。
+两处证据分歧已判断并留档：根 `compatible` 采用实机值（`ArmDTPlatform::configure()` 不匹配该属性，`ArmDTPlatform.cpp:123-142`）；iomem 的 System RAM 比 FDT 描述**只少最后一个 4 KiB 页**（`0x1000`），此前"少 55 MiB"的印象是取整表述错误。
 
-USB v3 运输8177783e单次实测已通过独立64MiB卷/FAT：envelope result=1、块设备Success；偏移减64B等于历史vendor ramdisk长度，支持拼接路线，v4替代和重复性仍未对照。菜单本身不作数据读取证据。[运输记录](operations/2026-10-24-usb-v3-trial.md)。
+## 卡点：board 仍不能组装 payload
 
-上游已审查更新固定 UniXNU e553e467ebfe7642e9f483d3977a57066c6d1aef、21模块；固件40014018074和内核40015845083构建通过。内核bf14e530/20188216B为Darwin22.6.0/iOS16.0、64补丁、零未定义。分析预链接eb66542cc9b6c34f369c07229900408ab67288152f561be63fa6061efce9ffca/58335232B，65348绑定和代码范围读回检查通过，但 **loadable=false**。完整初始化/回调/C++ ABI、真实ADT和实际分配的OS内存窗口未资格化，文件校验成功也不等于内核或iOS启动。ST FTS路线、身份和所有_verified保持原状。[集成](operations/2026-10-24-upstream-integration.md)、[AMFI分析](operations/2026-10-24-amfi-phase-and-slots.md)。
+`[payload] dram_size`（`payload.py:149` 直接读取）与 `[payload.adt] owned_memory_size` 属 AGENTS §3.1 受审字段，**未写入**，已提 `docs/NEED-REVIEW.md` **R-012** 三选一待批。因此 payload 步骤仍不可运行，board 保持 `example = true`。
 
-下一步先离线审计真实原生内核加载链、ADT及普通/连续内存分配要求，维护分析MachO loadable=false边界和初始化/ABI待办。不得把当前数据诊断PASS直接变成执行分析内核的许可；新候选另完成离线检查、日志/恢复条件确认并通知后再测试。原Heap/HOB保护、认证策略、板值和_verified保持。[交接](operations/2026-10-23-mainline-handoff.md)。
+## OS 入口四个 blocker（未解）
+
+`reports/os-entry-next-step/continuation.json`：① 早期安全初始化器身份与调用 ABI（AMFI 注册入口已静态定位、23 项槽位与 12 项时序通过，构造/kmod start 间接路径与 C++ ABI 仍缺）；② donor/native 完整 C++ 与结构 ABI；③ 真实 ADT 与运行时分配窗口（本轮只解掉"生成器缺失"，窗口仍待 R-012 与 UEFI 证据）；④ 大负载装载（读取已通过，装载未做）。
+
+分析内核 `eb66542c`（58335232 B）仍 `loadable=false`、`runtime_qualified=false`，不作实机 OS 包。**文件 SHA PASS 不等于执行许可。**
+
+## 下一步
+
+R-012 获批后写入两个受审字段，再离线复核 payload 组装；同时推进原生内核加载链、ADT 与连续内存分配资格审查。任何新包仍需离线验收、新鲜录像与恢复门、启动前即时通知，结束恢复 Android 完成 1 并核对三分区。原 Heap/HOB 保护、认证策略、板值与所有 `_verified` 保持原状。[交接](operations/2026-10-23-mainline-handoff.md)。

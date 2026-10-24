@@ -1,0 +1,128 @@
+{
+  "scope": "known-value reconciliation between the generator constants and the captured nuwa FDT",
+  "fdt": "out\\live-nuwa-dt\\android-dt-after-r011\\android-live.dtb",
+  "fdt_bytes": 938804,
+  "fdt_sha256": "e7217b1575c7a7c2ca4bd758ab7fc20f580533cae4ea85631608997fede51e1d",
+  "fdt_node_count": 4815,
+  "generator_sha256": "b7c16c7c004f95ace4a4df9e86eaa7af746b3b8f8dfb6923daf138daf681a084",
+  "comparisons": [
+    {
+      "constant": "TIMEBASE",
+      "generator": "0x124f800",
+      "fdt": "0x124f800",
+      "evidence": "/soc/timer clock-frequency",
+      "match": true
+    },
+    {
+      "constant": "GIC_DIST",
+      "generator": "0x17100000",
+      "fdt": "0x17100000",
+      "evidence": "/soc/interrupt-controller@17100000 reg[0]",
+      "match": true
+    },
+    {
+      "constant": "GIC_DIST_SIZE",
+      "generator": "0x10000",
+      "fdt": "0x10000",
+      "evidence": "/soc/interrupt-controller@17100000 reg[1]",
+      "match": true
+    },
+    {
+      "constant": "GIC_REDIST",
+      "generator": "0x17180000",
+      "fdt": "0x17180000",
+      "evidence": "/soc/interrupt-controller@17100000 reg[2]",
+      "match": true
+    },
+    {
+      "constant": "GIC_REDIST_SIZE",
+      "generator": "0x200000",
+      "fdt": "0x200000",
+      "evidence": "/soc/interrupt-controller@17100000 reg[3]",
+      "match": true
+    },
+    {
+      "constant": "GIC_REDIST_STRIDE",
+      "generator": "0x40000",
+      "fdt": "0x40000",
+      "evidence": "/soc/interrupt-controller@17100000 redistributor-stride",
+      "match": true
+    },
+    {
+      "constant": "CPU_AFFINITY1",
+      "generator": "passed via --cpu-regs",
+      "fdt": [
+        "0x0",
+        "0x100",
+        "0x200",
+        "0x300",
+        "0x400",
+        "0x500",
+        "0x600",
+        "0x700"
+      ],
+      "evidence": "8 /cpus/cpu@N nodes",
+      "match": null
+    },
+    {
+      "constant": "PSCI_METHOD",
+      "generator": "smc",
+      "fdt": "smc",
+      "evidence": "/soc/psci method (generator default)",
+      "match": true
+    },
+    {
+      "constant": "UFS_HC",
+      "generator": "0x1d84000",
+      "fdt": "0x1d84000",
+      "evidence": "/soc/ufshc@1d84000 reg[0]",
+      "match": true
+    },
+    {
+      "constant": "UFS_HC_SIZE",
+      "generator": "0x3000",
+      "fdt": "0x3000",
+      "evidence": "/soc/ufshc@1d84000 reg[1]",
+      "match": true
+    },
+    {
+      "constant": "DRAM_BASE",
+      "generator": "0x8c0000000",
+      "fdt": "0x8c0000000",
+      "evidence": "/memory reg: 9 entries coalesce into 8 run(s), largest is 2 entries",
+      "match": true
+    },
+    {
+      "constant": "DRAM_RUN_SPAN",
+      "generator": "passed via --dram-size",
+      "fdt": "0x240000000",
+      "evidence": "largest contiguous /memory run (2 entries)",
+      "match": null
+    },
+    {
+      "constant": "ROOT_MODEL",
+      "generator": "nuwa-first-boot",
+      "fdt": "Qualcomm Technologies, Inc. 8550 nuwa",
+      "evidence": "/ model (label only)",
+      "match": null
+    },
+    {
+      "constant": "ROOT_COMPATIBLE",
+      "generator": "qcom,kalama-mtp",
+      "fdt": [
+        "qcom,kalama-mtp",
+        "qcom,kalama",
+        "qcom,mtp"
+      ],
+      "evidence": "/ compatible; ArmDTPlatform::configure() does not match this property",
+      "match": null
+    }
+  ],
+  "failures": [],
+  "status": "constants_match_live_fdt",
+  "not_proven": [
+    "that a matching FDT value is also the right Apple-side value for XNU",
+    "that the largest /memory bank is the window firmware can allocate",
+    "anything about a boot: no kernel or firmware ran"
+  ]
+}

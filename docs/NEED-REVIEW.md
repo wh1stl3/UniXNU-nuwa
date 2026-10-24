@@ -12,7 +12,28 @@
 
 | 编号 | 主题 | 需要用户做什么 |
 | --- | --- | --- |
-| — | 当前无待批准项；启动前仍核对具体日志及恢复路径 | — |
+| R-012 | ADT 的 `dram_size` / `owned_memory_size` 取值 | 从 A/B/C 中选定一个，批准在 board.toml 写入这两个受审字段 |
+
+## R-012 · ADT 的 dram_size / owned_memory_size 取值（待批）
+
+背景：2026-10-24 设备仓 ADT 生成器已落地（`scripts/make-nuwa-adt.py`、`scripts/check-nuwa-adt.py`、`scripts/audit-nuwa-adt-inputs.py`），`[payload.adt] tool` 已指向它，板级常量已逐项对回实机 FDT。但 `[payload] dram_size`（`scripts/unixnu/payload.py:149` 直接读取，缺则无法组装 payload）与 `[payload.adt] owned_memory_size` 属于 AGENTS §3.1 的内存/基址受审字段，本轮没有写入，因此 payload 步骤仍不可运行。
+
+本轮实测证据（`reports/adt-nuwa/2026-10-24/inputs.json`，输入为 `out/live-nuwa-dt/android-dt-after-r011/android-live.dtb`）：
+
+- 实机 FDT `/memory` 的 9 个 reg 条目合并后共有 8 段连续区，最大一段为 **base `0x8c0000000`、跨度 `0x240000000`**（精确 9216 MiB，满足 2 MiB 对齐）。
+- `/proc/iomem` 的 System RAM 尾部条目 `0x8c0000000-0xaffffefff` 跨度是 `0x23FFFF000`，比 FDT 描述**恰好少 `0x1000`（最后一页）**，不是少 55 MiB；此前把该段近似记作 9216 MiB 是取整表述。
+- 两者只在最后一个 4 KiB 页上不同。`dram-size` 是广告给内核的物理 DRAM 大小，不是分配承诺；实际可用性由 UEFI 内存图与 DarwinBoot 分配决定。
+
+候选 A（倾向）：`[payload] dram_size = "0x240000000"`，`[payload.adt] owned_memory_size = "0x40000000"`（1 GiB）。
+代价：广告值比 iomem 可见 System RAM 多最后一页。若 DarwinBoot 真把窗口推到该页，需要 UEFI 内存图证明该页可用；但窗口起点与长度由分配器实际返回的连续区决定，不由 `dram-size` 单独决定，因此这条风险主要落在 owned 请求的验证上，而不是板值本身写错。理由：与 D-001 的 9216 MiB 主 bank 结论、D-002 的 512 MiB–1 GiB 首版窗口范围一致，且 FDT 与 iomem 两条独立证据互相印证。
+
+候选 B：`dram_size = "0x23FFE0000"`（把 `0x23FFFF000` 向下对齐到 2 MiB），`owned_memory_size = "0x40000000"`。
+代价：比 D-001 记录的 9216 MiB 少 128 KiB，需要同步修订 D-001 的表述，否则两份文档互相矛盾；收益是广告范围严格不越过 iomem 的 System RAM 末尾。
+
+候选 C：只填 `dram_size`，`owned_memory_size` 留空（不请求连续窗口）。
+代价：DarwinBoot 不会通过 `darwinboot-memory-size` 请求指定窗口，58 MB 级内核加 boot_args 与 kext 的装载余量落回默认分配路径，后续仍需补一次同类审批；收益是本轮改动面最小，可先单独验证 ADT 能否被平台专家接受。
+
+**需要批准的最小范围：选择 A 时，只在 board.toml 写入上述两个值，其余 TODO 与 `example = true` 保持不变；不置任何 `*_verified = true`，不改 bringup-plan、donor、固件、feed 或 XNU 窗口，不进行任何设备动作。** 选择 B 时额外授权修订 D-001 中 9216 MiB 的表述。选择 C 时只写 `dram_size`，并明确 owned 窗口留待下一次审批。
 
 ## R-011 · 资源耗尽后的DXE Heap修正范围（approved A，源码/构建/唯一临时对照及恢复完成）
 

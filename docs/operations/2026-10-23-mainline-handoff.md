@@ -87,3 +87,26 @@ recover实际临时加载原厂v4 boot，postcondition.at=2026-10-24T08:14:06.60
 最新实际状态2026-10-24T10:09:48.744209+00:00/北京时间18:09:48：nuwa/kalama、Android1、槽_a、boot/vendor_boot/init_boot SHA与试前一致，无flash/erase/改槽。无需再回fastboot或按Enter。原认证/Heap/HOB/板值不变，分析MachO仍数据文件，不执行。
 
 下一步离线检查原生内核加载链、ADT、实际OS窗口与初始化/ABI资格。不要重复文件探针或从文件PASS直接执行loadable=false分析内核；新包先离线验收，新录像/恢复门及即时启动通知。具体实测和旧认证拒绝首因判断更新见operations/2026-10-24-fv-file-audit.md。
+
+## 最新离线里程碑：ADT 生成器落地，board 仍缺受审字段
+
+本轮全离线，无手机、USB 或固件动作；最近真实手机状态仍是 2026-10-24T10:09:48.744209+00:00（北京时间18:09:48）Android完成1、槽_a、三分区SHA与试前一致。
+
+改动：新增 scripts/make-nuwa-adt.py、scripts/check-nuwa-adt.py、scripts/audit-nuwa-adt-inputs.py、scripts/test-nuwa-adt.py；board.toml [payload.adt] 增加 tool/cpu_regs/psci_method（非受审字段）。OS 入口 blocker 3 中"生成器缺失"部分解除，"运行时分配窗口"仍在。
+
+证据：reports/adt-nuwa/2026-10-24/{min,full,inputs,test}.json；输入 out/live-nuwa-dt/android-dt-after-r011/android-live.dtb（4815节点）。结构审计最小12节点/20检查、完整21节点/35检查均0失败；常量对实机FDT 14项对照10项精确相等、0项不符；正负例8用例全部符合预期。操作记录 operations/2026-10-24-nuwa-adt.md。
+
+两处判断留档：根 compatible 用实机值 qcom,kalama-mtp/qcom,kalama/qcom,mtp，因为 ArmDTPlatform.cpp:123-142 只校验四节点与 NVRAM proxy，不匹配根 compatible；iomem System RAM 跨度 0x23FFFF000 比 FDT /memory 跨度 0x240000000 只少最后 0x1000，此前"9216 MiB 与实测差55MiB"的印象不成立。
+
+**当前唯一阻塞**：[payload] dram_size（payload.py:149 直接读取）与 [payload.adt] owned_memory_size 属 AGENTS §3.1 受审字段，未写入；已提 NEED-REVIEW R-012（A: 0x240000000/0x40000000 倾向；B: 0x23FFE0000/0x40000000；C: 只填 dram_size）。批准前 payload 步骤不可运行，board 保持 example=true，不改 bringup-plan/donor/固件/feed/XNU窗口，不置任何 _verified。
+
+获准后可直接续接的离线命令：
+
+```bash
+python3 scripts/make-nuwa-adt.py --output out/adt-nuwa/<新目录>/kernel.macho.adt --dram-size <批准值> --owned-memory-size <批准值> --ipad-identity --cpu-regs 0,256,512,768,1024,1280,1536,1792 --psci-method smc
+python3 scripts/check-nuwa-adt.py --adt <上一步产物> --output reports/<新路径>/audit.json
+python3 scripts/audit-nuwa-adt-inputs.py --fdt out/live-nuwa-dt/android-dt-after-r011/android-live.dtb --output reports/<新路径>/inputs.json
+```
+
+未完成：固件能否满足 owned 窗口（需 UEFI 内存图与实际分配）、XNU 是否接受该树（无内核执行）、任何驱动是否绑定（未验证）。启动前仍须离线验收、新鲜录像与恢复条件、即时通知；不得从文件 SHA PASS 直接执行 loadable=false 分析内核。
+

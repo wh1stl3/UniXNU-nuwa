@@ -13,12 +13,19 @@ device_class = "d22ap"
 # TODO: url/chip_id/board_id/sha256；缺donor BuildManifest及组件哈希核对。
 
 [payload.adt]
+# 2026-10-24: 设备仓自己的 ADT 生成器落地，契约见 UniXNU docs/zh/concepts/payload.md。
+# 设备仓 scripts/ 会被拷进构建树 scripts/，因此这里是相对路径。
+tool = "scripts/make-nuwa-adt.py"
 ipad_identity = true
-# TODO: tool/chip_id/cpu_regs/psci_method等，待nuwa ADT来源核对。
-# TODO: owned_memory_size，缺UEFI可用连续区证据；D-002先512MiB–1GiB，上限8GiB。
-# TODO: [payload] dram_size，物理DRAM描述尚需核对，不能当作窗口大小。
-# TODO: [userdata] LBA与lba_bytes，缺本轮GPT证据核对。
+# 实机 FDT /cpus/cpu@0..cpu@700：Affinity1 编号 0x000..0x700，共 8 核。
+cpu_regs = "0,256,512,768,1024,1280,1536,1792"
+# 实机 FDT /soc/psci method = "smc"。
+psci_method = "smc"
+# TODO: chip_id/unique_chip_id —— 平台种子不入库，构建时用 --unique-chip-id 或
+#   UNIXNU_UNIQUE_CHIP_ID 传入；board 侧置 unique_chip_id = "required" 须先定 chip_id。
+# TODO(硬停): owned_memory_size 与 [payload] dram_size 属 AGENTS §3.1 的内存/基址字段。
+#   实机证据与候选值见 docs/NEED-REVIEW.md R-012，未获批准前不写入。
+# TODO: [payload] volume/size_mib/kernel_args 与 [userdata] LBA，缺本轮GPT证据核对。
 # TODO: [kernel] defconfig/archives，缺8796配置及Darwin22接口审查。
 # TODO: [kernel.prelink] 全部数值，缺donor kernelcache分析；不借sheng/fuxi值。
-# TODO: [firmware] 配置/路径，uefi-nuwa尚未建立。
-# TODO: [bootimg.image] 地址/offset/pagesize/header_version，缺nuwa装载证据。
+# TODO: [firmware] 配置/路径与 [bootimg.image] 地址/offset，缺nuwa装载证据。
