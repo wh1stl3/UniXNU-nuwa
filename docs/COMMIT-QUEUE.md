@@ -1580,3 +1580,13 @@
 [Evidence] 与成功CI相同64补丁/12项源码顺序检查通过；335项native策略槽、23项AMFI常量写入和RX目标对应；公开Apple同版本实现支持。
 [Risk] 完整CFG/回调及C++ABI、真实ADT/分配窗口/大文件运输仍未资格；初始化映射为空/loadable=false，无设备动作或新实测包。
 ```
+
+## Q-151 · USB数据线v3 ramdisk运输诊断包
+
+```text
+[unixnu-nuwa][loader] 构建USB内存ramdisk的v3候选与匹配v4离线对照
+
+[Change] 复用固定合并固件和64MiB有界探针，严格新scope包验收/录像恢复门；补ABL版本来源和真实选择门字节夹具。
+[Evidence] v3 8177783e/v4 91e86ce4仅头部offset20/40不同，70266880B全包回读；7项新测试/10历史门控、16项AArch64用户QEMU分支夹具通过。
+[Risk] v3容器接受/实际context/ramdisk拼接和64MiB发布未实测，菜单fallback不算运输成功；无XNU/ADT、无手机或分区动作。
+```

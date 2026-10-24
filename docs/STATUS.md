@@ -1,8 +1,8 @@
 # STATUS
 
-> AMFI阶段审计新增12项源码顺序检查通过，23项注册写入对应实际native策略槽；DATA_CONST文件只读标志不足以判定早期写保护故障。完整初始化/ABI仍待资格，分析预链接loadable=false。
+> USB内存ramdisk诊断包8177783e已构建并严格复验：v3与v4离线对照仅头部两字节不同。7新测试/10历史门控及16项真实ABL门字节QEMU夹具通过，待本包新鲜录像确认后实测，无需OTG。
 
-全部已审查上游更新已合并并完成默认配置构建验证。e553e46/21模块已推送；固件CI40014018074和Darwin22/iOS16源内核CI40015845083成功。本轮仅离线审计，无手机或USB介质操作，无固件行为变化，不重复构建同一二进制；新固件和内核尚未实测。
+全部已审查上游更新已合并并完成默认配置构建验证。e553e46/21模块已推送；固件CI40014018074和Darwin22/iOS16源内核CI40015845083成功。本轮复用固定FD生成新v3运输容器，不重复编译同一固件；无手机或USB介质操作，新固件和内核尚未实测。
 
 源：wh1stl3/UniXNU@e553e467ebfe7642e9f483d3977a57066c6d1aef，真实双亲merge上游1a01c2af，54冲突落实，合并树精确为完整上游+3个nuwa工作流。设备接入提交5abdde1，内核前置依赖修复6070627。全部21模块初始化并固定；两旧资料库只读。固件默认upstream-merged，内核merged与NativePrelink工具入口已切新源。[完整落实记录](operations/2026-10-24-upstream-integration.md)。
 
@@ -18,6 +18,8 @@
 
 本轮以成功CI相同64项补丁在内存重建六文件，12项检查确认安全加载先于mac_late与最终lockdown，可选入口在构造/成功start之后。DATA_CONST初始RWNX、最后RNX，单靠Mach-O只读标志判故障的风险排序已修正。实际bf14 dSYM的mac_policy_ops为335槽/2680B，原AMFI直线注册块23次指针写入均落在native槽位且目标位于原AMFI RX；槽位匹配不证明参数结构/C++ABI。[阶段与槽位记录](operations/2026-10-24-amfi-phase-and-slots.md)。
 
-下一步追踪donor构造/start间接路径及once-guard、关键回调参数；initializer仍为空。独立大文件探针/介质镜像尚未构建；用户已答暂无OTG，不等待购买硬件，继续离线审查临时启动负载交接、真实nuwa ADT及实际OS窗口。4MiB配置卷不证明约58MiB运输，9GiB为快照而非已分配窗口。旧5a128fb2/7774仅历史分析，loadable=false。
+USB运输当前首因倾向v4 ABL选择已安装init_boot，临时ramdisk未交接。新增固定ABL版本来源+0x28→context+0x458与选择门证据；36原始门字节在AArch64用户QEMU16例通过，不是完整ABL执行。新v3包8177783e1364caed71e0db82f4c91db720f9586f8bc0d05ca044e133be4ad898/70266880B，v4匹配对照91e86ce4，两者仅offset20/40不同，4096之后全部相同。相同FD/64MiB封装CRC/配置探针，无XNU/ADT，保留原cmdline和全部板值。包报告reports/usb-ramdisk/40014018074/package-v3.json；匹配v4仅离线，不安排自动启动。[USB诊断记录](operations/2026-10-24-usb-ramdisk-v3.md)。
 
-当前不需按键/录像，OTG问项关闭；新实机启动另确认当轮日志/恢复并即时通知。Heap/HOB保护/ST FTS路线、board内存/身份/_verified未改，无flash/erase/改槽位。最近菜单后无OS/充电仍首先由探针action=exit及无OS负载解释，不归因尚未执行的AMFI。[交接](operations/2026-10-23-mainline-handoff.md)。
+下一步取得本包新鲜录像/按键恢复条件，刷新唯一nuwa/kalama、Android完成1及三分区基线并即时通知后，才单次临时启动。必须看到独立封装result=1/64MiB块发布Success；内嵌配置菜单fallback不算运输成功。失败先核版本/拼接或v3解析兼容，不改Heap/分区。用户现已具备OTG线并授权判断路线；先试已就绪USB v3，减少host角色/供电/枚举新变量，OTG作为备选。没有本轮设备状态查询，恢复仍以上述历史证据为准。
+
+离线主线继续donor构造/start间接路径/once-guard/关键回调参数、真实ADT和OS窗口资格；initializer仍为空，loadable=false。9GiB为快照而非已分配窗口，64MiB配置封装成功也不等于真实58MiB预链接文件/内核执行通过。Heap/HOB保护/ST FTS路线、board内存/身份/_verified未改，无flash/erase/改槽位。最近菜单后充电仍由探针action=exit/无OS负载解释。[交接](operations/2026-10-23-mainline-handoff.md)。

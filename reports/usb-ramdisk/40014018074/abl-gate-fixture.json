@@ -1,0 +1,53 @@
+{
+  "scope": "QEMU user-space isolated real ABL gate bytes only; not phone or full ABL execution",
+  "source_report": "reports/abl-handoff/usb-v3-gates.json",
+  "source_report_sha256": "4ec12f38f1c9fa6dc05130be6a1faac02e886ce0f7a6c9337c59eadb9fcba51a",
+  "code_start": "0x7660",
+  "code_end": "0x7684",
+  "code_sha256": "4887b0af93d493308e4ddfca4e88bb093edcaa0dd5cdf62f24061d2396da807f",
+  "original_gate_bytes_preserved": true,
+  "exit_destinations_replaced_by_fixture_returns": true,
+  "cases": 16,
+  "result": "QEMU execution passed",
+  "commands": [
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "aarch64-linux-gnu-gcc",
+        "-static",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "/mnt/d/Code/UniXNU-nuwa/out/usb-ramdisk-gate/gate.S",
+        "/mnt/d/Code/UniXNU-nuwa/out/usb-ramdisk-gate/main.c",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/usb-ramdisk-gate/gate-test"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/upstream-host-tests/qemu-runtime/usr/bin/qemu-aarch64",
+        "/mnt/d/Code/UniXNU-nuwa/out/usb-ramdisk-gate/gate-test"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS 16 isolated selection-gate cases\n",
+      "stderr": ""
+    }
+  ],
+  "conclusion": "For both modeled values of context+0x45c, version3 bypasses this init_boot lookup gate; version4 can enter it when flag is set",
+  "limitations": [
+    "Actual context field values and full ramdisk assembly path are not executed",
+    "Header compatibility and successful firmware/initrd entry need a separately captured phone trial"
+  ],
+  "device_accessed": false
+}

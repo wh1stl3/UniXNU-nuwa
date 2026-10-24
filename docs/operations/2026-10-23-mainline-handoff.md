@@ -38,3 +38,15 @@ Q-150：用户已答暂无OTG，问项关闭，不要求购买、不等待录像
 新增证据reports/native-prelink-merged/init-phase-final.json、amfi-ops-slots.json；操作记录2026-10-24-amfi-phase-and-slots.md。新源/产物SHA/Heap/HOB/板值及空initializer映射、loadable=false保持；当前“菜单后充电”首因仍配置退出/无OS负载，不能归因未执行过的AMFI。
 
 可直接执行：bundled Python -B scripts/audit-prelink-init-phase.py --output reports/<新路径>.json；audit-amfi-ops-slots.py同参数（需WSL llvm-dwarfdump）。下一步追踪三构造/start间接槽和once-guard、关键回调参数；并行的逻辑工作是离线读取核心/无OTG现有启动链运输审查，不能默认写UFS或扩大内存窗口。设备启动门按上节保持，每个新包重新确认日志并即时通知。
+
+## 当前USB运输候选（2026-10-24，Q-151）
+
+用户已明确USB数据线路径，OTG非依赖。已完成离线包8177783e1364caed71e0db82f4c91db720f9586f8bc0d05ca044e133be4ad898/70266880B，out/trial-boot/usb-ramdisk-40014018074/boot-ramdisk-v3.img，严格报告reports/usb-ramdisk/40014018074/package-v3.json。复用固件40014018074/FD2d606985和112B shim8a3b5476，Heap/HOB缓存维护/坏链保护/板值/内存图保持，不重编FD。64MiB配置FAT加64B封装，无XNU/ADT；v4离线匹配对照91e86ce4仅与v3头部20/40两字节不同，不纳入启动scope。
+
+首因判断为v4选择init_boot替代临时ramdisk；新增原始版本来源窗口+16例36字节原始分支用户QEMU夹具支持v3旁路，但未证明完整ABL或实机接受。7项新容器/门控及10项历史门控通过，原factory Heap/HOB保护检查随每次包validate重跑；所有结果见上述报告目录，操作记录2026-10-24-usb-ramdisk-v3.md。启动成功判据必须是NUWA-VOLUME result=1且64MiB块设备Success，内嵌4MiB fallback菜单不算运输证据。
+
+续接先跑 bundled Python -B scripts/usb_ramdisk_package.py --validate reports/usb-ramdisk/40014018074/package-v3.json。需本包新鲜连续录像≥120秒/必要时按键回fastboot条件，确认前不执行设备动作。确认后用record-nuwa-trial-state.py --package <v3报告> --capture-confirmation <用户原答复> --output reports/usb-ramdisk-trial/<新轮次>/preflight.json 刷新实际状态，再即时通知后用trial-v4-firmware.py launch --package <v3报告> --preflight <本轮preflight> --evidence <新轮次launch.json>。脚本名保留历史但只为严格USB-v3新scope允许header3，其他scope仍须header4；匹配v4对照不能启动。
+
+试验结束按既有recover与record --before流程恢复Android完成1和三分区SHA相同；恢复原boot仍ef558db2/v4，不flash/erase/改槽位。当前未启动/未查询设备；最近真实恢复仍上文26ef8efd UTC18:55:45.904383，并非新查询。若v3被拒绝或chosen仍旧，先保留日志再审查完整解析/选择路径；不通过放宽范围守卫找卷。离线完整OS资格仍loadable=false。
+
+用户最新条件：现在已有OTG线，授权判断路线。仍选先测已就绪v3，避免引入host/供电/介质枚举变量；OTG备用，介质可用性尚未确认。不要沿用早先“暂无OTG”作为当前事实，也不自动安排OTG第二轮启动；本v3包仍等待新鲜录像条件。

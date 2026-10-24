@@ -19,6 +19,11 @@ def main():
     args = cli.parse_args()
     if args.package:
         metadata = json.loads(args.package.read_text())
+        if metadata.get('approval') == 'USB-RAMDISK-V3-OFFLINE':
+            from usb_ramdisk_package import validate
+            validate(args.package)
+            if not (args.capture_confirmation or '').strip():
+                raise ValueError('Fresh USB ramdisk capture confirmation required before device query')
         if metadata.get('approval') in ('EMBEDDED-PROBE-OFFLINE', 'BOOT-INPUT-AUDIT-OFFLINE', 'HOB-STAGE-AUDIT-OFFLINE', 'HOB-CACHE-HANDOFF-OFFLINE'):
             from embedded_probe_package import validate
             validate(args.package)
@@ -78,7 +83,8 @@ def main():
                   'EMBEDDED-PROBE-OFFLINE': ROOT/'reports/embedded-probe',
                   'BOOT-INPUT-AUDIT-OFFLINE': ROOT/'reports/boot-input-audit',
                   'HOB-STAGE-AUDIT-OFFLINE': ROOT/'reports/hob-stage-audit',
-                  'HOB-CACHE-HANDOFF-OFFLINE': ROOT/'reports/hob-cache-handoff'}
+                  'HOB-CACHE-HANDOFF-OFFLINE': ROOT/'reports/hob-cache-handoff',
+                  'USB-RAMDISK-V3-OFFLINE': ROOT/'reports/usb-ramdisk'}
         approval = json.loads(package.read_text())['approval']
         if approval not in scopes or not package.is_relative_to(scopes[approval]):
             raise ValueError('Unexpected allocation trial package report')
