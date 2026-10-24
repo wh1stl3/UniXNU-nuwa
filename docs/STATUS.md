@@ -37,6 +37,13 @@
 
 `scripts/test-kernel-entry-probe.py` 已能把**真实候选从入口连续执行穿过 MMU 到 `_arm_init`**：模型需先置入 AArch64 高异常级状态（`SCR_EL3.NS|RW`、`HCR_EL2.RW`）；默认状态保留为负对照。42 项通过，含负对照、占槽场景，以及三项钉死绑定：SCR_EL3/HCR_EL2 读回、页表摘要 `682cb477…`、停止点等于 white 回放地址。此前"引擎不支持、只能合成进入"是测试初始化错误，已作废。
 
+## 当前状态：v7 已打包并校验，等待录像后单次启动
+
+- 镜像 **`1684358edd0034af9482bc7702a694df40ce9646c61c3a35908e3e3f643ab554`**，70,266,880 B，菜单标识 `XNU ENTRY PROBE 03 - BLUE YELLOW MAGENTA CYAN WHITE PURPLE RED`；报告 `reports/xnu-first-entry/entry-probe-03.json`，`--validate` 已从出货 FAT 读回 kernel `af6e1b5f` 与 ADT `07b75eda` 通过。
+- 内核：v7 `af6e1b5f`（28 补丁，含恒等 VBAR + 页内 16 向量 + 四个 C 入口标记）。
+- 离线资格：42 项固定测试 + 带 ADT 7 项 + 处理器合成执行 2 项，全部通过；其中带 ADT 的验证用的是**随包这份 ADT**（`07b75eda`）。
+- 用户 2026-10-25 01:12 指示：已批准打包，启动前会先问录像。**尚未启动，未碰设备。**
+
 ## 构建支线
 
 `codex/pr100-linux-8796`（`b8872cb`）保持独立、未合入；其平台链接产物 `89a30cfb` 仍是链路资格，不是可启动镜像。

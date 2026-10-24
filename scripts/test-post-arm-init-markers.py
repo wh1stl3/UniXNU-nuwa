@@ -13,7 +13,7 @@ from unicorn.arm64_const import *
 spec = importlib.util.spec_from_file_location('t', ROOT/'scripts/test-kernel-entry-probe.py')
 T = importlib.util.module_from_spec(spec); spec.loader.exec_module(T)
 B = T.B
-ADT_PATH = ROOT/'out/trial-boot/xnu-entry-probe-02/kernel.macho.adt'
+ADT_PATH = ROOT/'out/trial-boot/xnu-entry-probe-02/kernel.macho.adt'   # default; override with --adt
 PA, FB, ROW, ARGS = T.PA, T.FB, T.ROW, T.ARGS
 ADT_PA = ARGS + 0x200000
 NULL_DEREF = '_current_percpu_base+0xc'
@@ -73,6 +73,7 @@ def main():
     cli.add_argument('--output', type=Path, required=True)
     cli.add_argument('--no-adt', action='store_true', help='keep the model-fidelity gap as a control')
     cli.add_argument('--handler', action='store_true', help='only exercise probe_exception from a snapshot')
+    cli.add_argument('--adt', type=Path, default=ADT_PATH, help='ADT bytes to hand to the kernel')
     args = cli.parse_args()
     report = json.loads(args.build.read_text())
     candidate = (ROOT/report['candidate']['path']).read_bytes()
@@ -103,9 +104,9 @@ def main():
     struct.pack_into('<4Q', args_buf, 8, base, PA, 0x40000000, ARGS+0x10000)
     struct.pack_into('<6Q', args_buf, 0x28, FB, 1, ROW, 1440, 3200, 32)
     if not args.no_adt:
-        uc.mem_write(ADT_PA, ADT_PATH.read_bytes())
+        uc.mem_write(ADT_PA, args.adt.read_bytes())
         struct.pack_into('<Q', args_buf, 0x58, ADT_PA)
-        struct.pack_into('<I', args_buf, 0x60, ADT_PATH.stat().st_size)
+        struct.pack_into('<I', args_buf, 0x60, args.adt.stat().st_size)
     uc.mem_write(ARGS, bytes(args_buf))
     uc.reg_write(UC_ARM64_REG_X0, ARGS); uc.reg_write(UC_ARM64_REG_X20, ARGS); uc.reg_write(UC_ARM64_REG_PSTATE, 0x3c5)
     uc.cpr_write(3, 6, 1, 1, 0, T.SCR_EL3_AARCH64); uc.cpr_write(3, 4, 1, 1, 0, T.HCR_EL2_RW)
@@ -155,7 +156,7 @@ def main():
     result = {'scope': ('v6 C-entry markers executed in the model with the real ADT; '
                         'not hardware behaviour'),
               'build': str(args.build), 'candidate_sha256': report['candidate']['sha256'],
-              'adt_used': not args.no_adt, 'adt_sha256': (hashlib.sha256(ADT_PATH.read_bytes()).hexdigest()
+              'adt_used': not args.no_adt, 'adt_sha256': (hashlib.sha256(args.adt.read_bytes()).hexdigest()
                                                           if not args.no_adt else None),
               'instructions': count[0], 'error': error, 'stopped_at': hex(pc),
               'stopped_symbol': f'{best[1]}+{pc-best[0]:#x}', 'reached': reached, 'pixels': pixels,
