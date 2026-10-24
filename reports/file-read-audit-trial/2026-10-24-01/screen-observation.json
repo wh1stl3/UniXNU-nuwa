@@ -1,0 +1,68 @@
+{
+  "scope": "Actual user photo plus fixed build/source audit; no captured LoadImage/StartImage call trace",
+  "photo": {
+    "path": "user-access-denied.jpg",
+    "sha256": "1b39546b7340c2003cf9f643981db2ba0424281802865681db85be0a146f6dd2"
+  },
+  "observed": {
+    "configuration_title": "NUWA FILE SHA PROBE - NO XN...",
+    "entry": "Read 58 MB data and verify SHA256",
+    "returned_status": "Access Denied",
+    "entry_attempted_and_returned": true,
+    "application_entry_or_file_sha_not_proven": true
+  },
+  "judgment": "External unsigned EFI authentication rejection is primary, high confidence from actual verification library and deny policy; precise failing API and runtime SecureBoot variable not captured",
+  "static": {
+    "pe_sha256": "def33a4add6f162a5726bba050a4c143c8ba38ea25f436f46ce4331811bb469f",
+    "certificate_table_offset": 0,
+    "certificate_table_bytes": 0,
+    "actual_build_report_sha256": "07fb1eea4a67d4334c0a833a45dfb8b0003a5ceb472692ec44ca92dbdd64ad7d",
+    "actual_build_matches": [
+      {
+        "line": 237,
+        "text": "    PcdFixedMediaImageVerificationPolicy        :  FIXED   (UINT32) = 0x04 (4)"
+      },
+      {
+        "line": 239,
+        "text": "    PcdRemovableMediaImageVerificationPolicy    :  FIXED   (UINT32) = 0x04 (4)"
+      },
+      {
+        "line": 3863,
+        "text": "    PcdFixedMediaImageVerificationPolicy        :  FIXED   (UINT32) = 0x04 (4)"
+      },
+      {
+        "line": 3865,
+        "text": "    PcdRemovableMediaImageVerificationPolicy    :  FIXED   (UINT32) = 0x04 (4)"
+      },
+      {
+        "line": 3965,
+        "text": "/DxeImageVerificationLib.inf"
+      }
+    ],
+    "security_sources": [
+      {
+        "path": "DxeImageVerificationLib.c",
+        "sha256": "b748ece13b4f2955b66aa14ccc032d4280042dd86a7e18090815be69f8fb828c"
+      },
+      {
+        "path": "DxeImageVerificationLib.h",
+        "sha256": "92439d8ee4c40519e67a55948911ce775a2049b0f1ebab6e5e6758b935efc5c1"
+      }
+    ],
+    "deny_policy_value": 4
+  },
+  "recovery": {
+    "at": "2026-10-24T08:14:06.606976+00:00",
+    "android_boot_completed": "1",
+    "slot": "_a",
+    "three_partition_hashes_unchanged": true
+  },
+  "file_sha_real_device_passed": false,
+  "transport_failure_not_shown": true,
+  "limitations": [
+    "No runtime SecureBoot variable or exact authentication callback result",
+    "Application may return errors from underlying file services; photo alone cannot exclude that alternative",
+    "QEMU firmware verification environment differed from nuwa",
+    "No evidence that a keyboard action is needed"
+  ]
+}

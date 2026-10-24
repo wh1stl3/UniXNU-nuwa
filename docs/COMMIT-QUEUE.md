@@ -1610,3 +1610,13 @@
 [Evidence] app def33a4a/6144B；最终包18ebd838/70266880B；13协议场景/3SHA向量/15门控通过，完整UEFI QEMU从最终FAT读58335232B和SHA通过后返回。
 [Risk] nuwa实际EFI加载/分配/文件SHA待实测；分析文件loadable=false，未执行内核/ADT/OS；本轮无新手机动作，Heap/HOB/板值不变。
 ```
+
+## Q-154 · 文件探针Access Denied与恢复闭环
+
+```text
+[unixnu-nuwa][device] 归档外部EFI拒绝画面并定位验签策略差异及完成恢复
+
+[Change] 归档18ebd838单次实测/原图/恢复，纠正等待Enter判断，审查实际构建镜像验证policy和PE签名。
+[Evidence] 原图returned Access Denied；实际SecurityStub链接验证库/介质policy0x04、app证书表0；postcondition UTC08:14:06完成1/A槽/三SHA不变。
+[Risk] 精确拒绝API/runtime SecureBoot值未捕获，认证拒绝为首因推断；无文件SHA实机成功，不重复同包或关闭验签，新固件候选尚未实现。
+```

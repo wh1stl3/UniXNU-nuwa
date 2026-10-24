@@ -39,3 +39,17 @@ Q-153新增独立6144B ARM64 EFI app def33a4a，菜单type=efi，来源卷固定
 续接先 bundled Python -B scripts/file_audit_package.py --validate reports/file-read-audit/package-02/package.json。新scope USB-FILE-SHA-OFFLINE元数据如实xnu_included=true，但strict验证只允许该固定文件作数据、kernel_execution_enabled=false/无XNU entry/无ADT，不能编辑JSON启用OS。原trial脚本其他scope仍禁止XNU。当前无新手机查询，最近实际恢复仍本轮v3-01北京时间15:41:49。
 
 需本包新鲜录像≥120秒/必要时按键回fastboot确认，之后刷新preflight并即时通知再单次launch。计划新轮目录reports/file-read-audit-trial/2026-10-24-01/，不得用旧v3-01 preflight。应拍FILE SHA新菜单和NUWA-FILE-SHA实际SHA/PASS/final bytes，旧embedded菜单不算成功；正常返回也需原恢复+postcondition三SHA闭环。更详细源码/证据/命令和未验边界见2026-10-24-file-read-audit.md。当前不需要OTG，无新启动已在运行。
+
+## 文件SHA第01轮正在执行
+
+用户本轮已答可以现在准备录像；新鲜preflight确认nuwa/kalama、完成1/A槽及三SHA旧基线一致。已即时通知后单次18ebd838临时启动ACK=0，120秒观察进行中，目录reports/file-read-audit-trial/2026-10-24-01/。若中断先检查本轮launch/recovery/postcondition，不重复launch；实际文件画面和恢复待补，不把启动前完成1或QEMU结果当本轮实机文件通过。当前ACK是命令接受，不是阶段证明。
+
+当前有效进度：launch.ended_at=2026-10-24T08:09:23.864382+00:00，120秒观察已结束。用户文字报告Read 58MB新菜单，问是否选entry；已说明Enter一次（或支持的空格/1），固定Menu.c任何键会停止倒计时。没有实际SHA/FAIL原图，不假设已执行或未执行；实体ButtonsDxe二进制映射尚未确认，不猜电源键。为避免中途打断仍待菜单操作的应用，本轮recover尚未运行；Android恢复/三SHA待补，人工操作待办不阻止离线分析，禁止重新launch。
+
+## 最新有效状态：Access Denied已收图且恢复闭环
+
+原图user-access-denied.jpg明确新配置、Read58MB条目及returned Access Denied，条目已尝试执行而非等Enter；已纠正前述用户操作判断。screen-observation.json保留原图SHA、真实BUILD_REPORT中SecurityStubDxe/DxeImageVerificationLib和0x04介质拒绝policy、实际app certificate table=0。首因高置信为外部无签名EFI认证拒绝，但未捕获准确LoadImage/StartImage返回点/runtime SecureBoot变量；不称SHA实机通过，不把QEMU认证环境当nuwa。
+
+recover实际临时加载原厂v4 boot，postcondition.at=2026-10-24T08:14:06.606976+00:00（北京时间16:14:06），完成1/nuwa/kalama/A槽和三分区SHA相同；当前恢复已闭环，无需按键/键盘/录像。不要重复18ebd838试验，不启动第二候选。详细操作2026-10-24-file-audit-access-denied.md，目录reports/file-read-audit-trial/2026-10-24-01/。
+
+下一步离线优先评估将同一只读校验核心纳入独立固件诊断profile、沿既有认证启动链运行，继续读取外来FAT；另一个方案为已有信任链签名资格/准确API状态，不能假造签名或改信任变量。当前尚未实现/构建新固件包，不默认关闭Secure Boot/放宽policy，不改Heap/HOB/板值；新包需重新SEC/保护验收及新鲜录像确认。

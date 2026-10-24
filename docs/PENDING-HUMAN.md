@@ -87,3 +87,9 @@
 2026-10-24T15:41:49+08:00 · **v3-01本轮全部待办关闭**：两张原图已归档，独立64MiB封装/块Success/FAT挂载实机证据取得；recovery/postcondition确认nuwa/kalama、Android完成1/A槽及三分区SHA与试前一致。不再需要按键/补录像，不自动安排OTG或第二候选。下次新包另过本轮录像门。
 
 2026-10-24 文件SHA候选 · 新包18ebd838完成离线构建/全包验收及完整UEFI QEMU文件SHA/返回验证；待本包新鲜连续录像≥120秒和必要时电源＋音量下恢复条件确认。确认前不启动，启动前即时通知，仅原USB线无需OTG。期望NUWA FILE SHA PROBE及NUWA-FILE-SHA actual SHA/PASS，旧菜单不作成功。最近手机恢复仍15:41:49，本轮无新设备动作。
+
+文件SHA第01轮正在执行：本轮用户已确认录像，preflight刷新nuwa/kalama、Android完成1/A槽及三SHA与上轮恢复一致；即时通知后单次18ebd838临时启动ACK=0，正在120秒观察。证据reports/file-read-audit-trial/2026-10-24-01/，待本轮实际SHA/PASS或失败画面及恢复闭环，不复用旧结果，不启动第二候选。
+
+文件SHA第01轮菜单阶段：120秒USB观察结束；用户文字报告新Read 58MB条目，并询问是否选中。已说明如仍在菜单可用Enter一次，菜单任何键会取消倒计时；缺输入设备时先保存当前画面，不猜nuwa实体电源键映射。当前等待该轮实际SHA/FAIL画面或用户完成操作，尚未启动恢复程序，避免打断该轮应用；启动后Android完成1/三SHA闭环仍待补，不安排第二次fastboot boot。
+
+2026-10-24T16:14:06+08:00 · **文件SHA第01轮待办关闭**：原图明确returned Access Denied，已纠正需要Enter的判断，不再要求键盘；recovery/postcondition实际确认nuwa/kalama/Android完成1/A槽及三分区SHA不变。无本轮文件SHA成功证据，不重复启动同包；继续离线认证入口诊断，当前无需按键/录像。

@@ -47,3 +47,5 @@ file_audit_package.py验证完整原固件profile/SEC保护、SHA/源身份、64
 完整OS资格仍保留loadable=false/空initializer：AMFI构造/start/once-guard/完整ABI、真实ADT和实际OS窗口待补。Heap/HOB缓存维护/坏链保护、ST FTS路线、board/bringup内存/身份及_verified全部不变；无flash/erase/改槽位。
 
 公开契约：[UEFI 2.10文件协议](https://uefi.org/specs/UEFI/2.10/13_Protocols_Media_Access.html)支持LoadedImage来源卷上的只读文件操作；[NIST FIPS180-4](https://csrc.nist.gov/pubs/fips/180-4/upd1/final)是SHA-256算法规范，复用实现不声称FIPS认证。实际UniXNU Boot.c固定e553e46实现type=efi的LoadImage/StartImage，与本次独立应用衔接；AOSP/ABL运输依据沿用已实测v3记录。
+
+实测更新：18ebd838第01轮已执行，原图新菜单returned Access Denied，文件SHA未实机通过；实际固件验签库/0x04拒绝policy与app无签名支持外部认证拒绝为首因，普通QEMU没有覆盖这一环境差异。Android于北京时间16:14:06完成1及三SHA不变，当前无需录像或Enter，不重复同包。以[本轮失败诊断](2026-10-24-file-audit-access-denied.md)和STATUS为准。

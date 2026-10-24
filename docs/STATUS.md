@@ -1,6 +1,6 @@
 # STATUS
 
-> 新文件SHA诊断包18ebd838已离线构建验收：完整UEFI QEMU读取58335232B、SHA匹配并返回；13协议场景/3向量/15门控通过。nuwa文件阶段待本包新鲜录像确认，未启动。
+> 文件SHA包18ebd838实测新菜单明确returned Access Denied，条目已尝试执行；不是等待Enter，文件SHA未实机通过。外部未签名EFI认证拒绝为首因判断。Android于北京时间16:14:06恢复完成1/三SHA不变，无需按键。
 
 USB v3运输阶段已实机通过：8177783e单次原图显示独立64MiB envelope result=1、块设备Success，FAT挂载先于embedded 4MiB卷。offset0x1d77f27减64B恰等于历史vendor ramdisk30899943B，明显支持vendor+临时generic拼接，增强v4 init_boot替代为此前缺卷首因的判断；同固件v4匹配对照/重复性未验。菜单fallback不作运输证据。[实测记录](operations/2026-10-24-usb-v3-trial.md)。
 
@@ -18,4 +18,4 @@ FD2d606985ad768dcfaab66c2b28073c0a4c2820126b42b23286623fdc450e848f/3145728B，sh
 
 内核bf14e5305a9f764c6852c2d3a69e81edc9c6199bc870c7b08160d55610616dea/20188216B，64补丁、Darwin22.6.0/iOS16.0、零未定义及5平台导出/归档一致。分析eb66542cc9b6c34f369c07229900408ab67288152f561be63fa6061efce9ffca/58335232B，65348绑定读回、30 donor/native代码范围保持、24解析通过，loadable=false/initializer空。AMFI注册/局部conf80B/23写入到335槽有静态依据，12源码时序检查下调单纯DATA_CONST写保护风险；完整构造/start/once-guard/回调及C++ABI、真实ADT和实际OS窗口仍待资格。9GiB只是快照，不是分配；文件SHA通过也不等于内核/iOS执行。[AMFI记录](operations/2026-10-24-amfi-phase-and-slots.md)。
 
-下一步本包新鲜连续录像≥120秒/必要时按键回fastboot确认后，刷新唯一nuwa/kalama、Android完成1和三分区基线，即时通知再单次临时启动。判据新FILE SHA菜单+NUWA-FILE-SHA实际SHA eb66542c/PASS/final bytes，旧fallback菜单不算成功；结束恢复原Android完成1/三SHA一致。用户现有OTG线备用，当前无需接OTG，不复用上包许可，不自动第二次启动。[交接](operations/2026-10-23-mainline-handoff.md)。
+下一步离线评估保留认证策略的固件内只读诊断入口，或补齐外部EFI既有信任链签名资格；新包尚未实现/构建，不默认关闭Secure Boot、不改db信任变量、不重复18ebd838。原图表明条目已尝试执行并返回Access Denied，无需键盘确认；准确拒绝API/runtime SecureBoot变量未捕获，外部未签名认证拒绝为高置信首因。详见operations/2026-10-24-file-audit-access-denied.md。
