@@ -461,3 +461,11 @@ D-029 实测补充（2026-10-24）：6b3e5bfd在保留认证策略的固件内�
 D-034 更正（2026-10-25 00:20，经独立复核）：原文有两处站不住，现标记为已推翻。① 「cyan 证明 SCTLR 写入后其取指已翻译」当时是先用 BAND_SNAPSHOT 再回放 isb，同步语义不成立；v5 改为先 `.inst` 回放 isb 再画带，语义收窄为「isb 已执行」。② 「Unicorn 拒绝执行 msr sctlr_el1 / 无 MMU 模型」归因错误：MSR 实测执行成功（SCTLR 读到 0x3454593d、PC 前进到 MSR+4），真正限制是**本环境 Unicorn 2.1.4 不实现 ARM64 取指翻译**——教科书 4 KiB 页表（VA 0x500000→PA 0x41000000）在 Windows 与 WSL 两个构建上取指均失败，M=1 时对已映射 RAM 的恒等取指也失败，M=0 立刻成功（scripts/probe-unicorn-mmu.py、audit-unicorn-mmu-support.py）。③ 占槽失败分支的缺陷已修（跳过时 x15=0，不再保存几何与绘制）。④ 打包绑定改为要求具体检查名存在，删检查不再能过。⑤ 此前「ParseKernel rc=139 由并行内存压力导致」的推断撤回，根因未验证。因此「真正穿过 MMU 切换」的测试在本环境无法交付，需 QEMU system mode 或实机。证据 operations/2026-10-25-probe-v5-corrections.md。
 
 D-034 第二次更正（2026-10-25 00:35，经复核可执行反例）：上一条把原因写成"Unicorn 不实现 ARM64 取指翻译"仍然不对。复核给出 TCR `0x280993519` 的非恒等取指成功用例，我复跑一致；补齐 A–H 矩阵后机制是：本构建在 **T0SZ=26 时从 L2 起走**（C 成功、B/D 失败），且该配置下 **≥1 GiB 的 VA 不可译**（`0x40000000`、`0x8c37c7378` 失败）。XNU 的 TCR 是 T0SZ=26 + L1 根、内核在 `0x8c37c7378`，故真实冷启动无法在该模型穿越，且重挂根表无用。结论不变的是"必须合成进入"，变的是理由与可证伪路径。同时修正审计脚本：只有 exit 0 记 translated、1 记 refused、其他记 environment-error，不再把导入失败当成功。证据 `probe-unicorn-start-level.py`、`unicorn-mmu-support.json`。
+
+# D-035 · 实机确认 MMU 开启并进入 arm_init，下一阶段转向 C 内打点
+
+入口探针02（内核 8515068d / 镜像 af5862be）单次 `fastboot boot`，用户拍摄到绿、蓝、黄、品红、青、白六条带。青钩在 `msr sctlr_el1` 之后的 `isb` 上且已改为先回放 isb 再绘制，因此青同时证明 SCTLR 写入已同步、**该带是在 MMU 开启状态下经 pre-MMU 安装的 1 GiB 设备恒等映射写入 framebuffer**；白钩在 `_arm_init` 首指令（KVA），证明 TTBR1 取指可用、控制权进入 C 入口。据此判定"MMU 是否成功开启"这一分叉已答，且排除页表属性/MAIR/TCR 配置错误这一类猜测。
+
+边界：无红条不等于无异常（MMU 后 VBAR 已是内核 KVA 向量）；内核随后返回/复位回固件菜单，`arm_vm_init`/pmap 的停点未验证；固件菜单会在内核返回后重新倒计时，可能重入同一内核，故"单次启动"按 fastboot 动作与固件自行重入分开记。恢复闭环：16:43:30Z 三分区 SHA 与 preflight 完全相同、Android 完成 1。
+
+下一步选定 C 内打点（`arm_vm_init`/`pmap_bootstrap`/`kernel_bootstrap` 首指令，沿用探针页+快照），并在 magenta 钩子把 `VBAR_EL1` 换成探针页恒等地址以捕获 MMU 后异常 ESR/ELR/FAR；串口/QEMU 仅作后备。证据 operations/2026-10-25-entry-probe-02-trial.md。

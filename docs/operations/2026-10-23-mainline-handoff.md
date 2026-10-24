@@ -211,3 +211,13 @@ python3 scripts/compare-prelink-candidates.py --old out/native-prelink-merged/an
 归因二次更正：翻译本身可用（复核给出 TCR `0x280993519` 的成功取指，我复跑一致）；本构建的限制是 **T0SZ=26 时从 L2 起走且 ≥1 GiB 的 VA 不可译**，而 XNU 正是 T0SZ=26 + L1 根、内核在 `0x8c37c7378`，因此真实冷启动必然在第一条翻译取指处失败，重挂根表也救不了（A–H 矩阵见 `probe-unicorn-start-level.py` 与 `unicorn-mmu-support.json`）。故「真正穿过 MMU 切换」的测试**本轮未交付**，已列为阻塞；两个后 MMU 钩子仍是带真实页表的合成进入。`ParseKernel rc=139` 的原因撤回「并行内存压力」推断，未验证。
 
 下一步：① 评估 QEMU system mode 作为第二执行通道（优先于继续调 Unicorn）；② 打包 v5 + 严格包校验，启动前须新鲜 preflight、即时通知、用户对本包的录像与恢复确认（`ab3c092b` 许可不可复用）；③ 判读规则不变。证据 `operations/2026-10-25-probe-v5-corrections.md`；v4 记录已标「被取代」。
+
+## 实机里程碑：MMU 已开、进入 arm_init（2026-10-25 00:45，main）
+
+**当前最高事实：入口探针02 单次 fastboot boot 后，用户拍到绿/蓝/黄/品红/青/白六条带。** 青 = SCTLR 写入+isb 同步完成，且该带在 MMU 开启状态下经 1 GiB 设备恒等映射写屏；白 = 到达 `_arm_init` 首指令（KVA 取指）。此前"MMU 到底开没开"的天花板已被突破，页表属性/MAIR/TCR 配置错误一类猜测可排除。
+
+镜像 af5862be/内核 8515068d/ADT ed7235cb；原图 out/trial-evidence/entry-probe-02/screen-01.jpg（7030b14c，323,957B）；启动 16:37:52Z、ACK 16:38:10Z、180 秒观察、全程 adb 无 nuwa；恢复 16:43:19Z Android 完成 1，16:43:30Z 槽_a 与三 SHA 与 preflight 完全相同（three_partition_hashes_unchanged=true）。无 flash/erase/改槽。
+
+未验证/边界：无红条不等于无异常（MMU 后 VBAR 已是内核 KVA 向量）；内核随后返回或复位回固件菜单并重新倒计时，`arm_vm_init`/pmap 停点未知，返回/panic/watchdog 未区分；固件可能自行重入同一内核（fastboot 只发一次）。
+
+下一步：① C 内打点（arm_vm_init/pmap_bootstrap/kernel_bootstrap 首指令，沿用探针页+快照）；② magenta 钩子把 VBAR_EL1 换成探针页恒等地址，捕获 MMU 后 ESR/ELR/FAR；③ 串口/QEMU 仅作后备。任何新包仍须打包校验、新鲜 preflight、即时通知与用户对本包的录像确认。证据 operations/2026-10-25-entry-probe-02-trial.md。

@@ -364,3 +364,5 @@
 2026-10-25 00:20 · 入口探针v5：按独立复核修三处真缺陷（占槽仍绘制、cyan 先画后回放isb、walker类型判定）、打包绑定改为要求具体检查名；纠正Unicorn归因——MSR可执行但本环境Unicorn不做ARM64取指翻译（两个构建的最小用例均失败，M=0立即恢复）。v5候选8515068d/58,339,328B/24补丁，33项软件执行（含占槽哨兵场景）、映射walk、5用例ParseKernel夹具通过；「真正穿过MMU」测试因工具限制未交付，已列为阻塞。未打包未启动 · 本里程碑提交 · reports/kernel-entry-probe/2026-10-24-v5/、operations/2026-10-25-probe-v5-corrections.md
 
 2026-10-25 00:35 · 复核可执行反例后二次更正Unicorn归因：翻译可用，本构建在T0SZ=26时从L2起走且≥1GiB VA不可译（A–H矩阵：T0SZ25+L1根成功、T0SZ26+L2根成功、XNU真实TCR+L1根失败、T0SZ26下0x40000000与0x8c37c7378失败），故真实冷启动无法在该模型穿越且重挂根表无用；审计脚本改为tri-state（0=translated/1=refused/其他=environment-error）。候选与软件证据不变（v5 8515068d/33项），未打包未启动 · 本里程碑提交 · scripts/probe-unicorn-start-level.py、reports/kernel-entry-probe/2026-10-24-v5/unicorn-mmu-support.json
+
+2026-10-25 00:45 · 入口探针02实机里程碑：单次fastboot boot后用户拍到绿蓝黄品红青白六条带——青证明MMU已开且该带在MMU开启状态下经1GiB设备恒等映射写入framebuffer，白证明到达_arm_init首指令(KVA取指)、进入C入口；内核随后返回/复位回固件菜单，未到iOS，停点未知。镜像af5862be/内核8515068d；原图7030b14c；16:43:19Z恢复Android完成1、16:43:30Z三SHA与preflight完全一致。无flash/erase/改槽 · 本里程碑提交 · reports/xnu-entry-probe-trial/2026-10-25-01/{preflight,launch,recovery,postcondition,screen-evidence}.json、operations/2026-10-25-entry-probe-02-trial.md

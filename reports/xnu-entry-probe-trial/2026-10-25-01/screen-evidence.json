@@ -1,0 +1,44 @@
+{
+  "scope": "User-taken photograph of the physical screen during the single entry-probe-02 trial; interpretation recorded separately from hardware truth",
+  "package": "reports/xnu-first-entry/entry-probe-02.json",
+  "image_sha256": "af5862be01126c5cf67e13b3fb36a9a5e8be3d6f028271f49ebc088d03876031",
+  "kernel_sha256": "8515068dcd6bd699a4301109b76b80022fb07120e6167b65b6169d52aeffcb6a",
+  "source_image": {
+    "path": "out/trial-evidence/entry-probe-02/screen-01.jpg",
+    "sha256": "7030b14c8e82f1a63525f6d2d51b1632112762021ed8f4bd6791b0231ebeafac",
+    "bytes": 323957,
+    "note": "delivered by the user as a clipboard image; kept under the ignored out/ tree, metadata tracked here"
+  },
+  "menu_identity": {
+    "title_seen": "XNU ENTRY PROBE 02 - BLUE YELLOW MAGENTA CYAN WHITE",
+    "entry_seen": "XNU ENTRY PROBE 02 ...",
+    "matches_package": true
+  },
+  "bands_observed_top_to_bottom": [
+    {"color": "green", "owner": "DarwinBoot ExitBootServices marker", "y_expected": null, "conclusion": "boot services exited"},
+    {"color": "blue", "y_expected": 256, "conclusion": "XNU __start branch and diagnostic entry executed"},
+    {"color": "yellow", "y_expected": 352, "conclusion": "bootstrap page tables generated"},
+    {"color": "magenta", "y_expected": 448, "conclusion": "BCM2837-only write suppressed, reached the SCTLR value build"},
+    {"color": "cyan", "y_expected": 736, "conclusion": "msr sctlr_el1 executed, the original isb replayed, and the band was drawn through the diagnostic 1 GiB device mapping with the MMU on"},
+    {"color": "white", "y_expected": 832, "conclusion": "_arm_init reached at the KVA: TTBR1 translation and instruction fetch work, control entered C"}
+  ],
+  "red_band_observed": false,
+  "red_band_caveat": "The early fault vectors are only reachable through the physical VBAR; after the MMU switch VBAR is the kernel KVA vectors, so the absence of red does not exclude a later exception",
+  "later_state": {
+    "observed": "the firmware menu is drawn again with its own countdown over the same framebuffer",
+    "means": "the kernel did not reach iOS; control returned to the firmware (return or reset) after arm_init",
+    "not_proven": "which function inside arm_init/arm_vm_init stopped it"
+  },
+  "loader_log_lines_read": [
+    "Exiting boot services. A green bar across the top means the kernel entry code ran.",
+    "SecurityLock::LockType: SOFTWARE_LOCK, Module: 42857F0A-13F2-4821-8A23-53D3F714B940, Function: LockCapsuleInterface",
+    "[ML] dump table info not found, Status = (0x0)",
+    "App Log Flush : 0 ms"
+  ],
+  "milestone": "First hardware evidence that the MMU switch executes and that control reaches _arm_init; this supersedes the previous ceiling of 'before the SCTLR write'",
+  "still_unverified": [
+    "what runs after _arm_init: arm_vm_init, pmap, kext start, userland, iOS",
+    "whether the later return to the firmware was a return, a panic reset or a watchdog reset",
+    "the exact fault/interrupt path after the MMU switch (no serial console available)"
+  ]
+}
