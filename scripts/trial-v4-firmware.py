@@ -223,7 +223,7 @@ def main():
             if unlocked.returncode or 'unlocked: yes' not in unlocked.stdout + unlocked.stderr:
                 raise RuntimeError('Bootloader not unlocked')
             run('fastboot', serial, ['getvar', 'current-slot'])
-            print('Launching hash-pinned v4 firmware candidate', flush=True)
+            print(f"Launching hash-pinned v{package['header_version']} firmware candidate", flush=True)
             boot = run('fastboot', serial, ['boot', str(candidate)], timeout=50)
             print(boot.stdout + boot.stderr, flush=True)
             report['fastboot_boot_exit_code'] = boot.returncode

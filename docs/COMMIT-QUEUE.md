@@ -1590,3 +1590,13 @@
 [Evidence] v3 8177783e/v4 91e86ce4仅头部offset20/40不同，70266880B全包回读；7项新测试/10历史门控、16项AArch64用户QEMU分支夹具通过。
 [Risk] v3容器接受/实际context/ramdisk拼接和64MiB发布未实测，菜单fallback不算运输成功；无XNU/ADT、无手机或分区动作。
 ```
+
+## Q-152 · USB v3运输探针实机与恢复闭环
+
+```text
+[unixnu-nuwa][device] 确认v3独立64MiB ramdisk发布及FAT挂载并完成Android恢复
+
+[Change] 归档单次8177783e试验的两张原图/转录/完整执行恢复证据，更新状态决策交接；修正未来控制台容器版本提示。
+[Evidence] 原图envelope result=1/0x4000000块Success及先于embedded的FAT挂载；offset-64=30899943精确匹配vendor ramdisk；120秒观察，postcondition完成1/三分区SHA不变。
+[Risk] 仅此运输阶段实机通过，非运行时SHA/真实大文件读取/XNU或iOS通过；同固件v4对照与重复性未验，无第二候选启动。
+```

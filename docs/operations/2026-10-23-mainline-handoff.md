@@ -1,52 +1,31 @@
-# 主线交接（2026-10-24T04:19:54.495058+08:00）
+# 主线交接（2026-10-24，USB v3实测闭环）
 
-## 当前任务已完成部分
+当前设备仓main：准备提交9cfaacd5b35d1c15b31e5b807d56b062a8829bef，Q-152待提交本轮执行证据。先读AGENTS.md和STATUS.md。两旧资料库只读；firmware工作源D:/Code/uefi-nuwa，独立upstream检出D:/Code/UniXNU-integration。当前无需用户按键/补录像，没有下一次设备启动在运行。
 
-用户“合并所有更新”已落实：wh1stl3/UniXNU main=e553e467ebfe7642e9f483d3977a57066c6d1aef，父76dd6414/上游1a01c2af；完整树等于上游+3份nuwa工作流，21个模块固定、独立D:/Code/UniXNU-integration检出。代码/CI接入5abdde1，前置授权补丁修复6070627。历史75bc、旧固件profile和26ef8efd实测证据保留；不修改原始报告。两个旧资料库只读，执行前先读AGENTS及STATUS。
+## 最新实际状态
 
-## 产物及验收
+8177783e v3包只临时启动一次，用户新鲜录像确认和启动前即时通知已取得。preflight唯一nuwa/kalama、Android完成1/A槽、三分区旧基线一致；实际120.0秒USB观察，ACK=0不是阶段证明。两原图确认独立NUWA-VOLUME result=1/bytes0x4000000/块Success及FAT挂载，之后才加载embedded 4MiB卷。菜单本身可能来自两卷之一，不用其判运输成功。
 
-- 固件40014018074/source5abdde1 success，3MiB FD2d606985ad768dcfaab66c2b28073c0a4c2820126b42b23286623fdc450e848f；shim8a3b5476/112B。下载out/upstream-firmware-40014018074/nuwa-firmware-40014018074/。697项实际检查通过，整个SEC与已实测缓存候选完全相同，HOB检查、缓存维护和Heap/内存表不变。新默认固件profile upstream-merged。
-- 内核40015845083/source6070627 success；原失败40014023191漏zzw辅助函数依赖的记录不覆盖。新64项补丁及真实平台归档/复链通过，下载out/upstream-kernel-40015845083-final/nuwa-8796-merged-40015845083/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped。SHA bf14e5305a9f764c6852c2d3a69e81edc9c6199bc870c7b08160d55610616dea，20188216B，Darwin22.6.0/iOS16.0，零未定义符号，5项平台导出及实际归档独立核对通过。
-- 新解析24项、packed逻辑1TiB/13拒绝、SMMU夹具、grant助手9项、常量池4项通过。GPU VM AArch64交叉链接+用户QEMU软件寄存器/IOKit夹具通过；不是目标XNU ABI或真实GPU/cache/SMMU。21模块源码可用，source-only内核未擅自开启可选root/hash-cache/GPU分支，不能称全部功能已编译/实机通过。
+观察后临时加载固定原厂v4 boot ef558db2；recovery识别Android完成1，postcondition.at=2026-10-24T07:41:49.163107+00:00（北京时间15:41:49），完成1/A槽及boot_a/vendor_boot_a/init_boot_a三个SHA与preflight相同。本轮恢复闭环；不自动再启动候选或OTG。证据reports/usb-ramdisk-trial/2026-10-24-v3-01/，操作2026-10-24-usb-v3-trial.md。没有flash/erase/改槽位。原观察报告保留其当时pending状态，当前以postcondition及screen-observation为准。
 
-全量证据reports/upstream-integration/2026-10-24/及reports/upstream-merged/40014018074/；关键integration-result.json、kernel-inspection.json、firmware-regression.json。固件仓文档ca2f043，构建固件pin仍6176a82+11补丁，不将文档HEAD当镜像来源。详细操作2026-10-24-upstream-integration.md。
+## 运输结论与固定产物
 
-## 实机与边界
+本次64MiB封装CRC→只读BlockIo→FAT阶段实机通过，非真实大文件SHA/内核/OS通过。原图offset0x1d77f27减64恰等于历史vendor_ramdisk30899943B，强烈支持vendor+临时generic拼接；v4 init_boot替代为此前缺卷首因判断增强。同固件v4匹配对照和重复性未实测，不称唯一根因。完整chosen范围未拍到，推算地址不写板值。
 
-本任务没有adb/fastboot/flash/erase/改槽位。最近实际恢复仍26ef8efd postcondition.at=2026-10-23T18:55:45.904383+00:00（北京时间02:55:45），Android完成1/三分区SHA不变，不当作当前新查询。26ef8efd原图after-mmu/ReadyToBoot/配置菜单通过，缓存遗漏是首要工程判断，重复性未闭环；新FD2d606985和内核bf14均未实测。无需用户按键/补图，不复用旧录像许可。
+v3候选8177783e1364caed71e0db82f4c91db720f9586f8bc0d05ca044e133be4ad898/70266880B，out/trial-boot/usb-ramdisk-40014018074/boot-ramdisk-v3.img；严格报告reports/usb-ramdisk/40014018074/package-v3.json。v4离线对照91e86ce4与它仅offset20/40两字节不同，不纳入启动scope。相同FD/shim/64MiB退出配置探针，无XNU/ADT。包device_executed=false是构建时元数据，不修改包；本轮执行单独报告。
 
-Heap/HOB保护、ST FTS硬件路线、内存/地址/身份/_verified不改。sheng Novatek/CPU列表/存储尾部布局和Data重置动作不套nuwa。9GiB是快照，未分配OS窗口。
+复验命令：bundled Python -B scripts/usb_ramdisk_package.py --validate reports/usb-ramdisk/40014018074/package-v3.json。7容器/新门控和10历史门控通过，16原始ABL门字节用户QEMU夹具通过；版本来源+0x28写context+0x458另有静态证据。当前不重复构建/试同一菜单包。历史脚本trial-v4-firmware.py仅对严格新scope支持v3；旧控制台v4固定文字已改未来按metadata打印，原日志不改。
 
-## 可直接续接的工作
+## 上游与内核资格
 
-1. 以新内核bf14实际产物为输入，离线重新准备NativePrelink/initializer/ABI资格。工具已迁移到合并源的NativePrelink2b6ffb50，两个原始工具与历史字节相同，4项常量池拒绝回归通过；旧7774和5a128fb2仍是历史分析fixture，不改标成新内核预链接，不直接启动。
-2. 继续独立大文件长度/SHA运输诊断、真实ADT属性核对及实际AllocatePages候选。4MiB配置FAT不能装约58MiB分析预链接；USB host/扩大FV/UFS写入均需各自具体依据，不通过删保护/乱换Heap解决。
-3. 复核新固件静态链：bundled Python -B scripts/check-upstream-merged.py。实际二进制已审，不因无变化重复重建。新内核检查见scripts/ci/inspect-source-kernel.py原命令与报告。
-4. 以后需设备动作时先新鲜录像确认/恢复路径、严格包验收、唯一nuwa/kalama并即时通知；使用新轮次目录，禁止覆盖旧preflight/launch/recovery/postcondition。试验结束恢复Android完成1与三分区SHA核验。当前没有新的临时启动授权或启动包实测结果。
+用户要求的全部审查更新已合并到wh1stl3/UniXNU@e553e467ebfe7642e9f483d3977a57066c6d1aef（原76dd6414与上游1a01c2af双亲merge），完整树等于上游+3工作流，21模块固定。固件CI40014018074/source5abdde1、内核40015845083/source6070627成功；原内核40014023191失败因前置zzw缺失已修，保留失败记录。详见2026-10-24-upstream-integration.md。
 
-## 最新预链接续接（2026-10-24T15:04:24.918562+08:00）
+FD2d606985ad768dcfaab66c2b28073c0a4c2820126b42b23286623fdc450e848f/3145728B，shim8a3b5476/112B。SEC7192fd3f与26ef8efd字节相同，原Heap/HOB坏链保护/缓存维护/内存表不改，697静态检查通过；本轮已实测独立卷/FAT/菜单。firmware source pin6176a822+11补丁，固件仓文档HEAD ca2f043不替代镜像来源。
 
-bf14新核已生成eb66542c分析候选，65348绑定读回/30 donor代码范围不变/24项解析通过，仍loadable=false。新profile和输出独立，不覆盖7774/5a历史。AMFI旧reference地址是已slide结果，原始候选逆解0xfffffff005703c54并含_mac_policy_register导入，3构造函数不同；实际native dSYM局部mac_policy_conf80B偏移与donor写入对应。DATA_CONST写入时序/完整ABI未验，不adopt initializer映射。下一步独立大文件读取SHA探针和阶段追踪；用户OTG问题待答，不构成新启动许可。详见2026-10-24-merged-native-prelink.md，无设备动作。
+内核bf14e5305a9f764c6852c2d3a69e81edc9c6199bc870c7b08160d55610616dea/20188216B，64补丁、Darwin22.6.0/iOS16.0、零未定义/5平台导出及真实归档匹配。新分析eb66542cc9b6c34f369c07229900408ab67288152f561be63fa6061efce9ffca/58335232B，65348绑定读回/代码范围不变/24解析，loadable=false、initializer空。AMFI实际注册入口/局部conf80B/23项写入到335策略槽有静态证据，12项源码时序检查下调单纯DATA_CONST写保护风险；完整构造/start/once-guard/参数和C++ABI仍缺。不要把原分析内核当可启动OS。
 
-## 当前有效续接（2026-10-24 15:16 +08:00）
+## 可继续的离线工作与下次设备门
 
-Q-150：用户已答暂无OTG，问项关闭，不要求购买、不等待录像/按键。本轮仅离线审计，无新固件/内核行为，不重建相同镜像；新探针及介质镜像尚未构建。最近Android恢复与SHA仍沿用上文历史来源，未冒充新查询。
+先在已通过USB v3上准备真实大文件只读读取/SHA诊断，不执行分析内核；继续AMFI构造/start间接调用和回调ABI、真实ADT及实际连续窗口资格。9GiB仅快照，不是已分配窗口。ST FTS路线保持，不照搬sheng板值/Novatek/存储清空动作；board/bringup身份/内存及任何_verified不变。
 
-修正上节DATA_CONST风险：对成功CI相同64补丁、六文件内存重建，12项源码检查确认早期安全加载/正常构造/start先于MAC置late和最终lockdown；平台初始RWNX后收紧RNX。Mach-O initprot=1不单独证明早期不可写。原AMFI直线注册块23项存储全部对应实际新核dSYM的335槽/0xa78表，目标全部原AMFI RX；不证明完整回调/对象ABI或运行时页表。
-
-新增证据reports/native-prelink-merged/init-phase-final.json、amfi-ops-slots.json；操作记录2026-10-24-amfi-phase-and-slots.md。新源/产物SHA/Heap/HOB/板值及空initializer映射、loadable=false保持；当前“菜单后充电”首因仍配置退出/无OS负载，不能归因未执行过的AMFI。
-
-可直接执行：bundled Python -B scripts/audit-prelink-init-phase.py --output reports/<新路径>.json；audit-amfi-ops-slots.py同参数（需WSL llvm-dwarfdump）。下一步追踪三构造/start间接槽和once-guard、关键回调参数；并行的逻辑工作是离线读取核心/无OTG现有启动链运输审查，不能默认写UFS或扩大内存窗口。设备启动门按上节保持，每个新包重新确认日志并即时通知。
-
-## 当前USB运输候选（2026-10-24，Q-151）
-
-用户已明确USB数据线路径，OTG非依赖。已完成离线包8177783e1364caed71e0db82f4c91db720f9586f8bc0d05ca044e133be4ad898/70266880B，out/trial-boot/usb-ramdisk-40014018074/boot-ramdisk-v3.img，严格报告reports/usb-ramdisk/40014018074/package-v3.json。复用固件40014018074/FD2d606985和112B shim8a3b5476，Heap/HOB缓存维护/坏链保护/板值/内存图保持，不重编FD。64MiB配置FAT加64B封装，无XNU/ADT；v4离线匹配对照91e86ce4仅与v3头部20/40两字节不同，不纳入启动scope。
-
-首因判断为v4选择init_boot替代临时ramdisk；新增原始版本来源窗口+16例36字节原始分支用户QEMU夹具支持v3旁路，但未证明完整ABL或实机接受。7项新容器/门控及10项历史门控通过，原factory Heap/HOB保护检查随每次包validate重跑；所有结果见上述报告目录，操作记录2026-10-24-usb-ramdisk-v3.md。启动成功判据必须是NUWA-VOLUME result=1且64MiB块设备Success，内嵌4MiB fallback菜单不算运输证据。
-
-续接先跑 bundled Python -B scripts/usb_ramdisk_package.py --validate reports/usb-ramdisk/40014018074/package-v3.json。需本包新鲜连续录像≥120秒/必要时按键回fastboot条件，确认前不执行设备动作。确认后用record-nuwa-trial-state.py --package <v3报告> --capture-confirmation <用户原答复> --output reports/usb-ramdisk-trial/<新轮次>/preflight.json 刷新实际状态，再即时通知后用trial-v4-firmware.py launch --package <v3报告> --preflight <本轮preflight> --evidence <新轮次launch.json>。脚本名保留历史但只为严格USB-v3新scope允许header3，其他scope仍须header4；匹配v4对照不能启动。
-
-试验结束按既有recover与record --before流程恢复Android完成1和三分区SHA相同；恢复原boot仍ef558db2/v4，不flash/erase/改槽位。当前未启动/未查询设备；最近真实恢复仍上文26ef8efd UTC18:55:45.904383，并非新查询。若v3被拒绝或chosen仍旧，先保留日志再审查完整解析/选择路径；不通过放宽范围守卫找卷。离线完整OS资格仍loadable=false。
-
-用户最新条件：现在已有OTG线，授权判断路线。仍选先测已就绪v3，避免引入host/供电/介质枚举变量；OTG备用，介质可用性尚未确认。不要沿用早先“暂无OTG”作为当前事实，也不自动安排OTG第二轮启动；本v3包仍等待新鲜录像条件。
+用户现有OTG线并授权择优，USB v3已通过所以当前不用OTG，保留备选。任何新包都需新鲜用户录像条件、严格包校验、唯一nuwa/kalama、Android完成1/三分区基线与具体恢复路径，启动前即时通知；结束恢复完成1及三SHA一致。当前轮次文件不可覆盖或复用，不自动做v4对照/第二候选。

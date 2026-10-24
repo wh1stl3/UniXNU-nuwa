@@ -1,0 +1,51 @@
+{
+  "recorded_at": "2026-10-24T07:43:21.242596+00:00",
+  "source": "Manual transcription of two original user photographs from this exact trial",
+  "images": [
+    {
+      "path": "user-publisher-entry.jpg",
+      "bytes": 1725053,
+      "sha256": "40fb467052b3105d9bc90ec1a05936294b64631ea806c0e3f232b62d66c5f33e"
+    },
+    {
+      "path": "user-volume-success.jpg",
+      "bytes": 913095,
+      "sha256": "9d4ca873bf2b4c996897de1530c27ea2d2c924538cd1d4e20dc95b98bc42a6b1"
+    }
+  ],
+  "image_sha256": "8177783e1364caed71e0db82f4c91db720f9586f8bc0d05ca044e133be4ad898",
+  "observed": {
+    "publisher_enter": true,
+    "envelope_result": 1,
+    "payload_offset": "0x1d77f27",
+    "payload_bytes": 67108864,
+    "block_device_base": "0xb3ffef27",
+    "block_device_bytes": 67108864,
+    "block_device_status": "Success",
+    "fat_mounted_after_external_publisher_before_embedded_driver": true,
+    "embedded_fallback_also_published": true,
+    "menu_text_from_user": "booting volume config loaded"
+  },
+  "arithmetic_inference": {
+    "source_report": "reports\\system-volume-audit\\inputs.json",
+    "source_report_sha256": "e3846054765f269352f9349bd82f585f09c766627d91576467e9a044b37d5798",
+    "observed_offset_minus_envelope_header": 30899943,
+    "historical_vendor_ramdisk_bytes": 30899943,
+    "prefix_matches_vendor_ramdisk_length": true,
+    "inferred_chosen_start_not_directly_photographed": "0xb2287000"
+  },
+  "stage_result": "USB-v3 64MiB envelope discovery, full CRC validation, read-only BlockIo and FAT mount: real-device passed for this trial",
+  "root_cause_judgment": "v4 init_boot substitution is strongly supported; exact same-firmware v4 control was not run, so uniqueness and repeatability remain open",
+  "recovery": {
+    "postcondition_at": "2026-10-24T07:41:49.163107+00:00",
+    "android_boot_completed": "1",
+    "three_partition_hashes_unchanged": true
+  },
+  "limitations": [
+    "No runtime SHA256 of the volume or full large-file read/hash test",
+    "No XNU/Apple ADT or OS execution",
+    "No captured full chosen extent or full ABL runtime branch trace",
+    "Only one v3 trial; v4 matched control remains offline",
+    "No complete continuous video file received, only photographs and user text"
+  ]
+}

@@ -79,3 +79,9 @@
 2026-10-24 USB路线 · v3包8177783e已离线构建/逐字节验收，待确认本轮连续录像至少120秒及必要时按电源＋音量下回fastboot条件；确认前不启动，启动前即时通知。无需OTG/U盘；完整准备见operations/2026-10-24-usb-ramdisk-v3.md。v4匹配对照仅离线，不安排第二轮自动启动。
 
 2026-10-24 USB候选准备期间 · 用户新增“现在有OTG线了”，授权自行选择稳健/快速路线；已记录可用线缆，不再沿用暂无OTG状态。当前仍先测就绪v3候选，OTG介质/host验证作备选，不需用户先操作OTG；本包录像条件仍待新确认。
+
+2026-10-24 v3-01正在观察 · 用户本轮已答“可以，现在准备录像”；preflight唯一nuwa/kalama、Android完成1/A槽及三分区旧基线一致，已即时通知后单次启动8177783e，fastboot ACK=0。正在120秒观察，待chosen/封装/发布原图或录像及本轮恢复闭环；ACK不证明v3接受或运输成功。证据reports/usb-ramdisk-trial/2026-10-24-v3-01/，具体时间见launch.json。
+
+2026-10-24 v3-01观察结束 · 已完成120秒；用户文字“菜单显示 booting volume config loaded”已记observation.json，原图/录像尚未提交。已通知保存录像，必要时按电源＋音量下回fastboot；recovery程序正在等nuwa恢复，Android完成1及三分区postcondition待补。人工恢复待办不阻断离线工作，不安排第二轮启动。
+
+2026-10-24T15:41:49+08:00 · **v3-01本轮全部待办关闭**：两张原图已归档，独立64MiB封装/块Success/FAT挂载实机证据取得；recovery/postcondition确认nuwa/kalama、Android完成1/A槽及三分区SHA与试前一致。不再需要按键/补录像，不自动安排OTG或第二候选。下次新包另过本轮录像门。

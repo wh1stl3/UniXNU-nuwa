@@ -45,3 +45,5 @@ scripts/usb_ramdisk_package.py复核固定recipe/CI输入、完整固件检查�
 - tests：bundled Python -B -m unittest discover -s tests -p test_usb_ramdisk_package.py -v；历史test_*gate.py。
 - [AOSP固定bootimg.h，Apache-2.0](https://android.googlesource.com/platform/system/tools/mkbootimg/+/808d42e197506319ee65eb078d3defd9602e2ac2/include/bootimg/bootimg.h)：v3/v4结构及4096对齐；[generic boot官方说明](https://source.android.com/docs/core/architecture/partitions/generic-boot)：Android13 init_boot分离。规范不替代nuwa安装ABL行为证据。
 - [UniXNU固定上游负载说明](https://github.com/UniXNU/UniXNU/blob/1a01c2afa197d975d04da892325c56b6b14aaecb/docs/zh/concepts/payload.md)及[sheng固定打包器](https://github.com/UniXNU/UniXNU-sheng/blob/a599a1a8a92093b5077543e071b72130769eb325/scripts/package-sheng-xnu-boot.py)：USB内存ramdisk是已有路线，OTG非依赖；不抄其v0/板值，未复制源码树。
+
+2026-10-24实测更新：8177783e单次试验取得独立封装result=1/64MiB块Success及内嵌驱动之前的FAT挂载原图，运输探针阶段实机通过；offset-64精确等于原vendor ramdisk长度，支持拼接解释。Android已于北京时间15:41:49完成恢复/三分区SHA一致，无第二轮。详见[本轮实测记录](2026-10-24-usb-v3-trial.md)。
