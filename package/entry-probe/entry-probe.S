@@ -124,35 +124,39 @@
 // Draw-once guard: the flag byte lives in the probe's own flag page, so a hook
 // that is hit repeatedly costs one branch instead of a full band redraw.
 .macro BAND_ONCE idx, y, color
-    adr         x16, probe_flags
+    adr         x15, probe_scratch
+    ldr         x9, [x15]
+    cbz         x9, .Lno_device\@
+    movz        x16, #0x8000, lsl #16
     ldrb        w17, [x16, #\idx]
     cbnz        w17, 9f
     mov         w17, #1
     strb        w17, [x16, #\idx]
+    dsb         sy
     BAND_SNAPSHOT \y, \color
 9:
+.Lno_device\@:
 .endm
 // Counter hook: renders the call count as hex for the first four calls, then
 // only counts. Cheap enough for hooks that run thousands of times.
 .macro BAND_ONCE20 idx, y, color
-    adr         x16, probe_flags
-    ldrb        w17, [x16, #\idx]
-    cbnz        w17, 9f
-    mov         w17, #1
-    strb        w17, [x16, #\idx]
     BAND x20, \y, \color
-9:
 .endm
 .macro COUNT16 idx, y
-    adr         x16, probe_flags
+    adr         x15, probe_scratch
+    ldr         x9, [x15]
+    cbz         x9, .Lno_device\@
+    movz        x16, #0x8000, lsl #16
     ldrb        w17, [x16, #\idx]
     cmp         w17, #4
     b.hs        9f
     add         w17, w17, #1
     strb        w17, [x16, #\idx]
+    dsb         sy
     mov         x23, x17
     HEXROW_VAL \y
 9:
+.Lno_device\@:
 .endm
 
 .text

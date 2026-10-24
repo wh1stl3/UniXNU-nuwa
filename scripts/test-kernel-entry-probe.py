@@ -32,7 +32,7 @@ def snapshot(uc):return {str(i):uc.reg_read(getattr(sys.modules[__name__],f'UC_A
 
 def run(raw,report,video=True,start=None,fault=False,stub=None,preoccupy=None):
     m=B.macho(raw);base=min(s['va'] for s in m['segments'] if s['size']);end=max(s['va']+s['size'] for s in m['segments']);first=m['symbols']['_start_first_cpu'];uc=U.Uc(U.UC_ARCH_ARM64,U.UC_MODE_ARM)
-    uc.mem_map(PA,B.align(end-base));uc.mem_map(ARGS,0x1000);uc.mem_map(FB,0x1200000)
+    uc.mem_map(PA,B.align(end-base));uc.mem_map(ARGS,0x1000);uc.mem_map(FB,0x1200000);uc.mem_map(0x80000000,0x1000)
     for s in m['segments']:
         if s['filesize']:uc.mem_write(PA+s['va']-base,bytes(raw[s['fileoff']:s['fileoff']+s['filesize']]))
     args=bytearray(4096);struct.pack_into('<HH',args,0,2,2);struct.pack_into('<4Q',args,8,base,PA,0x40000000,ARGS+0x10000);struct.pack_into('<6Q',args,0x28,FB if video else 0,1,ROW,1440,3200,32);uc.mem_write(ARGS,bytes(args))
@@ -103,7 +103,7 @@ def run_continuous(raw,report,model='aarch64',preoccupy=None):
     SCR_EL3=0/HCR_EL2=0 as the negative control.
     """
     m=B.macho(raw);base=min(s['va'] for s in m['segments'] if s['size']);end=max(s['va']+s['size'] for s in m['segments']);first=m['symbols']['_start_first_cpu'];uc=U.Uc(U.UC_ARCH_ARM64,U.UC_MODE_ARM)
-    uc.mem_map(PA,B.align(end-base)+0x200000);uc.mem_map(ARGS,0x1000);uc.mem_map(FB,0x1200000)
+    uc.mem_map(PA,B.align(end-base)+0x200000);uc.mem_map(ARGS,0x1000);uc.mem_map(FB,0x1200000);uc.mem_map(0x80000000,0x1000)
     for s in m['segments']:
         if s['filesize']:uc.mem_write(PA+s['va']-base,bytes(raw[s['fileoff']:s['fileoff']+s['filesize']]))
     args=bytearray(4096);struct.pack_into('<HH',args,0,2,2);struct.pack_into('<4Q',args,8,base,PA,0x40000000,ARGS+0x10000);struct.pack_into('<6Q',args,0x28,FB,1,ROW,1440,3200,32);uc.mem_write(ARGS,bytes(args))

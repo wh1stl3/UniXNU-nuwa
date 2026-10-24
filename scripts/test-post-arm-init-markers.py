@@ -30,7 +30,7 @@ def handler_checks(report, candidate, checks):
     m = B.macho(candidate); base = min(s['va'] for s in m['segments'] if s['size'])
     end = max(s['va'] + s['size'] for s in m['segments'])
     uc = U.Uc(U.UC_ARCH_ARM64, U.UC_MODE_ARM)
-    uc.mem_map(PA, B.align(end-base)+0x1000); uc.mem_map(FB, 0x1200000)
+    uc.mem_map(PA, B.align(end-base)+0x1000); uc.mem_map(FB, 0x1200000); uc.mem_map(0x80000000, 0x1000)
     for s in m['segments']:
         if s['filesize']: uc.mem_write(PA+s['va']-base, bytes(candidate[s['fileoff']:s['fileoff']+s['filesize']]))
     probe_va = int(report['probe']['va'], 16)
@@ -97,7 +97,7 @@ def main():
     end = max(s['va'] + s['size'] for s in m['segments'])
     uc = U.Uc(U.UC_ARCH_ARM64, U.UC_MODE_ARM)
     uc.mem_map(PA, B.align(end-base)+0x8000000); uc.mem_map(ARGS, 0x1000)
-    uc.mem_map(FB, 0x1200000); uc.mem_map(ADT_PA, 0x10000)
+    uc.mem_map(FB, 0x1200000); uc.mem_map(0x80000000, 0x1000); uc.mem_map(ADT_PA, 0x10000)
     for s in m['segments']:
         if s['filesize']: uc.mem_write(PA+s['va']-base, bytes(candidate[s['fileoff']:s['fileoff']+s['filesize']]))
     args_buf = bytearray(4096); struct.pack_into('<HH', args_buf, 0, 2, 2)
