@@ -1,0 +1,387 @@
+{
+  "scope": "Diagnostic binary instrumentation of fixed analysis prelink; not runtime qualification",
+  "input_sha256": "1aeebf1352a86b0d31612a6bd6e77bd7292f676ad2ce43a99ec4a8f3999eedb6",
+  "candidate": {
+    "path": "out/kernel-entry-probe-06/kernel-entry-probe.macho",
+    "sha256": "fb6b6b6d261d182fab7ca35cee5bd913b48eb03b4f41136cbbb02cbebf57ab9c",
+    "bytes": 58339328
+  },
+  "probe": {
+    "va": "0xfffffff008489000",
+    "file_offset": 58335232,
+    "code_bytes": 1472,
+    "segment_bytes": 4096,
+    "sha256": "23d5dca18b48132d2701c783c39cc803f1ece7738efe889f93f66424c76197c7",
+    "symbols": {
+      "fault_stop": "0xfffffff00848957c",
+      "probe_arm_init": "0xfffffff0084891ec",
+      "probe_arm_init_replay": "0xfffffff008489220",
+      "probe_arm_vm": "0xfffffff008489264",
+      "probe_arm_vm_replay": "0xfffffff008489298",
+      "probe_cpu_base": "0xfffffff008489228",
+      "probe_cpu_base_replay": "0xfffffff00848925c",
+      "probe_entry": "0xfffffff008489000",
+      "probe_fault": "0xfffffff008489328",
+      "probe_kernel_bootstrap": "0xfffffff0084892dc",
+      "probe_kernel_bootstrap_replay": "0xfffffff008489310",
+      "probe_mmu": "0xfffffff0084890cc",
+      "probe_mmu_on": "0xfffffff0084891b0",
+      "probe_mmu_on_replay": "0xfffffff0084891e8",
+      "probe_pmap": "0xfffffff0084892a0",
+      "probe_pmap_replay": "0xfffffff0084892d4",
+      "probe_scratch": "0xfffffff008489318",
+      "probe_tables": "0xfffffff008489064"
+    }
+  },
+  "patches": [
+    {
+      "file_offset": 16,
+      "va": null,
+      "before": "1900000040160000",
+      "after": "1a00000088160000",
+      "reason": "Add one bounded RX diagnostic segment"
+    },
+    {
+      "file_offset": 5728,
+      "va": null,
+      "before": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "after": "19000000480000005f5f4e5557415f50524f42450000000000904808f0ffffff001000000000000000207a0300000000001000000000000005000000050000000000000000000000",
+      "reason": "Use verified zero load-command padding"
+    },
+    {
+      "file_offset": 3937416,
+      "va": "0xfffffff0073c5488",
+      "before": "f5060014",
+      "after": "de0e4314",
+      "reason": "probe_entry"
+    },
+    {
+      "file_offset": 3945096,
+      "va": "0xfffffff0073c7288",
+      "before": "9f3b03d5",
+      "after": "77074314",
+      "reason": "probe_tables"
+    },
+    {
+      "file_offset": 3945316,
+      "va": "0xfffffff0073c7364",
+      "before": "0000e0f2",
+      "after": "5a074314",
+      "reason": "probe_mmu"
+    },
+    {
+      "file_offset": 3945336,
+      "va": "0xfffffff0073c7378",
+      "before": "df3f03d5",
+      "after": "8e074314",
+      "reason": "probe_mmu_on"
+    },
+    {
+      "file_offset": 9889864,
+      "va": "0xfffffff007972848",
+      "before": "ff4303d1",
+      "after": "695a2c14",
+      "reason": "probe_arm_init"
+    },
+    {
+      "file_offset": 3895696,
+      "va": "0xfffffff0073bb190",
+      "before": "fd7bbfa9",
+      "after": "26384314",
+      "reason": "probe_cpu_base"
+    },
+    {
+      "file_offset": 3907604,
+      "va": "0xfffffff0073be014",
+      "before": "ff8305d1",
+      "after": "942c4314",
+      "reason": "probe_arm_vm"
+    },
+    {
+      "file_offset": 3798724,
+      "va": "0xfffffff0073a36c4",
+      "before": "ff4302d1",
+      "after": "f7964314",
+      "reason": "probe_pmap"
+    },
+    {
+      "file_offset": 2729988,
+      "va": "0xfffffff00729e804",
+      "before": "ff4301d1",
+      "after": "b6aa4714",
+      "reason": "probe_kernel_bootstrap"
+    },
+    {
+      "file_offset": 3945260,
+      "va": "0xfffffff0073c732c",
+      "before": "010000b9",
+      "after": "1f2003d5",
+      "reason": "Suppress BCM2837-only MMIO write; no native timer activation"
+    },
+    {
+      "file_offset": 3940352,
+      "va": "0xfffffff0073c6000",
+      "before": "00000014",
+      "after": "ca0c4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3940480,
+      "va": "0xfffffff0073c6080",
+      "before": "00000014",
+      "after": "aa0c4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3940608,
+      "va": "0xfffffff0073c6100",
+      "before": "00000014",
+      "after": "8a0c4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3940736,
+      "va": "0xfffffff0073c6180",
+      "before": "00000014",
+      "after": "6a0c4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3940864,
+      "va": "0xfffffff0073c6200",
+      "before": "00000014",
+      "after": "4a0c4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3940992,
+      "va": "0xfffffff0073c6280",
+      "before": "00000014",
+      "after": "2a0c4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3941120,
+      "va": "0xfffffff0073c6300",
+      "before": "00000014",
+      "after": "0a0c4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3941248,
+      "va": "0xfffffff0073c6380",
+      "before": "00000014",
+      "after": "ea0b4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3941376,
+      "va": "0xfffffff0073c6400",
+      "before": "00000014",
+      "after": "ca0b4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3941504,
+      "va": "0xfffffff0073c6480",
+      "before": "00000014",
+      "after": "aa0b4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3941632,
+      "va": "0xfffffff0073c6500",
+      "before": "00000014",
+      "after": "8a0b4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3941760,
+      "va": "0xfffffff0073c6580",
+      "before": "00000014",
+      "after": "6a0b4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3941888,
+      "va": "0xfffffff0073c6600",
+      "before": "00000014",
+      "after": "4a0b4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3942016,
+      "va": "0xfffffff0073c6680",
+      "before": "00000014",
+      "after": "2a0b4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3942144,
+      "va": "0xfffffff0073c6700",
+      "before": "00000014",
+      "after": "0a0b4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3942272,
+      "va": "0xfffffff0073c6780",
+      "before": "00000014",
+      "after": "ea0a4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    }
+  ],
+  "original_changed_bytes": 117,
+  "preserved_donor_segments": [
+    {
+      "name": "__PRELINK_TEXT",
+      "sha256": "4c25f20e7d3a4a4e1784988481e605609a3a509b56c07bc0e86b50d6b66bd963",
+      "bytes": 8142848
+    },
+    {
+      "name": "__PRELINK_INFO",
+      "sha256": "5a4c588b5b483e929526aea63ae3e904b966419b30e7996bb887ca569f648b50",
+      "bytes": 462848
+    },
+    {
+      "name": "__PLK_TEXT_EXEC",
+      "sha256": "63162f476b8df6ca4eddbc4a5963295e08610c0702f40777f199cae718b7d40b",
+      "bytes": 23937024
+    },
+    {
+      "name": "__PRELINK_DATA",
+      "sha256": "8b5d1098af56cf6befd8f214b4770c0f19b9a4e8a21c8d2b85670828833ae7a7",
+      "bytes": 1785856
+    },
+    {
+      "name": "__PLK_DATA_CONST",
+      "sha256": "b77ee164db3621f0e8107fdafe70ac50c8ad80a77e966ddfe78d8390564e6566",
+      "bytes": 3817472
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "clang",
+        "--target=aarch64-none-elf",
+        "-c",
+        "/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-06/probe.S",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-06/probe.o"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "ld.lld",
+        "-Ttext=0xfffffff008489000",
+        "--entry=probe_entry",
+        "--defsym=original_first_cpu=0xfffffff0073c705c",
+        "--defsym=original_tables_resume=0xfffffff0073c728c",
+        "--defsym=original_mmu_resume=0xfffffff0073c7368",
+        "--defsym=original_mmu_on_resume=0xfffffff0073c737c",
+        "--defsym=original_arm_init_resume=0xfffffff00797284c",
+        "--defsym=original_cpu_base_resume=0xfffffff0073bb194",
+        "--defsym=original_arm_vm_resume=0xfffffff0073be018",
+        "--defsym=original_pmap_resume=0xfffffff0073a36c8",
+        "--defsym=original_kernel_bootstrap_resume=0xfffffff00729e808",
+        "/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-06/probe.o",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-06/probe.elf"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "llvm-objcopy",
+        "-O",
+        "binary",
+        "--only-section=.text",
+        "/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-06/probe.elf",
+        "/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-06/probe.bin"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "source_sha256": "ad41f1b880b038366dcbe1e9097611f69aa80105447faad25e188472bf94c921",
+  "loadable": false,
+  "runtime_qualified": false,
+  "device_accessed": false,
+  "screen": {
+    "bands": [
+      {
+        "stage": 1,
+        "y": 256,
+        "color": "blue",
+        "means": "XNU __start branch and diagnostic entry executed"
+      },
+      {
+        "stage": 2,
+        "y": 352,
+        "color": "yellow",
+        "means": "Bootstrap page tables generated; before translation control setup"
+      },
+      {
+        "stage": 3,
+        "y": 448,
+        "color": "magenta",
+        "means": "Passed BCM block with invalid write suppressed; before enabling MMU"
+      },
+      {
+        "stage": 4,
+        "y": 736,
+        "color": "cyan",
+        "means": "msr sctlr_el1 executed and the following fetch was translated (V=P identity)"
+      },
+      {
+        "stage": 5,
+        "y": 832,
+        "color": "white",
+        "means": "arm_init entered at the KVA: TTBR1 fetch and translation are live"
+      }
+    ],
+    "fault": {
+      "y": 544,
+      "color": "red",
+      "hex_rows": {
+        "ESR_EL1": 608,
+        "ELR_EL1": 640,
+        "FAR_EL1": 672
+      }
+    },
+    "post_mmu_mapping": {
+      "l1_slot": 2,
+      "virtual": "0x80000000",
+      "physical": "0x80000000",
+      "size": "0x40000000",
+      "descriptor": "0x6000008000040d",
+      "attributes": "Device-nGnRnE (MAIR index 3), AF, PXN|UXN, installed only if the slot is invalid",
+      "source": "probe_mmu stub before the SCTLR write",
+      "scratch": "framebuffer base and line stride copied from boot_args into probe_scratch"
+    },
+    "limitations": [
+      "Bands do not prove arm_init returned, arm_vm_init, kext start or iOS",
+      "Cyan and white depend on the diagnostic 1 GiB device mapping installed pre-MMU; if the L1 slot were occupied nothing is drawn and no mapping is changed",
+      "Fault logger active only through physical early vector; x20 must still be boot_args",
+      "Exact video ABI and MMIO/cache effects need nuwa trial"
+    ]
+  }
+}

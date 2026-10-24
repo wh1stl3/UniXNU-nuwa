@@ -1,0 +1,49 @@
+{
+  "scope": "v6 C-entry markers executed in the model with the real ADT; not hardware behaviour",
+  "build": "reports\\kernel-entry-probe\\2026-10-24-v6\\build.json",
+  "candidate_sha256": "fb6b6b6d261d182fab7ca35cee5bd913b48eb03b4f41136cbbb02cbebf57ab9c",
+  "adt_used": true,
+  "adt_sha256": "ed7235cbd4bebe1e38f4c9ef73ad727df3b5cfb5fb20ecab56aa75fb1468f9f3",
+  "instructions": 444083,
+  "error": "Unhandled CPU exception (UC_ERR_EXCEPTION)",
+  "stopped_at": "0xfffffff0073bb19c",
+  "stopped_symbol": "_current_percpu_base+0xc",
+  "reached": {
+    "white": 374399,
+    "cpu_base": 444077
+  },
+  "pixels": {
+    "256": "0xff0080ff",
+    "352": "0xffffff00",
+    "448": "0xffff00ff",
+    "736": "0xff00ffff",
+    "832": "0xffffffff",
+    "896": "0xff8000ff",
+    "960": "0x0",
+    "1024": "0x0",
+    "1088": "0x0"
+  },
+  "bad_memory": [],
+  "checks": [
+    {
+      "name": "Cyan and white still correct",
+      "passed": true
+    },
+    {
+      "name": "_current_percpu_base marker paints its band",
+      "passed": true
+    },
+    {
+      "name": "_current_percpu_base marker is the first new marker reached",
+      "passed": true
+    },
+    {
+      "name": "Execution still stops at the same per-CPU null dereference",
+      "passed": true
+    },
+    {
+      "name": "No invalid memory access other than the reported stop",
+      "passed": true
+    }
+  ]
+}

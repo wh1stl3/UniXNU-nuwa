@@ -54,14 +54,27 @@ def main():
     if struct.unpack_from('<I',raw,backed(m,isb_site))[0]!=0xd5033fdf:raise ValueError('Expected isb after the SCTLR write')
     if '_arm_init' not in symbols:raise ValueError('_arm_init symbol missing')
     arm_init=symbols['_arm_init']
+    # C-entry markers past arm_init: located by symbol, validated by instruction word.
+    for name in ('_current_percpu_base','_arm_vm_init','_pmap_bootstrap','_kernel_bootstrap'):
+        if name not in symbols:raise ValueError(name+' symbol missing')
     expected={tables:0xd5033b9f,mmu:0xf2e00000,bcm:0xb9000001}
     for va,word in expected.items():
         if struct.unpack_from('<I',raw,backed(m,va))[0]!=word:raise ValueError(f'Unexpected instruction at {va:#x}')
     codeva=align(max(s['va']+s['size'] for s in m['segments']));fileoff=align(len(raw));work.mkdir(parents=True)
     template=(ROOT/'package/entry-probe/entry-probe.S').read_text(encoding='utf-8-sig')
+    for name in ('_current_percpu_base','_arm_vm_init','_pmap_bootstrap','_kernel_bootstrap'):
+        if not (0xfffffff007000000<=symbols[name]<0xfffffff008000000):raise ValueError(name+' outside the kernel text')
     constants=dict(original_first_cpu=first,original_tables_word=expected[tables],original_tables_resume=tables+4,original_mmu_word=expected[mmu],original_mmu_resume=mmu+4,
                    original_mmu_on_word=0xd5033fdf,original_mmu_on_resume=isb_site+4,
-                   original_arm_init_word=struct.unpack_from('<I',raw,backed(m,arm_init))[0],original_arm_init_resume=arm_init+4)
+                   original_arm_init_word=struct.unpack_from('<I',raw,backed(m,arm_init))[0],original_arm_init_resume=arm_init+4,
+                   original_cpu_base_word=struct.unpack_from('<I',raw,backed(m,symbols['_current_percpu_base']))[0],
+                   original_cpu_base_resume=symbols['_current_percpu_base']+4,
+                   original_arm_vm_word=struct.unpack_from('<I',raw,backed(m,symbols['_arm_vm_init']))[0],
+                   original_arm_vm_resume=symbols['_arm_vm_init']+4,
+                   original_pmap_word=struct.unpack_from('<I',raw,backed(m,symbols['_pmap_bootstrap']))[0],
+                   original_pmap_resume=symbols['_pmap_bootstrap']+4,
+                   original_kernel_bootstrap_word=struct.unpack_from('<I',raw,backed(m,symbols['_kernel_bootstrap']))[0],
+                   original_kernel_bootstrap_resume=symbols['_kernel_bootstrap']+4)
     source='\n'.join(f'.equ {k}, {v:#x}' for k,v in constants.items() if k.endswith('_word'))+'\n'+template
     (work/'probe.S').write_text(source,encoding='utf-8',newline='\n')
     commands=[]
@@ -84,7 +97,11 @@ def main():
         candidate[off:off+len(new)]=new
     patch(16,struct.pack('<II',m['ncmds']+1,m['cmdbytes']+72),'Add one bounded RX diagnostic segment')
     patch(cursor,command,'Use verified zero load-command padding')
-    for va,name in ((entry,'probe_entry'),(tables,'probe_tables'),(mmu,'probe_mmu'),(isb_site,'probe_mmu_on'),(arm_init,'probe_arm_init')):patch(backed(m,va),branch(va,hooks[name]),name,va)
+    sites=((entry,'probe_entry'),(tables,'probe_tables'),(mmu,'probe_mmu'),(isb_site,'probe_mmu_on'),
+           (arm_init,'probe_arm_init'),(symbols['_current_percpu_base'],'probe_cpu_base'),
+           (symbols['_arm_vm_init'],'probe_arm_vm'),(symbols['_pmap_bootstrap'],'probe_pmap'),
+           (symbols['_kernel_bootstrap'],'probe_kernel_bootstrap'))
+    for va,name in sites:patch(backed(m,va),branch(va,hooks[name]),name,va)
     patch(backed(m,bcm),struct.pack('<I',0xd503201f),'Suppress BCM2837-only MMIO write; no native timer activation',bcm)
     for index in range(16):
         va=low+index*128;off=backed(m,va)

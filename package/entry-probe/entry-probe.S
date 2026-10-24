@@ -135,6 +135,38 @@ probe_arm_init:
 probe_arm_init_replay:
     .inst original_arm_init_word
     b original_arm_init_resume
+.balign 4
+// C-entry markers past arm_init. They share the snapshot so they keep working
+// after MMU is on, and they are the only signal available before pmap rebuilds
+// the tables.
+.global probe_cpu_base
+probe_cpu_base:
+    BAND_SNAPSHOT 896, 0xff8000ff
+.global probe_cpu_base_replay
+probe_cpu_base_replay:
+    .inst original_cpu_base_word
+    b original_cpu_base_resume
+.global probe_arm_vm
+probe_arm_vm:
+    BAND_SNAPSHOT 960, 0xff804000
+.global probe_arm_vm_replay
+probe_arm_vm_replay:
+    .inst original_arm_vm_word
+    b original_arm_vm_resume
+.global probe_pmap
+probe_pmap:
+    BAND_SNAPSHOT 1024, 0xff00ff80
+.global probe_pmap_replay
+probe_pmap_replay:
+    .inst original_pmap_word
+    b original_pmap_resume
+.global probe_kernel_bootstrap
+probe_kernel_bootstrap:
+    BAND_SNAPSHOT 1088, 0xffff8040
+.global probe_kernel_bootstrap_replay
+probe_kernel_bootstrap_replay:
+    .inst original_kernel_bootstrap_word
+    b original_kernel_bootstrap_resume
 .balign 8
 .global probe_scratch
 probe_scratch:
