@@ -1,0 +1,380 @@
+{
+  "scope": "Static provenance only; no XNU execution proof",
+  "checks": [
+    {
+      "name": "CI Mu pin",
+      "passed": true
+    },
+    {
+      "name": "CI DarwinBoot pin",
+      "passed": true
+    },
+    {
+      "name": "Capsule GUID",
+      "passed": true
+    },
+    {
+      "name": "Software audit event",
+      "passed": true
+    },
+    {
+      "name": "Callback registered at EBS",
+      "passed": true
+    },
+    {
+      "name": "Mu implements displayed format",
+      "passed": true
+    },
+    {
+      "name": "Source green store before branch",
+      "passed": true
+    },
+    {
+      "name": "Enter follows successful EBS",
+      "passed": true
+    },
+    {
+      "name": "Actual build includes Capsule",
+      "passed": true
+    },
+    {
+      "name": "Actual build links audit lib",
+      "passed": true
+    },
+    {
+      "name": "FD matches trial",
+      "passed": true
+    },
+    {
+      "name": "Actual entry located",
+      "passed": true
+    },
+    {
+      "name": "Full body decoded",
+      "passed": true
+    },
+    {
+      "name": "Actual green store before kernel branch",
+      "passed": true
+    }
+  ],
+  "sources": [
+    {
+      "name": "CapsuleService.c",
+      "sha256": "3b3a275755482cbbc837fbf04f71fd55eeb66896c9362312f6a3c86d2805cae8",
+      "url": "https://github.com/microsoft/mu_basecore/blob/cfb93724a06ff86ff5ba971413368a7809ee42a5/MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleService.c",
+      "lines": [
+        {
+          "line": 64,
+          "text": "@retval EFI_OUT_OF_RESOURCES  When ExitBootServices() has been previously called this error indicates the capsule"
+        },
+        {
+          "line": 66,
+          "text": "in runtime. The caller may resubmit the capsule prior to ExitBootServices()."
+        },
+        {
+          "line": 67,
+          "text": "@retval EFI_OUT_OF_RESOURCES  When ExitBootServices() has not been previously called then this error indicates"
+        },
+        {
+          "line": 284,
+          "text": "@retval EFI_OUT_OF_RESOURCES  When ExitBootServices() has been previously called this error indicates"
+        },
+        {
+          "line": 287,
+          "text": "The caller may resubmit the capsule prior to ExitBootServices()."
+        },
+        {
+          "line": 288,
+          "text": "@retval EFI_OUT_OF_RESOURCES  When ExitBootServices() has not been previously called then this error"
+        },
+        {
+          "line": 401,
+          "text": "LockCapsuleInterface - Event handler"
+        },
+        {
+          "line": 410,
+          "text": "LockCapsuleInterface ("
+        },
+        {
+          "line": 416,
+          "text": "SECURITY_LOCK_REPORT_EVENT (\"Lock Capsule Interface\", SOFTWARE_LOCK);"
+        },
+        {
+          "line": 479,
+          "text": "LockCapsuleInterface,"
+        },
+        {
+          "line": 481,
+          "text": "&gEfiEventExitBootServicesGuid,"
+        }
+      ]
+    },
+    {
+      "name": "CapsuleRuntimeDxe.inf",
+      "sha256": "49d74d968ca1f893752b02bbe397923e59800dc916b83cd634d1472c488e431c",
+      "url": "https://github.com/microsoft/mu_basecore/blob/cfb93724a06ff86ff5ba971413368a7809ee42a5/MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf",
+      "lines": [
+        {
+          "line": 19,
+          "text": "FILE_GUID                      = 42857F0A-13F2-4B21-8A23-53D3F714B840"
+        },
+        {
+          "line": 82,
+          "text": "gEfiEventExitBootServicesGuid                 ## SOMETIMES_CONSUMES   # MU_CHANGE - 161994 - add lock support"
+        }
+      ]
+    },
+    {
+      "name": "SecurityLockAuditDebugMessageLib.c",
+      "sha256": "9b8554f0c1f6a31c67eeb9f3e9df02b74962878aeb387f4d8b8c9d65f69b2b3e",
+      "url": "https://github.com/microsoft/mu_basecore/blob/cfb93724a06ff86ff5ba971413368a7809ee42a5/MdeModulePkg/Library/SecurityLockAuditDebugMessageLib/SecurityLockAuditDebugMessageLib.c",
+      "lines": [
+        {
+          "line": 16,
+          "text": "\"SOFTWARE_LOCK\","
+        },
+        {
+          "line": 43,
+          "text": "DEBUG ((DEBUG_ERROR, \"SecurityLock::LockType: %a, Module: %g, Function: %a, Output: %a\\n\", mLockName[LockTypeIndex], Module, Function, LockEventText));"
+        },
+        {
+          "line": 45,
+          "text": "DEBUG ((DEBUG_ERROR, \"SecurityLock::LockType: %d, Module: %g, Function: %a, Output: %a\\n\", LockType, Module, Function, LockEventText));"
+        }
+      ]
+    },
+    {
+      "name": "Entry.S",
+      "sha256": "72d63bede2d0eac7179ac4f1048a5312d97f210c8362111dafb71e289b403f56",
+      "url": "https://github.com/UniXNU/DarwinBoot/blob/d099354d0eab34df5088ca1ba89c9c88bc3260bb/DarwinBootPkg/Driver/Entry.S",
+      "lines": [
+        {
+          "line": 10,
+          "text": "ASM_FUNC(DarwinEnter)"
+        },
+        {
+          "line": 21,
+          "text": "stp w10, w10, [x11], #8"
+        },
+        {
+          "line": 52,
+          "text": "br x1"
+        }
+      ]
+    },
+    {
+      "name": "DarwinBoot.c",
+      "sha256": "db189a520fb7af3decb80f6ad65e2b7ab2aa9e3e6c5ab6e2286a23df6108d8f2",
+      "url": "https://github.com/UniXNU/DarwinBoot/blob/d099354d0eab34df5088ca1ba89c9c88bc3260bb/DarwinBootPkg/Driver/DarwinBoot.c",
+      "lines": [
+        {
+          "line": 42,
+          "text": "VOID EFIAPI DarwinEnter (UINT64 Args, UINT64 Entry, UINT64 Memory, UINT64 Size, UINT64 VideoBase, UINT64 VideoBytes);"
+        },
+        {
+          "line": 691,
+          "text": "Status = gBS->ExitBootServices (mImage, Key);"
+        },
+        {
+          "line": 693,
+          "text": "DarwinEnter (ArgsAddress, Address + Kernel.Entry - Kernel.Base, Address, WindowSize, Video[0], Video[2] * Video[4]);"
+        }
+      ]
+    }
+  ],
+  "fd_sha256": "2d606985ad768dcfaab66c2b28073c0a4c2820126b42b23286623fdc450e848f",
+  "loader_sha256": "3313e8568b97432675c33e76dc3b8a7240cfff66a1cd0559ba33e2f512440145",
+  "darwin_enter": {
+    "rva": "0x5d40",
+    "bytes": 148,
+    "sha256": "2ce57cfcc58acdf9ff7ebc8071cd1c3a873bb9b8f2fdbfb0de922ed9b4217463",
+    "instructions": [
+      {
+        "address": "0x5d40",
+        "mnemonic": "msr",
+        "operands": "daifset, #0xf"
+      },
+      {
+        "address": "0x5d44",
+        "mnemonic": "cbz",
+        "operands": "x4, #0x5d6c"
+      },
+      {
+        "address": "0x5d48",
+        "mnemonic": "lsr",
+        "operands": "x9, x5, #4"
+      },
+      {
+        "address": "0x5d4c",
+        "mnemonic": "and",
+        "operands": "x9, x9, #0xfffffffffffffff8"
+      },
+      {
+        "address": "0x5d50",
+        "mnemonic": "mov",
+        "operands": "w10, #0xff00"
+      },
+      {
+        "address": "0x5d54",
+        "mnemonic": "movk",
+        "operands": "w10, #0xff00, lsl #16"
+      },
+      {
+        "address": "0x5d58",
+        "mnemonic": "mov",
+        "operands": "x11, x4"
+      },
+      {
+        "address": "0x5d5c",
+        "mnemonic": "stp",
+        "operands": "w10, w10, [x11], #8"
+      },
+      {
+        "address": "0x5d60",
+        "mnemonic": "subs",
+        "operands": "x9, x9, #8"
+      },
+      {
+        "address": "0x5d64",
+        "mnemonic": "b.hi",
+        "operands": "#0x5d5c"
+      },
+      {
+        "address": "0x5d68",
+        "mnemonic": "dsb",
+        "operands": "sy"
+      },
+      {
+        "address": "0x5d6c",
+        "mnemonic": "add",
+        "operands": "x5, x2, x3"
+      },
+      {
+        "address": "0x5d70",
+        "mnemonic": "mrs",
+        "operands": "x6, ctr_el0"
+      },
+      {
+        "address": "0x5d74",
+        "mnemonic": "ubfx",
+        "operands": "x6, x6, #0x10, #4"
+      },
+      {
+        "address": "0x5d78",
+        "mnemonic": "mov",
+        "operands": "x7, #4"
+      },
+      {
+        "address": "0x5d7c",
+        "mnemonic": "lsl",
+        "operands": "x6, x7, x6"
+      },
+      {
+        "address": "0x5d80",
+        "mnemonic": "sub",
+        "operands": "x7, x6, #1"
+      },
+      {
+        "address": "0x5d84",
+        "mnemonic": "bic",
+        "operands": "x4, x2, x7"
+      },
+      {
+        "address": "0x5d88",
+        "mnemonic": "dsb",
+        "operands": "sy"
+      },
+      {
+        "address": "0x5d8c",
+        "mnemonic": "dc",
+        "operands": "civac, x4"
+      },
+      {
+        "address": "0x5d90",
+        "mnemonic": "add",
+        "operands": "x4, x4, x6"
+      },
+      {
+        "address": "0x5d94",
+        "mnemonic": "cmp",
+        "operands": "x4, x5"
+      },
+      {
+        "address": "0x5d98",
+        "mnemonic": "b.lo",
+        "operands": "#0x5d8c"
+      },
+      {
+        "address": "0x5d9c",
+        "mnemonic": "dsb",
+        "operands": "sy"
+      },
+      {
+        "address": "0x5da0",
+        "mnemonic": "ic",
+        "operands": "iallu"
+      },
+      {
+        "address": "0x5da4",
+        "mnemonic": "dsb",
+        "operands": "sy"
+      },
+      {
+        "address": "0x5da8",
+        "mnemonic": "isb",
+        "operands": ""
+      },
+      {
+        "address": "0x5dac",
+        "mnemonic": "mrs",
+        "operands": "x4, sctlr_el1"
+      },
+      {
+        "address": "0x5db0",
+        "mnemonic": "and",
+        "operands": "x4, x4, #0xfffffffffffffffe"
+      },
+      {
+        "address": "0x5db4",
+        "mnemonic": "and",
+        "operands": "x4, x4, #0xfffffffffffffffb"
+      },
+      {
+        "address": "0x5db8",
+        "mnemonic": "and",
+        "operands": "x4, x4, #0xffffffffffffefff"
+      },
+      {
+        "address": "0x5dbc",
+        "mnemonic": "msr",
+        "operands": "sctlr_el1, x4"
+      },
+      {
+        "address": "0x5dc0",
+        "mnemonic": "isb",
+        "operands": ""
+      },
+      {
+        "address": "0x5dc4",
+        "mnemonic": "tlbi",
+        "operands": "vmalle1"
+      },
+      {
+        "address": "0x5dc8",
+        "mnemonic": "dsb",
+        "operands": "sy"
+      },
+      {
+        "address": "0x5dcc",
+        "mnemonic": "isb",
+        "operands": ""
+      },
+      {
+        "address": "0x5dd0",
+        "mnemonic": "br",
+        "operands": "x1"
+      }
+    ]
+  }
+}

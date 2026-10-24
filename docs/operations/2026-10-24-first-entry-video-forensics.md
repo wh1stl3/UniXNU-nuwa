@@ -1,3 +1,5 @@
+> 2026-10-24 20:25 更正：本文为历史记录。SecurityLock/LockCapsuleInterface 已定位到 Mu UEFI EBS 回调，绿条仅证明 DarwinEnter 写屏；不支持 Apple 安全锁故障或 XNU 已执行的旧结论。slot-retry-count 为剩余次数。详见 [接手审计](2026-10-24-first-entry-provenance.md)，原图/录像及历史文本保留。
+
 # 首次内核进入：录像取证报告
 
 > 素材：用户用第三台设备拍摄的完整录像 `2d932cb8b5db1c97cde5eba6e4991325_raw.mp4`（1920×1080 竖屏容器，2 分 50.43 秒，HEVC 59.97 fps）。

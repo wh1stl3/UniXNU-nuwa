@@ -1,3 +1,5 @@
+> **2026-10-24 20:25 接手纠错，优先于下方历史条目：** SecurityLock/LockCapsuleInterface 已固定来源为Mu CapsuleRuntimeDxe的ExitBootServices回调；不是Apple安全链失败。实际DarwinEnter绿色写入早于br x1，不能证明XNU开始执行；slot-retry-count是剩余次数，不是累计失败数。当前确认到UEFI加载/窗口/DarwinEnter写屏，内核第一指令/退出口待定位。14项静态审计通过，见 [接手审计](2026-10-24-first-entry-provenance.md) 和 ../STATUS.md。本轮无设备动作、新包或新录像确认；最近设备事实仅继承下方旧记录，不当作当前查询。后续先离线设计交接尾部与XNU入口的独立标记，保留所有启动前日志/恢复门。
+
 # 主线交接（2026-10-24，USB v3实测闭环）
 
 当前设备仓main：运输实测已提交8de7b98bedd0778e7cf9b69544bf7a2cd6f8a113，新文件SHA探针Q-153待提交。先读AGENTS.md和STATUS.md。两旧资料库只读；firmware工作源D:/Code/uefi-nuwa，独立upstream检出D:/Code/UniXNU-integration。上轮恢复闭环，无需按键；新文件包未启动，待新鲜录像条件。

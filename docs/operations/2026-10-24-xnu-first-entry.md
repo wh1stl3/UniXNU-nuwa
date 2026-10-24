@@ -1,3 +1,5 @@
+> 2026-10-24 20:25 更正：本文为历史记录。SecurityLock/LockCapsuleInterface 已定位到 Mu UEFI EBS 回调，绿条仅证明 DarwinEnter 写屏；不支持 Apple 安全锁故障或 XNU 已执行的旧结论。slot-retry-count 为剩余次数。详见 [接手审计](2026-10-24-first-entry-provenance.md)，原图/录像及历史文本保留。
+
 # 首次内核进入试验：内核入口执行，XNU 走到启动链锁后重启
 
 2026-10-24 19:26–19:33。本轮是本项目第一次让 iOS 16 内核在 nuwa 上真正执行。
