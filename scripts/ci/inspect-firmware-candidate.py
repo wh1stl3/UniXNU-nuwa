@@ -3,6 +3,7 @@ import argparse
 import hashlib
 import json
 import lzma
+import re
 from pathlib import Path
 import struct
 import uuid
@@ -281,6 +282,43 @@ def heap_descriptors(data):
     return result
 
 
+def fv_sha_linkage(data, map_text):
+    """Require real optimized Ready->SHA compression calls, not wrapper names."""
+    symbols = {m[2]: int(m[1], 16) for m in re.finditer(
+        r'^([0-9a-fA-F]{8,16})\s+0+\s+0\s+(\S+)\s*$', map_text, re.M)}
+    need('Ready' in symbols and 'sha256_block_data_order' in symbols, 'Target Ready/SHA block symbols absent')
+    header, = struct.unpack_from('<I', data, 60)
+    count, = struct.unpack_from('<H', data, header+6)
+    optsize, = struct.unpack_from('<H', data, header+20)
+    sections = [struct.unpack_from('<4I', data, header+24+optsize+40*i+8) for i in range(count)]
+    def backed(rva, length):
+        section = next((s for s in sections if s[1] <= rva and length <= s[2] and rva-s[1] <= s[2]-length), None)
+        need(section is not None, 'Target crypto code outside actual PE backing')
+        at = section[3]+rva-section[1]
+        need(at+length <= len(data), 'Target crypto file bounds')
+        return data[at:at+length]
+    ready = symbols['Ready']
+    block = symbols['sha256_block_data_order']
+    end = min(address for address in symbols.values() if address > ready)
+    block_end = min(address for address in symbols.values() if address > block)
+    code = backed(ready, end-ready)
+    calls = []
+    for offset in range(0, len(code)-3, 4):
+        word, = struct.unpack_from('<I', code, offset)
+        if word >> 26 != 0x25:  # A64 BL imm26
+            continue
+        immediate = word & 0x3ffffff
+        if immediate & (1 << 25):
+            immediate -= 1 << 26
+        target = ready+offset+4*immediate
+        if target == block:
+            calls.append(hex(ready+offset))
+    need(len(calls) >= 1 and block_end-block >= 256, 'Actual Ready does not call a nontrivial SHA compression body')
+    return dict(ready_rva=hex(ready), sha_block_rva=hex(block), direct_call_sites=calls,
+                sha_block_bytes=block_end-block, sha_block_sha256=sha(backed(block, block_end-block)),
+                scope='Static real PE/map optimized call linkage; not crypto execution proof')
+
+
 def inspect(artifact, publisher_name='ShengBootMemoryDxe', require_sec_trace=False, require_no_auto_abl=False, require_allocation_trace=False, allocation_profile='dxe-allocation'):
     artifact = artifact.resolve()
     inputs = json.loads((artifact/'inputs.json').read_text())
@@ -397,12 +435,18 @@ def inspect(artifact, publisher_name='ShengBootMemoryDxe', require_sec_trace=Fal
         need(sec_te[0]['sha256'] == expected_sec, 'FV diagnostic changed actual SEC bytes')
         build_report = (artifact/'BUILD_REPORT.txt').read_text(errors='replace')
         need('DxeImageVerificationLib.inf' in build_report, 'Actual target image verification library absent')
+        module_blocks = [block for block in build_report.split('Module Name:')[1:]
+                         if block.lstrip().startswith('NuwaFileAuditDxe\n') or block.lstrip().startswith('NuwaFileAuditDxe\r\n')]
+        need(len(module_blocks) == 1 and '/OpensslPkg/Library/BaseCryptLib' in module_blocks[0]
+             and '/OpensslLib.inf' in module_blocks[0] and 'BaseCryptLibNull' not in module_blocks[0],
+             'FV audit did not link the reviewed real BaseCryptLib/OpenSSL implementation')
         for policy in ('PcdFixedMediaImageVerificationPolicy', 'PcdRemovableMediaImageVerificationPolicy'):
             need(any(policy in line and '0x04 (4)' in line for line in build_report.splitlines()),
                  'Image verification deny policy changed: ' + policy)
         crypto_maps = list(artifact.rglob('NuwaFileAuditDxe.map'))
-        need(crypto_maps and any('Sha256HashAll' in p.read_text(errors='replace') for p in crypto_maps),
-             'Target SHA256 implementation evidence absent from driver map')
+        crypto_images = list(artifact.rglob('NuwaFileAuditDxe.efi'))
+        need(crypto_maps and crypto_images, 'Target SHA driver PE/map missing')
+        fv_sha_linkage(crypto_images[0].read_bytes(), crypto_maps[0].read_text(errors='replace'))
     if require_allocation_trace and allocation_profile in ('factory-heap', 'sec-handoff', 'constructor-trace', 'mmu-branches', 'hob-query', 'volume-envelope', 'hob-integrity', 'volume-status', 'embedded-probe', 'boot-input-audit', 'hob-stage-audit', 'hob-cache-handoff', 'upstream-merged', 'fv-file-audit'):
         descriptors = sec_te[0]['heap_descriptors']
         need(len(descriptors) == 1 and descriptors[0]['base'] == '0xbab00000'

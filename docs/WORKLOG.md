@@ -333,3 +333,5 @@
 2026-10-24T16:14:06+08:00 · 18ebd838单次实测：新菜单原图returned Access Denied，纠正等Enter判断；实际构建镜像验证库/0x04拒绝policy和PE无签名支持认证拒绝首因，文件SHA未实机通过。120秒观察后原厂v4恢复完成1/A槽/三SHA不变，无第二候选或策略改动；下一步离线保留认证入口诊断 · Q-154（包准备ab7e4b9） · reports/file-read-audit-trial/2026-10-24-01/、docs/operations/2026-10-24-file-audit-access-denied.md
 
 2026-10-24 · 固件内NuwaFileAuditDxe源a155c495推送，新独立fv-file-audit profile及CI/模块和SEC/认证policy检查接入；57输入/12补丁/15后哈希通过，原guard保持，19实际C源AArch64 QEMU场景及一次性回调通过。实际固件CI/目标crypto/SEC同字节待验，无新手机动作或新试验包 · Q-155 · reports/fv-file-audit/、docs/operations/2026-10-24-fv-file-audit.md
+
+2026-10-24 · CI40078257763固件编译成功但原包装符号检查因LTO失败，保留原日志；按实际Ready四次BL→572B SHA体和模块真实crypto链接修正并独立验收FD52ab071e/SEC7192fd3f逐字节相同及全部原保护/认证策略。纯数据FAT5ea19e90与首轮离线包6b3e5bfd已验收，待完整CI重跑，不启动手机 · Q-156（首轮源2b7328b） · reports/fv-file-audit/40078257763/

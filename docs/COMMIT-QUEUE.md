@@ -1630,3 +1630,13 @@
 [Evidence] 57输入/12补丁/15后哈希静态通过，原11guard补丁和原保护post-image相同；实际C源AArch64 QEMU 19场景加一次性回调通过。
 [Risk] 实际固件编译/SEC逐字节/目标crypto链接和nuwa执行待验，新包未生成，无新手机动作。
 ```
+
+## Q-156 · 实际SHA链接审计与无外部应用数据包
+
+```text
+[unixnu-nuwa][build] 按实际LTO调用验证FV诊断SHA并接入纯数据包和设备门控
+
+[Change] 修正包装函数内联后的实际PE调用审计，加入真实模块crypto链接和拒绝stub回归；构建纯数据FAT及严格新scope包。
+[Evidence] 初轮40078257763编译成功/原检查失败留档；下载FD52ab071e独立全检查通过，SEC7192fd3f完全相同，Ready四次调用真实572B SHA体，原认证策略保持。
+[Risk] 修正检查后的完整CI重跑待验；实际诊断调度/目标文件SHA尚未nuwa实测，不借旧录像或关闭验证策略。
+```

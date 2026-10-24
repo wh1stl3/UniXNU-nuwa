@@ -21,3 +21,17 @@ CI新增fv-file-audit选择，默认仍upstream-merged。实际FD验收继承全
 独立新profile未来继续沿USB v3运输普通数据FAT；需重新打包但不执行外部EFI app，菜单应改退出动作避免再次Access Denied干扰。实际构建验收后再固定FD/SHA和数据FAT，新增试验scope保持录像/恢复门；当前不借旧许可启动。
 
 复现静态：bundled Python -B scripts/check-fv-file-audit.py --output reports/<新文件>.json；软件夹具test-fv-file-audit.py --work out/<新目录> --output reports/<新文件>.json。CI build-firmware-candidate.py --profile fv-file-audit仅在受控Actions新树执行；固定源和补丁不复制到旧资料库。Heap/板值/内存/身份/_verified不改，当前无需用户按键/录像。
+
+## 首轮实际构建与LTO验收修正
+
+CI40078257763/source2b7328b固件编译成功，最初artifact inspection失败于要求map出现Sha256HashAll包装名；保留initial-ci-failure.json，不改原CI状态。实际LTO将包装函数及ReadAndHash/AuditVolumes内联进Ready，保留sha256_block_data_order。检查已改为实际PE/map的Ready→压缩函数直接BL、非平凡函数体及驱动专属实际链接报告的真实BaseCryptLib/OpenSSL（拒绝Null库），不通过删检查放行。
+
+下载实际产物独立检查通过：FD52ab071eaa6cdb06f1902464923f1fab11f55d169f0494a58165ceed8894be51/3145728B；shim8a3b5476/112B，SEC7192fd3f与上一实测完整字节相同，全部原Heap/HOB/cache守卫、7模块GUID/PE/DEPEX/屏幕marker及原验证库/0x04拒绝策略通过。实际Ready在RVA18fc/192c/1994/19cc四次直接调用RVA36d8的572B SHA函数体，完整哈希见crypto-linkage.json；这只是静态实际链接，不宣称目标crypto实机执行。
+
+新增移除所有SHA调用/把SHA体伪造成4字节stub的拒绝回归，避免把包装名消失当实现缺失或把占位函数当真SHA。当前独立重验报告artifact-inspection-local.json与真实初始CI失败分别保留；将用修正后的验收重新触发CI取得完整绿色结果，固件源/模块实现本身未改。
+
+## 数据卷和候选包
+
+新数据FAT64MiB SHA5ea19e90fa1b44d0f79041663e1b91a9d9e274c34a8beda594ac009d762fb9ed，只含READTEST.BIN（58335232B/eb66542c）与60秒退出配置，实际两文件完整抽取SHA一致；没有外部EFI app或XNU执行项。菜单只退出，校验由ReadyToBoot自动执行，不要求键盘或Enter。config/fv-file-audit/unixnu.toml、build-fv-audit-data.py和data-01.json记录输入及命令。
+
+首轮本地重验包6b3e5bfd3a8e1d5a8e8abbda3268872a6fc69b287c144df70387012d46a41dc7/70266880B已完整重建/逐字节读回，reports/fv-file-audit/40078257763/package.json；尚不安排实测，待修正验收CI完整成功后固定最终包。新scope FV-FILE-SHA-OFFLINE严格验证源profile/原全部保护/最终FD/数据卷/数据用途和禁止外部app；无新鲜录像或preflight时在设备子进程前拒绝，不能编辑元数据重启XNU。当前无新设备查询，最近Android恢复仍16:14:06。

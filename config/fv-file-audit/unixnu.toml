@@ -1,0 +1,17 @@
+version = 1
+
+[boot]
+timeout = 60
+default = "audit-exit"
+
+[kits]
+autoload = false
+
+[ui]
+title = "NUWA FV FILE SHA AUDIT - DATA ONLY"
+
+[[entry]]
+id = "audit-exit"
+title = "FV file audit completed - return to firmware"
+type = "action"
+action = "exit"

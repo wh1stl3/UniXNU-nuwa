@@ -61,3 +61,9 @@ recover实际临时加载原厂v4 boot，postcondition.at=2026-10-24T08:14:06.60
 实际CI尚待验收：必须新模块GUID/PE/DEPEX/屏幕marker、SEC SHA7192fd3f逐字节一致、实际认证库/介质0x04策略和驱动map Sha256HashAll。软件fixture用NativeAdreno SHA回调而目标链接BaseCryptLib，不能混为目标库已执行。相关scripts/check-fv-file-audit.py、test-fv-file-audit.py和reports/fv-file-audit/；操作2026-10-24-fv-file-audit.md。
 
 当前没有新镜像包/设备动作；18ebd838失败和Android16:14:06恢复仍为最近实机真相。下一步触发firmware-candidate.yml profile=fv-file-audit，检查失败保留日志且修复，不能跳过新增检查。CI后才准备USB v3数据FAT+退出菜单包，避免重复执行外部app；新包另需严格scope/录像/恢复门。不要重复启动旧18ebd838，不要求用户键盘/OTG。
+
+## 实际首轮构建与严格LTO修正
+
+40078257763/source2b7328b编译成功，初始检查要求Sha256HashAll包装名未考虑LTO而失败，保留initial-ci-failure.json。下载产物在修正后的本地强检查通过：FD52ab071e/3MiB，SEC7192fd3f与旧完整字节一致、原Heap/HOB/cache/认证库0x04策略/7模块及真实BaseCryptLib/OpenSSL链接通过。Ready实际四次BL→sha256_block_data_order/572B，crypto-linkage.json记录PE/map/bodySHA；新的检查拒绝移除调用或4B stub，不简单删条件。待新检查CI完整重跑后固定实测包，不将首轮CI写成绿色。
+
+已生成纯数据FAT5ea19e90/64MiB及首轮本地重验包6b3e5bfd/70266880B，严格报告reports/fv-file-audit/40078257763/package.json。无外部app，只READTEST.BIN与退出菜单；FV自动检查无需Enter。fv_file_audit_package.py继承原所有保护并固定数据用途，新scope FV-FILE-SHA-OFFLINE；原脚本加入scope但仍必须新鲜capture/preflight，不能编辑JSON启用XNU。最近手机仍18ebd838失败后Android16:14:06恢复，没有新设备操作。

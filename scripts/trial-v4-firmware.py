@@ -30,7 +30,7 @@ def devices(tool):
 
 def capture_confirmed(gate, approval):
     confirmation = gate.get('human_capture_confirmation')
-    if approval in ('USB-RAMDISK-V3-OFFLINE', 'USB-FILE-SHA-OFFLINE'):
+    if approval in ('USB-RAMDISK-V3-OFFLINE', 'USB-FILE-SHA-OFFLINE', 'FV-FILE-SHA-OFFLINE'):
         return isinstance(confirmation, str) and bool(confirmation.strip())
     if approval in ('MMU-BRANCHES-OFFLINE', 'HOB-QUERY-OFFLINE', 'VOLUME-PROBE-OFFLINE', 'HOB-INTEGRITY-OFFLINE', 'VOLUME-STATUS-OFFLINE', 'EMBEDDED-PROBE-OFFLINE', 'BOOT-INPUT-AUDIT-OFFLINE', 'HOB-STAGE-AUDIT-OFFLINE', 'HOB-CACHE-HANDOFF-OFFLINE'):
         return isinstance(confirmation, str) and bool(confirmation.strip())
@@ -69,10 +69,14 @@ def main():
                   'HOB-STAGE-AUDIT-OFFLINE': ROOT/'reports/hob-stage-audit',
                   'HOB-CACHE-HANDOFF-OFFLINE': ROOT/'reports/hob-cache-handoff',
                   'USB-RAMDISK-V3-OFFLINE': ROOT/'reports/usb-ramdisk',
-                  'USB-FILE-SHA-OFFLINE': ROOT/'reports/file-read-audit'}
+                  'USB-FILE-SHA-OFFLINE': ROOT/'reports/file-read-audit',
+                  'FV-FILE-SHA-OFFLINE': ROOT/'reports/fv-file-audit'}
         package_raw = package_path.read_bytes()
         package = json.loads(package_raw)
         approval = package.get('approval')
+        if approval == 'FV-FILE-SHA-OFFLINE':
+            from fv_file_audit_package import validate
+            validate(package_path)
         if approval == 'USB-FILE-SHA-OFFLINE':
             from file_audit_package import validate
             validate(package_path)
@@ -89,8 +93,8 @@ def main():
             from sec_handoff_package import validate
             validate(package_path)
         if (approval not in scopes or not package_path.is_relative_to(scopes[approval])
-                or package['header_version'] != (3 if approval in ('USB-RAMDISK-V3-OFFLINE', 'USB-FILE-SHA-OFFLINE') else 4)
-                or (package['xnu_included'] and approval != 'USB-FILE-SHA-OFFLINE') or (package['fat_included'] and approval not in ('VOLUME-PROBE-OFFLINE', 'HOB-INTEGRITY-OFFLINE', 'VOLUME-STATUS-OFFLINE', 'EMBEDDED-PROBE-OFFLINE', 'BOOT-INPUT-AUDIT-OFFLINE', 'HOB-STAGE-AUDIT-OFFLINE', 'HOB-CACHE-HANDOFF-OFFLINE', 'USB-RAMDISK-V3-OFFLINE', 'USB-FILE-SHA-OFFLINE')) or package['appended_dtb']
+                or package['header_version'] != (3 if approval in ('USB-RAMDISK-V3-OFFLINE', 'USB-FILE-SHA-OFFLINE', 'FV-FILE-SHA-OFFLINE') else 4)
+                or (package['xnu_included'] and approval not in ('USB-FILE-SHA-OFFLINE', 'FV-FILE-SHA-OFFLINE')) or (package['fat_included'] and approval not in ('VOLUME-PROBE-OFFLINE', 'HOB-INTEGRITY-OFFLINE', 'VOLUME-STATUS-OFFLINE', 'EMBEDDED-PROBE-OFFLINE', 'BOOT-INPUT-AUDIT-OFFLINE', 'HOB-STAGE-AUDIT-OFFLINE', 'HOB-CACHE-HANDOFF-OFFLINE', 'USB-RAMDISK-V3-OFFLINE', 'USB-FILE-SHA-OFFLINE', 'FV-FILE-SHA-OFFLINE')) or package['appended_dtb']
                 or package['original_boot_sha256'] != HASHES[ORIGINAL]):
             raise ValueError('Package is outside the approved trial scope')
         if approval == 'R-008 A' and (package['shim_text_offset'] != 0

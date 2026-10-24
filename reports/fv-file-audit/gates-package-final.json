@@ -1,0 +1,18 @@
+{
+  "command": [
+    "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_*gate.py",
+    "-v"
+  ],
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "test_empty_capture_rejected (test_boot_input_audit_gate.BootAuditGate.test_empty_capture_rejected) ... ok\ntest_old_fv_cannot_claim_audit_profile (test_boot_input_audit_gate.BootAuditGate.test_old_fv_cannot_claim_audit_profile) ... ok\ntest_empty_capture_rejected (test_embedded_probe_gate.EmbeddedGate.test_empty_capture_rejected) ... ok\ntest_old_fd_cannot_claim_embedded_profile (test_embedded_probe_gate.EmbeddedGate.test_old_fd_cannot_claim_embedded_profile) ... ok\ntest_empty_capture_rejected (test_file_audit_gate.FileAuditGate.test_empty_capture_rejected) ... ok\ntest_metadata_cannot_enable_kernel_entry (test_file_audit_gate.FileAuditGate.test_metadata_cannot_enable_kernel_entry) ... ok\ntest_missing_capture_blocks_preflight_before_enumeration (test_file_audit_gate.FileAuditGate.test_missing_capture_blocks_preflight_before_enumeration) ... ok\ntest_missing_preflight_blocks_launch_before_device (test_file_audit_gate.FileAuditGate.test_missing_preflight_blocks_launch_before_device) ... ok\ntest_package_preserves_data_only_identity (test_file_audit_gate.FileAuditGate.test_package_preserves_data_only_identity) ... ok\ntest_empty_capture_refused_for_new_scope (test_fv_file_audit_gate.FvFileAuditGate.test_empty_capture_refused_for_new_scope) ... ok\ntest_new_scope_requires_capture_before_adb (test_fv_file_audit_gate.FvFileAuditGate.test_new_scope_requires_capture_before_adb) ... ok\ntest_new_scope_requires_fresh_preflight_before_device (test_fv_file_audit_gate.FvFileAuditGate.test_new_scope_requires_fresh_preflight_before_device) ... ok\ntest_optimized_ready_calls_real_sha_compression (test_fv_file_audit_gate.FvFileAuditGate.test_optimized_ready_calls_real_sha_compression) ... ok\ntest_package_cannot_add_external_application (test_fv_file_audit_gate.FvFileAuditGate.test_package_cannot_add_external_application) ... ok\ntest_prior_fd_missing_fv_driver_is_refused (test_fv_file_audit_gate.FvFileAuditGate.test_prior_fd_missing_fv_driver_is_refused) ... ok\ntest_removed_sha_calls_are_refused (test_fv_file_audit_gate.FvFileAuditGate.test_removed_sha_calls_are_refused) ... ok\ntest_stub_compression_body_is_refused (test_fv_file_audit_gate.FvFileAuditGate.test_stub_compression_body_is_refused) ... ok\ntest_empty_capture_rejected (test_hob_cache_handoff_gate.CacheHandoffGate.test_empty_capture_rejected) ... ok\ntest_old_fv_cannot_claim_audit_profile (test_hob_cache_handoff_gate.CacheHandoffGate.test_old_fv_cannot_claim_audit_profile) ... ok\ntest_empty_capture_rejected (test_hob_stage_audit_gate.HobStageGate.test_empty_capture_rejected) ... ok\ntest_old_fv_cannot_claim_audit_profile (test_hob_stage_audit_gate.HobStageGate.test_old_fv_cannot_claim_audit_profile) ... ok\ntest_new_scope_requires_capture_confirmation (test_volume_status_gate.VolumeStatusGate.test_new_scope_requires_capture_confirmation) ... ok\ntest_old_publisher_rejected_even_if_profile_metadata_is_spoofed (test_volume_status_gate.VolumeStatusGate.test_old_publisher_rejected_even_if_profile_metadata_is_spoofed) ... ok\n\n----------------------------------------------------------------------\nRan 23 tests in 13.190s\n\nOK\n",
+  "device_accessed": false
+}
