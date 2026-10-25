@@ -1,0 +1,537 @@
+{
+  "scope": "Unicorn ARM64 instruction execution with sparse RAM/framebuffer model. An AArch64 high-EL model state (SCR_EL3.NS|RW, HCR_EL2.RW) lets the real cold path cross the SCTLR write and reach the arm_init hook; the default state stays as the negative control. No hardware cache/device model and no nuwa execution",
+  "unicorn_version": "2.1.4",
+  "candidate_sha256": "d7f125b5d06fd4cc4b526dd04132adce276a3c6198efca2d8009e457b46c726c",
+  "checks": [
+    {
+      "name": "Pinned baseline",
+      "passed": true
+    },
+    {
+      "name": "Candidate digest",
+      "passed": true
+    },
+    {
+      "name": "Baseline reaches BCM-only unmapped write",
+      "passed": true
+    },
+    {
+      "name": "Single-store correction reaches MMU enable instruction",
+      "passed": true
+    },
+    {
+      "name": "Minimal corrected kernel installs no framebuffer mapping",
+      "passed": true
+    },
+    {
+      "name": "Instrumented kernel reaches MMU enable instruction",
+      "passed": true
+    },
+    {
+      "name": "Live registers preserved",
+      "passed": true
+    },
+    {
+      "name": "Bootstrap tables match minimal corrected kernel outside the added slot",
+      "passed": true
+    },
+    {
+      "name": "Diagnostic framebuffer 1 GiB block installed in L1 slot 2",
+      "passed": true
+    },
+    {
+      "name": "Boot args untouched",
+      "passed": true
+    },
+    {
+      "name": "Entry blue band",
+      "passed": true
+    },
+    {
+      "name": "Tables yellow band",
+      "passed": true
+    },
+    {
+      "name": "Pre-MMU magenta band",
+      "passed": true
+    },
+    {
+      "name": "Post-SCTLR hook executes to its replay point",
+      "passed": true
+    },
+    {
+      "name": "Geometry snapshot matches boot_args",
+      "passed": true
+    },
+    {
+      "name": "Cyan post-MMU band",
+      "passed": true
+    },
+    {
+      "name": "Post-SCTLR hook preserves live registers",
+      "passed": true
+    },
+    {
+      "name": "Post-SCTLR hook leaves earlier bands intact",
+      "passed": true
+    },
+    {
+      "name": "arm_init hook executes to its replay point",
+      "passed": true
+    },
+    {
+      "name": "White arm_init band",
+      "passed": true
+    },
+    {
+      "name": "arm_init hook preserves live registers",
+      "passed": true
+    },
+    {
+      "name": "Cyan hook replays the original isb before anything is drawn",
+      "passed": true
+    },
+    {
+      "name": "Pre-occupied L1 slot 2 is left untouched",
+      "passed": true
+    },
+    {
+      "name": "Pre-occupied slot yields no geometry snapshot",
+      "passed": true
+    },
+    {
+      "name": "Continuous run crosses the SCTLR write with AArch64 high-EL state",
+      "passed": true
+    },
+    {
+      "name": "Continuous run draws cyan and white under real translation",
+      "passed": true
+    },
+    {
+      "name": "Continuous run used the kernel own TCR/TTBR/MAIR/SCTLR values",
+      "passed": true
+    },
+    {
+      "name": "Default SCR/HCR state remains the negative control (stops right after the SCTLR write)",
+      "passed": true
+    },
+    {
+      "name": "Continuous run executes in the AArch64 high-EL state (SCR_EL3=0x431 = NS|RW, HCR_EL2=0x80000000)",
+      "passed": true
+    },
+    {
+      "name": "Continuous run ends exactly at the white replay point",
+      "passed": true
+    },
+    {
+      "name": "Continuous run reproduces the pinned kernel page-table digest",
+      "passed": true
+    },
+    {
+      "name": "Negative control keeps SCR_EL3/HCR_EL2 at the model default",
+      "passed": true
+    },
+    {
+      "name": "Continuous run leaves only the diagnostic L1 slot changed",
+      "passed": true
+    },
+    {
+      "name": "With a pre-occupied slot the continuous run still reaches arm_init and paints nothing",
+      "passed": true
+    },
+    {
+      "name": "Missing framebuffer still reaches MMU",
+      "passed": true
+    },
+    {
+      "name": "Missing framebuffer writes no bands",
+      "passed": true
+    },
+    {
+      "name": "Missing framebuffer still installs the diagnostic mapping only",
+      "passed": true
+    },
+    {
+      "name": "Post-MMU hook sees an empty snapshot without a framebuffer",
+      "passed": true
+    },
+    {
+      "name": "Post-MMU hook draws nothing without a snapshot",
+      "passed": true
+    },
+    {
+      "name": "Early vector enters fault logger",
+      "passed": true
+    },
+    {
+      "name": "Fault red band",
+      "passed": true
+    },
+    {
+      "name": "ESR ELR FAR glyphs independently decode",
+      "passed": true
+    }
+  ],
+  "baseline": {
+    "error": "Invalid memory write (UC_ERR_WRITE_UNMAPPED)",
+    "trace": [
+      "0x8c37c705c",
+      "0x8c37c7288",
+      "0x8c37c732c"
+    ],
+    "bad_memory": [
+      {
+        "access": 20,
+        "address": "0x40000040",
+        "size": 4,
+        "pc": "0x8c37c732c"
+      }
+    ],
+    "pc": "0x8c37c732c",
+    "boot_args_unchanged": true
+  },
+  "minimal_corrected": {
+    "stop": "before-sctlr",
+    "trace": [
+      "0x8c37c705c",
+      "0x8c37c7288",
+      "0x8c37c732c",
+      "0x8c37c7374"
+    ],
+    "bad_memory": [],
+    "pc": "0x8c37c7374",
+    "boot_args_unchanged": true
+  },
+  "instrumented": {
+    "stop": "before-sctlr",
+    "trace": [
+      "0x8c37c705c",
+      "0x8c37c7288",
+      "0x8c37c732c",
+      "0x8c37c7374"
+    ],
+    "bad_memory": [],
+    "pc": "0x8c37c7374",
+    "boot_args_unchanged": true
+  },
+  "post_sctlr_stub": {
+    "entry": 37657026200,
+    "replay": 37657026316,
+    "before": {
+      "0": 877943101,
+      "1": 240,
+      "2": 37636939776,
+      "3": 37636927488,
+      "4": 37635506176,
+      "5": 0,
+      "6": 486,
+      "7": 0,
+      "8": 0,
+      "18": 52674560,
+      "19": 18446744005117421640,
+      "20": 37851267072,
+      "21": 0,
+      "22": 18446744005107531776,
+      "23": 37635506176,
+      "24": 1021067264,
+      "25": 37636923392,
+      "26": 0,
+      "27": 0,
+      "28": 0,
+      "29": 0,
+      "30": 18446744005117421640
+    },
+    "scratch": [
+      3087007744,
+      5760
+    ],
+    "reached_replay": true,
+    "reached": true,
+    "after": {
+      "0": 877943101,
+      "1": 240,
+      "2": 37636939776,
+      "3": 37636927488,
+      "4": 37635506176,
+      "5": 0,
+      "6": 486,
+      "7": 0,
+      "8": 0,
+      "18": 52674560,
+      "19": 18446744005117421640,
+      "20": 37851267072,
+      "21": 0,
+      "22": 18446744005107531776,
+      "23": 37635506176,
+      "24": 1021067264,
+      "25": 37636923392,
+      "26": 0,
+      "27": 0,
+      "28": 0,
+      "29": 0,
+      "30": 18446744005117421640
+    },
+    "pc": "0x8c4889f0c",
+    "bad_memory": []
+  },
+  "arm_init_stub": {
+    "entry": 37657026320,
+    "replay": 37657026544,
+    "before": {
+      "0": 877943101,
+      "1": 240,
+      "2": 37636939776,
+      "3": 37636927488,
+      "4": 37635506176,
+      "5": 0,
+      "6": 486,
+      "7": 0,
+      "8": 0,
+      "18": 52674560,
+      "19": 18446744005117421640,
+      "20": 37851267072,
+      "21": 0,
+      "22": 18446744005107531776,
+      "23": 37635506176,
+      "24": 1021067264,
+      "25": 37636923392,
+      "26": 0,
+      "27": 0,
+      "28": 0,
+      "29": 0,
+      "30": 18446744005117421640
+    },
+    "scratch": [
+      3087007744,
+      5760
+    ],
+    "reached_replay": true,
+    "reached": true,
+    "after": {
+      "0": 877943101,
+      "1": 240,
+      "2": 37636939776,
+      "3": 37636927488,
+      "4": 37635506176,
+      "5": 0,
+      "6": 486,
+      "7": 0,
+      "8": 0,
+      "18": 52674560,
+      "19": 18446744005117421640,
+      "20": 37851267072,
+      "21": 0,
+      "22": 18446744005107531776,
+      "23": 37635506176,
+      "24": 1021067264,
+      "25": 37636923392,
+      "26": 0,
+      "27": 0,
+      "28": 0,
+      "29": 0,
+      "30": 18446744005117421640
+    },
+    "pc": "0x8c4889ff0",
+    "bad_memory": []
+  },
+  "continuous": {
+    "native_vbar_snapshot": "0xfffffff0073c2000",
+    "model": "aarch64",
+    "error": null,
+    "reached": true,
+    "instructions": 52703,
+    "pc": "0xfffffff008489ff0",
+    "bad_memory": [],
+    "sctlr": "0x3454593d",
+    "tcr": "0x22a51a251a",
+    "ttbr0": "0x8c355e000",
+    "ttbr1": "0x8c355f000",
+    "scr_el3": "0x431",
+    "hcr_el2": "0x80000000",
+    "mair": "0xc08044f00bb44ff",
+    "tables_pa": "0x8c355e000",
+    "tables_before_sha256": "f851ae4a554b2867f0ce5f050ee5a505804498479309c988f4b12822398f732d",
+    "tables_after_sha256": "682cb477a6574e9e107de81570e339336eb60c81a156cf1bb1bdf6eff4d1bfa8",
+    "tables_slot2": "0x6000008000040d",
+    "pixels": {
+      "256": "0xff0080ff",
+      "288": "0xffffff00",
+      "320": "0xffff00ff",
+      "352": "0xff00ffff",
+      "384": "0xffffffff",
+      "416": "0x0",
+      "448": "0x0",
+      "480": "0x0",
+      "512": "0x0",
+      "544": "0x0",
+      "576": "0x0",
+      "608": "0x0",
+      "640": "0x0",
+      "1056": "0x0",
+      "1088": "0x0",
+      "1120": "0x0",
+      "1152": "0x0"
+    }
+  },
+  "negative_control": {
+    "native_vbar_snapshot": "0xfffffff0073c2000",
+    "model": "default",
+    "error": "Unhandled CPU exception (UC_ERR_EXCEPTION)",
+    "reached": false,
+    "instructions": 43081,
+    "pc": "0x8c37c7378",
+    "bad_memory": [],
+    "sctlr": "0x3454593d",
+    "tcr": "0x22a51a251a",
+    "ttbr0": "0x8c355e000",
+    "ttbr1": "0x8c355f000",
+    "scr_el3": "0x0",
+    "hcr_el2": "0x0",
+    "mair": "0xc08044f00bb44ff",
+    "tables_pa": "0x8c355e000",
+    "tables_before_sha256": "f851ae4a554b2867f0ce5f050ee5a505804498479309c988f4b12822398f732d",
+    "tables_after_sha256": "682cb477a6574e9e107de81570e339336eb60c81a156cf1bb1bdf6eff4d1bfa8",
+    "tables_slot2": "0x6000008000040d",
+    "pixels": {
+      "256": "0xff0080ff",
+      "288": "0xffffff00",
+      "320": "0xffff00ff",
+      "352": "0x0",
+      "384": "0x0",
+      "416": "0x0",
+      "448": "0x0",
+      "480": "0x0",
+      "512": "0x0",
+      "544": "0x0",
+      "576": "0x0",
+      "608": "0x0",
+      "640": "0x0",
+      "1056": "0x0",
+      "1088": "0x0",
+      "1120": "0x0",
+      "1152": "0x0"
+    }
+  },
+  "pixels": {
+    "256": "0xff0080ff",
+    "288": "0xffffff00",
+    "320": "0xffff00ff",
+    "352": "0x0",
+    "384": "0x0",
+    "416": "0x0",
+    "448": "0x0",
+    "480": "0x0",
+    "512": "0x0",
+    "544": "0x0",
+    "576": "0x0",
+    "608": "0x0",
+    "640": "0x0",
+    "1056": "0x0",
+    "1088": "0x0",
+    "1120": "0x0",
+    "1152": "0x0"
+  },
+  "pixels_after_stubs": {
+    "post_sctlr": {
+      "256": "0xff0080ff",
+      "288": "0xffffff00",
+      "320": "0xffff00ff",
+      "352": "0xff00ffff",
+      "384": "0x0",
+      "416": "0x0",
+      "448": "0x0",
+      "480": "0x0",
+      "512": "0x0",
+      "544": "0x0",
+      "576": "0x0",
+      "608": "0x0",
+      "640": "0x0",
+      "1056": "0x0",
+      "1088": "0x0",
+      "1120": "0x0",
+      "1152": "0x0"
+    },
+    "arm_init": {
+      "256": "0xff0080ff",
+      "288": "0xffffff00",
+      "320": "0xffff00ff",
+      "352": "0x0",
+      "384": "0xffffffff",
+      "416": "0x0",
+      "448": "0x0",
+      "480": "0x0",
+      "512": "0x0",
+      "544": "0x0",
+      "576": "0x0",
+      "608": "0x0",
+      "640": "0x0",
+      "1056": "0x0",
+      "1088": "0x0",
+      "1120": "0x0",
+      "1152": "0x0"
+    },
+    "no_video": {
+      "256": "0x0",
+      "288": "0x0",
+      "320": "0x0",
+      "352": "0x0",
+      "384": "0x0",
+      "416": "0x0",
+      "448": "0x0",
+      "480": "0x0",
+      "512": "0x0",
+      "544": "0x0",
+      "576": "0x0",
+      "608": "0x0",
+      "640": "0x0",
+      "1056": "0x0",
+      "1088": "0x0",
+      "1120": "0x0",
+      "1152": "0x0"
+    },
+    "null": {
+      "256": "0x0",
+      "288": "0x0",
+      "320": "0x0",
+      "352": "0x0",
+      "384": "0x0",
+      "416": "0x0",
+      "448": "0x0",
+      "480": "0x0",
+      "512": "0x0",
+      "544": "0x0",
+      "576": "0x0",
+      "608": "0x0",
+      "640": "0x0",
+      "1056": "0x0",
+      "1088": "0x0",
+      "1120": "0x0",
+      "1152": "0x0"
+    }
+  },
+  "fault_injection": {
+    "stop": "fault-stop",
+    "trace": [],
+    "bad_memory": [],
+    "pc": "0x8c489fd28",
+    "boot_args_unchanged": true,
+    "decoded_hex": {
+      "ESR_EL1": "0000000096000040",
+      "ELR_EL1": "00000008C37C732C",
+      "FAR_EL1": "0000000040000040"
+    },
+    "expected_hex": {
+      "ESR_EL1": "0000000096000040",
+      "ELR_EL1": "00000008C37C732C",
+      "FAR_EL1": "0000000040000040"
+    }
+  },
+  "live_registers_equal": true,
+  "bootstrap_tables": {
+    "sha256": "682cb477a6574e9e107de81570e339336eb60c81a156cf1bb1bdf6eff4d1bfa8",
+    "masked_sha256": "f851ae4a554b2867f0ce5f050ee5a505804498479309c988f4b12822398f732d",
+    "slot2": "0x6000008000040d",
+    "ttbr0": "0x8c355e000"
+  },
+  "framebuffer_descriptor": "0x6000008000040d"
+}

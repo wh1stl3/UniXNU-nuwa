@@ -298,7 +298,7 @@ def main():
         UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 20','PROBE 21').replace('NATIVE PTHREAD OSKEXT TO BSD ROOT','ROOT RESOURCE AND MEDIA WAIT TRACE')
     root_ramdisk=None
     if args.root_ramdisk:
-        if not probe or revision not in (30,31,32,33):raise ValueError('Real root diagnostic requires revision30..32 boundary')
+        if not probe or revision not in (30,31,32,33,34):raise ValueError('Real root diagnostic requires revision30..32 boundary')
         ctx=root_context(revision);PAYLOAD_SHA,ARGS,validate_report=ctx.PAYLOAD_SHA,ctx.ARGS,ctx.validate_report
         root_proof=json.loads((ROOT/probe['root-launch']['path']).read_text());validate_report(root_proof)
         root_ramdisk=args.root_ramdisk.read_bytes()
@@ -311,6 +311,8 @@ def main():
             UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 23','PROBE 24').replace('CONTINUOUS BSD TO FIRST INIT EXEC','NATIVE EXEC ACTIVATION AND SIGNATURE TRACE')
         if revision>=33:
             UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 24','PROBE 25').replace('NATIVE EXEC ACTIVATION AND SIGNATURE TRACE','CONTINUOUS EXEC WITH PERSISTENT NATIVE ERRORS')
+        if revision>=34:
+            UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 25','PROBE 26').replace('CONTINUOUS EXEC WITH PERSISTENT NATIVE ERRORS','NATIVE EXEC AND DYLD PATH ERROR TRACE')
     elif probe and revision>=30:raise ValueError('Mount-only candidate must bind the real RAMDisk')
     if sha(fd) != FD_SHA or len(fd) != 3145728:
         raise ValueError('Firmware FD changed')
@@ -443,6 +445,8 @@ def main():
             report['success_requires']='PROBE24: mount and first exec continue; side panel IDs220..238 observe native activation/task switch/signature/cleanup. A02D activation errno, A02E signature errno, A02F task switch observed, A030 actual exec return, A032 MAC entry errno; stage-specific fields overwrite old WFE data. ID239 magenta/A02B239 means unreviewed restore task release held, not execution success. Original errors/panic/fallback retained; zero activation alone is not success.'
         if revision>=33:
             report['success_requires']=report['success_requires'].replace('PROBE24:', 'PROBE25:')+' Revision33 always renders actual activation/exec/signature post-call values, retains last completed error across fallback; A02C counts init exec attempts. No new endpoint.'
+        if revision>=34:
+            report['success_requires']=report['success_requires'].replace('PROBE25:', 'PROBE26:')+' IDs240..263=exec and dyld calls/continuations. A02E=first nonzero stage call ID per attempt, A032=its raw native return (errno or Mach loader status according to callee), A02C=attempt count. Aggregate activation/exec remain A02D/A030. No forced success or path substitution.'
         report['expected_screen_outcomes'] = [report['success_requires'], 'Any later XNU text or panic requires separate attribution; no band proves MMU enabled or iOS started']
         report['not_proven'] = ['Real nuwa execution of this candidate', 'MMU activation and arm_init', 'Native timer/interrupt driver readiness', 'Full donor/native ABI or iOS boot']
     output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')

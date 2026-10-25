@@ -31,7 +31,7 @@ ENTRY_FUNCTIONS=('_load_context','_machine_load_context','_thread_continue',
 def plan_next(raw,m,backed,revision=25):
     symbols=m['symbols'];reverse={v:k for k,v in symbols.items()};edges=[];sites={}
     def add(site,fn,callee,phase,call=None):
-        index=len(edges)+(4 if revision>=29 and len(edges)>=178 else 0)+(2 if revision>=31 and len(edges)>=208 else 0)+(1 if revision>=32 and len(edges)>=212 else 0)
+        index=(1 if revision>=34 and len(edges)>=232 else 0)+len(edges)+(4 if revision>=29 and len(edges)>=178 else 0)+(2 if revision>=31 and len(edges)>=208 else 0)+(1 if revision>=32 and len(edges)>=212 else 0)
         if index>=(264 if revision>=32 else 220):raise ValueError('Next-phase panel capacity exceeded')
         color={'call':'0xff40c0ff','continuation':'0xff40ff80','entry':'0xffffff00','context':'0xffff40ff'}[phase]
         e=dict(id=index,function=fn,callee=callee,phase=phase,call=hex(call if call is not None else site),site=hex(site),x=832+(index%10)*48,y=256+(index//10)*24,color=color)
@@ -85,6 +85,8 @@ def plan_next(raw,m,backed,revision=25):
         from exec_trace_sites import add_sites
         if revision>=33:
             from exec_trace_v33 import add_sites
+        if revision>=34:
+            from exec_path_sites import add_sites
         add_sites(add,raw,m,backed)
     return edges,sites
 
@@ -154,6 +156,8 @@ def generate(raw,m,backed,revision=24):
             from exec_trace_sites import observe
             if revision>=33:
                 from exec_trace_v33 import observe
+            if revision>=34:
+                from exec_path_sites import observe
             source += [observe(site)]
         source += ['    PROBE_RESTORE',f'.global {label}_replay',label+'_replay:',code]
         hooks.append((site,label))

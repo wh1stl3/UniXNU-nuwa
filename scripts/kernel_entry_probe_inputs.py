@@ -51,7 +51,7 @@ def validate(meta,kernel_sha):
         endpoint=('0xfffffff00769d230','probe_dense_769d230') if build['probe_revision']>=32 else ('0xfffffff00769d5f4','probe_dense_769d5f4') if build['probe_revision']>=31 else ('0xfffffff0076730e8','probe_dense_76730e8')
         if (policy.get('site'),policy.get('hook'))!=endpoint or policy.get('intentional_transparency_exemption') is not (build['probe_revision']<32):raise ValueError('Diagnostic boundary missing')
         if build['probe_revision']>=32:
-            if not policy.get('conditional_boundary_only') or build.get('exec_trace',{}).get('source_sha256')!=sha((ROOT/('scripts/exec_trace_v33.py' if build['probe_revision']>=33 else 'scripts/exec_trace_sites.py')).read_bytes()):raise ValueError('Continuous exec policy/source differs')
+            if not policy.get('conditional_boundary_only') or build.get('exec_trace',{}).get('source_sha256')!=sha((ROOT/('scripts/exec_path_sites.py' if build['probe_revision']>=34 else 'scripts/exec_trace_v33.py' if build['probe_revision']>=33 else 'scripts/exec_trace_sites.py')).read_bytes()):raise ValueError('Continuous exec policy/source differs')
         for name in ('root-stop','root-launch','root-inputs'):
             item=meta[name];payload=report_path(item['path']).read_bytes()
             if sha(payload)!=item['sha256']:raise ValueError('Root evidence digest differs')
@@ -61,6 +61,7 @@ def validate(meta,kernel_sha):
                 checks=e.get('checks',[])
                 required={'inactive-pass','uncommitted-pass','foreign-task-pass','wrong-flag-pass','committed-hold','committed-no-video','first-exec-continues','error-return-continues'} if build['probe_revision']>=32 else {'first','nonzero-argument','no-video'} if build['probe_revision']>=31 else {'success','error','no-video'}
                 if build['probe_revision']>=33:required|={'inactive-activation-result','inactive-exec-result','repeat-retains-result','inactive-switch-rearms'}
+                if build['probe_revision']>=34:required|={'path-first-error','path-zero-return','path-keeps-first-error'}
                 if len(checks)!=len(required) or {c['name'] for c in checks}!=required or any(c['passed'] is not True for c in checks):raise ValueError('Boundary evidence incomplete')
             elif name=='root-launch':
                 if build['probe_revision']>=33:
@@ -83,7 +84,7 @@ def validate(meta,kernel_sha):
     if not {'probe_entry','probe_tables','probe_mmu'}<=hooks:raise ValueError('Required entry/tables/MMU hooks missing')
     # Two header edits, one branch per hooked site, the BCM NOP and sixteen early vectors.
     compat=build.get('image4_compatibility',{}).get('hooks',[])
-    if compat and build.get('probe_revision') not in (27,28,29,30,31,32,33):raise ValueError('Image4 compatibility requires revision 27..30')
+    if compat and build.get('probe_revision') not in (27,28,29,30,31,32,33,34):raise ValueError('Image4 compatibility requires revision 27..30')
     overlay=[]
     if build.get('probe_revision',0)>=28:
         from pthread_prelink_overlay import load,ranges,SHA256

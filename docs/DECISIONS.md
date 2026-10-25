@@ -676,3 +676,7 @@ manifest-properties节点已存在但无BNCH，boot-manifest-hash缺失。固定
 # D-061 · PROBE25实际ENOENT优先定位运行时路径来源
 
 2026-10-25照片e7ffb6cc读到A02C2、A02D2、A0302，尚无切换/签名/用户态；22:55:01后验恢复闭环。主机只读普通755 launchd/dyld及LC_LOAD_DYLINKER路径均存在，仅开发/调试路径缺失，故不能把真实ENOENT直接归因正式launchd未打包。继续核对初始namei与dyld加载路径首个错误，不强制返回或放宽认证。证据v33c/screen、postcondition与v34/exec-files.json。
+
+# D-062 · exec/dyld首个非零来源观察，保留原生流程
+
+2026-10-25。实际ENOENT与主机正式文件存在并存，新增12组固定BL/后继观察覆盖最初namei至dyld读取。每次exec仅清首项占用，保留首个非零调用ID与原始返回，外层传播不覆盖；不同callee分别解释errno/Mach/内部状态，不直接称所有非零为错误。冻结v33及实际任务释放守卫，无新增阶段停止或认证绕过。21项串行验证含1052透明比较、15边界/结果读回、独立逐字节重建与新旧包回读通过；包26镜像9906e2b7，尚未实机。详见v34操作记录和execution.json。

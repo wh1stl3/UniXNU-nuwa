@@ -63,6 +63,24 @@ def main():
                 fields=struct.unpack('<12Q',u.mem_read(state,96));assert fields[0]==1 and fields[9]==u.reg_read(UC_ARM64_REG_X3)
             else:assert reader.decode(u,row)=='0000000000000002'
             checks.append(dict(name=name,passed=True,held=False,target=hex(target)))
+    if b['probe_revision']>=34:
+        for name,error,prior in [('path-first-error',2,0),('path-zero-return',0,0),('path-keeps-first-error',13,240)]:
+            site=0xfffffff00769bdd8
+            patch=next(x for x in b['patches'] if x.get('va')==hex(site))
+            u,_,_=T.machine(raw,b,patch,dict(flag=0,video=True,nzcv=0,x0=error,native_pc=site))
+            u.mem_write(state,bytes(96));u.mem_write(state+88,struct.pack('<Q',prior))
+            target=int(b['probe']['symbols']['probe_dense_769bdd8_replay'],16)
+            h=u.hook_add(T.U.UC_HOOK_CODE,lambda u,pc,size,data:u.emu_stop() if pc==target else None)
+            word=int.from_bytes(bytes.fromhex(patch['after']),'little');imm=word&0x3ffffff
+            if imm&(1<<25):imm-=1<<26
+            u.emu_start(site+imm*4,0,count=2000000);u.hook_del(h)
+            assert u.reg_read(UC_ARM64_REG_PC)==target and u.reg_read(UC_ARM64_REG_X0)==error
+            first=struct.unpack('<Q',u.mem_read(state+88,8))[0]
+            assert first==(242 if name=='path-first-error' else prior)
+            if name=='path-first-error':
+                assert reader.decode(u,1472)=='00000000000000F2' and reader.decode(u,1600)=='0000000000000002'
+            else:assert reader.decode(u,1472)=='?'*16 and reader.decode(u,1600)=='?'*16
+            checks.append(dict(name=name,passed=True,held=False,first_failure_stage=first))
     a.output.write_bytes(json.dumps(dict(scope=__doc__,candidate_sha256=T.B.sha(raw),checks=checks,exec_body_executed=False,restore_userspace_released=False),indent=2).encode()+b'\n')
     print(json.dumps(dict(checks=len(checks),passed=True)))
 if __name__=='__main__':main()

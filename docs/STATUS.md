@@ -1,11 +1,15 @@
 # STATUS
 
-更新：2026-10-25 22:59 +08。PROBE25实机A02C=2（两次exec尝试），A02D=2且A030=2（最后原生激活和exec返回ENOENT），A02E未知/A02F0，未到任务切换、签名或239恢复任务释放守卫。原图e7ffb6cc仅本地。22:55:01 +08后验确认Android1/A槽/三SHA与试前一致，恢复关闭。主机只读复核正式/sbin/launchd与/usr/lib/dyld均为普通755文件，launchd声明的加载器正是/usr/lib/dyld且存在；开发/调试AppleInternal路径不存在。不能把ENOENT直接归为正式文件缺失或据此放宽认证；下一步定位原生namei、镜像激活及dyld查找的首个错误。
+更新：2026-10-25。PROBE26原生exec/dyld路径错误定位版离线完成，21项串行回归全部通过：1052透明性、25Image4、6pthread、15边界/结果读回、7根输入、34绑定及入口/MMU/向量/显示回归；独立重建逐字节相同，实际FAT文件回读和旧包25复验通过。新鲜预检2026-10-25T23:09:47.274939+08:00确认Android1/A槽/三分区SHA与v33c后验一致。沿用用户本轮录像恢复确认、最新具体照片/fastboot确认及随后继续指令，条件未报告失效，按AGENTS连续推进不重复问是否继续；尚未启动26。
 
-最近包25镜像8e24773c3811f267b36272abf04a030d0fd2adfa5f5a15340d1cb8fbe8b5b655，204484608B；内核52dd89529567caa552c690f11de2f20cd701bde60027c2868b46364cef8489db，ADT f9e3e90956fda7a5713022295e09d50bad88383112726df9e2eeb31ecefe4461。代码d65c2b4、启动bc7f0cf。21项串行回归、独立逐字节重建、实际FAT回读及旧包24复验通过，不等于用户态运行。证据v33c/{screen,recovery,postcondition}.json；主机路径/权限/LC_LOAD_DYLINKER检查为v34/exec-files.json，已卸载，无设备写入。
+权威包reports/xnu-first-entry/entry-probe-26.json，镜像out/trial-boot/xnu-entry-probe-26-paths/boot-xnu-first-entry.img，204484608字节，SHA256 9906e2b702e8123d729ad83b4d1c07bad2ec26daedc9f11f1424c4c8c025b895。内核d7f125b5d06fd4cc4b526dd04132adce276a3c6198efca2d8009e457b46c726c、58449920B，ADT4e45522907b9b08ae4172ad84103326383c03f3a0e625cd22d7afcbfb07ea34f；真实APFS d180c38d、192MiB运输和-v rd=md0保持。代码父74a5193，新milestone提交以git log为准，无push/新CI。
 
-此前实机已到原生根挂载返回0、BSD初始化返回和首进程准备；25已执行真实exec但返回ENOENT。未知最终错误来源不能用虚构路径、强制成功、绕过认证或复制同机型身份解决。继续原生流程，不为成功阶段停止；只在真实故障、明确硬停或未授权设备内容更改边界停止相关动作，恢复用户态释放守卫保留。
+最近内核实测PROBE25：A02C2次尝试，实际激活A02D2和exec A0302均为ENOENT，尚无任务切换/签名/用户态。原图e7ffb6cc仅本地，22:55:01 +08 Android1/A槽/三SHA恢复闭环，当前无待恢复。主机只读确认正式launchd/dyld普通755且LC_LOAD_DYLINKER路径正确，开发/调试AppleInternal路径缺失；不能用此替代运行时路径证明。
 
-用户新规则已写AGENTS §3：fastboot getvar多次unknown command / Variable Not found本身不硬停，保留失败日志，重进一次fastboot后重试；不把缺失变量当确认值。目标设备/具体日志/恢复及内存身份等既有边界不变。当前无待恢复，最近设备证据22:55:01 Android1；不重复启动25。人工等待继续离线工作。
+新增240至263共12组实际BL/后继观察，覆盖exec_save_path、两处初始/后续namei、vnode_getattr/MAC/授权/读取、Mach-O激活/load_machfile及dyld的namei/授权/读取。A02E记录本次尝试首个非零调用ID、A032记录其原始返回，外层传播不覆盖首项；须按callee区分errno、Mach加载状态和内部控制返回。A02C尝试数、A02D/A030聚合返回保持；累计格点不是时序。原生调用/错误/认证不变，无新增成功终点，恢复用户态释放守卫保持。
 
-当前推进原生路径错误定位；下一包尚未完成，不提前启动。FD/shim、真实APFS d180c38d、192MiB运输、-v rd=md0、板内存/TCR、iOS16/8796身份和*_verified不变，loadable/runtime_qualified=false。无flash/erase/改槽、push/新CI或原始媒体上传。详见operations/2026-10-25-v33-exec-errors.md；本轮milestone提交以git log为准。
+下一步：即时通知后仅一次26临时boot，菜单电源Enter后拍完整画面，含最右侧两列全部新增行与A02C/D/E/F/A030/A032。首个错误阶段必须结合函数和源码解释，不据未知值改认证。取图后固定原厂临时boot恢复Android1，再与v34/preflight比A槽/三SHA；恢复未确认不启动第二候选，人工恢复等待继续离线分析。
+
+fastboot getvar反复unknown command / Variable Not found不单独硬停，保留日志，重进一次fastboot重试；必要目标/日志/恢复条件仍须确认。FD/shim、板内存/TCR、iOS16/8796身份、所有*_verified保持，loadable/runtime_qualified=false，无flash/erase/改槽或原始媒体上传。用户要求暂不调查重启现象，保持。
+
+完整依据和命令见[本轮记录](operations/2026-10-25-v34-exec-paths.md)。
