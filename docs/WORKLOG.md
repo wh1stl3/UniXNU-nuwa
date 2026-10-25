@@ -462,3 +462,5 @@
 2026-10-25 · PROBE21新增原生root内部30点，19项串行任务/860差分等通过，独立重建与实际包回读一致，包f005f7ed。固定iOS16真实RestoreRamDisk下载/IM4P/APFS只读检查完成并卸载，payload d180c38d；不当作nuwa挂载/完整iOS。用户PROBE21录像/恢复就绪，R-013解除，新鲜Android1/A槽/三SHA预检一致。· 本次kernel里程碑（父6797bd5） · v29 execution/restore-candidate/restore-filesystem-retry、包21、D-052
 
 2026-10-25 21:03:14 +08 · PROBE21录像/恢复及新鲜三SHA预检通过，即时通知后仅一次临时boot ACK；待菜单电源Enter后的root内部画面和本轮Android恢复后验，不把ACK写成执行阶段。· 7faf565后设备记录 · reports/xnu-entry-probe-trial/2026-10-25-v29/launch.json
+
+2026-10-25 21:13:15 +08 · PROBE21照片b412ba53确认184/185初始资源等待返回、208–211默认IOMedia构造返回、200介质等待进入/201未到；未挂载。首次恢复监测超时保留，fastboot后原厂boot仅临时加载一次，Android1/A槽/三SHA后验一致。用户要求继续新临时启动、暂不调查重启现象，转真实APFS挂载后停止候选。· 本次device里程碑（父a444c82） · v29 screen/recovery/recovery-retry/postcondition、D-053

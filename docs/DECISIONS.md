@@ -628,3 +628,9 @@ manifest-properties节点已存在但无BNCH，boot-manifest-hash缺失。固定
 2026-10-25。IOFindBSDRoot先等IOBSD资源，当前入口实测不能证明已到IOMedia等待。PROBE21固定15个原生BL及后继增加30点182–211，保留旧/178–181布局及实际等待；19项串行任务通过，860差分/25Image4/6pthread/31绑定，独立重建和实际包回读一致，旧PROBE20复验通过。包21 f005f7ed，内核dc496abe；启动按R-013的本包日志/恢复条件，不用ACK认定进度。
 
 同一固定phone iOS16/20H392清单RestoreRamDisk通过Apple archive/BuildManifest/ZIP和SHA384核对，rdsk payload d180c38d为102MiB真实APFS，主机只读挂载确认真实launchd/dyld/restored_external并卸载。初次drvfs失败保留，原生WSL重试成功。它提供后续真实挂载候选，不是完整iOS或nuwa挂载证明；当前64MiB运输FAT不足，后续单独验证传输/驱动/运行时RAMDisk，不改受审窗口、不伪造md0、不将4.73GB完整系统塞入1GiB。证据v29 restore-candidate/restore-filesystem/restore-filesystem-retry与操作记录。
+
+# D-053 · PROBE21定位root介质等待，恢复后继续新包
+
+2026-10-25。照片b412ba53中184/185均亮、208–211均亮、200蓝/201暗；结合固定输入无RAMDisk/根选择，定位原生默认Apple_HFS IOMedia等待，尚未进入挂载。197/199绿不能解释为mdevadd/waitQuiet返回：原生3664→36ac、36f0→370c可绕过调用；196/198均暗。无新panic/fault，A02A0/B6/C1。前轮“可能停初始IOBSD等待”在本次排除为最终停点；计时器超时/IRQ递送仍未验证。
+
+第一次恢复监测超时未发送原厂boot，用户回fastboot后只复位bootloader一次、临时加载固定原厂boot一次；21:12:18 Android1、21:13:15 +08后验A槽/三SHA与preflight一致。用户报告多次重启保留为未归因现象，最新明确“继续新的临时启动 先不管这个重启”，暂停该调查，继续真实APFS RAMDisk挂载后停止候选。未经后续实际root结果不宣称挂载或用户态通过。

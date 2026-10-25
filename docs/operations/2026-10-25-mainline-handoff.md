@@ -1,5 +1,7 @@
 # nuwa / iOS16 主线交接（2026-10-25，PROBE19后）
 
+> **当前实测及用户指令更新：PROBE21照片b412ba53确认184/185初始IOBSD资源等待已返回，208–211默认Apple_HFS IOMedia匹配构造已达，200蓝/201暗定位介质匹配等待；挂载入口8暗。** 196/198调用暗、197/199绿由原生其他前驱直达后继解释，不当作RAMDisk创建/等待调用返回。第一次恢复监测超时保留，用户确认fastboot后21:10:06只临时加载一次固定原厂boot，21:12:18观察Android1，21:13:15 +08 postcondition确认A槽/三SHA与本轮preflight相同，恢复关闭。证据v29/{screen,recovery,recovery-retry,postcondition}.json。用户最新“继续新的临时启动 先不管这个重启”优先执行：暂停重启归因，继续PROBE22真实APFS RAMDisk挂载后停止候选；尚未离线完成/尚未新启动，不把主机APFS检查写成实机挂载。内存/身份/_verified边界与日志/恢复门保持；旧等待照片/未恢复段落是历史。
+
 > **设备实时状态：PROBE21已于2026-10-25 21:03:14 +08单次临时boot ACK，待用户菜单电源Enter后的root内部标记照片。** 代码7faf565，本轮preflight录像/恢复门已确认，Android1/A槽/三SHA与v28后验相同。当前不能确认内核新阶段，本轮Android恢复后验尚无，不启动第二候选。图像采集后执行 `trial-v4-firmware.py recover --package reports/xnu-first-entry/entry-probe-21.json --evidence reports/xnu-entry-probe-trial/2026-10-25-v29/recovery.json`，再record-nuwa-trial-state.py对比v29/preflight补postcondition。ACK不代替画面，人工恢复不阻断离线工作。启动证据reports/xnu-entry-probe-trial/2026-10-25-v29/launch.json。
 
 > **v29增量：PROBE21离线完成，用户本包录像/恢复就绪已确认，新鲜preflight Android1/A槽/三SHA与v28后验一致，即将一次临时boot。** 包21镜像f005f7ed/70,266,880B，内核dc496abe，ADTb6bb6c88；860差分/25Image4/6pthread/31绑定及独立重建、实际FAT回读通过。新增root内部30点182–211，184/185为初始IOBSD等待、200/201为介质等待。真实102MiB APFS恢复介质已只下载/主机只读检查并卸载，未塞入试包，不改变内存/身份。尚无本包实机画面/恢复后验；证据v29/build/execution/preflight，续接见[v29记录](2026-10-25-v29-root-waits.md)。无push/新CI，父6797bd5。

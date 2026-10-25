@@ -1,6 +1,10 @@
 # STATUS
 
-更新：2026-10-25。**PROBE20实机进入IOFindBSDRoot，未到挂载；PROBE21于21:03:14 +08单次临时boot ACK，待用户菜单电源Enter后的画面。** 本包录像/恢复已确认，新鲜preflight Android1/A槽/三SHA与v28后验一致；本轮画面/恢复后验未取得，不启动第二候选。ACK不作内核进度，代码7faf565，launch证据v29/launch.json。人工采集/恢复等待不阻断离线工作。
+更新：2026-10-25。**PROBE21照片已确认初始IOBSD等待返回，进入root介质匹配等待，未到挂载。21:13:15 +08后验已确认Android1/A槽/三SHA与试前一致，恢复关闭。** 用户最新指令“继续新的临时启动 先不管这个重启”；停止重启原因排查，继续准备真实APFS RAMDisk挂载诊断PROBE22，离线验证完成及刷新日志/恢复门前不执行下一设备启动。
+
+本轮照片b412ba53c34999701b9c351d277d3e0e5defa98e64d5ad9eb4d9fa8d37f906ea仅本地：184/185均亮，208–211默认IOMedia/Apple_HFS构造均亮，200调用蓝、201后继暗。196 mdevadd/198 waitQuiet暗而197/199绿，固定原生分支可绕过调用直达后继，不当作已创建内存盘/已等待。A02A=0/B=6/C=1，无新panic/fault记录。恢复第一次监测超时保留；用户确认fastboot后，只发一次fastboot reboot bootloader和一次固定原厂boot，21:12:18检测Android1，21:13:15三SHA后验一致。用户报告多次重启仍属未归因现象，未据此造故障结论。
+
+证据reports/xnu-entry-probe-trial/2026-10-25-v29/{screen,recovery,recovery-retry,postcondition}.json。当前代码基线a444c82，v30实现进行中尚未验证；PROBE21/包f005f7ed无需重复启动。下文保留前轮输入背景，最新状态以上述实测和v30工作为准。
 
 ## 实机与恢复
 
