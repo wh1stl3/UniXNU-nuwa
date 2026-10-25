@@ -14,6 +14,16 @@ def main():
             try:validate(altered,sha)
             except (ValueError,KeyError):checks.append(dict(name='missing '+name+' rejected',passed=True))
             else:raise AssertionError(name)
+    if b.get('probe_revision',0)>=35:
+        altered=copy.deepcopy(meta);del altered['fscompression-startup']
+        try:validate(altered,sha)
+        except (ValueError,KeyError):checks.append(dict(name='missing FS compression startup rejected',passed=True))
+        else:raise AssertionError('FS compression startup')
+        original_fs=Path.read_bytes;fs_path=(ROOT/meta['fscompression-startup']['path']).resolve();obj=json.loads(original_fs(fs_path));obj['checks'].pop();payload=json.dumps(obj).encode();altered=copy.deepcopy(meta);altered['fscompression-startup']['sha256']=hashlib.sha256(payload).hexdigest()
+        with patch.object(Path,'read_bytes',lambda p:payload if p.resolve()==fs_path else original_fs(p)):
+            try:validate(altered,sha)
+            except ValueError:checks.append(dict(name='deleted FS compression case rejected after resealing digest',passed=True))
+            else:raise AssertionError('FS compression cases')
     if b.get('probe_revision',0)>=28:
         altered=copy.deepcopy(meta);del altered['pthread-startup']
         try:validate(altered,sha)

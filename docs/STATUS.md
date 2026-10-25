@@ -1,9 +1,15 @@
 # STATUS
 
-更新：2026-10-25。PROBE26照片03259a98已确认第二次exec到文件头读取：240至249调用/后继均亮，250 vn_rdwr调用亮、251后继暗，252之后Mach-O/dyld未亮。A02C2；保留的A02E=0xF2/242、A0322及A02D/A0302可来自前一次开发路径失败，不能解释为当前读取返回ENOENT。当前首要调查是文件头读取未见返回。Android1/A槽/三SHA后验已完成（v34/postcondition），无待恢复，不重复启动26。只读审计v35/exec-compression.json确认launchd/dyld均decmpfs type4；预链接含Zlib不等于已注册，正在核对正常组件初始化。按用户决定保持当前基线、不做全量上游迁移，继续主线且保留硬停。
+更新：2026-10-25。PROBE27条件初始化真实类型4解压组件候选离线完成。22项串行回归全部通过：1052透明性、25Image4、6pthread、15exec边界、8解压启动模型、7根输入、36绑定及既有入口/MMU/向量/显示回归。独立重建逐字节一致，新包实际FAT回读及旧包26复验通过。预检2026-10-25T23:50:46.940487+08:00确认Android1/A槽/三SHA与v34后验一致；沿用本轮连续实拍、已验证按键恢复和用户最新继续主线指令，条件未报告失效，尚未启动27。
 
-最近包26镜像9906e2b7、内核d7f125b5、ADT4e455229，代码5263bbb/启动7153e06。21项串行验证及回读通过；实机仍未到Mach-O/签名/用户态。详见v34操作记录及screen/recovery/postcondition。
+权威包reports/xnu-first-entry/entry-probe-27.json；镜像out/trial-boot/xnu-entry-probe-27-fscompression/boot-xnu-first-entry.img，204484608B，SHA256 06913eaf3124e2634a2c9e654f66b374ece2caf2fed790dea8b6578b0d34955d。内核bca646e7498e6dc2b2efa7fa02a248c717067313eb0958707b8e27989175cdbc，58449920B；ADT34acf64bacffe26f602d62b3bc84b8d415bac1695c3cef832e6d9248926f3b34；真实APFS d180c38d、192MiB运输、-v rd=md0保持。代码父d5878f0，本轮提交号以git log为准，无push/新CI。
 
-下一步核对压缩文件读取等待与type4解压器注册，拟通过正常OSKext生命周期补齐已有Zlib组件初始化，真实状态/错误保留，不写假表或绕过检查、不新增阶段终点。源码依据decmpfs.c:206–259及register_decmpfs_decompressor，主机只读压缩属性仅证明格式，不证明实机等待位置。内核数据注册指针仍待实测。
+最近内核实测PROBE26：第二次exec到文件头读取250亮/251暗，240至249已达；Mach-O/dyld未到。保留ENOENT来自前一次开发路径失败的可能性明确，不能认定当前读取返回2。原图03259a98仅本地，v34 screen/recovery/postcondition；Android1/A槽/三SHA已恢复闭环，无待恢复。
 
-保留FD/shim/内存表/TCR/iOS16/8796身份和*_verified，loadable/runtime_qualified=false；无flash/erase/改槽、push/新CI、原始媒体上传。fastboot查询缺失变量记录后重进一次不单独硬停；具体目标/日志/恢复门保持，人工等待继续离线工作。
+只读审计确认launchd/dyld使用decmpfs type4，已有Zlib预链接组件不证明实际注册。新helper在实际init exec前读取原生注册表slot4：非空跳过，空时请求正常OSKext加载并记录真实返回与表项。无直接组件入口或注册表写入，无原生错误/认证改写，无新增成功终点。264蓝=加载请求、264黄=原已注册；265绿只表示返回/已存在，需结合A02A实际加载状态和A033实际注册指针解释。若已注册仍不读，则证伪缺注册假设并转查读取内部等待。模型未执行实际生命周期或解压函数，不宣称实机修复。
+
+下一步即时通知后仅一次临时boot，菜单电源Enter后保存完整最终画面，包括右侧264/265及A02A/A033和原读取/exec点。取得画面后固定原厂临时boot恢复Android1，再与v35/preflight对比A槽/三SHA；恢复未确认不启动第二候选。人工等待继续离线工作。若日志或恢复条件失效，按AGENTS §3停在启动前。
+
+按用户决定保持当前基线，暂不全量迁移新UniXNU框架。FD/shim、板内存/TCR、iOS16/8796身份和*_verified不变，loadable/runtime_qualified=false；无flash/erase/改槽或原始媒体上传。fastboot getvar缺失变量保留日志、重进一次不单独硬停；必要目标/日志/恢复门不放宽。
+
+源码、测试局限及命令见[本轮记录](operations/2026-10-25-v35-fscompression.md)。

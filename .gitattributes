@@ -68,3 +68,8 @@ reports/xnu-entry-probe-trial/2026-10-25-v33c/*.json -text -whitespace
 reports/kernel-entry-probe/2026-10-25-v34/*.json -text -whitespace
 reports/xnu-first-entry/entry-probe-26.json -text -whitespace
 reports/xnu-entry-probe-trial/2026-10-25-v34/*.json -text -whitespace
+reports/kernel-entry-probe/2026-10-25-v35/*.json -text -whitespace
+reports/xnu-first-entry/entry-probe-27.json -text -whitespace
+reports/xnu-entry-probe-trial/2026-10-25-v35/*.json -text -whitespace
+# This helper's exact source bytes are bound into the v35 evidence.
+patches/xnu-8796-candidates/fscompression-oskext-start.S -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

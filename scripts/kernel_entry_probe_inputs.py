@@ -27,6 +27,8 @@ def metadata(build):
         paths += [('pthread-startup',build.with_name('pthread-startup.json'))]
     if json.loads(build.read_text()).get('probe_revision',0)>=30:
         paths += [(n,build.with_name(n+'.json')) for n in ('root-stop','root-launch','root-inputs')]
+    if json.loads(build.read_text()).get('probe_revision',0)>=35:
+        paths += [('fscompression-startup',build.with_name('fscompression-startup.json'))]
     return {name:dict(path=path.relative_to(ROOT).as_posix(),sha256=sha(path.read_bytes())) for name,path in paths}
 
 def validate(meta,kernel_sha):
@@ -84,7 +86,7 @@ def validate(meta,kernel_sha):
     if not {'probe_entry','probe_tables','probe_mmu'}<=hooks:raise ValueError('Required entry/tables/MMU hooks missing')
     # Two header edits, one branch per hooked site, the BCM NOP and sixteen early vectors.
     compat=build.get('image4_compatibility',{}).get('hooks',[])
-    if compat and build.get('probe_revision') not in (27,28,29,30,31,32,33,34):raise ValueError('Image4 compatibility requires revision 27..30')
+    if compat and build.get('probe_revision') not in (27,28,29,30,31,32,33,34,35):raise ValueError('Image4 compatibility requires revision 27..30')
     overlay=[]
     if build.get('probe_revision',0)>=28:
         from pthread_prelink_overlay import load,ranges,SHA256
@@ -100,6 +102,13 @@ def validate(meta,kernel_sha):
         required={mode+': '+video for mode in ('registered','load-success','load-failure') for video in ('video','no-video')}
         checks=evidence.get('checks',[])
         if (sha(payload)!=item['sha256'] or evidence.get('candidate_sha256')!=kernel_sha or evidence.get('prelink_sha256')!=SHA256 or evidence.get('source_sha256')!=source or len(checks)!=len(required) or {c['name'] for c in checks}!=required or any(c['passed'] is not True for c in checks)):raise ValueError('pthread startup evidence incomplete')
+    if build.get('probe_revision',0)>=35:
+        startup=build.get('fscompression_startup',{});source=sha((ROOT/'patches/xnu-8796-candidates/fscompression-oskext-start.S').read_bytes())
+        if startup.get('source_sha256')!=source or startup.get('bundle')!='com.apple.AppleFSCompression.AppleFSCompressionTypeZlib' or startup.get('compression_type')!=4 or startup.get('registration_address')!=hex(builder.macho(original)['symbols']['_decompressors']+32) or startup.get('loader_va')!=hex(builder.macho(original)['symbols']['_OSKextLoadKextWithIdentifier']):raise ValueError('FS compression lifecycle binding differs')
+        if 'fscompression-startup' not in meta:raise ValueError('Missing FS compression startup evidence')
+        item=meta['fscompression-startup'];payload=report_path(item['path']).read_bytes();e=json.loads(payload)
+        required={mode+': '+video for mode in ('registered','load-success','load-failure','load-empty') for video in ('video','no-video')};checks=e.get('checks',[])
+        if sha(payload)!=item['sha256'] or e.get('candidate_sha256')!=kernel_sha or e.get('source_sha256')!=source or len(checks)!=len(required) or {c['name'] for c in checks}!=required or any(c['passed'] is not True for c in checks) or e.get('os_kext_lifecycle_executed') is not False or e.get('decompressor_body_executed') is not False:raise ValueError('FS compression startup evidence incomplete')
     if len(build['patches'])!=2+len(hooks)+1+16+len(compat)+len(overlay):raise ValueError('Patch set shape differs from the recorded hook set')
     if build.get('probe_revision',0)>=27:
         required_sites={(0xfffffff0046ea000,'image4_amnm_provider'),(0xfffffff0046ea3b4,'image4_chmh_provider')}

@@ -159,6 +159,8 @@ def generate(raw,m,backed,revision=24):
             if revision>=34:
                 from exec_path_sites import observe
             source += [observe(site)]
+            if revision>=35 and site==0xfffffff00769d5f4:
+                source += ['    stp x29, x30, [sp, #-16]!', '    bl fscompression_load_before_exec', '    ldp x29, x30, [sp], #16']
         source += ['    PROBE_RESTORE',f'.global {label}_replay',label+'_replay:',code]
         hooks.append((site,label))
     return '\n'.join(source)+'\n',constants,hooks,edges

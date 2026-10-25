@@ -25,6 +25,9 @@ def machine(raw,report,patch,case,reference=False):
     # load request and registration paths have separate pthread-startup cases.
     if report.get('probe_revision',0)>=28:
         u.mem_write(m['symbols']['_pthread_functions'],struct.pack('<Q',STACK+0x4000))
+    if report.get('probe_revision',0)>=35:
+        # Registered dependency fixture only; actual loader requests have dedicated cases.
+        u.mem_write(m['symbols']['_decompressors']+32,struct.pack('<Q',STACK+0x4300))
     u.mem_write(flags,bytes([case['flag']])*4096)
     if 'probe_native_vectors' in syms:u.mem_write(int(syms['probe_native_vectors'],16),struct.pack('<Q',m['symbols']['_ExceptionVectorsBase']))
     u.mem_write(int(syms['probe_scratch'],16),struct.pack('<QQ',FB if case['video'] else 0,ROW))

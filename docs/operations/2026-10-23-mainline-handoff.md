@@ -1,5 +1,8 @@
 > **当前续接入口已迁至[2026-10-25主线交接](2026-10-25-mainline-handoff.md)。** PROBE22实机真实RAMDisk/md0路径、原生根挂载返回0，A0350/212绿，未进入用户态。21:30:50 +08 Android1/A槽/三SHA一致，恢复关闭。用户最新要求减少阶段停止、一次推进更多；下一候选取消挂载后停止，连续推进安全根/BSD收尾/首进程准备，在首次执行恢复用户态前保留唯一明确边界。代码fb76965、启动b6a80c1，实测v30 screen/recovery/postcondition。下方均历史，STATUS、新交接和v30记录为准。
 
+> PROBE27条件初始化真实类型4解压组件候选离线完成。22项串行回归全部通过：1052透明性、25Image4、6pthread、15exec边界、8解压启动模型、7根输入、36绑定及既有入口/MMU/向量/显示回归。独立重建逐字节一致，新包实际FAT回读及旧包26复验通过。预检2026-10-25T23:50:46.940487+08:00确认Android1/A槽/三SHA与v34后验一致；沿用本轮连续实拍、已验证按键恢复和用户最新继续主线指令，条件未报告失效，尚未启动27。 权威包reports/xnu-first-entry/entry-probe-27.json；镜像out/trial-boot/xnu-entry-probe-27-fscompression/boot-xnu-first-entry.img，204484608B，SHA256 06913eaf3124e2634a2c9e654f66b374ece2caf2fed790dea8b6578b0d34955d。内核bca646e7498e6dc2b2efa7fa02a248c717067313eb0958707b8e27989175cdbc，58449920B；ADT34acf64bacffe26f602d62b3bc84b8d415bac1695c3cef832e6d9248926f3b34；真实APFS d180c38d、192MiB运输、-v rd=md0保持。代码父d5878f0，本轮提交号以git log为准，无push/新CI。 运行时类型4注册和读取推进尚待验证。续接trial-v4-firmware.py launch --package reports/xnu-first-entry/entry-probe-27.json --preflight reports/xnu-entry-probe-trial/2026-10-25-v35/preflight.json --evidence reports/xnu-entry-probe-trial/2026-10-25-v35/launch.json --observation-seconds 0；仅一次。取图后同驱动recover绑定包27补Android1/A槽/三SHA。当前无待恢复；观察/恢复失效先硬停，fastboot查询变量兼容规则保留。STATUS/v35记录为当前入口，下方旧实时段均历史。
+
+
 > PROBE26照片03259a98已确认第二次exec到文件头读取：240至249调用/后继均亮，250 vn_rdwr调用亮、251后继暗，252之后Mach-O/dyld未亮。A02C2；保留的A02E=0xF2/242、A0322及A02D/A0302可来自前一次开发路径失败，不能解释为当前读取返回ENOENT。当前首要调查是文件头读取未见返回。Android1/A槽/三SHA后验已完成（v34/postcondition），无待恢复，不重复启动26。只读审计v35/exec-compression.json确认launchd/dyld均decmpfs type4；预链接含Zlib不等于已注册，正在核对正常组件初始化。按用户决定保持当前基线、不做全量上游迁移，继续主线且保留硬停。 下方旧待图/恢复段为历史，当前STATUS与v34实测为准；续接先核对v35压缩属性和正常组件初始化，未验证新候选不得启动。
 
 

@@ -24,7 +24,7 @@ def main():
     build = a.build.resolve()
     report = json.loads(build.read_text())
     work = a.work.resolve()
-    if (not build.is_relative_to(ROOT / 'reports') or report.get('probe_revision') not in (27,28,29,30,31,32,33,34)
+    if (not build.is_relative_to(ROOT / 'reports') or report.get('probe_revision') not in (27,28,29,30,31,32,33,34,35)
             or not work.is_relative_to(ROOT / 'out') or work.exists()):
         raise ValueError('Explicit revision-27 build and fresh out/ work directory required')
     work.mkdir(parents=True)
@@ -50,6 +50,7 @@ def main():
         *([('pthread-startup', 'test-pthread-startup.py', [])] if report.get('probe_revision')>=28 else []),
         *([('root-stop', 'test-exec-release-boundary.py' if report.get('probe_revision')>=32 else 'test-pre-exec-stop.py' if report.get('probe_revision')>=31 else 'test-root-mount-stop.py', [])] if report.get('probe_revision')>=30 else []),
         *([('root-inputs', 'test-root-launch-context.py', [])] if report.get('probe_revision')>=30 else []),
+        *([('fscompression-startup','test-fscompression-startup.py',[])] if report.get('probe_revision')>=35 else []),
         ('binding', 'test-probe-evidence-binding.py', [])]
     records = []
     evidence = build.with_name('execution.json')
