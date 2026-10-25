@@ -440,3 +440,7 @@
 2026-10-25 18:11 · PROBE18修复HEX越框及向量入口/交接，178点扩展首线程至BSD/root；740差分和全回归、重建/镜像回读通过。最终模型进入IOKit，在OSKext清零普通STP异常，未到BSD；新包未实测。· 本次kernel里程碑 · reports/kernel-entry-probe/2026-10-25-v25/、operations/2026-10-25-v25-first-thread-display.md
 
 2026-10-25 18:19 · PROBE18实机横纹消失，进入首线程/IOKit并走过IRQ使能调用，到MAC initmach的Image4 mix策略缺项panic(2)；已恢复Android1/A槽/三SHA一致。保留reader+出货ADT复现缺属性，5契约用例通过，未改运行时策略。· 本次device/审计提交 · v25实测目录、image4-policy-audit.json
+
+2026-10-25 · 补齐上述里程碑提交映射（保留原时间线）：PROBE17离线75daa59、发送记录5d58d4d、实测恢复a1fc1a4；AGENTS合并280c198；PROBE18代码/离线9a5961f；PROBE18实测/恢复及Image4审计5fd74e4。均为本地提交，未push。· 75daa59至5fd74e4 · git log、reports/xnu-entry-probe-trial/2026-10-25-v24/及v25/
+
+2026-10-25 · 收口PROBE18并新增当前主线交接：统一README/STATUS/人工待办及旧交接入口，区分18:11离线快照与随后实测。串行复验包18镜像回读、Image4五例；核对15项已提交报告与四项产物SHA。42项历史中间文件和10项本地附件保留不纳入有效证据，原始媒体不提交；本次无设备命令、无push。· 紧随5fd74e4的docs提交 · operations/2026-10-25-mainline-handoff.md、reports/handoff/2026-10-25/verification.json

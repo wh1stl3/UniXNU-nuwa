@@ -1,0 +1,393 @@
+{
+  "snapshot_at": "2026-10-25T18:43:49.193090+08:00",
+  "base_commit": "5fd74e414f553b3bed333d0fa6105e8376914cfc",
+  "branch": "main",
+  "local_tracking_ref": "origin/main (cached; no fetch)",
+  "ahead_before_handoff": 51,
+  "push_performed": false,
+  "device_commands_issued": false,
+  "firmware": {
+    "path": "D:/Code/uefi-nuwa",
+    "commit": "a155c495c863e06d400b515315e3b8f7791dc308",
+    "tracked_diff": ""
+  },
+  "integration": {
+    "path": "D:/Code/UniXNU-integration",
+    "commit": "e553e467ebfe7642e9f483d3977a57066c6d1aef"
+  },
+  "bound_reports": [
+    {
+      "name": "build",
+      "path": "reports/kernel-entry-probe/2026-10-25-v25/build.json",
+      "sha256": "f9f918d6b6922d519fd99fe2baf64ac01eee19bef9ba1f089c5e49b81f33106b"
+    },
+    {
+      "name": "software",
+      "path": "reports/kernel-entry-probe/2026-10-25-v25/software.json",
+      "sha256": "f992bd57e9547698e2a4079e38383e325999c1ccc96790ab8a2c9b47c35da1f2"
+    },
+    {
+      "name": "transparency",
+      "path": "reports/kernel-entry-probe/2026-10-25-v25/transparency.json",
+      "sha256": "8a1db433b9086cd08ae17e5066e62105b570413e6aafaf2161d1c4063490a2e0"
+    },
+    {
+      "name": "wfe",
+      "path": "reports/kernel-entry-probe/2026-10-25-v25/wfe.json",
+      "sha256": "ef2f4ad0852c921b2977b6759e02e050da2104ff9e9ba86b0c57685c96e5605e"
+    },
+    {
+      "name": "read-sites",
+      "path": "reports/kernel-entry-probe/2026-10-25-v25/read-sites.json",
+      "sha256": "b331146206e7ee019993b144dec2a98261bcd8846e8572ff702a80136c46d4dd"
+    },
+    {
+      "name": "loader",
+      "path": "reports/kernel-entry-probe/2026-10-25-v25/loader.json",
+      "sha256": "2f1451486b0058a0b5e7ed7816816e4820f7492f82ebeefcc45ae5cac8f2de86"
+    },
+    {
+      "name": "mapping",
+      "path": "reports/kernel-entry-probe/2026-10-25-v25/mapping.json",
+      "sha256": "4464ce3bb5255fa08cf81aac847c112d263ffdf496c8a98f8f9867672bcd9683"
+    },
+    {
+      "name": "transition-normal",
+      "path": "reports/kernel-entry-probe/2026-10-25-v25/transition-normal.json",
+      "sha256": "d2b2c868c4d07f23e686de67b8c9d6f91c5eef4e6e4db040a0ab3c947fd6ad6b"
+    },
+    {
+      "name": "transition-occupied-probe",
+      "path": "reports/kernel-entry-probe/2026-10-25-v25/transition-occupied-probe.json",
+      "sha256": "f8951902b44fb17d92558a8402019e4c0295ed049d96c9110ceb4c86b397658b"
+    },
+    {
+      "name": "transition-bad-topology",
+      "path": "reports/kernel-entry-probe/2026-10-25-v25/transition-bad-topology.json",
+      "sha256": "b429bf0e8413ac89ac0b9652da09a12d06dae6a8a1b61197a6a7412207e755e9"
+    },
+    {
+      "name": "transition-occupied-fb",
+      "path": "reports/kernel-entry-probe/2026-10-25-v25/transition-occupied-fb.json",
+      "sha256": "cd92d331262d6fa95f9155d9788d5211970e1cf0b88282088011f4a5e8c03535"
+    },
+    {
+      "name": "console-policy",
+      "path": "reports/kernel-entry-probe/2026-10-25-v25/console-policy.json",
+      "sha256": "cd7190f4e3a60205135fc1ebd14327a6cbaf44bc97d5db0c30feba2b841ce1e6"
+    },
+    {
+      "name": "renderer-bounds",
+      "path": "reports/kernel-entry-probe/2026-10-25-v25/renderer-bounds.json",
+      "sha256": "eca3874c0fc9e1e5a36afa707b200df97cecc6f5f5c11a191ad1771e671f3de7"
+    },
+    {
+      "name": "context-display",
+      "path": "reports/kernel-entry-probe/2026-10-25-v25/context-display.json",
+      "sha256": "41722c605b2994aae1c68667a8f26a84b958717e1667b67562415327f43ff433"
+    },
+    {
+      "name": "vectors",
+      "path": "reports/kernel-entry-probe/2026-10-25-v25/vectors.json",
+      "sha256": "88f10abb4538e0c26acaed777371edd65378fb430ecd2b58dd8cdcffaf0d326b"
+    }
+  ],
+  "artifacts": [
+    {
+      "name": "image",
+      "path": "out/trial-boot/xnu-entry-probe-18-vectors/boot-xnu-first-entry.img",
+      "bytes": 70266880,
+      "sha256": "c89cfa52c165562693ab0868dddeeb1225995bb5f30e3899df58a888197e8dde"
+    },
+    {
+      "name": "kernel",
+      "path": "out/kernel-entry-probe-25-vector2/kernel-entry-probe.macho",
+      "bytes": 58413056,
+      "sha256": "d6f101e4dfb670e7aa44cd6f51d447feb5d433e5c5883152b5a574da1a09479e"
+    },
+    {
+      "name": "adt",
+      "path": "out/trial-boot/xnu-entry-probe-18-vectors/kernel.macho.adt",
+      "bytes": 13120,
+      "sha256": "9846c7dadd23bf544190c45ba3db437fb83265cb180ad6c54cd3a3fedee20d93"
+    },
+    {
+      "name": "base_kernel",
+      "path": "out/earlysec-2026-10-24/kernel-prelinked-earlysec.macho",
+      "bytes": 58335232,
+      "sha256": "1aeebf1352a86b0d31612a6bd6e77bd7292f676ad2ce43a99ec4a8f3999eedb6"
+    }
+  ],
+  "postcondition": {
+    "path": "reports/xnu-entry-probe-trial/2026-10-25-v25/postcondition.json",
+    "at": "2026-10-25T10:19:42.809564+00:00",
+    "android_boot_completed": "1",
+    "slot": "_a",
+    "partition_hashes": {
+      "/dev/block/by-name/boot_a": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+      "/dev/block/by-name/vendor_boot_a": "5ad2a9dc751870fa3c367fa2833582147541f5b62b880dcbdf525003ad68cc23",
+      "/dev/block/by-name/init_boot_a": "19e95d952ded5172e8a17bd1af907a8d6b08b29734881c370961b09bbaf78f96"
+    },
+    "three_partition_hashes_unchanged": true
+  },
+  "recheck": {
+    "package_validation": "passed including FAT/image readback",
+    "policy_checks": 5,
+    "policy_matches_committed_report": true,
+    "shipped_policy_errno": 2
+  },
+  "untracked_attachment_files_local_only": 10,
+  "untracked_legacy_files": [
+    {
+      "path": "docs/operations/2026-10-23-bottleneck-code-diagnosis.md",
+      "bytes": 15523,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "95ad9fbdd71f1c01a842aa4b0223e82372ffb9eb270d9e96900a479060f34a05"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-24-v11/build.json",
+      "bytes": 13406,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "637d3036697105481b8270c588169e08063de8cec84458a276efcee51e89e81d"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-24-v11/post-arm-init-markers.json",
+      "bytes": 1745,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "bb3aa2eb158343c3bb2333ef3072facfcafd5fe2374f177403062ddef4d43981"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-24-v11/software.json",
+      "bytes": 11437,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "7b64752ccf3fda5f1bac38063d8f90f93f9cdd47b0213c8dd8bc16a405d9c8cd"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-25-v20/post-arm-init-handler.json",
+      "bytes": 488,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "fe0a5f6681feb88a5b504f96c514623be6d097dfbb932f5e04d0233aef749391"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-25-v20/post-arm-init.json",
+      "bytes": 1930,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "61c64916a87964b96854157a20f934f15bb28dfdce96b680ebdb569ec0780049"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-25-v20/read-sites.json",
+      "bytes": 3515,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "2f727f434be4c87cda5b854dbdb8ba3bfb2c959aa3dd7c1f9c838893d9ad2ce5"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-25-v20/software.json",
+      "bytes": 13060,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "4d788d85f091254e22ae08f3a06200f3a8eb5df570ac40c63fb3a0de1bc95f89"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-25-v21/build.json",
+      "bytes": 18337,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "52cf72456b3418003bc1ad42ee75b1f21f5a0d668f86e2a1cfb783f8f8a90956"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-25-v21/post-arm-init.json",
+      "bytes": 1976,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "2d0624ad1bfcd8aa4df6aca49dddaf38694ee88107b9f08ee440dd3f82fe636d"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-25-v21/read-sites.json",
+      "bytes": 3515,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "da2029e5cb58fdc45e7d658e6dce5156e0b45529339095bb59f9274cdea215df"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-25-v21/software.json",
+      "bytes": 13058,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "23da3e123bffebd2d9d8430b37192bf5a3d333402622e813cfea1e4fd780942c"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-25-v21/transparency.json",
+      "bytes": 13951,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "7a1edcaaa134e72b798321e9694b352e6539b3f040e1dc5067d79a2494c7c728"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-25-v21c/build.json",
+      "bytes": 18442,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "531ccf95f467b0bbeefb6a09e7aa4e9d0b7f4f55596ecb39efe3f81ab22a3c4f"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-25-v21c/loader.json",
+      "bytes": 1793,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "c1ea0db1bfa502d7ce28b5cfbcdf4f77b04580bb214ed1290ffb9ecd1b943afa"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-25-v21c/mapping.json",
+      "bytes": 3474,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "2b828ec0616c65d5465bb18a56b8622b4271c32adf9621648efeb630602593fb"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-25-v21c/post-arm-init-handler.json",
+      "bytes": 489,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "fbe71e58f23fca48e2ad4a52a754415c8de60ed9befde5c42b28a465e4082114"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-25-v21c/post-arm-init.json",
+      "bytes": 1977,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "01062805320fbb9ff95255af6060606cc07c26654159ac65a68cbc1c26ad98ca"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-25-v21c/read-sites.json",
+      "bytes": 3872,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "23ff548a3dfaa91a8665cc2cf3ef64b6ed2f1760650dec9a4890fd1b20a70bb8"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-25-v21c/software.json",
+      "bytes": 13058,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "33ed0a71b7da340ebca60be9b0acb3d34ce417b49558ac57ad8bd763a11872a0"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-25-v21c/transparency.json",
+      "bytes": 13951,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "f9427ca799782dfc377a95f080baa0bc8c58e24980178bd9de4d5e3cf7a75759"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-25-v21c/wfe.json",
+      "bytes": 3413,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "989755c799817583fa30710c67e2c3abd09b15cbbbd31c0ac5255b9bcfd5f122"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-25-v22/build.json",
+      "bytes": 19221,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "a5893b0f9afdf69906abb3072af4749845ed2f0b0bbf3a36c819f25d26865157"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-25-v23/build.json",
+      "bytes": 20419,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "11e702afb4239bd51265656bdf7715011fb016874110e26d9c8da0a32f1abdb9"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-25-v23b/build.json",
+      "bytes": 20484,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "e6c7e364e1f2ec1ec537b403a03b825cefc85ba3abee74e19f42ca9d02f023d7"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-25-v25/bootstrap-forward.json",
+      "bytes": 12744,
+      "classification": "intermediate or duplicate; not the canonical PROBE18 binding",
+      "sha256": "23f667cb9f92d7e6aedb9c61bc8a7f16453fc79303079b0c859bc0f85353b523"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-25-v25/build-final.json",
+      "bytes": 140897,
+      "classification": "intermediate or duplicate; not the canonical PROBE18 binding",
+      "sha256": "2e1af44889228c371b5eea8e3d6698c44a02eaedbb160a0b0659f3778c78e4d8"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-25-v25/build-fixed.json",
+      "bytes": 140862,
+      "classification": "intermediate or duplicate; not the canonical PROBE18 binding",
+      "sha256": "016c8ba2262d73ed698a33cc88b24c28c7a6e6e57f014d1abb80da77b823406a"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-25-v25/build-vector.json",
+      "bytes": 141432,
+      "classification": "intermediate or duplicate; not the canonical PROBE18 binding",
+      "sha256": "0b948313f415f5edf3225843187efe38a6507fba2f823fdc3e70b3d11bf4722d"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-25-v25/build-vector2.json",
+      "bytes": 141439,
+      "classification": "intermediate or duplicate; not the canonical PROBE18 binding",
+      "sha256": "f9f918d6b6922d519fd99fe2baf64ac01eee19bef9ba1f089c5e49b81f33106b"
+    },
+    {
+      "path": "reports/sec-handoff-trial/2026-10-23-evening/user-screen.jpg",
+      "bytes": 6699911,
+      "classification": "local-only raw media; do not commit"
+    },
+    {
+      "path": "reports/xnu-entry-probe-trial/2026-10-25-11/launch.json",
+      "bytes": 21878,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "6a3a563730d9e944a993ca1412bc5acae844e1d3a7872d8deb7058203d55fb8b"
+    },
+    {
+      "path": "reports/xnu-entry-probe-trial/2026-10-25-11/postcondition.json",
+      "bytes": 1971,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "1658270be10d4a198ecd439039730d3fe6c9cd10aa128052bacbd3d2cada5899"
+    },
+    {
+      "path": "reports/xnu-entry-probe-trial/2026-10-25-11/preflight.json",
+      "bytes": 2820,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "f7c285b54fa7056792982fd64627edbf9b820efdf866941c505ee6e50665b495"
+    },
+    {
+      "path": "reports/xnu-entry-probe-trial/2026-10-25-11/recovery.json",
+      "bytes": 4183,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "ddbba3bb9a3fe4737367a538573edb389abf0459f31d26931d6e85fd546ddcbe"
+    },
+    {
+      "path": "reports/xnu-entry-probe-trial/2026-10-25-12/preflight.json",
+      "bytes": 3083,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "dab2c97c2844df352bece6f20237bfe6c7672dc187ef9394b2cafe954e167a4c"
+    },
+    {
+      "path": "reports/xnu-entry-probe-trial/2026-10-25-12/trial.json",
+      "bytes": 9567,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "03c34f1c04378abd6ba0949750f6a49b08b79b11cb023724ebefa5f84a8aa85b"
+    },
+    {
+      "path": "reports/xnu-first-entry/entry-probe-05.json",
+      "bytes": 4841,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "bf8d3712b3991636337db6102d2ad0ba2da67c0cc258e354265c00752bd32968"
+    },
+    {
+      "path": "reports/xnu-first-entry/entry-probe-13.json",
+      "bytes": 4817,
+      "classification": "historical experiment or draft; preserved unchanged, not current status",
+      "sha256": "8152b425320f7bd355cdaf4efc236cb194db8eb72974b69cf1f09ecf5d4ec35f"
+    },
+    {
+      "path": "reports/xnu-first-entry/entry-probe-18-vectors.json",
+      "bytes": 68427,
+      "classification": "intermediate or duplicate; not the canonical PROBE18 binding",
+      "sha256": "9b8edb163890cd59e8e0ed9d33a3123c48c8e6bded7c32e7ca22198e2fa6f6dd"
+    },
+    {
+      "path": "scripts/audit-adt-xnu-find-entry.py",
+      "bytes": 7787,
+      "classification": "historical helper draft; not imported by current proof gates; not reviewed as current authority",
+      "sha256": "d462fec03ee54f5ba9cde5e7354f46c2dd6f3a2b190fbfcbf520a8c290c788ff"
+    },
+    {
+      "path": "scripts/audit-boot-args-abi.py",
+      "bytes": 7229,
+      "classification": "historical helper draft; not imported by current proof gates; not reviewed as current authority",
+      "sha256": "e6301230a11c303b286d78eaf3975c650a65ef3855599429b4d0e4ae04d91fab"
+    }
+  ]
+}

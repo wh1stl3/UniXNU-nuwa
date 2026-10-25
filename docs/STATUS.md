@@ -11,7 +11,7 @@
 
 ## 当前卡点：Image4启动环境契约
 
-panic完整匹配donor AppleImage4 5.0.0：`failed to get mix-n-match policy: %d`，参数2。不是模型中bzero未处理异常的实机复现；本轮已实际越过OSKext摘要初始化。
+panic完整匹配donor AppleImage4 5.0.0：`failed to get mix-n-match policy: %d`，参数2。模型停于PE_init_iokit内部的bzero；实机PE_init_iokit已返回，该模型异常不是本轮实机阻塞证据。
 
 首要缺项为`/chosen/mix-n-match-prevention-status`。保留二进制读取器+原生SecureDT，使用同一出货ADT，复现返回2。5个隔离用例确认32位1表示禁止mix-n-match，0或空属性会允许，8字节超限返回84。当前仅审计，未选择运行时值、未修改ADT或绕过认证；IOKit runtime-provider动态路线尚未单独复现。
 
@@ -24,3 +24,5 @@ HEX清屏每行写1920却只退1280的漂移已修正；临时异常槽位改为
 740差分、42入口/MMU、18读数、5WFE、6静态walk、5ParseKernel、8稀疏阶段、2异常处理器、6精确矩形、10上下文/显示、5真实向量、同ADT切换12断言、6console与26绑定检查、镜像回读/重复构建通过；新增Image4契约5例通过。均与实机结论分开记录。代码/离线提交9a5961f；通用AGENTS合并280c198。未push，未触发新CI。
 
 实测reports/xnu-entry-probe-trial/2026-10-25-v25/；离线reports/kernel-entry-probe/2026-10-25-v25/；包reports/xnu-first-entry/entry-probe-18.json；[完整操作记录](operations/2026-10-25-v25-first-thread-display.md)。原图/有声视频/提取帧仅本地out或用户原路径，不上传。新候选再按本包录像、基线与恢复门执行，不复用旧确认。
+
+[当前交接与续接命令](operations/2026-10-25-mainline-handoff.md)固定提交、产物SHA、未验证边界及Image4下一步；收口核验见reports/handoff/2026-10-25/verification.json。旧交接与未跟踪中间报告仅保留历史，不替代上述权威入口。

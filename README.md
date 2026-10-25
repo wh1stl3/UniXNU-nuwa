@@ -4,13 +4,13 @@
 
 ## 当前进度（2026-10-25）
 
-**nuwa实机已进入XNU的`kernel_bootstrap`入口。iOS尚未启动。** PROBE16镜像`6f0907b2`、内核`167bd013`在ADT缺少pram时跳过可选旧panic日志导入，保留原控制台初始化；用户文字与原图确认pmap绿色块下的kernel_bootstrap橙色块出现。仅证明入口，不证明完成、调度器、驱动、root或用户态。
+**nuwa实机已运行XNU首线程，PE_init_iokit已返回，在mac_policy_initmach的Image4策略初始化panic。BSD/root与iOS用户态尚未进入。** PROBE18镜像`c89cfa52`、内核`d6f101e4`修复横纹和临时异常向量交接，实机81格亮，白/青校验带完整。中断使能调用返回不代表硬件IRQ递送已验证。
 
-本轮恢复于北京时间16:44:29：Android完成1、A槽，三个启动分区SHA与试前相同，无flash/erase/改槽。原始音视频、截图只保留本地，仓库提交脱敏文字/哈希/命令证据。
+最近恢复记录为2026-10-25北京时间18:19:42：Android完成1、A槽，三个启动分区SHA与试前相同，无flash/erase/改槽。原始音视频、截图只保留本地，仓库提交脱敏文字/哈希/命令证据。
 
-源DT panic区补丁已适配8796，函数体编译和边界测试通过；整核源码重建未完成。现有诊断内核仅支持缺pram路径，不能作为通用DT panic缓冲实现。下一步验证kernel_bootstrap内部和VM启动内存初始化，不把模型指令预算耗尽写成卡死。
+当前首要缺项为`/chosen/mix-n-match-prevention-status`；保留二进制读取器及原生SecureDT对出货ADT复现返回2，5个隔离用例通过。下一步核对实际IOKit provider和完整Image4/manifest契约；运行时策略值尚未选择。源DT panic区补丁仅函数体编译和边界测试通过，整核源码重建未完成。
 
-先读[STATUS](docs/STATUS.md)、[v23实现/实测](docs/operations/2026-10-25-v23-dt-panic-console.md)和[官网QR/迁移复核](docs/operations/2026-10-25-official-porting-update.md)。官方二维码日志是UEFI/EBS前功能，nuwa尚未接入；Format2/共享SM8550迁移另行评审，保留iOS16 ABI及nuwa板值。
+先读[STATUS](docs/STATUS.md)、[当前交接](docs/operations/2026-10-25-mainline-handoff.md)、[v25实现/实测](docs/operations/2026-10-25-v25-first-thread-display.md)和[官网QR/迁移复核](docs/operations/2026-10-25-official-porting-update.md)。官方二维码日志是UEFI/EBS前功能，nuwa尚未接入；Format2/共享SM8550迁移另行评审，保留iOS16 ABI及nuwa板值。
 
 ## 为什么单开一个仓库
 

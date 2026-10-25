@@ -1,4 +1,8 @@
-> **当前唯一有效交接：PROBE18实机进入首线程/IOKit，MAC/Image4缺项panic（2026-10-25）**：镜像c89cfa52/内核d6f101e4，代码9a5961f；81格亮，PE_init_iokit已返回，中断使能调用和commpage完成相关路径，到88 mac_policy_initmach，BSD未到。横纹消失，A02A=0/B=4/C=1。panic `failed to get mix-n-match policy: %d` 参数2，已定位AppleImage4 `/chosen/mix-n-match-prevention-status`；实际读取器+当前ADT复现2，5契约用例通过。0/空属性会允许mix，32位1禁止，尚未选择运行时策略/修改ADT。下一步完整核对Image4输入与manifest/hash来源，保持可信链/板值/资格边界，不能将模型bzero停止当实机故障。
+> **当前续接入口已迁至[2026-10-25主线交接](2026-10-25-mainline-handoff.md)。** 最近设备后验为2026-10-25 18:19:42北京时间Android完成1/A槽/三SHA一致，无待恢复任务。当前卡点为首线程MAC/Image4策略panic(2)，BSD/root尚未进入；代码与实测已提交9a5961f、5fd74e4。完整产物SHA、验证命令及下一步以新交接和STATUS为准。本文件以下保留各时刻历史快照，旧“当前/未启动/待恢复”不代表现在。
+
+## 历史快照：PROBE18结果
+
+> PROBE18实机进入首线程/IOKit，MAC/Image4缺项panic（2026-10-25）：镜像c89cfa52/内核d6f101e4，代码9a5961f；81格亮，PE_init_iokit已返回，中断使能调用和commpage完成相关路径，到88 mac_policy_initmach，BSD未到。横纹消失，A02A=0/B=4/C=1。panic `failed to get mix-n-match policy: %d` 参数2，已定位AppleImage4 `/chosen/mix-n-match-prevention-status`；实际读取器+当前ADT复现2，5契约用例通过。0/空属性会允许mix，32位1禁止，尚未选择运行时策略/修改ADT。下一步完整核对Image4输入与manifest/hash来源，保持可信链/板值/资格边界，不能将模型bzero停止当实机故障。
 >
 > 18:19:42北京时间已恢复Android1/A槽/三SHA与试前一致，无待人工恢复；实测证据reports/xnu-entry-probe-trial/2026-10-25-v25/，审计v25/image4-policy-audit.json。原始有声视频、照片和帧仅本地，无push、新CI未触发。新候选独立建包和完整离线验证后，再确认新包录像/恢复、新preflight与即时通知；不复用本轮许可。详见STATUS及2026-10-25-v25-first-thread-display.md，下方旧未启动/待恢复描述均为历史。
 > **当前有效交接：v25 / PROBE18离线完成（2026-10-25）**：内核d6f101e4/58413056B/211补丁，镜像c89cfa52/70266880B，ADT9846c7da，包reports/xnu-first-entry/entry-probe-18.json。修复HEX清屏1920/1280错算与临时向量入口，178新点覆盖首线程到BSD/root，首线程入口交回原生VBAR；A02A像素不符数、A02B检查ID、A02C向量状态。740差分及全部新/旧回归、同ADT检查和镜像回读通过。最终模型进入PE_init_iokit后，在OSKext摘要清零STP产生未处理CPU异常，原因未区分；BSD未到，不改参数/补假RAM。详见2026-10-25-v25-first-thread-display.md及STATUS。
