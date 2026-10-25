@@ -1,5 +1,11 @@
 # v31 / PROBE23：连续执行BSD，只在首次init exec前停止
 
+> 实测完成：照片624b4cda确认bsd_init调用/返回110/111、IOSecureBSDRoot调用/返回168/169、devfs174/175、首进程bootstrap176/177均亮，214–216黄、217蓝/218品红，A02B=0xD9，实际到第一次init exec前。21:50:51 +08 Android1/A槽/三SHA后验一致，恢复关闭。下方未实测/待恢复段落为试前快照。
+
+原图624b4cda9d93521f5d818cd6004944e947e9ab820085c11e4346a265edbebdb6只在out/trial-evidence/entry-probe-23/user-screen.jpg；采样与文字在v31/screen.json。A02A0/C1、A0350/212绿，213暗。未执行___mac_execve，未证明Mach-O/AMFI/用户态加载；安全根调用返回也不单独证明密码学验证通过。恢复21:50:19观察Android1，21:50:51后验与preflight三SHA一致，无flash/erase/改槽或重复候选。
+
+用户进一步要求“之后都要连续推进”，已落AGENTS连续推进默认；不能机械地每轮把人为停止点后移。下一项核对真实exec激活/签名/新任务释放路径并连续推进，只有真实故障、明确硬停或尚未授权的设备写入边界才停。特别注意固定kern_exec.c:5017的原生语义：exec_activate_image在不可回退点后失败也可能返回0，后续不能只凭零返回判定成功。不默认运行恢复镜像里的还原程序，也不改变受审内存/身份。
+
 ## 用户要求与已有实测
 
 用户明确要求少用“挂载成功后主动停止”这样的阶段终点，一次推进尽可能多。PROBE22原图fc1c4ade已确认真实md0路径与原生vfs_mountroot返回0，21:30:50 +08恢复Android1/A槽/三SHA一致；无需重复证明这个单点。

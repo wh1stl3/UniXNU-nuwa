@@ -474,3 +474,7 @@
 2026-10-25 · PROBE23取消挂载停止、连续执行原生BSD至首次init exec前；21项串行任务（872差分/25Image4/6pthread/3终点/7根输入/34绑定）、独立重建/实际四文件回读/旧包22复验通过。镜像7e24257b、内核2e1f5d4a、ADT531c915c；用户本包录像恢复就绪，新鲜Android1/A槽/三SHA一致，准备一次临时boot。· 本次kernel里程碑（父7057d1d） · v31 execution/root-stop/root-inputs/root-launch、包23、D-056
 
 2026-10-25 21:47:10 +08 · PROBE23按用户要求取消挂载阶段停止，新鲜预检/本包录像恢复确认与即时通知后单次临时boot ACK，待最终画面及恢复后验，不将ACK当作新阶段证据。· 91175af后设备记录 · reports/xnu-entry-probe-trial/2026-10-25-v31/launch.json
+
+2026-10-25 21:50:51 +08 · PROBE23照片624b4cda确认bsd_init调用/返回、原生BSD收尾/首进程准备，217蓝/218品红及A02B217到首次init exec前；未执行___mac_execve/用户态。Android1/A槽/三SHA后验一致，用户确认已回Android，恢复关闭。· 本次device里程碑（父d644d7a） · v31 screen/recovery/postcondition、D-057
+
+2026-10-25 · 用户“之后都要连续推进”已写AGENTS：诊断默认记录继续，成功里程碑不主动停止，不机械逐轮后移终点，只在真实故障/明确硬停/未授权设备写入边界停；同步STATUS与两份交接。· 本次连续推进约定提交（父d644d7a） · AGENTS第4节、D-057
