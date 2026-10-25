@@ -233,3 +233,31 @@ python3 scripts/compare-prelink-candidates.py --old out/native-prelink-merged/an
 全离线。两个结论：① 模型停在 `___ubsan_handle_sub_overflow_minimal`（brk #0x1206）是**夹具缺 ADT** 造成的保真度缺口，不是实机根因（`pe_identify_machine.c:60` 因 `SecureDTFindEntry("name","arm-io")` 失败而提前返回，时基留在 0）；② 补入随包 ADT（`kernel.macho.adt`，ed7235cb）后 UBSan 消失，改在 `_current_percpu_base+0xc` 的 `ldr x0,[x0,#0xe0]` 停（374,951 条，`TPIDR_EL1=0`）。
 
 v6（下一轮，批准后再打包）目标：恒等 VBAR + 页内 16 向量让 MMU 后异常自报 ESR/ELR/FAR；`_current_percpu_base` 入口一条带；`_arm_vm_init`/`_pmap_bootstrap`/`kernel_bootstrap` 各一条带。风险：pmap 重建可能替换 1 GiB 设备映射；探针页或需 2 页。证据 `reports/kernel-entry-probe/2026-10-25-post-arm-init/analysis.json`、`operations/2026-10-25-post-arm-init-analysis.md`。
+
+## 2026-10-25 · v21探针语义修复与entry-probe-14（当前续接点）
+
+此前D-037时基算术及旧ADRP回放推论以D-038为准。镜像42b42624460d5f0b974e4315bc50d615dce6111514184815724d2040adbd509f，内核0c1594215b534434221ddd16f10a8da6e4162bcc2d614d321f297425373723c4；45补丁，离线全套与镜像回读通过，未设备启动。新鲜preflight尚未执行；本轮未查询设备，不能沿用旧Android完成1作为当前状态。
+
+本包录像提醒已发，等待回复；之后用record-nuwa-trial-state.py --package reports/xnu-first-entry/entry-probe-14.json创建新鲜preflight，再用trial-v4-firmware.py launch --observation-seconds 180单次临时启动。准确命令、读数表和恢复条件见operations/2026-10-25-v21-probe-transparency.md。未授权flash/erase/改槽，原有恢复与三SHA门仍适用。
+
+## 2026-10-25 15:07 · entry-probe-14实测闭环，下一前线为跨TTBR诊断映射
+
+本包已单次启动并恢复，15:07:42北京时间Android完成1/A槽/三分区SHA与preflight一致，无flash/erase/改槽。A032=4和后续阶段色块证实越过旧WFE问题。模型按真实加载器布局与1GiB owned RAM推进至pmap原入口；新TTBR1丢probe页、新TTBR0丢FB，跳probe_pmap=FFFFFFF00848A1A8取指异常。硬件pmap未证，禁止用无色块判未进入。证据reports/xnu-entry-probe-trial/2026-10-25-v21/。当前设备已恢复，本轮不再启动；下一步离线保留或迁移诊断代码/数据/FB在新页表中的映射，细节见最新STATUS与v21操作记录。
+
+用户更正：无需固定180秒。XNU菜单后电源键=Enter才触发内核；后续trial脚本XNU scope默认post-ACK USB观察为0。原有新鲜preflight、即时通知和恢复三SHA门保留。
+
+## 2026-10-25 16:12 · 当前续接：实机pmap入口已到，console旧日志路径待适配
+
+entry-probe-15镜像36969f94、内核a8b8fc90/47补丁，用户菜单电源键触发，实机pmap入口绿色块出现。16:12:44北京时间Android完成1/A槽/三SHA不变，无待恢复任务。本轮只一次候选启动。
+
+v22新页表诊断映射与最终包ADT的四场景执行回归通过，保留代码ROexec/数据RWNX/FB Device/VBAR KVA。源码/报告均留工作区，无commit/push。主线下一步核对_PE_create_console的BCM固定panic日志区0x3c0fc000（模型读失败），补入口/实际地址观察，实机尚未捕获该ELR/FAR。不要重测旧pmap色块或猜TCR/时基，不跳整个console。详见最新STATUS和operations/2026-10-25-v22-pmap-transition.md。
+
+原始音视频禁止自动上传，均在out或用户路径，GitHub制品ZIP内容未验，不对历史绝对保证。新包试验仍须本包录像就绪与新鲜preflight；无需180秒等待。
+
+## 2026-10-25 · 本轮归档提交与官网更新（最新续接）
+
+代码/证据已本地提交597baed（完整SHA见git log）；本次用户授权覆盖本地commit，未执行push。随后docs提交更新README/AGENTS/STATUS/DECISIONS/WORKLOG/PENDING-HUMAN/COMMIT-QUEUE及v20-v22操作记录。当前无待恢复任务；最后设备核验仍2026-10-25 16:12:44北京时间Android1/A槽/三SHA不变，不代表现在重新查询了设备。
+
+续接优先读operations/2026-10-25-official-porting-update.md：固定UniXNU16e592ab已有native-dt-panic-region.patch及XNU_DT_PANIC_REGION路径，优先评估8796适用性，保留console和当前panic；未应用。QR日志通过AdvancedLogDxe/Tools/Advanced Logger导出UEFI内存快照，需producer及QR/Logger库和DSC/FDF集成，仅覆盖EBS前；nuwa尚未验收。Format2/SoC共用迁移与porting.toml另开后续里程碑，不套用iPadOS17/板值。
+
+检查命令：python -B scripts/build_xnu_boot_package.py --validate --output reports/xnu-first-entry/entry-probe-15.json；python -B scripts/test-probe-transition.py --build reports/kernel-entry-probe/2026-10-25-v22c/build.json --adt out/trial-boot/xnu-entry-probe-15/kernel.macho.adt --case normal --output out/RECHECK.json。需本地已存的out输入；不要重写实机绑定报告。上游pin和文件SHA在reports/upstream-porting-review/2026-10-25/review.json。

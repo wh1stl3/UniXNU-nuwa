@@ -1,105 +1,37 @@
 # STATUS
 
-更新：2026-10-25 00:45（北京时间），分支 `main`。**实机已确认：MMU 成功开启，控制权进入 `_arm_init`（C 入口）。** 内核未继续到 iOS，停点未知。`arm_init` 之后是当前唯一前线。
+更新：2026-10-25（北京时间）。主线仍为 UniXNU / nuwa / iOS 16；本轮完成v22跨页表诊断映射修复、entry-probe-15实机pmap入口及Android恢复闭环。
 
-## 本轮实机结果（entry-probe-02）
+实机历史已证明 MMU 开启、到达 arm_init；本轮实机确认init入口eventi=4并进入pmap_bootstrap；kernel_bootstrap或iOS启动仍未验证。
 
-单次 `fastboot boot`，六条色带全部出现：绿（EBS）、蓝(256)、黄(352)、品红(448)、**青(736)**、**白(832)**，未见红条。
+## 最新里程碑：entry-probe-15实机进入pmap_bootstrap
 
-- **青** = `msr sctlr_el1` + 回放的 `isb` 已完成同步，且该带是**在 MMU 开启状态下经 1 GiB 设备恒等映射**写进 framebuffer 的 → MMU 真的开了、V=P 覆盖执行区、设备写屏可用。
-- **白** = 到达 `_arm_init` 首指令（KVA 取指）→ TTBR1 翻译与取指可用、进入 C 入口。
-- 内核随后返回/复位回固件菜单（菜单重绘并重新倒计时），**未到 iOS**。
+2026-10-25，v22c内核`a8b8fc90e4b926830839f4f1a4b27bf19ae34c1736bd8f41d99724a768c74265`/58,372,096 B/47补丁，镜像`36969f945790452a9e9a7b2ba2785edd9afddda53c36106249623cf17c55144e`。单次临时启动，用户菜单电源键Enter触发；照片/视频出现左列y480绿色pmap入口标记。A032=4，A033为正确eventi地址。
 
-| 项 | 值 |
-| --- | --- |
-| 镜像 / 内核 / ADT | `af5862be` / `8515068d` / `ed7235cb` |
-| 原图 | `out/trial-evidence/entry-probe-02/screen-01.jpg`，SHA256 `7030b14c8e82f1a63525f6d2d51b1632112762021ed8f4bd6791b0231ebeafac` |
-| 恢复 | 16:43:19Z Android 完成 1；16:43:30Z 唯一 nuwa/kalama、槽_a，boot/vendor_boot/init_boot 三 SHA 与 preflight **完全相同** |
+**最高实机事实：MMU开启、进入arm_init、进入pmap_bootstrap。** pmap返回、kernel_bootstrap、驱动与iOS仍未验证。没有异常读数不排除后续映射或异常问题，底部菜单是残留背景，不证明返回固件。
 
-## 边界（不要越过）
+恢复于2026-10-25 16:12:44北京时间：Android完成1/A槽，三分区SHA与试前一致，无flash/erase/改槽。当前已恢复，不等待人工恢复。证据reports/xnu-entry-probe-trial/2026-10-25-v22/。
 
-1. 没有红条**不等于**无异常：MMU 后 VBAR 已是内核 KVA 向量，物理早期向量抓不到那个阶段。
-2. 停点未知：`arm_vm_init`/pmap 的哪一步、以及是返回还是复位（panic/watchdog），均未验证。
-3. 固件菜单在内核返回后会重新倒计时，可能再次拉起同一内核；`fastboot boot` 只发过一次、ACK 一次，但"单次启动"要按"fastboot 动作"与"固件自行重入"分开记。
-4. 板值、认证/AMFI、`_verified`、donor/pin 全部未动；本轮没有 flash/erase/改槽。
+## 修复及验收
 
-## 下一步（v6，目标已收敛）
+arm_vm_init切换新TTBR前，在固定两个BL调用点核对新L1/L2 table与空L3叶，再补8页诊断映射。代码RO可执行、数据RW NX；snapshot移至独立数据页，VBAR改KVA，framebuffer保留原Device属性。占槽不覆盖；错误结构拒写不产生部分叶改动。没有改变板值/内存声明/TCR/donor/认证/_verified。此为诊断映射，不是正式pmap平台实现。
 
-离线分析（[arm_init 之后](operations/2026-10-25-post-arm-init-analysis.md)）给出三条可判定命题：
+离线：42入口/MMU、88普通钩子差分、18渲染、5WFE、8阶段、2异常、5ParseKernel、15绑定门；另6地址walk和4个原生页表切换场景（12断言）。四个切换场景使用最终镜像同一ADT，执行真实钩子无host正常路径页表代写。最终镜像回读通过。`loadable=false`/`runtime_qualified=false`不变。
 
-1. ~~**恒等 VBAR + 页内向量**~~ **已完成（v7）**：magenta 钩子把 `VBAR_EL1` 换成探针页恒等物理地址，页首 16 个向量全指 `probe_exception`；该处理器只读快照（不依赖 x20），画红带(1216) + ESR/ELR/FAR(1280/1312/1344)。待实机判定：若 FAR 落在 `0xe0` 附近、ELR=`_current_percpu_base+0xc`，则"per-CPU 基址为空导致解引用"在实机成立。
-2. **`_current_percpu_base` 入口一条带**：判定是否走到该处（模型里 `TPIDR_EL1=0`，`ldr x0,[x0,#0xe0]` 解引用空）。
-3. **`_arm_vm_init` / `_pmap_bootstrap` / `_kernel_bootstrap` 入口各一条带**：若出现，前线推进到 pmap/kext。
+## 下一前线：平台旧panic日志区
 
-已知风险：`arm_vm_init` 会重建 pmap，可能替换掉那条 1 GiB 设备恒等映射，pmap 之后的标记要么画在重建前，要么先重建写屏通路；探针页可能要扩到 2 页（届时显式放宽单页约束并重记）。任何新包仍需打包校验、新鲜 preflight、即时通知与本包录像确认。
+真实布局连续模型已执行pmap探针，后在_PE_create_console+0x48读取0x3c0fc000失败。二进制常量和只读XNU源码BCM2837.h:63相符：这是BCM固定旧panic日志区；pe_init.c:94-99的check_for_panic_log在console初始化前访问它。**这是模型和静态首要原因，不是已捕获的实机唯一ELR/FAR。**
 
-## 离线测试能力（2026-10-25 00:55 起）
+下一步优先评估上游固定版本native-dt-panic-region.patch与XNU_DT_PANIC_REGION开关在8796中的适用性，再补console/旧日志检查路径的可判定记录；不跳过整个console。不要伪造0x3c0fc000映射，不要NOP整个console或新panic。源码无固定宏时可用DT pram契约、缺失时自然return，需与本构建二进制匹配后实施。
 
-`scripts/test-kernel-entry-probe.py` 已能把**真实候选从入口连续执行穿过 MMU 到 `_arm_init`**：模型需先置入 AArch64 高异常级状态（`SCR_EL3.NS|RW`、`HCR_EL2.RW`）；默认状态保留为负对照。42 项通过，含负对照、占槽场景，以及三项钉死绑定：SCR_EL3/HCR_EL2 读回、页表摘要 `682cb477…`、停止点等于 white 回放地址。此前"引擎不支持、只能合成进入"是测试初始化错误，已作废。
+## 流程与隐私
 
-## 实机流程约定（2026-10-25 04:07 起）
+XNU试验以菜单电源键Enter触发，无固定180秒等待。preflight/唯一设备/即时通知/恢复三SHA门保留。
 
-**实机试验不再需要逐次用户批准**；只需在需要录像前给用户发一个提醒问题（"可以开始录像了吗"），并遵守既有硬停条件：新鲜 preflight、唯一 nuwa/kalama、完成 1、三分区基线、即时通知、180 秒观察、恢复后 postcondition 三 SHA 一致。离线改动（构建/测试/打包/文档）无需征询。
+原始照片音视频只在本地out或用户原路径。本轮原始音视频未上传；代码及证据已本地提交`597baed9bd04a59c6a05710ffa22f61ac6b046aa`，未push。隐私核查：常见音视频扩展名在tracked与已获取全部Git引用历史为空，GitHub Releases/Issues为0，29个Actions制品名称均为构建相关；制品ZIP内部未逐一验证，不能保证没有嵌入内容。已加.gitignore常见音视频规则。见reports/media-privacy/2026-10-25/audit.json。
 
-## 当前状态：v7 已试验并闭环；v8 已把色带改成等高等距，待打包
+代码与证据提交`597baed9bd04a59c6a05710ffa22f61ac6b046aa`；文档在后续独立提交中收敛。未push、未合并远程或PR100支线。原工作区中不属于本轮的历史未跟踪材料保持原样。详细实现/复现/边界：docs/operations/2026-10-25-v22-pmap-transition.md。
 
-**entry-probe-03（v7 `af6e1b5f`）单次实机已闭环**：2026-10-24T17:16:20Z preflight → 17:22Z 恢复 Android 完成 1 → 17:25:11Z postcondition，三分区 SHA 与试前完全一致；原图 `out/trial-evidence/entry-probe-03/screen-01.jpg`（`dc310fb1…`）。
+## 官网最新复核（2026-10-25）
 
-- 可确认：绿（固件面包屑）+ 蓝/黄/品红/青/白，即 **MMU 已开、进入 `_arm_init`**（与 v5 结论一致）。
-- **不能从这张斜拍照片确认**：紫(496)/棕(544)/青绿(592)/橙(640)/红(688)与三行十六进制。所以"是否走到 `_current_percpu_base`、异常是否自报"仍是未知——照片有反光、色带又细，这正是要做等距布局的原因。
-
-**v8（`c3c39839…`，28 补丁）把布局改成等高等距**：所有带高 32 行不变，行距统一 48 行，首行 256：
-
-| 行 | 颜色 | 含义 |
-| --- | --- | --- |
-| 256 / 304 / 352 | 蓝 / 黄 / 品红 | 入口 / 页表生成 / 开 MMU 前 |
-| 400 / 448 | 青 / 白 | SCTLR+isb 之后 / 进入 `_arm_init` |
-| 496 / 544 / 592 / 640 | 紫 / 棕 / 青绿 / 橙 | `_current_percpu_base` / `_arm_vm_init` / `_pmap_bootstrap` / `_kernel_bootstrap` |
-| 688 | 红 | 异常 |
-| 736 / 784 / 832 | ESR / ELR / FAR | 十六进制 |
-
-最上面的绿色粗条**不是我们的代码**：是固件 `DarwinBootPkg/Driver/Entry.S` 的 `DarwinEnter` 面包屑，占帧缓冲顶部 1/16 = 200 行，写在 hash 钉死的固件里，按规矩不动；它占 0–199 行，与我们的 256 行起不重叠。
-
-v8 离线资格：42 项固定测试 + 带 ADT 7 项 + 处理器合成 2 项，全部通过。**尚未打包、未启动。**
-
-## 当前状态：v9 已带 per-CPU 垫片，等距布局 + 主线推进，待打包
-
-v9 候选 **`b5db0f1e5793a2557efa99af735a59ca1c923ed1ae9e461f712a5a79163ac348`**（58,343,424 B，28 补丁），在 v8 等距布局之上多做一件主线事：
-
-**per-CPU 基址垫片**。模型里 `arm_init` 之后第一个真实阻塞是平台专家路径通过 `TPIDR_EL1` 读 per-CPU 基址，而 `start.s` 在开 MMU **之后**才 `msr TPIDR_EL1, xzr`，于是 `_current_percpu_base+0xc` 的 `ldr x0,[x0,#0xe0]` 解引用空。v9 在白带钩子里把 `TPIDR_EL1` 指向探针第二页（整页零）：`cpu_number`（+0xe8）读成 0——启动 CPU 的正确值；XNU 稍后在 `cpu_bootstrap` 会写入真正的 per-CPU 数据。
-
-模型验证（带随包 ADT，8 项）：垫片生效、`TPIDR_EL1` 回读等于零页 VA、执行**越过空解引用**，前进到 `_cpu_number+0x10`；再往后模型撞在 `msr TPIDRRO_EL0, x0`（Unicorn 不实现该写入），所以**模型到此为止**，下一阻塞只能在实机暴露。42 项固定测试 + 处理器合成 2 项也通过。
-
-探针段从一页扩到两页（第 2 页整页零），打包绑定已同步改为 8192。
-
-## 当前状态：entry-probe-04 已闭环——per-CPU 垫片在实机生效，前线推进到 `arm_vm_init` 内
-
-单次 `fastboot boot`（内核 v9 `b5db0f1e`）已闭环：preflight 17:45:50Z → 恢复 17:51:16Z Android 完成 1 → postcondition 17:51:58Z，**三分区 SHA 与试前完全一致**。原图 `out/trial-evidence/entry-probe-04/screen-01.jpg`（`e6dedeb0…`），判读记录 `reports/xnu-entry-probe-trial/2026-10-25-03/screen-evidence.json`。
-
-**观测到的色带（行号与颜色取自 `.S`，非从照片推断）**：绿（固件）→ 蓝 256 → 黄 304 → 品红 352 → 青 400 → 白 448 → **紫 496** → **棕 544（最后一条）**。
-
-**结论**：
-
-- 紫(496)=`_current_percpu_base` 出现 ⇒ **per-CPU 基址垫片在实机生效**，这是模型没能走到的一步；
-- 棕(544)=`_arm_vm_init` 出现 ⇒ 执行**进入了 `arm_vm_init`**；
-- **未见**青绿(592)=`_pmap_bootstrap`、橙(640)=`_kernel_bootstrap`、红(688)+三行十六进制 ⇒ 停在 `arm_vm_init` 内部、且在调用 `pmap_bootstrap` 之前；没有异常落到我们的向量页。
-
-**未验证**：为什么停在 `arm_vm_init` 里（复位/panic 路径/挂死），以及 `pmap_bootstrap` 之后的一切。红带没出现说明不是"被向量捕获的异常"，更像复位或走进不取异常的路径。
-
-**下一轮**：在 `arm_vm_init` 内部再插 2–3 个点（它开头就是内存映射/DT 解析，`SecureDTGetProperty(memory_map,"TrustCache"/"AuxKC")` 附近），把断点从"函数入口"推进到具体语句；同时保留红带自报。模型侧需先绕过 `msr TPIDRRO_EL0` 才能继续预演。
-
-## 当前状态：v19 抓到 panic 的函数名与格式串，已打包为 entry-probe-12，等待录像上机
-
-**v19（`793008e3`，33 补丁）**：在 `panic_trap_to_debugger` 钩子里读 x1（va_list 指针）→ 取变参栈槽 → 若它像页对齐的 KVA 就当作 `__func__` 指针解引用，渲染 1088/1248 两行；否则跳过，只渲染格式串的 1280/1312 两行。渲染前用 stp/ldp 保存恢复 x19–x28（`HEXROW_VAL` 用的是被调用者保存寄存器）。
-
-**踩到的坑与二分结论**（此前三次失败的真实原因）：XNU 的 `panic_trap_to_debugger(fmt, va_list *args, …)` 里第一个变参**不一定是字符串**——模型里那个 panic 传的是整数，我把它当指针解引用 → fault → 模型提前死 → "第一个带守卫的带没画"这个假象。二分过程：① 只加保存恢复 → 通过；② 加 va_list 读取 → 失败；②a 只改高度检查 → 通过；②b 只加 va_list 读取 → 失败；②d 用 5 条 nop 等长替换 → 通过 ⇒ 罪魁是**解引用非指针**。加"像不像 KVA"的校验后全绿。
-
-**包**：镜像 `594015f8efd5245c7248f0a62ef31957d4df01a3ce2cafb690d4a7496f580fc2` / 70,266,880 B，ADT `61567057`，`--validate` 从出货 FAT 读回通过；离线 42+9+2 项全过。**未启动。**
-
-**预期读数**：1088/1248 两行 = panic 的 `__func__`（函数名）前 16 字节；1280/1312 两行 = 格式串前 16 字节（已知是 `"%s: inva…"`）。若 1088 是乱码而 1280 正常，说明第一个变参不是字符串（那就把 1088/1248 改画格式串、把 1280/1312 改画 %s 之后的字符）。
-
-## 构建支线
-
-`codex/pr100-linux-8796`（`b8872cb`）保持独立、未合入；其平台链接产物 `89a30cfb` 仍是链路资格，不是可启动镜像。
-
-细节与复现命令见 [探针02试验记录](operations/2026-10-25-entry-probe-02-trial.md)；v5 离线资格见 [v5 修正记录](operations/2026-10-25-probe-v5-corrections.md)。
+已核对UniXNU固定版本16e592ab及SM8550共享仓23b2049f。发现DT panic区补丁已在ARM64系列中，是下一平台问题的首要复用候选。AdvancedLogDxe/OneSend二维码日志已实现，覆盖UEFI菜单与EBS前；nuwa固件的producer/库/DSC/FDF接入未完成，不能声称已可扫取XNU日志。Format2、分层SoC/OS配置和porting.toml记录机制有明显更新；只查阅，不在当前实测链上自动迁移。详情见operations/2026-10-25-official-porting-update.md。

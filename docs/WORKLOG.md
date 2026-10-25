@@ -418,3 +418,11 @@
 2026-10-25 04:25 · v19 三次尝试均失败并整体回退到 v18（.S 与两个测试脚本 git checkout，仓内无半成品）。三次尝试：(a) 加四行十六进制并把 flags 页挪进代码页；(b) 彻底去守卫；(c) 只改 panic 块。共同现象：第一个带守卫的带 416 没画、运行在到达它之前抛异常；共同点只有"panic 块让探针代码变长"。下一轮按二分走：① 只加 save/restore 不动行号；② 再加 va_list 读取与渲染；③ 若 ① 就失败，则探针段多出的一页落在内核启动页表之外，需把探针段压回同样页数。另注：v18 实机已证明守卫可用（紫带出现过），"flags 页不可达"的猜测不成立。· 本里程碑提交 · docs/STATUS.md、docs/WORKLOG.md
 
 2026-10-25 04:40 · v19 完成并打包为 entry-probe-12（镜像594015f8/ADT 61567057/内核793008e3，validate通过，42+9+2全过）。内容：panic_trap_to_debugger 钩子读 va_list 取第一个变参，像页对齐KVA才解引用（否则跳过），渲染1088/1248两行函数名 + 1280/1312两行格式串；渲染前保存恢复 x19-x28（HEXROW_VAL 用被调用者保存寄存器）。此前三次失败的真正原因：第一个变参不一定是字符串（模型里是整数），当指针解引用就 fault，造成"第一个带守卫的带没画"的假象；二分：①只加保存恢复通过 / ②加va_list读取失败 / ②a只改高度检查通过 / ②b只加va_list读取失败 / ②d用5条nop等长替换通过 ⇒ 罪魁是解引用非指针。加 KVA 校验后全绿。未启动 · 本里程碑提交 · reports/kernel-entry-probe/2026-10-24-v19/、reports/xnu-first-entry/entry-probe-12.json
+
+2026-10-25 · v21修复ADRP/CBZ搬移、活跃x9/NZCV破坏、flag串扰及屏幕重叠；88项钩子差分与WFE真实正负对照通过，连续模型进入arm_vm_init后停在夹具未映射RAM的bzero。entry-probe-14镜像42b42624/内核0c159421已打包并严格回读，未上机；等待本包录像就绪。· 工作区（不commit/push） · reports/kernel-entry-probe/2026-10-25-v21d/、reports/xnu-first-entry/entry-probe-14.json
+
+2026-10-25 15:07 · entry-probe-14单次实机闭环：照片A032=4、A033为预期全局，后续misc/cpu和arm_vm_init内部标记出现；Android完成1/A槽/三SHA不变。按加载器布局补齐RAM模型后到达pmap入口，继续跳探针因新TTBR未映射probe页而取指异常；实机pmap仍未验。用户取消固定180秒等待，改按菜单电源键触发。· 工作区（不commit/push） · reports/xnu-entry-probe-trial/2026-10-25-v21/、docs/operations/2026-10-25-v21-probe-transparency.md
+
+2026-10-25 16:12 · v22c完成跨TTBR诊断映射，entry-probe-15/36969f94单次实机确认pmap_bootstrap入口，Android恢复完成1与三SHA不变；下一模型停点为BCM固定panic日志区读取，未宣称实机唯一停因。音视频仅本地，隐私核查结果含未验ZIP边界。· 工作区（不commit/push） · reports/xnu-entry-probe-trial/2026-10-25-v22/、reports/media-privacy/2026-10-25/
+
+2026-10-25 · 用户授权本轮本地提交，代码/回归/脱敏实测证据已提交597baed；Git暂存blob与包绑定摘要逐项相同，未包含照片、原始音视频或构建二进制。官网复核固定UniXNU16e592ab/SM8550-common23b2049f，确认QR固件日志、Format2记录及DT panic区补丁；未执行迁移/固件构建/设备新试验/上游发布。文档独立提交。· 597baed（代码）+紧随docs提交 · operations/2026-10-25-official-porting-update.md、reports/upstream-porting-review/2026-10-25/review.json

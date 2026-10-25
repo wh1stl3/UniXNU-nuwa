@@ -1,0 +1,75 @@
+{
+  "scope": "Read-only upstream documentation/source review; no migration, firmware build, device action or upstream publication",
+  "unixnu": {
+    "date": "2026-10-25T04:25:19Z",
+    "message": "docs(adreno-metal): describe shader priming of the OS image",
+    "sha": "16e592abee8a550dec8154ed1f38b5ebc4f16213"
+  },
+  "sm8550_common": {
+    "date": "2026-10-24T18:03:13Z",
+    "message": "docs: describe SM8550 ownership and agent workflow",
+    "sha": "23b2049fcd9e30356161def84231334fb55ecca9"
+  },
+  "files": [
+    {
+      "path": "patches/xnu/native-dt-panic-region.patch",
+      "sha256": "b60c2a9a72ea23832f1e64348a5c5d1152cf05db6c156283dd8a93c804cd89cb"
+    },
+    {
+      "path": "package/UniXNUPkg/Driver/AdvancedLogDxe/AdvancedLogDxe.inf",
+      "sha256": "77dced57e7fad55121dbab8241db5bf92e2f31e396925bac91b65d2e5649b2de"
+    },
+    {
+      "path": "package/UniXNUPkg/Driver/AdvancedLogDxe/AdvancedLogDxe.c",
+      "sha256": "aa76c504a222cb79982dee09ab3cb913b33382da19cf07c68b99ddd9cf9d3745"
+    },
+    {
+      "path": "profiles/arch/arm64/patches/xnu/series",
+      "sha256": "19f3bac209c8a5f0e9df13ef8a87dabbb496cd6e51c942e8a140b8a8a1b07167"
+    },
+    {
+      "path": "soc.toml",
+      "sha256": "a7177808bb17a4548660847ef11024a4046734f26a25a32ff1feaa4e281c1bdc"
+    },
+    {
+      "path": "configs/sm8550.config",
+      "sha256": "d5e2a1c0c199e277ac72f18f6fb94f665492675b7bad58f01c2e29fe335395fb"
+    },
+    {
+      "path": "patches/xnu/series",
+      "sha256": "73c71b22c515d5956a45d16b09c05df03365a8738e65c72f614ce206fe1f738c"
+    },
+    {
+      "path": "README.md",
+      "sha256": "36793f92cc802e271027dcd2b1d760cfdc6ba808f7400c7f05ab1160e14090e9"
+    }
+  ],
+  "pages": [
+    "https://unixnu.com/porting/",
+    "https://unixnu.com/porting/migration",
+    "https://unixnu.com/porting/log-capture",
+    "https://unixnu.com/porting/records",
+    "https://unixnu.com/porting/soc-support",
+    "https://unixnu.com/devices/sheng",
+    "https://unixnu.com/devices/nuwa"
+  ],
+  "local_firmware_revision": "a155c495c863e06d400b515315e3b8f7791dc308",
+  "qr_local_integration": {
+    "nuwa_dsc_fdf_AdvancedLogDxe_reference_found": false,
+    "AdvancedLogger_QrEncoder_inf_found_in_current_rg_inventory": false,
+    "build_verified": false,
+    "device_verified": false
+  },
+  "panic_patch": {
+    "path": "patches/xnu/native-dt-panic-region.patch",
+    "flag": "XNU_DT_PANIC_REGION",
+    "present_in_arm64_series": true,
+    "applied_to_nuwa": false,
+    "ios16_8796_compile_verified": false
+  },
+  "migration": {
+    "only_inspected_os_profile": "ipados-17.7.11-21H461",
+    "ios16_profile_not_listed_in_reviewed_tree": true,
+    "board_values_changed": false
+  }
+}

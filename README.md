@@ -2,19 +2,17 @@
 
 以 **UniXNU** 为底座，改造使 **nuwa（小米 13 Pro / SM8550 / 12 GB）** 运行 **iOS 16**。
 
-## 当前入口（2026-10-24 19:2x）
+## 当前进度（2026-10-25）
 
-**iOS 16 内核已在 nuwa 上实际执行过。** 内核候选 `1aeebf13` 经 `fastboot boot` 临时启动，DarwinBoot 打印 `Exiting boot services`、屏幕出现绿色横条，XNU 自身输出 `AppleARMPlatform: IODTNVRAM from …`、`SecurityLock::LockType: SOFTWARE_LOCK`、`LockCapsuleInterface`、`App Log Flush : 0 ms`，随后设备自动重启回 Android。**iOS 未启动** —— 内核在 Apple 启动链安全锁阶段终止（判断置信中高，缺 SEP/硬件信任链）。恢复闭环完成：Android 完成 1、槽_a、三分区 SHA 未变。
+**nuwa实机已进入XNU的`pmap_bootstrap`入口。iOS尚未启动。** entry-probe-15的镜像`36969f94`、内核`a8b8fc90`修复了页表切换后诊断代码与framebuffer失去映射的问题，用户照片和视频记录到pmap入口标记。不能据此宣称pmap完成、kernel_bootstrap或用户态通过。
 
-完整录像取证进一步确认：`App Log Flush` 之后**内核静默退出**（19 秒黑屏、无 panic 文本）；绿条只持续 6 秒，不代表内核存活时长。详见[首次内核进入](docs/operations/2026-10-24-xnu-first-entry.md)与[录像取证](docs/operations/2026-10-24-first-entry-video-forensics.md)。
+本轮恢复于北京时间16:12:44：Android完成1、A槽，boot/vendor_boot/init_boot三SHA与试前相同，无flash/erase/改槽。原始音视频只留本地；仓库提交文字读数、哈希和脱敏命令报告。
 
-确切读数：`kernel va 0xfffffff003DC8000 pa 0x8C01C8000`、`window 0x40000000 bytes`（**1 GiB 连续窗口由 UEFI 成功给出**）、`TCR_EL1 0x28003518`（4 KiB granule，与 D-003 一致）、`CurrentEL 1`。
+下一模型停点是`PE_create_console`读取BCM固定旧panic日志区`0x3c0fc000`，未捕获实机唯一ELR/FAR。新查到上游已有`native-dt-panic-region.patch`，优先评估它与8796/iOS16的兼容性，不跳过整个console。
 
-同日离线完成 ADT 生成器落地（`scripts/make-nuwa-adt.py` 等四个脚本，板级常量逐项对回实机 FDT，结构审计与正负例 0 失败）、R-012 批准 A（写入 `dram_size = 0x240000000` 与 `owned_memory_size = 0x40000000`）、以及早期安全初始化器通路打通（`early_security_init` 被 emitter 接受、注册调用 ABI 静态核对通过）。
+先读[当前状态](docs/STATUS.md)、[v22实现与实测](docs/operations/2026-10-25-v22-pmap-transition.md)及[最新官网复核：QR/Format2/DT panic区](docs/operations/2026-10-25-official-porting-update.md)。官网QR日志覆盖UEFI阶段，nuwa尚未接入；Format2/共享SM8550支持仍为待迁移项目，不能套用sheng的iPadOS17板值。
 
-分析内核的 `loadable` 标志仍为 `false`（人工资格化字段），但**实机已证明它可被加载并跳转**。
-
-续接先读 [STATUS](docs/STATUS.md) 与[主线交接](docs/operations/2026-10-23-mainline-handoff.md)，再看[全量更新记录](docs/operations/2026-10-24-upstream-integration.md)。不重复已结束的设备试验。
+旧记录中把固件画面残留解释为XNU安全锁停止/返回固件的判断已被后续复核收窄；以当前STATUS和最新证据为准。分析内核`loadable=false`/`runtime_qualified=false`保留，未把一次阶段到达等同整核资格化。
 
 ## 为什么单开一个仓库
 

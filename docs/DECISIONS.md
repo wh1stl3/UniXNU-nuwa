@@ -479,3 +479,72 @@ D-034 第三次更正（2026-10-25 00:55，经复核源码级定位）：第二�
 本轮一度把"模型停在 UBSan brk"当成实机线索，实测根因是夹具从未写 `boot_args->deviceTreeP/Length`：`SecureDTFindEntry("name","arm-io")` 失败 → `pe_arm_get_soc_base_phys()` 返回 0（pexpert/arm/pe_identify_machine.c:185-196）→ 该函数在 line 60 提前返回，而时基默认值 24000000 在 line 68 才赋值 → 结构留 BSS 零 → `wfe_timeout_configure` 的 `flsll(0)-1` 下溢 → UBSan `brk #0x1206`（375,270 条）。实机不适用：DarwinBoot.c:630-631 已写入 `Args->DeviceTree/Length`，随包 ADT（ed7235cb）含 `arm-io` 与 `timebase-frequency=19200000`。
 
 补入随包 ADT 后 UBSan 消失，模型改在 374,951 条处停于 `_current_percpu_base+0xc` 的 `ldr x0,[x0,#0xe0]`（`TPIDR_EL1=0`）。规则确立：**凡声称"模型里跑到某处失败"，先核对模型输入是否与实机一致（ADT、boot_args、MMU 映射）**；本轮据此把 v6 定为三条可判定命题而非盲目打点。证据 operations/2026-10-25-post-arm-init-analysis.md。
+
+# D-037 · 时基链改为实机直读；模型侧 DT 注入偏移此前是错的
+
+> 时基算术/唯一panic归因部分 superseded by D-038；保留原记录用于追溯。
+
+实机 v19 的 panic 文本已锁定唯一出处：`osfmk/arm64/machine_routines.c:2219` 的 `panic("%s: invalid bit index (%u)", __FUNCTION__, bit_index)`，其 `bit_index` 来自 `wfe_timeout_configure()` 的 `flsll(ticks_per_event)-1`，而 `ticks_per_event = gPEClockFrequencyInfo.timebase_frequency_hz / events_per_sec`。时基为 0 ⇒ `flsll(0)-1` 下溢 ⇒ bit_index=0xFFFFFFFF ≥ 64 ⇒ panic。
+
+**更正一（此前判断错误）**：上一轮怀疑 `/cpus/cpu0` 的 `state` 属性 size 语义（含结尾 NUL）导致 `strncmp(value,"running",size)` 不匹配。**不成立**：`strncmp` 遇 NUL 即停，`size=8`（含 NUL）与 `size=7` 同样返回 0。对随包 ADT 做 XNU 等价遍历（复刻 `find_entry`/`SecureDTGetProperty`/`FindChild` 的逐字节推进规则）确认：`arm-io` 命中、`ranges[1]=0x17000000` 非零、cpu0 `state="running"` 匹配、`timebase-frequency=19200000`。
+
+**更正二**：模型夹具把 ADT 指针写进 `boot_args` 的 **0x58/0x60**，而真实偏移是 **0x60/0x68**（`reports/official-site-audit/darwin22-boot-args.json`：DeviceTree=96、DeviceTreeLength=104）。即 D-036 里"补入随包 ADT 后 UBSan 消失"的结论建立在错误注入位置上，不能作为实机行为的证据。偏移已修正。
+
+**更正三**：加载器 `DARWIN_BOOT_ARGS` 与 XNU `boot_args` 的自然对齐布局对比，早先"11 处不匹配"是脚本漏了对齐造成的假象；加对齐后 `deviceTreeP`/`deviceTreeLength`/`machineType`/`Video` 全部一致，只剩 `bootFlags`/`memSizeActual` 因 CommandLine 长度 608 vs 1024 而偏移不同（与本次 panic 无关）。
+
+**决定**：时基链不再靠推断。v20 在实机直读六个量，全部落在 bootstrap KVA 映射窗口内（`__DATA_CONST`/`__DATA`，KVA 0xfffffff00714c000..0xfffffff007b48000 ⊂ [virtBase, virtBase+256MB)）：
+- `probe_soc_base`（`pe_arm_get_soc_base_phys` 入口，即 `pe_identify_machine` 的守卫）：`_DTInitialized`(1344)、`_DTRootNode`(1376)、`_gPESoCBasePhys`(1408，入口时仍为 0)、`PE_state.deviceTreeHead`(1440)、`PE_state.deviceTreeSize`(1472)
+- `probe_wfe_timeout`（`wfe_timeout_configure` 入口，`pe_identify_machine` 之后）：`gPEClockFrequencyInfo.timebase_frequency_hz`(1504，偏移 0x48)、`_arm64_eventi`(1536)
+
+判读规则：`_DTInitialized=0` ⇒ `SecureDTInit` 未拿到非零树；`_DTInitialized=1` 且 `_DTRootNode=0` ⇒ 树指针为零；`deviceTreeSize=0` ⇒ boot_args 的长度没传进来；时基=0 ⇒ `pe_identify_machine` 提前 return，与前四项一起定位到具体哪一步。
+
+附带修正：解码表 'E' 的位图抄错（`11111000111110011111` 应为 `11111000111110001111`），会让一个 digit 解成 '?' 并使查表少一项；新增 `test-probe-read-sites.py`（11 项）直接驱动两个读数点、从帧缓冲反解 hex，并与探针源码里的 `hex_font` 逐位比对，防止再犯。
+
+证据 `reports/kernel-entry-probe/2026-10-25-v20/`（build/software/read-sites/post-arm-init）、`reports/xnu-first-entry/entry-probe-13.json`。
+
+D-037 补充（2026-10-25，panic 钩子两处探针缺陷）：v19 实机 1088/1248 两行为空，原因不是"变参不是字符串"，而是两处探针自身缺陷。① **KVA 判据过严**：钩子要求变参指针页对齐（`x12 & 0xfff == 0`），而 `panic("%s: invalid bit index (%u)", __FUNCTION__, bit_index)` 的第一个变参是 `__TEXT` 里的字符串字面量，**不会页对齐**，必然被拒。改为"在 KVA 范围内且 8 字节对齐"，整数变参（bit_index=0xffffffff）仍被排除。② **渲染宏破坏寄存器**：`HEXROW_VAL` 内部用 x12（`mov x12, #4`）作像素行计数器，而钩子用 x12 保存变参指针，第一次渲染后 x12 变 0，第二次 `ldr x23,[x12,#8]` 遂读地址 0x8 —— 一次非法访问会让内核死在钩子里，该路径在 v19 从未被实机验证过。改为每次使用前从 x11 重新装载（x11 不被渲染宏使用）。两处均由 `test-probe-read-sites.py` 直接驱动 `probe_panic_trap` 并从帧缓冲反解 hex 覆盖（17 项，含"非页对齐也被接受""函数名两段正确""参数指针正确""格式串仍正确"）。
+
+D-037 第二次补充（2026-10-25，v20 实机推翻主线假设）：v20（entry-probe-13，镜像 d329e7c4 / 内核 1f517836）用六个直读量取代推断，实机读数由用户从录像/照片读出（自动字模解码不可靠，照片分辨率不足）。行位由三个独立锚点互锁确定：读数行4=`0xfffffff008491000` 恰是随包 ADT 的内核 VA（Kernel.Base+ALIGN(Kernel.End-Kernel.Base,16K)+0x1000 逐位算得）⇒ SecureDTInit 拿到了正确的树；读数行7=`0xfffffff00715c7c0` 精确命中符号 `_const_boot_args` ⇒ 该偏移是 PE_state.bootArgs，PE_state.initialized 已为 TRUE；读数行8=`0x000000000124f800`=19200000 正是 ADT 的 timebase-frequency ⇒ pe_identify_machine 走到了时钟节点。**因此"实机 DT 不可见 ⇒ 时基 0 ⇒ panic"这条主线假设被实机数据推翻**，DT 可见、时基正确。
+
+同时留下一处未解矛盾并写明出处：按出货内核 `wfe_timeout_configure` 的真实指令（`udiv`; `bl flsll`; `subs w8,w0,#1`; `lsl w9,w9,w8`（移位量取低 5 位）; `subs w9,w9,#1`; `tst`; `cinc`; `subs w8,w8,#1`; `csel w8,wzr,w8,lo`（有符号负取 0）），时基 19200000 时 arm64_eventi ∈ [38,59]，时基 0 时 arm64_eventi = 0，两种情况都 < 64，而 `wfe_timeout_init` 的判据是 `cmp w8,#64; b.hs → panic("%s: invalid bit index (%u)")`；arm64_eventi 全镜像只有一处写、wfe_timeout_configure 全镜像只有一个调用点、调用顺序已逐条核对。但 v19 实机确实读到了该格式串（前 16 字节逐字节吻合，出货内核 0x74d37 处存在）。**不掩盖、不硬凑**：该矛盾连同五个可证伪问题写入 `docs/operations/2026-10-25-v20-review-request.md`，交 Codex 复核，并要求下一轮改为直接读 `wfe_timeout_init` 视角的 arm64_eventi 与 `PE_parse_boot_argn("wfe_events_sec")` 的产物。
+
+同时定下两条探针工程约束（下一轮必须做到）：① 读数行从屏幕 1088 行起与固件 `DiagDraw` 文字（第 800 行起）重叠，录像里数字与固件日志叠在一起几乎不可读 ⇒ 读数行改到 800 行以上；② 行位不能靠肉眼数（本轮靠三个锚点互锁才定下来）⇒ 每行必须自带可识别的常量前缀。
+
+# D-038 · 先恢复探针语义，再判断时基与平台故障
+
+2026-10-25。D-037中“时基零是该panic唯一来源”、末尾“19.2MHz输出38..59/LO清零负值/配置入口读数就是被拒绝值”被本决策取代。
+
+独立复核发现实际出货v19/v20将wfe_timeout_init的ADRP机器码搬至新PC，原页0xfffffff00716e000变为0xfffffff00822e000。真实解析器和配置函数在19.2MHz/-v下写4，init却读0x5f006570而panic；只在模型恢复原址原首指令即可正常返回。实机唯一根因须修复后对照，当前为首要解释，不能继续据此改ADT/时基。
+
+同时修复arm_vm_init+0x54探针破坏活跃x9、CBZ搬移后跳入探针代码、重复flag和不可可靠读取的显示布局。所有MMU后C钩子保存恢复renderer GPR与NZCV；ADRP/CBZ显式重定位。字节字符串按实际__TEXT范围检查，不要求页或8字节对齐；panic原始整数先记录再选择性解引用。TPIDR_EL1 shim仍是有意平台改变，未列作透明探针。
+
+新规则：每个中途/入口钩子都必须与原址原指令做差分（GPR/SP/NZCV/PC/原生内存写），覆盖首次、重复、无视频与条件分支；渲染测试不能代替控制流验证。打包必须绑定transparency/wfe/read-sites/loader/mapping证据并拒绝删检查后重封摘要。
+
+v21d候选0c159421，entry-probe-14镜像42b42624，离线全部检查与镜像回读通过，尚未实机启动。证据reports/kernel-entry-probe/2026-10-25-v21d/；操作记录operations/2026-10-25-v21-probe-transparency.md。TCR、板值、认证、donor与_verified不变。
+
+D-038 实测补充：entry-probe-14单次临时启动的照片确认A032=4、A033=预期全局，出现后续misc/cpu与arm_vm_init内部标记；恢复Android完成1和三SHA不变。旧配置入口FFFFFFFF与init入口4现已在同屏区分。pmap实机入口未验证；真实布局完整RAM模型能到pmap原入口，但新根表已丢弃探针/FB，继续跳探针时取指异常。下一步修跨页表诊断映射，不能继续把无色块当未执行。
+
+# D-039 · XNU试验以菜单电源键触发，不固定等待180秒
+
+用户2026-10-25明确“探针是在进入UniXNU菜单之后按电源键充当enter键才能触发”，取消固定180秒。fastboot ACK仅为运输接受，不是内核计时起点。后续按菜单就绪→用户电源键触发→捕获变化/读数→恢复推进。XNU scope默认post-ACK USB窗口0，其它scope保留原120秒默认；显式长观察仍可选。新鲜基线、唯一nuwa、即时通知、具体画面观测、可恢复路径与三SHA后验门不变。3项无设备单元测试通过。
+
+# D-040 · v22保留诊断页跨TTBR切换，实机确认pmap入口
+
+2026-10-25。v22c在arm_vm_init两个固定BL点保存寄存器/NZCV、验证空叶后补探针8页代码RO执行/数据RW NX与FB Device映射，VBAR改KVA；不钩pre-MMU也调用的全局TTBR函数入口。正常原生模型通过pmap探针，4个切换场景/12断言及全部回归通过，绑定最终包ADT与证据。
+
+entry-probe-15镜像36969f94/内核a8b8fc90单次实测照片视频出现pmap入口y480绿色块，实机最高阶段升至pmap_bootstrap入口；不证明pmap完成。16:12:44北京时间Android完成1/A槽/三SHA一致，无flash/erase/改槽。证据reports/xnu-entry-probe-trial/2026-10-25-v22/、operations/2026-10-25-v22-pmap-transition.md。
+
+下一首要平台问题：模型_PE_create_console+0x48读0x3c0fc000，对应BCM2837.h固定panic日志区；实机ELR/FAR未验，不升格唯一停因。先评估可选旧日志契约、保留真实console和新panic，不猜物理板值。
+
+音视频纪律：原始音视频仅本地，禁止自动上传。音视频扩展名已忽略；Git历史/当前跟踪/Release/Issue检查未发现，Actions内部ZIP未验，详见隐私报告。无commit/push。
+
+
+# D-041 · 复用上游DT panic区修复，QR与Format2迁移分别评审
+
+2026-10-25。用户授权本轮结果本地提交，取代此前本轮“不commit”限制；不执行push。代码/证据已提交597baed，文档独立提交；所有原始音视频保持本地。
+
+核查UniXNU 16e592abee8a550dec8154ed1f38b5ebc4f16213与SM8550共用仓23b2049fcd9e30356161def84231334fb55ecca9。发现native-dt-panic-region.patch及XNU_DT_PANIC_REGION选择逻辑，优先评估8796适配，处理当前BCM旧panic区模型停点；不NOP整个console、不自动套用iPadOS17配置。
+
+AdvancedLogDxe与OneSend动态二维码日志已有固定实现，日志快照覆盖UEFI菜单/EBS前；nuwa固件尚缺已验收producer/库/DSC/FDF集成，不声称它能取pmap后的内核日志。Format2、共享SM8550、组件规范名与porting.toml是独立后续迁移任务，保持iOS16、板值、pin和资格边界。
+
+证据reports/upstream-porting-review/2026-10-25/review.json；完整依赖、来源和路线见operations/2026-10-25-official-porting-update.md。官网nuwa页仍滞后，本轮没有上游发布/PR。暂存区报告字节曾被CRLF归一化破坏摘要；对本轮绑定报告精确保留并复核Git blob摘要后才提交，避免证据重封而失去实机包绑定。

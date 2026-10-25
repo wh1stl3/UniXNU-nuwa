@@ -1660,3 +1660,10 @@
 [Evidence] 原图PASS exact length EOF SHA256及exit Success；18:09:48 Android完成1、槽_a、三个启动分区SHA与试前一致。
 [Risk] 单次文件数据链通过不等于内核或iOS执行，未收到完整连续视频；实际OS窗口、ADT及初始化/完整ABI仍未资格化。
 ```
+
+## Q-159 · 本轮归档（已完成）
+
+- 代码与证据：`597baed`，v21语义修复/v22跨TTBR诊断映射/实机pmap入口/恢复闭环/音视频忽略/报告Git字节绑定。
+- 文档：紧随其后的`[unixnu-nuwa][docs]`提交，包含本轮README与交接、官网QR/DT panic区/Format2复核。
+- 发布状态：仅本地commit，未push。与本轮无关的历史未跟踪材料和原始截图未纳入。
+- 下一实现：优先移植固定版本DT panic区补丁并验证8796；QR日志作为固件独立接入，Format2迁移另行冻结输入。
