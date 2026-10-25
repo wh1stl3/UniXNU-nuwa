@@ -492,3 +492,5 @@
 2026-10-25 22:59 +08 · PROBE25实测两次exec，实际激活/exec均ENOENT；恢复Android1/A槽/三SHA闭环；只读确认launchd/dyld路径及755权限；写入fastboot查询兼容规则 · 提交号见本条所属提交 · v33c screen/recovery/postcondition、v34/exec-files.json、AGENTS §3
 
 2026-10-25 2026-10-25T23:09:47.274939+08:00 · PROBE26定位exec/dyld原生路径首个非零来源，21项串行验证/独立重建/新旧包回读通过；连续授权与日志恢复门仍有效，新鲜Android1/A槽/三SHA一致 · 提交号见本条所属提交 · v34/execution.json、entry-probe-26.json、v34/preflight.json
+
+2026-10-25T23:11:09.500196+08:00 · PROBE26单次临时boot ACK，等待菜单Enter后的具体画面及Android恢复后验，不将ACK当内核证据 · 代码5263bbb；启动提交见本条所属提交 · reports/xnu-entry-probe-trial/2026-10-25-v34/launch.json

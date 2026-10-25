@@ -1,5 +1,8 @@
 # nuwa / iOS16 主线交接（2026-10-25，PROBE19后）
 
+> PROBE26于2026-10-25T23:11:09.500196+08:00仅一次临时boot ACK，代码5263bbb，镜像9906e2b7；等待用户菜单电源Enter后完整画面，尚无新阶段实测或Android恢复后验，不重复启动26或第二候选。已有连续推进授权及当前具体画面/恢复条件沿用，新鲜预检Android1/A槽/三SHA一致。重点A02E首个非零调用ID、A032原始返回和右侧240至263格点，按函数解释errno/Mach状态，不能把ACK作为内核证据。取图后trial-v4-firmware.py recover --package reports/xnu-first-entry/entry-probe-26.json --evidence reports/xnu-entry-probe-trial/2026-10-25-v34/recovery.json；再record-nuwa-trial-state.py对比本轮preflight补postcondition。人工恢复等待继续离线工作；fastboot缺失变量保留日志重进一次，不单独硬停。启动证据v34/launch.json。
+
+
 > PROBE26原生exec/dyld路径错误定位版离线完成，21项串行回归全部通过：1052透明性、25Image4、6pthread、15边界/结果读回、7根输入、34绑定及入口/MMU/向量/显示回归；独立重建逐字节相同，实际FAT文件回读和旧包25复验通过。新鲜预检2026-10-25T23:09:47.274939+08:00确认Android1/A槽/三分区SHA与v33c后验一致。沿用用户本轮录像恢复确认、最新具体照片/fastboot确认及随后继续指令，条件未报告失效，按AGENTS连续推进不重复问是否继续；尚未启动26。 权威包reports/xnu-first-entry/entry-probe-26.json，镜像out/trial-boot/xnu-entry-probe-26-paths/boot-xnu-first-entry.img，204484608字节，SHA256 9906e2b702e8123d729ad83b4d1c07bad2ec26daedc9f11f1424c4c8c025b895。内核d7f125b5d06fd4cc4b526dd04132adce276a3c6198efca2d8009e457b46c726c、58449920B，ADT4e45522907b9b08ae4172ad84103326383c03f3a0e625cd22d7afcbfb07ea34f；真实APFS d180c38d、192MiB运输和-v rd=md0保持。代码父74a5193，新milestone提交以git log为准，无push/新CI。 最近内核实测25为ENOENT、恢复已闭环；26不是故障修复成功声明，观察真实路径错误且不新增停止点。续接：trial-v4-firmware.py launch --package reports/xnu-first-entry/entry-probe-26.json --preflight reports/xnu-entry-probe-trial/2026-10-25-v34/preflight.json --evidence reports/xnu-entry-probe-trial/2026-10-25-v34/launch.json --observation-seconds 0；取图后recover绑定包26补Android1/A槽/三SHA。日志/恢复条件失效先按AGENTS §3停；fastboot查询变量兼容规则保留。下方旧实时段为历史，以STATUS/v34记录为准。
 
 
