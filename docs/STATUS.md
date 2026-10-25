@@ -1,6 +1,6 @@
 # STATUS
 
-更新：2026-10-25。**PROBE20实机进入IOFindBSDRoot，未到挂载；PROBE21离线完成并获本包录像/恢复就绪确认，新鲜preflight确认Android1/A槽/三SHA与v28后验一致，即将单次临时boot。** 主线转root内部等待定位与真实介质输入。尚未取得PROBE21画面/恢复后验。
+更新：2026-10-25。**PROBE20实机进入IOFindBSDRoot，未到挂载；PROBE21于21:03:14 +08单次临时boot ACK，待用户菜单电源Enter后的画面。** 本包录像/恢复已确认，新鲜preflight Android1/A槽/三SHA与v28后验一致；本轮画面/恢复后验未取得，不启动第二候选。ACK不作内核进度，代码7faf565，launch证据v29/launch.json。人工采集/恢复等待不阻断离线工作。
 
 ## 实机与恢复
 

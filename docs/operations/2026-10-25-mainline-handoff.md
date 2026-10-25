@@ -1,5 +1,7 @@
 # nuwa / iOS16 主线交接（2026-10-25，PROBE19后）
 
+> **设备实时状态：PROBE21已于2026-10-25 21:03:14 +08单次临时boot ACK，待用户菜单电源Enter后的root内部标记照片。** 代码7faf565，本轮preflight录像/恢复门已确认，Android1/A槽/三SHA与v28后验相同。当前不能确认内核新阶段，本轮Android恢复后验尚无，不启动第二候选。图像采集后执行 `trial-v4-firmware.py recover --package reports/xnu-first-entry/entry-probe-21.json --evidence reports/xnu-entry-probe-trial/2026-10-25-v29/recovery.json`，再record-nuwa-trial-state.py对比v29/preflight补postcondition。ACK不代替画面，人工恢复不阻断离线工作。启动证据reports/xnu-entry-probe-trial/2026-10-25-v29/launch.json。
+
 > **v29增量：PROBE21离线完成，用户本包录像/恢复就绪已确认，新鲜preflight Android1/A槽/三SHA与v28后验一致，即将一次临时boot。** 包21镜像f005f7ed/70,266,880B，内核dc496abe，ADTb6bb6c88；860差分/25Image4/6pthread/31绑定及独立重建、实际FAT回读通过。新增root内部30点182–211，184/185为初始IOBSD等待、200/201为介质等待。真实102MiB APFS恢复介质已只下载/主机只读检查并卸载，未塞入试包，不改变内存/身份。尚无本包实机画面/恢复后验；证据v29/build/execution/preflight，续接见[v29记录](2026-10-25-v29-root-waits.md)。无push/新CI，父6797bd5。
 
 > **当前：PROBE20实机进入IOFindBSDRoot，pthread原生初始化返回，未到vfs_mountroot。** 照片36983517中180/181亮（已注册，备用请求跳过），160–164为IOKitBSDInit/net_init_run后继和root调用，7号root入口亮、8号挂载入口暗。A02A=0/B=6/C=1，B不随root入口更新。20:45:31 +08后验确认Android1/A槽/三SHA一致，无待恢复任务。无需再启动20；主线转真实root介质/提供者和匹配输入。7项审计确认-v、无root-matching/boot-uuid/RAMDisk，默认等待Apple_HFS IOMedia；内部具体等待位置和IRQ/计时器仍未证明。详见[v28实测段](2026-10-25-v28-pthread-to-root.md)、STATUS和v28/screen.json、recovery.json、postcondition.json、root-inputs.json。下方未取画面/未恢复为历史快照。

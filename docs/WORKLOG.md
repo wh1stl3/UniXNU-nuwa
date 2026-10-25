@@ -460,3 +460,5 @@
 2026-10-25 20:45:31 · PROBE20照片36983517确认pthread已在BSD前注册，真实初始化返回，IOFindBSDRoot调用164/入口7亮、挂载入口8未亮；7项审计确认当前-v/无root选择/RAMDisk，转真实root提供路径。用户回fastboot后固定原厂boot恢复，Android1/A槽/本轮三SHA相同，无待恢复任务。· 本次device里程碑（父cde790a） · v28 screen/recovery/postcondition、root-inputs.json、D-051
 
 2026-10-25 · PROBE21新增原生root内部30点，19项串行任务/860差分等通过，独立重建与实际包回读一致，包f005f7ed。固定iOS16真实RestoreRamDisk下载/IM4P/APFS只读检查完成并卸载，payload d180c38d；不当作nuwa挂载/完整iOS。用户PROBE21录像/恢复就绪，R-013解除，新鲜Android1/A槽/三SHA预检一致。· 本次kernel里程碑（父6797bd5） · v29 execution/restore-candidate/restore-filesystem-retry、包21、D-052
+
+2026-10-25 21:03:14 +08 · PROBE21录像/恢复及新鲜三SHA预检通过，即时通知后仅一次临时boot ACK；待菜单电源Enter后的root内部画面和本轮Android恢复后验，不把ACK写成执行阶段。· 7faf565后设备记录 · reports/xnu-entry-probe-trial/2026-10-25-v29/launch.json

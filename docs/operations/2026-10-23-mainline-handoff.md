@@ -2,6 +2,8 @@
 
 > v29续接：PROBE21镜像f005f7ed离线完成，用户已确认本包录像/恢复；preflight Android1/A槽/三SHA与v28后验一致，准备单次临时boot。新增root内部30点，860差分等19项串行任务通过。真实102MiB APFS恢复介质只下载/主机只读检查，未装入试包，未改内存/身份。日志门R-013已解除；新试验画面/后验未取得时不启动第二候选。命令、SHA、待办以新交接与v29记录为准。
 
+> 21:03:14 +08更新：PROBE21单次临时boot已ACK，代码7faf565；等待用户菜单电源Enter后的画面，本轮恢复后验未取得，不启动第二候选。ACK不作内核执行结论，证据v29/launch.json。新交接含原厂恢复和postcondition续接命令，人工恢复不阻断离线工作。
+
 ## 历史快照：PROBE18结果
 
 > PROBE18实机进入首线程/IOKit，MAC/Image4缺项panic（2026-10-25）：镜像c89cfa52/内核d6f101e4，代码9a5961f；81格亮，PE_init_iokit已返回，中断使能调用和commpage完成相关路径，到88 mac_policy_initmach，BSD未到。横纹消失，A02A=0/B=4/C=1。panic `failed to get mix-n-match policy: %d` 参数2，已定位AppleImage4 `/chosen/mix-n-match-prevention-status`；实际读取器+当前ADT复现2，5契约用例通过。0/空属性会允许mix，32位1禁止，尚未选择运行时策略/修改ADT。下一步完整核对Image4输入与manifest/hash来源，保持可信链/板值/资格边界，不能将模型bzero停止当实机故障。
