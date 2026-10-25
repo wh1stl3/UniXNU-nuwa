@@ -432,3 +432,5 @@
 2026-10-25 17:10 · v24/PROBE17一次性158点密集调用/后继可见路径，692差分及全回归通过；1.2亿模型指令越过页释放进入zone路径，无非法访存，不当作实机。镜像e3b8e022已回读，未启动，待本包录像恢复条件；无push。· 本次kernel里程碑提交 · operations/2026-10-25-v24-dense-bootstrap.md、reports/kernel-entry-probe/2026-10-25-v24/
 
 2026-10-25 17:12 · 本包录像/恢复确认后刷新Android1/A槽/三SHA，PROBE17单次临时boot ACK成功；待Enter后画面和恢复后验，ACK不当内核阶段。· 75daa59（离线）/本次device记录 · reports/xnu-entry-probe-trial/2026-10-25-v24/
+
+2026-10-25 17:18 · PROBE17原图126亮/32缺，ID0–60确认推进到load_context调用前；61缺块符合noreturn，不宣称线程已运行。Android1/A槽及三SHA恢复闭环，无第二候选，媒体仅本地。· 本次device里程碑 · reports/xnu-entry-probe-trial/2026-10-25-v24/{screen,trial,recovery,postcondition}.json

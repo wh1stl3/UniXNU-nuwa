@@ -46,3 +46,17 @@
 python -B scripts/test-probe-transition.py --build reports/kernel-entry-probe/2026-10-25-v24/build.json --adt out/trial-boot/xnu-entry-probe-17/kernel.macho.adt --explore-bootstrap --instruction-budget 60000000 --output out/NEW-bootstrap-forward.json
 python -B scripts/build_xnu_boot_package.py --validate --output reports/xnu-first-entry/entry-probe-17.json
 ```
+
+## 实机读图与恢复闭环
+
+用户照片SHA256为31f4ed2755934299b8108ec3a43f147f4097f615822e738f237fb2b04c1f0a80；原图只保留out/trial-evidence/entry-probe-17/screen-original.jpg。按照片中心坐标逐格取样并目视核对，126亮、32未亮，原始RGB与坐标见screen.json；这是静态累计状态，不是时序录像。
+
+ID0–60全部可见。明确的新事实是kernel_bootstrap已经走到load_context调用前0xfffffff00729ef18；包括sched_init(14/15)、task_init(36/37)、thread_init(38/39)、kernel_thread_create(52/53)和其后路径。不可写成调度器已运行或首线程切换完成。
+
+缺块61对应load_context的后继位置。固定8796源码startup.c:578调用后标NOTREACHED，890声明noreturn，958最终machine_load_context；因此它不亮符合契约，不能把它判为内核停点。110/111、114–116、122、130/131和134–156等大多为条件分支/冷路径；117、123、157由共享后继可达，不意味着fillPage/cold.1已调用。A032=4可读，未见异常/panic字段，不宣称绝对没有后续异常。完整缺块列表在screen.json。
+
+右侧每格有16px横向和8px纵向间隔，黑缝是设计；细密横纹在部分彩块和白图案上也可见，相机/OLED扫描、PWM或摩尔纹是合理候选，仍未验证。左侧色块内较粗黑线不是stage矩形主动绘制，后续写屏/缓存覆盖与拍摄伪影均未定位，不据此断定内存损坏。
+
+用户保存画面后提示电源+音量下恢复，recover脚本临时加载固定原厂boot；2026-10-25 17:18:00北京时间postcondition确认Android完成1/A槽、boot_a/vendor_boot_a/init_boot_a三SHA与preflight相同。没有flash/erase/改槽、无第二候选。本轮照片/音视频均不上传。
+
+下一观察范围从load_context内部开始，核对machine_set_current_thread、processor_up、PMAP_ACTIVATE_USER、machine_load_context、第一continuation和kernel_bootstrap_thread；上下文切换可能更换TTBR及framebuffer可见性，应先核对可观测性，再判断故障。不重复验证已经到达的kernel_bootstrap前半程。

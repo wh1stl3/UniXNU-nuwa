@@ -566,3 +566,9 @@ PROBE16/6f0907b2、内核167bd013单次临时实测，原图确认kernel_bootstr
 692逐点差分及像素检查通过；6000万连续模型指令完成133696次页释放，采样按48字节对象推进，支持前轮预算不足；不因此宣称实机已经进入或完成VM。新包PROBE17/e3b8e022尚未实测，启动仍需本包日志与恢复条件。板值/TCR/donor/资格不变，无push、媒体仅本地。证据reports/kernel-entry-probe/2026-10-25-v24/和operations/2026-10-25-v24-dense-bootstrap.md。
 
 延长1.2亿模型指令后累计240085次释放，已越过pmap_startup及vm_page_bootstrap后继点，到zone_bootstrap调用路径；结束于SHA256压缩函数且无非法访存。不能由预算结束推导zone完成或实机成功。最终镜像回读与绑定复验通过。
+
+# D-044 · PROBE17到达首线程切换前，缺块按控制流解释
+
+2026-10-25。实机照片确认ID0–60，最高边界为load_context原生调用前，而非调用返回或调度运行。源startup.c:578/890/958明确noreturn/NOTREACHED，61不亮符合设计；冷分支和共享后继不能按第一缺块推断停点。126亮/32缺块的RGB与位置、原图哈希见v24 screen.json，媒体仅本地。
+
+下一批追load_context内部及machine_load_context/continuation/kernel_bootstrap_thread，并核对PMAP_ACTIVATE_USER之后日志映射；不因观察点终止断言真实hang。细黑线来源未验证，规则网格间隙是设计。17:18:00恢复Android1/A槽/三SHA一致，证据v24 postcondition.json；不push、不重复启动。
