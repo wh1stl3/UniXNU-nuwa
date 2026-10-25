@@ -164,7 +164,7 @@
     subs x12, x12, #1
     b.ne .Lclear_col\@
     add x9, x9, x22
-    sub x9, x9, #1280
+    sub x9, x9, #1920
     subs x10, x10, #1
     b.ne .Lclear_row\@
     mov x23, #(0xa000 + (\y / 32))
@@ -225,8 +225,111 @@
 9:
 .Lno_device\@:
 .endm
-// Dense panel at x832..1295/y256..759, outside both earlier panels.
-// Flags 128..287 are reserved for these independently numbered call/return edges.
+// Non-destructive readback follows an explicit two-color calibration rectangle.
+// It never repaints during CHECK: later writers remain observable.
+.macro DISPLAY_INIT
+    adr x15, probe_scratch
+    ldr x9, [x15]
+    cbz x9, .Ldisplay_init_done\@
+    ldr x10, [x15, #8]
+    mov x11, #5376
+    cmp x10, x11
+    b.lo .Ldisplay_init_done\@
+    adr x16, probe_flags
+    ldrb w17, [x16, #80]
+    cbnz w17, .Ldisplay_init_done\@
+    mov w17, #1
+    strb w17, [x16, #80]
+    mov x11, #224
+    madd x9, x10, x11, x9
+    add x9, x9, #3328
+    mov x13, #16
+.Ldisplay_init_row\@:
+    mov x14, #384
+.Ldisplay_init_col\@:
+    mov w12, #-1
+    cmp x14, #192
+    b.hi .Ldisplay_init_store\@
+    mov w12, #0xffff
+    movk w12, #0xff00, lsl #16
+.Ldisplay_init_store\@:
+    str w12, [x9], #4
+    subs x14, x14, #1
+    b.ne .Ldisplay_init_col\@
+    add x9, x9, x10
+    sub x9, x9, #1536
+    subs x13, x13, #1
+    b.ne .Ldisplay_init_row\@
+    dsb sy
+.Ldisplay_init_done\@:
+.endm
+.macro DISPLAY_CHECK stage
+    adr x15, probe_scratch
+    ldr x9, [x15]
+    cbz x9, .Ldisplay_check_done\@
+    ldr x10, [x15, #8]
+    mov x11, #5376
+    cmp x10, x11
+    b.lo .Ldisplay_check_done\@
+    adr x16, probe_flags
+    ldrb w17, [x16, #80]
+    cbz w17, .Ldisplay_check_done\@
+    mov x11, #224
+    madd x9, x10, x11, x9
+    add x9, x9, #3328
+    mov x13, #16
+    mov x23, #0
+.Ldisplay_check_row\@:
+    mov x14, #384
+.Ldisplay_check_col\@:
+    mov w12, #-1
+    cmp x14, #192
+    b.hi .Ldisplay_check_load\@
+    mov w12, #0xffff
+    movk w12, #0xff00, lsl #16
+.Ldisplay_check_load\@:
+    ldr w11, [x9], #4
+    cmp w11, w12
+    cinc x23, x23, ne
+    subs x14, x14, #1
+    b.ne .Ldisplay_check_col\@
+    add x9, x9, x10
+    sub x9, x9, #1536
+    subs x13, x13, #1
+    b.ne .Ldisplay_check_row\@
+    adr x15, probe_display_status
+    mov x22, #\stage
+    stp x23, x22, [x15]
+    HEXROW_VAL 1344
+    mov x23, #\stage
+    HEXROW_VAL 1376
+.Ldisplay_check_done\@:
+.endm
+
+.macro RESTORE_NATIVE_VECTORS
+    adr x15, probe_native_vectors
+    ldr x9, [x15]
+    LOADABS x10, g_native_vectors
+    cmp x9, x10
+    b.ne .Lnative_vector_bad\@
+    msr vbar_el1, x9
+    isb
+    mov x23, #1
+    adr x15, probe_vector_status
+    str x23, [x15]
+    HEXROW_VAL 1408
+    b .Lnative_vector_done\@
+.Lnative_vector_bad\@:
+    mov x23, #2
+    adr x15, probe_vector_status
+    str x23, [x15]
+    HEXROW_VAL 1408
+    b probe_native_vector_reject
+.Lnative_vector_done\@:
+.endm
+
+// Dense panel at x832..1295, y256 with dense_cell_height row pitch.
+// Flags 128..347 are reserved for independently numbered entry/call/context edges.
 .macro DENSE_ONCE idx, color
     adr x15, probe_scratch
     ldr x9, [x15]
@@ -240,13 +343,13 @@
     cbnz w17, .Ldense_done\@
     mov w17, #1
     strb w17, [x16, #(128+\idx)]
-    mov x11, #(256+(\idx/10)*32)
+    mov x11, #(256+(\idx/10)*dense_cell_height)
     madd x9, x10, x11, x9
     mov x11, #((832+(\idx%10)*48)*4)
     add x9, x9, x11
     mov w12, #(\color & 0xffff)
     movk w12, #((\color >> 16) & 0xffff), lsl #16
-    mov x13, #24
+    mov x13, #dense_tile_height
 .Ldense_row\@:
     mov x14, #16
 .Ldense_col\@:
@@ -289,8 +392,8 @@
 .global probe_vectors
 probe_vectors:
     .rept 16
-    .space 124
     b probe_exception
+    .space 124
     .endr
 .balign 4
 .global probe_exception
@@ -306,6 +409,9 @@ probe_exception:
 .global exception_stop
 exception_stop:
     b exception_stop
+.global probe_native_vector_reject
+probe_native_vector_reject:
+    b probe_native_vector_reject
 
 // Pre-MMU preparation for the post-MMU hooks. The bootstrap tables map only the
 // kernel's own physical range, so the framebuffer that is reachable while the
@@ -336,6 +442,9 @@ exception_stop:
     // Point the exception vectors at this page (its identity address), so an
     // exception taken while the MMU is on still lands on our reporter. The page
     // is reachable through the V=P identity mapping until pmap is rebuilt.
+    mrs         x13, vbar_el1
+    adr         x14, probe_native_vectors
+    str         x13, [x14]
     adr         x13, probe_vectors
     msr         vbar_el1, x13
 .endm
@@ -976,9 +1085,18 @@ probe_scratch:
 .global probe_map_status
 probe_map_status:
     .quad 0, 0
+.global probe_native_vectors
+probe_native_vectors:
+    .quad 0
+.global probe_vector_status
+probe_vector_status:
+    .quad 0
 .global probe_console_status
 probe_console_status:
     .quad 0
+.global probe_display_status
+probe_display_status:
+    .quad 0, 0
 .balign 4096
 .global probe_zero
 probe_zero:

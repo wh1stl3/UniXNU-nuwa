@@ -436,3 +436,5 @@
 2026-10-25 17:18 · PROBE17原图126亮/32缺，ID0–60确认推进到load_context调用前；61缺块符合noreturn，不宣称线程已运行。Android1/A槽及三SHA恢复闭环，无第二候选，媒体仅本地。· 本次device里程碑 · reports/xnu-entry-probe-trial/2026-10-25-v24/{screen,trial,recovery,postcondition}.json
 
 2026-10-25 · 按用户明确要求，将下载AGENTS.md中适用于nuwa的表达、代码质量、逆向取证、边界测试与工具规则合并为第10节；原9节与全部设备/只读/媒体门保留，脚本串行。· 本次docs提交 · AGENTS.md:第10节，来源SHA8fcd7fa7
+
+2026-10-25 18:11 · PROBE18修复HEX越框及向量入口/交接，178点扩展首线程至BSD/root；740差分和全回归、重建/镜像回读通过。最终模型进入IOKit，在OSKext清零普通STP异常，未到BSD；新包未实测。· 本次kernel里程碑 · reports/kernel-entry-probe/2026-10-25-v25/、operations/2026-10-25-v25-first-thread-display.md

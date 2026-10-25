@@ -147,7 +147,7 @@ def run_continuous(raw,report,model='aarch64',preoccupy=None):
     def sr(op0,op1,crn,crm,op2):
         try:return hex(uc.cpr_read(op0,op1,crn,crm,op2))
         except Exception:return None
-    return {'model':model,'error':error,'reached':st['reached'],'instructions':st['count'],
+    return {'native_vbar_snapshot':hex(struct.unpack('<Q',uc.mem_read(PA+int(report['probe']['symbols']['probe_native_vectors'],16)-base,8))[0]) if 'probe_native_vectors' in report['probe']['symbols'] else None,'model':model,'error':error,'reached':st['reached'],'instructions':st['count'],
             'pc':hex(uc.reg_read(UC_ARM64_REG_PC)),'bad_memory':bad,
             'sctlr':sr(3,0,1,0,0),'tcr':sr(3,0,2,0,2),'ttbr0':sr(3,0,2,0,0),'ttbr1':sr(3,0,2,0,1),
             'scr_el3':sr(3,6,1,1,0),'hcr_el2':sr(3,4,1,1,0),

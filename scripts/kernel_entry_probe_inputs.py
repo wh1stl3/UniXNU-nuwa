@@ -19,6 +19,8 @@ def metadata(build):
         paths += [(n,build.with_name(n+'.json')) for n in ('transition-normal','transition-occupied-probe','transition-bad-topology','transition-occupied-fb')]
     if json.loads(build.read_text()).get('probe_revision',0)>=23:
         paths += [('console-policy',build.with_name('console-policy.json'))]
+    if json.loads(build.read_text()).get('probe_revision',0)>=25:
+        paths += [(n,build.with_name(n+'.json')) for n in ('renderer-bounds','context-display','vectors')]
     return {name:dict(path=path.relative_to(ROOT).as_posix(),sha256=sha(path.read_bytes())) for name,path in paths}
 
 def validate(meta,kernel_sha):
@@ -45,7 +47,7 @@ def validate(meta,kernel_sha):
     if any(h.startswith('probe_dense_') for h in hooks):
         if build.get('probe_revision',0)<24:raise ValueError('Dense hooks require revision 24')
         from probe_bootstrap_sites import generate
-        _,_,dense_sites,edges=generate(original,builder.macho(original),builder.backed)
+        _,_,dense_sites,edges=generate(original,builder.macho(original),builder.backed,revision=build.get('probe_revision',24))
         if build.get('dense_bootstrap',{}).get('edges')!=edges:raise ValueError('Dense edge catalogue differs from native calls')
         actual={(int(p['va'],16),p['reason']) for p in build['patches'] if p['reason'].startswith('probe_dense_')}
         if actual!=set(dense_sites):raise ValueError('Dense hook set incomplete')
@@ -112,6 +114,17 @@ def validate(meta,kernel_sha):
             raise ValueError('Console policy evidence differs')
         required_console={'shipped-missing-pram uses native DT lookup without BCM access','minimal-missing-pram uses native DT lookup without BCM access','present-pram uses native DT lookup without BCM access','Missing-pram path retains native screen initialization entry','Present-pram policy stops explicitly before console and old log access','Old candidate still reads unmapped BCM panic region'}
         if {c['name'] for c in evidence['checks']}!=required_console:raise ValueError('Console policy checks incomplete')
+    if build.get('probe_revision',0)>=25:
+        required_extra={
+            'renderer-bounds':{site+suffix for site in ('probe_soc_base','probe_wfe_timeout','probe_panic_trap') for suffix in (' confines every framebuffer write to exact rectangles',' rejects old PROBE17 row drift')},
+            'context-display':{'Machine context restore preserves GPR SIMD SP system registers: '+mode for mode in ('fresh','repeat','no-video','FPCR-change','first-stack-layout')} | {'Calibration band writes exact white and cyan pixels','Immediate display readback reports zero mismatches','Readback detects one changed pixel without repainting','Readback detects one changed row without repainting','Missing framebuffer keeps native control flow without display writes'}}
+        required_extra['vectors']={'All sixteen actual vector entries branch to the reporter','Old PROBE17 vector entries trap before the reporter','Real cold path captures the pinned native VBAR before override','First-thread entry restores native VBAR before services and IRQ enable','Unexpected saved VBAR is rejected without unsafe handoff'}
+        for name,required in required_extra.items():
+            if name not in meta:raise ValueError('Missing v25 evidence: '+name)
+            item=meta[name];payload=report_path(item['path']).read_bytes()
+            if sha(payload)!=item['sha256']:raise ValueError('v25 digest differs: '+name)
+            evidence=json.loads(payload);checks=evidence.get('checks',[])
+            if evidence.get('candidate_sha256')!=kernel_sha or len(checks)!=len(required) or {c['name'] for c in checks}!=required or any(c['passed'] is not True for c in checks):raise ValueError('v25 evidence incomplete: '+name)
     covered=set()
     for patch in build['patches']:
         off=patch['file_offset'];before=bytes.fromhex(patch['before']);after=bytes.fromhex(patch['after']);new=set(range(off,off+len(after)))

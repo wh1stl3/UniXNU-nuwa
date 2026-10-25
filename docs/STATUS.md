@@ -1,27 +1,32 @@
 # STATUS
 
-更新：2026-10-25（北京时间）。主线 UniXNU / nuwa / iOS16，最高实机事实为 **PROBE17 到达 load_context 调用前（首线程切换边界）**；iOS未启动。
+更新：2026-10-25。最高实机事实：PROBE17已到load_context调用前；首线程运行/IOKit/BSD/iOS仍未实机验证。
 
-## 当前离线里程碑：PROBE17 / v24 密集路径
+## 当前候选：PROBE18 / v25
 
-按用户要求一次性布密当前可见启动路径：kernel_bootstrap、vm_mem_bootstrap、vm_page_bootstrap、pmap_startup 中79个真实调用，158个调用前/后继位置编号，新增150个补丁位置。右侧10列网格与原左侧阶段/A字段分开；蓝色=调用前，绿色=到达后继位置。共享分支可绕过原调用到达后继，绿色不能单独证明返回。完整目录和语义绑定进包报告。
+- 内核d6f101e4dfb670e7aa44cd6f51d447feb5d433e5c5883152b5a574da1a09479e，58,413,056 B，211记录补丁；新目录重建逐字节一致。
+- 镜像c89cfa52c165562693ab0868dddeeb1225995bb5f30e3899df58a888197e8dde，70,266,880 B；包reports/xnu-first-entry/entry-probe-18.json。
+- 最终ADT9846c7dadd23bf544190c45ba3db437fb83265cb180ad6c54cd3a3fedee20d93。
+- 178新编号覆盖首线程上下文、kernel_bootstrap_thread、IOKit、BSD/root关键调用；右侧网格行距24，入口黄/上下文紫红/调用蓝/后继绿，不能沿用PROBE17编号。
 
-- 内核：6110c6fba2579eca0e3dfe84bd87a03869685645e98d6fbb75faa2b2a368e09b，58,404,864 B，199记录补丁；独立目录重复构建逐字节一致。
-- 镜像：e3b8e0224a0f4f0421927780e2257fda0d892a6cecf1d153c94f3868bbd71aea，70,266,880 B。
-- 最终ADT：572c4dbb22009ceae9fc27f1c61e3e5f4208f7db377b2a52cca32a18315127b5。
-- 692逐点寄存器/指令/像素差分、42入口/MMU、18读数、5WFE、6静态walk、5ParseKernel、8稀疏阶段、2异常检查通过；最终ADT四切换场景12断言、6console策略及20绑定检查通过。
-- TCR/板值/owned window/donor/_verified不变；loadable=false/runtime_qualified=false。
+## 本轮修复
 
-6000万指令连续模型完成133,696次页释放，参数按每对象48字节推进；1.2亿指令累计240,085次，越过pmap_startup/vm_page_bootstrap后继点并到zone_bootstrap调用路径，预算结束于SHA256压缩函数，无非法访存。支持此前20M为预算不足；不证明zone完成，也不是实机停点证明。新包最终镜像回读与绑定复验通过。
+用户确认横纹肉眼存在，菜单没有，触发后随色带/HEX出现。HEX_RENDER每行写1920字节却只减1280，导致每行漂移160像素，黑色覆盖Logo。已修正1920，旧包负对照有框外写，新包精确矩形检查为0；实机消失与否待验。原始有声视频/静态帧只留本地。
 
-代码/离线证据提交75daa59，未push。证据 reports/kernel-entry-probe/2026-10-25-v24/，包 reports/xnu-first-entry/entry-probe-17.json；实现、读图、边界与续接命令见 [v24操作记录](operations/2026-10-25-v24-dense-bootstrap.md)。
+临时异常向量原来零填充在前、分支在槽末，实际入口无法可靠到报告器；修正分支在槽首，并逐个验证16入口及旧包负对照。首线程入口核对并恢复预先捕获的原生VBAR，避免探针长期拦住正常中断；错误捕获值A02C=2停住，成功1。原生中断控制器功能未验证。
+
+y224白/青校验带在load_context绘制，后续只读回。A02A=不符预期像素数，A02B=最后检查ID，A02C=原生向量交接状态；这些字段覆盖旧DT/SoC含义，必须按PROBE18布局解释。CPU读回正确不代表扫描输出正常。
+
+## 验证与模型边界
+
+740逐点差分（GPR/SIMD/栈/标志/像素）、42入口/MMU、18读数、5WFE、6静态walk、5ParseKernel、8稀疏阶段、2异常处理器、6精确矩形、10上下文/显示、5真实向量检查通过；最终同ADT切换12断言、6console及26绑定检查通过。镜像回读/内核重建一致；板值/TCR/owned window/donor/_verified不变，loadable=false/runtime_qualified=false。
+
+最终连续模型已跨过首线程、恢复原生VBAR并进入PE_init_iokit；随后OSKext::updateLoadedKextSummaries的bzero+0x1c普通STP报UC_ERR_EXCEPTION，ESR/ELR/FAR为0，无host bad_memory。BSD未到达；分配映射/权限与模型异常递送尚未区分，不改参数、补假RAM或跳过清零。模型不是实机结果。
+
+证据reports/kernel-entry-probe/2026-10-25-v25/；详见[操作记录](operations/2026-10-25-v25-first-thread-display.md)。通用AGENTS规范已按用户要求合并为第10节，提交280c198，原nuwa约定保留。
 
 ## 设备与下一步
 
-2026-10-25 17:11:45北京时间刷新PROBE17试前基线：Android完成1/A槽，三分区SHA与PROBE16恢复记录一致。用户明确本包录像/按键恢复就绪并收到启动前通知；17:12:30单次临时boot ACK成功。证据 reports/xnu-entry-probe-trial/2026-10-25-v24/{preflight,launch}.json。无flash/erase/改槽，ACK不证明内核执行。
+最近设备后验为2026-10-25 17:18:00北京时间：PROBE17恢复Android完成1/A槽/三分区SHA与试前一致；这是历史快照。PROBE18尚未启动，需本包录像/恢复就绪、刷新基线、即时通知后单次临时boot。菜单电源Enter触发，不固定180秒；观察校验带、网格0/1/2/3/4/5/6以及A02A–A02C，保存后恢复Android与三SHA。
 
-用户照片已收到并保存在本地out；独立取样/目视复核126格亮、32格未亮，ID0–60均亮：到达sched_init、task_init、thread_init、kernel_thread_create及load_context调用前。ID61未亮符合native noreturn/NOTREACHED契约，不能判故障；首线程运行未验证。17:18:00北京时间已恢复Android完成1/A槽，三分区SHA与试前一致。证据screen/trial/recovery/postcondition.json，无新候选再次启动。
-
-正式源码的DT panic补丁仍需整核配置接入与重建。当前缺pram诊断桥接保留screen/console，pram存在明确拒绝；不冒充通用动态panic缓冲支持。当前实机调用边不证明上下文切换完成、调度服务运行、驱动、root或iOS。下一批观察load_context内部、machine_load_context/第一continuation及kernel_bootstrap_thread，并先核对切换后的framebuffer映射。
-
-官网QR/AdvancedLogDxe覆盖UEFI/EBS前，nuwa尚未接入；Format2/共享SM8550迁移独立评审，保持iOS16身份，见 operations/2026-10-25-official-porting-update.md。原始音视频/截图仅本地，无push。
+正式源码整核接入、计时/中断、必要设备/存储/root和用户态仍需推进。QR/AdvancedLogDxe覆盖UEFI/EBS前，不替代内核日志。原始媒体只留本地，无push。

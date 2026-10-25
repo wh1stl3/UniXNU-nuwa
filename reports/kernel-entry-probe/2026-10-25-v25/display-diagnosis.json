@@ -1,0 +1,16 @@
+{
+  "user_observation": "横纹实机肉眼可见；菜单未按Enter时没有，触发后与早期色带/HEX一起出现，之后网格出现",
+  "raw_video_sha256": "2832fce3644cc13f6c14bb9d1640b1e3b72da2eca87f85c4568744f8099d000d",
+  "raw_video_bytes": 20849036,
+  "duration_seconds": 7.916767,
+  "video_stream": {"width":1920,"height":1080,"fps":60,"rotation_applied_to_frames":true},
+  "audio_present": true,
+  "raw_video_uploaded": false,
+  "extracted_frames_local_only": "out/trial-evidence/entry-probe-17/video-frames",
+  "sampling": {"fps":4,"frame_count":32,"scope":"approximate timing only; cannot resolve first HEX versus first grid within one 250ms interval"},
+  "visual_review": ["Menu frames through approximately 2.75s show intact logo", "Approximately 3.0s shows loader hand-off text", "Approximately 3.25s shows stage colors, HEX and partial grid with logo overwrite", "Approximately 3.5s grid is more complete and later frames are stable"],
+  "static_root_cause": {"macro":"HEX_RENDER","clear_pairs_per_row":240,"bytes_per_pair":8,"bytes_written":1920,"old_rewind_bytes":1280,"excess_bytes_per_row":640,"excess_pixels_per_row":160,"correct_rewind_bytes":1920},
+  "negative_control": "test-probe-renderer-bounds.py executes original PROBE17 renderers and observes writes outside declared rectangles; corrected candidate has zero outside writes",
+  "confidence": "Definite renderer defect and strong match to reported onset; complete disappearance of physical stripes remains unverified until corrected hardware trial",
+  "supersedes": "Exclusive photographic/PWM/moire explanations are contradicted by the user's direct observation; prior report retained as historical evidence"
+}

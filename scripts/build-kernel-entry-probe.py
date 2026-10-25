@@ -160,7 +160,7 @@ def main():
                  '_gPEClockFrequencyInfo','_arm64_eventi'):
         if name not in symbols:raise ValueError(name+' symbol missing')
         if not (0xfffffff007000000<=symbols[name]<0xfffffff008000000):raise ValueError(name+' outside the kernel text')
-    globals_=dict(g_phys_base=symbols['_gPhysBase'],g_virt_base=symbols['_gVirtBase'],
+    globals_=dict(g_native_vectors=symbols['_ExceptionVectorsBase'],dense_cell_height=24,dense_tile_height=16,g_phys_base=symbols['_gPhysBase'],g_virt_base=symbols['_gVirtBase'],
                   g_dt_initialized=symbols['_DTInitialized'],
                   g_dt_root_node=symbols['_DTRootNode'],
                   g_soc_base_phys=symbols['_gPESoCBasePhys'],
@@ -169,7 +169,7 @@ def main():
                   g_arm64_eventi=symbols['_arm64_eventi'],
                   g_text_min=next(x['va'] for x in m['segments'] if x['name']=='__TEXT'),
                   g_text_end_minus_16=next(x['va']+x['filesize']-16 for x in m['segments'] if x['name']=='__TEXT'))
-    dense_source,dense_constants,dense_sites,dense_edges=dense_generate(raw,m,backed)
+    dense_source,dense_constants,dense_sites,dense_edges=dense_generate(raw,m,backed,revision=25)
     constants.update(dense_constants)
     template=template.replace('// DENSE_BOOTSTRAP_STUBS',dense_source)
     source='\n'.join(f'.equ {k}, {v:#x}' for k,v in constants.items() if k.endswith('_word'))+'\n' \
@@ -241,8 +241,10 @@ def main():
             preserved.append(dict(name=seg['name'],sha256=sha(raw[off:off+n]),bytes=n))
     target=work/'kernel-entry-probe.macho';target.write_bytes(candidate)
     report=dict(scope='Diagnostic binary instrumentation of fixed analysis prelink; not runtime qualification',input_sha256=EXPECTED,candidate=dict(path=target.relative_to(ROOT).as_posix(),sha256=sha(candidate),bytes=len(candidate)),probe=dict(va=hex(codeva),file_offset=fileoff,code_bytes=len(code),segment_bytes=len(payload),sha256=sha(payload),symbols={k:hex(v) for k,v in hooks.items() if k.startswith(('probe_','fault_stop','exception_stop'))}),patches=patches,original_changed_bytes=len(changed),preserved_donor_segments=preserved,commands=commands,source_sha256=sha(template.encode()),loadable=False,runtime_qualified=False,device_accessed=False,probe_zero=hex(hooks['probe_zero']),probe_flags=hex(hooks['probe_flags']),screen=dict(bands=[dict(stage=1,y=256,color='blue',means='XNU __start branch and diagnostic entry executed'),dict(stage=2,y=352,color='yellow',means='Bootstrap page tables generated; before translation control setup'),dict(stage=3,y=448,color='magenta',means='Passed BCM block with invalid write suppressed; before enabling MMU'),dict(stage=4,y=736,color='cyan',means='msr sctlr_el1 executed and the following fetch was translated (V=P identity)'),dict(stage=5,y=832,color='white',means='arm_init entered at the KVA: TTBR1 fetch and translation are live')],fault=dict(y=544,color='red',hex_rows=dict(ESR_EL1=608,ELR_EL1=640,FAR_EL1=672)),post_mmu_mapping=dict(l1_slot=2,virtual='0x80000000',physical='0x80000000',size='0x40000000',descriptor='0x6000008000040d',attributes='Device-nGnRnE (MAIR index 3), AF, PXN|UXN, installed only if the slot is invalid',source='probe_mmu stub before the SCTLR write',scratch='framebuffer base and line stride copied from boot_args into probe_scratch'),limitations=['Bands do not prove arm_init returned, arm_vm_init, kext start or iOS','Cyan and white depend on the diagnostic 1 GiB device mapping installed pre-MMU; if the L1 slot were occupied nothing is drawn and no mapping is changed','Fault logger active only through physical early vector; x20 must still be boot_args','Exact video ABI and MMIO/cache effects need nuwa trial']))
-    report['probe_revision']=24
-    report['dense_bootstrap']=dict(edges=dense_edges,semantics='call means before native BL; continuation means the native post-call address executed, possibly from another predecessor; each site drawn once',panel=dict(x=832,y=256,columns=10,cell_width=48,cell_height=32,tile_width=32,tile_height=24),limitations=['Control-flow reachability, not subsystem correctness','Later kernel framebuffer writes may overwrite the panel','No event ordering or call count is inferred from the cumulative grid'])
+    report['probe_revision']=25
+    report['dense_bootstrap']=dict(edges=dense_edges,semantics='call means before native BL; continuation means the native post-call address executed, possibly from another predecessor; each site drawn once',panel=dict(x=832,y=256,columns=10,cell_width=48,cell_height=24,tile_width=32,tile_height=16),limitations=['Control-flow reachability, not subsystem correctness','Later kernel framebuffer writes may overwrite the panel','No event ordering or call count is inferred from the cumulative grid'])
+    report['native_vector_handoff']=dict(captured='probe_native_vectors',expected=hex(symbols['_ExceptionVectorsBase']),stage='_kernel_bootstrap_thread entry',status_tag='A02C',success=1,rejected=2,reason='Return normal IRQ/FIQ/synchronous handling to the pinned native XNU vectors before thread services unmask interrupts')
+    report['display_readback']=dict(x=832,y=224,width=384,height=16,split_x=1024,colors=['0xffffffff','0xff00ffff'],mismatched_pixels_tag='A02A',last_stage_id_tag='A02B',meaning='CPU readback only; zero does not prove physical scanout is correct')
     report['console_policy']={'mode':'DT missing-pram diagnostic only','source_patch':'patches/xnu-8796-candidates/native-dt-panic-region.patch','present_pram':'explicit unsupported-policy halt without BCM access','native_console_tail':hex(console+0x94),'current_panic_disabled':False}
     report['screen']={
         'stage_tiles':dict(width=96,height=32,x_formula='((logical_y-256)//512)*96',y_formula='256+(logical_y-256)%512'),

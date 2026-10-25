@@ -572,3 +572,9 @@ PROBE16/6f0907b2、内核167bd013单次临时实测，原图确认kernel_bootstr
 2026-10-25。实机照片确认ID0–60，最高边界为load_context原生调用前，而非调用返回或调度运行。源startup.c:578/890/958明确noreturn/NOTREACHED，61不亮符合设计；冷分支和共享后继不能按第一缺块推断停点。126亮/32缺块的RGB与位置、原图哈希见v24 screen.json，媒体仅本地。
 
 下一批追load_context内部及machine_load_context/continuation/kernel_bootstrap_thread，并核对PMAP_ACTIVATE_USER之后日志映射；不因观察点终止断言真实hang。细黑线来源未验证，规则网格间隙是设计。17:18:00恢复Android1/A槽/三SHA一致，证据v24 postcondition.json；不push、不重复启动。
+
+# D-045 · 修复HEX行漂移与真实异常向量入口，首线程交回原生VBAR
+
+2026-10-25，补充D-044：用户肉眼确认菜单正常、进入内核后才有横纹，排除纯拍摄解释。HEX_RENDER写1920却退1280导致160px/行漂移，精确矩形正反对照已证实并修正，实机消除待验。临时向量原先入口124字节零在前，真实16槽负对照均先异常；修正B在首指令，保留早期诊断，并在kernel_bootstrap_thread入口核对/恢复原生VBAR，防止临时向量阻断正常IRQ。此处是明确行为交接，不冒充所有系统寄存器透明。
+
+PROBE18增加178个首线程/IOKit/BSD/root编号；10上下文/显示、5真实向量、6矩形、740差分及同ADT全回归通过。最终模型已进入IOKit，随后OSKext摘要清零STP出现UC_ERR_EXCEPTION；分配映射/权限与模型异常递送待区分，不以补假RAM、跳过函数或改内核参数推进。证据v25目录；新包尚未实测，原始媒体仅本地，原17报告误封已按Git原字节恢复并校验，无push。

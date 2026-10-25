@@ -13,6 +13,7 @@ cli.add_argument('--adt',type=Path,required=True)
 cli.add_argument('--output',type=Path,required=True)
 cli.add_argument('--case',choices=['normal','occupied-probe','bad-topology','occupied-fb'],default='normal')
 cli.add_argument('--explore-bootstrap',action='store_true',help='Continue beyond confirmed entry; budget exhaustion is inconclusive')
+cli.add_argument('--explore-until',choices=['vm-return','load-context','bootstrap-thread','bsd'],default='vm-return')
 cli.add_argument('--instruction-budget',type=int,default=20000000)
 args=cli.parse_args()
 build=json.loads(args.build.read_text());raw=(R/build['candidate']['path']).read_bytes();assert B.sha(raw)==build['candidate']['sha256']
@@ -25,6 +26,8 @@ a=bytearray(4096);struct.pack_into('<HH',a,0,2,2);struct.pack_into('<4Q',a,8,bas
 u.mem_write(argsPA,bytes(a));u.mem_write(treePA,adt);u.reg_write(UC_ARM64_REG_X0,argsPA);u.reg_write(UC_ARM64_REG_X20,argsPA);u.reg_write(UC_ARM64_REG_PSTATE,0x3c5);u.cpr_write(3,6,1,1,0,0x401);u.cpr_write(3,4,1,1,0,1<<31)
 syms=m['symbols'];ps=build['probe']['symbols'];events=[];bad=[];checks=[];transition={};stop_reason=None
 watch={syms[n]:n for n in ('_arm_vm_init','_pmap_bootstrap','_kernel_bootstrap','_panic','_set_tcr','_set_mmu_ttb_alternate','_set_mmu_ttb','_PE_create_console','_initialize_screen')}
+if args.explore_bootstrap:
+ watch.update({syms[n]:n for n in ('_load_context','_machine_load_context','_thread_continue','_call_continuation','_kernel_bootstrap_thread','_PE_init_iokit','_bsd_init')})
 watch.update({0xfffffff0073be1f0:'first-table-bzero',0xfffffff0073beb60:'before-TTBR0-switch',0xfffffff0073beb74:'before-TTBR1-switch',0xfffffff0073beb7c:'after-TTBR-switches'})
 release_count=0;release_samples=[];dense_seen=[]
 dense_watch={}
@@ -92,7 +95,10 @@ def hook(u,pc,size,_):
   e=dict(site=watch[pc],pc=hex(pc),x0=hex(u.reg_read(UC_ARM64_REG_X0)),x1=hex(u.reg_read(UC_ARM64_REG_X1)),tcr=hex(u.cpr_read(3,0,2,0,2)),ttbr0=hex(u.cpr_read(3,0,2,0,0)),ttbr1=hex(u.cpr_read(3,0,2,0,1)),fb=walk(FB),probe=walk(int(build['probe']['va'],16)));events.append(e)
   if len(events)>100:u.emu_stop()
   if watch[pc]=='_kernel_bootstrap' and not args.explore_bootstrap:u.emu_stop()
- if args.explore_bootstrap and pc==syms['_kernel_bootstrap']+0x74:stop_reason='vm_mem_bootstrap-returned';u.emu_stop()
+ if args.explore_bootstrap and args.explore_until=='vm-return' and pc==syms['_kernel_bootstrap']+0x74:stop_reason='vm_mem_bootstrap-returned';u.emu_stop()
+ if args.explore_bootstrap and args.explore_until!='vm-return':
+  goal={'load-context':'_load_context','bootstrap-thread':'_kernel_bootstrap_thread','bsd':'_bsd_init'}[args.explore_until]
+  if pc==syms[goal]+4:stop_reason='entered-'+goal;u.emu_stop()
  if pc in (int(ps['exception_stop'],16),int(ps['fault_stop'],16),PA+int(ps['exception_stop'],16)-base,PA+int(ps['fault_stop'],16)-base):u.emu_stop()
 def invalid(u,access,addr,size,value,_):bad.append(dict(access=access,address=hex(addr),pc=hex(u.reg_read(UC_ARM64_REG_PC))));return False
 u.hook_add(U.UC_HOOK_CODE,hook);u.hook_add(U.UC_HOOK_MEM_INVALID,invalid)
@@ -100,9 +106,9 @@ error=None
 try:u.emu_start(PA+m['entry']-base,0,count=args.instruction_budget)
 except U.UcError as e:error=str(e)
 pc=u.reg_read(UC_ARM64_REG_PC);near=max((v,k) for k,v in syms.items() if v<=pc)
-out=dict(scope=__doc__,candidate_sha256=B.sha(raw),input=dict(argsPA=hex(argsPA),treePA=hex(treePA),treeKVA=hex(base+treePA-PA),topOfKernelData=hex(PA+used),owned_window=hex(window),adt_sha256=B.sha(adt),loader_memSizeActual_offset=1144),events=events,error=error,pc=hex(pc),nearest=near[1]+'+'+hex(pc-near[0]),bad_memory=bad,final_fb=walk(FB),final_probe=walk(int(build['probe']['va'],16)))
+out=dict(scope=__doc__,candidate_sha256=B.sha(raw),input=dict(argsPA=hex(argsPA),treePA=hex(treePA),treeKVA=hex(base+treePA-PA),topOfKernelData=hex(PA+used),owned_window=hex(window),adt_sha256=B.sha(adt),loader_memSizeActual_offset=1144),events=events,error=error,pc=hex(pc),nearest=near[1]+'+'+hex(pc-near[0]),bad_memory=bad,final_fb=walk(FB),final_probe=walk(int(build['probe']['va'],16)),native_vector_mapping=walk(syms['_ExceptionVectorsBase']))
 if args.explore_bootstrap:
- out.update(exploration=True,instruction_budget=args.instruction_budget,release_count=release_count,release_samples=release_samples,dense_seen=dense_seen,stop_reason=stop_reason,meaning='Model observation only; no completion claim from budget exhaustion')
+ out.update(final_registers=dict(gprs=[hex(u.reg_read(getattr(U.arm64_const,'UC_ARM64_REG_X'+str(i)))) for i in range(31)],sp=hex(u.reg_read(UC_ARM64_REG_SP)),vbar_el1=hex(u.cpr_read(3,0,12,0,0)),tpidr_el1=hex(u.reg_read(UC_ARM64_REG_TPIDR_EL1)),esr_el1=hex(u.cpr_read(3,0,5,2,0)),elr_el1=hex(u.cpr_read(3,0,4,0,1)),far_el1=hex(u.cpr_read(3,0,6,0,0))),exploration=True,goal=args.explore_until,instruction_budget=args.instruction_budget,release_count=release_count,release_samples=release_samples,dense_seen=dense_seen,stop_reason=stop_reason,meaning='Model observation only; no completion claim from budget exhaustion')
  args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(out,indent=2)+'\n')
  print(json.dumps(dict(exploration=True,stop=out['nearest'],error=error,release_count=release_count,dense_seen=dense_seen)));sys.exit(0)
 if args.case=='normal':

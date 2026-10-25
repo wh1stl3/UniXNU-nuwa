@@ -244,6 +244,8 @@ def main():
         UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 15','PROBE 16').replace('PMAP TRANSITION MAPPING','DT PANIC POLICY AND CONSOLE')
     if probe and revision>=24:
         UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 16','PROBE 17').replace('DT PANIC POLICY AND CONSOLE','DENSE BOOTSTRAP CALL AND RETURN')
+    if probe and revision>=25:
+        UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 17','PROBE 18').replace('DENSE BOOTSTRAP CALL AND RETURN','FIRST THREAD IOKIT BSD AND DISPLAY')
     if sha(fd) != FD_SHA or len(fd) != 3145728:
         raise ValueError('Firmware FD changed')
     if sha(shim) != SHIM_SHA:
@@ -338,6 +340,10 @@ def main():
         if revision>=24:
             report['probe_screen']['dense_bootstrap']=json.loads(args.entry_probe.read_text())['dense_bootstrap']
             report['success_requires']='PROBE17: power-key Enter starts XNU; capture original left tiles, A-fields, and right grid x832..1295/y256..759. Blue grid cell=call edge reached; green=continuation reached. Decode IDs using bound dense_bootstrap.edges. Unlit cells do not prove the kernel stopped there.'
+        if revision>=25:
+            report['probe_screen']['native_vector_handoff']=json.loads(args.entry_probe.read_text())['native_vector_handoff']
+            report['probe_screen']['display_readback']=json.loads(args.entry_probe.read_text())['display_readback']
+            report['success_requires']='PROBE18: power-key Enter; yellow entry / magenta context checkpoints / blue call / green continuation. Grid uses 24-pixel row pitch. A02A=mismatched pixels of the white/cyan band at y224, A02B=last checking stage, A02C=1 native vectors restored (2=rejected). CPU readback is not physical scanout proof.'
         report['expected_screen_outcomes'] = [report['success_requires'], 'Any later XNU text or panic requires separate attribution; no band proves MMU enabled or iOS started']
         report['not_proven'] = ['Real nuwa execution of this candidate', 'MMU activation and arm_init', 'Native timer/interrupt driver readiness', 'Full donor/native ABI or iOS boot']
     output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')

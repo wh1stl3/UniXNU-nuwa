@@ -2,7 +2,7 @@
 
 Registers, NZCV, SP, next PC and native stack effects must agree. Framebuffer,
 flag bytes and scratch below the entry SP belong to the diagnostic hook.
-TPIDR_EL1 in probe_arm_init is an explicitly intentional platform shim.
+TPIDR_EL1 in probe_arm_init is an intentional shim; revision25 first-thread entry intentionally restores native VBAR (checked separately).
 """
 import gc, argparse, hashlib, importlib.util, json, struct, sys
 from pathlib import Path
@@ -22,9 +22,13 @@ def machine(raw,report,patch,case,reference=False):
         if s['filesize']:u.mem_write(s['va'],raw[s['fileoff']:s['fileoff']+s['filesize']])
     syms=report['probe']['symbols'];flags=int(syms['probe_flags'],16)
     u.mem_write(flags,bytes([case['flag']])*4096)
+    if 'probe_native_vectors' in syms:u.mem_write(int(syms['probe_native_vectors'],16),struct.pack('<Q',m['symbols']['_ExceptionVectorsBase']))
     u.mem_write(int(syms['probe_scratch'],16),struct.pack('<QQ',FB if case['video'] else 0,ROW))
     for i,reg in enumerate(REGS):u.reg_write(reg,0x101000+i*0x100)
-    u.reg_write(UC_ARM64_REG_X0,case['x0']);u.reg_write(UC_ARM64_REG_X1,STACK+0x2000)
+    native_word=int.from_bytes(bytes.fromhex(patch['before']),'little')
+    operand_x0=STACK+0x2000 if native_word&0x0a000000==0x08000000 and ((native_word>>5)&31)==0 else case['x0']
+    u.reg_write(UC_ARM64_REG_CPACR_EL1,3<<20)
+    u.reg_write(UC_ARM64_REG_X0,operand_x0);u.reg_write(UC_ARM64_REG_X1,STACK+0x2000)
     u.mem_write(STACK+0x2000,struct.pack('<Q',STACK+0x2100));u.mem_write(STACK+0x2100,struct.pack('<Q',1234))
     if patch['reason']=='probe_panic_trap':u.reg_write(UC_ARM64_REG_X0,0xfffffff007078d37)
     u.reg_write(UC_ARM64_REG_X19,STACK+0x3000);u.reg_write(UC_ARM64_REG_LR,STACK+0x1000)
@@ -38,7 +42,7 @@ def machine(raw,report,patch,case,reference=False):
         native=case['native_pc']
         u.hook_add(U.UC_HOOK_CODE,lambda u,a,s,d:u.emu_stop() if a==native else None)
         u.emu_start(site,0,count=2000000)
-    return u,dict(registers=[u.reg_read(x) for x in REGS],sp=u.reg_read(UC_ARM64_REG_SP),nzcv=u.reg_read(UC_ARM64_REG_NZCV),pc=u.reg_read(UC_ARM64_REG_PC),bad=bad),writes
+    return u,dict(registers=[u.reg_read(x) for x in REGS],sp=u.reg_read(UC_ARM64_REG_SP),nzcv=u.reg_read(UC_ARM64_REG_NZCV),simd=[u.reg_read(getattr(sys.modules[__name__],f'UC_ARM64_REG_Q{i}')) for i in range(32)],tpidr_el1=u.reg_read(UC_ARM64_REG_TPIDR_EL1),pc=u.reg_read(UC_ARM64_REG_PC),bad=bad),writes
 
 def main():
     a=argparse.ArgumentParser(description=__doc__);a.add_argument('--build',type=Path,required=True);a.add_argument('--output',type=Path,required=True);args=a.parse_args()
@@ -52,6 +56,7 @@ def main():
             except U.UcError as e:raise AssertionError((patch['reason'],kind,'native fixture',str(e))) from e
             case['native_pc']=expected['pc']
             got,actual,writes=machine(raw,report,patch,case)
+            if patch['reason']=='probe_arm_init':expected['tpidr_el1']=actual['tpidr_el1']
             assert actual==expected,(patch['reason'],kind,expected,actual)
             # Compare native allocated stack frame and caller stack, excluding the
             # diagnostic's temporary save frame below entry SP.
