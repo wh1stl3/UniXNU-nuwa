@@ -23,3 +23,7 @@ PROBE27条件初始化真实类型4解压组件候选离线完成。22项串行�
 权威包reports/xnu-first-entry/entry-probe-27.json；镜像out/trial-boot/xnu-entry-probe-27-fscompression/boot-xnu-first-entry.img，204484608B，SHA256 06913eaf3124e2634a2c9e654f66b374ece2caf2fed790dea8b6578b0d34955d。内核bca646e7498e6dc2b2efa7fa02a248c717067313eb0958707b8e27989175cdbc，58449920B；ADT34acf64bacffe26f602d62b3bc84b8d415bac1695c3cef832e6d9248926f3b34；真实APFS d180c38d、192MiB运输、-v rd=md0保持。代码父d5878f0，本轮提交号以git log为准，无push/新CI。
 
 构建在既有连续链上新增--fscompression，verify-image4-entry-candidate.py串行22项原命令和输出见v35/execution.json。8项FS模型及缺失/删项反例强制绑定，独立重建v35/reproduce.json；build_xnu_boot_package.py --validate回读包27及旧26。新鲜授权上下文原文保留于v35/preflight，不虚构用户另答了本包问题。
+
+## 本轮启动
+
+PROBE27于2026-10-25T23:53:48.080828+08:00仅一次临时boot ACK，代码45a57de，镜像06913eaf；等待菜单电源Enter后的完整画面，重点A02A加载状态、A033实际type4注册指针、264/265及250/251。ACK不证明解压器已注册、读取已返回或exec成功；本轮Android恢复后验尚未取得，不重复启动或第二候选。已有连续推进授权和具体画面/恢复条件沿用，新鲜Android1/A槽/三SHA预检一致。取图后trial-v4-firmware.py recover --package reports/xnu-first-entry/entry-probe-27.json --evidence reports/xnu-entry-probe-trial/2026-10-25-v35/recovery.json；再record-nuwa-trial-state.py对比本轮preflight补postcondition。人工等待继续离线工作，真实故障和明确硬停/未授权设备内容更改边界保持；fastboot查询缺失变量按已定规则处理。启动证据v35/launch.json。

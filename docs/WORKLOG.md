@@ -498,3 +498,5 @@
 2026-10-25 · PROBE26实际到vn_rdwr头读取250未见251，纠正跨尝试ENOENT解释；恢复Android1/A槽/三SHA闭环，确认launchd/dyld type4压缩；用户决定冻结现有基线继续主线 · 提交号见本条所属提交 · v34 screen/recovery/postcondition、v35/exec-compression.json
 
 2026-10-25T23:50:46.940487+08:00 · PROBE27正常OSKext条件加载type4组件，22项串行验证/独立重建/新旧包回读通过，连续授权与观测恢复条件仍有效，新鲜三SHA一致 · 提交号见本条所属提交 · v35/execution.json、entry-probe-27.json、v35/preflight.json
+
+2026-10-25T23:53:48.080828+08:00 · PROBE27单次临时boot ACK，等待菜单Enter后的实际注册/读取画面及Android恢复后验 · 代码45a57de；启动记录见本条所属提交 · reports/xnu-entry-probe-trial/2026-10-25-v35/launch.json

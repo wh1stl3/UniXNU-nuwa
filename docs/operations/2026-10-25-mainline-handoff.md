@@ -1,5 +1,8 @@
 # nuwa / iOS16 主线交接（2026-10-25，PROBE19后）
 
+> PROBE27于2026-10-25T23:53:48.080828+08:00仅一次临时boot ACK，代码45a57de，镜像06913eaf；等待菜单电源Enter后的完整画面，重点A02A加载状态、A033实际type4注册指针、264/265及250/251。ACK不证明解压器已注册、读取已返回或exec成功；本轮Android恢复后验尚未取得，不重复启动或第二候选。已有连续推进授权和具体画面/恢复条件沿用，新鲜Android1/A槽/三SHA预检一致。取图后trial-v4-firmware.py recover --package reports/xnu-first-entry/entry-probe-27.json --evidence reports/xnu-entry-probe-trial/2026-10-25-v35/recovery.json；再record-nuwa-trial-state.py对比本轮preflight补postcondition。人工等待继续离线工作，真实故障和明确硬停/未授权设备内容更改边界保持；fastboot查询缺失变量按已定规则处理。启动证据v35/launch.json。
+
+
 > PROBE27条件初始化真实类型4解压组件候选离线完成。22项串行回归全部通过：1052透明性、25Image4、6pthread、15exec边界、8解压启动模型、7根输入、36绑定及既有入口/MMU/向量/显示回归。独立重建逐字节一致，新包实际FAT回读及旧包26复验通过。预检2026-10-25T23:50:46.940487+08:00确认Android1/A槽/三SHA与v34后验一致；沿用本轮连续实拍、已验证按键恢复和用户最新继续主线指令，条件未报告失效，尚未启动27。 权威包reports/xnu-first-entry/entry-probe-27.json；镜像out/trial-boot/xnu-entry-probe-27-fscompression/boot-xnu-first-entry.img，204484608B，SHA256 06913eaf3124e2634a2c9e654f66b374ece2caf2fed790dea8b6578b0d34955d。内核bca646e7498e6dc2b2efa7fa02a248c717067313eb0958707b8e27989175cdbc，58449920B；ADT34acf64bacffe26f602d62b3bc84b8d415bac1695c3cef832e6d9248926f3b34；真实APFS d180c38d、192MiB运输、-v rd=md0保持。代码父d5878f0，本轮提交号以git log为准，无push/新CI。 运行时类型4注册和读取推进尚待验证。续接trial-v4-firmware.py launch --package reports/xnu-first-entry/entry-probe-27.json --preflight reports/xnu-entry-probe-trial/2026-10-25-v35/preflight.json --evidence reports/xnu-entry-probe-trial/2026-10-25-v35/launch.json --observation-seconds 0；仅一次。取图后同驱动recover绑定包27补Android1/A槽/三SHA。当前无待恢复；观察/恢复失效先硬停，fastboot查询变量兼容规则保留。STATUS/v35记录为当前入口，下方旧实时段均历史。
 
 
