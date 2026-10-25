@@ -14,13 +14,13 @@
 
 6000万指令连续模型完成133,696次页释放，参数按每对象48字节推进；1.2亿指令累计240,085次，越过pmap_startup/vm_page_bootstrap后继点并到zone_bootstrap调用路径，预算结束于SHA256压缩函数，无非法访存。支持此前20M为预算不足；不证明zone完成，也不是实机停点证明。新包最终镜像回读与绑定复验通过。
 
-证据 reports/kernel-entry-probe/2026-10-25-v24/，包 reports/xnu-first-entry/entry-probe-17.json；实现、读图、边界与续接命令见 [v24操作记录](operations/2026-10-25-v24-dense-bootstrap.md)。当前新包未启动，设备基线需试前刷新。
+代码/离线证据提交75daa59，未push。证据 reports/kernel-entry-probe/2026-10-25-v24/，包 reports/xnu-first-entry/entry-probe-17.json；实现、读图、边界与续接命令见 [v24操作记录](operations/2026-10-25-v24-dense-bootstrap.md)。
 
 ## 设备与下一步
 
-最近设备核验仍为2026-10-25 16:44:29北京时间：PROBE16试后Android完成1/A槽，boot_a/vendor_boot_a/init_boot_a三SHA不变；这是历史记录，不代表持续查询。原证据 reports/xnu-entry-probe-trial/2026-10-25-v23/。无flash/erase/改槽。
+2026-10-25 17:11:45北京时间刷新PROBE17试前基线：Android完成1/A槽，三分区SHA与PROBE16恢复记录一致。用户明确本包录像/按键恢复就绪并收到启动前通知；17:12:30单次临时boot ACK成功。证据 reports/xnu-entry-probe-trial/2026-10-25-v24/{preflight,launch}.json。无flash/erase/改槽，ACK不证明内核执行。
 
-PROBE17实机前需要本包录像与按键恢复就绪，再刷新preflight、即时通知后单次临时boot。菜单电源键Enter触发，无固定180秒；保留整个网格与A字段。试后恢复Android完成1和三SHA核验。等待人工不阻断离线主线。
+当前等待用户菜单电源Enter后的网格/A字段画面，尚无本包新阶段实机结论；Android恢复及三SHA后验待完成。无需固定180秒。先保留素材再安排恢复，不重启第二候选；等待人工不阻断离线主线。
 
 正式源码的DT panic补丁仍需整核配置接入与重建。当前缺pram诊断桥接保留screen/console，pram存在明确拒绝；不冒充通用动态panic缓冲支持。最高实机入口不证明VM完成、调度、驱动、root或iOS。
 

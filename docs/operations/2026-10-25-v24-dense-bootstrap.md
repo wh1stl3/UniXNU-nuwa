@@ -38,7 +38,7 @@
 
 最终镜像回读核验通过，build/软件/切换/console 摘要已绑定最终目录；20项绑定反例复验通过。脚本执行命令和夹具边界汇总在 execution.json，原始 stdout/stderr 留 out/probe-v24-analysis。所有检查均为离线模型或静态检查，无设备动作。
 
-新包尚未实机启动。最高实机事实仍为 PROBE16 的 kernel_bootstrap 入口；最近设备基线仍为 2026-10-25 16:44:29 北京时间 Android 完成1/A槽/三分区 SHA 一致，不当成当前查询。实际启动需本包录像与按键恢复就绪，再刷新 preflight、即时通知后单次临时 boot；菜单电源键 Enter 触发，无固定180秒。原始音视频和截图仅本地，无 push。
+离线里程碑提交75daa59。随后用户明确PROBE17录像/按键恢复就绪；17:11:45北京时间刷新Android完成1/A槽/三SHA并与PROBE16试后记录逐项一致。即时通知后17:12:30完成单次临时boot ACK，等待用户菜单电源Enter后的画面。最高实机阶段仍为PROBE16 kernel_bootstrap入口，本包阶段、恢复与三SHA后验待补。无固定180秒，不以ACK计内核时长。原始音视频和截图仅本地，无push。
 
 复现命令按 scripts 的 --help 及本目录报告所列参数执行，所有脚本串行。典型续跑：
 
