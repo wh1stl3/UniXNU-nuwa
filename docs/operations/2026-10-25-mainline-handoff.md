@@ -1,5 +1,8 @@
 # nuwa / iOS16 主线交接（2026-10-25，PROBE19后）
 
+> PROBE24照片683cc91b已保留本地，A02D/E仍未知哨兵、A02F=0，未证明激活/签名/任务切换或用户态成功；完整格点及exec返回码尚待逐项注册核对。用户已回fastboot，固定原厂临时boot恢复完成；后验2026-10-25T14:25:22.341342+00:00确认Android1/A槽/三SHA与试前一致，无待恢复，不重复启动24。代码7269f20、启动1b4fe71；本轮证据v32b/screen、recovery、postcondition.json。下一项分析真实exec停点，不按成功阶段停止，不放行未审阅恢复服务。
+
+
 > 实时：PROBE24于2026-10-25 22:21:36 +08已仅一次临时boot ACK，代码7269f20；等待菜单电源Enter后完整画面，重点最右侧220至239及A02D/E/F/A030/A032。ACK不是内核执行证据，不重复启动，尚无本轮恢复后验。镜像eed726b2，预检Android1/A槽/三SHA一致，用户本包录像恢复就绪。取图后trial-v4-firmware.py recover --package reports/xnu-first-entry/entry-probe-24.json --evidence reports/xnu-entry-probe-trial/2026-10-25-v32b/recovery.json；随后record-nuwa-trial-state.py --before reports/xnu-entry-probe-trial/2026-10-25-v32b/preflight.json --output reports/xnu-entry-probe-trial/2026-10-25-v32b/postcondition.json。人工恢复等待继续离线分析，不启动第二候选。证据v32b/launch.json；下方启动前快照为历史。
 
 

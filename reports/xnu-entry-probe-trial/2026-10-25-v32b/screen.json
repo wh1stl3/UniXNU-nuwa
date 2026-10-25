@@ -1,0 +1,25 @@
+{
+  "scope": "Preliminary local photo transcription; exact exec return and full grid still require registered analysis",
+  "image_sha256": "683cc91b265592424d9af2eb83c144027021ce65b31cd031a1bc0e1011acb7e6",
+  "image_bytes": 10661351,
+  "image_size": [
+    3072,
+    4096
+  ],
+  "package": "reports/xnu-first-entry/entry-probe-24.json",
+  "candidate_sha256": "e8032e02eafb478837d61525c6b2c3ac8d257f65c6a8d50be40622604c6c6328",
+  "fields": {
+    "A02B": "00000000000000D9",
+    "A02D": "FFFFFFFFFFFFFFFF",
+    "A02E": "FFFFFFFFFFFFFFFF",
+    "A02F": "0000000000000000",
+    "A035": "0000000000000000"
+  },
+  "confirmed": [
+    "PROBE24 menu and native kernel display present",
+    "No observed task-switch state; activation/signature return fields remain unknown sentinels",
+    "No claim of successful userspace execution or restore-release hold"
+  ],
+  "exact_exec_return": "pending registered full-resolution analysis",
+  "raw_media_committed": false
+}

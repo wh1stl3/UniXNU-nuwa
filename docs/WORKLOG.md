@@ -482,3 +482,5 @@
 2026-10-25 22:20 +08 · PROBE24连续exec离线完成，21项串行检查/逐字节重建/FAT回读/旧包23复验通过，录像恢复确认和Android1/A槽/三SHA新鲜预检完成 · 提交号见本条所属git提交 · reports/kernel-entry-probe/2026-10-25-v32b/execution.json、reports/xnu-first-entry/entry-probe-24.json、v32b/preflight.json
 
 2026-10-25 22:21:36 +08 · PROBE24单次临时boot ACK，等待菜单Enter后最终画面及Android恢复，ACK不当内核证据 · 代码7269f20；启动记录见本条所属提交 · reports/xnu-entry-probe-trial/2026-10-25-v32b/launch.json
+
+2026-10-25 · PROBE24照片本地683cc91b，尚未证明用户态成功；原厂临时boot恢复Android1/A槽/三SHA闭环，继续exec离线分析 · 代码7269f20/启动1b4fe71；本条所属提交 · v32b/screen.json、recovery.json、postcondition.json
