@@ -478,3 +478,5 @@
 2026-10-25 21:50:51 +08 · PROBE23照片624b4cda确认bsd_init调用/返回、原生BSD收尾/首进程准备，217蓝/218品红及A02B217到首次init exec前；未执行___mac_execve/用户态。Android1/A槽/三SHA后验一致，用户确认已回Android，恢复关闭。· 本次device里程碑（父d644d7a） · v31 screen/recovery/postcondition、D-057
 
 2026-10-25 · 用户“之后都要连续推进”已写AGENTS：诊断默认记录继续，成功里程碑不主动停止，不机械逐轮后移终点，只在真实故障/明确硬停/未授权设备写入边界停；同步STATUS与两份交接。· 本次连续推进约定提交（父d644d7a） · AGENTS第4节、D-057
+
+2026-10-25 22:20 +08 · PROBE24连续exec离线完成，21项串行检查/逐字节重建/FAT回读/旧包23复验通过，录像恢复确认和Android1/A槽/三SHA新鲜预检完成 · 提交号见本条所属git提交 · reports/kernel-entry-probe/2026-10-25-v32b/execution.json、reports/xnu-first-entry/entry-probe-24.json、v32b/preflight.json

@@ -1,5 +1,8 @@
 # nuwa / iOS16 主线交接（2026-10-25，PROBE19后）
 
+> 当前PROBE24已离线完成，尚未启动；用户本轮录像/恢复就绪，22:19:42 +08预检Android1/A槽/三SHA与v31后验一致。连续真实exec/激活/签名/错误回退，只有真实故障或已提交恢复任务FINAL_WAIT释放边界才停；239品红/A02B239不等于exec成功。镜像eed726b2406e4809196aefd03ee91a166bd0fbbde3eb749cc0dc25d83fcd935e，204484608B；内核e8032e02，ADT3196efde。21项串行验证、独立逐字节重建、实际FAT回读及旧包23复验通过，代码父a785eed，无push/新CI。最近实际设备预检Android1，无待恢复，最近内核实测仍PROBE23到首次exec前。下方旧实时状态是历史快照，以STATUS及本段为准。续接：trial-v4-firmware.py launch --package reports/xnu-first-entry/entry-probe-24.json --preflight reports/xnu-entry-probe-trial/2026-10-25-v32b/preflight.json --evidence reports/xnu-entry-probe-trial/2026-10-25-v32b/launch.json --observation-seconds 0；仅一次临时boot。取图后同驱动recover绑定包24，补Android1/A槽/三SHA，不把ACK当内核证据；日志或恢复条件失效先按AGENTS §3停在启动前。详见2026-10-25-v32-native-exec.md。
+
+
 > **当前PROBE23已实机到首次init exec前，21:50:51 +08 Android1/A槽/三SHA一致，恢复关闭。** 原图624b4cda仅本地，110/111 bsd_init返回、168/169安全根调用返回、174/175 devfs、176/177 bootstrap均亮，214–216黄、217蓝/218品红，A02B217；未执行___mac_execve/Mach-O/AMFI或用户态，不将调用返回提升为Apple可信根验证。证据v31/{screen,recovery,postcondition}.json，代码91175af/启动d644d7a。用户最新“之后都要连续推进”已写AGENTS：诊断只记录继续、成功不主动停、不机械每轮后移终点；只在真实故障/明确硬停/未授权设备写入边界停，已有日志恢复条件有效直接继续。下一项真实exec/激活/签名/任务释放，原生exec_activate_image不可回退失败也可能返回0，须核对实际语义。无需重复启动23；旧未取图/待恢复是历史，STATUS与v31实测段为准。
 
 > **实时状态：PROBE23于2026-10-25 21:47:10 +08仅一次临时boot ACK，待用户菜单电源Enter后最终画面，本轮恢复后验未取得。** 代码91175af，镜像7e24257b，用户本包录像/恢复已确认，新鲜Android1/A槽/三SHA与v30后验相同。挂载点不停止，继续原生安全根/BSD/PID1准备；214–217为新点、218品红为唯一首次exec前终点、A02B217。未取画面不声称任何新阶段成功，不启动第二候选。取图后trial-v4-firmware.py recover绑定包23、输出v31/recovery.json，再对比v31/preflight补postcondition；人工恢复等待不阻断离线工作。证据v31/launch.json与[v31记录](2026-10-25-v31-continuous-bsd.md)。
