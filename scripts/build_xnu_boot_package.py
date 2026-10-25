@@ -459,7 +459,7 @@ def main():
             report['success_requires']=report['success_requires'].replace('PROBE27:', 'PROBE28:')+' Header call 250 resets row y784 x832..1295. IDs266/267=vn_rdwr_64 call/return, 268/269=MAC read, 270/271=VNOP_READ, 272/273=actual filesystem dispatch, 274/275=swap-file read. Scope requires this exact header caller, TPIDR_EL1 and native frame; return markers require their paired call. A034=last read stage; A035=actual low32 return, all ones while call is pending. These overwrite prior A034/A035 after header entry. No marker proves APFS/decmpfs body completion unless its matching return was observed. Real errors and release guard retained.'
         report['expected_screen_outcomes'] = [report['success_requires'], 'Any later XNU text or panic requires separate attribution; no band proves MMU enabled or iOS started']
         report['not_proven'] = ['Real nuwa execution of this candidate', 'MMU activation and arm_init', 'Native timer/interrupt driver readiness', 'Full donor/native ABI or iOS boot']
-    output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps({'image_bytes': len(image), 'image_sha256': sha(image),
                       'kernel_sha256': sha(kernel), 'adt_sha256': sha(adt),
                       'fat_sha256': sha(fat)}))

@@ -2,8 +2,8 @@
   "scope": "Diagnostic XNU entry probe with BCM-only MMIO suppressed and early exception display; no device action",
   "approval": "XNU-FIRST-ENTRY-ANALYSIS",
   "run_id": null,
-  "image_path": "out/trial-boot/xnu-entry-probe-28-read-boundaries/boot-xnu-first-entry.img",
-  "image_sha256": "a8cb4595ead94549006998c71b2618e205b6e5890cfcdfafeb9125d85d2712f5",
+  "image_path": "out/trial-boot/xnu-entry-probe-28-read-boundaries-lf/boot-xnu-first-entry.img",
+  "image_sha256": "7a04626e631196be116d270fa94e59b957ab537ecc1353501ff8f7b54fec7e0f",
   "image_bytes": 204484608,
   "header_version": 3,
   "xnu_included": true,
@@ -16,7 +16,7 @@
   "kernel_bytes": 58462208,
   "kernel_sha256": "54179a8775ee4d723bb0493a66679932f986d39231e9ef371d856afb07b3ea07",
   "fat_bytes": 201326592,
-  "fat_sha256": "9753d00a3f0bccef489f97c866f550ff2bfd1c982fab16456d4ccba0617f4960",
+  "fat_sha256": "4141d4edd953fd21b9070a44f213c1b0c33f9e28d27c05ce24371fda75fe69ba",
   "read_file_bytes": 15004,
   "read_file_sha256": "458232d6270643a88b465814535eead13eb88771c869e3cf6edfbe1741aa12f0",
   "success_requires": "PROBE28: mount and first exec continue; side panel IDs220..238 observe native activation/task switch/signature/cleanup. A02D activation errno, A02E signature errno, A02F task switch observed, A030 actual exec return, A032 MAC entry errno; stage-specific fields overwrite old WFE data. ID239 magenta/A02B239 means unreviewed restore task release held, not execution success. Original errors/panic/fallback retained; zero activation alone is not success. Revision33 always renders actual activation/exec/signature post-call values, retains last completed error across fallback; A02C counts init exec attempts. No new endpoint. IDs240..263=exec and dyld calls/continuations. A02E=first nonzero stage call ID per attempt, A032=its raw native return (errno or Mach loader status according to callee), A02C=attempt count. Aggregate activation/exec remain A02D/A030. No forced success or path substitution. Before real init exec, request normal Zlib OSKext lifecycle only when native type4 registration is absent; no direct kmod start or table writes. IDs264/265 observe loading; A02A=actual loader status, A033=actual native type4 registration pointer. All successful stages continue; restore userspace release guard remains. Header call 250 resets row y784 x832..1295. IDs266/267=vn_rdwr_64 call/return, 268/269=MAC read, 270/271=VNOP_READ, 272/273=actual filesystem dispatch, 274/275=swap-file read. Scope requires this exact header caller, TPIDR_EL1 and native frame; return markers require their paired call. A034=last read stage; A035=actual low32 return, all ones while call is pending. These overwrite prior A034/A035 after header entry. No marker proves APFS/decmpfs body completion unless its matching return was observed. Real errors and release guard retained.",
@@ -104,63 +104,63 @@
   "entry_probe": {
     "build": {
       "path": "reports/kernel-entry-probe/2026-10-26-v36/build.json",
-      "sha256": "b3ed87e94a2a282fde5c34860880d88ce2d269256241e2eb8fffd1ac5ac9e716"
+      "sha256": "fe7f386f8206f467266b668f1196bc3e5d23bb34f4430c827fa982c290b1c383"
     },
     "software": {
       "path": "reports/kernel-entry-probe/2026-10-26-v36/software.json",
-      "sha256": "514ffb10b2edaa79821e2a06037c39b7ff8dbc67c05c082331550209f8b43ed9"
+      "sha256": "f302195872916c0ef13e3a7dd91d6ef7a4a308ae8ec31d33bc464290ff82c6e2"
     },
     "transparency": {
       "path": "reports/kernel-entry-probe/2026-10-26-v36/transparency.json",
-      "sha256": "744fe5e09ff857a6650fe9ce167620ef18404784ebf09d59a2e9be3f401b4ae8"
+      "sha256": "f5bea34213c3775eb9285c6b0cfc02f8340f9405fb04872c561fe5957cfbc3d3"
     },
     "wfe": {
       "path": "reports/kernel-entry-probe/2026-10-26-v36/wfe.json",
-      "sha256": "2493eb5f6ed4d72db6d0c1774a6d7959f3b6c43352f3eedfd9112116eb05f4a2"
+      "sha256": "ee1439cdd99e2af9a10f4b6b13bff16679e9f83522404a78046753c3da29d91f"
     },
     "read-sites": {
       "path": "reports/kernel-entry-probe/2026-10-26-v36/read-sites.json",
-      "sha256": "90ef6760af62af5e528370e041f1059bf1bb12d838f500a5ac3a77be416ef445"
+      "sha256": "bbd3063037c58c986321273334272d857ab1db2baf1b4d68605fc5777b0b7674"
     },
     "loader": {
       "path": "reports/kernel-entry-probe/2026-10-26-v36/loader.json",
-      "sha256": "e9d36eac9586897dc8a487427babf769d2b28bc1b7e3c7ae22c2f1e3e0e15174"
+      "sha256": "7295d2cc1498ef87930c301fdc357901484b98d13917aafcef5968bfa4dd6612"
     },
     "mapping": {
       "path": "reports/kernel-entry-probe/2026-10-26-v36/mapping.json",
-      "sha256": "18cedd8f8bb00384e13a89a9ac46814c262d5324e4d32d4750b890099918f927"
+      "sha256": "19957d08b93f639e932b3b88eaaae425f76ea21c15d009c405aaa0cce3fbb289"
     },
     "transition-normal": {
       "path": "reports/kernel-entry-probe/2026-10-26-v36/transition-normal.json",
-      "sha256": "1a3aa444fbda4fd6196ff92f3cf035012aa6dc24d7f6b2f3d0febed355b46c62"
+      "sha256": "e380de8f8093941dee1874e7c5d9a18b4de2eae76cb61946fee7a8957edf5eaa"
     },
     "transition-occupied-probe": {
       "path": "reports/kernel-entry-probe/2026-10-26-v36/transition-occupied-probe.json",
-      "sha256": "94351850836cd75528dfdbff037d4d27ab240616c8288c35a5f73e349d3cd5fa"
+      "sha256": "7844625b911f369fca65431b1ca867b380afc0cbf48e201447da24e0393801eb"
     },
     "transition-bad-topology": {
       "path": "reports/kernel-entry-probe/2026-10-26-v36/transition-bad-topology.json",
-      "sha256": "ca92651d3403c197dfc058628b365ac1897329820036244ad4f89eb5dc84d101"
+      "sha256": "65f5e1aa6bbe09a33da5622ddcb2a5e166275859acd791f875484f9168a1f1a1"
     },
     "transition-occupied-fb": {
       "path": "reports/kernel-entry-probe/2026-10-26-v36/transition-occupied-fb.json",
-      "sha256": "ac0a0b8b7132a3bd20e2494ad92ad40eac7052b8755c67ce5ad047fb51acded6"
+      "sha256": "3c8fbf6c42b75a23358459db85df2a9bc5b19ac5458cdadf53ed352e513787b6"
     },
     "console-policy": {
       "path": "reports/kernel-entry-probe/2026-10-26-v36/console-policy.json",
-      "sha256": "b957683d8ac84c990962b39bb460c94e62109f820a1b8e1d46d9362b7ce73fcd"
+      "sha256": "24a6cfa95b78637b6f860f118c215dd65cb44f79aa4cf2a1b7890eca6024bed0"
     },
     "renderer-bounds": {
       "path": "reports/kernel-entry-probe/2026-10-26-v36/renderer-bounds.json",
-      "sha256": "df187fe09c9bbd41e6ff5a8f5a323b60b3794f649d7dfe3c932bf5f5ffd7af02"
+      "sha256": "a66caf4e72528a04ed40ef1a7d0fb9eaa83e9ae1dca534a628217fc08be66e2f"
     },
     "context-display": {
       "path": "reports/kernel-entry-probe/2026-10-26-v36/context-display.json",
-      "sha256": "149f3cf736e3d532d9312d7dc453cc6524704a7f28877facb441b02221bb090e"
+      "sha256": "fcb13122eb8b2591c1516a303a426c86e6dc4d561745af23836ae970ec1c68e0"
     },
     "vectors": {
       "path": "reports/kernel-entry-probe/2026-10-26-v36/vectors.json",
-      "sha256": "e0b06fcb4571b5075a053aa4358f0d82042a5df5a25614a21f47a798f471f6f2"
+      "sha256": "0c8b2c1b3a8bf08e59eb9472e447fd2c5971c3bff1cdc5dce3fb62d57b690ce0"
     },
     "image4-launch": {
       "path": "reports/kernel-entry-probe/2026-10-26-v36/image4-launch.json",
@@ -192,7 +192,7 @@
     },
     "read-boundaries": {
       "path": "reports/kernel-entry-probe/2026-10-26-v36/read-boundaries.json",
-      "sha256": "5d45d6c3abdded1fe7a6ad25d8c137044f83ff3bc34f6862a7c98844f005deb0"
+      "sha256": "aad4a4dfc77f74fcf650ddda8a354a5698265f7534c385395efde8beef559dfe"
     }
   },
   "root_ramdisk": {

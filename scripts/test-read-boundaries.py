@@ -101,6 +101,6 @@ def main():
         off=B.backed(m,m['symbols'][fn]);assert original[off:off+len(bytes.fromhex(expected))].hex()==expected
     checks=[run(raw,b,mode) for mode in MODES]
     a.output.parent.mkdir(parents=True,exist_ok=True)
-    a.output.write_text(json.dumps(dict(scope=__doc__,candidate_sha256=b['candidate']['sha256'],source_sha256=B.sha((ROOT/'scripts/read_boundary_sites.py').read_bytes()),checks=checks,device_accessed=False,real_filesystem_body_executed=False,real_mac_policy_executed=False),indent=2)+'\n')
+    a.output.write_text(json.dumps(dict(scope=__doc__,candidate_sha256=b['candidate']['sha256'],source_sha256=B.sha((ROOT/'scripts/read_boundary_sites.py').read_bytes()),checks=checks,device_accessed=False,real_filesystem_body_executed=False,real_mac_policy_executed=False),indent=2)+'\n',newline='\n')
     print(json.dumps(dict(checks=len(checks),passed=True)))
 if __name__=='__main__':main()

@@ -44,7 +44,7 @@ scripts/test-read-boundaries.py从实际250入口执行vn_rdwr、vn_rdwr_64、VN
 
 ## 固定产物
 
-- 包 reports/xnu-first-entry/entry-probe-28.json；镜像 out/trial-boot/xnu-entry-probe-28-read-boundaries/boot-xnu-first-entry.img，204484608B，SHA256 a8cb4595ead94549006998c71b2618e205b6e5890cfcdfafeb9125d85d2712f5。
+- 包 reports/xnu-first-entry/entry-probe-28.json；镜像 out/trial-boot/xnu-entry-probe-28-read-boundaries-lf/boot-xnu-first-entry.img，204484608B，SHA256 7a04626e631196be116d270fa94e59b957ab537ecc1353501ff8f7b54fec7e0f。
 - 内核58462208B，54179a8775ee4d723bb0493a66679932f986d39231e9ef371d856afb07b3ea07。
 - ADT458232d6270643a88b465814535eead13eb88771c869e3cf6edfbe1741aa12f0；测量上下文使用新nonce/内核测量，base.adt仍6270ea69…、板字段不改。
 - APFS d180c38dcc754bc079cc92a40f58a4b5fad2c2b7ce72cf5e64a117453fd7c90a，106954752B；192MiB运输及-v rd=md0保持。
@@ -55,3 +55,9 @@ scripts/test-read-boundaries.py从实际250入口执行vn_rdwr、vn_rdwr_64、VN
 本轮没有任何设备命令；实际当前设备状态未重新读取。最后确认仍是v35/postcondition.json的2026-10-26T00:19:12.450574+08:00：Android完成1/A槽/三SHA一致。不能把该历史值称本轮新鲜预检。PROBE28未启动，PROBE27不重复启动。
 
 R-014为open：尚未在本会话确认当轮菜单Enter后的可读/可拍画面及可按键恢复条件。只暂停下一设备启动，离线工作已完成。按AGENTS §3.2，不凭ACK或过去录像记录替代本轮日志门。取得条件后先用真实用户原文建立新鲜Android1/目标/槽位/三SHA预检并与v35后验对照，即时通知后才按既有范围单次临时boot。采样后沿原厂临时boot恢复，再确认Android1/同槽三SHA。新条件有效时不重复询问；不增加flash/erase/改槽或其他受审授权。具体命令见最新mainline-handoff，旧10月23/25交接只作历史参考。
+
+## Git字节绑定修正与最终重封
+
+提交42cf7d1时发现部分Windows报告为CRLF，Git存为LF，原包按CRLF计算的证据SHA不能用于干净检出。新版验证器在绑定前固定当前报告JSON为LF，构建/包/绑定与新增模型/来源报告输出显式LF。38项绑定复跑通过；23份包绑定报告的暂存Git blob SHA逐一等于包内值，再用这些Git字节替代报告运行完整验证通过，见git-evidence-binding.json。没有实际切换检出或创建第二工作树。仅修正报告传输字节，不改变内核生成控制流。
+
+首包a8cb4595…保留为重封前本地记录；最终权威包是7a04626e631196be116d270fa94e59b957ab537ecc1353501ff8f7b54fec7e0f，路径以entry-probe-28.json为准。重封与首包仅83字节、5页不同：4字节运输CRC，目录项14/15及22/23时间字段共40字节，FAT空闲簇97915中39字节。FAT表确认该尾簇为0/未分配；其工具生成来源未进一步核对，不宣称整镜像逐字节可复现。内核、ADT、FD/shim和菜单相同，APFS及全部有效载荷实际回读通过。差异与FAT几何见repack-difference.json；最终包回读命令/原始输出追加于post-build-validation.json。内核独立重建逐字节一致结论保持。不得再按a8cb首包安排设备动作。

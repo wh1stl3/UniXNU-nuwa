@@ -4,7 +4,7 @@
 
 新探针限定250文件头读取调用、TPIDR_EL1及原生栈帧，成对观察vn_rdwr_64、MAC read、VNOP_READ、真实文件系统分派和swap备用路径。实测前发现并修正：VNOP_READ后继b24也是MAC拒绝公共汇合点，必须先有同帧调用才能记录返回。266..275在主格最后一行；A034=最近读取阶段，A035=实际低32返回，未返回全1。每次header尝试清状态/画面，不跳过权限或原生错误，既有用户态释放守卫保持。详见[本轮操作记录](operations/2026-10-26-v36-read-boundaries.md)。
 
-包reports/xnu-first-entry/entry-probe-28.json；镜像204484608B，SHA256 a8cb4595ead94549006998c71b2618e205b6e5890cfcdfafeb9125d85d2712f5；内核54179a8775ee4d723bb0493a66679932f986d39231e9ef371d856afb07b3ea07（58462208B）；ADT458232d6270643a88b465814535eead13eb88771c869e3cf6edfbe1741aa12f0。APFS d180c38d…、192MiB运输、-v rd=md0、FD/shim、板内存/TCR、iOS16/8796身份与_verified均保持，loadable/runtime_qualified=false。
+包reports/xnu-first-entry/entry-probe-28.json；镜像204484608B，SHA256 7a04626e631196be116d270fa94e59b957ab537ecc1353501ff8f7b54fec7e0f；内核54179a8775ee4d723bb0493a66679932f986d39231e9ef371d856afb07b3ea07（58462208B）；ADT458232d6270643a88b465814535eead13eb88771c869e3cf6edfbe1741aa12f0。APFS d180c38d…、192MiB运输、-v rd=md0、FD/shim、板内存/TCR、iOS16/8796身份与_verified均保持，loadable/runtime_qualified=false。
 
 PROBE27实机基线仍为264黄/265绿、A033 FFFFFFF005F48EF8、250亮/251暗；已有类型4表项不证明解压执行或Mach-O/dyld成功。首要调查读取/APFS/decmpfs内部等待，次要MAC读取检查；用PROBE28成对边界最小证伪，不虚构具体锁、IRQ或永久卡死。
 
@@ -13,3 +13,5 @@ R-014 open：下一次临时启动前，缺本会话当轮可读/可拍画面及
 基线父a78e759，当前里程碑提交见本文件所属Git提交。未push、未建新CI；远端状态未刷新。初始28项历史未跟踪内容保留，不批量提交。源码只读固定1b191cb58250d0705d8a51287127505aa4bc0789，无上游迁移、原始媒体上传或其他项目改动。
 
 唯一续接入口：[2026-10-26主线交接](operations/2026-10-26-mainline-handoff.md)。
+
+后续证据字节修正已完成：JSON固定LF，38绑定复跑及23份Git blob证据校验通过；最终包7a04626e…已回读。首包a8cb…为重封前历史，不再使用。重封仅83字节运输CRC/目录时间/空闲簇差异，内核与有效载荷相同；不声称整镜像逐字节重建。

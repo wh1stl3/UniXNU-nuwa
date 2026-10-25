@@ -504,3 +504,5 @@
 2026-10-26T00:19:12.450574+08:00 · PROBE27核图264黄/265绿、A033末尾按用户纠正为EF8，类型4表项已有但头读取仍250亮251暗；Android1/A槽/三SHA恢复闭环；按用户要求交接并提交，不试新包 · 代码45a57de/启动ab489f4，收尾提交见本条所属提交 · v35 screen/recovery/postcondition、docs/operations/2026-10-26-mainline-handoff.md
 
 2026-10-26T01:03:12.006996+08:00 · PROBE28限定原生header/线程/栈帧并修正MAC拒绝公共后继假返回；24项串行检查、独立逐字节重建、新28/旧27回读通过，尚未设备动作，R-014待当轮画面/恢复条件 · 父a78e759，本里程碑见本条所属提交 · reports/kernel-entry-probe/2026-10-26-v36/、reports/xnu-first-entry/entry-probe-28.json、docs/operations/2026-10-26-v36-read-boundaries.md
+
+2026-10-26T01:12:52.877158+08:00 · 固定v36 JSON为Git LF字节，38绑定与23份Git blob验证通过；最终28包7a04626e取代首包a8cb，有效载荷相同，重封差异83字节已固定 · 父42cf7d1，本修正见本条所属提交 · v36/git-evidence-binding.json、repack-difference.json、post-build-validation.json

@@ -84,6 +84,6 @@ def main():
     try:validate(altered,sha)
     except ValueError:checks.append(dict(name='software digest mutation rejected',passed=True))
     else:raise AssertionError('digest')
-    a.output.write_text(json.dumps(dict(candidate_sha256=sha,checks=checks),indent=2)+'\n')
+    a.output.write_text(json.dumps(dict(candidate_sha256=sha,checks=checks),indent=2)+'\n',newline='\n')
     print(json.dumps(dict(checks=len(checks),passed=True)))
 if __name__=='__main__':main()

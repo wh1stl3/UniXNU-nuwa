@@ -24,7 +24,7 @@ PROBE27原图实测仍为264黄/265绿、A02A0、A033 FFFFFFF005F48EF8（用户�
 
 ## 固定产物与边界
 
-权威包reports/xnu-first-entry/entry-probe-28.json；镜像out/trial-boot/xnu-entry-probe-28-read-boundaries/boot-xnu-first-entry.img，204484608B，SHA256 a8cb4595ead94549006998c71b2618e205b6e5890cfcdfafeb9125d85d2712f5。内核54179a8775ee4d723bb0493a66679932f986d39231e9ef371d856afb07b3ea07（58462208B）；ADT458232d6270643a88b465814535eead13eb88771c869e3cf6edfbe1741aa12f0。APFS d180c38dcc754bc079cc92a40f58a4b5fad2c2b7ce72cf5e64a117453fd7c90a（106954752B），192MiB运输，-v rd=md0。
+权威包reports/xnu-first-entry/entry-probe-28.json；镜像out/trial-boot/xnu-entry-probe-28-read-boundaries-lf/boot-xnu-first-entry.img，204484608B，SHA256 7a04626e631196be116d270fa94e59b957ab537ecc1353501ff8f7b54fec7e0f。内核54179a8775ee4d723bb0493a66679932f986d39231e9ef371d856afb07b3ea07（58462208B）；ADT458232d6270643a88b465814535eead13eb88771c869e3cf6edfbe1741aa12f0。APFS d180c38dcc754bc079cc92a40f58a4b5fad2c2b7ce72cf5e64a117453fd7c90a（106954752B），192MiB运输，-v rd=md0。
 
 独立重建reproduce.json。build-unpaired.json对应失败负对照dfa16e70…，不得启动或误用。PROBE27旧包06913eaf3124e2634a2c9e654f66b374ece2caf2fed790dea8b6578b0d34955d只作回归，不重复启动。
 
@@ -58,3 +58,7 @@ Get-Content -Encoding UTF8 docs/STATUS.md
 不得以validate通过自动启动。R-014条件确认后，record-nuwa-trial-state.py --package reports/xnu-first-entry/entry-probe-28.json --capture-confirmation必须采用用户本轮真实原文，输出新的reports/xnu-entry-probe-trial/2026-10-26-v36/preflight.json，并与v35/postcondition.json核对。不得伪造确认。再由trial-v4-firmware.py launch --package reports/xnu-first-entry/entry-probe-28.json --preflight上述新文件 --evidence该目录launch.json执行单次临时boot；菜单就绪后由电源Enter触发，不固定等180秒、不以ACK为内核计时起点。拍具体画面并只本地保留原始媒体。
 
 恢复沿已授权trial-v4-firmware.py recover --package reports/xnu-first-entry/entry-probe-28.json --evidence该目录recovery.json，结束后record-nuwa-trial-state.py --output该目录postcondition.json --before该目录preflight.json确认Android1/同槽/三SHA。人工恢复等待记录PENDING-HUMAN并继续离线修复，不在恢复/日志门缺失时启动第二候选。fastboot缺变量保留失败、重进一次再试，不伪造缺失值。上述设备流程尚未执行，不把本段命令当设备授权或实测证据。
+
+## 最终文字证据与包版本修正
+
+在42cf7d1之后固定JSON证据为LF，38绑定复跑、23份Git暂存blob哈希及完整绑定验证通过（git-evidence-binding.json）。权威entry-probe-28现绑定这些Git字节，最终镜像7a04626e…，首包a8cb…已退为历史且不得启动。两包差83字节，均在运输CRC/目录时间字段/未分配FAT尾簇；有效载荷相同并已回读，内核独立重建逐字节相同。空闲簇字节生成来源未进一步核对，不宣称整个运输镜像可逐字节重建。详细差异repack-difference.json，最终包回读追加post-build-validation.json。R-014仍open，没有设备动作或新鲜预检。

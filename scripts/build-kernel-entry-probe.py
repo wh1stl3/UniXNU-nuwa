@@ -344,5 +344,5 @@ def main():
         'records':{str(y):dict(tag=f'{0xa000+y//32:04X}',y=224+28*((y-1088)//32)) for y in (1088,1152,1184,1216,1248,1280,1312,1344,1376,1408,1440,1472,1504,1536,1568,1600,1632,1664)},
         'max_written_row':799,
         'limitations':['No output is guaranteed after pmap removes the diagnostic framebuffer mapping','TPIDR_EL1 shim is an intentional behaviour change, distinct from transparent hooks','Stage tiles and field IDs must be read using this revision layout']}
-    output.parent.mkdir(parents=True,exist_ok=True);output.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8');print(json.dumps(report['candidate']))
+    output.parent.mkdir(parents=True,exist_ok=True);output.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n');print(json.dumps(report['candidate']))
 if __name__=='__main__':main()

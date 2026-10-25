@@ -696,3 +696,7 @@ manifest-properties节点已存在但无BNCH，boot-manifest-hash缺失。固定
 # D-066 · 读取边界必须限定header、线程、栈帧并成对观察公共后继
 
 2026-10-26。固定源vfs_vnops.c:994/1006与原生指令显示MAC拒绝分支0xfffffff007466ad0直达0xfffffff007466b24，后者也是VNOP_READ后继，故仅地址到达不能证明调用返回。旧候选在MAC拒绝模型下错误亮271，最终以同帧调用配对修正；限定250 caller LR、实际TPIDR_EL1/FP，每次header重置状态与画面，不改权限/错误。24项串行检查含1092透明、11真实包装器模型、38绑定，独立重建与新旧包回读通过。PROBE28镜像a8cb4595…尚未实机；MAC/文件系统主体仍未验证，R-014仅暂停待当轮日志/恢复条件的设备动作。证据v36/read-boundary-source、read-boundaries、execution、post-build-validation及本轮操作记录。
+
+# D-067 · Git存储字节与诊断证据哈希保持LF一致
+
+2026-10-26。Windows默认JSON CRLF被Git规范为LF，按前者计算的包内报告SHA会在检出后失配。v36绑定前固定LF，相关生产器显式LF；38绑定复跑与23份Git blob替代验证通过。最终PROBE28包7a04626e…取代首包a8cb…；内核54179a87…与有效载荷不变，重封83字节CRC/目录时间/空闲簇差异已逐项记录。不将内核逐字节重建扩写为整个FAT运输镜像可复现。详见git-evidence-binding、repack-difference、post-build-validation及本轮操作记录；R-014当轮画面/恢复门仍保持。

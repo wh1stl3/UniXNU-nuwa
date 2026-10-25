@@ -74,6 +74,22 @@
       "elapsed_seconds": 0.24188020001747645,
       "stdout": "",
       "stderr": "<instantiation>:1:11: error: immediate must be an integer in range [0, 65535].\nmovz x11, #((read_header_return) & 0xffff)\n          ^\n/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-36-read-boundaries/probe.S:1076:5: note: while in macro instantiation\n    LOADABS x11, read_header_return\n    ^\n<instantiation>:2:15: error: immediate must be an integer in range [0, 65535].\n    movk x11, #(((read_header_return) >> 16) & 0xffff), lsl #16\n              ^\n/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-36-read-boundaries/probe.S:1076:5: note: while in macro instantiation\n    LOADABS x11, read_header_return\n    ^\n<instantiation>:3:15: error: immediate must be an integer in range [0, 65535].\n    movk x11, #(((read_header_return) >> 32) & 0xffff), lsl #32\n              ^\n/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-36-read-boundaries/probe.S:1076:5: note: while in macro instantiation\n    LOADABS x11, read_header_return\n    ^\n<instantiation>:4:15: error: immediate must be an integer in range [0, 65535].\n    movk x11, #(((read_header_return) >> 48) & 0xffff), lsl #48\n              ^\n/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-36-read-boundaries/probe.S:1076:5: note: while in macro instantiation\n    LOADABS x11, read_header_return\n    ^\n<instantiation>:1:11: error: immediate must be an integer in range [0, 65535].\nmovz x11, #((read_header_return) & 0xffff)\n          ^\n/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-36-read-boundaries/probe.S:1109:5: note: while in macro instantiation\n    LOADABS x11, read_header_return\n    ^\n<instantiation>:2:15: error: immediate must be an integer in range [0, 65535].\n    movk x11, #(((read_header_return) >> 16) & 0xffff), lsl #16\n              ^\n/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-36-read-boundaries/probe.S:1109:5: note: while in macro instantiation\n    LOADABS x11, read_header_return\n    ^\n<instantiation>:3:15: error: immediate must be an integer in range [0, 65535].\n    movk x11, #(((read_header_return) >> 32) & 0xffff), lsl #32\n              ^\n/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-36-read-boundaries/probe.S:1109:5: note: while in macro instantiation\n    LOADABS x11, read_header_return\n    ^\n<instantiation>:4:15: error: immediate must be an integer in range [0, 65535].\n    movk x11, #(((read_header_return) >> 48) & 0xffff), lsl #48\n              ^\n/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-36-read-boundaries/probe.S:1109:5: note: while in macro instantiation\n    LOADABS x11, read_header_return\n    ^\n"
+    },
+    {
+      "name": "lf-package-readback",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "scripts/build_xnu_boot_package.py",
+        "--validate",
+        "--output",
+        "reports/xnu-first-entry/entry-probe-28.json"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "passed": true,
+      "stdout": "{\"image_sha256\": \"7a04626e631196be116d270fa94e59b957ab537ecc1353501ff8f7b54fec7e0f\", \"fat_sha256\": \"4141d4edd953fd21b9070a44f213c1b0c33f9e28d27c05ce24371fda75fe69ba\", \"kernel_sha256\": \"54179a8775ee4d723bb0493a66679932f986d39231e9ef371d856afb07b3ea07\", \"adt_sha256\": \"458232d6270643a88b465814535eead13eb88771c869e3cf6edfbe1741aa12f0\"}\n",
+      "stderr": ""
     }
   ]
 }

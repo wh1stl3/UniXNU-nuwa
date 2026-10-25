@@ -57,6 +57,12 @@ def main():
     records = []
     evidence = build.with_name('execution.json')
     for name, script, options in jobs:
+        if name=='binding' and report.get('probe_revision',0)>=36:
+            # Git stores text evidence as LF. Bind those exact bytes so a clean
+            # checkout retains the same hashes as the producing Windows tree.
+            for evidence_path in build.parent.glob('*.json'):
+                payload=evidence_path.read_bytes()
+                evidence_path.write_bytes(payload.replace(b'\r\n',b'\n'))
         command = [sys.executable, '-B', str(ROOT / 'scripts' / script), '--build', str(build),
                    '--output', str(build.with_name(name + '.json')), *options]
         print(json.dumps({'starting': name}), flush=True)
