@@ -31,3 +31,5 @@ kern_exec.c源文件SHAd6c064ee0c954db395d865e3265f6aa319e0908bb7e243e48bfe00429
 离线完成：21项串行任务通过，872透明差分/25Image4/6pthread/3唯一终点/7根输入/34绑定及入口/MMU/向量/显示回归。原挂载后hook重新加入透明比较，独立内核逐字节一致；实际FAT四文件回读/测量通过，旧包22复验通过。包reports/xnu-first-entry/entry-probe-23.json；镜像204,484,608B，SHA7e24257b5dede7e8a0d6089c6c0e458b8e54d0f5a904fe91371acb74e41c44a0，FAT SHA6e8f367f5206bd8a1900b294c83da8f928d76441de93ce0e5a7400a0eba32407。
 
 本包用户已确认“PROBE23 录像与恢复仍就绪，继续”，新鲜preflight确认Android1/A槽/三SHA与v30后验一致，准备单次临时boot，尚无实机结果。后续恢复命令为trial-v4-firmware.py recover绑定包23、输出v31/recovery.json，后验以v31/preflight为基线。
+
+2026-10-25 21:47:10 +08：即时通知后仅一次临时boot镜像7e24257b，199692KB传输/Booting ACK。代码91175af，等待菜单电源Enter后最终画面；本轮恢复后验尚未取得，不启动第二候选。ACK不提升为安全根/BSD/PID1成功；启动证据v31/launch.json。

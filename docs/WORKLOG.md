@@ -472,3 +472,5 @@
 2026-10-25 21:30:50 +08 · PROBE22照片fc1c4ade确认真实RAMDisk/md0路径及原生根挂载返回0、A0350/212绿，预定诊断停止，未进用户态；固定原厂boot恢复后Android1/A槽/三SHA一致。用户要求减少阶段停止、一次推进更多，下一候选保留标记并连续推进至首次用户态exec前。· 本次device里程碑（父b6a80c1） · v30 screen/recovery/postcondition、D-055
 
 2026-10-25 · PROBE23取消挂载停止、连续执行原生BSD至首次init exec前；21项串行任务（872差分/25Image4/6pthread/3终点/7根输入/34绑定）、独立重建/实际四文件回读/旧包22复验通过。镜像7e24257b、内核2e1f5d4a、ADT531c915c；用户本包录像恢复就绪，新鲜Android1/A槽/三SHA一致，准备一次临时boot。· 本次kernel里程碑（父7057d1d） · v31 execution/root-stop/root-inputs/root-launch、包23、D-056
+
+2026-10-25 21:47:10 +08 · PROBE23按用户要求取消挂载阶段停止，新鲜预检/本包录像恢复确认与即时通知后单次临时boot ACK，待最终画面及恢复后验，不将ACK当作新阶段证据。· 91175af后设备记录 · reports/xnu-entry-probe-trial/2026-10-25-v31/launch.json
