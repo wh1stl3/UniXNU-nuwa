@@ -22,6 +22,6 @@ v26切片把x19强制设成pmap runtime，不能证明真实初始化只补字�
 
 固定donor有iOS16.7的com.apple.kec.pthread，原30组件selection遗漏它。新增11项离线审计只加入pthread后31组件绑定闭合，指令原字节保留；真实kmod入口通过原生pthread_kext_register注册实际函数表，原生wrapper分派到donor初始化入口，重复注册仍拒绝。分析产物52227410位于out/pthread-prelink-v28-analysis，不是试包20，未执行初始化函数体/真实OSKext生命周期，不可直接部署。
 
-下一步将该组件通过真正OSKext启动/注册路径接入BSD前并验证锁/hash/thread-call/sysctl依赖，不能跳过pthread_init或填假表。集成源码libpthread构建脚本是Darwin23/iOS17参考，不直接代替iOS16 ABI。完整因果与重放见[v27记录](operations/2026-10-25-v27-image4-to-bsd.md)及[当前交接](operations/2026-10-25-mainline-handoff.md)。
+PROBE20/revision28已加入31组件并在BSD前调用原生OSKextLoadKextWithIdentifier；内核d34a5de9，独立启动输入ADT635d4f4d。19项串行任务全部通过：740差分、25完整Image4、6pthread、31绑定及入口/MMU/向量/显示回归；独立内核重建一致，实际FAT回读和输入重新测量通过。新镜像365216ae/70,266,880B，权威包reports/xnu-first-entry/entry-probe-20.json。尚未实测，等待PROBE20当轮录像/恢复条件；最近设备证据仍20:03:58 Android1/A槽/三SHA一致。不能把模型API边界当成完整生命周期。保留原生pthread_init和NULL表panic；锁/hash/thread-call/sysctl实际初始化仍需确认。命令与SHA见[v28记录](operations/2026-10-25-v28-pthread-to-root.md)。前轮因果见[v27记录](operations/2026-10-25-v27-image4-to-bsd.md)及[当前交接](operations/2026-10-25-mainline-handoff.md)。
 
 实测reports/xnu-entry-probe-trial/2026-10-25-v27/；离线reports/kernel-entry-probe/2026-10-25-v27/。板值、TCR、内存/身份、只读资料库、loadable=false/runtime_qualified=false保持。无flash/erase/改槽，无push、新CI或原始媒体上传。

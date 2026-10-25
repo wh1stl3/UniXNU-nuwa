@@ -610,3 +610,9 @@ manifest-properties节点已存在但无BNCH，boot-manifest-hash缺失。固定
 2026-10-25。照片5bad2ca9证实MAC后继89和BSD入口6亮，A02A=0/A02B=6/A02C=1；新panic为pthread kernel extension not loaded (function table is NULL)，匹配原生pthread_shims.c:318。root入口7/8未亮，root挂载/用户态尚未进入。第一次恢复监测超时保留失败，随后20:03:58北京时间Android1/A槽/三SHA与试前一致，用户也确认回Android；无待恢复任务，无flash/erase/改槽或第二候选。
 
 固定donor中iOS16.7 com.apple.kec.pthread存在但原30组件selection漏选。只加入该组件的31组件离线分析闭合；11项检查执行真实kmod入口和原生pthread_kext_register，返回真实callbacks，原生wrapper到实际donor初始化入口，重复注册仍拒绝。该分析不等于OSKext正常生命周期或pthread初始化完成；下一步经真正OSKext启动/注册接入有效选择，不跳过NULL检查、不填假表，不将Darwin23/iOS17参考组件直接当作iOS16 ABI。证据v27 pthread-registration.json与实测目录。
+
+# D-050 · 真实pthread选择与正常OSKext加载请求
+
+2026-10-25。采用固定iOS16.7 donor中的com.apple.kec.pthread，31组件闭合prelink为52227410。新旧Mach-O段布局相同，以显式前像/后像范围叠加到原1aeebf13基线，保留旧包复核能力。BSD入口若原生表已注册则不重复请求，否则调用原生单参数OSKextLoadKextWithIdentifier；默认startOpt为ExcludeNone，由正常OSKext管理依赖、启动和错误。出货代码不直接调kmod，不填假表，不略过pthread_init或原生NULL断言。helper保存GPR、SIMD、NZCV与FP状态。
+
+定向6例在显式OSKext API模型边界执行真实donor注册，覆盖已注册/成功/失败与有无视频，并比较原生首指令机器状态；失败仍到原生pthread_init panic，成功只证明分派到实际初始化入口。完整生命周期与初始化体明确未在模型执行，不以组件闭合代替锁/hash/thread-call/sysctl运行证据。PROBE20/revision28内核d34a5de9，独立nonce/manifest与ADT635d4f4d；Image4原生完整入口25项回归通过。实机门和完整结果见operations/2026-10-25-v28-pthread-to-root.md，不将候选当作已越过pthread/root。

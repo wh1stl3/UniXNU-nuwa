@@ -97,6 +97,8 @@ def generate(raw,m,backed,revision=24):
             if site==m['symbols']['_load_context']:source += ['    DISPLAY_INIT',f'    DISPLAY_CHECK {markers[0]["id"]}']
             if site in (m['symbols']['_machine_load_context'],m['symbols']['_kernel_bootstrap_thread'],m['symbols']['_bsd_init']):source += [f'    DISPLAY_CHECK {markers[0]["id"]}']
             if site==m['symbols']['_kernel_bootstrap_thread']:source += ['    RESTORE_NATIVE_VECTORS']
+        if revision>=28 and site==m['symbols']['_bsd_init']:
+            source += ['    stp x29, x30, [sp, #-16]!', '    bl pthread_load_before_bsd', '    ldp x29, x30, [sp], #16']
         source += ['    PROBE_RESTORE',f'.global {label}_replay',label+'_replay:',code]
         hooks.append((site,label))
     return '\n'.join(source)+'\n',constants,hooks,edges

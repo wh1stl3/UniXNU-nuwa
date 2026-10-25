@@ -38,12 +38,19 @@ def linux(p):return '/mnt/d/'+p.resolve().as_posix().split(':/',1)[1]
 
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--work',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--image4-launch',action='store_true',help='Integrate pinned AMNM/CHMH provider compatibility; requires measured launch ADT');a=p.parse_args()
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--work',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--image4-launch',action='store_true',help='Integrate pinned AMNM/CHMH provider compatibility; requires measured launch ADT');p.add_argument('--pthread',action='store_true',help='Add audited iOS16 pthread and genuine OSKext load request before BSD');a=p.parse_args()
+    if a.pthread and not a.image4_launch:raise ValueError('pthread continuation requires measured Image4 launch inputs')
     work=a.work.resolve();output=a.output.resolve()
     if not work.is_relative_to(ROOT/'out') or work.exists() or not output.is_relative_to(ROOT/'reports') or output.exists():raise ValueError('Fresh out and reports required')
     raw=INPUT.read_bytes()
     if sha(raw)!=EXPECTED:raise ValueError('Input kernel changed')
     m=macho(raw);symbols=m['symbols'];entry=m['entry'];first=symbols['_start_first_cpu'];low=symbols['_LowExceptionVectorBase']
+    prelink=raw;overlay=[]
+    if a.pthread:
+        from pthread_prelink_overlay import load as load_pthread,ranges as pthread_ranges
+        prelink=load_pthread(raw)
+        if macho(prelink)['segments']!=m['segments']:raise ValueError('pthread overlay changed the approved segment layout')
+        overlay=pthread_ranges(raw,prelink)
     if raw[backed(m,entry):backed(m,entry)+4]!=branch(entry,first):raise ValueError('Entry branch changed')
     # These exact instruction sites are in the fixed CI40015845083 native text.
     tables=first+0x22c;mmu=first+0x308;bcm=first+0x2d0
@@ -78,6 +85,10 @@ def main():
         marker='.balign 4096\n.global probe_data'
         if template.count(marker)!=1:raise ValueError('Probe code/data insertion marker changed')
         template=template.replace(marker,'\n'.join(fragments)+'\n'+marker)
+    if a.pthread:
+        pthread_source=(ROOT/'patches/xnu-8796-candidates/pthread-oskext-start.S').read_text()
+        template=template.replace('.balign 4096\n.global probe_data',pthread_source+'\n.balign 4096\n.global probe_data')
+        template=template.replace('.balign 4096\n.global probe_zero','.global probe_pthread_load_status\nprobe_pthread_load_status:\n    .quad 0, 0, 0\n.balign 4096\n.global probe_zero')
     for name in ('_current_percpu_base','_arm_vm_init','_pmap_bootstrap','_kernel_bootstrap',
                  '_panic','_panic_trap_to_debugger','_panic_with_options','_early_random',
                  '_SecureDTLookupEntry','_pe_arm_get_soc_base_phys','_ml_parse_cpu_topology',
@@ -184,7 +195,9 @@ def main():
                   g_arm64_eventi=symbols['_arm64_eventi'],
                   g_text_min=next(x['va'] for x in m['segments'] if x['name']=='__TEXT'),
                   g_text_end_minus_16=next(x['va']+x['filesize']-16 for x in m['segments'] if x['name']=='__TEXT'))
-    dense_source,dense_constants,dense_sites,dense_edges=dense_generate(raw,m,backed,revision=25)
+    if a.pthread:
+        globals_.update(native_pthread_functions=symbols['_pthread_functions'],native_kext_load=symbols['_OSKextLoadKextWithIdentifier'])
+    dense_source,dense_constants,dense_sites,dense_edges=dense_generate(raw,m,backed,revision=28 if a.pthread else 25)
     constants.update(dense_constants)
     template=template.replace('// DENSE_BOOTSTRAP_STUBS',dense_source)
     source='\n'.join(f'.equ {k}, {v:#x}' for k,v in constants.items() if k.endswith('_word'))+'\n' \
@@ -214,6 +227,7 @@ def main():
     def patch(off,new,reason,va=None):
         patches.append(dict(file_offset=off,va=hex(va) if va else None,before=bytes(candidate[off:off+len(new)]).hex(),after=new.hex(),reason=reason))
         candidate[off:off+len(new)]=new
+    for index,(off,new) in enumerate(overlay):patch(off,new,'pthread_prelink_range_'+str(index))
     patch(16,struct.pack('<II',m['ncmds']+1,m['cmdbytes']+72),'Add one bounded RX diagnostic segment')
     patch(cursor,command,'Use verified zero load-command padding')
     sites=((console+0x10,'probe_console_policy'),(symbols['_initialize_screen'],'probe_console_init'),(symbols['_arm_vm_init']+0xb4c,'probe_ttbr1'),(symbols['_arm_vm_init']+0xb60,'probe_ttbr0'),(entry,'probe_entry'),(tables,'probe_tables'),(mmu,'probe_mmu'),(isb_site,'probe_mmu_on'),
@@ -252,20 +266,23 @@ def main():
     for seg in m['segments']:
         if seg['name'].startswith(('__PRELINK','__PLK')) and seg['filesize']:
             off=seg['fileoff'];n=seg['filesize']
-            expected_segment=bytearray(raw[off:off+n])
+            expected_segment=bytearray(prelink[off:off+n])
             for va,label in compat_sites:
                 at=backed(m,va)
                 if off<=at and at+4<=off+n:expected_segment[at-off:at-off+4]=branch(va,hooks[label])
             if bytes(expected_segment)!=candidate[off:off+n]:raise ValueError('Donor changed outside explicit Image4 provider hooks')
-            if raw[off:off+n]==candidate[off:off+n]:
-                preserved.append(dict(name=seg['name'],sha256=sha(raw[off:off+n]),bytes=n))
-            else:compat_segments.append(dict(name=seg['name'],before_sha256=sha(raw[off:off+n]),after_sha256=sha(candidate[off:off+n]),bytes=n))
+            if prelink[off:off+n]==candidate[off:off+n]:
+                preserved.append(dict(name=seg['name'],sha256=sha(prelink[off:off+n]),bytes=n))
+            else:compat_segments.append(dict(name=seg['name'],before_sha256=sha(prelink[off:off+n]),after_sha256=sha(candidate[off:off+n]),bytes=n))
     target=work/'kernel-entry-probe.macho';target.write_bytes(candidate)
     report=dict(scope='Diagnostic binary instrumentation of fixed analysis prelink; not runtime qualification',input_sha256=EXPECTED,candidate=dict(path=target.relative_to(ROOT).as_posix(),sha256=sha(candidate),bytes=len(candidate)),probe=dict(va=hex(codeva),file_offset=fileoff,code_bytes=len(code),segment_bytes=len(payload),sha256=sha(payload),symbols={k:hex(v) for k,v in hooks.items() if k.startswith(('probe_','fault_stop','exception_stop'))}),patches=patches,original_changed_bytes=len(changed),preserved_donor_segments=preserved,commands=commands,source_sha256=sha(template.encode()),loadable=False,runtime_qualified=False,device_accessed=False,probe_zero=hex(hooks['probe_zero']),probe_flags=hex(hooks['probe_flags']),screen=dict(bands=[dict(stage=1,y=256,color='blue',means='XNU __start branch and diagnostic entry executed'),dict(stage=2,y=352,color='yellow',means='Bootstrap page tables generated; before translation control setup'),dict(stage=3,y=448,color='magenta',means='Passed BCM block with invalid write suppressed; before enabling MMU'),dict(stage=4,y=736,color='cyan',means='msr sctlr_el1 executed and the following fetch was translated (V=P identity)'),dict(stage=5,y=832,color='white',means='arm_init entered at the KVA: TTBR1 fetch and translation are live')],fault=dict(y=544,color='red',hex_rows=dict(ESR_EL1=608,ELR_EL1=640,FAR_EL1=672)),post_mmu_mapping=dict(l1_slot=2,virtual='0x80000000',physical='0x80000000',size='0x40000000',descriptor='0x6000008000040d',attributes='Device-nGnRnE (MAIR index 3), AF, PXN|UXN, installed only if the slot is invalid',source='probe_mmu stub before the SCTLR write',scratch='framebuffer base and line stride copied from boot_args into probe_scratch'),limitations=['Bands do not prove arm_init returned, arm_vm_init, kext start or iOS','Cyan and white depend on the diagnostic 1 GiB device mapping installed pre-MMU; if the L1 slot were occupied nothing is drawn and no mapping is changed','Fault logger active only through physical early vector; x20 must still be boot_args','Exact video ABI and MMIO/cache effects need nuwa trial']))
-    report['probe_revision']=27 if a.image4_launch else 25
+    report['probe_revision']=28 if a.pthread else 27 if a.image4_launch else 25
     if a.image4_launch:
         report['image4_compatibility']=dict(scope='Only AMNM/CHMH provider routing; no authentication result or policy value patched',source_sha256=compat_sources,changed_segments=compat_segments,hooks=[dict(va=hex(va),symbol=label,target=hex(hooks[label])) for va,label in compat_sites],requires_measured_launch_context=True)
         report['probe']['symbols'].update({label:hex(hooks[label]) for _,label in compat_sites})
+    if a.pthread:
+        report['pthread_startup']=dict(prelink_path='out/pthread-prelink-v28-analysis/kernel-pthread-analysis.macho',prelink_sha256=sha(prelink),overlay_patch_count=len(overlay),loader='_OSKextLoadKextWithIdentifier',loader_va=hex(symbols['_OSKextLoadKextWithIdentifier']),functions_va=hex(symbols['_pthread_functions']),helper=hex(hooks['pthread_load_before_bsd']),source_sha256=sha((ROOT/'patches/xnu-8796-candidates/pthread-oskext-start.S').read_bytes()),markers={'178':'before OSKext load','179':'OSKext load returned','180':'native pthread function table non-NULL','181':'already registered; no load request'})
+        report['probe']['symbols']['pthread_load_before_bsd']=hex(hooks['pthread_load_before_bsd'])
     report['dense_bootstrap']=dict(edges=dense_edges,semantics='call means before native BL; continuation means the native post-call address executed, possibly from another predecessor; each site drawn once',panel=dict(x=832,y=256,columns=10,cell_width=48,cell_height=24,tile_width=32,tile_height=16),limitations=['Control-flow reachability, not subsystem correctness','Later kernel framebuffer writes may overwrite the panel','No event ordering or call count is inferred from the cumulative grid'])
     report['native_vector_handoff']=dict(captured='probe_native_vectors',expected=hex(symbols['_ExceptionVectorsBase']),stage='_kernel_bootstrap_thread entry',status_tag='A02C',success=1,rejected=2,reason='Return normal IRQ/FIQ/synchronous handling to the pinned native XNU vectors before thread services unmask interrupts')
     report['display_readback']=dict(x=832,y=224,width=384,height=16,split_x=1024,colors=['0xffffffff','0xff00ffff'],mismatched_pixels_tag='A02A',last_stage_id_tag='A02B',meaning='CPU readback only; zero does not prove physical scanout is correct')

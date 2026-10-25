@@ -21,6 +21,10 @@ def machine(raw,report,patch,case,reference=False):
     for s in m['segments']:
         if s['filesize']:u.mem_write(s['va'],raw[s['fileoff']:s['fileoff']+s['filesize']])
     syms=report['probe']['symbols'];flags=int(syms['probe_flags'],16)
+    # Legacy transparency fixtures exercise the already-registered path. The
+    # load request and registration paths have separate pthread-startup cases.
+    if report.get('probe_revision',0)>=28:
+        u.mem_write(m['symbols']['_pthread_functions'],struct.pack('<Q',STACK+0x4000))
     u.mem_write(flags,bytes([case['flag']])*4096)
     if 'probe_native_vectors' in syms:u.mem_write(int(syms['probe_native_vectors'],16),struct.pack('<Q',m['symbols']['_ExceptionVectorsBase']))
     u.mem_write(int(syms['probe_scratch'],16),struct.pack('<QQ',FB if case['video'] else 0,ROW))
@@ -28,6 +32,8 @@ def machine(raw,report,patch,case,reference=False):
     native_word=int.from_bytes(bytes.fromhex(patch['before']),'little')
     operand_x0=STACK+0x2000 if native_word&0x0a000000==0x08000000 and ((native_word>>5)&31)==0 else case['x0']
     u.reg_write(UC_ARM64_REG_CPACR_EL1,3<<20)
+    if case.get('seed_simd'):
+        for i in range(32):u.reg_write(getattr(sys.modules[__name__],f'UC_ARM64_REG_Q{i}'),(0x1122334455667788<<64)+i+1)
     u.reg_write(UC_ARM64_REG_X0,operand_x0);u.reg_write(UC_ARM64_REG_X1,STACK+0x2000)
     u.mem_write(STACK+0x2000,struct.pack('<Q',STACK+0x2100));u.mem_write(STACK+0x2100,struct.pack('<Q',1234))
     if patch['reason']=='probe_panic_trap':u.reg_write(UC_ARM64_REG_X0,0xfffffff007078d37)

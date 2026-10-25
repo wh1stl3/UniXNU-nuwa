@@ -8,6 +8,18 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--build',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args()
     b=json.loads(a.build.read_text());meta=metadata(a.build);sha=b['candidate']['sha256'];checks=[]
     validate(meta,sha);checks.append(dict(name='complete v21 evidence accepted',passed=True))
+    if b.get('probe_revision',0)>=28:
+        altered=copy.deepcopy(meta);del altered['pthread-startup']
+        try:validate(altered,sha)
+        except (ValueError,KeyError):checks.append(dict(name='missing pthread-startup rejected',passed=True))
+        else:raise AssertionError('pthread-startup')
+        original_pthread=Path.read_bytes;pthread_path=(ROOT/meta['pthread-startup']['path']).resolve()
+        obj=json.loads(original_pthread(pthread_path));obj['checks'].pop()
+        pthread_payload=json.dumps(obj).encode();altered=copy.deepcopy(meta);altered['pthread-startup']['sha256']=hashlib.sha256(pthread_payload).hexdigest()
+        with patch.object(Path,'read_bytes',lambda p:pthread_payload if p.resolve()==pthread_path else original_pthread(p)):
+            try:validate(altered,sha)
+            except ValueError:checks.append(dict(name='deleted pthread-startup case rejected after resealing digest',passed=True))
+            else:raise AssertionError('pthread-startup cases')
     for name in ('transparency','wfe','read-sites','loader','mapping') + (('transition-normal','transition-occupied-probe','transition-bad-topology','transition-occupied-fb') if b.get('probe_revision',0)>=22 else ()) + (('console-policy',) if b.get('probe_revision',0)>=23 else ()) + (('renderer-bounds','context-display','vectors') if b.get('probe_revision',0)>=25 else ()) + (('image4-launch','launch-context') if b.get('probe_revision',0)>=27 else ()):
         altered=copy.deepcopy(meta);del altered[name]
         try:validate(altered,sha)

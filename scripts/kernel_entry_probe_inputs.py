@@ -23,6 +23,8 @@ def metadata(build):
         paths += [(n,build.with_name(n+'.json')) for n in ('renderer-bounds','context-display','vectors')]
     if json.loads(build.read_text()).get('probe_revision',0)>=27:
         paths += [(n,build.with_name(n+'.json')) for n in ('image4-launch','launch-context')]
+    if json.loads(build.read_text()).get('probe_revision',0)>=28:
+        paths += [('pthread-startup',build.with_name('pthread-startup.json'))]
     return {name:dict(path=path.relative_to(ROOT).as_posix(),sha256=sha(path.read_bytes())) for name,path in paths}
 
 def validate(meta,kernel_sha):
@@ -46,8 +48,23 @@ def validate(meta,kernel_sha):
     if not {'probe_entry','probe_tables','probe_mmu'}<=hooks:raise ValueError('Required entry/tables/MMU hooks missing')
     # Two header edits, one branch per hooked site, the BCM NOP and sixteen early vectors.
     compat=build.get('image4_compatibility',{}).get('hooks',[])
-    if compat and build.get('probe_revision')!=27:raise ValueError('Image4 compatibility requires revision 27')
-    if len(build['patches'])!=2+len(hooks)+1+16+len(compat):raise ValueError('Patch set shape differs from the recorded hook set')
+    if compat and build.get('probe_revision') not in (27,28):raise ValueError('Image4 compatibility requires revision 27/28')
+    overlay=[]
+    if build.get('probe_revision',0)>=28:
+        from pthread_prelink_overlay import load,ranges,SHA256
+        replacement=load(original);overlay=ranges(original,replacement)
+        actual=[p for p in build['patches'] if p['reason'].startswith('pthread_prelink_range_')]
+        wanted=[(off,data.hex(),'pthread_prelink_range_'+str(i)) for i,(off,data) in enumerate(overlay)]
+        if [(p['file_offset'],p['after'],p['reason']) for p in actual]!=wanted:raise ValueError('Pinned pthread overlay differs')
+        startup=build.get('pthread_startup',{})
+        source=sha((ROOT/'patches/xnu-8796-candidates/pthread-oskext-start.S').read_bytes())
+        if startup.get('prelink_sha256')!=SHA256 or startup.get('source_sha256')!=source or startup.get('overlay_patch_count')!=len(overlay):raise ValueError('pthread source binding differs')
+        if 'pthread-startup' not in meta:raise ValueError('Missing pthread startup evidence')
+        item=meta['pthread-startup'];payload=report_path(item['path']).read_bytes();evidence=json.loads(payload)
+        required={mode+': '+video for mode in ('registered','load-success','load-failure') for video in ('video','no-video')}
+        checks=evidence.get('checks',[])
+        if (sha(payload)!=item['sha256'] or evidence.get('candidate_sha256')!=kernel_sha or evidence.get('prelink_sha256')!=SHA256 or evidence.get('source_sha256')!=source or len(checks)!=len(required) or {c['name'] for c in checks}!=required or any(c['passed'] is not True for c in checks)):raise ValueError('pthread startup evidence incomplete')
+    if len(build['patches'])!=2+len(hooks)+1+16+len(compat)+len(overlay):raise ValueError('Patch set shape differs from the recorded hook set')
     if build.get('probe_revision',0)>=27:
         required_sites={(0xfffffff0046ea000,'image4_amnm_provider'),(0xfffffff0046ea3b4,'image4_chmh_provider')}
         if {(int(h['va'],16),h['symbol']) for h in compat}!=required_sites:raise ValueError('Image4 provider hooks incomplete')

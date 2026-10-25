@@ -118,3 +118,5 @@ PROBE18实测、读图与恢复闭环完成。最近后验18:19:42北京时间�
 - [x] 2026-10-25 PROBE19（20:03:58后验已关闭，以下保留先前等待过程）：本包用户录像/恢复条件已确认，19:56:34新鲜Android1/A槽/三SHA通过；19:57单次临时boot ACK。照片5bad2ca9已本地保留，BSD入口ID6/A02B=6点亮，pthread kernel extension not loaded panic，root未进入。第一次原厂恢复监测180秒未见Android完成，待用户电源+音量下回fastboot后临时加载固定原厂boot；人工恢复等待不阻断离线分析，不启动第二候选。证据reports/xnu-entry-probe-trial/2026-10-25-v27/。
 
 - [x] PROBE19恢复闭环：2026-10-25 20:03:58北京时间，用户已回Android；命令确认Android完成1/A槽/boot_a、vendor_boot_a、init_boot_a三SHA与preflight完全一致。第一次recovery超时保留，成功重试确认已在Android，无第二试验包。当前无待恢复任务；下一包另核对当轮录像/恢复条件。
+
+- [ ] PROBE20：用户已确认“现在可以，录像与恢复就绪”，新鲜preflight确认Android1/A槽/三SHA与v27后验相同。离线包365216ae只安排一次临时boot；待菜单电源Enter、画面采集与Android后验。证据reports/xnu-entry-probe-trial/2026-10-25-v28/；人工恢复等待不阻断离线工作。

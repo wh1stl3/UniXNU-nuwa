@@ -1,0 +1,34 @@
+{
+  "format": "Nuwa.DiagnosticLaunch.v1",
+  "adt_sha256": "635d4f4dd8fc4abc7c2d15b427cf69b6a037086a39df21fb22b33b6fddb1ed09",
+  "manifest_sha384": "bd10ff8811840960347af6284c710d2db415312c7ac5eb8a6e6ee3b01a5e25a326ebf1a036709c4709d7a8ce31ea3766",
+  "bnch_sha384": "b0a41b99d341c22bdb2755a790f2154ab14571d5b5ce6a683b30afc5f20b0aede0d58293e9d9bb97df1333263cdd477c",
+  "nonce_preimage_checked": true,
+  "components": {
+    "base_adt": {
+      "bytes": 13120,
+      "sha256": "e88c0a0d84159cda0256d01138424140d39b03bb1e6394ac3d880e66b211d1fe"
+    },
+    "boot_shim": {
+      "bytes": 112,
+      "sha256": "8a3b54765c895a0366539130fdf6e4e4a01e364fe7de067a38d0193606f9d462"
+    },
+    "firmware_fd": {
+      "bytes": 3145728,
+      "sha256": "2d606985ad768dcfaab66c2b28073c0a4c2820126b42b23286623fdc450e848f"
+    },
+    "kernel": {
+      "bytes": 58413056,
+      "sha256": "d34a5de954a806f66fa346a74e5312a2513ec24d4377759d850ec6d6dd3eeb1d"
+    }
+  },
+  "trust": {
+    "anti_replay_enforced": false,
+    "apple_im4m": false,
+    "hardware_nonce_protection": false,
+    "manifest_authentication": "none; host launch measurement",
+    "tss_personalized": false
+  },
+  "policy": "32-bit LE 1: prohibit mix-n-match; no default/empty property",
+  "producer_sha256": "40e1b776495f43d51cd786a4ac8a4826b11289aa86210cc45093ddb96d64de8f"
+}

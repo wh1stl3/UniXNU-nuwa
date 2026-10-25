@@ -260,6 +260,8 @@ def main():
         UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 17','PROBE 18').replace('DENSE BOOTSTRAP CALL AND RETURN','FIRST THREAD IOKIT BSD AND DISPLAY')
     if probe and revision>=27:
         UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 18','PROBE 19').replace('FIRST THREAD IOKIT BSD AND DISPLAY','IMAGE4 INPUTS TO BSD ROOT')
+    if probe and revision>=28:
+        UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 19','PROBE 20').replace('IMAGE4 INPUTS TO BSD ROOT','NATIVE PTHREAD OSKEXT TO BSD ROOT')
     if sha(fd) != FD_SHA or len(fd) != 3145728:
         raise ValueError('Firmware FD changed')
     if sha(shim) != SHIM_SHA:
@@ -374,6 +376,9 @@ def main():
         if revision>=27:
             report['image4_launch_context']=launch_context
             report['success_requires']=report['success_requires'].replace('PROBE18:','PROBE19:')+' Image4 native initializer RET is modeled only; ID89 is MAC continuation, ID6 is BSD entry, ID7/8 are root discovery/mount entry. Non-Apple host-measured launch inputs; no hardware replay protection or Apple trusted-boot claim.'
+        if revision>=28:
+            report['pthread_startup']=json.loads(args.entry_probe.read_text())['pthread_startup']
+            report['success_requires']=report['success_requires'].replace('PROBE19:','PROBE20:')+' IDs178/179=before/after native OSKext load; ID180=function table non-NULL; ID181=already registered. Loader lifecycle and initializer body require physical observation.'
         report['expected_screen_outcomes'] = [report['success_requires'], 'Any later XNU text or panic requires separate attribution; no band proves MMU enabled or iOS started']
         report['not_proven'] = ['Real nuwa execution of this candidate', 'MMU activation and arm_init', 'Native timer/interrupt driver readiness', 'Full donor/native ABI or iOS boot']
     output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')

@@ -1,5 +1,7 @@
 # nuwa / iOS16 主线交接（2026-10-25，PROBE19后）
 
+> 续接增量：v28/PROBE20离线完成，镜像365216ae/70,266,880B、内核d34a5de9、独立ADT635d4f4d；正常OSKext加载helper与真实pthread选择已接入。19项串行任务全部通过（740差分/25Image4/6pthread/31绑定），独立重建一致、实际FAT回读和输入重测通过。权威包reports/xnu-first-entry/entry-probe-20.json，尚未实测；等待PROBE20当轮录像/恢复条件。命令和模型边界见[本轮记录](2026-10-25-v28-pthread-to-root.md)及reports/kernel-entry-probe/2026-10-25-v28/execution.json。设备仍以前轮20:03:58 Android后验为最近证据，不重复启动19。无push/新CI。
+
 接手顺序：根目录AGENTS.md → docs/STATUS.md → 本文 → [v27完整操作记录](2026-10-25-v27-image4-to-bsd.md)。旧v25/v26及10月23日交接保留历史；不再把“未到BSD”“Image4仍是实机卡点”当作当前状态。
 
 ## 1. 当前实机结论
