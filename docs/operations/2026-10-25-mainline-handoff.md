@@ -1,6 +1,6 @@
 # nuwa / iOS16 主线交接（2026-10-25）
 
-接手顺序：仓库根目录AGENTS.md → docs/STATUS.md → 本文 → v25操作记录。本文替代2026-10-23交接文件作为当前续接入口；旧文件保留历史，不再把其中“未进入内核”“待恢复”等快照当作当前状态。
+接手顺序：仓库根目录AGENTS.md → docs/STATUS.md → 本文 → v26 Image4 provider记录 → v25实机记录。本文替代2026-10-23交接文件作为当前续接入口；旧文件保留历史，不再把其中“未进入内核”“待恢复”等快照当作当前状态。
 
 ## 1. 当前结论
 
@@ -8,7 +8,7 @@
 
 - 横纹已在本轮实机消失，Logo与白/青校验带完整。A02A=0、A02B=4、A02C=1。
 - panic为AppleImage4 5.0.0的`failed to get mix-n-match policy: %d`，参数2。
-- 首要缺项为`/chosen/mix-n-match-prevention-status`。保留二进制读取器与原生SecureDT读取同一出货ADT，复现返回2；5个隔离用例通过。
+- `/chosen/mix-n-match-prevention-status`确实缺失，原SecureDT五例仍成立；**v26已证伪只补字段即可修复**：真实IsLockedDown=false选择pmap dtless，而其实例描述符没有AMNM。合法属性的对象夹具仍经原初始化panic(2)。见第10节及D-047，不能沿用单缺项首因排序。
 - **尚未选择或写入运行时策略值**，没有以空字段或绕过认证消除panic。
 - 最近设备后验：2026-10-25 **18:19:42北京时间**，Android `sys.boot_completed=1`，A槽，boot_a/vendor_boot_a/init_boot_a三SHA与试前相同。当前无待人工恢复任务。这是证据时间，不是实时轮询。
 - 实际硬件IRQ递送、计时器/控制器、驱动完整性、BSD/root/用户态、长期稳定性均未验证。一次使能调用返回不能证明IRQ工作。
@@ -19,7 +19,7 @@
 
 | 对象 | 状态 |
 | --- | --- |
-| 设备仓main | 本文记录基准为`5fd74e414f553b3bed333d0fa6105e8376914cfc`；本文及收口核验随后单独提交 |
+| 设备仓main | 收口基准`d555d97`；v26 provider审计/模型兼容候选随后单独提交，以git log为准 |
 | `75daa59` | PROBE17密集bootstrap观察、692差分 |
 | `a1fc1a4` | PROBE17实机到load_context调用前、恢复闭环 |
 | `280c198` | 用户提供的通用规范合并为AGENTS第10节，原nuwa约定保留 |
@@ -29,7 +29,7 @@
 | 固件仓 | `D:/Code/uefi-nuwa`，HEAD `a155c495c863e06d400b515315e3b8f7791dc308`，交接核对时工作区干净 |
 | 集成源码 | `D:/Code/UniXNU-integration`，HEAD `e553e467ebfe7642e9f483d3977a57066c6d1aef`，工作区干净 |
 
-未push，未触发新CI。本地origin/main缓存相对记录基准落后51提交，未fetch；交接提交后的计数用`git status -sb`重查，不代表远端实时状态。用户要求本地收口，没有授权本轮发布。
+未push，未触发新CI。原记录中本地origin/main缓存相对5fd74e4落后51提交，v26执行前main=d555d97、ahead52，未fetch；本轮提交后的计数用`git status -sb`重查，不代表远端实时状态。只做本地里程碑，不发布。
 
 `D:/Code/PortingiOS`和`D:/Code/PortingiOSWithUniXNU`只读。上游源码不复制入设备仓。编译、测试脚本串行。内存/基址、既有IPSW身份边界和`*_verified=true`按AGENTS处理；保持`loadable=false/runtime_qualified=false`。没有新增Image4审批项，不把未决设计自行升级成新的全局权限门。
 
@@ -96,7 +96,7 @@ A02A=校验带不符像素数；A02B=最后检查ID；A02C=向量交接状态（
 | 空属性 | 0 | 1，不能拿空属性修复缺项 |
 | 8字节属性 | 84 | 输出未写 |
 
-审计未修改出货文件、未选择运行时策略。它执行的是SecureDT后备路线，**IOKit runtime-provider路线尚未动态复现**；下一步先核对实际provider、节点、OSData类型/长度，再整理AMNM/CHMH及manifest/hash等依赖，形成可追溯的平台输入。最小证伪：若实际provider能读到合法属性仍返回2，就要回查provider路由/来源，不能继续归因于缺字段。
+原审计未修改出货文件、未选择运行时策略，只执行SecureDT后备路线。**v26已执行IOKit读取器及缓存路由模型，并命中上述最小证伪**：合法属性经dtless仍返回2；对象/OSData边界显式建模，未实时读回实机provider。下一项是前MAC nonce/manifest/身份的真实平台输入来源，再结合第10节兼容候选集成新包。
 
 不要只补一个默认值就重复实测。`EXTERNAL_HEADERS/img4/runtime.h`说明AMNM会影响nonce和前级manifest hash约束；ios-sweet/topaz的合成boot-manifest-hash只是其它移植的兼容模式参考，不是nuwa真实前级签名manifest。当前没有建立或宣称Apple可信启动链，没有更改资格标志。
 
@@ -128,4 +128,23 @@ $stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
 
 ## 9. 可复制的接手指令
 
-> 延续D:/Code/UniXNU-nuwa，先读AGENTS.md、STATUS.md与docs/operations/2026-10-25-mainline-handoff.md。当前PROBE18已实机运行首线程、PE_init_iokit返回并到mac_policy_initmach的AppleImage4 mix-n-match policy panic(2)，已恢复Android1/A槽/三SHA。横纹与临时向量问题已修；不要重复入口/MMU/T0SZ旧路线，不把模型bzero异常当实机故障。先复验包18和Image4审计，再核对实际IOKit provider与完整启动环境/manifest契约。当前未选择运行时策略；保持板值、iOS16身份、资格与只读资料库边界，脚本串行、媒体仅本地、不push。新包验证后再取得当轮录像/恢复条件做单次临时boot。阶段日志与模型/实机证据分开，所有结果同步STATUS、WORKLOG、DECISIONS和交接。
+> 延续D:/Code/UniXNU-nuwa，先读AGENTS.md、STATUS.md、当前交接及v26-image4-runtime-provider记录。PROBE18实机到MAC/Image4 panic(2)，最近18:19:42已恢复Android1/A槽/三SHA。v26发现原生IsLockedDown=false选择的dtless描述符不含AMNM；合法属性仍panic，不能只补字段。104字节兼容候选已编译、18项模型检查及反例通过，未装入启动包。禁止混配夹具修路由后下一BNCH panic；manifest-properties节点存在但无BNCH，boot-manifest-hash缺失。先建立真实前MAC nonce/manifest/身份来源，再集成兼容候选和新包；后期owner摘要不能冒充前级Apple manifest。未选择出货策略，不伪造fuse/摘要/可信链；保持板值/iOS16/资格/只读边界，串行、媒体本地、不push。新包验证后按当轮录像和恢复条件单次临时boot；模型与实机分开记录，不宣称内核完成。
+
+## 10. v26续接：provider反例、兼容候选与下一真实依赖
+
+详见[完整v26操作记录](2026-10-25-v26-image4-runtime-provider.md)，报告`reports/kernel-entry-probe/2026-10-25-v26/{image4-runtime-provider,execution}.json`。本轮有效脚本为`scripts/audit-image4-runtime-provider.py`，兼容源为`patches/xnu-8796-candidates/image4-amnm-provider.S`。包18/原SecureDT五例已复验，无设备动作、新CI或push。
+
+真实选择代码、chip getter、版本6缓存实例化、AMNM调用与panic边在隔离模型执行；22项实例描述符没有AMNM/CHMH。IORegistry/OSData对象和日志边界为显式夹具，不是实机运行时快照。原ADT与合法4字节1都经dtless返回2。
+
+104字节兼容候选只对dtless AMNM调用原生Darwin IOKit getter，保留缺失2/类型96/超长84错误及输出哨兵；其他缓存标识符和SecureDT后备不变。18项模型检查、重复编译一致及错误绕过反例通过。仅在模型内安装，**未修改有效内核、ADT、包18或出货策略**；没有新的可启动包，不复用旧确认实测。
+
+原初始化在禁止混配夹具修路由后到BNCH panic，参数0、2；manifest-properties节点存在但没有BNCH，boot-manifest-hash缺失。该级别0不是实测Apple安全状态。下一步需真实前MAC输入契约；固定集成源码的owner image-set摘要发布属于后续root/cache路径，不作为当前前级Apple manifest或BNCH默认来源。
+
+兼容bin位于`out/image4-mainline-v26/amnm-provider.bin`，SHA256 `ad2bb3e06d60ea2fee50de9f642e2feec6ac89e594071af1f8e5b4408006aa39`。链接VA只为模型，不能直接部署。详细编译命令见v26记录；已有bin时可串行重放：
+
+```powershell
+Set-Location D:/Code/UniXNU-nuwa
+& 'C:/Users/Administrator/.workbuddy/binaries/python/versions/3.13.12/python.exe' -B scripts/audit-image4-runtime-provider.py --adt out/trial-boot/xnu-entry-probe-18-vectors/kernel.macho.adt --adapter out/image4-mainline-v26/amnm-provider.bin --output out/image4-mainline-v26/replay.json
+```
+
+没有新设备后验，最近仍为18:19:42。未决启动输入是工程依赖，不新增全局审批门。未来集成若修改donor hook，必须显式记录限定差分并更新新候选验证，不能继续声称donor全部未变。

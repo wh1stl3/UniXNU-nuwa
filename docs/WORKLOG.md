@@ -444,3 +444,5 @@
 2026-10-25 · 补齐上述里程碑提交映射（保留原时间线）：PROBE17离线75daa59、发送记录5d58d4d、实测恢复a1fc1a4；AGENTS合并280c198；PROBE18代码/离线9a5961f；PROBE18实测/恢复及Image4审计5fd74e4。均为本地提交，未push。· 75daa59至5fd74e4 · git log、reports/xnu-entry-probe-trial/2026-10-25-v24/及v25/
 
 2026-10-25 · 收口PROBE18并新增当前主线交接：统一README/STATUS/人工待办及旧交接入口，区分18:11离线快照与随后实测。串行复验包18镜像回读、Image4五例；核对15项已提交报告与四项产物SHA。42项历史中间文件和10项本地附件保留不纳入有效证据，原始媒体不提交；本次无设备命令、无push。· 紧随5fd74e4的docs提交 · operations/2026-10-25-mainline-handoff.md、reports/handoff/2026-10-25/verification.json
+
+2026-10-25 · v26复验包18/原Image4五例；执行真实dtless选择和缓存实例化，合法AMNM属性仍panic(2)，修正缺字段单因排序。新增104字节兼容候选仅模型安装，18项检查/重复编译/错误绕过负候选拒绝通过；后续原BNCH panic已复现，manifest节点存在但数据缺失。未改出货包/策略、无设备动作/push。· 本次kernel审计里程碑（父d555d97） · reports/kernel-entry-probe/2026-10-25-v26/、operations/2026-10-25-v26-image4-runtime-provider.md、D-047

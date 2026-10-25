@@ -1,0 +1,98 @@
+{
+  "created_at_utc": "2026-10-25T11:37:55.042278+00:00",
+  "commands": [
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "clang",
+        "--target=aarch64-none-elf",
+        "-c",
+        "/mnt/d/Code/UniXNU-nuwa/patches/xnu-8796-candidates/image4-amnm-provider.S",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/image4-mainline-v26/amnm-provider-reproduce.o"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "ld.lld",
+        "-Ttext=0xfffffff003dc4000",
+        "--entry=image4_amnm_provider",
+        "/mnt/d/Code/UniXNU-nuwa/out/image4-mainline-v26/amnm-provider-reproduce.o",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/image4-mainline-v26/amnm-provider-reproduce.elf"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "llvm-objcopy",
+        "-O",
+        "binary",
+        "--only-section=.text",
+        "/mnt/d/Code/UniXNU-nuwa/out/image4-mainline-v26/amnm-provider-reproduce.elf",
+        "/mnt/d/Code/UniXNU-nuwa/out/image4-mainline-v26/amnm-provider-reproduce.bin"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "scripts/audit-image4-runtime-provider.py",
+        "--adt",
+        "out/trial-boot/xnu-entry-probe-18-vectors/kernel.macho.adt",
+        "--adapter",
+        "out/image4-mainline-v26/amnm-provider-error-bypass-negative.bin",
+        "--output",
+        "out/image4-mainline-v26/must-not-pass.json"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"D:\\Code\\UniXNU-nuwa\\scripts\\audit-image4-runtime-provider.py\", line 448, in <module>\n    main()\n    ~~~~^^\n  File \"D:\\Code\\UniXNU-nuwa\\scripts\\audit-image4-runtime-provider.py\", line 384, in main\n    raise ValueError((name, result))\nValueError: ('missing', {'panic': None, 'errno': 0, 'chip': '0xfffffff005cae660', 'selected_runtime': '0xfffffff005cad110', 'cache_version': 6, 'cache_missing_mask': '0x3d51f', 'events': [{'lookup': '/chosen'}, {'node': '/chosen', 'property': 'use-ddi-secure-boot', 'length': None}, {'node': '/chosen', 'property': 'crypto-hash-method', 'length': 9}, {'lookup': '/chosen'}, {'node': '/chosen', 'property': 'chip-epoch', 'length': None}, {'lookup': '/chosen'}, {'node': '/chosen', 'property': 'board-id', 'length': None}, {'lookup': '/chosen'}, {'node': '/chosen', 'property': 'chip-id', 'length': None}, {'lookup': '/chosen'}, {'node': '/chosen', 'property': 'security-domain', 'length': None}, {'lookup': '/chosen'}, {'node': '/chosen', 'property': 'unique-chip-id', 'length': None}, {'lookup': '/chosen'}, {'node': '/chosen', 'property': 'certificate-production-status', 'length': 4}, {'lookup': '/chosen'}, {'node': '/chosen', 'property': 'certificate-security-mode', 'length': 4}, {'lookup': '/chosen'}, {'node': '/chosen', 'property': 'effective-production-status-ap', 'length': 4}, {'lookup': '/chosen'}, {'node': '/chosen', 'property': 'effective-security-mode-ap', 'length': None}, {'lookup': '/chosen'}, {'node': '/chosen', 'property': 'internal-use-only-unit', 'length': None}, {'lookup': '/chosen'}, {'node': '/chosen', 'property': 'engineering-use-only-unit', 'length': None}, {'lookup': '/chosen'}, {'node': '/chosen', 'property': 'research-enabled', 'length': None}, {'lookup': '/chosen'}, {'node': '/chosen', 'property': 'esdm-fuses', 'length': None}, {'lookup': '/chosen'}, {'lookup': '/chosen'}, {'node': '/chosen', 'property': 'chip-id', 'length': None}, {'lookup': '/chosen'}, {'lookup': '/chosen'}, {'lookup': '/chosen'}, {'lookup': '/chosen'}], 'adapter_in_model_only': True, 'allow_mix_n_match': 165, 'callee_saved_and_sp_preserved': True})\n",
+      "expected_failure": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "Independent adapter build byte identical",
+      "passed": true
+    },
+    {
+      "name": "Artificial error-bypass mutant refused",
+      "passed": true
+    }
+  ],
+  "sha256": {
+    "scripts/audit-image4-runtime-provider.py": "39e5d879b885733875b156d23bca94b6b5670a924f997df8b16c96b348ebecbd",
+    "patches/xnu-8796-candidates/image4-amnm-provider.S": "8c79dd2795efc4b4739589c6f2d524981fd015bfb658d79e0ffd431d0bbee843",
+    "out/image4-mainline-v26/amnm-provider.bin": "ad2bb3e06d60ea2fee50de9f642e2feec6ac89e594071af1f8e5b4408006aa39",
+    "out/trial-boot/xnu-entry-probe-18-vectors/kernel.macho.adt": "9846c7dadd23bf544190c45ba3db437fb83265cb180ad6c54cd3a3fedee20d93",
+    "out/kernel-entry-probe-25-vector2/kernel-entry-probe.macho": "d6f101e4dfb670e7aa44cd6f51d447feb5d433e5c5883152b5a574da1a09479e",
+    "reports/kernel-entry-probe/2026-10-25-v26/image4-runtime-provider.json": "4c3d3a4d59b13601f8de0678c876ee432edca6d7af35b8ede0d11060f352ac80"
+  },
+  "device_accessed": false,
+  "boot_package_modified": false,
+  "notes": [
+    "Initial adapter instruction pin guessed incorrectly and rejected; corrected using actual 08ae00d0 bytes before acceptance",
+    "Initial continuation fixture used a callee-saved sentinel as x20; unmapped read refused. Restored the actual initializer page and actual effective-chip getter before acceptance",
+    "manifest-properties node exists; no BNCH property. The accepted next-stop evidence is the real BNCH panic, not a missing-node panic"
+  ]
+}

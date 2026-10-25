@@ -581,6 +581,16 @@ PROBE18增加178个首线程/IOKit/BSD/root编号；10上下文/显示、5真实
 
 # D-046 · 首线程与IOKit实机越过，收敛Image4启动契约
 
+关于“缺mix-n-match属性为完整当前路线首因”的排序：**superseded by D-047**。以下保留当时证据，实机进度与恢复记录仍有效。
+
 2026-10-25。PROBE18横纹消失，首线程入口/上下文点、PE_init_iokit后继、IRQ使能调用后继和commpage可见，MAC initmach panic；不据使能调用返回声称硬件IRQ已验证。模型此前OSKext bzero停点不再视为真实阻塞。18:19:42恢复Android1/A槽/三SHA一致，媒体仅本地。
 
 完整panic为AppleImage4的failed to get mix-n-match policy: %d，参数2；保留consumer与原生SecureDT对同ADT返回2，缺/chosen/mix-n-match-prevention-status是首要原因。五例确认0/空属性允许混配，32位1禁止；审计不选择/改运行时值，完整manifest/hash依赖先核对，不绕过认证、不伪造hardware fuse或verified标志。IOKit provider动态路线未独立复现。证据v25 screen/trial/postcondition及image4-policy-audit.json。
+
+# D-047 · Image4 dtless不表达AMNM，字段与provider分别证伪
+
+2026-10-25。D-046关于实机进度/恢复仍有效；其中将缺mix-n-match属性作为完整当前路线首因的排序 **superseded by D-047**。v26执行真实IsLockedDown=false选择、真实chip getter与版本6实例化，dtless的22项描述符没有AMNM/CHMH；出货和合法4字节1的对象夹具均经原初始化panic(2)。因此缺属性和provider表达能力是两个问题，不能只补字段就实测。
+
+104字节兼容候选仅将dtless AMNM转原生Darwin IOKit getter，保持缺失/类型/超长错误；18项模型检查、重复编译和错误绕过负候选拒绝通过。候选只装入隔离模型，没有修改donor/出货包或选择出货策略。夹具禁止混配值使原初始化到下一BNCH panic(级别0/errno2)，不是实机推进。
+
+manifest-properties节点已存在但无BNCH，boot-manifest-hash缺失。固定集成源码的owner摘要发布晚于当前MAC路径，且不是前级Apple manifest，不拿来倒填。下一步建立真实前MAC平台nonce/manifest/身份来源后再集成新包，不伪造可信链，不新增全局审批门。证据：reports/kernel-entry-probe/2026-10-25-v26/和operations/2026-10-25-v26-image4-runtime-provider.md。对象边界显式夹具，不能写成实机IORegistry已验证。

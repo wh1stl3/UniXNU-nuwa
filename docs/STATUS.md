@@ -1,28 +1,28 @@
 # STATUS
 
-更新：2026-10-25。**PROBE18实机已执行首线程，越过PE_init_iokit、中断使能调用及commpage初始化，到mac_policy_initmach后panic。BSD/root/iOS尚未进入。**
+更新：2026-10-25。**实机仍为PROBE18到MAC/Image4 panic(2)，未到BSD/root/iOS。v26已证伪“补AMNM属性即可”：当前dtless缓存不含该标识符。兼容候选仅模型通过，未打包或实测。**
 
-## 当前实机结果
+## 当前实机与有效产物
 
-- 内核d6f101e4dfb670e7aa44cd6f51d447feb5d433e5c5883152b5a574da1a09479e，58,413,056 B，211记录补丁；镜像c89cfa52c165562693ab0868dddeeb1225995bb5f30e3899df58a888197e8dde，70,266,880 B。
-- 本包录像/恢复确认、新基线后单次临时boot，用户菜单电源Enter触发。81格亮，0–5入口、10/11上下文恢复点可见；74/75 PE_init_iokit、80/81中断使能调用、84–87commpage可见，88 mac_policy_initmach有调用无后继。
-- 横纹实机消失，白/青校验带完整；A02A=0、A02B=4、A02C=1。证明一次读回一致及该点原生VBAR交接，不代表长期显示或实际硬件IRQ递送已验证。
-- 2026-10-25 18:19:42北京时间已恢复Android完成1/A槽，三分区SHA与试前一致；当前无人工恢复待办。此为该时刻记录，不代表持续查询。
+PROBE18实机已运行首线程，PE_init_iokit返回，走过中断使能调用及commpage，停于mac_policy_initmach内AppleImage4 5.0.0的`failed to get mix-n-match policy: %d`，参数2。横纹消失，A02A=0、A02B=4、A02C=1；一次VBAR交接和使能调用不证明硬件IRQ工作。
 
-## 当前卡点：Image4启动环境契约
+最近设备后验仍为2026-10-25 18:19:42北京时间Android完成1/A槽/boot_a、vendor_boot_a、init_boot_a三SHA与试前一致。无人工恢复待办；不是实时查询。本轮无设备动作。
 
-panic完整匹配donor AppleImage4 5.0.0：`failed to get mix-n-match policy: %d`，参数2。模型停于PE_init_iokit内部的bzero；实机PE_init_iokit已返回，该模型异常不是本轮实机阻塞证据。
+有效内核d6f101e4dfb670e7aa44cd6f51d447feb5d433e5c5883152b5a574da1a09479e，镜像c89cfa52c165562693ab0868dddeeb1225995bb5f30e3899df58a888197e8dde，ADT9846c7dadd23bf544190c45ba3db437fb83265cb180ad6c54cd3a3fedee20d93，包reports/xnu-first-entry/entry-probe-18.json。本轮绑定/回读复验与原Image4五例通过，未改包18历史。
 
-首要缺项为`/chosen/mix-n-match-prevention-status`。保留二进制读取器+原生SecureDT，使用同一出货ADT，复现返回2。5个隔离用例确认32位1表示禁止mix-n-match，0或空属性会允许，8字节超限返回84。当前仅审计，未选择运行时值、未修改ADT或绕过认证；IOKit runtime-provider动态路线尚未单独复现。
+## 当前卡点与新增证据
 
-下一主线是完整列明Image4策略与manifest/hash依赖，再形成可追溯的非Apple平台输入契约；不能以空字段、伪造fuse/可信链或跳过MAC检查推进。继续保持板值/TCR/owned window/donor/_verified不变，loadable=false/runtime_qualified=false。BSD/root、必要驱动和用户态随后仍需工作。
+v26执行原生SecureDTIsLockedDown选择代码、真实chip getter/版本6缓存构建和初始化AMNM调用/panic边。原生IsLockedDown=false会选择pmap dtless；其22项描述符没有AMNM，出货ADT及合法4字节1的对象夹具均panic(2)，且缓存路线不读取该属性。缺属性仍是真实输入问题，但不足以解释或修复完整路线。该结论取代D-046中仅据SecureDT后备路线的首因排序。
 
-## 修复、验证与证据
+104字节兼容候选仅对dtless的AMNM调用原生Darwin IOKit getter，不构造策略或吞掉错误。18项模型检查、重复编译一致与错误绕过负候选拒绝通过；其他缓存标识符和原SecureDT后备行为保持。IORegistry对象/OSData边界为显式夹具，不是实机provider读回。候选未写入内核或启动包，出货策略未选。
 
-HEX清屏每行写1920却只退1280的漂移已修正；临时异常槽位改为首指令分支，首线程入口交回捕获并核对的原生VBAR。178点新布局和A02A–A02C含义与PROBE17不同，见绑定包报告。
+隔离夹具使用禁止混配值并修正路由后，真实初始化下一停点为BNCH读取panic（级别参数0、errno2）。出货manifest-properties节点存在但没有BNCH，boot-manifest-hash缺失。级别0不是nuwa实测Apple安全状态。集成源码的owner image-set摘要属于后续root/cache路径，不能当作前级Apple manifest或倒填当前字段。
 
-740差分、42入口/MMU、18读数、5WFE、6静态walk、5ParseKernel、8稀疏阶段、2异常处理器、6精确矩形、10上下文/显示、5真实向量、同ADT切换12断言、6console与26绑定检查、镜像回读/重复构建通过；新增Image4契约5例通过。均与实机结论分开记录。代码/离线提交9a5961f；通用AGENTS合并280c198。未push，未触发新CI。
+下一步建立早于MAC的真实非Apple平台nonce/manifest/身份输入来源，再将兼容改动和输入一起集成新候选并绑定新包。不能补空字段、伪造fuse/摘要/可信链或跳过MAC。BSD/root、IRQ/计时器/控制器、必要驱动及用户态仍未验证，不能宣称内核完成。
 
-实测reports/xnu-entry-probe-trial/2026-10-25-v25/；离线reports/kernel-entry-probe/2026-10-25-v25/；包reports/xnu-first-entry/entry-probe-18.json；[完整操作记录](operations/2026-10-25-v25-first-thread-display.md)。原图/有声视频/提取帧仅本地out或用户原路径，不上传。新候选再按本包录像、基线与恢复门执行，不复用旧确认。
+## 证据与边界
 
-[当前交接与续接命令](operations/2026-10-25-mainline-handoff.md)固定提交、产物SHA、未验证边界及Image4下一步；收口核验见reports/handoff/2026-10-25/verification.json。旧交接与未跟踪中间报告仅保留历史，不替代上述权威入口。
+- v26完整因果：[Image4 provider操作记录](operations/2026-10-25-v26-image4-runtime-provider.md)；reports/kernel-entry-probe/2026-10-25-v26/{image4-runtime-provider,execution}.json。
+- v25实机证据reports/xnu-entry-probe-trial/2026-10-25-v25/；显示/向量/740差分等既有离线回归见reports/kernel-entry-probe/2026-10-25-v25/及[操作记录](operations/2026-10-25-v25-first-thread-display.md)。模型OSKext bzero异常不是实机卡点。
+- [主线交接](operations/2026-10-25-mainline-handoff.md)固定有效包与续接命令。保持TCR、板值、内存/身份、只读资料库、loadable=false/runtime_qualified=false和媒体仅本地。
+- 未push、未触发新CI。本轮仅模型候选与审计，不重复启动包18。

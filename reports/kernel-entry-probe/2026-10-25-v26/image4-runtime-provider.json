@@ -1,0 +1,2106 @@
+{
+  "scope": "Execute pinned Image4 readers with an ADT-backed, explicitly modeled IOKit boundary.\n\nNo kernel/ADT/device writes. OS object lookup, casting and virtual methods are\nfixtures; Image4 dispatch, conversion, validation and copying execute real code.\n",
+  "input_sha256": "1aeebf1352a86b0d31612a6bd6e77bd7292f676ad2ce43a99ec4a8f3999eedb6",
+  "adt_sha256": "9846c7dadd23bf544190c45ba3db437fb83265cb180ad6c54cd3a3fedee20d93",
+  "shipped_probe_kernel_sha256": "d6f101e4dfb670e7aa44cd6f51d447feb5d433e5c5883152b5a574da1a09479e",
+  "preserved_donor_segments": [
+    {
+      "name": "__PRELINK_TEXT",
+      "sha256": "4c25f20e7d3a4a4e1784988481e605609a3a509b56c07bc0e86b50d6b66bd963"
+    },
+    {
+      "name": "__PRELINK_INFO",
+      "sha256": "5a4c588b5b483e929526aea63ae3e904b966419b30e7996bb887ca569f648b50"
+    },
+    {
+      "name": "__PLK_TEXT_EXEC",
+      "sha256": "63162f476b8df6ca4eddbc4a5963295e08610c0702f40777f199cae718b7d40b"
+    },
+    {
+      "name": "__PRELINK_DATA",
+      "sha256": "8b5d1098af56cf6befd8f214b4770c0f19b9a4e8a21c8d2b85670828833ae7a7"
+    },
+    {
+      "name": "__PLK_DATA_CONST",
+      "sha256": "b77ee164db3621f0e8107fdafe70ac50c8ad80a77e966ddfe78d8390564e6566"
+    }
+  ],
+  "checks": [
+    {
+      "name": "IOKit reader missing",
+      "passed": true
+    },
+    {
+      "name": "IOKit reader one",
+      "passed": true
+    },
+    {
+      "name": "IOKit reader zero",
+      "passed": true
+    },
+    {
+      "name": "IOKit reader empty",
+      "passed": true
+    },
+    {
+      "name": "IOKit reader oversized",
+      "passed": true
+    },
+    {
+      "name": "IOKit reader wrong-type",
+      "passed": true
+    },
+    {
+      "name": "Original initializer panic through cache: shipped",
+      "passed": true
+    },
+    {
+      "name": "Original initializer panic through cache: legal-prevention-one",
+      "passed": true
+    },
+    {
+      "name": "Real 22-entry instance table excludes CHMH and AMNM",
+      "passed": true
+    },
+    {
+      "name": "Model-only AMNM adapter missing",
+      "passed": true
+    },
+    {
+      "name": "Model-only AMNM adapter one",
+      "passed": true
+    },
+    {
+      "name": "Original next BNCH panic reproduced without fabricated manifest input",
+      "passed": true
+    },
+    {
+      "name": "Model-only AMNM adapter zero",
+      "passed": true
+    },
+    {
+      "name": "Model-only AMNM adapter empty",
+      "passed": true
+    },
+    {
+      "name": "Model-only AMNM adapter oversized",
+      "passed": true
+    },
+    {
+      "name": "Model-only AMNM adapter wrong-type",
+      "passed": true
+    },
+    {
+      "name": "Eight non-AMNM cached identifiers unchanged",
+      "passed": true
+    },
+    {
+      "name": "Nine original SecureDT fallback identifiers unchanged",
+      "passed": true
+    }
+  ],
+  "cases": {
+    "missing": {
+      "errno": 2,
+      "output_hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "mix-n-match-prevention-status",
+          "length": null
+        }
+      ]
+    },
+    "one": {
+      "errno": 0,
+      "output_hex": "00a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "mix-n-match-prevention-status",
+          "length": 4
+        }
+      ]
+    },
+    "zero": {
+      "errno": 0,
+      "output_hex": "01a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "mix-n-match-prevention-status",
+          "length": 4
+        }
+      ]
+    },
+    "empty": {
+      "errno": 0,
+      "output_hex": "01a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "mix-n-match-prevention-status",
+          "length": 0
+        }
+      ]
+    },
+    "oversized": {
+      "errno": 84,
+      "output_hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "mix-n-match-prevention-status",
+          "length": 8
+        }
+      ]
+    },
+    "wrong-type": {
+      "errno": 96,
+      "output_hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "mix-n-match-prevention-status",
+          "length": 4
+        }
+      ]
+    }
+  },
+  "inventory": {
+    "0": {
+      "kind": "u32",
+      "errno": 2,
+      "output_hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-epoch",
+          "length": null
+        }
+      ]
+    },
+    "1": {
+      "kind": "u32",
+      "errno": 2,
+      "output_hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "board-id",
+          "length": null
+        }
+      ]
+    },
+    "2": {
+      "kind": "u32",
+      "errno": 2,
+      "output_hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        }
+      ]
+    },
+    "3": {
+      "kind": "u32",
+      "errno": 2,
+      "output_hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "security-domain",
+          "length": null
+        }
+      ]
+    },
+    "15": {
+      "kind": "u32",
+      "errno": 2,
+      "output_hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "esdm-fuses",
+          "length": null
+        }
+      ]
+    },
+    "4": {
+      "kind": "u64",
+      "errno": 2,
+      "output_hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "unique-chip-id",
+          "length": null
+        }
+      ]
+    },
+    "5": {
+      "kind": "bool",
+      "errno": 0,
+      "output_hex": "00a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-production-status",
+          "length": 4
+        }
+      ]
+    },
+    "6": {
+      "kind": "bool",
+      "errno": 0,
+      "output_hex": "01a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-security-mode",
+          "length": 4
+        }
+      ]
+    },
+    "7": {
+      "kind": "bool",
+      "errno": 0,
+      "output_hex": "00a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-production-status-ap",
+          "length": 4
+        }
+      ]
+    },
+    "8": {
+      "kind": "bool",
+      "errno": 2,
+      "output_hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-security-mode-ap",
+          "length": null
+        }
+      ]
+    },
+    "9": {
+      "kind": "bool",
+      "errno": 2,
+      "output_hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "internal-use-only-unit",
+          "length": null
+        }
+      ]
+    },
+    "10": {
+      "kind": "bool",
+      "errno": 2,
+      "output_hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "research-enabled",
+          "length": null
+        }
+      ]
+    },
+    "12": {
+      "kind": "bool",
+      "errno": 2,
+      "output_hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "mix-n-match-prevention-status",
+          "length": null
+        }
+      ]
+    },
+    "13": {
+      "kind": "bool",
+      "errno": 2,
+      "output_hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "engineering-use-only-unit",
+          "length": null
+        }
+      ]
+    },
+    "16": {
+      "kind": "bool",
+      "errno": 2,
+      "output_hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "factory-prerelease-global-trust",
+          "length": null
+        }
+      ]
+    },
+    "11": {
+      "kind": "digest",
+      "errno": 2,
+      "output_hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "boot-manifest-hash",
+          "length": null
+        }
+      ]
+    }
+  },
+  "cached_initializer": {
+    "shipped": {
+      "panic": "failed to get mix-n-match policy: %d",
+      "errno": 2,
+      "chip": "0xfffffff005cae660",
+      "selected_runtime": "0xfffffff005cad110",
+      "cache_version": 6,
+      "cache_missing_mask": "0x3d51f",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "use-ddi-secure-boot",
+          "length": null
+        },
+        {
+          "node": "/chosen",
+          "property": "crypto-hash-method",
+          "length": 9
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-epoch",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "board-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "security-domain",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "unique-chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-production-status",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-security-mode",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-production-status-ap",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-security-mode-ap",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "internal-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "engineering-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "research-enabled",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "esdm-fuses",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        }
+      ],
+      "adapter_in_model_only": false,
+      "allow_mix_n_match": 165,
+      "callee_saved_and_sp_preserved": true
+    },
+    "legal-prevention-one": {
+      "panic": "failed to get mix-n-match policy: %d",
+      "errno": 2,
+      "chip": "0xfffffff005cae660",
+      "selected_runtime": "0xfffffff005cad110",
+      "cache_version": 6,
+      "cache_missing_mask": "0x3d51f",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "use-ddi-secure-boot",
+          "length": null
+        },
+        {
+          "node": "/chosen",
+          "property": "crypto-hash-method",
+          "length": 9
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-epoch",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "board-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "security-domain",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "unique-chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-production-status",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-security-mode",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-production-status-ap",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-security-mode-ap",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "internal-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "engineering-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "research-enabled",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "esdm-fuses",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        }
+      ],
+      "adapter_in_model_only": false,
+      "allow_mix_n_match": 165,
+      "callee_saved_and_sp_preserved": true
+    }
+  },
+  "instance_descriptors": [
+    {
+      "address": "0xfffffff005caf0e0",
+      "identifier": 0,
+      "mask": "0x1"
+    },
+    {
+      "address": "0xfffffff005cac440",
+      "identifier": 1,
+      "mask": "0x2"
+    },
+    {
+      "address": "0xfffffff005cad430",
+      "identifier": 2,
+      "mask": "0x4"
+    },
+    {
+      "address": "0xfffffff005cac6b8",
+      "identifier": 3,
+      "mask": "0x8"
+    },
+    {
+      "address": "0xfffffff005cabe60",
+      "identifier": 4,
+      "mask": "0x10"
+    },
+    {
+      "address": "0xfffffff005cacac8",
+      "identifier": 5,
+      "mask": "0x20"
+    },
+    {
+      "address": "0xfffffff005cb3750",
+      "identifier": 6,
+      "mask": "0x40"
+    },
+    {
+      "address": "0xfffffff005cb1cb8",
+      "identifier": 7,
+      "mask": "0x80"
+    },
+    {
+      "address": "0xfffffff005cb3ad0",
+      "identifier": 8,
+      "mask": "0x100"
+    },
+    {
+      "address": "0xfffffff005cb2668",
+      "identifier": 9,
+      "mask": "0x200"
+    },
+    {
+      "address": "0xfffffff005cb06e0",
+      "identifier": 13,
+      "mask": "0x800"
+    },
+    {
+      "address": "0xfffffff005cabf40",
+      "identifier": 10,
+      "mask": "0x400"
+    },
+    {
+      "address": "0xfffffff005cacc18",
+      "identifier": 5,
+      "mask": "0x20"
+    },
+    {
+      "address": "0xfffffff005cb38a0",
+      "identifier": 6,
+      "mask": "0x40"
+    },
+    {
+      "address": "0xfffffff005cb05f0",
+      "identifier": 15,
+      "mask": "0x1000"
+    },
+    {
+      "address": "0xfffffff005caf238",
+      "identifier": 17,
+      "mask": "0x4000"
+    },
+    {
+      "address": "0xfffffff005cb39f0",
+      "identifier": 18,
+      "mask": "0x8000"
+    },
+    {
+      "address": "0xfffffff005cb07c0",
+      "identifier": 19,
+      "mask": "0x10000"
+    },
+    {
+      "address": "0xfffffff005cac798",
+      "identifier": 20,
+      "mask": "0x20000"
+    },
+    {
+      "address": "0xfffffff005cb2b08",
+      "identifier": 21,
+      "mask": "0x40000"
+    },
+    {
+      "address": "0xfffffff005caff58",
+      "identifier": 24,
+      "mask": "0x0"
+    },
+    {
+      "address": "0xfffffff005cac998",
+      "identifier": 25,
+      "mask": "0x0"
+    }
+  ],
+  "adapter_cases": {
+    "missing": {
+      "panic": "failed to get mix-n-match policy: %d",
+      "errno": 2,
+      "chip": "0xfffffff005cae660",
+      "selected_runtime": "0xfffffff005cad110",
+      "cache_version": 6,
+      "cache_missing_mask": "0x3d51f",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "use-ddi-secure-boot",
+          "length": null
+        },
+        {
+          "node": "/chosen",
+          "property": "crypto-hash-method",
+          "length": 9
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-epoch",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "board-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "security-domain",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "unique-chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-production-status",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-security-mode",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-production-status-ap",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-security-mode-ap",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "internal-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "engineering-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "research-enabled",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "esdm-fuses",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "mix-n-match-prevention-status",
+          "length": null
+        }
+      ],
+      "adapter_in_model_only": true,
+      "allow_mix_n_match": 165,
+      "callee_saved_and_sp_preserved": true
+    },
+    "one": {
+      "panic": null,
+      "errno": 0,
+      "chip": "0xfffffff005cae660",
+      "selected_runtime": "0xfffffff005cad110",
+      "cache_version": 6,
+      "cache_missing_mask": "0x3d51f",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "use-ddi-secure-boot",
+          "length": null
+        },
+        {
+          "node": "/chosen",
+          "property": "crypto-hash-method",
+          "length": 9
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-epoch",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "board-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "security-domain",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "unique-chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-production-status",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-security-mode",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-production-status-ap",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-security-mode-ap",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "internal-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "engineering-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "research-enabled",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "esdm-fuses",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "mix-n-match-prevention-status",
+          "length": 4
+        }
+      ],
+      "adapter_in_model_only": true,
+      "allow_mix_n_match": 0,
+      "callee_saved_and_sp_preserved": true
+    },
+    "zero": {
+      "panic": null,
+      "errno": 0,
+      "chip": "0xfffffff005cae660",
+      "selected_runtime": "0xfffffff005cad110",
+      "cache_version": 6,
+      "cache_missing_mask": "0x3d51f",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "use-ddi-secure-boot",
+          "length": null
+        },
+        {
+          "node": "/chosen",
+          "property": "crypto-hash-method",
+          "length": 9
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-epoch",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "board-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "security-domain",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "unique-chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-production-status",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-security-mode",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-production-status-ap",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-security-mode-ap",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "internal-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "engineering-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "research-enabled",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "esdm-fuses",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "mix-n-match-prevention-status",
+          "length": 4
+        }
+      ],
+      "adapter_in_model_only": true,
+      "allow_mix_n_match": 1,
+      "callee_saved_and_sp_preserved": true
+    },
+    "empty": {
+      "panic": null,
+      "errno": 0,
+      "chip": "0xfffffff005cae660",
+      "selected_runtime": "0xfffffff005cad110",
+      "cache_version": 6,
+      "cache_missing_mask": "0x3d51f",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "use-ddi-secure-boot",
+          "length": null
+        },
+        {
+          "node": "/chosen",
+          "property": "crypto-hash-method",
+          "length": 9
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-epoch",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "board-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "security-domain",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "unique-chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-production-status",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-security-mode",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-production-status-ap",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-security-mode-ap",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "internal-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "engineering-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "research-enabled",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "esdm-fuses",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "mix-n-match-prevention-status",
+          "length": 0
+        }
+      ],
+      "adapter_in_model_only": true,
+      "allow_mix_n_match": 1,
+      "callee_saved_and_sp_preserved": true
+    },
+    "oversized": {
+      "panic": "failed to get mix-n-match policy: %d",
+      "errno": 84,
+      "chip": "0xfffffff005cae660",
+      "selected_runtime": "0xfffffff005cad110",
+      "cache_version": 6,
+      "cache_missing_mask": "0x3d51f",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "use-ddi-secure-boot",
+          "length": null
+        },
+        {
+          "node": "/chosen",
+          "property": "crypto-hash-method",
+          "length": 9
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-epoch",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "board-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "security-domain",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "unique-chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-production-status",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-security-mode",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-production-status-ap",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-security-mode-ap",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "internal-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "engineering-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "research-enabled",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "esdm-fuses",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "mix-n-match-prevention-status",
+          "length": 8
+        }
+      ],
+      "adapter_in_model_only": true,
+      "allow_mix_n_match": 165,
+      "callee_saved_and_sp_preserved": true
+    },
+    "wrong-type": {
+      "panic": "failed to get mix-n-match policy: %d",
+      "errno": 96,
+      "chip": "0xfffffff005cae660",
+      "selected_runtime": "0xfffffff005cad110",
+      "cache_version": 6,
+      "cache_missing_mask": "0x3d51f",
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "use-ddi-secure-boot",
+          "length": null
+        },
+        {
+          "node": "/chosen",
+          "property": "crypto-hash-method",
+          "length": 9
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-epoch",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "board-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "security-domain",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "unique-chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-production-status",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-security-mode",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-production-status-ap",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-security-mode-ap",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "internal-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "engineering-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "research-enabled",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "esdm-fuses",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "mix-n-match-prevention-status",
+          "length": 4
+        }
+      ],
+      "adapter_in_model_only": true,
+      "allow_mix_n_match": 165,
+      "callee_saved_and_sp_preserved": true
+    }
+  },
+  "adapter_controls": {
+    "unrelated_cached_identifiers": {
+      "5": {
+        "errno": 0,
+        "output_hex": "00a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+      },
+      "6": {
+        "errno": 0,
+        "output_hex": "01a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+      },
+      "7": {
+        "errno": 0,
+        "output_hex": "00a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+      },
+      "8": {
+        "errno": 2,
+        "output_hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+      },
+      "9": {
+        "errno": 0,
+        "output_hex": "00a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+      },
+      "10": {
+        "errno": 2,
+        "output_hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+      },
+      "13": {
+        "errno": 0,
+        "output_hex": "00a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+      },
+      "16": {
+        "errno": 2,
+        "output_hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+      }
+    },
+    "original_secure_dt_fallback": {
+      "5": {
+        "errno": 0,
+        "output_hex": "00a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+      },
+      "6": {
+        "errno": 0,
+        "output_hex": "01a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+      },
+      "7": {
+        "errno": 0,
+        "output_hex": "00a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+      },
+      "8": {
+        "errno": 2,
+        "output_hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+      },
+      "9": {
+        "errno": 2,
+        "output_hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+      },
+      "10": {
+        "errno": 2,
+        "output_hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+      },
+      "12": {
+        "errno": 2,
+        "output_hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+      },
+      "13": {
+        "errno": 2,
+        "output_hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+      },
+      "16": {
+        "errno": 2,
+        "output_hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+      }
+    }
+  },
+  "subsequent_initializer": {
+    "panic": "failed to read boot nonce hash: secure boot level = %#llx: %d",
+    "variadic_values": [
+      0,
+      2
+    ],
+    "events": [
+      {
+        "lookup": "/chosen"
+      },
+      {
+        "node": "/chosen",
+        "property": "use-ddi-secure-boot",
+        "length": null
+      },
+      {
+        "node": "/chosen",
+        "property": "crypto-hash-method",
+        "length": 9
+      },
+      {
+        "lookup": "/chosen"
+      },
+      {
+        "node": "/chosen",
+        "property": "chip-epoch",
+        "length": null
+      },
+      {
+        "lookup": "/chosen"
+      },
+      {
+        "node": "/chosen",
+        "property": "board-id",
+        "length": null
+      },
+      {
+        "lookup": "/chosen"
+      },
+      {
+        "node": "/chosen",
+        "property": "chip-id",
+        "length": null
+      },
+      {
+        "lookup": "/chosen"
+      },
+      {
+        "node": "/chosen",
+        "property": "security-domain",
+        "length": null
+      },
+      {
+        "lookup": "/chosen"
+      },
+      {
+        "node": "/chosen",
+        "property": "unique-chip-id",
+        "length": null
+      },
+      {
+        "lookup": "/chosen"
+      },
+      {
+        "node": "/chosen",
+        "property": "certificate-production-status",
+        "length": 4
+      },
+      {
+        "lookup": "/chosen"
+      },
+      {
+        "node": "/chosen",
+        "property": "certificate-security-mode",
+        "length": 4
+      },
+      {
+        "lookup": "/chosen"
+      },
+      {
+        "node": "/chosen",
+        "property": "effective-production-status-ap",
+        "length": 4
+      },
+      {
+        "lookup": "/chosen"
+      },
+      {
+        "node": "/chosen",
+        "property": "effective-security-mode-ap",
+        "length": null
+      },
+      {
+        "lookup": "/chosen"
+      },
+      {
+        "node": "/chosen",
+        "property": "internal-use-only-unit",
+        "length": null
+      },
+      {
+        "lookup": "/chosen"
+      },
+      {
+        "node": "/chosen",
+        "property": "engineering-use-only-unit",
+        "length": null
+      },
+      {
+        "lookup": "/chosen"
+      },
+      {
+        "node": "/chosen",
+        "property": "research-enabled",
+        "length": null
+      },
+      {
+        "lookup": "/chosen"
+      },
+      {
+        "node": "/chosen",
+        "property": "esdm-fuses",
+        "length": null
+      },
+      {
+        "lookup": "/chosen"
+      },
+      {
+        "lookup": "/chosen"
+      },
+      {
+        "node": "/chosen",
+        "property": "chip-id",
+        "length": null
+      },
+      {
+        "lookup": "/chosen"
+      },
+      {
+        "lookup": "/chosen"
+      },
+      {
+        "lookup": "/chosen"
+      },
+      {
+        "lookup": "/chosen"
+      },
+      {
+        "lookup": "/chosen"
+      },
+      {
+        "node": "/chosen",
+        "property": "mix-n-match-prevention-status",
+        "length": 4
+      },
+      {
+        "lookup": "/chosen"
+      },
+      {
+        "node": "/chosen",
+        "property": "use-ddi-secure-boot",
+        "length": null
+      },
+      {
+        "node": "/chosen",
+        "property": "crypto-hash-method",
+        "length": 9
+      },
+      {
+        "lookup": "/chosen/asmb"
+      },
+      {
+        "secure_dt_lookup": "/chosen/manifest-properties"
+      }
+    ],
+    "scope": "Original initializer continuation with baseline native SecureDT; AMNM one only in object fixture"
+  },
+  "adapter_sha256": "ad2bb3e06d60ea2fee50de9f642e2feec6ac89e594071af1f8e5b4408006aa39",
+  "subsequent_inputs": {
+    "manifest_properties_node_present": true,
+    "boot_manifest_hash_bytes": null,
+    "manifest_authenticity": "not established; never substitute an arbitrary digest"
+  },
+  "code_evidence": {
+    "0xfffffff0046e98cc": {
+      "bytes": 1744,
+      "sha256": "74b9904cca061ef07ca64a28aa1c05f7d7ec4a493604eed0d4e7e0f36176a8e5"
+    },
+    "0xfffffff0046e9fe0": {
+      "bytes": 364,
+      "sha256": "88dc6db1aab40c42a10ae9ce17be4aa6e29632eb733f3a4f29a4082ad5b39ae6"
+    },
+    "0xfffffff0046ea9c8": {
+      "bytes": 196,
+      "sha256": "2c841d6f4d4852176f32bb7b204b62850f933af08656382794badb9e4407ec8f"
+    },
+    "0xfffffff0046f07e8": {
+      "bytes": 200,
+      "sha256": "723cdfaa562a70e3b98a79a6b4d9af6a5b60c10ec4976b71c5d733daa7ec54ab"
+    }
+  },
+  "modeled_boundaries": [
+    "IORegistryEntry::fromPath/getProperty/release",
+    "OSMetaClassBase::safeMetaCast",
+    "OSData::getLength/getBytesNoCopy",
+    "Image4 runtime logging"
+  ],
+  "policy_selected": false,
+  "shipped_files_modified": false,
+  "device_accessed": false,
+  "limitations": [
+    "ADT-backed object fixtures; not a live IORegistry snapshot",
+    "No Apple trust chain or manifest authenticity established"
+  ]
+}
