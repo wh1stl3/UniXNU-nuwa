@@ -8,10 +8,45 @@
 // to probe_exception, which reports ESR/ELR/FAR through the geometry snapshot and
 // never relies on x20 (an exception can fire when x20 holds anything).
 
+// Post-MMU hooks can interrupt live temporaries, not just ABI call boundaries.
+// Preserve every renderer scratch GPR and NZCV before replaying native code.
+.macro PROBE_SAVE
+    sub sp, sp, #176
+    stp x9, x10, [sp, #0]
+    stp x11, x12, [sp, #16]
+    stp x13, x14, [sp, #32]
+    stp x15, x16, [sp, #48]
+    stp x17, x18, [sp, #64]
+    stp x19, x20, [sp, #80]
+    stp x21, x22, [sp, #96]
+    stp x23, x24, [sp, #112]
+    stp x25, x26, [sp, #128]
+    stp x27, x28, [sp, #144]
+    mrs x9, nzcv
+    str x9, [sp, #160]
+.endm
+.macro PROBE_RESTORE
+    ldr x9, [sp, #160]
+    msr nzcv, x9
+    ldp x9, x10, [sp, #0]
+    ldp x11, x12, [sp, #16]
+    ldp x13, x14, [sp, #32]
+    ldp x15, x16, [sp, #48]
+    ldp x17, x18, [sp, #64]
+    ldp x19, x20, [sp, #80]
+    ldp x21, x22, [sp, #96]
+    ldp x23, x24, [sp, #112]
+    ldp x25, x26, [sp, #128]
+    ldp x27, x28, [sp, #144]
+    add sp, sp, #176
+.endm
+
 .macro BAND args, y, color
     ldr x9, [\args, #0x28]
     cbz x9, 9f
     ldr x10, [\args, #0x38]
+    cmp x10, #384
+    b.lo 9f
     ldr x11, [\args, #0x48]
     cmp x11, #(\y+32)
     b.lo 9f
@@ -24,15 +59,22 @@
     b.ne 9f
     tst x10, #7
     b.ne 9f
-    mov x11, #\y
+    mov x11, #(256 + ((\y - 256) % 512))
     madd x9, x10, x11, x9
-    lsl x10, x10, #5
+    add x9, x9, #(((\y - 256) / 512) * 384)
     mov w12, #(\color & 0xffff)
     movk w12, #((\color >> 16) & 0xffff), lsl #16
-1:
+    mov x13, #32
+.Ltile_row\@:
+    mov x14, #48
+.Ltile_col\@:
     stp w12, w12, [x9], #8
-    subs x10, x10, #8
-    b.hi 1b
+    subs x14, x14, #1
+    b.ne .Ltile_col\@
+    add x9, x9, x10
+    sub x9, x9, #384
+    subs x13, x13, #1
+    b.ne .Ltile_row\@
     dsb sy
 9:
 .endm
@@ -44,38 +86,38 @@
     ldr         x9, [x15]
     cbz         x9, .Ldraw_done\@
     ldr         x10, [x15, #8]
-    mov         x11, #\y
-    madd        x9, x10, x11, x9
-    lsl         x10, x10, #5
-    mov         w12, #(\color & 0xffff)
-    movk        w12, #((\color >> 16) & 0xffff), lsl #16
-1:
-    stp         w12, w12, [x9], #8
-    subs        x10, x10, #8
-    b.hi        1b
-    dsb         sy
+    mov x11, #(256 + ((\y - 256) % 512))
+    madd x9, x10, x11, x9
+    add x9, x9, #(((\y - 256) / 512) * 384)
+    mov w12, #(\color & 0xffff)
+    movk w12, #((\color >> 16) & 0xffff), lsl #16
+    mov x13, #32
+.Ltile_row\@:
+    mov x14, #48
+.Ltile_col\@:
+    stp w12, w12, [x9], #8
+    subs x14, x14, #1
+    b.ne .Ltile_col\@
+    add x9, x9, x10
+    sub x9, x9, #384
+    subs x13, x13, #1
+    b.ne .Ltile_row\@
+    dsb sy
 .Ldraw_done\@:
 .endm
 
 // 16 hex digits of a system register, drawn from the snapshot. 4x4 squares,
 // 24 bytes apart, one row of 5 pixels per hex bit row (same glyphs as hex_font).
-.macro HEXROW_VAL y
-    adr         x15, probe_scratch
-    ldr         x21, [x15]
-    ldr         x22, [x15, #8]
-    cbz         x21, .Lhex_done\@
-    mov         x24, #60
-    mov         x25, #\y
-    madd        x21, x22, x25, x21
-.Lhex_digit\@:
+.macro HEX_DIGITS
+.Ldigits_digit\@:
     lsr         x25, x23, x24
     and         x25, x25, #15
     adr         x26, hex_font
     ldr         w27, [x26, x25, lsl #2]
     mov         x28, #0
-.Lhex_row\@:
+.Ldigits_row\@:
     mov         x17, #0
-.Lhex_col\@:
+.Ldigits_col\@:
     mov         x16, #19
     sub         x16, x16, x28, lsl #2
     sub         x16, x16, x17
@@ -86,21 +128,58 @@
     madd        x13, x14, x22, x21
     add         x13, x13, x17, lsl #4
     mov         x12, #4
-.Lhex_pixel_row\@:
+.Ldigits_pixel_row\@:
     stp         w15, w15, [x13]
     stp         w15, w15, [x13, #8]
     add         x13, x13, x22
     subs        x12, x12, #1
-    b.ne        .Lhex_pixel_row\@
+    b.ne        .Ldigits_pixel_row\@
     add         x17, x17, #1
     cmp         x17, #4
-    b.lo        .Lhex_col\@
+    b.lo        .Ldigits_col\@
     add         x28, x28, #1
     cmp         x28, #5
-    b.lo        .Lhex_row\@
+    b.lo        .Ldigits_row\@
     add         x21, x21, #24*4
     subs        x24, x24, #4
-    b.ge        .Lhex_digit\@
+    b.ge        .Ldigits_digit\@
+.endm
+.macro HEX_RENDER y
+    // Four-nibble field ID followed by sixteen value nibbles. 4x4 glyph pixels.
+    mov x19, x23
+    .if \y >= 1088
+    mov x25, #(224 + ((\y - 1088) / 32) * 28)
+    .else
+    mov x25, #756
+    .endif
+    madd x21, x22, x25, x21
+    add x21, x21, #1024
+    // Clear the entire 480x20 data rectangle, including inter-digit gaps.
+    mov x9, x21
+    mov x10, #20
+.Lclear_row\@:
+    mov x12, #240
+.Lclear_col\@:
+    stp wzr, wzr, [x9], #8
+    subs x12, x12, #1
+    b.ne .Lclear_col\@
+    add x9, x9, x22
+    sub x9, x9, #1920
+    subs x10, x10, #1
+    b.ne .Lclear_row\@
+    mov x23, #(0xa000 + (\y / 32))
+    mov x24, #12
+    HEX_DIGITS
+    mov x23, x19
+    mov x24, #60
+    HEX_DIGITS
+.endm
+.macro HEXROW_VAL y
+    adr x15, probe_scratch
+    ldr x21, [x15]
+    ldr x22, [x15, #8]
+    cbz x21, .Lhex_done\@
+    HEX_RENDER \y
 .Lhex_done\@:
 .endm
 // Same renderer, but the value comes from a system register.
@@ -108,19 +187,28 @@
     mrs         x23, \reg
     HEXROW_VAL \y
 .endm
+// Read an absolute 64-bit kernel address into x23 and render it. The address
+// comes from the linker as an absolute symbol, so it must be materialised
+// with movz/movk: the probe runs at the kernel's KVA, but the linker only
+// knows the numeric value.
+.macro LOADABS reg, sym
+    movz        \reg, #((\sym) & 0xffff)
+    movk        \reg, #(((\sym) >> 16) & 0xffff), lsl #16
+    movk        \reg, #(((\sym) >> 32) & 0xffff), lsl #32
+    movk        \reg, #(((\sym) >> 48) & 0xffff), lsl #48
+.endm
+// Render the 64-bit value at (absolute address + offset).
+.macro HEXROW_AT sym, off, y
+    LOADABS     x23, \sym
+    ldr         x23, [x23, #\off]
+    HEXROW_VAL  \y
+.endm
 
-// Band layout: every band is 32 rows tall with a 48-row pitch (16 rows of gap),
-// starting at row 256. Hex rows use the same pitch and are 20 rows of glyphs.
-//   256 blue (__start)      304 yellow (page tables)  352 magenta (before SCTLR)
-//   400 cyan (after SCTLR+isb)  448 white (_arm_init)  496 purple (_current_percpu_base)
-//   544 brown (_arm_vm_init)  592 teal (_pmap_bootstrap)  640 orange (_kernel_bootstrap)
-//   688 red (exception)      736 ESR_EL1  784 ELR_EL1  832 FAR_EL1
-//   880 teal-gray (arm_vm_init+0x54)  928 olive (arm_vm_init+0xa4)
-//   976 hot pink (panic)  1024 violet (panic_trap_to_debugger)
-//   1072 first eight bytes of the panic format string, as hex
-// The firmware logo is a background layer drawn before the kernel, so bands
-// drawn over it stay visible; the firmware only redraws the menu below row
-// ~1150, so no band may live there. Height check 1104; the screen is 3200 rows.
+// v21 screen: 96x32 stage tiles in x=0..191,y=256..767.
+// Logical stage rows >=800 wrap into the second tile column. Hex records
+// occupy x=256..735 with a four-nibble ID and sixteen value nibbles.
+// Logical hex rows >=1088 map to y=224+28*((row-1088)/32); IDs are
+// A000+(logical_row/32). Counter 784 uses y756. Nothing writes y>=800.
 // Draw-once guard: the flag byte lives in the probe's own flag page, so a hook
 // that is hit repeatedly costs one branch instead of a full band redraw.
 .macro BAND_ONCE idx, y, color
@@ -220,12 +308,14 @@ exception_stop:
     ldr         x13, [x20, #0x28]
     cbz         x13, .Lsnap_done\@
     ldr         x14, [x20, #0x38]
+    cmp x14, #2944
+    b.lo .Lsnap_done\@
     cmp         x14, #0x10, lsl #12
     b.hi        .Lsnap_done\@
     tst         x14, #7
     b.ne        .Lsnap_done\@
     ldr         x9, [x20, #0x48]
-    cmp         x9, #1344                         // must cover the panic text row at 1312
+    cmp         x9, #800                          // all diagnostic output is above row 800
     b.lo        .Lsnap_done\@
     ldr         x9, [x20, #0x50]
     and         x9, x9, #255
@@ -268,6 +358,7 @@ probe_mmu_on_replay:
 // live and usable for instruction fetch.
 .global probe_arm_init
 probe_arm_init:
+    PROBE_SAVE
     BAND_ONCE 2, 384, 0xffffffff
     // Mainline shim, not a measurement: the platform-expert path reads the per-CPU
     // base through TPIDR_EL1 before XNU has built cpu_data_t, and start.s clears
@@ -276,6 +367,7 @@ probe_arm_init:
     // overwrites TPIDR_EL1 with the real per-CPU data later in cpu_bootstrap.
     adr         x15, probe_zero
     msr         TPIDR_EL1, x15
+    PROBE_RESTORE
 .global probe_arm_init_replay
 probe_arm_init_replay:
     .inst original_arm_init_word
@@ -289,154 +381,266 @@ probe_arm_init_replay:
 // pmap_bootstrap, plus the whole panic family.
 .global probe_cpu_base
 probe_cpu_base:
+    PROBE_SAVE
     BAND_ONCE 3, 416, 0xff8000ff
+    PROBE_RESTORE
 .global probe_cpu_base_replay
 probe_cpu_base_replay:
     .inst original_cpu_base_word
     b original_cpu_base_resume
 .global probe_arm_vm
 probe_arm_vm:
+    PROBE_SAVE
     BAND_ONCE 4, 448, 0xff804000
+    PROBE_RESTORE
 .global probe_arm_vm_replay
 probe_arm_vm_replay:
     .inst original_arm_vm_word
     b original_arm_vm_resume
 .global probe_pmap
 probe_pmap:
+    PROBE_SAVE
     BAND_ONCE 5, 480, 0xff00ff80
+    PROBE_RESTORE
 .global probe_pmap_replay
 probe_pmap_replay:
     .inst original_pmap_word
     b original_pmap_resume
 .global probe_kernel_bootstrap
 probe_kernel_bootstrap:
+    PROBE_SAVE
     BAND_ONCE 6, 512, 0xffff8040
+    PROBE_RESTORE
 .global probe_kernel_bootstrap_replay
 probe_kernel_bootstrap_replay:
     .inst original_kernel_bootstrap_word
     b original_kernel_bootstrap_resume
 .global probe_avm_bases
 probe_avm_bases:
+    PROBE_SAVE
     BAND_ONCE 7, 544, 0xff008080
+    PROBE_RESTORE
 .global probe_avm_bases_replay
 probe_avm_bases_replay:
     .inst original_avm_bases_word
     b original_avm_bases_resume
 .global probe_avm_memcheck
 probe_avm_memcheck:
+    PROBE_SAVE
     BAND_ONCE 8, 576, 0xff808000
+    PROBE_RESTORE
 .global probe_avm_memcheck_replay
 probe_avm_memcheck_replay:
-    .inst original_avm_memcheck_word
+    cbnz x0, .Lavm_memcheck_fallthrough
+    b original_avm_memcheck_target
+.Lavm_memcheck_fallthrough:
     b original_avm_memcheck_resume
 .global probe_avm_physmap
 probe_avm_physmap:
+    PROBE_SAVE
     BAND_ONCE 9, 608, 0xff8080c0
+    PROBE_RESTORE
 .global probe_avm_physmap_replay
 probe_avm_physmap_replay:
     .inst original_avm_physmap_word
     b original_avm_physmap_resume
 .global probe_avm_slide
 probe_avm_slide:
+    PROBE_SAVE
     BAND_ONCE 10, 640, 0xff808080
+    PROBE_RESTORE
 .global probe_avm_slide_replay
 probe_avm_slide_replay:
     .inst original_avm_slide_word
     b original_avm_slide_resume
 .global probe_early_random
 probe_early_random:
+    PROBE_SAVE
     COUNT16 11, 784
+    PROBE_RESTORE
 .global probe_early_random_replay
 probe_early_random_replay:
     .inst original_early_random_word
     b original_early_random_resume
 .global probe_dt_lookup
 probe_dt_lookup:
-    BAND_ONCE 14, 672, 0xff9400d3
+    PROBE_SAVE
+    BAND_ONCE 12, 672, 0xff9400d3
+    PROBE_RESTORE
 .global probe_dt_lookup_replay
 probe_dt_lookup_replay:
     .inst original_dt_lookup_word
     b original_dt_lookup_resume
 .global probe_soc_base
 probe_soc_base:
-    BAND_ONCE 15, 704, 0xff00c0c0
+    PROBE_SAVE
+    BAND_ONCE 13, 704, 0xff00c0c0
+    // v20: decide the timebase question on hardware, not by inference.
+    // This hook runs at the entry of pe_arm_get_soc_base_phys(), which is the
+    // exact guard in pe_identify_machine():
+    //     if (pe_arm_get_soc_base_phys() == 0) return;
+    // At this point SecureDTInit() has already run (PE_init_platform() calls it
+    // before pe_identify_machine()), so DTInitialized and DTRootNode hold their
+    // final values, while gPESoCBasePhys is still zero: it is assigned inside
+    // this very function. Reading both separates "the DT was never found" from
+    // "the DT was found but ranges[1] was zero".
+    //   row 1344: DTInitialized (0 = the tree was never initialised)
+    //   row 1376: DTRootNode (the pointer the kernel actually holds)
+    //   row 1408: gPESoCBasePhys (still zero at function entry)
+    //   row 1440: PE_state_raw_90 (what SecureDTInit was given)
+    //   row 1472: PE_state.bootArgs (the tree length the kernel took)
+    stp         x19, x20, [sp, #-80]!
+    stp         x21, x22, [sp, #16]
+    stp         x23, x24, [sp, #32]
+    stp         x25, x26, [sp, #48]
+    stp         x27, x28, [sp, #64]
+    LOADABS     x23, g_dt_initialized
+    ldr         w23, [x23]
+    HEXROW_VAL  1344
+    LOADABS     x23, g_dt_root_node
+    ldr         x23, [x23]
+    HEXROW_VAL  1376
+    LOADABS     x23, g_soc_base_phys
+    ldr         x23, [x23]
+    HEXROW_VAL  1408
+    LOADABS     x23, g_pe_state
+    ldr         x23, [x23, #0x90]              // PE_state_raw_90
+    HEXROW_VAL  1440
+    LOADABS     x23, g_pe_state
+    ldr         x23, [x23, #0xa0]              // PE_state.bootArgs
+    HEXROW_VAL  1472
+    ldp         x27, x28, [sp, #64]
+    ldp         x25, x26, [sp, #48]
+    ldp         x23, x24, [sp, #32]
+    ldp         x21, x22, [sp, #16]
+    ldp         x19, x20, [sp], #80
+    PROBE_RESTORE
 .global probe_soc_base_replay
 probe_soc_base_replay:
     .inst original_soc_base_word
     b original_soc_base_resume
 .global probe_timer_regs
 probe_timer_regs:
-       BAND_ONCE 16, 736, 0xffff80c0
+    PROBE_SAVE
+       BAND_ONCE 14, 736, 0xffff80c0
+    PROBE_RESTORE
 .global probe_timer_regs_replay
 probe_timer_regs_replay:
        .inst original_timer_regs_word
     b original_timer_regs_resume
 .global probe_wfe_timeout
 probe_wfe_timeout:
-       BAND_ONCE 17, 768, 0xff9400d3
+    PROBE_SAVE
+       BAND_ONCE 15, 768, 0xff9400d3
+    // v20: read the clock values the panic is computed from.
+    // wfe_timeout_configure() runs after pe_identify_machine(), so
+    // gPEClockFrequencyInfo already holds the final values here.
+    //   row 1504: gPEClockFrequencyInfo.timebase_frequency_hz (offset 0x48)
+    //   row 1536: arm64_eventi before configuration (initial value, not the rejected index)
+    // A zero timebase means pe_identify_machine() returned early, which is
+    // only possible when pe_arm_get_soc_base_phys() returned zero.
+    stp         x19, x20, [sp, #-80]!
+    stp         x21, x22, [sp, #16]
+    stp         x23, x24, [sp, #32]
+    stp         x25, x26, [sp, #48]
+    stp         x27, x28, [sp, #64]
+    LOADABS     x23, g_pe_clock_freq_info
+    ldr         x23, [x23, #0x48]               // timebase_frequency_hz
+    HEXROW_VAL  1504
+    LOADABS     x23, g_arm64_eventi
+    ldr         w23, [x23]
+    HEXROW_VAL  1536
+    ldp         x27, x28, [sp, #64]
+    ldp         x25, x26, [sp, #48]
+    ldp         x23, x24, [sp, #32]
+    ldp         x21, x22, [sp, #16]
+    ldp         x19, x20, [sp], #80
+    PROBE_RESTORE
 .global probe_wfe_timeout_replay
 probe_wfe_timeout_replay:
        .inst original_wfe_timeout_word
     b original_wfe_timeout_resume
 .global probe_wfe_init
 probe_wfe_init:
-       BAND_ONCE 18, 800, 0xff00c0c0
+    PROBE_SAVE
+       BAND_ONCE 16, 800, 0xff00c0c0
+    LOADABS x23, g_arm64_eventi
+    ldr w23, [x23]
+    HEXROW_VAL 1600
+    LOADABS x23, g_arm64_eventi
+    HEXROW_VAL 1632
+    PROBE_RESTORE
 .global probe_wfe_init_replay
 probe_wfe_init_replay:
-       .inst original_wfe_init_word
+       adrp x8, original_wfe_init_page
     b original_wfe_init_resume
 .global probe_misc_boot_args
 probe_misc_boot_args:
-       BAND_ONCE 19, 832, 0xff80c000
+    PROBE_SAVE
+       BAND_ONCE 17, 832, 0xff80c000
+    PROBE_RESTORE
 .global probe_misc_boot_args_replay
 probe_misc_boot_args_replay:
        .inst original_misc_boot_args_word
     b original_misc_boot_args_resume
 .global probe_misc_regs
 probe_misc_regs:
-       BAND_ONCE 20, 864, 0xffffc000
+    PROBE_SAVE
+       BAND_ONCE 18, 864, 0xffffc000
+    PROBE_RESTORE
 .global probe_misc_regs_replay
 probe_misc_regs_replay:
        .inst original_misc_regs_word
     b original_misc_regs_resume
 .global probe_cpu_topo
 probe_cpu_topo:
-    BAND_ONCE 14, 896, 0xff80c000
+    PROBE_SAVE
+    BAND_ONCE 19, 896, 0xff80c000
+    PROBE_RESTORE
 .global probe_cpu_topo_replay
 probe_cpu_topo_replay:
     .inst original_cpu_topo_word
     b original_cpu_topo_resume
 .global probe_cpu_bootstrap
 probe_cpu_bootstrap:
-    BAND_ONCE 15, 928, 0xffffc000
+    PROBE_SAVE
+    BAND_ONCE 20, 928, 0xffffc000
+    PROBE_RESTORE
 .global probe_cpu_bootstrap_replay
 probe_cpu_bootstrap_replay:
     .inst original_cpu_bootstrap_word
     b original_cpu_bootstrap_resume
 .global probe_machine_startup
 probe_machine_startup:
-    BAND_ONCE 16, 960, 0xffc000ff
+    PROBE_SAVE
+    BAND_ONCE 21, 960, 0xffc000ff
+    PROBE_RESTORE
 .global probe_machine_startup_replay
 probe_machine_startup_replay:
     .inst original_machine_startup_word
     b original_machine_startup_resume
 .global probe_panic
 probe_panic:
-    BAND_ONCE 17, 992, 0xffff1493
+    PROBE_SAVE
+    BAND_ONCE 22, 992, 0xffff1493
+    PROBE_RESTORE
 .global probe_panic_replay
 probe_panic_replay:
     .inst original_panic_word
     b original_panic_resume
 .global probe_panic_options
 probe_panic_options:
-    BAND_ONCE 18, 1024, 0xffc000c0
+    PROBE_SAVE
+    BAND_ONCE 23, 1024, 0xffc000c0
+    PROBE_RESTORE
 .global probe_panic_options_replay
 probe_panic_options_replay:
     .inst original_panic_options_word
     b original_panic_options_resume
 .global probe_panic_trap
 probe_panic_trap:
-    BAND_ONCE 19, 1040, 0xff9400ff
+    PROBE_SAVE
+    BAND_ONCE 24, 1040, 0xff9400ff
     // HEXROW_VAL uses x21..x28, which are callee-saved; this hook runs at a
     // function entry, so save and restore them around the rendering.
     stp         x19, x20, [sp, #-80]!
@@ -452,21 +656,48 @@ probe_panic_trap:
     // name of the function that panicked - but other panics pass a number there,
     // so only dereference it when it really looks like a page aligned kernel
     // pointer, otherwise fall back to the format string alone.
+    // The first variadic argument is checked as a pointer: for
+    // panic("%s: invalid bit index (%u)", __FUNCTION__, bit_index) it is the
+    // function name, a kernel text address. The earlier page-alignment test
+    // was wrong - a string literal in __TEXT is not page aligned, so the two
+    // argument rows stayed empty on hardware. What is actually required is
+    // that the value looks like a kernel pointer: in the KVA range and
+    // within the bounded kernel text segment. An integer argument fails
+    // both tests and the format string alone is rendered instead.
     ldr         x11, [x1]
     cbz         x11, .Lpanic_no_argument
+    ldr x23, [x11]
+    HEXROW_VAL 1568
+    ldr x23, [x11, #8]
+    HEXROW_VAL 1664
     ldr         x12, [x11]
     movz        x13, #0
     movk        x13, #0xffff, lsl #48
     cmp         x12, x13
     b.lo        .Lpanic_no_argument
-    and         x13, x12, #0xfff
-    cbnz        x13, .Lpanic_no_argument
+    LOADABS x13, g_text_min
+    cmp x12, x13
+    b.lo .Lpanic_no_argument
+    LOADABS x13, g_text_end_minus_16
+    cmp x12, x13
+    b.hi .Lpanic_no_argument
+    // The argument is a pointer to the function name: read its first eight
+    // bytes and render them as text, then the next eight.
+    // x11 holds the variadic slot and x12 the pointer, but HEXROW_VAL uses
+    // x12 internally, so x12 is reloaded from x11 before every use. x11 is
+    // not touched by the renderer.
     ldr         x23, [x12]
     rev         x23, x23
     HEXROW_VAL 1088
+    ldr         x12, [x11]
     ldr         x23, [x12, #8]
     rev         x23, x23
     HEXROW_VAL 1248
+    // The argument pointer itself, so a zero or a non-text address is visible.
+    // It is a value, not a loaded word, so it is not byte reversed.
+    ldr         x12, [x11]
+    mov         x23, x12
+    HEXROW_VAL 1568
 .Lpanic_no_argument:
     ldr         x23, [x0]
     rev         x23, x23
@@ -479,70 +710,141 @@ probe_panic_trap:
     ldp         x23, x24, [sp, #32]
     ldp         x21, x22, [sp, #16]
     ldp         x19, x20, [sp], #80
+    PROBE_RESTORE
 .global probe_panic_trap_replay
 probe_panic_trap_replay:
     .inst original_panic_trap_word
     b original_panic_trap_resume
-.balign 8
-.global probe_scratch
-probe_scratch:
-    .quad 0, 0
+
+// v22: diagnostic mapping transition. No allocations or replacement of live
+// descriptors. x0 is the new physical root; old V=P still maps these tables.
+.global probe_ttbr1
+probe_ttbr1:
+    PROBE_SAVE
+    adr x19, probe_vectors
+    adr x20, probe_end
+    LOADABS x9, g_phys_base
+    ldr x21, [x9]
+    LOADABS x9, g_virt_base
+    ldr x22, [x9]
+    sub x21, x21, x22
+    // Validate every leaf first: no partial changes on occupied/bad topology.
+    mov x23, x19
+.Lvalidate_probe:
+    ubfx x9, x23, #30, #8
+    ldr x10, [x0, x9, lsl #3]
+    and x11, x10, #3
+    cmp x11, #3
+    b.ne .Lmap_abort
+    and x10, x10, #0x0000fffffffff000
+    ubfx x9, x23, #21, #9
+    ldr x10, [x10, x9, lsl #3]
+    and x11, x10, #3
+    cmp x11, #3
+    b.ne .Lmap_abort
+    and x10, x10, #0x0000fffffffff000
+    ubfx x9, x23, #12, #9
+    ldr x11, [x10, x9, lsl #3]
+    cbnz x11, .Lmap_abort
+    add x23, x23, #4096
+    cmp x23, x20
+    b.lo .Lvalidate_probe
+    mov x23, x19
+.Linstall_probe:
+    ubfx x9, x23, #30, #8
+    ldr x10, [x0, x9, lsl #3]
+    and x10, x10, #0x0000fffffffff000
+    ubfx x9, x23, #21, #9
+    ldr x10, [x10, x9, lsl #3]
+    and x10, x10, #0x0000fffffffff000
+    ubfx x9, x23, #12, #9
+    add x11, x23, x21
+    adr x12, probe_data
+    cmp x23, x12
+    b.hs .Lprobe_rw
+    // Normal WB idx0, AF, inner-shareable, EL1 RO executable, EL0 XN.
+    mov x12, #0x783
+    movk x12, #0x0040, lsl #48
+    b .Lprobe_attr
+.Lprobe_rw:
+    // Mutable snapshot/flags/per-CPU page: privileged RW, PXN and UXN.
+    mov x12, #0x703
+    movk x12, #0x0060, lsl #48
+.Lprobe_attr:
+    orr x11, x11, x12
+    str x11, [x10, x9, lsl #3]
+    add x23, x23, #4096
+    cmp x23, x20
+    b.lo .Linstall_probe
+    dsb ishst
+    // Use KVA vectors: both old and new TTBR1 now map this code.
+    msr vbar_el1, x19
+    isb
+    adr x9, probe_map_status
+    mov x10, #1
+    str x10, [x9]
+    b .Lmap_exit
+.Lmap_abort:
+    adr x9, probe_map_status
+    mov x10, #2
+    str x10, [x9]
+.Lmap_exit:
+    PROBE_RESTORE
+.global probe_ttbr1_replay
+probe_ttbr1_replay:
+    adrp x30, original_ttbr1_resume
+    add x30, x30, :lo12:original_ttbr1_resume
+    b original_ttbr1_entry
+
+.global probe_ttbr0
+probe_ttbr0:
+    PROBE_SAVE
+    adr x9, probe_map_status
+    ldr x10, [x9]
+    cmp x10, #1
+    b.ne .Lfb_exit
+    ldr x10, [x0, #16]
+    cbnz x10, .Lfb_occupied
+    mov x10, #0x040d
+    movk x10, #0x8000, lsl #16
+    movk x10, #0x0060, lsl #48
+    str x10, [x0, #16]
+    dsb ishst
+    mov x10, #1
+    str x10, [x9, #8]
+    b .Lfb_exit
+.Lfb_occupied:
+    // Keep slot intact and disable rendering; code remains reachable.
+    adr x11, probe_scratch
+    str xzr, [x11]
+    mov x10, #2
+    str x10, [x9, #8]
+.Lfb_exit:
+    PROBE_RESTORE
+.global probe_ttbr0_replay
+probe_ttbr0_replay:
+    adrp x30, original_ttbr0_resume
+    add x30, x30, :lo12:original_ttbr0_resume
+    b original_ttbr0_entry
 
 // Early exception output for the kernel's own physical vectors: red band, then
 // ESR/ELR/FAR in 16 hex digits each, read from boot_args through x20. This path
 // is only live before the probe page takes over VBAR.
 .macro HEXROW reg, y
     mrs x23, \reg
-    mov x24, #60
     ldr x21, [x20, #0x28]
     ldr x22, [x20, #0x38]
-    mov x25, #\y
-    madd x21, x22, x25, x21
-hex_digit_\@:
-    lsr x25, x23, x24
-    and x25, x25, #15
-    adr x26, hex_font
-    ldr w27, [x26, x25, lsl #2]
-    mov x28, #0
-hex_row_\@:
-    // 4 columns, each a 4x4 square; high glyph bit first.
-    mov x17, #0
-hex_col_\@:
-    mov x16, #19
-    sub x16, x16, x28, lsl #2
-    sub x16, x16, x17
-    lsr w15, w27, w16
-    and w15, w15, #1
-    neg w15, w15
-    lsl x14, x28, #2
-    madd x13, x14, x22, x21
-    add x13, x13, x17, lsl #4
-    mov x12, #4
-hex_pixel_row_\@:
-    stp w15, w15, [x13]
-    stp w15, w15, [x13, #8]
-    add x13, x13, x22
-    subs x12, x12, #1
-    b.ne hex_pixel_row_\@
-    add x17, x17, #1
-    cmp x17, #4
-    b.lo hex_col_\@
-    add x28, x28, #1
-    cmp x28, #5
-    b.lo hex_row_\@
-    add x21, x21, #24*4
-    subs x24, x24, #4
-    b.ge hex_digit_\@
+    HEX_RENDER \y
 .endm
 .global probe_fault
 probe_fault:
     ldr x9, [x20, #0x28]
     cbz x9, fault_stop
     ldr x10, [x20, #0x48]
-    cmp x10, #1344
+    cmp x10, #800
     b.lo fault_stop
     ldr x10, [x20, #0x38]
-    cmp x10, #1536
+    cmp x10, #2944
     b.lo fault_stop
     cmp x10, #0x10, lsl #12
     b.hi fault_stop
@@ -568,6 +870,15 @@ hex_font:
     .word 0xf888f, 0xe999e, 0xf8f8f, 0xf8f88
 
 .balign 4096
+.global probe_data
+probe_data:
+.global probe_scratch
+probe_scratch:
+    .quad 0, 0
+.global probe_map_status
+probe_map_status:
+    .quad 0, 0
+.balign 4096
 .global probe_zero
 probe_zero:
     .space 4096
@@ -577,3 +888,6 @@ probe_zero:
 .global probe_flags
 probe_flags:
     .space 4096
+
+.global probe_end
+probe_end:

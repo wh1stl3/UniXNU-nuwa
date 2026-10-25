@@ -17,3 +17,13 @@ patches/firmware-candidates/0008-nuwa-dxe-allocation-trace.patch -text
 reports/kernel-entry-probe/2026-10-24/build-v3.json -text -whitespace
 reports/kernel-entry-probe/2026-10-24/software.json -text -whitespace
 reports/xnu-first-entry/entry-probe-01.json -text -whitespace
+
+# Preserve this milestone's package/report/preflight byte bindings in Git.
+reports/kernel-entry-probe/2026-10-25-v20/*.json -text -whitespace
+reports/kernel-entry-probe/2026-10-25-v21d/*.json -text -whitespace
+reports/kernel-entry-probe/2026-10-25-v21-reproduce/*.json -text -whitespace
+reports/kernel-entry-probe/2026-10-25-v22c/*.json -text -whitespace
+reports/xnu-entry-probe-trial/2026-10-25-v21/*.json -text -whitespace
+reports/xnu-entry-probe-trial/2026-10-25-v22/*.json -text -whitespace
+reports/xnu-first-entry/entry-probe-14.json -text -whitespace
+reports/xnu-first-entry/entry-probe-15.json -text -whitespace

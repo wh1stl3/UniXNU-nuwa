@@ -1,0 +1,76 @@
+{
+  "scope": "Single temporary entry-probe-14 hardware trial, visual field reads, recovered Android with unchanged partition hashes; separate model analysis is not hardware proof",
+  "package": {
+    "image_sha256": "42b42624460d5f0b974e4315bc50d615dce6111514184815724d2040adbd509f",
+    "kernel_sha256": "0c1594215b534434221ddd16f10a8da6e4162bcc2d614d321f297425373723c4",
+    "report": "reports/xnu-first-entry/entry-probe-14.json"
+  },
+  "trigger": {
+    "host": "One fastboot boot command accepted",
+    "kernel": "User presses power as Enter after UniXNU menu; supported by user statement and menu-to-markers video",
+    "fixed_post_ack_wait_is_kernel_timer": false
+  },
+  "host_usb_observation_seconds": 180.0,
+  "submitted_video_duration_seconds": 4.036708,
+  "readings": {
+    "method": "Assistant visual read from original photograph crop, not automatic OCR",
+    "values": {
+      "A02A": "0000000000000001",
+      "A02B": "FFFFFFF008491000",
+      "A02C": "0000000000000000",
+      "A02D": "0000000000000000",
+      "A02E": "FFFFFFF00715C7C0",
+      "A02F": "000000000124F800",
+      "A030": "00000000FFFFFFFF",
+      "A032": "0000000000000004",
+      "A033": "FFFFFFF00716E5F8"
+    }
+  },
+  "screen_observations": {
+    "arm_init": true,
+    "wfe_init_value": 4,
+    "post_wfe_stages": [
+      "configure_misc_apple_boot_args",
+      "configure_misc_apple_regs",
+      "ml_parse_cpu_topology",
+      "cpu_bootstrap"
+    ],
+    "arm_vm_internal_sites": [
+      "+0x54",
+      "+0xa4",
+      "+0x108",
+      "+0x130"
+    ],
+    "pmap_marker_visible": false,
+    "panic_or_exception_records_visible": false,
+    "absence_is_not_exclusion": true
+  },
+  "bounds": [
+    "No hardware pmap_bootstrap entry proof",
+    "Framebuffer and appended code mapping may disappear before that hook",
+    "Provided video covers menu-to-markers and brief stable state, not all host 180-second USB observation",
+    "Residual menu under kernel overlays does not prove return to firmware"
+  ],
+  "model": {
+    "candidate_unchanged": true,
+    "loader_derived_boot_args": true,
+    "owned_ram_window": "0x40000000",
+    "reached": "pmap_bootstrap original entry",
+    "probe_and_fb_unmapped_after_ttbr_switch": true,
+    "next_probe_fetch_exception_pc": "0xfffffff00848a1a8",
+    "files": [
+      "forward-model.json",
+      "probe-loss-model.json"
+    ],
+    "hardware_claim": false
+  },
+  "recovery": {
+    "at": "2026-10-25T07:07:42.668924+00:00",
+    "android_boot_completed": "1",
+    "slot": "_a",
+    "three_partition_hashes_unchanged": true,
+    "no_flash_no_erase_no_slot_change": true
+  },
+  "next": "Keep probe code and framebuffer observability valid across arm_vm_init TTBR reconstruction before diagnosing the next kernel stop",
+  "device_accessed": true
+}

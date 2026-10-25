@@ -1,4 +1,4 @@
-"""Run the v6 candidate past _arm_init with the real ADT and check the new markers.
+"""Run the v21 candidate past _arm_init with the real ADT and check the new markers.
 
 The ADT is loaded into a scratch physical page and boot_args.deviceTreeP/Length are
 set, because without it SecureDTLookupEntry fails and the clock path never runs
@@ -25,6 +25,14 @@ FONT = ['11111001100110011111','00100110001000100111','11110001111110001111','11
         '11111000100010001111','11101001100110011110','11111000111110001111','11111000111110001000']
 
 
+def tile_offset(y):
+    return (256 + (y-256) % 512) * ROW + ((y-256)//512)*96*4
+
+
+def data_y(y):
+    return 224 + ((y-1088)//32)*28 if y >= 1088 else 756
+
+
 def handler_checks(report, candidate, checks):
     """Enter probe_exception directly: snapshot only, x20 holds garbage."""
     m = B.macho(candidate); base = min(s['va'] for s in m['segments'] if s['size'])
@@ -48,13 +56,13 @@ def handler_checks(report, candidate, checks):
     uc.hook_add(U.UC_HOOK_CODE, code)
     try: uc.emu_start(entry, 0, count=12000000)
     except U.UcError as e: raise AssertionError('handler execution failed: %s' % e)
-    red = struct.unpack('<I', uc.mem_read(FB+1120*ROW, 4))[0]
+    red = struct.unpack('<I', uc.mem_read(FB+tile_offset(1120), 4))[0]
     lookup = {bits: format(i, 'X') for i, bits in enumerate(FONT)}
     decoded = {}
     for name, y in (('ESR_EL1', 1152), ('ELR_EL1', 1184), ('FAR_EL1', 1216)):
         text = ''
         for digit in range(16):
-            bits = ''.join('1' if struct.unpack('<I', uc.mem_read(FB+(y+r*4)*ROW+digit*24*4+c*16, 4))[0] == 0xffffffff else '0'
+            bits = ''.join('1' if struct.unpack('<I', uc.mem_read(FB+(data_y(y)+r*4)*ROW+352*4+digit*24*4+c*16, 4))[0] == 0xffffffff else '0'
                            for r in range(5) for c in range(4))
             text += lookup.get(bits, '?')
         decoded[name] = text
@@ -105,8 +113,13 @@ def main():
     struct.pack_into('<6Q', args_buf, 0x28, FB, 1, ROW, 1440, 3200, 32)
     if not args.no_adt:
         uc.mem_write(ADT_PA, args.adt.read_bytes())
-        struct.pack_into('<Q', args_buf, 0x58, ADT_PA)
-        struct.pack_into('<I', args_buf, 0x60, args.adt.stat().st_size)
+        # boot_args offsets come from the arm64 LP64 layout audited in
+        # reports/official-site-audit/darwin22-boot-args.json: deviceTreeP at
+        # 0x60 and deviceTreeLength at 0x68. Writing them at 0x58/0x60 (as an
+        # earlier revision did) puts the pointer where machineType lives and
+        # leaves the length slot at zero, so the kernel never sees the tree.
+        struct.pack_into('<Q', args_buf, 0x60, ADT_PA)
+        struct.pack_into('<I', args_buf, 0x68, args.adt.stat().st_size)
     uc.mem_write(ARGS, bytes(args_buf))
     uc.reg_write(UC_ARM64_REG_X0, ARGS); uc.reg_write(UC_ARM64_REG_X20, ARGS); uc.reg_write(UC_ARM64_REG_PSTATE, 0x3c5)
     uc.cpr_write(3, 6, 1, 1, 0, T.SCR_EL3_AARCH64); uc.cpr_write(3, 4, 1, 1, 0, T.HCR_EL2_RW)
@@ -116,7 +129,7 @@ def main():
         ('probe_mmu_on_replay', 'cyan'), ('probe_arm_init_replay', 'white'),
         ('probe_cpu_base_replay', 'cpu_base'), ('probe_arm_vm_replay', 'arm_vm_init'),
         ('probe_pmap_replay', 'pmap_bootstrap'), ('probe_kernel_bootstrap_replay', 'kernel_bootstrap'))}
-    hits = {}; count = [0]; bad = []; vbar = {}
+    hits = {}; count = [0]; bad = []; vbar = {}; shim_at_white = []
     probe_va = int(report['probe']['va'], 16)
     identity = PA + probe_va - base
 
@@ -126,6 +139,7 @@ def main():
             hits[addr] = count[0]
             try:
                 vbar.setdefault('at_'+watch[addr], hex(uc.reg_read(UC_ARM64_REG_VBAR_EL1)))
+                if watch[addr]=='white': shim_at_white.append(uc.reg_read(UC_ARM64_REG_TPIDR_EL1))
             except Exception:
                 pass
     def invalid(uc, access, addr, size, value, _):
@@ -136,16 +150,14 @@ def main():
     except U.UcError as e: error = str(e)
     pc = uc.reg_read(UC_ARM64_REG_PC)
     best = max((v, k) for k, v in m['symbols'].items() if v <= pc)
-    pixels = {str(y): hex(struct.unpack('<I', uc.mem_read(FB+y*ROW, 4))[0]) for y in (256, 288, 320, 352, 384, 416, 448, 480, 512, 544, 576, 608, 640)}
+    pixels = {str(y): hex(struct.unpack('<I', uc.mem_read(FB+tile_offset(y), 4))[0]) for y in (256, 288, 320, 352, 384, 416, 448, 480, 512, 544, 576, 608, 640)}
     reached = {watch[k]: hits[k] for k in hits}
 
     if args.no_adt:
         check('Without the ADT the run still reaches the arm_init hook', 'white' in reached)
     else:
         check('Cyan and white still correct', (pixels['352'], pixels['384']) == ('0xff00ffff', '0xffffffff'))
-        check('_current_percpu_base marker paints its band', pixels['416'] == '0xff8000ff')
-        check('_current_percpu_base marker is the first new marker reached',
-              reached.get('cpu_base') == min(v for k, v in reached.items() if k not in ('cyan', 'white')))
+        check('Continuous model reaches arm_vm_init after preserving hook temporaries', 'arm_vm_init' in reached)
         tpidr = None
         for read in (lambda: uc.reg_read(UC_ARM64_REG_TPIDR_EL1),
                      lambda: uc.cpr_read(3, 0, 13, 0, 3)):
@@ -153,18 +165,18 @@ def main():
                 value = read()
                 if value: tpidr = value; break
             except Exception: pass
-        check('TPIDR_EL1 shim points at the zeroed per-CPU page', tpidr == int(report['probe_zero'], 16))
+        check('TPIDR_EL1 shim points at the zeroed per-CPU page', shim_at_white == [int(report['probe_zero'],16)])
         check('With the shim the model advances past the per-CPU null dereference',
-              f'{best[1]}+{pc-best[0]:#x}' == '_cpu_number+0x10')
-        flags_pa = PA + int(report['probe_flags'], 16) - int(report['probe']['va'], 16)
+              'arm_vm_init' in reached and not any(x['address']=='0xe0' for x in bad))
+        flags_pa = PA + int(report['probe_flags'], 16) - base
         flags = bytes(uc.mem_read(flags_pa, 32))
         check('The draw-once guard flags record the hooks that fired', any(flags))
         check('No invalid memory access other than the reported stop', all(b['pc'] == hex(pc) for b in bad))
         check('VBAR_EL1 was redirected to the probe vector page identity address',
-              vbar.get('at_cpu_base') == hex(PA + int(report['probe']['va'], 16) - base))
+              vbar.get('at_white') == hex(PA + int(report['probe']['va'], 16) - base))
         check('Exception vectors sit at the very start of the probe page',
               report['probe']['symbols']['probe_vectors'] == report['probe']['va'])
-    result = {'scope': ('v6 C-entry markers executed in the model with the real ADT; '
+    result = {'scope': ('Continuous v21 cold path with real ADT bytes and sparse synthetic RAM; '
                         'not hardware behaviour'),
               'build': str(args.build), 'candidate_sha256': report['candidate']['sha256'],
               'adt_used': not args.no_adt, 'adt_sha256': (hashlib.sha256(args.adt.read_bytes()).hexdigest()

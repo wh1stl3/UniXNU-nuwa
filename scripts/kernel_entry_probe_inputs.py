@@ -12,7 +12,12 @@ def report_path(relative):
 def metadata(build):
     build=build.resolve();software=build.with_name('software.json')
     if not build.is_relative_to(ROOT/'reports'):raise ValueError('Probe build report path')
-    return {name:dict(path=path.relative_to(ROOT).as_posix(),sha256=sha(path.read_bytes())) for name,path in (('build',build),('software',software))}
+    paths=[('build',build),('software',software)]
+    if json.loads(build.read_text()).get('probe_revision',0)>=21:
+        paths += [(n,build.with_name(n+'.json')) for n in ('transparency','wfe','read-sites','loader','mapping')]
+    if json.loads(build.read_text()).get('probe_revision',0)>=22:
+        paths += [(n,build.with_name(n+'.json')) for n in ('transition-normal','transition-occupied-probe','transition-bad-topology','transition-occupied-fb')]
+    return {name:dict(path=path.relative_to(ROOT).as_posix(),sha256=sha(path.read_bytes())) for name,path in paths}
 
 def validate(meta,kernel_sha):
     bound={}
@@ -42,6 +47,53 @@ def validate(meta,kernel_sha):
     if 'probe_mmu_on' in hooks:required|={'Post-SCTLR hook executes to its replay point','Cyan post-MMU band'}
     if 'probe_arm_init' in hooks:required|={'arm_init hook executes to its replay point','White arm_init band'}
     if not required<=names:raise ValueError('Probe software checks missing: '+', '.join(sorted(required-names)))
+    if 'probe_wfe_init' in hooks and build.get('probe_revision',0)<21:
+        raise ValueError('Unsafe pre-v21 WFE hook revision (ADRP relocation)')
+    if build.get('probe_revision',0)>=21:
+        # These tests are mandatory for this revision, not optional attachments.
+        for name in ('transparency','wfe','read-sites','loader','mapping'):
+            if name not in meta: raise ValueError('Missing v21 evidence: '+name)
+            raw_report=report_path(meta[name]['path']).read_bytes()
+            if sha(raw_report)!=meta[name]['sha256']: raise ValueError('Probe report digest differs: '+name)
+            evidence=json.loads(raw_report)
+            if evidence.get('candidate_sha256')!=kernel_sha: raise ValueError('Probe evidence candidate differs: '+name)
+            if name=='mapping':
+                walks=[w for snap in evidence['snapshots'] for w in snap.get('walks',[])]
+                if len(walks)!=6 or not all(w.get('mapped') is True for w in walks): raise ValueError('Probe mapping evidence incomplete')
+                continue
+            checks=evidence['cases'] if name=='loader' else evidence['checks']
+            if not checks or any(c['passed'] is not True for c in checks): raise ValueError('Failed v21 evidence: '+name)
+            actual_names={c['name'] for c in checks}
+            if len(actual_names)!=len(checks): raise ValueError('Duplicate v21 check names: '+name)
+            if name=='transparency':
+                required_cases={h+': '+mode for h in hooks-{'probe_entry','probe_tables','probe_mmu','probe_mmu_on','probe_ttbr1','probe_ttbr0'}
+                                for mode in ('first','repeat','no-video','count-saturated')}
+                if actual_names!=required_cases: raise ValueError('Probe transparency cases incomplete')
+            if name=='wfe' and actual_names!={'configure-init '+c for c in ('-v','-v wfe_events_sec=0','-v wfe_events_sec=19200','-v wfe_events_sec=2000000')}|{'v20 negative control reaches panic despite eventi=4'}:
+                raise ValueError('Probe WFE cases incomplete')
+            if name=='read-sites' and 'Every sampled data row has its own correct four-nibble field ID' not in actual_names:
+                raise ValueError('Probe field ID evidence missing')
+            if name=='loader' and actual_names!={'original','candidate','overlapping-probe','command-overrun','probe-file-overrun'}:
+                raise ValueError('Probe loader cases incomplete')
+    if {'probe_ttbr1','probe_ttbr0'} & hooks:
+        if build.get('probe_revision',0)<22: raise ValueError('TTBR hooks require revision 22 evidence')
+        for case in ('normal','occupied-probe','bad-topology','occupied-fb'):
+            name='transition-'+case
+            if name not in meta: raise ValueError('Missing transition evidence: '+case)
+            report_raw=report_path(meta[name]['path']).read_bytes()
+            if sha(report_raw)!=meta[name]['sha256']:raise ValueError('Transition digest differs')
+            evidence=json.loads(report_raw)
+            if evidence.get('candidate_sha256')!=kernel_sha or evidence.get('case')!=case:
+                raise ValueError('Transition identity differs')
+            if not evidence.get('checks') or any(c.get('passed') is not True for c in evidence['checks']):
+                raise ValueError('Transition checks incomplete')
+            required_transition={'TTBR1 call preserves GPR/SP/NZCV and native LR'}
+            if case in ('normal','occupied-fb'):required_transition.add('TTBR0 call preserves GPR/SP/NZCV and native LR')
+            if case=='normal':required_transition|={'Native cold path passes pmap probe after TTBR reconstruction','Code RO executable and data RW NX map exact probe physical pages','Next stop preserved as console platform read, not probe fetch'}
+            elif case=='occupied-fb':required_transition.add('Occupied framebuffer slot preserved and renderer disabled')
+            else:required_transition.add('Rejects occupied or malformed tables without partial page-table edits')
+            if {c['name'] for c in evidence['checks']}!=required_transition:
+                raise ValueError('Transition cases incomplete')
     covered=set()
     for patch in build['patches']:
         off=patch['file_offset'];before=bytes.fromhex(patch['before']);after=bytes.fromhex(patch['after']);new=set(range(off,off+len(after)))

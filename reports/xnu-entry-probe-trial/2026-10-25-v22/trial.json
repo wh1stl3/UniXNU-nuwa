@@ -1,0 +1,57 @@
+{
+  "scope": "Single temporary boot, menu power-key trigger, visual hardware evidence and verified Android recovery; model and source diagnosis are separate",
+  "image_sha256": "36969f945790452a9e9a7b2ba2785edd9afddda53c36106249623cf17c55144e",
+  "kernel_sha256": "a8b8fc90e4b926830839f4f1a4b27bf19ae34c1736bd8f41d99724a768c74265",
+  "readings": {
+    "method": "Assistant visual read of original-resolution crop; no automatic OCR",
+    "values": {
+      "A02A": "0000000000000001",
+      "A02B": "FFFFFFF008495000",
+      "A02C": "0000000017000000",
+      "A02D": "0000000000000000",
+      "A02E": "FFFFFFF00715C7C0",
+      "A02F": "000000000124F800",
+      "A030": "00000000FFFFFFFF",
+      "A032": "0000000000000004",
+      "A033": "FFFFFFF00716E5F8"
+    }
+  },
+  "hardware": {
+    "pmap_bootstrap_entry_marker": true,
+    "marker": {
+      "x": 0,
+      "y": 480,
+      "color": "0xff00ff80",
+      "hook": "probe_pmap",
+      "native_va": "0xfffffff0073a36c4"
+    },
+    "pmap_return_verified": false,
+    "kernel_bootstrap_verified": false,
+    "panic_or_exception_records_visible": false,
+    "exact_stop_pc_verified": false
+  },
+  "media": {
+    "raw_video_uploaded": false,
+    "raw_audio_uploaded": false,
+    "local_files_in_ignored_out": true,
+    "photo_sha256": "e024a7794cd91acf87812f0ca0301f30ce048cd45814281ac5f2c9fe68d9c640",
+    "video_sha256": "48ecdc4f54be38cc168436115b6395283ad71bf1abce2155dcd241ac2b15e885",
+    "duration_seconds": 4.697625,
+    "contains_aac_audio": true
+  },
+  "recovery": {
+    "at": "2026-10-25T08:12:44.521255+00:00",
+    "android_boot_completed": "1",
+    "slot": "_a",
+    "three_partition_hashes_unchanged": true,
+    "no_flash_no_erase_no_slot_change": true
+  },
+  "next_model_stop": {
+    "pc": "0xfffffff0079091f8",
+    "function": "_PE_create_console+0x48",
+    "read_address": "0x3c0fc000",
+    "source_role": "BCM2837 PLATFORM_PANIC_LOG_PADDR old panic log",
+    "hardware_stop_claim": false
+  },
+  "device_accessed": true
+}

@@ -38,17 +38,24 @@ def capture_confirmed(gate, approval):
     return confirmation == '可以，启动前通知我'
 
 
+def observation_window(requested, approval):
+    """ACK is transport acceptance; XNU starts at the menu power key."""
+    xnu = approval == 'XNU-FIRST-ENTRY-ANALYSIS'
+    seconds = (0 if xnu else 120) if requested is None else requested
+    if not (0 if xnu else 120) <= seconds <= 600:
+        raise ValueError('USB observation window outside this package scope')
+    return seconds
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('phase', choices=['launch', 'recover'])
     parser.add_argument('--evidence', type=Path, required=True)
     parser.add_argument('--package', type=Path, help='R-007/R-008/R-009 approved hash-pinned package report')
     parser.add_argument('--preflight', type=Path, help='Fresh D-021 process-log/recovery gate evidence, required for launch')
-    parser.add_argument('--observation-seconds', type=int, default=120,
-                        help='USB observation window after ACK, 120-600 seconds; not a process-log substitute')
+    parser.add_argument('--observation-seconds', type=int,
+                        help='USB window after ACK: XNU defaults to 0 (manual menu trigger), other scopes 120; maximum 600')
     args = parser.parse_args()
-    if not 120 <= args.observation_seconds <= 600:
-        raise ValueError('Observation window must be 120-600 seconds')
     evidence = args.evidence.resolve()
     if not evidence.is_relative_to(ROOT / 'reports') or evidence.exists():
         raise ValueError('Evidence must be a fresh reports file')
@@ -129,6 +136,7 @@ def main():
             raise ValueError('Diagnostic candidate escapes trial output')
         candidate_sha = package['image_sha256']
         package_sha = hashlib.sha256(package_raw).hexdigest()
+    args.observation_seconds = observation_window(args.observation_seconds, package['approval'] if args.package else None)
     checked_hashes = {ORIGINAL: HASHES[ORIGINAL]}
     if args.phase == 'launch':
         checked_hashes[candidate] = candidate_sha
@@ -243,7 +251,10 @@ def main():
             save()
             # A returned success is command acceptance, not proof of SEC/DXE.
             observed_from = time.monotonic()
-            report['observation_scope'] = 'USB presence only; screen video needed for process logs'
+            report['observation_scope'] = 'USB presence only; ACK is not kernel entry or an execution timer'
+            if package['approval']=='XNU-FIRST-ENTRY-ANALYSIS':
+                report['kernel_entry_trigger']='User presses power as Enter after the UniXNU menu appears; confirm from video'
+                print('Transport accepted. Press power as Enter in the UniXNU menu; no fixed post-ACK wait.',flush=True)
             report['requested_observation_seconds'] = args.observation_seconds
             while True:
                 report['observations'].append(dict(at=now(),

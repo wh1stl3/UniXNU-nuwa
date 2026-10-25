@@ -1,0 +1,223 @@
+{
+  "scope": "Forward analysis with loader-derived placement and the existing 1GiB owned RAM window.\nNo kernel bytes or parameters changed; no device commands. This is a model only.\n",
+  "candidate_sha256": "0c1594215b534434221ddd16f10a8da6e4162bcc2d614d321f297425373723c4",
+  "input": {
+    "argsPA": "0x8c4890000",
+    "treePA": "0x8c4891000",
+    "treeKVA": "0xfffffff008491000",
+    "topOfKernelData": "0x8c4898000",
+    "owned_window": "0x40000000",
+    "adt_sha256": "cf3d03e97bc7c0fda920cc2ed2a8c9b7fd6897bff3a3d31e205a8d0482c90ffd",
+    "loader_memSizeActual_offset": 1144
+  },
+  "events": [
+    {
+      "site": "_arm_vm_init",
+      "pc": "0xfffffff0073be014",
+      "x0": "0x0",
+      "x1": "0xfffffff00715c7c0",
+      "tcr": "0x22a51a251a",
+      "ttbr0": "0x8c355e000",
+      "ttbr1": "0x8c355f000",
+      "fb": {
+        "mapped": true,
+        "pa": "0xb8000000",
+        "rows": [
+          "0x6000008000040d"
+        ]
+      },
+      "probe": {
+        "mapped": true,
+        "pa": "0x8c4889000",
+        "rows": [
+          "0x8c3561003",
+          "0x8c4800601"
+        ]
+      }
+    },
+    {
+      "site": "first-table-bzero",
+      "pc": "0xfffffff0073be1f0",
+      "x0": "0xfffffff008498000",
+      "x1": "0x1000",
+      "tcr": "0x22a51a251a",
+      "ttbr0": "0x8c355e000",
+      "ttbr1": "0x8c355f000",
+      "fb": {
+        "mapped": true,
+        "pa": "0xb8000000",
+        "rows": [
+          "0x6000008000040d"
+        ]
+      },
+      "probe": {
+        "mapped": true,
+        "pa": "0x8c4889000",
+        "rows": [
+          "0x8c3561003",
+          "0x8c4800601"
+        ]
+      }
+    },
+    {
+      "site": "before-TTBR0-switch",
+      "pc": "0xfffffff0073beb60",
+      "x0": "0x8c4899000",
+      "x1": "0xfffffff007b33e00",
+      "tcr": "0x22a51a251a",
+      "ttbr0": "0x8c355e000",
+      "ttbr1": "0x8c355f000",
+      "fb": {
+        "mapped": true,
+        "pa": "0xb8000000",
+        "rows": [
+          "0x6000008000040d"
+        ]
+      },
+      "probe": {
+        "mapped": true,
+        "pa": "0x8c4889000",
+        "rows": [
+          "0x8c3561003",
+          "0x8c4800601"
+        ]
+      }
+    },
+    {
+      "site": "_set_mmu_ttb_alternate",
+      "pc": "0xfffffff0073cb23c",
+      "x0": "0x8c4899000",
+      "x1": "0xfffffff007b33e00",
+      "tcr": "0x22a51a251a",
+      "ttbr0": "0x8c355e000",
+      "ttbr1": "0x8c355f000",
+      "fb": {
+        "mapped": true,
+        "pa": "0xb8000000",
+        "rows": [
+          "0x6000008000040d"
+        ]
+      },
+      "probe": {
+        "mapped": true,
+        "pa": "0x8c4889000",
+        "rows": [
+          "0x8c3561003",
+          "0x8c4800601"
+        ]
+      }
+    },
+    {
+      "site": "before-TTBR1-switch",
+      "pc": "0xfffffff0073beb74",
+      "x0": "0x8c4898000",
+      "x1": "0xfffffff007b33e00",
+      "tcr": "0x22a51a251a",
+      "ttbr0": "0x8c355e000",
+      "ttbr1": "0x8c4899000",
+      "fb": {
+        "mapped": true,
+        "pa": "0xb8000000",
+        "rows": [
+          "0x6000008000040d"
+        ]
+      },
+      "probe": {
+        "mapped": false,
+        "rows": [
+          "0x20000008c489a003",
+          "0x8c48a5003",
+          "0x0"
+        ]
+      }
+    },
+    {
+      "site": "_set_mmu_ttb",
+      "pc": "0xfffffff0073cb24c",
+      "x0": "0x8c4898000",
+      "x1": "0xfffffff007b33e00",
+      "tcr": "0x22a51a251a",
+      "ttbr0": "0x8c355e000",
+      "ttbr1": "0x8c4899000",
+      "fb": {
+        "mapped": true,
+        "pa": "0xb8000000",
+        "rows": [
+          "0x6000008000040d"
+        ]
+      },
+      "probe": {
+        "mapped": false,
+        "rows": [
+          "0x20000008c489a003",
+          "0x8c48a5003",
+          "0x0"
+        ]
+      }
+    },
+    {
+      "site": "after-TTBR-switches",
+      "pc": "0xfffffff0073beb7c",
+      "x0": "0x8c4898000",
+      "x1": "0xfffffff007b33e00",
+      "tcr": "0x22a51a251a",
+      "ttbr0": "0x8c4898000",
+      "ttbr1": "0x8c4899000",
+      "fb": {
+        "mapped": false,
+        "rows": [
+          "0x0"
+        ]
+      },
+      "probe": {
+        "mapped": false,
+        "rows": [
+          "0x20000008c489a003",
+          "0x8c48a5003",
+          "0x0"
+        ]
+      }
+    },
+    {
+      "site": "_pmap_bootstrap",
+      "pc": "0xfffffff0073a36c4",
+      "x0": "0xfffffff085200000",
+      "x1": "0xfffffff007b33e00",
+      "tcr": "0x22a51a251a",
+      "ttbr0": "0x8c4898000",
+      "ttbr1": "0x8c4899000",
+      "fb": {
+        "mapped": false,
+        "rows": [
+          "0x0"
+        ]
+      },
+      "probe": {
+        "mapped": false,
+        "rows": [
+          "0x20000008c489a003",
+          "0x8c48a5003",
+          "0x0"
+        ]
+      }
+    }
+  ],
+  "error": null,
+  "pc": "0xfffffff0073a36c4",
+  "nearest": "_pmap_bootstrap+0x0",
+  "bad_memory": [],
+  "final_fb": {
+    "mapped": false,
+    "rows": [
+      "0x0"
+    ]
+  },
+  "final_probe": {
+    "mapped": false,
+    "rows": [
+      "0x20000008c489a003",
+      "0x8c48a5003",
+      "0x0"
+    ]
+  }
+}

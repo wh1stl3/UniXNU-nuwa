@@ -121,7 +121,47 @@ def main():
                    original_misc_boot_args_resume=symbols['_configure_misc_apple_boot_args']+4,
                    original_misc_regs_word=struct.unpack_from('<I',raw,backed(m,symbols['_configure_misc_apple_regs']))[0],
                    original_misc_regs_resume=symbols['_configure_misc_apple_regs']+4)
-    source='\n'.join(f'.equ {k}, {v:#x}' for k,v in constants.items() if k.endswith('_word'))+'\n'+template
+    for n,hook in (('_set_mmu_ttb_alternate','ttbr1'),('_set_mmu_ttb','ttbr0')):
+        site=symbols['_arm_vm_init']+(0xb4c if hook=='ttbr1' else 0xb60)
+        if raw[backed(m,site):backed(m,site)+4] != struct.pack('<I',0x94000000|(((symbols[n]-site)//4)&0x3ffffff)):
+            raise ValueError('Unexpected arm_vm_init TTBR call')
+        constants['original_'+hook+'_entry']=symbols[n]
+        constants['original_'+hook+'_resume']=site+4
+    # Relocate the two PC-relative displaced instructions, never copy their encoding.
+    if constants['original_wfe_init_word'] != 0x90ffed28:
+        raise ValueError('Unexpected wfe_timeout_init ADRP')
+    w=constants['original_wfe_init_word'];imm=((w>>29)&3)|(((w>>5)&0x7ffff)<<2)
+    if imm & (1<<20): imm-=1<<21
+    constants['original_wfe_init_page']=(symbols['_wfe_timeout_init'] & ~4095)+(imm<<12)
+    w=constants['original_avm_memcheck_word']
+    if w & 0xff00001f != 0xb4000000: raise ValueError('Unexpected avm_memcheck CBZ x0')
+    imm=(w>>5)&0x7ffff
+    if imm & (1<<18): imm-=1<<19
+    constants['original_avm_memcheck_target']=avm_memcheck+(imm<<2)
+    # v20: absolute kernel addresses of the globals the timebase chain runs
+    # through. The probe reads them directly so the next hardware trial
+    # decides the question with measurements instead of inference:
+    #   _DTInitialized          - was SecureDTInit() given a non-zero tree?
+    #   _DTRootNode             - which device tree pointer does the kernel hold?
+    #   _gPESoCBasePhys         - the value pe_arm_get_soc_base_phys() computes
+    #   _PE_state               - holds PE_state.deviceTreeHead at +0x90
+    #   _gPEClockFrequencyInfo  - timebase_frequency_hz lives at +0x48
+    #   _arm64_eventi           - the bit index _enable_timebase_event_stream() rejects
+    for name in ('_DTInitialized','_DTRootNode','_gPESoCBasePhys','_PE_state',
+                 '_gPEClockFrequencyInfo','_arm64_eventi'):
+        if name not in symbols:raise ValueError(name+' symbol missing')
+        if not (0xfffffff007000000<=symbols[name]<0xfffffff008000000):raise ValueError(name+' outside the kernel text')
+    globals_=dict(g_phys_base=symbols['_gPhysBase'],g_virt_base=symbols['_gVirtBase'],
+                  g_dt_initialized=symbols['_DTInitialized'],
+                  g_dt_root_node=symbols['_DTRootNode'],
+                  g_soc_base_phys=symbols['_gPESoCBasePhys'],
+                  g_pe_state=symbols['_PE_state'],
+                  g_pe_clock_freq_info=symbols['_gPEClockFrequencyInfo'],
+                  g_arm64_eventi=symbols['_arm64_eventi'],
+                  g_text_min=next(x['va'] for x in m['segments'] if x['name']=='__TEXT'),
+                  g_text_end_minus_16=next(x['va']+x['filesize']-16 for x in m['segments'] if x['name']=='__TEXT'))
+    source='\n'.join(f'.equ {k}, {v:#x}' for k,v in constants.items() if k.endswith('_word'))+'\n' \
+         +'\n'.join(f'.equ {k}, {v:#x}' for k,v in globals_.items())+'\n'+template
     (work/'probe.S').write_text(source,encoding='utf-8',newline='\n')
     commands=[]
     for argv in (['clang','--target=aarch64-none-elf','-c',linux(work/'probe.S'),'-o',linux(work/'probe.o')],
@@ -149,7 +189,7 @@ def main():
         candidate[off:off+len(new)]=new
     patch(16,struct.pack('<II',m['ncmds']+1,m['cmdbytes']+72),'Add one bounded RX diagnostic segment')
     patch(cursor,command,'Use verified zero load-command padding')
-    sites=((entry,'probe_entry'),(tables,'probe_tables'),(mmu,'probe_mmu'),(isb_site,'probe_mmu_on'),
+    sites=((symbols['_arm_vm_init']+0xb4c,'probe_ttbr1'),(symbols['_arm_vm_init']+0xb60,'probe_ttbr0'),(entry,'probe_entry'),(tables,'probe_tables'),(mmu,'probe_mmu'),(isb_site,'probe_mmu_on'),
            (arm_init,'probe_arm_init'),(symbols['_current_percpu_base'],'probe_cpu_base'),
            (symbols['_arm_vm_init'],'probe_arm_vm'),(symbols['_pmap_bootstrap'],'probe_pmap'),
            (symbols['_kernel_bootstrap'],'probe_kernel_bootstrap'),
@@ -188,5 +228,12 @@ def main():
             preserved.append(dict(name=seg['name'],sha256=sha(raw[off:off+n]),bytes=n))
     target=work/'kernel-entry-probe.macho';target.write_bytes(candidate)
     report=dict(scope='Diagnostic binary instrumentation of fixed analysis prelink; not runtime qualification',input_sha256=EXPECTED,candidate=dict(path=target.relative_to(ROOT).as_posix(),sha256=sha(candidate),bytes=len(candidate)),probe=dict(va=hex(codeva),file_offset=fileoff,code_bytes=len(code),segment_bytes=len(payload),sha256=sha(payload),symbols={k:hex(v) for k,v in hooks.items() if k.startswith(('probe_','fault_stop','exception_stop'))}),patches=patches,original_changed_bytes=len(changed),preserved_donor_segments=preserved,commands=commands,source_sha256=sha(template.encode()),loadable=False,runtime_qualified=False,device_accessed=False,probe_zero=hex(hooks['probe_zero']),probe_flags=hex(hooks['probe_flags']),screen=dict(bands=[dict(stage=1,y=256,color='blue',means='XNU __start branch and diagnostic entry executed'),dict(stage=2,y=352,color='yellow',means='Bootstrap page tables generated; before translation control setup'),dict(stage=3,y=448,color='magenta',means='Passed BCM block with invalid write suppressed; before enabling MMU'),dict(stage=4,y=736,color='cyan',means='msr sctlr_el1 executed and the following fetch was translated (V=P identity)'),dict(stage=5,y=832,color='white',means='arm_init entered at the KVA: TTBR1 fetch and translation are live')],fault=dict(y=544,color='red',hex_rows=dict(ESR_EL1=608,ELR_EL1=640,FAR_EL1=672)),post_mmu_mapping=dict(l1_slot=2,virtual='0x80000000',physical='0x80000000',size='0x40000000',descriptor='0x6000008000040d',attributes='Device-nGnRnE (MAIR index 3), AF, PXN|UXN, installed only if the slot is invalid',source='probe_mmu stub before the SCTLR write',scratch='framebuffer base and line stride copied from boot_args into probe_scratch'),limitations=['Bands do not prove arm_init returned, arm_vm_init, kext start or iOS','Cyan and white depend on the diagnostic 1 GiB device mapping installed pre-MMU; if the L1 slot were occupied nothing is drawn and no mapping is changed','Fault logger active only through physical early vector; x20 must still be boot_args','Exact video ABI and MMIO/cache effects need nuwa trial']))
+    report['probe_revision']=22
+    report['screen']={
+        'stage_tiles':dict(width=96,height=32,x_formula='((logical_y-256)//512)*96',y_formula='256+(logical_y-256)%512'),
+        'data':dict(x=256,value_x=352,width=480,glyph_pixel_scale=4,glyph_height=20,tag='A000 + logical_y//32',y_formula='224+28*((logical_y-1088)//32)',counter_y=756),
+        'records':{str(y):dict(tag=f'{0xa000+y//32:04X}',y=224+28*((y-1088)//32)) for y in (1088,1152,1184,1216,1248,1280,1312,1344,1376,1408,1440,1472,1504,1536,1568,1600,1632,1664)},
+        'max_written_row':799,
+        'limitations':['No output is guaranteed after pmap removes the diagnostic framebuffer mapping','TPIDR_EL1 shim is an intentional behaviour change, distinct from transparent hooks','Stage tiles and field IDs must be read using this revision layout']}
     output.parent.mkdir(parents=True,exist_ok=True);output.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8');print(json.dumps(report['candidate']))
 if __name__=='__main__':main()

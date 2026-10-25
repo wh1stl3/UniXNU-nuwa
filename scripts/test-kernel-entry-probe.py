@@ -27,6 +27,14 @@ HCR_EL2_RW=1<<31
 PINNED_TABLES_SHA256='682cb477a6574e9e107de81570e339336eb60c81a156cf1bb1bdf6eff4d1bfa8'
 
 
+def tile_offset(y):
+    return (256 + (y-256) % 512) * ROW + ((y-256)//512)*96*4
+
+
+def data_y(y):
+    return 224 + ((y-1088)//32)*28 if y >= 1088 else 756
+
+
 def snapshot(uc):return {str(i):uc.reg_read(getattr(sys.modules[__name__],f'UC_ARM64_REG_X{i}')) for i in PRESERVED}
 
 
@@ -66,6 +74,10 @@ def run(raw,report,video=True,start=None,fault=False,stub=None,preoccupy=None):
     table=uc.reg_read(UC_ARM64_REG_X25) if not fault else 0
     table_bytes=bytes(uc.mem_read(table,0x10000)) if not fault and state.get('stop') else None
     if stub and table_bytes:
+        # This isolated mode keeps MMU disabled and executes at PA. Give its
+        # C hook the physical alias of the real stack; continuous mode uses KVA.
+        sp=uc.reg_read(UC_ARM64_REG_SP)
+        if base <= sp < end: uc.reg_write(UC_ARM64_REG_SP, PA+sp-base)
         symbols=report['probe']['symbols']
         stub_state.update(entry=PA+int(symbols[stub],16)-base,replay=PA+int(symbols[stub+'_replay'],16)-base,
                           before=snapshot(uc),scratch=struct.unpack('<2Q',uc.mem_read(PA+int(symbols['probe_scratch'],16)-base,16)))
@@ -75,7 +87,7 @@ def run(raw,report,video=True,start=None,fault=False,stub=None,preoccupy=None):
         stub_state.update(reached=stub_state.get('reached_replay',False),after=snapshot(uc),
                           pc=hex(uc.reg_read(UC_ARM64_REG_PC)),bad_memory=list(bad))
     registers=snapshot(uc)
-    pixels={str(y):struct.unpack('<I',uc.mem_read(FB+y*ROW,4))[0] for y in (256,288,320,352,384,416,448,480,512,544,576,608,640,1056,1088,1120,1152)}
+    pixels={str(y):struct.unpack('<I',uc.mem_read(FB+tile_offset(y),4))[0] for y in (256,288,320,352,384,416,448,480,512,544,576,608,640,1056,1088,1120,1152)}
     if fault:
         # Independent glyph sampling from the rendered pixels, not from font bytes.
         font=['11111001100110011111','00100110001000100111','11110001111110001111','11110001111100011111','10011001111100010001','11111000111100011111','11111000111110011111','11110001001001000100','11111001111110011111','11111001111100011111','11111001111110011001','11101001111010011110','11111000100010001111','11101001100110011110','11111000111110001111','11111000111110001000']
@@ -83,7 +95,7 @@ def run(raw,report,video=True,start=None,fault=False,stub=None,preoccupy=None):
         for name,y in (('ESR_EL1',1152),('ELR_EL1',1184),('FAR_EL1',1216)):
             text=''
             for digit in range(16):
-                bits=''.join('1' if struct.unpack('<I',uc.mem_read(FB+(y+r*4)*ROW+digit*24*4+c*16,4))[0]==0xffffffff else '0' for r in range(5) for c in range(4))
+                bits=''.join('1' if struct.unpack('<I',uc.mem_read(FB+(data_y(y)+r*4)*ROW+352*4+digit*24*4+c*16,4))[0]==0xffffffff else '0' for r in range(5) for c in range(4))
                 text+=lookup.get(bits,'?')
             decoded[name]=text
         state['decoded_hex']=decoded;state['expected_hex']={k:f'{v:016X}' for k,v in values.items()}
@@ -145,7 +157,7 @@ def run_continuous(raw,report,model='aarch64',preoccupy=None):
             'tables_after_sha256':hashlib.sha256(after_tables).hexdigest() if after_tables else None,
             'tables_before_bytes':st['tables_before'],'tables_after_bytes':after_tables,
             'tables_slot2':hex(struct.unpack_from('<Q',after_tables,16)[0]) if after_tables else None,
-            'pixels':{str(y):hex(struct.unpack('<I',uc.mem_read(FB+y*ROW,4))[0]) for y in (256,288,320,352,384,416,448,480,512,544,576,608,640,1056,1088,1120,1152)}}
+            'pixels':{str(y):hex(struct.unpack('<I',uc.mem_read(FB+tile_offset(y),4))[0]) for y in (256,288,320,352,384,416,448,480,512,544,576,608,640,1056,1088,1120,1152)}}
 
 
 def main():

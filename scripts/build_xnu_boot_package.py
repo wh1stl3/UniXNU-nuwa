@@ -131,6 +131,12 @@ def validate(path):
     if 'entry_probe' in report:
         from kernel_entry_probe_inputs import validate as validate_probe
         validate_probe(report['entry_probe'], report['kernel_sha256'])
+        for case in ('normal','occupied-probe','bad-topology','occupied-fb'):
+            name='transition-'+case
+            if name in report['entry_probe']:
+                transition=json.loads((ROOT/report['entry_probe'][name]['path']).read_text())
+                if transition['input']['adt_sha256']!=report['read_file_sha256']:
+                    raise ValueError('Transition tests must use the exact shipped ADT')
     if report.get('approval') != APPROVAL:
         raise ValueError('Unexpected approval for the XNU entry package')
     if (report.get('header_version') != 3 or not report.get('xnu_included')
@@ -226,8 +232,11 @@ def main():
         global UNIXNU_TOML
         # Bump this label whenever the band set changes so a recording cannot be
         # mistaken for an earlier package.
-        UNIXNU_TOML = UNIXNU_TOML.replace('NUWA XNU FIRST ENTRY - ANALYSIS BUILD', 'NUWA XNU ENTRY PROBE 12')
-        UNIXNU_TOML = UNIXNU_TOML.replace('Enter UniXNU iOS 16 kernel (analysis prelink)', 'XNU ENTRY PROBE 12 - PANIC FUNC AND FORMAT TEXT')
+        revision=json.loads(args.entry_probe.read_text()).get('probe_revision',0)
+        UNIXNU_TOML = UNIXNU_TOML.replace('NUWA XNU FIRST ENTRY - ANALYSIS BUILD', 'NUWA XNU ENTRY PROBE 14')
+        UNIXNU_TOML = UNIXNU_TOML.replace('Enter UniXNU iOS 16 kernel (analysis prelink)', 'XNU ENTRY PROBE 14 - RELOCATED HOOKS AND FIELD IDS')
+    if probe and revision>=22:
+        UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 14','PROBE 15').replace('RELOCATED HOOKS AND FIELD IDS','PMAP TRANSITION MAPPING')
     if sha(fd) != FD_SHA or len(fd) != 3145728:
         raise ValueError('Firmware FD changed')
     if sha(shim) != SHIM_SHA:
@@ -317,7 +326,8 @@ def main():
         report['entry_probe'] = probe
         report['scope'] = 'Diagnostic XNU entry probe with BCM-only MMIO suppressed and early exception display; no device action'
         report['kernel_source']['source'] = 'hash-pinned early-security prelink plus bounded native entry diagnostic patches'
-        report['success_requires'] = 'Blue band at row 256 proves the XNU entry branch executed; yellow row 352 and magenta row 448 identify later pre-MMU stages. Red row 544 captures ESR/ELR/FAR. Green/menu/ACK alone do not prove XNU execution.'
+        report['success_requires'] = 'Revision 21: left stage tiles at y256/288/320/352/384 show entry/tables/pre-MMU/cyan/white. Tagged data at x256,y224..775 includes A032=init eventi and A033=its intended address. Panic/fault records require the bound build screen layout; ACK alone is not execution evidence.'
+        report['probe_screen'] = json.loads(args.entry_probe.read_text())['screen']
         report['expected_screen_outcomes'] = [report['success_requires'], 'Any later XNU text or panic requires separate attribution; no band proves MMU enabled or iOS started']
         report['not_proven'] = ['Real nuwa execution of this candidate', 'MMU activation and arm_init', 'Native timer/interrupt driver readiness', 'Full donor/native ABI or iOS boot']
     output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
