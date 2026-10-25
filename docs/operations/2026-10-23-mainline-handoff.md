@@ -261,3 +261,11 @@ v22新页表诊断映射与最终包ADT的四场景执行回归通过，保留�
 续接优先读operations/2026-10-25-official-porting-update.md：固定UniXNU16e592ab已有native-dt-panic-region.patch及XNU_DT_PANIC_REGION路径，优先评估8796适用性，保留console和当前panic；未应用。QR日志通过AdvancedLogDxe/Tools/Advanced Logger导出UEFI内存快照，需producer及QR/Logger库和DSC/FDF集成，仅覆盖EBS前；nuwa尚未验收。Format2/SoC共用迁移与porting.toml另开后续里程碑，不套用iPadOS17/板值。
 
 检查命令：python -B scripts/build_xnu_boot_package.py --validate --output reports/xnu-first-entry/entry-probe-15.json；python -B scripts/test-probe-transition.py --build reports/kernel-entry-probe/2026-10-25-v22c/build.json --adt out/trial-boot/xnu-entry-probe-15/kernel.macho.adt --case normal --output out/RECHECK.json。需本地已存的out输入；不要重写实机绑定报告。上游pin和文件SHA在reports/upstream-porting-review/2026-10-25/review.json。
+
+## 2026-10-25 16:44 · 最新续接：kernel_bootstrap入口已实机确认
+
+代码/证据b708494，PROBE16镜像6f0907b2/内核167bd013/49补丁。真实DT无pram时跳过旧日志导入，原console保留；有pram显式拒绝，通用缓冲需源码重建，不假称完整实现。用户原图确认左列y512橙色kernel_bootstrap入口，不证明完成。16:44:29北京时间Android1/A槽/三SHA与preflight一致，无待人工恢复，本轮仅一次候选启动。
+
+下一步看kernel_bootstrap/VM启动内存初始化；续跑模型20M指令耗尽，无错误，不把vm_page_release_startup+0x254判hang。先建立阶段证据，保留pmap诊断映射。来源/测试/边界见最新STATUS、operations/2026-10-25-v23-dt-panic-console.md。复跑：python -B scripts/test-probe-transition.py --build reports/kernel-entry-probe/2026-10-25-v23c/build.json --adt out/trial-boot/xnu-entry-probe-16/kernel.macho.adt --case normal --output out/NEW.json；脚本固定预算，不能当持续系统仿真。
+
+原始媒体本地，不push。新包仍需本包录像就绪与新鲜preflight。官网QR固件接入和Format2迁移仍独立，不替代内核诊断。

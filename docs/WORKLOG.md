@@ -426,3 +426,5 @@
 2026-10-25 16:12 · v22c完成跨TTBR诊断映射，entry-probe-15/36969f94单次实机确认pmap_bootstrap入口，Android恢复完成1与三SHA不变；下一模型停点为BCM固定panic日志区读取，未宣称实机唯一停因。音视频仅本地，隐私核查结果含未验ZIP边界。· 工作区（不commit/push） · reports/xnu-entry-probe-trial/2026-10-25-v22/、reports/media-privacy/2026-10-25/
 
 2026-10-25 · 用户授权本轮本地提交，代码/回归/脱敏实测证据已提交597baed；Git暂存blob与包绑定摘要逐项相同，未包含照片、原始音视频或构建二进制。官网复核固定UniXNU16e592ab/SM8550-common23b2049f，确认QR固件日志、Format2记录及DT panic区补丁；未执行迁移/固件构建/设备新试验/上游发布。文档独立提交。· 597baed（代码）+紧随docs提交 · operations/2026-10-25-official-porting-update.md、reports/upstream-porting-review/2026-10-25/review.json
+
+2026-10-25 16:44 · PROBE16在真实DT缺pram时跳过可选旧panic导入，保留原console，实机确认kernel_bootstrap入口；Android1/A槽/三SHA恢复闭环。源函数体AArch64编译及11 DT guard、6console策略、92差分与全部绑定检查通过；整核源码重建未验。· b708494 · operations/2026-10-25-v23-dt-panic-console.md、reports/xnu-entry-probe-trial/2026-10-25-v23/

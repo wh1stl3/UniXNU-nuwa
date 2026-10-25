@@ -1667,3 +1667,7 @@
 - 文档：紧随其后的`[unixnu-nuwa][docs]`提交，包含本轮README与交接、官网QR/DT panic区/Format2复核。
 - 发布状态：仅本地commit，未push。与本轮无关的历史未跟踪材料和原始截图未纳入。
 - 下一实现：优先移植固定版本DT panic区补丁并验证8796；QR日志作为固件独立接入，Format2迁移另行冻结输入。
+
+## Q-160 · 已完成：kernel_bootstrap入口里程碑
+
+代码/证据b708494：DT panic源码候选与缺pram诊断路径、PROBE16实机kernel_bootstrap入口和恢复三SHA闭环；后续docs提交同步所有入口。未push，未上传原始媒体。下一步VM启动初始化观测及源构建接入；不把诊断桥接或指令预算当完整平台实现/停因。

@@ -1,37 +1,37 @@
 # STATUS
 
-更新：2026-10-25（北京时间）。主线仍为 UniXNU / nuwa / iOS 16；本轮完成v22跨页表诊断映射修复、entry-probe-15实机pmap入口及Android恢复闭环。
+更新：2026-10-25（北京时间）。主线 UniXNU / nuwa / iOS16 已从pmap入口推进到 **kernel_bootstrap入口实机确认**；iOS仍未启动。
 
-实机历史已证明 MMU 开启、到达 arm_init；本轮实机确认init入口eventi=4并进入pmap_bootstrap；kernel_bootstrap或iOS启动仍未验证。
+## 当前里程碑：PROBE16
 
-## 最新里程碑：entry-probe-15实机进入pmap_bootstrap
+- 镜像：6f0907b2ce684a70dd143664172bf083012bae5b31d3d4a195459d0c3f6400fa。
+- 内核：167bd013da33a6a1e439b0dba5a4ec161ce5a90c781e14f446da6b520ec40753，58,372,096 B，49记录补丁。
+- 本地代码/证据提交：b708494；未push。
+- 单次临时启动，用户在菜单按电源键Enter触发；用户文字及原图确认左列y512橙色kernel_bootstrap入口标记出现。无固定180秒等待。
+- 恢复核验：2026-10-25 16:44:29北京时间Android完成1/A槽，boot_a/vendor_boot_a/init_boot_a三SHA与试前一致，无flash/erase/改槽。当前无需人工恢复；这是该时刻的记录，不代表持续实时查询。
 
-2026-10-25，v22c内核`a8b8fc90e4b926830839f4f1a4b27bf19ae34c1736bd8f41d99724a768c74265`/58,372,096 B/47补丁，镜像`36969f945790452a9e9a7b2ba2785edd9afddda53c36106249623cf17c55144e`。单次临时启动，用户菜单电源键Enter触发；照片/视频出现左列y480绿色pmap入口标记。A032=4，A033为正确eventi地址。
+证据reports/xnu-entry-probe-trial/2026-10-25-v23/；包reports/xnu-first-entry/entry-probe-16.json。原图留本地out，只提交哈希/读数，无原始音视频上传。
 
-**最高实机事实：MMU开启、进入arm_init、进入pmap_bootstrap。** pmap返回、kernel_bootstrap、驱动与iOS仍未验证。没有异常读数不排除后续映射或异常问题，底部菜单是残留背景，不证明返回固件。
+## 当前修复的准确范围
 
-恢复于2026-10-25 16:12:44北京时间：Android完成1/A槽，三分区SHA与试前一致，无flash/erase/改槽。当前已恢复，不等待人工恢复。证据reports/xnu-entry-probe-trial/2026-10-25-v22/。
+旧模型在PE_create_console导入BCM固定旧panic区0x3c0fc000时读失败。上游DT panic区补丁已适配成8796源码候选，函数体AArch64编译与11个host边界场景通过；**未完成整核源码重建**。
 
-## 修复及验收
+当前二进制曾把panic_text_len常量折叠为1字节状态，不能直接套通用动态日志区。诊断桥接只实现“真实DT查询缺pram则跳过旧panic导入”，保留原initialize_screen/console和当前panic代码；pram存在则明确红色/A035=2停住。此为限定诊断路径，不是正式通用panic缓冲提供者。
 
-arm_vm_init切换新TTBR前，在固定两个BL调用点核对新L1/L2 table与空L3叶，再补8页诊断映射。代码RO可执行、数据RW NX；snapshot移至独立数据页，VBAR改KVA，framebuffer保留原Device属性。占槽不覆盖；错误结构拒写不产生部分叶改动。没有改变板值/内存声明/TCR/donor/认证/_verified。此为诊断映射，不是正式pmap平台实现。
+原模型的0x3c0fc000失败被正反对照定位，PROBE16实机越过此前最高阶段，进入kernel_bootstrap；没有实机ELR/FAR证明旧包唯一停因，保留该边界。
 
-离线：42入口/MMU、88普通钩子差分、18渲染、5WFE、8阶段、2异常、5ParseKernel、15绑定门；另6地址walk和4个原生页表切换场景（12断言）。四个切换场景使用最终镜像同一ADT，执行真实钩子无host正常路径页表代写。最终镜像回读通过。`loadable=false`/`runtime_qualified=false`不变。
+## 软件验证
 
-## 下一前线：平台旧panic日志区
+42入口/MMU、92普通钩子差分、18渲染、5WFE、8稀疏阶段、2异常、5ParseKernel、17绑定门；四切换场景12断言；6个console策略检查及11个源码DT guard用例。连续模型使用最终镜像同一ADT到达kernel_bootstrap，无非法访存；旧v22负对照仍在旧panic区读失败。最终镜像回读及Git报告字节摘要一致。loadable=false/runtime_qualified=false、板值/TCR/donor/认证/_verified保持。
 
-真实布局连续模型已执行pmap探针，后在_PE_create_console+0x48读取0x3c0fc000失败。二进制常量和只读XNU源码BCM2837.h:63相符：这是BCM固定旧panic日志区；pe_init.c:94-99的check_for_panic_log在console初始化前访问它。**这是模型和静态首要原因，不是已捕获的实机唯一ELR/FAR。**
+## 下一主线
 
-下一步优先评估上游固定版本native-dt-panic-region.patch与XNU_DT_PANIC_REGION开关在8796中的适用性，再补console/旧日志检查路径的可判定记录；不跳过整个console。不要伪造0x3c0fc000映射，不要NOP整个console或新panic。源码无固定宏时可用DT pram契约、缺失时自然return，需与本构建二进制匹配后实施。
+1. 收敛kernel_bootstrap内部和VM启动内存初始化阶段，验证其完成/返回，再看scheduler、驱动和root。橙色只证明入口，不证明完成。
+2. 续跑模型20,000,000指令在_vm_page_release_startup+0x254达到预算，无错误；不能判死循环或硬件停点。先区分正常大循环与真实等待，再选少量阶段点，不盲目增加模型假RAM或跳过核心初始化。
+3. 正式源码构建接入DT panic补丁/配置并做整核回归；诊断缺pram桥接不能冒充完整实现。
 
-## 流程与隐私
+详细实现与复现：operations/2026-10-25-v23-dt-panic-console.md。前轮pmap映射修复保留，不重复旧试验。本轮没有第二次候选启动。
 
-XNU试验以菜单电源键Enter触发，无固定180秒等待。preflight/唯一设备/即时通知/恢复三SHA门保留。
+## 官网与日志
 
-原始照片音视频只在本地out或用户原路径。本轮原始音视频未上传；代码及证据已本地提交`597baed9bd04a59c6a05710ffa22f61ac6b046aa`，未push。隐私核查：常见音视频扩展名在tracked与已获取全部Git引用历史为空，GitHub Releases/Issues为0，29个Actions制品名称均为构建相关；制品ZIP内部未逐一验证，不能保证没有嵌入内容。已加.gitignore常见音视频规则。见reports/media-privacy/2026-10-25/audit.json。
-
-代码与证据提交`597baed9bd04a59c6a05710ffa22f61ac6b046aa`；文档在后续独立提交中收敛。未push、未合并远程或PR100支线。原工作区中不属于本轮的历史未跟踪材料保持原样。详细实现/复现/边界：docs/operations/2026-10-25-v22-pmap-transition.md。
-
-## 官网最新复核（2026-10-25）
-
-已核对UniXNU固定版本16e592ab及SM8550共享仓23b2049f。发现DT panic区补丁已在ARM64系列中，是下一平台问题的首要复用候选。AdvancedLogDxe/OneSend二维码日志已实现，覆盖UEFI菜单与EBS前；nuwa固件的producer/库/DSC/FDF接入未完成，不能声称已可扫取XNU日志。Format2、分层SoC/OS配置和porting.toml记录机制有明显更新；只查阅，不在当前实测链上自动迁移。详情见operations/2026-10-25-official-porting-update.md。
+官网16e592ab的AdvancedLogDxe/OneSend二维码日志覆盖UEFI/EBS前，nuwa尚未接入；Format2/共享SM8550迁移保留独立评审、iOS16 ABI与板值。见operations/2026-10-25-official-porting-update.md。原始音视频仅本地，禁止自动GitHub附件/CI上传；历史Actions ZIP内部未逐个审计，不能对历史上传绝对保证。

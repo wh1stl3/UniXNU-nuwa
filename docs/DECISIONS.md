@@ -548,3 +548,13 @@ entry-probe-15镜像36969f94/内核a8b8fc90单次实测照片视频出现pmap入
 AdvancedLogDxe与OneSend动态二维码日志已有固定实现，日志快照覆盖UEFI菜单/EBS前；nuwa固件尚缺已验收producer/库/DSC/FDF集成，不声称它能取pmap后的内核日志。Format2、共享SM8550、组件规范名与porting.toml是独立后续迁移任务，保持iOS16、板值、pin和资格边界。
 
 证据reports/upstream-porting-review/2026-10-25/review.json；完整依赖、来源和路线见operations/2026-10-25-official-porting-update.md。官网nuwa页仍滞后，本轮没有上游发布/PR。暂存区报告字节曾被CRLF归一化破坏摘要；对本轮绑定报告精确保留并复核Git blob摘要后才提交，避免证据重封而失去实机包绑定。
+
+# D-042 · 缺pram诊断桥接越过旧panic区，实机到kernel_bootstrap
+
+2026-10-25。8796源码适配native-dt-panic-region.patch，真实函数体AArch64编译/11个边界场景通过，整核源码重建未完成。出货二进制panic_text_len被常量折叠为byte，通用动态DT缓冲不能直接注入；当前诊断只允许实际DT查询缺pram时跳过旧日志导入，保持原screen/console和panic代码，有pram时明确拒绝停住。
+
+PROBE16/6f0907b2、内核167bd013单次临时实测，原图确认kernel_bootstrap入口橙色块；不证明完成/调度器/驱动/iOS。恢复16:44:29北京时间Android1/A槽/三SHA一致，无flash/erase/改槽。代码/证据本地提交b708494，未push，原始音视频/截图仅本地。
+
+连续模型同ADT达到kernel_bootstrap，旧v22同ADT负对照仍读0x3c0fc000失败。继续20M指令在_vm_page_release_startup达到预算，无错误，不认定hang。下一阶段先量VM启动内存初始化进展，不跳核心流程。
+
+宿主ParseKernel间歇ASan问题仍未定位；脚本现在总保存全部cases，宿主-fno-pie/-no-pie保留ASan/UBSan后五例通过，不能把地址布局调整写成已证明历史rc139根因。证据reports/kernel-entry-probe/2026-10-25-v23c/、reports/xnu-entry-probe-trial/2026-10-25-v23/；详细操作operations/2026-10-25-v23-dt-panic-console.md。

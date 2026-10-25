@@ -4,15 +4,13 @@
 
 ## 当前进度（2026-10-25）
 
-**nuwa实机已进入XNU的`pmap_bootstrap`入口。iOS尚未启动。** entry-probe-15的镜像`36969f94`、内核`a8b8fc90`修复了页表切换后诊断代码与framebuffer失去映射的问题，用户照片和视频记录到pmap入口标记。不能据此宣称pmap完成、kernel_bootstrap或用户态通过。
+**nuwa实机已进入XNU的`kernel_bootstrap`入口。iOS尚未启动。** PROBE16镜像`6f0907b2`、内核`167bd013`在ADT缺少pram时跳过可选旧panic日志导入，保留原控制台初始化；用户文字与原图确认pmap绿色块下的kernel_bootstrap橙色块出现。仅证明入口，不证明完成、调度器、驱动、root或用户态。
 
-本轮恢复于北京时间16:12:44：Android完成1、A槽，boot/vendor_boot/init_boot三SHA与试前相同，无flash/erase/改槽。原始音视频只留本地；仓库提交文字读数、哈希和脱敏命令报告。
+本轮恢复于北京时间16:44:29：Android完成1、A槽，三个启动分区SHA与试前相同，无flash/erase/改槽。原始音视频、截图只保留本地，仓库提交脱敏文字/哈希/命令证据。
 
-下一模型停点是`PE_create_console`读取BCM固定旧panic日志区`0x3c0fc000`，未捕获实机唯一ELR/FAR。新查到上游已有`native-dt-panic-region.patch`，优先评估它与8796/iOS16的兼容性，不跳过整个console。
+源DT panic区补丁已适配8796，函数体编译和边界测试通过；整核源码重建未完成。现有诊断内核仅支持缺pram路径，不能作为通用DT panic缓冲实现。下一步验证kernel_bootstrap内部和VM启动内存初始化，不把模型指令预算耗尽写成卡死。
 
-先读[当前状态](docs/STATUS.md)、[v22实现与实测](docs/operations/2026-10-25-v22-pmap-transition.md)及[最新官网复核：QR/Format2/DT panic区](docs/operations/2026-10-25-official-porting-update.md)。官网QR日志覆盖UEFI阶段，nuwa尚未接入；Format2/共享SM8550支持仍为待迁移项目，不能套用sheng的iPadOS17板值。
-
-旧记录中把固件画面残留解释为XNU安全锁停止/返回固件的判断已被后续复核收窄；以当前STATUS和最新证据为准。分析内核`loadable=false`/`runtime_qualified=false`保留，未把一次阶段到达等同整核资格化。
+先读[STATUS](docs/STATUS.md)、[v23实现/实测](docs/operations/2026-10-25-v23-dt-panic-console.md)和[官网QR/迁移复核](docs/operations/2026-10-25-official-porting-update.md)。官方二维码日志是UEFI/EBS前功能，nuwa尚未接入；Format2/共享SM8550迁移另行评审，保留iOS16 ABI及nuwa板值。
 
 ## 为什么单开一个仓库
 
