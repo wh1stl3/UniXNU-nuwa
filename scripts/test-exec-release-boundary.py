@@ -36,6 +36,33 @@ def main():
         pixel=struct.unpack('<I',u.mem_read(T.FB+472*T.ROW+1368*4,4))[0]
         assert pixel==(0xffff40ff if should_hold and video else 0),(name,hex(pixel))
         checks.append(dict(name=name,passed=True,held=should_hold,target=hex(target)))
+    if b['probe_revision']>=33:
+        spec=importlib.util.spec_from_file_location('reader',ROOT/'scripts/test-probe-read-sites.py')
+        reader=importlib.util.module_from_spec(spec);spec.loader.exec_module(reader)
+        for name,site,row in [('inactive-activation-result',0xfffffff00769cfac,1440),('inactive-exec-result',0xfffffff00769d5f8,1536),('repeat-retains-result',0xfffffff00769d5f4,1440),('inactive-switch-rearms',0xfffffff00769d0d8,0)]:
+            patch=next(x for x in b['patches'] if x.get('va')==hex(site))
+            # Seed a stopped machine, then execute the real patched hook anew.
+            case=dict(flag=0,video=True,nzcv=0,x0=2,native_pc=site)
+            u,_,_=T.machine(raw,b,patch,case)
+            u.mem_write(state,bytes(96));u.reg_write(UC_ARM64_REG_X0,2)
+            if name=='repeat-retains-result':
+                u.mem_write(state+80,struct.pack('<Q',1))
+                rectangle=T.FB+reader.data_y(row)*T.ROW+256*4
+                u.mem_write(rectangle,b'\x5a'*1920)
+                before=bytes(u.mem_read(rectangle,1920))
+            target=m['symbols']['_proc_exec_switch_task'] if name=='inactive-switch-rearms' else m['symbols']['___mac_execve'] if name=='repeat-retains-result' else site+4
+            h=u.hook_add(T.U.UC_HOOK_CODE,lambda u,pc,size,data:u.emu_stop() if pc==target else None)
+            word=int.from_bytes(bytes.fromhex(patch['after']),'little');imm=word&0x3ffffff
+            if imm&(1<<25):imm-=1<<26
+            u.emu_start(site+imm*4,0,count=2000000);u.hook_del(h)
+            assert u.reg_read(UC_ARM64_REG_PC)==target and u.reg_read(UC_ARM64_REG_X0)==2
+            if name=='repeat-retains-result':
+                assert bytes(u.mem_read(rectangle,1920))==before
+                assert reader.decode(u,1408)=='0000000000000002'
+            elif name=='inactive-switch-rearms':
+                fields=struct.unpack('<12Q',u.mem_read(state,96));assert fields[0]==1 and fields[9]==u.reg_read(UC_ARM64_REG_X3)
+            else:assert reader.decode(u,row)=='0000000000000002'
+            checks.append(dict(name=name,passed=True,held=False,target=hex(target)))
     a.output.write_bytes(json.dumps(dict(scope=__doc__,candidate_sha256=T.B.sha(raw),checks=checks,exec_body_executed=False,restore_userspace_released=False),indent=2).encode()+b'\n')
     print(json.dumps(dict(checks=len(checks),passed=True)))
 if __name__=='__main__':main()

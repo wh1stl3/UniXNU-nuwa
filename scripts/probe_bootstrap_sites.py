@@ -83,6 +83,8 @@ def plan_next(raw,m,backed,revision=25):
         add(pc,'_load_init_program_at_path','___mac_execve','call',pc)
     if revision>=32:
         from exec_trace_sites import add_sites
+        if revision>=33:
+            from exec_trace_v33 import add_sites
         add_sites(add,raw,m,backed)
     return edges,sites
 
@@ -150,6 +152,8 @@ def generate(raw,m,backed,revision=24):
                        '    b probe_pre_exec_stop']
         if revision>=32:
             from exec_trace_sites import observe
+            if revision>=33:
+                from exec_trace_v33 import observe
             source += [observe(site)]
         source += ['    PROBE_RESTORE',f'.global {label}_replay',label+'_replay:',code]
         hooks.append((site,label))

@@ -1,5 +1,8 @@
 > **当前续接入口已迁至[2026-10-25主线交接](2026-10-25-mainline-handoff.md)。** PROBE22实机真实RAMDisk/md0路径、原生根挂载返回0，A0350/212绿，未进入用户态。21:30:50 +08 Android1/A槽/三SHA一致，恢复关闭。用户最新要求减少阶段停止、一次推进更多；下一候选取消挂载后停止，连续推进安全根/BSD收尾/首进程准备，在首次执行恢复用户态前保留唯一明确边界。代码fb76965、启动b6a80c1，实测v30 screen/recovery/postcondition。下方均历史，STATUS、新交接和v30记录为准。
 
+> 当前PROBE25离线完成，尚未启动；21项串行验证、独立逐字节重建、实际FAT回读及旧包24复验通过。镜像8e24773c3811f267b36272abf04a030d0fd2adfa5f5a15340d1cb8fbe8b5b655/204484608B，内核52dd8952、ADT f9e3e909。用户本包录像/恢复就绪，22:50:05 +08预检Android1/A槽/三SHA一致，无待恢复。原生exec错误跨回退保留、A02C尝试计数，原生任务切换重新建立释放边界跟踪，不新增成功终点、不修改错误或认证。PROBE24已见exec/激活后继但无任务切换/签名/释放守卫证明，具体errno未确认；其恢复已关闭。续接：trial-v4-firmware.py launch --package reports/xnu-first-entry/entry-probe-25.json --preflight reports/xnu-entry-probe-trial/2026-10-25-v33c/preflight.json --evidence reports/xnu-entry-probe-trial/2026-10-25-v33c/launch.json --observation-seconds 0；仅一次临时boot。取图后同驱动recover绑定包25补Android1/A槽/三SHA；日志/恢复条件失效按AGENTS §3先停。代码父b0704b5，无push/新CI；v33操作记录和STATUS为当前入口，下方旧实时段均历史。
+
+
 > PROBE24照片683cc91b已保留本地，A02D/E仍未知哨兵、A02F=0，未证明激活/签名/任务切换或用户态成功；完整格点及exec返回码尚待逐项注册核对。用户已回fastboot，固定原厂临时boot恢复完成；后验2026-10-25T14:25:22.341342+00:00确认Android1/A槽/三SHA与试前一致，无待恢复，不重复启动24。代码7269f20、启动1b4fe71；本轮证据v32b/screen、recovery、postcondition.json。下一项分析真实exec停点，不按成功阶段停止，不放行未审阅恢复服务。
 
 

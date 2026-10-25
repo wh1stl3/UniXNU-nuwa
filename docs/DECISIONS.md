@@ -664,3 +664,7 @@ manifest-properties节点已存在但无BNCH，boot-manifest-hash缺失。固定
 2026-10-25。固定kern_exec.c及指令确认新任务可在___mac_execve返回前被释放，且激活返回0可能包含不可回退失败，故删除旧exec前终点并记录真实MAC/clone/激活/切换/签名/返回。只在本次init exec、原生切换已返回、x0匹配其x3新任务、w1=FINAL_WAIT(2)时守住0xfffffff00769d230；其他路径继续。主机只读APFS配置证实restored_external RunAtLoad=true，未授权恢复用户态不自动放行，不推断自动擦除。
 
 21项串行任务通过含956透明差分和8条件边界，独立重建逐字节一致、实际FAT回读及旧包23复验通过；镜像eed726b2。该模型不执行真实exec函数体，尚无24实机结果。报告v32b/build、execution、restore-policy，完整源码SHA/语义/字段见v32操作记录。既有内存/身份/_verified边界保留。
+
+# D-059 · exec错误跨回退保留，释放守卫由原生任务切换建立跟踪
+
+2026-10-25。PROBE24格点已见原生exec/激活路径，尚未见切换/签名，字段未知不能当errno。新v33模块冻结v32源，无条件记录实际后继x0，仅首次初始化未知屏显，A02C记录尝试数；原生任务切换调用/返回重新建立跟踪，匹配已切换任务FINAL_WAIT=2时守住未审阅恢复用户态。无新阶段终点、错误改写或认证绕过。独立生产器测量新策略并保持旧包24兼容。12项边界/像素读回和完整21项串行验证、逐字节重建、实际包回读通过，包25镜像8e24773c。尚未实机，根因仍待真实errno；详情v33操作记录、v33c/execution、v32b/screen-registered。

@@ -1,0 +1,239 @@
+{
+  "scope": "Forward analysis with loader-derived placement and the existing 1GiB owned RAM window.\nNative v22 mapping hooks execute; adversarial cases inject occupied or malformed descriptors before the hook. Normal case has no host page-table edits. No device commands. This is a model only.\n",
+  "candidate_sha256": "52dd89529567caa552c690f11de2f20cd701bde60027c2868b46364cef8489db",
+  "input": {
+    "argsPA": "0x8c48a4000",
+    "treePA": "0x8c48a5000",
+    "treeKVA": "0xfffffff0084a5000",
+    "topOfKernelData": "0x8c48ac000",
+    "owned_window": "0x40000000",
+    "adt_sha256": "f9e3e90956fda7a5713022295e09d50bad88383112726df9e2eeb31ecefe4461",
+    "loader_memSizeActual_offset": 1144
+  },
+  "events": [
+    {
+      "site": "_arm_vm_init",
+      "pc": "0xfffffff0073be014",
+      "x0": "0x0",
+      "x1": "0xfffffff00715c7c0",
+      "tcr": "0x22a51a251a",
+      "ttbr0": "0x8c355e000",
+      "ttbr1": "0x8c355f000",
+      "fb": {
+        "mapped": true,
+        "pa": "0xb8000000",
+        "rows": [
+          "0x6000008000040d"
+        ]
+      },
+      "probe": {
+        "mapped": true,
+        "pa": "0x8c4889000",
+        "rows": [
+          "0x8c3561003",
+          "0x8c4800601"
+        ]
+      }
+    },
+    {
+      "site": "first-table-bzero",
+      "pc": "0xfffffff0073be1f0",
+      "x0": "0xfffffff0084ac000",
+      "x1": "0x1000",
+      "tcr": "0x22a51a251a",
+      "ttbr0": "0x8c355e000",
+      "ttbr1": "0x8c355f000",
+      "fb": {
+        "mapped": true,
+        "pa": "0xb8000000",
+        "rows": [
+          "0x6000008000040d"
+        ]
+      },
+      "probe": {
+        "mapped": true,
+        "pa": "0x8c4889000",
+        "rows": [
+          "0x8c3561003",
+          "0x8c4800601"
+        ]
+      }
+    },
+    {
+      "site": "before-TTBR0-switch",
+      "pc": "0xfffffff0073beb60",
+      "x0": "0x8c48ad000",
+      "x1": "0xfffffff007b33e00",
+      "tcr": "0x22a51a251a",
+      "ttbr0": "0x8c355e000",
+      "ttbr1": "0x8c355f000",
+      "fb": {
+        "mapped": true,
+        "pa": "0xb8000000",
+        "rows": [
+          "0x6000008000040d"
+        ]
+      },
+      "probe": {
+        "mapped": true,
+        "pa": "0x8c4889000",
+        "rows": [
+          "0x8c3561003",
+          "0x8c4800601"
+        ]
+      }
+    }
+  ],
+  "error": null,
+  "pc": "0xfffffff0073cb23c",
+  "nearest": "_set_mmu_ttb_alternate+0x0",
+  "bad_memory": [],
+  "final_fb": {
+    "mapped": true,
+    "pa": "0xb8000000",
+    "rows": [
+      "0x6000008000040d"
+    ]
+  },
+  "final_probe": {
+    "mapped": true,
+    "pa": "0x8c4889000",
+    "rows": [
+      "0x8c3561003",
+      "0x8c4800601"
+    ]
+  },
+  "native_vector_mapping": {
+    "mapped": true,
+    "pa": "0x8c37c2000",
+    "rows": [
+      "0x8c3561003",
+      "0x8c3600601"
+    ]
+  },
+  "checks": [
+    {
+      "name": "TTBR1 call preserves GPR/SP/NZCV and native LR",
+      "passed": true
+    },
+    {
+      "name": "Rejects occupied or malformed tables without partial page-table edits",
+      "passed": true
+    }
+  ],
+  "case": "bad-topology",
+  "stop_reason": "rejected-before-switch",
+  "transition": {
+    "root1": 37657169920,
+    "leaves": [
+      37657216072,
+      37657216080,
+      37657216088,
+      37657216096,
+      37657216104,
+      37657216112,
+      37657216120,
+      37657216128,
+      37657216136,
+      37657216144,
+      37657216152,
+      37657216160,
+      37657216168,
+      37657216176,
+      37657216184,
+      37657216192,
+      37657216200,
+      37657216208,
+      37657216216,
+      37657216224,
+      37657216232,
+      37657216240,
+      37657216248
+    ],
+    "before": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "registers": [
+      37657169920,
+      18446744005119262208,
+      24,
+      18446744005111446632,
+      3,
+      18446744005119261912,
+      18446744005129449016,
+      18446744005119261912,
+      37657169920,
+      192,
+      0,
+      0,
+      1,
+      0,
+      999407616,
+      4085399063,
+      3732238392,
+      18446744005119260848,
+      52674560,
+      18446744005119262208,
+      1,
+      18446744005108944896,
+      18446744005108944896,
+      18446744005108944896,
+      18446744005108944896,
+      18446744005108944896,
+      18446744005108942784,
+      18446744005108942464,
+      18446744005108944896,
+      18446744005119262496,
+      18446744005111442180
+    ],
+    "sp": 18446744005119262160,
+    "nzcv": 2147483648,
+    "after": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

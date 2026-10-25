@@ -8,7 +8,10 @@ NAMES={'actual-root','corrupt-root','missing-root-measurement','userspace-allowe
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--build',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args()
     global R
-    if json.loads(a.build.read_text())['probe_revision']>=32:
+    if json.loads(a.build.read_text())['probe_revision']>=33:
+        from nuwa_exec_detail_launch_context import API
+        R=API
+    elif json.loads(a.build.read_text())['probe_revision']>=32:
         from nuwa_exec_launch_context import API
         R=API
     elif json.loads(a.build.read_text())['probe_revision']>=31:

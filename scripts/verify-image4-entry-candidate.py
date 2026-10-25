@@ -24,7 +24,7 @@ def main():
     build = a.build.resolve()
     report = json.loads(build.read_text())
     work = a.work.resolve()
-    if (not build.is_relative_to(ROOT / 'reports') or report.get('probe_revision') not in (27,28,29,30,31,32)
+    if (not build.is_relative_to(ROOT / 'reports') or report.get('probe_revision') not in (27,28,29,30,31,32,33)
             or not work.is_relative_to(ROOT / 'out') or work.exists()):
         raise ValueError('Explicit revision-27 build and fresh out/ work directory required')
     work.mkdir(parents=True)

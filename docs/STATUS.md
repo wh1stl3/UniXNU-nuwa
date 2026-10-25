@@ -1,15 +1,13 @@
 # STATUS
 
-更新：2026-10-25。PROBE24照片683cc91b已保留本地，A02D/E仍未知哨兵、A02F=0，未证明激活/签名/任务切换或用户态成功；完整格点及exec返回码尚待逐项注册核对。用户已回fastboot，固定原厂临时boot恢复完成；后验2026-10-25T14:25:22.341342+00:00确认Android1/A槽/三SHA与试前一致，无待恢复，不重复启动24。代码7269f20、启动1b4fe71；本轮证据v32b/screen、recovery、postcondition.json。下一项分析真实exec停点，不按成功阶段停止，不放行未审阅恢复服务。
+更新：2026-10-25 22:50 +08。PROBE25连续exec错误保留版离线完成，21项串行回归通过：956透明性、25Image4、6pthread、12条件边界与像素解码、7根输入、34证据绑定及入口/MMU/向量/显示回归。独立重建逐字节一致，新包实际FAT回读和旧包24复验通过。用户“PROBE25 录像与恢复就绪”；22:50:05 +08预检Android1/A槽/三SHA与v32b后验一致，尚未启动25。
 
-PROBE24取消旧exec前终点；挂载、BSD、exec、Mach-O激活、签名与错误回退均继续原生流程。唯一条件边界在原生已切换的新任务清除FINAL_WAIT前，阻止释放尚未审阅的恢复用户态。只读检查确认恢复根中restored_external的RunAtLoad=true；这不是自动擦除证明。真实故障则保留错误/panic。观察点不假返回、不跳过认证，不为成功阶段主动停止。
+权威包reports/xnu-first-entry/entry-probe-25.json，镜像out/trial-boot/xnu-entry-probe-25-exec/boot-xnu-first-entry.img，204484608字节，SHA256 8e24773c3811f267b36272abf04a030d0fd2adfa5f5a15340d1cb8fbe8b5b655。内核52dd89529567caa552c690f11de2f20cd701bde60027c2868b46364cef8489db、ADT f9e3e90956fda7a5713022295e09d50bad88383112726df9e2eeb31ecefe4461；真实102MiB APFS d180c38d、-v rd=md0和192MiB运输不变。最终build为v33c/build.json，初始v33/v33b不部署。
 
-权威包reports/xnu-first-entry/entry-probe-24.json；镜像out/trial-boot/xnu-entry-probe-24-exec/boot-xnu-first-entry.img，204484608字节，SHA256 eed726b2406e4809196aefd03ee91a166bd0fbbde3eb749cc0dc25d83fcd935e。内核e8032e02eafb478837d61525c6b2c3ac8d257f65c6a8d50be40622604c6c6328，ADT3196efdee76507d8df099fc2d2a15697bd92f4ba0add02a907d428b4ebdb9db5；真实102MiB APFS d180c38d、192MiB FAT、-v rd=md0保持。最终build为reports/kernel-entry-probe/2026-10-25-v32b/build.json，初始v32候选不部署。
+PROBE24完整右侧格点确认220黄、223蓝/224绿、225蓝/226绿；227至232暗；233/235蓝、234/236/238绿、239暗，219绿。清理后继可能有其他前驱，累计格点不提供顺序或次数；未证明task switch、签名或恢复用户态释放守卫已触发。A02D/E未知、A02F0与激活后继同时出现，原生最终errno未确认。首要调查方向为原生激活错误/回退，不能直接认定所有launchd缺失，旧只读证据已见正式launchd和dyld。原图683cc91b仅本地out；v32b/screen-registered.json为本轮补录，不能以未知哨兵当errno。
 
-21项串行验证通过：956透明性差分、25 Image4、6 pthread、8条件边界、7根输入、34绑定及入口/MMU/向量/显示回归。独立重建逐字节一致，包24实际FAT回读及旧包23复验通过。主机只读恢复配置检查和卸载通过；未执行实际用户态。完整依据见[本轮记录](operations/2026-10-25-v32-native-exec.md)。
+PROBE25无条件记录原生激活/exec/签名后继的x0，A02C为exec尝试数；仅首次初始化未知显示，后续保留上一笔完成结果。任务切换调用和返回处重新建立跟踪并记录实际新任务，匹配已切换任务的FINAL_WAIT=2才守住尚未审阅恢复用户态释放；原生错误、认证及回退均保留，不新增阶段终点。固定源、指令、测试局限见[本轮操作记录](operations/2026-10-25-v33-exec-errors.md)。
 
-实机PROBE23照片624b4cda中110/111 BSD调用/返回、168/169安全根调用/返回、174/175 devfs、176/177 bootstrap均亮，214至216黄、217蓝/218品红，A02B217；不把安全根返回当密码学验证，不宣称Mach-O/AMFI或用户态通过。证据reports/xnu-entry-probe-trial/2026-10-25-v31/{screen,recovery,postcondition}.json。PROBE22曾实测原生挂载返回0。用户要求暂不调查重启现象，保持。
+最近设备已知状态：PROBE24后22:25:22 +08 Android1/A槽/三SHA恢复闭环，本轮22:50:05预检再次相同，无待恢复。最近内核实测仍24，不声称25已运行或用户态已通过。下一步仅一次25临时boot；菜单电源Enter后保存完整画面，含右侧两列和A02C/D/E/F/A030。取图后固定原厂临时boot恢复Android1，再与本轮preflight比A槽/三SHA；恢复未确认不启动第二候选，人工等待继续离线分析。
 
-下一步：核对PROBE24完整格点、exec返回和原生指令，定位当前首进程执行阻碍并继续离线修复。239品红/A02B239仅为条件边界定义，本轮未宣称到达。距离系统启动画面仍需首个用户态成功执行、完整系统根/启动服务和显示接管三块工作；不能换算为固定试包数。
-
-本轮预检reports/xnu-entry-probe-trial/2026-10-25-v32b/preflight.json，22:19:42 +08，用户原文“录像与恢复仍就绪，继续 PROBE24”。代码父a785eed，新里程碑以git log为准，无push/新CI。FD/shim/板内存/TCR/iOS16身份与所有*_verified不改，loadable/runtime_qualified仍false；无flash/erase/改槽、原始媒体上传。本轮照片已收到，恢复与三SHA后验已闭环。启动证据reports/xnu-entry-probe-trial/2026-10-25-v32b/launch.json。
+代码父b0704b5，新里程碑以git log为准；无push/新CI，保持FD/shim/板内存/TCR/iOS16/8796身份和*_verified不变，loadable/runtime_qualified仍false。无flash/erase/改槽和原始媒体上传。用户要求暂不调查重启现象，保持。硬停规则未因平台弹窗或连续推进而放宽。
