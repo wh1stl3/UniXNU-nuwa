@@ -8,6 +8,12 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--build',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args()
     b=json.loads(a.build.read_text());meta=metadata(a.build);sha=b['candidate']['sha256'];checks=[]
     validate(meta,sha);checks.append(dict(name='complete v21 evidence accepted',passed=True))
+    if b.get('probe_revision',0)>=30:
+        for name in ('root-stop','root-launch','root-inputs'):
+            altered=copy.deepcopy(meta);del altered[name]
+            try:validate(altered,sha)
+            except (ValueError,KeyError):checks.append(dict(name='missing '+name+' rejected',passed=True))
+            else:raise AssertionError(name)
     if b.get('probe_revision',0)>=28:
         altered=copy.deepcopy(meta);del altered['pthread-startup']
         try:validate(altered,sha)

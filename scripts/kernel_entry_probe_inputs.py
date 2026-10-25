@@ -25,6 +25,8 @@ def metadata(build):
         paths += [(n,build.with_name(n+'.json')) for n in ('image4-launch','launch-context')]
     if json.loads(build.read_text()).get('probe_revision',0)>=28:
         paths += [('pthread-startup',build.with_name('pthread-startup.json'))]
+    if json.loads(build.read_text()).get('probe_revision',0)>=30:
+        paths += [(n,build.with_name(n+'.json')) for n in ('root-stop','root-launch','root-inputs')]
     return {name:dict(path=path.relative_to(ROOT).as_posix(),sha256=sha(path.read_bytes())) for name,path in paths}
 
 def validate(meta,kernel_sha):
@@ -44,11 +46,29 @@ def validate(meta,kernel_sha):
     original=builder.INPUT.read_bytes()
     if sha(original)!=builder.EXPECTED or build['input_sha256']!=builder.EXPECTED:raise ValueError('Probe baseline changed')
     expected=bytearray(original)
+    if build.get('probe_revision',0)>=30:
+        policy=build.get('root_mount_diagnostic',{})
+        if policy.get('site')!='0xfffffff0076730e8' or policy.get('hook')!='probe_dense_76730e8' or policy.get('intentional_transparency_exemption') is not True:raise ValueError('Mount-only endpoint missing')
+        for name in ('root-stop','root-launch','root-inputs'):
+            item=meta[name];payload=report_path(item['path']).read_bytes()
+            if sha(payload)!=item['sha256']:raise ValueError('Root evidence digest differs')
+            e=json.loads(payload)
+            if e.get('candidate_sha256')!=kernel_sha:raise ValueError('Root evidence candidate differs')
+            if name=='root-stop':
+                checks=e.get('checks',[])
+                if len(checks)!=3 or {c['name'] for c in checks}!={'success','error','no-video'} or any(c['passed'] is not True for c in checks):raise ValueError('Mount-only halt evidence incomplete')
+            elif name=='root-launch':
+                from nuwa_root_launch_context import validate_report
+                validate_report(e)
+            else:
+                required={'actual-root','corrupt-root','missing-root-measurement','userspace-allowed','wrong-arguments','wrong-producer','nonzero-placeholder'}
+                checks=e.get('checks',[])
+                if len(checks)!=len(required) or {c['name'] for c in checks}!=required or any(c['passed'] is not True for c in checks):raise ValueError('Root input negative controls incomplete')
     hooks={p['reason'] for p in build['patches'] if p['reason'].startswith('probe_')}
     if not {'probe_entry','probe_tables','probe_mmu'}<=hooks:raise ValueError('Required entry/tables/MMU hooks missing')
     # Two header edits, one branch per hooked site, the BCM NOP and sixteen early vectors.
     compat=build.get('image4_compatibility',{}).get('hooks',[])
-    if compat and build.get('probe_revision') not in (27,28,29):raise ValueError('Image4 compatibility requires revision 27/28/29')
+    if compat and build.get('probe_revision') not in (27,28,29,30):raise ValueError('Image4 compatibility requires revision 27..30')
     overlay=[]
     if build.get('probe_revision',0)>=28:
         from pthread_prelink_overlay import load,ranges,SHA256
@@ -135,7 +155,8 @@ def validate(meta,kernel_sha):
             actual_names={c['name'] for c in checks}
             if len(actual_names)!=len(checks): raise ValueError('Duplicate v21 check names: '+name)
             if name=='transparency':
-                required_cases={h+': '+mode for h in hooks-{'probe_entry','probe_tables','probe_mmu','probe_mmu_on','probe_ttbr1','probe_ttbr0','probe_console_policy'}
+                exempt={'probe_dense_76730e8'} if build.get('probe_revision',0)>=30 else set()
+                required_cases={h+': '+mode for h in hooks-{'probe_entry','probe_tables','probe_mmu','probe_mmu_on','probe_ttbr1','probe_ttbr0','probe_console_policy'}-exempt
                                 for mode in ('first','repeat','no-video','count-saturated')}
                 if actual_names!=required_cases: raise ValueError('Probe transparency cases incomplete')
             if name=='wfe' and actual_names!={'configure-init '+c for c in ('-v','-v wfe_events_sec=0','-v wfe_events_sec=19200','-v wfe_events_sec=2000000')}|{'v20 negative control reaches panic despite eventi=4'}:

@@ -55,6 +55,7 @@ def main():
     report=json.loads(args.build.read_text());raw=(ROOT/report['candidate']['path']).read_bytes();checks=[]
     assert B.sha(raw)==report['candidate']['sha256']
     for patch in report['patches']:
+        if report.get('probe_revision',0)>=30 and patch['reason']=='probe_dense_76730e8':continue
         if not patch['reason'].startswith('probe_') or patch['reason'] in ('probe_entry','probe_tables','probe_mmu','probe_mmu_on','probe_ttbr1','probe_ttbr0','probe_console_policy'):continue
         for kind,flag,video,nzcv,x0 in [('first',0,True,0xa0000000,1),('repeat',1,True,0x50000000,0),('no-video',0,False,0xf0000000,1),('count-saturated',4,True,0,0)]:
             case=dict(flag=flag,video=video,nzcv=nzcv,x0=x0)

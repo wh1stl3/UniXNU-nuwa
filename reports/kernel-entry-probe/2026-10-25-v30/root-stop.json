@@ -1,0 +1,26 @@
+{
+  "scope": "Execute the deliberate post-mount halt; no root result or userspace simulated.",
+  "candidate_sha256": "7f699af6e3f2ce70f0d55450661a0e70b62e2404cebc8194a47f693b2ec538d3",
+  "checks": [
+    {
+      "name": "success",
+      "passed": true,
+      "actual_return": 0,
+      "stop": "0xfffffff00848e9d4"
+    },
+    {
+      "name": "error",
+      "passed": true,
+      "actual_return": 5,
+      "stop": "0xfffffff00848e9d4"
+    },
+    {
+      "name": "no-video",
+      "passed": true,
+      "actual_return": 0,
+      "stop": "0xfffffff00848e9d4"
+    }
+  ],
+  "actual_root_mount_executed": false,
+  "userspace_entered": false
+}

@@ -1,5 +1,7 @@
 # nuwa / iOS16 主线交接（2026-10-25，PROBE19后）
 
+> **v30 / PROBE22已离线完成，准备一次新的临时boot，尚无本包实机结果。** 镜像1b24ff82/204,484,608B，内核7f699af6、ADT15cf608b、真实APFS d180c38d；192MiB FAT实载内核/根镜像，-v rd=md0，原生挂载返回后A035真实返回码、212绿/213红并停止，不进入恢复镜像用户态。21项串行任务含856差分/25Image4/6pthread/3停止/7根输入/34绑定通过，独立重建、实际四文件回读、旧包21复验通过。新鲜v30/preflight Android1/A槽/三SHA与v29后验一致，按用户“继续新的临时启动 先不管这个重启”推进，不再调查重启原因。上一轮21:13:15后验恢复已完成。现有内存/身份/_verified保持，192MiB运输和实际APFS挂载尚待实机。权威包reports/xnu-first-entry/entry-probe-22.json，完整命令/SHA见[v30记录](2026-10-25-v30-real-apfs-mount.md)；代码父cd21655，无push/新CI。
+
 > **当前实测及用户指令更新：PROBE21照片b412ba53确认184/185初始IOBSD资源等待已返回，208–211默认Apple_HFS IOMedia匹配构造已达，200蓝/201暗定位介质匹配等待；挂载入口8暗。** 196/198调用暗、197/199绿由原生其他前驱直达后继解释，不当作RAMDisk创建/等待调用返回。第一次恢复监测超时保留，用户确认fastboot后21:10:06只临时加载一次固定原厂boot，21:12:18观察Android1，21:13:15 +08 postcondition确认A槽/三SHA与本轮preflight相同，恢复关闭。证据v29/{screen,recovery,recovery-retry,postcondition}.json。用户最新“继续新的临时启动 先不管这个重启”优先执行：暂停重启归因，继续PROBE22真实APFS RAMDisk挂载后停止候选；尚未离线完成/尚未新启动，不把主机APFS检查写成实机挂载。内存/身份/_verified边界与日志/恢复门保持；旧等待照片/未恢复段落是历史。
 
 > **设备实时状态：PROBE21已于2026-10-25 21:03:14 +08单次临时boot ACK，待用户菜单电源Enter后的root内部标记照片。** 代码7faf565，本轮preflight录像/恢复门已确认，Android1/A槽/三SHA与v28后验相同。当前不能确认内核新阶段，本轮Android恢复后验尚无，不启动第二候选。图像采集后执行 `trial-v4-firmware.py recover --package reports/xnu-first-entry/entry-probe-21.json --evidence reports/xnu-entry-probe-trial/2026-10-25-v29/recovery.json`，再record-nuwa-trial-state.py对比v29/preflight补postcondition。ACK不代替画面，人工恢复不阻断离线工作。启动证据reports/xnu-entry-probe-trial/2026-10-25-v29/launch.json。

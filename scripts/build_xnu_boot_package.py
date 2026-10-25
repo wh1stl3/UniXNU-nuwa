@@ -66,7 +66,7 @@ def sha(raw):
     return hashlib.sha256(raw).hexdigest()
 
 
-def build_adt(output):
+def build_adt(output,root_ramdisk=False):
     """Generate the Apple device tree with the approved board values."""
     command = [sys.executable, str(ROOT / 'scripts/make-nuwa-adt.py'),
                '--output', str(output),
@@ -75,13 +75,14 @@ def build_adt(output):
                '--ipad-identity',
                '--cpu-regs', '0,256,512,768,1024,1280,1536,1792',
                '--psci-method', 'smc']
+    if root_ramdisk:command.append('--data-ramdisk')
     result = subprocess.run(command, capture_output=True, text=True)
     if result.returncode != 0:
         raise ValueError('ADT generation failed: %s' % result.stderr.strip())
     return command, result.stdout.strip()
 
 
-def build_fat(work, image, adt, kernel):
+def build_fat(work, image, adt, kernel, ramdisk=None):
     """Create the 64 MiB FAT with the loader configuration and the payload."""
     config = UNIXNU_TOML.encode()
     parsed = tomllib.loads(config.decode())
@@ -100,12 +101,14 @@ def build_fat(work, image, adt, kernel):
                          'stderr': result.stderr.decode(errors='replace')})
         result.check_returncode()
 
-    run('mformat', '-C', '-F', '-T', '131072', '-v', 'NUWAXNU', '-N', '584E5558', '-i', linux(image), '::')
+    run('mformat', '-C', '-F', '-T', '393216' if ramdisk is not None else '131072', '-v', 'NUWAXNU', '-N', '584E5558', '-i', linux(image), '::')
     for name in ('::/EFI', '::/EFI/UniXNU', '::/EFI/UniXNU/Payloads'):
         run('mmd', '-i', linux(image), name)
-    for name, raw, dest in (('unixnu.toml', config, '::/EFI/UniXNU/unixnu.toml'),
+    files=[('unixnu.toml', config, '::/EFI/UniXNU/unixnu.toml'),
                             ('kernel.macho', kernel, '::/EFI/UniXNU/Payloads/kernel.macho'),
-                            ('kernel.macho.adt', adt, '::/EFI/UniXNU/Payloads/kernel.macho.adt')):
+                            ('kernel.macho.adt', adt, '::/EFI/UniXNU/Payloads/kernel.macho.adt')]
+    if ramdisk is not None:files.append(('root-restore.apfs',ramdisk,'::/EFI/UniXNU/Payloads/root-restore.apfs'))
+    for name, raw, dest in files:
         stage = work / name
         stage.write_bytes(raw)
         os.utime(stage, (315532800, 315532800))
@@ -134,6 +137,10 @@ def validate(path):
         build=json.loads((ROOT/report['entry_probe']['build']['path']).read_text())
         if build.get('probe_revision',0)>=27 and 'image4_launch_context' not in report:
             raise ValueError('Measured launch context cannot be removed from revision 27')
+        if build.get('probe_revision',0)>=30:
+            if 'root_ramdisk' not in report or report.get('root_mount_diagnostic')!=build.get('root_mount_diagnostic'):raise ValueError('Real root image/endpoint removed')
+            from nuwa_root_launch_context import POLICY,ARGS,PAYLOAD_SHA
+            if report['root_ramdisk'].get('policy')!=POLICY or report['root_ramdisk'].get('sha256')!=PAYLOAD_SHA or report['fat_bytes']!=201326592:raise ValueError('Root transport/policy differs')
         for case in ('normal','occupied-probe','bad-topology','occupied-fb'):
             name='transition-'+case
             if name in report['entry_probe']:
@@ -181,10 +188,12 @@ def validate(path):
     def linux(path):
         return '/mnt/d/' + path.resolve().as_posix().split(':/', 1)[1]
 
-    for name, dest, expected in (('kernel.macho', '::/EFI/UniXNU/Payloads/kernel.macho',
+    payloads=[('kernel.macho', '::/EFI/UniXNU/Payloads/kernel.macho',
                                   report['kernel_sha256']),
                                  ('kernel.macho.adt', '::/EFI/UniXNU/Payloads/kernel.macho.adt',
-                                  report['read_file_sha256'])):
+                                  report['read_file_sha256'])]
+    if 'root_ramdisk' in report:payloads.append(('root-restore.apfs','::/EFI/UniXNU/Payloads/root-restore.apfs',report['root_ramdisk']['sha256']))
+    for name, dest, expected in payloads:
         target = work / name
         command = ['wsl', '-d', 'Ubuntu-22.04', '--', 'env', 'TZ=UTC', 'MTOOLS_SKIP_CHECK=1',
                    'mcopy', '-i', linux(fat_path), dest, linux(target)]
@@ -201,6 +210,15 @@ def validate(path):
         proof=validate_context((work/'kernel.macho.adt').read_bytes(),work/'kernel.macho',fd_path,shim_path)
         if proof!=report['image4_launch_context']:
             raise ValueError('Shipped launch context/component proof changed')
+        if 'root_ramdisk' in report:
+            from nuwa_root_launch_context import validate as validate_root,ARGS
+            root_proof=validate_root((work/'kernel.macho.adt').read_bytes(),work/'kernel.macho',fd_path,shim_path,work/'root-restore.apfs')
+            if root_proof['policy']!=report['root_ramdisk']['policy']:raise ValueError('Shipped root policy differs')
+            menu=work/'unixnu.toml'
+            cmd=['wsl','-d','Ubuntu-22.04','--','env','TZ=UTC','MTOOLS_SKIP_CHECK=1','mcopy','-i',linux(fat_path),'::/EFI/UniXNU/unixnu.toml',linux(menu)]
+            subprocess.run(cmd,capture_output=True,timeout=180,check=True)
+            parsed=tomllib.loads(menu.read_text());entry=parsed['entry']
+            if len(entry)!=1 or entry[0].get('args')!=ARGS or entry[0].get('initrd')!='Payloads/root-restore.apfs':raise ValueError('Actual menu does not bind measured root/arguments')
     for path in work.glob('*'):
         path.unlink()
     work.rmdir()
@@ -220,6 +238,7 @@ def main():
     cli.add_argument('--entry-probe', type=Path,
                      help='Bind a diagnostic kernel to its static and software-execution reports')
     cli.add_argument('--adt', type=Path, help='Reuse an already tested exact ADT, rather than generate new entropy')
+    cli.add_argument('--root-ramdisk',type=Path,help='Pinned real APFS mount-only diagnostic; requires revision30')
     args = cli.parse_args()
 
     if args.validate:
@@ -264,6 +283,16 @@ def main():
         UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 19','PROBE 20').replace('IMAGE4 INPUTS TO BSD ROOT','NATIVE PTHREAD OSKEXT TO BSD ROOT')
     if probe and revision>=29:
         UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 20','PROBE 21').replace('NATIVE PTHREAD OSKEXT TO BSD ROOT','ROOT RESOURCE AND MEDIA WAIT TRACE')
+    root_ramdisk=None
+    if args.root_ramdisk:
+        if not probe or revision!=30:raise ValueError('Real root diagnostic requires revision30 mount endpoint')
+        from nuwa_root_launch_context import PAYLOAD_SHA,ARGS,validate_report
+        root_proof=json.loads((ROOT/probe['root-launch']['path']).read_text());validate_report(root_proof)
+        root_ramdisk=args.root_ramdisk.read_bytes()
+        if sha(root_ramdisk)!=PAYLOAD_SHA:raise ValueError('Pinned real root image changed')
+        UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 21','PROBE 22').replace('ROOT RESOURCE AND MEDIA WAIT TRACE','REAL APFS RAMDISK MOUNT THEN HALT')
+        UNIXNU_TOML=UNIXNU_TOML.replace('args = "-v"','args = "'+ARGS+'"\ninitrd = "Payloads/root-restore.apfs"')
+    elif probe and revision>=30:raise ValueError('Mount-only candidate must bind the real RAMDisk')
     if sha(fd) != FD_SHA or len(fd) != 3145728:
         raise ValueError('Firmware FD changed')
     if sha(shim) != SHIM_SHA:
@@ -292,10 +321,10 @@ def main():
             raise ValueError('Launch context evidence does not bind the shipped ADT')
 
     fat_path = work / 'payload.fat.img'
-    parsed, commands = build_fat(work, fat_path, adt, kernel)
+    parsed, commands = build_fat(work, fat_path, adt, kernel,root_ramdisk)
     fat = fat_path.read_bytes()
-    if len(fat) != 67108864:
-        raise ValueError('FAT must be 64 MiB')
+    if len(fat) != (201326592 if root_ramdisk is not None else 67108864):
+        raise ValueError('Unexpected bounded FAT capacity')
 
     envelope = transport.MAGIC + struct.pack('<IIQI28x', 1, 64, len(fat), zlib.crc32(fat)) + fat
     image = transport.compose(stock[:4096], shim + fd, envelope, 3)
@@ -364,6 +393,8 @@ def main():
     output.parent.mkdir(parents=True, exist_ok=True)
     if probe:
         report['entry_probe'] = probe
+        if root_ramdisk is not None:
+            report['root_ramdisk']=dict(path=args.root_ramdisk.resolve().relative_to(ROOT).as_posix(),sha256=sha(root_ramdisk),bytes=len(root_ramdisk),policy=root_proof['policy'])
         report['scope'] = 'Diagnostic XNU entry probe with BCM-only MMIO suppressed and early exception display; no device action'
         report['kernel_source']['source'] = 'hash-pinned early-security prelink plus bounded native entry diagnostic patches'
         report['success_requires'] = 'Revision 21: left stage tiles at y256/288/320/352/384 show entry/tables/pre-MMU/cyan/white. Tagged data at x256,y224..775 includes A032=init eventi and A033=its intended address. Panic/fault records require the bound build screen layout; ACK alone is not execution evidence.'
@@ -383,6 +414,9 @@ def main():
             report['success_requires']=report['success_requires'].replace('PROBE19:','PROBE20:')+' IDs178/179=before/after native OSKext load; ID180=function table non-NULL; ID181=already registered. Loader lifecycle and initializer body require physical observation.'
         if revision>=29:
             report['success_requires']=report['success_requires'].replace('PROBE20:','PROBE21:')+' IDs182..211 trace native root calls and continuations. 184/185=IOBSD resource wait, 200/201=root matching wait. Blue without green is reachability only; wait implementation and IRQ/timer require separate evidence.'
+        if revision>=30:
+            report['root_mount_diagnostic']=json.loads(args.entry_probe.read_text())['root_mount_diagnostic']
+            report['success_requires']=report['success_requires'].replace('PROBE21:','PROBE22:')+' Real APFS on RAMDisk, rd=md0. A035=actual native vfs_mountroot return, ID212 green=zero return, ID213 red=error; deliberate halt before restore userspace. Enlarged transport is not yet nuwa-qualified.'
         report['expected_screen_outcomes'] = [report['success_requires'], 'Any later XNU text or panic requires separate attribution; no band proves MMU enabled or iOS started']
         report['not_proven'] = ['Real nuwa execution of this candidate', 'MMU activation and arm_init', 'Native timer/interrupt driver readiness', 'Full donor/native ABI or iOS boot']
     output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')

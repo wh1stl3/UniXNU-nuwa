@@ -1,35 +1,25 @@
 # STATUS
 
-更新：2026-10-25。**PROBE21照片已确认初始IOBSD等待返回，进入root介质匹配等待，未到挂载。21:13:15 +08后验已确认Android1/A槽/三SHA与试前一致，恢复关闭。** 用户最新指令“继续新的临时启动 先不管这个重启”；停止重启原因排查，继续准备真实APFS RAMDisk挂载诊断PROBE22，离线验证完成及刷新日志/恢复门前不执行下一设备启动。
+更新：2026-10-25。**PROBE21实机确认初始IOBSD等待返回，停在默认IOMedia介质匹配等待，未挂载。PROBE22真实APFS RAMDisk挂载后停止候选离线完成，按用户“继续新的临时启动 先不管这个重启”准备一次临时boot。** 新鲜preflight确认Android1/A槽/三SHA与v29后验相同，尚未执行PROBE22启动。
 
-本轮照片b412ba53c34999701b9c351d277d3e0e5defa98e64d5ad9eb4d9fa8d37f906ea仅本地：184/185均亮，208–211默认IOMedia/Apple_HFS构造均亮，200调用蓝、201后继暗。196 mdevadd/198 waitQuiet暗而197/199绿，固定原生分支可绕过调用直达后继，不当作已创建内存盘/已等待。A02A=0/B=6/C=1，无新panic/fault记录。恢复第一次监测超时保留；用户确认fastboot后，只发一次fastboot reboot bootloader和一次固定原厂boot，21:12:18检测Android1，21:13:15三SHA后验一致。用户报告多次重启仍属未归因现象，未据此造故障结论。
+## 最新设备实测
 
-证据reports/xnu-entry-probe-trial/2026-10-25-v29/{screen,recovery,recovery-retry,postcondition}.json。当前代码基线a444c82，v30实现进行中尚未验证；PROBE21/包f005f7ed无需重复启动。下文保留前轮输入背景，最新状态以上述实测和v30工作为准。
+PROBE21照片b412ba53c34999701b9c351d277d3e0e5defa98e64d5ad9eb4d9fa8d37f906ea仅本地。184/185初始IOBSD资源等待均亮，208–211默认Apple_HFS IOMedia构造均亮，200调用蓝/201后继暗，挂载入口8暗。196/198暗、197/199绿由原生其他前驱直达后继解释，不视为mdevadd/waitQuiet返回。A02A0/B6/C1，无新panic/fault。
 
-## 实机与恢复
+首次恢复监测超时未加载原厂boot，用户回fastboot后只复位bootloader一次、临时加载固定原厂boot一次；21:12:18观察Android1，21:13:15 +08后验确认Android1/A槽/三SHA与试前一致。该恢复待办已关闭。用户报告重启数次，未归因；最新明确暂不调查并继续新临时启动，已按该指令执行。当前PROBE22新鲜preflight也确认Android完成1/A槽/相同三SHA。
 
-用户确认本包录像及恢复就绪；新鲜preflight确认nuwa/kalama、Android1/A槽/三SHA与v27后验一致。20:42:51单次临时boot ACK，用户菜单电源Enter后拍照。原图SHA369835170e359ef66697a02510152bc7b48328095beb1207900f65a69259d0f6，仅本地out/trial-evidence/entry-probe-20/user-screen.jpg。
+## PROBE22实际输入与离线结果
 
-ID180品红、181黄：BSD入口时真实pthread表已经注册，备用显式OSKext请求未执行。160/161 IOKitBSDInit与162/163 net_init_run调用/后继亮，164调用和7号IOFindBSDRoot入口亮，165后继与8号挂载入口未亮。原生pthread_init调用0xfffffff007672f94在已达路径之前，确认本次初始化返回；不由表非空单独推导成功。旧NULL表panic未复现，无新panic/fault记录。A02A=0/B=6/C=1；B仍为6是root入口未更新DISPLAY_CHECK。171在白logo上采样未知，不视为点亮。
+权威包reports/xnu-first-entry/entry-probe-22.json。镜像out/trial-boot/xnu-entry-probe-22-real-apfs/boot-xnu-first-entry.img，204,484,608B，SHA1b24ff82048f7ff29a6c6381889ba6806cce942a3fe79fa22f8db4256ad9397a。内核7f699af6e3f2ce70f0d55450661a0e70b62e2404cebc8194a47f693b2ec538d3；ADT15cf608bffbf62b450f0223fc61b3ee13b6e66c878bfe4a96fa2fd8907c67518；真实102MiB APFS payload d180c38dcc754bc079cc92a40f58a4b5fad2c2b7ce72cf5e64a117453fd7c90a。
 
-用户已回fastboot，固定原厂boot临时加载成功；20:45:24观察Android完成1，20:45:31后验确认A槽及boot_a/vendor_boot_a/init_boot_a三SHA与本轮preflight相同。无flash/erase/改槽，无第二候选。
+同一固定phone iOS16/20H392 RestoreRamDisk已核对ZIP/Apple清单摘要，主机只读APFS检查真实launchd/dyld/restored_external后卸载。当前FAT由64增至192MiB以实际携带内核与根镜像；FD/shim/board内存表、1GiB窗口、IPSW身份、bootimg base/offset不变。菜单-v rd=md0及initrd路径、ADT真实RAMDisk零占位由原DarwinBoot填实际地址/长度，根镜像和挂载停止策略写入扩展诊断测量，未改冻结v1生产器。
 
-## 有效包与验证
+21项串行任务通过：856透明差分、25完整Image4、6pthread、3挂载停止、7根输入、34绑定及入口/MMU/向量/显示/同ADT回归。独立内核重建逐字节一致，实际FAT回读kernel/ADT/APFS/菜单并重新测量通过；旧PROBE21复验通过，历史报告不改。
 
-权威包reports/xnu-first-entry/entry-probe-20.json；镜像out/trial-boot/xnu-entry-probe-20-pthread/boot-xnu-first-entry.img，SHA365216aebab5ec2e925a65f65576a26a6f1173ca4aa631e0c0ff0faf46422198，70,266,880B。内核d34a5de954a806f66fa346a74e5312a2513ec24d4377759d850ec6d6dd3eeb1d，ADT635d4f4dd8fc4abc7c2d15b427cf69b6a037086a39df21fb22b33b6fddb1ed09。
+## 运行边界与续接
 
-代码f0f4ea6，启动记录cde790a；当前实测记录提交号以git log为准，无push/新CI。固定iOS16.7 donor加入漏选pthread后31组件闭合；正常prelink启动已在BSD前注册。helper保留原生pthread_init/NULL断言，已注册时不重复请求。19项串行任务全部通过：740差分、25Image4、6pthread、31绑定及入口/MMU/向量/显示/同ADT回归。独立内核重建一致，实际FAT回读与输入重测通过。备用显式请求仍只有模型证据，本轮实机走已注册路径。
+原生vfs_mountroot返回后在0xfffffff0076730e8停止：A035显示真实返回值，ID212绿为0，213红为非0；不把错误改成成功，不进入恢复镜像用户态。此单个hook是显式行为变化，独立测试并从透明性集合排除。其余root内部标记182–211保持。尚无PROBE22实机结果，192MiB运输和实际APFS挂载仍待验证；不能把主机只读检查或离线执行写成实机挂载。
 
-nonce来自主机OS CSPRNG，BNCH为原像SHA-384；非Apple诊断manifest绑定FD/shim/内核/基础ADT，不是Apple IM4M/TSS、硬件nonce或防重放证明。loadable=false/runtime_qualified=false，未设置任何*_verified。旧包19及其报告不改。
+执行新启动前即时通知，仅临时boot一次；图像采集后恢复固定原厂boot，确认Android1/A槽/本轮三SHA。人工恢复等待继续离线工作，但恢复未确认不启动第二候选。loadable/runtime_qualified及所有*_verified保持false，未flash/erase/改槽，无push/新CI/原始媒体上传。
 
-## 当前判断与下一步
-
-PROBE21内核dc496abe，新增ID182–211为15对原生root调用/后继，区分184/185初始IOBSD资源等待、200/201介质等待和RAMDisk/根交接。19项串行任务全部通过（860差分/25Image4/6pthread/31绑定），独立重建逐字节一致，实际镜像回读及旧PROBE20复验通过。权威包reports/xnu-first-entry/entry-probe-21.json；镜像f005f7edcc9e89db577ab171829c6b28c53e7df36eb148c35618fe6ceb629760，70,266,880B；ADT b6bb6c88ebc600c4e33acd8c0be6f400e1feb59653ff92a42fabe08ef3a4f801。代码未跳过原生等待，不提供假root结果。设备启动前日志门R-013经本包用户确认解除；不重复启动20。
-
-同一固定iOS16清单的RestoreRamDisk已下载并验ZIP/清单摘要，真实102MiB APFS payload d180c38d（IM4P ac9634ab）。主机只读APFS检查含真实launchd/dyld/restored_external，已卸载；初次drvfs挂载失败与原生WSL成功都保留。它不是完整iOS或nuwa挂载证明。后续真实md0方案仍需APFS驱动和运输容量验证，当前64MiB FAT容不下102MiB镜像加内核；未改XNU窗口、板值或IPSW身份。完整SHA/命令/标记见[v29记录](operations/2026-10-25-v29-root-waits.md)。
-
-7项root输入审计确认：出货菜单只有-v，实际ADT没有root-matching/boot-uuid或RAMDisk，原生IOFindBSDRoot默认等待Content=Apple_HFS的IOMedia。**首要原因是当前包缺少可选择的真实root提供路径。** 照片只能定位在IOFindBSDRoot内部，尚不能区分初始IOBSD资源等待、IOMedia等待和计时器/唤醒停滞；IRQ/计时器真实递送仍未验证。
-
-下一步固定真实root介质/镜像、格式、DarwinBoot侧车或nuwa存储提供者来源与依赖，核对注册/匹配/根选择；不填假UUID、不把运输FAT当XNU root、不跳过等待。具体root内部停点需有限标记和独立候选；触及受审内存字段按AGENTS边界处理。无需重复启动20。root挂载/用户态未验证。
-
-实测reports/xnu-entry-probe-trial/2026-10-25-v28/{screen,recovery,postcondition}.json；静态reports/kernel-entry-probe/2026-10-25-v28/root-inputs.json。[v28记录](operations/2026-10-25-v28-pthread-to-root.md)、[当前交接](operations/2026-10-25-mainline-handoff.md)。媒体仅本地，只读资料库、iOS16/8796身份、板值/TCR/内存窗口保持。
+当前提交cd21655之后的v30里程碑以git log为准；上一实机资料reports/xnu-entry-probe-trial/2026-10-25-v29/，新预检v30/preflight.json。[v30完整记录](operations/2026-10-25-v30-real-apfs-mount.md)、[当前交接](operations/2026-10-25-mainline-handoff.md)含SHA、source pin、指令和未验证边界。

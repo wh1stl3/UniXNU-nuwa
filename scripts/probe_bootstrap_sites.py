@@ -117,6 +117,16 @@ def generate(raw,m,backed,revision=24):
             if site==m['symbols']['_kernel_bootstrap_thread']:source += ['    RESTORE_NATIVE_VECTORS']
         if revision>=28 and site==m['symbols']['_bsd_init']:
             source += ['    stp x29, x30, [sp, #-16]!', '    bl pthread_load_before_bsd', '    ldp x29, x30, [sp], #16']
+        if revision>=30 and site==0xfffffff0076730e8:
+            # A deliberate diagnostic endpoint after the real mount call.
+            # Never enter restore-image userspace; no native success fabricated.
+            source += ['    mov x23, x0','    HEXROW_VAL 1696',
+                       '    cbnz w0, .Lroot_mount_failed',
+                       '    DENSE_ONCE 212, 0xff40ff80',
+                       '    b probe_root_mount_stop','.Lroot_mount_failed:',
+                       '    DENSE_ONCE 213, 0xffff0000',
+                       '.global probe_root_mount_stop','probe_root_mount_stop:',
+                       '    b probe_root_mount_stop']
         source += ['    PROBE_RESTORE',f'.global {label}_replay',label+'_replay:',code]
         hooks.append((site,label))
     return '\n'.join(source)+'\n',constants,hooks,edges

@@ -82,7 +82,7 @@ def main():
     a = p.parse_args()
     build = json.loads(a.build.read_text())
     candidate = (ROOT / build['candidate']['path']).read_bytes()
-    if C.sha256(candidate) != build['candidate']['sha256'] or build.get('probe_revision') not in (27,28,29):
+    if C.sha256(candidate) != build['candidate']['sha256'] or build.get('probe_revision') not in (27,28,29,30):
         raise ValueError('Unexpected candidate/revision')
     original = A.B.INPUT.read_bytes()
     if C.sha256(original) != A.B.EXPECTED:
