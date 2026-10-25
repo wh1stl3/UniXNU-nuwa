@@ -127,6 +127,14 @@ def main():
             raise ValueError('Unexpected arm_vm_init TTBR call')
         constants['original_'+hook+'_entry']=symbols[n]
         constants['original_'+hook+'_resume']=site+4
+    console=symbols['_PE_create_console']
+    # Pin the entire inlined old-log path before changing its entry edge.
+    console_expected=bytes.fromhex('f657bda9f44f01a9fd7b02a9fd83009113008852')
+    if raw[backed(m,console):backed(m,console)+len(console_expected)]!=console_expected:
+        raise ValueError('Unexpected console prologue/no-pram policy site')
+    constants.update(native_dt_lookup=symbols['_SecureDTLookupEntry'],native_console_tail=console+0x94,
+                     original_console_init_word=struct.unpack_from('<I',raw,backed(m,symbols['_initialize_screen']))[0],
+                     original_console_init_resume=symbols['_initialize_screen']+4)
     # Relocate the two PC-relative displaced instructions, never copy their encoding.
     if constants['original_wfe_init_word'] != 0x90ffed28:
         raise ValueError('Unexpected wfe_timeout_init ADRP')
@@ -189,7 +197,7 @@ def main():
         candidate[off:off+len(new)]=new
     patch(16,struct.pack('<II',m['ncmds']+1,m['cmdbytes']+72),'Add one bounded RX diagnostic segment')
     patch(cursor,command,'Use verified zero load-command padding')
-    sites=((symbols['_arm_vm_init']+0xb4c,'probe_ttbr1'),(symbols['_arm_vm_init']+0xb60,'probe_ttbr0'),(entry,'probe_entry'),(tables,'probe_tables'),(mmu,'probe_mmu'),(isb_site,'probe_mmu_on'),
+    sites=((console+0x10,'probe_console_policy'),(symbols['_initialize_screen'],'probe_console_init'),(symbols['_arm_vm_init']+0xb4c,'probe_ttbr1'),(symbols['_arm_vm_init']+0xb60,'probe_ttbr0'),(entry,'probe_entry'),(tables,'probe_tables'),(mmu,'probe_mmu'),(isb_site,'probe_mmu_on'),
            (arm_init,'probe_arm_init'),(symbols['_current_percpu_base'],'probe_cpu_base'),
            (symbols['_arm_vm_init'],'probe_arm_vm'),(symbols['_pmap_bootstrap'],'probe_pmap'),
            (symbols['_kernel_bootstrap'],'probe_kernel_bootstrap'),
@@ -228,7 +236,8 @@ def main():
             preserved.append(dict(name=seg['name'],sha256=sha(raw[off:off+n]),bytes=n))
     target=work/'kernel-entry-probe.macho';target.write_bytes(candidate)
     report=dict(scope='Diagnostic binary instrumentation of fixed analysis prelink; not runtime qualification',input_sha256=EXPECTED,candidate=dict(path=target.relative_to(ROOT).as_posix(),sha256=sha(candidate),bytes=len(candidate)),probe=dict(va=hex(codeva),file_offset=fileoff,code_bytes=len(code),segment_bytes=len(payload),sha256=sha(payload),symbols={k:hex(v) for k,v in hooks.items() if k.startswith(('probe_','fault_stop','exception_stop'))}),patches=patches,original_changed_bytes=len(changed),preserved_donor_segments=preserved,commands=commands,source_sha256=sha(template.encode()),loadable=False,runtime_qualified=False,device_accessed=False,probe_zero=hex(hooks['probe_zero']),probe_flags=hex(hooks['probe_flags']),screen=dict(bands=[dict(stage=1,y=256,color='blue',means='XNU __start branch and diagnostic entry executed'),dict(stage=2,y=352,color='yellow',means='Bootstrap page tables generated; before translation control setup'),dict(stage=3,y=448,color='magenta',means='Passed BCM block with invalid write suppressed; before enabling MMU'),dict(stage=4,y=736,color='cyan',means='msr sctlr_el1 executed and the following fetch was translated (V=P identity)'),dict(stage=5,y=832,color='white',means='arm_init entered at the KVA: TTBR1 fetch and translation are live')],fault=dict(y=544,color='red',hex_rows=dict(ESR_EL1=608,ELR_EL1=640,FAR_EL1=672)),post_mmu_mapping=dict(l1_slot=2,virtual='0x80000000',physical='0x80000000',size='0x40000000',descriptor='0x6000008000040d',attributes='Device-nGnRnE (MAIR index 3), AF, PXN|UXN, installed only if the slot is invalid',source='probe_mmu stub before the SCTLR write',scratch='framebuffer base and line stride copied from boot_args into probe_scratch'),limitations=['Bands do not prove arm_init returned, arm_vm_init, kext start or iOS','Cyan and white depend on the diagnostic 1 GiB device mapping installed pre-MMU; if the L1 slot were occupied nothing is drawn and no mapping is changed','Fault logger active only through physical early vector; x20 must still be boot_args','Exact video ABI and MMIO/cache effects need nuwa trial']))
-    report['probe_revision']=22
+    report['probe_revision']=23
+    report['console_policy']={'mode':'DT missing-pram diagnostic only','source_patch':'patches/xnu-8796-candidates/native-dt-panic-region.patch','present_pram':'explicit unsupported-policy halt without BCM access','native_console_tail':hex(console+0x94),'current_panic_disabled':False}
     report['screen']={
         'stage_tiles':dict(width=96,height=32,x_formula='((logical_y-256)//512)*96',y_formula='256+(logical_y-256)%512'),
         'data':dict(x=256,value_x=352,width=480,glyph_pixel_scale=4,glyph_height=20,tag='A000 + logical_y//32',y_formula='224+28*((logical_y-1088)//32)',counter_y=756),

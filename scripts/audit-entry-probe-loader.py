@@ -33,7 +33,7 @@ static UINT64 U64(const void *p){UINT64 v;memcpy(&v,p,8);return v;}
 '''
     suffix='''int main(int argc,char **argv){if(argc!=2)return 90;FILE*f=fopen(argv[1],"rb");if(!f)return 91;fseek(f,0,SEEK_END);size_t n=ftell(f);rewind(f);unsigned char*p=malloc(n);if(fread(p,1,n,f)!=n)return 92;fclose(f);KERNEL k={0};int st=ParseKernel(p,n,&k);printf("%d %zu %llx %llx %llx\\n",st,k.Count,(unsigned long long)k.Base,(unsigned long long)k.End,(unsigned long long)k.Entry);free(p);return st;}
 '''
-    source=a.work/'parse.c';source.write_text(prefix+definitions+body+suffix,encoding='utf-8',newline='\n');exe=a.work/'parse';cmd=['wsl','-d','Ubuntu-22.04','--','clang','-O1','-g','-fsanitize=address,undefined',b.linux(source),'-o',b.linux(exe)];r=subprocess.run(cmd,capture_output=True,text=True);r.check_returncode()
+    source=a.work/'parse.c';source.write_text(prefix+definitions+body+suffix,encoding='utf-8',newline='\n');exe=a.work/'parse';cmd=['wsl','-d','Ubuntu-22.04','--','clang','-O1','-g','-fno-pie','-no-pie','-fsanitize=address,undefined',b.linux(source),'-o',b.linux(exe)];r=subprocess.run(cmd,capture_output=True,text=True);r.check_returncode()
     m=b.macho(candidate);probe=m['segments'][-1];variants=[]
     variants.append(('original',b.INPUT.read_bytes(),True));variants.append(('candidate',candidate,True))
     changed=bytearray(candidate);struct.pack_into('<Q',changed,probe['command_offset']+24,m['segments'][0]['va']);variants.append(('overlapping-probe',changed,False))
@@ -44,7 +44,8 @@ static UINT64 U64(const void *p){UINT64 v;memcpy(&v,p,8);return v;}
         image=a.work/(name+'.macho');image.write_bytes(raw);run=subprocess.run(['wsl','-d','Ubuntu-22.04','--',b.linux(exe),b.linux(image)],capture_output=True,text=True)
         passed=(run.returncode==0)==ok and not run.stderr
         results.append(dict(name=name,expected_accept=ok,passed=passed,exit_code=run.returncode,stdout=run.stdout,stderr=run.stderr))
-        if not passed:raise ValueError('Loader source fixture failed: '+name)
+        # Preserve every raw result, including failures; do not hide earlier cases.
     result=dict(scope='Host ASan/UBSan execution of pinned ParseKernel source body; not full EFI module or hardware execution',candidate_sha256=b.sha(candidate),source_path=str(source_path),source_body_sha256=b.sha(body.encode()),compile_command=cmd,cases=results)
-    a.output.parent.mkdir(parents=True,exist_ok=True);a.output.write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8');print(json.dumps(dict(cases=len(results),passed=True)))
+    a.output.parent.mkdir(parents=True,exist_ok=True);a.output.write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8');print(json.dumps(dict(cases=len(results),passed=all(x['passed'] for x in results))))
+    if not all(x['passed'] for x in results):raise ValueError('Loader source fixture failed; raw results saved to '+str(a.output))
 if __name__=='__main__':main()

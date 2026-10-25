@@ -17,6 +17,8 @@ def metadata(build):
         paths += [(n,build.with_name(n+'.json')) for n in ('transparency','wfe','read-sites','loader','mapping')]
     if json.loads(build.read_text()).get('probe_revision',0)>=22:
         paths += [(n,build.with_name(n+'.json')) for n in ('transition-normal','transition-occupied-probe','transition-bad-topology','transition-occupied-fb')]
+    if json.loads(build.read_text()).get('probe_revision',0)>=23:
+        paths += [('console-policy',build.with_name('console-policy.json'))]
     return {name:dict(path=path.relative_to(ROOT).as_posix(),sha256=sha(path.read_bytes())) for name,path in paths}
 
 def validate(meta,kernel_sha):
@@ -66,7 +68,7 @@ def validate(meta,kernel_sha):
             actual_names={c['name'] for c in checks}
             if len(actual_names)!=len(checks): raise ValueError('Duplicate v21 check names: '+name)
             if name=='transparency':
-                required_cases={h+': '+mode for h in hooks-{'probe_entry','probe_tables','probe_mmu','probe_mmu_on','probe_ttbr1','probe_ttbr0'}
+                required_cases={h+': '+mode for h in hooks-{'probe_entry','probe_tables','probe_mmu','probe_mmu_on','probe_ttbr1','probe_ttbr0','probe_console_policy'}
                                 for mode in ('first','repeat','no-video','count-saturated')}
                 if actual_names!=required_cases: raise ValueError('Probe transparency cases incomplete')
             if name=='wfe' and actual_names!={'configure-init '+c for c in ('-v','-v wfe_events_sec=0','-v wfe_events_sec=19200','-v wfe_events_sec=2000000')}|{'v20 negative control reaches panic despite eventi=4'}:
@@ -75,7 +77,7 @@ def validate(meta,kernel_sha):
                 raise ValueError('Probe field ID evidence missing')
             if name=='loader' and actual_names!={'original','candidate','overlapping-probe','command-overrun','probe-file-overrun'}:
                 raise ValueError('Probe loader cases incomplete')
-    if {'probe_ttbr1','probe_ttbr0'} & hooks:
+    if {'probe_ttbr1','probe_ttbr0','probe_console_policy'} & hooks:
         if build.get('probe_revision',0)<22: raise ValueError('TTBR hooks require revision 22 evidence')
         for case in ('normal','occupied-probe','bad-topology','occupied-fb'):
             name='transition-'+case
@@ -89,11 +91,20 @@ def validate(meta,kernel_sha):
                 raise ValueError('Transition checks incomplete')
             required_transition={'TTBR1 call preserves GPR/SP/NZCV and native LR'}
             if case in ('normal','occupied-fb'):required_transition.add('TTBR0 call preserves GPR/SP/NZCV and native LR')
-            if case=='normal':required_transition|={'Native cold path passes pmap probe after TTBR reconstruction','Code RO executable and data RW NX map exact probe physical pages','Next stop preserved as console platform read, not probe fetch'}
+            if case=='normal':required_transition|={'Native cold path passes pmap probe after TTBR reconstruction','Code RO executable and data RW NX map exact probe physical pages',('Native cold path passes console and reaches kernel_bootstrap' if build.get('probe_revision',0)>=23 else 'Next stop preserved as console platform read, not probe fetch')}
             elif case=='occupied-fb':required_transition.add('Occupied framebuffer slot preserved and renderer disabled')
             else:required_transition.add('Rejects occupied or malformed tables without partial page-table edits')
             if {c['name'] for c in evidence['checks']}!=required_transition:
                 raise ValueError('Transition cases incomplete')
+    if 'probe_console_policy' in hooks:
+        if build.get('probe_revision',0)<23 or 'console-policy' not in meta:raise ValueError('Console policy evidence missing')
+        item=meta['console-policy'];payload=report_path(item['path']).read_bytes()
+        if sha(payload)!=item['sha256']:raise ValueError('Console policy digest differs')
+        evidence=json.loads(payload)
+        if evidence.get('candidate_sha256')!=kernel_sha or any(c['passed'] is not True for c in evidence.get('checks',[])):
+            raise ValueError('Console policy evidence differs')
+        required_console={'shipped-missing-pram uses native DT lookup without BCM access','minimal-missing-pram uses native DT lookup without BCM access','present-pram uses native DT lookup without BCM access','Missing-pram path retains native screen initialization entry','Present-pram policy stops explicitly before console and old log access','Old candidate still reads unmapped BCM panic region'}
+        if {c['name'] for c in evidence['checks']}!=required_console:raise ValueError('Console policy checks incomplete')
     covered=set()
     for patch in build['patches']:
         off=patch['file_offset'];before=bytes.fromhex(patch['before']);after=bytes.fromhex(patch['after']);new=set(range(off,off+len(after)))

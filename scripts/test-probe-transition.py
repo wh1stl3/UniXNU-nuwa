@@ -22,7 +22,7 @@ for seg in m['segments']:
 a=bytearray(4096);struct.pack_into('<HH',a,0,2,2);struct.pack_into('<4Q',a,8,base,PA,window,PA+used);struct.pack_into('<6Q',a,0x28,FB,1,5760,1440,3200,32);struct.pack_into('<Q',a,0x60,base+treePA-PA);struct.pack_into('<I',a,0x68,len(adt));a[0x6c:0x6f]=b'-v\0';struct.pack_into('<Q',a,1144,window)
 u.mem_write(argsPA,bytes(a));u.mem_write(treePA,adt);u.reg_write(UC_ARM64_REG_X0,argsPA);u.reg_write(UC_ARM64_REG_X20,argsPA);u.reg_write(UC_ARM64_REG_PSTATE,0x3c5);u.cpr_write(3,6,1,1,0,0x401);u.cpr_write(3,4,1,1,0,1<<31)
 syms=m['symbols'];ps=build['probe']['symbols'];events=[];bad=[];checks=[];transition={};stop_reason=None
-watch={syms[n]:n for n in ('_arm_vm_init','_pmap_bootstrap','_kernel_bootstrap','_panic','_set_tcr','_set_mmu_ttb_alternate','_set_mmu_ttb')}
+watch={syms[n]:n for n in ('_arm_vm_init','_pmap_bootstrap','_kernel_bootstrap','_panic','_set_tcr','_set_mmu_ttb_alternate','_set_mmu_ttb','_PE_create_console','_initialize_screen')}
 watch.update({0xfffffff0073be1f0:'first-table-bzero',0xfffffff0073beb60:'before-TTBR0-switch',0xfffffff0073beb74:'before-TTBR1-switch',0xfffffff0073beb7c:'after-TTBR-switches'})
 def walk(va):
  tcr=u.cpr_read(3,0,2,0,2);t1=bool(va>>63);size=64-((tcr>>(16 if t1 else 0))&63);level=4-(size-4)//9;root=u.cpr_read(3,0,2,0,1 if t1 else 0)&0x0000fffffffff000;rows=[]
@@ -90,7 +90,11 @@ pc=u.reg_read(UC_ARM64_REG_PC);near=max((v,k) for k,v in syms.items() if v<=pc)
 out=dict(scope=__doc__,candidate_sha256=B.sha(raw),input=dict(argsPA=hex(argsPA),treePA=hex(treePA),treeKVA=hex(base+treePA-PA),topOfKernelData=hex(PA+used),owned_window=hex(window),adt_sha256=B.sha(adt),loader_memSizeActual_offset=1144),events=events,error=error,pc=hex(pc),nearest=near[1]+'+'+hex(pc-near[0]),bad_memory=bad,final_fb=walk(FB),final_probe=walk(int(build['probe']['va'],16)))
 if args.case=='normal':
  assert any(e['site']=='_pmap_bootstrap' for e in events),out
- assert error=='Invalid memory read (UC_ERR_READ_UNMAPPED)' and pc==syms['_PE_create_console']+0x48,out
+ if build.get('probe_revision',0)>=23:
+  assert error is None and not bad and pc==syms['_kernel_bootstrap'],out
+  assert any(e['site']=='_initialize_screen' for e in events),out
+ else:
+  assert error=='Invalid memory read (UC_ERR_READ_UNMAPPED)' and pc==syms['_PE_create_console']+0x48,out
  assert out['final_fb']['mapped'] and out['final_probe']['mapped'],out
  assert u.cpr_read(3,0,12,0,0)==int(ps['probe_vectors'],16)
  before=transition['before'];after=transition['after'];assert not any(before)
@@ -99,7 +103,7 @@ if args.case=='normal':
   va=start+i*4096;assert d&0x0000fffffffff000==PA+va-base
   if va<data: assert d&(1<<7) and not d&(1<<53) and d&(1<<54)
   else: assert not d&(1<<7) and d&(1<<53) and d&(1<<54)
- checks += [dict(name='Native cold path passes pmap probe after TTBR reconstruction',passed=True),dict(name='Code RO executable and data RW NX map exact probe physical pages',passed=True),dict(name='Next stop preserved as console platform read, not probe fetch',passed=True)]
+ checks += [dict(name='Native cold path passes pmap probe after TTBR reconstruction',passed=True),dict(name='Code RO executable and data RW NX map exact probe physical pages',passed=True),dict(name=('Native cold path passes console and reaches kernel_bootstrap' if build.get('probe_revision',0)>=23 else 'Next stop preserved as console platform read, not probe fetch'),passed=True)]
 else: assert stop_reason is not None and error is None,out
 out.update(checks=checks,case=args.case,stop_reason=stop_reason,transition=transition)
 args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(out,indent=2)+'\n')

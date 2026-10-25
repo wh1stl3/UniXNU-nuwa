@@ -716,6 +716,66 @@ probe_panic_trap_replay:
     .inst original_panic_trap_word
     b original_panic_trap_resume
 
+// v23 diagnostic lowering of the upstream DT-panic policy for the no-pram
+// case only. The native binary constant-folded panic_text_len to one byte;
+// a real DT region requires rebuilding source, not assigning a dynamic size.
+.global probe_console_policy
+probe_console_policy:
+    PROBE_SAVE
+    sub sp, sp, #96
+    stp x0, x1, [sp]
+    stp x2, x3, [sp, #16]
+    stp x4, x5, [sp, #32]
+    stp x6, x7, [sp, #48]
+    stp x8, x30, [sp, #64]
+    mov x0, #0
+    adr x1, .Lpram_name
+    add x2, sp, #80
+    bl native_dt_lookup
+    cmp w0, #1
+    b.eq .Lconsole_region_present
+    // Source check_for_panic_log returns without importing any old log.
+    mov x9, #1
+    adr x10, probe_console_status
+    str x9, [x10]
+    ldp x0, x1, [sp]
+    ldp x2, x3, [sp, #16]
+    ldp x4, x5, [sp, #32]
+    ldp x6, x7, [sp, #48]
+    ldp x8, x30, [sp, #64]
+    add sp, sp, #96
+    // Render only after restoring native arguments and the hook save frame.
+    BAND_ONCE 26, 768, 0xff80ffff
+    PROBE_RESTORE
+    // Native tail uses w20=1 to select graphics/text mode; native prologue
+    // already saved incoming x20. Do not bypass PE_initialize_console.
+    mov w20, #1
+    b native_console_tail
+.Lconsole_region_present:
+    adr x9, probe_console_status
+    mov x10, #2
+    str x10, [x9]
+    // Explicit unsupported-policy stop; never access BCM panic memory.
+    BAND_SNAPSHOT 1120, 0xffff0000
+    mov x23, #2
+    HEXROW_VAL 1696
+.global probe_console_policy_stop
+probe_console_policy_stop:
+    b probe_console_policy_stop
+.Lpram_name:
+    .asciz "pram"
+.balign 4
+// Marker remains a separate transparent entry hook after the policy's tail.
+.global probe_console_init
+probe_console_init:
+    PROBE_SAVE
+    BAND_ONCE 27, 800, 0xffc08040
+    PROBE_RESTORE
+.global probe_console_init_replay
+probe_console_init_replay:
+    .inst original_console_init_word
+    b original_console_init_resume
+
 // v22: diagnostic mapping transition. No allocations or replacement of live
 // descriptors. x0 is the new physical root; old V=P still maps these tables.
 .global probe_ttbr1
@@ -878,6 +938,9 @@ probe_scratch:
 .global probe_map_status
 probe_map_status:
     .quad 0, 0
+.global probe_console_status
+probe_console_status:
+    .quad 0
 .balign 4096
 .global probe_zero
 probe_zero:

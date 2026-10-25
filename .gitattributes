@@ -27,3 +27,9 @@ reports/xnu-entry-probe-trial/2026-10-25-v21/*.json -text -whitespace
 reports/xnu-entry-probe-trial/2026-10-25-v22/*.json -text -whitespace
 reports/xnu-first-entry/entry-probe-14.json -text -whitespace
 reports/xnu-first-entry/entry-probe-15.json -text -whitespace
+
+# Preserve exact PROBE16 report bindings.
+reports/kernel-entry-probe/2026-10-25-v23c/*.json -text -whitespace
+reports/xnu-entry-probe-trial/2026-10-25-v23/*.json -text -whitespace
+reports/xnu-first-entry/entry-probe-16.json -text -whitespace
+patches/xnu-8796-candidates/native-dt-panic-region.patch -whitespace

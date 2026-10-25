@@ -1,0 +1,71 @@
+{
+  "scope": "Compile the actual patched 8796 check_for_panic_log body and test its DT guards.\nHost DT/map adapters are test doubles; no kernel hardware or whole-kernel qualification.\n",
+  "source_path": "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full\\pexpert\\arm\\pe_init.c",
+  "source_sha256": "a62744526ee819ca4a3edc7892c322d26f8c83ea02fc33157a7ff937a5007b38",
+  "patch_sha256": "92bf718a9974cf0c685d81280c8b71ba952a078322f1ca8b1c8f9f56edb733c7",
+  "function_sha256": "aa47c9c0073cd0e24ecefe2e028e3385dcfeb7f4fc62913287960eac131637ef",
+  "commands": [
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "clang",
+        "--target=aarch64-none-elf",
+        "-ffreestanding",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wno-multichar",
+        "-c",
+        "/mnt/d/Code/UniXNU-nuwa/out/probe-v23-source-check/unit.c",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/probe-v23-source-check/unit.o"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "clang",
+        "-O1",
+        "-fsanitize=undefined",
+        "-fno-sanitize-recover=all",
+        "-Wno-multichar",
+        "/mnt/d/Code/UniXNU-nuwa/out/probe-v23-source-check/host.c",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/probe-v23-source-check/host"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "/mnt/d/Code/UniXNU-nuwa/out/probe-v23-source-check/host"
+      ],
+      "exit_code": 0,
+      "stdout": "11 source guard cases passed; header=161\n",
+      "stderr": ""
+    }
+  ],
+  "cases": 11,
+  "full_kernel_build_verified": false,
+  "upstream": {
+    "repository": "https://github.com/UniXNU/UniXNU",
+    "revision": "16e592abee8a550dec8154ed1f38b5ebc4f16213",
+    "path": "patches/xnu/native-dt-panic-region.patch",
+    "sha256": "b60c2a9a72ea23832f1e64348a5c5d1152cf05db6c156283dd8a93c804cd89cb"
+  },
+  "scope_note": "Adapted exact guard changes to read-only 8796 source; function-body compile/host adapters only. Current prelinked image uses a separate, restricted missing-pram diagnostic lowering."
+}

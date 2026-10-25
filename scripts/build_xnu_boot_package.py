@@ -137,6 +137,9 @@ def validate(path):
                 transition=json.loads((ROOT/report['entry_probe'][name]['path']).read_text())
                 if transition['input']['adt_sha256']!=report['read_file_sha256']:
                     raise ValueError('Transition tests must use the exact shipped ADT')
+    if 'console-policy' in report.get('entry_probe',{}):
+        policy=json.loads((ROOT/report['entry_probe']['console-policy']['path']).read_text())
+        if policy['adt_sha256']!=report['read_file_sha256']:raise ValueError('Console policy requires exact shipped ADT')
     if report.get('approval') != APPROVAL:
         raise ValueError('Unexpected approval for the XNU entry package')
     if (report.get('header_version') != 3 or not report.get('xnu_included')
@@ -237,6 +240,8 @@ def main():
         UNIXNU_TOML = UNIXNU_TOML.replace('Enter UniXNU iOS 16 kernel (analysis prelink)', 'XNU ENTRY PROBE 14 - RELOCATED HOOKS AND FIELD IDS')
     if probe and revision>=22:
         UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 14','PROBE 15').replace('RELOCATED HOOKS AND FIELD IDS','PMAP TRANSITION MAPPING')
+    if probe and revision>=23:
+        UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 15','PROBE 16').replace('PMAP TRANSITION MAPPING','DT PANIC POLICY AND CONSOLE')
     if sha(fd) != FD_SHA or len(fd) != 3145728:
         raise ValueError('Firmware FD changed')
     if sha(shim) != SHIM_SHA:

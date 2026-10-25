@@ -1,0 +1,43 @@
+{
+  "scope": "Visual confirmation of single temporary PROBE16 trial; recovery is tracked separately",
+  "image_sha256": "6f0907b2ce684a70dd143664172bf083012bae5b31d3d4a195459d0c3f6400fa",
+  "kernel_sha256": "167bd013da33a6a1e439b0dba5a4ec161ce5a90c781e14f446da6b520ec40753",
+  "photo": {
+    "sha256": "397add4bae72de693d8c8c057ebb4c139d14acc309e926fc6d61f73ef9b94385",
+    "local_only": true,
+    "uploaded": false
+  },
+  "observation": {
+    "user_report": "Orange appeared",
+    "assistant_visual_confirmation": true,
+    "pmap_marker": {
+      "x": 0,
+      "y": 480,
+      "color": "0xff00ff80"
+    },
+    "kernel_bootstrap_marker": {
+      "x": 0,
+      "y": 512,
+      "color": "0xffff8040",
+      "native_va": "0xfffffff00729e804"
+    },
+    "console_no_pram_marker": {
+      "x": 96,
+      "y": 256,
+      "color": "0xff80ffff"
+    },
+    "native_screen_entry_marker": {
+      "x": 96,
+      "y": 288,
+      "color": "0xffc08040"
+    },
+    "panic_exception_or_unsupported_policy_records_visible": false
+  },
+  "bounds": [
+    "Entry marker proves entry only; no kernel_bootstrap completion, scheduler, drivers or iOS proof",
+    "Absent exception record does not exclude later faults",
+    "No source-kernel rebuild or general DT panic-region ABI qualification",
+    "Photo only received for this trial; original media stays local"
+  ],
+  "device_accessed": true
+}

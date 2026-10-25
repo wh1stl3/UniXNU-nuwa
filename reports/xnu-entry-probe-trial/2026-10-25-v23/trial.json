@@ -1,0 +1,25 @@
+{
+  "scope": "Single temporary PROBE16 hardware trial and verified recovery; entry checkpoint only",
+  "image_sha256": "6f0907b2ce684a70dd143664172bf083012bae5b31d3d4a195459d0c3f6400fa",
+  "kernel_sha256": "167bd013da33a6a1e439b0dba5a4ec161ce5a90c781e14f446da6b520ec40753",
+  "kernel_bootstrap_entry_observed": true,
+  "screen_evidence": "screen.json",
+  "source_dt_policy": "Source patch candidate checked; shipping diagnostic supports missing-pram only",
+  "full_kernel_source_rebuild": false,
+  "recovery": {
+    "at": "2026-10-25T08:44:29.445840+00:00",
+    "android_boot_completed": "1",
+    "slot": "_a",
+    "three_partition_hashes_unchanged": true,
+    "no_flash_no_erase_no_slot_change": true
+  },
+  "not_proven": [
+    "kernel_bootstrap completion",
+    "scheduler and interrupts",
+    "drivers, storage, root mount and iOS",
+    "generic DT panic buffer handling"
+  ],
+  "next": "Measure kernel_bootstrap startup and VM initialization checkpoints; do not infer a hang from model instruction budget",
+  "raw_media_uploaded": false,
+  "device_accessed": true
+}
