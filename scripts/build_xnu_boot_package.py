@@ -65,6 +65,13 @@ args = "-v"
 def sha(raw):
     return hashlib.sha256(raw).hexdigest()
 
+def root_context(revision):
+    if revision>=31:
+        from nuwa_bsd_launch_context import API
+        return API
+    import nuwa_root_launch_context
+    return nuwa_root_launch_context
+
 
 def build_adt(output,root_ramdisk=False):
     """Generate the Apple device tree with the approved board values."""
@@ -139,7 +146,7 @@ def validate(path):
             raise ValueError('Measured launch context cannot be removed from revision 27')
         if build.get('probe_revision',0)>=30:
             if 'root_ramdisk' not in report or report.get('root_mount_diagnostic')!=build.get('root_mount_diagnostic'):raise ValueError('Real root image/endpoint removed')
-            from nuwa_root_launch_context import POLICY,ARGS,PAYLOAD_SHA
+            ctx=root_context(build['probe_revision']);POLICY,ARGS,PAYLOAD_SHA=ctx.POLICY,ctx.ARGS,ctx.PAYLOAD_SHA
             if report['root_ramdisk'].get('policy')!=POLICY or report['root_ramdisk'].get('sha256')!=PAYLOAD_SHA or report['fat_bytes']!=201326592:raise ValueError('Root transport/policy differs')
         for case in ('normal','occupied-probe','bad-topology','occupied-fb'):
             name='transition-'+case
@@ -211,7 +218,7 @@ def validate(path):
         if proof!=report['image4_launch_context']:
             raise ValueError('Shipped launch context/component proof changed')
         if 'root_ramdisk' in report:
-            from nuwa_root_launch_context import validate as validate_root,ARGS
+            ctx=root_context(build['probe_revision']);validate_root,ARGS=ctx.validate,ctx.ARGS
             root_proof=validate_root((work/'kernel.macho.adt').read_bytes(),work/'kernel.macho',fd_path,shim_path,work/'root-restore.apfs')
             if root_proof['policy']!=report['root_ramdisk']['policy']:raise ValueError('Shipped root policy differs')
             menu=work/'unixnu.toml'
@@ -285,13 +292,15 @@ def main():
         UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 20','PROBE 21').replace('NATIVE PTHREAD OSKEXT TO BSD ROOT','ROOT RESOURCE AND MEDIA WAIT TRACE')
     root_ramdisk=None
     if args.root_ramdisk:
-        if not probe or revision!=30:raise ValueError('Real root diagnostic requires revision30 mount endpoint')
-        from nuwa_root_launch_context import PAYLOAD_SHA,ARGS,validate_report
+        if not probe or revision not in (30,31):raise ValueError('Real root diagnostic requires revision30/31 endpoint')
+        ctx=root_context(revision);PAYLOAD_SHA,ARGS,validate_report=ctx.PAYLOAD_SHA,ctx.ARGS,ctx.validate_report
         root_proof=json.loads((ROOT/probe['root-launch']['path']).read_text());validate_report(root_proof)
         root_ramdisk=args.root_ramdisk.read_bytes()
         if sha(root_ramdisk)!=PAYLOAD_SHA:raise ValueError('Pinned real root image changed')
         UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 21','PROBE 22').replace('ROOT RESOURCE AND MEDIA WAIT TRACE','REAL APFS RAMDISK MOUNT THEN HALT')
         UNIXNU_TOML=UNIXNU_TOML.replace('args = "-v"','args = "'+ARGS+'"\ninitrd = "Payloads/root-restore.apfs"')
+        if revision>=31:
+            UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 22','PROBE 23').replace('REAL APFS RAMDISK MOUNT THEN HALT','CONTINUOUS BSD TO FIRST INIT EXEC')
     elif probe and revision>=30:raise ValueError('Mount-only candidate must bind the real RAMDisk')
     if sha(fd) != FD_SHA or len(fd) != 3145728:
         raise ValueError('Firmware FD changed')
@@ -417,6 +426,8 @@ def main():
         if revision>=30:
             report['root_mount_diagnostic']=json.loads(args.entry_probe.read_text())['root_mount_diagnostic']
             report['success_requires']=report['success_requires'].replace('PROBE21:','PROBE22:')+' Real APFS on RAMDisk, rd=md0. A035=actual native vfs_mountroot return, ID212 green=zero return, ID213 red=error; deliberate halt before restore userspace. Enlarged transport is not yet nuwa-qualified.'
+        if revision>=31:
+            report['success_requires']='PROBE23: continue native root, secure root, BSD completion and init preparation without intermediate halts. A035 records native mount return, IDs212/213 observe success/error and continue. IDs214/215/216=bsdinit_task/load_init_program/load_init_program_at_path entries; ID217=before first ___mac_execve, ID218 magenta=sole intentional endpoint, A02B=217. No restore userspace executed; all native errors preserved.'
         report['expected_screen_outcomes'] = [report['success_requires'], 'Any later XNU text or panic requires separate attribution; no band proves MMU enabled or iOS started']
         report['not_proven'] = ['Real nuwa execution of this candidate', 'MMU activation and arm_init', 'Native timer/interrupt driver readiness', 'Full donor/native ABI or iOS boot']
     output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')

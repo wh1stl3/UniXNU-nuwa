@@ -7,6 +7,10 @@ import nuwa_root_launch_context as R
 NAMES={'actual-root','corrupt-root','missing-root-measurement','userspace-allowed','wrong-arguments','wrong-producer','nonzero-placeholder'}
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--build',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args()
+    global R
+    if json.loads(a.build.read_text())['probe_revision']>=31:
+        from nuwa_bsd_launch_context import API
+        R=API
     root=json.loads(a.build.with_name('root-launch.json').read_text());adt=(C.ROOT/root['adt_path']).read_bytes()
     kernel=C.ROOT/root['kernel_path'];fd=C.ROOT/root['fd_path'];shim=C.ROOT/root['shim_path'];ramdisk=C.ROOT/root['ramdisk']['path'];checks=[]
     R.validate_report(root);R.validate(adt,kernel,fd,shim,ramdisk);checks.append(dict(name='actual-root',passed=True))

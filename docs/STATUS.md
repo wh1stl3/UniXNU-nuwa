@@ -1,27 +1,25 @@
 # STATUS
 
-更新：2026-10-25。**PROBE22实机通过真实RAMDisk→md0→原生根挂载路径，vfs_mountroot返回0，并在预定诊断终点停止，未进入恢复用户态。21:30:50 +08后验确认Android完成1、A槽、三分区SHA与试前一致，无待恢复任务。** 尚未启动iOS用户态，不将本轮当作完整驱动/长期运行资格。
+更新：2026-10-25。**按用户要求减少阶段停止，PROBE23已取消挂载后停止，连续执行原生安全根/BSD收尾/首进程准备，唯一终点在首次init exec前。21项串行验证和镜像回读完成；用户已确认本包录像/恢复仍就绪，新鲜preflight确认Android1/A槽/三SHA与上轮后验一致，准备单次临时boot。** 尚无PROBE23实机结果。
 
-## 当前实机结论
+## 最近实机与设备
 
-照片fc1c4ade8efa484b2e0362067e1d68b997f76477a297a6d41f77c79b1ecbe58b仅本地out/trial-evidence/entry-probe-22/user-screen.jpg。A035=0000000000000000，ID212绿、213暗；是原生挂载返回后主动停止，不是panic。196/197真实mdevadd、204/205 mdevlookup、206/207 setRootMedia、164/165 IOFindBSDRoot、166/167 vfs_mountroot调用/后继均亮，入口8黄，后续IOSecureBSDRoot168及用户态bootstrap9未到。184/185初始IOBSD等待返回，200/201默认介质等待暗，符合实际rd=md0分支，不再等待不存在的HFS IOMedia。A02A0/B6/C1；B保持6是root入口不更新DISPLAY_CHECK。
+PROBE22照片fc1c4ade8efa484b2e0362067e1d68b997f76477a297a6d41f77c79b1ecbe58b仅本地：真实mdevadd196/197、mdevlookup204/205、setRootMedia206/207、IOFindBSDRoot164/165、vfs_mountroot166/167均亮；A0350/212绿、213暗，原生根挂载返回0，在旧预定终点停止，未进入恢复用户态。实载APFS已知，运行时FS名称/root vnode和整盘哈希未直接读回，不扩大结论。
 
-实载的是固定102MiB APFS恢复介质，经真实md0路径且原生根挂载返回0。还未直接读回运行时文件系统名称、root vnode内容或RAMDisk完整哈希；不把这部分未采集数据填成实测。192MiB运输本次已支撑菜单、内核和该路径，但不是192MiB运行时逐字节哈希认证或稳定性资格。
+PROBE22恢复后21:30:22观察Android1，21:30:50 +08后验确认Android1/A槽/三SHA与试前相同，无待恢复任务。用户此前要求暂不调查重启现象，仍保持。当前PROBE23的新鲜preflight再次确认Android完成1/A槽/相同三SHA，不重复启动22。
 
-用户确认fastboot后，恢复流程只复位bootloader一次、临时加载固定原厂boot一次；21:30:22观察Android1，21:30:50后验确认A槽/boot_a、vendor_boot_a、init_boot_a三SHA与v30/preflight相同。无flash/erase/改槽或重复候选启动。用户此前要求暂不调查重启现象，此要求保持；当前无新重启归因结论。
+## PROBE23有效输入与设计
 
-## 有效包及输入
+权威包reports/xnu-first-entry/entry-probe-23.json。镜像out/trial-boot/xnu-entry-probe-23-bsd/boot-xnu-first-entry.img，204,484,608B，SHA7e24257b5dede7e8a0d6089c6c0e458b8e54d0f5a904fe91371acb74e41c44a0。内核2e1f5d4a1e586a8f3dfb432053d8fe4c1c019d4beb405017f5aefeac9eea3ffc；ADT531c915c18213897113ec1011a682155ee04ea5123fa2903517a6cd246a556a3；真实102MiB APFS仍为d180c38d，-v rd=md0，192MiB运输。
 
-权威包reports/xnu-first-entry/entry-probe-22.json；镜像out/trial-boot/xnu-entry-probe-22-real-apfs/boot-xnu-first-entry.img，204,484,608B，SHA1b24ff82048f7ff29a6c6381889ba6806cce942a3fe79fa22f8db4256ad9397a。内核7f699af6e3f2ce70f0d55450661a0e70b62e2404cebc8194a47f693b2ec538d3，ADT15cf608bffbf62b450f0223fc61b3ee13b6e66c878bfe4a96fa2fd8907c67518，真实APFS payload d180c38dcc754bc079cc92a40f58a4b5fad2c2b7ce72cf5e64a117453fd7c90a。
+挂载返回后只记录A035及212绿/213红，然后重放原生后继指令。安全根、imageboot/devfs、BSD收尾、PID1创建与init参数准备按原生控制流继续；不逐阶段停止或换包，不跳过原生错误。唯一终点在0xfffffff00769d5f4 BL ___mac_execve之前，避免运行恢复镜像里的restored_external；不证明可执行文件存在、Mach-O/AMFI加载或用户态通过。
 
-代码fb76965、启动记录b6a80c1；本轮实测提交号以git log为准。原固定FD/shim、31组件iOS16 prelink、Image4兼容及受审1GiB窗口/板值/TCR/IPSW身份不变。FAT192MiB实载kernel/ADT/APFS/菜单，-v rd=md0；冻结v1生产器不改，扩展诊断测量绑定实际根字节、参数和挂载后停止策略，不宣称Apple IM4M/TSS、硬件nonce或防重放。
+新增214=bsdinit_task、215=load_init_program、216=load_init_program_at_path入口；217=首次exec调用前，218品红=主动终点，A02B=217。旧root观察标记保持。v30冻结生产器不改，v31独立策略/生产器SHA纳入真实测量，旧包22复验通过。
 
-离线21项串行任务通过：856透明差分、25Image4、6pthread、3停止、7根输入、34绑定及入口/MMU/向量/显示回归；独立内核重建、实际四文件回读和旧包21复验通过。唯一非透明hook在真实vfs_mountroot返回后0xfffffff0076730e8显示原生返回值并停止，不伪造成功、不进入恢复镜像用户态。
+21项串行任务通过：872透明差分、25Image4、6pthread、3唯一终点、7根输入、34绑定及入口/MMU/向量/显示回归。原挂载hook已重新加入透明性检查；只有首次exec前终点单独豁免。独立内核逐字节一致，实际FAT回读kernel/ADT/APFS/菜单并重新测量通过。源码/指令依据、SHA和命令见[v31记录](operations/2026-10-25-v31-continuous-bsd.md)。
 
-## 下一项与边界
+## 实测边界和续接
 
-用户最新要求减少类似阶段停止、一次尽可能推进更多。下一候选取消挂载后停止，标记继续记录并连续执行安全根/BSD收尾/首进程准备，唯一明确边界放在首次执行用户态之前；同时尽量读回运行时根身份，不再为每个观察点安排独立启动。恢复镜像不能直接当完整正常iOS root。完整系统根约4.73GB和Cryptex等后续输入需要真实存储/运输方案，不能默认扩大受审窗口或更换身份。
+用户原文“PROBE23 录像与恢复仍就绪，继续”保留于v31/preflight。即时通知后仅一次临时boot，取最终画面后固定原厂boot恢复，确认Android1/A槽/三SHA与本轮preflight相同。人工等待继续离线工作，恢复未确认不启动第二候选。
 
-loadable/runtime_qualified与所有*_verified保持false；IRQ/计时器实际递送、驱动完整性、后续安全根和iOS用户态未验证。新试包独立离线验证、刷新日志/恢复条件及preflight后才启动。无push/新CI/原始媒体上传，资料库只读。无需重复启动22。
-
-证据reports/xnu-entry-probe-trial/2026-10-25-v30/{screen,recovery,postcondition}.json；[v30完整记录](operations/2026-10-25-v30-real-apfs-mount.md)、[当前交接](operations/2026-10-25-mainline-handoff.md)。
+当前基线7057d1d之后的新里程碑以git log为准；无PROBE23实机结果，安全根/首进程/用户态、IRQ计时器和驱动完整性仍未验证。原FD/shim/board内存表、1GiB窗口、TCR、iOS16/8796身份和*_verified不改，loadable/runtime_qualified保持false；无flash/erase/改槽、push/新CI或原始媒体上传。

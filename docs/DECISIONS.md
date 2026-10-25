@@ -646,3 +646,9 @@ manifest-properties节点已存在但无BNCH，boot-manifest-hash缺失。固定
 2026-10-25。PROBE22原图fc1c4ade中真实mdevadd196/197、mdevlookup204/205、setRootMedia206/207、IOFindBSDRoot164/165、vfs_mountroot166/167均亮，A0350/212绿、213暗，原生根挂载返回0并按预定终点停止。实载APFS已知，尚未直接读回运行时FS名称/root vnode或全盘哈希，不扩大为这些数据实测。21:30:50 +08 Android1/A槽/三SHA一致，恢复关闭，无用户态执行。
 
 用户要求少用类似阶段停止、一次尽量推进更多。后续保留累计观察点，取消挂载后停止，连续执行安全根/BSD收尾/首进程准备；唯一边界移至首次用户态exec之前，避免直接运行恢复镜像里的restored_external。继续保留原生错误、不假返回、不按阶段反复启动；实际首次exec前位置以固定kern_exec.c和原生指令核定，未实施前不声称已到首进程。
+
+# D-056 · 连续观察，首次init exec前保留唯一终点
+
+2026-10-25。PROBE23取消挂载后停止，A035/212/213只记录并重放原生后继；安全根、imageboot/devfs、BSD收尾、PID1创建和init参数准备连续执行。唯一终点在load_init_program_at_path的0xfffffff00769d5f4 BL ___mac_execve之前，源码和固定指令同时核验；新增214–217观察点、218品红终点，不逐阶段换包。保留原生错误和init路径顺序，未证明可执行文件存在或Macho/AMFI/用户态执行。
+
+冻结PROBE22生产器/策略，PROBE23在独立命名空间复用固定SHA源码并绑定新策略及生产器自身SHA，旧包可复验。21项串行任务通过，872差分含重新纳入的挂载hook、25Image4/6pthread/3唯一终点/7根输入/34绑定，独立重建、实际四文件回读和旧包22复验通过。包23镜像7e24257b；本包用户录像/恢复确认和新鲜三SHA通过，尚未实机，不提前宣称已到PID1。

@@ -1,0 +1,28 @@
+{
+  "scope": "Execute the sole pre-init-exec halt and show no exec target runs.",
+  "candidate_sha256": "2e1f5d4a1e586a8f3dfb432053d8fe4c1c019d4beb405017f5aefeac9eea3ffc",
+  "checks": [
+    {
+      "name": "first",
+      "passed": true,
+      "incoming_x0": 0,
+      "stop": "0xfffffff008490a20",
+      "exec_entered": false
+    },
+    {
+      "name": "nonzero-argument",
+      "passed": true,
+      "incoming_x0": 5,
+      "stop": "0xfffffff008490a20",
+      "exec_entered": false
+    },
+    {
+      "name": "no-video",
+      "passed": true,
+      "incoming_x0": 0,
+      "stop": "0xfffffff008490a20",
+      "exec_entered": false
+    }
+  ],
+  "userspace_entered": false
+}

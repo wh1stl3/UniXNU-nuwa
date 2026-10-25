@@ -24,7 +24,7 @@ def main():
     build = a.build.resolve()
     report = json.loads(build.read_text())
     work = a.work.resolve()
-    if (not build.is_relative_to(ROOT / 'reports') or report.get('probe_revision') not in (27,28,29,30)
+    if (not build.is_relative_to(ROOT / 'reports') or report.get('probe_revision') not in (27,28,29,30,31)
             or not work.is_relative_to(ROOT / 'out') or work.exists()):
         raise ValueError('Explicit revision-27 build and fresh out/ work directory required')
     work.mkdir(parents=True)
@@ -48,7 +48,7 @@ def main():
          '--nonce', str(a.nonce.resolve()), '--manifest', str(a.manifest.resolve()),
          '--baseline-adt', 'out/trial-boot/xnu-entry-probe-18-vectors/kernel.macho.adt']),
         *([('pthread-startup', 'test-pthread-startup.py', [])] if report.get('probe_revision')>=28 else []),
-        *([('root-stop', 'test-root-mount-stop.py', [])] if report.get('probe_revision')>=30 else []),
+        *([('root-stop', 'test-pre-exec-stop.py' if report.get('probe_revision')>=31 else 'test-root-mount-stop.py', [])] if report.get('probe_revision')>=30 else []),
         *([('root-inputs', 'test-root-launch-context.py', [])] if report.get('probe_revision')>=30 else []),
         ('binding', 'test-probe-evidence-binding.py', [])]
     records = []

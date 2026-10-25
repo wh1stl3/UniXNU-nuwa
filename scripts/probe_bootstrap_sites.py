@@ -31,7 +31,7 @@ ENTRY_FUNCTIONS=('_load_context','_machine_load_context','_thread_continue',
 def plan_next(raw,m,backed,revision=25):
     symbols=m['symbols'];reverse={v:k for k,v in symbols.items()};edges=[];sites={}
     def add(site,fn,callee,phase,call=None):
-        index=len(edges)+(4 if revision>=29 and len(edges)>=178 else 0)
+        index=len(edges)+(4 if revision>=29 and len(edges)>=178 else 0)+(2 if revision>=31 and len(edges)>=208 else 0)
         if index>=220:raise ValueError('Next-phase panel capacity exceeded')
         color={'call':'0xff40c0ff','continuation':'0xff40ff80','entry':'0xffffff00','context':'0xffff40ff'}[phase]
         e=dict(id=index,function=fn,callee=callee,phase=phase,call=hex(call if call is not None else site),site=hex(site),x=832+(index%10)*48,y=256+(index//10)*24,color=color)
@@ -74,6 +74,12 @@ def plan_next(raw,m,backed,revision=25):
             if callee is None:raise ValueError('Root checkpoint target has no pinned symbol')
             add(pc,'_IOFindBSDRoot',callee,'call',pc)
             add(pc+4,'_IOFindBSDRoot',callee,'continuation',pc)
+    if revision>=31:
+        for fn in ('_bsdinit_task','_load_init_program','_load_init_program_at_path'):
+            add(symbols[fn],fn,fn,'entry')
+        pc=0xfffffff00769d5f4;word=struct.unpack_from('<I',raw,backed(m,pc))[0]
+        if word&0xfc000000!=0x94000000 or pc+signed(word&0x3ffffff,26)*4!=symbols['___mac_execve']:raise ValueError('First init exec call changed')
+        add(pc,'_load_init_program_at_path','___mac_execve','call',pc)
     return edges,sites
 
 def plan(raw,m,backed,revision=24):
@@ -117,7 +123,12 @@ def generate(raw,m,backed,revision=24):
             if site==m['symbols']['_kernel_bootstrap_thread']:source += ['    RESTORE_NATIVE_VECTORS']
         if revision>=28 and site==m['symbols']['_bsd_init']:
             source += ['    stp x29, x30, [sp, #-16]!', '    bl pthread_load_before_bsd', '    ldp x29, x30, [sp], #16']
-        if revision>=30 and site==0xfffffff0076730e8:
+        if revision>=31 and site==0xfffffff0076730e8:
+            source += ['    mov x23, x0','    HEXROW_VAL 1696',
+                       '    cbnz w0, .Lroot_observe_failed','    DENSE_ONCE 212, 0xff40ff80',
+                       '    b .Lroot_observe_continue','.Lroot_observe_failed:',
+                       '    DENSE_ONCE 213, 0xffff0000','.Lroot_observe_continue:']
+        elif revision>=30 and site==0xfffffff0076730e8:
             # A deliberate diagnostic endpoint after the real mount call.
             # Never enter restore-image userspace; no native success fabricated.
             source += ['    mov x23, x0','    HEXROW_VAL 1696',
@@ -127,6 +138,10 @@ def generate(raw,m,backed,revision=24):
                        '    DENSE_ONCE 213, 0xffff0000',
                        '.global probe_root_mount_stop','probe_root_mount_stop:',
                        '    b probe_root_mount_stop']
+        if revision>=31 and site==0xfffffff00769d5f4:
+            source += ['    DISPLAY_CHECK 217','    DENSE_ONCE 218, 0xffff40ff',
+                       '.global probe_pre_exec_stop','probe_pre_exec_stop:',
+                       '    b probe_pre_exec_stop']
         source += ['    PROBE_RESTORE',f'.global {label}_replay',label+'_replay:',code]
         hooks.append((site,label))
     return '\n'.join(source)+'\n',constants,hooks,edges
