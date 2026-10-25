@@ -480,3 +480,5 @@
 2026-10-25 · 用户“之后都要连续推进”已写AGENTS：诊断默认记录继续，成功里程碑不主动停止，不机械逐轮后移终点，只在真实故障/明确硬停/未授权设备写入边界停；同步STATUS与两份交接。· 本次连续推进约定提交（父d644d7a） · AGENTS第4节、D-057
 
 2026-10-25 22:20 +08 · PROBE24连续exec离线完成，21项串行检查/逐字节重建/FAT回读/旧包23复验通过，录像恢复确认和Android1/A槽/三SHA新鲜预检完成 · 提交号见本条所属git提交 · reports/kernel-entry-probe/2026-10-25-v32b/execution.json、reports/xnu-first-entry/entry-probe-24.json、v32b/preflight.json
+
+2026-10-25 22:21:36 +08 · PROBE24单次临时boot ACK，等待菜单Enter后最终画面及Android恢复，ACK不当内核证据 · 代码7269f20；启动记录见本条所属提交 · reports/xnu-entry-probe-trial/2026-10-25-v32b/launch.json

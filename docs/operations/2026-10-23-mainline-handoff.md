@@ -1,5 +1,8 @@
 > **当前续接入口已迁至[2026-10-25主线交接](2026-10-25-mainline-handoff.md)。** PROBE22实机真实RAMDisk/md0路径、原生根挂载返回0，A0350/212绿，未进入用户态。21:30:50 +08 Android1/A槽/三SHA一致，恢复关闭。用户最新要求减少阶段停止、一次推进更多；下一候选取消挂载后停止，连续推进安全根/BSD收尾/首进程准备，在首次执行恢复用户态前保留唯一明确边界。代码fb76965、启动b6a80c1，实测v30 screen/recovery/postcondition。下方均历史，STATUS、新交接和v30记录为准。
 
+> 实时：PROBE24于2026-10-25 22:21:36 +08已仅一次临时boot ACK，代码7269f20；等待菜单电源Enter后完整画面，重点最右侧220至239及A02D/E/F/A030/A032。ACK不是内核执行证据，不重复启动，尚无本轮恢复后验。镜像eed726b2，预检Android1/A槽/三SHA一致，用户本包录像恢复就绪。取图后trial-v4-firmware.py recover --package reports/xnu-first-entry/entry-probe-24.json --evidence reports/xnu-entry-probe-trial/2026-10-25-v32b/recovery.json；随后record-nuwa-trial-state.py --before reports/xnu-entry-probe-trial/2026-10-25-v32b/preflight.json --output reports/xnu-entry-probe-trial/2026-10-25-v32b/postcondition.json。人工恢复等待继续离线分析，不启动第二候选。证据v32b/launch.json；下方启动前快照为历史。
+
+
 > 当前PROBE24已离线完成，尚未启动；用户本轮录像/恢复就绪，22:19:42 +08预检Android1/A槽/三SHA与v31后验一致。连续真实exec/激活/签名/错误回退，只有真实故障或已提交恢复任务FINAL_WAIT释放边界才停；239品红/A02B239不等于exec成功。镜像eed726b2406e4809196aefd03ee91a166bd0fbbde3eb749cc0dc25d83fcd935e，204484608B；内核e8032e02，ADT3196efde。21项串行验证、独立逐字节重建、实际FAT回读及旧包23复验通过，代码父a785eed，无push/新CI。最近实际设备预检Android1，无待恢复，最近内核实测仍PROBE23到首次exec前。下方旧实时状态是历史快照，以STATUS及本段为准。续接：trial-v4-firmware.py launch --package reports/xnu-first-entry/entry-probe-24.json --preflight reports/xnu-entry-probe-trial/2026-10-25-v32b/preflight.json --evidence reports/xnu-entry-probe-trial/2026-10-25-v32b/launch.json --observation-seconds 0；仅一次临时boot。取图后同驱动recover绑定包24，补Android1/A槽/三SHA，不把ACK当内核证据；日志或恢复条件失效先按AGENTS §3停在启动前。详见2026-10-25-v32-native-exec.md。
 
 

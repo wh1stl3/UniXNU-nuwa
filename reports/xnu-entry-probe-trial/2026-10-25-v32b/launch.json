@@ -1,0 +1,213 @@
+{
+  "phase": "launch",
+  "started_at": "2026-10-25T14:21:11.648098+00:00",
+  "commands": [
+    {
+      "at": "2026-10-25T14:21:12.006704+00:00",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'cat /sys/firmware/devicetree/base/model; cat /sys/firmware/devicetree/base/compatible'"
+      ],
+      "exit_code": 0,
+      "stdout": "Qualcomm Technologies, Inc. 8550 nuwa\u0000qcom,kalama-mtp\u0000qcom,kalama\u0000qcom,mtp\u0000",
+      "stderr": ""
+    },
+    {
+      "at": "2026-10-25T14:21:12.065180+00:00",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "shell",
+        "getprop sys.boot_completed"
+      ],
+      "exit_code": 0,
+      "stdout": "1\n",
+      "stderr": ""
+    },
+    {
+      "at": "2026-10-25T14:21:15.741044+00:00",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "reboot",
+        "bootloader"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "at": "2026-10-25T14:21:23.873238+00:00",
+      "argv": [
+        "fastboot",
+        "-s",
+        "<selected-nuwa>",
+        "getvar",
+        "product"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "product: nuwa\nFinished. Total time: 0.004s\n"
+    },
+    {
+      "at": "2026-10-25T14:21:23.895140+00:00",
+      "argv": [
+        "fastboot",
+        "-s",
+        "<selected-nuwa>",
+        "reboot",
+        "bootloader"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Rebooting into bootloader                          OKAY [  0.000s]\nFinished. Total time: 0.000s\n"
+    },
+    {
+      "at": "2026-10-25T14:21:27.978771+00:00",
+      "argv": [
+        "fastboot",
+        "-s",
+        "<selected-nuwa>",
+        "getvar",
+        "product"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "product: nuwa\nFinished. Total time: 0.005s\n"
+    },
+    {
+      "at": "2026-10-25T14:21:28.012765+00:00",
+      "argv": [
+        "fastboot",
+        "-s",
+        "<selected-nuwa>",
+        "getvar",
+        "unlocked"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "unlocked: yes\nFinished. Total time: 0.003s\n"
+    },
+    {
+      "at": "2026-10-25T14:21:28.040110+00:00",
+      "argv": [
+        "fastboot",
+        "-s",
+        "<selected-nuwa>",
+        "getvar",
+        "current-slot"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "current-slot: a\nFinished. Total time: 0.005s\n"
+    },
+    {
+      "at": "2026-10-25T14:21:32.808089+00:00",
+      "argv": [
+        "fastboot",
+        "-s",
+        "<selected-nuwa>",
+        "boot",
+        "D:\\Code\\UniXNU-nuwa\\out\\trial-boot\\xnu-entry-probe-24-exec\\boot-xnu-first-entry.img"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Sending 'boot.img' (199692 KB)                     OKAY [  4.587s]\nBooting                                            OKAY [  0.112s]\nFinished. Total time: 4.743s\n"
+    }
+  ],
+  "observations": [
+    {
+      "at": "2026-10-25T14:21:32.808995+00:00",
+      "seconds_after_ack": 0.0,
+      "selected_nuwa_in_fastboot": false,
+      "adb_device_count": 1
+    }
+  ],
+  "authorization": "XNU-FIRST-ENTRY-ANALYSIS explicit diagnostic trial/recovery approval",
+  "candidate_sha256": "eed726b2406e4809196aefd03ee91a166bd0fbbde3eb749cc0dc25d83fcd935e",
+  "candidate_package_sha256": "a6df1bb51441ee2edbf97b604c392d5ea02fd956602aedaab604bfdc49d01b69",
+  "recovery_sha256": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+  "preflight": {
+    "at": "2026-10-25T14:19:42.657354+00:00",
+    "commands": [
+      {
+        "argv": [
+          "adb",
+          "-s",
+          "<selected-nuwa>",
+          "exec-out",
+          "su -c 'cat /sys/firmware/devicetree/base/model; cat /sys/firmware/devicetree/base/compatible'"
+        ],
+        "exit_code": 0,
+        "stdout": "Qualcomm Technologies, Inc. 8550 nuwa\nqcom,kalama-mtp\nqcom,kalama\nqcom,mtp",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "adb",
+          "-s",
+          "<selected-nuwa>",
+          "exec-out",
+          "getprop sys.boot_completed"
+        ],
+        "exit_code": 0,
+        "stdout": "1",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "adb",
+          "-s",
+          "<selected-nuwa>",
+          "exec-out",
+          "getprop ro.boot.slot_suffix"
+        ],
+        "exit_code": 0,
+        "stdout": "_a",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "adb",
+          "-s",
+          "<selected-nuwa>",
+          "exec-out",
+          "su -c 'sha256sum /dev/block/by-name/boot_a /dev/block/by-name/vendor_boot_a /dev/block/by-name/init_boot_a'"
+        ],
+        "exit_code": 0,
+        "stdout": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31  /dev/block/by-name/boot_a\n5ad2a9dc751870fa3c367fa2833582147541f5b62b880dcbdf525003ad68cc23  /dev/block/by-name/vendor_boot_a\n19e95d952ded5172e8a17bd1af907a8d6b08b29734881c370961b09bbaf78f96  /dev/block/by-name/init_boot_a",
+        "stderr": ""
+      }
+    ],
+    "device": "nuwa",
+    "soc": "kalama",
+    "android_boot_completed": "1",
+    "slot": "_a",
+    "partition_hashes": {
+      "/dev/block/by-name/boot_a": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+      "/dev/block/by-name/vendor_boot_a": "5ad2a9dc751870fa3c367fa2833582147541f5b62b880dcbdf525003ad68cc23",
+      "/dev/block/by-name/init_boot_a": "19e95d952ded5172e8a17bd1af907a8d6b08b29734881c370961b09bbaf78f96"
+    },
+    "three_partition_hashes_unchanged": true,
+    "package_sha256": "a6df1bb51441ee2edbf97b604c392d5ea02fd956602aedaab604bfdc49d01b69",
+    "process_log_method": "framebuffer photographed or recorded by user",
+    "human_capture_confirmation": "\u5f55\u50cf\u4e0e\u6062\u590d\u4ecd\u5c31\u7eea\uff0c\u7ee7\u7eed PROBE24",
+    "human_capture_source": "Fresh user confirmation supplied for this trial; notify immediately before launch",
+    "recovery_path": "Power plus volume down to fastboot (R-010 completed); reset bootloader and temporarily load pinned original boot; confirm Android completion",
+    "original_boot_sha256": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+    "recovery_evidence": {
+      "path": "reports/dxe-allocation/39829943950/recovery.json",
+      "sha256": "4d3a8e2f2f3cf5a296101edaaa5acffdb4b45a459761f2e34c1dfa6aee44ee0a"
+    }
+  },
+  "fastboot_boot_exit_code": 0,
+  "observation_scope": "USB presence only; ACK is not kernel entry or an execution timer",
+  "kernel_entry_trigger": "User presses power as Enter after the UniXNU menu appears; confirm from video",
+  "requested_observation_seconds": 0,
+  "ended_at": "2026-10-25T14:21:36.066868+00:00"
+}

@@ -33,3 +33,5 @@ exec阶段字段复用：A02D=实际激活返回，A02E=实际签名返回，A02
 用户已授权连续推进；实际启动前核对具体日志/恢复条件并刷新preflight对比v31/postcondition，即时通知后仅一次临时boot。需保存完整屏幕包括最右侧两列、阶段标签/错误字段。取图后固定原厂boot恢复，Android1/A槽/三SHA后验通过前不启动第二候选，人工恢复等待不阻断离线工作。
 
 22:19:42 +08新鲜preflight确认Android1/A槽/三SHA与v31后验一致；用户“录像与恢复仍就绪，继续 PROBE24”。权威包reports/xnu-first-entry/entry-probe-24.json。复验命令：build_xnu_boot_package.py --validate --output reports/xnu-first-entry/entry-probe-24.json；对包23同样复验。正式只读策略审计audit-restore-userland-policy.py在WSL使用/var/tmp/unixnu-nuwa-restore-policy-v32，报告v32b/restore-policy.json且确认已卸载。
+
+22:21:36 +08，代码7269f20，包24仅一次临时boot ACK；具体命令见v32b/launch.json。等待菜单电源Enter后的完整画面，尚无新阶段实测或恢复后验，不启动第二候选。
