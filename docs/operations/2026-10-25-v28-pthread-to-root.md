@@ -1,5 +1,19 @@
 # v28 / PROBE20：iOS16 pthread 正常 OSKext 启动
 
+> 实测更新：PROBE20已进入IOFindBSDRoot，pthread初始化返回，未到vfs_mountroot。20:45:31 +08已恢复Android1/A槽/三SHA一致。下方“尚未实测”部分保留为试前快照，不代表现在；无需重复启动20，转root介质/发现路径。
+
+## 实测与root输入审计
+
+原图SHA256 `369835170e359ef66697a02510152bc7b48328095beb1207900f65a69259d0f6`，仅本地out/trial-evidence/entry-probe-20/user-screen.jpg。screen.json按11x11原像素中位数并目视复核：ID7黄、164蓝为IOFindBSDRoot入口/调用，165与8未亮；160/161及162/163分别为IOKitBSDInit和net_init_run调用/后继，均亮。180品红、181黄，178/179暗，说明正常prelink启动已在BSD前注册pthread，备用请求被跳过，不将本轮写成显式请求实机通过。
+
+原生pthread_init调用0xfffffff007672f94位于已达IOKitBSDInit/IOFindBSDRoot之前，确认本次真实初始化已返回，不是仅从非NULL表推断。A02A=0/B=6/C=1，root入口未做DISPLAY_CHECK，B保持6。171在白logo上采样未知，不算亮。无新panic/fault前缀。
+
+用户已恢复fastboot；临时加载固定原厂boot，20:45:24 +08观察Android完成1，20:45:31后验确认Android1/A槽和三SHA与本轮preflight完全一致。无flash/erase/改槽、第二候选或媒体上传。
+
+scripts/audit-root-entry-inputs.py的7项静态审计确认：本次实际ADT无root-matching/boot-uuid/RAMDisk，出货菜单只-v。原生IOKitBSDInit.cpp:655先等IOBSD资源，再构造根选择匹配；无选择时默认IOMedia/Content=Apple_HFS，随后waitForService，缺失仍保留Failed to mount root device。源码SHA ccee70ea15e2fdf143360feb4c4abb647def98eb647434aa1dd2d32f54cc7363，XNU提交1b191cb5/APSL-2.0。证据v28/root-inputs.json。
+
+首要判断是本包未提供可选择的真实root路径；其次区分IOBSD资源等待、IOMedia等待和计时器/唤醒停滞。root入口照片不足以指定内部阻塞指令，不把源码Still waiting文字写成实测日志。下一步核对真实镜像/卷格式与固定DarwinBoot侧车或nuwa存储提供者，必要时加root内部标记；不填假UUID、不把运输FAT当root、不跳过等待。root挂载与用户态未验证。
+
 ## 当前结论
 
 PROBE19 已实机进入 BSD，当前首要阻塞是遗漏 `com.apple.kec.pthread`，不是 Image4。v28 将固定 donor 中的真实 iOS16.7 组件加入闭合选择，并在 BSD 入口请求正常 OSKext 加载。候选尚未实机验证；root 发现、挂载和用户态仍未进入。设备最近后验仍为 2026-10-25 20:03:58 +08 Android 完成1、A槽、三分区SHA不变。

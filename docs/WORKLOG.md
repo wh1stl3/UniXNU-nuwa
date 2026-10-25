@@ -456,3 +456,5 @@
 2026-10-25 · PROBE20接入真实iOS16 pthread选择及正常OSKext加载请求；19项串行任务（740差分/25Image4/6pthread/31绑定）通过，独立重建与实际FAT回读一致。镜像365216ae、内核d34a5de9、ADT635d4f4d；用户本包录像/恢复就绪，新鲜Android1/A槽/三SHA预检通过，尚未以模型宣称生命周期/初始化体完成。· 本次kernel里程碑（父48c6909） · reports/kernel-entry-probe/2026-10-25-v28/、reports/xnu-first-entry/entry-probe-20.json、D-050
 
 2026-10-25 20:42:51 · 用户本包录像/恢复就绪，新鲜三SHA通过，即时通知后PROBE20单次临时boot ACK；等待菜单电源Enter后画面与恢复后验，不将ACK当作pthread/BSD/root执行。· f0f4ea6后设备记录 · reports/xnu-entry-probe-trial/2026-10-25-v28/launch.json
+
+2026-10-25 20:45:31 · PROBE20照片36983517确认pthread已在BSD前注册，真实初始化返回，IOFindBSDRoot调用164/入口7亮、挂载入口8未亮；7项审计确认当前-v/无root选择/RAMDisk，转真实root提供路径。用户回fastboot后固定原厂boot恢复，Android1/A槽/本轮三SHA相同，无待恢复任务。· 本次device里程碑（父cde790a） · v28 screen/recovery/postcondition、root-inputs.json、D-051

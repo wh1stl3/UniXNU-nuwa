@@ -1,0 +1,1185 @@
+{
+  "scope": "Local PROBE20 photo transcription and affine sampled critical tiles; no raw-media upload",
+  "image_sha256": "369835170e359ef66697a02510152bc7b48328095beb1207900f65a69259d0f6",
+  "image_bytes": 10953880,
+  "image_size": [
+    3072,
+    4096
+  ],
+  "package": "reports/xnu-first-entry/entry-probe-20.json",
+  "candidate_sha256": "d34a5de954a806f66fa346a74e5312a2513ec24d4377759d850ec6d6dd3eeb1d",
+  "fields": {
+    "A02A": "0000000000000000",
+    "A02B": "0000000000000006",
+    "A02C": "0000000000000001"
+  },
+  "critical_tiles": {
+    "0": {
+      "state": "yellow",
+      "median_rgb": [
+        246,
+        224,
+        53
+      ],
+      "photo_center": [
+        1769.54,
+        952.14
+      ],
+      "edge": {
+        "id": 0,
+        "function": "_load_context",
+        "callee": "_load_context",
+        "phase": "entry",
+        "call": "0xfffffff00729f098",
+        "site": "0xfffffff00729f098",
+        "x": 832,
+        "y": 256,
+        "color": "0xffffff00"
+      }
+    },
+    "1": {
+      "state": "yellow",
+      "median_rgb": [
+        247,
+        224,
+        53
+      ],
+      "photo_center": [
+        1847.02,
+        951.13
+      ],
+      "edge": {
+        "id": 1,
+        "function": "_machine_load_context",
+        "callee": "_machine_load_context",
+        "phase": "entry",
+        "call": "0xfffffff0073c73e0",
+        "site": "0xfffffff0073c73e0",
+        "x": 880,
+        "y": 256,
+        "color": "0xffffff00"
+      }
+    },
+    "2": {
+      "state": "yellow",
+      "median_rgb": [
+        248,
+        226,
+        55
+      ],
+      "photo_center": [
+        1924.49,
+        950.12
+      ],
+      "edge": {
+        "id": 2,
+        "function": "_thread_continue",
+        "callee": "_thread_continue",
+        "phase": "entry",
+        "call": "0xfffffff0072933fc",
+        "site": "0xfffffff0072933fc",
+        "x": 928,
+        "y": 256,
+        "color": "0xffffff00"
+      }
+    },
+    "3": {
+      "state": "yellow",
+      "median_rgb": [
+        248,
+        226,
+        55
+      ],
+      "photo_center": [
+        2001.96,
+        949.11
+      ],
+      "edge": {
+        "id": 3,
+        "function": "_call_continuation",
+        "callee": "_call_continuation",
+        "phase": "entry",
+        "call": "0xfffffff0073cddcc",
+        "site": "0xfffffff0073cddcc",
+        "x": 976,
+        "y": 256,
+        "color": "0xffffff00"
+      }
+    },
+    "4": {
+      "state": "yellow",
+      "median_rgb": [
+        247,
+        224,
+        54
+      ],
+      "photo_center": [
+        2079.44,
+        948.1
+      ],
+      "edge": {
+        "id": 4,
+        "function": "_kernel_bootstrap_thread",
+        "callee": "_kernel_bootstrap_thread",
+        "phase": "entry",
+        "call": "0xfffffff007944b18",
+        "site": "0xfffffff007944b18",
+        "x": 1024,
+        "y": 256,
+        "color": "0xffffff00"
+      }
+    },
+    "5": {
+      "state": "yellow",
+      "median_rgb": [
+        246,
+        222,
+        53
+      ],
+      "photo_center": [
+        2156.91,
+        947.09
+      ],
+      "edge": {
+        "id": 5,
+        "function": "_PE_init_iokit",
+        "callee": "_PE_init_iokit",
+        "phase": "entry",
+        "call": "0xfffffff0079089cc",
+        "site": "0xfffffff0079089cc",
+        "x": 1072,
+        "y": 256,
+        "color": "0xffffff00"
+      }
+    },
+    "6": {
+      "state": "yellow",
+      "median_rgb": [
+        247,
+        223,
+        53
+      ],
+      "photo_center": [
+        2234.39,
+        946.08
+      ],
+      "edge": {
+        "id": 6,
+        "function": "_bsd_init",
+        "callee": "_bsd_init",
+        "phase": "entry",
+        "call": "0xfffffff0076729e0",
+        "site": "0xfffffff0076729e0",
+        "x": 1120,
+        "y": 256,
+        "color": "0xffffff00"
+      }
+    },
+    "7": {
+      "state": "yellow",
+      "median_rgb": [
+        246,
+        222,
+        53
+      ],
+      "photo_center": [
+        2311.86,
+        945.07
+      ],
+      "edge": {
+        "id": 7,
+        "function": "_IOFindBSDRoot",
+        "callee": "_IOFindBSDRoot",
+        "phase": "entry",
+        "call": "0xfffffff0078e331c",
+        "site": "0xfffffff0078e331c",
+        "x": 1168,
+        "y": 256,
+        "color": "0xffffff00"
+      }
+    },
+    "8": {
+      "state": "dark",
+      "median_rgb": [
+        16,
+        16,
+        15
+      ],
+      "photo_center": [
+        2389.33,
+        944.06
+      ],
+      "edge": {
+        "id": 8,
+        "function": "_vfs_mountroot",
+        "callee": "_vfs_mountroot",
+        "phase": "entry",
+        "call": "0xfffffff00744377c",
+        "site": "0xfffffff00744377c",
+        "x": 1216,
+        "y": 256,
+        "color": "0xffffff00"
+      }
+    },
+    "9": {
+      "state": "dark",
+      "median_rgb": [
+        21,
+        21,
+        19
+      ],
+      "photo_center": [
+        2466.81,
+        943.05
+      ],
+      "edge": {
+        "id": 9,
+        "function": "_bsd_utaskbootstrap",
+        "callee": "_bsd_utaskbootstrap",
+        "phase": "entry",
+        "call": "0xfffffff007673470",
+        "site": "0xfffffff007673470",
+        "x": 1264,
+        "y": 256,
+        "color": "0xffffff00"
+      }
+    },
+    "140": {
+      "state": "blue",
+      "median_rgb": [
+        100,
+        202,
+        252
+      ],
+      "photo_center": [
+        1769.54,
+        1502.32
+      ],
+      "edge": {
+        "id": 140,
+        "function": "_bsd_init",
+        "callee": "_throttle_init",
+        "phase": "call",
+        "call": "0xfffffff007672a2c",
+        "site": "0xfffffff007672a2c",
+        "x": 832,
+        "y": 592,
+        "color": "0xff40c0ff"
+      }
+    },
+    "141": {
+      "state": "green",
+      "median_rgb": [
+        50,
+        235,
+        48
+      ],
+      "photo_center": [
+        1847.02,
+        1501.31
+      ],
+      "edge": {
+        "id": 141,
+        "function": "_bsd_init",
+        "callee": "_throttle_init",
+        "phase": "continuation",
+        "call": "0xfffffff007672a2c",
+        "site": "0xfffffff007672a30",
+        "x": 880,
+        "y": 592,
+        "color": "0xff40ff80"
+      }
+    },
+    "142": {
+      "state": "blue",
+      "median_rgb": [
+        102,
+        207,
+        251
+      ],
+      "photo_center": [
+        1924.49,
+        1500.29
+      ],
+      "edge": {
+        "id": 142,
+        "function": "_bsd_init",
+        "callee": "_kauth_init",
+        "phase": "call",
+        "call": "0xfffffff007672a3c",
+        "site": "0xfffffff007672a3c",
+        "x": 928,
+        "y": 592,
+        "color": "0xff40c0ff"
+      }
+    },
+    "143": {
+      "state": "green",
+      "median_rgb": [
+        50,
+        237,
+        48
+      ],
+      "photo_center": [
+        2001.96,
+        1499.28
+      ],
+      "edge": {
+        "id": 143,
+        "function": "_bsd_init",
+        "callee": "_kauth_init",
+        "phase": "continuation",
+        "call": "0xfffffff007672a3c",
+        "site": "0xfffffff007672a40",
+        "x": 976,
+        "y": 592,
+        "color": "0xff40ff80"
+      }
+    },
+    "144": {
+      "state": "blue",
+      "median_rgb": [
+        110,
+        219,
+        253
+      ],
+      "photo_center": [
+        2079.44,
+        1498.27
+      ],
+      "edge": {
+        "id": 144,
+        "function": "_bsd_init",
+        "callee": "_fdt_init",
+        "phase": "call",
+        "call": "0xfffffff007672b30",
+        "site": "0xfffffff007672b30",
+        "x": 1024,
+        "y": 592,
+        "color": "0xff40c0ff"
+      }
+    },
+    "145": {
+      "state": "green",
+      "median_rgb": [
+        50,
+        236,
+        47
+      ],
+      "photo_center": [
+        2156.91,
+        1497.26
+      ],
+      "edge": {
+        "id": 145,
+        "function": "_bsd_init",
+        "callee": "_fdt_init",
+        "phase": "continuation",
+        "call": "0xfffffff007672b30",
+        "site": "0xfffffff007672b34",
+        "x": 1072,
+        "y": 592,
+        "color": "0xff40ff80"
+      }
+    },
+    "146": {
+      "state": "blue",
+      "median_rgb": [
+        112,
+        222,
+        252
+      ],
+      "photo_center": [
+        2234.39,
+        1496.25
+      ],
+      "edge": {
+        "id": 146,
+        "function": "_bsd_init",
+        "callee": "_mac_policy_initbsd",
+        "phase": "call",
+        "call": "0xfffffff007672b9c",
+        "site": "0xfffffff007672b9c",
+        "x": 1120,
+        "y": 592,
+        "color": "0xff40c0ff"
+      }
+    },
+    "147": {
+      "state": "green",
+      "median_rgb": [
+        49,
+        235,
+        46
+      ],
+      "photo_center": [
+        2311.86,
+        1495.24
+      ],
+      "edge": {
+        "id": 147,
+        "function": "_bsd_init",
+        "callee": "_mac_policy_initbsd",
+        "phase": "continuation",
+        "call": "0xfffffff007672b9c",
+        "site": "0xfffffff007672ba0",
+        "x": 1168,
+        "y": 592,
+        "color": "0xff40ff80"
+      }
+    },
+    "148": {
+      "state": "blue",
+      "median_rgb": [
+        112,
+        222,
+        251
+      ],
+      "photo_center": [
+        2389.33,
+        1494.23
+      ],
+      "edge": {
+        "id": 148,
+        "function": "_bsd_init",
+        "callee": "_bsd_bufferinit",
+        "phase": "call",
+        "call": "0xfffffff007672e30",
+        "site": "0xfffffff007672e30",
+        "x": 1216,
+        "y": 592,
+        "color": "0xff40c0ff"
+      }
+    },
+    "149": {
+      "state": "green",
+      "median_rgb": [
+        48,
+        232,
+        46
+      ],
+      "photo_center": [
+        2466.81,
+        1493.22
+      ],
+      "edge": {
+        "id": 149,
+        "function": "_bsd_init",
+        "callee": "_bsd_bufferinit",
+        "phase": "continuation",
+        "call": "0xfffffff007672e30",
+        "site": "0xfffffff007672e34",
+        "x": 1264,
+        "y": 592,
+        "color": "0xff40ff80"
+      }
+    },
+    "150": {
+      "state": "blue",
+      "median_rgb": [
+        101,
+        204,
+        252
+      ],
+      "photo_center": [
+        1769.54,
+        1541.61
+      ],
+      "edge": {
+        "id": 150,
+        "function": "_bsd_init",
+        "callee": "_IOKitInitializeTime",
+        "phase": "call",
+        "call": "0xfffffff007672e34",
+        "site": "0xfffffff007672e34",
+        "x": 832,
+        "y": 616,
+        "color": "0xff40c0ff"
+      }
+    },
+    "151": {
+      "state": "green",
+      "median_rgb": [
+        49,
+        231,
+        47
+      ],
+      "photo_center": [
+        1847.02,
+        1540.6
+      ],
+      "edge": {
+        "id": 151,
+        "function": "_bsd_init",
+        "callee": "_IOKitInitializeTime",
+        "phase": "continuation",
+        "call": "0xfffffff007672e34",
+        "site": "0xfffffff007672e38",
+        "x": 880,
+        "y": 616,
+        "color": "0xff40ff80"
+      }
+    },
+    "152": {
+      "state": "blue",
+      "median_rgb": [
+        100,
+        202,
+        251
+      ],
+      "photo_center": [
+        1924.49,
+        1539.59
+      ],
+      "edge": {
+        "id": 152,
+        "function": "_bsd_init",
+        "callee": "_vfsinit",
+        "phase": "call",
+        "call": "0xfffffff007672e38",
+        "site": "0xfffffff007672e38",
+        "x": 928,
+        "y": 616,
+        "color": "0xff40c0ff"
+      }
+    },
+    "153": {
+      "state": "green",
+      "median_rgb": [
+        50,
+        236,
+        47
+      ],
+      "photo_center": [
+        2001.96,
+        1538.58
+      ],
+      "edge": {
+        "id": 153,
+        "function": "_bsd_init",
+        "callee": "_vfsinit",
+        "phase": "continuation",
+        "call": "0xfffffff007672e38",
+        "site": "0xfffffff007672e3c",
+        "x": 976,
+        "y": 616,
+        "color": "0xff40ff80"
+      }
+    },
+    "154": {
+      "state": "dark",
+      "median_rgb": [
+        19,
+        19,
+        17
+      ],
+      "photo_center": [
+        2079.44,
+        1537.57
+      ],
+      "edge": {
+        "id": 154,
+        "function": "_bsd_init",
+        "callee": "_OSKextLoadKextWithIdentifier",
+        "phase": "call",
+        "call": "0xfffffff007672e68",
+        "site": "0xfffffff007672e68",
+        "x": 1024,
+        "y": 616,
+        "color": "0xff40c0ff"
+      }
+    },
+    "155": {
+      "state": "dark",
+      "median_rgb": [
+        14,
+        14,
+        14
+      ],
+      "photo_center": [
+        2156.91,
+        1536.56
+      ],
+      "edge": {
+        "id": 155,
+        "function": "_bsd_init",
+        "callee": "_OSKextLoadKextWithIdentifier",
+        "phase": "continuation",
+        "call": "0xfffffff007672e68",
+        "site": "0xfffffff007672e6c",
+        "x": 1072,
+        "y": 616,
+        "color": "0xff40ff80"
+      }
+    },
+    "156": {
+      "state": "dark",
+      "median_rgb": [
+        12,
+        12,
+        12
+      ],
+      "photo_center": [
+        2234.39,
+        1535.55
+      ],
+      "edge": {
+        "id": 156,
+        "function": "_bsd_init",
+        "callee": "_OSKextLoadKextWithIdentifier",
+        "phase": "call",
+        "call": "0xfffffff007672efc",
+        "site": "0xfffffff007672efc",
+        "x": 1120,
+        "y": 616,
+        "color": "0xff40c0ff"
+      }
+    },
+    "157": {
+      "state": "dark",
+      "median_rgb": [
+        12,
+        13,
+        12
+      ],
+      "photo_center": [
+        2311.86,
+        1534.54
+      ],
+      "edge": {
+        "id": 157,
+        "function": "_bsd_init",
+        "callee": "_OSKextLoadKextWithIdentifier",
+        "phase": "continuation",
+        "call": "0xfffffff007672efc",
+        "site": "0xfffffff007672f00",
+        "x": 1168,
+        "y": 616,
+        "color": "0xff40ff80"
+      }
+    },
+    "158": {
+      "state": "dark",
+      "median_rgb": [
+        12,
+        12,
+        13
+      ],
+      "photo_center": [
+        2389.33,
+        1533.53
+      ],
+      "edge": {
+        "id": 158,
+        "function": "_bsd_init",
+        "callee": "_OSKextLoadKextWithIdentifier",
+        "phase": "call",
+        "call": "0xfffffff007672f68",
+        "site": "0xfffffff007672f68",
+        "x": 1216,
+        "y": 616,
+        "color": "0xff40c0ff"
+      }
+    },
+    "159": {
+      "state": "dark",
+      "median_rgb": [
+        17,
+        17,
+        15
+      ],
+      "photo_center": [
+        2466.81,
+        1532.52
+      ],
+      "edge": {
+        "id": 159,
+        "function": "_bsd_init",
+        "callee": "_OSKextLoadKextWithIdentifier",
+        "phase": "continuation",
+        "call": "0xfffffff007672f68",
+        "site": "0xfffffff007672f6c",
+        "x": 1264,
+        "y": 616,
+        "color": "0xff40ff80"
+      }
+    },
+    "160": {
+      "state": "blue",
+      "median_rgb": [
+        101,
+        204,
+        253
+      ],
+      "photo_center": [
+        1769.54,
+        1580.91
+      ],
+      "edge": {
+        "id": 160,
+        "function": "_bsd_init",
+        "callee": "_IOKitBSDInit",
+        "phase": "call",
+        "call": "0xfffffff00767300c",
+        "site": "0xfffffff00767300c",
+        "x": 832,
+        "y": 640,
+        "color": "0xff40c0ff"
+      }
+    },
+    "161": {
+      "state": "green",
+      "median_rgb": [
+        49,
+        232,
+        48
+      ],
+      "photo_center": [
+        1847.02,
+        1579.9
+      ],
+      "edge": {
+        "id": 161,
+        "function": "_bsd_init",
+        "callee": "_IOKitBSDInit",
+        "phase": "continuation",
+        "call": "0xfffffff00767300c",
+        "site": "0xfffffff007673010",
+        "x": 880,
+        "y": 640,
+        "color": "0xff40ff80"
+      }
+    },
+    "162": {
+      "state": "blue",
+      "median_rgb": [
+        100,
+        202,
+        252
+      ],
+      "photo_center": [
+        1924.49,
+        1578.89
+      ],
+      "edge": {
+        "id": 162,
+        "function": "_bsd_init",
+        "callee": "_net_init_run",
+        "phase": "call",
+        "call": "0xfffffff00767303c",
+        "site": "0xfffffff00767303c",
+        "x": 928,
+        "y": 640,
+        "color": "0xff40c0ff"
+      }
+    },
+    "163": {
+      "state": "green",
+      "median_rgb": [
+        50,
+        237,
+        47
+      ],
+      "photo_center": [
+        2001.96,
+        1577.88
+      ],
+      "edge": {
+        "id": 163,
+        "function": "_bsd_init",
+        "callee": "_net_init_run",
+        "phase": "continuation",
+        "call": "0xfffffff00767303c",
+        "site": "0xfffffff007673040",
+        "x": 976,
+        "y": 640,
+        "color": "0xff40ff80"
+      }
+    },
+    "164": {
+      "state": "blue",
+      "median_rgb": [
+        111,
+        221,
+        254
+      ],
+      "photo_center": [
+        2079.44,
+        1576.87
+      ],
+      "edge": {
+        "id": 164,
+        "function": "_bsd_init",
+        "callee": "_IOFindBSDRoot",
+        "phase": "call",
+        "call": "0xfffffff007673094",
+        "site": "0xfffffff007673094",
+        "x": 1024,
+        "y": 640,
+        "color": "0xff40c0ff"
+      }
+    },
+    "165": {
+      "state": "dark",
+      "median_rgb": [
+        14,
+        14,
+        14
+      ],
+      "photo_center": [
+        2156.91,
+        1575.86
+      ],
+      "edge": {
+        "id": 165,
+        "function": "_bsd_init",
+        "callee": "_IOFindBSDRoot",
+        "phase": "continuation",
+        "call": "0xfffffff007673094",
+        "site": "0xfffffff007673098",
+        "x": 1072,
+        "y": 640,
+        "color": "0xff40ff80"
+      }
+    },
+    "166": {
+      "state": "dark",
+      "median_rgb": [
+        12,
+        12,
+        13
+      ],
+      "photo_center": [
+        2234.39,
+        1574.85
+      ],
+      "edge": {
+        "id": 166,
+        "function": "_bsd_init",
+        "callee": "_vfs_mountroot",
+        "phase": "call",
+        "call": "0xfffffff0076730e4",
+        "site": "0xfffffff0076730e4",
+        "x": 1120,
+        "y": 640,
+        "color": "0xff40c0ff"
+      }
+    },
+    "167": {
+      "state": "dark",
+      "median_rgb": [
+        13,
+        13,
+        13
+      ],
+      "photo_center": [
+        2311.86,
+        1573.84
+      ],
+      "edge": {
+        "id": 167,
+        "function": "_bsd_init",
+        "callee": "_vfs_mountroot",
+        "phase": "continuation",
+        "call": "0xfffffff0076730e4",
+        "site": "0xfffffff0076730e8",
+        "x": 1168,
+        "y": 640,
+        "color": "0xff40ff80"
+      }
+    },
+    "168": {
+      "state": "dark",
+      "median_rgb": [
+        11,
+        11,
+        11
+      ],
+      "photo_center": [
+        2389.33,
+        1572.83
+      ],
+      "edge": {
+        "id": 168,
+        "function": "_bsd_init",
+        "callee": "_IOSecureBSDRoot",
+        "phase": "call",
+        "call": "0xfffffff00767311c",
+        "site": "0xfffffff00767311c",
+        "x": 1216,
+        "y": 640,
+        "color": "0xff40c0ff"
+      }
+    },
+    "169": {
+      "state": "dark",
+      "median_rgb": [
+        16,
+        16,
+        15
+      ],
+      "photo_center": [
+        2466.81,
+        1571.82
+      ],
+      "edge": {
+        "id": 169,
+        "function": "_bsd_init",
+        "callee": "_IOSecureBSDRoot",
+        "phase": "continuation",
+        "call": "0xfffffff00767311c",
+        "site": "0xfffffff007673120",
+        "x": 1264,
+        "y": 640,
+        "color": "0xff40ff80"
+      }
+    },
+    "170": {
+      "state": "dark",
+      "median_rgb": [
+        23,
+        22,
+        21
+      ],
+      "photo_center": [
+        1769.54,
+        1620.21
+      ],
+      "edge": {
+        "id": 170,
+        "function": "_bsd_init",
+        "callee": "_imageboot_setup",
+        "phase": "call",
+        "call": "0xfffffff007673310",
+        "site": "0xfffffff007673310",
+        "x": 832,
+        "y": 664,
+        "color": "0xff40c0ff"
+      }
+    },
+    "171": {
+      "state": "unknown",
+      "median_rgb": [
+        247,
+        245,
+        247
+      ],
+      "photo_center": [
+        1847.02,
+        1619.2
+      ],
+      "edge": {
+        "id": 171,
+        "function": "_bsd_init",
+        "callee": "_imageboot_setup",
+        "phase": "continuation",
+        "call": "0xfffffff007673310",
+        "site": "0xfffffff007673314",
+        "x": 880,
+        "y": 664,
+        "color": "0xff40ff80"
+      }
+    },
+    "172": {
+      "state": "dark",
+      "median_rgb": [
+        22,
+        22,
+        20
+      ],
+      "photo_center": [
+        1924.49,
+        1618.19
+      ],
+      "edge": {
+        "id": 172,
+        "function": "_bsd_init",
+        "callee": "_IOSetImageBoot",
+        "phase": "call",
+        "call": "0xfffffff007673314",
+        "site": "0xfffffff007673314",
+        "x": 928,
+        "y": 664,
+        "color": "0xff40c0ff"
+      }
+    },
+    "173": {
+      "state": "dark",
+      "median_rgb": [
+        19,
+        19,
+        17
+      ],
+      "photo_center": [
+        2001.96,
+        1617.18
+      ],
+      "edge": {
+        "id": 173,
+        "function": "_bsd_init",
+        "callee": "_IOSetImageBoot",
+        "phase": "continuation",
+        "call": "0xfffffff007673314",
+        "site": "0xfffffff007673318",
+        "x": 976,
+        "y": 664,
+        "color": "0xff40ff80"
+      }
+    },
+    "174": {
+      "state": "dark",
+      "median_rgb": [
+        20,
+        21,
+        18
+      ],
+      "photo_center": [
+        2079.44,
+        1616.17
+      ],
+      "edge": {
+        "id": 174,
+        "function": "_bsd_init",
+        "callee": "_devfs_kernel_mount",
+        "phase": "call",
+        "call": "0xfffffff0076733b0",
+        "site": "0xfffffff0076733b0",
+        "x": 1024,
+        "y": 664,
+        "color": "0xff40c0ff"
+      }
+    },
+    "175": {
+      "state": "dark",
+      "median_rgb": [
+        14,
+        14,
+        14
+      ],
+      "photo_center": [
+        2156.91,
+        1615.16
+      ],
+      "edge": {
+        "id": 175,
+        "function": "_bsd_init",
+        "callee": "_devfs_kernel_mount",
+        "phase": "continuation",
+        "call": "0xfffffff0076733b0",
+        "site": "0xfffffff0076733b4",
+        "x": 1072,
+        "y": 664,
+        "color": "0xff40ff80"
+      }
+    },
+    "176": {
+      "state": "dark",
+      "median_rgb": [
+        12,
+        12,
+        12
+      ],
+      "photo_center": [
+        2234.39,
+        1614.15
+      ],
+      "edge": {
+        "id": 176,
+        "function": "_bsd_init",
+        "callee": "_bsd_utaskbootstrap",
+        "phase": "call",
+        "call": "0xfffffff0076733bc",
+        "site": "0xfffffff0076733bc",
+        "x": 1120,
+        "y": 664,
+        "color": "0xff40c0ff"
+      }
+    },
+    "177": {
+      "state": "dark",
+      "median_rgb": [
+        13,
+        13,
+        13
+      ],
+      "photo_center": [
+        2311.86,
+        1613.14
+      ],
+      "edge": {
+        "id": 177,
+        "function": "_bsd_init",
+        "callee": "_bsd_utaskbootstrap",
+        "phase": "continuation",
+        "call": "0xfffffff0076733bc",
+        "site": "0xfffffff0076733c0",
+        "x": 1168,
+        "y": 664,
+        "color": "0xff40ff80"
+      }
+    },
+    "178": {
+      "state": "dark",
+      "median_rgb": [
+        12,
+        12,
+        12
+      ],
+      "photo_center": [
+        2389.33,
+        1612.13
+      ],
+      "edge": {
+        "meaning": "before OSKext load"
+      }
+    },
+    "179": {
+      "state": "dark",
+      "median_rgb": [
+        16,
+        16,
+        15
+      ],
+      "photo_center": [
+        2466.81,
+        1611.12
+      ],
+      "edge": {
+        "meaning": "OSKext load returned"
+      }
+    },
+    "180": {
+      "state": "magenta",
+      "median_rgb": [
+        251,
+        113,
+        254
+      ],
+      "photo_center": [
+        1769.54,
+        1659.51
+      ],
+      "edge": {
+        "meaning": "native pthread function table non-NULL"
+      }
+    },
+    "181": {
+      "state": "yellow",
+      "median_rgb": [
+        248,
+        225,
+        55
+      ],
+      "photo_center": [
+        1847.02,
+        1658.5
+      ],
+      "edge": {
+        "meaning": "already registered; no load request"
+      }
+    }
+  },
+  "sampling": "11x11 original-pixel medians at visually registered centers; dark cells alone are not proof of absent execution. ID171 unknown is over the existing white logo, not counted lit.",
+  "raw_media_local_only": true,
+  "observation": "ID180 magenta and ID181 yellow: table already registered at BSD entry, explicit helper load skipped. ID160/161 IOKitBSDInit call/continuation and 162/163 net_init_run call/continuation lit. ID164 call and ID7 IOFindBSDRoot entry lit, ID165 continuation and ID8 vfs_mountroot entry dark. No new panic/fault record visible. A02B remains6 because root entry does not update DISPLAY_CHECK."
+}

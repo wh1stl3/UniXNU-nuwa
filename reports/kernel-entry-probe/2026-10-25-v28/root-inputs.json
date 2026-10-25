@@ -1,0 +1,51 @@
+{
+  "scope": "Audit exact PROBE20 root inputs and native selection branches; no device action.",
+  "checks": [
+    {
+      "name": "Shipped menu contains verbose flag only",
+      "passed": true
+    },
+    {
+      "name": "Exact shipped ADT has no explicit root selector",
+      "passed": true
+    },
+    {
+      "name": "Exact shipped memory-map has no root RAMDisk",
+      "passed": true
+    },
+    {
+      "name": "Native pthread initializer call precedes observed root call",
+      "passed": true
+    },
+    {
+      "name": "Native root fallback matches Apple_HFS IOMedia",
+      "passed": true
+    },
+    {
+      "name": "Native root waits for matching service and retains missing-root error",
+      "passed": true
+    },
+    {
+      "name": "Pinned native root source unchanged",
+      "passed": true
+    }
+  ],
+  "package": "reports/xnu-first-entry/entry-probe-20.json",
+  "candidate_sha256": "d34a5de954a806f66fa346a74e5312a2513ec24d4377759d850ec6d6dd3eeb1d",
+  "adt_sha256": "635d4f4dd8fc4abc7c2d15b427cf69b6a037086a39df21fb22b33b6fddb1ed09",
+  "chosen_root_keys": {},
+  "memory_map_keys": [
+    "name"
+  ],
+  "native_pthread_init_call": "0xfffffff007672f94",
+  "native_root_call": "0xfffffff007673094",
+  "source": {
+    "path": "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full\\iokit\\bsddev\\IOKitBSDInit.cpp",
+    "sha256": "ccee70ea15e2fdf143360feb4c4abb647def98eb647434aa1dd2d32f54cc7363",
+    "commit": "1b191cb58250d0705d8a51287127505aa4bc0789",
+    "license": "APSL-2.0"
+  },
+  "interpretation": "Observed root entry is after pthread initialization. With -v only, no root selector or RAMDisk, native fallback seeks Apple_HFS IOMedia. Missing usable root provider is the leading cause; exact position inside IOFindBSDRoot and timer/wakeup health are not observed.",
+  "device_accessed": false,
+  "root_mounted": false
+}

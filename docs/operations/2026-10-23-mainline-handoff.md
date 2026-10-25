@@ -1,4 +1,4 @@
-> **当前续接入口已迁至[2026-10-25主线交接](2026-10-25-mainline-handoff.md)。** PROBE19已实机越过MAC/Image4进入BSD，停于pthread函数表NULL panic；root/用户态未进入。最近设备后验为2026-10-25 20:03:58北京时间Android完成1/A槽/三SHA一致，无待恢复任务。新包镜像f1febc06/内核f3c33194；完整输入、SHA、命令与pthread下一步以新交接、STATUS和v27记录为准。本文件以下保留历史快照，旧“当前/未启动/待恢复/未到BSD”不代表现在。
+> **当前续接入口已迁至[2026-10-25主线交接](2026-10-25-mainline-handoff.md)。** PROBE20已实机越过pthread初始化进入IOFindBSDRoot，未到挂载/root用户态。2026-10-25 20:45:31北京时间Android完成1/A槽/本轮三SHA一致，无待恢复任务。包20镜像365216ae/内核d34a5de9，转真实root介质/提供者及选择输入，详见新交接、STATUS及v28实测记录。本文件以下是历史，旧pthread NULL panic/等待画面/恢复描述不代表现在。
 
 ## 历史快照：PROBE18结果
 

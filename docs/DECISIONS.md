@@ -616,3 +616,9 @@ manifest-properties节点已存在但无BNCH，boot-manifest-hash缺失。固定
 2026-10-25。采用固定iOS16.7 donor中的com.apple.kec.pthread，31组件闭合prelink为52227410。新旧Mach-O段布局相同，以显式前像/后像范围叠加到原1aeebf13基线，保留旧包复核能力。BSD入口若原生表已注册则不重复请求，否则调用原生单参数OSKextLoadKextWithIdentifier；默认startOpt为ExcludeNone，由正常OSKext管理依赖、启动和错误。出货代码不直接调kmod，不填假表，不略过pthread_init或原生NULL断言。helper保存GPR、SIMD、NZCV与FP状态。
 
 定向6例在显式OSKext API模型边界执行真实donor注册，覆盖已注册/成功/失败与有无视频，并比较原生首指令机器状态；失败仍到原生pthread_init panic，成功只证明分派到实际初始化入口。完整生命周期与初始化体明确未在模型执行，不以组件闭合代替锁/hash/thread-call/sysctl运行证据。PROBE20/revision28内核d34a5de9，独立nonce/manifest与ADT635d4f4d；Image4原生完整入口25项回归通过。实机门和完整结果见operations/2026-10-25-v28-pthread-to-root.md，不将候选当作已越过pthread/root。
+
+# D-051 · PROBE20实机到root发现，转真实介质输入
+
+2026-10-25。照片36983517的ID180/181说明BSD入口时已由正常prelink启动完成真实pthread注册，备用显式OSKext请求未执行，不能拿本轮认证该备用路径。原生pthread_init调用0xfffffff007672f94先于已亮的IOKitBSDInit/net_init_run后继及IOFindBSDRoot调用164/入口7，证明初始化已返回；本次旧NULL表panic不再出现。165后继/挂载入口8暗，无新panic/fault。A02B保持6是root入口未做DISPLAY_CHECK，不是实际仍停BSD入口。root挂载/用户态未验证。
+
+7项精确出货输入/原生指令审计确认-v、无root-matching/boot-uuid/RAMDisk，原生默认Apple_HFS IOMedia等待；缺真实root提供路径为首要工程判断。照片不能区分函数内部IOBSD资源等待、介质等待、计时器/唤醒问题，不虚构Still waiting实测文字。下一步固定真实介质/镜像格式与DarwinBoot侧车或nuwa存储提供者，增加必要内部标记，不跳过等待、不伪造UUID或拿运输FAT当root。20:45:31 +08 Android1/A槽/本轮三SHA一致，恢复关闭。证据v28 screen/recovery/postcondition、root-inputs.json及操作记录；原图仅本地。
