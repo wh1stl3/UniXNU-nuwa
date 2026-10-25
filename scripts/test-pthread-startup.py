@@ -17,7 +17,7 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--build',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args()
     report=json.loads(a.build.read_text());raw=(ROOT/report['candidate']['path']).read_bytes()
-    assert T.B.sha(raw)==report['candidate']['sha256'] and report['probe_revision'] in (28,29,30,31,32,33,34,35)
+    assert T.B.sha(raw)==report['candidate']['sha256'] and report['probe_revision'] in (28,29,30,31,32,33,34,35,36)
     audit=json.loads((ROOT/'reports/kernel-entry-probe/2026-10-25-v27/pthread-registration.json').read_text())
     patch=next(x for x in report['patches'] if x.get('va')=='0xfffffff0076729e0')
     m=T.B.macho(raw);syms=m['symbols'];checks=[]

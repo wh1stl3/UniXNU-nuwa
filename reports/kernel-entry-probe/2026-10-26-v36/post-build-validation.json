@@ -1,0 +1,79 @@
+{
+  "serial_execution": true,
+  "device_accessed": false,
+  "commands": [
+    {
+      "name": "new-package-readback",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "scripts/build_xnu_boot_package.py",
+        "--validate",
+        "--output",
+        "reports/xnu-first-entry/entry-probe-28.json"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "passed": true,
+      "elapsed_seconds": 7.723707099998137,
+      "stdout": "{\"image_sha256\": \"a8cb4595ead94549006998c71b2618e205b6e5890cfcdfafeb9125d85d2712f5\", \"fat_sha256\": \"9753d00a3f0bccef489f97c866f550ff2bfd1c982fab16456d4ccba0617f4960\", \"kernel_sha256\": \"54179a8775ee4d723bb0493a66679932f986d39231e9ef371d856afb07b3ea07\", \"adt_sha256\": \"458232d6270643a88b465814535eead13eb88771c869e3cf6edfbe1741aa12f0\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "old27-compatibility-readback",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "scripts/build_xnu_boot_package.py",
+        "--validate",
+        "--output",
+        "reports/xnu-first-entry/entry-probe-27.json"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "passed": true,
+      "elapsed_seconds": 6.596752500016009,
+      "stdout": "{\"image_sha256\": \"06913eaf3124e2634a2c9e654f66b374ece2caf2fed790dea8b6578b0d34955d\", \"fat_sha256\": \"d2eff1d1c77cb2d7837057eb741abbed4170e0fc188ac2f9138ab9a0c4acf3de\", \"kernel_sha256\": \"bca646e7498e6dc2b2efa7fa02a248c717067313eb0958707b8e27989175cdbc\", \"adt_sha256\": \"34acf64bacffe26f602d62b3bc84b8d415bac1695c3cef832e6d9248926f3b34\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "unpaired-join-negative",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "scripts/test-read-boundaries.py",
+        "--build",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v36\\build-unpaired.json",
+        "--output",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v36\\unpaired-negative-must-not-pass.json"
+      ],
+      "exit_code": 1,
+      "expected_exit_code": 1,
+      "passed": true,
+      "elapsed_seconds": 4.134270999988075,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"D:\\Code\\UniXNU-nuwa\\scripts\\test-read-boundaries.py\", line 106, in <module>\n    if __name__=='__main__':main()\n                            ~~~~^^\n  File \"D:\\Code\\UniXNU-nuwa\\scripts\\test-read-boundaries.py\", line 102, in main\n    checks=[run(raw,b,mode) for mode in MODES]\n            ~~~^^^^^^^^^^^^\n  File \"D:\\Code\\UniXNU-nuwa\\scripts\\test-read-boundaries.py\", line 80, in run\n    assert set(lit)==expected,(mode,lit,expected)\n           ^^^^^^^^^^^^^^^^^^\nAssertionError: ('mac-denied', [266, 267, 268, 269, 271], {266, 267, 268, 269})\n"
+    },
+    {
+      "name": "undefined-assembly-constant-negative",
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "clang",
+        "--target=aarch64-none-elf",
+        "-c",
+        "/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-36-read-boundaries/probe.S",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-36-read-boundaries/probe.o"
+      ],
+      "exit_code": 1,
+      "expected_exit_code": 1,
+      "passed": true,
+      "elapsed_seconds": 0.24188020001747645,
+      "stdout": "",
+      "stderr": "<instantiation>:1:11: error: immediate must be an integer in range [0, 65535].\nmovz x11, #((read_header_return) & 0xffff)\n          ^\n/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-36-read-boundaries/probe.S:1076:5: note: while in macro instantiation\n    LOADABS x11, read_header_return\n    ^\n<instantiation>:2:15: error: immediate must be an integer in range [0, 65535].\n    movk x11, #(((read_header_return) >> 16) & 0xffff), lsl #16\n              ^\n/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-36-read-boundaries/probe.S:1076:5: note: while in macro instantiation\n    LOADABS x11, read_header_return\n    ^\n<instantiation>:3:15: error: immediate must be an integer in range [0, 65535].\n    movk x11, #(((read_header_return) >> 32) & 0xffff), lsl #32\n              ^\n/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-36-read-boundaries/probe.S:1076:5: note: while in macro instantiation\n    LOADABS x11, read_header_return\n    ^\n<instantiation>:4:15: error: immediate must be an integer in range [0, 65535].\n    movk x11, #(((read_header_return) >> 48) & 0xffff), lsl #48\n              ^\n/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-36-read-boundaries/probe.S:1076:5: note: while in macro instantiation\n    LOADABS x11, read_header_return\n    ^\n<instantiation>:1:11: error: immediate must be an integer in range [0, 65535].\nmovz x11, #((read_header_return) & 0xffff)\n          ^\n/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-36-read-boundaries/probe.S:1109:5: note: while in macro instantiation\n    LOADABS x11, read_header_return\n    ^\n<instantiation>:2:15: error: immediate must be an integer in range [0, 65535].\n    movk x11, #(((read_header_return) >> 16) & 0xffff), lsl #16\n              ^\n/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-36-read-boundaries/probe.S:1109:5: note: while in macro instantiation\n    LOADABS x11, read_header_return\n    ^\n<instantiation>:3:15: error: immediate must be an integer in range [0, 65535].\n    movk x11, #(((read_header_return) >> 32) & 0xffff), lsl #32\n              ^\n/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-36-read-boundaries/probe.S:1109:5: note: while in macro instantiation\n    LOADABS x11, read_header_return\n    ^\n<instantiation>:4:15: error: immediate must be an integer in range [0, 65535].\n    movk x11, #(((read_header_return) >> 48) & 0xffff), lsl #48\n              ^\n/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-36-read-boundaries/probe.S:1109:5: note: while in macro instantiation\n    LOADABS x11, read_header_return\n    ^\n"
+    }
+  ]
+}

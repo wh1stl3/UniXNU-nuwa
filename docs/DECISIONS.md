@@ -692,3 +692,7 @@ manifest-properties节点已存在但无BNCH，boot-manifest-hash缺失。固定
 # D-065 · PROBE27已有类型4表项，读取内部等待为后续方向
 
 2026-10-26。原图62f86fe6，264黄/265绿，A02A0、A033 FFFFFFF005F48EF8（用户纠正末尾EF8、原图复核）证明已观察到已注册分支；未见加载请求蓝色，不能称正常API加载实机通过。候选静态EF8处version3及五个回调地址相符，但非运行时内存/解压执行证明。250调用亮251暗保持，故D-064中的缺空表项根因假设superseded by D-065；条件检查代码不被替换为强制加载或假注册。后续先分界MAC read回调与VNOP_READ/APFS/decmpfs内部，原生错误/认证/释放守卫保持。恢复Android1/A槽/三SHA闭环，本轮按用户要求核图/交接/提交后结束，无新候选。
+
+# D-066 · 读取边界必须限定header、线程、栈帧并成对观察公共后继
+
+2026-10-26。固定源vfs_vnops.c:994/1006与原生指令显示MAC拒绝分支0xfffffff007466ad0直达0xfffffff007466b24，后者也是VNOP_READ后继，故仅地址到达不能证明调用返回。旧候选在MAC拒绝模型下错误亮271，最终以同帧调用配对修正；限定250 caller LR、实际TPIDR_EL1/FP，每次header重置状态与画面，不改权限/错误。24项串行检查含1092透明、11真实包装器模型、38绑定，独立重建与新旧包回读通过。PROBE28镜像a8cb4595…尚未实机；MAC/文件系统主体仍未验证，R-014仅暂停待当轮日志/恢复条件的设备动作。证据v36/read-boundary-source、read-boundaries、execution、post-build-validation及本轮操作记录。

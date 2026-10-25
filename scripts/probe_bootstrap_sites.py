@@ -32,10 +32,12 @@ def plan_next(raw,m,backed,revision=25):
     symbols=m['symbols'];reverse={v:k for k,v in symbols.items()};edges=[];sites={}
     def add(site,fn,callee,phase,call=None):
         index=(1 if revision>=34 and len(edges)>=232 else 0)+len(edges)+(4 if revision>=29 and len(edges)>=178 else 0)+(2 if revision>=31 and len(edges)>=208 else 0)+(1 if revision>=32 and len(edges)>=212 else 0)
-        if index>=(264 if revision>=32 else 220):raise ValueError('Next-phase panel capacity exceeded')
+        if revision>=36 and index>=264:index+=2
+        if index>=(276 if revision>=36 else 264 if revision>=32 else 220):raise ValueError('Next-phase panel capacity exceeded')
         color={'call':'0xff40c0ff','continuation':'0xff40ff80','entry':'0xffffff00','context':'0xffff40ff'}[phase]
         e=dict(id=index,function=fn,callee=callee,phase=phase,call=hex(call if call is not None else site),site=hex(site),x=832+(index%10)*48,y=256+(index//10)*24,color=color)
         if index>=220:e.update(x=1320+((index-220)%2)*48,y=256+((index-220)//2)*24)
+        if revision>=36 and index>=266:e.update(x=832+(index-266)*48,y=784)
         edges.append(e);sites.setdefault(site,[]).append(e)
     for fn in ENTRY_FUNCTIONS:add(symbols[fn],fn,fn,'entry')
     machine=symbols['_machine_load_context']
@@ -87,6 +89,8 @@ def plan_next(raw,m,backed,revision=25):
             from exec_trace_v33 import add_sites
         if revision>=34:
             from exec_path_sites import add_sites
+        if revision>=36:
+            from read_boundary_sites import add_sites
         add_sites(add,raw,m,backed)
     return edges,sites
 
@@ -124,7 +128,7 @@ def generate(raw,m,backed,revision=24):
         label=f'probe_dense_{site&0xffffffff:x}';word=struct.unpack_from('<I',raw,backed(m,site))[0]
         code,defs=relocate(word,site,'original_'+label);constants.update(defs)
         source += [f'.global {label}',label+':','    PROBE_SAVE']
-        source += [f'    DENSE_ONCE {e["id"]}, {e["color"]}' for e in markers]
+        source += [f'    DENSE_ONCE {e["id"]}, {e["color"]}' for e in markers if e['id']<266]
         if revision>=25:
             if site==m['symbols']['_load_context']:source += ['    DISPLAY_INIT',f'    DISPLAY_CHECK {markers[0]["id"]}']
             if site in (m['symbols']['_machine_load_context'],m['symbols']['_kernel_bootstrap_thread'],m['symbols']['_bsd_init']):source += [f'    DISPLAY_CHECK {markers[0]["id"]}']
@@ -158,6 +162,8 @@ def generate(raw,m,backed,revision=24):
                 from exec_trace_v33 import observe
             if revision>=34:
                 from exec_path_sites import observe
+            if revision>=36:
+                from read_boundary_sites import observe
             source += [observe(site)]
             if revision>=35 and site==0xfffffff00769d5f4:
                 source += ['    stp x29, x30, [sp, #-16]!', '    bl fscompression_load_before_exec', '    ldp x29, x30, [sp], #16']

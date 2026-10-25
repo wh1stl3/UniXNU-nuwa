@@ -8,6 +8,18 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--build',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args()
     b=json.loads(a.build.read_text());meta=metadata(a.build);sha=b['candidate']['sha256'];checks=[]
     validate(meta,sha);checks.append(dict(name='complete v21 evidence accepted',passed=True))
+    if b.get('probe_revision',0)>=36:
+        altered=copy.deepcopy(meta);del altered['read-boundaries']
+        try:validate(altered,sha)
+        except (ValueError,KeyError):checks.append(dict(name='missing read-boundaries rejected',passed=True))
+        else:raise AssertionError('missing read-boundaries')
+        original_read=Path.read_bytes;path=(ROOT/meta['read-boundaries']['path']).resolve();obj=json.loads(original_read(path));obj['checks'].pop()
+        payload=json.dumps(obj).encode();altered=copy.deepcopy(meta);altered['read-boundaries']['sha256']=hashlib.sha256(payload).hexdigest()
+        def read_boundary(p):return payload if p.resolve()==path else original_read(p)
+        with patch.object(Path,'read_bytes',read_boundary):
+            try:validate(altered,sha)
+            except ValueError:checks.append(dict(name='deleted read boundary case rejected after resealing digest',passed=True))
+            else:raise AssertionError('deleted read boundary case')
     if b.get('probe_revision',0)>=30:
         for name in ('root-stop','root-launch','root-inputs'):
             altered=copy.deepcopy(meta);del altered[name]

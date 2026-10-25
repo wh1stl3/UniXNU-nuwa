@@ -298,7 +298,7 @@ def main():
         UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 20','PROBE 21').replace('NATIVE PTHREAD OSKEXT TO BSD ROOT','ROOT RESOURCE AND MEDIA WAIT TRACE')
     root_ramdisk=None
     if args.root_ramdisk:
-        if not probe or revision not in (30,31,32,33,34,35):raise ValueError('Real root diagnostic requires revision30..32 boundary')
+        if not probe or revision not in (30,31,32,33,34,35,36):raise ValueError('Real root diagnostic requires revision30..32 boundary')
         ctx=root_context(revision);PAYLOAD_SHA,ARGS,validate_report=ctx.PAYLOAD_SHA,ctx.ARGS,ctx.validate_report
         root_proof=json.loads((ROOT/probe['root-launch']['path']).read_text());validate_report(root_proof)
         root_ramdisk=args.root_ramdisk.read_bytes()
@@ -315,6 +315,8 @@ def main():
             UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 25','PROBE 26').replace('CONTINUOUS EXEC WITH PERSISTENT NATIVE ERRORS','NATIVE EXEC AND DYLD PATH ERROR TRACE')
         if revision>=35:
             UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 26','PROBE 27').replace('NATIVE EXEC AND DYLD PATH ERROR TRACE','NATIVE TYPE4 COMPRESSION STARTUP AND CONTINUOUS EXEC')
+        if revision>=36:
+            UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 27','PROBE 28').replace('NATIVE TYPE4 COMPRESSION STARTUP AND CONTINUOUS EXEC','SCOPED NATIVE MAC AND FILESYSTEM READ BOUNDARIES')
     elif probe and revision>=30:raise ValueError('Mount-only candidate must bind the real RAMDisk')
     if sha(fd) != FD_SHA or len(fd) != 3145728:
         raise ValueError('Firmware FD changed')
@@ -452,6 +454,9 @@ def main():
         if revision>=35:
             report['fscompression_startup']=json.loads(args.entry_probe.read_text())['fscompression_startup']
             report['success_requires']=report['success_requires'].replace('PROBE26:', 'PROBE27:')+' Before real init exec, request normal Zlib OSKext lifecycle only when native type4 registration is absent; no direct kmod start or table writes. IDs264/265 observe loading; A02A=actual loader status, A033=actual native type4 registration pointer. All successful stages continue; restore userspace release guard remains.'
+        if revision>=36:
+            report['read_boundaries']=json.loads(args.entry_probe.read_text())['read_boundaries']
+            report['success_requires']=report['success_requires'].replace('PROBE27:', 'PROBE28:')+' Header call 250 resets row y784 x832..1295. IDs266/267=vn_rdwr_64 call/return, 268/269=MAC read, 270/271=VNOP_READ, 272/273=actual filesystem dispatch, 274/275=swap-file read. Scope requires this exact header caller, TPIDR_EL1 and native frame; return markers require their paired call. A034=last read stage; A035=actual low32 return, all ones while call is pending. These overwrite prior A034/A035 after header entry. No marker proves APFS/decmpfs body completion unless its matching return was observed. Real errors and release guard retained.'
         report['expected_screen_outcomes'] = [report['success_requires'], 'Any later XNU text or panic requires separate attribution; no band proves MMU enabled or iOS started']
         report['not_proven'] = ['Real nuwa execution of this candidate', 'MMU activation and arm_init', 'Native timer/interrupt driver readiness', 'Full donor/native ABI or iOS boot']
     output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
