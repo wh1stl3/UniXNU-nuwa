@@ -434,3 +434,5 @@
 2026-10-25 17:12 · 本包录像/恢复确认后刷新Android1/A槽/三SHA，PROBE17单次临时boot ACK成功；待Enter后画面和恢复后验，ACK不当内核阶段。· 75daa59（离线）/本次device记录 · reports/xnu-entry-probe-trial/2026-10-25-v24/
 
 2026-10-25 17:18 · PROBE17原图126亮/32缺，ID0–60确认推进到load_context调用前；61缺块符合noreturn，不宣称线程已运行。Android1/A槽及三SHA恢复闭环，无第二候选，媒体仅本地。· 本次device里程碑 · reports/xnu-entry-probe-trial/2026-10-25-v24/{screen,trial,recovery,postcondition}.json
+
+2026-10-25 · 按用户明确要求，将下载AGENTS.md中适用于nuwa的表达、代码质量、逆向取证、边界测试与工具规则合并为第10节；原9节与全部设备/只读/媒体门保留，脚本串行。· 本次docs提交 · AGENTS.md:第10节，来源SHA8fcd7fa7
