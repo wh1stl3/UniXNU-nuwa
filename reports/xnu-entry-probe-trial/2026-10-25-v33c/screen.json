@@ -1,0 +1,267 @@
+{
+  "scope": "Local PROBE25 full-resolution transcription and registered cumulative grid",
+  "image_sha256": "e7ffb6ccfd45d9a5da44ae6c43b3da1e35f0d21f19c9f3126c579bb295300102",
+  "image_bytes": 11266703,
+  "image_size": [
+    3072,
+    4096
+  ],
+  "package": "reports/xnu-first-entry/entry-probe-25.json",
+  "candidate_sha256": "52dd89529567caa552c690f11de2f20cd701bde60027c2868b46364cef8489db",
+  "fields": {
+    "A02A": "0000000000000000",
+    "A02B": "00000000000000D9",
+    "A02C": "0000000000000002",
+    "A02D": "0000000000000002",
+    "A02E": "FFFFFFFFFFFFFFFF",
+    "A02F": "0000000000000000",
+    "A030": "0000000000000002",
+    "A032": "FFFFFFFFFFFFFFFF",
+    "A035": "0000000000000000"
+  },
+  "critical_tiles": {
+    "220": {
+      "state": "yellow",
+      "photo_center": [
+        2481,
+        774.0
+      ],
+      "median_rgb": [
+        247,
+        224,
+        54
+      ]
+    },
+    "221": {
+      "state": "dark",
+      "photo_center": [
+        2558,
+        774.0
+      ],
+      "median_rgb": [
+        19,
+        19,
+        18
+      ]
+    },
+    "222": {
+      "state": "dark",
+      "photo_center": [
+        2481,
+        812.2
+      ],
+      "median_rgb": [
+        19,
+        20,
+        15
+      ]
+    },
+    "223": {
+      "state": "blue",
+      "photo_center": [
+        2558,
+        812.2
+      ],
+      "median_rgb": [
+        104,
+        208,
+        243
+      ]
+    },
+    "224": {
+      "state": "green",
+      "photo_center": [
+        2481,
+        850.4
+      ],
+      "median_rgb": [
+        45,
+        223,
+        43
+      ]
+    },
+    "225": {
+      "state": "blue",
+      "photo_center": [
+        2558,
+        850.4
+      ],
+      "median_rgb": [
+        105,
+        210,
+        244
+      ]
+    },
+    "226": {
+      "state": "green",
+      "photo_center": [
+        2481,
+        888.6
+      ],
+      "median_rgb": [
+        45,
+        222,
+        43
+      ]
+    },
+    "227": {
+      "state": "dark",
+      "photo_center": [
+        2558,
+        888.6
+      ],
+      "median_rgb": [
+        20,
+        20,
+        18
+      ]
+    },
+    "228": {
+      "state": "dark",
+      "photo_center": [
+        2481,
+        926.8
+      ],
+      "median_rgb": [
+        19,
+        19,
+        17
+      ]
+    },
+    "229": {
+      "state": "dark",
+      "photo_center": [
+        2558,
+        926.8
+      ],
+      "median_rgb": [
+        22,
+        21,
+        19
+      ]
+    },
+    "230": {
+      "state": "dark",
+      "photo_center": [
+        2481,
+        965.0
+      ],
+      "median_rgb": [
+        19,
+        19,
+        17
+      ]
+    },
+    "231": {
+      "state": "dark",
+      "photo_center": [
+        2558,
+        965.0
+      ],
+      "median_rgb": [
+        21,
+        21,
+        19
+      ]
+    },
+    "232": {
+      "state": "dark",
+      "photo_center": [
+        2481,
+        1003.2
+      ],
+      "median_rgb": [
+        18,
+        18,
+        16
+      ]
+    },
+    "233": {
+      "state": "blue",
+      "photo_center": [
+        2558,
+        1003.2
+      ],
+      "median_rgb": [
+        104,
+        211,
+        245
+      ]
+    },
+    "234": {
+      "state": "green",
+      "photo_center": [
+        2481,
+        1041.4
+      ],
+      "median_rgb": [
+        47,
+        227,
+        44
+      ]
+    },
+    "235": {
+      "state": "blue",
+      "photo_center": [
+        2558,
+        1041.4
+      ],
+      "median_rgb": [
+        106,
+        212,
+        245
+      ]
+    },
+    "236": {
+      "state": "green",
+      "photo_center": [
+        2481,
+        1079.6
+      ],
+      "median_rgb": [
+        47,
+        227,
+        44
+      ]
+    },
+    "237": {
+      "state": "dark",
+      "photo_center": [
+        2558,
+        1079.6
+      ],
+      "median_rgb": [
+        23,
+        22,
+        20
+      ]
+    },
+    "238": {
+      "state": "green",
+      "photo_center": [
+        2481,
+        1117.8
+      ],
+      "median_rgb": [
+        47,
+        228,
+        45
+      ]
+    },
+    "239": {
+      "state": "dark",
+      "photo_center": [
+        2558,
+        1117.8
+      ],
+      "median_rgb": [
+        25,
+        24,
+        22
+      ]
+    }
+  },
+  "observation": "Two init exec attempts; last native activation and exec returns are 2 (ENOENT). No observed task switch/signature or restore-release hold. Namei path versus dyld lookup versus other policy source not yet identified.",
+  "sampling": "9x9 original-pixel median, visually registered side centers; cumulative only, no event order inferred",
+  "raw_media_local_only": true
+}

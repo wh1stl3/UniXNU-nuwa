@@ -668,3 +668,11 @@ manifest-properties节点已存在但无BNCH，boot-manifest-hash缺失。固定
 # D-059 · exec错误跨回退保留，释放守卫由原生任务切换建立跟踪
 
 2026-10-25。PROBE24格点已见原生exec/激活路径，尚未见切换/签名，字段未知不能当errno。新v33模块冻结v32源，无条件记录实际后继x0，仅首次初始化未知屏显，A02C记录尝试数；原生任务切换调用/返回重新建立跟踪，匹配已切换任务FINAL_WAIT=2时守住未审阅恢复用户态。无新阶段终点、错误改写或认证绕过。独立生产器测量新策略并保持旧包24兼容。12项边界/像素读回和完整21项串行验证、逐字节重建、实际包回读通过，包25镜像8e24773c。尚未实机，根因仍待真实errno；详情v33操作记录、v33c/execution、v32b/screen-registered。
+
+# D-060 · fastboot缺失查询变量不单独硬停
+
+2026-10-25用户明确：getvar多次unknown command / Variable Not found仅记录并重新进入一次fastboot后重试，不单独硬停。AGENTS §3已落地，仍核对目标、具体日志/恢复，缺失值不伪造，不放宽flash/erase/改槽、内存身份和_verified。
+
+# D-061 · PROBE25实际ENOENT优先定位运行时路径来源
+
+2026-10-25照片e7ffb6cc读到A02C2、A02D2、A0302，尚无切换/签名/用户态；22:55:01后验恢复闭环。主机只读普通755 launchd/dyld及LC_LOAD_DYLINKER路径均存在，仅开发/调试路径缺失，故不能把真实ENOENT直接归因正式launchd未打包。继续核对初始namei与dyld加载路径首个错误，不强制返回或放宽认证。证据v33c/screen、postcondition与v34/exec-files.json。

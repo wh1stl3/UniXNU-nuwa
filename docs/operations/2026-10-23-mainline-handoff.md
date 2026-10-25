@@ -1,5 +1,8 @@
 > **当前续接入口已迁至[2026-10-25主线交接](2026-10-25-mainline-handoff.md)。** PROBE22实机真实RAMDisk/md0路径、原生根挂载返回0，A0350/212绿，未进入用户态。21:30:50 +08 Android1/A槽/三SHA一致，恢复关闭。用户最新要求减少阶段停止、一次推进更多；下一候选取消挂载后停止，连续推进安全根/BSD收尾/首进程准备，在首次执行恢复用户态前保留唯一明确边界。代码fb76965、启动b6a80c1，实测v30 screen/recovery/postcondition。下方均历史，STATUS、新交接和v30记录为准。
 
+> PROBE25实机A02C=2（两次exec尝试），A02D=2且A030=2（最后原生激活和exec返回ENOENT），A02E未知/A02F0，未到任务切换、签名或239恢复任务释放守卫。原图e7ffb6cc仅本地。22:55:01 +08后验确认Android1/A槽/三SHA与试前一致，恢复关闭。主机只读复核正式/sbin/launchd与/usr/lib/dyld均为普通755文件，launchd声明的加载器正是/usr/lib/dyld且存在；开发/调试AppleInternal路径不存在。不能把ENOENT直接归为正式文件缺失或据此放宽认证；下一步定位原生namei、镜像激活及dyld查找的首个错误。 用户fastboot查询兼容规则已写AGENTS；代码d65c2b4/启动bc7f0cf，包25镜像8e24773c，证据v33c screen/recovery/postcondition与v34/exec-files。当前无待恢复，不重复启动25；先完成原生路径错误定位候选及离线验证，新包日志恢复门有效后才启动；保持内存/身份/_verified及写盘边界，无push/新CI。下方待图/恢复段均历史。
+
+
 > PROBE25于2026-10-25 22:51:47 +08仅一次临时boot ACK，代码d65c2b4，镜像8e24773c。等待用户菜单电源Enter后完整最终画面，ACK不证明内核或exec进展；本轮Android恢复后验尚未取得，不重复启动25、不启动第二候选。用户本包录像/恢复就绪，22:50:05预检Android1/A槽/三SHA一致。取图后trial-v4-firmware.py recover --package reports/xnu-first-entry/entry-probe-25.json --evidence reports/xnu-entry-probe-trial/2026-10-25-v33c/recovery.json；再用record-nuwa-trial-state.py对比本轮preflight补postcondition。人工恢复等待继续离线工作；真实故障、明确硬停或未授权设备内容更改边界仍停止相关动作。启动证据v33c/launch.json。
 
 

@@ -39,3 +39,9 @@ PROBE25无条件记录原生激活/exec/签名后继的x0，A02C为exec尝试数
 ## 本轮启动
 
 PROBE25于2026-10-25 22:51:47 +08仅一次临时boot ACK，代码d65c2b4，镜像8e24773c。等待用户菜单电源Enter后完整最终画面，ACK不证明内核或exec进展；本轮Android恢复后验尚未取得，不重复启动25、不启动第二候选。用户本包录像/恢复就绪，22:50:05预检Android1/A槽/三SHA一致。取图后trial-v4-firmware.py recover --package reports/xnu-first-entry/entry-probe-25.json --evidence reports/xnu-entry-probe-trial/2026-10-25-v33c/recovery.json；再用record-nuwa-trial-state.py对比本轮preflight补postcondition。人工恢复等待继续离线工作；真实故障、明确硬停或未授权设备内容更改边界仍停止相关动作。启动证据v33c/launch.json。
+
+## PROBE25实测与恢复闭环
+
+PROBE25实机A02C=2（两次exec尝试），A02D=2且A030=2（最后原生激活和exec返回ENOENT），A02E未知/A02F0，未到任务切换、签名或239恢复任务释放守卫。原图e7ffb6cc仅本地。22:55:01 +08后验确认Android1/A槽/三SHA与试前一致，恢复关闭。主机只读复核正式/sbin/launchd与/usr/lib/dyld均为普通755文件，launchd声明的加载器正是/usr/lib/dyld且存在；开发/调试AppleInternal路径不存在。不能把ENOENT直接归为正式文件缺失或据此放宽认证；下一步定位原生namei、镜像激活及dyld查找的首个错误。
+
+主机检查命令audit-restore-exec-inputs.py --output reports/kernel-entry-probe/2026-10-25-v34/exec-files.json --mount /var/tmp/unixnu-nuwa-exec-inputs-v34（WSL），固定APFS及工具SHA，已卸载；不证明运行时namei根命名空间。原生源码ENOENT也可能由load_return_to_errno(LOAD_ENOENT)传播，因此需分开最初namei与dyld namei，不先把ENOENT认作文件内容损坏。
