@@ -103,7 +103,7 @@ Windows 不敏感，但构建全在 WSL 里跑，`/mnt/d/Code/...` **区分大�
 
 - XNU探针以UniXNU菜单中的电源键Enter触发；不固定等待180秒，不以fastboot ACK作为内核执行计时起点。按菜单就绪、用户触发、捕获画面、恢复与三SHA后验推进。
 - 原始有声/无声音视频只保留本地，不commit、不push、不作为GitHub附件或CI artifact上传。共享以脱敏文字读数、哈希或经审查的静态截图为准；本轮截图也保留本地out。
-- 续接先读docs/STATUS.md及最新v22/官网复核操作记录。官网Format2和共享SoC迁移须独立固定输入并评审，保留iOS16/8796身份与ABI，不机械套sheng板值。
+- 续接先读docs/STATUS.md和docs/operations/2026-10-26-mainline-handoff.md，再按需查v22/官网复核历史操作记录。官网Format2和共享SoC迁移须独立固定输入并评审，保留iOS16/8796身份与ABI，不机械套sheng板值。
 
 ## 10. 通用工程与表达规范（用户2026-10-25合并）
 

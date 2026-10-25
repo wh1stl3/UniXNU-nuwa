@@ -1,3 +1,5 @@
+> **历史交接：当前续接入口为[2026-10-26主线交接](2026-10-26-mainline-handoff.md)。** PROBE27照片核验与恢复收尾完成。264黄色/265绿色，A02A=0，A033=FFFFFFF005F48EF8（用户纠正末尾EF8，原图已复核），证明观察到了类型4表项已存在的分支；加载请求蓝色未见，不能把A02A0说成一次真实加载调用返回0。250文件头读取调用亮、251后继暗，Mach-O/dyld未到；缺少类型4空表项已不能解释当前观察停点。2026-10-26T00:16:10.211478+08:00恢复驱动确认Android完成1；2026-10-26T00:19:12.450574+08:00后验确认Android1/A槽/三分区SHA与本轮预检一致，恢复关闭，无待人工操作。按用户要求本轮到照片验证、文档与提交为止，不构建或启动下一候选。 以下旧ACK/待图/待恢复及续接命令均为历史，不作为当前设备动作指令。
+
 # nuwa / iOS16 主线交接（2026-10-25，PROBE19后）
 
 > PROBE27于2026-10-25T23:53:48.080828+08:00仅一次临时boot ACK，代码45a57de，镜像06913eaf；等待菜单电源Enter后的完整画面，重点A02A加载状态、A033实际type4注册指针、264/265及250/251。ACK不证明解压器已注册、读取已返回或exec成功；本轮Android恢复后验尚未取得，不重复启动或第二候选。已有连续推进授权和具体画面/恢复条件沿用，新鲜Android1/A槽/三SHA预检一致。取图后trial-v4-firmware.py recover --package reports/xnu-first-entry/entry-probe-27.json --evidence reports/xnu-entry-probe-trial/2026-10-25-v35/recovery.json；再record-nuwa-trial-state.py对比本轮preflight补postcondition。人工等待继续离线工作，真实故障和明确硬停/未授权设备内容更改边界保持；fastboot查询缺失变量按已定规则处理。启动证据v35/launch.json。

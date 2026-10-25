@@ -27,3 +27,11 @@ PROBE27条件初始化真实类型4解压组件候选离线完成。22项串行�
 ## 本轮启动
 
 PROBE27于2026-10-25T23:53:48.080828+08:00仅一次临时boot ACK，代码45a57de，镜像06913eaf；等待菜单电源Enter后的完整画面，重点A02A加载状态、A033实际type4注册指针、264/265及250/251。ACK不证明解压器已注册、读取已返回或exec成功；本轮Android恢复后验尚未取得，不重复启动或第二候选。已有连续推进授权和具体画面/恢复条件沿用，新鲜Android1/A槽/三SHA预检一致。取图后trial-v4-firmware.py recover --package reports/xnu-first-entry/entry-probe-27.json --evidence reports/xnu-entry-probe-trial/2026-10-25-v35/recovery.json；再record-nuwa-trial-state.py对比本轮preflight补postcondition。人工等待继续离线工作，真实故障和明确硬停/未授权设备内容更改边界保持；fastboot查询缺失变量按已定规则处理。启动证据v35/launch.json。
+
+## PROBE27实机核图与最终收尾（2026-10-26）
+
+PROBE27照片核验与恢复收尾完成。264黄色/265绿色，A02A=0，A033=FFFFFFF005F48EF8（用户纠正末尾EF8，原图已复核），证明观察到了类型4表项已存在的分支；加载请求蓝色未见，不能把A02A0说成一次真实加载调用返回0。250文件头读取调用亮、251后继暗，Mach-O/dyld未到；缺少类型4空表项已不能解释当前观察停点。2026-10-26T00:16:10.211478+08:00恢复驱动确认Android完成1；2026-10-26T00:19:12.450574+08:00后验确认Android1/A槽/三分区SHA与本轮预检一致，恢复关闭，无待人工操作。按用户要求本轮到照片验证、文档与提交为止，不构建或启动下一候选。
+
+原图62f86fe67cad0e6f0facb9a4262f78d5b26ee1947d5957a6ca7080ea9a76736d（4898922B）仅本地out/trial-evidence/entry-probe-27/user-screen.jpg；文字/采样reports/xnu-entry-probe-trial/2026-10-25-v35/screen.json。A02C=2，A02D/A030=2，A02E=0xF2/242、A032=2是跨尝试保留结果，不能当作本次未返回读取的errno。A02F0，未观察任务切换/签名或239释放守卫。候选静态0xfffffff005f48ef8为version3及五个非零回调地址，与读数相符；这不是运行时内存转储或解压执行证明。
+
+D-065据此将“当前缺少类型4空表项”假设排除，D-064条件初始化实现保留但不宣称修复成功。下一轮以新的2026-10-26-mainline-handoff.md为准；本轮按用户要求只落档/提交，不启动下一候选。

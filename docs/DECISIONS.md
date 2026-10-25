@@ -673,7 +673,7 @@ manifest-properties节点已存在但无BNCH，boot-manifest-hash缺失。固定
 
 2026-10-25用户明确：getvar多次unknown command / Variable Not found仅记录并重新进入一次fastboot后重试，不单独硬停。AGENTS §3已落地，仍核对目标、具体日志/恢复，缺失值不伪造，不放宽flash/erase/改槽、内存身份和_verified。
 
-# D-061 · PROBE25实际ENOENT优先定位运行时路径来源
+# D-061 · PROBE25实际ENOENT优先定位运行时路径来源（当前停点解释 superseded by D-063）
 
 2026-10-25照片e7ffb6cc读到A02C2、A02D2、A0302，尚无切换/签名/用户态；22:55:01后验恢复闭环。主机只读普通755 launchd/dyld及LC_LOAD_DYLINKER路径均存在，仅开发/调试路径缺失，故不能把真实ENOENT直接归因正式launchd未打包。继续核对初始namei与dyld加载路径首个错误，不强制返回或放宽认证。证据v33c/screen、postcondition与v34/exec-files.json。
 
@@ -685,6 +685,10 @@ manifest-properties节点已存在但无BNCH，boot-manifest-hash缺失。固定
 
 2026-10-25。PROBE26照片03259a98中240至249均亮、250亮/251暗、252+暗，第二次尝试到vn_rdwr未见后继；A02E F2/242和聚合2为保留结果，可来自首次开发路径缺失。D-061关于当前停止原因的ENOENT推断superseded by D-063；不把旧结果当作当前尝试完成。恢复后验已闭环。主机确认launchd/dyld decmpfs type4，已有Zlib组件但实际注册尚待确认，正常组件生命周期是后续调查/修复方向，不伪造注册或错误。
 
-# D-064 · 通过正常生命周期条件补齐原生类型4解压器初始化
+# D-064 · 通过正常生命周期条件补齐原生类型4解压器初始化（空表项根因假设 superseded by D-065；实现保留）
 
 2026-10-25。实际头读取未见返回，主机确认launchd/dyld为type4资源分叉压缩；源码在已知驱动但未注册时会等待资源。新helper仅在原生_decompressors[4]为空时调用正常OSKext加载Zlib组件，记录API返回和真实表项，不直接kmod调用或写假表。可能已注册而停在其他读取回调，尚未证实缺注册是实机根因。22项串行验证（含8模型/36绑定）、逐字节重建和新旧包回读通过，包27镜像06913eaf。无阶段终点，既有释放守卫/真实错误/身份及内存边界保持；详见v35记录。
+
+# D-065 · PROBE27已有类型4表项，读取内部等待为后续方向
+
+2026-10-26。原图62f86fe6，264黄/265绿，A02A0、A033 FFFFFFF005F48EF8（用户纠正末尾EF8、原图复核）证明已观察到已注册分支；未见加载请求蓝色，不能称正常API加载实机通过。候选静态EF8处version3及五个回调地址相符，但非运行时内存/解压执行证明。250调用亮251暗保持，故D-064中的缺空表项根因假设superseded by D-065；条件检查代码不被替换为强制加载或假注册。后续先分界MAC read回调与VNOP_READ/APFS/decmpfs内部，原生错误/认证/释放守卫保持。恢复Android1/A槽/三SHA闭环，本轮按用户要求核图/交接/提交后结束，无新候选。

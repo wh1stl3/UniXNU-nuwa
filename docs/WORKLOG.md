@@ -500,3 +500,5 @@
 2026-10-25T23:50:46.940487+08:00 · PROBE27正常OSKext条件加载type4组件，22项串行验证/独立重建/新旧包回读通过，连续授权与观测恢复条件仍有效，新鲜三SHA一致 · 提交号见本条所属提交 · v35/execution.json、entry-probe-27.json、v35/preflight.json
 
 2026-10-25T23:53:48.080828+08:00 · PROBE27单次临时boot ACK，等待菜单Enter后的实际注册/读取画面及Android恢复后验 · 代码45a57de；启动记录见本条所属提交 · reports/xnu-entry-probe-trial/2026-10-25-v35/launch.json
+
+2026-10-26T00:19:12.450574+08:00 · PROBE27核图264黄/265绿、A033末尾按用户纠正为EF8，类型4表项已有但头读取仍250亮251暗；Android1/A槽/三SHA恢复闭环；按用户要求交接并提交，不试新包 · 代码45a57de/启动ab489f4，收尾提交见本条所属提交 · v35 screen/recovery/postcondition、docs/operations/2026-10-26-mainline-handoff.md
