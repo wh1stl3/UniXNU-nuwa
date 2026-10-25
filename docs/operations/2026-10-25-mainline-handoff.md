@@ -1,5 +1,7 @@
 # nuwa / iOS16 主线交接（2026-10-25，PROBE19后）
 
+> 设备动作更新：2026-10-25 20:42:51 +08，PROBE20镜像365216ae单次fastboot boot ACK。本包用户录像/恢复就绪，新鲜preflight Android1/A槽/三SHA与v27后验一致。等待菜单电源Enter后的画面，不以ACK声称pthread已注册；本轮恢复后验未取得，不启动第二候选。证据v28/launch.json，代码f0f4ea6。画面取证后运行trial-v4-firmware.py recover --package reports/xnu-first-entry/entry-probe-20.json --evidence reports/xnu-entry-probe-trial/2026-10-25-v28/recovery.json，随后record-nuwa-trial-state.py --before本轮preflight --output本轮postcondition。人工恢复不阻断离线工作。
+
 > 续接增量：v28/PROBE20离线完成，镜像365216ae/70,266,880B、内核d34a5de9、独立ADT635d4f4d；正常OSKext加载helper与真实pthread选择已接入。19项串行任务全部通过（740差分/25Image4/6pthread/31绑定），独立重建一致、实际FAT回读和输入重测通过。权威包reports/xnu-first-entry/entry-probe-20.json，尚未实测；等待PROBE20当轮录像/恢复条件。命令和模型边界见[本轮记录](2026-10-25-v28-pthread-to-root.md)及reports/kernel-entry-probe/2026-10-25-v28/execution.json。设备仍以前轮20:03:58 Android后验为最近证据，不重复启动19。无push/新CI。
 
 接手顺序：根目录AGENTS.md → docs/STATUS.md → 本文 → [v27完整操作记录](2026-10-25-v27-image4-to-bsd.md)。旧v25/v26及10月23日交接保留历史；不再把“未到BSD”“Image4仍是实机卡点”当作当前状态。

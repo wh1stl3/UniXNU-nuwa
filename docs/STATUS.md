@@ -2,6 +2,8 @@
 
 更新：2026-10-25。**PROBE19实机已越过MAC/Image4并进入bsd_init；当前panic为pthread内核函数表未注册。root发现/挂载和iOS用户态尚未进入。20:03:58已确认Android1/A槽/三SHA一致，恢复待办关闭。**
 
+**20:42:51 PROBE20已单次临时boot ACK，等待用户菜单电源Enter后的画面；ACK不计为pthread/BSD进度。** 本轮新鲜preflight与v27后验三SHA一致，用户本包录像/恢复条件已确认；当前Android恢复后验尚未取得，不启动第二候选。launch证据reports/xnu-entry-probe-trial/2026-10-25-v28/launch.json，代码f0f4ea6。照片到达后判读178–181与原BSD/root点，再执行固定原厂临时boot恢复及本轮三SHA后验。
+
 ## 当前设备与有效包
 
 19:56:34北京时间preflight确认nuwa/kalama、Android完成1、A槽、boot_a/vendor_boot_a/init_boot_a三SHA与v25后验一致。用户确认本包录像及恢复就绪后，19:57单次临时boot ACK；照片5bad2ca9179cc42353ea70c1a5cb0dc69a3ef5bb197560ce8527976565154f6f本地保存。ACK不作为内核阶段证据。

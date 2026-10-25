@@ -53,3 +53,5 @@ BSD 入口诊断外层保存 x9–x28/NZCV，新增 helper 保存 x0–x8/x29/x3
 下一次设备动作之前，按 AGENTS.md 第3/9节确认**PROBE20当轮**全程录像、菜单电源Enter、停屏采集和必要时按键恢复就绪；刷新 preflight 对比 v27/postcondition.json 三SHA。即时通知后只做一次临时boot，不flash/erase/改槽。采集后恢复Android完成1并比较本轮preflight三SHA。此确认只针对实机观测和恢复条件，不阻断离线工作。
 
 本轮构建、补丁和离线验证不改板值/TCR/内存/IPSW身份，不设置任何 *_verified=true；loadable/runtime_qualified 仍false。不上载原始媒体，无push或新CI。
+
+2026-10-25 20:42:51 +08：用户答复“现在可以，录像与恢复就绪”；新鲜preflight Android1/A槽/三SHA与v27后验一致，即时通知后只执行一次临时fastboot boot。ACK成功，等待菜单电源Enter后的真实画面；未取得pthread/root结果或本轮恢复后验。代码f0f4ea6，launch/preflight在reports/xnu-entry-probe-trial/2026-10-25-v28/。不得把此ACK写成内核执行通过。
