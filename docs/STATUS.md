@@ -1,6 +1,6 @@
 # STATUS
 
-更新：2026-10-25。**PROBE21实机确认初始IOBSD等待返回，停在默认IOMedia介质匹配等待，未挂载。PROBE22真实APFS RAMDisk挂载后停止候选离线完成，按用户“继续新的临时启动 先不管这个重启”准备一次临时boot。** 新鲜preflight确认Android1/A槽/三SHA与v29后验相同，尚未执行PROBE22启动。
+更新：2026-10-25。**PROBE22已于21:26:08 +08单次临时boot ACK，等待菜单电源Enter后的实机画面；不能据ACK声称192MiB运输、APFS装载或root挂载通过。** 代码fb76965，新鲜preflight确认Android1/A槽/三SHA与v29后验相同，按用户最新“继续新的临时启动 先不管这个重启”执行。当前本轮恢复后验尚未取得，不启动第二候选。原PROBE21确认初始IOBSD等待返回、停在默认IOMedia等待，尚未挂载。
 
 ## 最新设备实测
 

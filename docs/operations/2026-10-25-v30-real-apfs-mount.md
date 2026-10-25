@@ -37,3 +37,5 @@ root-launch/root-stop/root-inputs是v30强制打包证据。七项根输入对�
 ## 启动与恢复门
 
 按用户“继续新的临时启动”推进，实际启动前刷新preflight对比v29/postcondition，保持当前录像/菜单电源Enter/停屏采集与固定原厂恢复路径，即时通知后仅一次临时boot。画面同时需包含PROBE22菜单身份、原root标记、212/213和A035；ACK不作阶段结论。采集后绑定包22执行原厂临时boot恢复，再确认Android1/A槽/三SHA与本轮preflight相同。若人工恢复等待则记待办，继续离线工作，但不再启动新候选。
+
+2026-10-25 21:26:08 +08：新鲜preflight通过，即时通知后镜像1b24ff82只执行一次fastboot boot，199692KB发送/Booting ACK。代码fb76965，等待菜单电源Enter后画面，本轮恢复后验未取得。不得将ACK提升为大运输、RAMDisk装载或APFS挂载实机通过；记录v30/launch.json。后续恢复命令绑定包22，后验以v30/preflight.json为基线。

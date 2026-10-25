@@ -466,3 +466,5 @@
 2026-10-25 21:13:15 +08 · PROBE21照片b412ba53确认184/185初始资源等待返回、208–211默认IOMedia构造返回、200介质等待进入/201未到；未挂载。首次恢复监测超时保留，fastboot后原厂boot仅临时加载一次，Android1/A槽/三SHA后验一致。用户要求继续新临时启动、暂不调查重启现象，转真实APFS挂载后停止候选。· 本次device里程碑（父a444c82） · v29 screen/recovery/recovery-retry/postcondition、D-053
 
 2026-10-25 · PROBE22真实102MiB APFS/md0及挂载后停止候选离线完成：21项串行任务（856差分/25Image4/6pthread/3停止/7根输入/34绑定）、独立重建/四文件回读/旧包21复验通过；镜像1b24ff82/204,484,608B，未改内存/身份。按用户新临时启动指令，新鲜Android1/A槽/三SHA预检一致；尚无本包实机挂载结论。· 本次kernel里程碑（父cd21655） · v30 execution/root-launch/root-stop/root-inputs，包22，D-054
+
+2026-10-25 21:26:08 +08 · 按用户最新新临时启动指令，preflight Android1/A槽/三SHA通过并即时通知后，PROBE22仅一次临时boot ACK；待菜单电源Enter后真实画面与本轮恢复后验，不将ACK写为运输/挂载通过。· fb76965后设备记录 · reports/xnu-entry-probe-trial/2026-10-25-v30/launch.json

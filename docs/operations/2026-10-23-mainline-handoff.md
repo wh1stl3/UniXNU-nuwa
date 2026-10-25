@@ -8,6 +8,8 @@
 
 > PROBE22离线完成：镜像1b24ff82/204,484,608B，内核7f699af6、ADT15cf608b、真实APFS d180c38d。21项串行任务、独立重建、实际四文件回读、旧包21复验通过；新鲜Android1/A槽/三SHA预检一致。准备一次临时boot，挂载返回后停止，不进入恢复用户态；192MiB运输和APFS实机挂载尚未证明，内存/身份/_verified未改。新交接与v30记录为续接入口。
 
+> 21:26:08 +08设备更新：PROBE22单次临时boot ACK，代码fb76965，待菜单电源Enter后的画面；本轮恢复后验未取得，不启动第二候选。ACK不证明运输/挂载，当前交接含绑定包22的原厂恢复与三SHA后验命令。人工恢复等待不阻断离线工作。
+
 ## 历史快照：PROBE18结果
 
 > PROBE18实机进入首线程/IOKit，MAC/Image4缺项panic（2026-10-25）：镜像c89cfa52/内核d6f101e4，代码9a5961f；81格亮，PE_init_iokit已返回，中断使能调用和commpage完成相关路径，到88 mac_policy_initmach，BSD未到。横纹消失，A02A=0/B=4/C=1。panic `failed to get mix-n-match policy: %d` 参数2，已定位AppleImage4 `/chosen/mix-n-match-prevention-status`；实际读取器+当前ADT复现2，5契约用例通过。0/空属性会允许mix，32位1禁止，尚未选择运行时策略/修改ADT。下一步完整核对Image4输入与manifest/hash来源，保持可信链/板值/资格边界，不能将模型bzero停止当实机故障。
