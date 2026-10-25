@@ -622,3 +622,9 @@ manifest-properties节点已存在但无BNCH，boot-manifest-hash缺失。固定
 2026-10-25。照片36983517的ID180/181说明BSD入口时已由正常prelink启动完成真实pthread注册，备用显式OSKext请求未执行，不能拿本轮认证该备用路径。原生pthread_init调用0xfffffff007672f94先于已亮的IOKitBSDInit/net_init_run后继及IOFindBSDRoot调用164/入口7，证明初始化已返回；本次旧NULL表panic不再出现。165后继/挂载入口8暗，无新panic/fault。A02B保持6是root入口未做DISPLAY_CHECK，不是实际仍停BSD入口。root挂载/用户态未验证。
 
 7项精确出货输入/原生指令审计确认-v、无root-matching/boot-uuid/RAMDisk，原生默认Apple_HFS IOMedia等待；缺真实root提供路径为首要工程判断。照片不能区分函数内部IOBSD资源等待、介质等待、计时器/唤醒问题，不虚构Still waiting实测文字。下一步固定真实介质/镜像格式与DarwinBoot侧车或nuwa存储提供者，增加必要内部标记，不跳过等待、不伪造UUID或拿运输FAT当root。20:45:31 +08 Android1/A槽/本轮三SHA一致，恢复关闭。证据v28 screen/recovery/postcondition、root-inputs.json及操作记录；原图仅本地。
+
+# D-052 · 原生root内部定位与102MiB真实APFS恢复介质
+
+2026-10-25。IOFindBSDRoot先等IOBSD资源，当前入口实测不能证明已到IOMedia等待。PROBE21固定15个原生BL及后继增加30点182–211，保留旧/178–181布局及实际等待；19项串行任务通过，860差分/25Image4/6pthread/31绑定，独立重建和实际包回读一致，旧PROBE20复验通过。包21 f005f7ed，内核dc496abe；启动按R-013的本包日志/恢复条件，不用ACK认定进度。
+
+同一固定phone iOS16/20H392清单RestoreRamDisk通过Apple archive/BuildManifest/ZIP和SHA384核对，rdsk payload d180c38d为102MiB真实APFS，主机只读挂载确认真实launchd/dyld/restored_external并卸载。初次drvfs失败保留，原生WSL重试成功。它提供后续真实挂载候选，不是完整iOS或nuwa挂载证明；当前64MiB运输FAT不足，后续单独验证传输/驱动/运行时RAMDisk，不改受审窗口、不伪造md0、不将4.73GB完整系统塞入1GiB。证据v29 restore-candidate/restore-filesystem/restore-filesystem-retry与操作记录。

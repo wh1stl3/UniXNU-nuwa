@@ -28,10 +28,10 @@ BSD_MILESTONES={'_throttle_init','_kauth_init','_fdt_init','_mac_policy_initbsd'
 ENTRY_FUNCTIONS=('_load_context','_machine_load_context','_thread_continue',
  '_call_continuation','_kernel_bootstrap_thread','_PE_init_iokit','_bsd_init',
  '_IOFindBSDRoot','_vfs_mountroot','_bsd_utaskbootstrap')
-def plan_next(raw,m,backed):
+def plan_next(raw,m,backed,revision=25):
     symbols=m['symbols'];reverse={v:k for k,v in symbols.items()};edges=[];sites={}
     def add(site,fn,callee,phase,call=None):
-        index=len(edges)
+        index=len(edges)+(4 if revision>=29 and len(edges)>=178 else 0)
         if index>=220:raise ValueError('Next-phase panel capacity exceeded')
         color={'call':'0xff40c0ff','continuation':'0xff40ff80','entry':'0xffffff00','context':'0xffff40ff'}[phase]
         e=dict(id=index,function=fn,callee=callee,phase=phase,call=hex(call if call is not None else site),site=hex(site),x=832+(index%10)*48,y=256+(index//10)*24,color=color)
@@ -56,10 +56,28 @@ def plan_next(raw,m,backed):
                 callee='indirect_x'+str((word>>5)&31)
             else:continue
             add(pc,fn,callee,'call',pc);add(pc+4,fn,callee,'continuation',pc)
+    if revision>=29:
+        # Keep legacy 0..177 and pthread 178..181 unchanged. Pin each real BL
+        # and expose the two different native waits instead of skipping either.
+        root_calls=(0xfffffff0078e3374,0xfffffff0078e33b4,
+                    0xfffffff0078e349c,0xfffffff0078e34b4,
+                    0xfffffff0078e34e0,0xfffffff0078e34ec,
+                    0xfffffff0078e3644,0xfffffff0078e36a8,
+                    0xfffffff0078e3708,0xfffffff0078e37a8,
+                    0xfffffff0078e381c,0xfffffff0078e3a3c,
+                    0xfffffff0078e3d94,0xfffffff0078e3e94,
+                    0xfffffff0078e3ea8)
+        for pc in root_calls:
+            word=struct.unpack_from('<I',raw,backed(m,pc))[0]
+            if word&0xfc000000!=0x94000000:raise ValueError('Root checkpoint no longer a native BL')
+            target=pc+signed(word&0x3ffffff,26)*4;callee=reverse.get(target)
+            if callee is None:raise ValueError('Root checkpoint target has no pinned symbol')
+            add(pc,'_IOFindBSDRoot',callee,'call',pc)
+            add(pc+4,'_IOFindBSDRoot',callee,'continuation',pc)
     return edges,sites
 
 def plan(raw,m,backed,revision=24):
-    return plan_next(raw,m,backed) if revision>=25 else plan_legacy(raw,m,backed)
+    return plan_next(raw,m,backed,revision) if revision>=25 else plan_legacy(raw,m,backed)
 
 def relocate(word,pc,label):
     resume=pc+4;tail=f'    b {label}_resume\n';defs={label+'_resume':resume}

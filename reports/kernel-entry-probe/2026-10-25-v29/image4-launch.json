@@ -1,0 +1,1520 @@
+{
+  "scope": "Test complete native Image4 initialization and exact measured launch inputs.\n\nExecutes the real initializer prologue through RET; IOKit object boundaries and\nruntime logging are modeled. This does not execute BSD or a physical device.\n",
+  "candidate_sha256": "dc496abea6f8916e8c30e5e19a7a60b2be7708274c53d458d6568da2940aff61",
+  "adt_sha256": "b6bb6c88ebc600c4e33acd8c0be6f400e1feb59653ff92a42fabe08ef3a4f801",
+  "context": {
+    "format": "Nuwa.DiagnosticLaunch.v1",
+    "adt_sha256": "b6bb6c88ebc600c4e33acd8c0be6f400e1feb59653ff92a42fabe08ef3a4f801",
+    "manifest_sha384": "dd9e04060f28ee31af323bd6d63684bd2846ed72c4ded8f46bbc844f5ffcecddbe9f4be4ffc519d84398c53b67a4e199",
+    "bnch_sha384": "9aaf9618cce465d3fcd2fea5a37688e174e73b1a34d44236ce531341e302a0e4374fbb8252878b9d6ceb4022d8ee8977",
+    "nonce_preimage_checked": true,
+    "components": {
+      "base_adt": {
+        "bytes": 13120,
+        "sha256": "17ed859eb65e301f3b53561b2f3306c49362043eebce77f4a578ec629f81d774"
+      },
+      "boot_shim": {
+        "bytes": 112,
+        "sha256": "8a3b54765c895a0366539130fdf6e4e4a01e364fe7de067a38d0193606f9d462"
+      },
+      "firmware_fd": {
+        "bytes": 3145728,
+        "sha256": "2d606985ad768dcfaab66c2b28073c0a4c2820126b42b23286623fdc450e848f"
+      },
+      "kernel": {
+        "bytes": 58421248,
+        "sha256": "dc496abea6f8916e8c30e5e19a7a60b2be7708274c53d458d6568da2940aff61"
+      }
+    },
+    "trust": {
+      "anti_replay_enforced": false,
+      "apple_im4m": false,
+      "hardware_nonce_protection": false,
+      "manifest_authentication": "none; host launch measurement",
+      "tss_personalized": false
+    },
+    "policy": "32-bit LE 1: prohibit mix-n-match; no default/empty property",
+    "producer_sha256": "40e1b776495f43d51cd786a4ac8a4826b11289aa86210cc45093ddb96d64de8f"
+  },
+  "checks": [
+    {
+      "name": "Actual nonce preimage and all four launch components match",
+      "passed": true
+    },
+    {
+      "name": "Real prologue original shipped-baseline",
+      "passed": true
+    },
+    {
+      "name": "Real prologue original legal-amnm-only",
+      "passed": true
+    },
+    {
+      "name": "Complete native Image4 initializer RET with measured inputs: unpatched",
+      "passed": true
+    },
+    {
+      "name": "Unpatched subsequent dtless AMNM and CHMH queries reproduce ENOENT",
+      "passed": true
+    },
+    {
+      "name": "Complete native Image4 initializer RET with measured inputs: candidate",
+      "passed": true
+    },
+    {
+      "name": "Integrated AMNM preserves prevention-one as allow=false",
+      "passed": true
+    },
+    {
+      "name": "Integrated CHMH returns all 48 actual manifest digest bytes",
+      "passed": true
+    },
+    {
+      "name": "Eight unrelated dtless queries retain native results",
+      "passed": true
+    },
+    {
+      "name": "Integrated CHMH preserves missing error/output",
+      "passed": true
+    },
+    {
+      "name": "Integrated CHMH preserves oversized error/output",
+      "passed": true
+    },
+    {
+      "name": "Integrated CHMH preserves wrong-type error/output",
+      "passed": true
+    },
+    {
+      "name": "Context rejects missing-amnm",
+      "passed": true
+    },
+    {
+      "name": "Context rejects empty-amnm",
+      "passed": true
+    },
+    {
+      "name": "Context rejects relaxed-amnm",
+      "passed": true
+    },
+    {
+      "name": "Context rejects missing-bnch",
+      "passed": true
+    },
+    {
+      "name": "Context rejects short-bnch",
+      "passed": true
+    },
+    {
+      "name": "Context rejects long-bnch",
+      "passed": true
+    },
+    {
+      "name": "Context rejects manifest-digest-corrupt",
+      "passed": true
+    },
+    {
+      "name": "Context rejects manifest-bytes-corrupt",
+      "passed": true
+    },
+    {
+      "name": "Context rejects board-value-corrupt",
+      "passed": true
+    },
+    {
+      "name": "Wrong nonce preimage refused",
+      "passed": true
+    },
+    {
+      "name": "Native initialization error retained: missing-bnch",
+      "passed": true
+    },
+    {
+      "name": "Native initialization error retained: oversized-bnch",
+      "passed": true
+    },
+    {
+      "name": "Native initialization error retained: missing-chmh",
+      "passed": true
+    }
+  ],
+  "cases": {
+    "shipped-baseline": {
+      "returned": false,
+      "panic": "failed to get mix-n-match policy: %d",
+      "variadic_values": [
+        2,
+        0
+      ],
+      "runtime_trace": [
+        {
+          "pc": "0xfffffff0046e99d8",
+          "consumer_runtime_x19": "0xfffffff005cb14d8"
+        }
+      ],
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "use-ddi-secure-boot",
+          "length": null
+        },
+        {
+          "node": "/chosen",
+          "property": "crypto-hash-method",
+          "length": 9
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "use-ddi-secure-boot",
+          "length": null
+        },
+        {
+          "node": "/chosen",
+          "property": "crypto-hash-method",
+          "length": 9
+        },
+        {
+          "lookup": "/chosen/asmb"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-epoch",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "board-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "security-domain",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "unique-chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-production-status",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-security-mode",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-production-status-ap",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-security-mode-ap",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "internal-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "engineering-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "research-enabled",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "esdm-fuses",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "mix-n-match-prevention-status",
+          "length": null
+        }
+      ],
+      "bad_memory": []
+    },
+    "legal-amnm-only": {
+      "returned": false,
+      "panic": "failed to read boot nonce hash: secure boot level = %#llx: %d",
+      "variadic_values": [
+        0,
+        2
+      ],
+      "runtime_trace": [
+        {
+          "pc": "0xfffffff0046e99d8",
+          "consumer_runtime_x19": "0xfffffff005cb14d8"
+        }
+      ],
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "use-ddi-secure-boot",
+          "length": null
+        },
+        {
+          "node": "/chosen",
+          "property": "crypto-hash-method",
+          "length": 9
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "use-ddi-secure-boot",
+          "length": null
+        },
+        {
+          "node": "/chosen",
+          "property": "crypto-hash-method",
+          "length": 9
+        },
+        {
+          "lookup": "/chosen/asmb"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-epoch",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "board-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "security-domain",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "unique-chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-production-status",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-security-mode",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-production-status-ap",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-security-mode-ap",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "internal-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "engineering-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "research-enabled",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "esdm-fuses",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "mix-n-match-prevention-status",
+          "length": 4
+        },
+        {
+          "secure_dt_lookup": "/chosen/manifest-properties"
+        }
+      ],
+      "bad_memory": []
+    },
+    "unpatched": {
+      "returned": true,
+      "runtime_trace": [
+        {
+          "pc": "0xfffffff0046e99d8",
+          "consumer_runtime_x19": "0xfffffff005cb14d8"
+        },
+        {
+          "pc": "0xfffffff0046e9ad8",
+          "consumer_runtime_x19": "0xfffffff005cb14d8"
+        }
+      ],
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "use-ddi-secure-boot",
+          "length": null
+        },
+        {
+          "node": "/chosen",
+          "property": "crypto-hash-method",
+          "length": 9
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "use-ddi-secure-boot",
+          "length": null
+        },
+        {
+          "node": "/chosen",
+          "property": "crypto-hash-method",
+          "length": 9
+        },
+        {
+          "lookup": "/chosen/asmb"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-epoch",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "board-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "security-domain",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "unique-chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-production-status",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-security-mode",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-production-status-ap",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-security-mode-ap",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "internal-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "engineering-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "research-enabled",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "esdm-fuses",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "mix-n-match-prevention-status",
+          "length": 4
+        },
+        {
+          "secure_dt_lookup": "/chosen/manifest-properties"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "boot-manifest-hash",
+          "length": 48
+        },
+        {
+          "lookup": "/chosen/manifest-properties"
+        },
+        {
+          "node": "/chosen/manifest-properties",
+          "property": "love",
+          "length": null
+        }
+      ],
+      "bad_memory": []
+    },
+    "candidate": {
+      "returned": true,
+      "runtime_trace": [
+        {
+          "pc": "0xfffffff0046e99d8",
+          "consumer_runtime_x19": "0xfffffff005cb14d8"
+        },
+        {
+          "pc": "0xfffffff0046e9ad8",
+          "consumer_runtime_x19": "0xfffffff005cb14d8"
+        }
+      ],
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "use-ddi-secure-boot",
+          "length": null
+        },
+        {
+          "node": "/chosen",
+          "property": "crypto-hash-method",
+          "length": 9
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "use-ddi-secure-boot",
+          "length": null
+        },
+        {
+          "node": "/chosen",
+          "property": "crypto-hash-method",
+          "length": 9
+        },
+        {
+          "lookup": "/chosen/asmb"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-epoch",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "board-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "security-domain",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "unique-chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-production-status",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-security-mode",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-production-status-ap",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-security-mode-ap",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "internal-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "engineering-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "research-enabled",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "esdm-fuses",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "mix-n-match-prevention-status",
+          "length": 4
+        },
+        {
+          "secure_dt_lookup": "/chosen/manifest-properties"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "boot-manifest-hash",
+          "length": 48
+        },
+        {
+          "lookup": "/chosen/manifest-properties"
+        },
+        {
+          "node": "/chosen/manifest-properties",
+          "property": "love",
+          "length": null
+        }
+      ],
+      "bad_memory": []
+    },
+    "missing-bnch": {
+      "returned": false,
+      "panic": "failed to read boot nonce hash: secure boot level = %#llx: %d",
+      "variadic_values": [
+        0,
+        2
+      ],
+      "runtime_trace": [
+        {
+          "pc": "0xfffffff0046e99d8",
+          "consumer_runtime_x19": "0xfffffff005cb14d8"
+        }
+      ],
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "use-ddi-secure-boot",
+          "length": null
+        },
+        {
+          "node": "/chosen",
+          "property": "crypto-hash-method",
+          "length": 9
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "use-ddi-secure-boot",
+          "length": null
+        },
+        {
+          "node": "/chosen",
+          "property": "crypto-hash-method",
+          "length": 9
+        },
+        {
+          "lookup": "/chosen/asmb"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-epoch",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "board-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "security-domain",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "unique-chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-production-status",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-security-mode",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-production-status-ap",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-security-mode-ap",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "internal-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "engineering-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "research-enabled",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "esdm-fuses",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "mix-n-match-prevention-status",
+          "length": 4
+        },
+        {
+          "secure_dt_lookup": "/chosen/manifest-properties"
+        }
+      ],
+      "bad_memory": []
+    },
+    "oversized-bnch": {
+      "returned": false,
+      "panic": "failed to read boot nonce hash: secure boot level = %#llx: %d",
+      "variadic_values": [
+        0,
+        84
+      ],
+      "runtime_trace": [
+        {
+          "pc": "0xfffffff0046e99d8",
+          "consumer_runtime_x19": "0xfffffff005cb14d8"
+        }
+      ],
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "use-ddi-secure-boot",
+          "length": null
+        },
+        {
+          "node": "/chosen",
+          "property": "crypto-hash-method",
+          "length": 9
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "use-ddi-secure-boot",
+          "length": null
+        },
+        {
+          "node": "/chosen",
+          "property": "crypto-hash-method",
+          "length": 9
+        },
+        {
+          "lookup": "/chosen/asmb"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-epoch",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "board-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "security-domain",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "unique-chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-production-status",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-security-mode",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-production-status-ap",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-security-mode-ap",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "internal-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "engineering-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "research-enabled",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "esdm-fuses",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "mix-n-match-prevention-status",
+          "length": 4
+        },
+        {
+          "secure_dt_lookup": "/chosen/manifest-properties"
+        }
+      ],
+      "bad_memory": []
+    },
+    "missing-chmh": {
+      "returned": false,
+      "panic": "failed to get previous stage manifest hash: %d",
+      "variadic_values": [
+        2,
+        0
+      ],
+      "runtime_trace": [
+        {
+          "pc": "0xfffffff0046e99d8",
+          "consumer_runtime_x19": "0xfffffff005cb14d8"
+        },
+        {
+          "pc": "0xfffffff0046e9ad8",
+          "consumer_runtime_x19": "0xfffffff005cb14d8"
+        }
+      ],
+      "events": [
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "use-ddi-secure-boot",
+          "length": null
+        },
+        {
+          "node": "/chosen",
+          "property": "crypto-hash-method",
+          "length": 9
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "use-ddi-secure-boot",
+          "length": null
+        },
+        {
+          "node": "/chosen",
+          "property": "crypto-hash-method",
+          "length": 9
+        },
+        {
+          "lookup": "/chosen/asmb"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-epoch",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "board-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "security-domain",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "unique-chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-production-status",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "certificate-security-mode",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-production-status-ap",
+          "length": 4
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "effective-security-mode-ap",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "internal-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "engineering-use-only-unit",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "research-enabled",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "esdm-fuses",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "chip-id",
+          "length": null
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "mix-n-match-prevention-status",
+          "length": 4
+        },
+        {
+          "secure_dt_lookup": "/chosen/manifest-properties"
+        },
+        {
+          "lookup": "/chosen"
+        },
+        {
+          "node": "/chosen",
+          "property": "boot-manifest-hash",
+          "length": null
+        }
+      ],
+      "bad_memory": []
+    }
+  },
+  "subsequent_queries": {
+    "unpatched": {
+      "amnm": {
+        "errno": 2,
+        "output_hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+      },
+      "chmh_errno": 2,
+      "chmh_length": 11936128518282651045,
+      "chmh_hex": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+    },
+    "candidate": {
+      "amnm": {
+        "errno": 0,
+        "output_hex": "00a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+      },
+      "chmh_errno": 0,
+      "chmh_length": 48,
+      "chmh_hex": "dd9e04060f28ee31af323bd6d63684bd2846ed72c4ded8f46bbc844f5ffcecddbe9f4be4ffc519d84398c53b67a4e199"
+    }
+  },
+  "correction_to_v26": "The real initializer prologue loads x19 from runtime+0x58, selecting Darwin IOKit, not the forced pmap runtime used in v26 slices. Missing AMNM explains the initial panic; cache incompatibility is reproduced for subsequent queries.",
+  "modeled_boundaries": [
+    "IORegistryEntry objects",
+    "OSData object methods/type casts",
+    "Darwin runtime logging"
+  ],
+  "device_accessed": false,
+  "bsd_entered": false,
+  "runtime_qualified": false
+}

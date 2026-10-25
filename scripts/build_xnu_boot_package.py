@@ -262,6 +262,8 @@ def main():
         UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 18','PROBE 19').replace('FIRST THREAD IOKIT BSD AND DISPLAY','IMAGE4 INPUTS TO BSD ROOT')
     if probe and revision>=28:
         UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 19','PROBE 20').replace('IMAGE4 INPUTS TO BSD ROOT','NATIVE PTHREAD OSKEXT TO BSD ROOT')
+    if probe and revision>=29:
+        UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 20','PROBE 21').replace('NATIVE PTHREAD OSKEXT TO BSD ROOT','ROOT RESOURCE AND MEDIA WAIT TRACE')
     if sha(fd) != FD_SHA or len(fd) != 3145728:
         raise ValueError('Firmware FD changed')
     if sha(shim) != SHIM_SHA:
@@ -379,6 +381,8 @@ def main():
         if revision>=28:
             report['pthread_startup']=json.loads(args.entry_probe.read_text())['pthread_startup']
             report['success_requires']=report['success_requires'].replace('PROBE19:','PROBE20:')+' IDs178/179=before/after native OSKext load; ID180=function table non-NULL; ID181=already registered. Loader lifecycle and initializer body require physical observation.'
+        if revision>=29:
+            report['success_requires']=report['success_requires'].replace('PROBE20:','PROBE21:')+' IDs182..211 trace native root calls and continuations. 184/185=IOBSD resource wait, 200/201=root matching wait. Blue without green is reachability only; wait implementation and IRQ/timer require separate evidence.'
         report['expected_screen_outcomes'] = [report['success_requires'], 'Any later XNU text or panic requires separate attribution; no band proves MMU enabled or iOS started']
         report['not_proven'] = ['Real nuwa execution of this candidate', 'MMU activation and arm_init', 'Native timer/interrupt driver readiness', 'Full donor/native ABI or iOS boot']
     output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')

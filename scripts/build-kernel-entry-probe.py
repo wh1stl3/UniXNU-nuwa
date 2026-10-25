@@ -38,8 +38,9 @@ def linux(p):return '/mnt/d/'+p.resolve().as_posix().split(':/',1)[1]
 
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--work',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--image4-launch',action='store_true',help='Integrate pinned AMNM/CHMH provider compatibility; requires measured launch ADT');p.add_argument('--pthread',action='store_true',help='Add audited iOS16 pthread and genuine OSKext load request before BSD');a=p.parse_args()
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--work',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--image4-launch',action='store_true',help='Integrate pinned AMNM/CHMH provider compatibility; requires measured launch ADT');p.add_argument('--pthread',action='store_true',help='Add audited iOS16 pthread and genuine OSKext load request before BSD');p.add_argument('--root-trace',action='store_true',help='Trace real root waits and matching without skipping calls');a=p.parse_args()
     if a.pthread and not a.image4_launch:raise ValueError('pthread continuation requires measured Image4 launch inputs')
+    if a.root_trace and not a.pthread:raise ValueError('Root trace requires pthread continuation')
     work=a.work.resolve();output=a.output.resolve()
     if not work.is_relative_to(ROOT/'out') or work.exists() or not output.is_relative_to(ROOT/'reports') or output.exists():raise ValueError('Fresh out and reports required')
     raw=INPUT.read_bytes()
@@ -197,7 +198,7 @@ def main():
                   g_text_end_minus_16=next(x['va']+x['filesize']-16 for x in m['segments'] if x['name']=='__TEXT'))
     if a.pthread:
         globals_.update(native_pthread_functions=symbols['_pthread_functions'],native_kext_load=symbols['_OSKextLoadKextWithIdentifier'])
-    dense_source,dense_constants,dense_sites,dense_edges=dense_generate(raw,m,backed,revision=28 if a.pthread else 25)
+    dense_source,dense_constants,dense_sites,dense_edges=dense_generate(raw,m,backed,revision=29 if a.root_trace else 28 if a.pthread else 25)
     constants.update(dense_constants)
     template=template.replace('// DENSE_BOOTSTRAP_STUBS',dense_source)
     source='\n'.join(f'.equ {k}, {v:#x}' for k,v in constants.items() if k.endswith('_word'))+'\n' \
@@ -276,7 +277,7 @@ def main():
             else:compat_segments.append(dict(name=seg['name'],before_sha256=sha(prelink[off:off+n]),after_sha256=sha(candidate[off:off+n]),bytes=n))
     target=work/'kernel-entry-probe.macho';target.write_bytes(candidate)
     report=dict(scope='Diagnostic binary instrumentation of fixed analysis prelink; not runtime qualification',input_sha256=EXPECTED,candidate=dict(path=target.relative_to(ROOT).as_posix(),sha256=sha(candidate),bytes=len(candidate)),probe=dict(va=hex(codeva),file_offset=fileoff,code_bytes=len(code),segment_bytes=len(payload),sha256=sha(payload),symbols={k:hex(v) for k,v in hooks.items() if k.startswith(('probe_','fault_stop','exception_stop'))}),patches=patches,original_changed_bytes=len(changed),preserved_donor_segments=preserved,commands=commands,source_sha256=sha(template.encode()),loadable=False,runtime_qualified=False,device_accessed=False,probe_zero=hex(hooks['probe_zero']),probe_flags=hex(hooks['probe_flags']),screen=dict(bands=[dict(stage=1,y=256,color='blue',means='XNU __start branch and diagnostic entry executed'),dict(stage=2,y=352,color='yellow',means='Bootstrap page tables generated; before translation control setup'),dict(stage=3,y=448,color='magenta',means='Passed BCM block with invalid write suppressed; before enabling MMU'),dict(stage=4,y=736,color='cyan',means='msr sctlr_el1 executed and the following fetch was translated (V=P identity)'),dict(stage=5,y=832,color='white',means='arm_init entered at the KVA: TTBR1 fetch and translation are live')],fault=dict(y=544,color='red',hex_rows=dict(ESR_EL1=608,ELR_EL1=640,FAR_EL1=672)),post_mmu_mapping=dict(l1_slot=2,virtual='0x80000000',physical='0x80000000',size='0x40000000',descriptor='0x6000008000040d',attributes='Device-nGnRnE (MAIR index 3), AF, PXN|UXN, installed only if the slot is invalid',source='probe_mmu stub before the SCTLR write',scratch='framebuffer base and line stride copied from boot_args into probe_scratch'),limitations=['Bands do not prove arm_init returned, arm_vm_init, kext start or iOS','Cyan and white depend on the diagnostic 1 GiB device mapping installed pre-MMU; if the L1 slot were occupied nothing is drawn and no mapping is changed','Fault logger active only through physical early vector; x20 must still be boot_args','Exact video ABI and MMIO/cache effects need nuwa trial']))
-    report['probe_revision']=28 if a.pthread else 27 if a.image4_launch else 25
+    report['probe_revision']=29 if a.root_trace else 28 if a.pthread else 27 if a.image4_launch else 25
     if a.image4_launch:
         report['image4_compatibility']=dict(scope='Only AMNM/CHMH provider routing; no authentication result or policy value patched',source_sha256=compat_sources,changed_segments=compat_segments,hooks=[dict(va=hex(va),symbol=label,target=hex(hooks[label])) for va,label in compat_sites],requires_measured_launch_context=True)
         report['probe']['symbols'].update({label:hex(hooks[label]) for _,label in compat_sites})

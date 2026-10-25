@@ -48,7 +48,7 @@ def validate(meta,kernel_sha):
     if not {'probe_entry','probe_tables','probe_mmu'}<=hooks:raise ValueError('Required entry/tables/MMU hooks missing')
     # Two header edits, one branch per hooked site, the BCM NOP and sixteen early vectors.
     compat=build.get('image4_compatibility',{}).get('hooks',[])
-    if compat and build.get('probe_revision') not in (27,28):raise ValueError('Image4 compatibility requires revision 27/28')
+    if compat and build.get('probe_revision') not in (27,28,29):raise ValueError('Image4 compatibility requires revision 27/28/29')
     overlay=[]
     if build.get('probe_revision',0)>=28:
         from pthread_prelink_overlay import load,ranges,SHA256

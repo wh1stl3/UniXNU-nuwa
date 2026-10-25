@@ -1,0 +1,479 @@
+{
+  "scope": "Forward analysis with loader-derived placement and the existing 1GiB owned RAM window.\nNative v22 mapping hooks execute; adversarial cases inject occupied or malformed descriptors before the hook. Normal case has no host page-table edits. No device commands. This is a model only.\n",
+  "candidate_sha256": "dc496abea6f8916e8c30e5e19a7a60b2be7708274c53d458d6568da2940aff61",
+  "input": {
+    "argsPA": "0x8c48a0000",
+    "treePA": "0x8c48a1000",
+    "treeKVA": "0xfffffff0084a1000",
+    "topOfKernelData": "0x8c48a8000",
+    "owned_window": "0x40000000",
+    "adt_sha256": "b6bb6c88ebc600c4e33acd8c0be6f400e1feb59653ff92a42fabe08ef3a4f801",
+    "loader_memSizeActual_offset": 1144
+  },
+  "events": [
+    {
+      "site": "_arm_vm_init",
+      "pc": "0xfffffff0073be014",
+      "x0": "0x0",
+      "x1": "0xfffffff00715c7c0",
+      "tcr": "0x22a51a251a",
+      "ttbr0": "0x8c355e000",
+      "ttbr1": "0x8c355f000",
+      "fb": {
+        "mapped": true,
+        "pa": "0xb8000000",
+        "rows": [
+          "0x6000008000040d"
+        ]
+      },
+      "probe": {
+        "mapped": true,
+        "pa": "0x8c4889000",
+        "rows": [
+          "0x8c3561003",
+          "0x8c4800601"
+        ]
+      }
+    },
+    {
+      "site": "first-table-bzero",
+      "pc": "0xfffffff0073be1f0",
+      "x0": "0xfffffff0084a8000",
+      "x1": "0x1000",
+      "tcr": "0x22a51a251a",
+      "ttbr0": "0x8c355e000",
+      "ttbr1": "0x8c355f000",
+      "fb": {
+        "mapped": true,
+        "pa": "0xb8000000",
+        "rows": [
+          "0x6000008000040d"
+        ]
+      },
+      "probe": {
+        "mapped": true,
+        "pa": "0x8c4889000",
+        "rows": [
+          "0x8c3561003",
+          "0x8c4800601"
+        ]
+      }
+    },
+    {
+      "site": "before-TTBR0-switch",
+      "pc": "0xfffffff0073beb60",
+      "x0": "0x8c48a9000",
+      "x1": "0xfffffff007b33e00",
+      "tcr": "0x22a51a251a",
+      "ttbr0": "0x8c355e000",
+      "ttbr1": "0x8c355f000",
+      "fb": {
+        "mapped": true,
+        "pa": "0xb8000000",
+        "rows": [
+          "0x6000008000040d"
+        ]
+      },
+      "probe": {
+        "mapped": true,
+        "pa": "0x8c4889000",
+        "rows": [
+          "0x8c3561003",
+          "0x8c4800601"
+        ]
+      }
+    },
+    {
+      "site": "_set_mmu_ttb_alternate",
+      "pc": "0xfffffff0073cb23c",
+      "x0": "0x8c48a9000",
+      "x1": "0xfffffff007b33e00",
+      "tcr": "0x22a51a251a",
+      "ttbr0": "0x8c355e000",
+      "ttbr1": "0x8c355f000",
+      "fb": {
+        "mapped": true,
+        "pa": "0xb8000000",
+        "rows": [
+          "0x6000008000040d"
+        ]
+      },
+      "probe": {
+        "mapped": true,
+        "pa": "0x8c4889000",
+        "rows": [
+          "0x8c3561003",
+          "0x8c4800601"
+        ]
+      }
+    },
+    {
+      "site": "before-TTBR1-switch",
+      "pc": "0xfffffff0073beb74",
+      "x0": "0x8c48a8000",
+      "x1": "0xfffffff007b33e00",
+      "tcr": "0x22a51a251a",
+      "ttbr0": "0x8c355e000",
+      "ttbr1": "0x8c48a9000",
+      "fb": {
+        "mapped": true,
+        "pa": "0xb8000000",
+        "rows": [
+          "0x6000008000040d"
+        ]
+      },
+      "probe": {
+        "mapped": true,
+        "pa": "0x8c4889000",
+        "rows": [
+          "0x20000008c48aa003",
+          "0x8c48b4003",
+          "0x400008c4889783"
+        ]
+      }
+    },
+    {
+      "site": "_set_mmu_ttb",
+      "pc": "0xfffffff0073cb24c",
+      "x0": "0x8c48a8000",
+      "x1": "0xfffffff007b33e00",
+      "tcr": "0x22a51a251a",
+      "ttbr0": "0x8c355e000",
+      "ttbr1": "0x8c48a9000",
+      "fb": {
+        "mapped": true,
+        "pa": "0xb8000000",
+        "rows": [
+          "0x6000008000040d"
+        ]
+      },
+      "probe": {
+        "mapped": true,
+        "pa": "0x8c4889000",
+        "rows": [
+          "0x20000008c48aa003",
+          "0x8c48b4003",
+          "0x400008c4889783"
+        ]
+      }
+    },
+    {
+      "site": "after-TTBR-switches",
+      "pc": "0xfffffff0073beb7c",
+      "x0": "0x8c48a8000",
+      "x1": "0xfffffff007b33e00",
+      "tcr": "0x22a51a251a",
+      "ttbr0": "0x8c48a8000",
+      "ttbr1": "0x8c48a9000",
+      "fb": {
+        "mapped": true,
+        "pa": "0xb8000000",
+        "rows": [
+          "0x6000008000040d"
+        ]
+      },
+      "probe": {
+        "mapped": true,
+        "pa": "0x8c4889000",
+        "rows": [
+          "0x20000008c48aa003",
+          "0x8c48b4003",
+          "0x400008c4889783"
+        ]
+      }
+    },
+    {
+      "site": "_pmap_bootstrap",
+      "pc": "0xfffffff0073a36c4",
+      "x0": "0xfffffff071800000",
+      "x1": "0xfffffff007b33e00",
+      "tcr": "0x22a51a251a",
+      "ttbr0": "0x8c48a8000",
+      "ttbr1": "0x8c48a9000",
+      "fb": {
+        "mapped": true,
+        "pa": "0xb8000000",
+        "rows": [
+          "0x6000008000040d"
+        ]
+      },
+      "probe": {
+        "mapped": true,
+        "pa": "0x8c4889000",
+        "rows": [
+          "0x20000008c48aa003",
+          "0x8c48b4003",
+          "0x400008c4889783"
+        ]
+      }
+    },
+    {
+      "site": "_PE_create_console",
+      "pc": "0xfffffff0079091b0",
+      "x0": "0x0",
+      "x1": "0xfffffff00703ed61",
+      "tcr": "0x22a51a251a",
+      "ttbr0": "0x8c48a8000",
+      "ttbr1": "0x8c48a9000",
+      "fb": {
+        "mapped": true,
+        "pa": "0xb8000000",
+        "rows": [
+          "0x6000008000040d"
+        ]
+      },
+      "probe": {
+        "mapped": true,
+        "pa": "0x8c4889000",
+        "rows": [
+          "0x20000008c48aa003",
+          "0x8c48b4003",
+          "0x400008c4889783"
+        ]
+      }
+    },
+    {
+      "site": "_initialize_screen",
+      "pc": "0xfffffff007398384",
+      "x0": "0xfffffff0071eab80",
+      "x1": "0x1",
+      "tcr": "0x22a51a251a",
+      "ttbr0": "0x8c48a8000",
+      "ttbr1": "0x8c48a9000",
+      "fb": {
+        "mapped": true,
+        "pa": "0xb8000000",
+        "rows": [
+          "0x6000008000040d"
+        ]
+      },
+      "probe": {
+        "mapped": true,
+        "pa": "0x8c4889000",
+        "rows": [
+          "0x20000008c48aa003",
+          "0x8c48b4003",
+          "0x400008c4889783"
+        ]
+      }
+    },
+    {
+      "site": "_kernel_bootstrap",
+      "pc": "0xfffffff00729e804",
+      "x0": "0xfffffff00716e5a0",
+      "x1": "0x0",
+      "tcr": "0x22a51a251a",
+      "ttbr0": "0x8c48a8000",
+      "ttbr1": "0x8c48a9000",
+      "fb": {
+        "mapped": true,
+        "pa": "0xb8000000",
+        "rows": [
+          "0x6000008000040d"
+        ]
+      },
+      "probe": {
+        "mapped": true,
+        "pa": "0x8c4889000",
+        "rows": [
+          "0x20000008c48aa003",
+          "0x8c48b4003",
+          "0x400008c4889783"
+        ]
+      }
+    }
+  ],
+  "error": null,
+  "pc": "0xfffffff00729e804",
+  "nearest": "_kernel_bootstrap+0x0",
+  "bad_memory": [],
+  "final_fb": {
+    "mapped": true,
+    "pa": "0xb8000000",
+    "rows": [
+      "0x6000008000040d"
+    ]
+  },
+  "final_probe": {
+    "mapped": true,
+    "pa": "0x8c4889000",
+    "rows": [
+      "0x20000008c48aa003",
+      "0x8c48b4003",
+      "0x400008c4889783"
+    ]
+  },
+  "native_vector_mapping": {
+    "mapped": true,
+    "pa": "0x8c37c2000",
+    "rows": [
+      "0x20000008c48aa003",
+      "0x8c48b1003",
+      "0x500008c37c2683"
+    ]
+  },
+  "checks": [
+    {
+      "name": "TTBR1 call preserves GPR/SP/NZCV and native LR",
+      "passed": true
+    },
+    {
+      "name": "TTBR0 call preserves GPR/SP/NZCV and native LR",
+      "passed": true
+    },
+    {
+      "name": "Native cold path passes pmap probe after TTBR reconstruction",
+      "passed": true
+    },
+    {
+      "name": "Code RO executable and data RW NX map exact probe physical pages",
+      "passed": true
+    },
+    {
+      "name": "Native cold path passes console and reaches kernel_bootstrap",
+      "passed": true
+    }
+  ],
+  "case": "normal",
+  "stop_reason": null,
+  "transition": {
+    "root1": 37657153536,
+    "leaves": [
+      37657199688,
+      37657199696,
+      37657199704,
+      37657199712,
+      37657199720,
+      37657199728,
+      37657199736,
+      37657199744,
+      37657199752,
+      37657199760,
+      37657199768,
+      37657199776,
+      37657199784,
+      37657199792,
+      37657199800,
+      37657199808,
+      37657199816,
+      37657199824,
+      37657199832,
+      37657199840
+    ],
+    "before": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "registers": [
+      37657153536,
+      18446744005119262208,
+      24,
+      18446744005111446632,
+      3,
+      18446744005119261912,
+      18446744005129432632,
+      18446744005119261912,
+      37657153536,
+      192,
+      0,
+      0,
+      1,
+      0,
+      999424000,
+      1599975491,
+      1754101221,
+      18446744005119260848,
+      52674560,
+      18446744005119262208,
+      1,
+      18446744005108944896,
+      18446744005108944896,
+      18446744005108944896,
+      18446744005108944896,
+      18446744005108944896,
+      18446744005108942784,
+      18446744005108942464,
+      18446744005108944896,
+      18446744005119262496,
+      18446744005111442180
+    ],
+    "sp": 18446744005119262160,
+    "nzcv": 2147483648,
+    "after": [
+      18014436166506371,
+      18014436166510467,
+      18014436166514563,
+      18014436166518659,
+      18014436166522755,
+      18014436166526851,
+      18014436166530947,
+      18014436166535043,
+      18014436166539139,
+      18014436166543235,
+      18014436166547331,
+      18014436166551427,
+      18014436166555523,
+      18014436166559619,
+      18014436166563715,
+      18014436166567811,
+      18014436166571907,
+      27021635421316867,
+      27021635421320963,
+      27021635421325059
+    ],
+    "root0": 37657149440,
+    "registers0": [
+      37657149440,
+      18446744005119262208,
+      24,
+      18446744005111446632,
+      3,
+      18446744005119261912,
+      18446744005129432632,
+      18446744005119261912,
+      37657149440,
+      192,
+      0,
+      0,
+      1,
+      0,
+      999424000,
+      1599975491,
+      1754101221,
+      18446744005119260848,
+      52674560,
+      18446744005108942448,
+      1,
+      18446744005108944896,
+      18446744005108944896,
+      18446744005108944896,
+      18446744005108944896,
+      18446744005108944896,
+      18446744005108942784,
+      18446744005108942464,
+      18446744005108944896,
+      18446744005119262496,
+      18446744005111442276
+    ],
+    "sp0": 18446744005119262160,
+    "nzcv0": 2147483648
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "scope": "Inspect the pinned restore APFS through a read-only host mount, not nuwa.",
+  "device_accessed": false,
+  "source_sha256": "d180c38dcc754bc079cc92a40f58a4b5fad2c2b7ce72cf5e64a117453fd7c90a",
+  "apfs_block_size": 4096,
+  "apfs_blocks": 26112,
+  "bytes": 106954752,
+  "tool_sha256": "4196d312862f49574fa5b0c870542544507b59ed2d93010be12cdbe0e1394922",
+  "tool_commit": "66b86bd525e8cb90f9012543be89b1f092b75cf3",
+  "tool_license": "GPL-2.0",
+  "mounted_read_only": false,
+  "mount_cleaned_up": false,
+  "commands": [
+    {
+      "argv": [
+        "/mnt/d/Code/PortingiOS/common/tools/apfs-fuse-linux/bin/apfs-fuse",
+        "-o",
+        "ro",
+        "/mnt/d/Code/UniXNU-nuwa/out/root-mainline-v29/restore/restore-payload.bin",
+        "/mnt/d/Code/UniXNU-nuwa/out/root-mainline-v29/restore/readonly-mount"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "fusermount: mounting over filesystem type 0x01021997 is forbidden\n"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # STATUS
 
-更新：2026-10-25。**PROBE20实机已越过pthread初始化并进入IOFindBSDRoot，尚未进入vfs_mountroot。当前主线是root发现/存储输入。20:45:31北京时间确认已恢复Android完成1、A槽、三分区SHA与试前一致，无待恢复任务。**
+更新：2026-10-25。**PROBE20实机进入IOFindBSDRoot，未到挂载；PROBE21离线完成并获本包录像/恢复就绪确认，新鲜preflight确认Android1/A槽/三SHA与v28后验一致，即将单次临时boot。** 主线转root内部等待定位与真实介质输入。尚未取得PROBE21画面/恢复后验。
 
 ## 实机与恢复
 
@@ -19,6 +19,10 @@ ID180品红、181黄：BSD入口时真实pthread表已经注册，备用显式OS
 nonce来自主机OS CSPRNG，BNCH为原像SHA-384；非Apple诊断manifest绑定FD/shim/内核/基础ADT，不是Apple IM4M/TSS、硬件nonce或防重放证明。loadable=false/runtime_qualified=false，未设置任何*_verified。旧包19及其报告不改。
 
 ## 当前判断与下一步
+
+PROBE21内核dc496abe，新增ID182–211为15对原生root调用/后继，区分184/185初始IOBSD资源等待、200/201介质等待和RAMDisk/根交接。19项串行任务全部通过（860差分/25Image4/6pthread/31绑定），独立重建逐字节一致，实际镜像回读及旧PROBE20复验通过。权威包reports/xnu-first-entry/entry-probe-21.json；镜像f005f7edcc9e89db577ab171829c6b28c53e7df36eb148c35618fe6ceb629760，70,266,880B；ADT b6bb6c88ebc600c4e33acd8c0be6f400e1feb59653ff92a42fabe08ef3a4f801。代码未跳过原生等待，不提供假root结果。设备启动前日志门R-013经本包用户确认解除；不重复启动20。
+
+同一固定iOS16清单的RestoreRamDisk已下载并验ZIP/清单摘要，真实102MiB APFS payload d180c38d（IM4P ac9634ab）。主机只读APFS检查含真实launchd/dyld/restored_external，已卸载；初次drvfs挂载失败与原生WSL成功都保留。它不是完整iOS或nuwa挂载证明。后续真实md0方案仍需APFS驱动和运输容量验证，当前64MiB FAT容不下102MiB镜像加内核；未改XNU窗口、板值或IPSW身份。完整SHA/命令/标记见[v29记录](operations/2026-10-25-v29-root-waits.md)。
 
 7项root输入审计确认：出货菜单只有-v，实际ADT没有root-matching/boot-uuid或RAMDisk，原生IOFindBSDRoot默认等待Content=Apple_HFS的IOMedia。**首要原因是当前包缺少可选择的真实root提供路径。** 照片只能定位在IOFindBSDRoot内部，尚不能区分初始IOBSD资源等待、IOMedia等待和计时器/唤醒停滞；IRQ/计时器真实递送仍未验证。
 

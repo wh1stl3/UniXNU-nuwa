@@ -14,6 +14,14 @@
 | --- | --- | --- |
 | — | 当前无待批准项；启动前仍核对具体日志及恢复路径 | — |
 
+## R-013 · PROBE21当轮过程日志与恢复条件（answered A，本包就绪）
+
+AGENTS第3.2/9节要求临时启动前有具体过程日志和恢复路径。PROBE21离线已完成，新的30个root内部点需实际画面才能区分等待阶段，不能以ACK替代。本包未确认录像条件时停在设备动作前，离线检查继续完成。
+
+候选A：用户本包全程录像、菜单电源Enter、拍停屏并可按键恢复；刷新Android/三SHA预检、即时通知后仅一次临时boot，采集后原厂临时boot恢复及三SHA后验。代价是需要本轮在场，收益是能分清初始IOBSD与介质等待。候选B：保持Android，暂不启动，保留PROBE21离线结果并继续真实root介质准备；代价是不能确定内部等待位置。
+
+倾向A；最小确认仅为PROBE21镜像f005f7ed的当轮可观测/可恢复条件及单次临时boot，不含flash/erase/改槽、内存字段、IPSW身份或*_verified。用户已答复“现在可以，PROBE21 录像与恢复就绪”；新鲜preflight确认Android1/A槽/三SHA与v28后验一致。该日志门解除，按A推进。
+
 ## R-012 · ADT 的 dram_size / owned_memory_size 取值（approved A，已写入 board.toml）
 
 **执行结果（2026-10-24 18:40）**：用户回复「批准A继续推进」，按批准的最小范围只写入两个受审字段：`[payload] dram_size = "0x240000000"`、`[payload.adt] owned_memory_size = "0x40000000"`。未置任何 `*_verified = true`，未改 bringup-plan/donor/固件/feed/XNU 窗口，`example = true` 保持，本轮无设备动作。

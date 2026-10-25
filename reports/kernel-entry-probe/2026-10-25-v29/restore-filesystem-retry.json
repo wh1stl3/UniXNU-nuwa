@@ -1,0 +1,89 @@
+{
+  "scope": "Inspect the pinned restore APFS through a read-only host mount, not nuwa.",
+  "device_accessed": false,
+  "source_sha256": "d180c38dcc754bc079cc92a40f58a4b5fad2c2b7ce72cf5e64a117453fd7c90a",
+  "apfs_block_size": 4096,
+  "apfs_blocks": 26112,
+  "bytes": 106954752,
+  "tool_sha256": "4196d312862f49574fa5b0c870542544507b59ed2d93010be12cdbe0e1394922",
+  "tool_commit": "66b86bd525e8cb90f9012543be89b1f092b75cf3",
+  "tool_license": "GPL-2.0",
+  "mounted_read_only": true,
+  "mount_cleaned_up": true,
+  "commands": [
+    {
+      "argv": [
+        "/mnt/d/Code/PortingiOS/common/tools/apfs-fuse-linux/bin/apfs-fuse",
+        "-o",
+        "ro",
+        "/mnt/d/Code/UniXNU-nuwa/out/root-mainline-v29/restore/restore-payload.bin",
+        "/var/tmp/unixnu-nuwa-restore-v29-1000"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "mountpoint",
+        "-q",
+        "/var/tmp/unixnu-nuwa-restore-v29-1000"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "fusermount",
+        "-u",
+        "/var/tmp/unixnu-nuwa-restore-v29-1000"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "top_level": [
+    "System",
+    "bin",
+    "dev",
+    "etc",
+    "mnt1",
+    "mnt2",
+    "mnt3",
+    "mnt4",
+    "mnt5",
+    "mnt6",
+    "mnt7",
+    "mnt8",
+    "mnt9",
+    "private",
+    "sbin",
+    "usr",
+    "var"
+  ],
+  "files": {
+    "sbin/launchd": {
+      "bytes": 541600,
+      "sha256": "12370e5ee35bf28ae479b6c4b4455f4f4693ab803e37c5eb3032537c18cac61c",
+      "magic": "cffaedfe0c0000010000000002000000"
+    },
+    "usr/lib/dyld": {
+      "bytes": 922912,
+      "sha256": "5806834564fe6462ae981d0915d612b1eb2f6f168822b5d278bee56254933757",
+      "magic": "cffaedfe0c0000010000000007000000"
+    },
+    "usr/local/bin/restored_external": {
+      "bytes": 2090848,
+      "sha256": "9c544ba32733301b2ebdd048223ea5da767b5358e07ed9fd93ce69820e027020",
+      "magic": "cffaedfe0c0000010000000002000000"
+    },
+    "System/Library/CoreServices/SystemVersion.plist": {
+      "bytes": 543,
+      "sha256": "c4d48067afc42d00626c7807ff4ff847d90f2b754b4f8302e42300cdc7a5384d",
+      "magic": "3c3f786d6c2076657273696f6e3d2231"
+    }
+  },
+  "status": "host-readonly-inspection-complete"
+}

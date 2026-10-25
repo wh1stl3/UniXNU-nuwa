@@ -1,0 +1,2655 @@
+{
+  "scope": "Diagnostic XNU entry probe with BCM-only MMIO suppressed and early exception display; no device action",
+  "approval": "XNU-FIRST-ENTRY-ANALYSIS",
+  "run_id": null,
+  "image_path": "out/trial-boot/xnu-entry-probe-21-root/boot-xnu-first-entry.img",
+  "image_sha256": "f005f7edcc9e89db577ab171829c6b28c53e7df36eb148c35618fe6ceb629760",
+  "image_bytes": 70266880,
+  "header_version": 3,
+  "xnu_included": true,
+  "fat_included": true,
+  "appended_dtb": false,
+  "adt_included": true,
+  "original_boot_sha256": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+  "fd_sha256": "2d606985ad768dcfaab66c2b28073c0a4c2820126b42b23286623fdc450e848f",
+  "shim_sha256": "8a3b54765c895a0366539130fdf6e4e4a01e364fe7de067a38d0193606f9d462",
+  "kernel_bytes": 58421248,
+  "kernel_sha256": "dc496abea6f8916e8c30e5e19a7a60b2be7708274c53d458d6568da2940aff61",
+  "fat_bytes": 67108864,
+  "fat_sha256": "46e83f09249c0d64723ddcc53e51cb1fbe8ed1f2839e937cb850c48aa707fe02",
+  "read_file_bytes": 14428,
+  "read_file_sha256": "b6bb6c88ebc600c4e33acd8c0be6f400e1feb59653ff92a42fabe08ef3a4f801",
+  "success_requires": "PROBE21: power-key Enter; yellow entry / magenta context checkpoints / blue call / green continuation. Grid uses 24-pixel row pitch. A02A=mismatched pixels of the white/cyan band at y224, A02B=last checking stage, A02C=1 native vectors restored (2=rejected). CPU readback is not physical scanout proof. Image4 native initializer RET is modeled only; ID89 is MAC continuation, ID6 is BSD entry, ID7/8 are root discovery/mount entry. Non-Apple host-measured launch inputs; no hardware replay protection or Apple trusted-boot claim. IDs178/179=before/after native OSKext load; ID180=function table non-NULL; ID181=already registered. Loader lifecycle and initializer body require physical observation. IDs182..211 trace native root calls and continuations. 184/185=IOBSD resource wait, 200/201=root matching wait. Blue without green is reachability only; wait implementation and IRQ/timer require separate evidence.",
+  "firmware": {
+    "source": "CI 40014018074 upstream-merged profile (no diagnostic driver)",
+    "fd_bytes": 3145728,
+    "shim_bytes": 112
+  },
+  "kernel_source": {
+    "path": "out\\kernel-entry-probe-29-root\\kernel-entry-probe.macho",
+    "source": "hash-pinned early-security prelink plus bounded native entry diagnostic patches",
+    "loadable": false,
+    "runtime_qualified": false
+  },
+  "adt_detail": {
+    "command": [
+      "reuse-exact-tested-adt",
+      "D:\\Code\\UniXNU-nuwa\\out\\root-mainline-v29\\launch\\kernel.macho.adt"
+    ],
+    "stdout": "Exact ADT bytes retained",
+    "dram_size": "0x240000000",
+    "owned_memory_size": "0x40000000",
+    "cpu_regs": "0,256,512,768,1024,1280,1536,1792",
+    "psci_method": "smc",
+    "sidecar_placeholders": false,
+    "note": "no RAMDisk/TrustCache/GpuAddon placeholder, so the loader takes the no-sidecar path in DarwinBoot.c:561-567"
+  },
+  "fat_detail": {
+    "config": {
+      "version": 1,
+      "boot": {
+        "timeout": 60,
+        "default": "xnu"
+      },
+      "kits": {
+        "autoload": false
+      },
+      "ui": {
+        "title": "NUWA XNU ENTRY PROBE 21"
+      },
+      "entry": [
+        {
+          "id": "xnu",
+          "title": "XNU ENTRY PROBE 21 - ROOT RESOURCE AND MEDIA WAIT TRACE",
+          "type": "xnu",
+          "path": "Payloads/kernel.macho",
+          "args": "-v"
+        }
+      ]
+    },
+    "exact_files": [
+      "EFI/UniXNU/unixnu.toml",
+      "EFI/UniXNU/Payloads/kernel.macho",
+      "EFI/UniXNU/Payloads/kernel.macho.adt"
+    ]
+  },
+  "container_readback": {
+    "kernel_offset": 4096,
+    "ramdisk_offset": 3153920,
+    "header_changed_offsets": [
+      8,
+      9,
+      10,
+      11,
+      12,
+      15,
+      20,
+      40
+    ],
+    "original_cmdline_preserved": true
+  },
+  "expected_screen_outcomes": [
+    "PROBE21: power-key Enter; yellow entry / magenta context checkpoints / blue call / green continuation. Grid uses 24-pixel row pitch. A02A=mismatched pixels of the white/cyan band at y224, A02B=last checking stage, A02C=1 native vectors restored (2=rejected). CPU readback is not physical scanout proof. Image4 native initializer RET is modeled only; ID89 is MAC continuation, ID6 is BSD entry, ID7/8 are root discovery/mount entry. Non-Apple host-measured launch inputs; no hardware replay protection or Apple trusted-boot claim. IDs178/179=before/after native OSKext load; ID180=function table non-NULL; ID181=already registered. Loader lifecycle and initializer body require physical observation. IDs182..211 trace native root calls and continuations. 184/185=IOBSD resource wait, 200/201=root matching wait. Blue without green is reachability only; wait implementation and IRQ/timer require separate evidence.",
+    "Any later XNU text or panic requires separate attribution; no band proves MMU enabled or iOS started"
+  ],
+  "recovery": "the original stock boot is preserved as the image header; after the trial the stock boot is loaded back and Android must report boot_completed=1 with the same boot_a/vendor_boot_a/init_boot_a digests",
+  "not_proven": [
+    "Real nuwa execution of this candidate",
+    "MMU activation and arm_init",
+    "Native timer/interrupt driver readiness",
+    "Full donor/native ABI or iOS boot"
+  ],
+  "device_executed": false,
+  "entry_probe": {
+    "build": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v29/build.json",
+      "sha256": "d8dbeddfa48aecca6da33aee0f7eb176065e0f302b81c57404e3cb0f777a9fa3"
+    },
+    "software": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v29/software.json",
+      "sha256": "645ffc76e76f14a005a8921afa0fbe9e173b0c6c7c21b728bbef9f1df6ed329b"
+    },
+    "transparency": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v29/transparency.json",
+      "sha256": "2bde3f57c0e6203cd8c468e05573b31523374d7afbcd92d7a4d2a9db48c66353"
+    },
+    "wfe": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v29/wfe.json",
+      "sha256": "b956e6bc0a8f7954263790b27cf4316140b010843008029f8b6241e4ccb6afea"
+    },
+    "read-sites": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v29/read-sites.json",
+      "sha256": "f9677266c0c6760ddc5eed614ffb513d0e783d67fc0eb147c082d9e314451e64"
+    },
+    "loader": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v29/loader.json",
+      "sha256": "166ff450b2f90c1c8baf0eb18e7cc7b9f1ae7e5478653ed01d0c1e2517a27367"
+    },
+    "mapping": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v29/mapping.json",
+      "sha256": "b23bdf162159dd5a719bff30480fc5c33dc073df02e912f8ed7f3586d267b7b6"
+    },
+    "transition-normal": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v29/transition-normal.json",
+      "sha256": "593ba11cd1e0ca93ac492192febe487efc0a36e943027ec011ab99e2bc40717a"
+    },
+    "transition-occupied-probe": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v29/transition-occupied-probe.json",
+      "sha256": "0aeb5dc466a9d54ff7ee45f5d47c148726220f596090070fe57f6de51765da9a"
+    },
+    "transition-bad-topology": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v29/transition-bad-topology.json",
+      "sha256": "f420e2c1bf0dca1cb4776e87541a2f7078631435983daeb7c808674a048ab8a6"
+    },
+    "transition-occupied-fb": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v29/transition-occupied-fb.json",
+      "sha256": "3537f2beec6345b32e8f4c4d43ea667f0d8eba29b6a1161dd1b9e44a0f40680c"
+    },
+    "console-policy": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v29/console-policy.json",
+      "sha256": "1c3334b399bbd0404b608d84ac9f437d96722459e0ec29ae638975b25d7a73d9"
+    },
+    "renderer-bounds": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v29/renderer-bounds.json",
+      "sha256": "158faab020c2a68998d8d3f42a295cda046814fcf149748b1dcf3397d584444a"
+    },
+    "context-display": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v29/context-display.json",
+      "sha256": "13cfb42d26d9bab0855aa3027fef3d077393f41680ece1a5c3e6aa3e35b5e8a5"
+    },
+    "vectors": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v29/vectors.json",
+      "sha256": "8b92e82083ebd04513fd29b5d39aa67e420aafc8e1521a7bd9641e98fd9d4de6"
+    },
+    "image4-launch": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v29/image4-launch.json",
+      "sha256": "14a34b8fdba593c0f5e7179689c34790957dbbc695cc0aeb193939162c612d54"
+    },
+    "launch-context": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v29/launch-context.json",
+      "sha256": "40ae4f34f68cf4f21fcd588404f4b0706118ef104cce49790e2f416bf84ea465"
+    },
+    "pthread-startup": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v29/pthread-startup.json",
+      "sha256": "e480dc99d3f8c8fa7980c45c7fabe472d2ea2a08bf8058efa4000a6c5dea272d"
+    }
+  },
+  "probe_screen": {
+    "stage_tiles": {
+      "width": 96,
+      "height": 32,
+      "x_formula": "((logical_y-256)//512)*96",
+      "y_formula": "256+(logical_y-256)%512"
+    },
+    "data": {
+      "x": 256,
+      "value_x": 352,
+      "width": 480,
+      "glyph_pixel_scale": 4,
+      "glyph_height": 20,
+      "tag": "A000 + logical_y//32",
+      "y_formula": "224+28*((logical_y-1088)//32)",
+      "counter_y": 756
+    },
+    "records": {
+      "1088": {
+        "tag": "A022",
+        "y": 224
+      },
+      "1152": {
+        "tag": "A024",
+        "y": 280
+      },
+      "1184": {
+        "tag": "A025",
+        "y": 308
+      },
+      "1216": {
+        "tag": "A026",
+        "y": 336
+      },
+      "1248": {
+        "tag": "A027",
+        "y": 364
+      },
+      "1280": {
+        "tag": "A028",
+        "y": 392
+      },
+      "1312": {
+        "tag": "A029",
+        "y": 420
+      },
+      "1344": {
+        "tag": "A02A",
+        "y": 448
+      },
+      "1376": {
+        "tag": "A02B",
+        "y": 476
+      },
+      "1408": {
+        "tag": "A02C",
+        "y": 504
+      },
+      "1440": {
+        "tag": "A02D",
+        "y": 532
+      },
+      "1472": {
+        "tag": "A02E",
+        "y": 560
+      },
+      "1504": {
+        "tag": "A02F",
+        "y": 588
+      },
+      "1536": {
+        "tag": "A030",
+        "y": 616
+      },
+      "1568": {
+        "tag": "A031",
+        "y": 644
+      },
+      "1600": {
+        "tag": "A032",
+        "y": 672
+      },
+      "1632": {
+        "tag": "A033",
+        "y": 700
+      },
+      "1664": {
+        "tag": "A034",
+        "y": 728
+      }
+    },
+    "max_written_row": 799,
+    "limitations": [
+      "No output is guaranteed after pmap removes the diagnostic framebuffer mapping",
+      "TPIDR_EL1 shim is an intentional behaviour change, distinct from transparent hooks",
+      "Stage tiles and field IDs must be read using this revision layout"
+    ],
+    "dense_bootstrap": {
+      "edges": [
+        {
+          "id": 0,
+          "function": "_load_context",
+          "callee": "_load_context",
+          "phase": "entry",
+          "call": "0xfffffff00729f098",
+          "site": "0xfffffff00729f098",
+          "x": 832,
+          "y": 256,
+          "color": "0xffffff00"
+        },
+        {
+          "id": 1,
+          "function": "_machine_load_context",
+          "callee": "_machine_load_context",
+          "phase": "entry",
+          "call": "0xfffffff0073c73e0",
+          "site": "0xfffffff0073c73e0",
+          "x": 880,
+          "y": 256,
+          "color": "0xffffff00"
+        },
+        {
+          "id": 2,
+          "function": "_thread_continue",
+          "callee": "_thread_continue",
+          "phase": "entry",
+          "call": "0xfffffff0072933fc",
+          "site": "0xfffffff0072933fc",
+          "x": 928,
+          "y": 256,
+          "color": "0xffffff00"
+        },
+        {
+          "id": 3,
+          "function": "_call_continuation",
+          "callee": "_call_continuation",
+          "phase": "entry",
+          "call": "0xfffffff0073cddcc",
+          "site": "0xfffffff0073cddcc",
+          "x": 976,
+          "y": 256,
+          "color": "0xffffff00"
+        },
+        {
+          "id": 4,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_kernel_bootstrap_thread",
+          "phase": "entry",
+          "call": "0xfffffff007944b18",
+          "site": "0xfffffff007944b18",
+          "x": 1024,
+          "y": 256,
+          "color": "0xffffff00"
+        },
+        {
+          "id": 5,
+          "function": "_PE_init_iokit",
+          "callee": "_PE_init_iokit",
+          "phase": "entry",
+          "call": "0xfffffff0079089cc",
+          "site": "0xfffffff0079089cc",
+          "x": 1072,
+          "y": 256,
+          "color": "0xffffff00"
+        },
+        {
+          "id": 6,
+          "function": "_bsd_init",
+          "callee": "_bsd_init",
+          "phase": "entry",
+          "call": "0xfffffff0076729e0",
+          "site": "0xfffffff0076729e0",
+          "x": 1120,
+          "y": 256,
+          "color": "0xffffff00"
+        },
+        {
+          "id": 7,
+          "function": "_IOFindBSDRoot",
+          "callee": "_IOFindBSDRoot",
+          "phase": "entry",
+          "call": "0xfffffff0078e331c",
+          "site": "0xfffffff0078e331c",
+          "x": 1168,
+          "y": 256,
+          "color": "0xffffff00"
+        },
+        {
+          "id": 8,
+          "function": "_vfs_mountroot",
+          "callee": "_vfs_mountroot",
+          "phase": "entry",
+          "call": "0xfffffff00744377c",
+          "site": "0xfffffff00744377c",
+          "x": 1216,
+          "y": 256,
+          "color": "0xffffff00"
+        },
+        {
+          "id": 9,
+          "function": "_bsd_utaskbootstrap",
+          "callee": "_bsd_utaskbootstrap",
+          "phase": "entry",
+          "call": "0xfffffff007673470",
+          "site": "0xfffffff007673470",
+          "x": 1264,
+          "y": 256,
+          "color": "0xffffff00"
+        },
+        {
+          "id": 10,
+          "function": "_machine_load_context",
+          "callee": "post-SP restore before D8",
+          "phase": "context",
+          "call": "0xfffffff0073c743c",
+          "site": "0xfffffff0073c743c",
+          "x": 832,
+          "y": 280,
+          "color": "0xffff40ff"
+        },
+        {
+          "id": 11,
+          "function": "_machine_load_context",
+          "callee": "before context RET",
+          "phase": "context",
+          "call": "0xfffffff0073c746c",
+          "site": "0xfffffff0073c746c",
+          "x": 880,
+          "y": 280,
+          "color": "0xffff40ff"
+        },
+        {
+          "id": 12,
+          "function": "_load_context",
+          "callee": "_current_processor",
+          "phase": "call",
+          "call": "0xfffffff00729f0b0",
+          "site": "0xfffffff00729f0b0",
+          "x": 928,
+          "y": 280,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 13,
+          "function": "_load_context",
+          "callee": "_current_processor",
+          "phase": "continuation",
+          "call": "0xfffffff00729f0b0",
+          "site": "0xfffffff00729f0b4",
+          "x": 976,
+          "y": 280,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 14,
+          "function": "_load_context",
+          "callee": "_machine_set_current_thread",
+          "phase": "call",
+          "call": "0xfffffff00729f0bc",
+          "site": "0xfffffff00729f0bc",
+          "x": 1024,
+          "y": 280,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 15,
+          "function": "_load_context",
+          "callee": "_machine_set_current_thread",
+          "phase": "continuation",
+          "call": "0xfffffff00729f0bc",
+          "site": "0xfffffff00729f0c0",
+          "x": 1072,
+          "y": 280,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 16,
+          "function": "_load_context",
+          "callee": "_stack_alloc_try",
+          "phase": "call",
+          "call": "0xfffffff00729f0cc",
+          "site": "0xfffffff00729f0cc",
+          "x": 1120,
+          "y": 280,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 17,
+          "function": "_load_context",
+          "callee": "_stack_alloc_try",
+          "phase": "continuation",
+          "call": "0xfffffff00729f0cc",
+          "site": "0xfffffff00729f0d0",
+          "x": 1168,
+          "y": 280,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 18,
+          "function": "_load_context",
+          "callee": "indirect_x8",
+          "phase": "call",
+          "call": "0xfffffff00729f108",
+          "site": "0xfffffff00729f108",
+          "x": 1216,
+          "y": 280,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 19,
+          "function": "_load_context",
+          "callee": "indirect_x8",
+          "phase": "continuation",
+          "call": "0xfffffff00729f108",
+          "site": "0xfffffff00729f10c",
+          "x": 1264,
+          "y": 280,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 20,
+          "function": "_load_context",
+          "callee": "_thread_get_perfcontrol_class",
+          "phase": "call",
+          "call": "0xfffffff00729f118",
+          "site": "0xfffffff00729f118",
+          "x": 832,
+          "y": 304,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 21,
+          "function": "_load_context",
+          "callee": "_thread_get_perfcontrol_class",
+          "phase": "continuation",
+          "call": "0xfffffff00729f118",
+          "site": "0xfffffff00729f11c",
+          "x": 880,
+          "y": 304,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 22,
+          "function": "_load_context",
+          "callee": "_processor_state_update_explicit",
+          "phase": "call",
+          "call": "0xfffffff00729f150",
+          "site": "0xfffffff00729f150",
+          "x": 928,
+          "y": 304,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 23,
+          "function": "_load_context",
+          "callee": "_processor_state_update_explicit",
+          "phase": "continuation",
+          "call": "0xfffffff00729f150",
+          "site": "0xfffffff00729f154",
+          "x": 976,
+          "y": 304,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 24,
+          "function": "_load_context",
+          "callee": "_thread_group_get",
+          "phase": "call",
+          "call": "0xfffffff00729f170",
+          "site": "0xfffffff00729f170",
+          "x": 1024,
+          "y": 304,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 25,
+          "function": "_load_context",
+          "callee": "_thread_group_get",
+          "phase": "continuation",
+          "call": "0xfffffff00729f170",
+          "site": "0xfffffff00729f174",
+          "x": 1072,
+          "y": 304,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 26,
+          "function": "_load_context",
+          "callee": "_processor_up",
+          "phase": "call",
+          "call": "0xfffffff00729f190",
+          "site": "0xfffffff00729f190",
+          "x": 1120,
+          "y": 304,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 27,
+          "function": "_load_context",
+          "callee": "_processor_up",
+          "phase": "continuation",
+          "call": "0xfffffff00729f190",
+          "site": "0xfffffff00729f194",
+          "x": 1168,
+          "y": 304,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 28,
+          "function": "_load_context",
+          "callee": "_recount_snapshot",
+          "phase": "call",
+          "call": "0xfffffff00729f19c",
+          "site": "0xfffffff00729f19c",
+          "x": 1216,
+          "y": 304,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 29,
+          "function": "_load_context",
+          "callee": "_recount_snapshot",
+          "phase": "continuation",
+          "call": "0xfffffff00729f19c",
+          "site": "0xfffffff00729f1a0",
+          "x": 1264,
+          "y": 304,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 30,
+          "function": "_load_context",
+          "callee": "_recount_processor_run",
+          "phase": "call",
+          "call": "0xfffffff00729f1b0",
+          "site": "0xfffffff00729f1b0",
+          "x": 832,
+          "y": 328,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 31,
+          "function": "_load_context",
+          "callee": "_recount_processor_run",
+          "phase": "continuation",
+          "call": "0xfffffff00729f1b0",
+          "site": "0xfffffff00729f1b4",
+          "x": 880,
+          "y": 328,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 32,
+          "function": "_load_context",
+          "callee": "_recount_update_snap",
+          "phase": "call",
+          "call": "0xfffffff00729f1b8",
+          "site": "0xfffffff00729f1b8",
+          "x": 928,
+          "y": 328,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 33,
+          "function": "_load_context",
+          "callee": "_recount_update_snap",
+          "phase": "continuation",
+          "call": "0xfffffff00729f1b8",
+          "site": "0xfffffff00729f1bc",
+          "x": 976,
+          "y": 328,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 34,
+          "function": "_load_context",
+          "callee": "_cpu_quiescent_counter_join",
+          "phase": "call",
+          "call": "0xfffffff00729f1c0",
+          "site": "0xfffffff00729f1c0",
+          "x": 1024,
+          "y": 328,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 35,
+          "function": "_load_context",
+          "callee": "_cpu_quiescent_counter_join",
+          "phase": "continuation",
+          "call": "0xfffffff00729f1c0",
+          "site": "0xfffffff00729f1c4",
+          "x": 1072,
+          "y": 328,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 36,
+          "function": "_load_context",
+          "callee": "_machine_load_context",
+          "phase": "call",
+          "call": "0xfffffff00729f1c8",
+          "site": "0xfffffff00729f1c8",
+          "x": 1120,
+          "y": 328,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 37,
+          "function": "_load_context",
+          "callee": "_machine_load_context",
+          "phase": "continuation",
+          "call": "0xfffffff00729f1c8",
+          "site": "0xfffffff00729f1cc",
+          "x": 1168,
+          "y": 328,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 38,
+          "function": "_thread_continue",
+          "callee": "_current_act",
+          "phase": "call",
+          "call": "0xfffffff007293410",
+          "site": "0xfffffff007293410",
+          "x": 1216,
+          "y": 328,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 39,
+          "function": "_thread_continue",
+          "callee": "_current_act",
+          "phase": "continuation",
+          "call": "0xfffffff007293410",
+          "site": "0xfffffff007293414",
+          "x": 1264,
+          "y": 328,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 40,
+          "function": "_thread_continue",
+          "callee": "_thread_dispatch",
+          "phase": "call",
+          "call": "0xfffffff007293430",
+          "site": "0xfffffff007293430",
+          "x": 832,
+          "y": 352,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 41,
+          "function": "_thread_continue",
+          "callee": "_thread_dispatch",
+          "phase": "continuation",
+          "call": "0xfffffff007293430",
+          "site": "0xfffffff007293434",
+          "x": 880,
+          "y": 352,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 42,
+          "function": "_thread_continue",
+          "callee": "_call_continuation",
+          "phase": "call",
+          "call": "0xfffffff00729345c",
+          "site": "0xfffffff00729345c",
+          "x": 928,
+          "y": 352,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 43,
+          "function": "_thread_continue",
+          "callee": "_call_continuation",
+          "phase": "continuation",
+          "call": "0xfffffff00729345c",
+          "site": "0xfffffff007293460",
+          "x": 976,
+          "y": 352,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 44,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_current_processor",
+          "phase": "call",
+          "call": "0xfffffff007944b2c",
+          "site": "0xfffffff007944b2c",
+          "x": 1024,
+          "y": 352,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 45,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_current_processor",
+          "phase": "continuation",
+          "call": "0xfffffff007944b2c",
+          "site": "0xfffffff007944b30",
+          "x": 1072,
+          "y": 352,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 46,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_platform_stall_panic_or_spin",
+          "phase": "call",
+          "call": "0xfffffff007944b38",
+          "site": "0xfffffff007944b38",
+          "x": 1120,
+          "y": 352,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 47,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_platform_stall_panic_or_spin",
+          "phase": "continuation",
+          "call": "0xfffffff007944b38",
+          "site": "0xfffffff007944b3c",
+          "x": 1168,
+          "y": 352,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 48,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_idle_thread_create",
+          "phase": "call",
+          "call": "0xfffffff007944b7c",
+          "site": "0xfffffff007944b7c",
+          "x": 1216,
+          "y": 352,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 49,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_idle_thread_create",
+          "phase": "continuation",
+          "call": "0xfffffff007944b7c",
+          "site": "0xfffffff007944b80",
+          "x": 1264,
+          "y": 352,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 50,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_sched_startup",
+          "phase": "call",
+          "call": "0xfffffff007944bb4",
+          "site": "0xfffffff007944bb4",
+          "x": 832,
+          "y": 376,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 51,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_sched_startup",
+          "phase": "continuation",
+          "call": "0xfffffff007944bb4",
+          "site": "0xfffffff007944bb8",
+          "x": 880,
+          "y": 376,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 52,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_thread_daemon_init",
+          "phase": "call",
+          "call": "0xfffffff007944bec",
+          "site": "0xfffffff007944bec",
+          "x": 928,
+          "y": 376,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 53,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_thread_daemon_init",
+          "phase": "continuation",
+          "call": "0xfffffff007944bec",
+          "site": "0xfffffff007944bf0",
+          "x": 976,
+          "y": 376,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 54,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_kernel_startup_initialize_upto",
+          "phase": "call",
+          "call": "0xfffffff007944bf4",
+          "site": "0xfffffff007944bf4",
+          "x": 1024,
+          "y": 376,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 55,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_kernel_startup_initialize_upto",
+          "phase": "continuation",
+          "call": "0xfffffff007944bf4",
+          "site": "0xfffffff007944bf8",
+          "x": 1072,
+          "y": 376,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 56,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_thread_bind",
+          "phase": "call",
+          "call": "0xfffffff007944c30",
+          "site": "0xfffffff007944c30",
+          "x": 1120,
+          "y": 376,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 57,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_thread_bind",
+          "phase": "continuation",
+          "call": "0xfffffff007944c30",
+          "site": "0xfffffff007944c34",
+          "x": 1168,
+          "y": 376,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 58,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_mapping_adjust",
+          "phase": "call",
+          "call": "0xfffffff007944c68",
+          "site": "0xfffffff007944c68",
+          "x": 1216,
+          "y": 376,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 59,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_mapping_adjust",
+          "phase": "continuation",
+          "call": "0xfffffff007944c68",
+          "site": "0xfffffff007944c6c",
+          "x": 1264,
+          "y": 376,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 60,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_clock_service_create",
+          "phase": "call",
+          "call": "0xfffffff007944ca0",
+          "site": "0xfffffff007944ca0",
+          "x": 832,
+          "y": 400,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 61,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_clock_service_create",
+          "phase": "continuation",
+          "call": "0xfffffff007944ca0",
+          "site": "0xfffffff007944ca4",
+          "x": 880,
+          "y": 400,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 62,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_device_service_create",
+          "phase": "call",
+          "call": "0xfffffff007944ca4",
+          "site": "0xfffffff007944ca4",
+          "x": 928,
+          "y": 400,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 63,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_device_service_create",
+          "phase": "continuation",
+          "call": "0xfffffff007944ca4",
+          "site": "0xfffffff007944ca8",
+          "x": 976,
+          "y": 400,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 64,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_phys_carveout_init",
+          "phase": "call",
+          "call": "0xfffffff007944ca8",
+          "site": "0xfffffff007944ca8",
+          "x": 1024,
+          "y": 400,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 65,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_phys_carveout_init",
+          "phase": "continuation",
+          "call": "0xfffffff007944ca8",
+          "site": "0xfffffff007944cac",
+          "x": 1072,
+          "y": 400,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 66,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_kdp_init",
+          "phase": "call",
+          "call": "0xfffffff007944ce0",
+          "site": "0xfffffff007944ce0",
+          "x": 1120,
+          "y": 400,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 67,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_kdp_init",
+          "phase": "continuation",
+          "call": "0xfffffff007944ce0",
+          "site": "0xfffffff007944ce4",
+          "x": 1168,
+          "y": 400,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 68,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_alternate_debugger_init",
+          "phase": "call",
+          "call": "0xfffffff007944ce4",
+          "site": "0xfffffff007944ce4",
+          "x": 1216,
+          "y": 400,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 69,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_alternate_debugger_init",
+          "phase": "continuation",
+          "call": "0xfffffff007944ce4",
+          "site": "0xfffffff007944ce8",
+          "x": 1264,
+          "y": 400,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 70,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_bootprofile_init",
+          "phase": "call",
+          "call": "0xfffffff007944d1c",
+          "site": "0xfffffff007944d1c",
+          "x": 832,
+          "y": 424,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 71,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_bootprofile_init",
+          "phase": "continuation",
+          "call": "0xfffffff007944d1c",
+          "site": "0xfffffff007944d20",
+          "x": 880,
+          "y": 424,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 72,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_kernel_startup_initialize_upto",
+          "phase": "call",
+          "call": "0xfffffff007944d24",
+          "site": "0xfffffff007944d24",
+          "x": 928,
+          "y": 424,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 73,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_kernel_startup_initialize_upto",
+          "phase": "continuation",
+          "call": "0xfffffff007944d24",
+          "site": "0xfffffff007944d28",
+          "x": 976,
+          "y": 424,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 74,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_PE_init_iokit",
+          "phase": "call",
+          "call": "0xfffffff007944da4",
+          "site": "0xfffffff007944da4",
+          "x": 1024,
+          "y": 424,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 75,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_PE_init_iokit",
+          "phase": "continuation",
+          "call": "0xfffffff007944da4",
+          "site": "0xfffffff007944da8",
+          "x": 1072,
+          "y": 424,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 76,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_ml_get_interrupts_enabled",
+          "phase": "call",
+          "call": "0xfffffff007944da8",
+          "site": "0xfffffff007944da8",
+          "x": 1120,
+          "y": 424,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 77,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_ml_get_interrupts_enabled",
+          "phase": "continuation",
+          "call": "0xfffffff007944da8",
+          "site": "0xfffffff007944dac",
+          "x": 1168,
+          "y": 424,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 78,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_kernel_startup_initialize_upto",
+          "phase": "call",
+          "call": "0xfffffff007944db4",
+          "site": "0xfffffff007944db4",
+          "x": 1216,
+          "y": 424,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 79,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_kernel_startup_initialize_upto",
+          "phase": "continuation",
+          "call": "0xfffffff007944db4",
+          "site": "0xfffffff007944db8",
+          "x": 1264,
+          "y": 424,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 80,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_ml_set_interrupts_enabled",
+          "phase": "call",
+          "call": "0xfffffff007944dbc",
+          "site": "0xfffffff007944dbc",
+          "x": 832,
+          "y": 448,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 81,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_ml_set_interrupts_enabled",
+          "phase": "continuation",
+          "call": "0xfffffff007944dbc",
+          "site": "0xfffffff007944dc0",
+          "x": 880,
+          "y": 448,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 82,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_initialize_screen",
+          "phase": "call",
+          "call": "0xfffffff007944dc8",
+          "site": "0xfffffff007944dc8",
+          "x": 928,
+          "y": 448,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 83,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_initialize_screen",
+          "phase": "continuation",
+          "call": "0xfffffff007944dc8",
+          "site": "0xfffffff007944dcc",
+          "x": 976,
+          "y": 448,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 84,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_vm_commpage_init",
+          "phase": "call",
+          "call": "0xfffffff007944dcc",
+          "site": "0xfffffff007944dcc",
+          "x": 1024,
+          "y": 448,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 85,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_vm_commpage_init",
+          "phase": "continuation",
+          "call": "0xfffffff007944dcc",
+          "site": "0xfffffff007944dd0",
+          "x": 1072,
+          "y": 448,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 86,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_vm_commpage_text_init",
+          "phase": "call",
+          "call": "0xfffffff007944dd0",
+          "site": "0xfffffff007944dd0",
+          "x": 1120,
+          "y": 448,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 87,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_vm_commpage_text_init",
+          "phase": "continuation",
+          "call": "0xfffffff007944dd0",
+          "site": "0xfffffff007944dd4",
+          "x": 1168,
+          "y": 448,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 88,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_mac_policy_initmach",
+          "phase": "call",
+          "call": "0xfffffff007944e08",
+          "site": "0xfffffff007944e08",
+          "x": 1216,
+          "y": 448,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 89,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_mac_policy_initmach",
+          "phase": "continuation",
+          "call": "0xfffffff007944e08",
+          "site": "0xfffffff007944e0c",
+          "x": 1264,
+          "y": 448,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 90,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_vnguard_policy_init",
+          "phase": "call",
+          "call": "0xfffffff007944e40",
+          "site": "0xfffffff007944e40",
+          "x": 832,
+          "y": 472,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 91,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_vnguard_policy_init",
+          "phase": "continuation",
+          "call": "0xfffffff007944e40",
+          "site": "0xfffffff007944e44",
+          "x": 880,
+          "y": 472,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 92,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_dtrace_early_init",
+          "phase": "call",
+          "call": "0xfffffff007944e78",
+          "site": "0xfffffff007944e78",
+          "x": 928,
+          "y": 472,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 93,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_dtrace_early_init",
+          "phase": "continuation",
+          "call": "0xfffffff007944e78",
+          "site": "0xfffffff007944e7c",
+          "x": 976,
+          "y": 472,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 94,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_sdt_early_init",
+          "phase": "call",
+          "call": "0xfffffff007944e7c",
+          "site": "0xfffffff007944e7c",
+          "x": 1024,
+          "y": 472,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 95,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_sdt_early_init",
+          "phase": "continuation",
+          "call": "0xfffffff007944e7c",
+          "site": "0xfffffff007944e80",
+          "x": 1072,
+          "y": 472,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 96,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_kernel_startup_initialize_upto",
+          "phase": "call",
+          "call": "0xfffffff007944e84",
+          "site": "0xfffffff007944e84",
+          "x": 1120,
+          "y": 472,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 97,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_kernel_startup_initialize_upto",
+          "phase": "continuation",
+          "call": "0xfffffff007944e84",
+          "site": "0xfffffff007944e88",
+          "x": 1168,
+          "y": 472,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 98,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_OSKextRemoveKextBootstrap",
+          "phase": "call",
+          "call": "0xfffffff007944ebc",
+          "site": "0xfffffff007944ebc",
+          "x": 1216,
+          "y": 472,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 99,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_OSKextRemoveKextBootstrap",
+          "phase": "continuation",
+          "call": "0xfffffff007944ebc",
+          "site": "0xfffffff007944ec0",
+          "x": 1264,
+          "y": 472,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 100,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_machine_lockdown",
+          "phase": "call",
+          "call": "0xfffffff007944ef4",
+          "site": "0xfffffff007944ef4",
+          "x": 832,
+          "y": 496,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 101,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_machine_lockdown",
+          "phase": "continuation",
+          "call": "0xfffffff007944ef4",
+          "site": "0xfffffff007944ef8",
+          "x": 880,
+          "y": 496,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 102,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_kernel_list_tests",
+          "phase": "call",
+          "call": "0xfffffff007944ef8",
+          "site": "0xfffffff007944ef8",
+          "x": 928,
+          "y": 496,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 103,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_kernel_list_tests",
+          "phase": "continuation",
+          "call": "0xfffffff007944ef8",
+          "site": "0xfffffff007944efc",
+          "x": 976,
+          "y": 496,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 104,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_kernel_do_post",
+          "phase": "call",
+          "call": "0xfffffff007944efc",
+          "site": "0xfffffff007944efc",
+          "x": 1024,
+          "y": 496,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 105,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_kernel_do_post",
+          "phase": "continuation",
+          "call": "0xfffffff007944efc",
+          "site": "0xfffffff007944f00",
+          "x": 1072,
+          "y": 496,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 106,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_PE_lockdown_iokit",
+          "phase": "call",
+          "call": "0xfffffff007944f6c",
+          "site": "0xfffffff007944f6c",
+          "x": 1120,
+          "y": 496,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 107,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_PE_lockdown_iokit",
+          "phase": "continuation",
+          "call": "0xfffffff007944f6c",
+          "site": "0xfffffff007944f70",
+          "x": 1168,
+          "y": 496,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 108,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_vm_set_restrictions",
+          "phase": "call",
+          "call": "0xfffffff007944f7c",
+          "site": "0xfffffff007944f7c",
+          "x": 1216,
+          "y": 496,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 109,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_vm_set_restrictions",
+          "phase": "continuation",
+          "call": "0xfffffff007944f7c",
+          "site": "0xfffffff007944f80",
+          "x": 1264,
+          "y": 496,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 110,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_bsd_init",
+          "phase": "call",
+          "call": "0xfffffff007944f80",
+          "site": "0xfffffff007944f80",
+          "x": 832,
+          "y": 520,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 111,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_bsd_init",
+          "phase": "continuation",
+          "call": "0xfffffff007944f80",
+          "site": "0xfffffff007944f84",
+          "x": 880,
+          "y": 520,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 112,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_kdebug_free_early_buf",
+          "phase": "call",
+          "call": "0xfffffff007944f84",
+          "site": "0xfffffff007944f84",
+          "x": 928,
+          "y": 520,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 113,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_kdebug_free_early_buf",
+          "phase": "continuation",
+          "call": "0xfffffff007944f84",
+          "site": "0xfffffff007944f88",
+          "x": 976,
+          "y": 520,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 114,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_serial_keyboard_init",
+          "phase": "call",
+          "call": "0xfffffff007944f88",
+          "site": "0xfffffff007944f88",
+          "x": 1024,
+          "y": 520,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 115,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_serial_keyboard_init",
+          "phase": "continuation",
+          "call": "0xfffffff007944f88",
+          "site": "0xfffffff007944f8c",
+          "x": 1072,
+          "y": 520,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 116,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_vm_page_init_local_q",
+          "phase": "call",
+          "call": "0xfffffff007944f90",
+          "site": "0xfffffff007944f90",
+          "x": 1120,
+          "y": 520,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 117,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_vm_page_init_local_q",
+          "phase": "continuation",
+          "call": "0xfffffff007944f90",
+          "site": "0xfffffff007944f94",
+          "x": 1168,
+          "y": 520,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 118,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_thread_bind",
+          "phase": "call",
+          "call": "0xfffffff007944f98",
+          "site": "0xfffffff007944f98",
+          "x": 1216,
+          "y": 520,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 119,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_thread_bind",
+          "phase": "continuation",
+          "call": "0xfffffff007944f98",
+          "site": "0xfffffff007944f9c",
+          "x": 1264,
+          "y": 520,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 120,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_vm_free_delayed_pages",
+          "phase": "call",
+          "call": "0xfffffff007944f9c",
+          "site": "0xfffffff007944f9c",
+          "x": 832,
+          "y": 544,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 121,
+          "function": "_kernel_bootstrap_thread",
+          "callee": "_vm_free_delayed_pages",
+          "phase": "continuation",
+          "call": "0xfffffff007944f9c",
+          "site": "0xfffffff007944fa0",
+          "x": 880,
+          "y": 544,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 122,
+          "function": "_bsd_utaskbootstrap",
+          "callee": "_cloneproc",
+          "phase": "call",
+          "call": "0xfffffff007673490",
+          "site": "0xfffffff007673490",
+          "x": 928,
+          "y": 544,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 123,
+          "function": "_bsd_utaskbootstrap",
+          "callee": "_cloneproc",
+          "phase": "continuation",
+          "call": "0xfffffff007673490",
+          "site": "0xfffffff007673494",
+          "x": 976,
+          "y": 544,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 124,
+          "function": "_bsd_utaskbootstrap",
+          "callee": "_proc_find",
+          "phase": "call",
+          "call": "0xfffffff00767349c",
+          "site": "0xfffffff00767349c",
+          "x": 1024,
+          "y": 544,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 125,
+          "function": "_bsd_utaskbootstrap",
+          "callee": "_proc_find",
+          "phase": "continuation",
+          "call": "0xfffffff00767349c",
+          "site": "0xfffffff0076734a0",
+          "x": 1072,
+          "y": 544,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 126,
+          "function": "_bsd_utaskbootstrap",
+          "callee": "_zalloc_first_proc_made",
+          "phase": "call",
+          "call": "0xfffffff0076734a8",
+          "site": "0xfffffff0076734a8",
+          "x": 1120,
+          "y": 544,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 127,
+          "function": "_bsd_utaskbootstrap",
+          "callee": "_zalloc_first_proc_made",
+          "phase": "continuation",
+          "call": "0xfffffff0076734a8",
+          "site": "0xfffffff0076734ac",
+          "x": 1168,
+          "y": 544,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 128,
+          "function": "_bsd_utaskbootstrap",
+          "callee": "_proc_signalend",
+          "phase": "call",
+          "call": "0xfffffff0076734b4",
+          "site": "0xfffffff0076734b4",
+          "x": 1216,
+          "y": 544,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 129,
+          "function": "_bsd_utaskbootstrap",
+          "callee": "_proc_signalend",
+          "phase": "continuation",
+          "call": "0xfffffff0076734b4",
+          "site": "0xfffffff0076734b8",
+          "x": 1264,
+          "y": 544,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 130,
+          "function": "_bsd_utaskbootstrap",
+          "callee": "_proc_transend",
+          "phase": "call",
+          "call": "0xfffffff0076734c0",
+          "site": "0xfffffff0076734c0",
+          "x": 832,
+          "y": 568,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 131,
+          "function": "_bsd_utaskbootstrap",
+          "callee": "_proc_transend",
+          "phase": "continuation",
+          "call": "0xfffffff0076734c0",
+          "site": "0xfffffff0076734c4",
+          "x": 880,
+          "y": 568,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 132,
+          "function": "_bsd_utaskbootstrap",
+          "callee": "_get_bsdthread_info",
+          "phase": "call",
+          "call": "0xfffffff0076734c8",
+          "site": "0xfffffff0076734c8",
+          "x": 928,
+          "y": 568,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 133,
+          "function": "_bsd_utaskbootstrap",
+          "callee": "_get_bsdthread_info",
+          "phase": "continuation",
+          "call": "0xfffffff0076734c8",
+          "site": "0xfffffff0076734cc",
+          "x": 976,
+          "y": 568,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 134,
+          "function": "_bsd_utaskbootstrap",
+          "callee": "_act_set_astbsd",
+          "phase": "call",
+          "call": "0xfffffff0076734d4",
+          "site": "0xfffffff0076734d4",
+          "x": 1024,
+          "y": 568,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 135,
+          "function": "_bsd_utaskbootstrap",
+          "callee": "_act_set_astbsd",
+          "phase": "continuation",
+          "call": "0xfffffff0076734d4",
+          "site": "0xfffffff0076734d8",
+          "x": 1072,
+          "y": 568,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 136,
+          "function": "_bsd_utaskbootstrap",
+          "callee": "_get_threadtask",
+          "phase": "call",
+          "call": "0xfffffff0076734dc",
+          "site": "0xfffffff0076734dc",
+          "x": 1120,
+          "y": 568,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 137,
+          "function": "_bsd_utaskbootstrap",
+          "callee": "_get_threadtask",
+          "phase": "continuation",
+          "call": "0xfffffff0076734dc",
+          "site": "0xfffffff0076734e0",
+          "x": 1168,
+          "y": 568,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 138,
+          "function": "_bsd_utaskbootstrap",
+          "callee": "_ipc_task_enable",
+          "phase": "call",
+          "call": "0xfffffff0076734e4",
+          "site": "0xfffffff0076734e4",
+          "x": 1216,
+          "y": 568,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 139,
+          "function": "_bsd_utaskbootstrap",
+          "callee": "_ipc_task_enable",
+          "phase": "continuation",
+          "call": "0xfffffff0076734e4",
+          "site": "0xfffffff0076734e8",
+          "x": 1264,
+          "y": 568,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 140,
+          "function": "_bsd_init",
+          "callee": "_throttle_init",
+          "phase": "call",
+          "call": "0xfffffff007672a2c",
+          "site": "0xfffffff007672a2c",
+          "x": 832,
+          "y": 592,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 141,
+          "function": "_bsd_init",
+          "callee": "_throttle_init",
+          "phase": "continuation",
+          "call": "0xfffffff007672a2c",
+          "site": "0xfffffff007672a30",
+          "x": 880,
+          "y": 592,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 142,
+          "function": "_bsd_init",
+          "callee": "_kauth_init",
+          "phase": "call",
+          "call": "0xfffffff007672a3c",
+          "site": "0xfffffff007672a3c",
+          "x": 928,
+          "y": 592,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 143,
+          "function": "_bsd_init",
+          "callee": "_kauth_init",
+          "phase": "continuation",
+          "call": "0xfffffff007672a3c",
+          "site": "0xfffffff007672a40",
+          "x": 976,
+          "y": 592,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 144,
+          "function": "_bsd_init",
+          "callee": "_fdt_init",
+          "phase": "call",
+          "call": "0xfffffff007672b30",
+          "site": "0xfffffff007672b30",
+          "x": 1024,
+          "y": 592,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 145,
+          "function": "_bsd_init",
+          "callee": "_fdt_init",
+          "phase": "continuation",
+          "call": "0xfffffff007672b30",
+          "site": "0xfffffff007672b34",
+          "x": 1072,
+          "y": 592,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 146,
+          "function": "_bsd_init",
+          "callee": "_mac_policy_initbsd",
+          "phase": "call",
+          "call": "0xfffffff007672b9c",
+          "site": "0xfffffff007672b9c",
+          "x": 1120,
+          "y": 592,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 147,
+          "function": "_bsd_init",
+          "callee": "_mac_policy_initbsd",
+          "phase": "continuation",
+          "call": "0xfffffff007672b9c",
+          "site": "0xfffffff007672ba0",
+          "x": 1168,
+          "y": 592,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 148,
+          "function": "_bsd_init",
+          "callee": "_bsd_bufferinit",
+          "phase": "call",
+          "call": "0xfffffff007672e30",
+          "site": "0xfffffff007672e30",
+          "x": 1216,
+          "y": 592,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 149,
+          "function": "_bsd_init",
+          "callee": "_bsd_bufferinit",
+          "phase": "continuation",
+          "call": "0xfffffff007672e30",
+          "site": "0xfffffff007672e34",
+          "x": 1264,
+          "y": 592,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 150,
+          "function": "_bsd_init",
+          "callee": "_IOKitInitializeTime",
+          "phase": "call",
+          "call": "0xfffffff007672e34",
+          "site": "0xfffffff007672e34",
+          "x": 832,
+          "y": 616,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 151,
+          "function": "_bsd_init",
+          "callee": "_IOKitInitializeTime",
+          "phase": "continuation",
+          "call": "0xfffffff007672e34",
+          "site": "0xfffffff007672e38",
+          "x": 880,
+          "y": 616,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 152,
+          "function": "_bsd_init",
+          "callee": "_vfsinit",
+          "phase": "call",
+          "call": "0xfffffff007672e38",
+          "site": "0xfffffff007672e38",
+          "x": 928,
+          "y": 616,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 153,
+          "function": "_bsd_init",
+          "callee": "_vfsinit",
+          "phase": "continuation",
+          "call": "0xfffffff007672e38",
+          "site": "0xfffffff007672e3c",
+          "x": 976,
+          "y": 616,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 154,
+          "function": "_bsd_init",
+          "callee": "_OSKextLoadKextWithIdentifier",
+          "phase": "call",
+          "call": "0xfffffff007672e68",
+          "site": "0xfffffff007672e68",
+          "x": 1024,
+          "y": 616,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 155,
+          "function": "_bsd_init",
+          "callee": "_OSKextLoadKextWithIdentifier",
+          "phase": "continuation",
+          "call": "0xfffffff007672e68",
+          "site": "0xfffffff007672e6c",
+          "x": 1072,
+          "y": 616,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 156,
+          "function": "_bsd_init",
+          "callee": "_OSKextLoadKextWithIdentifier",
+          "phase": "call",
+          "call": "0xfffffff007672efc",
+          "site": "0xfffffff007672efc",
+          "x": 1120,
+          "y": 616,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 157,
+          "function": "_bsd_init",
+          "callee": "_OSKextLoadKextWithIdentifier",
+          "phase": "continuation",
+          "call": "0xfffffff007672efc",
+          "site": "0xfffffff007672f00",
+          "x": 1168,
+          "y": 616,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 158,
+          "function": "_bsd_init",
+          "callee": "_OSKextLoadKextWithIdentifier",
+          "phase": "call",
+          "call": "0xfffffff007672f68",
+          "site": "0xfffffff007672f68",
+          "x": 1216,
+          "y": 616,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 159,
+          "function": "_bsd_init",
+          "callee": "_OSKextLoadKextWithIdentifier",
+          "phase": "continuation",
+          "call": "0xfffffff007672f68",
+          "site": "0xfffffff007672f6c",
+          "x": 1264,
+          "y": 616,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 160,
+          "function": "_bsd_init",
+          "callee": "_IOKitBSDInit",
+          "phase": "call",
+          "call": "0xfffffff00767300c",
+          "site": "0xfffffff00767300c",
+          "x": 832,
+          "y": 640,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 161,
+          "function": "_bsd_init",
+          "callee": "_IOKitBSDInit",
+          "phase": "continuation",
+          "call": "0xfffffff00767300c",
+          "site": "0xfffffff007673010",
+          "x": 880,
+          "y": 640,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 162,
+          "function": "_bsd_init",
+          "callee": "_net_init_run",
+          "phase": "call",
+          "call": "0xfffffff00767303c",
+          "site": "0xfffffff00767303c",
+          "x": 928,
+          "y": 640,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 163,
+          "function": "_bsd_init",
+          "callee": "_net_init_run",
+          "phase": "continuation",
+          "call": "0xfffffff00767303c",
+          "site": "0xfffffff007673040",
+          "x": 976,
+          "y": 640,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 164,
+          "function": "_bsd_init",
+          "callee": "_IOFindBSDRoot",
+          "phase": "call",
+          "call": "0xfffffff007673094",
+          "site": "0xfffffff007673094",
+          "x": 1024,
+          "y": 640,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 165,
+          "function": "_bsd_init",
+          "callee": "_IOFindBSDRoot",
+          "phase": "continuation",
+          "call": "0xfffffff007673094",
+          "site": "0xfffffff007673098",
+          "x": 1072,
+          "y": 640,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 166,
+          "function": "_bsd_init",
+          "callee": "_vfs_mountroot",
+          "phase": "call",
+          "call": "0xfffffff0076730e4",
+          "site": "0xfffffff0076730e4",
+          "x": 1120,
+          "y": 640,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 167,
+          "function": "_bsd_init",
+          "callee": "_vfs_mountroot",
+          "phase": "continuation",
+          "call": "0xfffffff0076730e4",
+          "site": "0xfffffff0076730e8",
+          "x": 1168,
+          "y": 640,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 168,
+          "function": "_bsd_init",
+          "callee": "_IOSecureBSDRoot",
+          "phase": "call",
+          "call": "0xfffffff00767311c",
+          "site": "0xfffffff00767311c",
+          "x": 1216,
+          "y": 640,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 169,
+          "function": "_bsd_init",
+          "callee": "_IOSecureBSDRoot",
+          "phase": "continuation",
+          "call": "0xfffffff00767311c",
+          "site": "0xfffffff007673120",
+          "x": 1264,
+          "y": 640,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 170,
+          "function": "_bsd_init",
+          "callee": "_imageboot_setup",
+          "phase": "call",
+          "call": "0xfffffff007673310",
+          "site": "0xfffffff007673310",
+          "x": 832,
+          "y": 664,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 171,
+          "function": "_bsd_init",
+          "callee": "_imageboot_setup",
+          "phase": "continuation",
+          "call": "0xfffffff007673310",
+          "site": "0xfffffff007673314",
+          "x": 880,
+          "y": 664,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 172,
+          "function": "_bsd_init",
+          "callee": "_IOSetImageBoot",
+          "phase": "call",
+          "call": "0xfffffff007673314",
+          "site": "0xfffffff007673314",
+          "x": 928,
+          "y": 664,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 173,
+          "function": "_bsd_init",
+          "callee": "_IOSetImageBoot",
+          "phase": "continuation",
+          "call": "0xfffffff007673314",
+          "site": "0xfffffff007673318",
+          "x": 976,
+          "y": 664,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 174,
+          "function": "_bsd_init",
+          "callee": "_devfs_kernel_mount",
+          "phase": "call",
+          "call": "0xfffffff0076733b0",
+          "site": "0xfffffff0076733b0",
+          "x": 1024,
+          "y": 664,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 175,
+          "function": "_bsd_init",
+          "callee": "_devfs_kernel_mount",
+          "phase": "continuation",
+          "call": "0xfffffff0076733b0",
+          "site": "0xfffffff0076733b4",
+          "x": 1072,
+          "y": 664,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 176,
+          "function": "_bsd_init",
+          "callee": "_bsd_utaskbootstrap",
+          "phase": "call",
+          "call": "0xfffffff0076733bc",
+          "site": "0xfffffff0076733bc",
+          "x": 1120,
+          "y": 664,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 177,
+          "function": "_bsd_init",
+          "callee": "_bsd_utaskbootstrap",
+          "phase": "continuation",
+          "call": "0xfffffff0076733bc",
+          "site": "0xfffffff0076733c0",
+          "x": 1168,
+          "y": 664,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 182,
+          "function": "_IOFindBSDRoot",
+          "callee": "__ZN9IOService15serviceMatchingEPK8OSStringP12OSDictionary",
+          "phase": "call",
+          "call": "0xfffffff0078e3374",
+          "site": "0xfffffff0078e3374",
+          "x": 928,
+          "y": 688,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 183,
+          "function": "_IOFindBSDRoot",
+          "callee": "__ZN9IOService15serviceMatchingEPK8OSStringP12OSDictionary",
+          "phase": "continuation",
+          "call": "0xfffffff0078e3374",
+          "site": "0xfffffff0078e3378",
+          "x": 976,
+          "y": 688,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 184,
+          "function": "_IOFindBSDRoot",
+          "callee": "__ZN9IOService22waitForMatchingServiceEP12OSDictionaryy",
+          "phase": "call",
+          "call": "0xfffffff0078e33b4",
+          "site": "0xfffffff0078e33b4",
+          "x": 1024,
+          "y": 688,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 185,
+          "function": "_IOFindBSDRoot",
+          "callee": "__ZN9IOService22waitForMatchingServiceEP12OSDictionaryy",
+          "phase": "continuation",
+          "call": "0xfffffff0078e33b4",
+          "site": "0xfffffff0078e33b8",
+          "x": 1072,
+          "y": 688,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 186,
+          "function": "_IOFindBSDRoot",
+          "callee": "_PE_parse_boot_argn",
+          "phase": "call",
+          "call": "0xfffffff0078e349c",
+          "site": "0xfffffff0078e349c",
+          "x": 1120,
+          "y": 688,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 187,
+          "function": "_IOFindBSDRoot",
+          "callee": "_PE_parse_boot_argn",
+          "phase": "continuation",
+          "call": "0xfffffff0078e349c",
+          "site": "0xfffffff0078e34a0",
+          "x": 1168,
+          "y": 688,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 188,
+          "function": "_IOFindBSDRoot",
+          "callee": "_PE_parse_boot_argn",
+          "phase": "call",
+          "call": "0xfffffff0078e34b4",
+          "site": "0xfffffff0078e34b4",
+          "x": 1216,
+          "y": 688,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 189,
+          "function": "_IOFindBSDRoot",
+          "callee": "_PE_parse_boot_argn",
+          "phase": "continuation",
+          "call": "0xfffffff0078e34b4",
+          "site": "0xfffffff0078e34b8",
+          "x": 1264,
+          "y": 688,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 190,
+          "function": "_IOFindBSDRoot",
+          "callee": "__ZN15IORegistryEntry8fromPathEPKcPK15IORegistryPlanePcPiPS_",
+          "phase": "call",
+          "call": "0xfffffff0078e34e0",
+          "site": "0xfffffff0078e34e0",
+          "x": 832,
+          "y": 712,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 191,
+          "function": "_IOFindBSDRoot",
+          "callee": "__ZN15IORegistryEntry8fromPathEPKcPK15IORegistryPlanePcPiPS_",
+          "phase": "continuation",
+          "call": "0xfffffff0078e34e0",
+          "site": "0xfffffff0078e34e4",
+          "x": 880,
+          "y": 712,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 192,
+          "function": "_IOFindBSDRoot",
+          "callee": "_di_root_ramfile",
+          "phase": "call",
+          "call": "0xfffffff0078e34ec",
+          "site": "0xfffffff0078e34ec",
+          "x": 928,
+          "y": 712,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 193,
+          "function": "_IOFindBSDRoot",
+          "callee": "_di_root_ramfile",
+          "phase": "continuation",
+          "call": "0xfffffff0078e34ec",
+          "site": "0xfffffff0078e34f0",
+          "x": 976,
+          "y": 712,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 194,
+          "function": "_IOFindBSDRoot",
+          "callee": "__ZN15IORegistryEntry8fromPathEPKcPK15IORegistryPlanePcPiPS_",
+          "phase": "call",
+          "call": "0xfffffff0078e3644",
+          "site": "0xfffffff0078e3644",
+          "x": 1024,
+          "y": 712,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 195,
+          "function": "_IOFindBSDRoot",
+          "callee": "__ZN15IORegistryEntry8fromPathEPKcPK15IORegistryPlanePcPiPS_",
+          "phase": "continuation",
+          "call": "0xfffffff0078e3644",
+          "site": "0xfffffff0078e3648",
+          "x": 1072,
+          "y": 712,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 196,
+          "function": "_IOFindBSDRoot",
+          "callee": "_mdevadd",
+          "phase": "call",
+          "call": "0xfffffff0078e36a8",
+          "site": "0xfffffff0078e36a8",
+          "x": 1120,
+          "y": 712,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 197,
+          "function": "_IOFindBSDRoot",
+          "callee": "_mdevadd",
+          "phase": "continuation",
+          "call": "0xfffffff0078e36a8",
+          "site": "0xfffffff0078e36ac",
+          "x": 1168,
+          "y": 712,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 198,
+          "function": "_IOFindBSDRoot",
+          "callee": "__ZN9IOService9waitQuietEy",
+          "phase": "call",
+          "call": "0xfffffff0078e3708",
+          "site": "0xfffffff0078e3708",
+          "x": 1216,
+          "y": 712,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 199,
+          "function": "_IOFindBSDRoot",
+          "callee": "__ZN9IOService9waitQuietEy",
+          "phase": "continuation",
+          "call": "0xfffffff0078e3708",
+          "site": "0xfffffff0078e370c",
+          "x": 1264,
+          "y": 712,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 200,
+          "function": "_IOFindBSDRoot",
+          "callee": "__ZN9IOService14waitForServiceEP12OSDictionaryP13mach_timespec",
+          "phase": "call",
+          "call": "0xfffffff0078e37a8",
+          "site": "0xfffffff0078e37a8",
+          "x": 832,
+          "y": 736,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 201,
+          "function": "_IOFindBSDRoot",
+          "callee": "__ZN9IOService14waitForServiceEP12OSDictionaryP13mach_timespec",
+          "phase": "continuation",
+          "call": "0xfffffff0078e37a8",
+          "site": "0xfffffff0078e37ac",
+          "x": 880,
+          "y": 736,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 202,
+          "function": "_IOFindBSDRoot",
+          "callee": "__ZN9IOService14waitForServiceEP12OSDictionaryP13mach_timespec",
+          "phase": "call",
+          "call": "0xfffffff0078e381c",
+          "site": "0xfffffff0078e381c",
+          "x": 928,
+          "y": 736,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 203,
+          "function": "_IOFindBSDRoot",
+          "callee": "__ZN9IOService14waitForServiceEP12OSDictionaryP13mach_timespec",
+          "phase": "continuation",
+          "call": "0xfffffff0078e381c",
+          "site": "0xfffffff0078e3820",
+          "x": 976,
+          "y": 736,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 204,
+          "function": "_IOFindBSDRoot",
+          "callee": "_mdevlookup",
+          "phase": "call",
+          "call": "0xfffffff0078e3a3c",
+          "site": "0xfffffff0078e3a3c",
+          "x": 1024,
+          "y": 736,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 205,
+          "function": "_IOFindBSDRoot",
+          "callee": "_mdevlookup",
+          "phase": "continuation",
+          "call": "0xfffffff0078e3a3c",
+          "site": "0xfffffff0078e3a40",
+          "x": 1072,
+          "y": 736,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 206,
+          "function": "_IOFindBSDRoot",
+          "callee": "__ZN9IOService12setRootMediaEPS_",
+          "phase": "call",
+          "call": "0xfffffff0078e3d94",
+          "site": "0xfffffff0078e3d94",
+          "x": 1120,
+          "y": 736,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 207,
+          "function": "_IOFindBSDRoot",
+          "callee": "__ZN9IOService12setRootMediaEPS_",
+          "phase": "continuation",
+          "call": "0xfffffff0078e3d94",
+          "site": "0xfffffff0078e3d98",
+          "x": 1168,
+          "y": 736,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 208,
+          "function": "_IOFindBSDRoot",
+          "callee": "__ZN9IOService15serviceMatchingEPKcP12OSDictionary",
+          "phase": "call",
+          "call": "0xfffffff0078e3e94",
+          "site": "0xfffffff0078e3e94",
+          "x": 1216,
+          "y": 736,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 209,
+          "function": "_IOFindBSDRoot",
+          "callee": "__ZN9IOService15serviceMatchingEPKcP12OSDictionary",
+          "phase": "continuation",
+          "call": "0xfffffff0078e3e94",
+          "site": "0xfffffff0078e3e98",
+          "x": 1264,
+          "y": 736,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 210,
+          "function": "_IOFindBSDRoot",
+          "callee": "__ZN8OSString17withCStringNoCopyEPKc",
+          "phase": "call",
+          "call": "0xfffffff0078e3ea8",
+          "site": "0xfffffff0078e3ea8",
+          "x": 832,
+          "y": 760,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 211,
+          "function": "_IOFindBSDRoot",
+          "callee": "__ZN8OSString17withCStringNoCopyEPKc",
+          "phase": "continuation",
+          "call": "0xfffffff0078e3ea8",
+          "site": "0xfffffff0078e3eac",
+          "x": 880,
+          "y": 760,
+          "color": "0xff40ff80"
+        }
+      ],
+      "semantics": "call means before native BL; continuation means the native post-call address executed, possibly from another predecessor; each site drawn once",
+      "panel": {
+        "x": 832,
+        "y": 256,
+        "columns": 10,
+        "cell_width": 48,
+        "cell_height": 24,
+        "tile_width": 32,
+        "tile_height": 16
+      },
+      "limitations": [
+        "Control-flow reachability, not subsystem correctness",
+        "Later kernel framebuffer writes may overwrite the panel",
+        "No event ordering or call count is inferred from the cumulative grid"
+      ]
+    },
+    "native_vector_handoff": {
+      "captured": "probe_native_vectors",
+      "expected": "0xfffffff0073c2000",
+      "stage": "_kernel_bootstrap_thread entry",
+      "status_tag": "A02C",
+      "success": 1,
+      "rejected": 2,
+      "reason": "Return normal IRQ/FIQ/synchronous handling to the pinned native XNU vectors before thread services unmask interrupts"
+    },
+    "display_readback": {
+      "x": 832,
+      "y": 224,
+      "width": 384,
+      "height": 16,
+      "split_x": 1024,
+      "colors": [
+        "0xffffffff",
+        "0xff00ffff"
+      ],
+      "mismatched_pixels_tag": "A02A",
+      "last_stage_id_tag": "A02B",
+      "meaning": "CPU readback only; zero does not prove physical scanout is correct"
+    }
+  },
+  "image4_launch_context": {
+    "format": "Nuwa.DiagnosticLaunch.v1",
+    "adt_sha256": "b6bb6c88ebc600c4e33acd8c0be6f400e1feb59653ff92a42fabe08ef3a4f801",
+    "manifest_sha384": "dd9e04060f28ee31af323bd6d63684bd2846ed72c4ded8f46bbc844f5ffcecddbe9f4be4ffc519d84398c53b67a4e199",
+    "bnch_sha384": "9aaf9618cce465d3fcd2fea5a37688e174e73b1a34d44236ce531341e302a0e4374fbb8252878b9d6ceb4022d8ee8977",
+    "nonce_preimage_checked": false,
+    "components": {
+      "base_adt": {
+        "bytes": 13120,
+        "sha256": "17ed859eb65e301f3b53561b2f3306c49362043eebce77f4a578ec629f81d774"
+      },
+      "boot_shim": {
+        "bytes": 112,
+        "sha256": "8a3b54765c895a0366539130fdf6e4e4a01e364fe7de067a38d0193606f9d462"
+      },
+      "firmware_fd": {
+        "bytes": 3145728,
+        "sha256": "2d606985ad768dcfaab66c2b28073c0a4c2820126b42b23286623fdc450e848f"
+      },
+      "kernel": {
+        "bytes": 58421248,
+        "sha256": "dc496abea6f8916e8c30e5e19a7a60b2be7708274c53d458d6568da2940aff61"
+      }
+    },
+    "trust": {
+      "anti_replay_enforced": false,
+      "apple_im4m": false,
+      "hardware_nonce_protection": false,
+      "manifest_authentication": "none; host launch measurement",
+      "tss_personalized": false
+    },
+    "policy": "32-bit LE 1: prohibit mix-n-match; no default/empty property",
+    "producer_sha256": "40e1b776495f43d51cd786a4ac8a4826b11289aa86210cc45093ddb96d64de8f"
+  },
+  "pthread_startup": {
+    "prelink_path": "out/pthread-prelink-v28-analysis/kernel-pthread-analysis.macho",
+    "prelink_sha256": "52227410fd5ad0da9b8487a3fc3706a8f03042cc8256cfe99018897337f47e01",
+    "overlay_patch_count": 16,
+    "loader": "_OSKextLoadKextWithIdentifier",
+    "loader_va": "0xfffffff007824574",
+    "functions_va": "0xfffffff007a9a138",
+    "helper": "0xfffffff008499700",
+    "source_sha256": "efa8e26905bf55302115c23cf5d417f7830ce7505c2b0ff3f999f0a6a2672fd1",
+    "markers": {
+      "178": "before OSKext load",
+      "179": "OSKext load returned",
+      "180": "native pthread function table non-NULL",
+      "181": "already registered; no load request"
+    }
+  }
+}

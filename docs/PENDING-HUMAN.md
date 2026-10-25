@@ -120,3 +120,5 @@ PROBE18实测、读图与恢复闭环完成。最近后验18:19:42北京时间�
 - [x] PROBE19恢复闭环：2026-10-25 20:03:58北京时间，用户已回Android；命令确认Android完成1/A槽/boot_a、vendor_boot_a、init_boot_a三SHA与preflight完全一致。第一次recovery超时保留，成功重试确认已在Android，无第二试验包。当前无待恢复任务；下一包另核对当轮录像/恢复条件。
 
 - [x] PROBE20：用户确认录像/恢复就绪，单次临时boot并取得照片36983517，实机进入IOFindBSDRoot。用户回fastboot后临时原厂boot恢复，2026-10-25 20:45:31 +08确认Android1/A槽/三SHA与本轮preflight一致。当前无待恢复任务，不重复启动20；证据reports/xnu-entry-probe-trial/2026-10-25-v28/。
+
+- [ ] PROBE21：用户已确认本包录像/恢复，新鲜Android1/A槽/三SHA预检与v28后验一致，准备只启动一次镜像f005f7ed。待菜单电源Enter、root内部标记画面与恢复后验；人工恢复等待不阻断离线工作，未确认本轮恢复前不启动新候选。
