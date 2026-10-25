@@ -1,0 +1,1052 @@
+{
+  "scope": "Map fixed XNU source read boundaries and native calls without device access.",
+  "level": "static-only",
+  "source_commit": "1b191cb58250d0705d8a51287127505aa4bc0789",
+  "source_repository": "https://github.com/apple-oss-distributions/xnu",
+  "source_license": "APSL-2.0",
+  "source_sha256": {
+    "bsd/kern/decmpfs.c": "9d5c0d486cd31222e007e6335aed0ce1e3bd6e609ab02005ac61d03dd421471c",
+    "security/mac_vfs.c": "51c6c39b497514f073cdd94aa2204f25679e6e92461b7a0f9120c886ea36c553"
+  },
+  "native_input_sha256": "1aeebf1352a86b0d31612a6bd6e77bd7292f676ad2ce43a99ec4a8f3999eedb6",
+  "candidate_sha256": "54179a8775ee4d723bb0493a66679932f986d39231e9ef371d856afb07b3ea07",
+  "test_source_sha256": "b8080e6dbd01c98f4a91d026fa095baad59a437aed30a12051ba604048e2bf40",
+  "functions": [
+    {
+      "function": "decmpfs_read_compressed",
+      "source_file": "bsd/kern/decmpfs.c",
+      "definition_line": 1648,
+      "ordered_source_anchors": [
+        {
+          "text": "decmpfs_lock_compressed_data(cp, 0)",
+          "line": 1676
+        },
+        {
+          "text": "cluster_copy_ubc_data(",
+          "line": 1691
+        },
+        {
+          "text": "decmpfs_fetch_compressed_header(",
+          "line": 1709
+        },
+        {
+          "text": "compression_type_valid(",
+          "line": 1713
+        },
+        {
+          "text": "lck_rw_lock_shared(&decompressorsLock)",
+          "line": 1724
+        },
+        {
+          "text": "adjust_fetch(",
+          "line": 1728
+        },
+        {
+          "text": "VNOP_VERIFY(",
+          "line": 1750
+        },
+        {
+          "text": "ubc_create_upl_kernel(",
+          "line": 1788
+        },
+        {
+          "text": "ubc_upl_map(",
+          "line": 1802
+        },
+        {
+          "text": "decmpfs_fetch_uncompressed_data(",
+          "line": 1829
+        },
+        {
+          "text": "wait_for_decompress(cp)",
+          "line": 1837
+        },
+        {
+          "text": "cluster_copy_upl_data(",
+          "line": 1890
+        }
+      ],
+      "native_symbol": "_decmpfs_read_compressed",
+      "native_symbol_available": true,
+      "start": "0xfffffff007480028",
+      "end": "0xfffffff007480904",
+      "calls": [
+        {
+          "pc": "0xfffffff007480078",
+          "word": "0x97fd2376",
+          "kind": "BL",
+          "target": "0xfffffff0073c8e50",
+          "target_symbols": [
+            "_current_thread",
+            "_current_act"
+          ]
+        },
+        {
+          "pc": "0xfffffff007480090",
+          "word": "0x97f7df7c",
+          "kind": "BL",
+          "target": "0xfffffff007277e80",
+          "target_symbols": [
+            "_lck_rw_lock_shared",
+            "_IORWLockRead"
+          ]
+        },
+        {
+          "pc": "0xfffffff0074800b0",
+          "word": "0x9408f2fd",
+          "kind": "BL",
+          "target": "0xfffffff0076bcca4",
+          "target_symbols": [
+            "_uio_offset"
+          ]
+        },
+        {
+          "pc": "0xfffffff0074800c0",
+          "word": "0x9408f1ee",
+          "kind": "BL",
+          "target": "0xfffffff0076bc878",
+          "target_symbols": [
+            "_uio_resid"
+          ]
+        },
+        {
+          "pc": "0xfffffff007480100",
+          "word": "0x97fef294",
+          "kind": "BL",
+          "target": "0xfffffff00743cb50",
+          "target_symbols": [
+            "_cluster_copy_ubc_data"
+          ]
+        },
+        {
+          "pc": "0xfffffff007480110",
+          "word": "0x9408f2e5",
+          "kind": "BL",
+          "target": "0xfffffff0076bcca4",
+          "target_symbols": [
+            "_uio_offset"
+          ]
+        },
+        {
+          "pc": "0xfffffff00748011c",
+          "word": "0x9408f1d7",
+          "kind": "BL",
+          "target": "0xfffffff0076bc878",
+          "target_symbols": [
+            "_uio_resid"
+          ]
+        },
+        {
+          "pc": "0xfffffff007480158",
+          "word": "0x97fff838",
+          "kind": "BL",
+          "target": "0xfffffff00747e238",
+          "target_symbols": [
+            "_decmpfs_fetch_compressed_header"
+          ]
+        },
+        {
+          "pc": "0xfffffff007480188",
+          "word": "0x97f7df3e",
+          "kind": "BL",
+          "target": "0xfffffff007277e80",
+          "target_symbols": [
+            "_lck_rw_lock_shared",
+            "_IORWLockRead"
+          ]
+        },
+        {
+          "pc": "0xfffffff007480194",
+          "word": "0x97fff909",
+          "kind": "BL",
+          "target": "0xfffffff00747e5b8",
+          "target_symbols": [
+            "__decmp_get_func"
+          ]
+        },
+        {
+          "pc": "0xfffffff0074801a0",
+          "word": "0x97f7e4fd",
+          "kind": "BL",
+          "target": "0xfffffff007279594",
+          "target_symbols": [
+            "_lck_rw_unlock_shared"
+          ]
+        },
+        {
+          "pc": "0xfffffff0074801b8",
+          "word": "0x97f7df32",
+          "kind": "BL",
+          "target": "0xfffffff007277e80",
+          "target_symbols": [
+            "_lck_rw_lock_shared",
+            "_IORWLockRead"
+          ]
+        },
+        {
+          "pc": "0xfffffff0074801c4",
+          "word": "0x97fff8fd",
+          "kind": "BL",
+          "target": "0xfffffff00747e5b8",
+          "target_symbols": [
+            "__decmp_get_func"
+          ]
+        },
+        {
+          "pc": "0xfffffff0074801ec",
+          "word": "0xd63f0100",
+          "kind": "BLR",
+          "register": "x8",
+          "target": "runtime value required"
+        },
+        {
+          "pc": "0xfffffff0074801fc",
+          "word": "0x97f7e4e6",
+          "kind": "BL",
+          "target": "0xfffffff007279594",
+          "target_symbols": [
+            "_lck_rw_unlock_shared"
+          ]
+        },
+        {
+          "pc": "0xfffffff00748023c",
+          "word": "0x97ffb864",
+          "kind": "BL",
+          "target": "0xfffffff00746e3cc",
+          "target_symbols": [
+            "_VNOP_VERIFY"
+          ]
+        },
+        {
+          "pc": "0xfffffff0074802a8",
+          "word": "0x97f7bb17",
+          "kind": "BL",
+          "target": "0xfffffff00726ef04",
+          "target_symbols": [
+            "_kfree_ext"
+          ]
+        },
+        {
+          "pc": "0xfffffff0074802bc",
+          "word": "0x97f7e41b",
+          "kind": "BL",
+          "target": "0xfffffff007279328",
+          "target_symbols": [
+            "_lck_rw_done",
+            "_IORWLockUnlock"
+          ]
+        },
+        {
+          "pc": "0xfffffff00748030c",
+          "word": "0x97f80edf",
+          "kind": "BL",
+          "target": "0xfffffff007283e88",
+          "target_symbols": [
+            "_printf"
+          ]
+        },
+        {
+          "pc": "0xfffffff007480368",
+          "word": "0x97f80ec8",
+          "kind": "BL",
+          "target": "0xfffffff007283e88",
+          "target_symbols": [
+            "_printf"
+          ]
+        },
+        {
+          "pc": "0xfffffff0074803e0",
+          "word": "0x97f80eaa",
+          "kind": "BL",
+          "target": "0xfffffff007283e88",
+          "target_symbols": [
+            "_printf"
+          ]
+        },
+        {
+          "pc": "0xfffffff007480420",
+          "word": "0x9409e728",
+          "kind": "BL",
+          "target": "0xfffffff0076fa0c0",
+          "target_symbols": [
+            "_ubc_create_upl_kernel"
+          ]
+        },
+        {
+          "pc": "0xfffffff007480438",
+          "word": "0x97fb75bb",
+          "kind": "BL",
+          "target": "0xfffffff00735db24",
+          "target_symbols": [
+            "_upl_mark_decmp"
+          ]
+        },
+        {
+          "pc": "0xfffffff007480444",
+          "word": "0x9409e9fe",
+          "kind": "BL",
+          "target": "0xfffffff0076fac3c",
+          "target_symbols": [
+            "_ubc_upl_map"
+          ]
+        },
+        {
+          "pc": "0xfffffff007480474",
+          "word": "0x97fffe2d",
+          "kind": "BL",
+          "target": "0xfffffff00747fd28",
+          "target_symbols": [
+            "_decmpfs_fetch_uncompressed_data"
+          ]
+        },
+        {
+          "pc": "0xfffffff0074804ac",
+          "word": "0x97f80e77",
+          "kind": "BL",
+          "target": "0xfffffff007283e88",
+          "target_symbols": [
+            "_printf"
+          ]
+        },
+        {
+          "pc": "0xfffffff0074804d0",
+          "word": "0x97f80e6e",
+          "kind": "BL",
+          "target": "0xfffffff007283e88",
+          "target_symbols": [
+            "_printf"
+          ]
+        },
+        {
+          "pc": "0xfffffff0074804d8",
+          "word": "0x97fffe66",
+          "kind": "BL",
+          "target": "0xfffffff00747fe70",
+          "target_symbols": [
+            "_wait_for_decompress"
+          ]
+        },
+        {
+          "pc": "0xfffffff0074804f8",
+          "word": "0x97f80e64",
+          "kind": "BL",
+          "target": "0xfffffff007283e88",
+          "target_symbols": [
+            "_printf"
+          ]
+        },
+        {
+          "pc": "0xfffffff007480520",
+          "word": "0x97fffe02",
+          "kind": "BL",
+          "target": "0xfffffff00747fd28",
+          "target_symbols": [
+            "_decmpfs_fetch_uncompressed_data"
+          ]
+        },
+        {
+          "pc": "0xfffffff0074805b4",
+          "word": "0x97f80e35",
+          "kind": "BL",
+          "target": "0xfffffff007283e88",
+          "target_symbols": [
+            "_printf"
+          ]
+        },
+        {
+          "pc": "0xfffffff0074805d8",
+          "word": "0x97f80e2c",
+          "kind": "BL",
+          "target": "0xfffffff007283e88",
+          "target_symbols": [
+            "_printf"
+          ]
+        },
+        {
+          "pc": "0xfffffff007480600",
+          "word": "0x94157688",
+          "kind": "BL",
+          "target": "0xfffffff0079de020",
+          "target_symbols": [
+            "___bzero",
+            "_bzero"
+          ]
+        },
+        {
+          "pc": "0xfffffff007480634",
+          "word": "0x97ffb766",
+          "kind": "BL",
+          "target": "0xfffffff00746e3cc",
+          "target_symbols": [
+            "_VNOP_VERIFY"
+          ]
+        },
+        {
+          "pc": "0xfffffff007480664",
+          "word": "0x97f80e09",
+          "kind": "BL",
+          "target": "0xfffffff007283e88",
+          "target_symbols": [
+            "_printf"
+          ]
+        },
+        {
+          "pc": "0xfffffff007480674",
+          "word": "0x9409e981",
+          "kind": "BL",
+          "target": "0xfffffff0076fac78",
+          "target_symbols": [
+            "_ubc_upl_unmap"
+          ]
+        },
+        {
+          "pc": "0xfffffff007480698",
+          "word": "0x97fffe30",
+          "kind": "BL",
+          "target": "0xfffffff00747ff58",
+          "target_symbols": [
+            "_commit_upl"
+          ]
+        },
+        {
+          "pc": "0xfffffff007480708",
+          "word": "0x97fef06f",
+          "kind": "BL",
+          "target": "0xfffffff00743c8c4",
+          "target_symbols": [
+            "_cluster_copy_upl_data"
+          ]
+        },
+        {
+          "pc": "0xfffffff007480744",
+          "word": "0x97f80dd1",
+          "kind": "BL",
+          "target": "0xfffffff007283e88",
+          "target_symbols": [
+            "_printf"
+          ]
+        },
+        {
+          "pc": "0xfffffff00748076c",
+          "word": "0x94157179",
+          "kind": "BL",
+          "target": "0xfffffff0079dcd50",
+          "target_symbols": [
+            "___ubsan_handle_sub_overflow_minimal"
+          ]
+        },
+        {
+          "pc": "0xfffffff007480790",
+          "word": "0x97fffdf2",
+          "kind": "BL",
+          "target": "0xfffffff00747ff58",
+          "target_symbols": [
+            "_commit_upl"
+          ]
+        },
+        {
+          "pc": "0xfffffff0074807a0",
+          "word": "0x94157192",
+          "kind": "BL",
+          "target": "0xfffffff0079dcde8",
+          "target_symbols": [
+            "___ubsan_handle_add_overflow_minimal"
+          ]
+        },
+        {
+          "pc": "0xfffffff0074807ac",
+          "word": "0x94157169",
+          "kind": "BL",
+          "target": "0xfffffff0079dcd50",
+          "target_symbols": [
+            "___ubsan_handle_sub_overflow_minimal"
+          ]
+        },
+        {
+          "pc": "0xfffffff0074807bc",
+          "word": "0x9415718b",
+          "kind": "BL",
+          "target": "0xfffffff0079dcde8",
+          "target_symbols": [
+            "___ubsan_handle_add_overflow_minimal"
+          ]
+        },
+        {
+          "pc": "0xfffffff0074807cc",
+          "word": "0x94157161",
+          "kind": "BL",
+          "target": "0xfffffff0079dcd50",
+          "target_symbols": [
+            "___ubsan_handle_sub_overflow_minimal"
+          ]
+        },
+        {
+          "pc": "0xfffffff0074807dc",
+          "word": "0x9415715d",
+          "kind": "BL",
+          "target": "0xfffffff0079dcd50",
+          "target_symbols": [
+            "___ubsan_handle_sub_overflow_minimal"
+          ]
+        },
+        {
+          "pc": "0xfffffff0074807e8",
+          "word": "0x94157180",
+          "kind": "BL",
+          "target": "0xfffffff0079dcde8",
+          "target_symbols": [
+            "___ubsan_handle_add_overflow_minimal"
+          ]
+        },
+        {
+          "pc": "0xfffffff007480838",
+          "word": "0x97fffdc8",
+          "kind": "BL",
+          "target": "0xfffffff00747ff58",
+          "target_symbols": [
+            "_commit_upl"
+          ]
+        },
+        {
+          "pc": "0xfffffff007480874",
+          "word": "0x97fffdb9",
+          "kind": "BL",
+          "target": "0xfffffff00747ff58",
+          "target_symbols": [
+            "_commit_upl"
+          ]
+        },
+        {
+          "pc": "0xfffffff007480894",
+          "word": "0x97f80d7d",
+          "kind": "BL",
+          "target": "0xfffffff007283e88",
+          "target_symbols": [
+            "_printf"
+          ]
+        },
+        {
+          "pc": "0xfffffff0074808d8",
+          "word": "0x97f80d6c",
+          "kind": "BL",
+          "target": "0xfffffff007283e88",
+          "target_symbols": [
+            "_printf"
+          ]
+        },
+        {
+          "pc": "0xfffffff0074808f0",
+          "word": "0x97fffd9a",
+          "kind": "BL",
+          "target": "0xfffffff00747ff58",
+          "target_symbols": [
+            "_commit_upl"
+          ]
+        }
+      ]
+    },
+    {
+      "function": "decmpfs_fetch_uncompressed_data",
+      "source_file": "bsd/kern/decmpfs.c",
+      "definition_line": 1170,
+      "ordered_source_anchors": [
+        {
+          "text": "lck_rw_lock_shared(&decompressorsLock)",
+          "line": 1211
+        },
+        {
+          "text": "decmp_get_func(",
+          "line": 1212
+        },
+        {
+          "text": "err = fetch(",
+          "line": 1214
+        },
+        {
+          "text": "lck_rw_unlock_shared(&decompressorsLock)",
+          "line": 1215
+        }
+      ],
+      "native_symbol": "_decmpfs_fetch_uncompressed_data",
+      "native_symbol_available": true,
+      "start": "0xfffffff00747fd28",
+      "end": "0xfffffff00747fe70",
+      "calls": [
+        {
+          "pc": "0xfffffff00747fd80",
+          "word": "0x97f7e040",
+          "kind": "BL",
+          "target": "0xfffffff007277e80",
+          "target_symbols": [
+            "_lck_rw_lock_shared",
+            "_IORWLockRead"
+          ]
+        },
+        {
+          "pc": "0xfffffff00747fd90",
+          "word": "0x97fffa0a",
+          "kind": "BL",
+          "target": "0xfffffff00747e5b8",
+          "target_symbols": [
+            "__decmp_get_func"
+          ]
+        },
+        {
+          "pc": "0xfffffff00747fdc0",
+          "word": "0xd63f0100",
+          "kind": "BLR",
+          "register": "x8",
+          "target": "runtime value required"
+        },
+        {
+          "pc": "0xfffffff00747fdd0",
+          "word": "0x97f7e5f1",
+          "kind": "BL",
+          "target": "0xfffffff007279594",
+          "target_symbols": [
+            "_lck_rw_unlock_shared"
+          ]
+        },
+        {
+          "pc": "0xfffffff00747fdd8",
+          "word": "0x97fd241e",
+          "kind": "BL",
+          "target": "0xfffffff0073c8e50",
+          "target_symbols": [
+            "_current_thread",
+            "_current_act"
+          ]
+        },
+        {
+          "pc": "0xfffffff00747fddc",
+          "word": "0x97f8c8c8",
+          "kind": "BL",
+          "target": "0xfffffff0072b20fc",
+          "target_symbols": [
+            "_thread_tid"
+          ]
+        },
+        {
+          "pc": "0xfffffff00747fdf0",
+          "word": "0x9407d3f9",
+          "kind": "BL",
+          "target": "0xfffffff007674dd4",
+          "target_symbols": [
+            "_ktriage_record"
+          ]
+        },
+        {
+          "pc": "0xfffffff00747fe00",
+          "word": "0x97fd2414",
+          "kind": "BL",
+          "target": "0xfffffff0073c8e50",
+          "target_symbols": [
+            "_current_thread",
+            "_current_act"
+          ]
+        },
+        {
+          "pc": "0xfffffff00747fe04",
+          "word": "0x97f8c8be",
+          "kind": "BL",
+          "target": "0xfffffff0072b20fc",
+          "target_symbols": [
+            "_thread_tid"
+          ]
+        },
+        {
+          "pc": "0xfffffff00747fe14",
+          "word": "0x9407d3f0",
+          "kind": "BL",
+          "target": "0xfffffff007674dd4",
+          "target_symbols": [
+            "_ktriage_record"
+          ]
+        },
+        {
+          "pc": "0xfffffff00747fe20",
+          "word": "0x97f7e5dd",
+          "kind": "BL",
+          "target": "0xfffffff007279594",
+          "target_symbols": [
+            "_lck_rw_unlock_shared"
+          ]
+        },
+        {
+          "pc": "0xfffffff00747fe48",
+          "word": "0x97fce530",
+          "kind": "BL",
+          "target": "0xfffffff0073b9308",
+          "target_symbols": [
+            "_flush_dcache64"
+          ]
+        },
+        {
+          "pc": "0xfffffff00747fe6c",
+          "word": "0x9413ed63",
+          "kind": "BL",
+          "target": "0xfffffff00797b3f8",
+          "target_symbols": [
+            "_decmpfs_fetch_uncompressed_data.cold.1"
+          ]
+        }
+      ]
+    },
+    {
+      "function": "compression_type_valid",
+      "source_file": "bsd/kern/decmpfs.c",
+      "definition_line": 1152,
+      "ordered_source_anchors": [
+        {
+          "text": "lck_rw_lock_shared(&decompressorsLock)",
+          "line": 1158
+        },
+        {
+          "text": "decmp_get_func(",
+          "line": 1159
+        },
+        {
+          "text": "lck_rw_unlock_shared(&decompressorsLock)",
+          "line": 1162
+        }
+      ],
+      "native_symbol": "_compression_type_valid",
+      "native_symbol_available": false,
+      "limitation": "No separate symbol in fixed image; may be inlined or omitted, not inferred"
+    },
+    {
+      "function": "decmpfs_lock_compressed_data",
+      "source_file": "bsd/kern/decmpfs.c",
+      "definition_line": 336,
+      "ordered_source_anchors": [
+        {
+          "text": "current_thread()",
+          "line": 338
+        },
+        {
+          "text": "if (cp->lockowner == thread)",
+          "line": 340
+        },
+        {
+          "text": "lck_rw_lock_exclusive(",
+          "line": 344
+        },
+        {
+          "text": "lck_rw_lock_shared(",
+          "line": 348
+        }
+      ],
+      "native_symbol": "_decmpfs_lock_compressed_data",
+      "native_symbol_available": true,
+      "start": "0xfffffff00747de80",
+      "end": "0xfffffff00747def8",
+      "calls": [
+        {
+          "pc": "0xfffffff00747de98",
+          "word": "0x97fd2bee",
+          "kind": "BL",
+          "target": "0xfffffff0073c8e50",
+          "target_symbols": [
+            "_current_thread",
+            "_current_act"
+          ]
+        },
+        {
+          "pc": "0xfffffff00747deb4",
+          "word": "0x97f7e782",
+          "kind": "BL",
+          "target": "0xfffffff007277cbc",
+          "target_symbols": [
+            "_lck_rw_lock_exclusive",
+            "_IORWLockWrite"
+          ]
+        },
+        {
+          "pc": "0xfffffff00747dedc",
+          "word": "0x97f7e7e9",
+          "kind": "BL",
+          "target": "0xfffffff007277e80",
+          "target_symbols": [
+            "_lck_rw_lock_shared",
+            "_IORWLockRead"
+          ]
+        }
+      ]
+    },
+    {
+      "function": "wait_for_decompress",
+      "source_file": "bsd/kern/decmpfs.c",
+      "definition_line": 1012,
+      "ordered_source_anchors": [
+        {
+          "text": "lck_mtx_lock(&decompress_channel_mtx)",
+          "line": 1015
+        },
+        {
+          "text": "decmpfs_fast_get_state(cp)",
+          "line": 1017
+        },
+        {
+          "text": "if (state != FILE_IS_CONVERTING)",
+          "line": 1018
+        },
+        {
+          "text": "lck_mtx_unlock(&decompress_channel_mtx)",
+          "line": 1020
+        },
+        {
+          "text": "msleep(",
+          "line": 1023
+        }
+      ],
+      "native_symbol": "_wait_for_decompress",
+      "native_symbol_available": true,
+      "start": "0xfffffff00747fe70",
+      "end": "0xfffffff00747ff58",
+      "calls": [
+        {
+          "pc": "0xfffffff00747fe98",
+          "word": "0x97f7d5cc",
+          "kind": "BL",
+          "target": "0xfffffff0072755c8",
+          "target_symbols": [
+            "_lck_mtx_lock",
+            "_IOLockLock"
+          ]
+        },
+        {
+          "pc": "0xfffffff00747fecc",
+          "word": "0x9408f6fb",
+          "kind": "BL",
+          "target": "0xfffffff0076bdab8",
+          "target_symbols": [
+            "_msleep"
+          ]
+        },
+        {
+          "pc": "0xfffffff00747ff28",
+          "word": "0x97f80fd8",
+          "kind": "BL",
+          "target": "0xfffffff007283e88",
+          "target_symbols": [
+            "_printf"
+          ]
+        },
+        {
+          "pc": "0xfffffff00747ff38",
+          "word": "0x97f7d649",
+          "kind": "BL",
+          "target": "0xfffffff00727585c",
+          "target_symbols": [
+            "_lck_mtx_unlock",
+            "_IOLockUnlock"
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mac_vnode_check_read",
+      "source_file": "security/mac_vfs.c",
+      "definition_line": 1668,
+      "ordered_source_anchors": [
+        {
+          "text": "vfs_context_ucred(ctx)",
+          "line": 1680
+        },
+        {
+          "text": "mac_cred_check_enforce(cred)",
+          "line": 1681
+        },
+        {
+          "text": "MAC_CHECK(vnode_check_read",
+          "line": 1685
+        },
+        {
+          "text": "return error;",
+          "line": 1689
+        }
+      ],
+      "native_symbol": "_mac_vnode_check_read",
+      "native_symbol_available": true,
+      "start": "0xfffffff007916d5c",
+      "end": "0xfffffff007916f08",
+      "calls": [
+        {
+          "pc": "0xfffffff007916d7c",
+          "word": "0x97ed4f54",
+          "kind": "BL",
+          "target": "0xfffffff00746aacc",
+          "target_symbols": [
+            "_vfs_context_ucred"
+          ]
+        },
+        {
+          "pc": "0xfffffff007916d90",
+          "word": "0x97f65b4b",
+          "kind": "BL",
+          "target": "0xfffffff0076adabc",
+          "target_symbols": [
+            "_proc_ucred"
+          ]
+        },
+        {
+          "pc": "0xfffffff007916df8",
+          "word": "0x97ffd779",
+          "kind": "BL",
+          "target": "0xfffffff00790cbdc",
+          "target_symbols": [
+            "_mac_label_verify"
+          ]
+        },
+        {
+          "pc": "0xfffffff007916e0c",
+          "word": "0xd63f0340",
+          "kind": "BLR",
+          "register": "x26",
+          "target": "runtime value required"
+        },
+        {
+          "pc": "0xfffffff007916e28",
+          "word": "0x97ffcfdd",
+          "kind": "BL",
+          "target": "0xfffffff00790ad9c",
+          "target_symbols": [
+            "_mac_error_select"
+          ]
+        },
+        {
+          "pc": "0xfffffff007916e4c",
+          "word": "0x97ffcc98",
+          "kind": "BL",
+          "target": "0xfffffff00790a0ac",
+          "target_symbols": [
+            "_mac_policy_list_conditional_busy"
+          ]
+        },
+        {
+          "pc": "0xfffffff007916e60",
+          "word": "0x97ffccba",
+          "kind": "BL",
+          "target": "0xfffffff00790a148",
+          "target_symbols": [
+            "_mac_policy_list_unbusy"
+          ]
+        },
+        {
+          "pc": "0xfffffff007916ec4",
+          "word": "0x97ffd746",
+          "kind": "BL",
+          "target": "0xfffffff00790cbdc",
+          "target_symbols": [
+            "_mac_label_verify"
+          ]
+        },
+        {
+          "pc": "0xfffffff007916ed8",
+          "word": "0xd63f0340",
+          "kind": "BLR",
+          "register": "x26",
+          "target": "runtime value required"
+        },
+        {
+          "pc": "0xfffffff007916ef4",
+          "word": "0x97ffcfaa",
+          "kind": "BL",
+          "target": "0xfffffff00790ad9c",
+          "target_symbols": [
+            "_mac_error_select"
+          ]
+        }
+      ]
+    }
+  ],
+  "conditional_conversion_wait_context": [
+    {
+      "line": 1829,
+      "text": "\t\terr = decmpfs_fetch_uncompressed_data(vp, cp, hdr, curUplPos, curUplSize, 1, &vec, &did_read);"
+    },
+    {
+      "line": 1830,
+      "text": "\t\tif (err) {"
+    },
+    {
+      "line": 1831,
+      "text": "\t\t\tErrorLogWithPath(\"decmpfs_fetch_uncompressed_data err %d\\n\", err);"
+    },
+    {
+      "line": 1832,
+      "text": ""
+    },
+    {
+      "line": 1833,
+      "text": "\t\t\t/* maybe the file is converting to decompressed */"
+    },
+    {
+      "line": 1834,
+      "text": "\t\t\tint cmp_state = decmpfs_fast_get_state(cp);"
+    },
+    {
+      "line": 1835,
+      "text": "\t\t\tif (cmp_state == FILE_IS_CONVERTING) {"
+    },
+    {
+      "line": 1836,
+      "text": "\t\t\t\tErrorLogWithPath(\"cmp_state == FILE_IS_CONVERTING\\n\");"
+    },
+    {
+      "line": 1837,
+      "text": "\t\t\t\tcmp_state = wait_for_decompress(cp);"
+    },
+    {
+      "line": 1838,
+      "text": "\t\t\t\tif (cmp_state == FILE_IS_COMPRESSED) {"
+    },
+    {
+      "line": 1839,
+      "text": "\t\t\t\t\tErrorLogWithPath(\"cmp_state == FILE_IS_COMPRESSED\\n\");"
+    },
+    {
+      "line": 1840,
+      "text": "\t\t\t\t\t/* a decompress was attempted but it failed, let's try fetching again */"
+    },
+    {
+      "line": 1841,
+      "text": "\t\t\t\t\tgoto decompress;"
+    },
+    {
+      "line": 1842,
+      "text": "\t\t\t\t}"
+    },
+    {
+      "line": 1843,
+      "text": "\t\t\t}"
+    },
+    {
+      "line": 1844,
+      "text": "\t\t\tif (cmp_state == FILE_IS_NOT_COMPRESSED) {"
+    },
+    {
+      "line": 1845,
+      "text": "\t\t\t\tErrorLogWithPath(\"cmp_state == FILE_IS_NOT_COMPRESSED\\n\");"
+    },
+    {
+      "line": 1846,
+      "text": "\t\t\t\t/* the file was decompressed after we started reading it */"
+    },
+    {
+      "line": 1847,
+      "text": "\t\t\t\tabort_read = 1; /* we're not going to commit our data */"
+    },
+    {
+      "line": 1848,
+      "text": "\t\t\t\t*is_compressed = 0; /* instruct caller to fall back to its normal path */"
+    }
+  ],
+  "limitations": [
+    "Source order is lexical and conditional; not every listed branch executes",
+    "No runtime APFS v_op table or actual 272 callback target captured",
+    "Registered type4 pointer does not prove compressed-data lock, UBC/UPL, validation or fetch returned",
+    "No observed lock owner, wait_event, blocked thread or IRQ state"
+  ],
+  "device_accessed": false
+}

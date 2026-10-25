@@ -1,0 +1,162 @@
+{
+  "checked_at": "2026-10-26T02:01:18.541825+08:00",
+  "scope": "Supplemental offline audit; original PROBE28 package and all bound reports retained byte-for-byte",
+  "baseline_commit": "079488ff466f9ab9429f8772f42cb6a871a56e93",
+  "package_report_path": "reports/xnu-first-entry/entry-probe-28.json",
+  "package_report_sha256": "83c8da8c84eed16a46b19a8cb770271adb3bb85da53e8d2d84b09debbce50ba3",
+  "image_sha256": "7a04626e631196be116d270fa94e59b957ab537ecc1353501ff8f7b54fec7e0f",
+  "kernel_sha256": "54179a8775ee4d723bb0493a66679932f986d39231e9ef371d856afb07b3ea07",
+  "legacy_fixture_command": {
+    "argv": [
+      "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+      "-B",
+      "scripts/test-read-boundaries.py",
+      "--build",
+      "reports/kernel-entry-probe/2026-10-26-v36/build.json",
+      "--output",
+      "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v36-active-audit\\legacy-fixture-check.json"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"checks\": 11, \"passed\": true}\n",
+    "stderr": "",
+    "output_byte_identical": true
+  },
+  "retained_original_evidence": [
+    {
+      "name": "build",
+      "path": "reports/kernel-entry-probe/2026-10-26-v36/build.json",
+      "sha256": "fe7f386f8206f467266b668f1196bc3e5d23bb34f4430c827fa982c290b1c383"
+    },
+    {
+      "name": "software",
+      "path": "reports/kernel-entry-probe/2026-10-26-v36/software.json",
+      "sha256": "f302195872916c0ef13e3a7dd91d6ef7a4a308ae8ec31d33bc464290ff82c6e2"
+    },
+    {
+      "name": "transparency",
+      "path": "reports/kernel-entry-probe/2026-10-26-v36/transparency.json",
+      "sha256": "f5bea34213c3775eb9285c6b0cfc02f8340f9405fb04872c561fe5957cfbc3d3"
+    },
+    {
+      "name": "wfe",
+      "path": "reports/kernel-entry-probe/2026-10-26-v36/wfe.json",
+      "sha256": "ee1439cdd99e2af9a10f4b6b13bff16679e9f83522404a78046753c3da29d91f"
+    },
+    {
+      "name": "read-sites",
+      "path": "reports/kernel-entry-probe/2026-10-26-v36/read-sites.json",
+      "sha256": "bbd3063037c58c986321273334272d857ab1db2baf1b4d68605fc5777b0b7674"
+    },
+    {
+      "name": "loader",
+      "path": "reports/kernel-entry-probe/2026-10-26-v36/loader.json",
+      "sha256": "7295d2cc1498ef87930c301fdc357901484b98d13917aafcef5968bfa4dd6612"
+    },
+    {
+      "name": "mapping",
+      "path": "reports/kernel-entry-probe/2026-10-26-v36/mapping.json",
+      "sha256": "19957d08b93f639e932b3b88eaaae425f76ea21c15d009c405aaa0cce3fbb289"
+    },
+    {
+      "name": "transition-normal",
+      "path": "reports/kernel-entry-probe/2026-10-26-v36/transition-normal.json",
+      "sha256": "e380de8f8093941dee1874e7c5d9a18b4de2eae76cb61946fee7a8957edf5eaa"
+    },
+    {
+      "name": "transition-occupied-probe",
+      "path": "reports/kernel-entry-probe/2026-10-26-v36/transition-occupied-probe.json",
+      "sha256": "7844625b911f369fca65431b1ca867b380afc0cbf48e201447da24e0393801eb"
+    },
+    {
+      "name": "transition-bad-topology",
+      "path": "reports/kernel-entry-probe/2026-10-26-v36/transition-bad-topology.json",
+      "sha256": "65f5e1aa6bbe09a33da5622ddcb2a5e166275859acd791f875484f9168a1f1a1"
+    },
+    {
+      "name": "transition-occupied-fb",
+      "path": "reports/kernel-entry-probe/2026-10-26-v36/transition-occupied-fb.json",
+      "sha256": "3c8fbf6c42b75a23358459db85df2a9bc5b19ac5458cdadf53ed352e513787b6"
+    },
+    {
+      "name": "console-policy",
+      "path": "reports/kernel-entry-probe/2026-10-26-v36/console-policy.json",
+      "sha256": "24a6cfa95b78637b6f860f118c215dd65cb44f79aa4cf2a1b7890eca6024bed0"
+    },
+    {
+      "name": "renderer-bounds",
+      "path": "reports/kernel-entry-probe/2026-10-26-v36/renderer-bounds.json",
+      "sha256": "a66caf4e72528a04ed40ef1a7d0fb9eaa83e9ae1dca534a628217fc08be66e2f"
+    },
+    {
+      "name": "context-display",
+      "path": "reports/kernel-entry-probe/2026-10-26-v36/context-display.json",
+      "sha256": "fcb13122eb8b2591c1516a303a426c86e6dc4d561745af23836ae970ec1c68e0"
+    },
+    {
+      "name": "vectors",
+      "path": "reports/kernel-entry-probe/2026-10-26-v36/vectors.json",
+      "sha256": "0c8b2c1b3a8bf08e59eb9472e447fd2c5971c3bff1cdc5dce3fb62d57b690ce0"
+    },
+    {
+      "name": "image4-launch",
+      "path": "reports/kernel-entry-probe/2026-10-26-v36/image4-launch.json",
+      "sha256": "e15755d7e2d7c8f0b8ea36ef75d70f4a0031cec25ff9bdf00c0e95de105388db"
+    },
+    {
+      "name": "launch-context",
+      "path": "reports/kernel-entry-probe/2026-10-26-v36/launch-context.json",
+      "sha256": "8a4e8ca80daf52748224bebb998427960c7e420539cc203ca38bf4923155c575"
+    },
+    {
+      "name": "pthread-startup",
+      "path": "reports/kernel-entry-probe/2026-10-26-v36/pthread-startup.json",
+      "sha256": "c83dc2d5b9462b060773eaf2cae3eddbc0c390c69e07c04ebef13afd389fbe3d"
+    },
+    {
+      "name": "root-stop",
+      "path": "reports/kernel-entry-probe/2026-10-26-v36/root-stop.json",
+      "sha256": "45c8d8c4c208aa180d4adab9c661469d96367f304438daa392806e42d9c8e009"
+    },
+    {
+      "name": "root-launch",
+      "path": "reports/kernel-entry-probe/2026-10-26-v36/root-launch.json",
+      "sha256": "119ada0ba800f6cb77467bf321c722b6e17cb54fa5c642d146a82161e3b02ad6"
+    },
+    {
+      "name": "root-inputs",
+      "path": "reports/kernel-entry-probe/2026-10-26-v36/root-inputs.json",
+      "sha256": "3eb09ac98c99f71305a68c2f20b675306fc5ab8bd920dd94197b16b12ae1a4f4"
+    },
+    {
+      "name": "fscompression-startup",
+      "path": "reports/kernel-entry-probe/2026-10-26-v36/fscompression-startup.json",
+      "sha256": "f13c645ede1c3c6a61a7b4d048bb546602f3e5733a70c2b75059fd9488e95862"
+    },
+    {
+      "name": "read-boundaries",
+      "path": "reports/kernel-entry-probe/2026-10-26-v36/read-boundaries.json",
+      "sha256": "aad4a4dfc77f74fcf650ddda8a354a5698265f7534c385395efde8beef559dfe"
+    }
+  ],
+  "supplemental_artifact_sha256": {
+    "scripts/test-read-boundaries.py": "8c8a2516242102a9af6707ab21d10cea8b9d6fc4911fdf9e4ac4fad5941def28",
+    "scripts/test-read-boundary-differential.py": "81fae7b61290429625822c0e3ba3240dd70ac8d4d77f3b3327b0cbbe2a6afc95",
+    "scripts/audit-read-wait-chain.py": "b8080e6dbd01c98f4a91d026fa095baad59a437aed30a12051ba604048e2bf40",
+    "reports/kernel-entry-probe/2026-10-26-v36-active-audit/differential-with-negative.json": "57d54206e9caed14c3d863b9a8315ca8ef2f2680f09bb653a2b5510f390f3997",
+    "reports/kernel-entry-probe/2026-10-26-v36-active-audit/wait-chain-with-conversion.json": "fa5ac0e76d7dfd1a175a9a70ddb05105913b0a7e5b6e187b02fdefb0e82edfb1",
+    "reports/kernel-entry-probe/2026-10-26-v36-active-audit/legacy-fixture-check.json": "aad4a4dfc77f74fcf650ddda8a354a5698265f7534c385395efde8beef559dfe"
+  },
+  "device_accessed": false,
+  "kernel_or_package_written": false,
+  "active_scenario_count": 11,
+  "execution_pairs": 12,
+  "negative_changed_registers": [
+    "x8",
+    "x9"
+  ],
+  "legacy_x0_unchanged": true,
+  "legacy_sp_unchanged": true,
+  "source_functions": 6,
+  "native_symbols_found": 5,
+  "authoritative": true
+}

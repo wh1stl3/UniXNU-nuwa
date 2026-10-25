@@ -1,0 +1,13 @@
+{
+  "supplemental_manifest_hashes_match": true,
+  "analysis_manifest_hashes_match": true,
+  "python_files_parse": 3,
+  "original_v36_and_package_unchanged": true,
+  "json_encoding": "UTF-8",
+  "device_accessed": false,
+  "earlier_checker_failure": {
+    "error": "UnicodeDecodeError: 'gbk' codec can't decode byte 0xac in position 2492: illegal multibyte sequence",
+    "cause": "Ad-hoc Windows checker omitted explicit UTF-8 for public-research.json",
+    "fix": "Checker explicitly reads UTF-8; no artifact or implementation change required"
+  }
+}

@@ -1,0 +1,223 @@
+{
+  "scope": "Public first-party research and next-stage planning only",
+  "checked_at": "2026-10-26T02:16:33.699386+08:00",
+  "tools_used": [
+    "web search_query",
+    "web open",
+    "web find",
+    "web click"
+  ],
+  "representative_queries": [
+    "site:github.com/apple-oss-distributions/xnu decmpfs.c xnu-8796.141.3 wait_for_decompress",
+    "XNU decmpfs decompressorsLock deadlock",
+    "XNU mac_policy_list_conditional_busy source",
+    "site:github.com/apple-oss-distributions/xnu/issues decmpfs",
+    "site:github.com/sgan81/apfs-fuse/issues compression read hang",
+    "\"UniXNU-sheng\" github",
+    "\"decmpfs\" \"deadlock\" xnu github"
+  ],
+  "source_version_checks": [
+    {
+      "path": "bsd/kern/decmpfs.c",
+      "worktree_sha256": "9d5c0d486cd31222e007e6335aed0ce1e3bd6e609ab02005ac61d03dd421471c",
+      "git_blob_sha256": "549649080ce3791c2edbf8471dca05fb22340eaa06715ca221e82dbf5a28082a",
+      "matches_after_crlf_normalization": true,
+      "command": [
+        "git",
+        "-C",
+        "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full",
+        "show",
+        "1b191cb58250d0705d8a51287127505aa4bc0789:bsd/kern/decmpfs.c"
+      ]
+    },
+    {
+      "path": "bsd/vfs/vfs_vnops.c",
+      "worktree_sha256": "ea24edd54bb7428d77ba880b1150b17cbbb6cca4518977536153f585552a6b9b",
+      "git_blob_sha256": "4a91ef466df3efa340b433ecf462a9fbc9afc6c31efa79c24bcf0c6bdc657a94",
+      "matches_after_crlf_normalization": true,
+      "command": [
+        "git",
+        "-C",
+        "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full",
+        "show",
+        "1b191cb58250d0705d8a51287127505aa4bc0789:bsd/vfs/vfs_vnops.c"
+      ]
+    },
+    {
+      "path": "security/mac_vfs.c",
+      "worktree_sha256": "51c6c39b497514f073cdd94aa2204f25679e6e92461b7a0f9120c886ea36c553",
+      "git_blob_sha256": "c571a0b7de9c1b521c7724b0dc99ca74e244373fcaa96c503f71df7df2c8011a",
+      "matches_after_crlf_normalization": true,
+      "command": [
+        "git",
+        "-C",
+        "D:\\Code\\PortingiOS\\common\\sources\\xnu-ios16-full",
+        "show",
+        "1b191cb58250d0705d8a51287127505aa4bc0789:security/mac_vfs.c"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "name": "Apple release",
+      "url": "https://github.com/apple-oss-distributions/xnu/commit/1b191cb58250d0705d8a51287127505aa4bc0789",
+      "version": "xnu-8796.141.3 / 1b191cb58250d0705d8a51287127505aa4bc0789",
+      "license": "APSL-2.0",
+      "applicability": "direct-version",
+      "finding": "本地固定提交与官方发布身份相同；三个源文件归一换行后等于本地此提交blob"
+    },
+    {
+      "name": "native read",
+      "url": "https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/bsd/vfs/vfs_vnops.c",
+      "version": "xnu-8796.141.3",
+      "license": "APSL-2.0",
+      "applicability": "direct-mechanism",
+      "finding": "MAC检查、普通/swap读及残余量是不同条件边界；需当轮返回"
+    },
+    {
+      "name": "MAC read",
+      "url": "https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/security/mac_vfs.c",
+      "version": "xnu-8796.141.3",
+      "license": "APSL-2.0",
+      "applicability": "direct-mechanism",
+      "finding": "独立read策略，不以exec授权通过替代read返回"
+    },
+    {
+      "name": "decmpfs",
+      "url": "https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/bsd/kern/decmpfs.c",
+      "version": "xnu-8796.141.3",
+      "license": "APSL-2.0",
+      "applicability": "direct-mechanism",
+      "finding": "有表项不证明锁/验证/UPL/fetch；转换等待有错误及状态前提"
+    },
+    {
+      "name": "pagein error handling",
+      "url": "https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/bsd/vm/vnode_pager.c",
+      "version": "xnu-8796.141.3",
+      "license": "APSL-2.0",
+      "applicability": "conditional-transfer",
+      "finding": "EAGAIN与EPERM的UPL处理；未证当前header进入该路径"
+    },
+    {
+      "name": "host decoder",
+      "url": "https://github.com/sgan81/apfs-fuse/blob/66b86bd525e8cb90f9012543be89b1f092b75cf3/ApfsLib/Decmpfs.cpp",
+      "version": "66b86bd525e8cb90f9012543be89b1f092b75cf3",
+      "license": "GPL-2.0-or-later",
+      "applicability": "host-format-only",
+      "finding": "type4资源分叉/Zlib格式参考，已有主机读取不等于内核执行"
+    },
+    {
+      "name": "ARM host issue",
+      "url": "https://github.com/sgan81/apfs-fuse/issues/25",
+      "version": "2018 maintainer thread",
+      "license": "repository GPL-2.0-or-later",
+      "applicability": "not-current-runtime-fix",
+      "finding": "Raspbian编译可移植性，当前已工作的主机工具不需重复修复"
+    },
+    {
+      "name": "framework tool",
+      "url": "https://github.com/Siguza/fscmp",
+      "version": "README viewed 2026-10-26; no code adopted",
+      "license": "MIT",
+      "applicability": "different-environment",
+      "finding": "macOS-only且私有框架接口不稳定，不适用Windows/WSL或直接替代XNU"
+    },
+    {
+      "name": "same SoC reference",
+      "url": "https://github.com/UniXNU/UniXNU-sheng",
+      "version": "dynamic README; selects ipados-17.7.11-21H461",
+      "license": "no implementation adopted",
+      "applicability": "source-index-only",
+      "finding": "版本/板值不同；不覆盖iOS16/8796"
+    },
+    {
+      "name": "shared SoC reference",
+      "url": "https://github.com/UniXNU/UniXNU-sm8550-common",
+      "version": "prior review pin 23b2049fcd9e30356161def84231334fb55ecca9; live README not same-version proof",
+      "license": "no implementation adopted",
+      "applicability": "source-index-only",
+      "finding": "通用资源与设备内存/电源/固件分工；不迁移"
+    },
+    {
+      "name": "diagnostic region",
+      "url": "https://github.com/UniXNU/UniXNU/blob/16e592abee8a550dec8154ed1f38b5ebc4f16213/patches/xnu/native-dt-panic-region.patch",
+      "version": "16e592abee8a550dec8154ed1f38b5ebc4f16213",
+      "license": "repository BSD-2-Clause-Patent; patch target retains XNU license",
+      "applicability": "diagnostics-only",
+      "finding": "改善旧panic区域选择；不直接修复当前exec读取"
+    },
+    {
+      "name": "firmware QR",
+      "url": "https://github.com/UniXNU/UniXNU/blob/16e592abee8a550dec8154ed1f38b5ebc4f16213/package/UniXNUPkg/Driver/AdvancedLogDxe/AdvancedLogDxe.inf",
+      "version": "16e592abee8a550dec8154ed1f38b5ebc4f16213",
+      "license": "BSD-2-Clause-Patent",
+      "applicability": "firmware-only",
+      "finding": "需logger producer/依赖，不覆盖XNU接管后的日志"
+    },
+    {
+      "name": "board logging",
+      "url": "https://unixnu.com/devices/sheng-unattended-test",
+      "version": "live documentation viewed 2026-10-26",
+      "license": "site BSD-2-Clause-Patent",
+      "applicability": "method-only",
+      "finding": "该板UFS区域/恢复输入/自动返回不可照搬nuwa"
+    },
+    {
+      "name": "public nuwa state",
+      "url": "https://unixnu.com/devices/nuwa",
+      "version": "live documentation viewed 2026-10-26",
+      "license": "site BSD-2-Clause-Patent",
+      "applicability": "historical-public-state",
+      "finding": "仍记较早IODTNVRAM与用户态未证，不替代本地最新交接"
+    }
+  ],
+  "access_limits": [
+    {
+      "action": "git remote get-url origin and git rev-parse HEAD",
+      "target": "D:/Code/PortingiOS/common/sources/UniXNU-sheng",
+      "status": "denied-by-git-ownership-protection",
+      "reason": "dubious ownership: CodexSandboxOnline owner, Administrator caller",
+      "response": "Did not change safe.directory or retry bypass; used prior pinned review and public README"
+    },
+    {
+      "action": "web open",
+      "target": "https://api.github.com/repos/UniXNU/UniXNU-sheng/commits/main",
+      "status": "unavailable-via-tool"
+    },
+    {
+      "action": "web open",
+      "target": "https://api.github.com/repos/UniXNU/UniXNU-sm8550-common/commits/main",
+      "status": "unavailable-via-tool"
+    },
+    {
+      "action": "web open",
+      "target": "https://github.com/UniXNU/UniXNU-sheng/commits/main/",
+      "status": "restricted-URL"
+    },
+    {
+      "action": "web open",
+      "target": "https://github.com/UniXNU/UniXNU-sm8550-common/commits/main/",
+      "status": "restricted-URL"
+    },
+    {
+      "action": "web open",
+      "target": "https://github.com/UniXNU/ShengUfs/commits/main/",
+      "status": "restricted-URL"
+    },
+    {
+      "action": "web open",
+      "target": "https://github.com/UniXNU/UniXNU-sm8550-common/tree/23b2049fcd9e30356161def84231334fb55ecca9",
+      "status": "restricted-URL"
+    },
+    {
+      "action": "web open",
+      "target": "https://unixnu.com/drivers/sheng-ufs",
+      "status": "unavailable-via-tool"
+    }
+  ],
+  "result": "No directly matching nuwa current header-read runtime fix found in these searches; not a claim that none exists",
+  "device_accessed": false,
+  "private_upload_performed": false,
+  "third_party_contacted": false,
+  "new_implementation_after_analysis_steering": false
+}

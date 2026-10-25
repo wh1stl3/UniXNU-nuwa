@@ -700,3 +700,7 @@ manifest-properties节点已存在但无BNCH，boot-manifest-hash缺失。固定
 # D-067 · Git存储字节与诊断证据哈希保持LF一致
 
 2026-10-26。Windows默认JSON CRLF被Git规范为LF，按前者计算的包内报告SHA会在检出后失配。v36绑定前固定LF，相关生产器显式LF；38绑定复跑与23份Git blob替代验证通过。最终PROBE28包7a04626e…取代首包a8cb…；内核54179a87…与有效载荷不变，重封83字节CRC/目录时间/空闲簇差异已逐项记录。不将内核逐字节重建扩写为整个FAT运输镜像可复现。详见git-evidence-binding、repack-difference、post-build-validation及本轮操作记录；R-014当轮画面/恢复门仍保持。
+
+# D-068 · 补齐激活读取透明性，后续先核对真实参数契约
+
+2026-10-26。11场景12对激活路径全寄存器/相关原生内存差分通过，x8/x9负对照敏感；默认夹具输出与原11项报告逐字节相同，原28镜像/23份证据保留。静态MAC/decmpfs地图仍不能指定真实等待对象；转换等待仅在fetch错误且CONVERTING后。发现真实250的flags8及运行时PAGE_SHIFT长度与普通4KiB/flags0 fixture存在参数覆盖边界，下一最小离线项先固定loader/初始化契约，不改板值/TCR。最新用户指令已转为只分析/公开搜索，不继续扩展实现，不操作设备；Mach-O/dyld、签名和恢复用户态释放都排在最早header卡点之后。证据active-audit的differential-with-negative、wait-chain-with-conversion、audit-manifest-final及两篇10月26日分析记录。
