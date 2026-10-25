@@ -4,13 +4,13 @@
 
 ## 当前进度（2026-10-25）
 
-**nuwa实机已运行XNU首线程，PE_init_iokit已返回，在mac_policy_initmach的Image4策略初始化panic。BSD/root与iOS用户态尚未进入。** PROBE18镜像`c89cfa52`、内核`d6f101e4`修复横纹和临时异常向量交接，实机81格亮，白/青校验带完整。中断使能调用返回不代表硬件IRQ递送已验证。
+**PROBE19实机已越过MAC/Image4并进入BSD，当前停于pthread内核函数表未注册panic。root发现/挂载与iOS用户态尚未进入。** 镜像`f1febc06`、内核`f3c33194`，MAC后继89和BSD入口6点亮，A02A=0、A02B=6、A02C=1。硬件IRQ递送/驱动资格仍未验证。
 
-最近恢复记录为2026-10-25北京时间18:19:42：Android完成1、A槽，三个启动分区SHA与试前相同，无flash/erase/改槽。原始音视频、截图只保留本地，仓库提交脱敏文字/哈希/命令证据。
+最近恢复记录为2026-10-25北京时间20:03:58：Android完成1、A槽，三个启动分区SHA与试前相同，无flash/erase/改槽，无待人工恢复任务。原始音视频、截图只保留本地，仓库提交脱敏文字/哈希/命令证据。
 
-当前首要缺项为`/chosen/mix-n-match-prevention-status`；保留二进制读取器及原生SecureDT对出货ADT复现返回2，5个隔离用例通过。下一步核对实际IOKit provider和完整Image4/manifest契约；运行时策略值尚未选择。源DT panic区补丁仅函数体编译和边界测试通过，整核源码重建未完成。
+本轮生成绑定实际FD/shim/kernel/基础ADT的非Apple诊断启动测量和主机CSPRNG nonce，集成AMNM/CHMH兼容路径，保留认证失败；不声称Apple IM4M/TSS链或硬件防重放。25项完整Image4检查、740差分、29绑定及镜像回读通过。固定donor有遗漏的iOS16 pthread组件，已完成31组件闭合/真实注册的11项离线审计；下一步接入正常OSKext生命周期，不能以假表跳过检查。
 
-先读[STATUS](docs/STATUS.md)、[当前交接](docs/operations/2026-10-25-mainline-handoff.md)、[v25实现/实测](docs/operations/2026-10-25-v25-first-thread-display.md)和[官网QR/迁移复核](docs/operations/2026-10-25-official-porting-update.md)。官方二维码日志是UEFI/EBS前功能，nuwa尚未接入；Format2/共享SM8550迁移另行评审，保留iOS16 ABI及nuwa板值。
+先读[STATUS](docs/STATUS.md)、[当前交接](docs/operations/2026-10-25-mainline-handoff.md)、[v27实现/实测](docs/operations/2026-10-25-v27-image4-to-bsd.md)和[官网QR/迁移复核](docs/operations/2026-10-25-official-porting-update.md)。官方二维码日志是UEFI/EBS前功能，nuwa尚未接入；Format2/共享SM8550迁移另行评审，保留iOS16 ABI及nuwa板值。
 
 ## 为什么单开一个仓库
 

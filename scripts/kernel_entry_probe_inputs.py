@@ -21,6 +21,8 @@ def metadata(build):
         paths += [('console-policy',build.with_name('console-policy.json'))]
     if json.loads(build.read_text()).get('probe_revision',0)>=25:
         paths += [(n,build.with_name(n+'.json')) for n in ('renderer-bounds','context-display','vectors')]
+    if json.loads(build.read_text()).get('probe_revision',0)>=27:
+        paths += [(n,build.with_name(n+'.json')) for n in ('image4-launch','launch-context')]
     return {name:dict(path=path.relative_to(ROOT).as_posix(),sha256=sha(path.read_bytes())) for name,path in paths}
 
 def validate(meta,kernel_sha):
@@ -43,7 +45,46 @@ def validate(meta,kernel_sha):
     hooks={p['reason'] for p in build['patches'] if p['reason'].startswith('probe_')}
     if not {'probe_entry','probe_tables','probe_mmu'}<=hooks:raise ValueError('Required entry/tables/MMU hooks missing')
     # Two header edits, one branch per hooked site, the BCM NOP and sixteen early vectors.
-    if len(build['patches'])!=2+len(hooks)+1+16:raise ValueError('Patch set shape differs from the recorded hook set')
+    compat=build.get('image4_compatibility',{}).get('hooks',[])
+    if compat and build.get('probe_revision')!=27:raise ValueError('Image4 compatibility requires revision 27')
+    if len(build['patches'])!=2+len(hooks)+1+16+len(compat):raise ValueError('Patch set shape differs from the recorded hook set')
+    if build.get('probe_revision',0)>=27:
+        required_sites={(0xfffffff0046ea000,'image4_amnm_provider'),(0xfffffff0046ea3b4,'image4_chmh_provider')}
+        if {(int(h['va'],16),h['symbol']) for h in compat}!=required_sites:raise ValueError('Image4 provider hooks incomplete')
+        for va,symbol in required_sites:
+            patches=[p for p in build['patches'] if p['reason']==symbol]
+            if len(patches)!=1:raise ValueError('Image4 hook missing/duplicate')
+            p=patches[0];target=int(build['probe']['symbols'][symbol],16)
+            if (p['va']!=hex(va) or p['before']!='08ae00d0'
+                    or bytes.fromhex(p['after'])!=builder.branch(va,target)):
+                raise ValueError('Image4 provider patch differs')
+        evidence={}
+        for name in ('image4-launch','launch-context'):
+            if name not in meta:raise ValueError('Missing Image4 launch evidence: '+name)
+            item=meta[name];payload=report_path(item['path']).read_bytes()
+            if sha(payload)!=item['sha256']:raise ValueError('Image4 launch evidence digest differs')
+            evidence[name]=json.loads(payload)
+        launch=evidence['image4-launch'];context=evidence['launch-context']
+        required={'Actual nonce preimage and all four launch components match',
+                  'Real prologue original shipped-baseline','Real prologue original legal-amnm-only',
+                  'Complete native Image4 initializer RET with measured inputs: unpatched',
+                  'Complete native Image4 initializer RET with measured inputs: candidate',
+                  'Unpatched subsequent dtless AMNM and CHMH queries reproduce ENOENT',
+                  'Integrated AMNM preserves prevention-one as allow=false',
+                  'Integrated CHMH returns all 48 actual manifest digest bytes',
+                  'Eight unrelated dtless queries retain native results','Wrong nonce preimage refused'}
+        required|={'Context rejects '+n for n in ('missing-amnm','empty-amnm','relaxed-amnm','missing-bnch','short-bnch','long-bnch','manifest-digest-corrupt','manifest-bytes-corrupt','board-value-corrupt')}
+        required|={'Native initialization error retained: '+n for n in ('missing-bnch','oversized-bnch','missing-chmh')}
+        required|={'Integrated CHMH preserves '+n+' error/output' for n in ('missing','oversized','wrong-type')}
+        checks=launch.get('checks',[])
+        if (launch.get('candidate_sha256')!=kernel_sha or len(checks)!=len(required)
+                or {c['name'] for c in checks}!=required or any(c['passed'] is not True for c in checks)):
+            raise ValueError('Image4 launch checks incomplete')
+        if (context.get('adt_sha256')!=launch.get('adt_sha256')
+                or context.get('components',{}).get('kernel',{}).get('sha256')!=kernel_sha
+                or context.get('nonce_preimage_checked') is not True
+                or context.get('trust',{}).get('apple_im4m') is not False):
+            raise ValueError('Image4 launch input binding differs')
     if any(h.startswith('probe_dense_') for h in hooks):
         if build.get('probe_revision',0)<24:raise ValueError('Dense hooks require revision 24')
         from probe_bootstrap_sites import generate

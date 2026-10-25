@@ -446,3 +446,9 @@
 2026-10-25 · 收口PROBE18并新增当前主线交接：统一README/STATUS/人工待办及旧交接入口，区分18:11离线快照与随后实测。串行复验包18镜像回读、Image4五例；核对15项已提交报告与四项产物SHA。42项历史中间文件和10项本地附件保留不纳入有效证据，原始媒体不提交；本次无设备命令、无push。· 紧随5fd74e4的docs提交 · operations/2026-10-25-mainline-handoff.md、reports/handoff/2026-10-25/verification.json
 
 2026-10-25 · v26复验包18/原Image4五例；执行真实dtless选择和缓存实例化，合法AMNM属性仍panic(2)，修正缺字段单因排序。新增104字节兼容候选仅模型安装，18项检查/重复编译/错误绕过负候选拒绝通过；后续原BNCH panic已复现，manifest节点存在但数据缺失。未改出货包/策略、无设备动作/push。· 本次kernel审计里程碑（父d555d97） · reports/kernel-entry-probe/2026-10-25-v26/、operations/2026-10-25-v26-image4-runtime-provider.md、D-047
+
+2026-10-25 · PROBE19完成实际启动集合测量/主机CSPRNG nonce与AMNM/CHMH兼容集成；完整原生Image4入口25项、740差分、29绑定、同ADT与镜像回读/重建通过。纠正v26强制x19切片的调用者判断，固定五个参考实现提交/源SHA。· 本次kernel/device里程碑（父df90f14） · reports/kernel-entry-probe/2026-10-25-v27/、D-048
+
+2026-10-25 20:03:58 · PROBE19单次临时boot后照片确认MAC后继89/BSD入口6亮、pthread NULL表panic；原图5bad2ca9仅本地。首次恢复等待超时保留，随后Android完成1/A槽/三SHA与试前一致，人工待办关闭；无flash/erase/改槽或第二候选。· 本次kernel/device里程碑（父df90f14） · reports/xnu-entry-probe-trial/2026-10-25-v27/、D-049
+
+2026-10-25 · 固定iOS16 donor发现被漏选的com.apple.kec.pthread，原baseline精确重现后只加它，31组件闭合/原指令保留；11项真实注册/分派/重复拒绝模型检查通过。仅离线分析52227410，未接入OSKext生命周期或新试包。· 本次kernel/device里程碑（父df90f14） · reports/kernel-entry-probe/2026-10-25-v27/pthread-registration.json

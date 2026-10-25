@@ -114,3 +114,7 @@ PROBE18实测、读图与恢复闭环完成。最近后验18:19:42北京时间�
 - 2026-10-25 PROBE16：用户已报告并拍到kernel_bootstrap橙色块；候选只临时启动一次，恢复脚本正在等待nuwa fastboot/Android完成1，尚未获得本轮postcondition，不启动新候选。保存照片后电源+音量下即可；人工恢复等待不阻断离线分析。
 
 - [x] PROBE16恢复等待已关闭：2026-10-25 16:44:29北京时间，Android1/A槽，三SHA与preflight一致，无新待录像/按键任务。先前等待条目保留为过程记录。
+
+- [x] 2026-10-25 PROBE19（20:03:58后验已关闭，以下保留先前等待过程）：本包用户录像/恢复条件已确认，19:56:34新鲜Android1/A槽/三SHA通过；19:57单次临时boot ACK。照片5bad2ca9已本地保留，BSD入口ID6/A02B=6点亮，pthread kernel extension not loaded panic，root未进入。第一次原厂恢复监测180秒未见Android完成，待用户电源+音量下回fastboot后临时加载固定原厂boot；人工恢复等待不阻断离线分析，不启动第二候选。证据reports/xnu-entry-probe-trial/2026-10-25-v27/。
+
+- [x] PROBE19恢复闭环：2026-10-25 20:03:58北京时间，用户已回Android；命令确认Android完成1/A槽/boot_a、vendor_boot_a、init_boot_a三SHA与preflight完全一致。第一次recovery超时保留，成功重试确认已在Android，无第二试验包。当前无待恢复任务；下一包另核对当轮录像/恢复条件。

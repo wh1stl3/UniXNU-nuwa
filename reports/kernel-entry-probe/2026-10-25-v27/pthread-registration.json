@@ -1,0 +1,104 @@
+{
+  "scope": "Audit the real iOS16 donor pthread component missing from the current selection.\n\nEmit only an offline analysis prelink. A direct module-start test establishes\nnative function-table registration and dispatch, not OSKext lifecycle readiness.\n",
+  "checks": [
+    {
+      "name": "Real iOS16 pthread bundle exists in the pinned donor but is not selected",
+      "passed": true
+    },
+    {
+      "name": "Emitter reproduces the exact current early-security baseline",
+      "passed": true
+    },
+    {
+      "name": "Adding only pthread closes all kernel/component bindings",
+      "passed": true
+    },
+    {
+      "name": "pthread executable bytes preserved from donor",
+      "passed": true
+    },
+    {
+      "name": "Real packed-4 kmod start points inside pthread executable text",
+      "passed": true
+    },
+    {
+      "name": "Native pthread function table starts NULL",
+      "passed": true
+    },
+    {
+      "name": "Unregistered native pthread_init reproduces the physical panic format",
+      "passed": true
+    },
+    {
+      "name": "Real donor kmod start registers through native pthread_kext_register",
+      "passed": true
+    },
+    {
+      "name": "Registration returns native callback table and real donor pthread_init target",
+      "passed": true
+    },
+    {
+      "name": "Native wrapper dispatches to the actual donor initializer after registration",
+      "passed": true
+    },
+    {
+      "name": "Duplicate registration retains the native rejection",
+      "passed": true
+    }
+  ],
+  "native_sha256": "bf14e5305a9f764c6852c2d3a69e81edc9c6199bc870c7b08160d55610616dea",
+  "donor_sha256": "2ec297bac95bcba01046fd0148e97e7e5885c05a6c18827f39f534ba375c1221",
+  "old_baseline_sha256": "1aeebf1352a86b0d31612a6bd6e77bd7292f676ad2ce43a99ec4a8f3999eedb6",
+  "bundle": "com.apple.kec.pthread",
+  "bundle_metadata": {
+    "DTPlatformVersion": "16.7.3",
+    "DTSDKName": "iphoneos16.7.internal",
+    "MinimumOSVersion": "16.7",
+    "CFBundleVersion": "1",
+    "OSBundleRequired": "Root",
+    "OSBundleLibraries": {
+      "com.apple.kpi.mach": "11.2",
+      "com.apple.kpi.private": "11.2",
+      "com.apple.kpi.unsupported": "11.2",
+      "com.apple.kpi.iokit": "13.0.0",
+      "com.apple.kpi.libkern": "11.2",
+      "com.apple.kpi.bsd": "12.0"
+    }
+  },
+  "selected_before": 30,
+  "selected_after": 31,
+  "pointer_counts": {
+    "kernel": 41153,
+    "component": 24290
+  },
+  "module_start": "0xfffffff005112000",
+  "original_panic_format": "pthread kernel extension not loaded (function table is NULL). @%s:%d",
+  "duplicate_panic_format": "Re-initialisation of pthread kext callbacks. @%s:%d",
+  "functions_table": "0xfffffff005ea0980",
+  "native_callbacks": "0xfffffff0071836c8",
+  "pthread_init_target": "0xfffffff005113240",
+  "candidate": {
+    "path": "out/pthread-prelink-v28-analysis/kernel-pthread-analysis.macho",
+    "sha256": "52227410fd5ad0da9b8487a3fc3706a8f03042cc8256cfe99018897337f47e01",
+    "bytes": 58335232
+  },
+  "model": {
+    "registration_calls": [
+      {
+        "functions": "0xfffffff005ea0980",
+        "callbacks_out": "0xfffffff006acdfb8"
+      },
+      {
+        "functions": "0xfffffff005ea0980",
+        "callbacks_out": "0xfffffff006acdfb8"
+      }
+    ],
+    "bad_memory": [],
+    "pthread_initializer_body_executed": false,
+    "os_kext_lifecycle_executed": false
+  },
+  "next": "Integrate selection and request the genuine OSKext start before BSD pthread_init; validate lifecycle and body. Do not bypass the native NULL-table check or call a fake table.",
+  "loadable": false,
+  "runtime_qualified": false,
+  "device_accessed": false
+}

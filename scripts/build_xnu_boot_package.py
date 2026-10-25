@@ -131,6 +131,9 @@ def validate(path):
     if 'entry_probe' in report:
         from kernel_entry_probe_inputs import validate as validate_probe
         validate_probe(report['entry_probe'], report['kernel_sha256'])
+        build=json.loads((ROOT/report['entry_probe']['build']['path']).read_text())
+        if build.get('probe_revision',0)>=27 and 'image4_launch_context' not in report:
+            raise ValueError('Measured launch context cannot be removed from revision 27')
         for case in ('normal','occupied-probe','bad-topology','occupied-fb'):
             name='transition-'+case
             if name in report['entry_probe']:
@@ -190,6 +193,14 @@ def validate(path):
             raise ValueError('FAT readback failed for %s: %s' % (name, result.stderr.decode()))
         if sha(target.read_bytes()) != expected:
             raise ValueError('FAT readback digest differs for ' + name)
+    if 'image4_launch_context' in report:
+        from nuwa_launch_context import validate as validate_context
+        fd_path=work/'firmware.fd';shim_path=work/'boot-shim.bin'
+        fd_path.write_bytes(image[4096+112:4096+kernel_size])
+        shim_path.write_bytes(image[4096:4096+112])
+        proof=validate_context((work/'kernel.macho.adt').read_bytes(),work/'kernel.macho',fd_path,shim_path)
+        if proof!=report['image4_launch_context']:
+            raise ValueError('Shipped launch context/component proof changed')
     for path in work.glob('*'):
         path.unlink()
     work.rmdir()
@@ -208,6 +219,7 @@ def main():
                      help='Re-derive and re-read an existing package report instead of building')
     cli.add_argument('--entry-probe', type=Path,
                      help='Bind a diagnostic kernel to its static and software-execution reports')
+    cli.add_argument('--adt', type=Path, help='Reuse an already tested exact ADT, rather than generate new entropy')
     args = cli.parse_args()
 
     if args.validate:
@@ -246,6 +258,8 @@ def main():
         UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 16','PROBE 17').replace('DT PANIC POLICY AND CONSOLE','DENSE BOOTSTRAP CALL AND RETURN')
     if probe and revision>=25:
         UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 17','PROBE 18').replace('DENSE BOOTSTRAP CALL AND RETURN','FIRST THREAD IOKIT BSD AND DISPLAY')
+    if probe and revision>=27:
+        UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 18','PROBE 19').replace('FIRST THREAD IOKIT BSD AND DISPLAY','IMAGE4 INPUTS TO BSD ROOT')
     if sha(fd) != FD_SHA or len(fd) != 3145728:
         raise ValueError('Firmware FD changed')
     if sha(shim) != SHIM_SHA:
@@ -257,8 +271,21 @@ def main():
 
     work.mkdir(parents=True)
     adt_path = work / 'kernel.macho.adt'
-    adt_command, adt_stdout = build_adt(adt_path)
+    if args.adt:
+        if not args.adt.resolve().is_relative_to(ROOT/'out'):raise ValueError('External ADT must be under out/')
+        adt_path.write_bytes(args.adt.read_bytes())
+        adt_command=['reuse-exact-tested-adt',str(args.adt.resolve())];adt_stdout='Exact ADT bytes retained'
+    else:
+        adt_command, adt_stdout = build_adt(adt_path)
     adt = adt_path.read_bytes()
+    launch_context=None
+    if probe and revision>=27:
+        if not args.adt:raise ValueError('Revision 27 requires exact measured launch ADT')
+        from nuwa_launch_context import validate as validate_context
+        launch_context=validate_context(adt,args.kernel,FIRMWARE/'build/FV/SILICIUM_UEFI.fd',FIRMWARE/'shim/shim.bin')
+        bound_context=json.loads((ROOT/probe['launch-context']['path']).read_text())
+        if bound_context['adt_sha256']!=sha(adt) or bound_context['manifest_sha384']!=launch_context['manifest_sha384']:
+            raise ValueError('Launch context evidence does not bind the shipped ADT')
 
     fat_path = work / 'payload.fat.img'
     parsed, commands = build_fat(work, fat_path, adt, kernel)
@@ -344,6 +371,9 @@ def main():
             report['probe_screen']['native_vector_handoff']=json.loads(args.entry_probe.read_text())['native_vector_handoff']
             report['probe_screen']['display_readback']=json.loads(args.entry_probe.read_text())['display_readback']
             report['success_requires']='PROBE18: power-key Enter; yellow entry / magenta context checkpoints / blue call / green continuation. Grid uses 24-pixel row pitch. A02A=mismatched pixels of the white/cyan band at y224, A02B=last checking stage, A02C=1 native vectors restored (2=rejected). CPU readback is not physical scanout proof.'
+        if revision>=27:
+            report['image4_launch_context']=launch_context
+            report['success_requires']=report['success_requires'].replace('PROBE18:','PROBE19:')+' Image4 native initializer RET is modeled only; ID89 is MAC continuation, ID6 is BSD entry, ID7/8 are root discovery/mount entry. Non-Apple host-measured launch inputs; no hardware replay protection or Apple trusted-boot claim.'
         report['expected_screen_outcomes'] = [report['success_requires'], 'Any later XNU text or panic requires separate attribution; no band proves MMU enabled or iOS started']
         report['not_proven'] = ['Real nuwa execution of this candidate', 'MMU activation and arm_init', 'Native timer/interrupt driver readiness', 'Full donor/native ABI or iOS boot']
     output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')

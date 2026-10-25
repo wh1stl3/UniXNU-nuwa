@@ -1,0 +1,85 @@
+{
+  "scope": "Final cross-file verification; initial serial commands remain in execution.json",
+  "checks": [
+    {
+      "name": "All 18 initial serial validation jobs passed",
+      "passed": true
+    },
+    {
+      "name": "Final Image4 checks include 25 accepted cases",
+      "passed": true
+    },
+    {
+      "name": "Final evidence binding has 29 accepted cases",
+      "passed": true
+    },
+    {
+      "name": "Native kernel is byte-identical in independent builds",
+      "passed": true
+    },
+    {
+      "name": "Shipped ADT is exactly the tested measured-input ADT",
+      "passed": true
+    },
+    {
+      "name": "Only transport accepted once",
+      "passed": true
+    },
+    {
+      "name": "Local photo supports MAC continuation and BSD entry",
+      "passed": true
+    },
+    {
+      "name": "Root entry tiles remain dark",
+      "passed": true
+    },
+    {
+      "name": "Recovery ended Android1 A slot and all three hashes unchanged",
+      "passed": true
+    },
+    {
+      "name": "Exact candidate qualification flags remain false",
+      "passed": true
+    },
+    {
+      "name": "Real pthread follow-up analysis has 11 passing checks",
+      "passed": true
+    }
+  ],
+  "sha256": {
+    "reports/xnu-first-entry/entry-probe-19.json": "5ca722f0865dc41bf22b7220d9a26fa0c46751197c1f7c7af7c6883c6d798363",
+    "reports/kernel-entry-probe/2026-10-25-v27/build.json": "326290382c0746fe680efe3a5fd93f39cfc190d746153d8cc651c412f19f6a28",
+    "reports/kernel-entry-probe/2026-10-25-v27/image4-launch.json": "c193e7e817353911e70c1b29b5dd9294b0bed138552e3a1a6c5814d7b4882ba6",
+    "reports/kernel-entry-probe/2026-10-25-v27/binding.json": "3b402e56dc91a0c77fd623a3d9c8f2416fbf143fdf9fa034f483965c6cc16e6a",
+    "reports/kernel-entry-probe/2026-10-25-v27/launch-context.json": "2a8774850d3e7d3f71429771e14500d15d11df9396d8cac48dbfa6a18edfe59f",
+    "reports/kernel-entry-probe/2026-10-25-v27/source-audit.json": "6bac6de0fde8d70092f4e4cb4010b01c13260a33bec2725e4997548a4bbf3a63",
+    "reports/kernel-entry-probe/2026-10-25-v27/pthread-registration.json": "ef35cd276cc09115778511024933e331fa51c231289bbf27b351654cebf85567",
+    "reports/xnu-entry-probe-trial/2026-10-25-v27/screen.json": "e3a3d3f560cf1f88669d11b0fdfd462ca2f5ecae6e0b642d5f57076c4733150f",
+    "reports/xnu-entry-probe-trial/2026-10-25-v27/trial.json": "05c664255295ef75c2827c4daaf8f96083558b9517caef8be48c4b8527902ed6",
+    "reports/xnu-entry-probe-trial/2026-10-25-v27/preflight.json": "cfaf595818727db512f67e1ff27cb52a87bbeb699b9ff2b3c0ff6c0317e0d0fc",
+    "reports/xnu-entry-probe-trial/2026-10-25-v27/launch.json": "6b30cf070dfe12a2069260aa26539921655086de56d57b62409b834d869d8355",
+    "reports/xnu-entry-probe-trial/2026-10-25-v27/recovery.json": "9b01ac43b63d30af0c4ea474cf64b64a65f3a2315112fee7b059e1b24f3e5932",
+    "reports/xnu-entry-probe-trial/2026-10-25-v27/recovery-retry.json": "6e4045bc5febce4f20f6762d07ed475b61a3118a7e4e1d0b8056588d3f822940",
+    "reports/xnu-entry-probe-trial/2026-10-25-v27/postcondition.json": "2f90742526efa839226968ef785fed0b409bef2381a3703d9f6cb0a7543eac92",
+    "scripts/nuwa_launch_context.py": "40e1b776495f43d51cd786a4ac8a4826b11289aa86210cc45093ddb96d64de8f",
+    "scripts/test-image4-launch.py": "17082086d4e2080a96595f70a0ddd4f21c28cf08427075b85baf4ef4680c72ad",
+    "scripts/audit-pthread-prelink.py": "b9ab05dbac50811b70f9c2ae83dc430f6c92191ccdae5aa8e7c9075798132974"
+  },
+  "followup_evidence": [
+    "source-audit: 5 fixed source commits and file hashes match",
+    "Image4 retest after adding CHMH missing/oversized/type checks: 25 cases passed",
+    "Binding retest after requiring those cases: 29 cases passed",
+    "New package build plus actual FAT/kernel/ADT/FD/shim readback passed",
+    "Independent kernel build matches original candidate hash",
+    "Both historical PROBE18 and new PROBE19 package validators passed after changes",
+    "pthread audit first failed because DEVELOPMENT panic format appends @%s:%d; actual native format retained and checked, then all 11 cases passed"
+  ],
+  "interpretation_limits": [
+    "Host-measured unsigned manifest, not Apple IM4M/TSS authentication",
+    "Nonce is per candidate package, not hardware-protected or per-boot anti-replay",
+    "Image4 full initializer uses real prologue; previous forced x19 cache slice does not describe it",
+    "pthread follow-up dispatch reaches initializer entry only; OSKext lifecycle and initializer body remain unexecuted"
+  ],
+  "new_ci": false,
+  "pushed": false
+}

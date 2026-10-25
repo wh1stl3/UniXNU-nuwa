@@ -38,7 +38,7 @@ def linux(p):return '/mnt/d/'+p.resolve().as_posix().split(':/',1)[1]
 
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--work',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args()
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--work',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--image4-launch',action='store_true',help='Integrate pinned AMNM/CHMH provider compatibility; requires measured launch ADT');a=p.parse_args()
     work=a.work.resolve();output=a.output.resolve()
     if not work.is_relative_to(ROOT/'out') or work.exists() or not output.is_relative_to(ROOT/'reports') or output.exists():raise ValueError('Fresh out and reports required')
     raw=INPUT.read_bytes()
@@ -63,6 +63,21 @@ def main():
         if struct.unpack_from('<I',raw,backed(m,va))[0]!=word:raise ValueError(f'Unexpected instruction at {va:#x}')
     codeva=align(max(s['va']+s['size'] for s in m['segments']));fileoff=align(len(raw));work.mkdir(parents=True)
     template=(ROOT/'package/entry-probe/entry-probe.S').read_text(encoding='utf-8-sig')
+    compat_sites=[];compat_sources={}
+    if a.image4_launch:
+        fragments=[]
+        for filename,site,label in (
+            ('image4-amnm-provider.S',0xfffffff0046ea000,'image4_amnm_provider'),
+            ('image4-chmh-provider.S',0xfffffff0046ea3b4,'image4_chmh_provider')):
+            path=ROOT/'patches/xnu-8796-candidates'/filename
+            source=path.read_text()
+            if raw[backed(m,site):backed(m,site)+4]!=bytes.fromhex('08ae00d0'):
+                raise ValueError('Image4 displaced ADRP changed: '+hex(site))
+            fragments.append(source);compat_sites.append((site,label))
+            compat_sources[path.relative_to(ROOT).as_posix()]=sha(path.read_bytes())
+        marker='.balign 4096\n.global probe_data'
+        if template.count(marker)!=1:raise ValueError('Probe code/data insertion marker changed')
+        template=template.replace(marker,'\n'.join(fragments)+'\n'+marker)
     for name in ('_current_percpu_base','_arm_vm_init','_pmap_bootstrap','_kernel_bootstrap',
                  '_panic','_panic_trap_to_debugger','_panic_with_options','_early_random',
                  '_SecureDTLookupEntry','_pe_arm_get_soc_base_phys','_ml_parse_cpu_topology',
@@ -220,7 +235,7 @@ def main():
            (symbols['_wfe_timeout_init'],'probe_wfe_init'),
            (symbols['_configure_misc_apple_boot_args'],'probe_misc_boot_args'),
            (symbols['_configure_misc_apple_regs'],'probe_misc_regs'))
-    sites=(*sites,*dense_sites)
+    sites=(*sites,*dense_sites,*compat_sites)
     for va,name in sites:patch(backed(m,va),branch(va,hooks[name]),name,va)
     patch(backed(m,bcm),struct.pack('<I',0xd503201f),'Suppress BCM2837-only MMIO write; no native timer activation',bcm)
     for index in range(16):
@@ -233,15 +248,24 @@ def main():
     allowed=set(i for item in patches for i in range(item['file_offset'],item['file_offset']+len(bytes.fromhex(item['after']))))
     changed={i for i,(x,y) in enumerate(zip(raw,candidate)) if x!=y}
     if not changed<=allowed:raise ValueError('Unrecorded original byte mutation')
-    preserved=[]
+    preserved=[];compat_segments=[]
     for seg in m['segments']:
         if seg['name'].startswith(('__PRELINK','__PLK')) and seg['filesize']:
             off=seg['fileoff'];n=seg['filesize']
-            if raw[off:off+n]!=candidate[off:off+n]:raise ValueError('Donor or prelink segment changed')
-            preserved.append(dict(name=seg['name'],sha256=sha(raw[off:off+n]),bytes=n))
+            expected_segment=bytearray(raw[off:off+n])
+            for va,label in compat_sites:
+                at=backed(m,va)
+                if off<=at and at+4<=off+n:expected_segment[at-off:at-off+4]=branch(va,hooks[label])
+            if bytes(expected_segment)!=candidate[off:off+n]:raise ValueError('Donor changed outside explicit Image4 provider hooks')
+            if raw[off:off+n]==candidate[off:off+n]:
+                preserved.append(dict(name=seg['name'],sha256=sha(raw[off:off+n]),bytes=n))
+            else:compat_segments.append(dict(name=seg['name'],before_sha256=sha(raw[off:off+n]),after_sha256=sha(candidate[off:off+n]),bytes=n))
     target=work/'kernel-entry-probe.macho';target.write_bytes(candidate)
     report=dict(scope='Diagnostic binary instrumentation of fixed analysis prelink; not runtime qualification',input_sha256=EXPECTED,candidate=dict(path=target.relative_to(ROOT).as_posix(),sha256=sha(candidate),bytes=len(candidate)),probe=dict(va=hex(codeva),file_offset=fileoff,code_bytes=len(code),segment_bytes=len(payload),sha256=sha(payload),symbols={k:hex(v) for k,v in hooks.items() if k.startswith(('probe_','fault_stop','exception_stop'))}),patches=patches,original_changed_bytes=len(changed),preserved_donor_segments=preserved,commands=commands,source_sha256=sha(template.encode()),loadable=False,runtime_qualified=False,device_accessed=False,probe_zero=hex(hooks['probe_zero']),probe_flags=hex(hooks['probe_flags']),screen=dict(bands=[dict(stage=1,y=256,color='blue',means='XNU __start branch and diagnostic entry executed'),dict(stage=2,y=352,color='yellow',means='Bootstrap page tables generated; before translation control setup'),dict(stage=3,y=448,color='magenta',means='Passed BCM block with invalid write suppressed; before enabling MMU'),dict(stage=4,y=736,color='cyan',means='msr sctlr_el1 executed and the following fetch was translated (V=P identity)'),dict(stage=5,y=832,color='white',means='arm_init entered at the KVA: TTBR1 fetch and translation are live')],fault=dict(y=544,color='red',hex_rows=dict(ESR_EL1=608,ELR_EL1=640,FAR_EL1=672)),post_mmu_mapping=dict(l1_slot=2,virtual='0x80000000',physical='0x80000000',size='0x40000000',descriptor='0x6000008000040d',attributes='Device-nGnRnE (MAIR index 3), AF, PXN|UXN, installed only if the slot is invalid',source='probe_mmu stub before the SCTLR write',scratch='framebuffer base and line stride copied from boot_args into probe_scratch'),limitations=['Bands do not prove arm_init returned, arm_vm_init, kext start or iOS','Cyan and white depend on the diagnostic 1 GiB device mapping installed pre-MMU; if the L1 slot were occupied nothing is drawn and no mapping is changed','Fault logger active only through physical early vector; x20 must still be boot_args','Exact video ABI and MMIO/cache effects need nuwa trial']))
-    report['probe_revision']=25
+    report['probe_revision']=27 if a.image4_launch else 25
+    if a.image4_launch:
+        report['image4_compatibility']=dict(scope='Only AMNM/CHMH provider routing; no authentication result or policy value patched',source_sha256=compat_sources,changed_segments=compat_segments,hooks=[dict(va=hex(va),symbol=label,target=hex(hooks[label])) for va,label in compat_sites],requires_measured_launch_context=True)
+        report['probe']['symbols'].update({label:hex(hooks[label]) for _,label in compat_sites})
     report['dense_bootstrap']=dict(edges=dense_edges,semantics='call means before native BL; continuation means the native post-call address executed, possibly from another predecessor; each site drawn once',panel=dict(x=832,y=256,columns=10,cell_width=48,cell_height=24,tile_width=32,tile_height=16),limitations=['Control-flow reachability, not subsystem correctness','Later kernel framebuffer writes may overwrite the panel','No event ordering or call count is inferred from the cumulative grid'])
     report['native_vector_handoff']=dict(captured='probe_native_vectors',expected=hex(symbols['_ExceptionVectorsBase']),stage='_kernel_bootstrap_thread entry',status_tag='A02C',success=1,rejected=2,reason='Return normal IRQ/FIQ/synchronous handling to the pinned native XNU vectors before thread services unmask interrupts')
     report['display_readback']=dict(x=832,y=224,width=384,height=16,split_x=1024,colors=['0xffffffff','0xff00ffff'],mismatched_pixels_tag='A02A',last_stage_id_tag='A02B',meaning='CPU readback only; zero does not prove physical scanout is correct')

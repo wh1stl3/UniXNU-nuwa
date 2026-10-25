@@ -589,8 +589,24 @@ PROBE18增加178个首线程/IOKit/BSD/root编号；10上下文/显示、5真实
 
 # D-047 · Image4 dtless不表达AMNM，字段与provider分别证伪
 
+其中把强制pmap runtime切片当成真实初始化调用者的完整路线判断：**superseded by D-048**。dtless后续查询的描述符缺项与原切片结果保留，但不能作为实际初始化路径的反例。
+
 2026-10-25。D-046关于实机进度/恢复仍有效；其中将缺mix-n-match属性作为完整当前路线首因的排序 **superseded by D-047**。v26执行真实IsLockedDown=false选择、真实chip getter与版本6实例化，dtless的22项描述符没有AMNM/CHMH；出货和合法4字节1的对象夹具均经原初始化panic(2)。因此缺属性和provider表达能力是两个问题，不能只补字段就实测。
 
 104字节兼容候选仅将dtless AMNM转原生Darwin IOKit getter，保持缺失/类型/超长错误；18项模型检查、重复编译和错误绕过负候选拒绝通过。候选只装入隔离模型，没有修改donor/出货包或选择出货策略。夹具禁止混配值使原初始化到下一BNCH panic(级别0/errno2)，不是实机推进。
 
 manifest-properties节点已存在但无BNCH，boot-manifest-hash缺失。固定集成源码的owner摘要发布晚于当前MAC路径，且不是前级Apple manifest，不拿来倒填。下一步建立真实前MAC平台nonce/manifest/身份来源后再集成新包，不伪造可信链，不新增全局审批门。证据：reports/kernel-entry-probe/2026-10-25-v26/和operations/2026-10-25-v26-image4-runtime-provider.md。对象边界显式夹具，不能写成实机IORegistry已验证。
+
+# D-048 · 真实Image4初始化入口、候选nonce与启动测量
+
+2026-10-25。纠正D-047：v26切片把x19强制设为pmap runtime，原生完整prologue实际从runtime+0x58加载Darwin IOKit runtime。完整入口对照确认原ADT为AMNM panic、仅合法AMNM后为BNCH panic、实际新输入使原初始化RET。dtless缺AMNM/CHMH仍影响初始化后的查询，兼容代码针对这两项路由并保留原生错误，不再拿缓存切片反例解释整个真实初始化。
+
+选择显式非Apple诊断启动输入：主机OS CSPRNG新nonce，BNCH为原像SHA-384；Nuwa.DiagnosticLaunch.v1规范清单绑定实际FD/shim/新内核/基础ADT及nonce hash，boot-manifest-hash为清单SHA-384，禁止混配值为32位LE1。原像仅本地out，清单无签名，不是Apple IM4M/TSS或硬件nonce，不提供逐次开机防重放；范围同时编码进输入/报告。没有放宽原认证/MAC，未伪造fuse/可信链或修改资格。DarwinBoot/VerifiedRoot/其他移植均固定源码提交与SHA，其他机型常量摘要不采用。
+
+新包19/revision27集成两处明确donor provider hook，25项完整入口/错误检查、29绑定、740差分及同ADT/上下文/向量等回归通过，实际镜像回读与独立内核重建一致。旧包18仍可验证，历史摘要未改。证据reports/kernel-entry-probe/2026-10-25-v27/、reports/xnu-first-entry/entry-probe-19.json及operations/2026-10-25-v27-image4-to-bsd.md。
+
+# D-049 · PROBE19实机到BSD，pthread缺组件按真实注册推进
+
+2026-10-25。照片5bad2ca9证实MAC后继89和BSD入口6亮，A02A=0/A02B=6/A02C=1；新panic为pthread kernel extension not loaded (function table is NULL)，匹配原生pthread_shims.c:318。root入口7/8未亮，root挂载/用户态尚未进入。第一次恢复监测超时保留失败，随后20:03:58北京时间Android1/A槽/三SHA与试前一致，用户也确认回Android；无待恢复任务，无flash/erase/改槽或第二候选。
+
+固定donor中iOS16.7 com.apple.kec.pthread存在但原30组件selection漏选。只加入该组件的31组件离线分析闭合；11项检查执行真实kmod入口和原生pthread_kext_register，返回真实callbacks，原生wrapper到实际donor初始化入口，重复注册仍拒绝。该分析不等于OSKext正常生命周期或pthread初始化完成；下一步经真正OSKext启动/注册接入有效选择，不跳过NULL检查、不填假表，不将Darwin23/iOS17参考组件直接当作iOS16 ABI。证据v27 pthread-registration.json与实测目录。

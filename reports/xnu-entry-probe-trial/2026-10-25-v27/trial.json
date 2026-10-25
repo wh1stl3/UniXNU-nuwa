@@ -1,0 +1,22 @@
+{
+  "scope": "PROBE19 physical BSD entry and pthread NULL-table panic with recovery postcondition",
+  "package_path": "reports/xnu-first-entry/entry-probe-19.json",
+  "image_sha256": "f1febc069f45bcf22d88c91f571e4c5fa8d84e1a7e4368c7375adf525cb787a6",
+  "kernel_sha256": "f3c33194973fc6469b3bc3e4aa5f72595083ef4560c5979a860415ebec918984",
+  "adt_sha256": "ace998436500149856a0f41838aa8a4e3dd8dedbb6cfb716922a5baad544ec4d",
+  "photo_sha256": "5bad2ca9179cc42353ea70c1a5cb0dc69a3ef5bb197560ce8527976565154f6f",
+  "panic_format": "pthread kernel extension not loaded (function table is NULL). @%s:%d",
+  "panic_prefix": "pthread kernel e",
+  "bsd_entry_observed": true,
+  "root_mount_entered": false,
+  "userland_entered": false,
+  "real_irq_delivery": "not validated",
+  "recovery_pending": false,
+  "android_boot_completed": "1",
+  "slot": "_a",
+  "postcondition_at": "2026-10-25T12:03:58.445696+00:00",
+  "three_partition_hashes_unchanged": true,
+  "original_media_local_only": true,
+  "device_launch_count": 1,
+  "no_flash_erase_or_slot_change": true
+}

@@ -1,28 +1,27 @@
 # STATUS
 
-更新：2026-10-25。**实机仍为PROBE18到MAC/Image4 panic(2)，未到BSD/root/iOS。v26已证伪“补AMNM属性即可”：当前dtless缓存不含该标识符。兼容候选仅模型通过，未打包或实测。**
+更新：2026-10-25。**PROBE19实机已越过MAC/Image4并进入bsd_init；当前panic为pthread内核函数表未注册。root发现/挂载和iOS用户态尚未进入。20:03:58已确认Android1/A槽/三SHA一致，恢复待办关闭。**
 
-## 当前实机与有效产物
+## 当前设备与有效包
 
-PROBE18实机已运行首线程，PE_init_iokit返回，走过中断使能调用及commpage，停于mac_policy_initmach内AppleImage4 5.0.0的`failed to get mix-n-match policy: %d`，参数2。横纹消失，A02A=0、A02B=4、A02C=1；一次VBAR交接和使能调用不证明硬件IRQ工作。
+19:56:34北京时间preflight确认nuwa/kalama、Android完成1、A槽、boot_a/vendor_boot_a/init_boot_a三SHA与v25后验一致。用户确认本包录像及恢复就绪后，19:57单次临时boot ACK；照片5bad2ca9179cc42353ea70c1a5cb0dc69a3ef5bb197560ce8527976565154f6f本地保存。ACK不作为内核阶段证据。
 
-最近设备后验仍为2026-10-25 18:19:42北京时间Android完成1/A槽/boot_a、vendor_boot_a、init_boot_a三SHA与试前一致。无人工恢复待办；不是实时查询。本轮无设备动作。
+照片A02A=0、A02B=6、A02C=1，MAC后继89与BSD入口6亮、root入口7/8未亮；panic前16字节为pthread kernel e，与原生pthread_shims.c:318函数表NULL检查匹配。无新IRQ/计时器/驱动资格结论。第一次恢复监测超时，随后用户回到Android，20:03:58后验确认Android完成1/A槽/三分区SHA与试前相同；失败recovery.json及成功recovery-retry.json都保留。当前无人工恢复待办，不重复启动19。
 
-有效内核d6f101e4dfb670e7aa44cd6f51d447feb5d433e5c5883152b5a574da1a09479e，镜像c89cfa52c165562693ab0868dddeeb1225995bb5f30e3899df58a888197e8dde，ADT9846c7dadd23bf544190c45ba3db437fb83265cb180ad6c54cd3a3fedee20d93，包reports/xnu-first-entry/entry-probe-18.json。本轮绑定/回读复验与原Image4五例通过，未改包18历史。
+权威包reports/xnu-first-entry/entry-probe-19.json；镜像f1febc069f45bcf22d88c91f571e4c5fa8d84e1a7e4368c7375adf525cb787a6（70,266,880B）；内核f3c33194973fc6469b3bc3e4aa5f72595083ef4560c5979a860415ebec918984；ADTace998436500149856a0f41838aa8a4e3dd8dedbb6cfb716922a5baad544ec4d。
 
-## 当前卡点与新增证据
+## 本轮输入与验证
 
-v26执行原生SecureDTIsLockedDown选择代码、真实chip getter/版本6缓存构建和初始化AMNM调用/panic边。原生IsLockedDown=false会选择pmap dtless；其22项描述符没有AMNM，出货ADT及合法4字节1的对象夹具均panic(2)，且缓存路线不读取该属性。缺属性仍是真实输入问题，但不足以解释或修复完整路线。该结论取代D-046中仅据SecureDT后备路线的首因排序。
+集成AMNM/CHMH兼容入口；nonce由主机OS CSPRNG新生成，BNCH为其SHA-384，manifest实际绑定固定FD/shim/新内核/基础ADT，boot-manifest-hash为规范清单的SHA-384。属于非Apple诊断启动测量：未建立Apple IM4M/TSS链，nonce按候选包存续，不提供硬件防重放；不当作nuwa硬件nonce实测。禁止混配值为32位LE1；未放宽认证或MAC错误。
 
-104字节兼容候选仅对dtless的AMNM调用原生Darwin IOKit getter，不构造策略或吞掉错误。18项模型检查、重复编译一致与错误绕过负候选拒绝通过；其他缓存标识符和原SecureDT后备行为保持。IORegistry对象/OSData边界为显式夹具，不是实机provider读回。候选未写入内核或启动包，出货策略未选。
+740差分、入口/MMU/向量/上下文/同ADT切换及console回归通过；25项完整原生Image4初始化及错误对照、29项证据绑定通过。内核独立重建一致，新包实际镜像回读及输入重新测量通过。参考DarwinBoot/VerifiedRoot/sweet/topaz/nuwa RNG均固定提交与源文件SHA；其他机型固定字符串摘要未采用。
 
-隔离夹具使用禁止混配值并修正路由后，真实初始化下一停点为BNCH读取panic（级别参数0、errno2）。出货manifest-properties节点存在但没有BNCH，boot-manifest-hash缺失。级别0不是nuwa实测Apple安全状态。集成源码的owner image-set摘要属于后续root/cache路径，不能当作前级Apple manifest或倒填当前字段。
+v26切片把x19强制设成pmap runtime，不能证明真实初始化只补字段仍失败；完整原生prologue实际加载Darwin IOKit runtime。完整入口反例确认：原ADT为AMNM panic、仅补合法AMNM后为BNCH panic；实际新输入使原初始化RET。dtless缺AMNM/CHMH仍对后续查询成立，兼容代码对此单独验证。D-048纠正D-047完整路线排序，D-049记录本轮BSD实机结果。
 
-下一步建立早于MAC的真实非Apple平台nonce/manifest/身份输入来源，再将兼容改动和输入一起集成新候选并绑定新包。不能补空字段、伪造fuse/摘要/可信链或跳过MAC。BSD/root、IRQ/计时器/控制器、必要驱动及用户态仍未验证，不能宣称内核完成。
+## 下一项与边界
 
-## 证据与边界
+固定donor有iOS16.7的com.apple.kec.pthread，原30组件selection遗漏它。新增11项离线审计只加入pthread后31组件绑定闭合，指令原字节保留；真实kmod入口通过原生pthread_kext_register注册实际函数表，原生wrapper分派到donor初始化入口，重复注册仍拒绝。分析产物52227410位于out/pthread-prelink-v28-analysis，不是试包20，未执行初始化函数体/真实OSKext生命周期，不可直接部署。
 
-- v26完整因果：[Image4 provider操作记录](operations/2026-10-25-v26-image4-runtime-provider.md)；reports/kernel-entry-probe/2026-10-25-v26/{image4-runtime-provider,execution}.json。
-- v25实机证据reports/xnu-entry-probe-trial/2026-10-25-v25/；显示/向量/740差分等既有离线回归见reports/kernel-entry-probe/2026-10-25-v25/及[操作记录](operations/2026-10-25-v25-first-thread-display.md)。模型OSKext bzero异常不是实机卡点。
-- [主线交接](operations/2026-10-25-mainline-handoff.md)固定有效包与续接命令。保持TCR、板值、内存/身份、只读资料库、loadable=false/runtime_qualified=false和媒体仅本地。
-- 未push、未触发新CI。本轮仅模型候选与审计，不重复启动包18。
+下一步将该组件通过真正OSKext启动/注册路径接入BSD前并验证锁/hash/thread-call/sysctl依赖，不能跳过pthread_init或填假表。集成源码libpthread构建脚本是Darwin23/iOS17参考，不直接代替iOS16 ABI。完整因果与重放见[v27记录](operations/2026-10-25-v27-image4-to-bsd.md)及[当前交接](operations/2026-10-25-mainline-handoff.md)。
+
+实测reports/xnu-entry-probe-trial/2026-10-25-v27/；离线reports/kernel-entry-probe/2026-10-25-v27/。板值、TCR、内存/身份、只读资料库、loadable=false/runtime_qualified=false保持。无flash/erase/改槽，无push、新CI或原始媒体上传。
