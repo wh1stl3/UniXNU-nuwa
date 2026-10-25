@@ -468,3 +468,5 @@
 2026-10-25 · PROBE22真实102MiB APFS/md0及挂载后停止候选离线完成：21项串行任务（856差分/25Image4/6pthread/3停止/7根输入/34绑定）、独立重建/四文件回读/旧包21复验通过；镜像1b24ff82/204,484,608B，未改内存/身份。按用户新临时启动指令，新鲜Android1/A槽/三SHA预检一致；尚无本包实机挂载结论。· 本次kernel里程碑（父cd21655） · v30 execution/root-launch/root-stop/root-inputs，包22，D-054
 
 2026-10-25 21:26:08 +08 · 按用户最新新临时启动指令，preflight Android1/A槽/三SHA通过并即时通知后，PROBE22仅一次临时boot ACK；待菜单电源Enter后真实画面与本轮恢复后验，不将ACK写为运输/挂载通过。· fb76965后设备记录 · reports/xnu-entry-probe-trial/2026-10-25-v30/launch.json
+
+2026-10-25 21:30:50 +08 · PROBE22照片fc1c4ade确认真实RAMDisk/md0路径及原生根挂载返回0、A0350/212绿，预定诊断停止，未进用户态；固定原厂boot恢复后Android1/A槽/三SHA一致。用户要求减少阶段停止、一次推进更多，下一候选保留标记并连续推进至首次用户态exec前。· 本次device里程碑（父b6a80c1） · v30 screen/recovery/postcondition、D-055

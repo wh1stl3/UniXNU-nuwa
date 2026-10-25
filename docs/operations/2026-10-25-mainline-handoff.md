@@ -1,5 +1,7 @@
 # nuwa / iOS16 主线交接（2026-10-25，PROBE19后）
 
+> **当前：PROBE22实机真实RAMDisk/md0→原生根挂载返回0，21:30:50 +08 Android1/A槽/三SHA一致，恢复关闭。** 原图fc1c4ade本地，196/197、204/205、206/207、164/165、166/167均亮，入口8黄、A0350/212绿；213错误与9用户态未到。未直接读回FS名称/root vnode/整盘哈希，不宣称iOS已启动。证据v30/{screen,recovery,postcondition}.json，代码fb76965/启动b6a80c1。用户最新要求减少阶段停止、一次推进更多：下一候选取消挂载后终点，保留累计标记，推进安全根/BSD收尾/首进程准备，唯一边界放在首次执行恢复用户态之前。无需重复启动22；旧ACK/待图/待恢复仅历史。详见STATUS与v30记录。
+
 > **实时状态：PROBE22于2026-10-25 21:26:08 +08单次临时boot ACK，等待用户菜单电源Enter后停止画面。** 代码fb76965，镜像1b24ff82，preflight确认Android1/A槽/三SHA与v29后验相同，用户最新授权原文保留。ACK不能证明192MiB运输/实际APFS装载/root挂载；本轮Android后验尚未取得，不启动第二候选。截图重点为菜单PROBE22、root点、A035与212/213；取图后运行trial-v4-firmware.py recover绑定reports/xnu-first-entry/entry-probe-22.json，输出v30/recovery.json，再对比v30/preflight补postcondition。人工恢复不阻断离线工作。证据v30/launch.json，完整输入见[v30记录](2026-10-25-v30-real-apfs-mount.md)。
 
 > **v30 / PROBE22已离线完成，准备一次新的临时boot，尚无本包实机结果。** 镜像1b24ff82/204,484,608B，内核7f699af6、ADT15cf608b、真实APFS d180c38d；192MiB FAT实载内核/根镜像，-v rd=md0，原生挂载返回后A035真实返回码、212绿/213红并停止，不进入恢复镜像用户态。21项串行任务含856差分/25Image4/6pthread/3停止/7根输入/34绑定通过，独立重建、实际四文件回读、旧包21复验通过。新鲜v30/preflight Android1/A槽/三SHA与v29后验一致，按用户“继续新的临时启动 先不管这个重启”推进，不再调查重启原因。上一轮21:13:15后验恢复已完成。现有内存/身份/_verified保持，192MiB运输和实际APFS挂载尚待实机。权威包reports/xnu-first-entry/entry-probe-22.json，完整命令/SHA见[v30记录](2026-10-25-v30-real-apfs-mount.md)；代码父cd21655，无push/新CI。
