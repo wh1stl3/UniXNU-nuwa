@@ -1,0 +1,2019 @@
+{
+  "scope": "Diagnostic XNU entry probe with BCM-only MMIO suppressed and early exception display; no device action",
+  "approval": "XNU-FIRST-ENTRY-ANALYSIS",
+  "run_id": null,
+  "image_path": "out/trial-boot/xnu-entry-probe-17/boot-xnu-first-entry.img",
+  "image_sha256": "e3b8e0224a0f4f0421927780e2257fda0d892a6cecf1d153c94f3868bbd71aea",
+  "image_bytes": 70266880,
+  "header_version": 3,
+  "xnu_included": true,
+  "fat_included": true,
+  "appended_dtb": false,
+  "adt_included": true,
+  "original_boot_sha256": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+  "fd_sha256": "2d606985ad768dcfaab66c2b28073c0a4c2820126b42b23286623fdc450e848f",
+  "shim_sha256": "8a3b54765c895a0366539130fdf6e4e4a01e364fe7de067a38d0193606f9d462",
+  "kernel_bytes": 58404864,
+  "kernel_sha256": "6110c6fba2579eca0e3dfe84bd87a03869685645e98d6fbb75faa2b2a368e09b",
+  "fat_bytes": 67108864,
+  "fat_sha256": "9b5d4bf910e892116f5d65ca3254620468490d186014e305138bb764f993ec0c",
+  "read_file_bytes": 13120,
+  "read_file_sha256": "572c4dbb22009ceae9fc27f1c61e3e5f4208f7db377b2a52cca32a18315127b5",
+  "success_requires": "PROBE17: power-key Enter starts XNU; capture original left tiles, A-fields, and right grid x832..1295/y256..759. Blue grid cell=call edge reached; green=continuation reached. Decode IDs using bound dense_bootstrap.edges. Unlit cells do not prove the kernel stopped there.",
+  "firmware": {
+    "source": "CI 40014018074 upstream-merged profile (no diagnostic driver)",
+    "fd_bytes": 3145728,
+    "shim_bytes": 112
+  },
+  "kernel_source": {
+    "path": "out\\kernel-entry-probe-24c\\kernel-entry-probe.macho",
+    "source": "hash-pinned early-security prelink plus bounded native entry diagnostic patches",
+    "loadable": false,
+    "runtime_qualified": false
+  },
+  "adt_detail": {
+    "command": [
+      "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+      "D:\\Code\\UniXNU-nuwa\\scripts\\make-nuwa-adt.py",
+      "--output",
+      "D:\\Code\\UniXNU-nuwa\\out\\trial-boot\\xnu-entry-probe-17\\kernel.macho.adt",
+      "--dram-size",
+      "0x240000000",
+      "--owned-memory-size",
+      "0x40000000",
+      "--ipad-identity",
+      "--cpu-regs",
+      "0,256,512,768,1024,1280,1536,1792",
+      "--psci-method",
+      "smc"
+    ],
+    "stdout": "nuwa ADT: 13120 bytes, dram 0x240000000 @ 0x8c0000000, 8 cpu(s), timebase 19200000 Hz",
+    "dram_size": "0x240000000",
+    "owned_memory_size": "0x40000000",
+    "cpu_regs": "0,256,512,768,1024,1280,1536,1792",
+    "psci_method": "smc",
+    "sidecar_placeholders": false,
+    "note": "no RAMDisk/TrustCache/GpuAddon placeholder, so the loader takes the no-sidecar path in DarwinBoot.c:561-567"
+  },
+  "fat_detail": {
+    "config": {
+      "version": 1,
+      "boot": {
+        "timeout": 60,
+        "default": "xnu"
+      },
+      "kits": {
+        "autoload": false
+      },
+      "ui": {
+        "title": "NUWA XNU ENTRY PROBE 17"
+      },
+      "entry": [
+        {
+          "id": "xnu",
+          "title": "XNU ENTRY PROBE 17 - DENSE BOOTSTRAP CALL AND RETURN",
+          "type": "xnu",
+          "path": "Payloads/kernel.macho",
+          "args": "-v"
+        }
+      ]
+    },
+    "exact_files": [
+      "EFI/UniXNU/unixnu.toml",
+      "EFI/UniXNU/Payloads/kernel.macho",
+      "EFI/UniXNU/Payloads/kernel.macho.adt"
+    ]
+  },
+  "container_readback": {
+    "kernel_offset": 4096,
+    "ramdisk_offset": 3153920,
+    "header_changed_offsets": [
+      8,
+      9,
+      10,
+      11,
+      12,
+      15,
+      20,
+      40
+    ],
+    "original_cmdline_preserved": true
+  },
+  "expected_screen_outcomes": [
+    "PROBE17: power-key Enter starts XNU; capture original left tiles, A-fields, and right grid x832..1295/y256..759. Blue grid cell=call edge reached; green=continuation reached. Decode IDs using bound dense_bootstrap.edges. Unlit cells do not prove the kernel stopped there.",
+    "Any later XNU text or panic requires separate attribution; no band proves MMU enabled or iOS started"
+  ],
+  "recovery": "the original stock boot is preserved as the image header; after the trial the stock boot is loaded back and Android must report boot_completed=1 with the same boot_a/vendor_boot_a/init_boot_a digests",
+  "not_proven": [
+    "Real nuwa execution of this candidate",
+    "MMU activation and arm_init",
+    "Native timer/interrupt driver readiness",
+    "Full donor/native ABI or iOS boot"
+  ],
+  "device_executed": false,
+  "entry_probe": {
+    "build": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v24/build.json",
+      "sha256": "60ebfc7608d8e22a9848f82cb59997600f1f132f24c36ae59103155603ec3898"
+    },
+    "software": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v24/software.json",
+      "sha256": "832ebfeaf1bfc8c4994b775b961b4cae3ee33adc3923db52e7e564e2cb1fae14"
+    },
+    "transparency": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v24/transparency.json",
+      "sha256": "4b722f723e606baeca341260a3e5ff1a39ef7f7356315bee025c86cf1addbded"
+    },
+    "wfe": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v24/wfe.json",
+      "sha256": "2b5522df62e6c13c67071ff13d85d300ce4eec4d925120bf0c6d99ccbbeac1d7"
+    },
+    "read-sites": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v24/read-sites.json",
+      "sha256": "e37d0ef81703d041036bd719ce4e9a44275c265d49deed32953c35314f6e1652"
+    },
+    "loader": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v24/loader.json",
+      "sha256": "0f32b5df188ee6eecf384f452519bf7f7ede36852613b428f658cb4914049b05"
+    },
+    "mapping": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v24/mapping.json",
+      "sha256": "49d92917f576684a7812a1b65997555aba401aee383143cec5c8bb52431a5fc9"
+    },
+    "transition-normal": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v24/transition-normal.json",
+      "sha256": "8485f27c4a32746fa76b64a3c3d3b848d97143ae2ffffc5c152fb3f3b4a99dcd"
+    },
+    "transition-occupied-probe": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v24/transition-occupied-probe.json",
+      "sha256": "6bbfb63c91958c17f72900cb05cc0357722cf44726de8e3e75a34decc45e9df4"
+    },
+    "transition-bad-topology": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v24/transition-bad-topology.json",
+      "sha256": "ad621247764dcdd725c9b899bea3dce477e759262b45ad4c199c4bf5f8973d28"
+    },
+    "transition-occupied-fb": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v24/transition-occupied-fb.json",
+      "sha256": "ad0e30a63a6ca7cef807225b06f5859f80aa337854794b08eeffcf8d22101b50"
+    },
+    "console-policy": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v24/console-policy.json",
+      "sha256": "582aed14b9de180b6ce16190953bd43a3fc30fdc66411d14d702b0d1f8fce87a"
+    }
+  },
+  "probe_screen": {
+    "stage_tiles": {
+      "width": 96,
+      "height": 32,
+      "x_formula": "((logical_y-256)//512)*96",
+      "y_formula": "256+(logical_y-256)%512"
+    },
+    "data": {
+      "x": 256,
+      "value_x": 352,
+      "width": 480,
+      "glyph_pixel_scale": 4,
+      "glyph_height": 20,
+      "tag": "A000 + logical_y//32",
+      "y_formula": "224+28*((logical_y-1088)//32)",
+      "counter_y": 756
+    },
+    "records": {
+      "1088": {
+        "tag": "A022",
+        "y": 224
+      },
+      "1152": {
+        "tag": "A024",
+        "y": 280
+      },
+      "1184": {
+        "tag": "A025",
+        "y": 308
+      },
+      "1216": {
+        "tag": "A026",
+        "y": 336
+      },
+      "1248": {
+        "tag": "A027",
+        "y": 364
+      },
+      "1280": {
+        "tag": "A028",
+        "y": 392
+      },
+      "1312": {
+        "tag": "A029",
+        "y": 420
+      },
+      "1344": {
+        "tag": "A02A",
+        "y": 448
+      },
+      "1376": {
+        "tag": "A02B",
+        "y": 476
+      },
+      "1408": {
+        "tag": "A02C",
+        "y": 504
+      },
+      "1440": {
+        "tag": "A02D",
+        "y": 532
+      },
+      "1472": {
+        "tag": "A02E",
+        "y": 560
+      },
+      "1504": {
+        "tag": "A02F",
+        "y": 588
+      },
+      "1536": {
+        "tag": "A030",
+        "y": 616
+      },
+      "1568": {
+        "tag": "A031",
+        "y": 644
+      },
+      "1600": {
+        "tag": "A032",
+        "y": 672
+      },
+      "1632": {
+        "tag": "A033",
+        "y": 700
+      },
+      "1664": {
+        "tag": "A034",
+        "y": 728
+      }
+    },
+    "max_written_row": 799,
+    "limitations": [
+      "No output is guaranteed after pmap removes the diagnostic framebuffer mapping",
+      "TPIDR_EL1 shim is an intentional behaviour change, distinct from transparent hooks",
+      "Stage tiles and field IDs must be read using this revision layout"
+    ],
+    "dense_bootstrap": {
+      "edges": [
+        {
+          "id": 0,
+          "function": "_kernel_bootstrap",
+          "callee": "_scale_setup",
+          "phase": "call",
+          "call": "0xfffffff00729e82c",
+          "site": "0xfffffff00729e82c",
+          "x": 832,
+          "y": 256,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 1,
+          "function": "_kernel_bootstrap",
+          "callee": "_scale_setup",
+          "phase": "continuation",
+          "call": "0xfffffff00729e82c",
+          "site": "0xfffffff00729e830",
+          "x": 880,
+          "y": 256,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 2,
+          "function": "_kernel_bootstrap",
+          "callee": "_vm_mem_bootstrap",
+          "phase": "call",
+          "call": "0xfffffff00729e870",
+          "site": "0xfffffff00729e870",
+          "x": 928,
+          "y": 256,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 3,
+          "function": "_kernel_bootstrap",
+          "callee": "_vm_mem_bootstrap",
+          "phase": "continuation",
+          "call": "0xfffffff00729e870",
+          "site": "0xfffffff00729e874",
+          "x": 976,
+          "y": 256,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 4,
+          "function": "_kernel_bootstrap",
+          "callee": "_atm_init",
+          "phase": "call",
+          "call": "0xfffffff00729e8f0",
+          "site": "0xfffffff00729e8f0",
+          "x": 1024,
+          "y": 256,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 5,
+          "function": "_kernel_bootstrap",
+          "callee": "_atm_init",
+          "phase": "continuation",
+          "call": "0xfffffff00729e8f0",
+          "site": "0xfffffff00729e8f4",
+          "x": 1072,
+          "y": 256,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 6,
+          "function": "_kernel_bootstrap",
+          "callee": "_kernel_startup_initialize_upto",
+          "phase": "call",
+          "call": "0xfffffff00729e8f8",
+          "site": "0xfffffff00729e8f8",
+          "x": 1120,
+          "y": 256,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 7,
+          "function": "_kernel_bootstrap",
+          "callee": "_kernel_startup_initialize_upto",
+          "phase": "continuation",
+          "call": "0xfffffff00729e8f8",
+          "site": "0xfffffff00729e8fc",
+          "x": 1168,
+          "y": 256,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 8,
+          "function": "_kernel_bootstrap",
+          "callee": "_telemetry_init",
+          "phase": "call",
+          "call": "0xfffffff00729e978",
+          "site": "0xfffffff00729e978",
+          "x": 1216,
+          "y": 256,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 9,
+          "function": "_kernel_bootstrap",
+          "callee": "_telemetry_init",
+          "phase": "continuation",
+          "call": "0xfffffff00729e978",
+          "site": "0xfffffff00729e97c",
+          "x": 1264,
+          "y": 256,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 10,
+          "function": "_kernel_bootstrap",
+          "callee": "_console_init",
+          "phase": "call",
+          "call": "0xfffffff00729ea08",
+          "site": "0xfffffff00729ea08",
+          "x": 832,
+          "y": 288,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 11,
+          "function": "_kernel_bootstrap",
+          "callee": "_console_init",
+          "phase": "continuation",
+          "call": "0xfffffff00729ea08",
+          "site": "0xfffffff00729ea0c",
+          "x": 880,
+          "y": 288,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 12,
+          "function": "_kernel_bootstrap",
+          "callee": "_stackshot_init",
+          "phase": "call",
+          "call": "0xfffffff00729ea44",
+          "site": "0xfffffff00729ea44",
+          "x": 928,
+          "y": 288,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 13,
+          "function": "_kernel_bootstrap",
+          "callee": "_stackshot_init",
+          "phase": "continuation",
+          "call": "0xfffffff00729ea44",
+          "site": "0xfffffff00729ea48",
+          "x": 976,
+          "y": 288,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 14,
+          "function": "_kernel_bootstrap",
+          "callee": "_sched_init",
+          "phase": "call",
+          "call": "0xfffffff00729ea80",
+          "site": "0xfffffff00729ea80",
+          "x": 1024,
+          "y": 288,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 15,
+          "function": "_kernel_bootstrap",
+          "callee": "_sched_init",
+          "phase": "continuation",
+          "call": "0xfffffff00729ea80",
+          "site": "0xfffffff00729ea84",
+          "x": 1072,
+          "y": 288,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 16,
+          "function": "_kernel_bootstrap",
+          "callee": "_mac_policy_init",
+          "phase": "call",
+          "call": "0xfffffff00729eabc",
+          "site": "0xfffffff00729eabc",
+          "x": 1120,
+          "y": 288,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 17,
+          "function": "_kernel_bootstrap",
+          "callee": "_mac_policy_init",
+          "phase": "continuation",
+          "call": "0xfffffff00729eabc",
+          "site": "0xfffffff00729eac0",
+          "x": 1168,
+          "y": 288,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 18,
+          "function": "_kernel_bootstrap",
+          "callee": "_kernel_startup_initialize_upto",
+          "phase": "call",
+          "call": "0xfffffff00729eac4",
+          "site": "0xfffffff00729eac4",
+          "x": 1216,
+          "y": 288,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 19,
+          "function": "_kernel_bootstrap",
+          "callee": "_kernel_startup_initialize_upto",
+          "phase": "continuation",
+          "call": "0xfffffff00729eac4",
+          "site": "0xfffffff00729eac8",
+          "x": 1264,
+          "y": 288,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 20,
+          "function": "_kernel_bootstrap",
+          "callee": "_mapping_free_prime",
+          "phase": "call",
+          "call": "0xfffffff00729eb38",
+          "site": "0xfffffff00729eb38",
+          "x": 832,
+          "y": 320,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 21,
+          "function": "_kernel_bootstrap",
+          "callee": "_mapping_free_prime",
+          "phase": "continuation",
+          "call": "0xfffffff00729eb38",
+          "site": "0xfffffff00729eb3c",
+          "x": 880,
+          "y": 320,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 22,
+          "function": "_kernel_bootstrap",
+          "callee": "_machine_init",
+          "phase": "call",
+          "call": "0xfffffff00729eb74",
+          "site": "0xfffffff00729eb74",
+          "x": 928,
+          "y": 320,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 23,
+          "function": "_kernel_bootstrap",
+          "callee": "_machine_init",
+          "phase": "continuation",
+          "call": "0xfffffff00729eb74",
+          "site": "0xfffffff00729eb78",
+          "x": 976,
+          "y": 320,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 24,
+          "function": "_kernel_bootstrap",
+          "callee": "_thread_machine_init_template",
+          "phase": "call",
+          "call": "0xfffffff00729ebb0",
+          "site": "0xfffffff00729ebb0",
+          "x": 1024,
+          "y": 320,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 25,
+          "function": "_kernel_bootstrap",
+          "callee": "_thread_machine_init_template",
+          "phase": "continuation",
+          "call": "0xfffffff00729ebb0",
+          "site": "0xfffffff00729ebb4",
+          "x": 1072,
+          "y": 320,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 26,
+          "function": "_kernel_bootstrap",
+          "callee": "_clock_init",
+          "phase": "call",
+          "call": "0xfffffff00729ebec",
+          "site": "0xfffffff00729ebec",
+          "x": 1120,
+          "y": 320,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 27,
+          "function": "_kernel_bootstrap",
+          "callee": "_clock_init",
+          "phase": "continuation",
+          "call": "0xfffffff00729ebec",
+          "site": "0xfffffff00729ebf0",
+          "x": 1168,
+          "y": 320,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 28,
+          "function": "_kernel_bootstrap",
+          "callee": "_thread_group_init",
+          "phase": "call",
+          "call": "0xfffffff00729ec28",
+          "site": "0xfffffff00729ec28",
+          "x": 1216,
+          "y": 320,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 29,
+          "function": "_kernel_bootstrap",
+          "callee": "_thread_group_init",
+          "phase": "continuation",
+          "call": "0xfffffff00729ec28",
+          "site": "0xfffffff00729ec2c",
+          "x": 1264,
+          "y": 320,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 30,
+          "function": "_kernel_bootstrap",
+          "callee": "_coalitions_init",
+          "phase": "call",
+          "call": "0xfffffff00729ec64",
+          "site": "0xfffffff00729ec64",
+          "x": 832,
+          "y": 352,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 31,
+          "function": "_kernel_bootstrap",
+          "callee": "_coalitions_init",
+          "phase": "continuation",
+          "call": "0xfffffff00729ec64",
+          "site": "0xfffffff00729ec68",
+          "x": 880,
+          "y": 352,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 32,
+          "function": "_kernel_bootstrap",
+          "callee": "_code_signing_init",
+          "phase": "call",
+          "call": "0xfffffff00729eca0",
+          "site": "0xfffffff00729eca0",
+          "x": 928,
+          "y": 352,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 33,
+          "function": "_kernel_bootstrap",
+          "callee": "_code_signing_init",
+          "phase": "continuation",
+          "call": "0xfffffff00729eca0",
+          "site": "0xfffffff00729eca4",
+          "x": 976,
+          "y": 352,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 34,
+          "function": "_kernel_bootstrap",
+          "callee": "_code_signing_configuration",
+          "phase": "call",
+          "call": "0xfffffff00729ecac",
+          "site": "0xfffffff00729ecac",
+          "x": 1024,
+          "y": 352,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 35,
+          "function": "_kernel_bootstrap",
+          "callee": "_code_signing_configuration",
+          "phase": "continuation",
+          "call": "0xfffffff00729ecac",
+          "site": "0xfffffff00729ecb0",
+          "x": 1072,
+          "y": 352,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 36,
+          "function": "_kernel_bootstrap",
+          "callee": "_task_init",
+          "phase": "call",
+          "call": "0xfffffff00729ece8",
+          "site": "0xfffffff00729ece8",
+          "x": 1120,
+          "y": 352,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 37,
+          "function": "_kernel_bootstrap",
+          "callee": "_task_init",
+          "phase": "continuation",
+          "call": "0xfffffff00729ece8",
+          "site": "0xfffffff00729ecec",
+          "x": 1168,
+          "y": 352,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 38,
+          "function": "_kernel_bootstrap",
+          "callee": "_thread_init",
+          "phase": "call",
+          "call": "0xfffffff00729ed24",
+          "site": "0xfffffff00729ed24",
+          "x": 1216,
+          "y": 352,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 39,
+          "function": "_kernel_bootstrap",
+          "callee": "_thread_init",
+          "phase": "continuation",
+          "call": "0xfffffff00729ed24",
+          "site": "0xfffffff00729ed28",
+          "x": 1264,
+          "y": 352,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 40,
+          "function": "_kernel_bootstrap",
+          "callee": "_restartable_init",
+          "phase": "call",
+          "call": "0xfffffff00729ed60",
+          "site": "0xfffffff00729ed60",
+          "x": 832,
+          "y": 384,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 41,
+          "function": "_kernel_bootstrap",
+          "callee": "_restartable_init",
+          "phase": "continuation",
+          "call": "0xfffffff00729ed60",
+          "site": "0xfffffff00729ed64",
+          "x": 880,
+          "y": 384,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 42,
+          "function": "_kernel_bootstrap",
+          "callee": "_workq_init",
+          "phase": "call",
+          "call": "0xfffffff00729ed9c",
+          "site": "0xfffffff00729ed9c",
+          "x": 928,
+          "y": 384,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 43,
+          "function": "_kernel_bootstrap",
+          "callee": "_workq_init",
+          "phase": "continuation",
+          "call": "0xfffffff00729ed9c",
+          "site": "0xfffffff00729eda0",
+          "x": 976,
+          "y": 384,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 44,
+          "function": "_kernel_bootstrap",
+          "callee": "_turnstiles_init",
+          "phase": "call",
+          "call": "0xfffffff00729edd8",
+          "site": "0xfffffff00729edd8",
+          "x": 1024,
+          "y": 384,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 45,
+          "function": "_kernel_bootstrap",
+          "callee": "_turnstiles_init",
+          "phase": "continuation",
+          "call": "0xfffffff00729edd8",
+          "site": "0xfffffff00729eddc",
+          "x": 1072,
+          "y": 384,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 46,
+          "function": "_kernel_bootstrap",
+          "callee": "_mach_init_activity_id",
+          "phase": "call",
+          "call": "0xfffffff00729ee14",
+          "site": "0xfffffff00729ee14",
+          "x": 1120,
+          "y": 384,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 47,
+          "function": "_kernel_bootstrap",
+          "callee": "_mach_init_activity_id",
+          "phase": "continuation",
+          "call": "0xfffffff00729ee14",
+          "site": "0xfffffff00729ee18",
+          "x": 1168,
+          "y": 384,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 48,
+          "function": "_kernel_bootstrap",
+          "callee": "_host_statistics_init",
+          "phase": "call",
+          "call": "0xfffffff00729ee18",
+          "site": "0xfffffff00729ee18",
+          "x": 1216,
+          "y": 384,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 49,
+          "function": "_kernel_bootstrap",
+          "callee": "_host_statistics_init",
+          "phase": "continuation",
+          "call": "0xfffffff00729ee18",
+          "site": "0xfffffff00729ee1c",
+          "x": 1264,
+          "y": 384,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 50,
+          "function": "_kernel_bootstrap",
+          "callee": "_exception_init",
+          "phase": "call",
+          "call": "0xfffffff00729ee54",
+          "site": "0xfffffff00729ee54",
+          "x": 832,
+          "y": 416,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 51,
+          "function": "_kernel_bootstrap",
+          "callee": "_exception_init",
+          "phase": "continuation",
+          "call": "0xfffffff00729ee54",
+          "site": "0xfffffff00729ee58",
+          "x": 880,
+          "y": 416,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 52,
+          "function": "_kernel_bootstrap",
+          "callee": "_kernel_thread_create",
+          "phase": "call",
+          "call": "0xfffffff00729eea4",
+          "site": "0xfffffff00729eea4",
+          "x": 928,
+          "y": 416,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 53,
+          "function": "_kernel_bootstrap",
+          "callee": "_kernel_thread_create",
+          "phase": "continuation",
+          "call": "0xfffffff00729eea4",
+          "site": "0xfffffff00729eea8",
+          "x": 976,
+          "y": 416,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 54,
+          "function": "_kernel_bootstrap",
+          "callee": "_mach_absolute_time",
+          "phase": "call",
+          "call": "0xfffffff00729eeb8",
+          "site": "0xfffffff00729eeb8",
+          "x": 1024,
+          "y": 416,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 55,
+          "function": "_kernel_bootstrap",
+          "callee": "_mach_absolute_time",
+          "phase": "continuation",
+          "call": "0xfffffff00729eeb8",
+          "site": "0xfffffff00729eebc",
+          "x": 1072,
+          "y": 416,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 56,
+          "function": "_kernel_bootstrap",
+          "callee": "_thread_set_thread_name",
+          "phase": "call",
+          "call": "0xfffffff00729eed0",
+          "site": "0xfffffff00729eed0",
+          "x": 1120,
+          "y": 416,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 57,
+          "function": "_kernel_bootstrap",
+          "callee": "_thread_set_thread_name",
+          "phase": "continuation",
+          "call": "0xfffffff00729eed0",
+          "site": "0xfffffff00729eed4",
+          "x": 1168,
+          "y": 416,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 58,
+          "function": "_kernel_bootstrap",
+          "callee": "_thread_deallocate",
+          "phase": "call",
+          "call": "0xfffffff00729eed8",
+          "site": "0xfffffff00729eed8",
+          "x": 1216,
+          "y": 416,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 59,
+          "function": "_kernel_bootstrap",
+          "callee": "_thread_deallocate",
+          "phase": "continuation",
+          "call": "0xfffffff00729eed8",
+          "site": "0xfffffff00729eedc",
+          "x": 1264,
+          "y": 416,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 60,
+          "function": "_kernel_bootstrap",
+          "callee": "_load_context",
+          "phase": "call",
+          "call": "0xfffffff00729ef18",
+          "site": "0xfffffff00729ef18",
+          "x": 832,
+          "y": 448,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 61,
+          "function": "_kernel_bootstrap",
+          "callee": "_load_context",
+          "phase": "continuation",
+          "call": "0xfffffff00729ef18",
+          "site": "0xfffffff00729ef1c",
+          "x": 880,
+          "y": 448,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 62,
+          "function": "_vm_mem_bootstrap",
+          "callee": "_vm_page_bootstrap",
+          "phase": "call",
+          "call": "0xfffffff007957d78",
+          "site": "0xfffffff007957d78",
+          "x": 928,
+          "y": 448,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 63,
+          "function": "_vm_mem_bootstrap",
+          "callee": "_vm_page_bootstrap",
+          "phase": "continuation",
+          "call": "0xfffffff007957d78",
+          "site": "0xfffffff007957d7c",
+          "x": 976,
+          "y": 448,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 64,
+          "function": "_vm_mem_bootstrap",
+          "callee": "_zone_bootstrap",
+          "phase": "call",
+          "call": "0xfffffff007957d88",
+          "site": "0xfffffff007957d88",
+          "x": 1024,
+          "y": 448,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 65,
+          "function": "_vm_mem_bootstrap",
+          "callee": "_zone_bootstrap",
+          "phase": "continuation",
+          "call": "0xfffffff007957d88",
+          "site": "0xfffffff007957d8c",
+          "x": 1072,
+          "y": 448,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 66,
+          "function": "_vm_mem_bootstrap",
+          "callee": "_vm_object_bootstrap",
+          "phase": "call",
+          "call": "0xfffffff007957d98",
+          "site": "0xfffffff007957d98",
+          "x": 1120,
+          "y": 448,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 67,
+          "function": "_vm_mem_bootstrap",
+          "callee": "_vm_object_bootstrap",
+          "phase": "continuation",
+          "call": "0xfffffff007957d98",
+          "site": "0xfffffff007957d9c",
+          "x": 1168,
+          "y": 448,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 68,
+          "function": "_vm_mem_bootstrap",
+          "callee": "_vm_retire_boot_pages",
+          "phase": "call",
+          "call": "0xfffffff007957d9c",
+          "site": "0xfffffff007957d9c",
+          "x": 1216,
+          "y": 448,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 69,
+          "function": "_vm_mem_bootstrap",
+          "callee": "_vm_retire_boot_pages",
+          "phase": "continuation",
+          "call": "0xfffffff007957d9c",
+          "site": "0xfffffff007957da0",
+          "x": 1264,
+          "y": 448,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 70,
+          "function": "_vm_mem_bootstrap",
+          "callee": "_vm_map_init",
+          "phase": "call",
+          "call": "0xfffffff007957dac",
+          "site": "0xfffffff007957dac",
+          "x": 832,
+          "y": 480,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 71,
+          "function": "_vm_mem_bootstrap",
+          "callee": "_vm_map_init",
+          "phase": "continuation",
+          "call": "0xfffffff007957dac",
+          "site": "0xfffffff007957db0",
+          "x": 880,
+          "y": 480,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 72,
+          "function": "_vm_mem_bootstrap",
+          "callee": "_kmem_init",
+          "phase": "call",
+          "call": "0xfffffff007957dc0",
+          "site": "0xfffffff007957dc0",
+          "x": 928,
+          "y": 480,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 73,
+          "function": "_vm_mem_bootstrap",
+          "callee": "_kmem_init",
+          "phase": "continuation",
+          "call": "0xfffffff007957dc0",
+          "site": "0xfffffff007957dc4",
+          "x": 976,
+          "y": 480,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 74,
+          "function": "_vm_mem_bootstrap",
+          "callee": "_kernel_startup_initialize_upto",
+          "phase": "call",
+          "call": "0xfffffff007957dc8",
+          "site": "0xfffffff007957dc8",
+          "x": 1024,
+          "y": 480,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 75,
+          "function": "_vm_mem_bootstrap",
+          "callee": "_kernel_startup_initialize_upto",
+          "phase": "continuation",
+          "call": "0xfffffff007957dc8",
+          "site": "0xfffffff007957dcc",
+          "x": 1072,
+          "y": 480,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 76,
+          "function": "_vm_mem_bootstrap",
+          "callee": "_vm_fault_init",
+          "phase": "call",
+          "call": "0xfffffff007957dd8",
+          "site": "0xfffffff007957dd8",
+          "x": 1120,
+          "y": 480,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 77,
+          "function": "_vm_mem_bootstrap",
+          "callee": "_vm_fault_init",
+          "phase": "continuation",
+          "call": "0xfffffff007957dd8",
+          "site": "0xfffffff007957ddc",
+          "x": 1168,
+          "y": 480,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 78,
+          "function": "_vm_mem_bootstrap",
+          "callee": "_kernel_startup_initialize_upto",
+          "phase": "call",
+          "call": "0xfffffff007957de0",
+          "site": "0xfffffff007957de0",
+          "x": 1216,
+          "y": 480,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 79,
+          "function": "_vm_mem_bootstrap",
+          "callee": "_kernel_startup_initialize_upto",
+          "phase": "continuation",
+          "call": "0xfffffff007957de0",
+          "site": "0xfffffff007957de4",
+          "x": 1264,
+          "y": 480,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 80,
+          "function": "_vm_page_bootstrap",
+          "callee": "_lck_mtx_init",
+          "phase": "call",
+          "call": "0xfffffff007966b90",
+          "site": "0xfffffff007966b90",
+          "x": 832,
+          "y": 512,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 81,
+          "function": "_vm_page_bootstrap",
+          "callee": "_lck_mtx_init",
+          "phase": "continuation",
+          "call": "0xfffffff007966b90",
+          "site": "0xfffffff007966b94",
+          "x": 880,
+          "y": 512,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 82,
+          "function": "_vm_page_bootstrap",
+          "callee": "_lck_mtx_init",
+          "phase": "call",
+          "call": "0xfffffff007966ba4",
+          "site": "0xfffffff007966ba4",
+          "x": 928,
+          "y": 512,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 83,
+          "function": "_vm_page_bootstrap",
+          "callee": "_lck_mtx_init",
+          "phase": "continuation",
+          "call": "0xfffffff007966ba4",
+          "site": "0xfffffff007966ba8",
+          "x": 976,
+          "y": 512,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 84,
+          "function": "_vm_page_bootstrap",
+          "callee": "_lck_mtx_init",
+          "phase": "call",
+          "call": "0xfffffff007966bbc",
+          "site": "0xfffffff007966bbc",
+          "x": 1024,
+          "y": 512,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 85,
+          "function": "_vm_page_bootstrap",
+          "callee": "_lck_mtx_init",
+          "phase": "continuation",
+          "call": "0xfffffff007966bbc",
+          "site": "0xfffffff007966bc0",
+          "x": 1072,
+          "y": 512,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 86,
+          "function": "_vm_page_bootstrap",
+          "callee": "_kernel_startup_initialize_upto",
+          "phase": "call",
+          "call": "0xfffffff0079672a4",
+          "site": "0xfffffff0079672a4",
+          "x": 1120,
+          "y": 512,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 87,
+          "function": "_vm_page_bootstrap",
+          "callee": "_kernel_startup_initialize_upto",
+          "phase": "continuation",
+          "call": "0xfffffff0079672a4",
+          "site": "0xfffffff0079672a8",
+          "x": 1168,
+          "y": 512,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 88,
+          "function": "_vm_page_bootstrap",
+          "callee": "_pmap_free_pages",
+          "phase": "call",
+          "call": "0xfffffff0079672b8",
+          "site": "0xfffffff0079672b8",
+          "x": 1216,
+          "y": 512,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 89,
+          "function": "_vm_page_bootstrap",
+          "callee": "_pmap_free_pages",
+          "phase": "continuation",
+          "call": "0xfffffff0079672b8",
+          "site": "0xfffffff0079672bc",
+          "x": 1264,
+          "y": 512,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 90,
+          "function": "_vm_page_bootstrap",
+          "callee": "_pmap_steal_memory_internal",
+          "phase": "call",
+          "call": "0xfffffff007967380",
+          "site": "0xfffffff007967380",
+          "x": 832,
+          "y": 544,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 91,
+          "function": "_vm_page_bootstrap",
+          "callee": "_pmap_steal_memory_internal",
+          "phase": "continuation",
+          "call": "0xfffffff007967380",
+          "site": "0xfffffff007967384",
+          "x": 880,
+          "y": 544,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 92,
+          "function": "_vm_page_bootstrap",
+          "callee": "_pmap_steal_memory_internal",
+          "phase": "call",
+          "call": "0xfffffff0079673a8",
+          "site": "0xfffffff0079673a8",
+          "x": 928,
+          "y": 544,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 93,
+          "function": "_vm_page_bootstrap",
+          "callee": "_pmap_steal_memory_internal",
+          "phase": "continuation",
+          "call": "0xfffffff0079673a8",
+          "site": "0xfffffff0079673ac",
+          "x": 976,
+          "y": 544,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 94,
+          "function": "_vm_page_bootstrap",
+          "callee": "_lck_spin_init",
+          "phase": "call",
+          "call": "0xfffffff007967428",
+          "site": "0xfffffff007967428",
+          "x": 1024,
+          "y": 544,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 95,
+          "function": "_vm_page_bootstrap",
+          "callee": "_lck_spin_init",
+          "phase": "continuation",
+          "call": "0xfffffff007967428",
+          "site": "0xfffffff00796742c",
+          "x": 1072,
+          "y": 544,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 96,
+          "function": "_vm_page_bootstrap",
+          "callee": "_pmap_startup",
+          "phase": "call",
+          "call": "0xfffffff0079674d8",
+          "site": "0xfffffff0079674d8",
+          "x": 1120,
+          "y": 544,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 97,
+          "function": "_vm_page_bootstrap",
+          "callee": "_pmap_startup",
+          "phase": "continuation",
+          "call": "0xfffffff0079674d8",
+          "site": "0xfffffff0079674dc",
+          "x": 1168,
+          "y": 544,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 98,
+          "function": "_vm_page_bootstrap",
+          "callee": "_ml_get_booter_memory_size",
+          "phase": "call",
+          "call": "0xfffffff0079675a4",
+          "site": "0xfffffff0079675a4",
+          "x": 1216,
+          "y": 544,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 99,
+          "function": "_vm_page_bootstrap",
+          "callee": "_ml_get_booter_memory_size",
+          "phase": "continuation",
+          "call": "0xfffffff0079675a4",
+          "site": "0xfffffff0079675a8",
+          "x": 1264,
+          "y": 544,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 100,
+          "function": "_pmap_startup",
+          "callee": "_pmap_free_pages_span",
+          "phase": "call",
+          "call": "0xfffffff00736d52c",
+          "site": "0xfffffff00736d52c",
+          "x": 832,
+          "y": 576,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 101,
+          "function": "_pmap_startup",
+          "callee": "_pmap_free_pages_span",
+          "phase": "continuation",
+          "call": "0xfffffff00736d52c",
+          "site": "0xfffffff00736d530",
+          "x": 880,
+          "y": 576,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 102,
+          "function": "_pmap_startup",
+          "callee": "_pmap_steal_memory_internal",
+          "phase": "call",
+          "call": "0xfffffff00736d5b0",
+          "site": "0xfffffff00736d5b0",
+          "x": 928,
+          "y": 576,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 103,
+          "function": "_pmap_startup",
+          "callee": "_pmap_steal_memory_internal",
+          "phase": "continuation",
+          "call": "0xfffffff00736d5b0",
+          "site": "0xfffffff00736d5b4",
+          "x": 976,
+          "y": 576,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 104,
+          "function": "_pmap_startup",
+          "callee": "_mach_absolute_time",
+          "phase": "call",
+          "call": "0xfffffff00736d6b0",
+          "site": "0xfffffff00736d6b0",
+          "x": 1024,
+          "y": 576,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 105,
+          "function": "_pmap_startup",
+          "callee": "_mach_absolute_time",
+          "phase": "continuation",
+          "call": "0xfffffff00736d6b0",
+          "site": "0xfffffff00736d6b4",
+          "x": 1072,
+          "y": 576,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 106,
+          "function": "_pmap_startup",
+          "callee": "_absolutetime_to_nanoseconds",
+          "phase": "call",
+          "call": "0xfffffff00736d6b8",
+          "site": "0xfffffff00736d6b8",
+          "x": 1120,
+          "y": 576,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 107,
+          "function": "_pmap_startup",
+          "callee": "_absolutetime_to_nanoseconds",
+          "phase": "continuation",
+          "call": "0xfffffff00736d6b8",
+          "site": "0xfffffff00736d6bc",
+          "x": 1168,
+          "y": 576,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 108,
+          "function": "_pmap_startup",
+          "callee": "_pmap_next_page",
+          "phase": "call",
+          "call": "0xfffffff00736d6d0",
+          "site": "0xfffffff00736d6d0",
+          "x": 1216,
+          "y": 576,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 109,
+          "function": "_pmap_startup",
+          "callee": "_pmap_next_page",
+          "phase": "continuation",
+          "call": "0xfffffff00736d6d0",
+          "site": "0xfffffff00736d6d4",
+          "x": 1264,
+          "y": 576,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 110,
+          "function": "_pmap_startup",
+          "callee": "_pmap_free_pages",
+          "phase": "call",
+          "call": "0xfffffff00736d710",
+          "site": "0xfffffff00736d710",
+          "x": 832,
+          "y": 608,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 111,
+          "function": "_pmap_startup",
+          "callee": "_pmap_free_pages",
+          "phase": "continuation",
+          "call": "0xfffffff00736d710",
+          "site": "0xfffffff00736d714",
+          "x": 880,
+          "y": 608,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 112,
+          "function": "_pmap_startup",
+          "callee": "_patch_low_glo_vm_page_info",
+          "phase": "call",
+          "call": "0xfffffff00736d73c",
+          "site": "0xfffffff00736d73c",
+          "x": 928,
+          "y": 608,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 113,
+          "function": "_pmap_startup",
+          "callee": "_patch_low_glo_vm_page_info",
+          "phase": "continuation",
+          "call": "0xfffffff00736d73c",
+          "site": "0xfffffff00736d740",
+          "x": 976,
+          "y": 608,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 114,
+          "function": "_pmap_startup",
+          "callee": "_pmap_startup.cold.3",
+          "phase": "call",
+          "call": "0xfffffff00736d7b0",
+          "site": "0xfffffff00736d7b0",
+          "x": 1024,
+          "y": 608,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 115,
+          "function": "_pmap_startup",
+          "callee": "_pmap_startup.cold.3",
+          "phase": "continuation",
+          "call": "0xfffffff00736d7b0",
+          "site": "0xfffffff00736d7b4",
+          "x": 1072,
+          "y": 608,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 116,
+          "function": "_pmap_startup",
+          "callee": "_fillPage",
+          "phase": "call",
+          "call": "0xfffffff00736d7d4",
+          "site": "0xfffffff00736d7d4",
+          "x": 1120,
+          "y": 608,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 117,
+          "function": "_pmap_startup",
+          "callee": "_fillPage",
+          "phase": "continuation",
+          "call": "0xfffffff00736d7d4",
+          "site": "0xfffffff00736d7d8",
+          "x": 1168,
+          "y": 608,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 118,
+          "function": "_pmap_startup",
+          "callee": "_vm_page_release_startup",
+          "phase": "call",
+          "call": "0xfffffff00736d7e8",
+          "site": "0xfffffff00736d7e8",
+          "x": 1216,
+          "y": 608,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 119,
+          "function": "_pmap_startup",
+          "callee": "_vm_page_release_startup",
+          "phase": "continuation",
+          "call": "0xfffffff00736d7e8",
+          "site": "0xfffffff00736d7ec",
+          "x": 1264,
+          "y": 608,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 120,
+          "function": "_pmap_startup",
+          "callee": "_pmap_next_page",
+          "phase": "call",
+          "call": "0xfffffff00736d814",
+          "site": "0xfffffff00736d814",
+          "x": 832,
+          "y": 640,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 121,
+          "function": "_pmap_startup",
+          "callee": "_pmap_next_page",
+          "phase": "continuation",
+          "call": "0xfffffff00736d814",
+          "site": "0xfffffff00736d818",
+          "x": 880,
+          "y": 640,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 122,
+          "function": "_pmap_startup",
+          "callee": "_fillPage",
+          "phase": "call",
+          "call": "0xfffffff00736d8dc",
+          "site": "0xfffffff00736d8dc",
+          "x": 928,
+          "y": 640,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 123,
+          "function": "_pmap_startup",
+          "callee": "_fillPage",
+          "phase": "continuation",
+          "call": "0xfffffff00736d8dc",
+          "site": "0xfffffff00736d8e0",
+          "x": 976,
+          "y": 640,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 124,
+          "function": "_pmap_startup",
+          "callee": "_vm_page_release_startup",
+          "phase": "call",
+          "call": "0xfffffff00736d8f4",
+          "site": "0xfffffff00736d8f4",
+          "x": 1024,
+          "y": 640,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 125,
+          "function": "_pmap_startup",
+          "callee": "_vm_page_release_startup",
+          "phase": "continuation",
+          "call": "0xfffffff00736d8f4",
+          "site": "0xfffffff00736d8f8",
+          "x": 1072,
+          "y": 640,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 126,
+          "function": "_pmap_startup",
+          "callee": "_mach_absolute_time",
+          "phase": "call",
+          "call": "0xfffffff00736d918",
+          "site": "0xfffffff00736d918",
+          "x": 1120,
+          "y": 640,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 127,
+          "function": "_pmap_startup",
+          "callee": "_mach_absolute_time",
+          "phase": "continuation",
+          "call": "0xfffffff00736d918",
+          "site": "0xfffffff00736d91c",
+          "x": 1168,
+          "y": 640,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 128,
+          "function": "_pmap_startup",
+          "callee": "_absolutetime_to_nanoseconds",
+          "phase": "call",
+          "call": "0xfffffff00736d920",
+          "site": "0xfffffff00736d920",
+          "x": 1216,
+          "y": 640,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 129,
+          "function": "_pmap_startup",
+          "callee": "_absolutetime_to_nanoseconds",
+          "phase": "continuation",
+          "call": "0xfffffff00736d920",
+          "site": "0xfffffff00736d924",
+          "x": 1264,
+          "y": 640,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 130,
+          "function": "_pmap_startup",
+          "callee": "_vm_page_release_startup",
+          "phase": "call",
+          "call": "0xfffffff00736da24",
+          "site": "0xfffffff00736da24",
+          "x": 832,
+          "y": 672,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 131,
+          "function": "_pmap_startup",
+          "callee": "_vm_page_release_startup",
+          "phase": "continuation",
+          "call": "0xfffffff00736da24",
+          "site": "0xfffffff00736da28",
+          "x": 880,
+          "y": 672,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 132,
+          "function": "_pmap_startup",
+          "callee": "_memorystatus_pages_update",
+          "phase": "call",
+          "call": "0xfffffff00736db30",
+          "site": "0xfffffff00736db30",
+          "x": 928,
+          "y": 672,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 133,
+          "function": "_pmap_startup",
+          "callee": "_memorystatus_pages_update",
+          "phase": "continuation",
+          "call": "0xfffffff00736db30",
+          "site": "0xfffffff00736db34",
+          "x": 976,
+          "y": 672,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 134,
+          "function": "_pmap_startup",
+          "callee": "_pmap_startup.cold.7",
+          "phase": "call",
+          "call": "0xfffffff00736dbb8",
+          "site": "0xfffffff00736dbb8",
+          "x": 1024,
+          "y": 672,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 135,
+          "function": "_pmap_startup",
+          "callee": "_pmap_startup.cold.7",
+          "phase": "continuation",
+          "call": "0xfffffff00736dbb8",
+          "site": "0xfffffff00736dbbc",
+          "x": 1072,
+          "y": 672,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 136,
+          "function": "_pmap_startup",
+          "callee": "_pmap_startup.cold.4",
+          "phase": "call",
+          "call": "0xfffffff00736dbc4",
+          "site": "0xfffffff00736dbc4",
+          "x": 1120,
+          "y": 672,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 137,
+          "function": "_pmap_startup",
+          "callee": "_pmap_startup.cold.4",
+          "phase": "continuation",
+          "call": "0xfffffff00736dbc4",
+          "site": "0xfffffff00736dbc8",
+          "x": 1168,
+          "y": 672,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 138,
+          "function": "_pmap_startup",
+          "callee": "_pmap_startup.cold.6",
+          "phase": "call",
+          "call": "0xfffffff00736dbc8",
+          "site": "0xfffffff00736dbc8",
+          "x": 1216,
+          "y": 672,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 139,
+          "function": "_pmap_startup",
+          "callee": "_pmap_startup.cold.6",
+          "phase": "continuation",
+          "call": "0xfffffff00736dbc8",
+          "site": "0xfffffff00736dbcc",
+          "x": 1264,
+          "y": 672,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 140,
+          "function": "_pmap_startup",
+          "callee": "_pmap_startup.cold.2",
+          "phase": "call",
+          "call": "0xfffffff00736dbcc",
+          "site": "0xfffffff00736dbcc",
+          "x": 832,
+          "y": 704,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 141,
+          "function": "_pmap_startup",
+          "callee": "_pmap_startup.cold.2",
+          "phase": "continuation",
+          "call": "0xfffffff00736dbcc",
+          "site": "0xfffffff00736dbd0",
+          "x": 880,
+          "y": 704,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 142,
+          "function": "_pmap_startup",
+          "callee": "_pmap_startup.cold.5",
+          "phase": "call",
+          "call": "0xfffffff00736dbd0",
+          "site": "0xfffffff00736dbd0",
+          "x": 928,
+          "y": 704,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 143,
+          "function": "_pmap_startup",
+          "callee": "_pmap_startup.cold.5",
+          "phase": "continuation",
+          "call": "0xfffffff00736dbd0",
+          "site": "0xfffffff00736dbd4",
+          "x": 976,
+          "y": 704,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 144,
+          "function": "_pmap_startup",
+          "callee": "_pmap_startup.cold.8",
+          "phase": "call",
+          "call": "0xfffffff00736dbd4",
+          "site": "0xfffffff00736dbd4",
+          "x": 1024,
+          "y": 704,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 145,
+          "function": "_pmap_startup",
+          "callee": "_pmap_startup.cold.8",
+          "phase": "continuation",
+          "call": "0xfffffff00736dbd4",
+          "site": "0xfffffff00736dbd8",
+          "x": 1072,
+          "y": 704,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 146,
+          "function": "_pmap_startup",
+          "callee": "_pmap_startup.cold.9",
+          "phase": "call",
+          "call": "0xfffffff00736dbd8",
+          "site": "0xfffffff00736dbd8",
+          "x": 1120,
+          "y": 704,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 147,
+          "function": "_pmap_startup",
+          "callee": "_pmap_startup.cold.9",
+          "phase": "continuation",
+          "call": "0xfffffff00736dbd8",
+          "site": "0xfffffff00736dbdc",
+          "x": 1168,
+          "y": 704,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 148,
+          "function": "_pmap_startup",
+          "callee": "_pmap_startup.cold.13",
+          "phase": "call",
+          "call": "0xfffffff00736dc1c",
+          "site": "0xfffffff00736dc1c",
+          "x": 1216,
+          "y": 704,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 149,
+          "function": "_pmap_startup",
+          "callee": "_pmap_startup.cold.13",
+          "phase": "continuation",
+          "call": "0xfffffff00736dc1c",
+          "site": "0xfffffff00736dc20",
+          "x": 1264,
+          "y": 704,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 150,
+          "function": "_pmap_startup",
+          "callee": "_pmap_startup.cold.12",
+          "phase": "call",
+          "call": "0xfffffff00736dc20",
+          "site": "0xfffffff00736dc20",
+          "x": 832,
+          "y": 736,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 151,
+          "function": "_pmap_startup",
+          "callee": "_pmap_startup.cold.12",
+          "phase": "continuation",
+          "call": "0xfffffff00736dc20",
+          "site": "0xfffffff00736dc24",
+          "x": 880,
+          "y": 736,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 152,
+          "function": "_pmap_startup",
+          "callee": "_pmap_startup.cold.10",
+          "phase": "call",
+          "call": "0xfffffff00736dc38",
+          "site": "0xfffffff00736dc38",
+          "x": 928,
+          "y": 736,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 153,
+          "function": "_pmap_startup",
+          "callee": "_pmap_startup.cold.10",
+          "phase": "continuation",
+          "call": "0xfffffff00736dc38",
+          "site": "0xfffffff00736dc3c",
+          "x": 976,
+          "y": 736,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 154,
+          "function": "_pmap_startup",
+          "callee": "_pmap_startup.cold.11",
+          "phase": "call",
+          "call": "0xfffffff00736dc5c",
+          "site": "0xfffffff00736dc5c",
+          "x": 1024,
+          "y": 736,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 155,
+          "function": "_pmap_startup",
+          "callee": "_pmap_startup.cold.11",
+          "phase": "continuation",
+          "call": "0xfffffff00736dc5c",
+          "site": "0xfffffff00736dc60",
+          "x": 1072,
+          "y": 736,
+          "color": "0xff40ff80"
+        },
+        {
+          "id": 156,
+          "function": "_pmap_startup",
+          "callee": "_pmap_startup.cold.1",
+          "phase": "call",
+          "call": "0xfffffff00736dc80",
+          "site": "0xfffffff00736dc80",
+          "x": 1120,
+          "y": 736,
+          "color": "0xff40c0ff"
+        },
+        {
+          "id": 157,
+          "function": "_pmap_startup",
+          "callee": "_pmap_startup.cold.1",
+          "phase": "continuation",
+          "call": "0xfffffff00736dc80",
+          "site": "0xfffffff00736dc84",
+          "x": 1168,
+          "y": 736,
+          "color": "0xff40ff80"
+        }
+      ],
+      "semantics": "call means before native BL; continuation means the native post-call address executed, possibly from another predecessor; each site drawn once",
+      "panel": {
+        "x": 832,
+        "y": 256,
+        "columns": 10,
+        "cell_width": 48,
+        "cell_height": 32,
+        "tile_width": 32,
+        "tile_height": 24
+      },
+      "limitations": [
+        "Control-flow reachability, not subsystem correctness",
+        "Later kernel framebuffer writes may overwrite the panel",
+        "No event ordering or call count is inferred from the cumulative grid"
+      ]
+    }
+  }
+}

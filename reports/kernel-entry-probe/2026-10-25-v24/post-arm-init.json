@@ -1,0 +1,71 @@
+{
+  "scope": "Continuous v21 cold path with real ADT bytes and sparse synthetic RAM; not hardware behaviour",
+  "build": "reports\\kernel-entry-probe\\2026-10-25-v24\\build.json",
+  "candidate_sha256": "6110c6fba2579eca0e3dfe84bd87a03869685645e98d6fbb75faa2b2a368e09b",
+  "adt_used": true,
+  "adt_sha256": "b674491617e625632ef509f12174b0d6d23ea580ba579c490f750db59d32a0df",
+  "instructions": 1096870,
+  "error": "Invalid memory write (UC_ERR_WRITE_UNMAPPED)",
+  "stopped_at": "0xfffffff0079de03c",
+  "stopped_symbol": "_bzero+0x1c",
+  "reached": {
+    "white": 52700,
+    "arm_vm_init": 986063
+  },
+  "pixels": {
+    "256": "0xff0080ff",
+    "288": "0xffffff00",
+    "320": "0xffff00ff",
+    "352": "0xff00ffff",
+    "384": "0xffffffff",
+    "416": "0x0",
+    "448": "0xff804000",
+    "480": "0x0",
+    "512": "0x0",
+    "544": "0xff008080",
+    "576": "0xff808000",
+    "608": "0xff8080c0",
+    "640": "0xff808080"
+  },
+  "bad_memory": [
+    {
+      "access": 20,
+      "address": "0x8d01d8000",
+      "pc": "0xfffffff0079de03c"
+    }
+  ],
+  "checks": [
+    {
+      "name": "Cyan and white still correct",
+      "passed": true
+    },
+    {
+      "name": "Continuous model reaches arm_vm_init after preserving hook temporaries",
+      "passed": true
+    },
+    {
+      "name": "TPIDR_EL1 shim points at the zeroed per-CPU page",
+      "passed": true
+    },
+    {
+      "name": "With the shim the model advances past the per-CPU null dereference",
+      "passed": true
+    },
+    {
+      "name": "The draw-once guard flags record the hooks that fired",
+      "passed": true
+    },
+    {
+      "name": "No invalid memory access other than the reported stop",
+      "passed": true
+    },
+    {
+      "name": "VBAR_EL1 was redirected to the probe vector page identity address",
+      "passed": true
+    },
+    {
+      "name": "Exception vectors sit at the very start of the probe page",
+      "passed": true
+    }
+  ]
+}

@@ -558,3 +558,11 @@ PROBE16/6f0907b2、内核167bd013单次临时实测，原图确认kernel_bootstr
 连续模型同ADT达到kernel_bootstrap，旧v22同ADT负对照仍读0x3c0fc000失败。继续20M指令在_vm_page_release_startup达到预算，无错误，不认定hang。下一阶段先量VM启动内存初始化进展，不跳核心流程。
 
 宿主ParseKernel间歇ASan问题仍未定位；脚本现在总保存全部cases，宿主-fno-pie/-no-pie保留ASan/UBSan后五例通过，不能把地址布局调整写成已证明历史rc139根因。证据reports/kernel-entry-probe/2026-10-25-v23c/、reports/xnu-entry-probe-trial/2026-10-25-v23/；详细操作operations/2026-10-25-v23-dt-panic-console.md。
+
+# D-043 · 密集调用边与后继位置，保留原生控制流
+
+2026-10-25。在固定输入内核的kernel_bootstrap及三个VM/pmap启动函数中一次性增加158个编号点，分开显示调用前与原后继位置，保持原生BL目标和x30、寄存器/NZCV/栈及PC相对指令语义。79调用共享150补丁位置。模型实际看到117/157后继点而没有对应116/156调用点，说明共享分支可直达；因此目录名用continuation，绿色不能单独证明调用返回或子系统完成。
+
+692逐点差分及像素检查通过；6000万连续模型指令完成133696次页释放，采样按48字节对象推进，支持前轮预算不足；不因此宣称实机已经进入或完成VM。新包PROBE17/e3b8e022尚未实测，启动仍需本包日志与恢复条件。板值/TCR/donor/资格不变，无push、媒体仅本地。证据reports/kernel-entry-probe/2026-10-25-v24/和operations/2026-10-25-v24-dense-bootstrap.md。
+
+延长1.2亿模型指令后累计240085次释放，已越过pmap_startup及vm_page_bootstrap后继点，到zone_bootstrap调用路径；结束于SHA256压缩函数且无非法访存。不能由预算结束推导zone完成或实机成功。最终镜像回读与绑定复验通过。

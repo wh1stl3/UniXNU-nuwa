@@ -4,7 +4,7 @@ Registers, NZCV, SP, next PC and native stack effects must agree. Framebuffer,
 flag bytes and scratch below the entry SP belong to the diagnostic hook.
 TPIDR_EL1 in probe_arm_init is an explicitly intentional platform shim.
 """
-import argparse, hashlib, importlib.util, json, struct, sys
+import gc, argparse, hashlib, importlib.util, json, struct, sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'out/python-tools'))
@@ -17,7 +17,7 @@ REGS=[getattr(sys.modules[__name__],f'UC_ARM64_REG_X{i}') for i in range(31)]
 
 def machine(raw,report,patch,case,reference=False):
     m=B.macho(raw);base=min(s['va'] for s in m['segments'] if s['size']);end=max(s['va']+s['size'] for s in m['segments'])
-    u=U.Uc(U.UC_ARCH_ARM64,U.UC_MODE_ARM);u.mem_map(base,B.align(end-base));u.mem_map(FB,0x1200000);u.mem_map(STACK,0x10000)
+    u=U.Uc(U.UC_ARCH_ARM64,U.UC_MODE_ARM);u.mem_map(base,B.align(end-base));u.mem_map(FB,0x1200000);u.mem_map(STACK,0x10000);u.mem_map(0x100000,0x10000)
     for s in m['segments']:
         if s['filesize']:u.mem_write(s['va'],raw[s['fileoff']:s['fileoff']+s['filesize']])
     syms=report['probe']['symbols'];flags=int(syms['probe_flags'],16)
@@ -48,7 +48,9 @@ def main():
         if not patch['reason'].startswith('probe_') or patch['reason'] in ('probe_entry','probe_tables','probe_mmu','probe_mmu_on','probe_ttbr1','probe_ttbr0','probe_console_policy'):continue
         for kind,flag,video,nzcv,x0 in [('first',0,True,0xa0000000,1),('repeat',1,True,0x50000000,0),('no-video',0,False,0xf0000000,1),('count-saturated',4,True,0,0)]:
             case=dict(flag=flag,video=video,nzcv=nzcv,x0=x0)
-            ref,expected,native_writes=machine(raw,report,patch,case,True);case['native_pc']=expected['pc']
+            try:ref,expected,native_writes=machine(raw,report,patch,case,True)
+            except U.UcError as e:raise AssertionError((patch['reason'],kind,'native fixture',str(e))) from e
+            case['native_pc']=expected['pc']
             got,actual,writes=machine(raw,report,patch,case)
             assert actual==expected,(patch['reason'],kind,expected,actual)
             # Compare native allocated stack frame and caller stack, excluding the
@@ -59,7 +61,13 @@ def main():
             # Rendering must never touch the firmware text area or cross the screen.
             fbwrites=[(p,s) for p,s in writes if FB<=p<FB+0x1200000]
             assert all(200<=(p-FB)//ROW<800 and (p-FB)%ROW+s<=ROW for p,s in fbwrites)
+            for edge in report.get('dense_bootstrap',{}).get('edges',[]):
+                if edge['site']!=patch['va']:continue
+                pixel=struct.unpack('<I',got.mem_read(FB+edge['y']*ROW+edge['x']*4,4))[0]
+                assert pixel==(int(edge['color'],16) if kind=='first' else 0),(patch['reason'],kind,edge,pixel)
             checks.append(dict(name=patch['reason']+': '+kind,passed=True,next_pc=hex(actual['pc']),framebuffer_writes=len(fbwrites)))
+            del ref,got;gc.collect()
+        if len(checks)%100==0:print(json.dumps(dict(progress_checks=len(checks))),flush=True)
     out=dict(scope=__doc__,candidate_sha256=B.sha(raw),checks=checks)
     args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(out,indent=2)+'\n')
     print(json.dumps(dict(checks=len(checks),passed=True)))

@@ -164,7 +164,7 @@
     subs x12, x12, #1
     b.ne .Lclear_col\@
     add x9, x9, x22
-    sub x9, x9, #1920
+    sub x9, x9, #1280
     subs x10, x10, #1
     b.ne .Lclear_row\@
     mov x23, #(0xa000 + (\y / 32))
@@ -225,6 +225,42 @@
 9:
 .Lno_device\@:
 .endm
+// Dense panel at x832..1295/y256..759, outside both earlier panels.
+// Flags 128..287 are reserved for these independently numbered call/return edges.
+.macro DENSE_ONCE idx, color
+    adr x15, probe_scratch
+    ldr x9, [x15]
+    cbz x9, .Ldense_done\@
+    ldr x10, [x15, #8]
+    mov x11, #5376
+    cmp x10, x11
+    b.lo .Ldense_done\@
+    adr x16, probe_flags
+    ldrb w17, [x16, #(128+\idx)]
+    cbnz w17, .Ldense_done\@
+    mov w17, #1
+    strb w17, [x16, #(128+\idx)]
+    mov x11, #(256+(\idx/10)*32)
+    madd x9, x10, x11, x9
+    mov x11, #((832+(\idx%10)*48)*4)
+    add x9, x9, x11
+    mov w12, #(\color & 0xffff)
+    movk w12, #((\color >> 16) & 0xffff), lsl #16
+    mov x13, #24
+.Ldense_row\@:
+    mov x14, #16
+.Ldense_col\@:
+    stp w12, w12, [x9], #8
+    subs x14, x14, #1
+    b.ne .Ldense_col\@
+    add x9, x9, x10
+    sub x9, x9, #128
+    subs x13, x13, #1
+    b.ne .Ldense_row\@
+    dsb sy
+.Ldense_done\@:
+.endm
+
 // Counter hook: renders the call count as hex for the first four calls, then
 // only counts. Cheap enough for hooks that run thousands of times.
 .macro BAND_ONCE20 idx, y, color
@@ -406,6 +442,8 @@ probe_pmap:
 probe_pmap_replay:
     .inst original_pmap_word
     b original_pmap_resume
+// DENSE_BOOTSTRAP_STUBS
+
 .global probe_kernel_bootstrap
 probe_kernel_bootstrap:
     PROBE_SAVE

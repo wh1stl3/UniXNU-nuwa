@@ -1,0 +1,339 @@
+{
+  "candidate_sha256": "6110c6fba2579eca0e3dfe84bd87a03869685645e98d6fbb75faa2b2a368e09b",
+  "image_sha256": "e3b8e0224a0f4f0421927780e2257fda0d892a6cecf1d153c94f3868bbd71aea",
+  "no_device_commands": true,
+  "serial_execution": true,
+  "initial_commands": [
+    {
+      "command": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "scripts/test-kernel-entry-probe.py",
+        "--build",
+        "reports/kernel-entry-probe/2026-10-25-v24/build.json",
+        "--output",
+        "reports/kernel-entry-probe/2026-10-25-v24/software.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.122884511947632
+    },
+    {
+      "command": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "scripts/test-probe-read-sites.py",
+        "--build",
+        "reports/kernel-entry-probe/2026-10-25-v24/build.json",
+        "--output",
+        "reports/kernel-entry-probe/2026-10-25-v24/read-sites.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.9315903186798096
+    },
+    {
+      "command": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "scripts/test-probe-wfe.py",
+        "--build",
+        "reports/kernel-entry-probe/2026-10-25-v24/build.json",
+        "--output",
+        "reports/kernel-entry-probe/2026-10-25-v24/wfe.json",
+        "--negative-build",
+        "reports/kernel-entry-probe/2026-10-25-v20/build.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.4543664455413818
+    },
+    {
+      "command": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "scripts/audit-entry-probe-post-mmu-mapping.py",
+        "--build",
+        "reports/kernel-entry-probe/2026-10-25-v24/build.json",
+        "--output",
+        "reports/kernel-entry-probe/2026-10-25-v24/mapping.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.472059965133667
+    },
+    {
+      "command": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "scripts/audit-entry-probe-loader.py",
+        "--build",
+        "reports/kernel-entry-probe/2026-10-25-v24/build.json",
+        "--output",
+        "reports/kernel-entry-probe/2026-10-25-v24/loader.json",
+        "--work",
+        "out/probe-v24-loader"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 6.935444116592407
+    },
+    {
+      "command": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "scripts/test-post-arm-init-markers.py",
+        "--build",
+        "reports/kernel-entry-probe/2026-10-25-v24/build.json",
+        "--output",
+        "reports/kernel-entry-probe/2026-10-25-v24/post-arm-init.json",
+        "--adt",
+        "out/trial-boot/xnu-entry-probe-16/kernel.macho.adt"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.8889584541320801
+    },
+    {
+      "command": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "scripts/test-post-arm-init-markers.py",
+        "--build",
+        "reports/kernel-entry-probe/2026-10-25-v24/build.json",
+        "--output",
+        "reports/kernel-entry-probe/2026-10-25-v24/exception.json",
+        "--handler"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.2735934257507324
+    },
+    {
+      "command": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "scripts/test-probe-transition.py",
+        "--build",
+        "reports/kernel-entry-probe/2026-10-25-v24/build.json",
+        "--output",
+        "reports/kernel-entry-probe/2026-10-25-v24/transition-normal.json",
+        "--adt",
+        "out/trial-boot/xnu-entry-probe-16/kernel.macho.adt",
+        "--case",
+        "normal"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.976799488067627
+    },
+    {
+      "command": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "scripts/test-probe-transition.py",
+        "--build",
+        "reports/kernel-entry-probe/2026-10-25-v24/build.json",
+        "--output",
+        "reports/kernel-entry-probe/2026-10-25-v24/transition-occupied-probe.json",
+        "--adt",
+        "out/trial-boot/xnu-entry-probe-16/kernel.macho.adt",
+        "--case",
+        "occupied-probe"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.274703025817871
+    },
+    {
+      "command": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "scripts/test-probe-transition.py",
+        "--build",
+        "reports/kernel-entry-probe/2026-10-25-v24/build.json",
+        "--output",
+        "reports/kernel-entry-probe/2026-10-25-v24/transition-bad-topology.json",
+        "--adt",
+        "out/trial-boot/xnu-entry-probe-16/kernel.macho.adt",
+        "--case",
+        "bad-topology"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.0521509647369385
+    },
+    {
+      "command": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "scripts/test-probe-transition.py",
+        "--build",
+        "reports/kernel-entry-probe/2026-10-25-v24/build.json",
+        "--output",
+        "reports/kernel-entry-probe/2026-10-25-v24/transition-occupied-fb.json",
+        "--adt",
+        "out/trial-boot/xnu-entry-probe-16/kernel.macho.adt",
+        "--case",
+        "occupied-fb"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.9240334033966064
+    },
+    {
+      "command": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "scripts/test-probe-console-policy.py",
+        "--build",
+        "reports/kernel-entry-probe/2026-10-25-v24/build.json",
+        "--output",
+        "reports/kernel-entry-probe/2026-10-25-v24/console-policy.json",
+        "--adt",
+        "out/trial-boot/xnu-entry-probe-16/kernel.macho.adt",
+        "--negative-build",
+        "reports/kernel-entry-probe/2026-10-25-v22c/build.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.846611261367798
+    },
+    {
+      "command": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "scripts/test-probe-evidence-binding.py",
+        "--build",
+        "reports/kernel-entry-probe/2026-10-25-v24/build.json",
+        "--output",
+        "reports/kernel-entry-probe/2026-10-25-v24/binding.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 4.040077447891235
+    }
+  ],
+  "final_ADT_commands": [
+    {
+      "command": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "scripts/test-probe-transition.py",
+        "--build",
+        "reports/kernel-entry-probe/2026-10-25-v24/build.json",
+        "--output",
+        "reports/kernel-entry-probe/2026-10-25-v24/transition-normal.json",
+        "--adt",
+        "out/trial-boot/xnu-entry-probe-17/kernel.macho.adt",
+        "--case",
+        "normal"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.478579044342041
+    },
+    {
+      "command": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "scripts/test-probe-transition.py",
+        "--build",
+        "reports/kernel-entry-probe/2026-10-25-v24/build.json",
+        "--output",
+        "reports/kernel-entry-probe/2026-10-25-v24/transition-occupied-probe.json",
+        "--adt",
+        "out/trial-boot/xnu-entry-probe-17/kernel.macho.adt",
+        "--case",
+        "occupied-probe"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.9948766231536865
+    },
+    {
+      "command": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "scripts/test-probe-transition.py",
+        "--build",
+        "reports/kernel-entry-probe/2026-10-25-v24/build.json",
+        "--output",
+        "reports/kernel-entry-probe/2026-10-25-v24/transition-bad-topology.json",
+        "--adt",
+        "out/trial-boot/xnu-entry-probe-17/kernel.macho.adt",
+        "--case",
+        "bad-topology"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.0168566703796387
+    },
+    {
+      "command": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "scripts/test-probe-transition.py",
+        "--build",
+        "reports/kernel-entry-probe/2026-10-25-v24/build.json",
+        "--output",
+        "reports/kernel-entry-probe/2026-10-25-v24/transition-occupied-fb.json",
+        "--adt",
+        "out/trial-boot/xnu-entry-probe-17/kernel.macho.adt",
+        "--case",
+        "occupied-fb"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.9289464950561523
+    },
+    {
+      "command": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "scripts/test-probe-console-policy.py",
+        "--build",
+        "reports/kernel-entry-probe/2026-10-25-v24/build.json",
+        "--output",
+        "reports/kernel-entry-probe/2026-10-25-v24/console-policy.json",
+        "--adt",
+        "out/trial-boot/xnu-entry-probe-17/kernel.macho.adt",
+        "--negative-build",
+        "reports/kernel-entry-probe/2026-10-25-v22c/build.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.547816753387451
+    },
+    {
+      "command": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "scripts/test-probe-transition.py",
+        "--build",
+        "reports/kernel-entry-probe/2026-10-25-v24/build.json",
+        "--output",
+        "reports/kernel-entry-probe/2026-10-25-v24/bootstrap-forward.json",
+        "--adt",
+        "out/trial-boot/xnu-entry-probe-17/kernel.macho.adt",
+        "--explore-bootstrap",
+        "--instruction-budget",
+        "60000000"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 73.46218514442444
+    },
+    {
+      "command": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "scripts/test-probe-evidence-binding.py",
+        "--build",
+        "reports/kernel-entry-probe/2026-10-25-v24/build.json",
+        "--output",
+        "reports/kernel-entry-probe/2026-10-25-v24/binding.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.9804887771606445
+    }
+  ],
+  "extension_command": [
+    "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+    "-B",
+    "scripts/test-probe-transition.py",
+    "--build",
+    "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v24\\build.json",
+    "--adt",
+    "out/trial-boot/xnu-entry-probe-17/kernel.macho.adt",
+    "--explore-bootstrap",
+    "--instruction-budget",
+    "120000000",
+    "--output",
+    "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v24\\bootstrap-forward-120m.json"
+  ],
+  "reproducible_sha256": "6110c6fba2579eca0e3dfe84bd87a03869685645e98d6fbb75faa2b2a368e09b",
+  "test_fixture_note": "Sparse per-instruction fixture adds 0x100000..0x10ffff only for synthetic register addresses; continuous cold-path RAM unchanged",
+  "raw_logs": "out/probe-v24-analysis/; media never included"
+}

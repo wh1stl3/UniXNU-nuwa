@@ -1,0 +1,4158 @@
+{
+  "scope": "Compare every post-MMU hook with its displaced native instruction.\n\nRegisters, NZCV, SP, next PC and native stack effects must agree. Framebuffer,\nflag bytes and scratch below the entry SP belong to the diagnostic hook.\nTPIDR_EL1 in probe_arm_init is an explicitly intentional platform shim.\n",
+  "candidate_sha256": "6110c6fba2579eca0e3dfe84bd87a03869685645e98d6fbb75faa2b2a368e09b",
+  "checks": [
+    {
+      "name": "probe_console_init: first",
+      "passed": true,
+      "next_pc": "0xfffffff007398388",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_console_init: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007398388",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_console_init: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007398388",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_console_init: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007398388",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_arm_init: first",
+      "passed": true,
+      "next_pc": "0xfffffff00797284c",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_arm_init: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00797284c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_arm_init: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00797284c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_arm_init: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00797284c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_cpu_base: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073bb194",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_cpu_base: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073bb194",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_cpu_base: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073bb194",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_cpu_base: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073bb194",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_arm_vm: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073be018",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_arm_vm: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073be018",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_arm_vm: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073be018",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_arm_vm: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073be018",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_pmap: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073a36c8",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_pmap: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073a36c8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_pmap: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073a36c8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_pmap: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073a36c8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_kernel_bootstrap: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729e808",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_kernel_bootstrap: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729e808",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_kernel_bootstrap: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729e808",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_kernel_bootstrap: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729e808",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_avm_bases: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073be06c",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_avm_bases: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073be06c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_avm_bases: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073be06c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_avm_bases: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073be06c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_avm_memcheck: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073be0bc",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_avm_memcheck: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073be0d0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_avm_memcheck: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073be0bc",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_avm_memcheck: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073be0d0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_avm_physmap: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073be120",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_avm_physmap: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073be120",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_avm_physmap: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073be120",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_avm_physmap: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073be120",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_avm_slide: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073be148",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_avm_slide: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073be148",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_avm_slide: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073be148",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_avm_slide: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073be148",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dt_lookup: first",
+      "passed": true,
+      "next_pc": "0xfffffff007905854",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_dt_lookup: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007905854",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dt_lookup: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007905854",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dt_lookup: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007905854",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_soc_base: first",
+      "passed": true,
+      "next_pc": "0xfffffff007907df4",
+      "framebuffer_writes": 83072
+    },
+    {
+      "name": "probe_soc_base: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007907df4",
+      "framebuffer_writes": 80000
+    },
+    {
+      "name": "probe_soc_base: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007907df4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_soc_base: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007907df4",
+      "framebuffer_writes": 80000
+    },
+    {
+      "name": "probe_cpu_topo: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073c9074",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_cpu_topo: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073c9074",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_cpu_topo: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073c9074",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_cpu_topo: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073c9074",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_cpu_bootstrap: first",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_cpu_bootstrap: repeat",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_cpu_bootstrap: no-video",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_cpu_bootstrap: count-saturated",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_machine_startup: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073c8cac",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_machine_startup: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073c8cac",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_machine_startup: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073c8cac",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_machine_startup: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073c8cac",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_panic: first",
+      "passed": true,
+      "next_pc": "0xfffffff007938004",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_panic: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007938004",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_panic: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007938004",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_panic: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007938004",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_panic_options: first",
+      "passed": true,
+      "next_pc": "0xfffffff007938054",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_panic_options: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007938054",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_panic_options: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007938054",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_panic_options: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007938054",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_panic_trap: first",
+      "passed": true,
+      "next_pc": "0xfffffff007261d18",
+      "framebuffer_writes": 67072
+    },
+    {
+      "name": "probe_panic_trap: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007261d18",
+      "framebuffer_writes": 64000
+    },
+    {
+      "name": "probe_panic_trap: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007261d18",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_panic_trap: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007261d18",
+      "framebuffer_writes": 64000
+    },
+    {
+      "name": "probe_timer_regs: first",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_timer_regs: repeat",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_timer_regs: no-video",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_timer_regs: count-saturated",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_wfe_timeout: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073cae0c",
+      "framebuffer_writes": 35072
+    },
+    {
+      "name": "probe_wfe_timeout: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073cae0c",
+      "framebuffer_writes": 32000
+    },
+    {
+      "name": "probe_wfe_timeout: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073cae0c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_wfe_timeout: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073cae0c",
+      "framebuffer_writes": 32000
+    },
+    {
+      "name": "probe_wfe_init: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073cadb4",
+      "framebuffer_writes": 35072
+    },
+    {
+      "name": "probe_wfe_init: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073cadb4",
+      "framebuffer_writes": 32000
+    },
+    {
+      "name": "probe_wfe_init: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073cadb4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_wfe_init: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073cadb4",
+      "framebuffer_writes": 32000
+    },
+    {
+      "name": "probe_misc_boot_args: first",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_misc_boot_args: repeat",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_misc_boot_args: no-video",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_misc_boot_args: count-saturated",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_misc_regs: first",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_misc_regs: repeat",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_misc_regs: no-video",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_misc_regs: count-saturated",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e82c: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729ef3c",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729e82c: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729ef3c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e82c: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729ef3c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e82c: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729ef3c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e830: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729e834",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729e830: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729e834",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e830: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729e834",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e830: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729e834",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e870: first",
+      "passed": true,
+      "next_pc": "0xfffffff007957d54",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729e870: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007957d54",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e870: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007957d54",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e870: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007957d54",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e874: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729e878",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729e874: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729e878",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e874: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729e878",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e874: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729e878",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e8f0: first",
+      "passed": true,
+      "next_pc": "0xfffffff0072f8c44",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729e8f0: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0072f8c44",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e8f0: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0072f8c44",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e8f0: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0072f8c44",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e8f4: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729e8f8",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729e8f4: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729e8f8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e8f4: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729e8f8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e8f4: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729e8f8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e8f8: first",
+      "passed": true,
+      "next_pc": "0xfffffff007944884",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729e8f8: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007944884",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e8f8: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007944884",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e8f8: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007944884",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e8fc: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729e900",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729e8fc: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729e900",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e8fc: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729e900",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e8fc: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729e900",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e978: first",
+      "passed": true,
+      "next_pc": "0xfffffff00739bfac",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729e978: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00739bfac",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e978: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00739bfac",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e978: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00739bfac",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e97c: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729e980",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729e97c: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729e980",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e97c: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729e980",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729e97c: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729e980",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ea08: first",
+      "passed": true,
+      "next_pc": "0xfffffff007394e60",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ea08: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007394e60",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ea08: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007394e60",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ea08: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007394e60",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ea0c: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729ea10",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ea0c: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729ea10",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ea0c: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729ea10",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ea0c: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729ea10",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ea44: first",
+      "passed": true,
+      "next_pc": "0xfffffff007226a74",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ea44: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007226a74",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ea44: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007226a74",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ea44: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007226a74",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ea48: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729ea4c",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ea48: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729ea4c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ea48: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729ea4c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ea48: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729ea4c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ea80: first",
+      "passed": true,
+      "next_pc": "0xfffffff00728e04c",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ea80: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00728e04c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ea80: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00728e04c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ea80: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00728e04c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ea84: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729ea88",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ea84: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729ea88",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ea84: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729ea88",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ea84: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729ea88",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eabc: first",
+      "passed": true,
+      "next_pc": "0xfffffff00790a1bc",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729eabc: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00790a1bc",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eabc: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00790a1bc",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eabc: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00790a1bc",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eac0: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729eac4",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729eac0: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729eac4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eac0: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729eac4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eac0: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729eac4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eac4: first",
+      "passed": true,
+      "next_pc": "0xfffffff007944884",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729eac4: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007944884",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eac4: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007944884",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eac4: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007944884",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eac8: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729eacc",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729eac8: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729eacc",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eac8: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729eacc",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eac8: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729eacc",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eb38: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073b6c10",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729eb38: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073b6c10",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eb38: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073b6c10",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eb38: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073b6c10",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eb3c: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729eb40",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729eb3c: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729eb40",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eb3c: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729eb40",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eb3c: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729eb40",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eb74: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073c89e4",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729eb74: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073c89e4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eb74: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073c89e4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eb74: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073c89e4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eb78: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729eb7c",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729eb78: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729eb7c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eb78: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729eb7c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eb78: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729eb7c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ebb0: first",
+      "passed": true,
+      "next_pc": "0xfffffff0072b1218",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ebb0: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0072b1218",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ebb0: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0072b1218",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ebb0: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0072b1218",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ebb4: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729ebb8",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ebb4: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729ebb8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ebb4: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729ebb8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ebb4: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729ebb8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ebec: first",
+      "passed": true,
+      "next_pc": "0xfffffff007259c00",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ebec: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007259c00",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ebec: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007259c00",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ebec: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007259c00",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ebf0: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729ebf4",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ebf0: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729ebf4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ebf0: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729ebf4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ebf0: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729ebf4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ec28: first",
+      "passed": true,
+      "next_pc": "0xfffffff0072ba640",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ec28: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0072ba640",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ec28: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0072ba640",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ec28: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0072ba640",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ec2c: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729ec30",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ec2c: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729ec30",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ec2c: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729ec30",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ec2c: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729ec30",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ec64: first",
+      "passed": true,
+      "next_pc": "0xfffffff00725e644",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ec64: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00725e644",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ec64: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00725e644",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ec64: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00725e644",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ec68: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729ec6c",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ec68: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729ec6c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ec68: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729ec6c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ec68: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729ec6c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eca0: first",
+      "passed": true,
+      "next_pc": "0xfffffff0076dcf70",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729eca0: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0076dcf70",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eca0: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0076dcf70",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eca0: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0076dcf70",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eca4: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729eca8",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729eca4: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729eca8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eca4: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729eca8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eca4: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729eca8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ecac: first",
+      "passed": true,
+      "next_pc": "0xfffffff0076dcd50",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ecac: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0076dcd50",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ecac: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0076dcd50",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ecac: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0076dcd50",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ecb0: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729ecb4",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ecb0: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729ecb4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ecb0: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729ecb4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ecb0: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729ecb4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ece8: first",
+      "passed": true,
+      "next_pc": "0xfffffff0072a1c64",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ece8: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0072a1c64",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ece8: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0072a1c64",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ece8: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0072a1c64",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ecec: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729ecf0",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ecec: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729ecf0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ecec: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729ecf0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ecec: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729ecf0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ed24: first",
+      "passed": true,
+      "next_pc": "0xfffffff0072b1224",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ed24: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0072b1224",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ed24: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0072b1224",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ed24: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0072b1224",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ed28: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729ed2c",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ed28: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729ed2c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ed28: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729ed2c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ed28: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729ed2c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ed60: first",
+      "passed": true,
+      "next_pc": "0xfffffff00728a454",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ed60: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00728a454",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ed60: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00728a454",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ed60: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00728a454",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ed64: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729ed68",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ed64: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729ed68",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ed64: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729ed68",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ed64: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729ed68",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ed9c: first",
+      "passed": true,
+      "next_pc": "0xfffffff007670280",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ed9c: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007670280",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ed9c: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007670280",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ed9c: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007670280",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eda0: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729eda4",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729eda0: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729eda4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eda0: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729eda4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eda0: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729eda4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729edd8: first",
+      "passed": true,
+      "next_pc": "0xfffffff0072c1360",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729edd8: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0072c1360",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729edd8: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0072c1360",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729edd8: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0072c1360",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eddc: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729ede0",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729eddc: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729ede0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eddc: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729ede0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eddc: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729ede0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ee14: first",
+      "passed": true,
+      "next_pc": "0xfffffff00724ed50",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ee14: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00724ed50",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ee14: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00724ed50",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ee14: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00724ed50",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ee18: first",
+      "passed": true,
+      "next_pc": "0xfffffff0072646b8",
+      "framebuffer_writes": 1536
+    },
+    {
+      "name": "probe_dense_729ee18: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0072646b8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ee18: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0072646b8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ee18: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0072646b8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ee1c: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729ee20",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ee1c: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729ee20",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ee1c: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729ee20",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ee1c: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729ee20",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ee54: first",
+      "passed": true,
+      "next_pc": "0xfffffff007262d88",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ee54: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007262d88",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ee54: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007262d88",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ee54: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007262d88",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ee58: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729ee5c",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ee58: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729ee5c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ee58: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729ee5c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ee58: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729ee5c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eea4: first",
+      "passed": true,
+      "next_pc": "0xfffffff0072b2d40",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729eea4: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0072b2d40",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eea4: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0072b2d40",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eea4: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0072b2d40",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eea8: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729ef1c",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729eea8: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729eeac",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eea8: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729ef1c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eea8: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729eeac",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eeb8: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073ceb44",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729eeb8: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073ceb44",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eeb8: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073ceb44",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eeb8: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073ceb44",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eebc: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729eec0",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729eebc: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729eec0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eebc: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729eec0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eebc: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729eec0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eed0: first",
+      "passed": true,
+      "next_pc": "0xfffffff0072b52b8",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729eed0: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0072b52b8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eed0: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0072b52b8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eed0: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0072b52b8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eed4: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729eed8",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729eed4: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729eed8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eed4: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729eed8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eed4: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729eed8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eed8: first",
+      "passed": true,
+      "next_pc": "0xfffffff0072b192c",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729eed8: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0072b192c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eed8: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0072b192c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eed8: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0072b192c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eedc: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729eee0",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729eedc: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729eee0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eedc: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729eee0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729eedc: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729eee0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ef18: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729f098",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ef18: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729f098",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ef18: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729f098",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ef18: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729f098",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ef1c: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729ef20",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_729ef1c: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729ef20",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ef1c: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729ef20",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_729ef1c: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729ef20",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d52c: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073a407c",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d52c: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073a407c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d52c: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073a407c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d52c: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073a407c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d530: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736d534",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d530: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736d534",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d530: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736d534",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d530: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736d534",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d5b0: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736dc84",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d5b0: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736dc84",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d5b0: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736dc84",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d5b0: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736dc84",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d5b4: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736d5b8",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d5b4: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736d5b8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d5b4: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736d5b8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d5b4: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736d5b8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d6b0: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073ceb44",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d6b0: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073ceb44",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d6b0: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073ceb44",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d6b0: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073ceb44",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d6b4: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736d6b8",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d6b4: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736d6b8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d6b4: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736d6b8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d6b4: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736d6b8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d6b8: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073cef68",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d6b8: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073cef68",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d6b8: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073cef68",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d6b8: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073cef68",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d6bc: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736d6c0",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d6bc: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736d6c0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d6bc: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736d6c0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d6bc: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736d6c0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d6d0: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073a4174",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d6d0: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073a4174",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d6d0: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073a4174",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d6d0: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073a4174",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d6d4: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736d6d8",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d6d4: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736d71c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d6d4: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736d6d8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d6d4: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736d71c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d710: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073a3f64",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d710: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073a3f64",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d710: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073a3f64",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d710: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073a3f64",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d714: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736d718",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d714: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736d718",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d714: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736d718",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d714: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736d718",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d73c: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073c3b04",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d73c: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073c3b04",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d73c: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073c3b04",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d73c: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073c3b04",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d740: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736d744",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d740: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736d744",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d740: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736d744",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d740: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736d744",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d7b0: first",
+      "passed": true,
+      "next_pc": "0xfffffff007967c5c",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d7b0: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007967c5c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d7b0: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007967c5c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d7b0: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007967c5c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d7b4: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736d7b8",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d7b4: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736d7b8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d7b4: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736d7b8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d7b4: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736d7b8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d7d4: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073ab3c4",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d7d4: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073ab3c4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d7d4: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073ab3c4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d7d4: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073ab3c4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d7d8: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736d7dc",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d7d8: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736d7dc",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d7d8: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736d7dc",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d7d8: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736d7dc",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d7e8: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736dfa8",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d7e8: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736dfa8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d7e8: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736dfa8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d7e8: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736dfa8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d7ec: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736d7f0",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d7ec: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736d7f0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d7ec: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736d7f0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d7ec: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736d7f0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d814: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073a4174",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d814: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073a4174",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d814: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073a4174",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d814: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073a4174",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d818: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736d81c",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d818: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736d900",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d818: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736d81c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d818: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736d900",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d8dc: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073ab3c4",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d8dc: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073ab3c4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d8dc: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073ab3c4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d8dc: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073ab3c4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d8e0: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736d8e4",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d8e0: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736d8e4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d8e0: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736d8e4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d8e0: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736d8e4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d8f4: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736dfa8",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d8f4: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736dfa8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d8f4: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736dfa8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d8f4: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736dfa8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d8f8: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736d800",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d8f8: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736d800",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d8f8: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736d800",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d8f8: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736d800",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d918: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073ceb44",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d918: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073ceb44",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d918: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073ceb44",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d918: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073ceb44",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d91c: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736d920",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d91c: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736d920",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d91c: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736d920",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d91c: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736d920",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d920: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073cef68",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d920: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073cef68",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d920: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073cef68",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d920: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073cef68",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d924: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736d928",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736d924: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736d928",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d924: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736d928",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736d924: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736d928",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736da24: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736dfa8",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736da24: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736dfa8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736da24: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736dfa8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736da24: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736dfa8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736da28: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736da2c",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736da28: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736da2c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736da28: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736da2c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736da28: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736da2c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736db30: first",
+      "passed": true,
+      "next_pc": "0xfffffff0076cb1a0",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736db30: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0076cb1a0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736db30: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0076cb1a0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736db30: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0076cb1a0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736db34: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736db38",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736db34: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736db38",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736db34: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736db38",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736db34: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736db38",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dbb8: first",
+      "passed": true,
+      "next_pc": "0xfffffff007967ccc",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736dbb8: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007967ccc",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dbb8: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007967ccc",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dbb8: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007967ccc",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dbbc: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736dbc0",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736dbbc: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736dbc0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dbbc: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736dbc0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dbbc: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736dbc0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dbc4: first",
+      "passed": true,
+      "next_pc": "0xfffffff007967c78",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736dbc4: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007967c78",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dbc4: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007967c78",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dbc4: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007967c78",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dbc8: first",
+      "passed": true,
+      "next_pc": "0xfffffff007967cb0",
+      "framebuffer_writes": 1536
+    },
+    {
+      "name": "probe_dense_736dbc8: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007967cb0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dbc8: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007967cb0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dbc8: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007967cb0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dbcc: first",
+      "passed": true,
+      "next_pc": "0xfffffff007967c3c",
+      "framebuffer_writes": 1536
+    },
+    {
+      "name": "probe_dense_736dbcc: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007967c3c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dbcc: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007967c3c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dbcc: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007967c3c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dbd0: first",
+      "passed": true,
+      "next_pc": "0xfffffff007967c94",
+      "framebuffer_writes": 1536
+    },
+    {
+      "name": "probe_dense_736dbd0: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007967c94",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dbd0: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007967c94",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dbd0: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007967c94",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dbd4: first",
+      "passed": true,
+      "next_pc": "0xfffffff007967d00",
+      "framebuffer_writes": 1536
+    },
+    {
+      "name": "probe_dense_736dbd4: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007967d00",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dbd4: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007967d00",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dbd4: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007967d00",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dbd8: first",
+      "passed": true,
+      "next_pc": "0xfffffff007967d1c",
+      "framebuffer_writes": 1536
+    },
+    {
+      "name": "probe_dense_736dbd8: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007967d1c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dbd8: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007967d1c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dbd8: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007967d1c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dbdc: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736dbe0",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736dbdc: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736dbe0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dbdc: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736dbe0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dbdc: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736dbe0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dc1c: first",
+      "passed": true,
+      "next_pc": "0xfffffff007967dd0",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736dc1c: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007967dd0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dc1c: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007967dd0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dc1c: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007967dd0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dc20: first",
+      "passed": true,
+      "next_pc": "0xfffffff007967da8",
+      "framebuffer_writes": 1536
+    },
+    {
+      "name": "probe_dense_736dc20: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007967da8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dc20: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007967da8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dc20: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007967da8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dc24: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736dc28",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736dc24: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736dc28",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dc24: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736dc28",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dc24: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736dc28",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dc38: first",
+      "passed": true,
+      "next_pc": "0xfffffff007967d38",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736dc38: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007967d38",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dc38: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007967d38",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dc38: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007967d38",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dc3c: first",
+      "passed": true,
+      "next_pc": "0xfffffff0079dcd50",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736dc3c: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0079dcd50",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dc3c: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0079dcd50",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dc3c: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0079dcd50",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dc5c: first",
+      "passed": true,
+      "next_pc": "0xfffffff007967d80",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736dc5c: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007967d80",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dc5c: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007967d80",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dc5c: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007967d80",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dc60: first",
+      "passed": true,
+      "next_pc": "0xfffffff0079dcd50",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736dc60: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0079dcd50",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dc60: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0079dcd50",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dc60: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0079dcd50",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dc80: first",
+      "passed": true,
+      "next_pc": "0xfffffff007967c14",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736dc80: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007967c14",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dc80: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007967c14",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dc80: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007967c14",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dc84: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736dc88",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_736dc84: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736dc88",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dc84: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736dc88",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_736dc84: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736dc88",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957d78: first",
+      "passed": true,
+      "next_pc": "0xfffffff007966b48",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_7957d78: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007966b48",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957d78: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007966b48",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957d78: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007966b48",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957d7c: first",
+      "passed": true,
+      "next_pc": "0xfffffff007957d80",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_7957d7c: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007957d80",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957d7c: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007957d80",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957d7c: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007957d80",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957d88: first",
+      "passed": true,
+      "next_pc": "0xfffffff00794cf90",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_7957d88: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00794cf90",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957d88: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00794cf90",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957d88: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00794cf90",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957d8c: first",
+      "passed": true,
+      "next_pc": "0xfffffff007957d90",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_7957d8c: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007957d90",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957d8c: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007957d90",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957d8c: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007957d90",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957d98: first",
+      "passed": true,
+      "next_pc": "0xfffffff00795fcac",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_7957d98: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00795fcac",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957d98: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00795fcac",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957d98: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00795fcac",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957d9c: first",
+      "passed": true,
+      "next_pc": "0xfffffff00737a820",
+      "framebuffer_writes": 1536
+    },
+    {
+      "name": "probe_dense_7957d9c: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00737a820",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957d9c: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00737a820",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957d9c: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00737a820",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957da0: first",
+      "passed": true,
+      "next_pc": "0xfffffff007957da4",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_7957da0: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007957da4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957da0: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007957da4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957da0: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007957da4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957dac: first",
+      "passed": true,
+      "next_pc": "0xfffffff00795a10c",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_7957dac: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00795a10c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957dac: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00795a10c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957dac: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00795a10c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957db0: first",
+      "passed": true,
+      "next_pc": "0xfffffff007957db4",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_7957db0: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007957db4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957db0: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007957db4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957db0: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007957db4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957dc0: first",
+      "passed": true,
+      "next_pc": "0xfffffff0079591f4",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_7957dc0: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0079591f4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957dc0: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0079591f4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957dc0: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0079591f4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957dc4: first",
+      "passed": true,
+      "next_pc": "0xfffffff007957dc8",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_7957dc4: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007957dc8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957dc4: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007957dc8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957dc4: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007957dc8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957dc8: first",
+      "passed": true,
+      "next_pc": "0xfffffff007944884",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_7957dc8: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007944884",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957dc8: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007944884",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957dc8: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007944884",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957dcc: first",
+      "passed": true,
+      "next_pc": "0xfffffff007957dd0",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_7957dcc: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007957dd0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957dcc: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007957dd0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957dcc: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007957dd0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957dd8: first",
+      "passed": true,
+      "next_pc": "0xfffffff0079565e4",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_7957dd8: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0079565e4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957dd8: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0079565e4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957dd8: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0079565e4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957ddc: first",
+      "passed": true,
+      "next_pc": "0xfffffff007957de0",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_7957ddc: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007957de0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957ddc: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007957de0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957ddc: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007957de0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957de0: first",
+      "passed": true,
+      "next_pc": "0xfffffff007944884",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_7957de0: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007944884",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957de0: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007944884",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957de0: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007944884",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957de4: first",
+      "passed": true,
+      "next_pc": "0xfffffff007957de8",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_7957de4: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007957de8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957de4: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007957de8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7957de4: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007957de8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7966b90: first",
+      "passed": true,
+      "next_pc": "0xfffffff007275478",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_7966b90: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007275478",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7966b90: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007275478",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7966b90: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007275478",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7966b94: first",
+      "passed": true,
+      "next_pc": "0xfffffff007966b98",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_7966b94: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007966b98",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7966b94: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007966b98",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7966b94: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007966b98",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7966ba4: first",
+      "passed": true,
+      "next_pc": "0xfffffff007275478",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_7966ba4: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007275478",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7966ba4: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007275478",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7966ba4: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007275478",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7966ba8: first",
+      "passed": true,
+      "next_pc": "0xfffffff007966bac",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_7966ba8: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007966bac",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7966ba8: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007966bac",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7966ba8: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007966bac",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7966bbc: first",
+      "passed": true,
+      "next_pc": "0xfffffff007275478",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_7966bbc: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007275478",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7966bbc: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007275478",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7966bbc: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007275478",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7966bc0: first",
+      "passed": true,
+      "next_pc": "0xfffffff007966bc4",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_7966bc0: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007966bc4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7966bc0: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007966bc4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7966bc0: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007966bc4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79672a4: first",
+      "passed": true,
+      "next_pc": "0xfffffff007944884",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_79672a4: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007944884",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79672a4: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007944884",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79672a4: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007944884",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79672a8: first",
+      "passed": true,
+      "next_pc": "0xfffffff0079672ac",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_79672a8: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0079672ac",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79672a8: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0079672ac",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79672a8: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0079672ac",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79672b8: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073a3f64",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_79672b8: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073a3f64",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79672b8: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073a3f64",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79672b8: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073a3f64",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79672bc: first",
+      "passed": true,
+      "next_pc": "0xfffffff0079672c0",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_79672bc: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0079672c0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79672bc: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0079672c0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79672bc: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0079672c0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7967380: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736dc84",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_7967380: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736dc84",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7967380: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736dc84",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7967380: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736dc84",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7967384: first",
+      "passed": true,
+      "next_pc": "0xfffffff007967388",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_7967384: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007967388",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7967384: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007967388",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7967384: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007967388",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79673a8: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736dc84",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_79673a8: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736dc84",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79673a8: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736dc84",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79673a8: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736dc84",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79673ac: first",
+      "passed": true,
+      "next_pc": "0xfffffff0079673b0",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_79673ac: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0079673b0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79673ac: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0079673b0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79673ac: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0079673b0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7967428: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073c113c",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_7967428: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073c113c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7967428: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073c113c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_7967428: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073c113c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_796742c: first",
+      "passed": true,
+      "next_pc": "0xfffffff007967430",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_796742c: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007967430",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_796742c: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007967430",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_796742c: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007967430",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79674d8: first",
+      "passed": true,
+      "next_pc": "0xfffffff00736d4a0",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_79674d8: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00736d4a0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79674d8: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00736d4a0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79674d8: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00736d4a0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79674dc: first",
+      "passed": true,
+      "next_pc": "0xfffffff0079674e0",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_79674dc: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0079674e0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79674dc: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0079674e0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79674dc: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0079674e0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79675a4: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073c8540",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_79675a4: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073c8540",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79675a4: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073c8540",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79675a4: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073c8540",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79675a8: first",
+      "passed": true,
+      "next_pc": "0xfffffff0079675ac",
+      "framebuffer_writes": 768
+    },
+    {
+      "name": "probe_dense_79675a8: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0079675ac",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79675a8: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0079675ac",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dense_79675a8: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0079675ac",
+      "framebuffer_writes": 0
+    }
+  ]
+}

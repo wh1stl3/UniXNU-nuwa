@@ -242,6 +242,8 @@ def main():
         UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 14','PROBE 15').replace('RELOCATED HOOKS AND FIELD IDS','PMAP TRANSITION MAPPING')
     if probe and revision>=23:
         UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 15','PROBE 16').replace('PMAP TRANSITION MAPPING','DT PANIC POLICY AND CONSOLE')
+    if probe and revision>=24:
+        UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 16','PROBE 17').replace('DT PANIC POLICY AND CONSOLE','DENSE BOOTSTRAP CALL AND RETURN')
     if sha(fd) != FD_SHA or len(fd) != 3145728:
         raise ValueError('Firmware FD changed')
     if sha(shim) != SHIM_SHA:
@@ -333,6 +335,9 @@ def main():
         report['kernel_source']['source'] = 'hash-pinned early-security prelink plus bounded native entry diagnostic patches'
         report['success_requires'] = 'Revision 21: left stage tiles at y256/288/320/352/384 show entry/tables/pre-MMU/cyan/white. Tagged data at x256,y224..775 includes A032=init eventi and A033=its intended address. Panic/fault records require the bound build screen layout; ACK alone is not execution evidence.'
         report['probe_screen'] = json.loads(args.entry_probe.read_text())['screen']
+        if revision>=24:
+            report['probe_screen']['dense_bootstrap']=json.loads(args.entry_probe.read_text())['dense_bootstrap']
+            report['success_requires']='PROBE17: power-key Enter starts XNU; capture original left tiles, A-fields, and right grid x832..1295/y256..759. Blue grid cell=call edge reached; green=continuation reached. Decode IDs using bound dense_bootstrap.edges. Unlit cells do not prove the kernel stopped there.'
         report['expected_screen_outcomes'] = [report['success_requires'], 'Any later XNU text or panic requires separate attribution; no band proves MMU enabled or iOS started']
         report['not_proven'] = ['Real nuwa execution of this candidate', 'MMU activation and arm_init', 'Native timer/interrupt driver readiness', 'Full donor/native ABI or iOS boot']
     output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')

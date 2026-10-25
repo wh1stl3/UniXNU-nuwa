@@ -29,6 +29,17 @@ def main():
         try:validate(altered,sha)
         except ValueError:checks.append(dict(name='revision downgrade rejected after resealing digest',passed=True))
         else:raise AssertionError('downgrade')
+    if b.get('probe_revision',0)>=24:
+        for mode in ('missing-edge','changed-coordinate','revision-23'):
+            obj=copy.deepcopy(b)
+            if mode=='missing-edge':obj['dense_bootstrap']['edges'].pop()
+            elif mode=='changed-coordinate':obj['dense_bootstrap']['edges'][0]['x']+=4
+            else:obj['probe_revision']=23
+            payload=json.dumps(obj).encode();altered=copy.deepcopy(meta);altered['build']['sha256']=hashlib.sha256(payload).hexdigest()
+            with patch.object(Path,'read_bytes',read_build):
+                try:validate(altered,sha)
+                except ValueError:checks.append(dict(name='dense '+mode+' rejected after resealing digest',passed=True))
+                else:raise AssertionError(mode)
     altered=copy.deepcopy(meta);altered['software']['sha256']='0'*64
     try:validate(altered,sha)
     except ValueError:checks.append(dict(name='software digest mutation rejected',passed=True))

@@ -428,3 +428,5 @@
 2026-10-25 · 用户授权本轮本地提交，代码/回归/脱敏实测证据已提交597baed；Git暂存blob与包绑定摘要逐项相同，未包含照片、原始音视频或构建二进制。官网复核固定UniXNU16e592ab/SM8550-common23b2049f，确认QR固件日志、Format2记录及DT panic区补丁；未执行迁移/固件构建/设备新试验/上游发布。文档独立提交。· 597baed（代码）+紧随docs提交 · operations/2026-10-25-official-porting-update.md、reports/upstream-porting-review/2026-10-25/review.json
 
 2026-10-25 16:44 · PROBE16在真实DT缺pram时跳过可选旧panic导入，保留原console，实机确认kernel_bootstrap入口；Android1/A槽/三SHA恢复闭环。源函数体AArch64编译及11 DT guard、6console策略、92差分与全部绑定检查通过；整核源码重建未验。· b708494 · operations/2026-10-25-v23-dt-panic-console.md、reports/xnu-entry-probe-trial/2026-10-25-v23/
+
+2026-10-25 17:10 · v24/PROBE17一次性158点密集调用/后继可见路径，692差分及全回归通过；1.2亿模型指令越过页释放进入zone路径，无非法访存，不当作实机。镜像e3b8e022已回读，未启动，待本包录像恢复条件；无push。· 本次kernel里程碑提交 · operations/2026-10-25-v24-dense-bootstrap.md、reports/kernel-entry-probe/2026-10-25-v24/

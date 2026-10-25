@@ -1,37 +1,27 @@
 # STATUS
 
-更新：2026-10-25（北京时间）。主线 UniXNU / nuwa / iOS16 已从pmap入口推进到 **kernel_bootstrap入口实机确认**；iOS仍未启动。
+更新：2026-10-25（北京时间）。主线 UniXNU / nuwa / iOS16，最高实机事实仍为 **PROBE16 到达 kernel_bootstrap 入口**；iOS未启动。
 
-## 当前里程碑：PROBE16
+## 当前离线里程碑：PROBE17 / v24 密集路径
 
-- 镜像：6f0907b2ce684a70dd143664172bf083012bae5b31d3d4a195459d0c3f6400fa。
-- 内核：167bd013da33a6a1e439b0dba5a4ec161ce5a90c781e14f446da6b520ec40753，58,372,096 B，49记录补丁。
-- 本地代码/证据提交：b708494；未push。
-- 单次临时启动，用户在菜单按电源键Enter触发；用户文字及原图确认左列y512橙色kernel_bootstrap入口标记出现。无固定180秒等待。
-- 恢复核验：2026-10-25 16:44:29北京时间Android完成1/A槽，boot_a/vendor_boot_a/init_boot_a三SHA与试前一致，无flash/erase/改槽。当前无需人工恢复；这是该时刻的记录，不代表持续实时查询。
+按用户要求一次性布密当前可见启动路径：kernel_bootstrap、vm_mem_bootstrap、vm_page_bootstrap、pmap_startup 中79个真实调用，158个调用前/后继位置编号，新增150个补丁位置。右侧10列网格与原左侧阶段/A字段分开；蓝色=调用前，绿色=到达后继位置。共享分支可绕过原调用到达后继，绿色不能单独证明返回。完整目录和语义绑定进包报告。
 
-证据reports/xnu-entry-probe-trial/2026-10-25-v23/；包reports/xnu-first-entry/entry-probe-16.json。原图留本地out，只提交哈希/读数，无原始音视频上传。
+- 内核：6110c6fba2579eca0e3dfe84bd87a03869685645e98d6fbb75faa2b2a368e09b，58,404,864 B，199记录补丁；独立目录重复构建逐字节一致。
+- 镜像：e3b8e0224a0f4f0421927780e2257fda0d892a6cecf1d153c94f3868bbd71aea，70,266,880 B。
+- 最终ADT：572c4dbb22009ceae9fc27f1c61e3e5f4208f7db377b2a52cca32a18315127b5。
+- 692逐点寄存器/指令/像素差分、42入口/MMU、18读数、5WFE、6静态walk、5ParseKernel、8稀疏阶段、2异常检查通过；最终ADT四切换场景12断言、6console策略及20绑定检查通过。
+- TCR/板值/owned window/donor/_verified不变；loadable=false/runtime_qualified=false。
 
-## 当前修复的准确范围
+6000万指令连续模型完成133,696次页释放，参数按每对象48字节推进；1.2亿指令累计240,085次，越过pmap_startup/vm_page_bootstrap后继点并到zone_bootstrap调用路径，预算结束于SHA256压缩函数，无非法访存。支持此前20M为预算不足；不证明zone完成，也不是实机停点证明。新包最终镜像回读与绑定复验通过。
 
-旧模型在PE_create_console导入BCM固定旧panic区0x3c0fc000时读失败。上游DT panic区补丁已适配成8796源码候选，函数体AArch64编译与11个host边界场景通过；**未完成整核源码重建**。
+证据 reports/kernel-entry-probe/2026-10-25-v24/，包 reports/xnu-first-entry/entry-probe-17.json；实现、读图、边界与续接命令见 [v24操作记录](operations/2026-10-25-v24-dense-bootstrap.md)。当前新包未启动，设备基线需试前刷新。
 
-当前二进制曾把panic_text_len常量折叠为1字节状态，不能直接套通用动态日志区。诊断桥接只实现“真实DT查询缺pram则跳过旧panic导入”，保留原initialize_screen/console和当前panic代码；pram存在则明确红色/A035=2停住。此为限定诊断路径，不是正式通用panic缓冲提供者。
+## 设备与下一步
 
-原模型的0x3c0fc000失败被正反对照定位，PROBE16实机越过此前最高阶段，进入kernel_bootstrap；没有实机ELR/FAR证明旧包唯一停因，保留该边界。
+最近设备核验仍为2026-10-25 16:44:29北京时间：PROBE16试后Android完成1/A槽，boot_a/vendor_boot_a/init_boot_a三SHA不变；这是历史记录，不代表持续查询。原证据 reports/xnu-entry-probe-trial/2026-10-25-v23/。无flash/erase/改槽。
 
-## 软件验证
+PROBE17实机前需要本包录像与按键恢复就绪，再刷新preflight、即时通知后单次临时boot。菜单电源键Enter触发，无固定180秒；保留整个网格与A字段。试后恢复Android完成1和三SHA核验。等待人工不阻断离线主线。
 
-42入口/MMU、92普通钩子差分、18渲染、5WFE、8稀疏阶段、2异常、5ParseKernel、17绑定门；四切换场景12断言；6个console策略检查及11个源码DT guard用例。连续模型使用最终镜像同一ADT到达kernel_bootstrap，无非法访存；旧v22负对照仍在旧panic区读失败。最终镜像回读及Git报告字节摘要一致。loadable=false/runtime_qualified=false、板值/TCR/donor/认证/_verified保持。
+正式源码的DT panic补丁仍需整核配置接入与重建。当前缺pram诊断桥接保留screen/console，pram存在明确拒绝；不冒充通用动态panic缓冲支持。最高实机入口不证明VM完成、调度、驱动、root或iOS。
 
-## 下一主线
-
-1. 收敛kernel_bootstrap内部和VM启动内存初始化阶段，验证其完成/返回，再看scheduler、驱动和root。橙色只证明入口，不证明完成。
-2. 续跑模型20,000,000指令在_vm_page_release_startup+0x254达到预算，无错误；不能判死循环或硬件停点。先区分正常大循环与真实等待，再选少量阶段点，不盲目增加模型假RAM或跳过核心初始化。
-3. 正式源码构建接入DT panic补丁/配置并做整核回归；诊断缺pram桥接不能冒充完整实现。
-
-详细实现与复现：operations/2026-10-25-v23-dt-panic-console.md。前轮pmap映射修复保留，不重复旧试验。本轮没有第二次候选启动。
-
-## 官网与日志
-
-官网16e592ab的AdvancedLogDxe/OneSend二维码日志覆盖UEFI/EBS前，nuwa尚未接入；Format2/共享SM8550迁移保留独立评审、iOS16 ABI与板值。见operations/2026-10-25-official-porting-update.md。原始音视频仅本地，禁止自动GitHub附件/CI上传；历史Actions ZIP内部未逐个审计，不能对历史上传绝对保证。
+官网QR/AdvancedLogDxe覆盖UEFI/EBS前，nuwa尚未接入；Format2/共享SM8550迁移独立评审，保持iOS16身份，见 operations/2026-10-25-official-porting-update.md。原始音视频/截图仅本地，无push。

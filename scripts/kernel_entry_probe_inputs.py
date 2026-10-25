@@ -42,6 +42,13 @@ def validate(meta,kernel_sha):
     if not {'probe_entry','probe_tables','probe_mmu'}<=hooks:raise ValueError('Required entry/tables/MMU hooks missing')
     # Two header edits, one branch per hooked site, the BCM NOP and sixteen early vectors.
     if len(build['patches'])!=2+len(hooks)+1+16:raise ValueError('Patch set shape differs from the recorded hook set')
+    if any(h.startswith('probe_dense_') for h in hooks):
+        if build.get('probe_revision',0)<24:raise ValueError('Dense hooks require revision 24')
+        from probe_bootstrap_sites import generate
+        _,_,dense_sites,edges=generate(original,builder.macho(original),builder.backed)
+        if build.get('dense_bootstrap',{}).get('edges')!=edges:raise ValueError('Dense edge catalogue differs from native calls')
+        actual={(int(p['va'],16),p['reason']) for p in build['patches'] if p['reason'].startswith('probe_dense_')}
+        if actual!=set(dense_sites):raise ValueError('Dense hook set incomplete')
     # The checks that carry a hook's evidence must actually be present: deleting
     # them and re-sealing the reports must not produce an acceptable package.
     names={c['name'] for c in software['checks']}

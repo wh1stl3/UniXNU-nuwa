@@ -1,3 +1,6 @@
+> **当前有效交接：2026-10-25 v24 / PROBE17（优先于下方历史）**：已一次性布密 kernel_bootstrap/VM/pmap 启动可见路径，158编号/150新增位置，692差分及全部入口、映射、console、绑定回归通过。内核6110c6fb/58404864B/199补丁，镜像e3b8e022/70266880B，最终ADT572c4dbb；包 reports/xnu-first-entry/entry-probe-17.json。绿点为后继位置到达，不能单独证明调用返回。6000万模型指令进入页释放133696次；1.2亿累计240085次，越过pmap/vm_page后继位置并进入zone调用路径，无非法访存。zone完成和实机同路径未验证。详见2026-10-25-v24-dense-bootstrap.md和../STATUS.md。
+>
+> 本轮无设备动作，最近实机事实仍为PROBE16 kernel_bootstrap入口和16:44:29北京时间恢复Android1/A槽/三SHA一致，不冒充当前查询。新包需本包录像/按键恢复就绪、刷新preflight后单次临时boot；菜单电源Enter、无180秒等待。先运行 `python -B scripts/build_xnu_boot_package.py --validate --output reports/xnu-first-entry/entry-probe-17.json`；再按 record-nuwa-trial-state.py 与 trial-v4-firmware.py 新鲜门执行，不复用PROBE16录像许可。原始媒体只留本地，不push。正式源码整核重建、scheduler/驱动/root/iOS仍未验证。
 > **最新闭环（2026-10-24 20:53:19，北京时间）：** 入口探针ab3c092b单次临时启动，原图5716899a独立确认绿/蓝/黄/品红，入口首字与候选一致；实机确认到XNU页表生成后、开启MMU前。recovery/postcondition确认Android1/A槽/三SHA与本轮preflight一致，无flash/erase/改槽，无需继续按键。原图约10MB在out/trial-evidence/kernel-entry-probe-01/，元数据在reports/kernel-entry-probe-trial/2026-10-24-01/screen-evidence.json。当前代码里程碑为本轮新增入口探针提交，固件仍旧已验收CI40014018074。下一步离线准备MMU后/C入口标记；不重启本包，不复用旧录像许可。下方进行中条目为历史。
 
 > **本轮已取得XNU入口实机观察：** 用户报告绿/蓝/黄/品红四色，证明新探针的内核入口、页表生成后与开启MMU前路径执行；MMU成功开启/C初始化/iOS未验证。180秒观察完成，原图录像待交付，恢复程序已运行；若仍停画面用户保存后按键回fastboot。用户电源键可当Enter的现场观察已记，不再沿用旧绝对否定。见screen-observation.json及入口探针操作记录。
