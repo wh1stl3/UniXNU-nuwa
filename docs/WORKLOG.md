@@ -494,3 +494,5 @@
 2026-10-25 2026-10-25T23:09:47.274939+08:00 · PROBE26定位exec/dyld原生路径首个非零来源，21项串行验证/独立重建/新旧包回读通过；连续授权与日志恢复门仍有效，新鲜Android1/A槽/三SHA一致 · 提交号见本条所属提交 · v34/execution.json、entry-probe-26.json、v34/preflight.json
 
 2026-10-25T23:11:09.500196+08:00 · PROBE26单次临时boot ACK，等待菜单Enter后的具体画面及Android恢复后验，不将ACK当内核证据 · 代码5263bbb；启动提交见本条所属提交 · reports/xnu-entry-probe-trial/2026-10-25-v34/launch.json
+
+2026-10-25 · PROBE26实际到vn_rdwr头读取250未见251，纠正跨尝试ENOENT解释；恢复Android1/A槽/三SHA闭环，确认launchd/dyld type4压缩；用户决定冻结现有基线继续主线 · 提交号见本条所属提交 · v34 screen/recovery/postcondition、v35/exec-compression.json

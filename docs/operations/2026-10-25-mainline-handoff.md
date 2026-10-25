@@ -1,5 +1,8 @@
 # nuwa / iOS16 主线交接（2026-10-25，PROBE19后）
 
+> PROBE26照片03259a98已确认第二次exec到文件头读取：240至249调用/后继均亮，250 vn_rdwr调用亮、251后继暗，252之后Mach-O/dyld未亮。A02C2；保留的A02E=0xF2/242、A0322及A02D/A0302可来自前一次开发路径失败，不能解释为当前读取返回ENOENT。当前首要调查是文件头读取未见返回。Android1/A槽/三SHA后验已完成（v34/postcondition），无待恢复，不重复启动26。只读审计v35/exec-compression.json确认launchd/dyld均decmpfs type4；预链接含Zlib不等于已注册，正在核对正常组件初始化。按用户决定保持当前基线、不做全量上游迁移，继续主线且保留硬停。 下方旧待图/恢复段为历史，当前STATUS与v34实测为准；续接先核对v35压缩属性和正常组件初始化，未验证新候选不得启动。
+
+
 > PROBE26于2026-10-25T23:11:09.500196+08:00仅一次临时boot ACK，代码5263bbb，镜像9906e2b7；等待用户菜单电源Enter后完整画面，尚无新阶段实测或Android恢复后验，不重复启动26或第二候选。已有连续推进授权及当前具体画面/恢复条件沿用，新鲜预检Android1/A槽/三SHA一致。重点A02E首个非零调用ID、A032原始返回和右侧240至263格点，按函数解释errno/Mach状态，不能把ACK作为内核证据。取图后trial-v4-firmware.py recover --package reports/xnu-first-entry/entry-probe-26.json --evidence reports/xnu-entry-probe-trial/2026-10-25-v34/recovery.json；再record-nuwa-trial-state.py对比本轮preflight补postcondition。人工恢复等待继续离线工作；fastboot缺失变量保留日志重进一次，不单独硬停。启动证据v34/launch.json。
 
 

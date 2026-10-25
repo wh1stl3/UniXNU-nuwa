@@ -1,0 +1,118 @@
+{
+  "scope": "Inspect pinned APFS exec paths and Mach-O loader declarations without device access.",
+  "image_sha256": "d180c38dcc754bc079cc92a40f58a4b5fad2c2b7ce72cf5e64a117453fd7c90a",
+  "tool_commit": "66b86bd525e8cb90f9012543be89b1f092b75cf3",
+  "commands": [
+    {
+      "argv": [
+        "/mnt/d/Code/PortingiOS/common/tools/apfs-fuse-linux/bin/apfs-fuse",
+        "-o",
+        "ro",
+        "/mnt/d/Code/UniXNU-nuwa/out/root-mainline-v29/restore/restore-payload.bin",
+        "/var/tmp/unixnu-nuwa-exec-compression-v35"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "mountpoint",
+        "-q",
+        "/var/tmp/unixnu-nuwa-exec-compression-v35"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "fusermount",
+        "-u",
+        "/var/tmp/unixnu-nuwa-exec-compression-v35"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "files": {
+    "sbin/launchd": {
+      "exists": true,
+      "mode": "0o100755",
+      "uid": 0,
+      "gid": 0,
+      "symlink": false,
+      "bytes": 541600,
+      "sha256": "12370e5ee35bf28ae479b6c4b4455f4f4693ab803e37c5eb3032537c18cac61c",
+      "xattr_names": [
+        "com.apple.ResourceFork",
+        "com.apple.decmpfs"
+      ],
+      "compression_xattrs": {
+        "com.apple.decmpfs": {
+          "bytes": 16,
+          "sha256": "3d011cc5a3eb54f74ba34162f5b03ba14c868fbb46d5e0bc2f6e2cc10b1e988b",
+          "header_hex": "66706d6304000000a043080000000000",
+          "magic": "0x636d7066",
+          "compression_type": 4,
+          "expanded_bytes": 541600
+        }
+      },
+      "macho": {
+        "cpu": "0x100000c",
+        "subtype": "0x0",
+        "filetype": 2,
+        "commands": [
+          {
+            "command": "LC_LOAD_DYLINKER",
+            "path": "/usr/lib/dyld",
+            "exists_in_same_host_root": true
+          }
+        ]
+      }
+    },
+    "usr/lib/dyld": {
+      "exists": true,
+      "mode": "0o100755",
+      "uid": 0,
+      "gid": 0,
+      "symlink": false,
+      "bytes": 922912,
+      "sha256": "5806834564fe6462ae981d0915d612b1eb2f6f168822b5d278bee56254933757",
+      "xattr_names": [
+        "com.apple.ResourceFork",
+        "com.apple.decmpfs"
+      ],
+      "compression_xattrs": {
+        "com.apple.decmpfs": {
+          "bytes": 16,
+          "sha256": "2b6c1b8d137f40073085bb91a2f5d25923069bc15751c30c0e7b9657e79cf392",
+          "header_hex": "66706d630400000020150e0000000000",
+          "magic": "0x636d7066",
+          "compression_type": 4,
+          "expanded_bytes": 922912
+        }
+      },
+      "macho": {
+        "cpu": "0x100000c",
+        "subtype": "0x0",
+        "filetype": 7,
+        "commands": []
+      }
+    },
+    "usr/appleinternal/sbin/launchd.development": {
+      "exists": false
+    },
+    "usr/appleinternal/sbin/launchd.debug": {
+      "exists": false
+    }
+  },
+  "mount_cleaned_up": true,
+  "device_accessed": false,
+  "not_proven": [
+    "Kernel runtime namei resolution",
+    "Native mount namespace and selected filesystem",
+    "Userland execution"
+  ]
+}

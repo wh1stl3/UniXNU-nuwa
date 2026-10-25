@@ -27,6 +27,19 @@ def main():
             elif stat.S_ISREG(st.st_mode):
                 if st.st_size>8*1024*1024:raise ValueError('Unexpected executable size')
                 raw=path.read_bytes();record['sha256']=sha(raw)
+                try:
+                    record['xattr_names']=os.listxattr(path)
+                    record['compression_xattrs']={}
+                    for key in record['xattr_names']:
+                        if key.endswith('com.apple.decmpfs'):
+                            value=os.getxattr(path,key)
+                            item=dict(bytes=len(value),sha256=sha(value),header_hex=value[:16].hex())
+                            if len(value)>=16:
+                                magic,kind,expanded=struct.unpack_from('<IIQ',value)
+                                item.update(magic=hex(magic),compression_type=kind,expanded_bytes=expanded)
+                            record['compression_xattrs'][key]=item
+                except OSError as e:
+                    record['xattr_error']=dict(errno=e.errno,message=str(e))
                 if raw[:4]==b'\xcf\xfa\xed\xfe':
                     magic,cpu,subtype,kind,count,size,flags,reserved=struct.unpack_from('<8I',raw)
                     record['macho']=dict(cpu=hex(cpu),subtype=hex(subtype),filetype=kind,commands=[]);cursor=32
