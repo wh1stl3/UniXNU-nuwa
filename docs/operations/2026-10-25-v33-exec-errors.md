@@ -35,3 +35,7 @@ PROBE25无条件记录原生激活/exec/签名后继的x0，A02C为exec尝试数
 代码父b0704b5，新里程碑以git log为准；无push/新CI，保持FD/shim/板内存/TCR/iOS16/8796身份和*_verified不变，loadable/runtime_qualified仍false。无flash/erase/改槽和原始媒体上传。用户要求暂不调查重启现象，保持。硬停规则未因平台弹窗或连续推进而放宽。
 
 命令入口：build-kernel-entry-probe.py --image4-launch --pthread --root-trace --exec-trace --exec-detail；verify-image4-entry-candidate.py绑定v33c/build与launch-guard实际ADT/nonce/manifest，21项串行命令及原始输出见v33c/execution.json。独立重建v33c/reproduce.json，实际FAT读回及旧24复验用build_xnu_boot_package.py --validate。nonce仅本地，不提交原始值。
+
+## 本轮启动
+
+PROBE25于2026-10-25 22:51:47 +08仅一次临时boot ACK，代码d65c2b4，镜像8e24773c。等待用户菜单电源Enter后完整最终画面，ACK不证明内核或exec进展；本轮Android恢复后验尚未取得，不重复启动25、不启动第二候选。用户本包录像/恢复就绪，22:50:05预检Android1/A槽/三SHA一致。取图后trial-v4-firmware.py recover --package reports/xnu-first-entry/entry-probe-25.json --evidence reports/xnu-entry-probe-trial/2026-10-25-v33c/recovery.json；再用record-nuwa-trial-state.py对比本轮preflight补postcondition。人工恢复等待继续离线工作；真实故障、明确硬停或未授权设备内容更改边界仍停止相关动作。启动证据v33c/launch.json。

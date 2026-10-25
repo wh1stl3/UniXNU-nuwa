@@ -1,5 +1,8 @@
 # nuwa / iOS16 主线交接（2026-10-25，PROBE19后）
 
+> PROBE25于2026-10-25 22:51:47 +08仅一次临时boot ACK，代码d65c2b4，镜像8e24773c。等待用户菜单电源Enter后完整最终画面，ACK不证明内核或exec进展；本轮Android恢复后验尚未取得，不重复启动25、不启动第二候选。用户本包录像/恢复就绪，22:50:05预检Android1/A槽/三SHA一致。取图后trial-v4-firmware.py recover --package reports/xnu-first-entry/entry-probe-25.json --evidence reports/xnu-entry-probe-trial/2026-10-25-v33c/recovery.json；再用record-nuwa-trial-state.py对比本轮preflight补postcondition。人工恢复等待继续离线工作；真实故障、明确硬停或未授权设备内容更改边界仍停止相关动作。启动证据v33c/launch.json。
+
+
 > 当前PROBE25离线完成，尚未启动；21项串行验证、独立逐字节重建、实际FAT回读及旧包24复验通过。镜像8e24773c3811f267b36272abf04a030d0fd2adfa5f5a15340d1cb8fbe8b5b655/204484608B，内核52dd8952、ADT f9e3e909。用户本包录像/恢复就绪，22:50:05 +08预检Android1/A槽/三SHA一致，无待恢复。原生exec错误跨回退保留、A02C尝试计数，原生任务切换重新建立释放边界跟踪，不新增成功终点、不修改错误或认证。PROBE24已见exec/激活后继但无任务切换/签名/释放守卫证明，具体errno未确认；其恢复已关闭。续接：trial-v4-firmware.py launch --package reports/xnu-first-entry/entry-probe-25.json --preflight reports/xnu-entry-probe-trial/2026-10-25-v33c/preflight.json --evidence reports/xnu-entry-probe-trial/2026-10-25-v33c/launch.json --observation-seconds 0；仅一次临时boot。取图后同驱动recover绑定包25补Android1/A槽/三SHA；日志/恢复条件失效按AGENTS §3先停。代码父b0704b5，无push/新CI；v33操作记录和STATUS为当前入口，下方旧实时段均历史。
 
 
