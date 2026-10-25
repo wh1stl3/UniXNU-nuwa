@@ -1,32 +1,26 @@
 # STATUS
 
-更新：2026-10-25。最高实机事实：PROBE17已到load_context调用前；首线程运行/IOKit/BSD/iOS仍未实机验证。
+更新：2026-10-25。**PROBE18实机已执行首线程，越过PE_init_iokit、中断使能调用及commpage初始化，到mac_policy_initmach后panic。BSD/root/iOS尚未进入。**
 
-## 当前候选：PROBE18 / v25
+## 当前实机结果
 
-- 内核d6f101e4dfb670e7aa44cd6f51d447feb5d433e5c5883152b5a574da1a09479e，58,413,056 B，211记录补丁；新目录重建逐字节一致。
-- 镜像c89cfa52c165562693ab0868dddeeb1225995bb5f30e3899df58a888197e8dde，70,266,880 B；包reports/xnu-first-entry/entry-probe-18.json。
-- 最终ADT9846c7dadd23bf544190c45ba3db437fb83265cb180ad6c54cd3a3fedee20d93。
-- 178新编号覆盖首线程上下文、kernel_bootstrap_thread、IOKit、BSD/root关键调用；右侧网格行距24，入口黄/上下文紫红/调用蓝/后继绿，不能沿用PROBE17编号。
+- 内核d6f101e4dfb670e7aa44cd6f51d447feb5d433e5c5883152b5a574da1a09479e，58,413,056 B，211记录补丁；镜像c89cfa52c165562693ab0868dddeeb1225995bb5f30e3899df58a888197e8dde，70,266,880 B。
+- 本包录像/恢复确认、新基线后单次临时boot，用户菜单电源Enter触发。81格亮，0–5入口、10/11上下文恢复点可见；74/75 PE_init_iokit、80/81中断使能调用、84–87commpage可见，88 mac_policy_initmach有调用无后继。
+- 横纹实机消失，白/青校验带完整；A02A=0、A02B=4、A02C=1。证明一次读回一致及该点原生VBAR交接，不代表长期显示或实际硬件IRQ递送已验证。
+- 2026-10-25 18:19:42北京时间已恢复Android完成1/A槽，三分区SHA与试前一致；当前无人工恢复待办。此为该时刻记录，不代表持续查询。
 
-## 本轮修复
+## 当前卡点：Image4启动环境契约
 
-用户确认横纹肉眼存在，菜单没有，触发后随色带/HEX出现。HEX_RENDER每行写1920字节却只减1280，导致每行漂移160像素，黑色覆盖Logo。已修正1920，旧包负对照有框外写，新包精确矩形检查为0；实机消失与否待验。原始有声视频/静态帧只留本地。
+panic完整匹配donor AppleImage4 5.0.0：`failed to get mix-n-match policy: %d`，参数2。不是模型中bzero未处理异常的实机复现；本轮已实际越过OSKext摘要初始化。
 
-临时异常向量原来零填充在前、分支在槽末，实际入口无法可靠到报告器；修正分支在槽首，并逐个验证16入口及旧包负对照。首线程入口核对并恢复预先捕获的原生VBAR，避免探针长期拦住正常中断；错误捕获值A02C=2停住，成功1。原生中断控制器功能未验证。
+首要缺项为`/chosen/mix-n-match-prevention-status`。保留二进制读取器+原生SecureDT，使用同一出货ADT，复现返回2。5个隔离用例确认32位1表示禁止mix-n-match，0或空属性会允许，8字节超限返回84。当前仅审计，未选择运行时值、未修改ADT或绕过认证；IOKit runtime-provider动态路线尚未单独复现。
 
-y224白/青校验带在load_context绘制，后续只读回。A02A=不符预期像素数，A02B=最后检查ID，A02C=原生向量交接状态；这些字段覆盖旧DT/SoC含义，必须按PROBE18布局解释。CPU读回正确不代表扫描输出正常。
+下一主线是完整列明Image4策略与manifest/hash依赖，再形成可追溯的非Apple平台输入契约；不能以空字段、伪造fuse/可信链或跳过MAC检查推进。继续保持板值/TCR/owned window/donor/_verified不变，loadable=false/runtime_qualified=false。BSD/root、必要驱动和用户态随后仍需工作。
 
-## 验证与模型边界
+## 修复、验证与证据
 
-740逐点差分（GPR/SIMD/栈/标志/像素）、42入口/MMU、18读数、5WFE、6静态walk、5ParseKernel、8稀疏阶段、2异常处理器、6精确矩形、10上下文/显示、5真实向量检查通过；最终同ADT切换12断言、6console及26绑定检查通过。镜像回读/内核重建一致；板值/TCR/owned window/donor/_verified不变，loadable=false/runtime_qualified=false。
+HEX清屏每行写1920却只退1280的漂移已修正；临时异常槽位改为首指令分支，首线程入口交回捕获并核对的原生VBAR。178点新布局和A02A–A02C含义与PROBE17不同，见绑定包报告。
 
-最终连续模型已跨过首线程、恢复原生VBAR并进入PE_init_iokit；随后OSKext::updateLoadedKextSummaries的bzero+0x1c普通STP报UC_ERR_EXCEPTION，ESR/ELR/FAR为0，无host bad_memory。BSD未到达；分配映射/权限与模型异常递送尚未区分，不改参数、补假RAM或跳过清零。模型不是实机结果。
+740差分、42入口/MMU、18读数、5WFE、6静态walk、5ParseKernel、8稀疏阶段、2异常处理器、6精确矩形、10上下文/显示、5真实向量、同ADT切换12断言、6console与26绑定检查、镜像回读/重复构建通过；新增Image4契约5例通过。均与实机结论分开记录。代码/离线提交9a5961f；通用AGENTS合并280c198。未push，未触发新CI。
 
-证据reports/kernel-entry-probe/2026-10-25-v25/；详见[操作记录](operations/2026-10-25-v25-first-thread-display.md)。通用AGENTS规范已按用户要求合并为第10节，提交280c198，原nuwa约定保留。
-
-## 设备与下一步
-
-最近设备后验为2026-10-25 17:18:00北京时间：PROBE17恢复Android完成1/A槽/三分区SHA与试前一致；这是历史快照。PROBE18尚未启动，需本包录像/恢复就绪、刷新基线、即时通知后单次临时boot。菜单电源Enter触发，不固定180秒；观察校验带、网格0/1/2/3/4/5/6以及A02A–A02C，保存后恢复Android与三SHA。
-
-正式源码整核接入、计时/中断、必要设备/存储/root和用户态仍需推进。QR/AdvancedLogDxe覆盖UEFI/EBS前，不替代内核日志。原始媒体只留本地，无push。
+实测reports/xnu-entry-probe-trial/2026-10-25-v25/；离线reports/kernel-entry-probe/2026-10-25-v25/；包reports/xnu-first-entry/entry-probe-18.json；[完整操作记录](operations/2026-10-25-v25-first-thread-display.md)。原图/有声视频/提取帧仅本地out或用户原路径，不上传。新候选再按本包录像、基线与恢复门执行，不复用旧确认。

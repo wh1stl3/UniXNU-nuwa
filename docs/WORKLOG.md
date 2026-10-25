@@ -438,3 +438,5 @@
 2026-10-25 · 按用户明确要求，将下载AGENTS.md中适用于nuwa的表达、代码质量、逆向取证、边界测试与工具规则合并为第10节；原9节与全部设备/只读/媒体门保留，脚本串行。· 本次docs提交 · AGENTS.md:第10节，来源SHA8fcd7fa7
 
 2026-10-25 18:11 · PROBE18修复HEX越框及向量入口/交接，178点扩展首线程至BSD/root；740差分和全回归、重建/镜像回读通过。最终模型进入IOKit，在OSKext清零普通STP异常，未到BSD；新包未实测。· 本次kernel里程碑 · reports/kernel-entry-probe/2026-10-25-v25/、operations/2026-10-25-v25-first-thread-display.md
+
+2026-10-25 18:19 · PROBE18实机横纹消失，进入首线程/IOKit并走过IRQ使能调用，到MAC initmach的Image4 mix策略缺项panic(2)；已恢复Android1/A槽/三SHA一致。保留reader+出货ADT复现缺属性，5契约用例通过，未改运行时策略。· 本次device/审计提交 · v25实测目录、image4-policy-audit.json

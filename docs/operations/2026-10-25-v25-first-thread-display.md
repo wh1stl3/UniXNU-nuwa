@@ -53,3 +53,21 @@ CPU读回0只说明经当前Device映射读到的像素一致，不证明物理�
 loadable=false/runtime_qualified=false；TCR、板值、owned window、donor、认证和_verified未改。脚本串行，无新设备动作。最近设备核验仍是PROBE17恢复后2026-10-25 17:18:00北京时间Android1/A槽/三SHA一致，不当作当前实时查询。
 
 实机试验仍需本包录像及按键恢复就绪，刷新preflight、即时通知后单次临时boot；菜单电源Enter触发，不固定等待180秒。先读校验带/新编号/A02A–A02C，再恢复Android完成1及三SHA闭环。原始音视频/静态截图仅本地，不push。
+
+## PROBE18实机结果与新卡点
+
+代码/离线证据提交9a5961f。本包用户录像/恢复确认后，18:13:09北京时间刷新Android1/A槽/三SHA，与PROBE17后验一致；18:13:39单次临时boot ACK。用户在菜单按电源Enter后确认画面稳定、横纹消失；原图1751df6ec68fe8a4edab0f46798f45e4002acff48cfd726c38dc754dba22e99c，视频bd941aa044c8f672238b61ff713f91718f737a93d137958c5038bdc057ca40de，7.334656秒/19,458,223 B，含音频，均仅本地。照片取样/目视共81格亮，完整读数与RGB见trial目录screen.json。
+
+A02A=0、A02B=4，表明首线程入口检查时校验带无不符像素；照片中白/青条完整，Logo横纹消失。这是本轮实机观察，不是长期显示资格。A02C=1，表明该入口已核对并交回原生向量。0–5入口、10/11上下文检查点及其后调用链可见，首线程确实执行到了kernel_bootstrap_thread；PE_init_iokit的74/75可见，之后80/81中断使能调用、84–87commpage初始化路径可见。88为mac_policy_initmach调用，89未出现，6 BSD入口未出现。不得仅据使能调用返回宣称真实IRQ递送/控制器已验证。
+
+本轮明确panic：A028=6661696C65642074、A029=6F20676574206D69，拼接`failed to get mi`；与保留donor唯一字符串`failed to get mix-n-match policy: %d`匹配，A031=2。模块为com.apple.security.AppleImage4 5.0.0，原donor文本与现prelink的slide为-0x1000000，格式串VA0xfffffff003e20262。最终实机停点是MAC/Image4策略初始化，已经越过模型先前的OSKext摘要bzero停点，不能继续将那个模型异常称为实机阻塞。
+
+按键恢复后18:19:42北京时间Android完成1/A槽，boot_a/vendor_boot_a/init_boot_a三SHA与试前完全一致，无flash/erase/改槽、无第二候选。证据reports/xnu-entry-probe-trial/2026-10-25-v25/{preflight,launch,screen,trial,recovery,postcondition}.json。
+
+## Image4契约审计
+
+静态调用与GOT核对定位`/chosen/mix-n-match-prevention-status`：AppleImage4读取器0xfffffff0046e9fe0的enum12分支，经0xfffffff0046eae28和原生SecureDTGetProperty读取。缺属性返回2，值为0会转换为allow=true，非零为allow=false；读取缓冲容量为4字节，空属性也被当作0，所以“补一个空属性”会改变策略，不能作为修复。
+
+新增audit-image4-boot-policy.py在保留二进制上执行实际读取器与原生SecureDT函数：最终发出的ADT缺属性，返回2；32位1返回成功且禁止mix-n-match；32位0/空属性允许；8字节超出4字节缓冲返回84。5例通过，无原生函数替身、未改当前ADT/内核/运行时策略或设备。隔离模型只执行SecureDT后备路线，IOKit runtime-provider路线尚未动态复现；首要缺项判断由实际属性缺失、同码反例及静态两路线属性名共同支持。见image4-policy-audit.json。
+
+runtime.h的IMG4_IDENTIFIER_AMNM/CHMH说明该策略会影响nonce与前级manifest hash约束。下一步先完整列明Image4启动环境及实际manifest/hash来源，选择明示的软件平台策略，保持来源可追溯；不将补字段视为建立了Apple可信启动链。ios-sweet/topaz的合成boot-manifest-hash只作为其他非Apple移植的兼容性参考，不能当作nuwa真实前级签名manifest证据。当前没有选择运行时值、未绕过认证，板值/TCR/资格保持。

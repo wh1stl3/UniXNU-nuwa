@@ -1,0 +1,79 @@
+{
+  "scope": "Audit the preserved AppleImage4 boolean policy consumer against the shipped ADT.\nFixtures change only an in-memory property; no shipped ADT, kernel, policy or device is changed.\n",
+  "input_sha256": "1aeebf1352a86b0d31612a6bd6e77bd7292f676ad2ce43a99ec4a8f3999eedb6",
+  "adt_sha256": "9846c7dadd23bf544190c45ba3db437fb83265cb180ad6c54cd3a3fedee20d93",
+  "consumer": "0xfffffff0046e9fe0",
+  "property": "/chosen/mix-n-match-prevention-status",
+  "checks": [
+    {
+      "name": "shipped-missing matches real consumer return and boolean semantics",
+      "passed": true
+    },
+    {
+      "name": "prevention-one matches real consumer return and boolean semantics",
+      "passed": true
+    },
+    {
+      "name": "prevention-zero matches real consumer return and boolean semantics",
+      "passed": true
+    },
+    {
+      "name": "empty-property matches real consumer return and boolean semantics",
+      "passed": true
+    },
+    {
+      "name": "oversized-property matches real consumer return and boolean semantics",
+      "passed": true
+    }
+  ],
+  "cases": {
+    "shipped-missing": {
+      "errno": 2,
+      "allow_mix_n_match": 165,
+      "property_reads": [
+        "mix-n-match-prevention-status"
+      ],
+      "adt_sha256": "9846c7dadd23bf544190c45ba3db437fb83265cb180ad6c54cd3a3fedee20d93"
+    },
+    "prevention-one": {
+      "errno": 0,
+      "allow_mix_n_match": 0,
+      "property_reads": [
+        "mix-n-match-prevention-status"
+      ],
+      "adt_sha256": "ac1dd3fb1742b89dee5eea2989a152570d9c0820f1051db9b821f8c1ae9910d6"
+    },
+    "prevention-zero": {
+      "errno": 0,
+      "allow_mix_n_match": 1,
+      "property_reads": [
+        "mix-n-match-prevention-status"
+      ],
+      "adt_sha256": "b9a5dd621de725fb493a145c2e342f1e41d7bd68cdfd3219e08d91caf3a589cd"
+    },
+    "empty-property": {
+      "errno": 0,
+      "allow_mix_n_match": 1,
+      "property_reads": [
+        "mix-n-match-prevention-status"
+      ],
+      "adt_sha256": "fe1935f23155e9937dfe118706aad9c42e04c11e2bf13dafebcdc5929378c581"
+    },
+    "oversized-property": {
+      "errno": 84,
+      "allow_mix_n_match": 165,
+      "property_reads": [
+        "mix-n-match-prevention-status"
+      ],
+      "adt_sha256": "8f1173b0e07111aa5d0f8cb933b24f19d64809842f527d53a634ba8b93efcddc"
+    }
+  },
+  "policy_selected": false,
+  "shipped_files_modified": false,
+  "device_accessed": false,
+  "limitations": [
+    "Native SecureDT fallback in an isolated instruction model; IOKit runtime-provider route not executed",
+    "Zero/empty cases are negative policy fixtures, not proposed shipping values",
+    "A readable property does not establish fusing, chain-of-trust or manifest authenticity"
+  ]
+}

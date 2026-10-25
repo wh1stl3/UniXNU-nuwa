@@ -578,3 +578,9 @@ PROBE16/6f0907b2、内核167bd013单次临时实测，原图确认kernel_bootstr
 2026-10-25，补充D-044：用户肉眼确认菜单正常、进入内核后才有横纹，排除纯拍摄解释。HEX_RENDER写1920却退1280导致160px/行漂移，精确矩形正反对照已证实并修正，实机消除待验。临时向量原先入口124字节零在前，真实16槽负对照均先异常；修正B在首指令，保留早期诊断，并在kernel_bootstrap_thread入口核对/恢复原生VBAR，防止临时向量阻断正常IRQ。此处是明确行为交接，不冒充所有系统寄存器透明。
 
 PROBE18增加178个首线程/IOKit/BSD/root编号；10上下文/显示、5真实向量、6矩形、740差分及同ADT全回归通过。最终模型已进入IOKit，随后OSKext摘要清零STP出现UC_ERR_EXCEPTION；分配映射/权限与模型异常递送待区分，不以补假RAM、跳过函数或改内核参数推进。证据v25目录；新包尚未实测，原始媒体仅本地，原17报告误封已按Git原字节恢复并校验，无push。
+
+# D-046 · 首线程与IOKit实机越过，收敛Image4启动契约
+
+2026-10-25。PROBE18横纹消失，首线程入口/上下文点、PE_init_iokit后继、IRQ使能调用后继和commpage可见，MAC initmach panic；不据使能调用返回声称硬件IRQ已验证。模型此前OSKext bzero停点不再视为真实阻塞。18:19:42恢复Android1/A槽/三SHA一致，媒体仅本地。
+
+完整panic为AppleImage4的failed to get mix-n-match policy: %d，参数2；保留consumer与原生SecureDT对同ADT返回2，缺/chosen/mix-n-match-prevention-status是首要原因。五例确认0/空属性允许混配，32位1禁止；审计不选择/改运行时值，完整manifest/hash依赖先核对，不绕过认证、不伪造hardware fuse或verified标志。IOKit provider动态路线未独立复现。证据v25 screen/trial/postcondition及image4-policy-audit.json。
