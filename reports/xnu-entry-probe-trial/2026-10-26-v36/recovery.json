@@ -1,0 +1,144 @@
+{
+  "phase": "recover",
+  "started_at": "2026-10-26T04:23:16.397330+00:00",
+  "commands": [
+    {
+      "at": "2026-10-26T04:23:16.451543+00:00",
+      "argv": [
+        "fastboot",
+        "-s",
+        "<selected-nuwa>",
+        "getvar",
+        "product"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "product: nuwa\nFinished. Total time: 0.004s\n"
+    },
+    {
+      "at": "2026-10-26T04:23:16.474437+00:00",
+      "argv": [
+        "fastboot",
+        "-s",
+        "<selected-nuwa>",
+        "reboot",
+        "bootloader"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Rebooting into bootloader                          OKAY [  0.000s]\nFinished. Total time: 0.000s\n"
+    },
+    {
+      "at": "2026-10-26T04:23:20.565045+00:00",
+      "argv": [
+        "fastboot",
+        "-s",
+        "<selected-nuwa>",
+        "getvar",
+        "product"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "product: nuwa\nFinished. Total time: 0.004s\n"
+    },
+    {
+      "at": "2026-10-26T04:23:25.245017+00:00",
+      "argv": [
+        "fastboot",
+        "-s",
+        "<selected-nuwa>",
+        "boot",
+        "D:\\Code\\PortingiOS\\nuwa\\backups\\recovery-20261020T121245314787Z\\boot_a.img"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Sending 'boot.img' (196608 KB)                     OKAY [  4.485s]\nBooting                                            OKAY [  0.117s]\nFinished. Total time: 4.654s\n"
+    },
+    {
+      "at": "2026-10-26T04:23:40.535241+00:00",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'cat /sys/firmware/devicetree/base/model; cat /sys/firmware/devicetree/base/compatible'"
+      ],
+      "exit_code": 0,
+      "stdout": "Qualcomm Technologies, Inc. 8550 nuwa\u0000qcom,kalama-mtp\u0000qcom,kalama\u0000qcom,mtp\u0000",
+      "stderr": ""
+    },
+    {
+      "at": "2026-10-26T04:23:40.609911+00:00",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "shell",
+        "getprop sys.boot_completed"
+      ],
+      "exit_code": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "at": "2026-10-26T04:23:45.858654+00:00",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'cat /sys/firmware/devicetree/base/model; cat /sys/firmware/devicetree/base/compatible'"
+      ],
+      "exit_code": 0,
+      "stdout": "Qualcomm Technologies, Inc. 8550 nuwa\u0000qcom,kalama-mtp\u0000qcom,kalama\u0000qcom,mtp\u0000",
+      "stderr": ""
+    },
+    {
+      "at": "2026-10-26T04:23:45.936031+00:00",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "shell",
+        "getprop sys.boot_completed"
+      ],
+      "exit_code": 0,
+      "stdout": "\n",
+      "stderr": ""
+    },
+    {
+      "at": "2026-10-26T04:23:51.307891+00:00",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "exec-out",
+        "su -c 'cat /sys/firmware/devicetree/base/model; cat /sys/firmware/devicetree/base/compatible'"
+      ],
+      "exit_code": 0,
+      "stdout": "Qualcomm Technologies, Inc. 8550 nuwa\u0000qcom,kalama-mtp\u0000qcom,kalama\u0000qcom,mtp\u0000",
+      "stderr": ""
+    },
+    {
+      "at": "2026-10-26T04:23:51.389278+00:00",
+      "argv": [
+        "adb",
+        "-s",
+        "<selected-nuwa>",
+        "shell",
+        "getprop sys.boot_completed"
+      ],
+      "exit_code": 0,
+      "stdout": "1\n",
+      "stderr": ""
+    }
+  ],
+  "observations": [],
+  "authorization": "XNU-FIRST-ENTRY-ANALYSIS explicit diagnostic trial/recovery approval",
+  "candidate_sha256": "7a04626e631196be116d270fa94e59b957ab537ecc1353501ff8f7b54fec7e0f",
+  "candidate_package_sha256": "83c8da8c84eed16a46b19a8cb770271adb3bb85da53e8d2d84b09debbce50ba3",
+  "recovery_sha256": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+  "preflight": null,
+  "android_boot_completed": "1",
+  "ended_at": "2026-10-26T04:23:51.389840+00:00"
+}

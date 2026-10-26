@@ -1,5 +1,26 @@
 # nuwa / iOS16 主线交接（2026-10-26，PROBE28离线就绪）
 
+
+本轮确认补充（2026-10-26T04:08:25.950811+00:00）：用户答复“能，已准备拍摄和按键恢复”；R-014当轮画面及按键恢复条件已满足。新preflight确认nuwa/kalama、Android1/_a/三SHA与v35一致，按既定范围单次临时启动同一PROBE28；不能重用本次已发送候选。待画面与恢复后验，不声称内核通过。
+
+## 当前唯一现场结论：PROBE28完成读图与恢复
+
+PROBE28/7a04626e已单次实测并consumed，禁止重发，未启动下一候选。原图A034=0x110/272、A035全F；266/268/270/272青、269绿，267/271/273未亮，swap274/275未亮。确定MAC已成对返回、到达VNOP_READ原生BLR x8调用点，未观察返回。272在BLR之前记录，目标函数体入口尚未直接证实；优先核对分派目标/入口与APFS/decmpfs读取等待。原先“已进入回调”的聊天表述已收紧，不能当作入口证明，也不能指定锁/IRQ为根因。
+
+用户已提供照片并按键回fastboot，本轮先核对实际状态，再对显式nuwa执行原boot临时恢复。12:24:07上海时间postcondition确认nuwa/kalama、Android1/_a/三SHA与本轮preflight一致；当前Android恢复闭环，无人工恢复待办。R-014本轮approved A且完成，不等于未来候选免预检。没有操作enuma、没有flash/erase/改槽。证据reports/xnu-entry-probe-trial/2026-10-26-v36/{preflight,launch,consumed,screen,recovery,postcondition,evidence-binding}.json。
+
+[完整实测记录](2026-10-26-probe28-device-result.md)。照片SHA8b25519f…，原图及Library属性只存本地out/trial-evidence/entry-probe-28/user-screen-library-complete.tar；未commit/上传原媒体。Windows/WSL读取兼容和临时源丢失后的保元数据归档均记录于evidence-binding；不能引用失效临时路径。A033本轮不作不可靠读数替换，历史EF8保留。未证明完整header/解压/Mach-O/dyld/用户态成功。
+
+下一步仅离线审查固定v_op目标、入口与内部分解；没有构建或启动下一候选。原包/内核/ADT和全部受审门保持，下方“等待画面/恢复”“未启动/待确认”及暂停段落均为历史，当前以本节与STATUS为准。
+
+## 当前现场：PROBE28已单次发送，等待照片后恢复
+
+用户本轮答复“能，已准备拍摄和按键恢复”，R-014 answered A。新preflight绑定确认原文，Android1/_a/三SHA与历史v35一致。于2026-10-26T04:08:55.911780+00:00单次fastboot boot 7a04626e包，Sending/Booting均OKAY，exit0；仅证明传输接受，尚无内核画面证据。reports/xnu-entry-probe-trial/2026-10-26-v36/consumed.json已锁定该候选consumed，不能重发；launch.json保存实际命令与结果。当前设备启动后状态未知，不沿用启动前Android1；恢复尚未执行。
+
+已通知用户在菜单电源Enter并发送完整诊断照片，先保留现场。读266..275/A034/A035后，按电源+音量下回fastboot；只对本轮明确选定nuwa用既有recover流程临时加载原boot，确认Android1/同槽/三SHA后验。所有preflight/launch/recover必须显式--serial，避免遍历查询其他设备。不得自动换包或把ACK当执行；无新媒体时保持等待，不重试候选。
+
+下方预检待确认/设备暂停段落为前轮历史，由本节及当前STATUS覆盖。最新离线参数契约和全部包资格证据仍有效。
+
 ## 当前实测准备（2026-10-26）
 
 用户最新明确“nuwa可以开展实测了”，解除此前设备操作暂停，范围仅既定PROBE28单次临时启动及安全恢复；没有授权无关刷写/改槽/换包。有效包7a04626e校验通过，现有仓库试验记录未发现已启动该包。

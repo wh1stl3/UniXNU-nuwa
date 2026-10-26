@@ -512,3 +512,5 @@
 2026-10-26 · 完成读取参数契约：9组真实flags8/4096对照、4组交付EFI存储、2负对照；修正模拟Darwin22 ABI后5项启动模型通过，默认11组/原23份绑定及有效包保持；无设备操作 · 提交见本条所属Git提交 · reports/kernel-entry-probe/2026-10-26-v36-parameter-contract/validation.json；docs/operations/2026-10-26-read-parameter-contract.md
 
 2026-10-26 · 用户允许PROBE28实测；完成新鲜nuwa Android1/_a/三SHA预检及有效包/原恢复boot校验，补显式目标筛选并通过3项隔离测试；未启动，待当轮拍摄/按键恢复确认 · 提交见本条所属Git提交 · reports/xnu-entry-probe-trial/2026-10-26-v36/state-before-confirmation.json、preparation.json、target-selection.json
+
+2026-10-26 12:24:07+08:00后 · PROBE28单次实测：A034272/A035全F，MAC已返回，原生文件系统分派调用点到达但未见返回；原boot恢复Android1/_a/三SHA闭环，原图仅本地，未启动新候选 · 提交见本条所属Git提交 · reports/xnu-entry-probe-trial/2026-10-26-v36/screen.json、postcondition.json、evidence-binding.json；docs/operations/2026-10-26-probe28-device-result.md

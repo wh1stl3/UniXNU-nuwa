@@ -1,0 +1,126 @@
+{
+  "level": "Single real-device framebuffer photograph manually inspected; no continuous trace",
+  "image": {
+    "library_file_id": "libfile_8da6cb270ad481918654ead1a4bb94f7",
+    "file_id": "file_0000000042008230a6299a92302a11cd",
+    "version": 0,
+    "sha256": "8b25519f7eb803bf101cb96ba6d2f83befe5b575a071aa2b5ccd4b4eb9bb70df",
+    "bytes": 710443,
+    "width": 1536,
+    "height": 2048,
+    "local_archive": "out/trial-evidence/entry-probe-28/user-screen-library-complete.tar",
+    "archive_sha256": "ad688e9ec6fe39b0e84b9402809000c3c8616aa1d4949c882aa9f1b718793cba",
+    "raw_media_committed": false,
+    "raw_media_uploaded_by_agent": false
+  },
+  "candidate_sha256": "7a04626e631196be116d270fa94e59b957ab537ecc1353501ff8f7b54fec7e0f",
+  "observed_title": "XNU ENTRY PROBE 28",
+  "fields": {
+    "A034": {
+      "hex": "0000000000000110",
+      "decimal": 272,
+      "confidence": "clear visual read",
+      "meaning": "last scoped read marker: native VNOP_READ BLR x8 dispatch call site"
+    },
+    "A035": {
+      "hex": "FFFFFFFFFFFFFFFF",
+      "confidence": "clear visual read",
+      "meaning": "pending sentinel, not a native errno"
+    },
+    "A033": {
+      "value": null,
+      "confidence": "Not reliably transcribed from this photo; do not overwrite prior user-corrected EF8 history"
+    }
+  },
+  "markers": [
+    {
+      "id": 266,
+      "observed": "cyan",
+      "native_fb_x": 832,
+      "native_fb_y": 784
+    },
+    {
+      "id": 267,
+      "observed": "unlit",
+      "native_fb_x": 880,
+      "native_fb_y": 784
+    },
+    {
+      "id": 268,
+      "observed": "cyan",
+      "native_fb_x": 928,
+      "native_fb_y": 784
+    },
+    {
+      "id": 269,
+      "observed": "green",
+      "native_fb_x": 976,
+      "native_fb_y": 784
+    },
+    {
+      "id": 270,
+      "observed": "cyan",
+      "native_fb_x": 1024,
+      "native_fb_y": 784
+    },
+    {
+      "id": 271,
+      "observed": "unlit",
+      "native_fb_x": 1072,
+      "native_fb_y": 784
+    },
+    {
+      "id": 272,
+      "observed": "cyan",
+      "native_fb_x": 1120,
+      "native_fb_y": 784
+    },
+    {
+      "id": 273,
+      "observed": "unlit",
+      "native_fb_x": 1168,
+      "native_fb_y": 784
+    },
+    {
+      "id": 274,
+      "observed": "unlit",
+      "native_fb_x": 1216,
+      "native_fb_y": 784
+    },
+    {
+      "id": 275,
+      "observed": "unlit",
+      "native_fb_x": 1264,
+      "native_fb_y": 784
+    }
+  ],
+  "facts": [
+    "Scoped MAC call and matching continuation observed",
+    "VNOP_READ call and native BLR x8 call-site marker observed; matching returns not observed in this snapshot",
+    "The green return marker is unconditional color, not a direct encoding of errno zero",
+    "A035 is pending sentinel, not 0xFFFFFFFF errno"
+  ],
+  "inference": {
+    "primary": "Narrow investigation to filesystem dispatch/replay/target-entry and the read callback path; current MAC function wait is not supported",
+    "native_mac_zero": "Inferred from retained native branch reaching VNOP_READ after observed MAC return; raw MAC errno was not retained in the displayed pending field",
+    "alternatives": [
+      "Failure or stall between call-site observation and callback entry, including invalid target or exception",
+      "APFS/decmpfs lock, UBC/UPL, validation, fetch or storage I/O wait after callback entry"
+    ],
+    "limitations": [
+      "No observed callback entry address or v_op target value",
+      "No lock owner, wait_event, blocked stack or IRQ state",
+      "One photo cannot establish permanent deadlock or exact elapsed wait",
+      "No complete header read, decompressor execution, Mach-O/dyld or userland success proved"
+    ]
+  },
+  "recovery": {
+    "at": "2026-10-26T04:24:07.962085+00:00",
+    "device": "nuwa",
+    "soc": "kalama",
+    "android_boot_completed": "1",
+    "slot": "_a",
+    "partition_hashes_unchanged": true
+  },
+  "next": "Offline fix/pin dispatch target and callback-entry observation before selecting minimal APFS/decmpfs internal probes; no new candidate launched"
+}

@@ -1,0 +1,60 @@
+{
+  "at": "2026-10-26T04:30:45.628729+00:00",
+  "baseline_commit": "91c1860",
+  "evidence": [
+    {
+      "path": "reports/xnu-entry-probe-trial/2026-10-26-v36/preflight.json",
+      "sha256": "6040db162106db007d1844a8142353cc8fe32b6d764005f7dc640f316cdb0e14"
+    },
+    {
+      "path": "reports/xnu-entry-probe-trial/2026-10-26-v36/launch.json",
+      "sha256": "c72db677a263b51b06974127d3925a4103080f627f2c2ff15e06bb344e9987db"
+    },
+    {
+      "path": "reports/xnu-entry-probe-trial/2026-10-26-v36/consumed.json",
+      "sha256": "814f3b39cde7c114a9a4b9b342fd395d82840658b6ce4f129d5e3050caab24eb"
+    },
+    {
+      "path": "reports/xnu-entry-probe-trial/2026-10-26-v36/recovery.json",
+      "sha256": "5bfa225820281a7e17a0d3319f678b2c8adf9469fd7d9d3e8f558e2eb006add7"
+    },
+    {
+      "path": "reports/xnu-entry-probe-trial/2026-10-26-v36/postcondition.json",
+      "sha256": "4edcdbf0403523d4636b557536d26187f2dd62b11e6cedf30921ac60f65c890a"
+    },
+    {
+      "path": "reports/xnu-entry-probe-trial/2026-10-26-v36/screen.json",
+      "sha256": "b4cde48a8f5e79a11acf5dc0273cf2c97f61fd1d1e5ae94d31066f891c10a699"
+    }
+  ],
+  "native_boundary_source": {
+    "path": "scripts/read_boundary_sites.py",
+    "sha256": "2f185518b4cfb617c7337d446abbc2898e6261019e684ff2900efcc676c00e23"
+  },
+  "package_report": {
+    "path": "reports/xnu-first-entry/entry-probe-28.json",
+    "sha256": "83c8da8c84eed16a46b19a8cb770271adb3bb85da53e8d2d84b09debbce50ba3"
+  },
+  "local_media": {
+    "image_sha256": "8b25519f7eb803bf101cb96ba6d2f83befe5b575a071aa2b5ccd4b4eb9bb70df",
+    "image_bytes": 710443,
+    "xattrs": {
+      "user.library-file-version": "0",
+      "user.library-file-id": "libfile_8da6cb270ad481918654ead1a4bb94f7"
+    },
+    "archive_sha256": "ad688e9ec6fe39b0e84b9402809000c3c8616aa1d4949c882aa9f1b718793cba",
+    "archive_bytes": 716800,
+    "archive_path": "out/trial-evidence/entry-probe-28/user-screen-library-complete.tar"
+  },
+  "media_access_notes": [
+    "Library default placement returned cloud path; this was not treated as a Windows-local file",
+    "Explicit Windows destination returned signed transfer; unchanged Library helper under Windows failed because os.setxattr unavailable",
+    "Unchanged helper succeeded in local WSL and image was visually inspected via Windows WSL UNC path",
+    "WSL temporary image later disappeared; verified missing before rematerialization. Repeated supported transfer then archived bytes and xattrs within one WSL invocation",
+    "Earlier tar attempt failed with missing source and is not valid media evidence; only user-screen-library-complete.tar is authoritative"
+  ],
+  "candidate_consumed": true,
+  "repeat_or_new_candidate_started": false,
+  "recovery_closed": true,
+  "other_device_operated": false
+}

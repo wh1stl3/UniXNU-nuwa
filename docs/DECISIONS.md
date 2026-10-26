@@ -708,3 +708,7 @@ manifest-properties节点已存在但无BNCH，boot-manifest-hash缺失。固定
 # D-069 — 以交付EFI和固定原生指令约束读取参数，修正模拟ABI
 
 2026-10-26，用户授权最小离线实现后，按实际EFI字节确认memSizeActual/0x2d8而非上游Darwin23/0x478；仅修正模拟夹具，未改loader/板值。固定arm_init初始化块写shift12，header原生参数为4096/flags8，9组全状态/API对照、4组loader存储及2负对照通过；TG0/TG1翻译粒度与运行时页大小各自核验。vn_rdwr外层NULL resid不会触发内层NULL分支EIO，纠正测试预期并保留失败。默认11组报告逐字节保持，ABI修正后normal启动模型5项通过；新旧完整快照差异保留，不声明逐字节可复现。原包及23份绑定报告保持，本轮没有实机/真实MAC/APFS执行。证据：v36-parameter-contract/validation.json及2026-10-26-read-parameter-contract.md。设备暂停/恢复日志/239/verified门保留。
+
+# D-070 — PROBE28把未返回边界收窄到文件系统分派调用点之后
+
+2026-10-26，原图A034=272/A035全F与266/268/269/270/272成对状态表明MAC已返回、VNOP_READ原生BLR x8调用点已观察、273未观察。272在原生调用前记录，不能当目标函数入口证明；先离线固定v_op目标与入口，再分解APFS/decmpfs/UBC/UPL/认证/fetch/I/O，不能指定锁或IRQ为根因。绿色返回标记不编码errno0，A035全F是pending哨兵。PROBE28 consumed不重发；原boot临时恢复后Android1/_a/三SHA闭环。证据v36/screen、postcondition、evidence-binding及2026-10-26-probe28-device-result.md；原图仅本地out。未证明完整header或用户态成功，未启动新候选。
