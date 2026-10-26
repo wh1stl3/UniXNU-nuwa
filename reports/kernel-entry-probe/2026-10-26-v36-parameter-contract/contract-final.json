@@ -1,0 +1,2022 @@
+{
+  "scope": "Pin shipped loader stores and execute native page/header argument blocks.\n\nUnicorn block and wrapper tests with explicit API models. No EFI allocation,\nfull arm_init, real MAC/filesystem, MMU execution or hardware qualification.\n",
+  "level": "Unicorn block/wrapper execution and static evidence only",
+  "native_input_sha256": "1aeebf1352a86b0d31612a6bd6e77bd7292f676ad2ce43a99ec4a8f3999eedb6",
+  "candidate_sha256": "54179a8775ee4d723bb0493a66679932f986d39231e9ef371d856afb07b3ea07",
+  "build_report_sha256": "fe7f386f8206f467266b668f1196bc3e5d23bb34f4430c827fa982c290b1c383",
+  "fixture_sha256": "f8cd5897103d1c8335b60c970b7c8a9b1f2580fd6a9c68bb06251c3901135ebe",
+  "test_sha256": "f41709fb95423f351ee35767c81847c75284c2952f082e1b9c986b3ba7e85d6a",
+  "adt_sha256": "458232d6270643a88b465814535eead13eb88771c869e3cf6edfbe1741aa12f0",
+  "owned_window": 1073741824,
+  "loader": {
+    "efi_sha256": "3313e8568b97432675c33e76dc3b8a7240cfff66a1cd0559ba33e2f512440145",
+    "fd_sha256": "2d606985ad768dcfaab66c2b28073c0a4c2820126b42b23286623fdc450e848f",
+    "recipe_sha256": "5859ea82067848d8150589ad68d83c88be395873449345b6f14216dfae852a22",
+    "upstream_sources": {
+      "drivers/DarwinBoot/DarwinBootPkg/Driver/DarwinBoot.c": "db189a520fb7af3decb80f6ad65e2b7ab2aa9e3e6c5ab6e2286a23df6108d8f2",
+      "drivers/DarwinBoot/DarwinBootPkg/Driver/BootArgs.h": "1d6b172a306bf5d3fc409d22bd7e674d166e5fde92652c4135de5c79f3eddd16"
+    },
+    "abi_patch_sha256": "8532237ec7774c9315ef0c2226e17df56935a1e32811400e741a4e1d502fdc87",
+    "native_stores": [
+      {
+        "pc": "0x233c",
+        "bytes": "f62740f9",
+        "instruction": "ldr x22, [sp, #0x48]"
+      },
+      {
+        "pc": "0x2340",
+        "bytes": "e8830f32",
+        "instruction": "mov w8, #0x20002"
+      },
+      {
+        "pc": "0x2344",
+        "bytes": "e1a30291",
+        "instruction": "add x1, sp, #0xa8"
+      },
+      {
+        "pc": "0x2348",
+        "bytes": "f52747a9",
+        "instruction": "ldp x21, x9, [sp, #0x70]"
+      },
+      {
+        "pc": "0x234c",
+        "bytes": "02068052",
+        "instruction": "mov w2, #0x30"
+      },
+      {
+        "pc": "0x2350",
+        "bytes": "c80200b9",
+        "instruction": "str w8, [x22]"
+      },
+      {
+        "pc": "0x2354",
+        "bytes": "c0a20091",
+        "instruction": "add x0, x22, #0x28"
+      },
+      {
+        "pc": "0x2358",
+        "bytes": "e8bf46f9",
+        "instruction": "ldr x8, [sp, #0xd78]"
+      },
+      {
+        "pc": "0x235c",
+        "bytes": "c96e01f9",
+        "instruction": "str x9, [x22, #0x2d8]"
+      },
+      {
+        "pc": "0x2360",
+        "bytes": "c8d600a9",
+        "instruction": "stp x8, x21, [x22, #8]"
+      },
+      {
+        "pc": "0x2364",
+        "bytes": "c9d201a9",
+        "instruction": "stp x9, x20, [x22, #0x18]"
+      }
+    ],
+    "checks": [
+      {
+        "window": 268435456,
+        "memSize": 268435456,
+        "memSizeActual": 268435456,
+        "upstream_Darwin23_offset_untouched": 0
+      },
+      {
+        "window": 1073741824,
+        "memSize": 1073741824,
+        "memSizeActual": 1073741824,
+        "upstream_Darwin23_offset_untouched": 0
+      },
+      {
+        "window": 1075838976,
+        "memSize": 1075838976,
+        "memSizeActual": 1075838976,
+        "upstream_Darwin23_offset_untouched": 0
+      },
+      {
+        "window": 8589934592,
+        "memSize": 8589934592,
+        "memSizeActual": 8589934592,
+        "upstream_Darwin23_offset_untouched": 0
+      }
+    ]
+  },
+  "page_init": {
+    "block": [
+      {
+        "pc": "0xfffffff007972e74",
+        "bytes": "48bffff0",
+        "instruction": "adrp x8, #0xfffffff00715d000"
+      },
+      {
+        "pc": "0xfffffff007972e78",
+        "bytes": "1f2003d5",
+        "instruction": "nop "
+      },
+      {
+        "pc": "0xfffffff007972e7c",
+        "bytes": "89018052",
+        "instruction": "mov w9, #0xc"
+      },
+      {
+        "pc": "0xfffffff007972e80",
+        "bytes": "091901b9",
+        "instruction": "str w9, [x8, #0x118]"
+      },
+      {
+        "pc": "0xfffffff007972e84",
+        "bytes": "680800b0",
+        "instruction": "adrp x8, #0xfffffff007a7f000"
+      },
+      {
+        "pc": "0xfffffff007972e88",
+        "bytes": "092900b9",
+        "instruction": "str w9, [x8, #0x28]"
+      }
+    ],
+    "shift": 12,
+    "full_arm_init_executed": false
+  },
+  "header": {
+    "instructions": [
+      {
+        "pc": "0xfffffff00769bf40",
+        "bytes": "761240f9",
+        "instruction": "ldr x22, [x19, #0x20]"
+      },
+      {
+        "pc": "0xfffffff00769bf44",
+        "bytes": "772240f9",
+        "instruction": "ldr x23, [x19, #0x40]"
+      },
+      {
+        "pc": "0xfffffff00769bf48",
+        "bytes": "480340b9",
+        "instruction": "ldr w8, [x26]"
+      },
+      {
+        "pc": "0xfffffff00769bf4c",
+        "bytes": "3b008052",
+        "instruction": "mov w27, #1"
+      },
+      {
+        "pc": "0xfffffff00769bf50",
+        "bytes": "7823c81a",
+        "instruction": "lsl w24, w27, w8"
+      },
+      {
+        "pc": "0xfffffff00769bf54",
+        "bytes": "605641f9",
+        "instruction": "ldr x0, [x19, #0x2a8]"
+      },
+      {
+        "pc": "0xfffffff00769bf58",
+        "bytes": "dd3af797",
+        "instruction": "bl #0xfffffff00746aacc"
+      },
+      {
+        "pc": "0xfffffff00769bf5c",
+        "bytes": "f90300aa",
+        "instruction": "mov x25, x0"
+      },
+      {
+        "pc": "0xfffffff00769bf60",
+        "bytes": "605641f9",
+        "instruction": "ldr x0, [x19, #0x2a8]"
+      },
+      {
+        "pc": "0xfffffff00769bf64",
+        "bytes": "dd39f797",
+        "instruction": "bl #0xfffffff00746a6d8"
+      },
+      {
+        "pc": "0xfffffff00769bf68",
+        "bytes": "e8730091",
+        "instruction": "add x8, sp, #0x1c"
+      },
+      {
+        "pc": "0xfffffff00769bf6c",
+        "bytes": "e80300a9",
+        "instruction": "stp x8, x0, [sp]"
+      },
+      {
+        "pc": "0xfffffff00769bf70",
+        "bytes": "00008052",
+        "instruction": "mov w0, #0"
+      },
+      {
+        "pc": "0xfffffff00769bf74",
+        "bytes": "e10316aa",
+        "instruction": "mov x1, x22"
+      },
+      {
+        "pc": "0xfffffff00769bf78",
+        "bytes": "e20317aa",
+        "instruction": "mov x2, x23"
+      },
+      {
+        "pc": "0xfffffff00769bf7c",
+        "bytes": "e30318aa",
+        "instruction": "mov x3, x24"
+      },
+      {
+        "pc": "0xfffffff00769bf80",
+        "bytes": "040080d2",
+        "instruction": "mov x4, #0"
+      },
+      {
+        "pc": "0xfffffff00769bf84",
+        "bytes": "45008052",
+        "instruction": "mov w5, #2"
+      },
+      {
+        "pc": "0xfffffff00769bf88",
+        "bytes": "06018052",
+        "instruction": "mov w6, #8"
+      },
+      {
+        "pc": "0xfffffff00769bf8c",
+        "bytes": "e70319aa",
+        "instruction": "mov x7, x25"
+      },
+      {
+        "pc": "0xfffffff00769bf90",
+        "bytes": "7e2af797",
+        "instruction": "bl #0xfffffff007466988"
+      }
+    ],
+    "actual": {
+      "shift": 12,
+      "args": [
+        0,
+        15745024,
+        15753216,
+        4096,
+        0,
+        2,
+        8,
+        15738880
+      ],
+      "stack_arguments": [
+        "0xf0801c",
+        "0xf02900"
+      ],
+      "modelled_calls": [
+        "0xfffffff00746aacc",
+        "0xfffffff00746a6d8"
+      ]
+    }
+  },
+  "flags_negative_control": {
+    "name": "native header flags8 to flags0 mutation rejected",
+    "passed": true,
+    "scope": "in-memory instruction mutation only"
+  },
+  "negative_control": {
+    "name": "16KiB alternate shift rejected as current-image contract",
+    "injected_shift": 14,
+    "observed_length": 16384,
+    "required_length": 4096,
+    "passed": true,
+    "scope": "Synthetic changed global only, not a viable current-image configuration"
+  },
+  "mapping_report_sha256": "19957d08b93f639e932b3b88eaaae425f76ea21c15d009c405aaa0cce3fbb289",
+  "restored_sites": [
+    "0xfffffff0074669b0",
+    "0xfffffff0074669b4",
+    "0xfffffff007466acc",
+    "0xfffffff007466ad0",
+    "0xfffffff007466b08",
+    "0xfffffff007466b0c",
+    "0xfffffff007466b20",
+    "0xfffffff007466b24",
+    "0xfffffff00746c688",
+    "0xfffffff00746c68c",
+    "0xfffffff00769bf90",
+    "0xfffffff00769bf94"
+  ],
+  "bootstrap_tcr_granules": [
+    {
+      "tcr": "0x22a51a251a",
+      "tg0": 0,
+      "tg1": 2,
+      "ttbr0_bytes": 4096,
+      "ttbr1_bytes": 4096
+    }
+  ],
+  "checks": [
+    {
+      "mode": "success",
+      "remaining": 0,
+      "aresid": true,
+      "flags": 8,
+      "passed": true,
+      "snapshot": {
+        "registers": [
+          "0x0",
+          "0x1000",
+          "0x8",
+          "0xf07f10",
+          "0xf07f20",
+          "0x48",
+          "0x8",
+          "0xf02800",
+          "0x0",
+          "0x0",
+          "0x101a00",
+          "0x101b00",
+          "0x101c00",
+          "0x101d00",
+          "0x101e00",
+          "0x101f00",
+          "0x102000",
+          "0x102100",
+          "0x102200",
+          "0x102300",
+          "0x102400",
+          "0x102500",
+          "0x102600",
+          "0x102700",
+          "0x102800",
+          "0x102900",
+          "0x102a00",
+          "0x102b00",
+          "0x102c00",
+          "0xf09000",
+          "0xfffffff00769bf94"
+        ],
+        "simd": [
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0"
+        ],
+        "sp": "0xf08000",
+        "nzcv": "0x60000000",
+        "fpcr": "0x0",
+        "fpsr": "0x0",
+        "tpidr_el1": "0x1111",
+        "pc": "0xfffffff00769bf94",
+        "caller_stack_sha256": "4591b6b5ebc68c00678f4ab61cfee4ceb63d7af1af5dfb22778ecbdb12c78ee6",
+        "residual": "0000000000000000",
+        "live_native_memory": {
+          "0xf02000:4": "00000000"
+        },
+        "calls": [
+          "_uio_createwithbuffer",
+          "_uio_addiov",
+          "_mac_vnode_check_read",
+          "_vnode_isswap",
+          "_uio_resid",
+          "filesystem-callback",
+          "_uio_resid",
+          "_uio_resid"
+        ]
+      },
+      "events": [
+        {
+          "function": "_uio_createwithbuffer",
+          "args": [
+            1,
+            0,
+            2,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_uio_addiov",
+          "args": [
+            15740928,
+            15753216,
+            4096,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_mac_vnode_check_read",
+          "args": [
+            15761168,
+            15738880,
+            15745024,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_vnode_isswap",
+          "args": [
+            15745024,
+            15738880,
+            15745024,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_uio_resid",
+          "args": [
+            15740928,
+            15740928,
+            8,
+            15761168,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "filesystem-callback",
+          "args": [
+            15761064,
+            15740928,
+            8,
+            15761168,
+            15761184,
+            72,
+            8,
+            15738880
+          ],
+          "vnop_args": "80de9f07f0ffffff0040f000000000000030f000000000000800000000000000107ff00000000000"
+        },
+        {
+          "function": "_uio_resid",
+          "args": [
+            15740928,
+            15740928,
+            8,
+            15761168,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_uio_resid",
+          "args": [
+            15740928,
+            4096,
+            8,
+            15761168,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "mac-denied",
+      "remaining": 0,
+      "aresid": true,
+      "flags": 8,
+      "passed": true,
+      "snapshot": {
+        "registers": [
+          "0xd",
+          "0xf02800",
+          "0xf04000",
+          "0x0",
+          "0xf07f20",
+          "0x48",
+          "0x8",
+          "0xf02800",
+          "0x0",
+          "0x0",
+          "0x101a00",
+          "0x101b00",
+          "0x101c00",
+          "0x101d00",
+          "0x101e00",
+          "0x101f00",
+          "0x102000",
+          "0x102100",
+          "0x102200",
+          "0x102300",
+          "0x102400",
+          "0x102500",
+          "0x102600",
+          "0x102700",
+          "0x102800",
+          "0x102900",
+          "0x102a00",
+          "0x102b00",
+          "0x102c00",
+          "0xf09000",
+          "0xfffffff00769bf94"
+        ],
+        "simd": [
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0"
+        ],
+        "sp": "0xf08000",
+        "nzcv": "0x60000000",
+        "fpcr": "0x0",
+        "fpsr": "0x0",
+        "tpidr_el1": "0x1111",
+        "pc": "0xfffffff00769bf94",
+        "caller_stack_sha256": "4591b6b5ebc68c00678f4ab61cfee4ceb63d7af1af5dfb22778ecbdb12c78ee6",
+        "residual": "0000000000000000",
+        "live_native_memory": {
+          "0xf02000:4": "00000000"
+        },
+        "calls": [
+          "_uio_createwithbuffer",
+          "_uio_addiov",
+          "_mac_vnode_check_read",
+          "_uio_resid"
+        ]
+      },
+      "events": [
+        {
+          "function": "_uio_createwithbuffer",
+          "args": [
+            1,
+            0,
+            2,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_uio_addiov",
+          "args": [
+            15740928,
+            15753216,
+            4096,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_mac_vnode_check_read",
+          "args": [
+            15761168,
+            15738880,
+            15745024,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_uio_resid",
+          "args": [
+            15740928,
+            15738880,
+            15745024,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "read-error",
+      "remaining": 0,
+      "aresid": true,
+      "flags": 8,
+      "passed": true,
+      "snapshot": {
+        "registers": [
+          "0x5",
+          "0x1000",
+          "0x8",
+          "0xf07f10",
+          "0xf07f20",
+          "0x48",
+          "0x8",
+          "0xf02800",
+          "0x0",
+          "0x0",
+          "0x101a00",
+          "0x101b00",
+          "0x101c00",
+          "0x101d00",
+          "0x101e00",
+          "0x101f00",
+          "0x102000",
+          "0x102100",
+          "0x102200",
+          "0x102300",
+          "0x102400",
+          "0x102500",
+          "0x102600",
+          "0x102700",
+          "0x102800",
+          "0x102900",
+          "0x102a00",
+          "0x102b00",
+          "0x102c00",
+          "0xf09000",
+          "0xfffffff00769bf94"
+        ],
+        "simd": [
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0"
+        ],
+        "sp": "0xf08000",
+        "nzcv": "0x60000000",
+        "fpcr": "0x0",
+        "fpsr": "0x0",
+        "tpidr_el1": "0x1111",
+        "pc": "0xfffffff00769bf94",
+        "caller_stack_sha256": "4591b6b5ebc68c00678f4ab61cfee4ceb63d7af1af5dfb22778ecbdb12c78ee6",
+        "residual": "0000000000000000",
+        "live_native_memory": {
+          "0xf02000:4": "00000000"
+        },
+        "calls": [
+          "_uio_createwithbuffer",
+          "_uio_addiov",
+          "_mac_vnode_check_read",
+          "_vnode_isswap",
+          "_uio_resid",
+          "filesystem-callback",
+          "_uio_resid",
+          "_uio_resid"
+        ]
+      },
+      "events": [
+        {
+          "function": "_uio_createwithbuffer",
+          "args": [
+            1,
+            0,
+            2,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_uio_addiov",
+          "args": [
+            15740928,
+            15753216,
+            4096,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_mac_vnode_check_read",
+          "args": [
+            15761168,
+            15738880,
+            15745024,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_vnode_isswap",
+          "args": [
+            15745024,
+            15738880,
+            15745024,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_uio_resid",
+          "args": [
+            15740928,
+            15740928,
+            8,
+            15761168,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "filesystem-callback",
+          "args": [
+            15761064,
+            15740928,
+            8,
+            15761168,
+            15761184,
+            72,
+            8,
+            15738880
+          ],
+          "vnop_args": "80de9f07f0ffffff0040f000000000000030f000000000000800000000000000107ff00000000000"
+        },
+        {
+          "function": "_uio_resid",
+          "args": [
+            15740928,
+            15740928,
+            8,
+            15761168,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_uio_resid",
+          "args": [
+            15740928,
+            4096,
+            8,
+            15761168,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "swap",
+      "remaining": 0,
+      "aresid": true,
+      "flags": 8,
+      "passed": true,
+      "snapshot": {
+        "registers": [
+          "0x0",
+          "0xf03000",
+          "0xf04000",
+          "0x0",
+          "0xf07f20",
+          "0x48",
+          "0x8",
+          "0xf02800",
+          "0x0",
+          "0x0",
+          "0x101a00",
+          "0x101b00",
+          "0x101c00",
+          "0x101d00",
+          "0x101e00",
+          "0x101f00",
+          "0x102000",
+          "0x102100",
+          "0x102200",
+          "0x102300",
+          "0x102400",
+          "0x102500",
+          "0x102600",
+          "0x102700",
+          "0x102800",
+          "0x102900",
+          "0x102a00",
+          "0x102b00",
+          "0x102c00",
+          "0xf09000",
+          "0xfffffff00769bf94"
+        ],
+        "simd": [
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0"
+        ],
+        "sp": "0xf08000",
+        "nzcv": "0x60000000",
+        "fpcr": "0x0",
+        "fpsr": "0x0",
+        "tpidr_el1": "0x1111",
+        "pc": "0xfffffff00769bf94",
+        "caller_stack_sha256": "4591b6b5ebc68c00678f4ab61cfee4ceb63d7af1af5dfb22778ecbdb12c78ee6",
+        "residual": "0000000000000000",
+        "live_native_memory": {
+          "0xf02000:4": "00000000"
+        },
+        "calls": [
+          "_uio_createwithbuffer",
+          "_uio_addiov",
+          "_mac_vnode_check_read",
+          "_vnode_isswap",
+          "_vn_read_swapfile",
+          "_uio_resid"
+        ]
+      },
+      "events": [
+        {
+          "function": "_uio_createwithbuffer",
+          "args": [
+            1,
+            0,
+            2,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_uio_addiov",
+          "args": [
+            15740928,
+            15753216,
+            4096,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_mac_vnode_check_read",
+          "args": [
+            15761168,
+            15738880,
+            15745024,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_vnode_isswap",
+          "args": [
+            15745024,
+            15738880,
+            15745024,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_vn_read_swapfile",
+          "args": [
+            15745024,
+            15740928,
+            15745024,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_uio_resid",
+          "args": [
+            15740928,
+            15740928,
+            15745024,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "mac-pending",
+      "remaining": 0,
+      "aresid": true,
+      "flags": 8,
+      "passed": true,
+      "snapshot": {
+        "registers": [
+          "0xf07f10",
+          "0xf02800",
+          "0xf04000",
+          "0x0",
+          "0xf07f20",
+          "0x48",
+          "0x8",
+          "0xf02800",
+          "0x4",
+          "0x121",
+          "0x101a00",
+          "0x101b00",
+          "0x101c00",
+          "0x101d00",
+          "0x101e00",
+          "0x101f00",
+          "0x102000",
+          "0x102100",
+          "0x102200",
+          "0x1000",
+          "0x8",
+          "0xf04000",
+          "0x0",
+          "0xf03000",
+          "0xf02800",
+          "0xf06000",
+          "0xf07fd8",
+          "0x102b00",
+          "0x102c00",
+          "0xf07fb0",
+          "0xfffffff007466ad0"
+        ],
+        "simd": [
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0"
+        ],
+        "sp": "0xf07f10",
+        "nzcv": "0x40000000",
+        "fpcr": "0x0",
+        "fpsr": "0x0",
+        "tpidr_el1": "0x1111",
+        "pc": "0xfffffff007916d5c",
+        "caller_stack_sha256": "4591b6b5ebc68c00678f4ab61cfee4ceb63d7af1af5dfb22778ecbdb12c78ee6",
+        "residual": "0000000000000000",
+        "live_native_memory": {
+          "0xf07f10:8": "1111000000000000",
+          "0xf07f18:8": "0028f00000000000",
+          "0xf07f20:8": "0000000000000000",
+          "0xf07f28:8": "0000000000000000",
+          "0xf07f30:8": "0000000000000000",
+          "0xf07f38:8": "0000000000000000",
+          "0xf07f40:8": "0000000000000000",
+          "0xf07f48:8": "0000000000000000",
+          "0xf07f50:8": "0000000000000000",
+          "0xf07f58:8": "0000000000000000",
+          "0xf07f60:8": "0000000000000000",
+          "0xf07f68:8": "0000000000000000",
+          "0xf07f70:8": "002a100000000000",
+          "0xf07f78:8": "0029100000000000",
+          "0xf07f80:8": "0028100000000000",
+          "0xf07f88:8": "0027100000000000",
+          "0xf07f90:8": "0026100000000000",
+          "0xf07f98:8": "0025100000000000",
+          "0xf07fa0:8": "0024100000000000",
+          "0xf07fa8:8": "0020f00000000000",
+          "0xf07fb0:8": "f07ff00000000000",
+          "0xf07fb8:8": "b4694607f0ffffff",
+          "0xf07fc0:8": "d87ff00000000000",
+          "0xf07fc8:8": "0029f00000000000",
+          "0xf07fd8:8": "0000000000000000",
+          "0xf07fe0:8": "0024100000000000",
+          "0xf07fe8:8": "0023100000000000",
+          "0xf07ff0:8": "0090f00000000000",
+          "0xf07ff8:8": "94bf6907f0ffffff"
+        },
+        "calls": [
+          "_uio_createwithbuffer",
+          "_uio_addiov",
+          "_mac_vnode_check_read"
+        ]
+      },
+      "events": [
+        {
+          "function": "_uio_createwithbuffer",
+          "args": [
+            1,
+            0,
+            2,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_uio_addiov",
+          "args": [
+            15740928,
+            15753216,
+            4096,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_mac_vnode_check_read",
+          "args": [
+            15761168,
+            15738880,
+            15745024,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "dispatch-pending",
+      "remaining": 0,
+      "aresid": true,
+      "flags": 8,
+      "passed": true,
+      "snapshot": {
+        "registers": [
+          "0xf07ea8",
+          "0xf03000",
+          "0x8",
+          "0xf07f10",
+          "0xf07f20",
+          "0x48",
+          "0x8",
+          "0xf02800",
+          "0xf01000",
+          "0xf05000",
+          "0x101a00",
+          "0x101b00",
+          "0x101c00",
+          "0x101d00",
+          "0x101e00",
+          "0x101f00",
+          "0x102000",
+          "0x102100",
+          "0x102200",
+          "0xf04000",
+          "0xf03000",
+          "0x1000",
+          "0xf07f10",
+          "0x8",
+          "0xf02800",
+          "0xf06000",
+          "0xf07fd8",
+          "0x102b00",
+          "0x102c00",
+          "0xf07f00",
+          "0xfffffff00746c68c"
+        ],
+        "simd": [
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0"
+        ],
+        "sp": "0xf07ea0",
+        "nzcv": "0x40000000",
+        "fpcr": "0x0",
+        "fpsr": "0x0",
+        "tpidr_el1": "0x1111",
+        "pc": "0xf01000",
+        "caller_stack_sha256": "4591b6b5ebc68c00678f4ab61cfee4ceb63d7af1af5dfb22778ecbdb12c78ee6",
+        "residual": "0000000000000000",
+        "live_native_memory": {
+          "0xf07ea8:8": "80de9f07f0ffffff",
+          "0xf07eb0:8": "0040f00000000000",
+          "0xf07eb8:8": "0030f00000000000",
+          "0xf07ec0:4": "08000000",
+          "0xf07ec0:8": "0800000000000000",
+          "0xf07ec8:8": "107ff00000000000",
+          "0xf07ed0:8": "0028f00000000000",
+          "0xf07ed8:8": "0030f00000000000",
+          "0xf07ee0:8": "0000000000000000",
+          "0xf07ee8:8": "0040f00000000000",
+          "0xf07ef0:8": "0800000000000000",
+          "0xf07ef8:8": "0010000000000000",
+          "0xf07f00:8": "b07ff00000000000",
+          "0xf07f08:8": "246b4607f0ffffff",
+          "0xf07f10:8": "1111000000000000",
+          "0xf07f18:8": "0028f00000000000",
+          "0xf07f20:8": "0000000000000000",
+          "0xf07f28:8": "0000000000000000",
+          "0xf07f30:8": "0000000000000000",
+          "0xf07f38:8": "0000000000000000",
+          "0xf07f40:8": "0000000000000000",
+          "0xf07f48:8": "0000000000000000",
+          "0xf07f50:8": "0000000000000000",
+          "0xf07f58:8": "0000000000000000",
+          "0xf07f60:8": "0000000000000000",
+          "0xf07f68:8": "0000000000000000",
+          "0xf07f70:8": "002a100000000000",
+          "0xf07f78:8": "0029100000000000",
+          "0xf07f80:8": "0028100000000000",
+          "0xf07f88:8": "0027100000000000",
+          "0xf07f90:8": "0026100000000000",
+          "0xf07f98:8": "0025100000000000",
+          "0xf07fa0:8": "0024100000000000",
+          "0xf07fa8:8": "0020f00000000000",
+          "0xf07fb0:8": "f07ff00000000000",
+          "0xf07fb8:8": "b4694607f0ffffff",
+          "0xf07fc0:8": "d87ff00000000000",
+          "0xf07fc8:8": "0029f00000000000",
+          "0xf07fd8:8": "0000000000000000",
+          "0xf07fe0:8": "0024100000000000",
+          "0xf07fe8:8": "0023100000000000",
+          "0xf07ff0:8": "0090f00000000000",
+          "0xf07ff8:8": "94bf6907f0ffffff"
+        },
+        "calls": [
+          "_uio_createwithbuffer",
+          "_uio_addiov",
+          "_mac_vnode_check_read",
+          "_vnode_isswap",
+          "_uio_resid",
+          "filesystem-callback"
+        ]
+      },
+      "events": [
+        {
+          "function": "_uio_createwithbuffer",
+          "args": [
+            1,
+            0,
+            2,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_uio_addiov",
+          "args": [
+            15740928,
+            15753216,
+            4096,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_mac_vnode_check_read",
+          "args": [
+            15761168,
+            15738880,
+            15745024,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_vnode_isswap",
+          "args": [
+            15745024,
+            15738880,
+            15745024,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_uio_resid",
+          "args": [
+            15740928,
+            15740928,
+            8,
+            15761168,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "filesystem-callback",
+          "args": [
+            15761064,
+            15740928,
+            8,
+            15761168,
+            15761184,
+            72,
+            8,
+            15738880
+          ],
+          "vnop_args": "80de9f07f0ffffff0040f000000000000030f000000000000800000000000000107ff00000000000"
+        }
+      ]
+    },
+    {
+      "mode": "success",
+      "remaining": 128,
+      "aresid": true,
+      "flags": 8,
+      "passed": true,
+      "snapshot": {
+        "registers": [
+          "0x0",
+          "0xf80",
+          "0x8",
+          "0xf07f10",
+          "0xf07f20",
+          "0x48",
+          "0x8",
+          "0xf02800",
+          "0x80",
+          "0x0",
+          "0x101a00",
+          "0x101b00",
+          "0x101c00",
+          "0x101d00",
+          "0x101e00",
+          "0x101f00",
+          "0x102000",
+          "0x102100",
+          "0x102200",
+          "0x102300",
+          "0x102400",
+          "0x102500",
+          "0x102600",
+          "0x102700",
+          "0x102800",
+          "0x102900",
+          "0x102a00",
+          "0x102b00",
+          "0x102c00",
+          "0xf09000",
+          "0xfffffff00769bf94"
+        ],
+        "simd": [
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0"
+        ],
+        "sp": "0xf08000",
+        "nzcv": "0x60000000",
+        "fpcr": "0x0",
+        "fpsr": "0x0",
+        "tpidr_el1": "0x1111",
+        "pc": "0xfffffff00769bf94",
+        "caller_stack_sha256": "4591b6b5ebc68c00678f4ab61cfee4ceb63d7af1af5dfb22778ecbdb12c78ee6",
+        "residual": "8000000000000000",
+        "live_native_memory": {
+          "0xf02000:4": "80000000"
+        },
+        "calls": [
+          "_uio_createwithbuffer",
+          "_uio_addiov",
+          "_mac_vnode_check_read",
+          "_vnode_isswap",
+          "_uio_resid",
+          "filesystem-callback",
+          "_uio_resid",
+          "_uio_resid"
+        ]
+      },
+      "events": [
+        {
+          "function": "_uio_createwithbuffer",
+          "args": [
+            1,
+            0,
+            2,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_uio_addiov",
+          "args": [
+            15740928,
+            15753216,
+            4096,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_mac_vnode_check_read",
+          "args": [
+            15761168,
+            15738880,
+            15745024,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_vnode_isswap",
+          "args": [
+            15745024,
+            15738880,
+            15745024,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_uio_resid",
+          "args": [
+            15740928,
+            15740928,
+            8,
+            15761168,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "filesystem-callback",
+          "args": [
+            15761064,
+            15740928,
+            8,
+            15761168,
+            15761184,
+            72,
+            8,
+            15738880
+          ],
+          "vnop_args": "80de9f07f0ffffff0040f000000000000030f000000000000800000000000000107ff00000000000"
+        },
+        {
+          "function": "_uio_resid",
+          "args": [
+            15740928,
+            15740928,
+            8,
+            15761168,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_uio_resid",
+          "args": [
+            15740928,
+            3968,
+            8,
+            15761168,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "success",
+      "remaining": 128,
+      "aresid": false,
+      "flags": 8,
+      "passed": true,
+      "snapshot": {
+        "registers": [
+          "0x0",
+          "0xf80",
+          "0x8",
+          "0xf07f10",
+          "0xf07f20",
+          "0x48",
+          "0x8",
+          "0xf02800",
+          "0x0",
+          "0x0",
+          "0x101a00",
+          "0x101b00",
+          "0x101c00",
+          "0x101d00",
+          "0x101e00",
+          "0x101f00",
+          "0x102000",
+          "0x102100",
+          "0x102200",
+          "0x102300",
+          "0x102400",
+          "0x102500",
+          "0x102600",
+          "0x102700",
+          "0x102800",
+          "0x102900",
+          "0x102a00",
+          "0x102b00",
+          "0x102c00",
+          "0xf09000",
+          "0xfffffff00769bf94"
+        ],
+        "simd": [
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0"
+        ],
+        "sp": "0xf08000",
+        "nzcv": "0x60000000",
+        "fpcr": "0x0",
+        "fpsr": "0x0",
+        "tpidr_el1": "0x1111",
+        "pc": "0xfffffff00769bf94",
+        "caller_stack_sha256": "0bbec8dbe8321d92e7011e059e8c3d81ff393b7b243f01de99809389de40b44f",
+        "residual": "0000000000000000",
+        "live_native_memory": {},
+        "calls": [
+          "_uio_createwithbuffer",
+          "_uio_addiov",
+          "_mac_vnode_check_read",
+          "_vnode_isswap",
+          "_uio_resid",
+          "filesystem-callback",
+          "_uio_resid",
+          "_uio_resid"
+        ]
+      },
+      "events": [
+        {
+          "function": "_uio_createwithbuffer",
+          "args": [
+            1,
+            0,
+            2,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_uio_addiov",
+          "args": [
+            15740928,
+            15753216,
+            4096,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_mac_vnode_check_read",
+          "args": [
+            15761168,
+            15738880,
+            15745024,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_vnode_isswap",
+          "args": [
+            15745024,
+            15738880,
+            15745024,
+            0,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_uio_resid",
+          "args": [
+            15740928,
+            15740928,
+            8,
+            15761168,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "filesystem-callback",
+          "args": [
+            15761064,
+            15740928,
+            8,
+            15761168,
+            15761184,
+            72,
+            8,
+            15738880
+          ],
+          "vnop_args": "80de9f07f0ffffff0040f000000000000030f000000000000800000000000000107ff00000000000"
+        },
+        {
+          "function": "_uio_resid",
+          "args": [
+            15740928,
+            15740928,
+            8,
+            15761168,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        },
+        {
+          "function": "_uio_resid",
+          "args": [
+            15740928,
+            3968,
+            8,
+            15761168,
+            15761184,
+            72,
+            8,
+            15738880
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "noauth",
+      "remaining": 0,
+      "aresid": true,
+      "flags": 32776,
+      "passed": true,
+      "snapshot": {
+        "registers": [
+          "0x0",
+          "0x1000",
+          "0x8008",
+          "0xf07f10",
+          "0xf07f20",
+          "0x48",
+          "0x8008",
+          "0xf02800",
+          "0x0",
+          "0x0",
+          "0x101a00",
+          "0x101b00",
+          "0x101c00",
+          "0x101d00",
+          "0x101e00",
+          "0x101f00",
+          "0x102000",
+          "0x102100",
+          "0x102200",
+          "0x102300",
+          "0x102400",
+          "0x102500",
+          "0x102600",
+          "0x102700",
+          "0x102800",
+          "0x102900",
+          "0x102a00",
+          "0x102b00",
+          "0x102c00",
+          "0xf09000",
+          "0xfffffff00769bf94"
+        ],
+        "simd": [
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0",
+          "0x0"
+        ],
+        "sp": "0xf08000",
+        "nzcv": "0x60000000",
+        "fpcr": "0x0",
+        "fpsr": "0x0",
+        "tpidr_el1": "0x1111",
+        "pc": "0xfffffff00769bf94",
+        "caller_stack_sha256": "4591b6b5ebc68c00678f4ab61cfee4ceb63d7af1af5dfb22778ecbdb12c78ee6",
+        "residual": "0000000000000000",
+        "live_native_memory": {
+          "0xf02000:4": "00000000"
+        },
+        "calls": [
+          "_uio_createwithbuffer",
+          "_uio_addiov",
+          "_vnode_isswap",
+          "_uio_resid",
+          "filesystem-callback",
+          "_uio_resid",
+          "_uio_resid"
+        ]
+      },
+      "events": [
+        {
+          "function": "_uio_createwithbuffer",
+          "args": [
+            1,
+            0,
+            2,
+            0,
+            15761184,
+            72,
+            32776,
+            15738880
+          ]
+        },
+        {
+          "function": "_uio_addiov",
+          "args": [
+            15740928,
+            15753216,
+            4096,
+            0,
+            15761184,
+            72,
+            32776,
+            15738880
+          ]
+        },
+        {
+          "function": "_vnode_isswap",
+          "args": [
+            15745024,
+            15753216,
+            4096,
+            0,
+            15761184,
+            72,
+            32776,
+            15738880
+          ]
+        },
+        {
+          "function": "_uio_resid",
+          "args": [
+            15740928,
+            15740928,
+            32776,
+            15761168,
+            15761184,
+            72,
+            32776,
+            15738880
+          ]
+        },
+        {
+          "function": "filesystem-callback",
+          "args": [
+            15761064,
+            15740928,
+            32776,
+            15761168,
+            15761184,
+            72,
+            32776,
+            15738880
+          ],
+          "vnop_args": "80de9f07f0ffffff0040f000000000000030f000000000000880000000000000107ff00000000000"
+        },
+        {
+          "function": "_uio_resid",
+          "args": [
+            15740928,
+            15740928,
+            32776,
+            15761168,
+            15761184,
+            72,
+            32776,
+            15738880
+          ]
+        },
+        {
+          "function": "_uio_resid",
+          "args": [
+            15740928,
+            4096,
+            32776,
+            15761168,
+            15761184,
+            72,
+            32776,
+            15738880
+          ]
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Native blocks start at explicitly seeded boundaries, not complete EFI Boot or arm_init entry",
+    "API calls are models; no real MAC, APFS, decmpfs or allocation tested",
+    "Compiled constant12 does not establish observed live runtime value; no hardware page-size qualification",
+    "Historical transition fixture used memSizeActual offset0x478; do not use it as Darwin22 ABI proof",
+    "Bootstrap table granule and advertised runtime page size are separate values"
+  ],
+  "device_accessed": false
+}

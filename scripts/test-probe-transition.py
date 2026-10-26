@@ -22,7 +22,7 @@ argsPA=B.align(PA+end-base,0x4000);treePA=argsPA+0x1000;adt=args.adt.read_bytes(
 u=U.Uc(U.UC_ARCH_ARM64,U.UC_MODE_ARM);u.mem_map(PA,window);u.mem_map(FB,0x1200000);u.mem_map(0x80000000,0x1000)
 for seg in m['segments']:
  if seg['filesize']:u.mem_write(PA+seg['va']-base,raw[seg['fileoff']:seg['fileoff']+seg['filesize']])
-a=bytearray(4096);struct.pack_into('<HH',a,0,2,2);struct.pack_into('<4Q',a,8,base,PA,window,PA+used);struct.pack_into('<6Q',a,0x28,FB,1,5760,1440,3200,32);struct.pack_into('<Q',a,0x60,base+treePA-PA);struct.pack_into('<I',a,0x68,len(adt));a[0x6c:0x6f]=b'-v\0';struct.pack_into('<Q',a,1144,window)
+a=bytearray(4096);struct.pack_into('<HH',a,0,2,2);struct.pack_into('<4Q',a,8,base,PA,window,PA+used);struct.pack_into('<6Q',a,0x28,FB,1,5760,1440,3200,32);struct.pack_into('<Q',a,0x60,base+treePA-PA);struct.pack_into('<I',a,0x68,len(adt));a[0x6c:0x6f]=b'-v\0';struct.pack_into('<Q',a,0x2d8,window)
 u.mem_write(argsPA,bytes(a));u.mem_write(treePA,adt);u.reg_write(UC_ARM64_REG_X0,argsPA);u.reg_write(UC_ARM64_REG_X20,argsPA);u.reg_write(UC_ARM64_REG_PSTATE,0x3c5);u.cpr_write(3,6,1,1,0,0x401);u.cpr_write(3,4,1,1,0,1<<31)
 syms=m['symbols'];ps=build['probe']['symbols'];events=[];bad=[];checks=[];transition={};stop_reason=None
 watch={syms[n]:n for n in ('_arm_vm_init','_pmap_bootstrap','_kernel_bootstrap','_panic','_set_tcr','_set_mmu_ttb_alternate','_set_mmu_ttb','_PE_create_console','_initialize_screen')}
@@ -106,10 +106,10 @@ error=None
 try:u.emu_start(PA+m['entry']-base,0,count=args.instruction_budget)
 except U.UcError as e:error=str(e)
 pc=u.reg_read(UC_ARM64_REG_PC);near=max((v,k) for k,v in syms.items() if v<=pc)
-out=dict(scope=__doc__,candidate_sha256=B.sha(raw),input=dict(argsPA=hex(argsPA),treePA=hex(treePA),treeKVA=hex(base+treePA-PA),topOfKernelData=hex(PA+used),owned_window=hex(window),adt_sha256=B.sha(adt),loader_memSizeActual_offset=1144),events=events,error=error,pc=hex(pc),nearest=near[1]+'+'+hex(pc-near[0]),bad_memory=bad,final_fb=walk(FB),final_probe=walk(int(build['probe']['va'],16)),native_vector_mapping=walk(syms['_ExceptionVectorsBase']))
+out=dict(scope=__doc__,candidate_sha256=B.sha(raw),input=dict(argsPA=hex(argsPA),treePA=hex(treePA),treeKVA=hex(base+treePA-PA),topOfKernelData=hex(PA+used),owned_window=hex(window),adt_sha256=B.sha(adt),loader_memSizeActual_offset=0x2d8),events=events,error=error,pc=hex(pc),nearest=near[1]+'+'+hex(pc-near[0]),bad_memory=bad,final_fb=walk(FB),final_probe=walk(int(build['probe']['va'],16)),native_vector_mapping=walk(syms['_ExceptionVectorsBase']))
 if args.explore_bootstrap:
  out.update(final_registers=dict(gprs=[hex(u.reg_read(getattr(U.arm64_const,'UC_ARM64_REG_X'+str(i)))) for i in range(31)],sp=hex(u.reg_read(UC_ARM64_REG_SP)),vbar_el1=hex(u.cpr_read(3,0,12,0,0)),tpidr_el1=hex(u.reg_read(UC_ARM64_REG_TPIDR_EL1)),esr_el1=hex(u.cpr_read(3,0,5,2,0)),elr_el1=hex(u.cpr_read(3,0,4,0,1)),far_el1=hex(u.cpr_read(3,0,6,0,0))),exploration=True,goal=args.explore_until,instruction_budget=args.instruction_budget,release_count=release_count,release_samples=release_samples,dense_seen=dense_seen,stop_reason=stop_reason,meaning='Model observation only; no completion claim from budget exhaustion')
- args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(out,indent=2)+'\n')
+ args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(out,indent=2)+'\n',encoding='utf-8',newline='\n')
  print(json.dumps(dict(exploration=True,stop=out['nearest'],error=error,release_count=release_count,dense_seen=dense_seen)));sys.exit(0)
 if args.case=='normal':
  assert any(e['site']=='_pmap_bootstrap' for e in events),out
@@ -129,5 +129,5 @@ if args.case=='normal':
  checks += [dict(name='Native cold path passes pmap probe after TTBR reconstruction',passed=True),dict(name='Code RO executable and data RW NX map exact probe physical pages',passed=True),dict(name=('Native cold path passes console and reaches kernel_bootstrap' if build.get('probe_revision',0)>=23 else 'Next stop preserved as console platform read, not probe fetch'),passed=True)]
 else: assert stop_reason is not None and error is None,out
 out.update(checks=checks,case=args.case,stop_reason=stop_reason,transition=transition)
-args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(out,indent=2)+'\n')
+args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(out,indent=2)+'\n',encoding='utf-8',newline='\n')
 print(json.dumps(dict(case=args.case,checks=len(checks),passed=True,stop=out['nearest'])))

@@ -1,0 +1,9 @@
+{
+  "command": "test-read-parameter-contract.py --build reports/kernel-entry-probe/2026-10-26-v36/build.json --output reports/kernel-entry-probe/2026-10-26-v36-parameter-contract/contract.json",
+  "exit_code": 1,
+  "error": "AssertionError: ('success', 'native errno lost')",
+  "cause": "Test oracle incorrectly expected EIO for short read when vn_rdwr caller aresid=NULL. Native vn_rdwr always supplies local int64 resid to vn_rdwr_64, then conditionally copies it. Thus this wrapper preserves result0; direct vn_rdwr_64 NULL-resid behavior is outside the tested entry.",
+  "raw_output_location": "Codex tool chunk 9f8440; summary transcribed after failure, no original report emitted",
+  "device_accessed": false,
+  "raw_tool_output_transcription": "Traceback (most recent call last):\n  File \"D:\\Code\\UniXNU-nuwa\\scripts\\test-read-parameter-contract.py\", line 96, in <module>\n    if __name__=='__main__':main()\n                            ~~~~^^\n  File \"D:\\Code\\UniXNU-nuwa\\scripts\\test-read-parameter-contract.py\", line 79, in main\n    F.run(candidate,b,mode,capture=actual,events=events,**kw);F.run(candidate,b,mode,reference=True,capture=expected,events=reference_events,**kw);assert actual==expected and events==reference_events\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\Code\\UniXNU-nuwa\\scripts\\test-read-boundaries.py\", line 106, in run\n    assert u.reg_read(UC_ARM64_REG_X0)==(13 if mode=='mac-denied' else 5 if mode=='read-error' or (remaining and not aresid) else 0),(mode,'native errno lost')\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ('success', 'native errno lost')\n"
+}

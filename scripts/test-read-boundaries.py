@@ -15,7 +15,7 @@ B=importlib.util.module_from_spec(spec);spec.loader.exec_module(B)
 STACK=0xf00000;FB=0xb8000000;ROW=5760
 MODES=('success','mac-denied','read-error','mac-pending','dispatch-pending','swap','noauth','foreign-thread','foreign-frame','repeat','no-video')
 
-def run(raw,b,mode,reference=False,capture=None):
+def run(raw,b,mode,reference=False,capture=None,request=4096,ioflags=None,remaining=0,aresid=True,events=None):
     if reference:
         # Same fixed image layout, restore only this path's displaced native
         # instructions. Probe code/data remains mapped but never executes.
@@ -45,12 +45,16 @@ def run(raw,b,mode,reference=False,capture=None):
         if pc==callback:fn='filesystem-callback'
         if fn is None:return
         calls.append(fn)
+        if events is not None:
+            item=dict(function=fn,args=[u.reg_read(getattr(sys.modules[__name__],f'UC_ARM64_REG_X{i}')) for i in range(8)])
+            if fn=='filesystem-callback':item['vnop_args']=bytes(u.mem_read(item['args'][0],40)).hex()
+            events.append(item)
         if (fn=='_mac_vnode_check_read' and mode=='mac-pending') or (fn=='filesystem-callback' and mode=='dispatch-pending'):u.emu_stop();return
         if fn=='_uio_createwithbuffer':value=STACK+0x3000
         elif fn=='_mac_vnode_check_read':value=13 if mode=='mac-denied' else 0
         elif fn=='_vnode_isswap':value=int(mode=='swap')
         elif fn in ('filesystem-callback','_vn_read_swapfile'):value=5 if mode=='read-error' else 0
-        elif fn=='_uio_resid':resids.append(pc);value=4096 if len(resids)==1 and mode not in ('mac-denied','swap') else 0
+        elif fn=='_uio_resid':resids.append(pc);value=request if len(resids)==1 and mode not in ('mac-denied','swap') else remaining
         else:value=0
         u.reg_write(UC_ARM64_REG_X0,value);u.reg_write(UC_ARM64_REG_PC,u.reg_read(UC_ARM64_REG_LR))
     u.hook_add(U.UC_HOOK_CODE,watch)
@@ -68,12 +72,12 @@ def run(raw,b,mode,reference=False,capture=None):
         if mode!='no-video':u.mem_write(FB+784*ROW+(832+9*48)*4,struct.pack('<I',0xff00ff00))
         for i in range(31):u.reg_write(getattr(sys.modules[__name__],f'UC_ARM64_REG_X{i}'),0x101000+i*0x100)
         u.reg_write(UC_ARM64_REG_X0,0);u.reg_write(UC_ARM64_REG_X1,vp)
-        u.reg_write(UC_ARM64_REG_X2,STACK+0x6000);u.reg_write(UC_ARM64_REG_X3,4096)
+        u.reg_write(UC_ARM64_REG_X2,STACK+0x6000);u.reg_write(UC_ARM64_REG_X3,request)
         u.reg_write(UC_ARM64_REG_X4,0);u.reg_write(UC_ARM64_REG_X5,2)
-        u.reg_write(UC_ARM64_REG_X6,0x8000 if mode=='noauth' else 0);u.reg_write(UC_ARM64_REG_X7,STACK+0x2800)
+        u.reg_write(UC_ARM64_REG_X6,(0x8000 if mode=='noauth' else 0) if ioflags is None else ioflags);u.reg_write(UC_ARM64_REG_X7,STACK+0x2800)
         u.reg_write(UC_ARM64_REG_X29,STACK+0x9000);u.reg_write(UC_ARM64_REG_SP,STACK+0x8000)
         u.reg_write(UC_ARM64_REG_TPIDR_EL1,0x1111);u.reg_write(UC_ARM64_REG_CPACR_EL1,3<<20)
-        u.mem_write(STACK+0x8000,struct.pack('<QQ',STACK+0x2000,STACK+0x2900))
+        u.mem_write(STACK+0x8000,struct.pack('<QQ',STACK+0x2000 if aresid else 0,STACK+0x2900))
         calls.clear();resids.clear();native_accesses.clear();u.emu_start(R.FIRST,0,count=2000000)
         if capture is not None:
             sp=u.reg_read(UC_ARM64_REG_SP);pc=u.reg_read(UC_ARM64_REG_PC)

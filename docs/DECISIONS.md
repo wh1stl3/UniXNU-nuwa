@@ -704,3 +704,7 @@ manifest-properties节点已存在但无BNCH，boot-manifest-hash缺失。固定
 # D-068 · 补齐激活读取透明性，后续先核对真实参数契约
 
 2026-10-26。11场景12对激活路径全寄存器/相关原生内存差分通过，x8/x9负对照敏感；默认夹具输出与原11项报告逐字节相同，原28镜像/23份证据保留。静态MAC/decmpfs地图仍不能指定真实等待对象；转换等待仅在fetch错误且CONVERTING后。发现真实250的flags8及运行时PAGE_SHIFT长度与普通4KiB/flags0 fixture存在参数覆盖边界，下一最小离线项先固定loader/初始化契约，不改板值/TCR。最新用户指令已转为只分析/公开搜索，不继续扩展实现，不操作设备；Mach-O/dyld、签名和恢复用户态释放都排在最早header卡点之后。证据active-audit的differential-with-negative、wait-chain-with-conversion、audit-manifest-final及两篇10月26日分析记录。
+
+# D-069 — 以交付EFI和固定原生指令约束读取参数，修正模拟ABI
+
+2026-10-26，用户授权最小离线实现后，按实际EFI字节确认memSizeActual/0x2d8而非上游Darwin23/0x478；仅修正模拟夹具，未改loader/板值。固定arm_init初始化块写shift12，header原生参数为4096/flags8，9组全状态/API对照、4组loader存储及2负对照通过；TG0/TG1翻译粒度与运行时页大小各自核验。vn_rdwr外层NULL resid不会触发内层NULL分支EIO，纠正测试预期并保留失败。默认11组报告逐字节保持，ABI修正后normal启动模型5项通过；新旧完整快照差异保留，不声明逐字节可复现。原包及23份绑定报告保持，本轮没有实机/真实MAC/APFS执行。证据：v36-parameter-contract/validation.json及2026-10-26-read-parameter-contract.md。设备暂停/恢复日志/239/verified门保留。
