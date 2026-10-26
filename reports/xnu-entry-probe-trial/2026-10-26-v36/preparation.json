@@ -1,0 +1,33 @@
+{
+  "at": "2026-10-26T04:03:16.256708+00:00",
+  "baseline": "c302451",
+  "package_sha256": "83c8da8c84eed16a46b19a8cb770271adb3bb85da53e8d2d84b09debbce50ba3",
+  "image_sha256": "7a04626e631196be116d270fa94e59b957ab537ecc1353501ff8f7b54fec7e0f",
+  "state_at": "2026-10-26T04:01:35.029989+00:00",
+  "fresh_android1_slot_a_three_hashes_match": true,
+  "candidate_launched": false,
+  "capture_and_keys_confirmation": "pending",
+  "other_device_queried": false,
+  "target_selection_checks": 3,
+  "sources": [
+    {
+      "path": "scripts/record-nuwa-trial-state.py",
+      "sha256": "61ea55b3cb6b50ae49fdf83c9b15a4c48fbccea7b5dc3c0a2035d6ed481fb595"
+    },
+    {
+      "path": "scripts/trial-v4-firmware.py",
+      "sha256": "4f775a63e148aa54c7f7ce0488989f872370af25b6ed4fcf0c5d627e89550d23"
+    },
+    {
+      "path": "scripts/test-trial-target-selection.py",
+      "sha256": "5b058df4986b7243fd87e71d209cbd4e4e0ce75a6d5916d895bef91ac36c3edd"
+    }
+  ],
+  "device_state_changed": false,
+  "recovery_input_sha256": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+  "prior_recovery_evidence": {
+    "path": "reports/dxe-allocation/39829943950/recovery.json",
+    "sha256": "4d3a8e2f2f3cf5a296101edaaa5acffdb4b45a459761f2e34c1dfa6aee44ee0a",
+    "scope": "Historical route proof only; not current recovery result"
+  }
+}

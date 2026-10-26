@@ -1,13 +1,13 @@
 # STATUS
 
-更新：2026-10-26。完成PROBE28参数契约离线补测与模拟夹具ABI修正；本轮用户已授权必要的最小离线实现。设备操作仍全部暂停，未执行adb/fastboot、预检、临时启动或刷写。
+更新：2026-10-26。用户已允许既定nuwa PROBE28实测，解除此前一般设备暂停。本轮已完成新鲜只读预检，尚未临时启动或消费候选；仅待菜单Enter后的具体画面拍摄及必要时按键恢复的当轮确认，针对性问题已发送。R-014保持open，不是权限拒绝。
 
-新增9组真实flags8/4096读取对照、4组交付loader存储案例、2个负对照通过。实际EFI把owned window同时写到memSize/0x18与memSizeActual/0x2d8；当前ADT窗口1GiB。原生arm_init定位块写PAGE_SHIFT_CONST=12，实际header指令产生4096/flags8。bootstrap TCR的翻译粒度另行解码，不能与运行时页大小混同。16KiB仅为负对照，未取得可运行资格。
+2026-10-26T04:01:35.029989+00:00确认nuwa/kalama、Android完成1、_a，三分区SHA与v35恢复后验相同。有效包7a04626e和原恢复boot ef558db2哈希校验通过，现有试验记录未发现PROBE28已启动。本轮没有改变设备状态，没有新的实测画面或恢复后验；不能把只读预检当内核通过。
 
-修正test-probe-transition.py遗留的Darwin23模拟偏移0x478为Darwin22的0x2d8；从入口重验normal路径5项通过、到_kernel_bootstrap。新旧完整快照有6处差异，未声称逐字节等价；最终映射和5项验收相同。短读首轮错误EIO预期已纠正并保留失败：vn_rdwr总向内层传局部残余指针，外层NULL不触发内层NULL分支。原默认11组输出逐字节相同，原23份绑定报告及包/内核/ADT SHA保持。详见[参数契约记录](operations/2026-10-26-read-parameter-contract.md)与reports/kernel-entry-probe/2026-10-26-v36-parameter-contract/validation.json。
+混接其他设备时工具原默认会遍历身份，本轮增加--serial仅选nuwa；实际读取均明确指定nuwa，未向其他设备发查询/操作。混接及所选设备缺失的3项隔离测试通过。记录见[当轮预检](operations/2026-10-26-probe28-preflight.md)与reports/xnu-entry-probe-trial/2026-10-26-v36/。后续preflight/launch/recover必须指定本轮nuwa目标；过期时刷新预检。
 
-证据级别仅为静态/Unicorn指令与API模型检查通过；未执行完整EFI分配/arm_init或真实MAC/APFS/decmpfs。最早实机卡点仍为PROBE27的250到达/251未观察；264黄/265绿及A033 FFFFFFF005F48EF8只证明类型4表项。PROBE28尚未实机，首要文件系统读取内部等待、次要MAC，需用266..275分界后再下结论。[后续路径与公开研究](operations/2026-10-26-next-stage-public-research.md)、[激活读取审计](operations/2026-10-26-read-active-transparency-and-waits.md)保留。
+c302451离线参数契约成果保留：9组flags8/4096对照、4组实际EFI存储、2负对照；模拟夹具memSizeActual改为Darwin22/0x2d8后启动模型5项通过，默认11组逐字节保持，原23份绑定报告保持。[参数契约及限制](operations/2026-10-26-read-parameter-contract.md)。这是静态/Unicorn检查，不是真实MAC/APFS/decmpfs执行。
 
-有效PROBE28未重建未改包：reports/xnu-first-entry/entry-probe-28.json；包7a04626e631196be116d270fa94e59b957ab537ecc1353501ff8f7b54fec7e0f，204484608B；内核54179a8775ee4d723bb0493a66679932f986d39231e9ef371d856afb07b3ea07；ADT458232d6270643a88b465814535eead13eb88771c869e3cf6edfbe1741aa12f0。原24项、1092比较、独立内核重建及包回读为此前证据，本轮未重复全套。旧a8cb包禁用。FD/shim、板值/内存/TCR/iOS16身份/_verified均未改，loadable/runtime_qualified=false。
+PROBE28镜像未改：reports/xnu-first-entry/entry-probe-28.json；包7a04626e631196be116d270fa94e59b957ab537ecc1353501ff8f7b54fec7e0f，204484608B；内核54179a8775ee4d723bb0493a66679932f986d39231e9ef371d856afb07b3ea07；ADT458232d6270643a88b465814535eead13eb88771c869e3cf6edfbe1741aa12f0。旧a8cb包禁用，PROBE27不重启。最早实机卡点仍是250到达/251未观察，A033 FFFFFFF005F48EF8只证明类型4表项。
 
-R-014仍open；设备当前状态未刷新，历史v35/postcondition（2026-10-26T00:19:12.450574+08:00）不能当当前预检。中午可用时间不自动授权操作，需当轮画面/恢复确认及新鲜身份/Android1/槽/三SHA，再按门禁使用同一PROBE28；239恢复用户态门保留。历史28项未跟踪保留，无push/云CI/原始媒体上传，enuma与旧会话未动。唯一最新交接：[10月26日主线交接](operations/2026-10-26-mainline-handoff.md)。
+下一步：当轮观测/恢复条件满足后取带真实确认原文的新preflight，按原门禁单次临时boot同一PROBE28，菜单电源Enter后观察266..275/A034/A035；然后恢复Android1/同槽/三SHA后验。权限/认证、239、内存/TCR/身份/_verified门保持，不自动换包或扩大刷写。历史28项未跟踪保留，无push/媒体上传；唯一最新交接：[10月26日主线交接](operations/2026-10-26-mainline-handoff.md)。

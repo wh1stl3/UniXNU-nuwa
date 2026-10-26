@@ -510,3 +510,5 @@
 2026-10-26T02:14:48.820654+08:00 · 完成11场景12对激活差分、x8/x9负对照与原11项输出字节一致性；固定等待链并按新指令转公开研究/下一阶段规划，原28与23证据不变，所有设备操作暂停 · 父079488f，本里程碑见本条所属提交 · reports/kernel-entry-probe/2026-10-26-v36-active-audit/、2026-10-26-next-stage-public-research.md
 
 2026-10-26 · 完成读取参数契约：9组真实flags8/4096对照、4组交付EFI存储、2负对照；修正模拟Darwin22 ABI后5项启动模型通过，默认11组/原23份绑定及有效包保持；无设备操作 · 提交见本条所属Git提交 · reports/kernel-entry-probe/2026-10-26-v36-parameter-contract/validation.json；docs/operations/2026-10-26-read-parameter-contract.md
+
+2026-10-26 · 用户允许PROBE28实测；完成新鲜nuwa Android1/_a/三SHA预检及有效包/原恢复boot校验，补显式目标筛选并通过3项隔离测试；未启动，待当轮拍摄/按键恢复确认 · 提交见本条所属Git提交 · reports/xnu-entry-probe-trial/2026-10-26-v36/state-before-confirmation.json、preparation.json、target-selection.json

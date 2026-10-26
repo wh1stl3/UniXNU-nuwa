@@ -12,6 +12,7 @@ ORIGINAL_SHA = 'ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31
 
 def main():
     cli = argparse.ArgumentParser(description=__doc__)
+    cli.add_argument('--serial', help='Only query this explicitly selected ADB target; serial is not saved')
     cli.add_argument('--output', type=Path, required=True)
     cli.add_argument('--package', type=Path, help='Enable R-010 preflight using the user capture confirmation')
     cli.add_argument('--before', type=Path, help='Compare final partition hashes with this prior record')
@@ -56,7 +57,7 @@ def main():
     found = []
     for line in subprocess.check_output(['adb', 'devices'],text=True).splitlines():
         parts = line.split()
-        if len(parts)==2 and parts[1]=='device':
+        if len(parts)==2 and parts[1]=='device' and (args.serial is None or parts[0]==args.serial):
             p = subprocess.run(['adb','-s',parts[0],'shell','getprop','ro.product.device'],capture_output=True,text=True,timeout=15)
             if p.returncode==0 and p.stdout.strip()=='nuwa':
                 found.append(parts[0])

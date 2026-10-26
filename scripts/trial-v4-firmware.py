@@ -12,6 +12,7 @@ import subprocess
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
+TARGET_SERIAL = None
 CANDIDATE = ROOT / 'out/trial-boot/firmware-v4/boot-firmware-v4.img'
 ORIGINAL = Path('D:/Code/PortingiOS/nuwa/backups/recovery-20261020T121245314787Z/boot_a.img')
 HASHES = {CANDIDATE: '12864ac6cc0ffc9909f4abbdfab91bfee216c3fdcfc5ab0d52b4d4b9cf4579f9',
@@ -25,7 +26,8 @@ def now():
 def devices(tool):
     p = subprocess.run([tool, 'devices'], capture_output=True, text=True, timeout=15, check=True)
     return [s[0] for line in p.stdout.splitlines() if len(s := line.split()) == 2
-            and s[1] == ('device' if tool == 'adb' else 'fastboot')]
+            and s[1] == ('device' if tool == 'adb' else 'fastboot')
+            and (TARGET_SERIAL is None or s[0] == TARGET_SERIAL)]
 
 
 def capture_confirmed(gate, approval):
@@ -48,7 +50,9 @@ def observation_window(requested, approval):
 
 
 def main():
+    global TARGET_SERIAL
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--serial', help='Only operate on this explicitly selected target; serial is not saved')
     parser.add_argument('phase', choices=['launch', 'recover'])
     parser.add_argument('--evidence', type=Path, required=True)
     parser.add_argument('--package', type=Path, help='R-007/R-008/R-009 approved hash-pinned package report')
@@ -56,6 +60,7 @@ def main():
     parser.add_argument('--observation-seconds', type=int,
                         help='USB window after ACK: XNU defaults to 0 (manual menu trigger), other scopes 120; maximum 600')
     args = parser.parse_args()
+    TARGET_SERIAL = args.serial
     evidence = args.evidence.resolve()
     if not evidence.is_relative_to(ROOT / 'reports') or evidence.exists():
         raise ValueError('Evidence must be a fresh reports file')

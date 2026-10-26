@@ -1,0 +1,19 @@
+{
+  "scope": "Verify pinned-target selection with a foreign attached device; no device calls.",
+  "checks": [
+    {
+      "name": "Full state recorder only queries explicitly selected nuwa amid foreign device",
+      "passed": true,
+      "queries": 5
+    },
+    {
+      "name": "adb selector excludes foreign devices and never falls back when selected device absent",
+      "passed": true
+    },
+    {
+      "name": "fastboot selector excludes foreign devices and never falls back when selected device absent",
+      "passed": true
+    }
+  ],
+  "device_accessed": false
+}
