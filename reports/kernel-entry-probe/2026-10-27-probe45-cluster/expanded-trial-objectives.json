@@ -1,0 +1,135 @@
+{
+  "image_path": "out/trial-boot/xnu-entry-probe-45-cluster/boot-xnu-first-entry.img",
+  "image_sha256": "e6a9494cb05992142032ddc80e42e9ca247f249ad373d7fefc398f382605902d",
+  "candidate_sha256": "2935ab6e53067a5daa4156510e158f3eebe765c50592abbd4b617375c2f05247",
+  "qualification_sha256": "9df45ae74bcb58f92e363e7abc720041f36617aed194832e9e4dfd9eef227dee",
+  "scope": "Expanded same-trial acceptance objectives from existing qualified code; static site coverage only, no new build or hardware result",
+  "milestones": [
+    {
+      "name": "UBC/UPL/IO read continuation",
+      "evidence": "Matched entry and paired continuation/RET checkpoints, including APFS 0xfffffff00519c4a0",
+      "failure_action": "Identify the actual completion provider and wait path before deeper probes"
+    },
+    {
+      "name": "ResourceFork helper completion",
+      "evidence": "Paired helper returns and native raw return; later caller progress",
+      "failure_action": "Interpret native read/error propagation without forcing success"
+    },
+    {
+      "name": "Type4 fetch/decode callback",
+      "evidence": "Existing read_fetch/read_deep/read_result checkpoints and actual callback raw return",
+      "failure_action": "Distinguish transport, allocation, block-table and decode errors by native function"
+    },
+    {
+      "name": "Mach-O activation and load_machfile",
+      "evidence": "Existing exec-path calls and continuations; A02D/A030 activation/exec results",
+      "failure_action": "Retain the first failing native stage and raw result"
+    },
+    {
+      "name": "dyld lookup, authorization and read",
+      "evidence": "Existing load_dylinker namei/vnode_authorize/vn_rdwr pairs",
+      "failure_action": "Check actual root namespace and native error; no path/security bypass"
+    },
+    {
+      "name": "Task switch/signature and controlled release boundary",
+      "evidence": "Existing task switch/signature records and conditional 239 at 0xfffffff00769d230",
+      "failure_action": "Keep Restore release hold; no EL0 or desktop claim"
+    }
+  ],
+  "native_exec_paths": [
+    {
+      "call": "0xfffffff00769bd74",
+      "continuation": "0xfffffff00769bd78",
+      "caller": "_exec_activate_image",
+      "target": "_exec_save_path"
+    },
+    {
+      "call": "0xfffffff00769bdd4",
+      "continuation": "0xfffffff00769bdd8",
+      "caller": "_exec_activate_image",
+      "target": "_namei"
+    },
+    {
+      "call": "0xfffffff00769be7c",
+      "continuation": "0xfffffff00769be80",
+      "caller": "_exec_activate_image",
+      "target": "_vnode_getattr"
+    },
+    {
+      "call": "0xfffffff00769bf00",
+      "continuation": "0xfffffff00769bf04",
+      "caller": "_exec_activate_image",
+      "target": "_mac_vnode_check_exec"
+    },
+    {
+      "call": "0xfffffff00769bf28",
+      "continuation": "0xfffffff00769bf2c",
+      "caller": "_exec_activate_image",
+      "target": "_vnode_authorize"
+    },
+    {
+      "call": "0xfffffff00769bf90",
+      "continuation": "0xfffffff00769bf94",
+      "caller": "_exec_activate_image",
+      "target": "_vn_rdwr"
+    },
+    {
+      "call": "0xfffffff00769bfe0",
+      "continuation": "0xfffffff00769bfe4",
+      "caller": "_exec_activate_image",
+      "target": "_exec_mach_imgact"
+    },
+    {
+      "call": "0xfffffff00769c0dc",
+      "continuation": "0xfffffff00769c0e0",
+      "caller": "_exec_activate_image",
+      "target": "_namei"
+    },
+    {
+      "call": "0xfffffff007698764",
+      "continuation": "0xfffffff007698768",
+      "caller": "_exec_mach_imgact",
+      "target": "_load_machfile"
+    },
+    {
+      "call": "0xfffffff0077300a4",
+      "continuation": "0xfffffff0077300a8",
+      "caller": "_load_dylinker",
+      "target": "_namei"
+    },
+    {
+      "call": "0xfffffff007730120",
+      "continuation": "0xfffffff007730124",
+      "caller": "_load_dylinker",
+      "target": "_vnode_authorize"
+    },
+    {
+      "call": "0xfffffff0077301a4",
+      "continuation": "0xfffffff0077301a8",
+      "caller": "_load_dylinker",
+      "target": "_vn_rdwr"
+    }
+  ],
+  "fields": {
+    "activation": "A02D",
+    "first_failure_stage": "A02E",
+    "task_switched": "A02F",
+    "exec_return": "A030",
+    "first_failure_raw_return": "A032",
+    "attempt_count": "A02C"
+  },
+  "boundary": {
+    "site": "0xfffffff00769d230",
+    "policy": "Hold only unreviewed restore userspace task release",
+    "restore_userspace_allowed": false
+  },
+  "limitations": [
+    "Progress depends on native earlier calls completing; broader objectives do not repair the current read wait",
+    "Success checkpoints return to native control flow; native errors remain observable and are not overridden",
+    "A02E is the first nonzero stage for the attempt; A032 is raw native return and not always errno",
+    "Video and stable photo can omit transient checkpoints; cumulative tiles are not complete ordering or execution counts",
+    "Reaching 239 is a controlled Restore task release boundary, not EL0 execution"
+  ],
+  "device_accessed": false,
+  "kernel_changed": false
+}

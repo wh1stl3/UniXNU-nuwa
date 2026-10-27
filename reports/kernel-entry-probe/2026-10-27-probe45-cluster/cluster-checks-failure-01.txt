@@ -1,0 +1,8 @@
+First standalone cluster observer check exited 1 before producing cluster-checks.json.
+Command: Python -B out/check-probe45-cluster.py
+Native reference ref.emu_start(site, 0, count=1) raised:
+unicorn.unicorn_py3.unicorn.UcError: Invalid memory read (UC_ERR_READ_UNMAPPED)
+Call chain: out/check-probe45-cluster.py:7 -> resource_cluster_checks.py:54 run -> execute:32.
+Scope: this occurred in the single-original-instruction reference fixture, before candidate execution for that case; not a hardware result.
+Initial fixture seeded x19=12 for every site although only the page_shift checkpoint uses that value, and x0=0x11223344 could not represent a dereferenced native pointer. Fixtures are being corrected to mapped addresses with x19=12 only at the declared checkpoint; native instruction replay remains mandatory.
+This note preserves the observed failure and stated fixture changes, not a complete stderr capture or proof of the exact offending site. Next run adds site/mode/instruction context on native-reference errors.

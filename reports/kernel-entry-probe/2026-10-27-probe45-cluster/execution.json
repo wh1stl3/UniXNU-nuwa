@@ -1,0 +1,654 @@
+{
+  "candidate_sha256": "2935ab6e53067a5daa4156510e158f3eebe765c50592abbd4b617375c2f05247",
+  "serial_execution": true,
+  "device_accessed": false,
+  "commands": [
+    {
+      "name": "software",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-kernel-entry-probe.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\software.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.2581348999519832,
+      "stdout": "{\"checks\": 42, \"passed\": true, \"candidate\": \"2935ab6e53067a5daa4156510e158f3eebe765c50592abbd4b617375c2f05247\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-sites",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-probe-read-sites.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\read-sites.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.8505054000415839,
+      "stdout": "{\"checks\": 18, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "wfe",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-probe-wfe.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\wfe.json",
+        "--negative-build",
+        "reports/kernel-entry-probe/2026-10-25-v20/build.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.2933231000206433,
+      "stdout": "{\"checks\": 5, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "mapping",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\audit-entry-probe-post-mmu-mapping.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\mapping.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.5595343000022694,
+      "stdout": "framebuffer PA 0xb8000000 0xb8000000 -> 0xb8000000 mapped= True\nframebuffer PA +1 page 0xb8001000 -> 0xb8001000 mapped= True\nprobe page VA 0xfffffff008489000 -> 0x8c4889000 mapped= True\narm_init KVA 0xfffffff007972848 -> 0x8c3d72848 mapped= True\nsctlr site as PA-identity VA 0x8c37c7374 -> 0x8c37c7374 mapped= True\nboot_args synthetic VA 0xfffffff013dc8000 -> 0x8d01c8000 mapped= True\n",
+      "stderr": ""
+    },
+    {
+      "name": "loader",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\audit-entry-probe-loader.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\loader.json",
+        "--work",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\out\\verify-probe45-cluster\\loader"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 4.895597099966835,
+      "stdout": "{\"cases\": 5, \"passed\": true}\n",
+      "stderr": "Exception in thread Thread-2 (_readerthread):\nTraceback (most recent call last):\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\threading.py\", line 1044, in _bootstrap_inner\n    self.run()\n    ~~~~~~~~^^\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\threading.py\", line 995, in run\n    self._target(*self._args, **self._kwargs)\n    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\subprocess.py\", line 1615, in _readerthread\n    buffer.append(fh.read())\n                  ~~~~~~~^^\nUnicodeDecodeError: 'gbk' codec can't decode byte 0xff in position 47: illegal multibyte sequence\nException in thread Thread-4 (_readerthread):\nTraceback (most recent call last):\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\threading.py\", line 1044, in _bootstrap_inner\n    self.run()\n    ~~~~~~~~^^\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\threading.py\", line 995, in run\n    self._target(*self._args, **self._kwargs)\n    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\subprocess.py\", line 1615, in _readerthread\n    buffer.append(fh.read())\n                  ~~~~~~~^^\nUnicodeDecodeError: 'gbk' codec can't decode byte 0xff in position 47: illegal multibyte sequence\nException in thread Thread-6 (_readerthread):\nTraceback (most recent call last):\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\threading.py\", line 1044, in _bootstrap_inner\n    self.run()\n    ~~~~~~~~^^\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\threading.py\", line 995, in run\n    self._target(*self._args, **self._kwargs)\n    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\subprocess.py\", line 1615, in _readerthread\n    buffer.append(fh.read())\n                  ~~~~~~~^^\nUnicodeDecodeError: 'gbk' codec can't decode byte 0xff in position 47: illegal multibyte sequence\nException in thread Thread-8 (_readerthread):\nTraceback (most recent call last):\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\threading.py\", line 1044, in _bootstrap_inner\n    self.run()\n    ~~~~~~~~^^\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\threading.py\", line 995, in run\n    self._target(*self._args, **self._kwargs)\n    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\subprocess.py\", line 1615, in _readerthread\n    buffer.append(fh.read())\n                  ~~~~~~~^^\nUnicodeDecodeError: 'gbk' codec can't decode byte 0xff in position 47: illegal multibyte sequence\nException in thread Thread-10 (_readerthread):\nTraceback (most recent call last):\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\threading.py\", line 1044, in _bootstrap_inner\n    self.run()\n    ~~~~~~~~^^\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\threading.py\", line 995, in run\n    self._target(*self._args, **self._kwargs)\n    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\subprocess.py\", line 1615, in _readerthread\n    buffer.append(fh.read())\n                  ~~~~~~~^^\nUnicodeDecodeError: 'gbk' codec can't decode byte 0xff in position 47: illegal multibyte sequence\nException in thread Thread-12 (_readerthread):\nTraceback (most recent call last):\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\threading.py\", line 1044, in _bootstrap_inner\n    self.run()\n    ~~~~~~~~^^\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\threading.py\", line 995, in run\n    self._target(*self._args, **self._kwargs)\n    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\subprocess.py\", line 1615, in _readerthread\n    buffer.append(fh.read())\n                  ~~~~~~~^^\nUnicodeDecodeError: 'gbk' codec can't decode byte 0xff in position 47: illegal multibyte sequence\n"
+    },
+    {
+      "name": "post-arm-init",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-post-arm-init-markers.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\post-arm-init.json",
+        "--adt",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\out\\exec-probe45-cluster\\launch\\kernel.macho.adt"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.8679008000181057,
+      "stdout": "{\"checks\": 8, \"passed\": true, \"reached\": {\"white\": 52703, \"arm_vm_init\": 890421}, \"pixels\": {\"256\": \"0xff0080ff\", \"288\": \"0xffffff00\", \"320\": \"0xffff00ff\", \"352\": \"0xff00ffff\", \"384\": \"0xffffffff\", \"416\": \"0x0\", \"448\": \"0xff804000\", \"480\": \"0x0\", \"512\": \"0x0\", \"544\": \"0xff008080\", \"576\": \"0xff808000\", \"608\": \"0xff8080c0\", \"640\": \"0xff808080\"}, \"stopped_symbol\": \"_bzero+0x1c\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "exception",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-post-arm-init-markers.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\exception.json",
+        "--handler"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.4573792000301182,
+      "stdout": "{\"checks\": 2, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "transition-normal",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-probe-transition.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\transition-normal.json",
+        "--adt",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\out\\exec-probe45-cluster\\launch\\kernel.macho.adt",
+        "--case",
+        "normal"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.9295217000180855,
+      "stdout": "{\"case\": \"normal\", \"checks\": 5, \"passed\": true, \"stop\": \"_kernel_bootstrap+0x0\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "transition-occupied-probe",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-probe-transition.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\transition-occupied-probe.json",
+        "--adt",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\out\\exec-probe45-cluster\\launch\\kernel.macho.adt",
+        "--case",
+        "occupied-probe"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.0598159999935888,
+      "stdout": "{\"case\": \"occupied-probe\", \"checks\": 2, \"passed\": true, \"stop\": \"_set_mmu_ttb_alternate+0x0\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "transition-bad-topology",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-probe-transition.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\transition-bad-topology.json",
+        "--adt",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\out\\exec-probe45-cluster\\launch\\kernel.macho.adt",
+        "--case",
+        "bad-topology"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.080308199976571,
+      "stdout": "{\"case\": \"bad-topology\", \"checks\": 2, \"passed\": true, \"stop\": \"_set_mmu_ttb_alternate+0x0\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "transition-occupied-fb",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-probe-transition.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\transition-occupied-fb.json",
+        "--adt",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\out\\exec-probe45-cluster\\launch\\kernel.macho.adt",
+        "--case",
+        "occupied-fb"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.0576459000003524,
+      "stdout": "{\"case\": \"occupied-fb\", \"checks\": 3, \"passed\": true, \"stop\": \"_set_mmu_ttb+0x0\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "console-policy",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-probe-console-policy.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\console-policy.json",
+        "--adt",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\out\\exec-probe45-cluster\\launch\\kernel.macho.adt",
+        "--negative-build",
+        "reports/kernel-entry-probe/2026-10-25-v22c/build.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.92672649997985,
+      "stdout": "{\"case\": \"normal\", \"checks\": 5, \"passed\": true, \"stop\": \"_PE_create_console+0x48\"}\n{\"checks\": 6, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "renderer-bounds",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-probe-renderer-bounds.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\renderer-bounds.json",
+        "--negative-build",
+        "reports/kernel-entry-probe/2026-10-25-v24/build.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.7916006000014022,
+      "stdout": "{\"checks\": 6, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "context-display",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-probe-context-display.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\context-display.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.203696199983824,
+      "stdout": "{\"checks\": 10, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "vectors",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-probe-vectors.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\vectors.json",
+        "--negative-build",
+        "reports/kernel-entry-probe/2026-10-25-v24/build.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 4.157550300005823,
+      "stdout": "{\"checks\": 5, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "transparency",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-probe-transparency.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\transparency.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 712.3586031000013,
+      "stdout": "{\"progress_checks\": 100}\n{\"progress_checks\": 200}\n{\"progress_checks\": 300}\n{\"progress_checks\": 400}\n{\"progress_checks\": 500}\n{\"progress_checks\": 600}\n{\"progress_checks\": 700}\n{\"progress_checks\": 800}\n{\"progress_checks\": 900}\n{\"progress_checks\": 1000}\n{\"progress_checks\": 1100}\n{\"progress_checks\": 1200}\n{\"progress_checks\": 1300}\n{\"progress_checks\": 1400}\n{\"progress_checks\": 1500}\n{\"progress_checks\": 1600}\n{\"progress_checks\": 1700}\n{\"progress_checks\": 1800}\n{\"progress_checks\": 1900}\n{\"progress_checks\": 2000}\n{\"progress_checks\": 2100}\n{\"progress_checks\": 2200}\n{\"progress_checks\": 2300}\n{\"progress_checks\": 2400}\n{\"progress_checks\": 2500}\n{\"progress_checks\": 2600}\n{\"progress_checks\": 2700}\n{\"progress_checks\": 2800}\n{\"progress_checks\": 2900}\n{\"progress_checks\": 3000}\n{\"checks\": 3024, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "image4-launch",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-image4-launch.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\image4-launch.json",
+        "--adt",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\out\\exec-probe45-cluster\\launch\\kernel.macho.adt",
+        "--nonce",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\out\\exec-probe45-cluster\\launch\\nonce.bin",
+        "--manifest",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\out\\exec-probe45-cluster\\launch\\launch-manifest.json",
+        "--baseline-adt",
+        "out/trial-boot/xnu-entry-probe-18-vectors/kernel.macho.adt"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.3672329999972135,
+      "stdout": "{\"checks\": 25, \"passed\": true, \"native_initializer_returned\": true, \"candidate_sha256\": \"2935ab6e53067a5daa4156510e158f3eebe765c50592abbd4b617375c2f05247\", \"adt_sha256\": \"052f0a91465cef62f78037555c4e29861e3a90805b69085bd1a50c1f9f44bbeb\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "pthread-startup",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-pthread-startup.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\pthread-startup.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.7627818000037223,
+      "stdout": "{\"checks\": 6, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "root-stop",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-exec-release-boundary.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\root-stop.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.468975399970077,
+      "stdout": "{\"checks\": 15, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "root-inputs",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-root-launch-context.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\root-inputs.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.6265644999803044,
+      "stdout": "{\"checks\": 7, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "fscompression-startup",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-fscompression-startup.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\fscompression-startup.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.001592200016603,
+      "stdout": "{\"checks\": 8, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-boundaries",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-read-boundaries.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\read-boundaries.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 13.91515299997991,
+      "stdout": "{\"checks\": 11, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-boundary-source",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\audit-read-boundary-source.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\read-boundary-source.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.5031669999589212,
+      "stdout": "{\"static_checks_passed\": true, \"sites\": 5, \"shared_join\": \"0xfffffff007466b24\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-dispatch",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-read-dispatch-integrated.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\read-dispatch.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.7825138999614865,
+      "stdout": "{\"checks\": 11, \"stale_cleared\": true, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-body",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-read-body.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\read-body.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 73.1607370999991,
+      "stdout": "{\"progress\": 50}\n{\"progress\": 100}\n{\"progress\": 150}\n{\"progress\": 200}\n{\"progress\": 250}\n{\"progress\": 300}\n{\"progress\": 350}\n{\"progress\": 400}\n{\"progress\": 450}\n{\"checks\": 476, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-body-reset",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-read-body-reset.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\read-body-reset.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.9883796999929473,
+      "stdout": "{\"candidate_sha256\": \"2935ab6e53067a5daa4156510e158f3eebe765c50592abbd4b617375c2f05247\", \"source_sha256\": \"1ec3de1ff8d6df0e7cffd486c3b80dab70bad35c9cb373af632d07907c655ab2\", \"tile_count\": 96, \"stale_fields_tiles_bits_cleared\": true, \"omitted_reset_negative_rejected\": true, \"device_accessed\": false}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-init",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-read-init.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\read-init.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.1639680999796838,
+      "stdout": "{\"checks\": 9, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "single-pass-hex",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-single-pass-hex.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\single-pass-hex.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.2092590000247583,
+      "stdout": "{\"checks\": 7, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-grid",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-read-grid.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\read-grid.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.168195799982641,
+      "stdout": "{\"checks\": 9, \"passed\": true, \"old_prefix_bytes\": 359936, \"new_prefix_bytes\": 52736}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-decmp",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-read-decmp.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\read-decmp.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 138.31509310001275,
+      "stdout": "{\"checks\": 617, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "shared-hex",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-shared-hex.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\shared-hex.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 4.712108999956399,
+      "stdout": "{\"checks\": 8, \"passed\": true, \"code_bytes\": 405504, \"result_bytes\": [38400, 0, 30720, 0, 1920, 30720]}\n",
+      "stderr": "Exception in thread Thread-2 (_readerthread):\nTraceback (most recent call last):\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\threading.py\", line 1044, in _bootstrap_inner\n    self.run()\n    ~~~~~~~~^^\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\threading.py\", line 995, in run\n    self._target(*self._args, **self._kwargs)\n    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\subprocess.py\", line 1615, in _readerthread\n    buffer.append(fh.read())\n                  ~~~~~~~^^\nUnicodeDecodeError: 'gbk' codec can't decode byte 0xff in position 47: illegal multibyte sequence\nException in thread Thread-4 (_readerthread):\nTraceback (most recent call last):\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\threading.py\", line 1044, in _bootstrap_inner\n    self.run()\n    ~~~~~~~~^^\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\threading.py\", line 995, in run\n    self._target(*self._args, **self._kwargs)\n    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\subprocess.py\", line 1615, in _readerthread\n    buffer.append(fh.read())\n                  ~~~~~~~^^\nUnicodeDecodeError: 'gbk' codec can't decode byte 0xff in position 47: illegal multibyte sequence\nException in thread Thread-6 (_readerthread):\nTraceback (most recent call last):\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\threading.py\", line 1044, in _bootstrap_inner\n    self.run()\n    ~~~~~~~~^^\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\threading.py\", line 995, in run\n    self._target(*self._args, **self._kwargs)\n    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\subprocess.py\", line 1615, in _readerthread\n    buffer.append(fh.read())\n                  ~~~~~~~^^\nUnicodeDecodeError: 'gbk' codec can't decode byte 0xff in position 47: illegal multibyte sequence\nException in thread Thread-8 (_readerthread):\nTraceback (most recent call last):\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\threading.py\", line 1044, in _bootstrap_inner\n    self.run()\n    ~~~~~~~~^^\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\threading.py\", line 995, in run\n    self._target(*self._args, **self._kwargs)\n    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\subprocess.py\", line 1615, in _readerthread\n    buffer.append(fh.read())\n                  ~~~~~~~^^\nUnicodeDecodeError: 'gbk' codec can't decode byte 0xff in position 47: illegal multibyte sequence\nException in thread Thread-10 (_readerthread):\nTraceback (most recent call last):\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\threading.py\", line 1044, in _bootstrap_inner\n    self.run()\n    ~~~~~~~~^^\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\threading.py\", line 995, in run\n    self._target(*self._args, **self._kwargs)\n    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\subprocess.py\", line 1615, in _readerthread\n    buffer.append(fh.read())\n                  ~~~~~~~^^\nUnicodeDecodeError: 'gbk' codec can't decode byte 0xff in position 47: illegal multibyte sequence\nException in thread Thread-12 (_readerthread):\nTraceback (most recent call last):\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\threading.py\", line 1044, in _bootstrap_inner\n    self.run()\n    ~~~~~~~~^^\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\threading.py\", line 995, in run\n    self._target(*self._args, **self._kwargs)\n    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\Lib\\subprocess.py\", line 1615, in _readerthread\n    buffer.append(fh.read())\n                  ~~~~~~~^^\nUnicodeDecodeError: 'gbk' codec can't decode byte 0xff in position 47: illegal multibyte sequence\n"
+    },
+    {
+      "name": "compact-decmp",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-compact-decmp.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\compact-decmp.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 24.501253800000995,
+      "stdout": "{\"checks\": 72, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-fetch",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-read-fetch.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\read-fetch.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 115.23130450001918,
+      "stdout": "{\"checks\": 509, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-deep",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-read-deep.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\read-deep.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 168.99288929998875,
+      "stdout": "{\"checks\": 752, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-result",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-read-result.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\read-result.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 24.920224500005133,
+      "stdout": "{\"checks\": 105, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "delta-hex",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-delta-hex.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\delta-hex.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 16.984348900034092,
+      "stdout": "{\"checks\": 37, \"passed\": true, \"sequence_bytes\": 7405440, \"reference_bytes\": 27801600}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-flow",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-read-flow.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\read-flow.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 644.6587453999673,
+      "stdout": "{\"checks\": 2795, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "binding",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-probe-evidence-binding.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\binding.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 187.640943800041,
+      "stdout": "{\"checks\": 67, \"passed\": true}\n",
+      "stderr": ""
+    }
+  ]
+}

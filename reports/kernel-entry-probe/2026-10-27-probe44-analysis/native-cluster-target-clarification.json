@@ -1,0 +1,11 @@
+{
+  "scope": "Clarifies a derived analysis field name without rewriting the prior report",
+  "prior_report": "native-cluster.json",
+  "prior_field": "expected_direct_target",
+  "field_value_meaning": "expected resolved kernel target, not the immediate BL destination",
+  "native_call_site": "0xfffffff00519c49c",
+  "native_bl_immediate_target": "0xfffffff00525e6dc",
+  "resolved_stub_target": "0xfffffff007438710",
+  "resolved_symbol": "_cluster_read",
+  "runtime_callee_entry_proven": false
+}

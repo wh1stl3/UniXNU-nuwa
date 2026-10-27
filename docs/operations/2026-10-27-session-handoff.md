@@ -1,4 +1,32 @@
-# nuwa 会话封存交接 — PROBE44未消费
+> 历史入口已更新（2026-10-28）：当前状态与续接请读`2026-10-28-session-handoff.md`及`2026-10-28-new-session-prompt.md`。PROBE44/45均已消费并恢复，下面的未启动、待恢复及启动命令仅供历史追溯，禁止直接执行。PROBE46是否可部署以最新STATUS、实际qualification和消费记录为准。
+
+## 最新：PROBE45已单次临时启动，待媒体与恢复后验（2026-10-27T23:28:53.8339879+08:00）
+
+用户确认正在录像且实体键恢复已准备好。新鲜预检确认nuwa/kalama、Android完成1、A槽、三分区SHA与44后验一致。fastboot Sending/Booting OKAY（4.566秒/0.112秒），仅证明传输接受，不证明内核执行。
+
+45已消费，禁止重发。镜像SHA e6a9494cb05992142032ddc80e42e9ca247f249ad373d7fefc398f382605902d。证据：reports/xnu-entry-probe-trial/2026-10-27-probe45-cluster/{preflight,launch,consumed}.json。当前等待菜单电源Enter后的录像、稳定照片及Android恢复后验，不能沿用启动前Android状态。媒体目录：D:/Code/PortingiOS/nuwa/Media-nuwa/PROBE45/original/。本轮覆盖UBC/UPL/IO读取及既有解码、Mach-O/dyld、exec续接；239保留。无flash/erase/改槽、提交或推送。
+
+下方45未启动/未消费描述为历史快照，已由本记录取代。
+
+# nuwa 主线交接 — 封存与后续实测
+
+## 最新：44恢复闭环，45整包离线资格完成（2026-10-27 23:09 +08）
+
+44 postcondition已确认Android1/A槽/三SHA不变；用户确认每次末态照片均稳定后拍摄，今后不再逐轮询问稳定性/固定秒数，未提供秒数则记未知。末态A03D=FFFFFFF00519C49C，已到APFS read内cluster_read调用前，未证明callee入口或具体等待原因。
+
+45内核SHA2935ab6e53067a5daa4156510e158f3eebe765c50592abbd4b617375c2f05247；64新位置/160B状态覆盖UBC/UPL/cluster IO连续链。附带x19读数对应_PAGE_SHIFT_CONST（715D118），可变_page_shift位于7A77A48并未采样。常量文件初值0需由arm_init初始化，不能当作实机值。
+
+用户随后要求同轮推进更远：45验收目标现覆盖缓存读取、ResourceFork、type4解码、Mach-O、dyld与exec受控释放。实际站点核对确认12对exec/dyld调用和续接、任务切换/签名/239均已存在，不为每段成功单独停止试验；读取返回后连续观察，当前前置等待仍需定位。expanded-trial-objectives.json绑定现有镜像与资格，未改镜像或新增运行结果，239仍不放开。
+
+38项串行作业全部通过：3024透明性、2795调用流程（含770新增）、67绑定，另29 x18扰动和9向量连续路径通过。独立内核字节复现及整包回读通过。镜像out/trial-boot/xnu-entry-probe-45-cluster/boot-xnu-first-entry.img，204484608字节，SHA e6a9494cb05992142032ddc80e42e9ca247f249ad373d7fefc398f382605902d；包报告reports/xnu-first-entry/entry-probe-45.json，资格reports/kernel-entry-probe/2026-10-27-probe45-cluster/qualification.json。45未启动/未消费，239保留，尚无EL0证明；新改动未提交。操作记录2026-10-27-probe44-media-probe45-cluster.md，报告reports/kernel-entry-probe/2026-10-27-probe44-analysis。原件目录Media-nuwa/PROBE45/original已准备。启动前仍需当轮拍摄/按键恢复条件及新鲜目标预检；44已消费，不得重发。下方44待媒体/恢复及未消费描述均为历史快照。
+
+## 当前更新：PROBE44已单次临时启动，待媒体及Android恢复（2026-10-27T22:09:00.4304633+08:00）
+
+用户本轮明确批准44直接启动，并确认连续拍摄与实体键恢复条件均已准备好。新鲜预检确认nuwa/kalama、Android完成1、A槽及三分区SHA与43后验一致；fastboot Sending/Booting OKAY，传输4.562秒、Booting 0.112秒。这是传输接受证据，未证明内核或目标读取链执行。
+
+44已消费，禁止重发；当前等待媒体及Android恢复后验，不能把启动前Android1或43后验写成44恢复完成。原件投放目录D:/Code/PortingiOS/nuwa/Media-nuwa/PROBE44/original/已由预检确认。证据reports/xnu-entry-probe-trial/2026-10-27-probe44-chain/{preflight,launch,consumed}.json。镜像SHA b8e2395576460b8296589ea92a6cfa6b73f34abc4fe04090f0c982d3b6d38030；239保留，无flash/erase/改槽，本轮未提交/推送。
+
+下方“44未启动/未消费”和“默认只读不启动”均是此前封存快照，已被本轮用户指令及消费记录更新；不得按旧prompt重发44。收到媒体后继续归档、分析与下一包离线交付。
 
 本文件是2026-10-27会话结束时的精简入口，当前状态优先于旧交接中的过程快照。用户本次明确要求落地所有文档并提交；本次允许本地检查点提交，不包含push或设备启动。不是历史验证重跑，也不授权把verified置真。
 

@@ -606,3 +606,15 @@
 2026-10-27 21:48 +08 · 媒体1397文件按PROBE轮目录迁移并逐一比较SHA一致，历史manifest保持；44/original已预建，XNU包预检自动建目录及6项无设备检查通过；含空目录清理的组合命令被自动审批拒绝后停止，空目录保留 · 未提交 · D:/Code/PortingiOS/nuwa/Media-nuwa/media-path-migration-2026-10-27.json；docs/operations/2026-10-27-probe43-media-probe44-chain.md
 
 2026-10-27T22:00:03.2704791+08:00 · 用户明确要求会话落档/本地提交/新会话prompt；封存PROBE29—44源码与文字证据及既有路径迁移修改，新增精简交接和prompt；待提交176个Python文件语法检查通过，精确字节属性例外保留绑定源码/报告，不改写历史摘要；固件资料已提交2affc24864bf520bf6c830f704415dd655accf8e。本条随设备仓检查点提交，提交号以封存本条的Git记录为准；未push/未启动设备 · reports/session-closeout/2026-10-27；docs/operations/2026-10-27-session-handoff.md
+
+2026-10-27T22:09:00.4304633+08:00 · PROBE44新鲜预检通过、用户当轮确认拍摄/按键恢复条件，单次临时启动Sending/Booting OKAY；44已消费，待媒体及Android恢复后验，未证明内核执行 · 未提交 · reports/xnu-entry-probe-trial/2026-10-27-probe44-chain/launch.json
+
+2026-10-27T23:12:36.1923568+08:00 · PROBE44末态稳定、Android1/A槽/三SHA恢复闭环；A03D=FFFFFFF00519C49C，推进到原生cluster_read调用前。用户确认以后末态照片默认稳定、不再逐轮问等待时间。45覆盖5个UBC/UPL/IO函数，38串行作业、3024透明性、2795流程（770新增）、67绑定、29 x18扰动、9向量连续路径通过，独立内核一致和整包回读通过；镜像SHA e6a9494cb05992142032ddc80e42e9ca247f249ad373d7fefc398f382605902d；45未启动、239保留。夹具及静态符号检查失败均留档，PAGE_SHIFT_CONST与可变page_shift区别已澄清；未把新位置算成新实机故障 · 未提交 · reports/kernel-entry-probe/2026-10-27-probe45-cluster/qualification.json；docs/operations/2026-10-27-probe44-media-probe45-cluster.md
+
+2026-10-27T23:22:36.9118588+08:00 · 用户要求45同轮推进更远；核对实际已编站点与既有15项release边界检查，确认12对exec/dyld调用及续接、fetch/decode/result和任务签名/切换/239站点均存在；扩大6段验收目标并绑定原镜像/资格SHA，未新增内核或实机结果，读取前置及239保持 · 未提交 · reports/kernel-entry-probe/2026-10-27-probe45-cluster/expanded-trial-objectives.json
+
+2026-10-27T23:28:53.8339879+08:00 · PROBE45新鲜预检通过，单次临时启动ACK成功并已消费；待媒体与Android三SHA恢复后验，239保留 · 未提交 · reports/xnu-entry-probe-trial/2026-10-27-probe45-cluster/{preflight,launch,consumed}.json
+
+2026-10-28T00:32:10.4396363+08:00 · PROBE45媒体归档（7阶段/227源帧）及Android1/A槽/三SHA恢复闭环；46内核编译与963专项通过，完整回归进行中；用户明确本轮文档与本地提交收尾 · 待本地提交 · docs/operations/2026-10-28-probe45-media-probe46-progress.md
+
+2026-10-28T00:58:59.015460+08:00 · PROBE46整包离线合格，38作业/独立重编/包回读通过，未启动；45媒体及恢复闭环、原绑定源码快照、状态/交接/prompt落档；本轮获准本地检查点提交（最终HEAD见项目根SESSION-CLOSEOUT-2026-10-28.json） · 待本地检查点 · reports/kernel-entry-probe/2026-10-27-probe46-progress/qualification.json

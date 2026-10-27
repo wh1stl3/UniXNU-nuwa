@@ -1,0 +1,38 @@
+{
+  "format": "Nuwa.DiagnosticLaunch.v1",
+  "adt_sha256": "052f0a91465cef62f78037555c4e29861e3a90805b69085bd1a50c1f9f44bbeb",
+  "manifest_sha384": "50bb042685eb45be951626a3ac79377ff5b4dffa37081af22a701f675d762c94cf579f69c49912eea462de474af0e67b",
+  "bnch_sha384": "52dd51c5095d091851d3d3b2c6f98f803b1f6f5556f49b0cd53a315ea659d2e59cbb4f49896994d9ae194001d7d9b55d",
+  "nonce_preimage_checked": true,
+  "components": {
+    "base_adt": {
+      "bytes": 13212,
+      "sha256": "6270ea69b086b6c9a103163c71e311fec547de7c42918db57d81da3815a08742"
+    },
+    "boot_shim": {
+      "bytes": 112,
+      "sha256": "8a3b54765c895a0366539130fdf6e4e4a01e364fe7de067a38d0193606f9d462"
+    },
+    "firmware_fd": {
+      "bytes": 3145728,
+      "sha256": "2d606985ad768dcfaab66c2b28073c0a4c2820126b42b23286623fdc450e848f"
+    },
+    "kernel": {
+      "bytes": 58744832,
+      "sha256": "2935ab6e53067a5daa4156510e158f3eebe765c50592abbd4b617375c2f05247"
+    },
+    "root_ramdisk": {
+      "bytes": 106954752,
+      "sha256": "d180c38dcc754bc079cc92a40f58a4b5fad2c2b7ce72cf5e64a117453fd7c90a"
+    }
+  },
+  "trust": {
+    "anti_replay_enforced": false,
+    "apple_im4m": false,
+    "hardware_nonce_protection": false,
+    "manifest_authentication": "none; host launch measurement",
+    "tss_personalized": false
+  },
+  "policy": "32-bit LE 1: prohibit mix-n-match; no default/empty property",
+  "producer_sha256": "40e1b776495f43d51cd786a4ac8a4826b11289aa86210cc45093ddb96d64de8f"
+}

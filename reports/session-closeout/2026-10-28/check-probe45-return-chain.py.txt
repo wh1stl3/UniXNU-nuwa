@@ -1,0 +1,22 @@
+import sys,json,importlib.util,struct
+from pathlib import Path
+R=Path.cwd();sys.path.insert(0,str(R/'scripts'));s=importlib.util.spec_from_file_location('flow',R/'scripts/test-read-flow.py');M=importlib.util.module_from_spec(s);sys.modules[s.name]=M;s.loader.exec_module(M)
+P=M.CLUSTER_CHECKS.P;C=M.CLUSTER_CHECKS;T=M.T
+b=json.loads((R/'reports/kernel-entry-probe/2026-10-27-probe45-cluster/build.json').read_bytes());raw=(R/b['candidate']['path']).read_bytes();orig=M.B.INPUT.read_bytes();om=M.B.macho(orig)
+p=next(p for p in P.points() if p['site']==P.BASE+0x438c34)
+results=[]
+for native in (True,False):
+ for mode in ('normal','no-video'):
+  u,m,sy,state,own=C.setup(M,raw,b,p,mode);fp=u.reg_read(T.UC_ARM64_REG_X29);uio=T.STACK+0xb000
+  u.reg_write(T.UC_ARM64_REG_X1,uio);u.reg_write(T.UC_ARM64_REG_X2,fp-0x60);u.mem_write(fp-0x60,struct.pack('<I',8))
+  if native:
+   for point in P.points():
+    at=M.B.backed(om,point['site']);u.mem_write(point['site'],orig[at:at+4])
+  trace=[]
+  def hook(u,pc,n,d):
+   if pc in (P.BASE+0x438c34,P.BASE+0x43cb58,P.BASE+0x43cc74,P.BASE+0x438c38,P.BASE+0x438c3c):trace.append(hex(pc))
+   if pc==P.BASE+0x6fa47c:u.reg_write(T.UC_ARM64_REG_X0,0);u.reg_write(T.UC_ARM64_REG_PC,u.reg_read(T.UC_ARM64_REG_LR))
+   if pc==P.BASE+0x438c3c:u.emu_stop()
+  u.hook_add(T.U.UC_HOOK_CODE,hook);u.emu_start(p['site'],0,count=12000000)
+  results.append(dict(native=native,mode=mode,trace=trace,pc=hex(u.reg_read(T.UC_ARM64_REG_PC)),record=[hex(x) for x in struct.unpack('<8Q',u.mem_read(sy['probe_result_state'],64))]))
+print(json.dumps(results,indent=2));(R/'reports/kernel-entry-probe/2026-10-27-probe45-analysis/return-chain-fixture.json').write_text(json.dumps(dict(scope='Native helper null-object return with supplied caller; not full IO',results=results),indent=2))

@@ -1,0 +1,858 @@
+{
+  "at": "2026-10-28T00:57:22.897221+08:00",
+  "scope": "Explicitly authorized local PROBE44-46 closeout; no raw media, out binaries or push",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 41994,
+      "sha256": "739da3b4d308a79967f48565586dff65e5601e5006cef6b87437eaebcc449d17"
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 23859,
+      "sha256": "483af0445cc1cd4ba8b31f984a5806d10bdb1ea8671c19087c670c97add0f150"
+    },
+    {
+      "path": "docs/PENDING-HUMAN.md",
+      "bytes": 30329,
+      "sha256": "4c54e319631b91a7203db664599b42d79e7b3105f6405f837ada0c21fc3f51a8"
+    },
+    {
+      "path": "docs/STATUS.md",
+      "bytes": 4177,
+      "sha256": "72ac4a600f9854bc50eddd1086bb8b28094a6bc9840e2aaa334a06a20e884207"
+    },
+    {
+      "path": "docs/WORKLOG.md",
+      "bytes": 123005,
+      "sha256": "a1771cf243be83d8cde23772c2ef8abcc086189cf33370d0a5043f1f9abcae51"
+    },
+    {
+      "path": "docs/operations/2026-10-26-mainline-handoff.md",
+      "bytes": 21539,
+      "sha256": "2146adb447c778b0013d17b894fadfdca3d27ca07b97f47e6150af7881c91046"
+    },
+    {
+      "path": "docs/operations/2026-10-27-new-session-prompt.md",
+      "bytes": 6310,
+      "sha256": "7afe81b02cafd2a6509eaad4a54754900d920faf740c714619a1f2f78c238dec"
+    },
+    {
+      "path": "docs/operations/2026-10-27-probe44-media-probe45-cluster.md",
+      "bytes": 10176,
+      "sha256": "09b27d6ad2ef9c9a8622b58dc3bb7ae8657f86cfe34423056b8d4a144ab470fe"
+    },
+    {
+      "path": "docs/operations/2026-10-27-session-handoff.md",
+      "bytes": 13616,
+      "sha256": "e0ca048fd0209dc0fdbc3a80d0150fa9072981ee28cee3cd26ece5bbbdea86c3"
+    },
+    {
+      "path": "docs/operations/2026-10-28-new-session-prompt.md",
+      "bytes": 2761,
+      "sha256": "4d88933a48677723a2d8c82d1ae1c3a4c1f61c0d3cd4008a712d5eb08a442633"
+    },
+    {
+      "path": "docs/operations/2026-10-28-probe45-media-probe46-progress.md",
+      "bytes": 6286,
+      "sha256": "7ee0589e9befd1026ac8b81030b4833e0dcd14d53c73ffba3d9335ffac4c6e74"
+    },
+    {
+      "path": "docs/operations/2026-10-28-session-handoff.md",
+      "bytes": 6472,
+      "sha256": "202e2be71c648244c31490029f8b15b854edd91f778a8d0fb307c5f352678cdb"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe44-analysis/cluster-source.json",
+      "bytes": 890,
+      "sha256": "8bc2e488c76d4e808f99c2cdcfd07cd0f639ba2663b87ff43ad0f8f316d7744f"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe44-analysis/copy-linear-calls.json",
+      "bytes": 12356,
+      "sha256": "93c34814caeb1f79f2396824d28829610109df614129bf8c2b400020f390c79a"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe44-analysis/native-cluster-target-clarification.json",
+      "bytes": 494,
+      "sha256": "9266763b8c42c028fbdc4fb4308b72c25a73240bb95a8ced708fadbb0d6b6f55"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe44-analysis/native-cluster.json",
+      "bytes": 1805475,
+      "sha256": "089ae310a104d855bab682db1d1aaff081b5fac4e7557383cb29669fce31397b"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe44-analysis/screen.json",
+      "bytes": 303,
+      "sha256": "0611d2593d6b7fd1de25b163ccf3886221746942fa71e3d35468f598e90a73b5"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe44-analysis/ubc-copy-native.json",
+      "bytes": 10167,
+      "sha256": "0c31ddd4f45f1266752aeb58015f5429655212393e5c60178fc4da4b67864467"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-analysis/native-return-window.json",
+      "bytes": 21257,
+      "sha256": "4b778022c3fc5bf1ded56bd3502717e1a0ce38c4fc9ab90b12c0fb81bb07230e"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-analysis/return-chain-fixture.json",
+      "bytes": 1962,
+      "sha256": "39f0cc3d3dfbf4afa689b7bf3ab07243e1ed40b4d4d254c51d22a1a9e7f69c21"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster-reproduce/build.json",
+      "bytes": 2179209,
+      "sha256": "cb9ed1ab3737af0d6c6c73327d9ae9346b21f5f3bd3a26fd7a8e82662db81db2"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/binding.json",
+      "bytes": 6357,
+      "sha256": "32311e35511f0e20b39dbf6c44a4bafef8909e754e64546777e7f4c3a3104c85"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/build.json",
+      "bytes": 2179149,
+      "sha256": "abfe9e07b7407a8847330f3fab8478c7f5b090ac3e9d352a0f2143384e8ae1fe"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/changes-from-probe44.diff",
+      "bytes": 335343,
+      "sha256": "02bab36b9ddad3d6c67a39b3ce65c8d393cd85915a49d52df3673e3de33d50bc"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/cluster-checks-console-02.txt",
+      "bytes": 33,
+      "sha256": "55a90aeebd678d37831e57ad6147af631bdd776ea1c8edce459be10c35dec963"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/cluster-checks-failure-01.txt",
+      "bytes": 1026,
+      "sha256": "2635d154376070d5933c43207092812ab36ce434e83d4bb270af3a0bb2f7a810"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/cluster-checks.json",
+      "bytes": 69827,
+      "sha256": "3d8fb2a46cabc80841c8edef6472e5ac9833b2e86a8edbe919ae2a574b311e23"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/compact-decmp.json",
+      "bytes": 5017,
+      "sha256": "d83364c82b96ec22efe441f062fbd94ada40294de0497dc42cfabf4fb9c60eb4"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/console-negative.json",
+      "bytes": 8895,
+      "sha256": "62f069259991cbfdf87781944f6a4271a965c080d8388a1cca1d74f6cb15eae5"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/console-policy.json",
+      "bytes": 13040,
+      "sha256": "6f80bdbc3b1acae9869a0196802710bc3cc48d72fd05025210014fd270f70f23"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/context-display.json",
+      "bytes": 2579,
+      "sha256": "ff64e79e78fe1044a8f5b58d3d3b6b69d76eed18edbb43d2b2ca5d19170200ec"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/delta-hex.json",
+      "bytes": 5985,
+      "sha256": "8c684aa762e932d8fd362df759602fa1481319aea44822e22d6e8753ff033d31"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/exception.json",
+      "bytes": 526,
+      "sha256": "2916f889a05039644043c54e605d77076c3c2f8e7ce7ce97d4847236611ef6ee"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/execution.json",
+      "bytes": 40479,
+      "sha256": "12dbefe9401e3376b129ab1b41188e6e5976544bbdcf685b32dd836c1bb10b9b"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/expanded-trial-objectives.json",
+      "bytes": 5023,
+      "sha256": "fe1eec70c4c34da6be4531958b8b35d625d8e8247cdc18794555b5a038720d91"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/fscompression-startup.json",
+      "bytes": 2197,
+      "sha256": "e88cc217d359d6bbb21962b502f7b3b162c64012977c62880fe075fd3a60993e"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/image4-launch.json",
+      "bytes": 34244,
+      "sha256": "ba19d4d33f91eb5216c5918296262e109e2bae3a300de59e75f5a48a64db7e4f"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/launch-context.json",
+      "bytes": 1461,
+      "sha256": "c4d6dec281637d4d6e39baa8f233f338e57f3be084ebdbd529fdbf22252f182d"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/loader.json",
+      "bytes": 1805,
+      "sha256": "7774e615a972bd01ef38bfc94a1bfa9bcd9afc1c760a7d64466bc9137554c7a1"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/mapping.json",
+      "bytes": 3396,
+      "sha256": "c5b7a51694ffbe6b64fd1da7f91479f67bcb0693be2a27e2af48a5fd8cfcdd83"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/native-globals-failure-01.txt",
+      "bytes": 1038,
+      "sha256": "4a472ca6526ebf3de0fcc506816ee92d4ef62c03a86b0e7141b389e9ab348540"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/native-globals.json",
+      "bytes": 785,
+      "sha256": "4b824660968f9671e31a1bc414770a0710d589cec2a757e65ff30bb7c3ad9920"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/package-console.txt",
+      "bytes": 361,
+      "sha256": "fed530d14fa674ef56904a62124dec639c4fdfe0a90cd45f825ecf059dd63e46"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/package-validation.json",
+      "bytes": 335,
+      "sha256": "ef81be50b7b89a69d14537a55a6f8af50c186fe8030bf63261851f137f40dcd2"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/post-arm-init.json",
+      "bytes": 1969,
+      "sha256": "05fe88e6cb48739ea154e5904b4a02a71f73524a58a05c1e525dc75dbfbdd11a"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/pthread-startup.json",
+      "bytes": 1711,
+      "sha256": "1d76257d247e8f8a53f6632f3cc7c1c4cfa730dfe9d201f867880aadf5c55377"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/qualification.json",
+      "bytes": 29998,
+      "sha256": "9df45ae74bcb58f92e363e7abc720041f36617aed194832e9e4dfd9eef227dee"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-body-reset.json",
+      "bytes": 314,
+      "sha256": "92a54c8d89e65661f6a6c7662fbdc87a696d9108fc95ff4e91d62b32a431b91f"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-body.json",
+      "bytes": 57414,
+      "sha256": "dd5269e8b6fe085e3861359a5c2374f24f4884f5ce78be0fa3910ceafc860b69"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-boundaries.json",
+      "bytes": 11078,
+      "sha256": "179ed8ad9366a2be5d6bd07b06d8ca4031b708a08e77f7308fb213d51f33c654"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-boundary-source.json",
+      "bytes": 8241,
+      "sha256": "29c8519519bd3e0ce4422f742a653f664be25dfa8308ad83cf13e2c9ba81486d"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-decmp.json",
+      "bytes": 50530,
+      "sha256": "ebbeaa78209ccdc7f152223d4276669bc4092509d66618cce49e66c3b5808596"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-deep.json",
+      "bytes": 61469,
+      "sha256": "8267172a6c5436e3a062367b3eca001355e60d289d5c83af1dfa3424487588e3"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-dispatch.json",
+      "bytes": 42021,
+      "sha256": "9854d426ff2254ad40c2f27af88af762dee69255988c73f32364d275739588c8"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-fetch.json",
+      "bytes": 41750,
+      "sha256": "6d9da5416f1ba4ea960a21aa7a05c074accf35bfaa13ffe85806451142fa7eb5"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-flow.json",
+      "bytes": 246253,
+      "sha256": "ee6bfcf85b605384bc292bf13ff67a380455bdb52ede72cfb7b33f56a5d128f1"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-grid.json",
+      "bytes": 1423,
+      "sha256": "66893e395d854ac1722d07aceb8a26a0b8310362e559144e5f9cc8e52438e9c8"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-init.json",
+      "bytes": 1352,
+      "sha256": "e2b7afc1fee2911698c254b56e44f3b6129c8d25569ec18c7d4f3fd6e5c96d5d"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-result.json",
+      "bytes": 8911,
+      "sha256": "c2e04e624ed91b2f4de17110fe21a760fc7ed1369af162aaad58bbc9cb24896b"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-sites.json",
+      "bytes": 3790,
+      "sha256": "3013a91854faeee5ec11d8ee523e2330070ccb4ba528b55232e71fedfb2b5e13"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-vector-path.json",
+      "bytes": 2502,
+      "sha256": "aa5bd4542152de0588c0ef2ce0bac4bb06b6d859495c17ba3c15a58326e1b6e2"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/renderer-bounds.json",
+      "bytes": 9431,
+      "sha256": "e59171bd936298a3a1831ad9121f9dd2455af128178997464e3a5312604a8ab9"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/reproduce-console.txt",
+      "bytes": 2519,
+      "sha256": "214c9d148554807f7e6e73e81df84dcb213d07084c5e64cae045e448ad82f42b"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/root-inputs.json",
+      "bytes": 615,
+      "sha256": "a91c6cec83b162160ed840d460ea51ea4c4717ceaad25ca2c3ca4a5f92e8fbaf"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/root-launch.json",
+      "bytes": 1223,
+      "sha256": "75f3082582736fb3fa775d9a79ac3fb0a119910dbd6e69474830878d354d9eae"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/root-stop.json",
+      "bytes": 2204,
+      "sha256": "cc49336d23dc22e06f1829fa2cab3525b0f38e9baa5e98e8b083cf0e7d83dedc"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/shared-hex.json",
+      "bytes": 1882,
+      "sha256": "d2ae9ff410ab66317f84676c754bbecb8c2283b1a23227de2f6baa92111bf3c8"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/single-pass-hex.json",
+      "bytes": 1737,
+      "sha256": "6469326faad7d869f20f150816b7f2572b438e0059b187f8942e5b742aae4021"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/software.json",
+      "bytes": 12623,
+      "sha256": "b8fa38921dd187c5c25359334428368be92fc0ae2e47f943707fe7d801a5fc86"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/transition-bad-topology.json",
+      "bytes": 7569,
+      "sha256": "e012df065b1bbbdf2fb530974af19d66e50c5a77cf03dbf6dbee26264d4c6ec1"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/transition-normal.json",
+      "bytes": 14671,
+      "sha256": "f8183aaf4a433327f76ee648151d5ebbd0cd5c7086ccc570e434700d2d9768da"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/transition-occupied-fb.json",
+      "bytes": 11149,
+      "sha256": "d58bf7df4c5d02ebb5149e0edc5d4f0e6f9d74c84c887408175982ff6e2c1954"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/transition-occupied-probe.json",
+      "bytes": 7588,
+      "sha256": "c2a4a7d210017ab006f5bac8674d54b7726623f4a2b55becb5831b88745023d5"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/transparency.json",
+      "bytes": 457848,
+      "sha256": "e4108f5ead51c465b8f2a431abc4791a691a2a670962ea5c5540346e8bacfe99"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/vector-console.txt",
+      "bytes": 31,
+      "sha256": "1281b87fe99dad4ed0ba9db906f857eacdacfad1b362f5bdce92159566e5befa"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/vectors.json",
+      "bytes": 5282,
+      "sha256": "2206b668746c178ae8550fc15df4c96de558fcdb980b6a0078d81bc2b7f644fc"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/wfe.json",
+      "bytes": 3250,
+      "sha256": "be052555a7a258a7f25ad038c44b894ccda3c4189de58f7e8e3297ade98ca4b3"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/x18-console.txt",
+      "bytes": 48,
+      "sha256": "2d842c1a87560bd28f6883b0d09c46405dc09149b8229826fce862cad20e937c"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/x18-interruption.json",
+      "bytes": 3644,
+      "sha256": "27f9adda2a00bc3f1274f2ebd57b545b416a7d7dbf6f5aca2a01163c5ae8125e"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress-reproduce/build.json",
+      "bytes": 2192856,
+      "sha256": "1397c9a920d073e3dafbc669253e04d2a155719a6bba859b47e9488a2a148cd5"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/binding.json",
+      "bytes": 6357,
+      "sha256": "36fb0c0923452ba5449983d54a7c5adc7bbde9e37c0560ce0e864b4c0e3355b0"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/build.json",
+      "bytes": 2192796,
+      "sha256": "85a89f404001138ff7576c7ce1fa3e80e8091b11f9084a19660f7df4ba4a139e"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/changes-from-probe45.diff",
+      "bytes": 15079,
+      "sha256": "d67c0fcb1900b1911b4d3b49d6ab002c721c7f78d5cab25a825b3fff8369bf72"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/cluster-checks.json",
+      "bytes": 87296,
+      "sha256": "381f2e2d13d330416fe44dcd8a5dc420a60db032a6c2a76450f8bd50f43d7e10"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/cluster-console-01.txt",
+      "bytes": 33,
+      "sha256": "0b455b1193f5f7e0eaf8d1e7b5a56a94c9914ee86e3dd1cc1cf34bfcd16f7c35"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/compact-decmp.json",
+      "bytes": 5017,
+      "sha256": "646fe95b202bfd6138924de1e81cca3d4263ffcd18a4d9009202bbe60bbc65b7"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/console-negative.json",
+      "bytes": 8895,
+      "sha256": "b73e53b1c3f0d97f4425a5461d61ede6ae8368f455d59bedbc5f1ed0429ff97d"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/console-policy.json",
+      "bytes": 13040,
+      "sha256": "226ff499dfc35932f330812d8da2b2febb0d73aafc21a082f1204a03e04e61e0"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/context-display.json",
+      "bytes": 2579,
+      "sha256": "cb604d1d73a15829f9eec1d82dd133433a0037d98433f409eb01176c8b0fb151"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/delta-hex.json",
+      "bytes": 5985,
+      "sha256": "1a7b82d551c34207ca53f5a1757fff92ac271b41dd0b0d561c7b11ec24ade119"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/exception.json",
+      "bytes": 527,
+      "sha256": "c56d4484b3f67a953bf084d1ccd1a9f9d5aec890fbb406e4635397b8a6ba6a07"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/execution.json",
+      "bytes": 31417,
+      "sha256": "ac9d5611c1a53ed4e06345da6ac91da5ba7d10a43819c4c03e9fa8b283a7f3fd"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/expanded-trial-objectives.json",
+      "bytes": 5024,
+      "sha256": "df5346d2ffd5e518e1448a9367872f171de3de142a674e086b3fb20720818d0c"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/fscompression-startup.json",
+      "bytes": 2197,
+      "sha256": "4be36f9c839a2e3b9880553aec3e253949d7c25729e6581ad877b72845260de5"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/image4-launch.json",
+      "bytes": 34244,
+      "sha256": "ed964fb10683cbe182425ed3ed8054a54b4ee0e82f9be5096f04932c4c8673e8"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/launch-context.json",
+      "bytes": 1461,
+      "sha256": "6e8b2e8f4be80d39630fa2d66be20645fd7b63db4b547e22935520b74d1bbb57"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/loader.json",
+      "bytes": 1797,
+      "sha256": "4f0d52e823a746dc29efd67d86c02755061e0ad5d1c52726add5f7db49a8b3fe"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/mapping.json",
+      "bytes": 3397,
+      "sha256": "f74aa54dd1656e28886750402747f748acb64c83abd778346ae4d4f04ac06f64"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/native-globals.json",
+      "bytes": 785,
+      "sha256": "dd9c2c85049ee862c226107b4f5b8495df32c83b93861941366cc08f950e176f"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/package-console.txt",
+      "bytes": 361,
+      "sha256": "5c8c0193d33fb35e7ba00dcb4815778a2801cd3e4965d526be6c1342bdb5c0de"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/package-validation.json",
+      "bytes": 335,
+      "sha256": "d834ba6feccc0e56b6a9fc51235618a04bd1771d6bdf5a2a7947da51f7ed9957"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/post-arm-init.json",
+      "bytes": 1970,
+      "sha256": "11d85c5f96dc84a1488d20c1bd407968f4973c3ddbb95d3993a5d26132b2183d"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/pthread-startup.json",
+      "bytes": 1711,
+      "sha256": "3efbaf7f211dc89e7de7f8104da21077523ea8d70166c8880a50626355ae516d"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/qualification.json",
+      "bytes": 33163,
+      "sha256": "ca96831b3b4ce42866101e2d77eab0fba996711a1357c35a558bfb9e85afa310"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/read-body-reset.json",
+      "bytes": 314,
+      "sha256": "487721a241a79113f979f0583cfe700db13c5aa18d46572d5a75aaba2dcdf7b7"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/read-body.json",
+      "bytes": 57414,
+      "sha256": "d56555c16bb0ef14554d30234aa783f27daf55e7904d14876adc48926ba7f464"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/read-boundaries.json",
+      "bytes": 11078,
+      "sha256": "ef9bcc3953d9e3df47a442b655653d7ea8c259ebc19c6b0e13e7ff2817dbf18f"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/read-boundary-source.json",
+      "bytes": 8241,
+      "sha256": "36c521b6657e128c507f9bb6f7d61b7beb08c8c7f6cfc12b188a9b0d845dd3e2"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/read-decmp.json",
+      "bytes": 50530,
+      "sha256": "72ab02371470567d046b385f0cdc6f2f73d0cff05777f4de5b2fa474d0c07e28"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/read-deep.json",
+      "bytes": 61469,
+      "sha256": "73227d4a9d04f8d4b04a4333026a740c9ba34033c3df0b4d0190311a95b64467"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/read-dispatch.json",
+      "bytes": 42021,
+      "sha256": "5ed825cab5a52ad36143fda7def85d458066548b5eaffe29c07afb48d3bcace6"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/read-fetch.json",
+      "bytes": 41750,
+      "sha256": "3bfccff038d424c1aec87e4a92c527b0d442f64f451fd1967ea322aaf452f072"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/read-flow.json",
+      "bytes": 263722,
+      "sha256": "0a5e138e8ca4d390b47ed39df17c1006097622d4a2801b4a8c5b1c33dc67d99c"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/read-grid.json",
+      "bytes": 1423,
+      "sha256": "18ec15056462f8c7668e46223a93d0b0d7420a67dba076c7d1ad34f38064bcef"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/read-init.json",
+      "bytes": 1352,
+      "sha256": "b340971489c600ff71b07e1bbc50321880322edd681b95db2cab2802132b3525"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/read-result.json",
+      "bytes": 8911,
+      "sha256": "03f425281317408f5b541651a6a270dff89f2a7a58a38e1ed77f6fa5f4675211"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/read-sites.json",
+      "bytes": 3791,
+      "sha256": "be85581e61b99a94d0707a6a91bb486cfe2fcabe0e7ce471d3685dbbcb4c4f17"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/read-vector-path.json",
+      "bytes": 2502,
+      "sha256": "ed9de8254fb828c93a937966603031a14f28f4d1ad41e5fb81c44abd5eeb6275"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/renderer-bounds.json",
+      "bytes": 9431,
+      "sha256": "a7aa1e3dc7c4be2f47adae30d5fee8a527e72932f37938c83c68c4f755d4a46b"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/reproduce-console.txt",
+      "bytes": 180,
+      "sha256": "da0000adf8c130406f5d62bb1dfd5425a0cc2d84cee20c521069a028a3869d4f"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/root-inputs.json",
+      "bytes": 615,
+      "sha256": "6d395290706760e960409bda3ee60bb94557f3d6fff4305fe1182c39a8a7c6a1"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/root-launch.json",
+      "bytes": 1225,
+      "sha256": "78e847beede359954598441c17b5d478480563e15d073e11fe46adf111fc91ca"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/root-stop.json",
+      "bytes": 2204,
+      "sha256": "d4dbf6fd53763196ff8af5f2b266700ffd31c6faf4993cc532e6938113f86bf7"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/shared-hex.json",
+      "bytes": 1883,
+      "sha256": "23a6e42ffc1f5a0dac2aece8b93e3bea4f67b710a065134ed7b5972b1efe972f"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/single-pass-hex.json",
+      "bytes": 1737,
+      "sha256": "2db84aab85e7e2c956569122158682389f8849535b697e14186f50134d484eb3"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/software.json",
+      "bytes": 12623,
+      "sha256": "8af3cd7231e1020b27954d99d2a66f71dd3c9a64864612f66c28f399e772b399"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/transition-bad-topology.json",
+      "bytes": 7645,
+      "sha256": "e438a756ed77892d648e372f6169b96d6304b46a15c1c0f5048ff2c01c6457cb"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/transition-normal.json",
+      "bytes": 14779,
+      "sha256": "e4980255eef23981439b5da7634ba7d04b65cd4be552905b4acca5020f1fe288"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/transition-occupied-fb.json",
+      "bytes": 11255,
+      "sha256": "3868eae723a2b7caa68e7f8a37a2e4696acf6a6bd89a7e9cd234b48153996439"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/transition-occupied-probe.json",
+      "bytes": 7661,
+      "sha256": "209078a92559b80ead6116c8ddf9a21c7bb36cdd81cbeb34294fd28e04f067c8"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/transparency.json",
+      "bytes": 466978,
+      "sha256": "4445041ad9c46f872ce55915ae334694b1192757474df22c01ee401ba7206062"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/vector-console.txt",
+      "bytes": 31,
+      "sha256": "1281b87fe99dad4ed0ba9db906f857eacdacfad1b362f5bdce92159566e5befa"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/vectors.json",
+      "bytes": 5282,
+      "sha256": "ed9e9c55f14c2dad278f96ce0d38e74bf295ae433eaee1038a3cd9c7f3c2abd6"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/wfe.json",
+      "bytes": 3250,
+      "sha256": "74e6742c8b7c4fc77cbb7238c317874c7c6c78fa1c209473ee648d168f47ce33"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/x18-console.txt",
+      "bytes": 48,
+      "sha256": "2d842c1a87560bd28f6883b0d09c46405dc09149b8229826fce862cad20e937c"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe46-progress/x18-interruption.json",
+      "bytes": 3644,
+      "sha256": "47e1e9000a6b7779178daa2b5bc12695c2c769942e83e985660eb190f79b233d"
+    },
+    {
+      "path": "reports/session-closeout/2026-10-28/probe45-bound-sources/build-kernel-entry-probe.py",
+      "bytes": 47911,
+      "sha256": "ce3a2c6fa54def75a462dc850a652c0791ba5d45750dfef48ed87bc26596a035"
+    },
+    {
+      "path": "reports/session-closeout/2026-10-28/probe45-bound-sources/build_xnu_boot_package.py",
+      "bytes": 41027,
+      "sha256": "bb4d3b32c12e2ae703389fac928f82dfc7c6c8f29441a308818d9c0703388ece"
+    },
+    {
+      "path": "reports/session-closeout/2026-10-28/probe45-bound-sources/kernel_entry_probe_inputs.py",
+      "bytes": 44191,
+      "sha256": "cdf0e8094685c6eb25b540ce964aafd78dfe0c1933fe59a2876cf6fb1b27ea45"
+    },
+    {
+      "path": "reports/session-closeout/2026-10-28/probe45-bound-sources/probe_bootstrap_sites.py",
+      "bytes": 14606,
+      "sha256": "950d18bd7588dfb5a66594bc0ed0895f06534e493bce497b0b022de440cef962"
+    },
+    {
+      "path": "reports/session-closeout/2026-10-28/probe45-bound-sources/read_flow_sites.py",
+      "bytes": 2714,
+      "sha256": "e4ce9ac7cbeeda4ebd3d5e8f0aa8648afe44317fd499cdaa225bb8f3cb52a366"
+    },
+    {
+      "path": "reports/session-closeout/2026-10-28/probe45-bound-sources/record-nuwa-trial-state.py",
+      "bytes": 9077,
+      "sha256": "90758e0766e7de600786ffaa7ac7ec0bc175a714fbdd5ab192cd8b81482a695d"
+    },
+    {
+      "path": "reports/session-closeout/2026-10-28/probe45-bound-sources/resource_chain_checks.py",
+      "bytes": 4954,
+      "sha256": "c691cc4b1c0633b48698101550aef978ff62df8a6f956ce50e99c6861c6e609c"
+    },
+    {
+      "path": "reports/session-closeout/2026-10-28/probe45-bound-sources/resource_chain_sites.py",
+      "bytes": 4412,
+      "sha256": "0b83fb0fa14980a5a533f684635fdbf69931cdcae0369b78b222aa4041cdcafc"
+    },
+    {
+      "path": "reports/session-closeout/2026-10-28/probe45-bound-sources/resource_cluster_checks.py",
+      "bytes": 5231,
+      "sha256": "71d843ffead8a50b6cf94207ac7e0cf0cfaaded4587ffaef71e82ff4163a63c8"
+    },
+    {
+      "path": "reports/session-closeout/2026-10-28/probe45-bound-sources/resource_cluster_sites.py",
+      "bytes": 5141,
+      "sha256": "bb8c5c87b097ecc93fd97c0379bff0c534241d81756e8cb56a942a57a4c2c96c"
+    },
+    {
+      "path": "reports/session-closeout/2026-10-28/probe45-bound-sources/resource_handler_checks.py",
+      "bytes": 4627,
+      "sha256": "86bda88335f9a42c94629668218f0f071f54d8b0aa18003913618265b87f76bb"
+    },
+    {
+      "path": "reports/session-closeout/2026-10-28/probe45-bound-sources/resource_handler_sites.py",
+      "bytes": 3336,
+      "sha256": "4291ef645c0f698d911fe3a1b049f9cd6a3e0ef100d6bfa3da9705b1281f7cf0"
+    },
+    {
+      "path": "reports/session-closeout/2026-10-28/probe45-bound-sources/test-read-flow.py",
+      "bytes": 9660,
+      "sha256": "46da609cc8f10aedfada09150008636eb2009a0e708be6283928bc38fdb9ca0a"
+    },
+    {
+      "path": "reports/session-closeout/2026-10-28/probe45-bound-sources/trial_media.py",
+      "bytes": 1391,
+      "sha256": "9aeab17fd155d11a9e404e5a40fd7a87003f759c2c0b2b9cea3fe16cee98ef38"
+    },
+    {
+      "path": "reports/session-closeout/2026-10-28/probe45-source-archive.json",
+      "bytes": 3643,
+      "sha256": "90c5df5d3fbf6e1701936faa8d6f3507e16ff9e29cc7c97d71b24fb700f9573a"
+    },
+    {
+      "path": "reports/session-closeout/2026-10-28/status-before-closeout.md",
+      "bytes": 21792,
+      "sha256": "0b099111ac77fdb1cf409e604db0e36c11ae6cef2a3ca7fb4956884f30cdf960"
+    },
+    {
+      "path": "reports/xnu-entry-probe-trial/2026-10-27-probe44-chain/consumed.json",
+      "bytes": 353,
+      "sha256": "d73bcd2901afb8d45bc0e7134577bbcf24b39452b929e99b0922917c7a5be614"
+    },
+    {
+      "path": "reports/xnu-entry-probe-trial/2026-10-27-probe44-chain/launch.json",
+      "bytes": 7384,
+      "sha256": "e4be4d61d4298967e54ce95ae4208121df48a00f0568c1610ad90b91bd12dfa0"
+    },
+    {
+      "path": "reports/xnu-entry-probe-trial/2026-10-27-probe44-chain/postcondition.json",
+      "bytes": 1971,
+      "sha256": "4ec3629e4a56381b4ee067653ebbaac7c688b1d47867460dc4d45f6d16c53406"
+    },
+    {
+      "path": "reports/xnu-entry-probe-trial/2026-10-27-probe44-chain/preflight.json",
+      "bytes": 3161,
+      "sha256": "cec05329931223ec9ea24c097a830d9340a3203fd94efa802462eff1c55ce18d"
+    },
+    {
+      "path": "reports/xnu-entry-probe-trial/2026-10-27-probe45-cluster/consumed.json",
+      "bytes": 448,
+      "sha256": "8f17945e613c6f8d6957a44979555109c8adc5b0154535cebe2d5208b3f60424"
+    },
+    {
+      "path": "reports/xnu-entry-probe-trial/2026-10-27-probe45-cluster/launch.json",
+      "bytes": 7379,
+      "sha256": "107a070a343d09f7e92e3f00d06e8558a5e58b80e806ded9697fec29cd7e04d9"
+    },
+    {
+      "path": "reports/xnu-entry-probe-trial/2026-10-27-probe45-cluster/postcondition.json",
+      "bytes": 1971,
+      "sha256": "57e4f475ad5dfe36efb4e67e043bf2a005fe3e14db2ff96f5d6026aeb035d94f"
+    },
+    {
+      "path": "reports/xnu-entry-probe-trial/2026-10-27-probe45-cluster/preflight.json",
+      "bytes": 3154,
+      "sha256": "bedefb0fbb48a5ad1af272e86bf5228b85435370ca7e13122bffdd8b460ff80f"
+    },
+    {
+      "path": "reports/xnu-first-entry/entry-probe-45.json",
+      "bytes": 399553,
+      "sha256": "ec793b657f31260a9800620c999faf87a648e9b78129fc4d0e783ca5f1e191cd"
+    },
+    {
+      "path": "reports/xnu-first-entry/entry-probe-46.json",
+      "bytes": 409489,
+      "sha256": "5d844899cd4d2348d7fd36efa92e28373a22484abd6c36fdf155f2f757c1ca97"
+    },
+    {
+      "path": "scripts/build-kernel-entry-probe.py",
+      "bytes": 47911,
+      "sha256": "ce3a2c6fa54def75a462dc850a652c0791ba5d45750dfef48ed87bc26596a035"
+    },
+    {
+      "path": "scripts/build_xnu_boot_package.py",
+      "bytes": 40794,
+      "sha256": "2e0db93571e96ead9a23dc336814489b6d20a5c957f489e831865d75344c67ac"
+    },
+    {
+      "path": "scripts/kernel_entry_probe_inputs.py",
+      "bytes": 44191,
+      "sha256": "cdf0e8094685c6eb25b540ce964aafd78dfe0c1933fe59a2876cf6fb1b27ea45"
+    },
+    {
+      "path": "scripts/probe_bootstrap_sites.py",
+      "bytes": 14380,
+      "sha256": "9773435814050fc14701e9df389b8d4777819380145cad4eae7776cdc60d5462"
+    },
+    {
+      "path": "scripts/read_flow_sites.py",
+      "bytes": 2672,
+      "sha256": "27535b0e8672788d0bcefa97ba8bfc1b1bc660b82b1c5e7c3f9969aecd0f5a75"
+    },
+    {
+      "path": "scripts/resource_cluster_checks.py",
+      "bytes": 9019,
+      "sha256": "6d73ed2117d9235b4e6acc1ee5a06a40ad822be9943f17cec00df0f31e7d0010"
+    },
+    {
+      "path": "scripts/resource_cluster_sites.py",
+      "bytes": 6049,
+      "sha256": "14528902b9b6a275ba5f03793d215af591c7e577f00ebecaf5e7b30d30b1662d"
+    },
+    {
+      "path": "scripts/test-read-flow.py",
+      "bytes": 9660,
+      "sha256": "46da609cc8f10aedfada09150008636eb2009a0e708be6283928bc38fdb9ca0a"
+    }
+  ],
+  "python_ast_checked": 22,
+  "probe46_qualified": true
+}

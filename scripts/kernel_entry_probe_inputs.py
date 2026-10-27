@@ -154,6 +154,8 @@ def validate(meta,kernel_sha):
         if e.get('handler_checks_sha256')!=handler_checks_sha256():raise ValueError('Handler test dependency differs')
         from resource_chain_checks import source_sha256 as chain_checks_sha256
         if e.get('chain_checks_sha256')!=chain_checks_sha256():raise ValueError('Resource chain test dependency differs')
+        from resource_cluster_checks import source_sha256 as cluster_checks_sha256
+        if e.get('cluster_checks_sha256')!=cluster_checks_sha256():raise ValueError('Resource cluster test dependency differs')
         spec=importlib.util.spec_from_file_location('flow_evidence_contract',ROOT/'scripts/test-read-flow.py')
         mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod);required=mod.required_names()
         checks=e.get('checks',[])

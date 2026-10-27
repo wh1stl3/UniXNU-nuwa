@@ -1,0 +1,1090 @@
+{
+  "time": "2026-10-27T23:09:51.896381+08:00",
+  "candidate_sha256": "2935ab6e53067a5daa4156510e158f3eebe765c50592abbd4b617375c2f05247",
+  "image_path": "out/trial-boot/xnu-entry-probe-45-cluster/boot-xnu-first-entry.img",
+  "image_sha256": "e6a9494cb05992142032ddc80e42e9ca247f249ad373d7fefc398f382605902d",
+  "image_bytes": 204484608,
+  "evidence": [
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/software.json",
+      "sha256": "b8fa38921dd187c5c25359334428368be92fc0ae2e47f943707fe7d801a5fc86"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-sites.json",
+      "sha256": "3013a91854faeee5ec11d8ee523e2330070ccb4ba528b55232e71fedfb2b5e13"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/wfe.json",
+      "sha256": "be052555a7a258a7f25ad038c44b894ccda3c4189de58f7e8e3297ade98ca4b3"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/mapping.json",
+      "sha256": "c5b7a51694ffbe6b64fd1da7f91479f67bcb0693be2a27e2af48a5fd8cfcdd83"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/loader.json",
+      "sha256": "7774e615a972bd01ef38bfc94a1bfa9bcd9afc1c760a7d64466bc9137554c7a1"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/post-arm-init.json",
+      "sha256": "05fe88e6cb48739ea154e5904b4a02a71f73524a58a05c1e525dc75dbfbdd11a"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/exception.json",
+      "sha256": "2916f889a05039644043c54e605d77076c3c2f8e7ce7ce97d4847236611ef6ee"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/transition-normal.json",
+      "sha256": "f8183aaf4a433327f76ee648151d5ebbd0cd5c7086ccc570e434700d2d9768da"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/transition-occupied-probe.json",
+      "sha256": "c2a4a7d210017ab006f5bac8674d54b7726623f4a2b55becb5831b88745023d5"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/transition-bad-topology.json",
+      "sha256": "e012df065b1bbbdf2fb530974af19d66e50c5a77cf03dbf6dbee26264d4c6ec1"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/transition-occupied-fb.json",
+      "sha256": "d58bf7df4c5d02ebb5149e0edc5d4f0e6f9d74c84c887408175982ff6e2c1954"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/console-policy.json",
+      "sha256": "6f80bdbc3b1acae9869a0196802710bc3cc48d72fd05025210014fd270f70f23"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/renderer-bounds.json",
+      "sha256": "e59171bd936298a3a1831ad9121f9dd2455af128178997464e3a5312604a8ab9"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/context-display.json",
+      "sha256": "ff64e79e78fe1044a8f5b58d3d3b6b69d76eed18edbb43d2b2ca5d19170200ec"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/vectors.json",
+      "sha256": "2206b668746c178ae8550fc15df4c96de558fcdb980b6a0078d81bc2b7f644fc"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/transparency.json",
+      "sha256": "e4108f5ead51c465b8f2a431abc4791a691a2a670962ea5c5540346e8bacfe99"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/image4-launch.json",
+      "sha256": "ba19d4d33f91eb5216c5918296262e109e2bae3a300de59e75f5a48a64db7e4f"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/pthread-startup.json",
+      "sha256": "1d76257d247e8f8a53f6632f3cc7c1c4cfa730dfe9d201f867880aadf5c55377"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/root-stop.json",
+      "sha256": "cc49336d23dc22e06f1829fa2cab3525b0f38e9baa5e98e8b083cf0e7d83dedc"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/root-inputs.json",
+      "sha256": "a91c6cec83b162160ed840d460ea51ea4c4717ceaad25ca2c3ca4a5f92e8fbaf"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/fscompression-startup.json",
+      "sha256": "e88cc217d359d6bbb21962b502f7b3b162c64012977c62880fe075fd3a60993e"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-boundaries.json",
+      "sha256": "179ed8ad9366a2be5d6bd07b06d8ca4031b708a08e77f7308fb213d51f33c654"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-boundary-source.json",
+      "sha256": "29c8519519bd3e0ce4422f742a653f664be25dfa8308ad83cf13e2c9ba81486d"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-dispatch.json",
+      "sha256": "9854d426ff2254ad40c2f27af88af762dee69255988c73f32364d275739588c8"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-body.json",
+      "sha256": "dd5269e8b6fe085e3861359a5c2374f24f4884f5ce78be0fa3910ceafc860b69"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-body-reset.json",
+      "sha256": "92a54c8d89e65661f6a6c7662fbdc87a696d9108fc95ff4e91d62b32a431b91f"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-init.json",
+      "sha256": "e2b7afc1fee2911698c254b56e44f3b6129c8d25569ec18c7d4f3fd6e5c96d5d"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/single-pass-hex.json",
+      "sha256": "6469326faad7d869f20f150816b7f2572b438e0059b187f8942e5b742aae4021"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-grid.json",
+      "sha256": "66893e395d854ac1722d07aceb8a26a0b8310362e559144e5f9cc8e52438e9c8"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-decmp.json",
+      "sha256": "ebbeaa78209ccdc7f152223d4276669bc4092509d66618cce49e66c3b5808596"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/shared-hex.json",
+      "sha256": "d2ae9ff410ab66317f84676c754bbecb8c2283b1a23227de2f6baa92111bf3c8"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/compact-decmp.json",
+      "sha256": "d83364c82b96ec22efe441f062fbd94ada40294de0497dc42cfabf4fb9c60eb4"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-fetch.json",
+      "sha256": "6d9da5416f1ba4ea960a21aa7a05c074accf35bfaa13ffe85806451142fa7eb5"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-deep.json",
+      "sha256": "8267172a6c5436e3a062367b3eca001355e60d289d5c83af1dfa3424487588e3"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-result.json",
+      "sha256": "c2e04e624ed91b2f4de17110fe21a760fc7ed1369af162aaad58bbc9cb24896b"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/delta-hex.json",
+      "sha256": "8c684aa762e932d8fd362df759602fa1481319aea44822e22d6e8753ff033d31"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-flow.json",
+      "sha256": "ee6bfcf85b605384bc292bf13ff67a380455bdb52ede72cfb7b33f56a5d128f1"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/binding.json",
+      "sha256": "32311e35511f0e20b39dbf6c44a4bafef8909e754e64546777e7f4c3a3104c85"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/x18-interruption.json",
+      "sha256": "27f9adda2a00bc3f1274f2ebd57b545b416a7d7dbf6f5aca2a01163c5ae8125e"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/read-vector-path.json",
+      "sha256": "aa5bd4542152de0588c0ef2ce0bac4bb06b6d859495c17ba3c15a58326e1b6e2"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/cluster-checks.json",
+      "sha256": "3d8fb2a46cabc80841c8edef6472e5ac9833b2e86a8edbe919ae2a574b311e23"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe45-cluster/native-globals.json",
+      "sha256": "4b824660968f9671e31a1bc414770a0710d589cec2a757e65ff30bb7c3ad9920"
+    }
+  ],
+  "check_counts": {
+    "software": 42,
+    "read-sites": 18,
+    "wfe": 5,
+    "post-arm-init": 8,
+    "exception": 2,
+    "transition-normal": 5,
+    "transition-occupied-probe": 2,
+    "transition-bad-topology": 2,
+    "transition-occupied-fb": 3,
+    "console-policy": 6,
+    "renderer-bounds": 6,
+    "context-display": 10,
+    "vectors": 5,
+    "transparency": 3024,
+    "image4-launch": 25,
+    "pthread-startup": 6,
+    "root-stop": 15,
+    "root-inputs": 7,
+    "fscompression-startup": 8,
+    "read-boundaries": 11,
+    "read-dispatch": 11,
+    "read-body": 476,
+    "read-init": 9,
+    "single-pass-hex": 7,
+    "read-grid": 9,
+    "read-decmp": 617,
+    "shared-hex": 8,
+    "compact-decmp": 72,
+    "read-fetch": 509,
+    "read-deep": 752,
+    "read-result": 105,
+    "delta-hex": 37,
+    "read-flow": 2795,
+    "binding": 67,
+    "x18-interruption": 29,
+    "read-vector-path": 9,
+    "cluster-checks": 770
+  },
+  "independent_kernel_byte_identical": true,
+  "old_probe44_preserved": true,
+  "probe44_original_media_preserved": true,
+  "resource_cluster_observation": {
+    "source_sha256": "bb8c5c87b097ecc93fd97c0379bff0c534241d81756e8cb56a942a57a4c2c96c",
+    "points": [
+      {
+        "offset": 4425500,
+        "phase": "entry",
+        "calls": [],
+        "returns": [],
+        "site": 18446744005111940892,
+        "id": 700,
+        "group": "clusterext"
+      },
+      {
+        "offset": 4425676,
+        "phase": "body",
+        "calls": [
+          3
+        ],
+        "returns": [],
+        "site": 18446744005111941068,
+        "id": 701,
+        "group": "clusterext"
+      },
+      {
+        "offset": 4425680,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          3
+        ],
+        "site": 18446744005111941072,
+        "id": 702,
+        "group": "clusterext"
+      },
+      {
+        "offset": 4425720,
+        "phase": "body",
+        "calls": [
+          4
+        ],
+        "returns": [],
+        "site": 18446744005111941112,
+        "id": 703,
+        "group": "clusterext"
+      },
+      {
+        "offset": 4425724,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          4
+        ],
+        "site": 18446744005111941116,
+        "id": 704,
+        "group": "clusterext"
+      },
+      {
+        "offset": 4425816,
+        "phase": "body",
+        "calls": [
+          1
+        ],
+        "returns": [],
+        "site": 18446744005111941208,
+        "id": 705,
+        "group": "clusterext"
+      },
+      {
+        "offset": 4425820,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          1
+        ],
+        "site": 18446744005111941212,
+        "id": 706,
+        "group": "clusterext"
+      },
+      {
+        "offset": 4425872,
+        "phase": "body",
+        "calls": [
+          0
+        ],
+        "returns": [],
+        "site": 18446744005111941264,
+        "id": 707,
+        "group": "clusterext"
+      },
+      {
+        "offset": 4425876,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          0
+        ],
+        "site": 18446744005111941268,
+        "id": 708,
+        "group": "clusterext"
+      },
+      {
+        "offset": 4425912,
+        "phase": "body",
+        "calls": [
+          2
+        ],
+        "returns": [],
+        "site": 18446744005111941304,
+        "id": 709,
+        "group": "clusterext"
+      },
+      {
+        "offset": 4425916,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          2
+        ],
+        "site": 18446744005111941308,
+        "id": 710,
+        "group": "clusterext"
+      },
+      {
+        "offset": 4425948,
+        "phase": "return",
+        "calls": [],
+        "returns": [],
+        "site": 18446744005111941340,
+        "id": 711,
+        "group": "clusterext"
+      },
+      {
+        "offset": 4425952,
+        "phase": "entry",
+        "calls": [],
+        "returns": [],
+        "site": 18446744005111941344,
+        "id": 712,
+        "group": "clustercopy"
+      },
+      {
+        "offset": 4426804,
+        "phase": "body",
+        "calls": [
+          0
+        ],
+        "returns": [],
+        "site": 18446744005111942196,
+        "id": 713,
+        "group": "clustercopy"
+      },
+      {
+        "offset": 4426808,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          0
+        ],
+        "site": 18446744005111942200,
+        "id": 714,
+        "group": "clustercopy"
+      },
+      {
+        "offset": 4427120,
+        "phase": "body",
+        "calls": [
+          10
+        ],
+        "returns": [],
+        "site": 18446744005111942512,
+        "id": 715,
+        "group": "clustercopy"
+      },
+      {
+        "offset": 4427124,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          10
+        ],
+        "site": 18446744005111942516,
+        "id": 716,
+        "group": "clustercopy"
+      },
+      {
+        "offset": 4427288,
+        "phase": "body",
+        "calls": [],
+        "returns": [],
+        "value": "x19",
+        "meaning": "native page_shift just loaded",
+        "site": 18446744005111942680,
+        "id": 717,
+        "group": "clustercopy"
+      },
+      {
+        "offset": 4427380,
+        "phase": "body",
+        "calls": [
+          1
+        ],
+        "returns": [],
+        "site": 18446744005111942772,
+        "id": 718,
+        "group": "clustercopy"
+      },
+      {
+        "offset": 4427384,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          1
+        ],
+        "site": 18446744005111942776,
+        "id": 719,
+        "group": "clustercopy"
+      },
+      {
+        "offset": 4428108,
+        "phase": "body",
+        "calls": [
+          2
+        ],
+        "returns": [],
+        "site": 18446744005111943500,
+        "id": 720,
+        "group": "clustercopy"
+      },
+      {
+        "offset": 4428112,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          2
+        ],
+        "site": 18446744005111943504,
+        "id": 721,
+        "group": "clustercopy"
+      },
+      {
+        "offset": 4428232,
+        "phase": "body",
+        "calls": [
+          3
+        ],
+        "returns": [],
+        "site": 18446744005111943624,
+        "id": 722,
+        "group": "clustercopy"
+      },
+      {
+        "offset": 4428236,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          3
+        ],
+        "site": 18446744005111943628,
+        "id": 723,
+        "group": "clustercopy"
+      },
+      {
+        "offset": 4428800,
+        "phase": "body",
+        "calls": [
+          4
+        ],
+        "returns": [],
+        "site": 18446744005111944192,
+        "id": 724,
+        "group": "clustercopy"
+      },
+      {
+        "offset": 4428804,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          4
+        ],
+        "site": 18446744005111944196,
+        "id": 725,
+        "group": "clustercopy"
+      },
+      {
+        "offset": 4428884,
+        "phase": "body",
+        "calls": [
+          5
+        ],
+        "returns": [],
+        "site": 18446744005111944276,
+        "id": 726,
+        "group": "clustercopy"
+      },
+      {
+        "offset": 4428888,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          5
+        ],
+        "site": 18446744005111944280,
+        "id": 727,
+        "group": "clustercopy"
+      },
+      {
+        "offset": 4429036,
+        "phase": "body",
+        "calls": [
+          6
+        ],
+        "returns": [],
+        "site": 18446744005111944428,
+        "id": 728,
+        "group": "clustercopy"
+      },
+      {
+        "offset": 4429040,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          6
+        ],
+        "site": 18446744005111944432,
+        "id": 729,
+        "group": "clustercopy"
+      },
+      {
+        "offset": 4430320,
+        "phase": "return",
+        "calls": [],
+        "returns": [],
+        "site": 18446744005111945712,
+        "id": 730,
+        "group": "clustercopy"
+      },
+      {
+        "offset": 4430544,
+        "phase": "body",
+        "calls": [
+          7
+        ],
+        "returns": [],
+        "site": 18446744005111945936,
+        "id": 731,
+        "group": "clustercopy"
+      },
+      {
+        "offset": 4430548,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          7
+        ],
+        "site": 18446744005111945940,
+        "id": 732,
+        "group": "clustercopy"
+      },
+      {
+        "offset": 4430692,
+        "phase": "body",
+        "calls": [
+          8
+        ],
+        "returns": [],
+        "site": 18446744005111946084,
+        "id": 733,
+        "group": "clustercopy"
+      },
+      {
+        "offset": 4430696,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          8
+        ],
+        "site": 18446744005111946088,
+        "id": 734,
+        "group": "clustercopy"
+      },
+      {
+        "offset": 4430760,
+        "phase": "body",
+        "calls": [
+          9
+        ],
+        "returns": [],
+        "site": 18446744005111946152,
+        "id": 735,
+        "group": "clustercopy"
+      },
+      {
+        "offset": 4430764,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          9
+        ],
+        "site": 18446744005111946156,
+        "id": 736,
+        "group": "clustercopy"
+      },
+      {
+        "offset": 4442968,
+        "phase": "entry",
+        "calls": [],
+        "returns": [],
+        "site": 18446744005111958360,
+        "id": 737,
+        "group": "ubccopy"
+      },
+      {
+        "offset": 4443020,
+        "phase": "body",
+        "calls": [
+          0
+        ],
+        "returns": [],
+        "site": 18446744005111958412,
+        "id": 738,
+        "group": "ubccopy"
+      },
+      {
+        "offset": 4443024,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          0
+        ],
+        "site": 18446744005111958416,
+        "id": 739,
+        "group": "ubccopy"
+      },
+      {
+        "offset": 4443164,
+        "phase": "body",
+        "calls": [
+          1
+        ],
+        "returns": [],
+        "site": 18446744005111958556,
+        "id": 740,
+        "group": "ubccopy"
+      },
+      {
+        "offset": 4443168,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          1
+        ],
+        "site": 18446744005111958560,
+        "id": 741,
+        "group": "ubccopy"
+      },
+      {
+        "offset": 4443252,
+        "phase": "return",
+        "calls": [],
+        "returns": [],
+        "site": 18446744005111958644,
+        "id": 742,
+        "group": "ubccopy"
+      },
+      {
+        "offset": 7315648,
+        "phase": "entry",
+        "calls": [],
+        "returns": [],
+        "site": 18446744005114831040,
+        "id": 743,
+        "group": "uplrequest"
+      },
+      {
+        "offset": 7315896,
+        "phase": "body",
+        "calls": [
+          0
+        ],
+        "returns": [],
+        "site": 18446744005114831288,
+        "id": 744,
+        "group": "uplrequest"
+      },
+      {
+        "offset": 7315900,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          0
+        ],
+        "site": 18446744005114831292,
+        "id": 745,
+        "group": "uplrequest"
+      },
+      {
+        "offset": 7315940,
+        "phase": "return",
+        "calls": [],
+        "returns": [],
+        "site": 18446744005114831332,
+        "id": 746,
+        "group": "uplrequest"
+      },
+      {
+        "offset": 7315960,
+        "phase": "return",
+        "calls": [],
+        "returns": [],
+        "site": 18446744005114831352,
+        "id": 747,
+        "group": "uplrequest"
+      },
+      {
+        "offset": 4408532,
+        "phase": "entry",
+        "calls": [],
+        "returns": [],
+        "site": 18446744005111923924,
+        "id": 748,
+        "group": "clusterio"
+      },
+      {
+        "offset": 4409828,
+        "phase": "body",
+        "calls": [
+          0
+        ],
+        "returns": [],
+        "site": 18446744005111925220,
+        "id": 749,
+        "group": "clusterio"
+      },
+      {
+        "offset": 4409832,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          0
+        ],
+        "site": 18446744005111925224,
+        "id": 750,
+        "group": "clusterio"
+      },
+      {
+        "offset": 4409948,
+        "phase": "body",
+        "calls": [
+          1
+        ],
+        "returns": [],
+        "site": 18446744005111925340,
+        "id": 751,
+        "group": "clusterio"
+      },
+      {
+        "offset": 4409952,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          1
+        ],
+        "site": 18446744005111925344,
+        "id": 752,
+        "group": "clusterio"
+      },
+      {
+        "offset": 4411876,
+        "phase": "body",
+        "calls": [
+          2
+        ],
+        "returns": [],
+        "site": 18446744005111927268,
+        "id": 753,
+        "group": "clusterio"
+      },
+      {
+        "offset": 4411880,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          2
+        ],
+        "site": 18446744005111927272,
+        "id": 754,
+        "group": "clusterio"
+      },
+      {
+        "offset": 4412172,
+        "phase": "body",
+        "calls": [
+          3
+        ],
+        "returns": [],
+        "site": 18446744005111927564,
+        "id": 755,
+        "group": "clusterio"
+      },
+      {
+        "offset": 4412176,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          3
+        ],
+        "site": 18446744005111927568,
+        "id": 756,
+        "group": "clusterio"
+      },
+      {
+        "offset": 4412208,
+        "phase": "body",
+        "calls": [
+          4
+        ],
+        "returns": [],
+        "site": 18446744005111927600,
+        "id": 757,
+        "group": "clusterio"
+      },
+      {
+        "offset": 4412212,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          4
+        ],
+        "site": 18446744005111927604,
+        "id": 758,
+        "group": "clusterio"
+      },
+      {
+        "offset": 4412956,
+        "phase": "body",
+        "calls": [
+          5
+        ],
+        "returns": [],
+        "site": 18446744005111928348,
+        "id": 759,
+        "group": "clusterio"
+      },
+      {
+        "offset": 4412960,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          5
+        ],
+        "site": 18446744005111928352,
+        "id": 760,
+        "group": "clusterio"
+      },
+      {
+        "offset": 4413396,
+        "phase": "body",
+        "calls": [
+          6
+        ],
+        "returns": [],
+        "site": 18446744005111928788,
+        "id": 761,
+        "group": "clusterio"
+      },
+      {
+        "offset": 4413400,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          6
+        ],
+        "site": 18446744005111928792,
+        "id": 762,
+        "group": "clusterio"
+      },
+      {
+        "offset": 4413432,
+        "phase": "return",
+        "calls": [],
+        "returns": [],
+        "site": 18446744005111928824,
+        "id": 763,
+        "group": "clusterio"
+      }
+    ],
+    "specs": [
+      {
+        "name": "clusterext",
+        "entry": 4425500,
+        "ret": 4425948,
+        "frame": 80,
+        "lr": -31865696,
+        "parent": "read",
+        "parent_bit": 4,
+        "parent_lr": 18446744005075651924,
+        "calls": [
+          4425872,
+          4425816,
+          4425912,
+          4425676,
+          4425720
+        ]
+      },
+      {
+        "name": "clustercopy",
+        "entry": 4425952,
+        "ret": 4430320,
+        "frame": 384,
+        "lr": 4425876,
+        "parent": "clusterext",
+        "parent_bit": 0,
+        "parent_lr": 18446744005075649696,
+        "calls": [
+          4426804,
+          4427380,
+          4428108,
+          4428232,
+          4428800,
+          4428884,
+          4429036,
+          4430544,
+          4430692,
+          4430760,
+          4427120
+        ]
+      },
+      {
+        "name": "ubccopy",
+        "entry": 4442968,
+        "ret": 4443252,
+        "frame": 96,
+        "lr": 4426808,
+        "parent": "clustercopy",
+        "parent_bit": 0,
+        "parent_lr": 18446744005111941268,
+        "calls": [
+          4443020,
+          4443164
+        ]
+      },
+      {
+        "name": "uplrequest",
+        "entry": 7315648,
+        "ret": 7315960,
+        "extra_ret": 7315940,
+        "frame": 16,
+        "lr": 4427384,
+        "parent": "clustercopy",
+        "parent_bit": 1,
+        "parent_lr": 18446744005111941268,
+        "calls": [
+          7315896
+        ]
+      },
+      {
+        "name": "clusterio",
+        "entry": 4408532,
+        "ret": 4413432,
+        "frame": 272,
+        "lr": 4428112,
+        "parent": "clustercopy",
+        "parent_bit": 2,
+        "parent_lr": 18446744005111941268,
+        "calls": [
+          4409828,
+          4409948,
+          4411876,
+          4412172,
+          4412208,
+          4412956,
+          4413396
+        ]
+      }
+    ],
+    "state_bytes": 160,
+    "new_grid_rectangles": 0,
+    "native_policy_changed": false,
+    "scope": "active read thread, paired parent call, exact parent frame chain and saved LR, paired child returns",
+    "fields": {
+      "A03D": "last scoped attribute/lookup/read checkpoint; not stopped PC",
+      "A03E": "raw native register at checkpoint; x19 only at page_shift checkpoint, not always errno"
+    },
+    "limitations": [
+      "Selected significant calls, not every instruction",
+      "Native locks, errors, IO and exec boundary unchanged"
+    ]
+  },
+  "page_shift_checkpoint": {
+    "source": "_PAGE_SHIFT_CONST",
+    "mutable_page_shift_sampled": false
+  },
+  "sources": [
+    {
+      "path": "scripts/resource_cluster_sites.py",
+      "sha256": "bb8c5c87b097ecc93fd97c0379bff0c534241d81756e8cb56a942a57a4c2c96c"
+    },
+    {
+      "path": "scripts/resource_cluster_checks.py",
+      "sha256": "71d843ffead8a50b6cf94207ac7e0cf0cfaaded4587ffaef71e82ff4163a63c8"
+    },
+    {
+      "path": "scripts/resource_chain_sites.py",
+      "sha256": "0b83fb0fa14980a5a533f684635fdbf69931cdcae0369b78b222aa4041cdcafc"
+    },
+    {
+      "path": "scripts/resource_chain_checks.py",
+      "sha256": "c691cc4b1c0633b48698101550aef978ff62df8a6f956ce50e99c6861c6e609c"
+    },
+    {
+      "path": "scripts/resource_handler_sites.py",
+      "sha256": "4291ef645c0f698d911fe3a1b049f9cd6a3e0ef100d6bfa3da9705b1281f7cf0"
+    },
+    {
+      "path": "scripts/resource_handler_checks.py",
+      "sha256": "86bda88335f9a42c94629668218f0f071f54d8b0aa18003913618265b87f76bb"
+    },
+    {
+      "path": "scripts/probe_bootstrap_sites.py",
+      "sha256": "950d18bd7588dfb5a66594bc0ed0895f06534e493bce497b0b022de440cef962"
+    },
+    {
+      "path": "scripts/read_flow_sites.py",
+      "sha256": "e4ce9ac7cbeeda4ebd3d5e8f0aa8648afe44317fd499cdaa225bb8f3cb52a366"
+    },
+    {
+      "path": "scripts/build-kernel-entry-probe.py",
+      "sha256": "ce3a2c6fa54def75a462dc850a652c0791ba5d45750dfef48ed87bc26596a035"
+    },
+    {
+      "path": "scripts/build_xnu_boot_package.py",
+      "sha256": "bb4d3b32c12e2ae703389fac928f82dfc7c6c8f29441a308818d9c0703388ece"
+    },
+    {
+      "path": "scripts/test-read-flow.py",
+      "sha256": "46da609cc8f10aedfada09150008636eb2009a0e708be6283928bc38fdb9ca0a"
+    },
+    {
+      "path": "scripts/kernel_entry_probe_inputs.py",
+      "sha256": "cdf0e8094685c6eb25b540ce964aafd78dfe0c1933fe59a2876cf6fb1b27ea45"
+    }
+  ],
+  "media_workflow_sources": [
+    {
+      "path": "scripts/trial_media.py",
+      "sha256": "9aeab17fd155d11a9e404e5a40fd7a87003f759c2c0b2b9cea3fe16cee98ef38"
+    },
+    {
+      "path": "scripts/record-nuwa-trial-state.py",
+      "sha256": "90758e0766e7de600786ffaa7ac7ec0bc175a714fbdd5ab192cd8b81482a695d"
+    }
+  ],
+  "media_directory": {
+    "round": "PROBE45",
+    "original": "D:\\Code\\PortingiOS\\nuwa\\Media-nuwa\\PROBE45\\original",
+    "derived": "D:\\Code\\PortingiOS\\nuwa\\Media-nuwa\\PROBE45\\derived",
+    "existing_files_preserved": true
+  },
+  "unchanged_media_workflow_prior_checks": {
+    "path": "reports/kernel-entry-probe/2026-10-27-probe44-chain/media-directory-checks.json",
+    "sha256": "74696bb181874218e6cc2ed7149c079d1dc1ad66835e2adfb2ab4b3d046a265e"
+  },
+  "device_accessed": false,
+  "device_test_passed": false,
+  "release_239_retained": true,
+  "limitations": [
+    "Synthetic instruction replay and x18 clearing are not physical IRQ or full native APFS execution tests",
+    "Existing incremental drawing remains; each matched handler observation draws two existing rows",
+    "Restore root unchanged; no EL0 or desktop claim",
+    "WSL stderr decoding errors retained in execution logs; not a clean log capture"
+  ]
+}

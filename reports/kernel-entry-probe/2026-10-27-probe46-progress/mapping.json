@@ -1,0 +1,130 @@
+{
+  "scope": "Software-generated bootstrap table walk; not hardware MMU or device mapping",
+  "build": "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe46-progress\\build.json",
+  "candidate_sha256": "ee2c130fd0e184e4d262f4b0eec86e65c370c3d323413570c761aabe91eca70f",
+  "snapshots": [
+    {
+      "tcr": "0x22a51a251a",
+      "ttbr0": "0x8c355e000",
+      "ttbr1": "0x8c355f000",
+      "walks": [
+        {
+          "label": "framebuffer PA 0xb8000000",
+          "va": "0xb8000000",
+          "mapped": true,
+          "pa": "0xb8000000",
+          "type": "block",
+          "level": 1,
+          "rows": [
+            {
+              "level": 1,
+              "table_offset": "0x8c355e010",
+              "descriptor": "0x6000008000040d"
+            }
+          ]
+        },
+        {
+          "label": "framebuffer PA +1 page",
+          "va": "0xb8001000",
+          "mapped": true,
+          "pa": "0xb8001000",
+          "type": "block",
+          "level": 1,
+          "rows": [
+            {
+              "level": 1,
+              "table_offset": "0x8c355e010",
+              "descriptor": "0x6000008000040d"
+            }
+          ]
+        },
+        {
+          "label": "probe page VA",
+          "va": "0xfffffff008489000",
+          "mapped": true,
+          "pa": "0x8c4889000",
+          "type": "block",
+          "level": 2,
+          "rows": [
+            {
+              "level": 1,
+              "table_offset": "0x8c355f600",
+              "descriptor": "0x8c3561003"
+            },
+            {
+              "level": 2,
+              "table_offset": "0x8c3561210",
+              "descriptor": "0x8c4800601"
+            }
+          ]
+        },
+        {
+          "label": "arm_init KVA",
+          "va": "0xfffffff007972848",
+          "mapped": true,
+          "pa": "0x8c3d72848",
+          "type": "block",
+          "level": 2,
+          "rows": [
+            {
+              "level": 1,
+              "table_offset": "0x8c355f600",
+              "descriptor": "0x8c3561003"
+            },
+            {
+              "level": 2,
+              "table_offset": "0x8c35611e0",
+              "descriptor": "0x8c3c00601"
+            }
+          ]
+        },
+        {
+          "label": "sctlr site as PA-identity VA",
+          "va": "0x8c37c7374",
+          "mapped": true,
+          "pa": "0x8c37c7374",
+          "type": "block",
+          "level": 2,
+          "rows": [
+            {
+              "level": 1,
+              "table_offset": "0x8c355e118",
+              "descriptor": "0x8c3560003"
+            },
+            {
+              "level": 2,
+              "table_offset": "0x8c35600d8",
+              "descriptor": "0x8c3600601"
+            }
+          ]
+        },
+        {
+          "label": "boot_args synthetic VA",
+          "va": "0xfffffff013dc8000",
+          "mapped": true,
+          "pa": "0x8d01c8000",
+          "type": "block",
+          "level": 2,
+          "rows": [
+            {
+              "level": 1,
+              "table_offset": "0x8c355f600",
+              "descriptor": "0x8c3561003"
+            },
+            {
+              "level": 2,
+              "table_offset": "0x8c35614f0",
+              "descriptor": "0x8d0000601"
+            }
+          ]
+        }
+      ],
+      "l1_sample": [
+        "0x0",
+        "0x0",
+        "0x6000008000040d",
+        "0x0"
+      ]
+    }
+  ]
+}

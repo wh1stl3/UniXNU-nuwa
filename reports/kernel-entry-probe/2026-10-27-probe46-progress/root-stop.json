@@ -1,0 +1,98 @@
+{
+  "scope": "Verify continuous exec observations and the conditional restore-release boundary.",
+  "candidate_sha256": "ee2c130fd0e184e4d262f4b0eec86e65c370c3d323413570c761aabe91eca70f",
+  "checks": [
+    {
+      "name": "inactive-pass",
+      "passed": true,
+      "held": false,
+      "target": "0xfffffff0072a1ab0"
+    },
+    {
+      "name": "uncommitted-pass",
+      "passed": true,
+      "held": false,
+      "target": "0xfffffff0072a1ab0"
+    },
+    {
+      "name": "foreign-task-pass",
+      "passed": true,
+      "held": false,
+      "target": "0xfffffff0072a1ab0"
+    },
+    {
+      "name": "wrong-flag-pass",
+      "passed": true,
+      "held": false,
+      "target": "0xfffffff0072a1ab0"
+    },
+    {
+      "name": "committed-hold",
+      "passed": true,
+      "held": true,
+      "target": "0xfffffff0084deb8c"
+    },
+    {
+      "name": "committed-no-video",
+      "passed": true,
+      "held": true,
+      "target": "0xfffffff0084deb8c"
+    },
+    {
+      "name": "first-exec-continues",
+      "passed": true,
+      "held": false,
+      "target": "0xfffffff00769ce3c"
+    },
+    {
+      "name": "error-return-continues",
+      "passed": true,
+      "held": false,
+      "target": "0xfffffff00769d5fc"
+    },
+    {
+      "name": "inactive-activation-result",
+      "passed": true,
+      "held": false,
+      "target": "0xfffffff00769cfb0"
+    },
+    {
+      "name": "inactive-exec-result",
+      "passed": true,
+      "held": false,
+      "target": "0xfffffff00769d5fc"
+    },
+    {
+      "name": "repeat-retains-result",
+      "passed": true,
+      "held": false,
+      "target": "0xfffffff00769ce3c"
+    },
+    {
+      "name": "inactive-switch-rearms",
+      "passed": true,
+      "held": false,
+      "target": "0xfffffff00769c238"
+    },
+    {
+      "name": "path-first-error",
+      "passed": true,
+      "held": false,
+      "first_failure_stage": 242
+    },
+    {
+      "name": "path-zero-return",
+      "passed": true,
+      "held": false,
+      "first_failure_stage": 0
+    },
+    {
+      "name": "path-keeps-first-error",
+      "passed": true,
+      "held": false,
+      "first_failure_stage": 240
+    }
+  ],
+  "exec_body_executed": false,
+  "restore_userspace_released": false
+}

@@ -1,0 +1,12 @@
+{
+  "native_instruction_input": "out/earlysec-2026-10-24/kernel-prelinked-earlysec.macho",
+  "native_instruction_input_sha256": "1aeebf1352a86b0d31612a6bd6e77bd7292f676ad2ce43a99ec4a8f3999eedb6",
+  "deployed_candidate": "out/kernel-entry-probe-45-cluster/kernel-entry-probe.macho",
+  "deployed_candidate_sha256": "2935ab6e53067a5daa4156510e158f3eebe765c50592abbd4b617375c2f05247",
+  "media_manifest_sha256": "2c7c7b9590be4434a375a3823c85aae28059d6c6e8e3f14b4c270997d37cb765",
+  "scope": "Native return window uses original pre-instrumentation instructions; PROBE45 actual observer mapping and modified sites are bound in its build report",
+  "public_source": {
+    "path": "D:/Code/PortingiOSLegacy/common/sources/xnu-ios16-full/bsd/vfs/vfs_cluster.c",
+    "sha256": "3e38e8366ae2db71e902d71a1ec12ee98ed760877145d872ac40bdc3df23669e"
+  }
+}

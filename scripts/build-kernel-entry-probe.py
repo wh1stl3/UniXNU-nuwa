@@ -189,6 +189,8 @@ def main():
         template=transform(template)
         from resource_chain_sites import transform
         template=transform(template)
+        from resource_cluster_sites import transform
+        template=transform(template)
     if a.read_init_checkpoints:
         from read_init_sites import MIN_HEIGHT
         old='    cmp         x9, #800                          // all diagnostic output is above row 800'

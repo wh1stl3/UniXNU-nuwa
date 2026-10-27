@@ -1,0 +1,42 @@
+import hashlib,json,sys
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'scripts'))
+import exec_path_sites as E
+import exec_trace_sites as T
+F=ROOT/'reports/kernel-entry-probe/2026-10-27-probe46-progress'
+def load(p):return json.loads(p.read_bytes())
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+b=load(F/'build.json');q=load(F/'qualification.json');image=ROOT/q['image_path']
+assert sha(image)==q['image_sha256']
+assert sha(ROOT/b['candidate']['path'])==q['candidate_sha256']
+edges=b['dense_bootstrap']['edges'];sites={int(x['site'],16) for x in edges}
+native_paths=[]
+for pc,fn,target in E.CALLS:
+ assert pc in sites and pc+4 in sites,(hex(pc),target)
+ native_paths.append(dict(call=hex(pc),continuation=hex(pc+4),caller=fn,target=target))
+for pc,target in T.CALLS:assert pc in sites and pc+4 in sites,(hex(pc),target)
+for key in ('read_deep','read_result','read_fetch'):
+ for p in b[key]['points']:assert p['site'] in sites,(key,hex(p['site']))
+assert b['root_mount_diagnostic']['conditional_boundary_only'] is True
+assert b['root_mount_diagnostic']['site']==hex(T.RELEASE)
+release=load(F/'root-stop.json');assert len(release['checks'])==15 and all(c['passed'] for c in release['checks'])
+report=dict(image_path=q['image_path'],image_sha256=q['image_sha256'],candidate_sha256=q['candidate_sha256'],qualification_sha256=sha(F/'qualification.json'),
+ scope='Expanded same-trial acceptance objectives from existing qualified code; static site coverage only, no new build or hardware result',
+ milestones=[
+  dict(name='UBC/UPL/IO read continuation',evidence='Matched entry and paired continuation/RET checkpoints, including APFS 0xfffffff00519c4a0',failure_action='Identify the actual completion provider and wait path before deeper probes'),
+  dict(name='ResourceFork helper completion',evidence='Paired helper returns and native raw return; later caller progress',failure_action='Interpret native read/error propagation without forcing success'),
+  dict(name='Type4 fetch/decode callback',evidence='Existing read_fetch/read_deep/read_result checkpoints and actual callback raw return',failure_action='Distinguish transport, allocation, block-table and decode errors by native function'),
+  dict(name='Mach-O activation and load_machfile',evidence='Existing exec-path calls and continuations; A02D/A030 activation/exec results',failure_action='Retain the first failing native stage and raw result'),
+  dict(name='dyld lookup, authorization and read',evidence='Existing load_dylinker namei/vnode_authorize/vn_rdwr pairs',failure_action='Check actual root namespace and native error; no path/security bypass'),
+  dict(name='Task switch/signature and controlled release boundary',evidence='Existing task switch/signature records and conditional 239 at 0xfffffff00769d230',failure_action='Keep Restore release hold; no EL0 or desktop claim')],
+ native_exec_paths=native_paths,
+ fields=b['exec_trace']['tags'],
+ boundary=dict(site=hex(T.RELEASE),policy=b['root_mount_diagnostic']['mode'],restore_userspace_allowed=False),
+ limitations=['Progress depends on native earlier calls completing; broader objectives do not repair the current read wait',
+ 'Success checkpoints return to native control flow; native errors remain observable and are not overridden',
+ 'A02E is the first nonzero stage for the attempt; A032 is raw native return and not always errno',
+ 'Video and stable photo can omit transient checkpoints; cumulative tiles are not complete ordering or execution counts',
+ 'Reaching 239 is a controlled Restore task release boundary, not EL0 execution'],
+ device_accessed=False,kernel_changed=False)
+dest=F/'expanded-trial-objectives.json';assert not dest.exists();dest.write_bytes(json.dumps(report,indent=2).encode()+b'\n')
+print(json.dumps(dict(milestones=len(report['milestones']),native_exec_call_pairs=len(native_paths),all_sites_present=True,kernel_changed=False,image_sha256=q['image_sha256'])))

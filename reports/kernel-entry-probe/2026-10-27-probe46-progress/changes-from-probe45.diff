@@ -1,0 +1,205 @@
+--- PROBE45/scripts/build_xnu_boot_package.py
++++ PROBE46/scripts/build_xnu_boot_package.py
+@@ -351,6 +351,8 @@
+                 UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 43','PROBE 44').replace('APFS RESOURCE HANDLER CALL AND RETURN','RESOURCE LOOKUP READ AND EXEC CONTINUATION')
+             if json.loads(args.entry_probe.read_text()).get('read_flow',{}).get('resource_cluster'):
+                 UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 44','PROBE 45').replace('RESOURCE LOOKUP READ AND EXEC CONTINUATION','UBC UPL IO AND NATIVE EXEC CONTINUATION')
++                if json.loads(args.entry_probe.read_text())['read_flow']['resource_cluster'].get('cache_progress_revision')==46:
++                    UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 45','PROBE 46').replace('UBC UPL IO AND NATIVE EXEC CONTINUATION','CACHE PROGRESS PREFETCH CLEANUP AND EXEC CONTINUATION')
+     elif probe and revision>=30:raise ValueError('Mount-only candidate must bind the real RAMDisk')
+     if sha(fd) != FD_SHA or len(fd) != 3145728:
+         raise ValueError('Firmware FD changed')
+--- PROBE45/scripts/probe_bootstrap_sites.py
++++ PROBE46/scripts/probe_bootstrap_sites.py
+@@ -33,7 +33,7 @@
+     def add(site,fn,callee,phase,call=None):
+         index=(1 if revision>=34 and len(edges)>=232 else 0)+len(edges)+(4 if revision>=29 and len(edges)>=178 else 0)+(2 if revision>=31 and len(edges)>=208 else 0)+(1 if revision>=32 and len(edges)>=212 else 0)
+         if revision>=36 and index>=264:index+=2
+-        if index>=(764 if revision>=49 else 589 if revision>=47 else 582 if revision>=46 else 499 if revision>=45 else 441 if revision>=42 else 373 if revision>=38 else 277 if revision>=37 else 276 if revision>=36 else 264 if revision>=32 else 220):raise ValueError('Next-phase panel capacity exceeded')
++        if index>=(779 if revision>=49 else 589 if revision>=47 else 582 if revision>=46 else 499 if revision>=45 else 441 if revision>=42 else 373 if revision>=38 else 277 if revision>=37 else 276 if revision>=36 else 264 if revision>=32 else 220):raise ValueError('Next-phase panel capacity exceeded')
+         color={'call':'0xff40c0ff','continuation':'0xff40ff80','entry':'0xffffff00','context':'0xffff40ff'}[phase]
+         e=dict(id=index,function=fn,callee=callee,phase=phase,call=hex(call if call is not None else site),site=hex(site),x=832+(index%10)*48,y=256+(index//10)*24,color=color)
+         if index>=220:e.update(x=1320+((index-220)%2)*48,y=256+((index-220)//2)*24)
+--- PROBE45/scripts/read_flow_sites.py
++++ PROBE46/scripts/read_flow_sites.py
+@@ -15,7 +15,7 @@
+ def plan():
+     return dict(source_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),points=points(),
+                 fields={'A03A':'second allocation request retained','A03B':'allocator return retained','A03C':'caller return retained','A03D':'latest scoped post-allocation/decode checkpoint PC, not stopped CPU PC','A03E':'raw x0 at paired continuation or decode RET; F at entry/call/checkpoint'},
+-                state_bytes=336,new_sites=43+len(CHAIN.points())+len(CLUSTER.points()),resource=RESOURCE.plan(),resource_dispatch=DISPATCH.plan(),resource_handler=HANDLER.plan(),resource_chain=CHAIN.plan(),resource_cluster=CLUSTER.plan(),native_policy_changed=False,
++                state_bytes=304,new_sites=43+len(CHAIN.points())+len(CLUSTER.points()),resource=RESOURCE.plan(),resource_dispatch=DISPATCH.plan(),resource_handler=HANDLER.plan(),resource_chain=CHAIN.plan(),resource_cluster=CLUSTER.plan(),native_policy_changed=False,
+                 scope='Existing header/thread/target/frame/parent-call gates plus active second-allocation record, nonzero non-sentinel caller return and matching callback FP')
+ 
+ def observe(site):
+--- PROBE45/scripts/resource_cluster_checks.py
++++ PROBE46/scripts/resource_cluster_checks.py
+@@ -5,7 +5,7 @@
+ import resource_dispatch_checks as W
+ MODES=('normal','no-video','foreign-thread','inactive-read','inactive-wrapper','wrapper-frame','wrong-lr','inactive-handler','handler-frame','unpaired','parent-lr','parent-unpaired')
+ def source_sha256():return hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+-def required_names():return {f'cluster:{p["site"]:#x}:{mode}' for p in P.points() for mode in MODES}|{'cluster:reset','cluster:missing-thread-negative'}
++def required_names():return {f'cluster:{p["site"]:#x}:{mode}' for p in P.points() for mode in MODES}|{'cluster:reset','cluster:missing-thread-negative'}|{f'cluster-continuity:{case}:{mode}' for case in CONTINUITY_CASES for mode in ('normal','no-video')}|{'cluster:ubc-native-bytes'}
+ 
+ def setup(M,raw,b,p,mode):
+     T=M.T;spec=P.spec_for(p)
+@@ -30,6 +30,8 @@
+ 
+ def execute(M,raw,b,p,mode,original,om):
+     T=M.T;site=p['site'];ref,_,_,_,_=setup(M,raw,b,p,mode)
++    value=p.get('value','x0')
++    sampled=((ref.reg_read(T.UC_ARM64_REG_X20)&0xffffffff)<<32)|(ref.reg_read(T.UC_ARM64_REG_X8)&0xffffffff) if value=='request_residual' else ref.reg_read(getattr(T,'UC_ARM64_REG_'+value.upper()))
+     at=M.B.backed(om,site);ref.mem_write(site,original[at:at+4])
+     try:ref.emu_start(site,0,count=1)
+     except T.U.UcError as error:raise AssertionError((hex(site),mode,'native reference instruction failed',original[at:at+4].hex())) from error
+@@ -46,13 +48,69 @@
+         for bit in p['calls']:own[2]|=1<<bit
+         own[3]+=1
+         if p['phase']=='return':own[1]=0
+-        state[4:6]=[site,12 if p.get('value')=='x19' else T.STACK+0xa000]
++        state[4:6]=[site,sampled]
+     assert list(struct.unpack('<8Q',u.mem_read(sy['probe_result_state'],64)))==state,(hex(site),mode,'record')
+     assert list(struct.unpack('<4Q',u.mem_read(sy[P.state_name(p['group'])],32)))==own,(hex(site),mode,'pairing')
+     assert sum(n for pos,n in writes)==(76800 if hit and mode!='no-video' else 0),(hex(site),mode,'pixels')
+     for pos,n in writes:
+         y,x=divmod(pos-T.FB,T.ROW);assert (980<=y<1000 or 1008<=y<1028) and 1024<=x and x+n<=2944
+     return dict(name=f'cluster:{site:#x}:{mode}',passed=True)
++
++
++# Explicit VM-boundary fixtures: exercise native helper, epilogue and caller
++# together. They do not qualify actual VM cache contents or physical IO.
++CONTINUITY_CASES={
++    'null-object':(8,0,0,False),
++    'zero-request':(0,0,0,True),
++    'cache-miss':(8,0,0,True),
++    'partial-copy':(8,3,0,True),
++    'complete-copy':(8,8,0,True),
++    'native-error':(8,0,5,True),
++}
++
++def continuity(M,raw,b,original,om,case,mode,native):
++    T=M.T;requested,copied,error,object_present=CONTINUITY_CASES[case]
++    p=next(p for p in P.points() if p['site']==P.BASE+0x438c34)
++    u,m,sy,state,own=setup(M,raw,b,p,mode)
++    fp=u.reg_read(T.UC_ARM64_REG_X29);uio=T.STACK+0xb000;obj=T.STACK+0xc000
++    u.reg_write(T.UC_ARM64_REG_X1,uio);u.reg_write(T.UC_ARM64_REG_X2,fp-0x60)
++    u.reg_write(T.UC_ARM64_REG_X3,0);u.reg_write(T.UC_ARM64_REG_X4,1)
++    u.reg_write(T.UC_ARM64_REG_X20,requested)
++    u.mem_write(fp-0x60,struct.pack('<I',requested))
++    u.mem_write(uio+0x18,struct.pack('<Q',0))
++    u.mem_write(uio+0x20,struct.pack('<I',2))
++    u.mem_write(uio+0x28,struct.pack('<Q',requested))
++    if native:
++        for point in P.points():
++            at=M.B.backed(om,point['site']);u.mem_write(point['site'],original[at:at+4])
++    trace=[];moves=[]
++    def hook(u,pc,n,d):
++        if pc in (P.BASE+0x438c34,P.BASE+0x43cb58,P.BASE+0x43cc74,P.BASE+0x438c38,P.BASE+0x438c3c):trace.append(pc)
++        if pc==P.BASE+0x6fa47c:
++            u.reg_write(T.UC_ARM64_REG_X0,obj if object_present else 0)
++            u.reg_write(T.UC_ARM64_REG_PC,u.reg_read(T.UC_ARM64_REG_LR))
++        if pc==P.BASE+0x3005cc:
++            assert u.reg_read(T.UC_ARM64_REG_X0)==obj and u.reg_read(T.UC_ARM64_REG_X2)==uio
++            assert u.reg_read(T.UC_ARM64_REG_X4)==requested
++            moves.append(requested)
++            u.mem_write(uio+0x18,struct.pack('<Q',copied))
++            u.mem_write(uio+0x28,struct.pack('<Q',requested-copied))
++            u.reg_write(T.UC_ARM64_REG_X0,error)
++            u.reg_write(T.UC_ARM64_REG_PC,u.reg_read(T.UC_ARM64_REG_LR))
++        if pc==P.BASE+0x438c40:u.emu_stop()
++    u.hook_add(T.U.UC_HOOK_CODE,hook)
++    u.emu_start(p['site'],0,count=12000000)
++    assert u.reg_read(T.UC_ARM64_REG_PC)==P.BASE+0x438c40
++    assert trace==[P.BASE+x for x in (0x438c34,0x43cb58,0x43cc74,0x438c38,0x438c3c)]
++    assert len(moves)==int(object_present and requested!=0)
++    residual=struct.unpack('<I',u.mem_read(fp-0x60,4))[0]
++    assert residual==requested-copied and u.reg_read(T.UC_ARM64_REG_X0)==error
++    if not native:
++        record=struct.unpack('<8Q',u.mem_read(sy['probe_result_state'],64))
++        assert record[4:6]==(P.BASE+0x438c3c,(requested<<32)|residual)
++        pair=struct.unpack('<4Q',u.mem_read(sy[P.state_name('clustercopy')],32))
++        assert pair[2]&1==0
++    return M.D.snapshot(u),bytes(u.mem_read(uio,48)),residual
+ 
+ def run(M,raw,b,original,om):
+     checks=[execute(M,raw,b,p,mode,original,om) for p in P.points() for mode in MODES]
+@@ -74,4 +132,13 @@
+     except AssertionError:rejected=True
+     assert rejected
+     checks.append(dict(name='cluster:missing-thread-negative',passed=True))
++    for case in CONTINUITY_CASES:
++        for mode in ('normal','no-video'):
++            actual=continuity(M,raw,b,original,om,case,mode,False)
++            reference=continuity(M,raw,b,original,om,case,mode,True)
++            assert actual==reference,(case,mode,'native helper and caller continuity')
++            checks.append(dict(name=f'cluster-continuity:{case}:{mode}',passed=True))
++    m=M.B.macho(raw);start=P.BASE+0x43cb58;size=0x124
++    assert raw[M.B.backed(m,start,size):M.B.backed(m,start,size)+size]==original[M.B.backed(om,start,size):M.B.backed(om,start,size)+size]
++    checks.append(dict(name='cluster:ubc-native-bytes',passed=True))
+     return checks
+--- PROBE45/scripts/resource_cluster_sites.py
++++ PROBE46/scripts/resource_cluster_sites.py
+@@ -1,4 +1,4 @@
+-"""Scoped continuation through APFS attributes, resource vnode lookup and read."""
++"""Scoped cache progress, prefetch, cleanup and native read continuation."""
+ import hashlib,struct
+ from pathlib import Path
+ import resource_chain_sites as H
+@@ -7,9 +7,7 @@
+  dict(name='clusterext',entry=0x43871c,ret=0x4388dc,frame=0x50,lr=0xfffffff00519c4a0-BASE,parent='read',parent_bit=4,parent_lr=0xfffffff00519cd54,
+       calls=(0x438890,0x438858,0x4388b8,0x4387cc,0x4387f8)),
+  dict(name='clustercopy',entry=0x4388e0,ret=0x4399f0,frame=0x180,lr=0x438894,parent='clusterext',parent_bit=0,parent_lr=0xfffffff00519c4a0,
+-      calls=(0x438c34,0x438e74,0x43914c,0x4391c8,0x439400,0x439454,0x4394ec,0x439ad0,0x439b64,0x439ba8,0x438d70)),
+- dict(name='ubccopy',entry=0x43cb58,ret=0x43cc74,frame=0x60,lr=0x438c38,parent='clustercopy',parent_bit=0,parent_lr=BASE+0x438894,
+-      calls=(0x43cb8c,0x43cc1c)),
++      calls=(0x438c34,0x438e74,0x43914c,0x4391c8,0x439400,0x439454,0x4394ec,0x439ad0,0x439b64,0x439ba8,0x438d70,0x438bdc,0x438c7c,0x439a94,0x439ae4,0x439af4,0x4399cc)),
+  dict(name='uplrequest',entry=0x6fa0c0,ret=0x6fa1f8,extra_ret=0x6fa1e4,frame=0x10,lr=0x438e78,parent='clustercopy',parent_bit=1,parent_lr=BASE+0x438894,
+       calls=(0x6fa1b8,)),
+  dict(name='clusterio',entry=0x4344d4,ret=0x4357f8,frame=0x110,lr=0x439150,parent='clustercopy',parent_bit=2,parent_lr=BASE+0x438894,
+@@ -20,7 +18,21 @@
+  for spec in SPECS:
+   rows={spec['entry']:dict(offset=spec['entry'],phase='entry',calls=[],returns=[]),spec['ret']:dict(offset=spec['ret'],phase='return',calls=[],returns=[])}
+   if 'extra_ret' in spec:rows[spec['extra_ret']]=dict(offset=spec['extra_ret'],phase='return',calls=[],returns=[])
+-  if spec['name']=='clustercopy':rows[0x438e18]=dict(offset=0x438e18,phase='body',calls=[],returns=[],value='x19',meaning='native page_shift just loaded')
++  if spec['name']=='clustercopy':
++   samples={
++    0x4389b0:('x21','native max_io_size after minimum and page rounding'),
++    0x438a7c:('x24','initial native io_req_size'),
++    0x438b38:('x19','native streaming loop remaining io_size'),
++    0x438c1c:('x20','requested cache copy bytes before call'),
++    0x438c3c:('request_residual','requested bytes high32, returned residual low32; not errno'),
++    0x438c4c:('x8','native error OR residual branch predicate'),
++    0x438cd0:('x0','native cache helper error before fallback branch'),
++    0x438e18:('x19','native _PAGE_SHIFT_CONST just loaded; not mutable _page_shift'),
++    0x439a00:('x19','remaining io_size at cache-stream completion'),
++    0x439a80:('x0','native status entering cleanup'),
++   }
++   for offset,(value,meaning) in samples.items():
++    rows[offset]=dict(offset=offset,phase='body',calls=[],returns=[],value=value,meaning=meaning)
+   for bit,offset in enumerate(spec['calls']):
+    for after in (False,True):
+     p=rows.setdefault(offset+4*after,dict(offset=offset+4*after,phase='body',calls=[],returns=[]))
+@@ -30,9 +42,9 @@
+ def spec_for(p):return next(s for s in SPECS if s['name']==p['group'])
+ def state_name(group):return 'probe_resource_'+group+'_state'
+ def plan():
+- return dict(source_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),points=points(),specs=[dict(s,calls=list(s['calls'])) for s in SPECS],state_bytes=160,new_grid_rectangles=0,native_policy_changed=False,
++ return dict(source_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),points=points(),specs=[dict(s,calls=list(s['calls'])) for s in SPECS],state_bytes=128,cache_progress_revision=46,removed_inner_ubc_hooks=[hex(BASE+x) for x in (0x43cb58,0x43cb8c,0x43cb90,0x43cc1c,0x43cc20,0x43cc74)],new_grid_rectangles=0,native_policy_changed=False,
+   scope='active read thread, paired parent call, exact parent frame chain and saved LR, paired child returns',
+-  fields={'A03D':'last scoped attribute/lookup/read checkpoint; not stopped PC','A03E':'raw native register at checkpoint; x19 only at page_shift checkpoint, not always errno'},
++  fields={'A03D':'last scoped attribute/lookup/read checkpoint; not stopped PC','A03E':'native x0 unless per-point value says otherwise; 7438C3C packs request high32 and residual low32, not errno'},
+   limitations=['Selected significant calls, not every instruction','Native locks, errors, IO and exec boundary unchanged'])
+ def add_sites(add,raw,m,backed):
+  for p in points():
+@@ -78,7 +90,11 @@
+  for bit in p['calls']:s+=f'    orr x10, x10, #{1<<bit}\n'
+  s+='    str x10, [x14, #16]\n    ldr x10, [x14, #24]\n    add x10, x10, #1\n    str x10, [x14, #24]\n'
+  if p['phase']=='return':s+='    str xzr, [x14, #8]\n'
+- s+=f'    adr x9, probe_result_state\n    LOADABS x10, {site:#x}\n    stp x10, {p.get("value","x0")}, [x9, #32]\n'
++ value=p.get('value','x0')
++ if value=='request_residual':
++  s+='    mov w15, w8\n    mov w16, w20\n    orr x15, x15, x16, lsl #32\n'
++  value='x15'
++ s+=f'    adr x9, probe_result_state\n    LOADABS x10, {site:#x}\n    stp x10, {value}, [x9, #32]\n' 
+  return s+H.H.W.R.R.draw((32,40))+done+':\n'
+ def reset():
+  return ''.join(f'    adr x14, {state_name(s["name"])}\n    stp xzr, xzr, [x14]\n    stp xzr, xzr, [x14, #16]\n' for s in SPECS)

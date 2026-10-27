@@ -1,0 +1,15 @@
+{
+  "scope": "Synthetic execution of probe_exception with a snapshot and no usable x20",
+  "build": "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-probe45-cluster\\build.json",
+  "candidate_sha256": "2935ab6e53067a5daa4156510e158f3eebe765c50592abbd4b617375c2f05247",
+  "checks": [
+    {
+      "name": "Handler draws the red band from the snapshot",
+      "passed": true
+    },
+    {
+      "name": "Handler decodes ESR/ELR/FAR from the snapshot without x20",
+      "passed": true
+    }
+  ]
+}

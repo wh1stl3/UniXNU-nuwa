@@ -1,0 +1,16 @@
+{
+  "scope": "Local public-source references for actual candidate instruction interpretation; not new runtime qualification",
+  "candidate_sha256": "49b913fc15e1517c51acc57af919c76d32187a1258a3a9fbb7f4890ebe2c74f1",
+  "sources": [
+    {
+      "path": "D:/Code/PortingiOSLegacy/common/sources/xnu-ios16-full/bsd/vfs/vfs_cluster.c",
+      "sha256": "3e38e8366ae2db71e902d71a1ec12ee98ed760877145d872ac40bdc3df23669e"
+    },
+    {
+      "path": "D:/Code/PortingiOSLegacy/common/sources/xnu-ios16-full/bsd/dev/memdev.c",
+      "sha256": "7a022561ab297fb2a1bb2bc4ddb511bbc9774154fcbfa20d0204f9a770d4dbee"
+    }
+  ],
+  "ramdisk_strategy": "Synchronous memory copy and buf_biodone in normal source path; actual runtime hit not yet observed",
+  "platform_status": "Timer/IPI and all wakeups not independently qualified by this trial; no failure inferred from missing qualification"
+}

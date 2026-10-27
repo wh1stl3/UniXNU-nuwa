@@ -6,6 +6,7 @@ import read_resource_sites as RESOURCE
 import resource_dispatch_sites as DISPATCH
 import resource_handler_sites as HANDLER
 import resource_chain_sites as CHAIN
+import resource_cluster_sites as CLUSTER
 D=PREVIOUS.PREVIOUS
 
 def points():
@@ -14,14 +15,14 @@ def points():
 def plan():
     return dict(source_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),points=points(),
                 fields={'A03A':'second allocation request retained','A03B':'allocator return retained','A03C':'caller return retained','A03D':'latest scoped post-allocation/decode checkpoint PC, not stopped CPU PC','A03E':'raw x0 at paired continuation or decode RET; F at entry/call/checkpoint'},
-                state_bytes=176,new_sites=43+len(CHAIN.points()),resource=RESOURCE.plan(),resource_dispatch=DISPATCH.plan(),resource_handler=HANDLER.plan(),resource_chain=CHAIN.plan(),native_policy_changed=False,
+                state_bytes=304,new_sites=43+len(CHAIN.points())+len(CLUSTER.points()),resource=RESOURCE.plan(),resource_dispatch=DISPATCH.plan(),resource_handler=HANDLER.plan(),resource_chain=CHAIN.plan(),resource_cluster=CLUSTER.plan(),native_policy_changed=False,
                 scope='Existing header/thread/target/frame/parent-call gates plus active second-allocation record, nonzero non-sentinel caller return and matching callback FP')
 
 def observe(site):
     p=next((p for p in points() if p['site']==site),None)
     if p is None:
-        s=PREVIOUS.observe(site)+RESOURCE.observe(site)+DISPATCH.observe(site)+HANDLER.observe(site)+CHAIN.observe(site)
-        if site==D.PREVIOUS.DECOMP.PREVIOUS.FIRST:s+=RESOURCE.reset()+DISPATCH.reset()+HANDLER.reset()+CHAIN.reset()
+        s=PREVIOUS.observe(site)+RESOURCE.observe(site)+DISPATCH.observe(site)+HANDLER.observe(site)+CHAIN.observe(site)+CLUSTER.observe(site)
+        if site==D.PREVIOUS.DECOMP.PREVIOUS.FIRST:s+=RESOURCE.reset()+DISPATCH.reset()+HANDLER.reset()+CHAIN.reset()+CLUSTER.reset()
         return s
     done=f'.Lflow_done_{site:x}'
     # Run before the original observer consumes the continuation pairing bit.

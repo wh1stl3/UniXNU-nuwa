@@ -5,6 +5,7 @@ import read_flow_sites as P
 import resource_dispatch_checks as DISPATCH_CHECKS
 import resource_handler_checks as HANDLER_CHECKS
 import resource_chain_checks as CHAIN_CHECKS
+import resource_cluster_checks as CLUSTER_CHECKS
 ROOT=Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location('flow_deep_model',ROOT/'scripts/test-read-deep.py')
 D=importlib.util.module_from_spec(spec);sys.modules[spec.name]=D;spec.loader.exec_module(D)
@@ -13,7 +14,7 @@ EXTRA=('inactive-result','null-result','pending-result','foreign-result-frame')
 GATES=(P.points()[0]['site'],P.D.DECODE,P.D.DECODE+P.D.DECODE_CALLS[0]+4,P.D.DECODE_RET)
 RMODES=('normal','no-video','foreign-thread','foreign-frame','wrong-lr','outer-unpaired','inactive','wrong-target','unpaired','parent-unpaired','resource-inactive','resource-frame','resource-lr','null-result')
 def required_names():
-    return {hex(p['site'])+':'+mode for p in P.points() for mode in D.MODES}|{hex(site)+':'+mode for site in GATES for mode in EXTRA}|{'missing-active-gate-negative'}|{'resource:'+hex(p['site'])+':'+mode for p in P.RESOURCE.points() for mode in RMODES}|{'resource-parent:'+str(n) for n in range(4)}|DISPATCH_CHECKS.required_names()|HANDLER_CHECKS.required_names()|CHAIN_CHECKS.required_names()
+    return {hex(p['site'])+':'+mode for p in P.points() for mode in D.MODES}|{hex(site)+':'+mode for site in GATES for mode in EXTRA}|{'missing-active-gate-negative'}|{'resource:'+hex(p['site'])+':'+mode for p in P.RESOURCE.points() for mode in RMODES}|{'resource-parent:'+str(n) for n in range(4)}|DISPATCH_CHECKS.required_names()|HANDLER_CHECKS.required_names()|CHAIN_CHECKS.required_names()|CLUSTER_CHECKS.required_names()
 
 def resource_setup(raw,b,p,mode,parent=2):
     special=('unpaired','parent-unpaired','resource-inactive','resource-frame','resource-lr','null-result','wrong-lr')
@@ -115,7 +116,8 @@ def main():
     checks += DISPATCH_CHECKS.run(sys.modules[__name__],raw,b,original,om)
     checks += HANDLER_CHECKS.run(sys.modules[__name__],raw,b,original,om)
     checks += CHAIN_CHECKS.run(sys.modules[__name__],raw,b,original,om)
+    checks += CLUSTER_CHECKS.run(sys.modules[__name__],raw,b,original,om)
     assert {c['name'] for c in checks}==required_names()
-    a.output.write_bytes(json.dumps(dict(candidate_sha256=B.sha(raw),source_sha256=P.plan()['source_sha256'],test_sha256=B.sha(Path(__file__).read_bytes()),dispatch_checks_sha256=DISPATCH_CHECKS.source_sha256(),handler_checks_sha256=HANDLER_CHECKS.source_sha256(),chain_checks_sha256=CHAIN_CHECKS.source_sha256(),checks=checks,device_accessed=False,limitations=['Isolated native instruction replay and scoped observer execution; not complete decoding or hardware timing','A03D is observed checkpoint, not sampled stopped PC; A03E is raw x0, not always errno']),indent=2).encode()+b'\n')
+    a.output.write_bytes(json.dumps(dict(candidate_sha256=B.sha(raw),source_sha256=P.plan()['source_sha256'],test_sha256=B.sha(Path(__file__).read_bytes()),dispatch_checks_sha256=DISPATCH_CHECKS.source_sha256(),handler_checks_sha256=HANDLER_CHECKS.source_sha256(),chain_checks_sha256=CHAIN_CHECKS.source_sha256(),cluster_checks_sha256=CLUSTER_CHECKS.source_sha256(),checks=checks,device_accessed=False,limitations=['Isolated native instruction replay and scoped observer execution; not complete decoding or hardware timing','A03D is observed checkpoint, not sampled stopped PC; A03E is raw x0, not always errno']),indent=2).encode()+b'\n')
     print(json.dumps(dict(checks=len(checks),passed=True)))
 if __name__=='__main__':main()

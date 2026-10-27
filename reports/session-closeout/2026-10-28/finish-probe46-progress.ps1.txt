@@ -1,0 +1,22 @@
+$ErrorActionPreference='Stop'
+Set-Location -LiteralPath 'D:/Code/PortingiOS/nuwa/UniXNU-nuwa'
+$taskPy='C:/Users/Administrator/.workbuddy/binaries/python/versions/3.13.12/python.exe'
+$taskReport='reports/kernel-entry-probe/2026-10-27-probe46-progress'
+$taskRun=Get-Content -LiteralPath "$taskReport/execution.json" -Raw | ConvertFrom-Json
+if ($taskRun.commands.Count -ne 38 -or @($taskRun.commands | Where-Object exit_code -ne 0).Count -ne 0) {throw 'Regression incomplete'}
+& $taskPy -B out/check-probe46-native-globals.py
+if ($LASTEXITCODE -ne 0){throw 'Native globals failed'}
+& $taskPy -B scripts/test-hex-x18-interruption.py --build "$taskReport/build.json" --output "$taskReport/x18-interruption.json" *> "$taskReport/x18-console.txt"
+if ($LASTEXITCODE -ne 0){throw 'x18 failed'}
+& $taskPy -B scripts/test-read-vector-path.py --build "$taskReport/build.json" --output "$taskReport/read-vector-path.json" *> "$taskReport/vector-console.txt"
+if ($LASTEXITCODE -ne 0){throw 'Vector path failed'}
+& $taskPy -B scripts/build-kernel-entry-probe.py --work out/kernel-entry-probe-46-progress-reproduce --output reports/kernel-entry-probe/2026-10-27-probe46-progress-reproduce/build.json --image4-launch --pthread --root-trace --exec-trace --exec-detail --exec-paths --fscompression --read-boundaries --read-dispatch --read-body --read-init-checkpoints --single-pass-hex --read-grid --read-decmp --shared-hex --compact-decmp --read-fetch --read-deep --read-result --delta-hex --read-flow *> "$taskReport/reproduce-console.txt"
+if ($LASTEXITCODE -ne 0){throw 'Independent build failed'}
+& $taskPy -B scripts/build_xnu_boot_package.py --work out/trial-boot/xnu-entry-probe-46-progress --output reports/xnu-first-entry/entry-probe-46.json --kernel out/kernel-entry-probe-46-progress/kernel-entry-probe.macho --entry-probe "$taskReport/build.json" --adt out/exec-probe46-progress/launch/kernel.macho.adt --root-ramdisk out/root-mainline-v29/restore/restore-payload.bin *> "$taskReport/package-console.txt"
+if ($LASTEXITCODE -ne 0){throw 'Package failed'}
+& $taskPy -B scripts/build_xnu_boot_package.py --validate --output reports/xnu-first-entry/entry-probe-46.json > "$taskReport/package-validation.json"
+if ($LASTEXITCODE -ne 0){throw 'Package readback failed'}
+& $taskPy -B out/finalize-probe46-progress.py
+if ($LASTEXITCODE -ne 0){throw 'Qualification failed'}
+& $taskPy -B out/expand-probe46-objectives.py
+if ($LASTEXITCODE -ne 0){throw 'Downstream scope check failed'}

@@ -471,3 +471,48 @@ patches/xnu-8796-candidates/fscompression-oskext-start.S -text whitespace=blank-
 
 # Frozen x18 test source is retained exactly, including its final blank line.
 /scripts/test-hex-x18-interruption.py -whitespace
+
+# Preserve new PROBE45/46 bound evidence and source snapshots exactly.
+/reports/kernel-entry-probe/2026-10-27-probe44-analysis/cluster-source.json -text
+/reports/kernel-entry-probe/2026-10-27-probe44-analysis/copy-linear-calls.json -text
+/reports/kernel-entry-probe/2026-10-27-probe44-analysis/ubc-copy-native.json -text
+/reports/kernel-entry-probe/2026-10-27-probe45-analysis/native-return-window.json -text
+/reports/kernel-entry-probe/2026-10-27-probe45-analysis/return-chain-fixture.json -text
+/reports/kernel-entry-probe/2026-10-27-probe45-cluster/changes-from-probe44.diff -text
+/reports/kernel-entry-probe/2026-10-27-probe45-cluster/cluster-checks-console-02.txt -text
+/reports/kernel-entry-probe/2026-10-27-probe45-cluster/package-console.txt -text
+/reports/kernel-entry-probe/2026-10-27-probe45-cluster/package-validation.json -text
+/reports/kernel-entry-probe/2026-10-27-probe45-cluster/qualification.json -text
+/reports/kernel-entry-probe/2026-10-27-probe45-cluster/reproduce-console.txt -text
+/reports/kernel-entry-probe/2026-10-27-probe45-cluster/vector-console.txt -text
+/reports/kernel-entry-probe/2026-10-27-probe45-cluster/x18-console.txt -text
+/reports/kernel-entry-probe/2026-10-27-probe45-cluster/x18-interruption.json -text
+/reports/kernel-entry-probe/2026-10-27-probe46-progress/cluster-console-01.txt -text
+/reports/kernel-entry-probe/2026-10-27-probe46-progress/package-console.txt -text
+/reports/kernel-entry-probe/2026-10-27-probe46-progress/package-validation.json -text
+/reports/kernel-entry-probe/2026-10-27-probe46-progress/reproduce-console.txt -text
+/reports/kernel-entry-probe/2026-10-27-probe46-progress/vector-console.txt -text
+/reports/kernel-entry-probe/2026-10-27-probe46-progress/x18-console.txt -text
+/reports/kernel-entry-probe/2026-10-27-probe46-progress/x18-interruption.json -text
+/reports/session-closeout/2026-10-28/probe45-bound-sources/build-kernel-entry-probe.py -text
+/reports/session-closeout/2026-10-28/probe45-bound-sources/build_xnu_boot_package.py -text
+/reports/session-closeout/2026-10-28/probe45-bound-sources/kernel_entry_probe_inputs.py -text
+/reports/session-closeout/2026-10-28/probe45-bound-sources/probe_bootstrap_sites.py -text
+/reports/session-closeout/2026-10-28/probe45-bound-sources/read_flow_sites.py -text
+/reports/session-closeout/2026-10-28/probe45-bound-sources/test-read-flow.py -text
+/reports/session-closeout/2026-10-28/status-before-closeout.md -text
+/reports/xnu-entry-probe-trial/2026-10-27-probe44-chain/consumed.json -text
+/reports/xnu-entry-probe-trial/2026-10-27-probe44-chain/launch.json -text
+/reports/xnu-entry-probe-trial/2026-10-27-probe44-chain/postcondition.json -text
+/reports/xnu-entry-probe-trial/2026-10-27-probe44-chain/preflight.json -text
+/reports/xnu-entry-probe-trial/2026-10-27-probe45-cluster/consumed.json -text
+/reports/xnu-entry-probe-trial/2026-10-27-probe45-cluster/launch.json -text
+/reports/xnu-entry-probe-trial/2026-10-27-probe45-cluster/postcondition.json -text
+/reports/xnu-entry-probe-trial/2026-10-27-probe45-cluster/preflight.json -text
+
+# Preserve new PROBE45/46 bound evidence and source snapshots exactly.
+/reports/kernel-entry-probe/2026-10-27-probe45-analysis/media-manifest-snapshot.json -text
+/reports/session-closeout/2026-10-28/check-probe45-return-chain.py.txt -text
+/reports/session-closeout/2026-10-28/document-encoding-failure-01.txt -text
+/reports/session-closeout/2026-10-28/finalize-probe46-progress.py.txt -text
+/reports/session-closeout/2026-10-28/finish-probe46-progress.ps1.txt -text

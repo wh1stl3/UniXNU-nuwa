@@ -1,0 +1,93 @@
+{
+  "scope": "Native helper null-object return with supplied caller; not full IO",
+  "results": [
+    {
+      "native": true,
+      "mode": "normal",
+      "trace": [
+        "0xfffffff007438c34",
+        "0xfffffff00743cb58",
+        "0xfffffff00743cc74",
+        "0xfffffff007438c38",
+        "0xfffffff007438c3c"
+      ],
+      "pc": "0xfffffff007438c3c",
+      "record": [
+        "0xf0f000",
+        "0x28",
+        "0x12340000",
+        "0x12340000",
+        "0x7",
+        "0x9",
+        "0x0",
+        "0x1"
+      ]
+    },
+    {
+      "native": true,
+      "mode": "no-video",
+      "trace": [
+        "0xfffffff007438c34",
+        "0xfffffff00743cb58",
+        "0xfffffff00743cc74",
+        "0xfffffff007438c38",
+        "0xfffffff007438c3c"
+      ],
+      "pc": "0xfffffff007438c3c",
+      "record": [
+        "0xf0f000",
+        "0x28",
+        "0x12340000",
+        "0x12340000",
+        "0x7",
+        "0x9",
+        "0x0",
+        "0x1"
+      ]
+    },
+    {
+      "native": false,
+      "mode": "normal",
+      "trace": [
+        "0xfffffff007438c34",
+        "0xfffffff00743cb58",
+        "0xfffffff00743cc74",
+        "0xfffffff007438c38",
+        "0xfffffff007438c3c"
+      ],
+      "pc": "0xfffffff007438c3c",
+      "record": [
+        "0xf0f000",
+        "0x28",
+        "0x12340000",
+        "0x12340000",
+        "0xfffffff007438c38",
+        "0x0",
+        "0x0",
+        "0x1"
+      ]
+    },
+    {
+      "native": false,
+      "mode": "no-video",
+      "trace": [
+        "0xfffffff007438c34",
+        "0xfffffff00743cb58",
+        "0xfffffff00743cc74",
+        "0xfffffff007438c38",
+        "0xfffffff007438c3c"
+      ],
+      "pc": "0xfffffff007438c3c",
+      "record": [
+        "0xf0f000",
+        "0x28",
+        "0x12340000",
+        "0x12340000",
+        "0xfffffff007438c38",
+        "0x0",
+        "0x0",
+        "0x1"
+      ]
+    }
+  ]
+}

@@ -349,6 +349,10 @@ def main():
                 UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 42','PROBE 43').replace('NATIVE CONTINUATION X18 SAFE HEX','APFS RESOURCE HANDLER CALL AND RETURN')
             if json.loads(args.entry_probe.read_text()).get('read_flow',{}).get('resource_chain'):
                 UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 43','PROBE 44').replace('APFS RESOURCE HANDLER CALL AND RETURN','RESOURCE LOOKUP READ AND EXEC CONTINUATION')
+            if json.loads(args.entry_probe.read_text()).get('read_flow',{}).get('resource_cluster'):
+                UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 44','PROBE 45').replace('RESOURCE LOOKUP READ AND EXEC CONTINUATION','UBC UPL IO AND NATIVE EXEC CONTINUATION')
+                if json.loads(args.entry_probe.read_text())['read_flow']['resource_cluster'].get('cache_progress_revision')==46:
+                    UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 45','PROBE 46').replace('UBC UPL IO AND NATIVE EXEC CONTINUATION','CACHE PROGRESS PREFETCH CLEANUP AND EXEC CONTINUATION')
     elif probe and revision>=30:raise ValueError('Mount-only candidate must bind the real RAMDisk')
     if sha(fd) != FD_SHA or len(fd) != 3145728:
         raise ValueError('Firmware FD changed')

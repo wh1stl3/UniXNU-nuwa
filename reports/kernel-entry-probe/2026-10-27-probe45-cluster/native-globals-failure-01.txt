@@ -1,0 +1,7 @@
+First finish-probe45-cluster.ps1 attempt stopped at its initial static-symbol check, before x18/vector checks, independent rebuild, package or final qualification output.
+Observed assertion:
+('page_shift symbol and observed native load differ', '0xfffffff007a77a48', '0xfffffff00715d118')
+This was a mistaken symbol name in the host-side check, not a changed native instruction or hardware failure.
+Actual symbol lookup resolved _PAGE_SHIFT_CONST to 0xfffffff00715d118 and mutable _page_shift to 0xfffffff007a77a48. The original checkpoint samples x19 loaded from _PAGE_SHIFT_CONST. The mutable variable was not sampled.
+A follow-up command tried to read both symbols as file-backed data and ended with StopIteration because _page_shift is not file-backed there; it produced no native-globals report. This note preserves the observed failures, not a complete stderr capture.
+Corrected check strictly matches _PAGE_SHIFT_CONST and reads only that file-backed constant; original completed 38-job evidence and kernel bytes remain unchanged.

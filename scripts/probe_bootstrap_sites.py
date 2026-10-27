@@ -33,7 +33,7 @@ def plan_next(raw,m,backed,revision=25):
     def add(site,fn,callee,phase,call=None):
         index=(1 if revision>=34 and len(edges)>=232 else 0)+len(edges)+(4 if revision>=29 and len(edges)>=178 else 0)+(2 if revision>=31 and len(edges)>=208 else 0)+(1 if revision>=32 and len(edges)>=212 else 0)
         if revision>=36 and index>=264:index+=2
-        if index>=(700 if revision>=49 else 589 if revision>=47 else 582 if revision>=46 else 499 if revision>=45 else 441 if revision>=42 else 373 if revision>=38 else 277 if revision>=37 else 276 if revision>=36 else 264 if revision>=32 else 220):raise ValueError('Next-phase panel capacity exceeded')
+        if index>=(779 if revision>=49 else 589 if revision>=47 else 582 if revision>=46 else 499 if revision>=45 else 441 if revision>=42 else 373 if revision>=38 else 277 if revision>=37 else 276 if revision>=36 else 264 if revision>=32 else 220):raise ValueError('Next-phase panel capacity exceeded')
         color={'call':'0xff40c0ff','continuation':'0xff40ff80','entry':'0xffffff00','context':'0xffff40ff'}[phase]
         e=dict(id=index,function=fn,callee=callee,phase=phase,call=hex(call if call is not None else site),site=hex(site),x=832+(index%10)*48,y=256+(index//10)*24,color=color)
         if index>=220:e.update(x=1320+((index-220)%2)*48,y=256+((index-220)//2)*24)
@@ -124,6 +124,8 @@ def plan_next(raw,m,backed,revision=25):
             add_resource_handler_sites(add,raw,m,backed)
             from resource_chain_sites import add_sites as add_resource_chain_sites
             add_resource_chain_sites(add,raw,m,backed)
+            from resource_cluster_sites import add_sites as add_resource_cluster_sites
+            add_resource_cluster_sites(add,raw,m,backed)
     return edges,sites
 
 def plan(raw,m,backed,revision=24):

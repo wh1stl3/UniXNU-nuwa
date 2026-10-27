@@ -1,0 +1,66 @@
+import datetime,hashlib,json,sys,difflib,shutil
+from pathlib import Path
+R=Path(__file__).resolve().parents[1];sys.path.insert(0,str(R/'scripts'))
+F=R/'reports/kernel-entry-probe/2026-10-27-probe46-progress'
+load=lambda p:json.loads(p.read_bytes())
+sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+b=load(F/'build.json');k=R/b['candidate']['path'];ks=sha(k)
+assert ks=='ee2c130fd0e184e4d262f4b0eec86e65c370c3d323413570c761aabe91eca70f'
+r=load(R/'reports/kernel-entry-probe/2026-10-27-probe46-progress-reproduce/build.json')
+assert k.read_bytes()==(R/r['candidate']['path']).read_bytes() and b['source_sha256']==r['source_sha256']
+run=load(F/'execution.json');assert len(run['commands'])==38 and all(c['exit_code']==0 for c in run['commands'])
+evidence=[];counts={}
+for name in [c['name'] for c in run['commands']]+['x18-interruption','read-vector-path','cluster-checks','native-globals']:
+ p=F/(name+'.json');d=load(p);assert d.get('candidate_sha256',ks)==ks
+ if 'checks' in d:
+  assert d['checks'] and all(c['passed'] is True for c in d['checks']);counts[name]=len(d['checks'])
+ evidence.append(dict(path=p.relative_to(R).as_posix(),sha256=sha(p)))
+assert counts['transparency']==3084 and counts['read-flow']==2988
+assert counts['cluster-checks']==963 and counts['x18-interruption']==29 and counts['read-vector-path']==9
+p=load(R/'reports/xnu-first-entry/entry-probe-46.json');image=R/p['image_path']
+assert p['kernel_sha256']==ks and p['image_sha256']==sha(image)
+assert 'PROBE 46' in p['fat_detail']['config']['entry'][0]['title']
+assert load(F/'package-validation.json')['image_sha256']==sha(image)
+old=load(R/'reports/xnu-first-entry/entry-probe-45.json')
+assert sha(R/old['image_path'])==old['image_sha256']=='e6a9494cb05992142032ddc80e42e9ca247f249ad373d7fefc398f382605902d'
+assert sha(R/'out/kernel-entry-probe-45-cluster/kernel-entry-probe.macho')=='2935ab6e53067a5daa4156510e158f3eebe765c50592abbd4b617375c2f05247'
+assert p['root_ramdisk']==old['root_ramdisk']
+for key in ('fd_sha256','shim_sha256','original_boot_sha256'):assert p[key]==old[key]
+h=b['read_flow']['resource_cluster'];assert len(h['points'])==79 and h['state_bytes']==128 and h['native_policy_changed'] is False and h['new_grid_rectangles']==0
+media=R.parent/'Media-nuwa/PROBE45/derived/review-01';manifest=load(media/'manifest.json')
+for item in manifest['original']:assert sha(media.parent.parent/'original'/Path(item['path']).name)==item['sha256']
+for item in manifest['user_stages']+manifest['frames']:assert sha(media/item['path'])==item['sha256']
+assert len(manifest['frames'])==227
+from trial_media import prepare
+media_directory=prepare(p)
+oldq=load(R/'reports/kernel-entry-probe/2026-10-27-probe45-cluster/qualification.json')
+# Exact historical bound sources, using pre-46 copies where current bytes changed.
+archive=R/'reports/session-closeout/2026-10-28/probe45-bound-sources';archive.mkdir(parents=True,exist_ok=False)
+archived=[]
+for item in oldq['sources']+oldq['media_workflow_sources']:
+ current=R/item['path'];source=current if sha(current)==item['sha256'] else R/'out/before-probe46-progress'/current.name
+ assert sha(source)==item['sha256'],('Historical source unavailable',item['path'])
+ dest=archive/current.name;shutil.copyfile(source,dest);archived.append(dict(original=item['path'],snapshot=dest.relative_to(R).as_posix(),sha256=sha(dest)))
+(archive.parent/'probe45-source-archive.json').write_bytes(json.dumps(dict(scope='Exact sources bound by historical PROBE45 qualification, not a rerun',files=archived),indent=2).encode()+b'\n')
+prior_media=R/'reports/kernel-entry-probe/2026-10-27-probe44-chain/media-directory-checks.json'
+for item in oldq['media_workflow_sources']:assert sha(R/item['path'])==item['sha256']
+assert all(x['passed'] for x in load(prior_media)['checks'])
+result=dict(time=datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8))).isoformat(),candidate_sha256=ks,image_path=p['image_path'],image_sha256=sha(image),image_bytes=image.stat().st_size,
+ evidence=evidence,check_counts=counts,independent_kernel_byte_identical=True,old_probe45_preserved=True,probe45_media_preserved=True,
+ resource_cluster_observation=h,page_shift_checkpoint=dict(source='_PAGE_SHIFT_CONST',mutable_page_shift_sampled=False),
+ sources=[dict(path='scripts/'+n,sha256=sha(R/'scripts'/n)) for n in ('resource_cluster_sites.py','resource_cluster_checks.py','resource_chain_sites.py','resource_chain_checks.py','resource_handler_sites.py','resource_handler_checks.py','probe_bootstrap_sites.py','read_flow_sites.py','build-kernel-entry-probe.py','build_xnu_boot_package.py','test-read-flow.py','kernel_entry_probe_inputs.py')],
+ media_workflow_sources=oldq['media_workflow_sources'],media_directory=media_directory,
+ unchanged_media_workflow_prior_checks=dict(path=prior_media.relative_to(R).as_posix(),sha256=sha(prior_media)),
+ device_accessed=False,device_test_passed=False,release_239_retained=True,
+ limitations=['VM cache and physical IO not simulated; continuous helper tests supply ubc_getobject and uiomove boundary results',
+ 'Internal UBC hooks removed; remaining observations still have display overhead',
+ 'A03E at 7438C3C is request/residual packed data, not errno',
+ 'Restore root and release239 hold retained; no EL0 or desktop proof',
+ 'Earlier WSL/log capture limitations are historical; current execution logs are authoritative'])
+dest=F/'qualification.json';assert not dest.exists();dest.write_bytes(json.dumps(result,indent=2).encode()+b'\n')
+changes=[]
+for previous in sorted((R/'out/before-probe46-progress').glob('*.py')):
+ current=R/'scripts'/previous.name
+ changes.extend(difflib.unified_diff(previous.read_text().splitlines(True),current.read_text().splitlines(True),fromfile='PROBE45/scripts/'+previous.name,tofile='PROBE46/scripts/'+previous.name))
+(F/'changes-from-probe45.diff').write_text(''.join(changes),encoding='utf-8',newline='\n')
+print(json.dumps(dict(image_sha256=result['image_sha256'],image_bytes=result['image_bytes'],counts=counts,qualified=True)))
