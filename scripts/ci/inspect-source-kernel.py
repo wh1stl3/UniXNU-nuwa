@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[2]
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('kernel', type=Path)
 parser.add_argument('--native-prelink', type=Path,
-                    default=Path('D:/Code/PortingiOS/common/sources/UniXNU/kits/NativePrelink/native_prelink.py'))
+                    default=Path('D:/Code/PortingiOSLegacy/common/sources/UniXNU/kits/NativePrelink/native_prelink.py'))
 parser.add_argument('--output', type=Path, required=True)
 parser.add_argument('--platform-link-report', type=Path,
                     help='Also compare actual exports and archive bytes with this runner report')

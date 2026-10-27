@@ -18,7 +18,7 @@ def main():
     cli.add_argument('--existing-candidate', type=Path,
                      help='Read an existing candidate only; never create or modify it')
     cli.add_argument('--tool-directory', type=Path, default=Path(
-        'D:/Code/PortingiOS/common/sources/UniXNU/kits/NativePrelink'))
+        'D:/Code/PortingiOSLegacy/common/sources/UniXNU/kits/NativePrelink'))
     cli.add_argument('--output', type=Path, required=True)
     args = cli.parse_args()
     output = args.output.resolve()

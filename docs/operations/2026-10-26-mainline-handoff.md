@@ -1,118 +1,77 @@
-# nuwa / iOS16 主线交接（2026-10-26，PROBE28离线就绪）
+# 当前主线交接（原文件名保留）
 
+本长篇记录保留全过程；新会话先读[2026-10-27精简交接](2026-10-27-session-handoff.md)及[续接prompt](2026-10-27-new-session-prompt.md)。用户已授权本次本地收尾提交，旧“未提交”段落是当时快照，不自动沿用为当前禁止；无push/设备动作授权扩展。
 
-本轮确认补充（2026-10-26T04:08:25.950811+00:00）：用户答复“能，已准备拍摄和按键恢复”；R-014当轮画面及按键恢复条件已满足。新preflight确认nuwa/kalama、Android1/_a/三SHA与v35一致，按既定范围单次临时启动同一PROBE28；不能重用本次已发送候选。待画面与恢复后验，不声称内核通过。
+## 最新：43恢复完成，44整包离线资格完成（2026-10-27 21:48 +08）
 
-## 当前唯一现场结论：PROBE28完成读图与恢复
+43的postcondition已确认Android1/A槽/三SHA不变；用户确认照片稳定超过十秒。末态A03D=FFFFFFF00519CC10，已在handler内到达属性处理调用前；首要范围为519CC48及其ResourceFork vnode lookup/read，尚无该子函数入口证据，不能断言锁死或UFS故障。代码/媒体依据见2026-10-27-probe43-media-probe44-chain.md与reports/kernel-entry-probe/2026-10-27-probe43-analysis。
 
-PROBE28/7a04626e已单次实测并consumed，禁止重发，未启动下一候选。原图A034=0x110/272、A035全F；266/268/270/272青、269绿，267/271/273未亮，swap274/275未亮。确定MAC已成对返回、到达VNOP_READ原生BLR x8调用点，未观察返回。272在BLR之前记录，目标函数体入口尚未直接证实；优先核对分派目标/入口与APFS/decmpfs读取等待。原先“已进入回调”的聊天表述已收紧，不能当作入口证明，也不能指定锁/IRQ为根因。
+44内核out/kernel-entry-probe-44-chain/kernel-entry-probe.macho，SHA49b913fc15e1517c51acc57af919c76d32187a1258a3a9fbb7f4890ebe2c74f1。新增68位置/96B状态；完整38作业通过，含2768透明性、2025调用流程（含818新增）及67绑定，另29 x18扰动、9向量连续路径、6媒体目录检查通过。独立内核重编逐字节一致、整包回读通过。镜像out/trial-boot/xnu-entry-probe-44-chain/boot-xnu-first-entry.img，204484608字节，SHA b8e2395576460b8296589ea92a6cfa6b73f34abc4fe04090f0c982d3b6d38030。包报告reports/xnu-first-entry/entry-probe-44.json，资格reports/kernel-entry-probe/2026-10-27-probe44-chain/qualification.json。44未启动/未消费，239不解除，无EL0/桌面声明。WSL编码日志异常保留。
 
-用户已提供照片并按键回fastboot，本轮先核对实际状态，再对显式nuwa执行原boot临时恢复。12:24:07上海时间postcondition确认nuwa/kalama、Android1/_a/三SHA与本轮preflight一致；当前Android恢复闭环，无人工恢复待办。R-014本轮approved A且完成，不等于未来候选免预检。没有操作enuma、没有flash/erase/改槽。证据reports/xnu-entry-probe-trial/2026-10-26-v36/{preflight,launch,consumed,screen,recovery,postcondition,evidence-binding}.json。
+媒体已按轮迁移1397文件并比较SHA一致；历史路径由Media-nuwa/media-path-migration-2026-10-27.json解析，下一轮目录Media-nuwa/PROBE44/original已建好。record-nuwa-trial-state.py现会在XNU包预检设备查询前创建媒体目录并记录位置；新鲜预检和当轮拍摄/恢复条件仍须满足。本轮未启动/未提交。只读包回读续接：在D:/Code/PortingiOS/nuwa/UniXNU-nuwa中用真实Python执行`-B scripts/build_xnu_boot_package.py --validate --output reports/xnu-first-entry/entry-probe-44.json`；不要重跑已完成的收尾脚本覆盖证据。以下为历史状态。
 
-[完整实测记录](2026-10-26-probe28-device-result.md)。照片SHA8b25519f…，原图及Library属性只存本地out/trial-evidence/entry-probe-28/user-screen-library-complete.tar；未commit/上传原媒体。Windows/WSL读取兼容和临时源丢失后的保元数据归档均记录于evidence-binding；不能引用失效临时路径。A033本轮不作不可靠读数替换，历史EF8保留。未证明完整header/解压/Mach-O/dyld/用户态成功。
+## 最新：PROBE43已单次临时启动，待媒体及恢复（2026-10-27T20:54:31.4467599+08:00）
 
-下一步仅离线审查固定v_op目标、入口与内部分解；没有构建或启动下一候选。原包/内核/ADT和全部受审门保持，下方“等待画面/恢复”“未启动/待确认”及暂停段落均为历史，当前以本节与STATUS为准。
+用户本轮明确批准启动并确认随时拍摄和实体键恢复。新鲜预检确认nuwa/kalama、Android1、A槽、三分区SHA与42后验一致；fastboot Sending/Booting OKAY，传输4.564秒、Booting 0.112秒。只证明命令接受，不证明菜单、内核或handler执行。43已消费，禁止重发。当前等待菜单电源Enter后的连续视频、稳定照片及Android恢复后验，不能沿用预检Android状态。
 
-## 当前现场：PROBE28已单次发送，等待照片后恢复
+镜像SHA256 ca73e9562f6236cddcba12c8cc2f62980804c419cb31ac05531c8f8007d8d585；证据reports/xnu-entry-probe-trial/2026-10-27-probe43-handler/{preflight,launch,consumed}.json。观测handler入口、内部调用/返回及wrapper续接，以区分原生处理未完成和观测遗漏；239保留。本轮无flash/erase/改槽或提交。下方43未启动/本轮不上机等表述为先前离线阶段快照。
 
-用户本轮答复“能，已准备拍摄和按键恢复”，R-014 answered A。新preflight绑定确认原文，Android1/_a/三SHA与历史v35一致。于2026-10-26T04:08:55.911780+00:00单次fastboot boot 7a04626e包，Sending/Booting均OKAY，exit0；仅证明传输接受，尚无内核画面证据。reports/xnu-entry-probe-trial/2026-10-26-v36/consumed.json已锁定该候选consumed，不能重发；launch.json保存实际命令与结果。当前设备启动后状态未知，不沿用启动前Android1；恢复尚未执行。
+## 最新：42恢复及媒体闭环，43离线整包完成（2026-10-27 20:49 +08）
 
-已通知用户在菜单电源Enter并发送完整诊断照片，先保留现场。读266..275/A034/A035后，按电源+音量下回fastboot；只对本轮明确选定nuwa用既有recover流程临时加载原boot，确认Android1/同槽/三SHA后验。所有preflight/launch/recover必须显式--serial，避免遍历查询其他设备。不得自动换包或把ACK当执行；无新媒体时保持等待，不重试候选。
+42的postcondition已确认Android1/A槽/三SHA不变；媒体415源帧及用户五阶段截图在Media-nuwa/derived/PROBE42/review-01，原件保留。稳定末态A03D=FFFFFFF00746E1A4、A03E=FFFFFFF00519CB28，旧panic文字未见；不把调用前当入口或死锁。代码审阅及首要假设见2026-10-27-probe42-media-probe43-handler.md、reports/kernel-entry-probe/2026-10-27-probe42-analysis。
 
-下方预检待确认/设备暂停段落为前轮历史，由本节及当前STATUS覆盖。最新离线参数契约和全部包资格证据仍有效。
+43候选内核out/kernel-entry-probe-43-handler/kernel-entry-probe.macho，SHA e5df5bef0779347edc5d94becd1611f8c3ffe7d5595795f345872dc02fe74a8b；新增19个handler位置、32B配对状态、无新增网格。38项串行作业全部通过：2496透明性、1207调用流程（含192新增）、67绑定；另29项x18扰动和9项连续路径通过。独立内核重编逐字节一致，整包回读通过，42旧内核/镜像及原媒体摘要未变。
 
-## 当前实测准备（2026-10-26）
+新镜像out/trial-boot/xnu-entry-probe-43-handler/boot-xnu-first-entry.img，204484608字节，SHA256 ca73e9562f6236cddcba12c8cc2f62980804c419cb31ac05531c8f8007d8d585。包报告reports/xnu-first-entry/entry-probe-43.json，资格reports/kernel-entry-probe/2026-10-27-probe43-handler/qualification.json。43未启动/未消费；当前Android恢复依据仍是42 postcondition。239不解除，无本轮启动/提交，WSL编码日志缺陷保留。启动前核对当轮观测/恢复和新鲜预检；不要执行下方历史已消费候选命令。可只读回读当前包：在D:/Code/PortingiOS/nuwa/UniXNU-nuwa中用真实Python执行`-B scripts/build_xnu_boot_package.py --validate --output reports/xnu-first-entry/entry-probe-43.json`。以下为历史状态。
 
-用户最新明确“nuwa可以开展实测了”，解除此前设备操作暂停，范围仅既定PROBE28单次临时启动及安全恢复；没有授权无关刷写/改槽/换包。有效包7a04626e校验通过，现有仓库试验记录未发现已启动该包。
+## 最新：PROBE42已单次临时启动，待媒体与恢复（2026-10-27T20:05:46.332150+08:00）
 
-本轮新鲜只读状态：2026-10-26T04:01:35.029989+00:00，nuwa/kalama、Android完成1、_a，boot_a/vendor_boot_a/init_boot_a三SHA均与v35后验一致。证据reports/xnu-entry-probe-trial/2026-10-26-v36/state-before-confirmation.json。尚未临时启动，未消费候选；当前状态不能写为PROBE28实测通过。
+新鲜预检nuwa/kalama、Android1、A槽及三SHA与41后验一致；用户确认连续拍摄和实体键恢复条件。fastboot Sending/Booting OKAY，仅证明传输接受，不能证明菜单/内核或修复通过。42已消费，禁止重发。当前等待菜单电源Enter后的连续视频、稳定照片及Android恢复后验；不能沿用启动前Android状态。本轮无flash/erase/改槽或提交。证据reports/xnu-entry-probe-trial/2026-10-27-probe42-x18/{preflight,launch,consumed}.json。
 
-USB清单存在其他设备，本轮仅按明确选中的nuwa serial执行身份/Android/槽位/三SHA读取，没有向其他设备发送查询或状态命令。给record-nuwa-trial-state.py和trial-v4-firmware.py添加--serial目标筛选，外来设备混接/所选设备缺失的3项隔离测试通过；记录中不持久化序列号。后续preflight/launch/recover均必须传本轮选定nuwa目标，不使用自动遍历其他设备的默认路径。
+观测目标：原HEX渲染panic是否消失、资源读取/解压/exec是否推进；若同类异常复现则重审x18假设。239保持。以下未启动/未消费/仅离线表述为历史阶段记录。
 
-R-014仍缺本轮菜单Enter后的拍摄/读取与按键恢复确认；已发出只针对这两个必要条件的问题，等待答复。不是再次询问一般实测授权。条件明确后才生成带真实确认原文的新preflight；若超时先刷新Android/三SHA。候选未启动时不执行无必要恢复或回刷。下一步仍为同一PROBE28的266..275/A034/A035观测，原日志/恢复/239/verified/权限门保留。
+## 2026-10-27 PROBE42离线续接
 
-## 最新离线里程碑：读取参数契约
+19:51 +08收尾：PROBE42已完成38项串行资格、29行x18扰动、9连续路径、独立内核字节复现和整包回读。镜像out/trial-boot/xnu-entry-probe-42-x18/boot-xnu-first-entry.img，SHA256 edae54d85c90d35458cfc97b412f92af5852afad35ba4633ada891c48a276a9b，204484608字节。资格reports/kernel-entry-probe/2026-10-27-probe42-x18/qualification.json。内核较41仅HEX helper内19字节变化；42未消费，本轮无设备访问/提交。239未解除，轻量记录架构尚待实施。下段核验中状态为本轮过程记录。
 
-本轮依据用户后续明确要求落实最小离线测试/夹具修正；旧“只分析、不实现”的轮次描述不再限制本项，设备暂停仍有效。基线19e096f，最终提交以Git最新提交为准。
+最新事实覆盖下方历史快照：41 r5媒体已落位，18:46:38 +08的postcondition确认Android1/A槽/三SHA不变。A034为FFFFFFF0084DA0F4，首要嫌疑为增量HEX跨异常返回持有x18缓存指针。新内核out/kernel-entry-probe-42-x18/kernel-entry-probe.macho已编译；29行x18扰动和旧候选负对照通过，完整串行核验正在进行，不可提前部署。新报告reports/kernel-entry-probe/2026-10-27-probe42-x18；详情2026-10-27-probe42-x18.md。本轮不上机，不提交。239仍保留，因为包内仍是Restore根，正常根/Data的provider及挂载尚未接入；不把删除停点当成正常用户态进展。
 
-完成9组flags8/4096原生与探针对照、4组实际EFI存储案例及2个负对照。交付Darwin22 ABI为memSizeActual/0x2d8，修正transition夹具旧0x478后从入口重验normal，5项通过到_kernel_bootstrap。原生初始化定位块写shift12，header指令据此构造4096/flags8；bootstrap TG0/TG1独立解码，16KiB仅负对照，未实机验证运行时值。短读首次错误EIO预期失败及修正理由已留档。新旧transition完整快照除ABI元数据还有5处变化，未宣称跨次字节一致；最终映射和5项验收相同。
+2026-10-27T18:43:05.203664+08:00
 
-原默认11组输出逐字节相同；原23份绑定报告、权威包报告、包/内核/ADT SHA重核保持；没有重建或替换有效PROBE28，没有重复全套24项。证据：reports/kernel-entry-probe/2026-10-26-v36-parameter-contract/contract-final.json、transition-final.json、validation.json；详见[参数契约记录](2026-10-26-read-parameter-contract.md)。本轮只改模拟/测试及文档，FD/uefi仓、板值/内存/TCR/身份/_verified和239门未动，无设备操作/推送，28项历史未跟踪保留。
+2026-10-27T18:43:05.203664+08:00 · 用户恢复实机且当轮确认连续拍摄/实体键恢复已就绪。PROBE41 r5单次临时启动已获fastboot Sending/Booting OKAY，包SHA256 6d2d0023437ab0aa630372aeb57ff4925a6ef5e9db18a5131cf2ffab1e6cb748；ACK只证明命令接受，不证明菜单/内核/handler已执行。候选已消费，禁止重发。新鲜预检Android1、nuwa/kalama、A槽，三SHA与PROBE40一致。当前等待用户菜单电源Enter、连续录像/稳定照片和回Android；启动后设备状态尚未取得后验，不沿用启动前Android1冒充恢复。证据reports/xnu-entry-probe-trial/2026-10-27-v49-r5/{preflight,launch,consumed}.json。媒体目录D:/Code/PortingiOS/nuwa/Media-nuwa；恢复后补postcondition与三SHA。未flash/erase/改槽、未提交。
 
-本离线项完成；最早实机卡点仍为250到达/251未观察。中午有人不构成自动启动授权，当前设备状态未知。下一步仍先确认当轮画面/恢复与具体临时启动范围，再取新鲜身份/Android1/槽/三SHA，按原门禁使用有效PROBE28观察266..275/A034/A035。未获这些条件前继续暂停设备命令，不能把本轮模拟当作MAC/APFS或iOS启动成功。
+PROBE41已调整为实际ResourceFork分派版r5，现已消费，待媒体/恢复后验。镜像out/trial-boot/xnu-entry-probe-41-dispatch-r5/boot-xnu-first-entry.img，204484608字节，SHA256 6d2d0023437ab0aa630372aeb57ff4925a6ef5e9db18a5131cf2ffab1e6cb748；内核89fdd0a831500ff2f28d2245824c47a0d1ad5e7d1719c42f7ede3b7e9237eaad，ADTfbc8ee7eabb52c2d1c0e4bca2dd581af6b107f0c2672fba33b8f455fa1e5e155。38项串行作业全部通过，2420透明性、1015专项（含新增38项分派检查）、9连续路径/重置、独立内核逐字节复现与镜像回读通过。新增A03D=FFFFFFF00746E1A4/A03E=原生实际x8目标，A03D=FFFFFFF00746E1A8/A03E=配对返回原始x0；调用前不是handler入口，A03D不是停止PC。仍使用原矩形，旧22点及后续主线继续；Restore根、239门、板值/内存/IPSW身份、verified边界不变。旧r4内核/ADT/整包摘要核对不变，旧资格保留且不套给r5。本轮没有设备操作、提交、推送或CI。详情docs/operations/2026-10-27-probe41-dispatch-r5.md，资格reports/kernel-entry-probe/2026-10-27-v49-r5/qualification.json，包报告reports/xnu-first-entry/entry-probe-41-r5.json。
 
-## 上一轮激活审计及分析记录（历史轮次）
+当前默认候选以r5为准。下列既有离线里程碑中的“41未变/无内核变更”描述其当时状态；OS/Data准备成果继续保留，不表示已接入本轮镜像。当前41实测已按本轮用户安排恢复；启动前状态由本轮preflight确认，启动后恢复仍待核验。
 
-2026-10-26接续079488f；本轮新增11场景/12对激活上下文差分及x8/x9泄漏负对照，默认11项输出与原证据逐字节一致；原包和23份绑定报告均原字节保留。6个源码函数/5个独立原生符号的MAC/decmpfs等待地图已审计。没有重跑全套24项，没有新内核/新包或设备操作。
+最新Data候选已生成，见2026-10-27-linux-apfs-data-candidate.md及reports/desktop-readiness/2026-10-27-data-linux-r1/qualification.json。采用固定fajita Linux builder+固定apfsprogs源归档，依赖在仓外Toolchain-nuwa，无git clone/init。160个20H392源目录，逻辑1 GiB、无文件偏好、APFS/role none，包106608B SHA256 1e00210d8fb17f13736efe8d6ca9f6b72eb424c223fa1bf03168b808bf2f7598，卷UUID 3FA04580-6AA3-5949-A64F-B5F03A271995；两次构建/独立FS读回/C++完整逻辑摘要通过。仅宿主候选，未接入41。当前实际内核未见RamBlock符号、恢复root RAMDisk与新Data不得混同；待固定正确iOS16 provider ABI/archive/link/init及完整root发布/挂载。旧快照和公开配置pin字节不同，Git元数据因dubious ownership停止，不作safe.directory或手读.git绕过，正式访问复核尚需解决。41/239/板值/设备暂停不变，未提交。
 
-用户最新要求为“先离线分析下一阶段”和公开资料检索。已有检查已完成，此后不扩展新实现；设备操作全部暂停，包括adb/fastboot查询/状态变化、临时启动和刷写。本文件后面的旧设备续接命令只作后续条件核对参考，不是本轮执行许可，不能因存在命令而自动运行。R-014仍open，最后Android后验仍是历史v35，不是当前预检。
+最新OS原始输入准备见2026-10-27-raw-os-input.md及reports/desktop-readiness/2026-10-27-raw-os-r1/qualification.json：5635081728字节raw SHA256 6e87bfcaa8eca952e00b719f333d1f1060715a63566112267ad8730e1ed98906，3638块回读、5文件只读视图对照、源DMG前后摘要/卸载闭环。System卷UUID DADD93F8-DBBF-4B17-A1DF-0F11E64172F7单独取得，候选契约out/desktop-raw-os-20261027-r2/raw-window-contract.json；未写board/ADT。15上游+14本地检查通过，Clock skew原日志保留；首次Windows/POSIX父证据路径差异失败日志保留，hash要求不变。只补齐宿主原始输入，非完整根/Data或启动包；目标容量、发布/匹配、Data种子/保护/初始化及原生运行仍未验收。41/239不变，设备暂停，未提交。历史“OS解码摘要未知”由本轮新证据取代，不重写旧报告。
 
-新增真实参数覆盖边界：250调用w6=8、len来自运行时PAGE_SHIFT_CONST，现有普通fixture为4KiB/flags0；磁盘初值0不是运行时证据。下一最小离线规划项为固定loader memSize→arm_init→PAGE_SHIFT→len契约，未实施参数扩展。最早未验证点仍是实际header读取；类型4表项已有不证明锁/验证/UPL/fetch返回。等待转换只在fetch错误且CONVERTING条件下进入，不能以采样未返回直接指定它。
+最新根/Data/服务推进见2026-10-27-root-data-service-contract.md及reports/desktop-readiness/2026-10-27-contract-r1/qualification-r2.json：根原始窗口总预览8380219392字节，目标容量/OS解码SHA未定；532作业、1668 Mach名、63路径，containermanagerd条件参数不展开，9个跨组件程序找到/ARM64-all，4个其它缺项待条件审查。out/desktop-root-contract-20261027-r2/assembly-contract.json和os-var-source.tar为本轮交付，198项初始来源包回读通过；排除staged_system_apps，非APFS种子。r1归档触及预算而不完整，禁止使用，原失败报告/日志保留。15+9+9项测试通过，源摘要不变/挂载退出，未用设备/未改41或239/未提交。r2资格仅纠正计数元数据及绑定，初版保留。下一项为Data APFS元数据/初始化与原生服务解释、OS解码/完整挂载契约；不要将host tar当payload Data输入。
 
-详细结果：[激活读取审计](2026-10-26-read-active-transparency-and-waits.md)；规划/一手来源/适用边界：[下一阶段公开研究](2026-10-26-next-stage-public-research.md)；补充SHA清单reports/kernel-entry-probe/2026-10-26-v36-active-audit/audit-manifest-final.json。原PROBE28镜像7a04626e…保持，原24项、1092透明比较、38绑定、23 Git blob及内核逐字节重建结论保持；新结果不能升级为真实MAC/APFS或实机通过。无push/新CI、无原始媒体上传，28项历史未跟踪保留。
+最新S05/S06推进：新增desktop_cache.py、desktop_namespace.py、audit-desktop-cache.py、test-desktop-cache.py；最终r3完成42子缓存+symbols UUID/映射引用、2710镜像索引，四个磁盘入口静态库路径1103节点/17649边，必需缺失0，弱依赖缺失6边/4路径，14项测试通过。三个组件前后摘要一致且卸载；r1/r2结果保留，r3修正lazy依赖覆盖和dyld磁盘/cache同名入口选择。reports/desktop-readiness/2026-10-27-cache-r1/qualification.json绑定最终源码和证据，详见2026-10-27-desktop-cache-closure.md。虚拟OS/cryptex/cache映射未部署，非完整符号/认证/运行闭包。下一离线项为根组装契约和Data/服务范围；41、239门和设备暂停保持，无提交。
 
-后续顺序：先参数契约分析；未来在当前设备暂停解除且当轮日志/恢复门、新鲜目标/Android1/槽位/三SHA均满足后，才考虑一次现有28观测；按最早未返边界只选一个内部调查。读取后才是Mach-O/dyld、原生任务切换/签名；239恢复用户态释放守卫保持，restore作业RunAtLoad风险与完整iOS系统根另审。本轮不执行这些规划。
+最新规则复审：新增audit-resource-progress.py、test-resource-progress.py、test-native-resource-uio.py；固定原生UIO双分配与VFS参数/初始化模型已核对。六项CFG检查、三组UIO含错误分支、一项VFS Unicorn模拟通过；真实分配器/APFS和live v_op未知。不能把IOMallocData返回当作UIO分配完成，不能把磁盘descriptor offset=0当作live index。详见2026-10-27-mainline-reassessment.md及reports/mainline-reassessment/2026-10-27-r1/qualification.json，包含失败原记录、疑点排序、阶段缺口和仅追溯的已执行命令。41仍未消费，包新读SHA未变，无设备操作/内核变更/提交；后续可离线推进命名空间/cache闭包，保留239门与平台独立验收缺口。
 
+用户明确本轮“离线”只指不使用实机，仍须在线参考公开资料；本轮没有设备访问/启动。阶段持续实机授权暂不执行，待用户恢复设备工作后按当轮观测/恢复及新鲜预检继续。最后设备证据仍是PROBE40的12:00:43 +08 Android1、nuwa/kalama、A槽及三分区SHA一致；不是本轮新查询。
 
-## 当前唯一接续点
+原生当前卡点仍是PROBE40细条带535资源块表读取调用可见、536续接未辨出。第二次分配非零及向量准备已观察，不能确定资源helper入口或死锁。详见docs/operations/2026-10-27-probe41-resource-bottleneck.md。原始媒体、首次screen和补充证据保留。
 
-PROBE28/v36离线完成，尚未启动。真实主机DESKTOP-S8M2VOR，D:/Code/UniXNU-nuwa；接续父a78e7591d90f3e442608e284083bb7acee6fc5cb。当前提交见本交接所属Git提交。AGENTS、原STATUS和本日最新交接均已读，.agents/skills不存在；不联系旧会话、不触碰其他项目、不启动第二写入者。本会话没有后台构建或设备进程；工作区在本轮提交后核验。无push或新CI，远端实时状态未刷新。
+历史PROBE41资源版r4为未启动、未消费的合格诊断包（当前默认候选已由r5替代）：38作业、2412透明性、977专项、9连续路径/重置、独立内核逐字节复现及包回读。包out/trial-boot/xnu-entry-probe-41-resource/boot-xnu-first-entry.img，204484608字节，SHA256 8d242a2dd953146af5c3c8ae59c6805cba6599aa7283188180667bfca5c2ec2a，本轮重新核对未变。内核8757bc0c38449099e3d10b8fcd69ec0cbd830c263f99c77bce2ff191848e4418；ADT82b5219204cd30f79d520e1710c5b63d105e19f4337f16ef87cdc1603da00a57。资格reports/kernel-entry-probe/2026-10-27-v49-r4/qualification.json，包报告reports/xnu-first-entry/entry-probe-41.json。旧28—40已消费启动命令只追溯，不重发。
 
-24项串行检查最终通过，1092透明比较、25 Image4、15 exec边界、11读取路径、38绑定。execution.json保留修订36白名单初次失败及续跑；execution-initial.json原始快照；最终24项结果均为0。独立重建逐字节相同，新28/旧27包实际FAT回读通过；旧未配对候选被MAC拒绝负对照拒绝。证据reports/kernel-entry-probe/2026-10-26-v36/，详细指令/来源/失败分析见[本轮记录](2026-10-26-v36-read-boundaries.md)。模型未执行真实MAC策略、APFS/decmpfs或解压回调；不能称实机或QEMU通过。
+新增桌面输入准备：4个脚本、6项测试；恢复RAMDisk实际缺少SpringBoard/backboardd和shared cache，无主launch配置。三份完整20H392的OS/SystemOS/AppOS组件已重新只读挂载、流式核对manifest摘要和前后不变，均卸载。OS含SpringBoard/backboardd及532项主launch配置，SystemOS有44个shared-cache文件。记录的是输入、头和配置，尚未完成cache引用/依赖闭包、根组装、认证或GUI运行。非部署输入计划及资格reports/desktop-readiness/2026-10-27-qualification-r1；组合证据reports/desktop-readiness/2026-10-27-combined-r1/qualification.json。
 
-## 新观测及工程判断
+已在线固定领先设备来源：sheng 08cde20edc32（SM8550/iPadOS17）、ishtar 9ee8ee510ebb（SM8550/iOS18，详细日志到锁屏、按键与USB；README滞后）、ios-sweet 45263bee51df（iOS16桌面）。实际审阅显示ABI构建、显示电源补丁、OS/cryptex根脚本；版本/文件SHA/许可和nuwa差异见reports/desktop-readiness/2026-10-27-reference-r1/manifest.json。维护者设备记录不是nuwa通过；没有导入板值、固定地址或上游实现。
 
-PROBE27原图实测仍为264黄/265绿、A02A0、A033 FFFFFFF005F48EF8（用户纠正EF8、原图复核），250亮/251暗。只证明类型4表项已存在，不能称本轮真实加载API返回0、解压成功、Mach-O/dyld或用户态到达。A02E F2/242、聚合ENOENT可为之前完成尝试，不能解释本次未返回读取。原图62f86fe6…只保存在本地out/trial-evidence/entry-probe-27/user-screen.jpg；文字证据v35/screen.json，原始媒体不上传。
+当前判断、已完成证据及下一项离线代码工作见docs/operations/2026-10-27-desktop-offline-progress.md：OS/cryptex虚拟命名空间；shared-cache引用与路径闭包；可写Data/服务内容；iOS16 IOSurface/MobileFramebuffer/HID接口资格。完整原材料已有，恢复根不能代表桌面根。
 
-首要调查读取主体/APFS/decmpfs内部等待，次要MAC读取检查；新探针是最小分界，尚无新实机读数。
+距离首次用户态仍需原生读取/解压、exec认证和映射、实际EL0；桌面还需完整根、服务与图形/输入。239未审用户任务释放门保持，UFS未验收，当前根是RAMDisk/md0。未改受审内存/IPSW身份、未置*_verified=true。HEAD855daaf，无本轮提交/推送/CI；原迁移修改与历史证据保留，新路径/Legacy只读/串行脚本/单写入者规则持续有效。
 
-- 266/267：vn_rdwr调用vn_rdwr_64及返回。
-- 268/269：mac_vnode_check_read调用/返回。
-- 270/271：VNOP_READ调用/返回。
-- 272/273：VNOP_READ中真实文件系统blr x8调用/返回。
-- 274/275：原生vn_read_swapfile备用路径。
+本轮已执行的离线命令及新输出见2026-10-27-desktop-offline-progress.md；历史输出均已存在，不重跑覆盖。后续只读包回读可执行build_xnu_boot_package.py --validate --output reports/xnu-first-entry/entry-probe-41.json；本轮不运行设备续接命令。
 
-0xfffffff007466b24是VNOP_READ后继，也是MAC拒绝公共汇合点；本轮以同帧调用配对避免假返回。新格x832..1295/y784..799，保留0..265。A034=最近读取阶段；A035=实际低32返回，调用未返回全1，header开始后覆盖旧含义。每次250开始清新格和状态，251后继清active，限定TPIDR_EL1、header caller LR和真实FP，不写原生表、不跳认证/错误、无新增成功终点；既有恢复用户态释放守卫保持。异常/panic仍按真实布局解释。诊断状态只覆盖当前首进程单个active header，不宣称通用并发exec记录。
+2026-10-27T14:10:38.5350403+08:00 · 官网顺序复核：驱动依赖、root/Data、先CPU呈现再GPU、分层日志和OS ABI契约已对照；后续按docs/operations/2026-10-27-official-adaptation-sequence.md推进。仅查阅/文档维护，设备暂停，PROBE41与受审输入未变。
 
-268亮269暗优先调查MAC；270亮271暗而272未到调查VNOP包装器/分派准备；272亮273暗优先调查真实文件系统回调及其APFS/decmpfs/锁/块I/O链。若更早即未到MAC则回查UIO等准备。不得把未见返回直接写成永久卡死、IRQ或具体锁已证。
+2026-10-27T14:14:30.9449713+08:00 · 用户已确认将UniXNU官网内容作为后续开发指南。执行规则已写入设备仓AGENTS.md第0节，固件仓同步引用；按官网依赖/启动阶段/ABI与日志完成条件推进，保留既有用户指令、硬停和证据边界。决策D-071。当前仍仅离线、不操作设备，PROBE41未变。
 
-## 固定产物与边界
-
-权威包reports/xnu-first-entry/entry-probe-28.json；镜像out/trial-boot/xnu-entry-probe-28-read-boundaries-lf/boot-xnu-first-entry.img，204484608B，SHA256 7a04626e631196be116d270fa94e59b957ab537ecc1353501ff8f7b54fec7e0f。内核54179a8775ee4d723bb0493a66679932f986d39231e9ef371d856afb07b3ea07（58462208B）；ADT458232d6270643a88b465814535eead13eb88771c869e3cf6edfbe1741aa12f0。APFS d180c38dcc754bc079cc92a40f58a4b5fad2c2b7ce72cf5e64a117453fd7c90a（106954752B），192MiB运输，-v rd=md0。
-
-独立重建reproduce.json。build-unpaired.json对应失败负对照dfa16e70…，不得启动或误用。PROBE27旧包06913eaf3124e2634a2c9e654f66b374ece2caf2fed790dea8b6578b0d34955d只作回归，不重复启动。
-
-只读XNU源码固定1b191cb58250d0705d8a51287127505aa4bc0789，APSL-2.0；vfs_vnops.c SHA ea24edd5…，来源审计含链接、指令和FP几何。无新上游迁移。D:/Code/uefi-nuwa本轮不改；PortingiOS/PortingiOSWithUniXNU只读。FD2d606985…、shim8a3b5476…、板内存/TCR、iOS16/8796身份、_verified均保持，loadable/runtime_qualified=false。不flash/erase/改槽、不push/新CI、不上传原始媒体。历史28项未跟踪保留；只提交本轮相关文字/代码。
-
-## 当前设备与R-014日志门
-
-本轮未执行任何设备命令，实际当前状态未刷新。最后恢复证据：v35/recovery.json于2026-10-26T00:16:10.211478+08:00 Android完成1，v35/postcondition.json于00:19:12.450574+08:00确认nuwa/kalama、_a及三SHA与预检一致：
-
-| 分区 | SHA256 |
-| --- | --- |
-| boot_a | ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31 |
-| vendor_boot_a | 5ad2a9dc751870fa3c367fa2833582147541f5b62b880dcbdf525003ad68cc23 |
-| init_boot_a | 19e95d952ded5172e8a17bd1af907a8d6b08b29734881c370961b09bbaf78f96 |
-
-R-014 open，停在下一设备启动前：尚未确认本会话当轮可读/可拍菜单Enter后的具体画面和可按键恢复条件，不能把旧记录或fastboot ACK当新日志门。离线构建/核验已完成；无待恢复设备或本轮待按键动作，当前状态未知不能据此声称现在已在Android。缺条件属于AGENTS §3.2，只停止相关设备动作，不停止独立离线工作。
-
-A：用户确认当轮拍摄/读取及按键恢复条件有效后，先用真实原文生成新鲜preflight，目标/Android1/_a/三SHA对照v35后验通过，即时通知后按既有范围单次临时boot28。B：保持设备不动，保留已验证28包，继续只读源码分析，代价是不能获得MAC/VNOP分界实测。倾向A，最小范围是本包当轮日志/恢复条件及既有单次临时启动；不扩展flash/erase/改槽、内存、身份、verified或恢复镜像自动还原。条件仍有效时不重复问。
-
-## 可直接执行的离线续接
-
-```powershell
-Set-Location -LiteralPath D:/Code/UniXNU-nuwa
-git status --short
-git log -4 --oneline
-Get-Content -Encoding UTF8 AGENTS.md
-Get-Content -Encoding UTF8 docs/STATUS.md
-& 'C:/Users/Administrator/.workbuddy/binaries/python/versions/3.13.12/python.exe' -B scripts/build_xnu_boot_package.py --validate --output reports/xnu-first-entry/entry-probe-28.json
-```
-
-不得以validate通过自动启动。R-014条件确认后，record-nuwa-trial-state.py --package reports/xnu-first-entry/entry-probe-28.json --capture-confirmation必须采用用户本轮真实原文，输出新的reports/xnu-entry-probe-trial/2026-10-26-v36/preflight.json，并与v35/postcondition.json核对。不得伪造确认。再由trial-v4-firmware.py launch --package reports/xnu-first-entry/entry-probe-28.json --preflight上述新文件 --evidence该目录launch.json执行单次临时boot；菜单就绪后由电源Enter触发，不固定等180秒、不以ACK为内核计时起点。拍具体画面并只本地保留原始媒体。
-
-恢复沿已授权trial-v4-firmware.py recover --package reports/xnu-first-entry/entry-probe-28.json --evidence该目录recovery.json，结束后record-nuwa-trial-state.py --output该目录postcondition.json --before该目录preflight.json确认Android1/同槽/三SHA。人工恢复等待记录PENDING-HUMAN并继续离线修复，不在恢复/日志门缺失时启动第二候选。fastboot缺变量保留失败、重进一次再试，不伪造缺失值。上述设备流程尚未执行，不把本段命令当设备授权或实测证据。
-
-## 最终文字证据与包版本修正
-
-在42cf7d1之后固定JSON证据为LF，38绑定复跑、23份Git暂存blob哈希及完整绑定验证通过（git-evidence-binding.json）。权威entry-probe-28现绑定这些Git字节，最终镜像7a04626e…，首包a8cb…已退为历史且不得启动。两包差83字节，均在运输CRC/目录时间字段/未分配FAT尾簇；有效载荷相同并已回读，内核独立重建逐字节相同。空闲簇字节生成来源未进一步核对，不宣称整个运输镜像可逐字节重建。详细差异repack-difference.json，最终包回读追加post-build-validation.json。R-014仍open，没有设备动作或新鲜预检。
+2026-10-27T14:25:45.9616435+08:00 · 用户要求各阶段具体方法/步骤落为规则：docs/DEVELOPMENT-STAGES.md已定义S00—S13及通用执行方法，两仓AGENTS强制引用，决策D-072。后续按前提、实施、离线/必要实测及完成/失败条件推进；当前阶段状态和证据不变。设备继续暂停，未改PROBE41，未提交。

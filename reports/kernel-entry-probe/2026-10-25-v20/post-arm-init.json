@@ -1,0 +1,69 @@
+{
+  "scope": "v6 C-entry markers executed in the model with the real ADT; not hardware behaviour",
+  "build": "reports\\kernel-entry-probe\\2026-10-25-v20\\build.json",
+  "candidate_sha256": "1f5178361a484fcd7fdde71917c394cd8d22b46bd5c91f3b3249f13a084a0369",
+  "adt_used": true,
+  "adt_sha256": "61567057a89009783f5f3a244b182ad1d3f222af1ec88cb453bcf0609046ffb5",
+  "instructions": 975710,
+  "error": "Unhandled CPU exception (UC_ERR_EXCEPTION)",
+  "stopped_at": "0xfffffff0073bb54c",
+  "stopped_symbol": "_cpu_number+0x10",
+  "reached": {
+    "white": 374421,
+    "cpu_base": 975688
+  },
+  "pixels": {
+    "256": "0xff0080ff",
+    "288": "0xffffff00",
+    "320": "0xffff00ff",
+    "352": "0xff00ffff",
+    "384": "0xffffffff",
+    "416": "0xff8000ff",
+    "448": "0x0",
+    "480": "0x0",
+    "512": "0x0",
+    "544": "0x0",
+    "576": "0x0",
+    "608": "0x0",
+    "640": "0x0"
+  },
+  "bad_memory": [],
+  "checks": [
+    {
+      "name": "Cyan and white still correct",
+      "passed": true
+    },
+    {
+      "name": "_current_percpu_base marker paints its band",
+      "passed": true
+    },
+    {
+      "name": "_current_percpu_base marker is the first new marker reached",
+      "passed": true
+    },
+    {
+      "name": "TPIDR_EL1 shim points at the zeroed per-CPU page",
+      "passed": true
+    },
+    {
+      "name": "With the shim the model advances past the per-CPU null dereference",
+      "passed": true
+    },
+    {
+      "name": "The draw-once guard flags record the hooks that fired",
+      "passed": true
+    },
+    {
+      "name": "No invalid memory access other than the reported stop",
+      "passed": true
+    },
+    {
+      "name": "VBAR_EL1 was redirected to the probe vector page identity address",
+      "passed": true
+    },
+    {
+      "name": "Exception vectors sit at the very start of the probe page",
+      "passed": true
+    }
+  ]
+}

@@ -10,7 +10,7 @@ import struct
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
-FIRMWARE = Path('D:/Code/uefi-nuwa')
+FIRMWARE = Path('D:/Code/PortingiOS/nuwa/uefi-nuwa')
 BASE = '5e4a8c814b89f62a4ba2bc145249314fed5db787'
 
 

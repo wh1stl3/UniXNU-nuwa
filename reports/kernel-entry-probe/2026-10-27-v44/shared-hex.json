@@ -1,0 +1,71 @@
+{
+  "candidate_sha256": "a80af3c69311927a4d91a6d07b0ac4cb2463760309ba46fdb9329f390468a4fd",
+  "source_sha256": "a93f29326bff59ec3344f9d8dde5c5fed672a8f463fa14198e0038774a575f5b",
+  "test_sha256": "64f2917547d54da4621cb45eec93db3f7662896fd935cef43d11cbabb5c849b0",
+  "checks": [
+    {
+      "name": "field-pixels",
+      "passed": true
+    },
+    {
+      "name": "unchanged-result-no-write",
+      "passed": true
+    },
+    {
+      "name": "changed-result-redraw",
+      "passed": true
+    },
+    {
+      "name": "no-video",
+      "passed": true
+    },
+    {
+      "name": "header-reset",
+      "passed": true
+    },
+    {
+      "name": "omitted-reset-negative",
+      "passed": true
+    },
+    {
+      "name": "code-size-reduction",
+      "passed": true,
+      "old_bytes": 221184,
+      "new_bytes": 184320
+    },
+    {
+      "name": "dispatch-native-equivalence",
+      "passed": true
+    }
+  ],
+  "result_sequence": [
+    "0xffffffffffffffff",
+    "0xffffffffffffffff",
+    "0x0",
+    "0x0",
+    "0x5",
+    "0xffffffffffffffff"
+  ],
+  "framebuffer_bytes": [
+    38400,
+    0,
+    38400,
+    0,
+    38400,
+    38400
+  ],
+  "reference_bytes": [
+    38400,
+    38400,
+    38400,
+    38400,
+    38400,
+    38400
+  ],
+  "device_accessed": false,
+  "hardware_timing_measured": false,
+  "limitations": [
+    "Flat model; no IRQ, cache or scanout timing",
+    "No native filesystem body execution; not a proven PROBE34 root-cause fix"
+  ]
+}

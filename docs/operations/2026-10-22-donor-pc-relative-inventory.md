@@ -20,7 +20,7 @@
 ## 复现
 
 ```text
-python -X utf8 -B scripts/ci/audit-donor-pc-relative.py --donor D:/Code/PortingiOS/nuwa/artifacts/ios16-donor-inspection/20261020T115253317035Z/original-iphone-kernelcache.macho --selection-report D:/Code/PortingiOSWithUniXNU/.work/kernel-prelinked.json --existing-candidate D:/Code/PortingiOSWithUniXNU/.work/kernel-prelinked.macho --output reports/donor-compat/pc-relative-inventory.json
+python -X utf8 -B scripts/ci/audit-donor-pc-relative.py --donor D:/Code/PortingiOSLegacy/nuwa/artifacts/ios16-donor-inspection/20261020T115253317035Z/original-iphone-kernelcache.macho --selection-report D:/Code/PortingiOSWithUniXNU/.work/kernel-prelinked.json --existing-candidate D:/Code/PortingiOSWithUniXNU/.work/kernel-prelinked.macho --output reports/donor-compat/pc-relative-inventory.json
 ```
 
 脚本只调用固定工具的解析和instruction_inventory函数；不会调用emit，不会改源文件或未知指令检查。报告有工具SHA、真实donor/candidate SHA、12项原始字/文件偏移/上下文字节、30项前后hash及官方拒绝原文。分析用参考选择，不采纳board的roots、slide或其他板值。

@@ -12,9 +12,9 @@
 
 | 树 | HEAD | 用途 |
 | --- | --- | --- |
-| `D:/Code/PortingiOS/common/sources/UniXNU` | `75bc13dd34dc4e403826793739e316a264ce00dd` | 本地基座实际构建入口 |
-| `D:/Code/PortingiOS/common/sources/xnu-ios16-full` | `1b191cb58250d0705d8a51287127505aa4bc0789` | 8796.141.3接口定义 |
-| `D:/Code/PortingiOS/common/sources/UniXNU-sheng` | `a599a1a8a92093b5077543e071b72130769eb325` | 查找缺失生产者与版本绑定，未复制代码/板值 |
+| `D:/Code/PortingiOSLegacy/common/sources/UniXNU` | `75bc13dd34dc4e403826793739e316a264ce00dd` | 本地基座实际构建入口 |
+| `D:/Code/PortingiOSLegacy/common/sources/xnu-ios16-full` | `1b191cb58250d0705d8a51287127505aa4bc0789` | 8796.141.3接口定义 |
+| `D:/Code/PortingiOSLegacy/common/sources/UniXNU-sheng` | `a599a1a8a92093b5077543e071b72130769eb325` | 查找缺失生产者与版本绑定，未复制代码/板值 |
 
 复现静态审查：
 
@@ -27,7 +27,7 @@
 WSL枚举在沙箱内返回 `Wsl/EnumerateDistros/Service/E_ACCESSDENIED`；经宿主批准在沙箱外只读枚举成功，得到 `Ubuntu-22.04`。因此不是“本机没有WSL”。继续执行：
 
 ```powershell
-wsl.exe -d Ubuntu-22.04 --exec /bin/sh /mnt/d/Code/UniXNU-nuwa/scripts/probe-wsl-toolchain.sh
+wsl.exe -d Ubuntu-22.04 --exec /bin/sh /mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/scripts/probe-wsl-toolchain.sh
 ```
 
 经批准的脚本只查询主机、工具版本/路径、有限范围SDK目录和预处理器内建；仅将记录写本仓 [wsl-toolchain.log](../../reports/darwin22-audit/wsl-toolchain.log)。没有apt、clone、make构建、Mach-O/ELF产物或设备操作。

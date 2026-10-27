@@ -1,0 +1,92 @@
+{
+  "dependencies": {
+    "path": "reports/desktop-readiness/2026-10-27-data-linux-r1/dependencies.json",
+    "sha256": "0884671da31bed2bf1a08f4f49e5f5d3427fc9794bc7bd596e6fbfa91cc024aa"
+  },
+  "apfsprogs_commit": "1bd1c1c2140d13d1b6d2e03379316572bee70aa3",
+  "source_directory": "/mnt/d/Code/PortingiOS/nuwa/Toolchain-nuwa/data-seed-20261027/apfsprogs-1bd1c1c",
+  "binaries": {
+    "mkapfs": {
+      "path": "/mnt/d/Code/PortingiOS/nuwa/Toolchain-nuwa/data-seed-20261027/apfsprogs-1bd1c1c/mkapfs/mkapfs",
+      "sha256": "0b7227c1d87653cfe4ea06601ea0f7dacd8649d019fbc0a9e4864ed9efcd5991"
+    },
+    "apfsck": {
+      "path": "/mnt/d/Code/PortingiOS/nuwa/Toolchain-nuwa/data-seed-20261027/apfsprogs-1bd1c1c/apfsck/apfsck",
+      "sha256": "319783f14fe0314266bdf4920631ded5dd9876eed1a187e23239a3fbc986e182"
+    },
+    "sparse_host": {
+      "path": "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/linux-data-tools-20261027-r1/sparse-host",
+      "sha256": "f61f1d916609f29410c55b1acc2943ed7791ac4d4c67c1aa17ff98ae459ad6d0"
+    }
+  },
+  "commands": [
+    {
+      "argv": [
+        "make",
+        "-C",
+        "/mnt/d/Code/PortingiOS/nuwa/Toolchain-nuwa/data-seed-20261027/apfsprogs-1bd1c1c/mkapfs",
+        "-j1"
+      ],
+      "exit_code": 0,
+      "stdout": "make: Entering directory '/mnt/d/Code/PortingiOS/nuwa/Toolchain-nuwa/data-seed-20261027/apfsprogs-1bd1c1c/mkapfs'\n  Compiling btree.c...\n  Compiling dir.c...\n  Compiling mkapfs.c...\n  Compiling object.c...\n  Compiling spaceman.c...\n  Compiling super.c...\n  Building libraries...\n  Compiling aes.c...\n  Compiling checksum.c...\n  Compiling libzbitmap.c...\n  Compiling parameters.c...\n  Compiling sha256.c...\n  Compiling unicode.c...\n  Compiling zlib_inflate/inffast.c...\n  Compiling zlib_inflate/inflate.c...\n  Compiling zlib_inflate/inftrees.c...\n  Compiling zlib_inflate/infutil.c...\n  Assembling library archive...\n  Library build complete\n  Linking...\n  Build complete\nmake: Leaving directory '/mnt/d/Code/PortingiOS/nuwa/Toolchain-nuwa/data-seed-20261027/apfsprogs-1bd1c1c/mkapfs'\n",
+      "stderr": "make: Warning: File 'Makefile' has modification time 26 s in the future\nfatal: not a git repository (or any parent up to mount point /mnt)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\nmake[1]: Warning: File 'Makefile' has modification time 25 s in the future\nmake[1]: warning:  Clock skew detected.  Your build may be incomplete.\nmake: warning:  Clock skew detected.  Your build may be incomplete.\n"
+    },
+    {
+      "argv": [
+        "make",
+        "-C",
+        "/mnt/d/Code/PortingiOS/nuwa/Toolchain-nuwa/data-seed-20261027/apfsprogs-1bd1c1c/apfsck",
+        "-j1"
+      ],
+      "exit_code": 0,
+      "stdout": "make: Entering directory '/mnt/d/Code/PortingiOS/nuwa/Toolchain-nuwa/data-seed-20261027/apfsprogs-1bd1c1c/apfsck'\n  Compiling apfsck.c...\n  Compiling btree.c...\n  Compiling compress.c...\n  Compiling crypto.c...\n  Compiling dir.c...\n  Compiling extents.c...\n  Compiling htable.c...\n  Compiling inode.c...\n  Compiling key.c...\n  Compiling object.c...\n  Compiling snapshot.c...\n  Compiling spaceman.c...\n  Compiling super.c...\n  Compiling xattr.c...\n  Building libraries...\n  Library build complete\n  Linking...\n  Build complete\nmake: Leaving directory '/mnt/d/Code/PortingiOS/nuwa/Toolchain-nuwa/data-seed-20261027/apfsprogs-1bd1c1c/apfsck'\n",
+      "stderr": "fatal: not a git repository (or any parent up to mount point /mnt)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n"
+    },
+    {
+      "argv": [
+        "/usr/bin/clang++",
+        "-std=c++17",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "/mnt/d/Code/PortingiOSLegacy/common/sources/UniXNU/drivers/NativeRamBlock/Test/sparse.cpp",
+        "-o",
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/linux-data-tools-20261027-r1/sparse-host"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/linux-data-tools-20261027-r1/sparse-host"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS: actual sparse parser/import/I/O, 4000 differential operations, overflow/malformed/short-copy/allocation failures\n",
+      "stderr": ""
+    }
+  ],
+  "host_differential_operations": 4000,
+  "source_headers": {
+    "path": "/mnt/d/Code/PortingiOSLegacy/common/sources/UniXNU/drivers/NativeRamBlock/SparseDisk.h",
+    "sha256": "8b1202eda8ae920c6b505d7b97c44691e4cd2b3c7756b20bbd86ade40b8738fd"
+  },
+  "source_tests": {
+    "path": "/mnt/d/Code/PortingiOSLegacy/common/sources/UniXNU/drivers/NativeRamBlock/Test/sparse.cpp",
+    "sha256": "715f5579020260b40905229b5c245ec42c27c2312962496909bea73bc06226ff"
+  },
+  "local_git_metadata_read": false,
+  "git_repository_created": false,
+  "device_accessed": false,
+  "kernel_built": false,
+  "sources": [
+    {
+      "path": "scripts/linux_data_inputs.py",
+      "sha256": "39cec3d6ae10b0253e1f2c3a2fbc788e7aa52659dcc85224419887dea5e249ba"
+    },
+    {
+      "path": "scripts/prepare-linux-data-tools.py",
+      "sha256": "5e255846194112993b96b0280d9cf05a662224dd98796d9bafe1eafdb8722756"
+    }
+  ]
+}

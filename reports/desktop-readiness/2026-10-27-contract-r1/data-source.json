@@ -1,0 +1,88 @@
+{
+  "parent": {
+    "path": "reports/desktop-readiness/2026-10-27-contract-r1/audit-r2.json",
+    "sha256": "c2020a42681111af7db73736d1361fd422b55fcb83afd335a37400a7daa1d4db"
+  },
+  "input": {
+    "path": "/mnt/d/Code/PortingiOSLegacy/common/cache/donor-ios16/components/087-86698-044.dmg",
+    "before": {
+      "sha256": "80f426d5b8fca8552f95be427434f1911dbb4c2c6d28aad94f2426ddd0c92483",
+      "sha384": "103b835176572a97ae36bc5ebe4c332c40b921e1f151b844116bbda49959c46c64364d343ceb0c4e9d95a51ba60d0e51",
+      "bytes": 4730814044
+    },
+    "after": {
+      "sha256": "80f426d5b8fca8552f95be427434f1911dbb4c2c6d28aad94f2426ddd0c92483",
+      "sha384": "103b835176572a97ae36bc5ebe4c332c40b921e1f151b844116bbda49959c46c64364d343ceb0c4e9d95a51ba60d0e51",
+      "bytes": 4730814044
+    }
+  },
+  "sources": [
+    {
+      "path": "scripts/desktop_data_source.py",
+      "sha256": "6eed1b6a3965fdff233769d81657b2bd368c63eddb1ce71ecfcd2cfa30cfd6ae"
+    },
+    {
+      "path": "scripts/prepare-desktop-data-source.py",
+      "sha256": "e0e5e55d534236eab7319cbe8110f05f4df529223fb8d57ac09a50a2f91027ec"
+    },
+    {
+      "path": "scripts/desktop_root_contract.py",
+      "sha256": "233b80a933dd4602b0b3fcce1c863a3f8e22322ce21da317c5be8882d738a658"
+    },
+    {
+      "path": "scripts/audit-desktop-system.py",
+      "sha256": "a708ed2ba1a3ae6e568984e66c0b5fb5e7c3a038881b486500d643c0bf76851f"
+    },
+    {
+      "path": "scripts/audit-desktop-root.py",
+      "sha256": "1205b549abf6f2b5bfe27985a8b9d49857075ecc96358cc53637fd9e43e008f8"
+    },
+    {
+      "path": "scripts/audit-userland-closure.py",
+      "sha256": "7dfc1c9ffac4d6d3db6f9f3dabe454e656369d33e9d8e0bbd79aca88d587a91f"
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "/mnt/d/Code/PortingiOSLegacy/common/tools/apfs-fuse-linux/bin/apfs-fuse",
+        "-o",
+        "ro",
+        "/mnt/d/Code/PortingiOSLegacy/common/cache/donor-ios16/components/087-86698-044.dmg",
+        "/var/tmp/nuwa-desktop-data-source-20261027-r1"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "mountpoint",
+        "-q",
+        "/var/tmp/nuwa-desktop-data-source-20261027-r1"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "fusermount",
+        "-u",
+        "/var/tmp/nuwa-desktop-data-source-20261027-r1"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "error": {
+    "type": "ValueError",
+    "message": "Data source byte budget"
+  },
+  "mount_cleanup_complete": true,
+  "device_accessed": false,
+  "filesystem_seed_created": false,
+  "jobs_enabled": false,
+  "release_guard_changed": false
+}

@@ -1,0 +1,375 @@
+{
+  "candidate_sha256": "f2711bf88941cb9e1c048e55e6c51b26b77b138c9d4dd6582ece11416f390324",
+  "serial_execution": true,
+  "device_accessed": false,
+  "commands": [
+    {
+      "name": "transparency",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-probe-transparency.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\transparency.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 548.0069740000181,
+      "stdout": "{\"progress_checks\": 100}\n{\"progress_checks\": 200}\n{\"progress_checks\": 300}\n{\"progress_checks\": 400}\n{\"progress_checks\": 500}\n{\"progress_checks\": 600}\n{\"progress_checks\": 700}\n{\"progress_checks\": 800}\n{\"progress_checks\": 900}\n{\"progress_checks\": 1000}\n{\"progress_checks\": 1100}\n{\"progress_checks\": 1200}\n{\"progress_checks\": 1300}\n{\"progress_checks\": 1400}\n{\"progress_checks\": 1500}\n{\"progress_checks\": 1600}\n{\"progress_checks\": 1700}\n{\"progress_checks\": 1800}\n{\"progress_checks\": 1900}\n{\"progress_checks\": 2000}\n{\"progress_checks\": 2100}\n{\"progress_checks\": 2200}\n{\"progress_checks\": 2300}\n{\"checks\": 2300, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "image4-launch",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-image4-launch.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\image4-launch.json",
+        "--adt",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\out\\exec-mainline-v46\\launch\\kernel.macho.adt",
+        "--nonce",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\out\\exec-mainline-v46\\launch\\nonce.bin",
+        "--manifest",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\out\\exec-mainline-v46\\launch\\launch-manifest.json",
+        "--baseline-adt",
+        "out/trial-boot/xnu-entry-probe-18-vectors/kernel.macho.adt"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.3507801999803632,
+      "stdout": "{\"checks\": 25, \"passed\": true, \"native_initializer_returned\": true, \"candidate_sha256\": \"f2711bf88941cb9e1c048e55e6c51b26b77b138c9d4dd6582ece11416f390324\", \"adt_sha256\": \"61219246e192aa0f814a9f232a77d380a568ef6f6391f30a6fb7ce620a52a30d\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "pthread-startup",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-pthread-startup.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\pthread-startup.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.7070671999827027,
+      "stdout": "{\"checks\": 6, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "root-stop",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-exec-release-boundary.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\root-stop.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.3258214999805205,
+      "stdout": "{\"checks\": 15, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "root-inputs",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-root-launch-context.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\root-inputs.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.5931767000001855,
+      "stdout": "{\"checks\": 7, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "fscompression-startup",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-fscompression-startup.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\fscompression-startup.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.917452100024093,
+      "stdout": "{\"checks\": 8, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-boundaries",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-read-boundaries.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\read-boundaries.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 16.22322449996136,
+      "stdout": "{\"checks\": 11, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-boundary-source",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\audit-read-boundary-source.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\read-boundary-source.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.4412362999864854,
+      "stdout": "{\"static_checks_passed\": true, \"sites\": 5, \"shared_join\": \"0xfffffff007466b24\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-dispatch",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-read-dispatch-integrated.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\read-dispatch.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.870734399999492,
+      "stdout": "{\"checks\": 11, \"stale_cleared\": true, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-body",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-read-body.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\read-body.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 67.37971949996427,
+      "stdout": "{\"progress\": 50}\n{\"progress\": 100}\n{\"progress\": 150}\n{\"progress\": 200}\n{\"progress\": 250}\n{\"progress\": 300}\n{\"progress\": 350}\n{\"progress\": 400}\n{\"progress\": 450}\n{\"checks\": 476, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-body-reset",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-read-body-reset.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\read-body-reset.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.9205256000277586,
+      "stdout": "{\"candidate_sha256\": \"f2711bf88941cb9e1c048e55e6c51b26b77b138c9d4dd6582ece11416f390324\", \"source_sha256\": \"1ec3de1ff8d6df0e7cffd486c3b80dab70bad35c9cb373af632d07907c655ab2\", \"tile_count\": 96, \"stale_fields_tiles_bits_cleared\": true, \"omitted_reset_negative_rejected\": true, \"device_accessed\": false}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-init",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-read-init.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\read-init.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.076145400002133,
+      "stdout": "{\"checks\": 9, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "single-pass-hex",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-single-pass-hex.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\single-pass-hex.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.1494032999617048,
+      "stdout": "{\"checks\": 7, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-grid",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-read-grid.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\read-grid.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.8344112999620847,
+      "stdout": "{\"checks\": 9, \"passed\": true, \"old_prefix_bytes\": 359936, \"new_prefix_bytes\": 52736}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-decmp",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-read-decmp.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\read-decmp.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 134.49615980003728,
+      "stdout": "{\"checks\": 617, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "shared-hex",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-shared-hex.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\shared-hex.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 7.381628899951465,
+      "stdout": "{\"checks\": 8, \"passed\": true, \"code_bytes\": 282624, \"result_bytes\": [38400, 0, 38400, 0, 38400, 38400]}\n",
+      "stderr": ""
+    },
+    {
+      "name": "compact-decmp",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-compact-decmp.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\compact-decmp.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 23.88027650001459,
+      "stdout": "{\"checks\": 72, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-fetch",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-read-fetch.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\read-fetch.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 115.85255279997364,
+      "stdout": "{\"checks\": 509, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-deep",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-read-deep.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\read-deep.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 172.13531720003812,
+      "stdout": "{\"checks\": 752, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "binding",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-probe-evidence-binding.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\binding.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 182.99120089999633,
+      "stdout": "{\"checks\": 61, \"passed\": true}\n",
+      "stderr": ""
+    }
+  ]
+}

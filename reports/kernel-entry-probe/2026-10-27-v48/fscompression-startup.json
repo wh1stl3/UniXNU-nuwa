@@ -1,0 +1,98 @@
+{
+  "scope": "Exercise the real first-exec hook with an explicit OSKext API boundary model.\n\nThe lifecycle and decompressor bodies are outside this model. No model table\nwrites are present in the delivered helper; actual registration needs hardware.\n",
+  "candidate_sha256": "4237d18ca1c4d1ac95d464c8828330ef8f833a53a6dd0942fd5c26c1a24099b5",
+  "source_sha256": "8a4d856a3057d23a389a7afff6dd1eb12249a8ea9c7dc57fb032190f225945f1",
+  "checks": [
+    {
+      "name": "registered: video",
+      "passed": true,
+      "loader_calls": 0,
+      "status": [
+        "0x0",
+        "0xf04300",
+        "0x0"
+      ],
+      "native_table_writes": []
+    },
+    {
+      "name": "registered: no-video",
+      "passed": true,
+      "loader_calls": 0,
+      "status": [
+        "0x0",
+        "0xf04300",
+        "0x0"
+      ],
+      "native_table_writes": []
+    },
+    {
+      "name": "load-success: video",
+      "passed": true,
+      "loader_calls": 1,
+      "status": [
+        "0x0",
+        "0xf04300",
+        "0x1"
+      ],
+      "native_table_writes": []
+    },
+    {
+      "name": "load-success: no-video",
+      "passed": true,
+      "loader_calls": 1,
+      "status": [
+        "0x0",
+        "0xf04300",
+        "0x1"
+      ],
+      "native_table_writes": []
+    },
+    {
+      "name": "load-failure: video",
+      "passed": true,
+      "loader_calls": 1,
+      "status": [
+        "0xe00002c0",
+        "0x0",
+        "0x1"
+      ],
+      "native_table_writes": []
+    },
+    {
+      "name": "load-failure: no-video",
+      "passed": true,
+      "loader_calls": 1,
+      "status": [
+        "0xe00002c0",
+        "0x0",
+        "0x1"
+      ],
+      "native_table_writes": []
+    },
+    {
+      "name": "load-empty: video",
+      "passed": true,
+      "loader_calls": 1,
+      "status": [
+        "0x0",
+        "0x0",
+        "0x1"
+      ],
+      "native_table_writes": []
+    },
+    {
+      "name": "load-empty: no-video",
+      "passed": true,
+      "loader_calls": 1,
+      "status": [
+        "0x0",
+        "0x0",
+        "0x1"
+      ],
+      "native_table_writes": []
+    }
+  ],
+  "os_kext_lifecycle_executed": false,
+  "decompressor_body_executed": false,
+  "device_accessed": false
+}

@@ -1,6 +1,6 @@
 """Recover a depth-one Git checkout when the smart HTTPS clone stalls.
 
-Only the user-requested D:/Code/uefi-nuwa is written. Original Git objects are
+Only the user-requested D:/Code/PortingiOS/nuwa/uefi-nuwa is written. Original Git objects are
 reconstructed from verified read-only cached objects and API metadata. A final
 repack removes the cache dependency. Never overlays an existing usable checkout.
 """
@@ -14,7 +14,7 @@ import runpy
 import zlib
 
 ROOT = Path(__file__).resolve().parents[1]
-TARGET = Path('D:/Code/uefi-nuwa')
+TARGET = Path('D:/Code/PortingiOS/nuwa/uefi-nuwa')
 REPO = 'wh1stl3/uefi-nuwa'
 COMMIT = '0a3a51af229eabe76bcc9dcb90d3ce985223b125'
 BRANCH = 'codex/nuwa-bringup'
@@ -48,7 +48,7 @@ def identity(who):
 
 
 def main():
-    assert TARGET.resolve() == Path('D:/Code/uefi-nuwa').resolve()
+    assert TARGET.resolve() == Path('D:/Code/PortingiOS/nuwa/uefi-nuwa').resolve()
     TARGET.mkdir(exist_ok=True)
     assert not any(p.name != '.git' for p in TARGET.iterdir()), 'Preserve existing worktree files'
     if (TARGET/'.git').exists():

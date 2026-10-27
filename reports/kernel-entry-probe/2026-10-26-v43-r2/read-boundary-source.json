@@ -1,0 +1,335 @@
+{
+  "scope": "Audit exact native read boundaries against fixed public XNU source and input.",
+  "level": "static-only",
+  "candidate_sha256": "e43ba1a896121c45fc9333585af4999ffcd3432457a1ad2dbff4d12c7db3ad5e",
+  "input_sha256": "1aeebf1352a86b0d31612a6bd6e77bd7292f676ad2ce43a99ec4a8f3999eedb6",
+  "source": {
+    "repository": "https://github.com/apple-oss-distributions/xnu",
+    "commit": "1b191cb58250d0705d8a51287127505aa4bc0789",
+    "version": "xnu-8796.141.3",
+    "license": "APSL-2.0",
+    "path": "bsd/vfs/vfs_vnops.c",
+    "sha256": "ea24edd54bb7428d77ba880b1150b17cbbb6cca4518977536153f585552a6b9b",
+    "lines": [
+      951,
+      1031
+    ],
+    "url": "https://github.com/apple-oss-distributions/xnu/blob/1b191cb58250d0705d8a51287127505aa4bc0789/bsd/vfs/vfs_vnops.c"
+  },
+  "source_command": [
+    "git",
+    "-C",
+    "D:\\Code\\PortingiOSLegacy\\common\\sources\\xnu-ios16-full",
+    "rev-parse",
+    "HEAD"
+  ],
+  "sites": [
+    {
+      "call_id": 266,
+      "return_id": 267,
+      "function": "_vn_rdwr",
+      "callee": "_vn_rdwr_64",
+      "call": "0xfffffff0074669b0",
+      "continuation": "0xfffffff0074669b4",
+      "native_instructions": [
+        {
+          "pc": "0xfffffff0074669b0",
+          "bytes": "0a000094",
+          "instruction": "bl #0xfffffff0074669d8"
+        },
+        {
+          "pc": "0xfffffff0074669b4",
+          "bytes": "730000b4",
+          "instruction": "cbz x19, #0xfffffff0074669c0"
+        }
+      ]
+    },
+    {
+      "call_id": 268,
+      "return_id": 269,
+      "function": "_vn_rdwr_64",
+      "callee": "_mac_vnode_check_read",
+      "call": "0xfffffff007466acc",
+      "continuation": "0xfffffff007466ad0",
+      "native_instructions": [
+        {
+          "pc": "0xfffffff007466acc",
+          "bytes": "a4c01294",
+          "instruction": "bl #0xfffffff007916d5c"
+        },
+        {
+          "pc": "0xfffffff007466ad0",
+          "bytes": "a0020035",
+          "instruction": "cbnz w0, #0xfffffff007466b24"
+        }
+      ]
+    },
+    {
+      "call_id": 270,
+      "return_id": 271,
+      "function": "_vn_rdwr_64",
+      "callee": "_VNOP_READ",
+      "call": "0xfffffff007466b20",
+      "continuation": "0xfffffff007466b24",
+      "native_instructions": [
+        {
+          "pc": "0xfffffff007466b20",
+          "bytes": "c2160094",
+          "instruction": "bl #0xfffffff00746c628"
+        },
+        {
+          "pc": "0xfffffff007466b24",
+          "bytes": "f40300aa",
+          "instruction": "mov x20, x0"
+        }
+      ]
+    },
+    {
+      "call_id": 272,
+      "return_id": 273,
+      "function": "_VNOP_READ",
+      "callee": "indirect_x8",
+      "call": "0xfffffff00746c688",
+      "continuation": "0xfffffff00746c68c",
+      "native_instructions": [
+        {
+          "pc": "0xfffffff00746c688",
+          "bytes": "00013fd6",
+          "instruction": "blr x8"
+        },
+        {
+          "pc": "0xfffffff00746c68c",
+          "bytes": "f60300aa",
+          "instruction": "mov x22, x0"
+        }
+      ]
+    },
+    {
+      "call_id": 274,
+      "return_id": 275,
+      "function": "_vn_rdwr_64",
+      "callee": "_vn_read_swapfile",
+      "call": "0xfffffff007466b08",
+      "continuation": "0xfffffff007466b0c",
+      "native_instructions": [
+        {
+          "pc": "0xfffffff007466b08",
+          "bytes": "23000094",
+          "instruction": "bl #0xfffffff007466b94"
+        },
+        {
+          "pc": "0xfffffff007466b0c",
+          "bytes": "06000014",
+          "instruction": "b #0xfffffff007466b24"
+        }
+      ]
+    }
+  ],
+  "shared_return_join": {
+    "mac_denial_branch": [
+      {
+        "pc": "0xfffffff007466ad0",
+        "bytes": "a0020035",
+        "instruction": "cbnz w0, #0xfffffff007466b24"
+      }
+    ],
+    "target": "0xfffffff007466b24",
+    "requires_paired_call": true
+  },
+  "thread_identity": [
+    {
+      "pc": "0xfffffff0073c8e50",
+      "bytes": "80d038d5",
+      "instruction": "mrs x0, tpidr_el1"
+    },
+    {
+      "pc": "0xfffffff0073c8e54",
+      "bytes": "c0035fd6",
+      "instruction": "ret "
+    }
+  ],
+  "frame_geometry": {
+    "probe_save": 176,
+    "vn_rdwr": {
+      "allocation": 64,
+      "fp_from_sp": 48,
+      "saved_lr_from_fp": 8
+    },
+    "vn_rdwr_64": {
+      "allocation": 176,
+      "fp_from_sp": 160
+    },
+    "VNOP_READ": {
+      "allocation": 112,
+      "fp_from_sp": 96
+    }
+  },
+  "native_read_path": [
+    {
+      "pc": "0xfffffff007466aa4",
+      "bytes": "94017837",
+      "instruction": "tbnz w20, #0xf, #0xfffffff007466ad4"
+    },
+    {
+      "pc": "0xfffffff007466aa8",
+      "bytes": "e0030091",
+      "instruction": "mov x0, sp"
+    },
+    {
+      "pc": "0xfffffff007466aac",
+      "bytes": "e10318aa",
+      "instruction": "mov x1, x24"
+    },
+    {
+      "pc": "0xfffffff007466ab0",
+      "bytes": "e20315aa",
+      "instruction": "mov x2, x21"
+    },
+    {
+      "pc": "0xfffffff007466ab4",
+      "bytes": "d6000034",
+      "instruction": "cbz w22, #0xfffffff007466acc"
+    },
+    {
+      "pc": "0xfffffff007466ab8",
+      "bytes": "47c91294",
+      "instruction": "bl #0xfffffff007918fd4"
+    },
+    {
+      "pc": "0xfffffff007466abc",
+      "bytes": "40030035",
+      "instruction": "cbnz w0, #0xfffffff007466b24"
+    },
+    {
+      "pc": "0xfffffff007466ac0",
+      "bytes": "05000014",
+      "instruction": "b #0xfffffff007466ad4"
+    },
+    {
+      "pc": "0xfffffff007466ac4",
+      "bytes": "c0028052",
+      "instruction": "mov w0, #0x16"
+    },
+    {
+      "pc": "0xfffffff007466ac8",
+      "bytes": "25000014",
+      "instruction": "b #0xfffffff007466b5c"
+    },
+    {
+      "pc": "0xfffffff007466acc",
+      "bytes": "a4c01294",
+      "instruction": "bl #0xfffffff007916d5c"
+    },
+    {
+      "pc": "0xfffffff007466ad0",
+      "bytes": "a0020035",
+      "instruction": "cbnz w0, #0xfffffff007466b24"
+    },
+    {
+      "pc": "0xfffffff007466ad4",
+      "bytes": "f6000034",
+      "instruction": "cbz w22, #0xfffffff007466af0"
+    },
+    {
+      "pc": "0xfffffff007466ad8",
+      "bytes": "e3030091",
+      "instruction": "mov x3, sp"
+    },
+    {
+      "pc": "0xfffffff007466adc",
+      "bytes": "e00315aa",
+      "instruction": "mov x0, x21"
+    },
+    {
+      "pc": "0xfffffff007466ae0",
+      "bytes": "e10317aa",
+      "instruction": "mov x1, x23"
+    },
+    {
+      "pc": "0xfffffff007466ae4",
+      "bytes": "e20314aa",
+      "instruction": "mov x2, x20"
+    },
+    {
+      "pc": "0xfffffff007466ae8",
+      "bytes": "fd160094",
+      "instruction": "bl #0xfffffff00746c6dc"
+    },
+    {
+      "pc": "0xfffffff007466aec",
+      "bytes": "0e000014",
+      "instruction": "b #0xfffffff007466b24"
+    },
+    {
+      "pc": "0xfffffff007466af0",
+      "bytes": "e00315aa",
+      "instruction": "mov x0, x21"
+    },
+    {
+      "pc": "0xfffffff007466af4",
+      "bytes": "8c100094",
+      "instruction": "bl #0xfffffff00746ad24"
+    },
+    {
+      "pc": "0xfffffff007466af8",
+      "bytes": "d400a837",
+      "instruction": "tbnz w20, #0x15, #0xfffffff007466b10"
+    },
+    {
+      "pc": "0xfffffff007466afc",
+      "bytes": "a0000034",
+      "instruction": "cbz w0, #0xfffffff007466b10"
+    },
+    {
+      "pc": "0xfffffff007466b00",
+      "bytes": "e00315aa",
+      "instruction": "mov x0, x21"
+    },
+    {
+      "pc": "0xfffffff007466b04",
+      "bytes": "e10317aa",
+      "instruction": "mov x1, x23"
+    },
+    {
+      "pc": "0xfffffff007466b08",
+      "bytes": "23000094",
+      "instruction": "bl #0xfffffff007466b94"
+    },
+    {
+      "pc": "0xfffffff007466b0c",
+      "bytes": "06000014",
+      "instruction": "b #0xfffffff007466b24"
+    },
+    {
+      "pc": "0xfffffff007466b10",
+      "bytes": "e3030091",
+      "instruction": "mov x3, sp"
+    },
+    {
+      "pc": "0xfffffff007466b14",
+      "bytes": "e00315aa",
+      "instruction": "mov x0, x21"
+    },
+    {
+      "pc": "0xfffffff007466b18",
+      "bytes": "e10317aa",
+      "instruction": "mov x1, x23"
+    },
+    {
+      "pc": "0xfffffff007466b1c",
+      "bytes": "e20314aa",
+      "instruction": "mov x2, x20"
+    },
+    {
+      "pc": "0xfffffff007466b20",
+      "bytes": "c2160094",
+      "instruction": "bl #0xfffffff00746c628"
+    },
+    {
+      "pc": "0xfffffff007466b24",
+      "bytes": "f40300aa",
+      "instruction": "mov x20, x0"
+    }
+  ],
+  "device_accessed": false
+}

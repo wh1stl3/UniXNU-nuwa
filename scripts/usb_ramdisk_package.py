@@ -14,7 +14,7 @@ import zlib
 ROOT = Path(__file__).resolve().parents[1]
 RUN = 40014018074
 ARTIFACT = ROOT / f'out/upstream-firmware-{RUN}/nuwa-firmware-{RUN}'
-STOCK = Path('D:/Code/PortingiOS/nuwa/backups/recovery-20261020T121245314787Z/boot_a.img')
+STOCK = Path('D:/Code/PortingiOSLegacy/nuwa/backups/recovery-20261020T121245314787Z/boot_a.img')
 STOCK_SHA = 'ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31'
 FD_SHA = '2d606985ad768dcfaab66c2b28073c0a4c2820126b42b23286623fdc450e848f'
 SHIM_SHA = '8a3b54765c895a0366539130fdf6e4e4a01e364fe7de067a38d0193606f9d462'

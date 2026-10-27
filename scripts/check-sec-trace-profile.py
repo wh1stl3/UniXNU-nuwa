@@ -6,7 +6,7 @@ from pathlib import Path
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
-FIRMWARE = Path('D:/Code/uefi-nuwa')
+FIRMWARE = Path('D:/Code/PortingiOS/nuwa/uefi-nuwa')
 GIT = 'C:/Program Files/Git/cmd/git.exe'
 
 
@@ -42,10 +42,10 @@ def main():
                 original = json.loads((ROOT / 'reports/uefi-nuwa/result.json').read_text())
                 if gitlink.split()[1:3] != ['commit', original['submodules'][module]]:
                     raise ValueError('Unexpected uninitialized module')
-                path = Path('D:/Code/PortingiOS/common/sources/mu-nuwa-firmware') / item['path']
+                path = Path('D:/Code/PortingiOSLegacy/common/sources/mu-nuwa-firmware') / item['path']
                 kind = 'read-only cache of pinned uninitialized ' + module
         else:
-            path = Path('D:/Code/PortingiOS/common/sources/UniXNU') / item['path']
+            path = Path('D:/Code/PortingiOSLegacy/common/sources/UniXNU') / item['path']
             kind = 'read-only pinned UniXNU cache'
         actual = hashlib.sha256(path.read_bytes().replace(b'\r\n', b'\n')).hexdigest()
         if actual != item['lf_sha256']:

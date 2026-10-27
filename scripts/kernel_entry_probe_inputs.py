@@ -31,6 +31,32 @@ def metadata(build):
         paths += [('fscompression-startup',build.with_name('fscompression-startup.json'))]
     if json.loads(build.read_text()).get('probe_revision',0)>=36:
         paths += [('read-boundaries',build.with_name('read-boundaries.json'))]
+    if json.loads(build.read_text()).get('probe_revision',0)>=37:
+        paths += [('read-dispatch',build.with_name('read-dispatch.json'))]
+    if json.loads(build.read_text()).get('probe_revision',0)>=39:
+        paths += [('read-init',build.with_name('read-init.json'))]
+    if json.loads(build.read_text()).get('probe_revision',0)>=38:
+        paths += [('read-body',build.with_name('read-body.json')),('read-body-reset',build.with_name('read-body-reset.json'))]
+    if json.loads(build.read_text()).get('probe_revision',0)>=40:
+        paths += [('single-pass-hex',build.with_name('single-pass-hex.json'))]
+    if json.loads(build.read_text()).get('probe_revision',0)>=49:
+        paths += [('read-flow',build.with_name('read-flow.json'))]
+    if json.loads(build.read_text()).get('probe_revision',0)>=48:
+        paths += [('delta-hex',build.with_name('delta-hex.json'))]
+    if json.loads(build.read_text()).get('probe_revision',0)>=47:
+        paths += [('read-result',build.with_name('read-result.json'))]
+    if json.loads(build.read_text()).get('probe_revision',0)>=46:
+        paths += [('read-deep',build.with_name('read-deep.json'))]
+    if json.loads(build.read_text()).get('probe_revision',0)>=45:
+        paths += [('read-fetch',build.with_name('read-fetch.json'))]
+    if json.loads(build.read_text()).get('probe_revision',0)>=44:
+        paths += [('compact-decmp',build.with_name('compact-decmp.json'))]
+    if json.loads(build.read_text()).get('probe_revision',0)>=43:
+        paths += [('shared-hex',build.with_name('shared-hex.json'))]
+    if json.loads(build.read_text()).get('probe_revision',0)>=42:
+        paths += [('read-decmp',build.with_name('read-decmp.json'))]
+    if json.loads(build.read_text()).get('probe_revision',0)>=41:
+        paths += [('read-grid',build.with_name('read-grid.json'))]
     return {name:dict(path=path.relative_to(ROOT).as_posix(),sha256=sha(path.read_bytes())) for name,path in paths}
 
 def validate(meta,kernel_sha):
@@ -88,7 +114,7 @@ def validate(meta,kernel_sha):
     if not {'probe_entry','probe_tables','probe_mmu'}<=hooks:raise ValueError('Required entry/tables/MMU hooks missing')
     # Two header edits, one branch per hooked site, the BCM NOP and sixteen early vectors.
     compat=build.get('image4_compatibility',{}).get('hooks',[])
-    if compat and build.get('probe_revision') not in (27,28,29,30,31,32,33,34,35,36):raise ValueError('Image4 compatibility requires revision 27..30')
+    if compat and build.get('probe_revision') not in (27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49):raise ValueError('Image4 compatibility requires a supported diagnostic revision')
     overlay=[]
     if build.get('probe_revision',0)>=28:
         from pthread_prelink_overlay import load,ranges,SHA256
@@ -118,6 +144,119 @@ def validate(meta,kernel_sha):
         item=meta['read-boundaries'];payload=report_path(item['path']).read_bytes();e=json.loads(payload)
         required={'success','mac-denied','read-error','mac-pending','dispatch-pending','swap','noauth','foreign-thread','foreign-frame','repeat','no-video'};checks=e.get('checks',[])
         if sha(payload)!=item['sha256'] or e.get('candidate_sha256')!=kernel_sha or e.get('source_sha256')!=source or len(checks)!=len(required) or {c['name'] for c in checks}!=required or any(c['passed'] is not True for c in checks) or e.get('device_accessed') is not False or e.get('real_filesystem_body_executed') is not False or e.get('real_mac_policy_executed') is not False:raise ValueError('Read boundary evidence incomplete')
+    if build.get('probe_revision',0)>=49:
+        from read_flow_sites import plan as flow_plan
+        if build['probe_revision']!=49 or build.get('read_flow')!=flow_plan():raise ValueError('Read flow plan differs')
+        item=meta['read-flow'];payload=report_path(item['path']).read_bytes();e=json.loads(payload)
+        from resource_dispatch_checks import source_sha256 as dispatch_checks_sha256
+        if e.get('dispatch_checks_sha256')!=dispatch_checks_sha256():raise ValueError('Dispatch test dependency differs')
+        from resource_handler_checks import source_sha256 as handler_checks_sha256
+        if e.get('handler_checks_sha256')!=handler_checks_sha256():raise ValueError('Handler test dependency differs')
+        from resource_chain_checks import source_sha256 as chain_checks_sha256
+        if e.get('chain_checks_sha256')!=chain_checks_sha256():raise ValueError('Resource chain test dependency differs')
+        spec=importlib.util.spec_from_file_location('flow_evidence_contract',ROOT/'scripts/test-read-flow.py')
+        mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod);required=mod.required_names()
+        checks=e.get('checks',[])
+        if sha(payload)!=item['sha256'] or e.get('candidate_sha256')!=kernel_sha or e.get('source_sha256')!=flow_plan()['source_sha256'] or e.get('test_sha256')!=sha((ROOT/'scripts/test-read-flow.py').read_bytes()) or len(checks)!=len(required) or {c['name'] for c in checks}!=required or any(c.get('passed') is not True for c in checks) or e.get('device_accessed') is not False:raise ValueError('Read flow evidence incomplete')
+    if build.get('probe_revision',0)>=48:
+        from probe_delta_hex import plan as delta_plan
+        if build['probe_revision'] not in (48,49) or build.get('delta_hex')!=delta_plan():raise ValueError('Delta HEX plan differs')
+        item=meta['delta-hex'];payload=report_path(item['path']).read_bytes();e=json.loads(payload)
+        spec=importlib.util.spec_from_file_location('delta_evidence_contract',ROOT/'scripts/test-delta-hex.py')
+        mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod);required=mod.required_names()
+        checks=e.get('checks',[])
+        if sha(payload)!=item['sha256'] or e.get('candidate_sha256')!=kernel_sha or e.get('source_sha256')!=delta_plan()['source_sha256'] or e.get('test_sha256')!=sha((ROOT/'scripts/test-delta-hex.py').read_bytes()) or len(checks)!=len(required) or {c['name'] for c in checks}!=required or any(c.get('passed') is not True for c in checks) or e.get('device_accessed') is not False:raise ValueError('Delta HEX evidence incomplete')
+    if build.get('probe_revision',0)>=47:
+        from read_result_sites import plan as result_plan
+        if build['probe_revision'] not in (47,48,49) or build.get('read_result')!=result_plan():raise ValueError('Result trace plan differs')
+        item=meta['read-result'];payload=report_path(item['path']).read_bytes();e=json.loads(payload)
+        spec=importlib.util.spec_from_file_location('result_evidence_contract',ROOT/'scripts/test-read-result.py')
+        mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod);required=mod.required_names()
+        checks=e.get('checks',[])
+        if sha(payload)!=item['sha256'] or e.get('candidate_sha256')!=kernel_sha or e.get('source_sha256')!=result_plan()['source_sha256'] or e.get('test_sha256')!=sha((ROOT/'scripts/test-read-result.py').read_bytes()) or len(checks)!=len(required) or {c['name'] for c in checks}!=required or any(c.get('passed') is not True for c in checks) or e.get('device_accessed') is not False:raise ValueError('Result trace evidence incomplete')
+    if build.get('probe_revision',0)>=46:
+        from read_deep_sites import plan as deep_plan, points as deep_points
+        if build['probe_revision'] not in (46,47,48,49) or build.get('read_deep')!=deep_plan():raise ValueError('Deep trace plan differs')
+        item=meta['read-deep'];payload=report_path(item['path']).read_bytes();e=json.loads(payload)
+        modes=('normal','foreign-thread','foreign-frame','wrong-lr','outer-unpaired','unpaired','no-video','inactive','wrong-target')
+        required={hex(p['site'])+':'+mode for p in deep_points() for mode in modes}|{'header-reset','layout','missing-pair-negative','missing-parent-pair','native-allocation-prefix'}
+        checks=e.get('checks',[])
+        if sha(payload)!=item['sha256'] or e.get('candidate_sha256')!=kernel_sha or e.get('source_sha256')!=deep_plan()['source_sha256'] or e.get('test_sha256')!=sha((ROOT/'scripts/test-read-deep.py').read_bytes()) or len(checks)!=len(required) or {c['name'] for c in checks}!=required or any(c.get('passed') is not True for c in checks) or e.get('device_accessed') is not False:raise ValueError('Deep trace evidence incomplete')
+    if build.get('probe_revision',0)>=45:
+        from read_fetch_sites import plan as fetch_plan, points as fetch_points
+        if build['probe_revision'] not in (45,46,47,48,49) or build.get('read_fetch')!=fetch_plan():raise ValueError('Fetch trace plan differs')
+        item=meta['read-fetch'];payload=report_path(item['path']).read_bytes();e=json.loads(payload)
+        modes=('normal','foreign-thread','foreign-frame','wrong-lr','outer-unpaired','unpaired','no-video','inactive','wrong-target')
+        required={hex(p['site'])+':'+mode for p in fetch_points() for mode in modes}|{'header-reset','layout','missing-pair-negative','wrong-callback-target','native-fetch-prefix'}
+        checks=e.get('checks',[])
+        if sha(payload)!=item['sha256'] or e.get('candidate_sha256')!=kernel_sha or e.get('source_sha256')!=fetch_plan()['source_sha256'] or e.get('test_sha256')!=sha((ROOT/'scripts/test-read-fetch.py').read_bytes()) or len(checks)!=len(required) or {c['name'] for c in checks}!=required or any(c.get('passed') is not True for c in checks) or e.get('device_accessed') is not False:raise ValueError('Fetch trace evidence incomplete')
+    if build.get('probe_revision',0)>=44:
+        from probe_compact_decmp import plan as compact_plan
+        if build['probe_revision'] not in (44,45,46,47,48,49) or build.get('compact_decmp')!=compact_plan():raise ValueError('Compact display plan differs')
+        item=meta['compact-decmp'];payload=report_path(item['path']).read_bytes();e=json.loads(payload)
+        required={'pixels-'+str(i) for i in range(373,441)}|{'header-reset','old-height-negative','no-video','repeat-no-write'}
+        checks=e.get('checks',[])
+        if sha(payload)!=item['sha256'] or e.get('candidate_sha256')!=kernel_sha or e.get('source_sha256')!=compact_plan()['source_sha256'] or e.get('test_sha256')!=sha((ROOT/'scripts/test-compact-decmp.py').read_bytes()) or len(checks)!=len(required) or {c['name'] for c in checks}!=required or any(c.get('passed') is not True for c in checks) or e.get('device_accessed') is not False:raise ValueError('Compact display evidence incomplete')
+    if build.get('probe_revision',0)>=43:
+        from probe_shared_hex import plan as shared_plan
+        if build['probe_revision'] not in (43,44,45,46,47,48,49) or build.get('shared_hex')!=shared_plan():raise ValueError('Shared HEX plan differs')
+        item=meta['shared-hex'];payload=report_path(item['path']).read_bytes();e=json.loads(payload)
+        required={'field-pixels','unchanged-result-no-write','changed-result-redraw','no-video','header-reset','omitted-reset-negative','code-size-reduction','dispatch-native-equivalence'}
+        checks=e.get('checks',[])
+        if sha(payload)!=item['sha256'] or e.get('candidate_sha256')!=kernel_sha or e.get('source_sha256')!=shared_plan()['source_sha256'] or e.get('test_sha256')!=sha((ROOT/'scripts/test-shared-hex.py').read_bytes()) or len(checks)!=len(required) or {c['name'] for c in checks}!=required or any(c.get('passed') is not True for c in checks) or e.get('device_accessed') is not False or e.get('hardware_timing_measured') is not False:raise ValueError('Shared HEX evidence incomplete')
+    if build.get('probe_revision',0)>=42:
+        from read_decmp_sites import plan as decmp_plan
+        from read_decmp_sites import points as decmp_points
+        if build['probe_revision'] not in (42,43,44,45,46,47,48,49) or build.get('read_decmp')!=decmp_plan():raise ValueError('Compressed read plan differs')
+        item=meta['read-decmp'];payload=report_path(item['path']).read_bytes();e=json.loads(payload)
+        modes=('normal','foreign-thread','foreign-frame','wrong-lr','outer-unpaired','unpaired','no-video','inactive','wrong-target')
+        required={hex(p['site'])+':'+mode for p in decmp_points() for mode in modes}|{'header-reset','missing-pair-negative','native-prefix','layout-no-overlap','old-layout-negative'}
+        checks=e.get('checks',[])
+        if sha(payload)!=item['sha256'] or e.get('candidate_sha256')!=kernel_sha or e.get('source_sha256')!=decmp_plan()['source_sha256'] or e.get('test_sha256')!=sha((ROOT/'scripts/test-read-decmp.py').read_bytes()) or len(checks)!=len(required) or {c['name'] for c in checks}!=required or any(c.get('passed') is not True for c in checks) or e.get('device_accessed') is not False or e.get('complete_decompression_executed') is not False:raise ValueError('Compressed read evidence incomplete')
+    if build.get('probe_revision',0)>=41:
+        from read_grid_sites import plan as grid_plan
+        if build['probe_revision'] not in (41,42,43,44,45,46,47,48,49) or build.get('read_grid')!=grid_plan():raise ValueError('Read grid plan differs')
+        item=meta['read-grid'];payload=report_path(item['path']).read_bytes();e=json.loads(payload)
+        required={'prefix-zero','prefix-offset','prefix-no-video','prefix-foreign-thread','prefix-write-reduction','ret-flush','ret-inactive','header-reset','missing-buffer-store-negative'}
+        checks=e.get('checks',[])
+        if sha(payload)!=item['sha256'] or e.get('candidate_sha256')!=kernel_sha or e.get('source_sha256')!=grid_plan()['source_sha256'] or e.get('test_sha256')!=sha((ROOT/'scripts/test-read-grid.py').read_bytes()) or len(checks)!=len(required) or {c['name'] for c in checks}!=required or any(c.get('passed') is not True for c in checks) or e.get('device_accessed') is not False or e.get('complete_filesystem_body_executed') is not False or e.get('native_helpers_executed')!=['uio_resid','uio_offset'] or e.get('stop_before')!='vnode_mount':raise ValueError('Read grid evidence incomplete')
+    if build.get('probe_revision',0)>=40:
+        from probe_single_pass_hex import plan
+        if build['probe_revision'] not in (40,41,42,43,44,45,46,47,48,49) or build.get('single_pass_hex')!=plan():raise ValueError('Single-pass HEX plan differs')
+        if build.get('screen',{}).get('max_written_row')!=1039:raise ValueError('Single-pass HEX screen extent differs')
+        item=meta['single-pass-hex'];payload=report_path(item['path']).read_bytes();e=json.loads(payload)
+        required={'pixels-'+f'{v:016x}' for v in (0,0xffffffffffffffff,0x0123456789abcdef,0xfedcba9876543210,0x8000000000000001)}|{'no-video','missing-spacing-store-negative'}
+        checks=e.get('checks',[])
+        if sha(payload)!=item['sha256'] or e.get('candidate_sha256')!=kernel_sha or e.get('source_sha256')!=plan()['source_sha256'] or e.get('test_sha256')!=sha((ROOT/'scripts/test-single-pass-hex.py').read_bytes()) or len(checks)!=len(required) or {c['name'] for c in checks}!=required or any(c.get('passed') is not True for c in checks) or e.get('device_accessed') is not False or e.get('hardware_timing_measured') is not False:raise ValueError('Single-pass HEX evidence incomplete')
+    if build.get('probe_revision',0)>=39:
+        from read_init_sites import CHECKPOINTS,MIN_HEIGHT
+        source=sha((ROOT/'scripts/read_init_sites.py').read_bytes());plan=build.get('read_init',{})
+        if build['probe_revision'] not in (39,40,41,42,43,44,45,46,47,48,49) or plan!=dict(source_sha256=source,checkpoints=CHECKPOINTS,minimum_height=MIN_HEIGHT,final_stage=250,native_policy_changed=False):raise ValueError('Read initialization plan differs')
+        item=meta['read-init'];payload=report_path(item['path']).read_bytes();e=json.loads(payload)
+        required={'checkpoints-video','checkpoints-no-video','height-799','height-800','height-1039','height-1040','height-3200','old-height-800-negative','omitted-checkpoint-negative'}
+        checks=e.get('checks',[])
+        if sha(payload)!=item['sha256'] or e.get('candidate_sha256')!=kernel_sha or e.get('source_sha256')!=source or e.get('test_sha256')!=sha((ROOT/'scripts/test-read-init.py').read_bytes()) or e.get('checkpoints')!=CHECKPOINTS or e.get('minimum_height')!=MIN_HEIGHT or len(checks)!=len(required) or {c['name'] for c in checks}!=required or any(c.get('passed') is not True for c in checks) or e.get('device_accessed') is not False:raise ValueError('Read initialization evidence incomplete')
+    if build.get('probe_revision',0)>=38:
+        from read_body_sites import points
+        source=sha((ROOT/'scripts/read_body_sites.py').read_bytes());plan=build.get('read_body',{})
+        if build['probe_revision'] not in (38,39,40,41,42,43,44,45,46,47,48,49) or plan.get('source_sha256')!=source or plan.get('points')!=points() or plan.get('native_policy_changed') is not False:raise ValueError('Read body plan differs')
+        item=meta['read-body'];payload=report_path(item['path']).read_bytes();e=json.loads(payload)
+        required={(hex(p['site']),mode) for p in points() for mode in ('normal','foreign-thread','foreign-frame','unpaired','no-video')}
+        required|={(hex(site),mode) for site in (0xfffffff0051a585c,0xfffffff0051a5888,0xfffffff0051a5978) for mode in ('inactive','wrong-lr')}
+        checks=e.get('checks',[])
+        if sha(payload)!=item['sha256'] or e.get('candidate_sha256')!=kernel_sha or e.get('source_sha256')!=source or e.get('points')!=points() or len(checks)!=len(required) or {(c['site'],c['mode']) for c in checks}!=required or any(c.get('passed') is not True for c in checks) or e.get('device_accessed') is not False or e.get('complete_filesystem_body_executed') is not False:raise ValueError('Read body evidence incomplete')
+        item=meta['read-body-reset'];payload=report_path(item['path']).read_bytes();e=json.loads(payload)
+        if sha(payload)!=item['sha256'] or e.get('candidate_sha256')!=kernel_sha or e.get('source_sha256')!=source or e.get('tile_count')!=len(points()) or e.get('stale_fields_tiles_bits_cleared') is not True or e.get('omitted_reset_negative_rejected') is not True or e.get('device_accessed') is not False:raise ValueError('Read body reset evidence incomplete')
+    if build.get('probe_revision',0)>=37:
+        source=sha((ROOT/'scripts/read_dispatch_sites.py').read_bytes());plan=build.get('read_dispatch',{})
+        if build['probe_revision'] not in (37,38,39,40,41,42,43,44,45,46,47,48,49) or plan.get('source_sha256')!=source or plan.get('entry')!='0xfffffff0051a5858' or plan.get('entry_marker')!=276 or plan.get('target_tag')!='A036' or plan.get('entry_tag')!='A037' or plan.get('runtime_target_known') is not False:raise ValueError('Dispatch observation policy/source differs')
+        item=meta['read-dispatch'];payload=report_path(item['path']).read_bytes();e=json.loads(payload)
+        required={'matched candidate','assigned index1','assigned index73','error return preserved','candidate body pending','different target','unmapped target','foreign thread','foreign frame','no video','null context'}
+        checks=e.get('checks',[])
+        if sha(payload)!=item['sha256'] or e.get('candidate_sha256')!=kernel_sha or e.get('source_sha256')!=source or len(checks)!=len(required) or {c['name'] for c in checks}!=required or any(c.get('passed') is not True for c in checks) or e.get('device_accessed') is not False or e.get('real_filesystem_body_executed') is not False or e.get('header_stale_fields_and_entry_tile_cleared') is not True or e.get('wrong_target_register_negative_rejected') is not True:raise ValueError('Dispatch observation evidence incomplete')
+        wanted={'scripts/test-read-dispatch-integrated.py','scripts/test-read-dispatch-observer.py','scripts/read_dispatch_sites.py','scripts/read_boundary_sites.py'}
+        sources=e.get('sources',[])
+        if len(sources)!=len(wanted) or {s['path'] for s in sources}!=wanted or any(sha((ROOT/s['path']).read_bytes())!=s['sha256'] for s in sources):raise ValueError('Dispatch model source binding differs')
     if len(build['patches'])!=2+len(hooks)+1+16+len(compat)+len(overlay):raise ValueError('Patch set shape differs from the recorded hook set')
     if build.get('probe_revision',0)>=27:
         required_sites={(0xfffffff0046ea000,'image4_amnm_provider'),(0xfffffff0046ea3b4,'image4_chmh_provider')}

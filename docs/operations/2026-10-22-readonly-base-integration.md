@@ -8,14 +8,14 @@
 只读命令：
 
 ```powershell
-& 'C:/Program Files/Git/cmd/git.exe' -c safe.directory=D:/Code/PortingiOS/common/sources/UniXNU --no-optional-locks -C D:/Code/PortingiOS/common/sources/UniXNU remote -v
+& 'C:/Program Files/Git/cmd/git.exe' -c safe.directory=D:/Code/PortingiOSLegacy/common/sources/UniXNU --no-optional-locks -C D:/Code/PortingiOSLegacy/common/sources/UniXNU remote -v
 ```
 
 输出 origin 为 `https://github.com/UniXNU/UniXNU.git`（fetch/push，blob:none）。浏览器读取 GitHub commits/main 与 GitHub API commits?per_page=1 均失败（Cache miss / not accessible）。**远端最新提交与差异未验证，未跟进上游。** 本报告只对上述本地 HEAD 成立；不能写成“已与最新上游同步”。后续先取得远端提交与 diff，再另排跟进提交，不运行 fetch 修改旧仓。
 
 ## 路径与覆盖方式
 
-以下源码路径均相对只读 `D:/Code/PortingiOS/common/sources/UniXNU/`。
+以下源码路径均相对只读 `D:/Code/PortingiOSLegacy/common/sources/UniXNU/`。
 
 | 证据 | 结论 / 执行约束 |
 | --- | --- |
@@ -34,14 +34,14 @@
 python3 ./unixnu status -D ../UniXNU-nuwa --out ../UniXNU-nuwa/out
 
 # 当前只读基座位于旧资料库；WSL路径大小写必须保持：
-PYTHONDONTWRITEBYTECODE=1 python3 /mnt/d/Code/PortingiOS/common/sources/UniXNU/unixnu status -D /mnt/d/Code/UniXNU-nuwa --out /mnt/d/Code/UniXNU-nuwa/out
+PYTHONDONTWRITEBYTECODE=1 python3 /mnt/d/Code/PortingiOSLegacy/common/sources/UniXNU/unixnu status -D /mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa --out /mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out
 ```
 
 `PYTHONDONTWRITEBYTECODE=1` 防止导入基座 Python 模块时在资料库生成 __pycache__。`status` 本身会写本仓 out/state.json，不能称为完全无写入。不得将上述真实布局误写为在旧基座目录使用 `-D ../UniXNU-nuwa`：那个相对路径不指向本仓。
 
 ## uefi-nuwa 布局方案（未创建）
 
-在唯一可写根内建议保留独立固件工作目录 `D:/Code/UniXNU-nuwa/firmware/uefi-nuwa/`，后续由 `--uefi` 指向。设备仓仍是根目录，不混成基座仓。该目录将来承载独立固件仓，宿主准备前先处理忽略边界；本轮没有 mkdir、git init、clone、固件配置或任何镜像产物。
+在唯一可写根内建议保留独立固件工作目录 `D:/Code/PortingiOS/nuwa/UniXNU-nuwa/firmware/uefi-nuwa/`，后续由 `--uefi` 指向。设备仓仍是根目录，不混成基座仓。该目录将来承载独立固件仓，宿主准备前先处理忽略边界；本轮没有 mkdir、git init、clone、固件配置或任何镜像产物。
 
 候选目录仅为规划：`Platforms/`（nuwa DSC/FDF及设备配置，具体包名待Mu-Silicium参照确认）、`Resources/`（上游工具/资源）、预检脚本与专有输入（后者不跟踪）。这些不是 board.toml 字段，也不声称已满足固件入口检查。`cli.py:66-71` 要求固件树有 `Resources/Scripts/mkbootimg.py`，空目录不能当有效固件树。
 

@@ -2,7 +2,7 @@
 
 ## 结果与来源
 
-在真实 Windows 主机 DESKTOP-S8M2VOR、D:/Code/UniXNU-nuwa 接续 a78e7591d90f3e442608e284083bb7acee6fc5cb。AGENTS、STATUS 和唯一最新10月26日交接已读取；原交接SHA256 a0b1db7f93b5c463f745f61982fc3ad718779325abaef3df787c768ea44cca3b。仓库没有 .agents/skills。初始已跟踪文件干净、28项历史未跟踪保留。本轮只写设备仓，不改只读源码、独立固件或其他项目，不创建第二写入者，不联系旧会话。environment.json记录主机、目录和来源。
+在真实 Windows 主机 DESKTOP-S8M2VOR、D:/Code/PortingiOS/nuwa/UniXNU-nuwa 接续 a78e7591d90f3e442608e284083bb7acee6fc5cb。AGENTS、STATUS 和唯一最新10月26日交接已读取；原交接SHA256 a0b1db7f93b5c463f745f61982fc3ad718779325abaef3df787c768ea44cca3b。仓库没有 .agents/skills。初始已跟踪文件干净、28项历史未跟踪保留。本轮只写设备仓，不改只读源码、独立固件或其他项目，不创建第二写入者，不联系旧会话。environment.json记录主机、目录和来源。
 
 PROBE28完成静态检查、Unicorn边界模型回归、独立重建及实际包回读，尚未实机。24项串行检查最终通过；其中1092透明比较、25 Image4、15 exec边界、11读取路径、38绑定。execution.json保留一次验证器版本名单缺36的失败及后续成功，不将初始失败抹去；execution-initial.json为失败当时快照。没有执行真实MAC策略、APFS/decmpfs主体或解压回调，不写成QEMU或实机通过。
 

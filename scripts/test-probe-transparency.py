@@ -5,6 +5,7 @@ flag bytes and scratch below the entry SP belong to the diagnostic hook.
 TPIDR_EL1 in probe_arm_init is an intentional shim; revision25 first-thread entry intentionally restores native VBAR (checked separately).
 """
 import gc, argparse, hashlib, importlib.util, json, struct, sys
+from functools import lru_cache
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'out/python-tools'))
@@ -14,6 +15,25 @@ spec=importlib.util.spec_from_file_location('builder',ROOT/'scripts/build-kernel
 B=importlib.util.module_from_spec(spec);spec.loader.exec_module(B)
 FB=0xb8000000;ROW=5760;STACK=0xf00000
 REGS=[getattr(sys.modules[__name__],f'UC_ARM64_REG_X{i}') for i in range(31)]
+
+@lru_cache(maxsize=1)
+def deep_rectangles():
+    from read_deep_sites import points,geometry
+    return tuple((*geometry(p['id']),32,2) for p in points())
+
+def framebuffer_write_in_bounds(address,size,revision):
+    y,offset=divmod(address-FB,ROW)
+    if size<=0 or offset+size>ROW:return False
+    if revision>=42 and any(224+(i//2)*24<=y<240+(i//2)*24 and (736+(i%2)*48)*4<=offset and offset+size<=(768+(i%2)*48)*4 for i in range(68)):return True
+    if revision>=47 and 256*4<=offset and offset+size<=736*4 and any(ry<=y<ry+20 for ry in (896,924,952,980,1008)):return True
+    if 200<=y<800:return True
+    if revision>=46 and any(ry<=y<ry+rh and rx*4<=offset and offset+size<=(rx+rw)*4 for rx,ry,rw,rh in deep_rectangles()):return True
+    if revision in (38,39,40,41,42,43,44,45,46,47,48,49):
+        return any(ry<=y<ry+rh and rx*4<=offset and offset+size<=(rx+rw)*4 for rx,ry,rw,rh in ((256,784,480,20),(256,812,480,20),(256,840,480,20),(256,868,480,20),*((832+(i%10)*48,808+(i//10)*24,32,16) for i in range(97))))
+    if revision==37:
+        return any(ry<=y<ry+rh and rx*4<=offset and offset+size<=(rx+rw)*4
+                   for rx,ry,rw,rh in ((256,784,480,20),(256,812,480,20),(832,808,32,16)))
+    return False
 
 def machine(raw,report,patch,case,reference=False):
     m=B.macho(raw);base=min(s['va'] for s in m['segments'] if s['size']);end=max(s['va']+s['size'] for s in m['segments'])
@@ -57,6 +77,19 @@ def main():
     a=argparse.ArgumentParser(description=__doc__);a.add_argument('--build',type=Path,required=True);a.add_argument('--output',type=Path,required=True);args=a.parse_args()
     report=json.loads(args.build.read_text());raw=(ROOT/report['candidate']['path']).read_bytes();checks=[]
     assert B.sha(raw)==report['candidate']['sha256']
+    revision=report.get('probe_revision',0)
+    if revision>=46:
+        for x,y,size in ((736,816,4),(767,817,4),(784,816,8)):
+            assert framebuffer_write_in_bounds(FB+y*ROW+x*4,size,revision)
+            assert not framebuffer_write_in_bounds(FB+y*ROW+x*4,size,45)
+        for x,y,size in ((736,818,4),(768,816,4),(816,816,4),(735,816,8),(208,800,4)):
+            assert not framebuffer_write_in_bounds(FB+y*ROW+x*4,size,revision)
+    if revision==37:
+        for x,y,size in ((0,810,4),(256,804,4),(256,832,4),(864,808,4),(735,812,8),(1439,790,8)):
+            assert not framebuffer_write_in_bounds(FB+y*ROW+x*4,size,revision)
+        for x,y,size in ((256,800,4),(735,803,4),(256,812,4),(735,831,4),(832,808,4),(863,823,4)):
+            assert framebuffer_write_in_bounds(FB+y*ROW+x*4,size,revision)
+            assert not framebuffer_write_in_bounds(FB+y*ROW+x*4,size,36)
     for patch in report['patches']:
         if report.get('probe_revision',0)==31 and patch['reason']=='probe_dense_769d5f4':continue
         if report.get('probe_revision',0)==30 and patch['reason']=='probe_dense_76730e8':continue
@@ -76,7 +109,8 @@ def main():
                 assert bytes(ref.mem_read(p,n))==bytes(got.mem_read(p,n)), (patch['reason'],kind,hex(p))
             # Rendering must never touch the firmware text area or cross the screen.
             fbwrites=[(p,s) for p,s in writes if FB<=p<FB+0x1200000]
-            assert all(200<=(p-FB)//ROW<800 and (p-FB)%ROW+s<=ROW for p,s in fbwrites)
+            rejected=[(hex(p),s,divmod(p-FB,ROW)) for p,s in fbwrites if not framebuffer_write_in_bounds(p,s,revision)]
+            assert not rejected,(patch['reason'],kind,rejected[:8])
             for edge in report.get('dense_bootstrap',{}).get('edges',[]):
                 if edge['site']!=patch['va']:continue
                 if report.get('probe_revision',0)>=36 and edge['id']>=266:continue # dedicated scoped cases exercise these
@@ -85,7 +119,8 @@ def main():
             checks.append(dict(name=patch['reason']+': '+kind,passed=True,next_pc=hex(actual['pc']),framebuffer_writes=len(fbwrites)))
             del ref,got;gc.collect()
         if len(checks)%100==0:print(json.dumps(dict(progress_checks=len(checks))),flush=True)
-    out=dict(scope=__doc__,candidate_sha256=B.sha(raw),checks=checks)
+    out=dict(scope=__doc__,candidate_sha256=B.sha(raw),checks=checks,
+             revision37_rectangle_negative_controls=revision==37,revision46_rectangle_negative_controls=revision>=46)
     args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(out,indent=2)+'\n')
     print(json.dumps(dict(checks=len(checks),passed=True)))
 if __name__=='__main__':main()

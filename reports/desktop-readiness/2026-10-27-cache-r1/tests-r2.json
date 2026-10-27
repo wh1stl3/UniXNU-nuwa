@@ -1,0 +1,71 @@
+{
+  "checks": [
+    {
+      "name": "referenced subcache and image address resolved",
+      "passed": true
+    },
+    {
+      "name": "UUID mismatch rejected",
+      "passed": true
+    },
+    {
+      "name": "unsafe suffix rejected",
+      "passed": true
+    },
+    {
+      "name": "table extent rejected",
+      "passed": true
+    },
+    {
+      "name": "mapping extent rejected",
+      "passed": true
+    },
+    {
+      "name": "unbacked image rejected",
+      "passed": true
+    },
+    {
+      "name": "missing subcache rejected",
+      "passed": true
+    },
+    {
+      "name": "truncated Mach-O commands rejected",
+      "passed": true
+    },
+    {
+      "name": "lazy-load dependency retained as required edge",
+      "passed": true
+    },
+    {
+      "name": "relative/absolute links cross declared virtual mount",
+      "passed": true
+    },
+    {
+      "name": "namespace root escape rejected",
+      "passed": true
+    },
+    {
+      "name": "namespace symlink loop rejected",
+      "passed": true
+    },
+    {
+      "name": "non-directory traversal rejected",
+      "passed": true
+    }
+  ],
+  "sources": [
+    {
+      "path": "scripts/desktop_cache.py",
+      "sha256": "f5e0b4fa506517c768633c6d19417e3908dabd393f93f307a01ca8bbb463a7c5"
+    },
+    {
+      "path": "scripts/desktop_namespace.py",
+      "sha256": "62581258a5d4bdbd633693557f0f8b0e42f6ac32f1b5395937f32fea15f8e7d7"
+    },
+    {
+      "path": "scripts/test-desktop-cache.py",
+      "sha256": "4e8c7cbd8d3ff738c7251373c6a808430750c6b329bcfaae21abea0d78568b21"
+    }
+  ],
+  "device_accessed": false
+}

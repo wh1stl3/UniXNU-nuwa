@@ -8,7 +8,7 @@
 
 `fastboot reboot`成功返回，但设备重新出现在fastboot；nuwa-after-reboot.json记录A同时successful=yes、unbootable=yes，B successful=no、unbootable=no。boot-reason变量不支持。用户说明此前另一对话推送过镜像、没有按音量键；这只能作为背景，不作为故障根因的证明。
 
-只读备份D:/Code/PortingiOS/nuwa/backups/recovery-20261020T121245314787Z/boot_a.img为原始nuwa v4 boot，201326592B/SHA256 ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31，与旧锁定记录一致。确认fastboot product后执行`fastboot boot <原始备份绝对路径>`：发送与Booting均OKAY；随后按DT model/compatible选择nuwa而非ROM可变vendor属性，确认nuwa/kalama/KALAMA及sys.boot_completed=1。命令、哈希与结果见stock-temporary-boot.json及identity-gate.json。此处仅“原厂boot临时恢复Android”实机通过；候选固件未执行、正常持久启动未修复、H-001硬挂按键演练未完成。
+只读备份D:/Code/PortingiOSLegacy/nuwa/backups/recovery-20261020T121245314787Z/boot_a.img为原始nuwa v4 boot，201326592B/SHA256 ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31，与旧锁定记录一致。确认fastboot product后执行`fastboot boot <原始备份绝对路径>`：发送与Booting均OKAY；随后按DT model/compatible选择nuwa而非ROM可变vendor属性，确认nuwa/kalama/KALAMA及sys.boot_completed=1。命令、哈希与结果见stock-temporary-boot.json及identity-gate.json。此处仅“原厂boot临时恢复Android”实机通过；候选固件未执行、正常持久启动未修复、H-001硬挂按键演练未完成。
 
 Android内整分区sha256sum又证明：当前boot_a=ef558db2…、init_boot_a=19e95d95…，分别与已存原始备份/锁定记录相同。不能归因于boot内容替换，A槽不可启动状态仍需后续处理；本轮没有改槽位或flash。bootctl不存在，不能据此判断Android已自动清除槽位标志。最后确认仍在nuwa Android且boot_completed=1。
 

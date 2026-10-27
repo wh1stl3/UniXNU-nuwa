@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def main():
     cli = argparse.ArgumentParser(description=__doc__)
     cli.add_argument('--output', type=Path, required=True)
-    cli.add_argument('--firmware', type=Path, default=Path('D:/Code/uefi-nuwa'))
+    cli.add_argument('--firmware', type=Path, default=Path('D:/Code/PortingiOS/nuwa/uefi-nuwa'))
     args = cli.parse_args()
     output = args.output.resolve()
     if not output.is_relative_to(ROOT / 'reports') or output.exists():

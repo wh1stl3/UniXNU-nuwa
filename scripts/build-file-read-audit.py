@@ -8,7 +8,7 @@ from native_prelink_inputs import ROOT, inputs
 
 SOURCE = Path('D:/Code/UniXNU-integration/drivers/NativeAdreno')
 PIN = 'b686b9054f57d393c80195b82568a09f8ca106a2'
-MU = Path('D:/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore')
+MU = Path('D:/Code/PortingiOSLegacy/common/sources/mu-nuwa-firmware/Mu_Basecore')
 MU_PIN = 'cfb93724a06ff86ff5ba971413368a7809ee42a5'
 
 

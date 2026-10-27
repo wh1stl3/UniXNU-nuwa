@@ -11,7 +11,7 @@ import subprocess
 import struct
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE = Path('D:/Code/PortingiOS/common/sources/UniXNU')
+BASE = Path('D:/Code/PortingiOSLegacy/common/sources/UniXNU')
 PIN = '75bc13dd34dc4e403826793739e316a264ce00dd'
 SOURCE = 'drivers/DarwinBoot/DarwinBootPkg/Driver/DarwinBoot.c'
 OUT = ROOT / 'reports/loader-window-host/results.json'
@@ -148,7 +148,7 @@ int main(void){
     harness = harness.replace('0xfffffff007004000ULL', hex(kernel_base) + 'ULL')
     harness = harness.replace('0x8c0004000', hex(candidate))
     WORK.mkdir(parents=True)
-    binary = '/mnt/d/Code/UniXNU-nuwa/out/loader-window-host-v2/probe'
+    binary = '/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/loader-window-host-v2/probe'
     commands = []
 
     def run(args, stdin=None):

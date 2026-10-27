@@ -1,0 +1,662 @@
+{
+  "scope": "Diagnostic binary instrumentation of fixed analysis prelink; not runtime qualification",
+  "input_sha256": "1aeebf1352a86b0d31612a6bd6e77bd7292f676ad2ce43a99ec4a8f3999eedb6",
+  "candidate": {
+    "path": "out/kernel-entry-probe-23/kernel-entry-probe.macho",
+    "sha256": "cd20a4932c847b6ef0ffd37dae0643bbbc8778c64d8f7122caa57e09cc47cc29",
+    "bytes": 58372096
+  },
+  "probe": {
+    "va": "0xfffffff008489000",
+    "file_offset": 58335232,
+    "code_bytes": 32768,
+    "segment_bytes": 36864,
+    "sha256": "03b13377cf5e64cbfc47029958d7b20a61faa5047d324bb6b9b1125835b2ce78",
+    "symbols": {
+      "exception_stop": "0xfffffff008489c64",
+      "fault_stop": "0xfffffff00848d4dc",
+      "probe_arm_init": "0xfffffff008489f00",
+      "probe_arm_init_replay": "0xfffffff008489fe0",
+      "probe_arm_vm": "0xfffffff00848a0c8",
+      "probe_arm_vm_replay": "0xfffffff00848a1a0",
+      "probe_avm_bases": "0xfffffff00848a368",
+      "probe_avm_bases_replay": "0xfffffff00848a440",
+      "probe_avm_memcheck": "0xfffffff00848a448",
+      "probe_avm_memcheck_replay": "0xfffffff00848a520",
+      "probe_avm_physmap": "0xfffffff00848a52c",
+      "probe_avm_physmap_replay": "0xfffffff00848a604",
+      "probe_avm_slide": "0xfffffff00848a60c",
+      "probe_avm_slide_replay": "0xfffffff00848a6e4",
+      "probe_console_init": "0xfffffff00848cd3c",
+      "probe_console_init_replay": "0xfffffff00848ce14",
+      "probe_console_policy": "0xfffffff00848ca58",
+      "probe_console_status": "0xfffffff00848e020",
+      "probe_cpu_base": "0xfffffff008489fe8",
+      "probe_cpu_base_replay": "0xfffffff00848a0c0",
+      "probe_cpu_bootstrap": "0xfffffff00848bc58",
+      "probe_cpu_bootstrap_replay": "0xfffffff00848bd30",
+      "probe_cpu_topo": "0xfffffff00848bb78",
+      "probe_cpu_topo_replay": "0xfffffff00848bc50",
+      "probe_data": "0xfffffff00848e000",
+      "probe_dt_lookup": "0xfffffff00848a8d0",
+      "probe_dt_lookup_replay": "0xfffffff00848a9a8",
+      "probe_early_random": "0xfffffff00848a6ec",
+      "probe_early_random_replay": "0xfffffff00848a8c8",
+      "probe_end": "0xfffffff008491000",
+      "probe_entry": "0xfffffff008489c68",
+      "probe_exception": "0xfffffff008489800",
+      "probe_fault": "0xfffffff00848d04c",
+      "probe_flags": "0xfffffff008490000",
+      "probe_kernel_bootstrap": "0xfffffff00848a288",
+      "probe_kernel_bootstrap_replay": "0xfffffff00848a360",
+      "probe_machine_startup": "0xfffffff00848bd38",
+      "probe_machine_startup_replay": "0xfffffff00848be10",
+      "probe_map_status": "0xfffffff00848e010",
+      "probe_misc_boot_args": "0xfffffff00848b9b8",
+      "probe_misc_boot_args_replay": "0xfffffff00848ba90",
+      "probe_misc_regs": "0xfffffff00848ba98",
+      "probe_misc_regs_replay": "0xfffffff00848bb70",
+      "probe_mmu": "0xfffffff008489d74",
+      "probe_mmu_on": "0xfffffff008489e88",
+      "probe_mmu_on_replay": "0xfffffff008489efc",
+      "probe_panic": "0xfffffff00848be18",
+      "probe_panic_options": "0xfffffff00848bef8",
+      "probe_panic_options_replay": "0xfffffff00848bfd0",
+      "probe_panic_replay": "0xfffffff00848bef0",
+      "probe_panic_trap": "0xfffffff00848bfd8",
+      "probe_panic_trap_replay": "0xfffffff00848ca50",
+      "probe_pmap": "0xfffffff00848a1a8",
+      "probe_pmap_replay": "0xfffffff00848a280",
+      "probe_scratch": "0xfffffff00848e000",
+      "probe_soc_base": "0xfffffff00848a9b0",
+      "probe_soc_base_replay": "0xfffffff00848b17c",
+      "probe_tables": "0xfffffff008489cec",
+      "probe_timer_regs": "0xfffffff00848b184",
+      "probe_timer_regs_replay": "0xfffffff00848b25c",
+      "probe_ttbr0": "0xfffffff00848cf90",
+      "probe_ttbr0_replay": "0xfffffff00848d040",
+      "probe_ttbr1": "0xfffffff00848ce1c",
+      "probe_ttbr1_replay": "0xfffffff00848cf84",
+      "probe_vectors": "0xfffffff008489000",
+      "probe_wfe_init": "0xfffffff00848b624",
+      "probe_wfe_init_replay": "0xfffffff00848b9b0",
+      "probe_wfe_timeout": "0xfffffff00848b264",
+      "probe_wfe_timeout_replay": "0xfffffff00848b61c",
+      "probe_zero": "0xfffffff00848f000"
+    }
+  },
+  "patches": [
+    {
+      "file_offset": 16,
+      "va": null,
+      "before": "1900000040160000",
+      "after": "1a00000088160000",
+      "reason": "Add one bounded RX diagnostic segment"
+    },
+    {
+      "file_offset": 5728,
+      "va": null,
+      "before": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "after": "19000000480000005f5f4e5557415f50524f42450000000000904808f0ffffff009000000000000000207a0300000000009000000000000005000000050000000000000000000000",
+      "reason": "Use verified zero load-command padding"
+    },
+    {
+      "file_offset": 9458112,
+      "va": "0xfffffff0079091c0",
+      "before": "13008852",
+      "after": "260e2e14",
+      "reason": "probe_console_policy"
+    },
+    {
+      "file_offset": 9455756,
+      "va": "0xfffffff00790888c",
+      "before": "000100b4",
+      "after": "2c112e14",
+      "reason": "probe_console_init"
+    },
+    {
+      "file_offset": 3910496,
+      "va": "0xfffffff0073beb60",
+      "before": "b7310094",
+      "after": "af384314",
+      "reason": "probe_ttbr1"
+    },
+    {
+      "file_offset": 3910516,
+      "va": "0xfffffff0073beb74",
+      "before": "b6310094",
+      "after": "07394314",
+      "reason": "probe_ttbr0"
+    },
+    {
+      "file_offset": 3937416,
+      "va": "0xfffffff0073c5488",
+      "before": "f5060014",
+      "after": "f8114314",
+      "reason": "probe_entry"
+    },
+    {
+      "file_offset": 3945096,
+      "va": "0xfffffff0073c7288",
+      "before": "9f3b03d5",
+      "after": "990a4314",
+      "reason": "probe_tables"
+    },
+    {
+      "file_offset": 3945316,
+      "va": "0xfffffff0073c7364",
+      "before": "0000e0f2",
+      "after": "840a4314",
+      "reason": "probe_mmu"
+    },
+    {
+      "file_offset": 3945336,
+      "va": "0xfffffff0073c7378",
+      "before": "df3f03d5",
+      "after": "c40a4314",
+      "reason": "probe_mmu_on"
+    },
+    {
+      "file_offset": 9889864,
+      "va": "0xfffffff007972848",
+      "before": "ff4303d1",
+      "after": "ae5d2c14",
+      "reason": "probe_arm_init"
+    },
+    {
+      "file_offset": 3895696,
+      "va": "0xfffffff0073bb190",
+      "before": "fd7bbfa9",
+      "after": "963b4314",
+      "reason": "probe_cpu_base"
+    },
+    {
+      "file_offset": 3907604,
+      "va": "0xfffffff0073be014",
+      "before": "ff8305d1",
+      "after": "2d304314",
+      "reason": "probe_arm_vm"
+    },
+    {
+      "file_offset": 3798724,
+      "va": "0xfffffff0073a36c4",
+      "before": "ff4302d1",
+      "after": "b99a4314",
+      "reason": "probe_pmap"
+    },
+    {
+      "file_offset": 2729988,
+      "va": "0xfffffff00729e804",
+      "before": "ff4301d1",
+      "after": "a1ae4714",
+      "reason": "probe_kernel_bootstrap"
+    },
+    {
+      "file_offset": 3907688,
+      "va": "0xfffffff0073be068",
+      "before": "3301088b",
+      "after": "c0304314",
+      "reason": "probe_avm_bases"
+    },
+    {
+      "file_offset": 3907768,
+      "va": "0xfffffff0073be0b8",
+      "before": "c00000b4",
+      "after": "e4304314",
+      "reason": "probe_avm_memcheck"
+    },
+    {
+      "file_offset": 3907868,
+      "va": "0xfffffff0073be11c",
+      "before": "751640f9",
+      "after": "04314314",
+      "reason": "probe_avm_physmap"
+    },
+    {
+      "file_offset": 3907908,
+      "va": "0xfffffff0073be144",
+      "before": "4901098b",
+      "after": "32314314",
+      "reason": "probe_avm_slide"
+    },
+    {
+      "file_offset": 9443408,
+      "va": "0xfffffff007905850",
+      "before": "ff0303d1",
+      "after": "20142e14",
+      "reason": "probe_dt_lookup"
+    },
+    {
+      "file_offset": 9453040,
+      "va": "0xfffffff007907df0",
+      "before": "ff0301d1",
+      "after": "f00a2e14",
+      "reason": "probe_soc_base"
+    },
+    {
+      "file_offset": 3952752,
+      "va": "0xfffffff0073c9070",
+      "before": "ff0303d1",
+      "after": "c20a4314",
+      "reason": "probe_cpu_topo"
+    },
+    {
+      "file_offset": 3889284,
+      "va": "0xfffffff0073b9884",
+      "before": "c0035fd6",
+      "after": "f5484314",
+      "reason": "probe_cpu_bootstrap"
+    },
+    {
+      "file_offset": 3951784,
+      "va": "0xfffffff0073c8ca8",
+      "before": "fd7bbfa9",
+      "after": "240c4314",
+      "reason": "probe_machine_startup"
+    },
+    {
+      "file_offset": 9650176,
+      "va": "0xfffffff007938000",
+      "before": "ff8300d1",
+      "after": "864f2d14",
+      "reason": "probe_panic"
+    },
+    {
+      "file_offset": 9650256,
+      "va": "0xfffffff007938050",
+      "before": "ff8300d1",
+      "after": "aa4f2d14",
+      "reason": "probe_panic_options"
+    },
+    {
+      "file_offset": 2481428,
+      "va": "0xfffffff007261d14",
+      "before": "ff0302d1",
+      "after": "b1a84814",
+      "reason": "probe_panic_trap"
+    },
+    {
+      "file_offset": 3963444,
+      "va": "0xfffffff0073cba34",
+      "before": "c0035fd6",
+      "after": "d4fd4214",
+      "reason": "probe_timer_regs"
+    },
+    {
+      "file_offset": 3960328,
+      "va": "0xfffffff0073cae08",
+      "before": "ff0301d1",
+      "after": "17014314",
+      "reason": "probe_wfe_timeout"
+    },
+    {
+      "file_offset": 3960240,
+      "va": "0xfffffff0073cadb0",
+      "before": "28edff90",
+      "after": "1d024314",
+      "reason": "probe_wfe_init"
+    },
+    {
+      "file_offset": 3963436,
+      "va": "0xfffffff0073cba2c",
+      "before": "c0035fd6",
+      "after": "e3ff4214",
+      "reason": "probe_misc_boot_args"
+    },
+    {
+      "file_offset": 3963440,
+      "va": "0xfffffff0073cba30",
+      "before": "c0035fd6",
+      "after": "1a004314",
+      "reason": "probe_misc_regs"
+    },
+    {
+      "file_offset": 3945260,
+      "va": "0xfffffff0073c732c",
+      "before": "010000b9",
+      "after": "1f2003d5",
+      "reason": "Suppress BCM2837-only MMIO write; no native timer activation"
+    },
+    {
+      "file_offset": 3940352,
+      "va": "0xfffffff0073c6000",
+      "before": "00000014",
+      "after": "131c4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3940480,
+      "va": "0xfffffff0073c6080",
+      "before": "00000014",
+      "after": "f31b4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3940608,
+      "va": "0xfffffff0073c6100",
+      "before": "00000014",
+      "after": "d31b4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3940736,
+      "va": "0xfffffff0073c6180",
+      "before": "00000014",
+      "after": "b31b4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3940864,
+      "va": "0xfffffff0073c6200",
+      "before": "00000014",
+      "after": "931b4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3940992,
+      "va": "0xfffffff0073c6280",
+      "before": "00000014",
+      "after": "731b4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3941120,
+      "va": "0xfffffff0073c6300",
+      "before": "00000014",
+      "after": "531b4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3941248,
+      "va": "0xfffffff0073c6380",
+      "before": "00000014",
+      "after": "331b4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3941376,
+      "va": "0xfffffff0073c6400",
+      "before": "00000014",
+      "after": "131b4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3941504,
+      "va": "0xfffffff0073c6480",
+      "before": "00000014",
+      "after": "f31a4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3941632,
+      "va": "0xfffffff0073c6500",
+      "before": "00000014",
+      "after": "d31a4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3941760,
+      "va": "0xfffffff0073c6580",
+      "before": "00000014",
+      "after": "b31a4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3941888,
+      "va": "0xfffffff0073c6600",
+      "before": "00000014",
+      "after": "931a4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3942016,
+      "va": "0xfffffff0073c6680",
+      "before": "00000014",
+      "after": "731a4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3942144,
+      "va": "0xfffffff0073c6700",
+      "before": "00000014",
+      "after": "531a4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    },
+    {
+      "file_offset": 3942272,
+      "va": "0xfffffff0073c6780",
+      "before": "00000014",
+      "after": "331a4314",
+      "reason": "Capture early exception ESR/ELR/FAR"
+    }
+  ],
+  "original_changed_bytes": 201,
+  "preserved_donor_segments": [
+    {
+      "name": "__PRELINK_TEXT",
+      "sha256": "4c25f20e7d3a4a4e1784988481e605609a3a509b56c07bc0e86b50d6b66bd963",
+      "bytes": 8142848
+    },
+    {
+      "name": "__PRELINK_INFO",
+      "sha256": "5a4c588b5b483e929526aea63ae3e904b966419b30e7996bb887ca569f648b50",
+      "bytes": 462848
+    },
+    {
+      "name": "__PLK_TEXT_EXEC",
+      "sha256": "63162f476b8df6ca4eddbc4a5963295e08610c0702f40777f199cae718b7d40b",
+      "bytes": 23937024
+    },
+    {
+      "name": "__PRELINK_DATA",
+      "sha256": "8b5d1098af56cf6befd8f214b4770c0f19b9a4e8a21c8d2b85670828833ae7a7",
+      "bytes": 1785856
+    },
+    {
+      "name": "__PLK_DATA_CONST",
+      "sha256": "b77ee164db3621f0e8107fdafe70ac50c8ad80a77e966ddfe78d8390564e6566",
+      "bytes": 3817472
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "clang",
+        "--target=aarch64-none-elf",
+        "-c",
+        "/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-23/probe.S",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-23/probe.o"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "ld.lld",
+        "-Ttext=0xfffffff008489000",
+        "--entry=probe_entry",
+        "--defsym=original_first_cpu=0xfffffff0073c705c",
+        "--defsym=original_tables_resume=0xfffffff0073c728c",
+        "--defsym=original_mmu_resume=0xfffffff0073c7368",
+        "--defsym=original_mmu_on_resume=0xfffffff0073c737c",
+        "--defsym=original_arm_init_resume=0xfffffff00797284c",
+        "--defsym=original_cpu_base_resume=0xfffffff0073bb194",
+        "--defsym=original_arm_vm_resume=0xfffffff0073be018",
+        "--defsym=original_pmap_resume=0xfffffff0073a36c8",
+        "--defsym=original_kernel_bootstrap_resume=0xfffffff00729e808",
+        "--defsym=original_avm_bases_resume=0xfffffff0073be06c",
+        "--defsym=original_avm_memcheck_resume=0xfffffff0073be0bc",
+        "--defsym=original_panic_resume=0xfffffff007938004",
+        "--defsym=original_panic_trap_resume=0xfffffff007261d18",
+        "--defsym=original_avm_physmap_resume=0xfffffff0073be120",
+        "--defsym=original_avm_slide_resume=0xfffffff0073be148",
+        "--defsym=original_early_random_resume=0xfffffff00739e378",
+        "--defsym=original_dt_lookup_resume=0xfffffff007905854",
+        "--defsym=original_soc_base_resume=0xfffffff007907df4",
+        "--defsym=original_cpu_topo_resume=0xfffffff0073c9074",
+        "--defsym=original_cpu_bootstrap_resume=0xfffffff0073b9888",
+        "--defsym=original_machine_startup_resume=0xfffffff0073c8cac",
+        "--defsym=original_panic_options_resume=0xfffffff007938054",
+        "--defsym=original_timer_regs_resume=0xfffffff0073cba38",
+        "--defsym=original_wfe_timeout_resume=0xfffffff0073cae0c",
+        "--defsym=original_wfe_init_resume=0xfffffff0073cadb4",
+        "--defsym=original_misc_boot_args_resume=0xfffffff0073cba30",
+        "--defsym=original_misc_regs_resume=0xfffffff0073cba34",
+        "--defsym=original_ttbr1_entry=0xfffffff0073cb23c",
+        "--defsym=original_ttbr1_resume=0xfffffff0073beb64",
+        "--defsym=original_ttbr0_entry=0xfffffff0073cb24c",
+        "--defsym=original_ttbr0_resume=0xfffffff0073beb78",
+        "--defsym=native_dt_lookup=0xfffffff007905850",
+        "--defsym=native_console_tail=0xfffffff007909244",
+        "--defsym=original_console_init_resume=0xfffffff007908890",
+        "--defsym=original_wfe_init_page=0xfffffff00716e000",
+        "--defsym=original_avm_memcheck_target=0xfffffff0073be0d0",
+        "/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-23/probe.o",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-23/probe.elf"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "llvm-objcopy",
+        "-O",
+        "binary",
+        "--only-section=.text",
+        "/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-23/probe.elf",
+        "/mnt/d/Code/UniXNU-nuwa/out/kernel-entry-probe-23/probe.bin"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "source_sha256": "9c59b98de7c7d33b4bb86e2151549a2afa45d696bae09df5880b4acd61155d5e",
+  "loadable": false,
+  "runtime_qualified": false,
+  "device_accessed": false,
+  "probe_zero": "0xfffffff00848f000",
+  "probe_flags": "0xfffffff008490000",
+  "screen": {
+    "stage_tiles": {
+      "width": 96,
+      "height": 32,
+      "x_formula": "((logical_y-256)//512)*96",
+      "y_formula": "256+(logical_y-256)%512"
+    },
+    "data": {
+      "x": 256,
+      "value_x": 352,
+      "width": 480,
+      "glyph_pixel_scale": 4,
+      "glyph_height": 20,
+      "tag": "A000 + logical_y//32",
+      "y_formula": "224+28*((logical_y-1088)//32)",
+      "counter_y": 756
+    },
+    "records": {
+      "1088": {
+        "tag": "A022",
+        "y": 224
+      },
+      "1152": {
+        "tag": "A024",
+        "y": 280
+      },
+      "1184": {
+        "tag": "A025",
+        "y": 308
+      },
+      "1216": {
+        "tag": "A026",
+        "y": 336
+      },
+      "1248": {
+        "tag": "A027",
+        "y": 364
+      },
+      "1280": {
+        "tag": "A028",
+        "y": 392
+      },
+      "1312": {
+        "tag": "A029",
+        "y": 420
+      },
+      "1344": {
+        "tag": "A02A",
+        "y": 448
+      },
+      "1376": {
+        "tag": "A02B",
+        "y": 476
+      },
+      "1408": {
+        "tag": "A02C",
+        "y": 504
+      },
+      "1440": {
+        "tag": "A02D",
+        "y": 532
+      },
+      "1472": {
+        "tag": "A02E",
+        "y": 560
+      },
+      "1504": {
+        "tag": "A02F",
+        "y": 588
+      },
+      "1536": {
+        "tag": "A030",
+        "y": 616
+      },
+      "1568": {
+        "tag": "A031",
+        "y": 644
+      },
+      "1600": {
+        "tag": "A032",
+        "y": 672
+      },
+      "1632": {
+        "tag": "A033",
+        "y": 700
+      },
+      "1664": {
+        "tag": "A034",
+        "y": 728
+      }
+    },
+    "max_written_row": 799,
+    "limitations": [
+      "No output is guaranteed after pmap removes the diagnostic framebuffer mapping",
+      "TPIDR_EL1 shim is an intentional behaviour change, distinct from transparent hooks",
+      "Stage tiles and field IDs must be read using this revision layout"
+    ]
+  },
+  "probe_revision": 23,
+  "console_policy": {
+    "mode": "DT missing-pram diagnostic only",
+    "source_patch": "patches/xnu-8796-candidates/native-dt-panic-region.patch",
+    "present_pram": "explicit unsupported-policy halt without BCM access",
+    "native_console_tail": "0xfffffff007909244",
+    "current_panic_disabled": false
+  }
+}

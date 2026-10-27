@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-native-resource-uio.py", line 106, in <module>
+    main()
+    ~~~~^^
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-native-resource-uio.py", line 96, in main
+    cases=[run(raw, m, off, length) for off, length in ((264, 8), (336, 23707), (384, 33021))],
+           ~~~^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-native-resource-uio.py", line 16, in run
+    u = T.machine(raw, m, b'', 0, [], False)
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-read-dispatch-observer.py", line 44, in machine
+    for i in range(31):u.reg_write(getattr(sys.modules[__name__],f'UC_ARM64_REG_X{i}'),0x101000+i*0x100)
+                                           ~~~~~~~~~~~^^^^^^^^^^
+KeyError: 'dispatch_fixture'

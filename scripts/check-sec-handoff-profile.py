@@ -6,9 +6,9 @@ from pathlib import Path
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
-FW = Path('D:/Code/uefi-nuwa')
-UNIXNU = Path('D:/Code/PortingiOS/common/sources/UniXNU')
-MU_FALLBACK = Path('D:/Code/PortingiOS/common/sources/mu-nuwa-firmware')
+FW = Path('D:/Code/PortingiOS/nuwa/uefi-nuwa')
+UNIXNU = Path('D:/Code/PortingiOSLegacy/common/sources/UniXNU')
+MU_FALLBACK = Path('D:/Code/PortingiOSLegacy/common/sources/mu-nuwa-firmware')
 
 
 def load(path):

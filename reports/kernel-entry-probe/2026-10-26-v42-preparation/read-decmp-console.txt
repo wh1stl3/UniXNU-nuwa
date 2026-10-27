@@ -1,0 +1,14 @@
+{"progress": 90}
+{"progress": 180}
+{"progress": 270}
+{"progress": 360}
+{"progress": 450}
+{"progress": 540}
+Traceback (most recent call last):
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-read-decmp.py", line 144, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-read-decmp.py", line 127, in main
+    assert prefix(raw,b,original,om)==prefix(raw,b,original,om,True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

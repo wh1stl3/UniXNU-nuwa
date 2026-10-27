@@ -1,0 +1,134 @@
+{
+  "scope": "Rendering test of the v20 probe read sites: known values are planted in the kernel globals and the hex rows are decoded back from the framebuffer. It proves the probe reads the intended address, offset and width; it says nothing about nuwa runtime behaviour.",
+  "build": "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v43\\build.json",
+  "candidate_sha256": "6a3b4c7755bb586f4a9ac218fe32e924e2d5173a718f7bbb97502ad76c163385",
+  "source_sha256": "ddbbe3127881ec29d95bc9e7eddcece34bd375c55dbd9a70aca69e4a9e293d06",
+  "checks": [
+    {
+      "name": "The glyph table matches the probe source font",
+      "passed": true
+    },
+    {
+      "name": "Every glyph is unique so a digit can be decoded",
+      "passed": true
+    },
+    {
+      "name": "The soc_base hook runs without a bad memory access",
+      "passed": true
+    },
+    {
+      "name": "DTInitialized renders its 32-bit value",
+      "passed": true
+    },
+    {
+      "name": "DTRootNode renders the full 64-bit pointer",
+      "passed": true
+    },
+    {
+      "name": "gPESoCBasePhys renders the full 64-bit value",
+      "passed": true
+    },
+    {
+      "name": "PE_state_raw_90 renders the value at offset 0x90",
+      "passed": true
+    },
+    {
+      "name": "PE_state.bootArgs renders the value at offset 0xa0",
+      "passed": true
+    },
+    {
+      "name": "The wfe_timeout hook runs without a bad memory access",
+      "passed": true
+    },
+    {
+      "name": "timebase_frequency_hz renders the value at offset 0x48",
+      "passed": true
+    },
+    {
+      "name": "arm64_eventi renders its 32-bit value",
+      "passed": true
+    },
+    {
+      "name": "Every sampled data row has its own correct four-nibble field ID",
+      "passed": true
+    },
+    {
+      "name": "The panic hook runs without a bad memory access",
+      "passed": true
+    },
+    {
+      "name": "The variadic argument is accepted although it is not page aligned",
+      "passed": true
+    },
+    {
+      "name": "The function name is rendered as its first eight bytes",
+      "passed": true
+    },
+    {
+      "name": "The function name continues in the next eight bytes",
+      "passed": true
+    },
+    {
+      "name": "The argument pointer is rendered as well",
+      "passed": true
+    },
+    {
+      "name": "The format string is still rendered",
+      "passed": true
+    }
+  ],
+  "soc_base": {
+    "error": null,
+    "bad_memory": [],
+    "decoded": {
+      "DTInitialized": "0000000000000001",
+      "DTRootNode": "FFFFFFF0071EA000",
+      "gPESoCBasePhys": "0000000017000000",
+      "PE_state_raw_90": "FFFFFFF0071EA000",
+      "PE_state.bootArgs": "0000000000003340"
+    },
+    "tags": {
+      "DTInitialized": "A02A",
+      "DTRootNode": "A02B",
+      "gPESoCBasePhys": "A02C",
+      "PE_state_raw_90": "A02D",
+      "PE_state.bootArgs": "A02E"
+    },
+    "rows": {
+      "DTInitialized": 1344,
+      "DTRootNode": 1376,
+      "gPESoCBasePhys": 1408,
+      "PE_state_raw_90": 1440,
+      "PE_state.bootArgs": 1472
+    }
+  },
+  "wfe_timeout": {
+    "error": null,
+    "bad_memory": [],
+    "decoded": {
+      "timebase_frequency_hz": "000000000124F800",
+      "arm64_eventi": "00000000FFFFFFFF"
+    },
+    "tags": {
+      "timebase_frequency_hz": "A02F",
+      "arm64_eventi": "A030"
+    },
+    "rows": {
+      "timebase_frequency_hz": 1504,
+      "arm64_eventi": 1536
+    }
+  },
+  "panic_argument": {
+    "decoded": {
+      "function_name_1": "5F656E61626C655F",
+      "function_name_2": "74696D6562617365",
+      "argument_pointer": "FFFFFFF007012343",
+      "format_1": "25733A20696E7661",
+      "format_2": "6C69642062697420"
+    },
+    "name": "_enable_timebase_event_stream\u0000",
+    "name_addr": "0xfffffff007012343",
+    "error": null,
+    "bad_memory": []
+  }
+}

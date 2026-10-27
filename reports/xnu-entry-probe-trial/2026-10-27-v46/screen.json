@@ -1,0 +1,35 @@
+{
+  "probe": 38,
+  "reviewed_at": "2026-10-27T01:10:23.346756+00:00",
+  "method": "Manual full photo and lossless crop review; no automatic OCR used",
+  "media_manifest": "D:/Code/PortingiOS/nuwa/Media-nuwa/derived/PROBE38/review-01/manifest.json",
+  "observations": [
+    "511/512 magenta allocator tail-entry and entry visible",
+    "513/514 kalloc call/continuation and 517/518 atomic accounting call/continuation visible",
+    "519/520 statistics call/continuation and 521 allocator RET point visible",
+    "499..510 post-allocation/vector checkpoints not visibly lit; decode entry not visibly lit",
+    "Allocator strips aggregate first and second call sites within current header; cannot attribute visible RET to second allocation alone",
+    "No complete header-read return, init/exec completion or user mode evidence"
+  ],
+  "stability": "Photo only; elapsed/stable duration asked, pending answer",
+  "fields": {
+    "A02A": "0000000000000000",
+    "A02B": "00000000000000D9",
+    "A02C": "0000000000000002",
+    "A02D": "0000000000000002",
+    "A02E": "00000000000000F2",
+    "A02F": "0000000000000000",
+    "A030": "0000000000000002",
+    "A032": "0000000000000002",
+    "A034": "0000000000000110",
+    "A036": "FFFFFFF0051A5858",
+    "A037": "FFFFFFF0051A5858",
+    "A038": "0000000000000000"
+  },
+  "partly_obscured_fields": [
+    "A033",
+    "A035",
+    "A039"
+  ],
+  "interpretation": "At least one scoped IOMalloc_internal RET reached. Second allocation null-return/error-print route remains a testable hypothesis; no allocator deadlock claim."
+}

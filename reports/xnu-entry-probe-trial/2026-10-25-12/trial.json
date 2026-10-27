@@ -1,0 +1,132 @@
+{
+  "scope": "v20 hardware trial of the entry probe: reads the device-tree and clock chain directly instead of inferring it. Hardware observation with a verified recovery; the remaining contradiction is stated, not resolved.",
+  "package": {
+    "image": "out/trial-boot/xnu-entry-probe-13/boot-xnu-first-entry.img",
+    "image_sha256": "d329e7c4ef7af38ee3aeecc484067007f8534ba33e8555fba78ac144abd0c826",
+    "kernel_sha256": "1f5178361a484fcd7fdde71917c394cd8d22b46bd5c91f3b3249f13a084a0369",
+    "adt_sha256": "7ebce5a6531429efb8a7450680fd05c59b20bbb15f54717dd403724cd11a6f2a",
+    "fat_sha256": "88a2497bb4cce5a0d5d7a55ef332e92ed7d0c1feed9958e1e40970b78cdddf13",
+    "menu_label": "XNU ENTRY PROBE 13 - DT AND TIMEBASE READOUT"
+  },
+  "trigger": {
+    "method": "adb reboot bootloader, then a single 'fastboot boot' of the image",
+    "fastboot_devices_before": "fe5ed56e only (the other attached device, d0fd0840, is an enuma/SM8450 and is excluded by an explicit -s on every adb command)",
+    "fastboot_boot_result": "Sending 'boot.img' (68620 KB) OKAY / Booting OKAY"
+  },
+  "preflight": {
+    "at": "2026-10-25T05:22:00+00:00",
+    "android_boot_completed": "1",
+    "slot": "_a",
+    "partition_hashes": {
+      "boot_a": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+      "vendor_boot_a": "5ad2a9dc751870fa3c367fa2833582147541f5b62b880dcbdf525003ad68cc23",
+      "init_boot_a": "19e95d952ded5172e8a17bd1af907a8d6b08b29734881c370961b09bbaf78f96"
+    },
+    "an_unsent_first_attempt": {
+      "at": "2026-10-25T05:52:00+00:00",
+      "result": "NOT SENT",
+      "evidence": "fastboot devices listed no device and the command was terminated before any transfer; the nuwa uptime stayed at 34062 s, so the device never rebooted and no kernel ran",
+      "operator_error": "the command was issued without confirming the device was in fastboot mode first"
+    }
+  },
+  "recovery": {
+    "path": "fastboot boot of the pinned stock boot image (D:/Code/PortingiOS/nuwa/backups/recovery-20261020T121245314787Z/boot_a.img, sha ef558db2..., identical to the boot_a baseline), then wait for Android",
+    "android_boot_completed": "1",
+    "slot": "_a",
+    "partition_hashes": {
+      "boot_a": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+      "vendor_boot_a": "5ad2a9dc751870fa3c367fa2833582147541f5b62b880dcbdf525003ad68cc23",
+      "init_boot_a": "19e95d952ded5172e8a17bd1af907a8d6b08b29734881c370961b09bbaf78f96"
+    },
+    "three_partition_hashes_unchanged": true,
+    "no_flash_no_erase_no_slot_change": true
+  },
+  "screen_capture": {
+    "photo": "C:/Users/Administrator/.workbuddy/clipboard-images/clipboard-2026-10-25T06-01-20-440Z-b5d87ae8.jpg",
+    "video": "C:/Users/Administrator/Documents/xwechat_files/wxid_i8ayad5f36ws22_4142/msg/video/2026-10/7d68291d8172230e7bba9271703ec7c2_raw.mp4",
+    "video_properties": "1920x1080 container, HEVC, 5.12 s, 60.14 fps",
+    "readings_supplied_by": "the user, after an automated glyph read was judged unreliable",
+    "note": "the firmware's own DiagDraw text starts at screen row 800 and overlaps the probe's hex rows from row 1088 down, so the probe numbers sit on top of firmware text in the capture"
+  },
+  "row_mapping": {
+    "how": "three independent anchors agree, so the block is pinned; the probe writes 12 hex rows and the nine visible ones are a contiguous run",
+    "block_starts_at_row": 1280,
+    "lines": {
+      "1": "row 1280 - panic format string bytes 0-7",
+      "2": "row 1312 - panic format string bytes 8-15",
+      "3": "row 1344 - _DTInitialized",
+      "4": "row 1376 - _DTRootNode",
+      "5": "row 1408 - _gPESoCBasePhys (read at the entry of pe_arm_get_soc_base_phys, so before this function assigns it)",
+      "6": "row 1440 - PE_state + 0x90",
+      "7": "row 1472 - PE_state + 0xa0",
+      "8": "row 1504 - gPEClockFrequencyInfo.timebase_frequency_hz (+0x48)",
+      "9": "row 1536 - arm64_eventi"
+    },
+    "rows_1088_1248_1568": "not read by the user: 1088/1248 carry the panic argument (the function name) and 1568 the argument pointer"
+  },
+  "readings": {
+    "line4": "0xfffffff008491000",
+    "line5": "0x0000000000000000",
+    "line6": "0x0000000000000000",
+    "line7": "0xfffffff00715c7c0",
+    "line8": "0x000000000124f800",
+    "line9": "0x00000000ffffffff"
+  },
+  "verified_identities": {
+    "line4_is_the_device_tree_kernel_va": {
+      "claim": "0xfffffff008491000 is exactly Args->DeviceTree for the shipped kernel",
+      "derivation": "Kernel.Base=0xfffffff003dc8000, Kernel.End=0xfffffff00848f000, TreeAddress-Address = ALIGN(Kernel.End-Kernel.Base, 16K) = 0x46c8000, Args->DeviceTree = Kernel.Base + 0x46c8000 + 0x1000 = 0xfffffff008491000",
+      "consequence": "SecureDTInit() received the correct tree pointer and _DTRootNode is non-zero, so the device tree is visible to the kernel"
+    },
+    "line7_is_pe_state_bootargs": {
+      "claim": "0xfffffff00715c7c0 is the symbol _const_boot_args exactly",
+      "consequence": "the probe's offset 0xa0 into PE_state is PE_state.bootArgs (= &const_boot_args), not PE_state.deviceTreeSize; PE_state.initialized was already TRUE, so PE_init_platform() ran"
+    },
+    "line8_is_the_adt_timebase": {
+      "claim": "0x124f800 = 19200000, which is the timebase-frequency value in the shipped ADT",
+      "consequence": "pe_identify_machine() read the timebase out of the device tree"
+    },
+    "line9_is_a_32_bit_value": {
+      "claim": "0xffffffff as a 32-bit field; note that the value this code can actually produce is 0xfffffffe, one bit away, and E/F are hard to tell apart in a 4x4 pixel glyph"
+    }
+  },
+  "the_contradiction": {
+    "statement": "the timebase read at the entry of wfe_timeout_configure is 19200000, and with that value the shipped kernel's own arithmetic cannot produce an invalid bit index - so the panic that the v19 rows showed cannot come from that path with that timebase",
+    "arithmetic_from_the_shipped_disassembly": {
+      "wfe_timeout_configure": "ldr x9,[gPEClockFrequencyInfo+0x510]; udiv x19,x9,x8; bl flsll; subs w8,w0,#1; mov w9,#1; lsl w9,w9,w8; subs w9,w9,#1; sxtw x9,w9; tst x19,x9; cinc w8,w8,ne; subs w8,w8,#1; csel w8,wzr,w8,lo; str w8,[arm64_eventi]",
+      "note": "the lsl uses the low 5 bits of the shift count, and the final csel replaces a negative result with 0",
+      "timebase_19200000": "ticks_per_event in [19, 19200000] depending on events_per_sec, flsll in [5,25], arm64_eventi in [38,59] - never >= 64, never 0xffffffff",
+      "timebase_0": "ticks_per_event = 0, flsll(0)-1 = 0xffffffff, the lsl takes the low 5 bits (31) so the mask becomes 0x7fffffff, the tst is 0, the increments do not fire, the final subs gives 0xfffffffe and the csel replaces it with 0 - so arm64_eventi would be 0, not 0xffffffff"
+    },
+    "wfe_timeout_init": "ldr w8,[x8,#1528]; cmp w8,#64; b.hs -> panic(\"%s: invalid bit index (%u)\", __FUNCTION__, bit_index) at machine_routines.c:2219; the panic is only reachable with arm64_eventi >= 64",
+    "call_order_verified_in_the_shipped_binary": "PE_init_platform (0xfffffff007972df8) -> configure_timer_apple_regs (0x...972dfc) -> wfe_timeout_configure (0x...972e00) -> wfe_timeout_init (0x...972e04); the only call site of wfe_timeout_configure in the image",
+    "arm64_eventi_has_a_single_writer": "str w8,[x9,#1528] at 0xfffffff0073caeb8, inside wfe_timeout_configure",
+    "what_would_resolve_it": [
+      "read arm64_eventi at the entry of wfe_timeout_init instead of at the entry of wfe_timeout_configure - the two differ if wfe_timeout_configure is re-entered",
+      "read the events_per_sec that PE_parse_boot_argn() produced for \"wfe_events_sec\", and whether the boot argument exists at all",
+      "read arm64_eventi from wfe_timeout_init's own frame, where the value that the comparison actually sees is known"
+    ]
+  },
+  "what_v20_proved_against_the_previous_hypothesis": {
+    "previous_hypothesis": "the device tree is not visible on the device, so pe_arm_get_soc_base_phys() returns 0, pe_identify_machine() returns early and the timebase stays zero",
+    "status": "REFUTED by this trial",
+    "evidence": [
+      "_DTRootNode = 0xfffffff008491000 = exactly the shipped ADT's kernel virtual address, so SecureDTInit() got a valid tree",
+      "PE_state.bootArgs is populated, so PE_init_platform() ran and PE_state.initialized became TRUE",
+      "gPEClockFrequencyInfo.timebase_frequency_hz = 19200000, the value the ADT carries, so pe_identify_machine() walked the tree and read the clock node"
+    ],
+    "consequence": "the timebase chain is not where the problem is; the next round must look at the arithmetic and at which invocation of wfe_timeout_configure produced the rejected bit index"
+  },
+  "still_open": [
+    "why the panic format string \"%s: invalid bit index (%u)\" appears if arm64_eventi can only be 0 or in [38,59] in the shipped code",
+    "the rows 1088/1248 (the panic argument, which should be the function name string) were not read, so whether the argument is a pointer is still unverified on hardware",
+    "the probe's hex rows from 1088 down overlap the firmware's own DiagDraw text, which starts at screen row 800, so the numbers are hard to read in a recording"
+  ],
+  "device_accessed": true,
+  "files": {
+    "build": "reports/kernel-entry-probe/2026-10-25-v20/build.json",
+    "software": "reports/kernel-entry-probe/2026-10-25-v20/software.json",
+    "read_sites": "reports/kernel-entry-probe/2026-10-25-v20/read-sites.json",
+    "post_arm_init": "reports/kernel-entry-probe/2026-10-25-v20/post-arm-init.json"
+  }
+}

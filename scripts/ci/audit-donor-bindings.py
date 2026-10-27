@@ -22,7 +22,7 @@ def main():
     cli.add_argument('--selection-report', type=Path, required=True,
                      help='Existing report for this exact donor; selection is analytical, not board configuration')
     cli.add_argument('--parser', type=Path, default=Path(
-        'D:/Code/PortingiOS/common/sources/UniXNU/kits/NativePrelink/native_prelink.py'))
+        'D:/Code/PortingiOSLegacy/common/sources/UniXNU/kits/NativePrelink/native_prelink.py'))
     cli.add_argument('--output', type=Path, required=True)
     args = cli.parse_args()
     output = args.output.resolve()

@@ -6,7 +6,7 @@ from pathlib import Path
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
-FIRMWARE = Path('D:/Code/uefi-nuwa')
+FIRMWARE = Path('D:/Code/PortingiOS/nuwa/uefi-nuwa')
 BASE = '5e4a8c814b89f62a4ba2bc145249314fed5db787'
 COMMIT = '910ee079fbaef736c49c14fd24501b132e98bb90'
 BRANCH = 'codex/nuwa-relative-offset'

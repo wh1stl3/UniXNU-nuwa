@@ -45,7 +45,7 @@ def main():
     checked = []
     for item in profile['recipe']['inputs']:
         if item['root'] == 'unixnu':
-            root = Path('D:/Code/PortingiOS/common/sources/UniXNU')
+            root = Path('D:/Code/PortingiOSLegacy/common/sources/UniXNU')
             pin, source_path = profile['recipe']['sources']['unixnu']['commit'], item['path']
         elif item['path'].startswith('Mu_Basecore/'):
             root, pin, source_path = ctor.MU, ctor.PIN, item['path'].split('/', 1)[1]

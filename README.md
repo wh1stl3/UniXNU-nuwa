@@ -1,5 +1,8 @@
 # UniXNU-nuwa
 
+<!-- path-migration-policy-2026-10-26 -->
+> **2026-10-26路径迁移：** 后续工作、新文档、脚本调用示例与交接统一使用 `D:/Code/PortingiOS/nuwa` 下的本机型新仓库路径，不与另一机型混用。仓库位置、旧资料库及历史证据定位见[统一迁移索引](../../PATH-MIGRATION.md)；旧记录不构成当前路径或新验证结论。
+
 以 **UniXNU** 为底座，改造使 **nuwa（小米 13 Pro / SM8550 / 12 GB）** 运行 **iOS 16**。
 
 ## 当前进度（2026-10-25）
@@ -14,7 +17,7 @@
 
 ## 为什么单开一个仓库
 
-旧仓 `D:\Code\PortingiOS` 走的是自建 P16/16K 链路，已转为**只读资料库**（上游源码副本、实测记录、旧报告都在里面）。
+旧仓 `D:\Code\PortingiOSLegacy` 走的是自建 P16/16K 链路，已转为**只读资料库**（上游源码副本、实测记录、旧报告都在里面）。
 本仓库只做「复用 UniXNU + 移植到 nuwa」这一条线，路线、目录、文档纪律都与旧仓分离，避免两套叙事混在一处。
 
 ## 先读什么
@@ -43,6 +46,6 @@ reports/         产出的报告
 
 ## 边界
 
-- 不改 `D:\Code\PortingiOS`，不改 `D:\Code\PortingiOSWithUniXNU`。
+- 不改 `D:\Code\PortingiOSLegacy`，不改 `D:\Code\PortingiOSWithUniXNU`。
 - 上游源码不复制进本仓库，按路径引用。
 - 模拟器 / QEMU 结果不得写成实机通过。

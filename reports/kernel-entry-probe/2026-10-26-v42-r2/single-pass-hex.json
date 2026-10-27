@@ -1,0 +1,62 @@
+{
+  "candidate_sha256": "9ebdb97ddf33b6df17150d4942fcf02e962a088d9d6bcaf57b65c156964cb91a",
+  "source_sha256": "f0cd441b20a8203c47905ecdafa28eb2a6198af32158b1a795e8731e34fa9f0d",
+  "test_sha256": "25e4bdd9595022ad853d35ab187b2f8f964bab79c869a079a90ebd4fc068f7f9",
+  "checks": [
+    {
+      "name": "pixels-0000000000000000",
+      "passed": true,
+      "old_bytes": 64000,
+      "new_bytes": 38400,
+      "old_instructions": 28275,
+      "new_instructions": 16973
+    },
+    {
+      "name": "pixels-ffffffffffffffff",
+      "passed": true,
+      "old_bytes": 64000,
+      "new_bytes": 38400,
+      "old_instructions": 28275,
+      "new_instructions": 16973
+    },
+    {
+      "name": "pixels-0123456789abcdef",
+      "passed": true,
+      "old_bytes": 64000,
+      "new_bytes": 38400,
+      "old_instructions": 28275,
+      "new_instructions": 16973
+    },
+    {
+      "name": "pixels-fedcba9876543210",
+      "passed": true,
+      "old_bytes": 64000,
+      "new_bytes": 38400,
+      "old_instructions": 28275,
+      "new_instructions": 16973
+    },
+    {
+      "name": "pixels-8000000000000001",
+      "passed": true,
+      "old_bytes": 64000,
+      "new_bytes": 38400,
+      "old_instructions": 28275,
+      "new_instructions": 16973
+    },
+    {
+      "name": "no-video",
+      "passed": true
+    },
+    {
+      "name": "missing-spacing-store-negative",
+      "passed": true
+    }
+  ],
+  "reference_candidate_sha256": "bb70dbb1071b202dc4d49e4b70cc2200c44137f1e80b74ee13303e9ddbddb99e",
+  "device_accessed": false,
+  "hardware_timing_measured": false,
+  "limitations": [
+    "Flat software memory, no real interrupt delivery or display scanout",
+    "Pixel equivalence and reduced writes do not establish the PROBE31 root cause"
+  ]
+}

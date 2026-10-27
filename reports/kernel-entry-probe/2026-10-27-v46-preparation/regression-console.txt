@@ -1,0 +1,43 @@
+{"starting": "software"}
+{"finished": "software", "exit_code": 0, "stdout_tail": "{\"checks\": 42, \"passed\": true, \"candidate\": \"f2711bf88941cb9e1c048e55e6c51b26b77b138c9d4dd6582ece11416f390324\"}\n", "stderr_tail": ""}
+{"starting": "read-sites"}
+{"finished": "read-sites", "exit_code": 0, "stdout_tail": "{\"checks\": 18, \"passed\": true}\n", "stderr_tail": ""}
+{"starting": "wfe"}
+{"finished": "wfe", "exit_code": 0, "stdout_tail": "{\"checks\": 5, \"passed\": true}\n", "stderr_tail": ""}
+{"starting": "mapping"}
+{"finished": "mapping", "exit_code": 0, "stdout_tail": "framebuffer PA 0xb8000000 0xb8000000 -> 0xb8000000 mapped= True\nframebuffer PA +1 page 0xb8001000 -> 0xb8001000 mapped= True\nprobe page VA 0xfffffff008489000 -> 0x8c4889000 mapped= True\narm_init KVA 0xfffffff007972848 -> 0x8c3d72848 mapped= True\nsctlr site as PA-identity VA 0x8c37c7374 -> 0x8c37c7374 mapped= True\nboot_args synthetic VA 0xfffffff013dc8000 -> 0x8d01c8000 mapped= True\n", "stderr_tail": ""}
+{"starting": "loader"}
+{"finished": "loader", "exit_code": 0, "stdout_tail": "{\"cases\": 5, \"passed\": true}\n", "stderr_tail": ""}
+{"starting": "post-arm-init"}
+{"finished": "post-arm-init", "exit_code": 0, "stdout_tail": "{\"checks\": 8, \"passed\": true, \"reached\": {\"white\": 52703, \"arm_vm_init\": 888991}, \"pixels\": {\"256\": \"0xff0080ff\", \"288\": \"0xffffff00\", \"320\": \"0xffff00ff\", \"352\": \"0xff00ffff\", \"384\": \"0xffffffff\", \"416\": \"0x0\", \"448\": \"0xff804000\", \"480\": \"0x0\", \"512\": \"0x0\", \"544\": \"0xff008080\", \"576\": \"0xff808000\", \"608\": \"0xff8080c0\", \"640\": \"0xff808080\"}, \"stopped_symbol\": \"_bzero+0x1c\"}\n", "stderr_tail": ""}
+{"starting": "exception"}
+{"finished": "exception", "exit_code": 0, "stdout_tail": "{\"checks\": 2, \"passed\": true}\n", "stderr_tail": ""}
+{"starting": "transition-normal"}
+{"finished": "transition-normal", "exit_code": 0, "stdout_tail": "{\"case\": \"normal\", \"checks\": 5, \"passed\": true, \"stop\": \"_kernel_bootstrap+0x0\"}\n", "stderr_tail": ""}
+{"starting": "transition-occupied-probe"}
+{"finished": "transition-occupied-probe", "exit_code": 0, "stdout_tail": "{\"case\": \"occupied-probe\", \"checks\": 2, \"passed\": true, \"stop\": \"_set_mmu_ttb_alternate+0x0\"}\n", "stderr_tail": ""}
+{"starting": "transition-bad-topology"}
+{"finished": "transition-bad-topology", "exit_code": 0, "stdout_tail": "{\"case\": \"bad-topology\", \"checks\": 2, \"passed\": true, \"stop\": \"_set_mmu_ttb_alternate+0x0\"}\n", "stderr_tail": ""}
+{"starting": "transition-occupied-fb"}
+{"finished": "transition-occupied-fb", "exit_code": 0, "stdout_tail": "{\"case\": \"occupied-fb\", \"checks\": 3, \"passed\": true, \"stop\": \"_set_mmu_ttb+0x0\"}\n", "stderr_tail": ""}
+{"starting": "console-policy"}
+{"finished": "console-policy", "exit_code": 0, "stdout_tail": "{\"case\": \"normal\", \"checks\": 5, \"passed\": true, \"stop\": \"_PE_create_console+0x48\"}\n{\"checks\": 6, \"passed\": true}\n", "stderr_tail": ""}
+{"starting": "renderer-bounds"}
+{"finished": "renderer-bounds", "exit_code": 0, "stdout_tail": "{\"checks\": 6, \"passed\": true}\n", "stderr_tail": ""}
+{"starting": "context-display"}
+{"finished": "context-display", "exit_code": 0, "stdout_tail": "{\"checks\": 10, \"passed\": true}\n", "stderr_tail": ""}
+{"starting": "vectors"}
+{"finished": "vectors", "exit_code": 0, "stdout_tail": "{\"checks\": 5, \"passed\": true}\n", "stderr_tail": ""}
+{"starting": "transparency"}
+{"finished": "transparency", "exit_code": 1, "stdout_tail": "{\"progress_checks\": 100}\n{\"progress_checks\": 200}\n{\"progress_checks\": 300}\n{\"progress_checks\": 400}\n{\"progress_checks\": 500}\n{\"progress_checks\": 600}\n{\"progress_checks\": 700}\n{\"progress_checks\": 800}\n{\"progress_checks\": 900}\n{\"progress_checks\": 1000}\n{\"progress_checks\": 1100}\n{\"progress_checks\": 1200}\n{\"progress_checks\": 1300}\n{\"progress_checks\": 1400}\n{\"progress_checks\": 1500}\n{\"progress_checks\": 1600}\n{\"progress_checks\": 1700}\n", "stderr_tail": "Traceback (most recent call last):\n  File \"D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-probe-transparency.py\", line 112, in <module>\n    if __name__=='__main__':main()\n                            ~~~~^^\n  File \"D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-probe-transparency.py\", line 99, in main\n    assert not rejected,(patch['reason'],kind,rejected[:8])\n           ^^^^^^^^^^^^\nAssertionError: ('probe_dense_769bf90', 'first', [('0xb847c380', 4, (816, 2944)), ('0xb847c384', 4, (816, 2948)), ('0xb847c388', 4, (816, 2952)), ('0xb847c38c', 4, (816, 2956)), ('0xb847c390', 4, (816, 2960)), ('0xb847c394', 4, (816, 2964)), ('0xb847c398', 4, (816, 2968)), ('0xb847c39c', 4, (816, 2972))])\n"}
+Traceback (most recent call last):
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\verify-image4-entry-candidate.py", line 101, in <module>
+    main()
+    ~~~~^^
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\verify-image4-entry-candidate.py", line 96, in main
+    result.check_returncode()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Administrator\.workbuddy\binaries\python\versions\3.13.12\Lib\subprocess.py", line 508, in check_returncode
+    raise CalledProcessError(self.returncode, self.args, self.stdout,
+                             self.stderr)
+subprocess.CalledProcessError: Command '['C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe', '-B', 'D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-probe-transparency.py', '--build', 'D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\build.json', '--output', 'D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v46\\transparency.json']' returned non-zero exit status 1.

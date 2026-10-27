@@ -1,0 +1,163 @@
+{
+  "scope": "Isolated actual candidate functions, planted 19.2MHz and package command line; not full cold boot or hardware",
+  "candidate_sha256": "f2711bf88941cb9e1c048e55e6c51b26b77b138c9d4dd6582ece11416f390324",
+  "checks": [
+    {
+      "name": "configure-init -v",
+      "passed": true
+    },
+    {
+      "name": "configure-init -v wfe_events_sec=0",
+      "passed": true
+    },
+    {
+      "name": "configure-init -v wfe_events_sec=19200",
+      "passed": true
+    },
+    {
+      "name": "configure-init -v wfe_events_sec=2000000",
+      "passed": true
+    },
+    {
+      "name": "v20 negative control reaches panic despite eventi=4",
+      "passed": true
+    }
+  ],
+  "cases": {
+    "-v": {
+      "eventi": 4,
+      "pcs": [
+        "0xf00000",
+        "0xf00000"
+      ],
+      "trace": [
+        {
+          "pc": "0xfffffff0073cae30",
+          "x0": 0,
+          "x8": 1,
+          "x9": 0
+        },
+        {
+          "pc": "0xfffffff0073cae7c",
+          "x0": 0,
+          "x8": 1000000,
+          "x9": 19200000
+        },
+        {
+          "pc": "0xfffffff0073cadb8",
+          "x0": 5,
+          "x8": 4,
+          "x9": 18446744005109014528
+        }
+      ]
+    },
+    "-v wfe_events_sec=0": {
+      "eventi": 24,
+      "pcs": [
+        "0xf00000",
+        "0xf00000"
+      ],
+      "trace": [
+        {
+          "pc": "0xfffffff0073cae30",
+          "x0": 1,
+          "x8": 1,
+          "x9": 15761368
+        },
+        {
+          "pc": "0xfffffff0073cae7c",
+          "x0": 1,
+          "x8": 1,
+          "x9": 19200000
+        },
+        {
+          "pc": "0xfffffff0073cadb8",
+          "x0": 25,
+          "x8": 24,
+          "x9": 18446744005109014528
+        }
+      ]
+    },
+    "-v wfe_events_sec=19200": {
+      "eventi": 9,
+      "pcs": [
+        "0xf00000",
+        "0xf00000"
+      ],
+      "trace": [
+        {
+          "pc": "0xfffffff0073cae30",
+          "x0": 1,
+          "x8": 1,
+          "x9": 15761368
+        },
+        {
+          "pc": "0xfffffff0073cae7c",
+          "x0": 1,
+          "x8": 19200,
+          "x9": 19200000
+        },
+        {
+          "pc": "0xfffffff0073cadb8",
+          "x0": 10,
+          "x8": 9,
+          "x9": 18446744005109014528
+        }
+      ]
+    },
+    "-v wfe_events_sec=2000000": {
+      "eventi": 4,
+      "pcs": [
+        "0xf00000",
+        "0xf00000"
+      ],
+      "trace": [
+        {
+          "pc": "0xfffffff0073cae30",
+          "x0": 1,
+          "x8": 1,
+          "x9": 15761368
+        },
+        {
+          "pc": "0xfffffff0073cae7c",
+          "x0": 1,
+          "x8": 1000000,
+          "x9": 19200000
+        },
+        {
+          "pc": "0xfffffff0073cadb8",
+          "x0": 5,
+          "x8": 4,
+          "x9": 18446744005109014528
+        }
+      ]
+    }
+  },
+  "negative": {
+    "eventi": 4,
+    "pcs": [
+      "0xf00000",
+      "0xfffffff007938000"
+    ],
+    "trace": [
+      {
+        "pc": "0xfffffff0073cae30",
+        "x0": 0,
+        "x8": 1,
+        "x9": 3091615744
+      },
+      {
+        "pc": "0xfffffff0073cae7c",
+        "x0": 0,
+        "x8": 1000000,
+        "x9": 19200000
+      },
+      {
+        "pc": "0xfffffff0073cadb8",
+        "x0": 5,
+        "x8": 1593861488,
+        "x9": 3091800064
+      }
+    ]
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "time": "2026-10-27T17:32:28.3552791+08:00",
+  "head": "855daaff4cb99fdeec43dac6ec5045c1d591f52c",
+  "evidence": [
+    {
+      "bytes": 1019,
+      "path": "reports/desktop-readiness/2026-10-27-data-linux-r1/tests.json",
+      "sha256": "5a4a775ec7697cb1fe63e238b1ec3ff7414c580931b35396a989550f9d36e60d"
+    },
+    {
+      "bytes": 5196,
+      "path": "reports/desktop-readiness/2026-10-27-data-linux-r1/tools.json",
+      "sha256": "9ab482b97c86cbc60e53af19346e1a1095322af555055aae195b95b36681d559"
+    },
+    {
+      "bytes": 105611,
+      "path": "reports/desktop-readiness/2026-10-27-data-linux-r1/candidate.json",
+      "sha256": "847153a9b5b7bb8c280d23faaa2ac5e34569d6fa848374245b5c93dcb2b48554"
+    },
+    {
+      "bytes": 159,
+      "path": "reports/desktop-readiness/2026-10-27-data-linux-r1/readback.json",
+      "sha256": "3ecc2ea0e8c79943923e51778b808e932b4d041c7eac06d58b48841b06b2db68"
+    },
+    {
+      "bytes": 4350,
+      "path": "reports/desktop-readiness/2026-10-27-data-linux-r1/provider.json",
+      "sha256": "a9a5476c29ed70c468a2914fa867eb408597eb459c7a0ad032dfe95e48ca98cf"
+    },
+    {
+      "bytes": 1373,
+      "path": "reports/desktop-readiness/2026-10-27-data-linux-r1/dependencies.json",
+      "sha256": "0884671da31bed2bf1a08f4f49e5f5d3427fc9794bc7bd596e6fbfa91cc024aa"
+    },
+    {
+      "bytes": 690,
+      "path": "reports/desktop-readiness/2026-10-27-data-linux-r1/public-ramblock.json",
+      "sha256": "8c658a7755b617225e1bb687cbfb697aa52318c807c9d5db0e0a9294c399e5b0"
+    },
+    {
+      "bytes": 20118,
+      "path": "out/linux-data-candidate-20261027-r1/nuwa-data-spec.json",
+      "sha256": "b1406a0b26cd71cb3e9a71e08b53007406435929f6a9f101cbf2819ec27f8196"
+    },
+    {
+      "bytes": 457,
+      "path": "out/linux-data-candidate-20261027-r1/packer-compat.py",
+      "sha256": "241dab1ed6a16e1009c80c97135f192068c6c6af13b2317cbefe4f9bc0b84454"
+    },
+    {
+      "bytes": 106608,
+      "path": "out/linux-data-candidate-20261027-r1/build-a/data-linux.dbr",
+      "sha256": "1e00210d8fb17f13736efe8d6ca9f6b72eb424c223fa1bf03168b808bf2f7598"
+    },
+    {
+      "bytes": 35391,
+      "path": "out/linux-data-candidate-20261027-r1/build-a/data-linux.json",
+      "sha256": "9185a4acc392b0fa11bf23646bd21ef10f46ea63c9c0781e7da21c62639163d8"
+    },
+    {
+      "bytes": 106608,
+      "path": "out/linux-data-candidate-20261027-r1/build-b/data-linux.dbr",
+      "sha256": "1e00210d8fb17f13736efe8d6ca9f6b72eb424c223fa1bf03168b808bf2f7598"
+    },
+    {
+      "bytes": 238,
+      "path": "out/linux-data-candidate-20261027-r1/independent-volume.txt",
+      "sha256": "a720670fdf8d606e04538b365333faf5785f283be5443ce90e1f39a60a20eaa1"
+    },
+    {
+      "bytes": 17856,
+      "path": "out/linux-data-tools-20261027-r1/data-seed-readback",
+      "sha256": "40ac84345c6178c51f19d055da8738a01351270b3ded9c5b07f41e58b3e5dd46"
+    },
+    {
+      "bytes": 2081,
+      "path": "scripts/data-seed-readback/main.cpp",
+      "sha256": "c6f76aa2b33d3a3090e3a4ed3ae95e3ee0ff9550dc458c8ff438435a88e9a10e"
+    },
+    {
+      "bytes": 10299,
+      "path": "docs/operations/2026-10-27-linux-apfs-data-candidate.md",
+      "sha256": "9ccdd81f9f369a2f7ce1f1d32a52227127644edd93451130f63e5ac483c7aed2"
+    }
+  ],
+  "input_checks": 8,
+  "sparse_differential_operations": 4000,
+  "independent_directories": 160,
+  "raw_sha256": "1a97ed81a7d9cc8866b4b7c3edc8c462797d92a9dce1560a0a2122eaf17b85d9",
+  "packed_sha256": "1e00210d8fb17f13736efe8d6ca9f6b72eb424c223fa1bf03168b808bf2f7598",
+  "packed_bytes": 106608,
+  "logical_bytes": 1073741824,
+  "volume_uuid": "3FA04580-6AA3-5949-A64F-B5F03A271995",
+  "reproduction_hashes_match": true,
+  "cpp_logical_readback_matches": true,
+  "kernel_ramblock_named_symbols": 0,
+  "local_git_metadata": {
+    "revision_confirmed": false,
+    "status": "Ownership protection refused; stopped",
+    "security_configuration_changed": false
+  },
+  "git_repository_created": false,
+  "device_accessed": false,
+  "ios16_runtime_accepted": false,
+  "kernel_linked": false,
+  "release_guard_changed": false,
+  "probe41": {
+    "path": "out/trial-boot/xnu-entry-probe-41-resource/boot-xnu-first-entry.img",
+    "sha256": "8d242a2dd953146af5c3c8ae59c6805cba6599aa7283188180667bfca5c2ec2a"
+  },
+  "scope": "Host APFS/packed-format candidate and metadata only; native driver ABI/link/mount and userland execution pending"
+}

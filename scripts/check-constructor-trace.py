@@ -54,7 +54,7 @@ def main():
     if expected != profile:
         raise ValueError('Profile exceeds four constructor logging files')
     checked = []
-    unixnu = Path('D:/Code/PortingiOS/common/sources/UniXNU')
+    unixnu = Path('D:/Code/PortingiOSLegacy/common/sources/UniXNU')
     for item in profile['recipe']['inputs']:
         if item['root'] == 'unixnu':
             raw = proposal.blob(unixnu, profile['recipe']['sources']['unixnu']['commit'], item['path'])

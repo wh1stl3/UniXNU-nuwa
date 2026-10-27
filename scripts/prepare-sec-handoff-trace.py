@@ -6,7 +6,7 @@ from pathlib import Path
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
-FW = Path('D:/Code/uefi-nuwa')
+FW = Path('D:/Code/PortingiOS/nuwa/uefi-nuwa')
 BASE = '1ccf760d667b9eec6dd3491c90cc04ebb7c58340'
 BRANCH = 'codex/nuwa-sec-handoff-trace'
 SOURCE = 'Silicon/Silicium/SiliciumPkg/Sec/Sec.c'

@@ -16,12 +16,12 @@ def main():
     if not work.is_relative_to(ROOT/'out') or work.exists() or not out.is_relative_to(ROOT/'reports') or out.exists():
         raise ValueError('Fresh local out/reports paths required')
     work.mkdir(parents=True)
-    driver=Path('D:/Code/uefi-nuwa/Platforms/Xiaomi/nuwaPkg/Drivers/NuwaFileAuditDxe/NuwaFileAuditDxe.c')
+    driver=Path('D:/Code/PortingiOS/nuwa/uefi-nuwa/Platforms/Xiaomi/nuwaPkg/Drivers/NuwaFileAuditDxe/NuwaFileAuditDxe.c')
     def linux(path):
         return '/mnt/d/'+path.resolve().as_posix().split(':/',1)[1]
     adapter=work/'adapter.c'
     adapter.write_text('#include "'+linux(driver)+'"\nEFI_STATUS TestAuditVolumes(void) {return AuditVolumes();}\nvoid TestReady(void){Ready(NULL,NULL);}\n',encoding='utf-8')
-    mu='/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/'
+    mu='/mnt/d/Code/PortingiOSLegacy/common/sources/mu-nuwa-firmware/Mu_Basecore/'
     common=['-fshort-wchar','-ffunction-sections','-Wall','-Wextra','-Werror','-Wno-unused-parameter',
             '-I',mu+'MdePkg/Include','-I',mu+'MdePkg/Include/AArch64','-I',mu+'CryptoPkg/Include']
     commands=[]

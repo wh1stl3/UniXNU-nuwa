@@ -1,0 +1,17 @@
+{
+  "scope": "Host read-only restore launch policy; no device or userland execution",
+  "records": [
+    {
+      "path": "System/Library/LaunchDaemons/com.apple.restored_external.plist",
+      "sha256": "ac190dd86eb7c5dec961559d355eec55fcb55b6826113de5327f8974884c0bf9",
+      "properties": {
+        "Label": "com.apple.restored_external",
+        "ProgramArguments": [
+          "/usr/local/bin/restored_external"
+        ],
+        "RunAtLoad": true
+      }
+    }
+  ],
+  "mount_cleaned_up": true
+}

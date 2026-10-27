@@ -1,0 +1,101 @@
+{
+  "candidate_sha256": "6305a0dadaf94dd5545e1cb297090933e49b4c45e90dc825ce47ec9b4e0c09af",
+  "input_sha256": "1aeebf1352a86b0d31612a6bd6e77bd7292f676ad2ce43a99ec4a8f3999eedb6",
+  "test_sha256": "89224f537d20cb6668a8b0ce9c3997c10ef0bbbe8eead2e161c343485016ba4e",
+  "checks": [
+    {
+      "name": "offset0-one-vector-1",
+      "passed": true,
+      "decode_arguments": [
+        "0xf0ef60",
+        "0x0",
+        "0x1",
+        "0x1",
+        "0xf06008",
+        "0xf0efa0"
+      ]
+    },
+    {
+      "name": "offset0-one-vector-512",
+      "passed": true,
+      "decode_arguments": [
+        "0xf0ef60",
+        "0x0",
+        "0x200",
+        "0x1",
+        "0xf06008",
+        "0xf0efa0"
+      ]
+    },
+    {
+      "name": "offset0-one-vector-4096",
+      "passed": true,
+      "decode_arguments": [
+        "0xf0ef60",
+        "0x0",
+        "0x1000",
+        "0x1",
+        "0xf06008",
+        "0xf0efa0"
+      ]
+    },
+    {
+      "name": "offset0-one-vector-16384",
+      "passed": true,
+      "decode_arguments": [
+        "0xf0ef60",
+        "0x0",
+        "0x4000",
+        "0x1",
+        "0xf06008",
+        "0xf0efa0"
+      ]
+    },
+    {
+      "name": "offset0-one-vector-65536",
+      "passed": true,
+      "decode_arguments": [
+        "0xf0ef60",
+        "0x0",
+        "0x10000",
+        "0x1",
+        "0xf06008",
+        "0xf0efa0"
+      ]
+    },
+    {
+      "name": "resource-request-264-8",
+      "passed": true
+    },
+    {
+      "name": "resource-request-336-23707",
+      "passed": true
+    },
+    {
+      "name": "resource-request-384-33021",
+      "passed": true
+    },
+    {
+      "name": "resource-header-reset",
+      "passed": true
+    }
+  ],
+  "disassembly_binding": [
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-v45-preparation/type4-native.json",
+      "sha256": "e7d6fe5fe7cbf47451bb5e708ac652e5feb6a7115ca31115c4241d4ce754bb93",
+      "instructions_matched": 287
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-v46-preparation/allocation-decode-native.json",
+      "sha256": "58536c6d04c78feaf2c31068aad8ec1b52556b6ecec60ad3d011ef16a1a4a045",
+      "instructions_matched": 409
+    }
+  ],
+  "device_accessed": false,
+  "limitations": [
+    "Unicorn execution with supplied nonnull allocation, zero offset, one vector; no allocator or resource IO executed",
+    "Vector path stops before decode; resource prefix supplies uio_create/addiov returns and stops before VNOP_GETXATTR body",
+    "No decompression or EL0 runtime claim"
+  ]
+}

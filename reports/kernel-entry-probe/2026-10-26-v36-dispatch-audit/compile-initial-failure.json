@@ -1,0 +1,24 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "wsl",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "clang",
+        "--target=aarch64-none-elf",
+        "-c",
+        "/mnt/d/Code/UniXNU-nuwa/out/read-dispatch-prototype-v1/observer.S",
+        "-o",
+        "/mnt/d/Code/UniXNU-nuwa/out/read-dispatch-prototype-v1/observer.o"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "<instantiation>:1:10: error: expected label or encodable integer pc offset\nadr x15, probe_scratch\n         ^\n/mnt/d/Code/UniXNU-nuwa/out/read-dispatch-prototype-v1/observer.S:142:5: note: while in macro instantiation\n    HEXROW_VAL 1728\n    ^\n<instantiation>:1:10: error: expected label or encodable integer pc offset\nadr x15, probe_scratch\n         ^\n/mnt/d/Code/UniXNU-nuwa/out/read-dispatch-prototype-v1/observer.S:144:5: note: while in macro instantiation\n    HEXROW_VAL 1760\n    ^\n/mnt/d/Code/UniXNU-nuwa/out/read-dispatch-prototype-v1/observer.S:146:15: error: expected label or encodable integer pc offset\n    adrp x30, read_header_return\n              ^\n/mnt/d/Code/UniXNU-nuwa/out/read-dispatch-prototype-v1/observer.S:148:7: error: expected label or encodable integer pc offset\n    b native_vn_rdwr\n      ^\n<instantiation>:1:9: error: expected label or encodable integer pc offset\nadr x9, probe_read_state\n        ^\n/mnt/d/Code/UniXNU-nuwa/out/read-dispatch-prototype-v1/observer.S:152:5: note: while in macro instantiation\n    READ_SCOPE .Ldispatch_done\n    ^\n<instantiation>:1:10: error: expected label or encodable integer pc offset\nadr x15, probe_scratch\n         ^\n/mnt/d/Code/UniXNU-nuwa/out/read-dispatch-prototype-v1/observer.S:154:5: note: while in macro instantiation\n    HEXROW_VAL 1728\n    ^\n/mnt/d/Code/UniXNU-nuwa/out/read-dispatch-prototype-v1/observer.S:157:15: error: expected label or encodable integer pc offset\n    adrp x30, read_dispatch_return\n              ^\n<instantiation>:1:9: error: expected label or encodable integer pc offset\nadr x9, probe_read_state\n        ^\n/mnt/d/Code/UniXNU-nuwa/out/read-dispatch-prototype-v1/observer.S:163:5: note: while in macro instantiation\n    READ_SCOPE .Lentry_done\n    ^\n<instantiation>:1:10: error: expected label or encodable integer pc offset\nadr x15, probe_scratch\n         ^\n/mnt/d/Code/UniXNU-nuwa/out/read-dispatch-prototype-v1/observer.S:176:5: note: while in macro instantiation\n    HEXROW_VAL 1760\n    ^\n/mnt/d/Code/UniXNU-nuwa/out/read-dispatch-prototype-v1/observer.S:180:7: error: expected label or encodable integer pc offset\n    b read_apfs_resume\n      ^\n"
+    }
+  ],
+  "source_sha256": "0dc1833c5df7ee20cd65a95015c78c0b94e63c379350e26f62375888b2c6b1a6",
+  "source_path": "out/read-dispatch-prototype-v1/observer.S",
+  "cause": "Assembler treated absolute .equ symbols in ADR/ADRP/branch as immediate PC offsets, not relocations. Use LOADABS for data/return addresses and linker defsym for branch targets."
+}

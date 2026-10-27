@@ -1,0 +1,440 @@
+{
+  "time": "2026-10-27T20:49:24.371510+08:00",
+  "candidate_sha256": "e5df5bef0779347edc5d94becd1611f8c3ffe7d5595795f345872dc02fe74a8b",
+  "image_path": "out/trial-boot/xnu-entry-probe-43-handler/boot-xnu-first-entry.img",
+  "image_sha256": "ca73e9562f6236cddcba12c8cc2f62980804c419cb31ac05531c8f8007d8d585",
+  "image_bytes": 204484608,
+  "evidence": [
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/software.json",
+      "sha256": "0b576cc08c82e846962a03b47ecc419767893e7137b8db0dd0af1ce0552318b7"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/read-sites.json",
+      "sha256": "d296c35b9abbc513ba0b6755a55c0a293fe01d8734624c1871b2e24f5edb4fba"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/wfe.json",
+      "sha256": "de4c4312220b254ea317866858d11d87a067daee9184251c219b34fea352c116"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/mapping.json",
+      "sha256": "fe69e01633f84f359b9ea1152133203b5c2afc0bc740ff4dd5827f8778579a4d"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/loader.json",
+      "sha256": "c3d4cab53d72488c304b389344ef0b3be3c2d3a71fc345613c15a67c7bea09c4"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/post-arm-init.json",
+      "sha256": "b0bc17fcfe9bf726c06be36923b3c501d1a3b0d72610b5f7b6530468ca214c66"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/exception.json",
+      "sha256": "2e2a47bcb5be4d0d0de6e54e4cd1c34782bf5970f1d4ff574565a296a657f176"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/transition-normal.json",
+      "sha256": "639e14ad6bd43d31a9f6e471e3951c0a300feadd5dc5101b96cd19c81bcdb2ba"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/transition-occupied-probe.json",
+      "sha256": "481561ca05511afa7389ba1ee226d51b7a0ed81ccd13f30817047143fceea5b8"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/transition-bad-topology.json",
+      "sha256": "060c6c3004a03bc6dc44a6508b4b5e706919597caf4878c3f2068fcaff755242"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/transition-occupied-fb.json",
+      "sha256": "5d39cc1ea9715cb9c1bcc0d7919a4c58f0e231f6cccccb5c1ee7b7b5ffc69ad3"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/console-policy.json",
+      "sha256": "60b2e7e0d136da12769c7e0bf0b751738a92ff9086d8c3788187e53a5fe16215"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/renderer-bounds.json",
+      "sha256": "5f7557efdd8cc890ebb1efdbb07aad86f43f156db66f535b76fe8e83ca6c35f0"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/context-display.json",
+      "sha256": "f5c23bea5a5fe9d3576635f4e5960bb565f177d03e2f77b6d95d1a965bc8b679"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/vectors.json",
+      "sha256": "266c993d25a8cc8ec1e17032b4eb6bdbf3bf55fe2eaeb653f1c74e1b27598e7b"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/transparency.json",
+      "sha256": "d890dc6bc89cf29527dab17637ba0421900eb0dd481392727e1726f11aee32b1"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/image4-launch.json",
+      "sha256": "b830349cdf2f76ce1b32b9c1d17e6368f4cdaa8ec8255798da608e2a43c30654"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/pthread-startup.json",
+      "sha256": "8ae6898dd5333d329a890f5de21bca57bd1da330bebb0c2e49775f0c99f0afb7"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/root-stop.json",
+      "sha256": "724aad70f4b37647a0554b3676fee5407d2f307d3af0aba9c71080592c2dc3fe"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/root-inputs.json",
+      "sha256": "b87dcff0c05d045866209214d2ef7699680939aaae36502b245a9c80f16c508d"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/fscompression-startup.json",
+      "sha256": "05b28ceae3cb10ff2b49d30c1311d90ab6bdae9ddeaedb82e1da73d718e9afe6"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/read-boundaries.json",
+      "sha256": "ab430684d1acc17712fb3231e1834d2c4aa02f642612c1d26860de3ed25e0e2e"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/read-boundary-source.json",
+      "sha256": "b4b360a5ce69763126a48db1f31bf59f7589111af6fe8f685767deb7a1c59a4c"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/read-dispatch.json",
+      "sha256": "3432d0be8f5132ef80c6f2a6b55887b3c76c3da7deb55ee36e2020ce112df4e6"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/read-body.json",
+      "sha256": "667ccf23afdc0be0daa2c6cff3452931927d80287689dcdd804989f6c0bedbd8"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/read-body-reset.json",
+      "sha256": "cd55382a4614283914dd9d13925f47a36bddf2011abd2f0a8d4695c51cbf3fe5"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/read-init.json",
+      "sha256": "1f4b507a21c6dc8440bc6ecad3439c5d67f7621962410286f192622559ca5bcd"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/single-pass-hex.json",
+      "sha256": "ce2a6579ae777f40e8cec7745ee411947dd6d1d717c58c5f5116d29d13331774"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/read-grid.json",
+      "sha256": "6088ae1236beb25225955c2c933dd902713c2b414508266f1d5ef2a6c6411f9a"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/read-decmp.json",
+      "sha256": "68c6bf161f89e51e7992e693ccd988e00053d297249bc8835792659e82d662f1"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/shared-hex.json",
+      "sha256": "1cbaeff8d70b0bd17b7eda5642bb7485095f242a3adc4c350261748c2cb2ee48"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/compact-decmp.json",
+      "sha256": "8e7524d355dda5a2582c0acc8cb933e287863fab68d8fe4a66a3c586f80d609b"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/read-fetch.json",
+      "sha256": "7d4f58ebb4c5ecd1beef135714a0c99a74bf8ef9e4247489752ddb73f7d0609b"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/read-deep.json",
+      "sha256": "93e79970e34159c75912225b2da1a4a00686fe621b37ff0a68a7e29056ee846d"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/read-result.json",
+      "sha256": "3fd463fcbb23ceaa0a82998aa5bacdb59bc37de37c45e6b1b18e081f846e8df2"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/delta-hex.json",
+      "sha256": "b9a69bfc079f07c941d6e03f22887a15b57afd24e52246a435ee6f95deb5b230"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/read-flow.json",
+      "sha256": "d1150698d523e4b7e5fbb099023ed45c2d6d931763909efec99f0ff73da7850f"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/binding.json",
+      "sha256": "4d88180f309137ff2f90d7b3f90917e577c905011a21f522f5c74ad0f8eb9c89"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/x18-interruption.json",
+      "sha256": "ba2b73361b65104dcc03ff857b9e937f52a2a71fe00334df5e1edd722b14de20"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/read-vector-path.json",
+      "sha256": "2bb19bfeae7b8de1201b06b13006776fc28a80c675e05819d2cf24b39a18d589"
+    },
+    {
+      "path": "reports/kernel-entry-probe/2026-10-27-probe43-handler/handler-checks.json",
+      "sha256": "eb8da607a6124238516bfb3e21df2f173d4a7533d1b0e3dcdd860821f707bfe3"
+    }
+  ],
+  "check_counts": {
+    "software": 42,
+    "read-sites": 18,
+    "wfe": 5,
+    "post-arm-init": 8,
+    "exception": 2,
+    "transition-normal": 5,
+    "transition-occupied-probe": 2,
+    "transition-bad-topology": 2,
+    "transition-occupied-fb": 3,
+    "console-policy": 6,
+    "renderer-bounds": 6,
+    "context-display": 10,
+    "vectors": 5,
+    "transparency": 2496,
+    "image4-launch": 25,
+    "pthread-startup": 6,
+    "root-stop": 15,
+    "root-inputs": 7,
+    "fscompression-startup": 8,
+    "read-boundaries": 11,
+    "read-dispatch": 11,
+    "read-body": 476,
+    "read-init": 9,
+    "single-pass-hex": 7,
+    "read-grid": 9,
+    "read-decmp": 617,
+    "shared-hex": 8,
+    "compact-decmp": 72,
+    "read-fetch": 509,
+    "read-deep": 752,
+    "read-result": 105,
+    "delta-hex": 37,
+    "read-flow": 1207,
+    "binding": 67,
+    "x18-interruption": 29,
+    "read-vector-path": 9,
+    "handler-checks": 192
+  },
+  "independent_kernel_byte_identical": true,
+  "old_probe42_preserved": true,
+  "probe42_original_media_preserved": true,
+  "handler_observation": {
+    "source_sha256": "4291ef645c0f698d911fe3a1b049f9cd6a3e0ef100d6bfa3da9705b1281f7cf0",
+    "points": [
+      {
+        "site": 18446744005075651368,
+        "phase": "entry",
+        "calls": [],
+        "returns": [],
+        "id": 613
+      },
+      {
+        "site": 18446744005075651396,
+        "phase": "body",
+        "calls": [
+          0
+        ],
+        "returns": [],
+        "id": 614
+      },
+      {
+        "site": 18446744005075651400,
+        "phase": "body",
+        "calls": [
+          1
+        ],
+        "returns": [
+          0
+        ],
+        "id": 615
+      },
+      {
+        "site": 18446744005075651404,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          1
+        ],
+        "id": 616
+      },
+      {
+        "site": 18446744005075651416,
+        "phase": "body",
+        "calls": [
+          2
+        ],
+        "returns": [],
+        "id": 617
+      },
+      {
+        "site": 18446744005075651420,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          2
+        ],
+        "id": 618
+      },
+      {
+        "site": 18446744005075651460,
+        "phase": "body",
+        "calls": [
+          3
+        ],
+        "returns": [],
+        "id": 619
+      },
+      {
+        "site": 18446744005075651464,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          3
+        ],
+        "id": 620
+      },
+      {
+        "site": 18446744005075651488,
+        "phase": "body",
+        "calls": [
+          4
+        ],
+        "returns": [],
+        "id": 621
+      },
+      {
+        "site": 18446744005075651492,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          4
+        ],
+        "id": 622
+      },
+      {
+        "site": 18446744005075651540,
+        "phase": "body",
+        "calls": [
+          5
+        ],
+        "returns": [],
+        "id": 623
+      },
+      {
+        "site": 18446744005075651544,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          5
+        ],
+        "id": 624
+      },
+      {
+        "site": 18446744005075651560,
+        "phase": "body",
+        "calls": [
+          6
+        ],
+        "returns": [],
+        "id": 625
+      },
+      {
+        "site": 18446744005075651564,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          6
+        ],
+        "id": 626
+      },
+      {
+        "site": 18446744005075651600,
+        "phase": "body",
+        "calls": [
+          7
+        ],
+        "returns": [],
+        "id": 627
+      },
+      {
+        "site": 18446744005075651604,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          7
+        ],
+        "id": 628
+      },
+      {
+        "site": 18446744005075651628,
+        "phase": "body",
+        "calls": [
+          8
+        ],
+        "returns": [],
+        "id": 629
+      },
+      {
+        "site": 18446744005075651632,
+        "phase": "body",
+        "calls": [],
+        "returns": [
+          8
+        ],
+        "id": 630
+      },
+      {
+        "site": 18446744005075651652,
+        "phase": "return",
+        "calls": [],
+        "returns": [],
+        "id": 631
+      }
+    ],
+    "state_bytes": 32,
+    "fields": {
+      "A03D": "last scoped APFS handler checkpoint, not stopped PC",
+      "A03E": "native x0 at that checkpoint; argument or raw return, not necessarily errno"
+    },
+    "scope": "active read thread and paired native wrapper frame/LR, paired internal returns",
+    "new_grid_rectangles": 0,
+    "native_policy_changed": false
+  },
+  "sources": [
+    {
+      "path": "scripts/resource_handler_sites.py",
+      "sha256": "4291ef645c0f698d911fe3a1b049f9cd6a3e0ef100d6bfa3da9705b1281f7cf0"
+    },
+    {
+      "path": "scripts/resource_handler_checks.py",
+      "sha256": "86bda88335f9a42c94629668218f0f071f54d8b0aa18003913618265b87f76bb"
+    },
+    {
+      "path": "scripts/probe_bootstrap_sites.py",
+      "sha256": "cfbe2103a0a0ce765ebbda56df3b4d88d12f331652e030fefc93cec6ed103ffa"
+    },
+    {
+      "path": "scripts/read_flow_sites.py",
+      "sha256": "c0163eef990d381be367472bfdcf0fdec4e0d2dfc5681d8f0a9f7d1e86ed0b56"
+    },
+    {
+      "path": "scripts/build-kernel-entry-probe.py",
+      "sha256": "f36163bd8812e86dd93eb07fe536bf2200f19287591a62ef373f280068bdd0ee"
+    },
+    {
+      "path": "scripts/build_xnu_boot_package.py",
+      "sha256": "6f8b08c2501f63d9b6802d41f0cfc0fdfc29fcb52523c1d83a793f6ddf7c3109"
+    },
+    {
+      "path": "scripts/test-read-flow.py",
+      "sha256": "d75ab353a69964f8112de0da4b6938adcf1f9659ad712d158b0aeca0e6d0ef1f"
+    },
+    {
+      "path": "scripts/kernel_entry_probe_inputs.py",
+      "sha256": "9ee0f2fb3faabb87a4171ef119954d89cff931438771aaf77810e78440d50946"
+    }
+  ],
+  "device_accessed": false,
+  "device_test_passed": false,
+  "release_239_retained": true,
+  "limitations": [
+    "Synthetic instruction replay and x18 clearing are not physical IRQ or full native APFS execution tests",
+    "Existing incremental drawing remains; each matched handler observation draws two existing rows",
+    "Restore root unchanged; no EL0 or desktop claim",
+    "WSL stderr decoding errors retained in execution logs; not a clean log capture"
+  ]
+}

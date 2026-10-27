@@ -16,7 +16,7 @@ uefi-nuwa@79c516a（含测试LF修正固定bc38be0）：NuwaBootMemoryDxe不再�
 
 ## 验证与来源
 
-`wsl -d Ubuntu-22.04 -- bash -lc 'cd /mnt/d/Code/uefi-nuwa && python3 -B -m unittest discover -s tests -v'`：8项通过。新测试直接编译实际发布器C和主机服务替身，UBSan覆盖未映射FDT在读前拒绝、无效输入、initrd越界在CRC前拒绝、只读BlockIo发布/读写范围及安装错误传播。FDT服务为替身，不验证真实libfdt或ABL。
+`wsl -d Ubuntu-22.04 -- bash -lc 'cd /mnt/d/Code/PortingiOS/nuwa/uefi-nuwa && python3 -B -m unittest discover -s tests -v'`：8项通过。新测试直接编译实际发布器C和主机服务替身，UBSan覆盖未映射FDT在读前拒绝、无效输入、initrd越界在CRC前拒绝、只读BlockIo发布/读写范围及安装错误传播。FDT服务为替身，不验证真实libfdt或ABL。
 
 `python -B scripts/check-volume-status.py`：41输入、7补丁、10补丁后哈希通过。完整固件编译及实际产物验收待完成；不称实机通过。旧profile不变，board/bringup-plan/内存图/验证标志不变。
 

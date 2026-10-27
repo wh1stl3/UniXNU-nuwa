@@ -1,0 +1,36 @@
+{
+  "probe": 40,
+  "reviewed_at": "2026-10-27T04:04:52.355810+00:00",
+  "method": "Manual full photo and crop; no automatic OCR",
+  "stable_before_photo": true,
+  "elapsed_seconds": null,
+  "user_statement": "\u753b\u9762\u7a33\u5b9a\u540e\u62cd\u7684\uff0c\u5df2\u7ecf\u56de\u5230Android",
+  "media_manifest": "D:/Code/PortingiOS/nuwa/Media-nuwa/derived/PROBE40/review-01/manifest.json",
+  "fields": {
+    "A034": "0000000000000110",
+    "A036": "FFFFFFF0051A5858",
+    "A037": "FFFFFFF0051A5858",
+    "A038": "0000000000000000",
+    "A03A": "0000000000000028",
+    "A03D": "FFFFFFF0056967B4",
+    "A03E": "00000000000002FF"
+  },
+  "partly_obscured_fields": [
+    "A033",
+    "A035",
+    "A039"
+  ],
+  "provisional_fields": {
+    "A03B": "FFFFFFF676FE1B80",
+    "A03C": "FFFFFFF676FE1B80"
+  },
+  "provisional_limit": "Logo crosses pointer fields: full pointer transcription provisional; visible nonzero value/suffix and caller checkpoint support returned allocation, not a heap-range claim",
+  "observations": [
+    "Second allocation request 0x28",
+    "Allocator and caller pointer fields visibly nonzero and appear equal",
+    "A03D callback+0x1b4 is native second allocation continuation; not CPU stopped-PC",
+    "A03E is recorded stack metadata, not assumed compression kind",
+    "No full decompression or userspace proof from this image"
+  ],
+  "interpretation": "Second allocation non-return hypothesis no longer fits this trial. Next candidate retains A03A-C and makes existing post-allocation/decode scoped checkpoints and raw returns readable in A03D-E. No lock/cache/IRQ/allocator policy change."
+}

@@ -2,7 +2,7 @@
 import argparse,hashlib,json,os,stat,struct,subprocess
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-TOOL=Path('/mnt/d/Code/PortingiOS/common/tools/apfs-fuse-linux/bin/apfs-fuse')
+TOOL=Path('/mnt/d/Code/PortingiOSLegacy/common/tools/apfs-fuse-linux/bin/apfs-fuse')
 IMAGE_SHA='d180c38dcc754bc079cc92a40f58a4b5fad2c2b7ce72cf5e64a117453fd7c90a'
 def sha(b):return hashlib.sha256(b).hexdigest()
 def main():

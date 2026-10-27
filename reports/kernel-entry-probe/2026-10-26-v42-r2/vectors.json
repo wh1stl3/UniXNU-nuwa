@@ -1,0 +1,259 @@
+{
+  "candidate_sha256": "9ebdb97ddf33b6df17150d4942fcf02e962a088d9d6bcaf57b65c156964cb91a",
+  "checks": [
+    {
+      "name": "All sixteen actual vector entries branch to the reporter",
+      "passed": true
+    },
+    {
+      "name": "Old PROBE17 vector entries trap before the reporter",
+      "passed": true
+    },
+    {
+      "name": "Real cold path captures the pinned native VBAR before override",
+      "passed": true
+    },
+    {
+      "name": "First-thread entry restores native VBAR before services and IRQ enable",
+      "passed": true
+    },
+    {
+      "name": "Unexpected saved VBAR is rejected without unsafe handoff",
+      "passed": true
+    }
+  ],
+  "native_vbar": "0xfffffff0073c2000",
+  "positive": [
+    {
+      "reached": true,
+      "interrupts": [],
+      "pc": "0xfffffff008489800",
+      "first_word": "00020014"
+    },
+    {
+      "reached": true,
+      "interrupts": [],
+      "pc": "0xfffffff008489800",
+      "first_word": "e0010014"
+    },
+    {
+      "reached": true,
+      "interrupts": [],
+      "pc": "0xfffffff008489800",
+      "first_word": "c0010014"
+    },
+    {
+      "reached": true,
+      "interrupts": [],
+      "pc": "0xfffffff008489800",
+      "first_word": "a0010014"
+    },
+    {
+      "reached": true,
+      "interrupts": [],
+      "pc": "0xfffffff008489800",
+      "first_word": "80010014"
+    },
+    {
+      "reached": true,
+      "interrupts": [],
+      "pc": "0xfffffff008489800",
+      "first_word": "60010014"
+    },
+    {
+      "reached": true,
+      "interrupts": [],
+      "pc": "0xfffffff008489800",
+      "first_word": "40010014"
+    },
+    {
+      "reached": true,
+      "interrupts": [],
+      "pc": "0xfffffff008489800",
+      "first_word": "20010014"
+    },
+    {
+      "reached": true,
+      "interrupts": [],
+      "pc": "0xfffffff008489800",
+      "first_word": "00010014"
+    },
+    {
+      "reached": true,
+      "interrupts": [],
+      "pc": "0xfffffff008489800",
+      "first_word": "e0000014"
+    },
+    {
+      "reached": true,
+      "interrupts": [],
+      "pc": "0xfffffff008489800",
+      "first_word": "c0000014"
+    },
+    {
+      "reached": true,
+      "interrupts": [],
+      "pc": "0xfffffff008489800",
+      "first_word": "a0000014"
+    },
+    {
+      "reached": true,
+      "interrupts": [],
+      "pc": "0xfffffff008489800",
+      "first_word": "80000014"
+    },
+    {
+      "reached": true,
+      "interrupts": [],
+      "pc": "0xfffffff008489800",
+      "first_word": "60000014"
+    },
+    {
+      "reached": true,
+      "interrupts": [],
+      "pc": "0xfffffff008489800",
+      "first_word": "40000014"
+    },
+    {
+      "reached": true,
+      "interrupts": [],
+      "pc": "0xfffffff008489800",
+      "first_word": "20000014"
+    }
+  ],
+  "negative": [
+    {
+      "reached": false,
+      "interrupts": [
+        1
+      ],
+      "pc": "0xfffffff008489000",
+      "first_word": "00000000"
+    },
+    {
+      "reached": false,
+      "interrupts": [
+        1
+      ],
+      "pc": "0xfffffff008489080",
+      "first_word": "00000000"
+    },
+    {
+      "reached": false,
+      "interrupts": [
+        1
+      ],
+      "pc": "0xfffffff008489100",
+      "first_word": "00000000"
+    },
+    {
+      "reached": false,
+      "interrupts": [
+        1
+      ],
+      "pc": "0xfffffff008489180",
+      "first_word": "00000000"
+    },
+    {
+      "reached": false,
+      "interrupts": [
+        1
+      ],
+      "pc": "0xfffffff008489200",
+      "first_word": "00000000"
+    },
+    {
+      "reached": false,
+      "interrupts": [
+        1
+      ],
+      "pc": "0xfffffff008489280",
+      "first_word": "00000000"
+    },
+    {
+      "reached": false,
+      "interrupts": [
+        1
+      ],
+      "pc": "0xfffffff008489300",
+      "first_word": "00000000"
+    },
+    {
+      "reached": false,
+      "interrupts": [
+        1
+      ],
+      "pc": "0xfffffff008489380",
+      "first_word": "00000000"
+    },
+    {
+      "reached": false,
+      "interrupts": [
+        1
+      ],
+      "pc": "0xfffffff008489400",
+      "first_word": "00000000"
+    },
+    {
+      "reached": false,
+      "interrupts": [
+        1
+      ],
+      "pc": "0xfffffff008489480",
+      "first_word": "00000000"
+    },
+    {
+      "reached": false,
+      "interrupts": [
+        1
+      ],
+      "pc": "0xfffffff008489500",
+      "first_word": "00000000"
+    },
+    {
+      "reached": false,
+      "interrupts": [
+        1
+      ],
+      "pc": "0xfffffff008489580",
+      "first_word": "00000000"
+    },
+    {
+      "reached": false,
+      "interrupts": [
+        1
+      ],
+      "pc": "0xfffffff008489600",
+      "first_word": "00000000"
+    },
+    {
+      "reached": false,
+      "interrupts": [
+        1
+      ],
+      "pc": "0xfffffff008489680",
+      "first_word": "00000000"
+    },
+    {
+      "reached": false,
+      "interrupts": [
+        1
+      ],
+      "pc": "0xfffffff008489700",
+      "first_word": "00000000"
+    },
+    {
+      "reached": false,
+      "interrupts": [
+        1
+      ],
+      "pc": "0xfffffff008489780",
+      "first_word": "00000000"
+    }
+  ],
+  "cold_snapshot": "0xfffffff0073c2000",
+  "scope": "Execute actual vector-slot entries; test capture and first-thread native VBAR handoff.",
+  "limitations": [
+    "Model execution; no hardware IRQ delivery or interrupt controller validation"
+  ]
+}

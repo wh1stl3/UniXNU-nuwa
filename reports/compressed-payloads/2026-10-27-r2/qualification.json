@@ -1,0 +1,37 @@
+{
+  "files": 38,
+  "type4_blocks": 188,
+  "decoded_bytes": 10960640,
+  "window_cases": 188,
+  "checks": 19,
+  "all_decoded_files_match": true,
+  "blocks_with_unused_suffix": 188,
+  "unused_suffix_bytes": 60632,
+  "code_directory_evidence": "reports/userland-closure/2026-10-27-r1/qualification.json",
+  "evidence": {
+    "audit.json": "8636d7733ef5e091424659753ee73e4544f14b5617e0afa0a7b20bfe69b2a892",
+    "tests.json": "e928c9c8ac8982aca0fd7b3c4b3ed2ddb0dd3802f731224d822193bf3e92b008"
+  },
+  "source_files_bound": 92,
+  "build_log_sha256": "7af349bf279c39fba18eef03c3045a15ca12b6ce73ef2612c5f6c5e3aff8ea0c",
+  "build_clock_skew_warning": true,
+  "build_scope": "Fresh local build directory; serial target build; warning retained; output independently compared against fixed host-read file digests",
+  "prior_failure": {
+    "path": "reports/compressed-payloads/2026-10-27-r1/audit-console.txt",
+    "sha256": "af463b18a3fc0c323685fb5f4d2c74392d313d35ddfb1ff3a53908f62b1a5cf1",
+    "cause": "Auditor required no unused suffix after Z_STREAM_END; actual wrapper permits suffix; fixed after comparing read-only Util.cpp decoder semantics",
+    "source_at_failure_sha256": "52c39e99ce7557f3479ef85991e9785abb1a4b24dc7ceb94de49b7344e30527f"
+  },
+  "package_unchanged": true,
+  "package_sha256": "03be86ac9dcc96a0e26885ec0fe5797e8244a7e88509782eb6c1cc89135c2811",
+  "image_sha256": "bc895d41c3308884a82c653e89c99226a81911d036c01ccb328389fce625bc8b",
+  "device_accessed": false,
+  "kernel_changed": false,
+  "release_guard_changed": false,
+  "qualification_script_sha256": "ac0fd3b04ac5d5962005fc84233e19e7fd27179c496e6b86c7c6e9c765c365b4",
+  "limitations": [
+    "Host APFS attribute extraction plus host zlib, not native XNU execution",
+    "Windows are pure data reconstruction, not kernel vnode/uio/vector execution",
+    "No allocator, lock, IRQ, error path or user release bypass"
+  ]
+}

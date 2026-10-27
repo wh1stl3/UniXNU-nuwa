@@ -76,7 +76,7 @@ int main(void){
  free(copy);free(p);puts("PASS 8192 alignments, observed FF0->1000 extent, invalid states cause zero maintenance, DSB/IVAC/DSB/ISB order, byte-unchanged HOB, one-shot/default/failure callback");return 0;
 }
 '''
-  exe='/mnt/d/Code/UniXNU-nuwa/out/hob-cache-handoff/host-handoff';(ROOT/'out/hob-cache-handoff').mkdir(parents=True,exist_ok=True)
+  exe='/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/hob-cache-handoff/host-handoff';(ROOT/'out/hob-cache-handoff').mkdir(parents=True,exist_ok=True)
   cmd=['wsl','-d','Ubuntu-22.04','--','clang','-x','c','-std=gnu11','-O1','-g','-fsanitize=address,undefined','-fno-sanitize-recover=all','-fno-pie','-no-pie','-o',exe,'-']
   compile_result=subprocess.run(cmd,input=host,capture_output=True,text=True);self.assertEqual(compile_result.returncode,0,compile_result.stderr)
   result=subprocess.run(['wsl','-d','Ubuntu-22.04','--',exe],capture_output=True,text=True);self.assertEqual(result.returncode,0,result.stderr)

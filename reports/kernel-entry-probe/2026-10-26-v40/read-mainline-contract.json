@@ -1,0 +1,160 @@
+{
+  "scope": "Read-only pinned registration/driver audit; no execution or device claims.",
+  "candidate_sha256": "59384a7dce1cb4f08705745484a3f8aa70943d558e9281889338476e77e00a01",
+  "native_input_sha256": "1aeebf1352a86b0d31612a6bd6e77bd7292f676ad2ce43a99ec4a8f3999eedb6",
+  "emission_sha256": "e10770f6a5f85a1430494114a136ba801f4ab062a9af1ba09408f60feb9fc5f2",
+  "source_sha256": "c48564b2e2b1dffb1ec246480ef5b1d2752151275b82c58867c657b68e9b75bd",
+  "public_sources": [
+    {
+      "path": "out/probe31-public-research/apple-oss-distributions-xnu-bsd-sys-decmpfs.h",
+      "sha256": "de165f10f5ee333a0c2ed69d49a5e81cdaeb0e394ee270a036f76248f970713d"
+    },
+    {
+      "path": "out/probe31-public-research/apple-oss-distributions-xnu-bsd-kern-decmpfs.c",
+      "sha256": "549649080ce3791c2edbf8471dca05fb22340eaa06715ca221e82dbf5a28082a"
+    },
+    {
+      "path": "out/probe31-public-research/UniXNU-ArmCpu-ArmCpu.cpp",
+      "sha256": "3c87b3bd617be5582a6a24ff797c359497ee9feaa702ee883ecee4270db21c9f"
+    }
+  ],
+  "registration_address": "0xfffffff005f48ef8",
+  "registration_version": 3,
+  "registration_file_bytes_unchanged": true,
+  "fields": [
+    {
+      "name": "validate",
+      "offset": 8,
+      "address": "0xfffffff0056962a8",
+      "applicable": true,
+      "extent": [
+        {
+          "module": "com.apple.AppleFSCompression.AppleFSCompressionTypeZlib",
+          "segment": "__TEXT_EXEC",
+          "va": 18446744005080825856,
+          "size": 46848
+        }
+      ],
+      "bindings": [
+        {
+          "site": 18446744005106765568,
+          "target": 18446744005097644712,
+          "new_site": 18446744005089988352,
+          "new_target": 18446744005080867496,
+          "kind": "component",
+          "module": "com.apple.AppleFSCompression.AppleFSCompressionTypeZlib"
+        }
+      ]
+    },
+    {
+      "name": "adjust_fetch",
+      "offset": 16,
+      "address": "0xfffffff0056965d8",
+      "applicable": true,
+      "extent": [
+        {
+          "module": "com.apple.AppleFSCompression.AppleFSCompressionTypeZlib",
+          "segment": "__TEXT_EXEC",
+          "va": 18446744005080825856,
+          "size": 46848
+        }
+      ],
+      "bindings": [
+        {
+          "site": 18446744005106765576,
+          "target": 18446744005097645528,
+          "new_site": 18446744005089988360,
+          "new_target": 18446744005080868312,
+          "kind": "component",
+          "module": "com.apple.AppleFSCompression.AppleFSCompressionTypeZlib"
+        }
+      ]
+    },
+    {
+      "name": "fetch",
+      "offset": 24,
+      "address": "0xfffffff005696600",
+      "applicable": true,
+      "extent": [
+        {
+          "module": "com.apple.AppleFSCompression.AppleFSCompressionTypeZlib",
+          "segment": "__TEXT_EXEC",
+          "va": 18446744005080825856,
+          "size": 46848
+        }
+      ],
+      "bindings": [
+        {
+          "site": 18446744005106765584,
+          "target": 18446744005097645568,
+          "new_site": 18446744005089988368,
+          "new_target": 18446744005080868352,
+          "kind": "component",
+          "module": "com.apple.AppleFSCompression.AppleFSCompressionTypeZlib"
+        }
+      ]
+    },
+    {
+      "name": "free_data",
+      "offset": 32,
+      "address": "0xfffffff005696a7c",
+      "applicable": true,
+      "extent": [
+        {
+          "module": "com.apple.AppleFSCompression.AppleFSCompressionTypeZlib",
+          "segment": "__TEXT_EXEC",
+          "va": 18446744005080825856,
+          "size": 46848
+        }
+      ],
+      "bindings": [
+        {
+          "site": 18446744005106765592,
+          "target": 18446744005097646716,
+          "new_site": 18446744005089988376,
+          "new_target": 18446744005080869500,
+          "kind": "component",
+          "module": "com.apple.AppleFSCompression.AppleFSCompressionTypeZlib"
+        }
+      ]
+    },
+    {
+      "name": "get_flags",
+      "offset": 40,
+      "address": "0xfffffff005696a88",
+      "applicable": true,
+      "extent": [
+        {
+          "module": "com.apple.AppleFSCompression.AppleFSCompressionTypeZlib",
+          "segment": "__TEXT_EXEC",
+          "va": 18446744005080825856,
+          "size": 46848
+        }
+      ],
+      "bindings": [
+        {
+          "site": 18446744005106765600,
+          "target": 18446744005097646728,
+          "new_site": 18446744005089988384,
+          "new_target": 18446744005080869512,
+          "kind": "component",
+          "module": "com.apple.AppleFSCompression.AppleFSCompressionTypeZlib"
+        }
+      ]
+    }
+  ],
+  "driver_counter_symbols": {
+    "_armcpu_timer_interrupts": "0xfffffff007ac0708",
+    "_armcpu_ipi_interrupts": "0xfffffff007ac0710",
+    "_armcpu_irq_phase": "0xfffffff007ac0788",
+    "_armcpu_irq_id": "0xfffffff007a10938"
+  },
+  "device_accessed": false,
+  "runtime_callback_invoked": false,
+  "limitations": [
+    "Photographed pointer is not a live registration-table memory dump",
+    "Static target provenance does not prove callback ABI execution or return",
+    "Counter symbols and driver source do not prove interrupt delivery",
+    "No filesystem lock, cache, decompression or UFS execution test"
+  ]
+}

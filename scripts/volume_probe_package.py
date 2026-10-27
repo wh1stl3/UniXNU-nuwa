@@ -10,7 +10,7 @@ import zlib
 ROOT = Path(__file__).resolve().parents[1]
 MAGIC = bytes.fromhex('4e5557412d564f4ca3719c4e82d650b9')
 FAT_SHA = 'bc0b3eae88e0dd8a528b3469d0fa9c3fa21c99097af842cab42c28cfa5068ff2'
-STOCK = Path('D:/Code/PortingiOS/nuwa/backups/recovery-20261020T121245314787Z/boot_a.img')
+STOCK = Path('D:/Code/PortingiOSLegacy/nuwa/backups/recovery-20261020T121245314787Z/boot_a.img')
 STOCK_SHA = 'ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31'
 
 

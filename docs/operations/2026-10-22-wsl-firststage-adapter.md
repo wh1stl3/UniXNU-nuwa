@@ -16,14 +16,14 @@
 经宿主批准运行：
 
 ```powershell
-wsl.exe -d Ubuntu-22.04 --exec /bin/sh /mnt/d/Code/UniXNU-nuwa/scripts/run-wsl-firststage.sh
+wsl.exe -d Ubuntu-22.04 --exec /bin/sh /mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/scripts/run-wsl-firststage.sh
 ```
 
 WSL内实际命令：
 
 ```sh
-/mnt/d/Code/PortingiOS/.venv-wsl/bin/python -B -m unittest discover -s tests -p test_wsl_kernel_adapter.py -v
-/mnt/d/Code/PortingiOS/.venv-wsl/bin/python -B scripts/wsl_kernel_adapter.py plan
+/mnt/d/Code/PortingiOSLegacy/.venv-wsl/bin/python -B -m unittest discover -s tests -p test_wsl_kernel_adapter.py -v
+/mnt/d/Code/PortingiOSLegacy/.venv-wsl/bin/python -B scripts/wsl_kernel_adapter.py plan
 ```
 
 测试退出0，9项通过；预检退出2，state=inputs-incomplete。外层脚本完成不等于工具链门通过，它接受“预检成功识别缺输入”并单独记录exit2，未把它改成通过。

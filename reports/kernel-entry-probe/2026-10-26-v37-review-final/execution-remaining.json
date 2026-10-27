@@ -1,0 +1,134 @@
+{
+  "candidate_sha256": "d9a9c6c4655244aa3dba895225943e0804058387207fde7bd3c35154633c4dee",
+  "serial_execution": true,
+  "device_accessed": false,
+  "original_execution_preserved": true,
+  "commands": [
+    {
+      "name": "pthread-startup",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-pthread-startup.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v37-review-final\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v37-review-final\\pthread-startup.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.7939233999932185,
+      "stdout": "{\"checks\": 6, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "root-stop",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-exec-release-boundary.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v37-review-final\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v37-review-final\\root-stop.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.6088157999911346,
+      "stdout": "{\"checks\": 15, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "root-inputs",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-root-launch-context.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v37-review-final\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v37-review-final\\root-inputs.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.585975199996028,
+      "stdout": "{\"checks\": 7, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "fscompression-startup",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-fscompression-startup.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v37-review-final\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v37-review-final\\fscompression-startup.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.4835911999980453,
+      "stdout": "{\"checks\": 8, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-boundaries",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-read-boundaries.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v37-review-final\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v37-review-final\\read-boundaries.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 16.455754299997352,
+      "stdout": "{\"checks\": 11, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-boundary-source",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\audit-read-boundary-source.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v37-review-final\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v37-review-final\\read-boundary-source.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.49884749998454936,
+      "stdout": "{\"static_checks_passed\": true, \"sites\": 5, \"shared_join\": \"0xfffffff007466b24\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "binding",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-probe-evidence-binding.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v37-review-final\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v37-review-final\\binding.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 105.56842520000646,
+      "stdout": "{\"checks\": 41, \"passed\": true}\n",
+      "stderr": ""
+    }
+  ]
+}

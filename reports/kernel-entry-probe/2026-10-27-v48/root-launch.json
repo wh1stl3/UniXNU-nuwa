@@ -1,0 +1,22 @@
+{
+  "candidate_sha256": "4237d18ca1c4d1ac95d464c8828330ef8f833a53a6dd0942fd5c26c1a24099b5",
+  "adt_sha256": "3ff810754831ff184f6499a2637da7dc8faa5057e0940781ddfaaf82e4177d4e",
+  "manifest_sha384": "59f051c4e1d84fbd10b3da37d57dd2b634f85f03a41c65b834cbe8593f6f15f06073f1e6d301e1c22bb2c2c85eda07d9",
+  "ramdisk": {
+    "path": "out/root-mainline-v29/restore/restore-payload.bin",
+    "bytes": 106954752,
+    "sha256": "d180c38dcc754bc079cc92a40f58a4b5fad2c2b7ce72cf5e64a117453fd7c90a"
+  },
+  "policy": {
+    "boot_arguments": "-v rd=md0",
+    "halt_before": "unreviewed restore task final wait release",
+    "halt_site": "0xfffffff00769d230",
+    "condition": "native exec task switch arms tracking; switch observed; matching task; clear_final_wait=2",
+    "restore_userspace_allowed": false
+  },
+  "producer_sha256": "dbef0b46e5ba263f1d72075a48f49ef947a796e0128540199c9fd1aa0ea7a9ed",
+  "kernel_path": "out/kernel-entry-probe-48-delta/kernel-entry-probe.macho",
+  "fd_path": "out/upstream-firmware-40014018074/nuwa-firmware-40014018074/build/FV/SILICIUM_UEFI.fd",
+  "shim_path": "out/upstream-firmware-40014018074/nuwa-firmware-40014018074/shim/shim.bin",
+  "adt_path": "out/exec-mainline-v48/launch/kernel.macho.adt"
+}

@@ -37,7 +37,7 @@
 
 ### 访问限制
 
-本地只读git remote/HEAD查询D:/Code/PortingiOS/common/sources/UniXNU-sheng被dubious ownership保护拒绝：目录owner为CodexSandboxOnline，当前为Administrator。未改safe.directory或重试绕过；改用已授权历史评估记录和公开README。
+本地只读git remote/HEAD查询D:/Code/PortingiOSLegacy/common/sources/UniXNU-sheng被dubious ownership保护拒绝：目录owner为CodexSandboxOnline，当前为Administrator。未改safe.directory或重试绕过；改用已授权历史评估记录和公开README。
 
 联网工具无法访问UniXNU仓的API提交端点、commits/main历史、共用仓固定tree URL及sheng-ufs指南直链；记录为不可访问，不据动态README虚构当前提交。固定Apple源码、固定主仓补丁/INF、公开README和维护者issue可读，已继续研究。上述限制不阻塞当前分析，但阻塞把新上游代码纳入可采用输入。本轮未采用该代码，不申请扩大权限。
 

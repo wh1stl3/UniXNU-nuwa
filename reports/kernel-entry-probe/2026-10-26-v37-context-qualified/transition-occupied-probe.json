@@ -1,0 +1,260 @@
+{
+  "scope": "Forward analysis with loader-derived placement and the existing 1GiB owned RAM window.\nNative v22 mapping hooks execute; adversarial cases inject occupied or malformed descriptors before the hook. Normal case has no host page-table edits. No device commands. This is a model only.\n",
+  "candidate_sha256": "d9a9c6c4655244aa3dba895225943e0804058387207fde7bd3c35154633c4dee",
+  "input": {
+    "argsPA": "0x8c48a8000",
+    "treePA": "0x8c48a9000",
+    "treeKVA": "0xfffffff0084a9000",
+    "topOfKernelData": "0x8c48b0000",
+    "owned_window": "0x40000000",
+    "adt_sha256": "32565b70b2c56c42e9b18ab39c58475de3a118cb9e2d3ac82532dcea4230dbd2",
+    "loader_memSizeActual_offset": 728
+  },
+  "events": [
+    {
+      "site": "_arm_vm_init",
+      "pc": "0xfffffff0073be014",
+      "x0": "0x0",
+      "x1": "0xfffffff00715c7c0",
+      "tcr": "0x22a51a251a",
+      "ttbr0": "0x8c355e000",
+      "ttbr1": "0x8c355f000",
+      "fb": {
+        "mapped": true,
+        "pa": "0xb8000000",
+        "rows": [
+          "0x6000008000040d"
+        ]
+      },
+      "probe": {
+        "mapped": true,
+        "pa": "0x8c4889000",
+        "rows": [
+          "0x8c3561003",
+          "0x8c4800601"
+        ]
+      }
+    },
+    {
+      "site": "first-table-bzero",
+      "pc": "0xfffffff0073be1f0",
+      "x0": "0xfffffff0084b0000",
+      "x1": "0x1000",
+      "tcr": "0x22a51a251a",
+      "ttbr0": "0x8c355e000",
+      "ttbr1": "0x8c355f000",
+      "fb": {
+        "mapped": true,
+        "pa": "0xb8000000",
+        "rows": [
+          "0x6000008000040d"
+        ]
+      },
+      "probe": {
+        "mapped": true,
+        "pa": "0x8c4889000",
+        "rows": [
+          "0x8c3561003",
+          "0x8c4800601"
+        ]
+      }
+    },
+    {
+      "site": "before-TTBR0-switch",
+      "pc": "0xfffffff0073beb60",
+      "x0": "0x8c48b1000",
+      "x1": "0xfffffff007b33e00",
+      "tcr": "0x22a51a251a",
+      "ttbr0": "0x8c355e000",
+      "ttbr1": "0x8c355f000",
+      "fb": {
+        "mapped": true,
+        "pa": "0xb8000000",
+        "rows": [
+          "0x6000008000040d"
+        ]
+      },
+      "probe": {
+        "mapped": true,
+        "pa": "0x8c4889000",
+        "rows": [
+          "0x8c3561003",
+          "0x8c4800601"
+        ]
+      }
+    }
+  ],
+  "error": null,
+  "pc": "0xfffffff0073cb23c",
+  "nearest": "_set_mmu_ttb_alternate+0x0",
+  "bad_memory": [],
+  "final_fb": {
+    "mapped": true,
+    "pa": "0xb8000000",
+    "rows": [
+      "0x6000008000040d"
+    ]
+  },
+  "final_probe": {
+    "mapped": true,
+    "pa": "0x8c4889000",
+    "rows": [
+      "0x8c3561003",
+      "0x8c4800601"
+    ]
+  },
+  "native_vector_mapping": {
+    "mapped": true,
+    "pa": "0x8c37c2000",
+    "rows": [
+      "0x8c3561003",
+      "0x8c3600601"
+    ]
+  },
+  "checks": [
+    {
+      "name": "TTBR1 call preserves GPR/SP/NZCV and native LR",
+      "passed": true
+    },
+    {
+      "name": "Rejects occupied or malformed tables without partial page-table edits",
+      "passed": true
+    }
+  ],
+  "case": "occupied-probe",
+  "stop_reason": "rejected-before-switch",
+  "transition": {
+    "root1": 37657186304,
+    "leaves": [
+      37657232456,
+      37657232464,
+      37657232472,
+      37657232480,
+      37657232488,
+      37657232496,
+      37657232504,
+      37657232512,
+      37657232520,
+      37657232528,
+      37657232536,
+      37657232544,
+      37657232552,
+      37657232560,
+      37657232568,
+      37657232576,
+      37657232584,
+      37657232592,
+      37657232600,
+      37657232608,
+      37657232616,
+      37657232624,
+      37657232632,
+      37657232640,
+      37657232648,
+      37657232656,
+      37657232664,
+      37657232672,
+      37657232680,
+      37657232688
+    ],
+    "before": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      305418243
+    ],
+    "registers": [
+      37657186304,
+      18446744005119262208,
+      24,
+      18446744005111446632,
+      3,
+      18446744005119261912,
+      18446744005129465400,
+      18446744005119261912,
+      37657186304,
+      192,
+      0,
+      0,
+      1,
+      0,
+      999391232,
+      4196608208,
+      3081687220,
+      18446744005119260848,
+      52674560,
+      18446744005119262208,
+      1,
+      18446744005108944896,
+      18446744005108944896,
+      18446744005108944896,
+      18446744005108944896,
+      18446744005108944896,
+      18446744005108942784,
+      18446744005108942464,
+      18446744005108944896,
+      18446744005119262496,
+      18446744005111442180
+    ],
+    "sp": 18446744005119262160,
+    "nzcv": 2147483648,
+    "after": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      305418243
+    ]
+  }
+}

@@ -2,8 +2,8 @@
 from pathlib import Path
 import subprocess
 
-BASE = Path("D:/Code/PortingiOS/common/sources/UniXNU")
-SOURCE = Path("D:/Code/PortingiOS/common/sources/xnu-ios16-full")
+BASE = Path("D:/Code/PortingiOSLegacy/common/sources/UniXNU")
+SOURCE = Path("D:/Code/PortingiOSLegacy/common/sources/xnu-ios16-full")
 GIT = "C:/Program Files/Git/cmd/git.exe"
 
 

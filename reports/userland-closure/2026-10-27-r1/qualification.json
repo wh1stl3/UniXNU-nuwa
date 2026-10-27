@@ -1,0 +1,150 @@
+{
+  "parsed_files": 38,
+  "dependency_edges": 355,
+  "code_pages": 2508,
+  "unresolved_weak_dependencies": [
+    {
+      "path": "/usr/local/lib/libobjc-env.dylib",
+      "all_incoming_weak": true,
+      "edges": [
+        {
+          "source": "/usr/lib/libobjc.A.dylib",
+          "path": "/usr/local/lib/libobjc-env.dylib",
+          "weak": true,
+          "command": "0x80000018"
+        }
+      ]
+    }
+  ],
+  "all_required_declared_dependency_files_present": true,
+  "all_parsed_code_page_hashes_match": true,
+  "all_parsed_architectures_arm64_all": true,
+  "segment_alignment_16k": true,
+  "initial_user_entry": {
+    "image": "/usr/lib/dyld",
+    "unslid_pc": "0x151b0",
+    "runtime_pc": "Requires actual dyld slide; not measured",
+    "launchd_lc_main_offset": "0x169b4",
+    "source": "mach_loader.c load_dylinker assigns myresult->entry_point; LC_MAIN is consumed by dyld"
+  },
+  "services": [
+    {
+      "path": "/System/Library/LaunchDaemons/com.apple.PurpleReverseProxy.ramdisk.plist",
+      "label": "com.apple.PurpleReverseProxy.ramdisk",
+      "disabled_declared": false,
+      "run_at_load": false,
+      "keep_alive": false,
+      "socket_names": [
+        "ctrl",
+        "notify",
+        "socks"
+      ],
+      "mach_services": [],
+      "program": "/usr/libexec/PurpleReverseProxy",
+      "program_file": {
+        "exists": true,
+        "mode": "0o100755",
+        "bytes": 93984
+      },
+      "approved_for_execution": false
+    },
+    {
+      "path": "/System/Library/LaunchDaemons/com.apple.diskimagesiod.plist",
+      "label": "com.apple.diskimagesiod",
+      "disabled_declared": false,
+      "run_at_load": false,
+      "keep_alive": false,
+      "socket_names": [],
+      "mach_services": [
+        "com.apple.diskimagesiod.xpc",
+        "com.apple.diskimagesiod.cachedelete"
+      ],
+      "program": "/usr/libexec/diskimagesiod",
+      "program_file": {
+        "exists": true,
+        "mode": "0o100755",
+        "bytes": 1154560
+      },
+      "approved_for_execution": false
+    },
+    {
+      "path": "/System/Library/LaunchDaemons/com.apple.diskimagesiod.ram.plist",
+      "label": "com.apple.diskimagesiod.ram",
+      "disabled_declared": false,
+      "run_at_load": false,
+      "keep_alive": false,
+      "socket_names": [],
+      "mach_services": [
+        "com.apple.diskimagesiod.ram.xpc"
+      ],
+      "program": "/usr/libexec/diskimagesiod",
+      "program_file": {
+        "exists": true,
+        "mode": "0o100755",
+        "bytes": 1154560
+      },
+      "approved_for_execution": false
+    },
+    {
+      "path": "/System/Library/LaunchDaemons/com.apple.restored_external.plist",
+      "label": "com.apple.restored_external",
+      "disabled_declared": false,
+      "run_at_load": true,
+      "keep_alive": false,
+      "socket_names": [],
+      "mach_services": [],
+      "program": "/usr/local/bin/restored_external",
+      "program_file": {
+        "exists": true,
+        "mode": "0o100755",
+        "bytes": 2090848
+      },
+      "approved_for_execution": false
+    },
+    {
+      "path": "/System/Library/LaunchDaemons/com.apple.syslogd.plist",
+      "label": "com.apple.syslogd",
+      "disabled_declared": true,
+      "run_at_load": false,
+      "keep_alive": true,
+      "socket_names": [],
+      "mach_services": [
+        "com.apple.system.logger"
+      ],
+      "program": "/usr/sbin/syslogd",
+      "program_file": {
+        "exists": true,
+        "mode": "0o100755",
+        "bytes": 166848
+      },
+      "approved_for_execution": false
+    }
+  ],
+  "release_checkpoint": 239,
+  "release_approved": false,
+  "package_unchanged": true,
+  "image_sha256": "bc895d41c3308884a82c653e89c99226a81911d036c01ccb328389fce625bc8b",
+  "evidence": {
+    "audit.json": "3304ca4d32877abe473ae9ddeda6d0f4fc9f597fb43d1ee9377b5cb31c6a720a",
+    "tests.json": "570b65a6130349b046676f9931f76552fb21d4f73bbe593834f16c92c22c5061",
+    "entry-probe-40.json": "03be86ac9dcc96a0e26885ec0fe5797e8244a7e88509782eb6c1cc89135c2811",
+    "build.json": "bb02513d6ac774290ceea77d219422afeef00c6e4817e0492bde196f9abb87f2"
+  },
+  "source_sha256": {
+    "bsd/kern/mach_loader.c": "cb92961fd590b733814f7e92e6b7a16ae753ad02ecfe1ff98cd7b13c188c0093",
+    "osfmk/mach/arm/_structs.h": "c37b047cecdb7ea7fe2617f66e5090aeb1e8a34686823b1e82f081bc99fc0e6d",
+    "osfmk/kern/cs_blobs.h": "2a2aba53c7745ef740cd46d569a5fcedcbb2159e0e0ff8f52ba8e370ec5d5582",
+    "EXTERNAL_HEADERS/mach-o/loader.h": "5d69e29414ee2fe9392a9f94101d25a5074eef7b3062ed2c880937c44d0f90aa"
+  },
+  "qualification_script_sha256": "a63f1d92d8104e70621a914f159c6cf6c651dc1af401ad7215f2527c2551f3f3",
+  "device_accessed": false,
+  "limitations": [
+    "Host read-only APFS extraction, not native XNU read/decompression",
+    "Code page hashes do not establish CMS trust, entitlements or AMFI acceptance",
+    "Dependency presence does not prove symbol binding, dyld execution or hardware readiness",
+    "Launch inventory does not approve restore services or release guard removal",
+    "No dynamic symbol resolution, binding or initializer execution",
+    "Declared weak dependency is not proof that all application uses tolerate absence",
+    "Service plist inventory is not complete binary side-effect review"
+  ]
+}

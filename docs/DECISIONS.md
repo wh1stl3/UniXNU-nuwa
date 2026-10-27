@@ -3,7 +3,7 @@
 - 状态：**superseded by D-002**（2026-10-22 03:00，官方文档给出真实控制点与 8 GiB 上限；§2/§3 的内核侧事实仍有效，§5 的「首选 9216 MiB」作废）
 - 否决的原提案：`NEED-REVIEW.md` R-001 的 A / B / C 三选一（那份题面把问题问错了）
 - 证据基线：`docs/inherited/nuwa-observed.json`、`docs/inherited/meminfo.txt`
-- 代码基线：`D:\Code\PortingiOS\common\sources\xnu-ios16-full`（只读）
+- 代码基线：`D:\Code\PortingiOSLegacy\common\sources\xnu-ios16-full`（只读）
 
 ## 1. 结论
 
@@ -351,7 +351,7 @@ D-016补充（2026-10-22 20:53）：离线实际FD/TE/map入口一致，SEC WARN
 - 状态：accepted，源码和本地检出完成，新固件尚未编译（2026-10-22）。
 - 证据：用户要求补齐uefi-nuwa并追问本地目录；reports/uefi-nuwa/；operations/2026-10-22-dedicated-uefi-repository.md。
 
-设备脚本/板描述/补丁与证据留在UniXNU-nuwa；固件改动在独立uefi-nuwa维护，使用固定提交接入。已有enuma处于同一GitHub fork网络，使用独立Git仓导入Mu历史，保持enuma和上游main不变；nuwa开发分支从已验证6c67550建立，不直接升级Mu基线。已入固件仓的patch不重复应用，旧manifest和patch保留以复现历史。用户要求的D:/Code/uefi-nuwa作为独立本地源码目录，旧资料库保持只读；源码仓建立和静态检查不构成镜像或实机阶段验收。
+设备脚本/板描述/补丁与证据留在UniXNU-nuwa；固件改动在独立uefi-nuwa维护，使用固定提交接入。已有enuma处于同一GitHub fork网络，使用独立Git仓导入Mu历史，保持enuma和上游main不变；nuwa开发分支从已验证6c67550建立，不直接升级Mu基线。已入固件仓的patch不重复应用，旧manifest和patch保留以复现历史。用户要求的D:/Code/PortingiOS/nuwa/uefi-nuwa作为独立本地源码目录，旧资料库保持只读；源码仓建立和静态检查不构成镜像或实机阶段验收。
 
 
 D-017/D-018补充（2026-10-22 23:47）：独立固件CI39805110487及665项下载产物静态检查通过，Darwin22 ABI补丁完成真实DarwinBoot EFI编译链接；FD3MiB/SHA7f6f16c8、shim112B保持9346a527。未生成Android容器或执行设备，运行ABI未验证；新SEC阶段诊断范围另列R-007，未应用。证据reports/firmware-ci/39805110487/。
@@ -712,3 +712,11 @@ manifest-properties节点已存在但无BNCH，boot-manifest-hash缺失。固定
 # D-070 — PROBE28把未返回边界收窄到文件系统分派调用点之后
 
 2026-10-26，原图A034=272/A035全F与266/268/269/270/272成对状态表明MAC已返回、VNOP_READ原生BLR x8调用点已观察、273未观察。272在原生调用前记录，不能当目标函数入口证明；先离线固定v_op目标与入口，再分解APFS/decmpfs/UBC/UPL/认证/fetch/I/O，不能指定锁或IRQ为根因。绿色返回标记不编码errno0，A035全F是pending哨兵。PROBE28 consumed不重发；原boot临时恢复后Android1/_a/三SHA闭环。证据v36/screen、postcondition、evidence-binding及2026-10-26-probe28-device-result.md；原图仅本地out。未证明完整header或用户态成功，未启动新候选。
+
+# D-071 — 官网指南成为nuwa后续开发执行基准
+
+2026-10-27，用户明确要求“把官网内容作为开发指南，以后按照此内容执行”。设备仓AGENTS.md第0节作为共同维护入口，固件仓AGENTS.md同步引用。后续按官网阶段、依赖、组件/OS ABI、初始化/构建交接与完成证据推进；官网方法适配到nuwa iOS16，不机械套默认模板、板值、分区或历史验收。用户指令及硬停、Legacy只读、证据、串行、不提交/推送约定继续优先。官网核对与当前任务映射见docs/operations/2026-10-27-official-adaptation-sequence.md；本次仅维护规则，未改包或操作设备。
+
+# D-072 — 各阶段具体开发步骤成为必执行方法
+
+2026-10-27，用户进一步要求“每个阶段的具体开发方法和开发步骤也要落为规则”。新增docs/DEVELOPMENT-STAGES.md作为唯一方法维护入口，两仓AGENTS要求任务开始/续接时必读通用方法及对应S00—S13章节。每阶段规定前提、顺序步骤、离线/必要实测、产物和完成/失败条件；前置依赖约束运行，后续静态工作仍可自主推进，多项目可合并验证。方法记录不构成通过证据，不新增逐步审批、不自动解除硬停/暂停或授权设备动作。原D-071继续有效，本次只维护规则与交接，未修改镜像或实机状态。

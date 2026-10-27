@@ -47,8 +47,8 @@
 
 官方[启动链](https://unixnu.com/zh/concepts/boot-chain)标明Darwin23结构。比对本地只读输入：
 
-- `D:/Code/PortingiOS/common/sources/xnu-ios16-full/pexpert/pexpert/arm64/boot.h:26,61-76`：`BOOT_LINE_LENGTH=608`。
-- `D:/Code/PortingiOS/common/sources/UniXNU/drivers/DarwinBoot/DarwinBootPkg/Driver/BootArgs.h:7-31`：注明Darwin23，CommandLine为1024，静态断言尾字段偏移0x478、总长0x480。
+- `D:/Code/PortingiOSLegacy/common/sources/xnu-ios16-full/pexpert/pexpert/arm64/boot.h:26,61-76`：`BOOT_LINE_LENGTH=608`。
+- `D:/Code/PortingiOSLegacy/common/sources/UniXNU/drivers/DarwinBoot/DarwinBootPkg/Driver/BootArgs.h:7-31`：注明Darwin23，CommandLine为1024，静态断言尾字段偏移0x478、总长0x480。
 
 `scripts/audit-darwin22-boot-args.py`显式按ARM64 LP64（不使用Windows的32位unsigned long）建模，结果见`darwin22-boot-args.json`：
 

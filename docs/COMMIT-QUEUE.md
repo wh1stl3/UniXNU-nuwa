@@ -1,5 +1,7 @@
 # COMMIT-QUEUE
 
+2026-10-27会话收尾：用户本次明确要求落档并提交，当前PROBE29—44与路径迁移工作按本地检查点归档；不据本文件旧发布说明自动push。当前精简交接和续接prompt分别见docs/operations/2026-10-27-session-handoff.md、2026-10-27-new-session-prompt.md。此前各队列项保留原历史。
+
 早期仅排队由宿主提交。用户于2026-10-22后续明确允许全部Git命令，允许将积压里程碑依次提交并发布到公开设备仓；以下保留每项历史描述，不把当时“未执行Git写入”的记载当成现行禁令。提交映射另记WORKLOG/证据，禁止改写既有提交。
 
 ## Q-001 · 49 补丁复跑
@@ -706,7 +708,7 @@
 ```text
 [unixnu-nuwa][firmware] 接入独立固件仓并补齐可独立使用的本地检出
 
-[Change] 固定uefi-nuwa的0a3a51a并接入dedicated构建profile，保留legacy与历史patch；建立D:/Code/uefi-nuwa，更新目录边界及发布器产物名。
+[Change] 固定uefi-nuwa的0a3a51a并接入dedicated构建profile，保留legacy与历史patch；建立D:/Code/PortingiOS/nuwa/uefi-nuwa，更新目录边界及发布器产物名。
 [Evidence] 源导入CI成功且临时secret已删除，2256条Git树/31项输入与模块接线检查通过，本地HEAD一致、工作区干净、完整fsck通过且共享缓存依赖已移除。
 [Risk] 新固件尚未编译或实机验证，本地子模块未初始化；合并版内核CI已成功但产物下载两次EOF尚未独立校验，未改board/feed或生成镜像。
 ```

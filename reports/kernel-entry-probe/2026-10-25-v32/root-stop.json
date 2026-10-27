@@ -1,0 +1,56 @@
+{
+  "scope": "Verify continuous exec observations and the conditional restore-release boundary.",
+  "candidate_sha256": "287ed8e62b0c6408f3fc2764c8d79c26459083284098d03dc6165a9bc3320504",
+  "checks": [
+    {
+      "name": "inactive-pass",
+      "passed": true,
+      "held": false,
+      "target": "0xfffffff0072a1ab0"
+    },
+    {
+      "name": "uncommitted-pass",
+      "passed": true,
+      "held": false,
+      "target": "0xfffffff0072a1ab0"
+    },
+    {
+      "name": "foreign-task-pass",
+      "passed": true,
+      "held": false,
+      "target": "0xfffffff0072a1ab0"
+    },
+    {
+      "name": "wrong-flag-pass",
+      "passed": true,
+      "held": false,
+      "target": "0xfffffff0072a1ab0"
+    },
+    {
+      "name": "committed-hold",
+      "passed": true,
+      "held": true,
+      "target": "0xfffffff008491d2c"
+    },
+    {
+      "name": "committed-no-video",
+      "passed": true,
+      "held": true,
+      "target": "0xfffffff008491d2c"
+    },
+    {
+      "name": "first-exec-continues",
+      "passed": true,
+      "held": false,
+      "target": "0xfffffff00769ce3c"
+    },
+    {
+      "name": "error-return-continues",
+      "passed": true,
+      "held": false,
+      "target": "0xfffffff00769d5fc"
+    }
+  ],
+  "exec_body_executed": false,
+  "restore_userspace_released": false
+}

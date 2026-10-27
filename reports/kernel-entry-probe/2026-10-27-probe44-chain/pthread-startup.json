@@ -1,0 +1,71 @@
+{
+  "scope": "Execute BSD hook with an explicit OSKext API boundary model.\n\nThe real donor kmod and native registration execute. OSKext lifecycle and\npthread initializer body are outside this isolated model and need hardware.\n",
+  "candidate_sha256": "49b913fc15e1517c51acc57af919c76d32187a1258a3a9fbb7f4890ebe2c74f1",
+  "prelink_sha256": "52227410fd5ad0da9b8487a3fc3706a8f03042cc8256cfe99018897337f47e01",
+  "source_sha256": "efa8e26905bf55302115c23cf5d417f7830ce7505c2b0ff3f999f0a6a2672fd1",
+  "checks": [
+    {
+      "name": "registered: video",
+      "passed": true,
+      "loader_calls": 0,
+      "status": [
+        "0x0",
+        "0xfffffff005ea0980",
+        "0x0"
+      ]
+    },
+    {
+      "name": "registered: no-video",
+      "passed": true,
+      "loader_calls": 0,
+      "status": [
+        "0x0",
+        "0xfffffff005ea0980",
+        "0x0"
+      ]
+    },
+    {
+      "name": "load-success: video",
+      "passed": true,
+      "loader_calls": 1,
+      "status": [
+        "0x0",
+        "0xfffffff005ea0980",
+        "0x1"
+      ]
+    },
+    {
+      "name": "load-success: no-video",
+      "passed": true,
+      "loader_calls": 1,
+      "status": [
+        "0x0",
+        "0xfffffff005ea0980",
+        "0x1"
+      ]
+    },
+    {
+      "name": "load-failure: video",
+      "passed": true,
+      "loader_calls": 1,
+      "status": [
+        "0xe00002c0",
+        "0x0",
+        "0x1"
+      ]
+    },
+    {
+      "name": "load-failure: no-video",
+      "passed": true,
+      "loader_calls": 1,
+      "status": [
+        "0xe00002c0",
+        "0x0",
+        "0x1"
+      ]
+    }
+  ],
+  "os_kext_lifecycle_executed": false,
+  "pthread_initializer_body_executed": false,
+  "device_accessed": false
+}

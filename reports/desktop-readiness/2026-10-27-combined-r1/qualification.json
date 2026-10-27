@@ -1,0 +1,32 @@
+{
+  "parent": {
+    "path": "reports/desktop-readiness/2026-10-27-qualification-r1/qualification.json",
+    "sha256": "14f72921ca6b43e23bbe6077cb2420a24e6a21374761454d53c1fc04bd7bd6eb"
+  },
+  "references": {
+    "path": "reports/desktop-readiness/2026-10-27-reference-r1/manifest.json",
+    "sha256": "00dc341f47d41b25213daffb211e3020c7624e45bb1d0b48b900651ac979d649"
+  },
+  "sources": [
+    {
+      "path": "scripts/audit-desktop-root.py",
+      "sha256": "1205b549abf6f2b5bfe27985a8b9d49857075ecc96358cc53637fd9e43e008f8"
+    },
+    {
+      "path": "scripts/test-desktop-root.py",
+      "sha256": "d1973af8e5284be7b8fc6a1fca51b02f4c97630970b631fa30c50c4bce988c54"
+    },
+    {
+      "path": "scripts/audit-desktop-system.py",
+      "sha256": "a708ed2ba1a3ae6e568984e66c0b5fb5e7c3a038881b486500d643c0bf76851f"
+    },
+    {
+      "path": "scripts/qualify-desktop-inputs.py",
+      "sha256": "ac0ef59c845a7a07cd8305c2ae4d7c2abac45f48bd59ad46297e6d7d6334e969"
+    }
+  ],
+  "device_accessed": false,
+  "release_guard_changed": false,
+  "probe41_sha256": "8d242a2dd953146af5c3c8ae59c6805cba6599aa7283188180667bfca5c2ec2a",
+  "scope": "Offline desktop input preparation; not a deployable root or desktop execution"
+}

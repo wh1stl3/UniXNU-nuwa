@@ -1,0 +1,484 @@
+{
+  "identity": {
+    "product": "iPhone10,3",
+    "version": "16.7.16",
+    "build": "20H392",
+    "device_class": "d22ap"
+  },
+  "source_layers": [
+    {
+      "component": "OS",
+      "path": "/mnt/d/Code/PortingiOSLegacy/common/cache/donor-ios16/components/087-86698-044.dmg",
+      "sha256": "80f426d5b8fca8552f95be427434f1911dbb4c2c6d28aad94f2426ddd0c92483",
+      "sha384": "103b835176572a97ae36bc5ebe4c332c40b921e1f151b844116bbda49959c46c64364d343ceb0c4e9d95a51ba60d0e51",
+      "bytes": 4730814044
+    },
+    {
+      "component": "Cryptex1,SystemOS",
+      "path": "/mnt/d/Code/PortingiOSLegacy/common/cache/donor-ios16/components/087-86593-047.dmg",
+      "sha256": "9cd738f3b0169055549df84ad6d8d13e50a2da39af618ce0522ca4e06df86849",
+      "sha384": "775e110985ba8fd0dd2ad21d3fd5a896eec8887af219fc0dbc1e55ace791de1d51ecca2477f2e650b24c557cb74a0627",
+      "bytes": 2743074816
+    },
+    {
+      "component": "Cryptex1,AppOS",
+      "path": "/mnt/d/Code/PortingiOSLegacy/common/cache/donor-ios16/components/087-86715-047.dmg",
+      "sha256": "391f2df322c3172b021b2874f6da5c3e78b70b3df8f502e1a4af2b1d715c4608",
+      "sha384": "853c4f945ea09b1614bedeaffc777aefdf2c5bcb15f1a66986e965207757246c2d3f8712a5a5c491cfc49a5a45e81502",
+      "bytes": 10485760
+    }
+  ],
+  "desktop_jobs": [
+    {
+      "keys": [
+        "LaunchDaemons",
+        "/System/Library/LaunchDaemons/com.apple.SpringBoard.plist"
+      ],
+      "label": "com.apple.SpringBoard",
+      "program": "/System/Library/CoreServices/SpringBoard.app/SpringBoard",
+      "program_present": true,
+      "declared": {
+        "RunAtLoad": true,
+        "KeepAlive": true,
+        "MachServices": {
+          "com.apple.springboard.carditemscontroller": true,
+          "com.apple.notificationcenter.widgetcontrollerconnection": true,
+          "com.apple.usernotifications.usernotificationsettingsservice": true,
+          "com.apple.UIKit.KeyboardManagement.hosted": true,
+          "com.apple.UIKit.statusbarserver": true,
+          "com.apple.springboard.statusbarservices": {},
+          "com.apple.controlcenter.remoteservice": true,
+          "com.apple.proactive.UserEducationSuggestion.client-listener.xpc": true,
+          "com.apple.springboard.blockableservices": {
+            "ResetAtClose": true
+          },
+          "com.apple.frontboard.systemappservices": true,
+          "com.apple.systemstatus.publisher": true,
+          "com.apple.usernotifications.usernotificationservice": true,
+          "com.apple.bulletinboard.dataproviderconnection": true,
+          "com.apple.pegasus": true,
+          "com.apple.usernotifications.aps": true,
+          "com.apple.bulletinboard.settingsconnection": true,
+          "com.apple.springboard.backgroundappservices": {
+            "HideUntilCheckIn": true,
+            "ResetAtClose": true
+          },
+          "com.apple.SBUserNotification": true,
+          "PurpleSystemAppPort": {
+            "ResetAtClose": true
+          },
+          "com.apple.usernotifications.remotenotificationservice": true,
+          "com.apple.DragUI.druid.system": true,
+          "com.apple.siri.activation": true,
+          "com.apple.springboard.services": {
+            "HideUntilCheckIn": true,
+            "ResetAtClose": true
+          },
+          "com.apple.siri.activation.service": true,
+          "com.apple.springboard.oswatchdog": true,
+          "com.apple.bulletinboard.serverconduitconnection": true,
+          "com.apple.systemstatus": true,
+          "com.apple.systemstatus.activityattribution": true,
+          "com.apple.usernotifications.delegate.com.apple.donotdisturb": true,
+          "com.apple.pencilkit.pktouchdetection": true,
+          "com.apple.bulletinboard.observerconnection": true,
+          "com.apple.usernotifications.aps.dev": true,
+          "com.apple.proactive.HomeScreenSuggestion.xpc": true
+        },
+        "UserName": "mobile"
+      }
+    },
+    {
+      "keys": [
+        "LaunchDaemons",
+        "/System/Library/LaunchDaemons/com.apple.runningboardd.plist"
+      ],
+      "label": "com.apple.runningboardd",
+      "program": "/usr/libexec/runningboardd",
+      "program_present": true,
+      "declared": {
+        "RunAtLoad": true,
+        "KeepAlive": true,
+        "MachServices": {
+          "com.apple.runningboard.watchdog": true,
+          "com.apple.runningboard.resource_notify": true,
+          "com.apple.runningboard": true
+        }
+      }
+    },
+    {
+      "keys": [
+        "LaunchDaemons",
+        "/System/Library/LaunchDaemons/com.apple.backboardd.plist"
+      ],
+      "label": "com.apple.backboardd",
+      "program": "/usr/libexec/backboardd",
+      "program_present": true,
+      "declared": {
+        "RunAtLoad": true,
+        "KeepAlive": true,
+        "MachServices": {
+          "PurpleSystemEventPort": {
+            "ResetAtClose": true
+          },
+          "com.apple.libEDR.Notification": true,
+          "com.apple.backboard.TouchDeliveryPolicyServer": true,
+          "com.apple.iohideventsystem": {
+            "ResetAtClose": true
+          },
+          "com.apple.CARenderServer": {
+            "ResetAtClose": true
+          },
+          "com.apple.backlightd": true,
+          "com.apple.AttentionAwareness": true,
+          "com.apple.backboard.hid.services": {
+            "ResetAtClose": true
+          },
+          "com.apple.backboard.oswatchdog": true,
+          "com.apple.accessibility.AXBackBoardServer": true,
+          "com.apple.backboard.display.services": {
+            "ResetAtClose": true
+          },
+          "com.apple.backboard.system-app-server": true,
+          "com.apple.backboard.altsysapp": true,
+          "PurpleWorkspacePort": {
+            "ResetAtClose": true
+          },
+          "com.apple.backboard.hid-services.xpc": true,
+          "com.apple.accessibility.gax.backboard": true,
+          "com.apple.iphone.axserver-systemwide": true,
+          "com.apple.backboard.watchdog": true
+        },
+        "UserName": "mobile"
+      }
+    }
+  ],
+  "total_main_launch_jobs": 532,
+  "cache_files": [
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64",
+      "bytes": 393216,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "8f970452c9e33e88b114feb1864bc9e0",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.01",
+      "bytes": 114638848,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "44bac65f145830e9938035c5e889f14f",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.02",
+      "bytes": 98304,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "37d5dc822446340986669de87c37e411",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.03",
+      "bytes": 115769344,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "ce36ef91240d3cfebbe389244b196a61",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.04",
+      "bytes": 180224,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "340af8b6df14321187979aec99165812",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.05",
+      "bytes": 114540544,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "567373c556243bd3882bd02151d319ec",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.06",
+      "bytes": 376832,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "fc4d0934f85733ec9078683fe092c35a",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.07",
+      "bytes": 115408896,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "e0d27cff730d3a6cb37fb65ebb184ac1",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.08",
+      "bytes": 278528,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "da0ef0aa68c23cba89536b3b161f1e7a",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.09",
+      "bytes": 115752960,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "3658db280dbd3506a1ea08a9a139c091",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.10",
+      "bytes": 409600,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "75d07b32c9d03d8dab03a4ade22040ab",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.11",
+      "bytes": 115818496,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "d0f9587518393c0cb480d42623d31129",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.12",
+      "bytes": 393216,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "cb4c3cdd1f373c1cb03caae055338c74",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.13",
+      "bytes": 107970560,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "12f76ff051173e55957009c10f2f6bb3",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.14",
+      "bytes": 409600,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "fc3c988eaf3639a5a6c14dd11373081b",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.15",
+      "bytes": 115097600,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "d3062030d7c73491bd5153ae4e631180",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.16",
+      "bytes": 458752,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "2d41b3804eb337428419ff546aff5584",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.17",
+      "bytes": 97419264,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "3918e298f5c0388b8bba4ba3d6255553",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.18",
+      "bytes": 376832,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "054144f0481a390abfe6eb978bc0c571",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.19",
+      "bytes": 107610112,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "280f45ea89353414a39ec6ae5c06ebc0",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.20",
+      "bytes": 262144,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "10c53b7fd69537d2815132a2ac5e46ef",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.21",
+      "bytes": 115130368,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "155522413d4d3809bc2561206e91b9ce",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.22",
+      "bytes": 442368,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "3325c651c70d36168fc6b280b48e5e64",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.23",
+      "bytes": 115015680,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "97f441bd8cbf3adbaf41882ade2ba180",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.24",
+      "bytes": 507904,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "4375f44a69f53eeb9747b8849c149764",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.25",
+      "bytes": 83607552,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "ed459aba225d35c69aab7ae6c303ab8a",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.26",
+      "bytes": 245760,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "f2dab8844d4b39918e4dfe3541c91752",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.27.dylddata",
+      "bytes": 187105280,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "07058ec474213a43b25eec4254f216d7",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.28.dyldlinkedit",
+      "bytes": 19922944,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "afbab8d5e85a3193a6e36eff921a15fe",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.29",
+      "bytes": 115539968,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "10ca8de51edc3a48a60cc1aaf6436416",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.30",
+      "bytes": 507904,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "3e38a068431e390bbdfdc8d60bf12670",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.31",
+      "bytes": 103677952,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "dd590e878c463a308207f7a607a48338",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.32",
+      "bytes": 573440,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "89b36107b8dc386f805591a751d7a96d",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.33",
+      "bytes": 115785728,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "4a489ab7995e32b88729a0ef338cb786",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.34",
+      "bytes": 638976,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "17ecfd50d4a7364db1ebbf726d27d2da",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.35",
+      "bytes": 115769344,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "8662ac227daf3822b4edd7c1a4722773",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.36",
+      "bytes": 491520,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "0e672c05a3c63bb1bb01e1dc55a27c42",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.37",
+      "bytes": 114917376,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "5cd25176738b3c0b84b996359b106298",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.38",
+      "bytes": 573440,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "0f806d3d90313bab88bccbb44f5b1a04",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.39",
+      "bytes": 86933504,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "c034c475f78a3d44996b6856f5aa4873",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.40",
+      "bytes": 557056,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "d31683f8a9aa3ab4b27ea5c0a4a08278",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.41.dylddata",
+      "bytes": 102547456,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "7227533a402d38848dc425301d51d08e",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.42.dyldlinkedit",
+      "bytes": 334102528,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "68ac84bcf0723a7e9806c21472133857",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    },
+    {
+      "path": "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.symbols",
+      "bytes": 592101376,
+      "magic": "64796c645f763120202061726d363400",
+      "uuid": "51ccba451fc23f19aed047050bdf009a",
+      "scope": "Header/size only; subcache UUID closure and signatures pending"
+    }
+  ],
+  "pending": [
+    "OS/cryptex namespace and symlink resolution",
+    "Complete shared-cache image/subcache UUID and dependency closure",
+    "Writable data layout, ownership and service content review",
+    "Native read/decode completion, exec and first EL0 evidence",
+    "iOS16 IOSurface/MobileFramebuffer ABI, refresh and actual scanout",
+    "nuwa HID/keys/touch and actual input events"
+  ],
+  "current_package": {
+    "path": "out/trial-boot/xnu-entry-probe-41-resource/boot-xnu-first-entry.img",
+    "sha256": "8d242a2dd953146af5c3c8ae59c6805cba6599aa7283188180667bfca5c2ec2a",
+    "purpose": "Restore-root kernel diagnostic; not desktop payload"
+  },
+  "executable": false,
+  "deployable": false,
+  "release_guard_changed": false,
+  "device_accessed": false
+}

@@ -1,0 +1,47 @@
+{
+  "checks": [
+    {
+      "name": "content/basic metadata actual archive readback",
+      "passed": true
+    },
+    {
+      "name": "absolute and relative links stored without following",
+      "passed": true
+    },
+    {
+      "name": "source content metadata unchanged",
+      "passed": true
+    },
+    {
+      "name": "existing archive rejected",
+      "passed": true
+    },
+    {
+      "name": "byte budget enforced",
+      "passed": true
+    },
+    {
+      "name": "entry budget enforced",
+      "passed": true
+    },
+    {
+      "name": "special node recorded without materialization",
+      "passed": true
+    },
+    {
+      "name": "feature branches retained without selecting a runtime value",
+      "passed": true
+    }
+  ],
+  "sources": [
+    {
+      "path": "scripts/desktop_data_source.py",
+      "sha256": "6eed1b6a3965fdff233769d81657b2bd368c63eddb1ce71ecfcd2cfa30cfd6ae"
+    },
+    {
+      "path": "scripts/test-desktop-data-source.py",
+      "sha256": "d10c6fa419d141456fcc16873ba24466f7fa4c05c344a7d6ed7a9f2f4863d88d"
+    }
+  ],
+  "device_accessed": false
+}

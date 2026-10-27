@@ -1,0 +1,491 @@
+{
+  "candidate_sha256": "f2711bf88941cb9e1c048e55e6c51b26b77b138c9d4dd6582ece11416f390324",
+  "negative_candidate_sha256": "6110c6fba2579eca0e3dfe84bd87a03869685645e98d6fbb75faa2b2a368e09b",
+  "checks": [
+    {
+      "name": "probe_soc_base confines every framebuffer write to exact rectangles",
+      "passed": true
+    },
+    {
+      "name": "probe_soc_base rejects old PROBE17 row drift",
+      "passed": true
+    },
+    {
+      "name": "probe_wfe_timeout confines every framebuffer write to exact rectangles",
+      "passed": true
+    },
+    {
+      "name": "probe_wfe_timeout rejects old PROBE17 row drift",
+      "passed": true
+    },
+    {
+      "name": "probe_panic_trap confines every framebuffer write to exact rectangles",
+      "passed": true
+    },
+    {
+      "name": "probe_panic_trap rejects old PROBE17 row drift",
+      "passed": true
+    }
+  ],
+  "cases": {
+    "probe_soc_base": {
+      "candidate": {
+        "outside_count": 0,
+        "outside_first": [],
+        "writes": 51072,
+        "rectangles": [
+          [
+            0,
+            704,
+            96,
+            32
+          ],
+          [
+            256,
+            448,
+            480,
+            20
+          ],
+          [
+            256,
+            476,
+            480,
+            20
+          ],
+          [
+            256,
+            504,
+            480,
+            20
+          ],
+          [
+            256,
+            532,
+            480,
+            20
+          ],
+          [
+            256,
+            560,
+            480,
+            20
+          ]
+        ]
+      },
+      "old_probe17": {
+        "outside_count": 33600,
+        "outside_first": [
+          {
+            "address": "0xb8278200",
+            "x": 736,
+            "y": 449,
+            "bytes": 4
+          },
+          {
+            "address": "0xb8278204",
+            "x": 737,
+            "y": 449,
+            "bytes": 4
+          },
+          {
+            "address": "0xb8278208",
+            "x": 738,
+            "y": 449,
+            "bytes": 4
+          },
+          {
+            "address": "0xb827820c",
+            "x": 739,
+            "y": 449,
+            "bytes": 4
+          },
+          {
+            "address": "0xb8278210",
+            "x": 740,
+            "y": 449,
+            "bytes": 4
+          },
+          {
+            "address": "0xb8278214",
+            "x": 741,
+            "y": 449,
+            "bytes": 4
+          },
+          {
+            "address": "0xb8278218",
+            "x": 742,
+            "y": 449,
+            "bytes": 4
+          },
+          {
+            "address": "0xb827821c",
+            "x": 743,
+            "y": 449,
+            "bytes": 4
+          },
+          {
+            "address": "0xb8278220",
+            "x": 744,
+            "y": 449,
+            "bytes": 4
+          },
+          {
+            "address": "0xb8278224",
+            "x": 745,
+            "y": 449,
+            "bytes": 4
+          },
+          {
+            "address": "0xb8278228",
+            "x": 746,
+            "y": 449,
+            "bytes": 4
+          },
+          {
+            "address": "0xb827822c",
+            "x": 747,
+            "y": 449,
+            "bytes": 4
+          }
+        ],
+        "writes": 83072,
+        "rectangles": [
+          [
+            0,
+            704,
+            96,
+            32
+          ],
+          [
+            256,
+            448,
+            480,
+            20
+          ],
+          [
+            256,
+            476,
+            480,
+            20
+          ],
+          [
+            256,
+            504,
+            480,
+            20
+          ],
+          [
+            256,
+            532,
+            480,
+            20
+          ],
+          [
+            256,
+            560,
+            480,
+            20
+          ]
+        ]
+      }
+    },
+    "probe_wfe_timeout": {
+      "candidate": {
+        "outside_count": 0,
+        "outside_first": [],
+        "writes": 22272,
+        "rectangles": [
+          [
+            96,
+            256,
+            96,
+            32
+          ],
+          [
+            256,
+            588,
+            480,
+            20
+          ],
+          [
+            256,
+            616,
+            480,
+            20
+          ]
+        ]
+      },
+      "old_probe17": {
+        "outside_count": 13440,
+        "outside_first": [
+          {
+            "address": "0xb833d000",
+            "x": 736,
+            "y": 589,
+            "bytes": 4
+          },
+          {
+            "address": "0xb833d004",
+            "x": 737,
+            "y": 589,
+            "bytes": 4
+          },
+          {
+            "address": "0xb833d008",
+            "x": 738,
+            "y": 589,
+            "bytes": 4
+          },
+          {
+            "address": "0xb833d00c",
+            "x": 739,
+            "y": 589,
+            "bytes": 4
+          },
+          {
+            "address": "0xb833d010",
+            "x": 740,
+            "y": 589,
+            "bytes": 4
+          },
+          {
+            "address": "0xb833d014",
+            "x": 741,
+            "y": 589,
+            "bytes": 4
+          },
+          {
+            "address": "0xb833d018",
+            "x": 742,
+            "y": 589,
+            "bytes": 4
+          },
+          {
+            "address": "0xb833d01c",
+            "x": 743,
+            "y": 589,
+            "bytes": 4
+          },
+          {
+            "address": "0xb833d020",
+            "x": 744,
+            "y": 589,
+            "bytes": 4
+          },
+          {
+            "address": "0xb833d024",
+            "x": 745,
+            "y": 589,
+            "bytes": 4
+          },
+          {
+            "address": "0xb833d028",
+            "x": 746,
+            "y": 589,
+            "bytes": 4
+          },
+          {
+            "address": "0xb833d02c",
+            "x": 747,
+            "y": 589,
+            "bytes": 4
+          }
+        ],
+        "writes": 35072,
+        "rectangles": [
+          [
+            96,
+            256,
+            96,
+            32
+          ],
+          [
+            256,
+            588,
+            480,
+            20
+          ],
+          [
+            256,
+            616,
+            480,
+            20
+          ]
+        ]
+      }
+    },
+    "probe_panic_trap": {
+      "candidate": {
+        "outside_count": 0,
+        "outside_first": [],
+        "writes": 41472,
+        "rectangles": [
+          [
+            96,
+            528,
+            96,
+            32
+          ],
+          [
+            256,
+            224,
+            480,
+            20
+          ],
+          [
+            256,
+            364,
+            480,
+            20
+          ],
+          [
+            256,
+            392,
+            480,
+            20
+          ],
+          [
+            256,
+            420,
+            480,
+            20
+          ],
+          [
+            256,
+            644,
+            480,
+            20
+          ],
+          [
+            256,
+            728,
+            480,
+            20
+          ]
+        ]
+      },
+      "old_probe17": {
+        "outside_count": 26880,
+        "outside_first": [
+          {
+            "address": "0xb838bc00",
+            "x": 736,
+            "y": 645,
+            "bytes": 4
+          },
+          {
+            "address": "0xb838bc04",
+            "x": 737,
+            "y": 645,
+            "bytes": 4
+          },
+          {
+            "address": "0xb838bc08",
+            "x": 738,
+            "y": 645,
+            "bytes": 4
+          },
+          {
+            "address": "0xb838bc0c",
+            "x": 739,
+            "y": 645,
+            "bytes": 4
+          },
+          {
+            "address": "0xb838bc10",
+            "x": 740,
+            "y": 645,
+            "bytes": 4
+          },
+          {
+            "address": "0xb838bc14",
+            "x": 741,
+            "y": 645,
+            "bytes": 4
+          },
+          {
+            "address": "0xb838bc18",
+            "x": 742,
+            "y": 645,
+            "bytes": 4
+          },
+          {
+            "address": "0xb838bc1c",
+            "x": 743,
+            "y": 645,
+            "bytes": 4
+          },
+          {
+            "address": "0xb838bc20",
+            "x": 744,
+            "y": 645,
+            "bytes": 4
+          },
+          {
+            "address": "0xb838bc24",
+            "x": 745,
+            "y": 645,
+            "bytes": 4
+          },
+          {
+            "address": "0xb838bc28",
+            "x": 746,
+            "y": 645,
+            "bytes": 4
+          },
+          {
+            "address": "0xb838bc2c",
+            "x": 747,
+            "y": 645,
+            "bytes": 4
+          }
+        ],
+        "writes": 67072,
+        "rectangles": [
+          [
+            96,
+            528,
+            96,
+            32
+          ],
+          [
+            256,
+            224,
+            480,
+            20
+          ],
+          [
+            256,
+            364,
+            480,
+            20
+          ],
+          [
+            256,
+            392,
+            480,
+            20
+          ],
+          [
+            256,
+            420,
+            480,
+            20
+          ],
+          [
+            256,
+            644,
+            480,
+            20
+          ],
+          [
+            256,
+            728,
+            480,
+            20
+          ]
+        ]
+      }
+    }
+  }
+}

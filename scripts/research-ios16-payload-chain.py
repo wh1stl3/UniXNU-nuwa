@@ -15,9 +15,9 @@ import subprocess
 import urllib.request
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE = Path('D:/Code/PortingiOS/common/sources/UniXNU')
-SHENG = Path('D:/Code/PortingiOS/common/sources/UniXNU-sheng')
-DONOR = Path('D:/Code/PortingiOS/common/cache/donor-ios16')
+BASE = Path('D:/Code/PortingiOSLegacy/common/sources/UniXNU')
+SHENG = Path('D:/Code/PortingiOSLegacy/common/sources/UniXNU-sheng')
+DONOR = Path('D:/Code/PortingiOSLegacy/common/cache/donor-ios16')
 PIN = '75bc13dd34dc4e403826793739e316a264ce00dd'
 SHENG_PIN = 'a599a1a8a92093b5077543e071b72130769eb325'
 OUT = ROOT / 'reports/ios16-payload-research'

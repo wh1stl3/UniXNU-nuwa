@@ -14,7 +14,7 @@ import subprocess
 from virtual_patch import Tree
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE = Path('D:/Code/PortingiOS/common/sources/UniXNU')
+BASE = Path('D:/Code/PortingiOSLegacy/common/sources/UniXNU')
 PIN = '75bc13dd34dc4e403826793739e316a264ce00dd'
 GIT = 'C:/Program Files/Git/cmd/git.exe'
 WORK = ROOT / 'out/darwin22-input-contracts/host-probe'
@@ -158,7 +158,7 @@ int main(int argc,char **argv){
 
     def wsl(path):
         value = path.resolve().as_posix()
-        if not value.startswith('D:/Code/UniXNU-nuwa/out/'):
+        if not value.startswith('D:/Code/PortingiOS/nuwa/UniXNU-nuwa/out/'):
             raise ValueError('Only existing repo artifacts and output fixtures are allowed')
         return '/mnt/d/' + value[3:]
 

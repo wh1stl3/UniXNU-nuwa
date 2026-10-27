@@ -1,0 +1,126 @@
+{
+  "candidate_sha256": "6a3b4c7755bb586f4a9ac218fe32e924e2d5173a718f7bbb97502ad76c163385",
+  "serial_execution": true,
+  "device_accessed": false,
+  "commands": [
+    {
+      "name": "software",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-kernel-entry-probe.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v43\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v43\\software.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.2682170000043698,
+      "stdout": "{\"checks\": 42, \"passed\": true, \"candidate\": \"6a3b4c7755bb586f4a9ac218fe32e924e2d5173a718f7bbb97502ad76c163385\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-sites",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-probe-read-sites.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v43\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v43\\read-sites.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.8158013999927789,
+      "stdout": "{\"checks\": 18, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "wfe",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-probe-wfe.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v43\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v43\\wfe.json",
+        "--negative-build",
+        "reports/kernel-entry-probe/2026-10-25-v20/build.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.2770256000221707,
+      "stdout": "{\"checks\": 5, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "mapping",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\audit-entry-probe-post-mmu-mapping.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v43\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v43\\mapping.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.5651573999784887,
+      "stdout": "framebuffer PA 0xb8000000 0xb8000000 -> 0xb8000000 mapped= True\nframebuffer PA +1 page 0xb8001000 -> 0xb8001000 mapped= True\nprobe page VA 0xfffffff008489000 -> 0x8c4889000 mapped= True\narm_init KVA 0xfffffff007972848 -> 0x8c3d72848 mapped= True\nsctlr site as PA-identity VA 0x8c37c7374 -> 0x8c37c7374 mapped= True\nboot_args synthetic VA 0xfffffff013dc8000 -> 0x8d01c8000 mapped= True\n",
+      "stderr": ""
+    },
+    {
+      "name": "loader",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\audit-entry-probe-loader.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v43\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v43\\loader.json",
+        "--work",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\out\\exec-mainline-v43\\verify\\loader"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 4.711101900029462,
+      "stdout": "{\"cases\": 5, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "post-arm-init",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-post-arm-init-markers.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v43\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v43\\post-arm-init.json",
+        "--adt",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\out\\exec-mainline-v43\\launch\\kernel.macho.adt"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.8551700000534765,
+      "stdout": "{\"checks\": 8, \"passed\": true, \"reached\": {\"white\": 52703, \"arm_vm_init\": 888991}, \"pixels\": {\"256\": \"0xff0080ff\", \"288\": \"0xffffff00\", \"320\": \"0xffff00ff\", \"352\": \"0xff00ffff\", \"384\": \"0xffffffff\", \"416\": \"0x0\", \"448\": \"0xff804000\", \"480\": \"0x0\", \"512\": \"0x0\", \"544\": \"0xff008080\", \"576\": \"0xff808000\", \"608\": \"0xff8080c0\", \"640\": \"0xff808080\"}, \"stopped_symbol\": \"_bzero+0x1c\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "exception",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-post-arm-init-markers.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v43\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v43\\exception.json",
+        "--handler"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 0.4219425999908708,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-post-arm-init-markers.py\", line 57, in handler_checks\n    try: uc.emu_start(entry, 0, count=12000000)\n         ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\out\\python-tools\\unicorn\\unicorn_py3\\unicorn.py\", line 766, in emu_start\n    raise UcError(status)\nunicorn.unicorn_py3.unicorn.UcError: Invalid memory write (UC_ERR_WRITE_UNMAPPED)\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-post-arm-init-markers.py\", line 194, in <module>\n    main()\n    ~~~~^^\n  File \"D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-post-arm-init-markers.py\", line 94, in main\n    checks = handler_checks(report, candidate, checks)\n  File \"D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-post-arm-init-markers.py\", line 58, in handler_checks\n    except U.UcError as e: raise AssertionError('handler execution failed: %s' % e)\n                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: handler execution failed: Invalid memory write (UC_ERR_WRITE_UNMAPPED)\n"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-read-result.py", line 123, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-read-result.py", line 112, in main
+    assert suffix(raw,b,original,om,value)==suffix(raw,b,original,om,value,True);checks.append(dict(name=name,passed=True))
+                                            ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-read-result.py", line 86, in suffix
+    if P.F.CALLBACK<=site<P.F.CALLBACK+0x480 or P.PREVIOUS.MALLOC<=site<=P.PREVIOUS.MALLOC_RET:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: '<=' not supported between instances of 'int' and 'NoneType'

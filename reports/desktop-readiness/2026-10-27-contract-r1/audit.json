@@ -1,0 +1,201 @@
+{
+  "root_window_preview": {
+    "manifest": "SHNGROOT v1",
+    "image_bytes": 8380219392,
+    "windows": [
+      {
+        "name": "OS",
+        "offset": 1048576,
+        "raw_bytes": 5635081728,
+        "block_size": 512,
+        "read_only": true,
+        "decoded_sha256": null,
+        "source_component": "OS"
+      },
+      {
+        "name": "SystemOS",
+        "offset": 5637144576,
+        "raw_bytes": 2743074816,
+        "block_size": 512,
+        "read_only": true,
+        "decoded_sha256": "9cd738f3b0169055549df84ad6d8d13e50a2da39af618ce0522ca4e06df86849",
+        "source_component": "Cryptex1,SystemOS"
+      }
+    ],
+    "target_capacity_bytes": null,
+    "capacity_fit": null,
+    "manifest_ready": false,
+    "deployable": false,
+    "unresolved": [
+      "Decoded raw-byte SHA256 for UDIF windows",
+      "nuwa storage provider and root UUID matching",
+      "Target geometry and Data/log reservations"
+    ]
+  },
+  "appos_geometry": {
+    "format": "raw_disk_without_koly",
+    "stored_bytes": 10485760,
+    "raw_bytes": 10485760,
+    "decoded": false,
+    "geometry_only": true,
+    "footer_sha256": "076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560"
+  },
+  "inputs": [
+    {
+      "component": "OS",
+      "path": "/mnt/d/Code/PortingiOSLegacy/common/cache/donor-ios16/components/087-86698-044.dmg",
+      "before": {
+        "sha256": "80f426d5b8fca8552f95be427434f1911dbb4c2c6d28aad94f2426ddd0c92483",
+        "sha384": "103b835176572a97ae36bc5ebe4c332c40b921e1f151b844116bbda49959c46c64364d343ceb0c4e9d95a51ba60d0e51",
+        "bytes": 4730814044
+      },
+      "geometry": {
+        "format": "UDIF",
+        "stored_bytes": 4730814044,
+        "raw_bytes": 5635081728,
+        "chunks": 3638,
+        "chunk_kinds": {
+          "0x80000007": 3266,
+          "0x2": 3,
+          "0x1": 369
+        },
+        "footer_sha256": "290c44ce4baddff865f51b52ae5b2d335f0e6b70d1310183c0b15c75357c2fde",
+        "plist_sha256": "54ae1469288ce4c3e4a73391a9726248d135cdba19f061ea89f07ed723e7c8bf",
+        "decoded": false,
+        "geometry_only": true
+      },
+      "after": {
+        "sha256": "80f426d5b8fca8552f95be427434f1911dbb4c2c6d28aad94f2426ddd0c92483",
+        "sha384": "103b835176572a97ae36bc5ebe4c332c40b921e1f151b844116bbda49959c46c64364d343ceb0c4e9d95a51ba60d0e51",
+        "bytes": 4730814044
+      }
+    },
+    {
+      "component": "Cryptex1,SystemOS",
+      "path": "/mnt/d/Code/PortingiOSLegacy/common/cache/donor-ios16/components/087-86593-047.dmg",
+      "before": {
+        "sha256": "9cd738f3b0169055549df84ad6d8d13e50a2da39af618ce0522ca4e06df86849",
+        "sha384": "775e110985ba8fd0dd2ad21d3fd5a896eec8887af219fc0dbc1e55ace791de1d51ecca2477f2e650b24c557cb74a0627",
+        "bytes": 2743074816
+      },
+      "geometry": {
+        "format": "raw_disk_without_koly",
+        "stored_bytes": 2743074816,
+        "raw_bytes": 2743074816,
+        "decoded": false,
+        "geometry_only": true,
+        "footer_sha256": "076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560"
+      },
+      "after": {
+        "sha256": "9cd738f3b0169055549df84ad6d8d13e50a2da39af618ce0522ca4e06df86849",
+        "sha384": "775e110985ba8fd0dd2ad21d3fd5a896eec8887af219fc0dbc1e55ace791de1d51ecca2477f2e650b24c557cb74a0627",
+        "bytes": 2743074816
+      }
+    },
+    {
+      "component": "Cryptex1,AppOS",
+      "path": "/mnt/d/Code/PortingiOSLegacy/common/cache/donor-ios16/components/087-86715-047.dmg",
+      "before": {
+        "sha256": "391f2df322c3172b021b2874f6da5c3e78b70b3df8f502e1a4af2b1d715c4608",
+        "sha384": "853c4f945ea09b1614bedeaffc777aefdf2c5bcb15f1a66986e965207757246c2d3f8712a5a5c491cfc49a5a45e81502",
+        "bytes": 10485760
+      },
+      "geometry": {
+        "format": "raw_disk_without_koly",
+        "stored_bytes": 10485760,
+        "raw_bytes": 10485760,
+        "decoded": false,
+        "geometry_only": true,
+        "footer_sha256": "076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560"
+      },
+      "after": {
+        "sha256": "391f2df322c3172b021b2874f6da5c3e78b70b3df8f502e1a4af2b1d715c4608",
+        "sha384": "853c4f945ea09b1614bedeaffc777aefdf2c5bcb15f1a66986e965207757246c2d3f8712a5a5c491cfc49a5a45e81502",
+        "bytes": 10485760
+      }
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "/mnt/d/Code/PortingiOSLegacy/common/tools/apfs-fuse-linux/bin/apfs-fuse",
+        "-o",
+        "ro",
+        "/mnt/d/Code/PortingiOSLegacy/common/cache/donor-ios16/components/087-86698-044.dmg",
+        "/var/tmp/nuwa-desktop-contract-20261027-r1"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "mountpoint",
+        "-q",
+        "/var/tmp/nuwa-desktop-contract-20261027-r1"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "fusermount",
+        "-u",
+        "/var/tmp/nuwa-desktop-contract-20261027-r1"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "error": {
+    "type": "ValueError",
+    "message": "ProgramArguments type"
+  },
+  "mount_cleanup_complete": true,
+  "sources": [
+    {
+      "path": "scripts/desktop_root_contract.py",
+      "sha256": "05fd2e75ab297ebfca00f1cfdde36850d30cfc78c7ca57ca7dea6408eccd8175"
+    },
+    {
+      "path": "scripts/audit-desktop-root-contract.py",
+      "sha256": "ea459cbce33d8d1c2d18df909591de47ef5f8838e672794d4bd9938f5091fa90"
+    },
+    {
+      "path": "scripts/desktop_namespace.py",
+      "sha256": "62581258a5d4bdbd633693557f0f8b0e42f6ac32f1b5395937f32fea15f8e7d7"
+    },
+    {
+      "path": "scripts/audit-desktop-system.py",
+      "sha256": "a708ed2ba1a3ae6e568984e66c0b5fb5e7c3a038881b486500d643c0bf76851f"
+    },
+    {
+      "path": "scripts/audit-desktop-root.py",
+      "sha256": "1205b549abf6f2b5bfe27985a8b9d49857075ecc96358cc53637fd9e43e008f8"
+    },
+    {
+      "path": "scripts/audit-userland-closure.py",
+      "sha256": "7dfc1c9ffac4d6d3db6f9f3dabe454e656369d33e9d8e0bbd79aca88d587a91f"
+    }
+  ],
+  "parents": [
+    {
+      "path": "reports/desktop-readiness/2026-10-27-system-r1/audit.json",
+      "sha256": "ac19d5f279bf5895e02e7a5fa52827aa68c197a1ac3745ad4c4daa96262c26b9"
+    },
+    {
+      "path": "reports/desktop-readiness/2026-10-27-cache-r1/audit-r3.json",
+      "sha256": "7cb05f2e0c8f0f6b2bfa68f88c4825949c9caf0cb114ab123caaf8af93807ad6"
+    },
+    {
+      "path": "reports/desktop-readiness/2026-10-27-cache-r1/qualification.json",
+      "sha256": "25fca4cabe63d102267dde6b6b7654e4710428bb46de3fb0ffc738114d47744d"
+    }
+  ],
+  "device_accessed": false,
+  "root_assembled": false,
+  "jobs_enabled": false,
+  "release_guard_changed": false
+}

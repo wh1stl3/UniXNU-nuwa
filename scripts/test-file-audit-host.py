@@ -14,7 +14,7 @@ def main():
     target=args.output.resolve()
     if not target.is_relative_to(ROOT/'reports') or target.exists():
         raise ValueError('Fresh reports output required')
-    prefix='/mnt/d/Code/UniXNU-nuwa/'
+    prefix='/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/'
     fixture=ROOT/'out/file-read-audit/build-02'
     commands=[]
     def run(argv):
@@ -24,8 +24,8 @@ def main():
         return result.stdout.decode()
     run(['aarch64-linux-gnu-g++','-std=c++17','-static','-O2','-fshort-wchar','-Wall','-Wextra','-Werror','-Wno-unused-parameter',
          '-I',prefix+'out/file-read-audit/build-02',
-         '-I','/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include',
-         '-I','/mnt/d/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/AArch64',
+         '-I','/mnt/d/Code/PortingiOSLegacy/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include',
+         '-I','/mnt/d/Code/PortingiOSLegacy/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include/AArch64',
          prefix+'tests/file_audit_host.cpp',prefix+'package/NuwaFileAudit/FileAudit.cpp',
          prefix+'out/file-read-audit/build-02/NativeAdrenoSha256.cpp','-o',prefix+'out/file-read-audit/build-02/host-test-recorded'])
     result=run([prefix+'out/upstream-host-tests/qemu-runtime/usr/bin/qemu-aarch64',

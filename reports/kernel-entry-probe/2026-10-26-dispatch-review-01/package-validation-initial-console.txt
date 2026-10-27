@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\build_xnu_boot_package.py", line 474, in <module>
+    main()
+    ~~~~^^
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\build_xnu_boot_package.py", line 258, in main
+    print(json.dumps(validate(args.output)))
+                     ~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\build_xnu_boot_package.py", line 162, in validate
+    raise ValueError('Transition tests must use the exact shipped ADT')
+ValueError: Transition tests must use the exact shipped ADT

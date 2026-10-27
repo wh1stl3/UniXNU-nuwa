@@ -1,0 +1,68 @@
+{
+  "checks": [
+    {
+      "name": "LZFSE roundtrip",
+      "passed": true
+    },
+    {
+      "name": "undersized declared output rejected",
+      "passed": true
+    },
+    {
+      "name": "oversized declared output rejected",
+      "passed": true
+    },
+    {
+      "name": "truncated LZFSE rejected",
+      "passed": true
+    },
+    {
+      "name": "decoder resource bound enforced",
+      "passed": true
+    },
+    {
+      "name": "stream suffix rejected 0x80000005",
+      "passed": true
+    },
+    {
+      "name": "stream suffix rejected 0x80000006",
+      "passed": true
+    },
+    {
+      "name": "all six chunk kinds with actual per-chunk/file readback",
+      "passed": true
+    },
+    {
+      "name": "original fixture bytes unchanged",
+      "passed": true
+    },
+    {
+      "name": "existing output rejected",
+      "passed": true
+    },
+    {
+      "name": "unsupported chunk rejected before output",
+      "passed": true
+    },
+    {
+      "name": "logical gap rejected before output",
+      "passed": true
+    }
+  ],
+  "library_sha256": "fa61255b26dbaa33be0d9db90e5227b15f96eac3af5d488943073976035cb9a0",
+  "sources": [
+    {
+      "path": "scripts/udif_raw_decode.py",
+      "sha256": "700d01ba09a99f6462792d06a5502d26723e760ac63032ad9508119a4ebdd312"
+    },
+    {
+      "path": "scripts/test-udif-raw-decode.py",
+      "sha256": "ea59a8e530ce2d998e9bd6fcb4d4b8e0c36ccf109ca7a66cd001dd6a5178bf9d"
+    },
+    {
+      "path": "scripts/desktop_root_contract.py",
+      "sha256": "233b80a933dd4602b0b3fcce1c863a3f8e22322ce21da317c5be8882d738a658"
+    }
+  ],
+  "device_accessed": false
+}

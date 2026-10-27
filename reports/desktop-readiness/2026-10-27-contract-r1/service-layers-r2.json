@@ -1,0 +1,2595 @@
+{
+  "parents": [
+    {
+      "path": "reports/desktop-readiness/2026-10-27-contract-r1/audit-r2.json",
+      "sha256": "c2020a42681111af7db73736d1361fd422b55fcb83afd335a37400a7daa1d4db"
+    },
+    {
+      "path": "reports/desktop-readiness/2026-10-27-cache-r1/audit-r3.json",
+      "sha256": "7cb05f2e0c8f0f6b2bfa68f88c4825949c9caf0cb114ab123caaf8af93807ad6"
+    }
+  ],
+  "programs": [
+    {
+      "label": "com.apple.Safari.passwordbreachd",
+      "program": "/System/Cryptexes/App/usr/libexec/passwordbreachd",
+      "present": true,
+      "namespace": {
+        "path": "/System/Cryptexes/App/usr/libexec/passwordbreachd",
+        "canonical": "/System/Cryptexes/App/usr/libexec/passwordbreachd",
+        "component": "Cryptex1,AppOS",
+        "physical": "/var/tmp/nuwa-service-layers-20261027-r2/1/root/usr/libexec/passwordbreachd",
+        "bytes": 168240,
+        "mode": "0o755",
+        "uid": 0,
+        "gid": 0,
+        "symlinks": [],
+        "regular": true,
+        "directory": false
+      },
+      "sha256": "2a0c3869099b72005d3b829a9e992a446dad5a6e531cfb077375cf40f44a67de",
+      "macho": {
+        "format": "universal_macho",
+        "slices": [
+          {
+            "cpu": "0x100000c",
+            "subtype": 0,
+            "offset": 16384,
+            "bytes": 69936,
+            "dependencies": [
+              {
+                "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/SafariShared.framework/SafariShared",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libobjc.A.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libSystem.B.dylib",
+                "weak": false,
+                "command": "0xc"
+              }
+            ],
+            "rpaths": [],
+            "filetype": 2
+          },
+          {
+            "cpu": "0x100000c",
+            "subtype": 2147483650,
+            "offset": 98304,
+            "bytes": 69936,
+            "dependencies": [
+              {
+                "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/SafariShared.framework/SafariShared",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libobjc.A.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libSystem.B.dylib",
+                "weak": false,
+                "command": "0xc"
+              }
+            ],
+            "rpaths": [],
+            "filetype": 2
+          }
+        ],
+        "selected": {
+          "cpu": "0x100000c",
+          "subtype": 0,
+          "offset": 16384,
+          "bytes": 69936,
+          "dependencies": [
+            {
+              "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/SafariShared.framework/SafariShared",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/libobjc.A.dylib",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/libSystem.B.dylib",
+              "weak": false,
+              "command": "0xc"
+            }
+          ],
+          "rpaths": [],
+          "filetype": 2
+        },
+        "scope": "ARM64-all selection only; no ARM64e fallback, signatures or runtime ABI qualification"
+      },
+      "dependencies_in_cache": [
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariShared.framework/SafariShared",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/libobjc.A.dylib",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/libSystem.B.dylib",
+          "weak": false,
+          "command": "0xc"
+        }
+      ],
+      "other_dependency_paths": [],
+      "enabled": false
+    },
+    {
+      "label": "com.apple.SafariBookmarksSyncAgent",
+      "program": "/System/Cryptexes/App/System/Library/CoreServices/SafariSupport.bundle/SafariBookmarksSyncAgent",
+      "present": true,
+      "namespace": {
+        "path": "/System/Cryptexes/App/System/Library/CoreServices/SafariSupport.bundle/SafariBookmarksSyncAgent",
+        "canonical": "/System/Cryptexes/App/System/Library/CoreServices/SafariSupport.bundle/SafariBookmarksSyncAgent",
+        "component": "Cryptex1,AppOS",
+        "physical": "/var/tmp/nuwa-service-layers-20261027-r2/1/root/System/Library/CoreServices/SafariSupport.bundle/SafariBookmarksSyncAgent",
+        "bytes": 2463008,
+        "mode": "0o755",
+        "uid": 0,
+        "gid": 0,
+        "symlinks": [],
+        "regular": true,
+        "directory": false
+      },
+      "sha256": "76fa74bc59c8b3611e28220cd316ca1b74896871a99918c8f1fa4aa1de8d9d5f",
+      "macho": {
+        "format": "universal_macho",
+        "slices": [
+          {
+            "cpu": "0x100000c",
+            "subtype": 0,
+            "offset": 16384,
+            "bytes": 1184256,
+            "dependencies": [
+              {
+                "path": "/System/Library/PrivateFrameworks/AppSupport.framework/AppSupport",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libMobileGestalt.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/WebBookmarks.framework/WebBookmarks",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libCTGreenTeaLogger.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/SharedWithYou.framework/SharedWithYou",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/FrontBoardServices.framework/FrontBoardServices",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/RunningBoardServices.framework/RunningBoardServices",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/SafariShared.framework/SafariShared",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/AuthKit.framework/AuthKit",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/Accounts.framework/Accounts",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/ApplePushService.framework/ApplePushService",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/CloudKit.framework/CloudKit",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/AppleAccount.framework/AppleAccount",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libsqlite3.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libc++.1.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libobjc.A.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libSystem.B.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+                "weak": false,
+                "command": "0xc"
+              }
+            ],
+            "rpaths": [],
+            "filetype": 2
+          },
+          {
+            "cpu": "0x100000c",
+            "subtype": 2147483650,
+            "offset": 1212416,
+            "bytes": 1250592,
+            "dependencies": [
+              {
+                "path": "/System/Library/PrivateFrameworks/AppSupport.framework/AppSupport",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libMobileGestalt.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/WebBookmarks.framework/WebBookmarks",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libCTGreenTeaLogger.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/SharedWithYou.framework/SharedWithYou",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/FrontBoardServices.framework/FrontBoardServices",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/RunningBoardServices.framework/RunningBoardServices",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/SafariShared.framework/SafariShared",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/AuthKit.framework/AuthKit",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/Accounts.framework/Accounts",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/ApplePushService.framework/ApplePushService",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/CloudKit.framework/CloudKit",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/AppleAccount.framework/AppleAccount",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libsqlite3.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libc++.1.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libobjc.A.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libSystem.B.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+                "weak": false,
+                "command": "0xc"
+              }
+            ],
+            "rpaths": [],
+            "filetype": 2
+          }
+        ],
+        "selected": {
+          "cpu": "0x100000c",
+          "subtype": 0,
+          "offset": 16384,
+          "bytes": 1184256,
+          "dependencies": [
+            {
+              "path": "/System/Library/PrivateFrameworks/AppSupport.framework/AppSupport",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/libMobileGestalt.dylib",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/WebBookmarks.framework/WebBookmarks",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/libCTGreenTeaLogger.dylib",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/SharedWithYou.framework/SharedWithYou",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/FrontBoardServices.framework/FrontBoardServices",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/RunningBoardServices.framework/RunningBoardServices",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/SafariShared.framework/SafariShared",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/AuthKit.framework/AuthKit",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/Accounts.framework/Accounts",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/ApplePushService.framework/ApplePushService",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/CloudKit.framework/CloudKit",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/AppleAccount.framework/AppleAccount",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/libsqlite3.dylib",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/libc++.1.dylib",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/libobjc.A.dylib",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/libSystem.B.dylib",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+              "weak": false,
+              "command": "0xc"
+            }
+          ],
+          "rpaths": [],
+          "filetype": 2
+        },
+        "scope": "ARM64-all selection only; no ARM64e fallback, signatures or runtime ABI qualification"
+      },
+      "dependencies_in_cache": [
+        {
+          "path": "/System/Library/PrivateFrameworks/AppSupport.framework/AppSupport",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/libMobileGestalt.dylib",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/WebBookmarks.framework/WebBookmarks",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/libCTGreenTeaLogger.dylib",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/SharedWithYou.framework/SharedWithYou",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/FrontBoardServices.framework/FrontBoardServices",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/RunningBoardServices.framework/RunningBoardServices",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariShared.framework/SafariShared",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/AuthKit.framework/AuthKit",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/Accounts.framework/Accounts",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/ApplePushService.framework/ApplePushService",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/CloudKit.framework/CloudKit",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/AppleAccount.framework/AppleAccount",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/libsqlite3.dylib",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/libc++.1.dylib",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/libobjc.A.dylib",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/libSystem.B.dylib",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+          "weak": false,
+          "command": "0xc"
+        }
+      ],
+      "other_dependency_paths": [],
+      "enabled": false
+    },
+    {
+      "label": "com.apple.webinspectord",
+      "program": "/System/Cryptexes/App/usr/libexec/webinspectord",
+      "present": true,
+      "namespace": {
+        "path": "/System/Cryptexes/App/usr/libexec/webinspectord",
+        "canonical": "/System/Cryptexes/App/usr/libexec/webinspectord",
+        "component": "Cryptex1,AppOS",
+        "physical": "/var/tmp/nuwa-service-layers-20261027-r2/1/root/usr/libexec/webinspectord",
+        "bytes": 168416,
+        "mode": "0o755",
+        "uid": 0,
+        "gid": 0,
+        "symlinks": [],
+        "regular": true,
+        "directory": false
+      },
+      "sha256": "dbb953d5251335d5728e33372ff4c11afbb92e237a4d348d71cd2b29ab90ad5c",
+      "macho": {
+        "format": "universal_macho",
+        "slices": [
+          {
+            "cpu": "0x100000c",
+            "subtype": 0,
+            "offset": 16384,
+            "bytes": 70112,
+            "dependencies": [
+              {
+                "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/WebInspector.framework/WebInspector",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libobjc.A.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libc++.1.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libSystem.B.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+                "weak": false,
+                "command": "0xc"
+              }
+            ],
+            "rpaths": [],
+            "filetype": 2
+          },
+          {
+            "cpu": "0x100000c",
+            "subtype": 2147483650,
+            "offset": 98304,
+            "bytes": 70112,
+            "dependencies": [
+              {
+                "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/WebInspector.framework/WebInspector",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libobjc.A.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libc++.1.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libSystem.B.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+                "weak": false,
+                "command": "0xc"
+              }
+            ],
+            "rpaths": [],
+            "filetype": 2
+          }
+        ],
+        "selected": {
+          "cpu": "0x100000c",
+          "subtype": 0,
+          "offset": 16384,
+          "bytes": 70112,
+          "dependencies": [
+            {
+              "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/WebInspector.framework/WebInspector",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/libobjc.A.dylib",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/libc++.1.dylib",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/libSystem.B.dylib",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+              "weak": false,
+              "command": "0xc"
+            }
+          ],
+          "rpaths": [],
+          "filetype": 2
+        },
+        "scope": "ARM64-all selection only; no ARM64e fallback, signatures or runtime ABI qualification"
+      },
+      "dependencies_in_cache": [
+        {
+          "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/WebInspector.framework/WebInspector",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/libobjc.A.dylib",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/libc++.1.dylib",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/libSystem.B.dylib",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+          "weak": false,
+          "command": "0xc"
+        }
+      ],
+      "other_dependency_paths": [],
+      "enabled": false
+    },
+    {
+      "label": "com.apple.Safari.History",
+      "program": "/System/Cryptexes/App/usr/libexec/com.apple.Safari.History",
+      "present": true,
+      "namespace": {
+        "path": "/System/Cryptexes/App/usr/libexec/com.apple.Safari.History",
+        "canonical": "/System/Cryptexes/App/usr/libexec/com.apple.Safari.History",
+        "component": "Cryptex1,AppOS",
+        "physical": "/var/tmp/nuwa-service-layers-20261027-r2/1/root/usr/libexec/com.apple.Safari.History",
+        "bytes": 137696,
+        "mode": "0o755",
+        "uid": 0,
+        "gid": 0,
+        "symlinks": [],
+        "regular": true,
+        "directory": false
+      },
+      "sha256": "ee6df89abeff704617462a9e708b9573289760fbb89a469fa77aad29ed711ab2",
+      "macho": {
+        "format": "universal_macho",
+        "slices": [
+          {
+            "cpu": "0x100000c",
+            "subtype": 0,
+            "offset": 16384,
+            "bytes": 55776,
+            "dependencies": [
+              {
+                "path": "/System/Library/PrivateFrameworks/SafariShared.framework/SafariShared",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libobjc.A.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libSystem.B.dylib",
+                "weak": false,
+                "command": "0xc"
+              }
+            ],
+            "rpaths": [],
+            "filetype": 2
+          },
+          {
+            "cpu": "0x100000c",
+            "subtype": 2147483650,
+            "offset": 81920,
+            "bytes": 55776,
+            "dependencies": [
+              {
+                "path": "/System/Library/PrivateFrameworks/SafariShared.framework/SafariShared",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libobjc.A.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libSystem.B.dylib",
+                "weak": false,
+                "command": "0xc"
+              }
+            ],
+            "rpaths": [],
+            "filetype": 2
+          }
+        ],
+        "selected": {
+          "cpu": "0x100000c",
+          "subtype": 0,
+          "offset": 16384,
+          "bytes": 55776,
+          "dependencies": [
+            {
+              "path": "/System/Library/PrivateFrameworks/SafariShared.framework/SafariShared",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/libobjc.A.dylib",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/libSystem.B.dylib",
+              "weak": false,
+              "command": "0xc"
+            }
+          ],
+          "rpaths": [],
+          "filetype": 2
+        },
+        "scope": "ARM64-all selection only; no ARM64e fallback, signatures or runtime ABI qualification"
+      },
+      "dependencies_in_cache": [
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariShared.framework/SafariShared",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/libobjc.A.dylib",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/libSystem.B.dylib",
+          "weak": false,
+          "command": "0xc"
+        }
+      ],
+      "other_dependency_paths": [],
+      "enabled": false
+    },
+    {
+      "label": "com.apple.safarifetcherd",
+      "program": "/System/Cryptexes/App/usr/libexec/safarifetcherd",
+      "present": true,
+      "namespace": {
+        "path": "/System/Cryptexes/App/usr/libexec/safarifetcherd",
+        "canonical": "/System/Cryptexes/App/usr/libexec/safarifetcherd",
+        "component": "Cryptex1,AppOS",
+        "physical": "/var/tmp/nuwa-service-layers-20261027-r2/1/root/usr/libexec/safarifetcherd",
+        "bytes": 366224,
+        "mode": "0o755",
+        "uid": 0,
+        "gid": 0,
+        "symlinks": [],
+        "regular": true,
+        "directory": false
+      },
+      "sha256": "e043e173a71edc59db87172b72c93f20e32a9a1601853ffda459f6f14dba698e",
+      "macho": {
+        "format": "universal_macho",
+        "slices": [
+          {
+            "cpu": "0x100000c",
+            "subtype": 0,
+            "offset": 16384,
+            "bytes": 169616,
+            "dependencies": [
+              {
+                "path": "/System/Library/PrivateFrameworks/BackgroundTaskAgent.framework/BackgroundTaskAgent",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/MobileSafari.framework/MobileSafari",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/QuartzCore.framework/QuartzCore",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/ImageIO.framework/ImageIO",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/CFNetwork.framework/CFNetwork",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libMobileGestalt.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/WebKit.framework/WebKit",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/AppSupport.framework/AppSupport",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/GraphicsServices.framework/GraphicsServices",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/UIKit.framework/UIKit",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/WebBookmarks.framework/WebBookmarks",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/WebKitLegacy.framework/WebKitLegacy",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/WebUI.framework/WebUI",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/SafariServices.framework/SafariServices",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/SafariSharedUI.framework/SafariSharedUI",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libobjc.A.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libc++.1.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libSystem.B.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/SoftLinking.framework/SoftLinking",
+                "weak": false,
+                "command": "0xc"
+              }
+            ],
+            "rpaths": [],
+            "filetype": 2
+          },
+          {
+            "cpu": "0x100000c",
+            "subtype": 2147483650,
+            "offset": 196608,
+            "bytes": 169616,
+            "dependencies": [
+              {
+                "path": "/System/Library/PrivateFrameworks/BackgroundTaskAgent.framework/BackgroundTaskAgent",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/MobileSafari.framework/MobileSafari",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/QuartzCore.framework/QuartzCore",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/ImageIO.framework/ImageIO",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/CFNetwork.framework/CFNetwork",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libMobileGestalt.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/WebKit.framework/WebKit",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/AppSupport.framework/AppSupport",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/GraphicsServices.framework/GraphicsServices",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/UIKit.framework/UIKit",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/WebBookmarks.framework/WebBookmarks",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/WebKitLegacy.framework/WebKitLegacy",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/WebUI.framework/WebUI",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/SafariServices.framework/SafariServices",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/SafariSharedUI.framework/SafariSharedUI",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libobjc.A.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libc++.1.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libSystem.B.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/SoftLinking.framework/SoftLinking",
+                "weak": false,
+                "command": "0xc"
+              }
+            ],
+            "rpaths": [],
+            "filetype": 2
+          }
+        ],
+        "selected": {
+          "cpu": "0x100000c",
+          "subtype": 0,
+          "offset": 16384,
+          "bytes": 169616,
+          "dependencies": [
+            {
+              "path": "/System/Library/PrivateFrameworks/BackgroundTaskAgent.framework/BackgroundTaskAgent",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/MobileSafari.framework/MobileSafari",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/QuartzCore.framework/QuartzCore",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/ImageIO.framework/ImageIO",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/CFNetwork.framework/CFNetwork",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/libMobileGestalt.dylib",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/WebKit.framework/WebKit",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/AppSupport.framework/AppSupport",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/GraphicsServices.framework/GraphicsServices",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/UIKit.framework/UIKit",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/WebBookmarks.framework/WebBookmarks",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/WebKitLegacy.framework/WebKitLegacy",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/WebUI.framework/WebUI",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/SafariServices.framework/SafariServices",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/SafariSharedUI.framework/SafariSharedUI",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/libobjc.A.dylib",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/libc++.1.dylib",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/libSystem.B.dylib",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/SoftLinking.framework/SoftLinking",
+              "weak": false,
+              "command": "0xc"
+            }
+          ],
+          "rpaths": [],
+          "filetype": 2
+        },
+        "scope": "ARM64-all selection only; no ARM64e fallback, signatures or runtime ABI qualification"
+      },
+      "dependencies_in_cache": [
+        {
+          "path": "/System/Library/PrivateFrameworks/BackgroundTaskAgent.framework/BackgroundTaskAgent",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/MobileSafari.framework/MobileSafari",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/QuartzCore.framework/QuartzCore",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/ImageIO.framework/ImageIO",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/CFNetwork.framework/CFNetwork",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/libMobileGestalt.dylib",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/WebKit.framework/WebKit",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/AppSupport.framework/AppSupport",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/GraphicsServices.framework/GraphicsServices",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/UIKit.framework/UIKit",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/WebBookmarks.framework/WebBookmarks",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/WebKitLegacy.framework/WebKitLegacy",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/WebUI.framework/WebUI",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/SafariServices.framework/SafariServices",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariSharedUI.framework/SafariSharedUI",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/libobjc.A.dylib",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/libc++.1.dylib",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/libSystem.B.dylib",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SoftLinking.framework/SoftLinking",
+          "weak": false,
+          "command": "0xc"
+        }
+      ],
+      "other_dependency_paths": [],
+      "enabled": false
+    },
+    {
+      "label": "com.apple.webkit.adattributiond",
+      "program": "/System/Cryptexes/OS/System/Library/Frameworks/WebKit.framework/Daemons/adattributiond",
+      "present": true,
+      "namespace": {
+        "path": "/System/Cryptexes/OS/System/Library/Frameworks/WebKit.framework/Daemons/adattributiond",
+        "canonical": "/System/Cryptexes/OS/System/Library/Frameworks/WebKit.framework/Daemons/adattributiond",
+        "component": "Cryptex1,SystemOS",
+        "physical": "/var/tmp/nuwa-service-layers-20261027-r2/0/root/System/Library/Frameworks/WebKit.framework/Daemons/adattributiond",
+        "bytes": 52144,
+        "mode": "0o755",
+        "uid": 0,
+        "gid": 0,
+        "symlinks": [],
+        "regular": true,
+        "directory": false
+      },
+      "sha256": "2a4ea738a9a9d6e841496c5aa4872cd07f2029b9f7d1263c5de989592832d8b1",
+      "macho": {
+        "format": "thin_macho",
+        "selected": {
+          "dependencies": [
+            {
+              "path": "/System/Library/Frameworks/WebKit.framework/WebKit",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/libc++.1.dylib",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/libSystem.B.dylib",
+              "weak": false,
+              "command": "0xc"
+            }
+          ],
+          "rpaths": [],
+          "cpu": "0x100000c",
+          "subtype": 0,
+          "filetype": 2
+        },
+        "slices": [
+          {
+            "offset": 0,
+            "bytes": 52144,
+            "dependencies": [
+              {
+                "path": "/System/Library/Frameworks/WebKit.framework/WebKit",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libc++.1.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libSystem.B.dylib",
+                "weak": false,
+                "command": "0xc"
+              }
+            ],
+            "rpaths": [],
+            "cpu": "0x100000c",
+            "subtype": 0,
+            "filetype": 2
+          }
+        ],
+        "scope": "Header/dependencies; not signatures or runtime ABI"
+      },
+      "dependencies_in_cache": [
+        {
+          "path": "/System/Library/Frameworks/WebKit.framework/WebKit",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/libc++.1.dylib",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/libSystem.B.dylib",
+          "weak": false,
+          "command": "0xc"
+        }
+      ],
+      "other_dependency_paths": [],
+      "enabled": false
+    },
+    {
+      "label": "com.apple.WebBookmarks.webbookmarksd",
+      "program": "/System/Cryptexes/App/usr/libexec/webbookmarksd",
+      "present": true,
+      "namespace": {
+        "path": "/System/Cryptexes/App/usr/libexec/webbookmarksd",
+        "canonical": "/System/Cryptexes/App/usr/libexec/webbookmarksd",
+        "component": "Cryptex1,AppOS",
+        "physical": "/var/tmp/nuwa-service-layers-20261027-r2/1/root/usr/libexec/webbookmarksd",
+        "bytes": 372608,
+        "mode": "0o755",
+        "uid": 0,
+        "gid": 0,
+        "symlinks": [],
+        "regular": true,
+        "directory": false
+      },
+      "sha256": "ad1ef9a1e9e479048a01d55ee9de89d9a08cea4d0ff21422cbcccb59e9ca807c",
+      "macho": {
+        "format": "universal_macho",
+        "slices": [
+          {
+            "cpu": "0x100000c",
+            "subtype": 0,
+            "offset": 16384,
+            "bytes": 175936,
+            "dependencies": [
+              {
+                "path": "/System/Library/PrivateFrameworks/CacheDelete.framework/CacheDelete",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/liblockdown.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/MobileSafari.framework/MobileSafari",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/SafariServices.framework/SafariServices",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/AppleAccount.framework/AppleAccount",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/Accounts.framework/Accounts",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/MobileAsset.framework/MobileAsset",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libMobileGestalt.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/AppSupport.framework/AppSupport",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/CFNetwork.framework/CFNetwork",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/SpringBoardServices.framework/SpringBoardServices",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/UIKit.framework/UIKit",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/WebBookmarks.framework/WebBookmarks",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/WebKit.framework/WebKit",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/WebKitLegacy.framework/WebKitLegacy",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/WebUI.framework/WebUI",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/CoreServices.framework/CoreServices",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libobjc.A.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libc++.1.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libSystem.B.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+                "weak": false,
+                "command": "0xc"
+              }
+            ],
+            "rpaths": [],
+            "filetype": 2
+          },
+          {
+            "cpu": "0x100000c",
+            "subtype": 2147483650,
+            "offset": 196608,
+            "bytes": 176000,
+            "dependencies": [
+              {
+                "path": "/System/Library/PrivateFrameworks/CacheDelete.framework/CacheDelete",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/liblockdown.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/MobileSafari.framework/MobileSafari",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/SafariServices.framework/SafariServices",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/AppleAccount.framework/AppleAccount",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/Accounts.framework/Accounts",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/MobileAsset.framework/MobileAsset",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libMobileGestalt.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/AppSupport.framework/AppSupport",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/CFNetwork.framework/CFNetwork",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/SpringBoardServices.framework/SpringBoardServices",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/UIKit.framework/UIKit",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/WebBookmarks.framework/WebBookmarks",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/WebKit.framework/WebKit",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/WebKitLegacy.framework/WebKitLegacy",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/PrivateFrameworks/WebUI.framework/WebUI",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/CoreServices.framework/CoreServices",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libobjc.A.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libc++.1.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libSystem.B.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+                "weak": false,
+                "command": "0xc"
+              }
+            ],
+            "rpaths": [],
+            "filetype": 2
+          }
+        ],
+        "selected": {
+          "cpu": "0x100000c",
+          "subtype": 0,
+          "offset": 16384,
+          "bytes": 175936,
+          "dependencies": [
+            {
+              "path": "/System/Library/PrivateFrameworks/CacheDelete.framework/CacheDelete",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/liblockdown.dylib",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/MobileSafari.framework/MobileSafari",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/SafariServices.framework/SafariServices",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/AppleAccount.framework/AppleAccount",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/Accounts.framework/Accounts",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/MobileAsset.framework/MobileAsset",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/libMobileGestalt.dylib",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/AppSupport.framework/AppSupport",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/CFNetwork.framework/CFNetwork",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/SpringBoardServices.framework/SpringBoardServices",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/UIKit.framework/UIKit",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/WebBookmarks.framework/WebBookmarks",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/WebKit.framework/WebKit",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/WebKitLegacy.framework/WebKitLegacy",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/PrivateFrameworks/WebUI.framework/WebUI",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/CoreServices.framework/CoreServices",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/libobjc.A.dylib",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/libc++.1.dylib",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/libSystem.B.dylib",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+              "weak": false,
+              "command": "0xc"
+            }
+          ],
+          "rpaths": [],
+          "filetype": 2
+        },
+        "scope": "ARM64-all selection only; no ARM64e fallback, signatures or runtime ABI qualification"
+      },
+      "dependencies_in_cache": [
+        {
+          "path": "/System/Library/PrivateFrameworks/CacheDelete.framework/CacheDelete",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/liblockdown.dylib",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/MobileSafari.framework/MobileSafari",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/SafariServices.framework/SafariServices",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/AppleAccount.framework/AppleAccount",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/Accounts.framework/Accounts",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/MobileAsset.framework/MobileAsset",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/libMobileGestalt.dylib",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/AppSupport.framework/AppSupport",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/CFNetwork.framework/CFNetwork",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SpringBoardServices.framework/SpringBoardServices",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/UIKit.framework/UIKit",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/WebBookmarks.framework/WebBookmarks",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/WebKit.framework/WebKit",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/WebKitLegacy.framework/WebKitLegacy",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/WebUI.framework/WebUI",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreServices.framework/CoreServices",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/libobjc.A.dylib",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/libc++.1.dylib",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/libSystem.B.dylib",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+          "weak": false,
+          "command": "0xc"
+        }
+      ],
+      "other_dependency_paths": [],
+      "enabled": false
+    },
+    {
+      "label": "com.apple.AuthenticationServicesCore.AuthenticationServicesAgent",
+      "program": "/System/Cryptexes/App/usr/libexec/AuthenticationServicesAgent",
+      "present": true,
+      "namespace": {
+        "path": "/System/Cryptexes/App/usr/libexec/AuthenticationServicesAgent",
+        "canonical": "/System/Cryptexes/App/usr/libexec/AuthenticationServicesAgent",
+        "component": "Cryptex1,AppOS",
+        "physical": "/var/tmp/nuwa-service-layers-20261027-r2/1/root/usr/libexec/AuthenticationServicesAgent",
+        "bytes": 138384,
+        "mode": "0o755",
+        "uid": 0,
+        "gid": 0,
+        "symlinks": [],
+        "regular": true,
+        "directory": false
+      },
+      "sha256": "e491c47a959628330c836c40ed7e8fed983c41cda05c014a6db937f74d77a7b7",
+      "macho": {
+        "format": "universal_macho",
+        "slices": [
+          {
+            "cpu": "0x100000c",
+            "subtype": 0,
+            "offset": 16384,
+            "bytes": 56464,
+            "dependencies": [
+              {
+                "path": "/System/Library/Frameworks/AuthenticationServices.framework/AuthenticationServices",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libobjc.A.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libSystem.B.dylib",
+                "weak": false,
+                "command": "0xc"
+              }
+            ],
+            "rpaths": [],
+            "filetype": 2
+          },
+          {
+            "cpu": "0x100000c",
+            "subtype": 2147483650,
+            "offset": 81920,
+            "bytes": 56464,
+            "dependencies": [
+              {
+                "path": "/System/Library/Frameworks/AuthenticationServices.framework/AuthenticationServices",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libobjc.A.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libSystem.B.dylib",
+                "weak": false,
+                "command": "0xc"
+              }
+            ],
+            "rpaths": [],
+            "filetype": 2
+          }
+        ],
+        "selected": {
+          "cpu": "0x100000c",
+          "subtype": 0,
+          "offset": 16384,
+          "bytes": 56464,
+          "dependencies": [
+            {
+              "path": "/System/Library/Frameworks/AuthenticationServices.framework/AuthenticationServices",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/libobjc.A.dylib",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/libSystem.B.dylib",
+              "weak": false,
+              "command": "0xc"
+            }
+          ],
+          "rpaths": [],
+          "filetype": 2
+        },
+        "scope": "ARM64-all selection only; no ARM64e fallback, signatures or runtime ABI qualification"
+      },
+      "dependencies_in_cache": [
+        {
+          "path": "/System/Library/Frameworks/AuthenticationServices.framework/AuthenticationServices",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/libobjc.A.dylib",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/libSystem.B.dylib",
+          "weak": false,
+          "command": "0xc"
+        }
+      ],
+      "other_dependency_paths": [],
+      "enabled": false
+    },
+    {
+      "label": "com.apple.webkit.webpushd",
+      "program": "/System/Cryptexes/App/usr/libexec/webpushd",
+      "present": true,
+      "namespace": {
+        "path": "/System/Cryptexes/App/usr/libexec/webpushd",
+        "canonical": "/System/Cryptexes/App/usr/libexec/webpushd",
+        "component": "Cryptex1,AppOS",
+        "physical": "/var/tmp/nuwa-service-layers-20261027-r2/1/root/usr/libexec/webpushd",
+        "bytes": 134496,
+        "mode": "0o755",
+        "uid": 0,
+        "gid": 0,
+        "symlinks": [],
+        "regular": true,
+        "directory": false
+      },
+      "sha256": "08fee09e2e3f8d20b03d44d18ca5a12a9dac83727c19ccd0a2ecb3ffa5dad3e4",
+      "macho": {
+        "format": "universal_macho",
+        "slices": [
+          {
+            "cpu": "0x100000c",
+            "subtype": 0,
+            "offset": 16384,
+            "bytes": 52576,
+            "dependencies": [
+              {
+                "path": "/System/Library/Frameworks/WebKit.framework/WebKit",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libc++.1.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libSystem.B.dylib",
+                "weak": false,
+                "command": "0xc"
+              }
+            ],
+            "rpaths": [],
+            "filetype": 2
+          },
+          {
+            "cpu": "0x100000c",
+            "subtype": 2147483650,
+            "offset": 81920,
+            "bytes": 52576,
+            "dependencies": [
+              {
+                "path": "/System/Library/Frameworks/WebKit.framework/WebKit",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libc++.1.dylib",
+                "weak": false,
+                "command": "0xc"
+              },
+              {
+                "path": "/usr/lib/libSystem.B.dylib",
+                "weak": false,
+                "command": "0xc"
+              }
+            ],
+            "rpaths": [],
+            "filetype": 2
+          }
+        ],
+        "selected": {
+          "cpu": "0x100000c",
+          "subtype": 0,
+          "offset": 16384,
+          "bytes": 52576,
+          "dependencies": [
+            {
+              "path": "/System/Library/Frameworks/WebKit.framework/WebKit",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/libc++.1.dylib",
+              "weak": false,
+              "command": "0xc"
+            },
+            {
+              "path": "/usr/lib/libSystem.B.dylib",
+              "weak": false,
+              "command": "0xc"
+            }
+          ],
+          "rpaths": [],
+          "filetype": 2
+        },
+        "scope": "ARM64-all selection only; no ARM64e fallback, signatures or runtime ABI qualification"
+      },
+      "dependencies_in_cache": [
+        {
+          "path": "/System/Library/Frameworks/WebKit.framework/WebKit",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/libc++.1.dylib",
+          "weak": false,
+          "command": "0xc"
+        },
+        {
+          "path": "/usr/lib/libSystem.B.dylib",
+          "weak": false,
+          "command": "0xc"
+        }
+      ],
+      "other_dependency_paths": [],
+      "enabled": false
+    }
+  ],
+  "remaining_os_only": [
+    {
+      "label": "com.apple.sntpd",
+      "program": "/usr/sbin/sntpd",
+      "scope": "Absent from OS inventory; applicability not inferred"
+    },
+    {
+      "label": "com.apple.dietappleh13camerad",
+      "program": "/usr/sbin/dietappleh13camerad",
+      "scope": "Absent from OS inventory; applicability not inferred"
+    },
+    {
+      "label": "com.apple.dietapplecamerad",
+      "program": "/usr/sbin/dietapplecamerad",
+      "scope": "Absent from OS inventory; applicability not inferred"
+    },
+    {
+      "label": "com.apple.factory.NFQRCoded",
+      "program": "/Developer/usr/local/libexec/NFQRCoded",
+      "scope": "Absent from OS inventory; applicability not inferred"
+    }
+  ],
+  "inputs": [
+    {
+      "component": "Cryptex1,SystemOS",
+      "path": "/mnt/d/Code/PortingiOSLegacy/common/cache/donor-ios16/components/087-86593-047.dmg",
+      "before": {
+        "sha256": "9cd738f3b0169055549df84ad6d8d13e50a2da39af618ce0522ca4e06df86849",
+        "sha384": "775e110985ba8fd0dd2ad21d3fd5a896eec8887af219fc0dbc1e55ace791de1d51ecca2477f2e650b24c557cb74a0627",
+        "bytes": 2743074816
+      },
+      "after": {
+        "sha256": "9cd738f3b0169055549df84ad6d8d13e50a2da39af618ce0522ca4e06df86849",
+        "sha384": "775e110985ba8fd0dd2ad21d3fd5a896eec8887af219fc0dbc1e55ace791de1d51ecca2477f2e650b24c557cb74a0627",
+        "bytes": 2743074816
+      }
+    },
+    {
+      "component": "Cryptex1,AppOS",
+      "path": "/mnt/d/Code/PortingiOSLegacy/common/cache/donor-ios16/components/087-86715-047.dmg",
+      "before": {
+        "sha256": "391f2df322c3172b021b2874f6da5c3e78b70b3df8f502e1a4af2b1d715c4608",
+        "sha384": "853c4f945ea09b1614bedeaffc777aefdf2c5bcb15f1a66986e965207757246c2d3f8712a5a5c491cfc49a5a45e81502",
+        "bytes": 10485760
+      },
+      "after": {
+        "sha256": "391f2df322c3172b021b2874f6da5c3e78b70b3df8f502e1a4af2b1d715c4608",
+        "sha384": "853c4f945ea09b1614bedeaffc777aefdf2c5bcb15f1a66986e965207757246c2d3f8712a5a5c491cfc49a5a45e81502",
+        "bytes": 10485760
+      }
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "/mnt/d/Code/PortingiOSLegacy/common/tools/apfs-fuse-linux/bin/apfs-fuse",
+        "-o",
+        "ro",
+        "/mnt/d/Code/PortingiOSLegacy/common/cache/donor-ios16/components/087-86593-047.dmg",
+        "/var/tmp/nuwa-service-layers-20261027-r2/0"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "mountpoint",
+        "-q",
+        "/var/tmp/nuwa-service-layers-20261027-r2/0"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/mnt/d/Code/PortingiOSLegacy/common/tools/apfs-fuse-linux/bin/apfs-fuse",
+        "-o",
+        "ro",
+        "/mnt/d/Code/PortingiOSLegacy/common/cache/donor-ios16/components/087-86715-047.dmg",
+        "/var/tmp/nuwa-service-layers-20261027-r2/1"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "mountpoint",
+        "-q",
+        "/var/tmp/nuwa-service-layers-20261027-r2/1"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "fusermount",
+        "-u",
+        "/var/tmp/nuwa-service-layers-20261027-r2/1"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "fusermount",
+        "-u",
+        "/var/tmp/nuwa-service-layers-20261027-r2/0"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "error": null,
+  "mount_cleanup_complete": true,
+  "sources": [
+    {
+      "path": "scripts/audit-desktop-service-layers.py",
+      "sha256": "16ec16f071f7b0d4c303b3a900f44b7c10cf5aeb340f836e7ec53e71b9972c1b"
+    },
+    {
+      "path": "scripts/desktop_service_macho.py",
+      "sha256": "a6f5ec1c8314527c07100bd1a95de68d3dce39a6e7cf499873a119f03a37bfca"
+    },
+    {
+      "path": "scripts/desktop_namespace.py",
+      "sha256": "62581258a5d4bdbd633693557f0f8b0e42f6ac32f1b5395937f32fea15f8e7d7"
+    },
+    {
+      "path": "scripts/desktop_cache.py",
+      "sha256": "f5e0b4fa506517c768633c6d19417e3908dabd393f93f307a01ca8bbb463a7c5"
+    },
+    {
+      "path": "scripts/audit-desktop-system.py",
+      "sha256": "a708ed2ba1a3ae6e568984e66c0b5fb5e7c3a038881b486500d643c0bf76851f"
+    },
+    {
+      "path": "scripts/audit-desktop-root.py",
+      "sha256": "1205b549abf6f2b5bfe27985a8b9d49857075ecc96358cc53637fd9e43e008f8"
+    },
+    {
+      "path": "scripts/audit-userland-closure.py",
+      "sha256": "7dfc1c9ffac4d6d3db6f9f3dabe454e656369d33e9d8e0bbd79aca88d587a91f"
+    }
+  ],
+  "device_accessed": false,
+  "root_assembled": false,
+  "jobs_enabled": false,
+  "limitations": [
+    "Declared program provenance, not service enablement, IPC consumers or execution",
+    "Other dependency paths are not evaluated as missing; no recursive service dependency closure"
+  ]
+}

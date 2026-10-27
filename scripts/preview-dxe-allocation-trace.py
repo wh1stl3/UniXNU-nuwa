@@ -7,7 +7,7 @@ import re
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
-MU = Path('D:/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore')
+MU = Path('D:/Code/PortingiOSLegacy/common/sources/mu-nuwa-firmware/Mu_Basecore')
 PIN = 'cfb93724a06ff86ff5ba971413368a7809ee42a5'
 PAGE = 'MdeModulePkg/Core/Dxe/Mem/Page.c'
 MAIN = 'MdeModulePkg/Core/Dxe/DxeMain/DxeMain.c'

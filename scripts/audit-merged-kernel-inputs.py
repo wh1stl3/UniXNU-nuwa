@@ -12,8 +12,8 @@ import runpy
 from virtual_patch import Tree, PatchError
 
 ROOT = Path(__file__).resolve().parents[1]
-OLD = Path('D:/Code/PortingiOS/common/sources/UniXNU')
-XNU = Path('D:/Code/PortingiOS/common/sources/xnu-ios16-full')
+OLD = Path('D:/Code/PortingiOSLegacy/common/sources/UniXNU')
+XNU = Path('D:/Code/PortingiOSLegacy/common/sources/xnu-ios16-full')
 MERGED = '76dd64142decca55f6594b860565e848de71d271'
 GH = 'C:/Program Files/GitHub CLI/gh.exe'
 

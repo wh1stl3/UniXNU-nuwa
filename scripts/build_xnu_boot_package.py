@@ -298,7 +298,7 @@ def main():
         UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 20','PROBE 21').replace('NATIVE PTHREAD OSKEXT TO BSD ROOT','ROOT RESOURCE AND MEDIA WAIT TRACE')
     root_ramdisk=None
     if args.root_ramdisk:
-        if not probe or revision not in (30,31,32,33,34,35,36):raise ValueError('Real root diagnostic requires revision30..32 boundary')
+        if not probe or revision not in (30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49):raise ValueError('Real root diagnostic requires a supported revision30..37 boundary')
         ctx=root_context(revision);PAYLOAD_SHA,ARGS,validate_report=ctx.PAYLOAD_SHA,ctx.ARGS,ctx.validate_report
         root_proof=json.loads((ROOT/probe['root-launch']['path']).read_text());validate_report(root_proof)
         root_ramdisk=args.root_ramdisk.read_bytes()
@@ -317,6 +317,38 @@ def main():
             UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 26','PROBE 27').replace('NATIVE EXEC AND DYLD PATH ERROR TRACE','NATIVE TYPE4 COMPRESSION STARTUP AND CONTINUOUS EXEC')
         if revision>=36:
             UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 27','PROBE 28').replace('NATIVE TYPE4 COMPRESSION STARTUP AND CONTINUOUS EXEC','SCOPED NATIVE MAC AND FILESYSTEM READ BOUNDARIES')
+        if revision>=37:
+            UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 28','PROBE 29').replace('SCOPED NATIVE MAC AND FILESYSTEM READ BOUNDARIES','SCOPED READ TARGET AND CANDIDATE ENTRY')
+        if revision>=38:
+            UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 29','PROBE 30').replace('SCOPED READ TARGET AND CANDIDATE ENTRY','NATIVE READ BODY CALLS AND RETURNS')
+        if revision>=39:
+            UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 30','PROBE 31').replace('NATIVE READ BODY CALLS AND RETURNS','READ INITIALIZATION AND NATIVE BODY TRACE')
+        if revision>=40:
+            UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 31','PROBE 32').replace('READ INITIALIZATION AND NATIVE BODY TRACE','SINGLE PASS DISPLAY AND NATIVE READ CONTINUATION')
+        if revision>=41:
+            UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 32','PROBE 33').replace('SINGLE PASS DISPLAY AND NATIVE READ CONTINUATION','NATIVE READ GRID WITH DEFERRED BODY HEX')
+        if revision>=42:
+            UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 33','PROBE 34').replace('NATIVE READ GRID WITH DEFERRED BODY HEX','NATIVE COMPRESSED READ CONTINUOUS PATH')
+        if revision>=43:
+            UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 34','PROBE 35').replace('NATIVE COMPRESSED READ CONTINUOUS PATH','CONTINUOUS READ WITH SHARED HEX RENDERER')
+        if revision>=44:
+            UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 35','PROBE 36').replace('CONTINUOUS READ WITH SHARED HEX RENDERER','CONTINUOUS READ WITH COMPACT STRIPS')
+        if revision>=45:
+            UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 36','PROBE 37').replace('CONTINUOUS READ WITH COMPACT STRIPS','NATIVE FETCH AND TYPE4 CALLBACK CONTINUATION')
+        if revision>=46:
+            UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 37','PROBE 38').replace('NATIVE FETCH AND TYPE4 CALLBACK CONTINUATION','NATIVE ALLOCATION VECTORS AND DECODE CONTINUATION')
+        if revision>=47:
+            UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 38','PROBE 39').replace('NATIVE ALLOCATION VECTORS AND DECODE CONTINUATION','SECOND ALLOCATION RESULTS AND ERROR CONTINUATION')
+        if revision>=48:
+            UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 39','PROBE 40').replace('SECOND ALLOCATION RESULTS AND ERROR CONTINUATION','CONTINUOUS MAINLINE WITH DELTA HEX')
+        if revision>=49:
+            UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 40','PROBE 41').replace('CONTINUOUS MAINLINE WITH DELTA HEX','RESOURCEFORK LIVE DISPATCH R5')
+            if json.loads(args.entry_probe.read_text()).get('delta_hex',{}).get('reserved_x18_live_state') is False:
+                UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 41','PROBE 42').replace('RESOURCEFORK LIVE DISPATCH R5','NATIVE CONTINUATION X18 SAFE HEX')
+            if json.loads(args.entry_probe.read_text()).get('read_flow',{}).get('resource_handler'):
+                UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 42','PROBE 43').replace('NATIVE CONTINUATION X18 SAFE HEX','APFS RESOURCE HANDLER CALL AND RETURN')
+            if json.loads(args.entry_probe.read_text()).get('read_flow',{}).get('resource_chain'):
+                UNIXNU_TOML=UNIXNU_TOML.replace('PROBE 43','PROBE 44').replace('APFS RESOURCE HANDLER CALL AND RETURN','RESOURCE LOOKUP READ AND EXEC CONTINUATION')
     elif probe and revision>=30:raise ValueError('Mount-only candidate must bind the real RAMDisk')
     if sha(fd) != FD_SHA or len(fd) != 3145728:
         raise ValueError('Firmware FD changed')
@@ -457,6 +489,47 @@ def main():
         if revision>=36:
             report['read_boundaries']=json.loads(args.entry_probe.read_text())['read_boundaries']
             report['success_requires']=report['success_requires'].replace('PROBE27:', 'PROBE28:')+' Header call 250 resets row y784 x832..1295. IDs266/267=vn_rdwr_64 call/return, 268/269=MAC read, 270/271=VNOP_READ, 272/273=actual filesystem dispatch, 274/275=swap-file read. Scope requires this exact header caller, TPIDR_EL1 and native frame; return markers require their paired call. A034=last read stage; A035=actual low32 return, all ones while call is pending. These overwrite prior A034/A035 after header entry. No marker proves APFS/decmpfs body completion unless its matching return was observed. Real errors and release guard retained.'
+        if revision>=37:
+            report['read_dispatch']=json.loads(args.entry_probe.read_text())['read_dispatch']
+            report['success_requires']=report['success_requires'].replace('PROBE28:', 'PROBE29:')+' A036 is actual scoped dispatch x8 at y784; A037 at y812 and ID276 at x832/y808 record only the pinned candidate entry. Header entry clears both fields and ID276. Other targets require separate interpretation; an unlit entry tile does not prove they failed to enter. No filesystem body completion or deadlock is inferred; native errors and release guard remain.'
+        if revision>=38:
+            report['read_body']=json.loads(args.entry_probe.read_text())['read_body']
+            report['success_requires']=report['success_requires'].replace('PROBE29:','PROBE30:')+' A038=last scoped native read body site, A039=last paired raw x0 return (not necessarily errno). IDs277..372 cover prologue continuation, all47 direct/indirect calls and continuations, and RET. No new halt or forced success. Unlit does not imply deadlock.'
+        if revision>=39:
+            report['read_init']=json.loads(args.entry_probe.read_text())['read_init']
+            report['success_requires']=report['success_requires'].replace('PROBE30:','PROBE31:')+' Initialization temporarily uses A034 F901 before A037 reset, F902 before A036 reset, F903 before body state/tile reset, F904 before A038/A039 reset; returns to250 before native call. Minimum snapshot height1040. All47 call/return pairs retained; checkpoints are not CPU stop proofs or a claimed PROBE30 fix.'
+        if revision>=40:
+            report['single_pass_hex']=json.loads(args.entry_probe.read_text())['single_pass_hex']
+            report['success_requires']=report['success_requires'].replace('PROBE31:','PROBE32:')+' HEX writes each pixel once, without a separate full-field black clear. Final labels/values and all native read/exec continuation observations retained. Reduced writes are not proof of a hardware fix.'
+        if revision>=41:
+            report['read_grid']=json.loads(args.entry_probe.read_text())['read_grid']
+            report['success_requires']=report['success_requires'].replace('PROBE32:','PROBE33:')+' Revision41 overrides the immediate A038/A039 body display described above: all96 tiles remain immediate; last site/paired raw x0 are buffered and displayed only at native RET. While pending, A038=0 and A039=all ones are initialization values, not body progress. Use the actual lit tiles to identify pending calls. Native continuation/error/release policy unchanged.'
+        if revision>=42:
+            report['read_decmp']=json.loads(args.entry_probe.read_text())['read_decmp']
+            report['success_requires']=report['success_requires'].replace('PROBE33:','PROBE34:')+' Center gutter IDs373..440 observe compressed-read entry,33 native call/return pairs and RET; two columns x736..815, y224..1031. Calls cyan, continuations green. No extra body HEX or native stop. Native return and outer APFS/read/exec observations remain required.'
+        if revision>=43:
+            report['shared_hex']=json.loads(args.entry_probe.read_text())['shared_hex']
+            report['success_requires']=report['success_requires'].replace('PROBE34:','PROBE35:')+' Shared HEX code preserves pixel values and all observations; unchanged A035 skips redundant rendering, with cache reset before every header. No native lock/error/IRQ/release policy changed. Not a claimed root-cause fix.'
+        if revision>=44:
+            report['compact_decmp']=json.loads(args.entry_probe.read_text())['compact_decmp']
+            report['success_requires']=report['success_requires'].replace('PROBE35:','PROBE36:')+' IDs373..440 use 32x2 strips, not full tiles. All native observations and release guard retained. No cache or lock fix claimed.'
+        if revision>=45:
+            report['read_fetch']=json.loads(args.entry_probe.read_text())['read_fetch']
+            report['success_requires']=report['success_requires'].replace('PROBE36:','PROBE37:')+' New interleaved 32x2 strips: magenta entry, amber native call, white paired continuation/return; fetch and fixed type4 callback. Native behavior and release guard unchanged.'
+        if revision>=46:
+            report['read_deep']=json.loads(args.entry_probe.read_text())['read_deep']
+            report['success_requires']=report['success_requires'].replace('PROBE37:','PROBE38:')+' New left-gutter checkpoints/allocation and third interleaved decode strips; native data/lock/error/cache/IRQ/release policies unchanged.'
+        if revision>=47:
+            report['read_result']=json.loads(args.entry_probe.read_text())['read_result']
+            report['success_requires']=report['success_requires'].replace('PROBE38:','PROBE39:')+' A03A request, A03B allocator return, A03C caller result, A03D checkpoint, A03E metadata subtype; failure-print edges retained without skipping native behavior.'
+        if revision>=48:
+            report['delta_hex']=json.loads(args.entry_probe.read_text())['delta_hex']
+            report['success_requires']=report['success_requires'].replace('PROBE39:','PROBE40:')+' Same-size same-pixel HEX; changed value glyphs only after initial complete draw. All mainline observers retained; no native cache/IRQ/allocator/release changes.'
+        if revision>=49:
+            report['read_flow']=json.loads(args.entry_probe.read_text())['read_flow']
+            report['success_requires']=report['success_requires'].replace('PROBE40:','PROBE41:')+' A03A-C retain allocation facts; A03D is latest scoped post-allocation/decode/resource checkpoint, including UIO preparation, VNOP_GETXATTR and cleanup/error paths; A03E raw paired x0 or F pending, not uniformly errno. No stopped-PC inference or native policy change.'
+        if revision>=49:
+            report['success_requires']+=' Resource dispatch: A03D=FFFFFFF00746E1A4 with A03E=native x8 handler target; A03D=FFFFFFF00746E1A8 with A03E=raw returned x0. No target body completion inferred from the call marker.'
         report['expected_screen_outcomes'] = [report['success_requires'], 'Any later XNU text or panic requires separate attribution; no band proves MMU enabled or iOS started']
         report['not_proven'] = ['Real nuwa execution of this candidate', 'MMU activation and arm_init', 'Native timer/interrupt driver readiness', 'Full donor/native ABI or iOS boot']
     output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8', newline='\n')

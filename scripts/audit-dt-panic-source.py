@@ -4,8 +4,8 @@ Host DT/map adapters are test doubles; no kernel hardware or whole-kernel qualif
 import argparse,hashlib,json,re,subprocess
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-SOURCE=Path('D:/Code/PortingiOS/common/sources/xnu-ios16-full/pexpert/arm/pe_init.c')
-DEBUG=Path('D:/Code/PortingiOS/common/sources/xnu-ios16-full/osfmk/kern/debug.h')
+SOURCE=Path('D:/Code/PortingiOSLegacy/common/sources/xnu-ios16-full/pexpert/arm/pe_init.c')
+DEBUG=Path('D:/Code/PortingiOSLegacy/common/sources/xnu-ios16-full/osfmk/kern/debug.h')
 
 def main():
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--work',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args();a.work.mkdir(parents=True,exist_ok=False)

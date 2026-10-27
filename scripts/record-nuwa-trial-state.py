@@ -7,7 +7,7 @@ from pathlib import Path
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
-ORIGINAL = Path('D:/Code/PortingiOS/nuwa/backups/recovery-20261020T121245314787Z/boot_a.img')
+ORIGINAL = Path('D:/Code/PortingiOSLegacy/nuwa/backups/recovery-20261020T121245314787Z/boot_a.img')
 ORIGINAL_SHA = 'ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31'
 
 def main():
@@ -54,6 +54,10 @@ def main():
     output = args.output.resolve()
     if not output.is_relative_to(ROOT/'reports') or output.exists():
         raise ValueError('Fresh reports file required')
+    media_directory=None
+    if args.package and metadata.get('approval')=='XNU-FIRST-ENTRY-ANALYSIS':
+        from trial_media import prepare
+        media_directory=prepare(metadata)
     found = []
     for line in subprocess.check_output(['adb', 'devices'],text=True).splitlines():
         parts = line.split()
@@ -65,6 +69,7 @@ def main():
         raise ValueError('No unique nuwa ADB target')
     serial = found[0]
     report = dict(at=datetime.datetime.now(datetime.timezone.utc).isoformat(), commands=[])
+    if media_directory is not None:report['media_directory']=media_directory
     values = {}
     for key, command in (
         ('identity', "su -c 'cat /sys/firmware/devicetree/base/model; cat /sys/firmware/devicetree/base/compatible'"),

@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-shared-hex.py", line 116, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-shared-hex.py", line 102, in main
+    comparison=inline_control(b,a.output) if b['probe_revision']>=45 else dict(code_bytes=old[0]['probe']['code_bytes'],scope='revision42 observation set baseline')
+               ~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-shared-hex.py", line 61, in inline_control
+    assert B.sha(source.encode())==b['source_sha256']
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

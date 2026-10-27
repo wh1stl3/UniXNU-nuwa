@@ -6,7 +6,7 @@ sys.path.insert(0,str(ROOT/'out/python-tools'))
 from capstone import Cs,CS_ARCH_ARM64,CS_MODE_ARM
 from read_boundary_sites import CALLS
 spec=importlib.util.spec_from_file_location('builder',ROOT/'scripts/build-kernel-entry-probe.py');B=importlib.util.module_from_spec(spec);spec.loader.exec_module(B)
-SOURCE=Path('D:/Code/PortingiOS/common/sources/xnu-ios16-full')
+SOURCE=Path('D:/Code/PortingiOSLegacy/common/sources/xnu-ios16-full')
 COMMIT='1b191cb58250d0705d8a51287127505aa4bc0789'
 SOURCE_SHA='ea24edd54bb7428d77ba880b1150b17cbbb6cca4518977536153f585552a6b9b'
 

@@ -1,0 +1,107 @@
+{
+  "scope": "Paired native machine context restore plus non-destructive framebuffer readback tests.",
+  "candidate_sha256": "49b913fc15e1517c51acc57af919c76d32187a1258a3a9fbb7f4890ebe2c74f1",
+  "checks": [
+    {
+      "name": "Machine context restore preserves GPR SIMD SP system registers: fresh",
+      "passed": true
+    },
+    {
+      "name": "Machine context restore preserves GPR SIMD SP system registers: repeat",
+      "passed": true
+    },
+    {
+      "name": "Machine context restore preserves GPR SIMD SP system registers: no-video",
+      "passed": true
+    },
+    {
+      "name": "Machine context restore preserves GPR SIMD SP system registers: FPCR-change",
+      "passed": true
+    },
+    {
+      "name": "Machine context restore preserves GPR SIMD SP system registers: first-stack-layout",
+      "passed": true
+    },
+    {
+      "name": "Calibration band writes exact white and cyan pixels",
+      "passed": true
+    },
+    {
+      "name": "Immediate display readback reports zero mismatches",
+      "passed": true
+    },
+    {
+      "name": "Readback detects one changed pixel without repainting",
+      "passed": true
+    },
+    {
+      "name": "Readback detects one changed row without repainting",
+      "passed": true
+    },
+    {
+      "name": "Missing framebuffer keeps native control flow without display writes",
+      "passed": true
+    }
+  ],
+  "context": {
+    "fresh": {
+      "pc": "0xfffffff0072933fc",
+      "sp": "0xf0c000",
+      "fpcr": "0x0",
+      "tpidr": [
+        "0x200000",
+        "0x0",
+        "0x12345678"
+      ]
+    },
+    "repeat": {
+      "pc": "0xfffffff0072933fc",
+      "sp": "0xf0c000",
+      "fpcr": "0x0",
+      "tpidr": [
+        "0x200000",
+        "0x0",
+        "0x12345678"
+      ]
+    },
+    "no-video": {
+      "pc": "0xfffffff0072933fc",
+      "sp": "0xf0c000",
+      "fpcr": "0x0",
+      "tpidr": [
+        "0x200000",
+        "0x0",
+        "0x12345678"
+      ]
+    },
+    "FPCR-change": {
+      "pc": "0xfffffff0072933fc",
+      "sp": "0xf0c000",
+      "fpcr": "0x400000",
+      "tpidr": [
+        "0x200000",
+        "0x0",
+        "0x12345678"
+      ]
+    },
+    "first-stack-layout": {
+      "pc": "0xfffffff0072933fc",
+      "sp": "0xf0c000",
+      "fpcr": "0x0",
+      "tpidr": [
+        "0x200000",
+        "0x0",
+        "0x12345678"
+      ]
+    }
+  },
+  "synthetic_layout": {
+    "thread": "0x200000",
+    "cpu": "0x202000",
+    "saved_context": "0x204000",
+    "new_sp": "0xf0c000"
+  },
+  "limitations": [
+    "Synthetic register/stack fixture, not full scheduler execution or hardware scanout"
+  ]
+}

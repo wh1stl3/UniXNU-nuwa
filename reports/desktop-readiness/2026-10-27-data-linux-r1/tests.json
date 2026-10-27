@@ -1,0 +1,47 @@
+{
+  "checks": [
+    {
+      "name": "plain archive extracts without Git initialization",
+      "passed": true
+    },
+    {
+      "name": "unsafe archive path 0",
+      "passed": true
+    },
+    {
+      "name": "unsafe archive path 1",
+      "passed": true
+    },
+    {
+      "name": "unsafe archive path 2",
+      "passed": true
+    },
+    {
+      "name": "unsafe archive path 3",
+      "passed": true
+    },
+    {
+      "name": "source symlink rejected",
+      "passed": true
+    },
+    {
+      "name": "existing destination refused",
+      "passed": true
+    },
+    {
+      "name": "source numeric ownership retained without external preferences",
+      "passed": true
+    }
+  ],
+  "sources": [
+    {
+      "path": "scripts/linux_data_inputs.py",
+      "sha256": "39cec3d6ae10b0253e1f2c3a2fbc788e7aa52659dcc85224419887dea5e249ba"
+    },
+    {
+      "path": "scripts/test-linux-data-inputs.py",
+      "sha256": "359fdbba72d2be451bdc36499ecb0a717e8e966c2fe5421cea5876e1d44c05dc"
+    }
+  ],
+  "device_accessed": false
+}

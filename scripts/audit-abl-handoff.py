@@ -17,7 +17,7 @@ sys.path.insert(0, str(ROOT / 'out/python-tools'))
 import capstone
 from capstone.arm64 import ARM64_OP_IMM, ARM64_OP_REG
 
-ABL = Path('D:/Code/PortingiOS/nuwa/backups/recovery-20261020T121245314787Z/abl_a.img')
+ABL = Path('D:/Code/PortingiOSLegacy/nuwa/backups/recovery-20261020T121245314787Z/abl_a.img')
 ABL_SHA = '38a837fa917ff45e5be7cf6a421e0417015d875db503d1fb2dbc4d89080b0188'
 
 

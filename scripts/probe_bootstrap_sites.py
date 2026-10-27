@@ -33,11 +33,22 @@ def plan_next(raw,m,backed,revision=25):
     def add(site,fn,callee,phase,call=None):
         index=(1 if revision>=34 and len(edges)>=232 else 0)+len(edges)+(4 if revision>=29 and len(edges)>=178 else 0)+(2 if revision>=31 and len(edges)>=208 else 0)+(1 if revision>=32 and len(edges)>=212 else 0)
         if revision>=36 and index>=264:index+=2
-        if index>=(276 if revision>=36 else 264 if revision>=32 else 220):raise ValueError('Next-phase panel capacity exceeded')
+        if index>=(700 if revision>=49 else 589 if revision>=47 else 582 if revision>=46 else 499 if revision>=45 else 441 if revision>=42 else 373 if revision>=38 else 277 if revision>=37 else 276 if revision>=36 else 264 if revision>=32 else 220):raise ValueError('Next-phase panel capacity exceeded')
         color={'call':'0xff40c0ff','continuation':'0xff40ff80','entry':'0xffffff00','context':'0xffff40ff'}[phase]
         e=dict(id=index,function=fn,callee=callee,phase=phase,call=hex(call if call is not None else site),site=hex(site),x=832+(index%10)*48,y=256+(index//10)*24,color=color)
         if index>=220:e.update(x=1320+((index-220)%2)*48,y=256+((index-220)//2)*24)
         if revision>=36 and index>=266:e.update(x=832+(index-266)*48,y=784)
+        if revision>=37 and index==276:e.update(x=832,y=808)
+        if revision>=38 and index>=276:e.update(x=832+((index-276)%10)*48,y=808+((index-276)//10)*24)
+        if revision>=42 and index>=373:e.update(x=736+((index-373)%2)*48,y=224+((index-373)//2)*24)
+        if revision>=45 and index>=441:e.update(x=736+((index-441)%2)*48,y=232+((index-441)//2)*24)
+        if revision>=46 and index>=499:
+            from read_deep_sites import geometry
+            x,y=geometry(index);e.update(x=x,y=y)
+        if revision>=47 and index>=582:
+            from read_result_sites import geometry
+            x,y=geometry(index);e.update(x=x,y=y)
+        if revision>=49 and index>=589:e.update(x=256,y=980,display='A03D/E HEX only; no DENSE tile')
         edges.append(e);sites.setdefault(site,[]).append(e)
     for fn in ENTRY_FUNCTIONS:add(symbols[fn],fn,fn,'entry')
     machine=symbols['_machine_load_context']
@@ -91,7 +102,28 @@ def plan_next(raw,m,backed,revision=25):
             from exec_path_sites import add_sites
         if revision>=36:
             from read_boundary_sites import add_sites
+        if revision>=37:
+            from read_dispatch_sites import add_sites
+        if revision>=38:
+            from read_body_sites import add_sites
+        if revision>=42:
+            from read_decmp_sites import add_sites
+        if revision>=45:
+            from read_fetch_sites import add_sites
+        if revision>=46:
+            from read_deep_sites import add_sites
+        if revision>=47:
+            from read_result_sites import add_sites
         add_sites(add,raw,m,backed)
+        if revision>=49:
+            from read_resource_sites import add_sites as add_resource_sites
+            add_resource_sites(add,raw,m,backed)
+            from resource_dispatch_sites import add_sites as add_resource_dispatch_sites
+            add_resource_dispatch_sites(add,raw,m,backed)
+            from resource_handler_sites import add_sites as add_resource_handler_sites
+            add_resource_handler_sites(add,raw,m,backed)
+            from resource_chain_sites import add_sites as add_resource_chain_sites
+            add_resource_chain_sites(add,raw,m,backed)
     return edges,sites
 
 def plan(raw,m,backed,revision=24):
@@ -164,6 +196,26 @@ def generate(raw,m,backed,revision=24):
                 from exec_path_sites import observe
             if revision>=36:
                 from read_boundary_sites import observe
+            if revision>=37:
+                from read_dispatch_sites import observe
+            if revision>=38:
+                from read_body_sites import observe
+            if revision>=39:
+                from read_init_sites import observe
+            if revision>=41:
+                from read_grid_sites import observe
+            if revision>=42:
+                from read_decmp_sites import observe
+            if revision>=43:
+                from probe_shared_hex import observe
+            if revision>=45:
+                from read_fetch_sites import observe
+            if revision>=46:
+                from read_deep_sites import observe
+            if revision>=47:
+                from read_result_sites import observe
+            if revision>=49:
+                from read_flow_sites import observe
             source += [observe(site)]
             if revision>=35 and site==0xfffffff00769d5f4:
                 source += ['    stp x29, x30, [sp, #-16]!', '    bl fscompression_load_before_exec', '    ldp x29, x30, [sp], #16']

@@ -63,7 +63,7 @@ def main():
     size_address = symbols['ArmReplaceLiveTranslationEntrySize']
     helper_size = struct.unpack('<I', read(size_address, 4))[0]
     helper = read(symbols['ArmReplaceLiveTranslationEntry'], helper_size)
-    mu = Path('D:/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore')
+    mu = Path('D:/Code/PortingiOSLegacy/common/sources/mu-nuwa-firmware/Mu_Basecore')
     pin = 'cfb93724a06ff86ff5ba971413368a7809ee42a5'
     paths = ['UefiCpuPkg/Library/ArmMmuLib/AArch64/ArmMmuLibReplaceEntry.S',
              'ArmPkg/Library/ArmCacheMaintenanceLib/ArmCacheMaintenanceLib.c',

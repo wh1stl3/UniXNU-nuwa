@@ -32,7 +32,7 @@ def main():
     terms = ('/arm-io', '/psci', 'sizeof (regions)', 'sizeof (bus)', 'getLength () == 11',
              'kSgiPpiEnable', 'cntv', 'cntfrq', 'getBytesNoCopy', 'required /cpus')
     for name in ('ArmCpu', 'ArmDTPlatform'):
-        source = Path('D:/Code/PortingiOS/common/sources/UniXNU/drivers') / name / (name + '.cpp')
+        source = Path('D:/Code/PortingiOSLegacy/common/sources/UniXNU/drivers') / name / (name + '.cpp')
         data = source.read_bytes()
         expected = next(item for item in audit['components'] if item['component'] == name)['source_sha256']
         if hashlib.sha256(data).hexdigest() != expected:
@@ -71,7 +71,7 @@ def main():
     kernel = kernel_path.read_bytes()
     if hashlib.sha256(kernel).hexdigest() != link['kernel_sha256']:
         raise ValueError('Kernel does not match the linked driver report')
-    parser_path = Path('D:/Code/PortingiOS/common/sources/UniXNU/kits/NativePrelink/native_prelink.py')
+    parser_path = Path('D:/Code/PortingiOSLegacy/common/sources/UniXNU/kits/NativePrelink/native_prelink.py')
     inspection = json.loads((ROOT / 'reports/kernel-ci/39793231214/kernel-inspection.json').read_text())
     if hashlib.sha256(parser_path.read_bytes()).hexdigest() != inspection['parser_sha256']:
         raise ValueError('NativePrelink parser changed')

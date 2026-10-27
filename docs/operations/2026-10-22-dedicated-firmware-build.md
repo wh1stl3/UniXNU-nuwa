@@ -25,7 +25,7 @@ runner原始result仍写artifact inspection pending，原文保留；独立artif
 
 新增patches/firmware-candidates/0005-nuwa-sec-stage-trace.patch，SHAae5d5e16254da93dac42665bfedeef77cf1ed737df0332fe84f1b2dfce57303f。仅修改SEC.c：在PlatformInitialize前后、MemoryPeim前/返回、PlatformPeim前/返回、FV解压前/返回、DXE Core调用前/返回增加WARN标记和已有x0值；移除本文件的45MiB全屏清零以保留较早标记。原SMMU/内存/HOB/解压/DXE调用及错误返回保持，不改BootShim、MMIO/地址、board、内存图、FDT、DTB、XNU或donor数据。
 
-scripts/check-sec-trace-preview.py验证固定SEC原始LF哈希fd28b903…、严格RAM应用、单文件范围、原阶段调用各一次、六个标记各一次及无新增地址/头文件；另git -C D:/Code/uefi-nuwa apply --check通过。只读源码仓保持干净。新源码尚未完整编译；报告sec-trace-preview.json明确这一点。
+scripts/check-sec-trace-preview.py验证固定SEC原始LF哈希fd28b903…、严格RAM应用、单文件范围、原阶段调用各一次、六个标记各一次及无新增地址/头文件；另git -C D:/Code/PortingiOS/nuwa/uefi-nuwa apply --check通过。只读源码仓保持干净。新源码尚未完整编译；报告sec-trace-preview.json明确这一点。
 
 候选仍走原帧缓冲DebugLib：不具备USB/UART/跨重启日志，不能观测ABL/BootShim/最早汇编，若未显示仍不能证明SEC未执行，打印/cache flush可能改变时序。输出前未调用SerialPortInitialize的依据是当前实现只返回EFI_SUCCESS、不建立硬件；这不是已验证的运行前置条件。执行需要单独诊断镜像范围R-007批准，尚未接到活动CI profile。
 

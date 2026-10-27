@@ -1,0 +1,34 @@
+{
+  "candidate_sha256": "d9a9c6c4655244aa3dba895225943e0804058387207fde7bd3c35154633c4dee",
+  "serial_execution": true,
+  "device_accessed": false,
+  "original_execution_preserved": true,
+  "commands": [
+    {
+      "name": "image4-launch",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-image4-launch.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v37-review-final\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-26-v37-review-final\\image4-launch.json",
+        "--adt",
+        "out/exec-mainline-v36/launch/kernel.macho.adt",
+        "--nonce",
+        "out/exec-mainline-v36/launch/nonce.bin",
+        "--manifest",
+        "out/exec-mainline-v36/launch/launch-manifest.json",
+        "--baseline-adt",
+        "out/trial-boot/xnu-entry-probe-18-vectors/kernel.macho.adt"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 0.43082400001003407,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-image4-launch.py\", line 201, in <module>\n    main()\n    ~~~~^^\n  File \"D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-image4-launch.py\", line 95, in main\n    context = C.validate(adt, kernel, fd, shim, nonce=nonce, manifest_bytes=a.manifest.read_bytes())\n  File \"D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\nuwa_launch_context.py\", line 192, in validate\n    raise ValueError('Manifest component mismatch: ' + key)\nValueError: Manifest component mismatch: kernel\n"
+    }
+  ]
+}

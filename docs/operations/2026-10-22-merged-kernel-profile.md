@@ -25,7 +25,7 @@ feeds.toml相对75bc在上游已有变化；本仓没有修改它，也没有采
 
 ```powershell
 & 'C:/Program Files/WorkBuddy/resources/vendor/python/python.exe' -X utf8 -B scripts/audit-merged-kernel-inputs.py
-& 'C:/Program Files/WorkBuddy/resources/vendor/python/python.exe' -X utf8 -B scripts/ci/build-8796-source.py --base D:/Code/PortingiOS/common/sources/UniXNU --check
+& 'C:/Program Files/WorkBuddy/resources/vendor/python/python.exe' -X utf8 -B scripts/ci/build-8796-source.py --base D:/Code/PortingiOSLegacy/common/sources/UniXNU --check
 ```
 
 前者真实合并版适配函数与Bash语法通过，后者旧基线回归输入检查通过。完整编译必须在macOS Actions，以记录的Xcode16.4/iphoneos工具执行；合并版平台驱动的真实编译/链接结果待CI，不能继承CI15通过。

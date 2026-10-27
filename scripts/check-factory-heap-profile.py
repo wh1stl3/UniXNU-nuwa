@@ -6,7 +6,7 @@ from pathlib import Path
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
-MU = Path('D:/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore')
+MU = Path('D:/Code/PortingiOSLegacy/common/sources/mu-nuwa-firmware/Mu_Basecore')
 
 def load(path):
     return json.loads((ROOT / path).read_text(encoding='utf-8'))
@@ -27,7 +27,7 @@ def main():
             item['lf_sha256'] = proposal['source']['proposed_lf_sha256']
     if expected != profile or 'R-011 A' not in profile['recipe']['approval']:
         raise ValueError('Profile exceeds approved one-row factory Heap change')
-    firmware = Path('D:/Code/uefi-nuwa')
+    firmware = Path('D:/Code/PortingiOS/nuwa/uefi-nuwa')
     if subprocess.check_output(['git', '--no-optional-locks', '-C', str(firmware), 'log', '-1', '--format=%H'],text=True).strip() != publish['commit']:
         raise ValueError('Wrong firmware source commit')
     if subprocess.check_output(['git', '--no-optional-locks', '-C', str(firmware), 'status', '--porcelain']).strip():
@@ -36,11 +36,11 @@ def main():
     checked = []
     for item in profile['recipe']['inputs']:
         if item['root'] == 'unixnu':
-            path = Path('D:/Code/PortingiOS/common/sources/UniXNU') / item['path']
+            path = Path('D:/Code/PortingiOSLegacy/common/sources/UniXNU') / item['path']
         else:
-            path = Path('D:/Code/uefi-nuwa') / item['path']
+            path = Path('D:/Code/PortingiOS/nuwa/uefi-nuwa') / item['path']
             if not path.is_file():
-                path = Path('D:/Code/PortingiOS/common/sources/mu-nuwa-firmware') / item['path']
+                path = Path('D:/Code/PortingiOSLegacy/common/sources/mu-nuwa-firmware') / item['path']
         actual = hashlib.sha256(path.read_bytes().replace(b'\r\n', b'\n')).hexdigest()
         if actual != item['lf_sha256']:
             raise ValueError('Source input changed: ' + item['path'])
@@ -52,7 +52,7 @@ def main():
     subprocess.run(command, check=True)
     if hashlib.sha256((ROOT/'board.toml').read_bytes().replace(b'\r\n',b'\n')).hexdigest() != profile['recipe']['board_lf_sha256']:
         raise ValueError('Board changed')
-    feed = Path('D:/Code/PortingiOS/common/sources/UniXNU/feeds.toml')
+    feed = Path('D:/Code/PortingiOSLegacy/common/sources/UniXNU/feeds.toml')
     if hashlib.sha256(feed.read_bytes().replace(b'\r\n', b'\n')).hexdigest() != profile['recipe']['feed_lf_sha256']:
         raise ValueError('Feed changed')
     result = dict(result='static profile checks passed', inputs=checked, raw_inputs=raw_inputs,

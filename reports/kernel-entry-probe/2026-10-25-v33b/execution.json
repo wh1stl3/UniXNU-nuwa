@@ -1,0 +1,294 @@
+{
+  "candidate_sha256": "e7c6c56017719d08b9f8a3d5a9755b31cdab56fefd79fa1633d3345db96d90e9",
+  "serial_execution": true,
+  "device_accessed": false,
+  "commands": [
+    {
+      "name": "software",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\UniXNU-nuwa\\scripts\\test-kernel-entry-probe.py",
+        "--build",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\build.json",
+        "--output",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\software.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.1597951000148896,
+      "stdout": "{\"checks\": 42, \"passed\": true, \"candidate\": \"e7c6c56017719d08b9f8a3d5a9755b31cdab56fefd79fa1633d3345db96d90e9\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-sites",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\UniXNU-nuwa\\scripts\\test-probe-read-sites.py",
+        "--build",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\build.json",
+        "--output",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\read-sites.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.7954305000021122,
+      "stdout": "{\"checks\": 18, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "wfe",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\UniXNU-nuwa\\scripts\\test-probe-wfe.py",
+        "--build",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\build.json",
+        "--output",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\wfe.json",
+        "--negative-build",
+        "reports/kernel-entry-probe/2026-10-25-v20/build.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.241415099997539,
+      "stdout": "{\"checks\": 5, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "mapping",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\UniXNU-nuwa\\scripts\\audit-entry-probe-post-mmu-mapping.py",
+        "--build",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\build.json",
+        "--output",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\mapping.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.3721085000142921,
+      "stdout": "framebuffer PA 0xb8000000 0xb8000000 -> 0xb8000000 mapped= True\nframebuffer PA +1 page 0xb8001000 -> 0xb8001000 mapped= True\nprobe page VA 0xfffffff008489000 -> 0x8c4889000 mapped= True\narm_init KVA 0xfffffff007972848 -> 0x8c3d72848 mapped= True\nsctlr site as PA-identity VA 0x8c37c7374 -> 0x8c37c7374 mapped= True\nboot_args synthetic VA 0xfffffff013dc8000 -> 0x8d01c8000 mapped= True\n",
+      "stderr": ""
+    },
+    {
+      "name": "loader",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\UniXNU-nuwa\\scripts\\audit-entry-probe-loader.py",
+        "--build",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\build.json",
+        "--output",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\loader.json",
+        "--work",
+        "D:\\Code\\UniXNU-nuwa\\out\\exec-mainline-v33\\verify\\loader"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 4.564237599988701,
+      "stdout": "{\"cases\": 5, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "post-arm-init",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\UniXNU-nuwa\\scripts\\test-post-arm-init-markers.py",
+        "--build",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\build.json",
+        "--output",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\post-arm-init.json",
+        "--adt",
+        "D:\\Code\\UniXNU-nuwa\\out\\exec-mainline-v33\\launch-final\\kernel.macho.adt"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.7490588999935426,
+      "stdout": "{\"checks\": 8, \"passed\": true, \"reached\": {\"white\": 52703, \"arm_vm_init\": 990538}, \"pixels\": {\"256\": \"0xff0080ff\", \"288\": \"0xffffff00\", \"320\": \"0xffff00ff\", \"352\": \"0xff00ffff\", \"384\": \"0xffffffff\", \"416\": \"0x0\", \"448\": \"0xff804000\", \"480\": \"0x0\", \"512\": \"0x0\", \"544\": \"0xff008080\", \"576\": \"0xff808000\", \"608\": \"0xff8080c0\", \"640\": \"0xff808080\"}, \"stopped_symbol\": \"_bzero+0x1c\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "exception",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\UniXNU-nuwa\\scripts\\test-post-arm-init-markers.py",
+        "--build",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\build.json",
+        "--output",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\exception.json",
+        "--handler"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.2743684000161011,
+      "stdout": "{\"checks\": 2, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "transition-normal",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\UniXNU-nuwa\\scripts\\test-probe-transition.py",
+        "--build",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\build.json",
+        "--output",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\transition-normal.json",
+        "--adt",
+        "D:\\Code\\UniXNU-nuwa\\out\\exec-mainline-v33\\launch-final\\kernel.macho.adt",
+        "--case",
+        "normal"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.2878277999989223,
+      "stdout": "{\"case\": \"normal\", \"checks\": 5, \"passed\": true, \"stop\": \"_kernel_bootstrap+0x0\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "transition-occupied-probe",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\UniXNU-nuwa\\scripts\\test-probe-transition.py",
+        "--build",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\build.json",
+        "--output",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\transition-occupied-probe.json",
+        "--adt",
+        "D:\\Code\\UniXNU-nuwa\\out\\exec-mainline-v33\\launch-final\\kernel.macho.adt",
+        "--case",
+        "occupied-probe"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.9557776000001468,
+      "stdout": "{\"case\": \"occupied-probe\", \"checks\": 2, \"passed\": true, \"stop\": \"_set_mmu_ttb_alternate+0x0\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "transition-bad-topology",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\UniXNU-nuwa\\scripts\\test-probe-transition.py",
+        "--build",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\build.json",
+        "--output",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\transition-bad-topology.json",
+        "--adt",
+        "D:\\Code\\UniXNU-nuwa\\out\\exec-mainline-v33\\launch-final\\kernel.macho.adt",
+        "--case",
+        "bad-topology"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.9468169000174385,
+      "stdout": "{\"case\": \"bad-topology\", \"checks\": 2, \"passed\": true, \"stop\": \"_set_mmu_ttb_alternate+0x0\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "transition-occupied-fb",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\UniXNU-nuwa\\scripts\\test-probe-transition.py",
+        "--build",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\build.json",
+        "--output",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\transition-occupied-fb.json",
+        "--adt",
+        "D:\\Code\\UniXNU-nuwa\\out\\exec-mainline-v33\\launch-final\\kernel.macho.adt",
+        "--case",
+        "occupied-fb"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.9311696999939159,
+      "stdout": "{\"case\": \"occupied-fb\", \"checks\": 3, \"passed\": true, \"stop\": \"_set_mmu_ttb+0x0\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "console-policy",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\UniXNU-nuwa\\scripts\\test-probe-console-policy.py",
+        "--build",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\build.json",
+        "--output",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\console-policy.json",
+        "--adt",
+        "D:\\Code\\UniXNU-nuwa\\out\\exec-mainline-v33\\launch-final\\kernel.macho.adt",
+        "--negative-build",
+        "reports/kernel-entry-probe/2026-10-25-v22c/build.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.4533615999971516,
+      "stdout": "{\"case\": \"normal\", \"checks\": 5, \"passed\": true, \"stop\": \"_PE_create_console+0x48\"}\n{\"checks\": 6, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "renderer-bounds",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\UniXNU-nuwa\\scripts\\test-probe-renderer-bounds.py",
+        "--build",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\build.json",
+        "--output",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\renderer-bounds.json",
+        "--negative-build",
+        "reports/kernel-entry-probe/2026-10-25-v24/build.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.6942511000088416,
+      "stdout": "{\"checks\": 6, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "context-display",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\UniXNU-nuwa\\scripts\\test-probe-context-display.py",
+        "--build",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\build.json",
+        "--output",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\context-display.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.1565191999834497,
+      "stdout": "{\"checks\": 10, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "vectors",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\UniXNU-nuwa\\scripts\\test-probe-vectors.py",
+        "--build",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\build.json",
+        "--output",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\vectors.json",
+        "--negative-build",
+        "reports/kernel-entry-probe/2026-10-25-v24/build.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 4.030922700010706,
+      "stdout": "{\"checks\": 5, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "transparency",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-B",
+        "D:\\Code\\UniXNU-nuwa\\scripts\\test-probe-transparency.py",
+        "--build",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\build.json",
+        "--output",
+        "D:\\Code\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-25-v33b\\transparency.json"
+      ],
+      "exit_code": 4294967295,
+      "elapsed_seconds": 123.43255120000686,
+      "stdout": "{\"progress_checks\": 100}\n{\"progress_checks\": 200}\n{\"progress_checks\": 300}\n{\"progress_checks\": 400}\n{\"progress_checks\": 500}\n",
+      "stderr": ""
+    }
+  ]
+}

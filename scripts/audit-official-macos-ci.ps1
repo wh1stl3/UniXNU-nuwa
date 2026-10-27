@@ -40,8 +40,8 @@ foreach ($path in $paths) {
     $blobHash = Get-Hash ($blobPrefix + $bytes) 'SHA1'
     if ($blobHash -ne $file.sha) { throw "Blob identity mismatch: $path" }
     $content = [Text.Encoding]::UTF8.GetString($bytes)
-    $local = Join-Path 'D:/Code/PortingiOS/common/sources/UniXNU' $path
-    $cached = Join-Path 'D:/Code/PortingiOS/common/sources/UniXNU-latest-audit' $path
+    $local = Join-Path 'D:/Code/PortingiOSLegacy/common/sources/UniXNU' $path
+    $cached = Join-Path 'D:/Code/PortingiOSLegacy/common/sources/UniXNU-latest-audit' $path
     $localHash = if (Test-Path -LiteralPath $local -PathType Leaf) { Get-Hash ([IO.File]::ReadAllBytes($local)) 'SHA256' } else { $null }
     $cachedHash = if (Test-Path -LiteralPath $cached -PathType Leaf) { Get-Hash ([IO.File]::ReadAllBytes($cached)) 'SHA256' } else { $null }
     $remoteHash = Get-Hash $bytes 'SHA256'

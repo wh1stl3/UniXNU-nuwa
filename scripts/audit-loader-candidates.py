@@ -54,10 +54,10 @@ def row_identity(row):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--firmware", type=Path, default=Path("D:/Code/PortingiOS/common/sources/mu-nuwa-firmware"))
-    parser.add_argument("--unixnu", type=Path, default=Path("D:/Code/PortingiOS/common/sources/UniXNU"))
+    parser.add_argument("--firmware", type=Path, default=Path("D:/Code/PortingiOSLegacy/common/sources/mu-nuwa-firmware"))
+    parser.add_argument("--unixnu", type=Path, default=Path("D:/Code/PortingiOSLegacy/common/sources/UniXNU"))
     parser.add_argument("--reference", type=Path, default=Path("D:/Code/PortingiOSWithUniXNU"))
-    parser.add_argument("--sheng", type=Path, default=Path("D:/Code/PortingiOS/common/sources/uefi-sheng"))
+    parser.add_argument("--sheng", type=Path, default=Path("D:/Code/PortingiOSLegacy/common/sources/uefi-sheng"))
     parser.add_argument("--kernel", type=Path, default=ROOT / "out/kernel-ci/39755850870/nuwa-8796-source-39755850870/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped")
     parser.add_argument("--report-dir", type=Path, default=ROOT / "reports/loader-integration")
     args = parser.parse_args()

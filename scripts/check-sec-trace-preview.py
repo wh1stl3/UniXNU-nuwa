@@ -6,7 +6,7 @@ import subprocess
 from virtual_patch import Tree, parse
 
 ROOT = Path(__file__).resolve().parents[1]
-FIRMWARE = Path('D:/Code/uefi-nuwa')
+FIRMWARE = Path('D:/Code/PortingiOS/nuwa/uefi-nuwa')
 RELATIVE = 'Silicon/Silicium/SiliciumPkg/Sec/Sec.c'
 PATCH = ROOT / 'patches/firmware-candidates/0005-nuwa-sec-stage-trace.patch'
 

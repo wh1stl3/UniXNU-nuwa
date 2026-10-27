@@ -17,7 +17,7 @@ def sha(path):
 
 def linux(path):
     text=path.resolve().as_posix()
-    if not text.startswith('D:/Code/UniXNU-nuwa/'):
+    if not text.startswith('D:/Code/PortingiOS/nuwa/UniXNU-nuwa/'):
         raise ValueError('Local device workspace path required')
     return '/mnt/d/'+text[3:]
 

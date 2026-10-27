@@ -14,7 +14,7 @@ import time
 ROOT = Path(__file__).resolve().parents[1]
 TARGET_SERIAL = None
 CANDIDATE = ROOT / 'out/trial-boot/firmware-v4/boot-firmware-v4.img'
-ORIGINAL = Path('D:/Code/PortingiOS/nuwa/backups/recovery-20261020T121245314787Z/boot_a.img')
+ORIGINAL = Path('D:/Code/PortingiOSLegacy/nuwa/backups/recovery-20261020T121245314787Z/boot_a.img')
 HASHES = {CANDIDATE: '12864ac6cc0ffc9909f4abbdfab91bfee216c3fdcfc5ab0d52b4d4b9cf4579f9',
           ORIGINAL: 'ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31'}
 

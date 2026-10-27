@@ -14,7 +14,7 @@
 
 ## 逐项适配理由
 
-源码证据相对 `D:/Code/PortingiOS/common/sources/xnu-ios16-full/`。
+源码证据相对 `D:/Code/PortingiOSLegacy/common/sources/xnu-ios16-full/`。
 
 | 候选 | 8796证据与处理 | 验证限制 |
 | --- | --- | --- |
@@ -33,7 +33,7 @@
 复查命令：
 
 ```powershell
-rg -n 'zone_id_require_aligned|zone_id_require\(' D:/Code/PortingiOS/common/sources/xnu-ios16-full/osfmk/kern/zalloc.c D:/Code/PortingiOS/common/sources/UniXNU/patches/xnu/offline-pgz-alignment-probe.patch
+rg -n 'zone_id_require_aligned|zone_id_require\(' D:/Code/PortingiOSLegacy/common/sources/xnu-ios16-full/osfmk/kern/zalloc.c D:/Code/PortingiOSLegacy/common/sources/UniXNU/patches/xnu/offline-pgz-alignment-probe.patch
 ```
 
 不能只丢掉失败的PGZ修补而宣称其probe可用：启用probe时有缺失API风险（这是静态接口分析，未实测编译失败）。下一步需在完整8796选择集中明确probe的禁用或等价移植；本轮没有新建API、改默认defconfig或跳过安全校验。`published-freezer-condition` 同样需按8796现有策略判定适用性，不能引入17.x策略只为凑通过数。

@@ -1,0 +1,75 @@
+{
+  "checks": [
+    {
+      "name": "UDIF logical disk differs from stored file length",
+      "passed": true
+    },
+    {
+      "name": "UDIF logical gap rejected",
+      "passed": true
+    },
+    {
+      "name": "UDIF chunk table overflow rejected",
+      "passed": true
+    },
+    {
+      "name": "UDIF stored extent rejected",
+      "passed": true
+    },
+    {
+      "name": "raw aligned image geometry",
+      "passed": true
+    },
+    {
+      "name": "raw sector misalignment rejected",
+      "passed": true
+    },
+    {
+      "name": "aligned preview never invents target capacity",
+      "passed": true
+    },
+    {
+      "name": "undersized target rejected",
+      "passed": true
+    },
+    {
+      "name": "duplicate window rejected",
+      "passed": true
+    },
+    {
+      "name": "provider duplicates and keepalive conditions do not invent startup edges",
+      "passed": true
+    },
+    {
+      "name": "nested socket and path-state references retained",
+      "passed": true
+    },
+    {
+      "name": "inventory never enables jobs",
+      "passed": true
+    },
+    {
+      "name": "non-string arguments retained as unresolved instead of coerced",
+      "passed": true
+    },
+    {
+      "name": "wrong path array type rejected",
+      "passed": true
+    },
+    {
+      "name": "numeric identities preserve signed sentinels and omit password column",
+      "passed": true
+    }
+  ],
+  "sources": [
+    {
+      "path": "scripts/desktop_root_contract.py",
+      "sha256": "233b80a933dd4602b0b3fcce1c863a3f8e22322ce21da317c5be8882d738a658"
+    },
+    {
+      "path": "scripts/test-desktop-root-contract.py",
+      "sha256": "7862ba8945e31406ce40fa7a972a3b8dfa7088de8a9cf79a43ce36ed749868a7"
+    }
+  ],
+  "device_accessed": false
+}

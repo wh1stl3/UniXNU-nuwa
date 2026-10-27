@@ -1,0 +1,82 @@
+{
+  "time": "2026-10-27T14:46:01.6003853+08:00",
+  "head": "855daaff4cb99fdeec43dac6ec5045c1d591f52c",
+  "bindings": [
+    {
+      "path": "scripts/audit-resource-progress.py",
+      "size": 5544,
+      "sha256": "d0dede2a288924420f5eb2f60c4e05fc751b62f0084b6ebf45d6e6b4dde2f0cc"
+    },
+    {
+      "path": "scripts/test-resource-progress.py",
+      "size": 2151,
+      "sha256": "2b196437b6eeb47bdccf96baea084cd2f0a8b038c7e485e7e790058745686ca4"
+    },
+    {
+      "path": "scripts/test-native-resource-uio.py",
+      "size": 6848,
+      "sha256": "9cc3725dae0e443cb1283fbeda0ae477ae5d2c0c67614b193cff5562ff4a3440"
+    },
+    {
+      "path": "scripts/read_dispatch_audit.py",
+      "size": 5314,
+      "sha256": "b3343f99a8cee10d9852238ab335ec213d3a6cf9daecfd89e59343506c394c0e"
+    },
+    {
+      "path": "scripts/test-read-dispatch-observer.py",
+      "size": 14259,
+      "sha256": "d78950f39abf88489fc305118dbe02166c1d60c257f1706ae5a84e48fa55c78e"
+    },
+    {
+      "path": "reports/mainline-reassessment/2026-10-27-r1/tests.json",
+      "size": 718,
+      "sha256": "1f3765e5347cbfa48293b853a87ed9bb867c5cea5b67e9804b46eddf02a73848"
+    },
+    {
+      "path": "reports/mainline-reassessment/2026-10-27-r1/resource-paths.json",
+      "size": 93058,
+      "sha256": "eaa4670795659d9536821ae2e416d8677f106772a997764f0e02b5476fb01990"
+    },
+    {
+      "path": "reports/mainline-reassessment/2026-10-27-r1/native-uio-vfs-r2.json",
+      "size": 3061,
+      "sha256": "2aa089c105595bb2cb60a88841dee150994cab8710fde230fcb66c7e97ce6af2"
+    },
+    {
+      "path": "reports/xnu-entry-probe-trial/2026-10-27-v48/screen-supplement-resource.json",
+      "size": 1963,
+      "sha256": "097a1eea67825b9af552dac0ea05e08f28c0dd60c40ac6ef53c443184ced04f9"
+    },
+    {
+      "path": "reports/desktop-readiness/2026-10-27-combined-r1/qualification.json",
+      "size": 1212,
+      "sha256": "330dd7d9ad1a3ca2026631830299002f22dff83f3139f943fa6ec93724400326"
+    },
+    {
+      "path": "D:/Code/PortingiOSLegacy/common/sources/xnu-ios16-full/osfmk/kern/zalloc.h",
+      "size": 75798,
+      "sha256": "68db6ecae098a1fb0732db8f34b977a3c622ab19cd3ad842419fd9c2b2a5d3d0"
+    }
+  ],
+  "input_sha256": "1aeebf1352a86b0d31612a6bd6e77bd7292f676ad2ce43a99ec4a8f3999eedb6",
+  "cfg_checks": 6,
+  "native_uio_cases": 3,
+  "native_vfs_fixture_passed": true,
+  "probe41": {
+    "sha256": "8d242a2dd953146af5c3c8ae59c6805cba6599aa7283188180667bfca5c2ec2a",
+    "launched_this_turn": false,
+    "size": 204484608,
+    "path": "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\out\\trial-boot\\xnu-entry-probe-41-resource\\boot-xnu-first-entry.img"
+  },
+  "device_accessed": false,
+  "kernel_modified": false,
+  "board_modified": false,
+  "release_guard_changed": false,
+  "committed": false,
+  "limitations": [
+    "Static and Unicorn fixture evidence only",
+    "Allocator bodies and APFS bodies did not execute",
+    "No live v_op or descriptor index captured",
+    "Existing historical reports preserved"
+  ]
+}

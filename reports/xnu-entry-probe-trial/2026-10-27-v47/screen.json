@@ -1,0 +1,33 @@
+{
+  "probe": 39,
+  "reviewed_at": "2026-10-27T02:09:53.278979+00:00",
+  "method": "Manual full photo and nearest-neighbor crop review; no automatic OCR",
+  "stable_before_photo": true,
+  "elapsed_seconds": null,
+  "user_statement": "\u753b\u9762\u7a33\u5b9a\u540e\u62cd\u7684\uff0c\u5df2\u7ecf\u56de\u5230Android",
+  "media_manifest": "D:/Code/PortingiOS/nuwa/Media-nuwa/derived/PROBE39/review-01/manifest.json",
+  "fields": {
+    "A034": "0000000000000110",
+    "A037": "0000000000000000",
+    "A038": "0000000000000000",
+    "A03A": "0000000000000000",
+    "A03B": "FFFFFFFFFFFFFFFF",
+    "A03D": "0000000000000000",
+    "A03E": "0000000000000000"
+  },
+  "partly_obscured_fields": [
+    "A033",
+    "A035",
+    "A039",
+    "A03C"
+  ],
+  "uncertain_fields": {
+    "A036": "Visible prefix FFFFFFF005 followed by a malformed/ambiguous glyph and zero suffix; do not accept as complete dispatch address"
+  },
+  "observations": [
+    "No visible decmp/fetch/deep/result strips",
+    "New result rows remain initial-looking; cannot infer second allocation outcome",
+    "A034=272 is dispatch-before stage; no fixed callback-entry observation this round"
+  ],
+  "interpretation": "Visible frontier earlier than PROBE38. Partial-looking target field and variable frontiers motivate reducing observer drawing work; no proven cache/IRQ/allocator root cause."
+}

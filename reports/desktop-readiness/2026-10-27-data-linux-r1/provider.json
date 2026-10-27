@@ -1,0 +1,112 @@
+{
+  "current_kernel": {
+    "path": "out\\kernel-entry-probe-49-resource-r4\\kernel-entry-probe.macho",
+    "sha256": "8757bc0c38449099e3d10b8fcd69ec0cbd830c263f99c77bce2ff191848e4418",
+    "symbol_count": 64693,
+    "ramblock_related_symbols": [],
+    "identity_strings": {
+      "NativeRamBlock": 0,
+      "native_ram_block": 0
+    },
+    "scope": "Named symbol/string evidence only; no runtime provider qualification"
+  },
+  "current_adt": {
+    "path": "out\\exec-mainline-v49-resource\\launch\\kernel.macho.adt",
+    "sha256": "82b5219204cd30f79d520e1710c5b63d105e19f4337f16ef87cdc1603da00a57",
+    "memory_map": {
+      "RAMDisk": {
+        "bytes": 16,
+        "zero_placeholder": true
+      }
+    },
+    "ephemeral_storage_present": true
+  },
+  "current_root": {
+    "path": "out/root-mainline-v29/restore/restore-payload.bin",
+    "sha256": "d180c38dcc754bc079cc92a40f58a4b5fad2c2b7ce72cf5e64a117453fd7c90a",
+    "bytes": 106954752,
+    "policy": {
+      "boot_arguments": "-v rd=md0",
+      "halt_before": "unreviewed restore task final wait release",
+      "halt_site": "0xfffffff00769d230",
+      "condition": "native exec task switch arms tracking; switch observed; matching task; clear_final_wait=2",
+      "restore_userspace_allowed": false
+    },
+    "scope": "Current initrd is the restore root, not the new Data candidate"
+  },
+  "local_readonly_snapshot": [
+    {
+      "path": "D:\\Code\\PortingiOSLegacy\\common\\sources\\UniXNU\\drivers\\NativeRamBlock\\SparseDisk.h",
+      "sha256": "8b1202eda8ae920c6b505d7b97c44691e4cd2b3c7756b20bbd86ade40b8738fd"
+    },
+    {
+      "path": "D:\\Code\\PortingiOSLegacy\\common\\sources\\UniXNU\\drivers\\NativeRamBlock\\NativeRamBlock.cpp",
+      "sha256": "c52530fad545b936a02ce51f380a98b6b4ee2a72ba50ca9675a21d2672b0bbb5"
+    },
+    {
+      "path": "D:\\Code\\PortingiOSLegacy\\common\\sources\\UniXNU\\drivers\\NativeRamBlock\\Test\\sparse.cpp",
+      "sha256": "715f5579020260b40905229b5c245ec42c27c2312962496909bea73bc06226ff"
+    }
+  ],
+  "configured_module_revision": "d4d22d9819b0162eda49f6402235dddc2279410d",
+  "public_comparison": [
+    {
+      "file": "SparseDisk.h",
+      "local_sha256": "8b1202eda8ae920c6b505d7b97c44691e4cd2b3c7756b20bbd86ade40b8738fd",
+      "public_sha256": "5ab6516488b7daaef88e788fffef17195e7d2f74746da2206c6d9ed3a63c8c74",
+      "same_bytes": false
+    },
+    {
+      "file": "NativeRamBlock.cpp",
+      "local_sha256": "c52530fad545b936a02ce51f380a98b6b4ee2a72ba50ca9675a21d2672b0bbb5",
+      "public_sha256": "e2ace3522943df38806ef2006525371691beaf0199f971266bd849d4f5253391",
+      "same_bytes": false
+    }
+  ],
+  "local_git_metadata": {
+    "status": "Stopped: Git dubious ownership; no safe.directory override or metadata workaround",
+    "revision_confirmed": false
+  },
+  "parents": [
+    {
+      "path": "reports\\xnu-first-entry\\entry-probe-41.json",
+      "sha256": "4362a40d2bdbabd1d242200077351d9bcdf33cf5b6d089d197bacb0c3eb2962e"
+    },
+    {
+      "path": "config\\kernel-merged-profile.json",
+      "sha256": "845c83415d70779808a169e8cebe70299bd7af97b452f5604075a462ab870935"
+    },
+    {
+      "path": "reports\\desktop-readiness\\2026-10-27-data-linux-r1\\public-ramblock.json",
+      "sha256": "8c658a7755b617225e1bb687cbfb697aa52318c807c9d5db0e0a9294c399e5b0"
+    }
+  ],
+  "sources": [
+    {
+      "path": "scripts/audit-data-provider.py",
+      "sha256": "d1b512411344bf9486d73b902ab077dda51e9f19b55068ca315ce9d7e3e11f4b"
+    },
+    {
+      "path": "scripts/check-nuwa-adt.py",
+      "sha256": "01d6bc9bcfbd8e5848014f345b0ae74d72f45175905cc8fcd89c28d5a0d9e322"
+    },
+    {
+      "path": "scripts/read_dispatch_audit.py",
+      "sha256": "b3343f99a8cee10d9852238ab335ec213d3a6cf9daecfd89e59343506c394c0e"
+    },
+    {
+      "path": "scripts/build-kernel-entry-probe.py",
+      "sha256": "540fa2b70a8ca633f6afab862058a43c3f8787e74907fb347675c4e1fb5475ef"
+    }
+  ],
+  "device_accessed": false,
+  "kernel_modified": false,
+  "board_modified": false,
+  "release_guard_changed": false,
+  "integration_pending": [
+    "Qualified iOS16 IOBlockStorageDevice/provider ABI, archive/link and initialization",
+    "Data volume UUID consumer and APFS mount path",
+    "Separate full root publication from current rd=md0 restore initrd",
+    "Fresh loader ownership/range and mutable page memory budget; no board memory change inferred"
+  ]
+}

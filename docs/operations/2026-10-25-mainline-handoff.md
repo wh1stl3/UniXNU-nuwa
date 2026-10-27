@@ -72,11 +72,11 @@
 
 ## 2. 目录与固定范围
 
-所有命令明确在D:/Code/UniXNU-nuwa执行，聊天默认cwd可能不同。设备仓main本轮父提交df90f14；本次里程碑提交号以git log为准。origin/main未fetch，不把本地ahead计数当作远端实时状态。
+所有命令明确在D:/Code/PortingiOS/nuwa/UniXNU-nuwa执行，聊天默认cwd可能不同。设备仓main本轮父提交df90f14；本次里程碑提交号以git log为准。origin/main未fetch，不把本地ahead计数当作远端实时状态。
 
-D:/Code/uefi-nuwa仍为a155c495c863e06d400b515315e3b8f7791dc308；D:/Code/UniXNU-integration仍为e553e467ebfe7642e9f483d3977a57066c6d1aef。本轮未修改它们。PR100独立分支codex/pr100-linux-8796仍不自动切换、合并或替换产物。
+D:/Code/PortingiOS/nuwa/uefi-nuwa仍为a155c495c863e06d400b515315e3b8f7791dc308；D:/Code/UniXNU-integration仍为e553e467ebfe7642e9f483d3977a57066c6d1aef。本轮未修改它们。PR100独立分支codex/pr100-linux-8796仍不自动切换、合并或替换产物。
 
-D:/Code/PortingiOS与D:/Code/PortingiOSWithUniXNU只读，不复制整棵源码进设备仓。保持iOS16/8796、板值/TCR、内存基址/容量/窗口、IPSW身份及*_verified审阅边界，loadable=false/runtime_qualified=false。脚本、编译和测试串行；媒体仅本地。
+D:/Code/PortingiOSLegacy与D:/Code/PortingiOSWithUniXNU只读，不复制整棵源码进设备仓。保持iOS16/8796、板值/TCR、内存基址/容量/窗口、IPSW身份及*_verified审阅边界，loadable=false/runtime_qualified=false。脚本、编译和测试串行；媒体仅本地。
 
 ## 3. 唯一有效试包19
 
@@ -125,7 +125,7 @@ source-audit.json固定DarwinBoot d099354d、VerifiedRoot 2854c61f、sweet fdad0
 ## 7. 直接续接命令
 
 ```powershell
-Set-Location D:/Code/UniXNU-nuwa
+Set-Location D:/Code/PortingiOS/nuwa/UniXNU-nuwa
 $py = 'C:/Users/Administrator/.workbuddy/binaries/python/versions/3.13.12/python.exe'
 git status -sb
 git log -5 --oneline
@@ -140,7 +140,7 @@ $stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
 
 ## 8. 恢复与媒体
 
-固定原厂恢复boot只读路径D:/Code/PortingiOS/nuwa/backups/recovery-20261020T121245314787Z/boot_a.img，SHA见下表。三分区本轮前后相同：
+固定原厂恢复boot只读路径D:/Code/PortingiOSLegacy/nuwa/backups/recovery-20261020T121245314787Z/boot_a.img，SHA见下表。三分区本轮前后相同：
 
 | 分区 | SHA256 |
 | --- | --- |

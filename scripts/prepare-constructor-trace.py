@@ -12,8 +12,8 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-MU = Path('D:/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore')
-FW = Path('D:/Code/uefi-nuwa')
+MU = Path('D:/Code/PortingiOSLegacy/common/sources/mu-nuwa-firmware/Mu_Basecore')
+FW = Path('D:/Code/PortingiOS/nuwa/uefi-nuwa')
 PIN = 'cfb93724a06ff86ff5ba971413368a7809ee42a5'
 FW_PIN = 'ddd794fc07e9bc64057222a9bffa4d79c8553af8'
 sys.path.insert(0, str(ROOT / 'scripts'))

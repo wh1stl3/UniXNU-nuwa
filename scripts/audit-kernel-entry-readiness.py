@@ -11,8 +11,8 @@ import struct
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE = Path('D:/Code/PortingiOS/common/sources/UniXNU')
-SHENG = Path('D:/Code/PortingiOS/common/sources/UniXNU-sheng')
+BASE = Path('D:/Code/PortingiOSLegacy/common/sources/UniXNU')
+SHENG = Path('D:/Code/PortingiOSLegacy/common/sources/UniXNU-sheng')
 OUT = ROOT / 'reports/darwin22-input-contracts/readiness.json'
 GIT = 'C:/Program Files/Git/cmd/git.exe'
 CALLBACKS = ['init', 'start', 'active', 'bind', 'putc', 'stage', 'irq', 'poll',

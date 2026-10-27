@@ -56,10 +56,10 @@ Combined diff --check exit: 0
 获批board用tomllib解析通过，并成功执行：
 
 ```text
-python -X utf8 -B D:/Code/PortingiOS/common/sources/UniXNU/unixnu status -D D:/Code/UniXNU-nuwa --out D:/Code/UniXNU-nuwa/out
+python -X utf8 -B D:/Code/PortingiOSLegacy/common/sources/UniXNU/unixnu status -D D:/Code/PortingiOS/nuwa/UniXNU-nuwa --out D:/Code/PortingiOS/nuwa/UniXNU-nuwa/out
 exit_code=0
-device   D:\Code\UniXNU-nuwa (nuwa)  [EXAMPLE]
-output   D:\Code\UniXNU-nuwa\out\nuwa
+device   D:\Code\PortingiOS\nuwa\UniXNU-nuwa (nuwa)  [EXAMPLE]
+output   D:\Code\PortingiOS\nuwa\UniXNU-nuwa\out\nuwa
 config   none (run defconfig)
 ```
 

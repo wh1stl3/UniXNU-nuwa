@@ -25,9 +25,9 @@ Compare-Object ($prior.results | ForEach-Object { "$($_.patch) $($_.sha256) $($_
 
 | 输入 | 精确基线 |
 | --- | --- |
-| 只读 XNU 树 | `D:/Code/PortingiOS/common/sources/xnu-ios16-full` |
+| 只读 XNU 树 | `D:/Code/PortingiOSLegacy/common/sources/xnu-ios16-full` |
 | XNU HEAD | `1b191cb58250d0705d8a51287127505aa4bc0789`，提交正文为 `xnu-8796.141.3 / Imported from xnu-8796.141.3.tar.gz` |
-| 只读 UniXNU | `D:/Code/PortingiOS/common/sources/UniXNU`，HEAD `75bc13dd34dc4e403826793739e316a264ce00dd`，tracked 工作树干净 |
+| 只读 UniXNU | `D:/Code/PortingiOSLegacy/common/sources/UniXNU`，HEAD `75bc13dd34dc4e403826793739e316a264ce00dd`，tracked 工作树干净 |
 | 补丁范围 | `patches/xnu/*.patch`，按文件名排序，恰好 49 个；每个 SHA-256 见 JSON |
 | Feed | 仍为 `xnu-10063.141.1`；`feeds.toml` SHA-256 `dec145fe25ed9cf1c50292a1e16ccbaa690b450a1de9e1ed687395e5fef88294` |
 | 工具与原始输出 | [results.json](../../reports/patch-portability-8796/results.json)，含时间、Git 版本、输入提交、前后 source status 和全部结果 |
@@ -41,7 +41,7 @@ Compare-Object ($prior.results | ForEach-Object { "$($_.patch) $($_.sha256) $($_
 每次检查命令如下；各补丁日志第一行保存实际完整命令：
 
 ```text
-git -c safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full --no-optional-locks -C D:/Code/PortingiOS/common/sources/xnu-ios16-full apply --check --verbose <patch-absolute-path>
+git -c safe.directory=D:/Code/PortingiOSLegacy/common/sources/xnu-ios16-full --no-optional-locks -C D:/Code/PortingiOSLegacy/common/sources/xnu-ios16-full apply --check --verbose <patch-absolute-path>
 ```
 
 没有执行 `git apply` 写入、checkout/reset、worktree 或 clone。`safe.directory` 仅命令级配置，没有改全局配置。XNU 检查前后 `status --porcelain --untracked-files=all` 均为空、返回 0。日志仅写本仓。脚本独立检查每个补丁，**不累积应用成功补丁**，因此保留前置依赖造成的失败，不扣除或重算成更高的通过率。
@@ -71,7 +71,7 @@ git -c safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full --no-opti
 补充命令及输出见 [pmap-existing-path-only.log](../../reports/patch-portability-8796/pmap-existing-path-only.log)：
 
 ```text
-git -c safe.directory=D:/Code/PortingiOS/common/sources/xnu-ios16-full --no-optional-locks -C D:/Code/PortingiOS/common/sources/xnu-ios16-full apply --check --verbose --exclude=osfmk/arm64/sptm/pmap/pmap.c D:/Code/PortingiOS/common/sources/UniXNU/patches/xnu/zzx-pmap-sync-64bit-pa.patch
+git -c safe.directory=D:/Code/PortingiOSLegacy/common/sources/xnu-ios16-full --no-optional-locks -C D:/Code/PortingiOSLegacy/common/sources/xnu-ios16-full apply --check --verbose --exclude=osfmk/arm64/sptm/pmap/pmap.c D:/Code/PortingiOSLegacy/common/sources/UniXNU/patches/xnu/zzx-pmap-sync-64bit-pa.patch
 exit_code=0
 Skipped patch 'osfmk/arm64/sptm/pmap/pmap.c'.
 Checking patch osfmk/arm/pmap/pmap.c...

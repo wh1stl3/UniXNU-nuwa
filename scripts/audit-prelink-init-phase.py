@@ -13,7 +13,7 @@ import subprocess
 from native_prelink_inputs import ROOT, inputs
 from virtual_patch import Tree, parse
 
-XNU = Path('D:/Code/PortingiOS/common/sources/xnu-ios16-full')
+XNU = Path('D:/Code/PortingiOSLegacy/common/sources/xnu-ios16-full')
 BASE = Path('D:/Code/UniXNU-integration')
 ARTIFACT = ROOT / 'out/upstream-kernel-40015845083-final/nuwa-8796-merged-40015845083/nuwa-8796-source'
 PATHS = ('osfmk/arm64/arm_vm_init.c', 'osfmk/arm64/machine_routines.c',

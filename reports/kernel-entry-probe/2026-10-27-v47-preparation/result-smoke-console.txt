@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-read-result.py", line 123, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-read-result.py", line 106, in main
+    assert not any(x<rx+rw and rx<x+w and y<ry+rh and ry<y+h for rx,ry,rw,rh in old+new[:i])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

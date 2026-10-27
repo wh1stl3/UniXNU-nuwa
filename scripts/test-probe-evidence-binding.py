@@ -8,6 +8,165 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--build',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args()
     b=json.loads(a.build.read_text());meta=metadata(a.build);sha=b['candidate']['sha256'];checks=[]
     validate(meta,sha);checks.append(dict(name='complete v21 evidence accepted',passed=True))
+    if b.get('probe_revision',0)>=49:
+        altered=copy.deepcopy(meta);del altered['read-flow']
+        try:validate(altered,sha)
+        except (ValueError,KeyError):checks.append(dict(name='missing read-flow rejected',passed=True))
+        else:raise AssertionError('missing read-flow')
+        native_read=Path.read_bytes;path=(ROOT/meta['read-flow']['path']).resolve();obj=json.loads(native_read(path));obj['checks'].pop();payload=json.dumps(obj).encode()
+        altered=copy.deepcopy(meta);altered['read-flow']['sha256']=hashlib.sha256(payload).hexdigest()
+        with patch.object(Path,'read_bytes',lambda p:payload if p.resolve()==path else native_read(p)):
+            try:validate(altered,sha)
+            except ValueError:checks.append(dict(name='deleted read-flow case rejected after resealing digest',passed=True))
+            else:raise AssertionError('missing read-flow case')
+    if b.get('probe_revision',0)>=48:
+        altered=copy.deepcopy(meta);del altered['delta-hex']
+        try:validate(altered,sha)
+        except (ValueError,KeyError):checks.append(dict(name='missing delta-hex rejected',passed=True))
+        else:raise AssertionError('missing delta-hex')
+        native_read=Path.read_bytes;path=(ROOT/meta['delta-hex']['path']).resolve();obj=json.loads(native_read(path));obj['checks'].pop();payload=json.dumps(obj).encode()
+        altered=copy.deepcopy(meta);altered['delta-hex']['sha256']=hashlib.sha256(payload).hexdigest()
+        with patch.object(Path,'read_bytes',lambda p:payload if p.resolve()==path else native_read(p)):
+            try:validate(altered,sha)
+            except ValueError:checks.append(dict(name='deleted delta-hex case rejected after resealing digest',passed=True))
+            else:raise AssertionError('missing delta-hex case')
+    if b.get('probe_revision',0)>=47:
+        altered=copy.deepcopy(meta);del altered['read-result']
+        try:validate(altered,sha)
+        except (ValueError,KeyError):checks.append(dict(name='missing read-result rejected',passed=True))
+        else:raise AssertionError('missing read-result')
+        native_read=Path.read_bytes;path=(ROOT/meta['read-result']['path']).resolve();obj=json.loads(native_read(path));obj['checks'].pop();payload=json.dumps(obj).encode()
+        altered=copy.deepcopy(meta);altered['read-result']['sha256']=hashlib.sha256(payload).hexdigest()
+        with patch.object(Path,'read_bytes',lambda p:payload if p.resolve()==path else native_read(p)):
+            try:validate(altered,sha)
+            except ValueError:checks.append(dict(name='deleted read-result case rejected after resealing digest',passed=True))
+            else:raise AssertionError('missing read-result case')
+    if b.get('probe_revision',0)>=46:
+        altered=copy.deepcopy(meta);del altered['read-deep']
+        try:validate(altered,sha)
+        except (ValueError,KeyError):checks.append(dict(name='missing read-deep rejected',passed=True))
+        else:raise AssertionError('missing read-deep')
+        native_read=Path.read_bytes;path=(ROOT/meta['read-deep']['path']).resolve();obj=json.loads(native_read(path));obj['checks'].pop();payload=json.dumps(obj).encode()
+        altered=copy.deepcopy(meta);altered['read-deep']['sha256']=hashlib.sha256(payload).hexdigest()
+        with patch.object(Path,'read_bytes',lambda p:payload if p.resolve()==path else native_read(p)):
+            try:validate(altered,sha)
+            except ValueError:checks.append(dict(name='deleted read-deep case rejected after resealing digest',passed=True))
+            else:raise AssertionError('missing read-deep case')
+    if b.get('probe_revision',0)>=45:
+        altered=copy.deepcopy(meta);del altered['read-fetch']
+        try:validate(altered,sha)
+        except (ValueError,KeyError):checks.append(dict(name='missing read-fetch rejected',passed=True))
+        else:raise AssertionError('missing read-fetch')
+        native_read=Path.read_bytes;path=(ROOT/meta['read-fetch']['path']).resolve();obj=json.loads(native_read(path));obj['checks'].pop();payload=json.dumps(obj).encode()
+        altered=copy.deepcopy(meta);altered['read-fetch']['sha256']=hashlib.sha256(payload).hexdigest()
+        with patch.object(Path,'read_bytes',lambda p:payload if p.resolve()==path else native_read(p)):
+            try:validate(altered,sha)
+            except ValueError:checks.append(dict(name='deleted read-fetch case rejected after resealing digest',passed=True))
+            else:raise AssertionError('missing read-fetch case')
+    if b.get('probe_revision',0)>=44:
+        altered=copy.deepcopy(meta);del altered['compact-decmp']
+        try:validate(altered,sha)
+        except (ValueError,KeyError):checks.append(dict(name='missing compact-decmp rejected',passed=True))
+        else:raise AssertionError('missing compact-decmp')
+        native_read=Path.read_bytes;path=(ROOT/meta['compact-decmp']['path']).resolve();obj=json.loads(native_read(path));obj['checks'].pop();payload=json.dumps(obj).encode()
+        altered=copy.deepcopy(meta);altered['compact-decmp']['sha256']=hashlib.sha256(payload).hexdigest()
+        with patch.object(Path,'read_bytes',lambda p:payload if p.resolve()==path else native_read(p)):
+            try:validate(altered,sha)
+            except ValueError:checks.append(dict(name='deleted compact-decmp case rejected after resealing digest',passed=True))
+            else:raise AssertionError('missing compact-decmp case')
+    if b.get('probe_revision',0)>=43:
+        altered=copy.deepcopy(meta);del altered['shared-hex']
+        try:validate(altered,sha)
+        except (ValueError,KeyError):checks.append(dict(name='missing shared-hex rejected',passed=True))
+        else:raise AssertionError('missing shared-hex')
+        native_read=Path.read_bytes;path=(ROOT/meta['shared-hex']['path']).resolve();obj=json.loads(native_read(path));obj['checks'].pop();payload=json.dumps(obj).encode()
+        altered=copy.deepcopy(meta);altered['shared-hex']['sha256']=hashlib.sha256(payload).hexdigest()
+        with patch.object(Path,'read_bytes',lambda p:payload if p.resolve()==path else native_read(p)):
+            try:validate(altered,sha)
+            except ValueError:checks.append(dict(name='deleted shared-hex case rejected after resealing digest',passed=True))
+            else:raise AssertionError('missing shared-hex case')
+    if b.get('probe_revision',0)>=42:
+        altered=copy.deepcopy(meta);del altered['read-decmp']
+        try:validate(altered,sha)
+        except (ValueError,KeyError):checks.append(dict(name='missing read-decmp rejected',passed=True))
+        else:raise AssertionError('missing read-decmp')
+        native_read=Path.read_bytes;path=(ROOT/meta['read-decmp']['path']).resolve();obj=json.loads(native_read(path));obj['checks'].pop();payload=json.dumps(obj).encode()
+        altered=copy.deepcopy(meta);altered['read-decmp']['sha256']=hashlib.sha256(payload).hexdigest()
+        with patch.object(Path,'read_bytes',lambda p:payload if p.resolve()==path else native_read(p)):
+            try:validate(altered,sha)
+            except ValueError:checks.append(dict(name='deleted read-decmp case rejected after resealing digest',passed=True))
+            else:raise AssertionError('missing read-decmp case')
+    if b.get('probe_revision',0)>=41:
+        altered=copy.deepcopy(meta);del altered['read-grid']
+        try:validate(altered,sha)
+        except (ValueError,KeyError):checks.append(dict(name='missing read-grid rejected',passed=True))
+        else:raise AssertionError('missing read-grid')
+        native_read=Path.read_bytes;path=(ROOT/meta['read-grid']['path']).resolve();obj=json.loads(native_read(path));obj['checks'].pop();payload=json.dumps(obj).encode()
+        altered=copy.deepcopy(meta);altered['read-grid']['sha256']=hashlib.sha256(payload).hexdigest()
+        with patch.object(Path,'read_bytes',lambda p:payload if p.resolve()==path else native_read(p)):
+            try:validate(altered,sha)
+            except ValueError:checks.append(dict(name='deleted read-grid case rejected after resealing digest',passed=True))
+            else:raise AssertionError('missing read-grid case')
+    if b.get('probe_revision',0)>=40:
+        native_read=Path.read_bytes;path=(ROOT/meta['build']['path']).resolve();obj=json.loads(native_read(path));obj['screen']['max_written_row']=1040;payload=json.dumps(obj).encode()
+        altered=copy.deepcopy(meta);altered['build']['sha256']=hashlib.sha256(payload).hexdigest()
+        with patch.object(Path,'read_bytes',lambda p:payload if p.resolve()==path else native_read(p)):
+            try:validate(altered,sha)
+            except ValueError:checks.append(dict(name='wrong screen extent rejected after resealing digest',passed=True))
+            else:raise AssertionError('wrong screen extent')
+        altered=copy.deepcopy(meta);del altered['single-pass-hex']
+        try:validate(altered,sha)
+        except (ValueError,KeyError):checks.append(dict(name='missing single-pass HEX rejected',passed=True))
+        else:raise AssertionError('missing single-pass HEX')
+        native_read=Path.read_bytes;path=(ROOT/meta['single-pass-hex']['path']).resolve();obj=json.loads(native_read(path));obj['checks'].pop();payload=json.dumps(obj).encode()
+        altered=copy.deepcopy(meta);altered['single-pass-hex']['sha256']=hashlib.sha256(payload).hexdigest()
+        with patch.object(Path,'read_bytes',lambda p:payload if p.resolve()==path else native_read(p)):
+            try:validate(altered,sha)
+            except ValueError:checks.append(dict(name='deleted single-pass HEX case rejected after resealing digest',passed=True))
+            else:raise AssertionError('missing single-pass HEX case')
+    if b.get('probe_revision',0)>=39:
+        altered=copy.deepcopy(meta);del altered['read-init']
+        try:validate(altered,sha)
+        except (ValueError,KeyError):checks.append(dict(name='missing read-init rejected',passed=True))
+        else:raise AssertionError('missing read-init')
+        native_read=Path.read_bytes;path=(ROOT/meta['read-init']['path']).resolve();obj=json.loads(native_read(path));obj['checks'].pop();payload=json.dumps(obj).encode()
+        altered=copy.deepcopy(meta);altered['read-init']['sha256']=hashlib.sha256(payload).hexdigest()
+        with patch.object(Path,'read_bytes',lambda p:payload if p.resolve()==path else native_read(p)):
+            try:validate(altered,sha)
+            except ValueError:checks.append(dict(name='deleted read-init case rejected after resealing digest',passed=True))
+            else:raise AssertionError('missing read-init case')
+    if b.get('probe_revision',0)>=38:
+        altered=copy.deepcopy(meta);del altered['read-body-reset']
+        try:validate(altered,sha)
+        except (ValueError,KeyError):checks.append(dict(name='missing read-body-reset rejected',passed=True))
+        else:raise AssertionError('missing read-body-reset')
+        altered=copy.deepcopy(meta);del altered['read-body']
+        try:validate(altered,sha)
+        except (ValueError,KeyError):checks.append(dict(name='missing read-body rejected',passed=True))
+        else:raise AssertionError('missing read-body')
+        native_read=Path.read_bytes;body_path=(ROOT/meta['read-body']['path']).resolve()
+        obj=json.loads(native_read(body_path));obj['checks'].pop();payload=json.dumps(obj).encode()
+        altered=copy.deepcopy(meta);altered['read-body']['sha256']=hashlib.sha256(payload).hexdigest()
+        with patch.object(Path,'read_bytes',lambda p:payload if p.resolve()==body_path else native_read(p)):
+            try:validate(altered,sha)
+            except ValueError:checks.append(dict(name='deleted body case rejected after resealing digest',passed=True))
+            else:raise AssertionError('missing body case')
+    if b.get('probe_revision',0)>=37:
+        altered=copy.deepcopy(meta);del altered['read-dispatch']
+        try:validate(altered,sha)
+        except (ValueError,KeyError):checks.append(dict(name='missing read-dispatch rejected',passed=True))
+        else:raise AssertionError('missing read-dispatch')
+        original_dispatch=Path.read_bytes;dispatch_path=(ROOT/meta['read-dispatch']['path']).resolve()
+        for mode in ('deleted-case','missing-negative'):
+            obj=json.loads(original_dispatch(dispatch_path))
+            if mode=='deleted-case':obj['checks'].pop()
+            else:obj['wrong_target_register_negative_rejected']=False
+            payload=json.dumps(obj).encode();altered=copy.deepcopy(meta)
+            altered['read-dispatch']['sha256']=hashlib.sha256(payload).hexdigest()
+            with patch.object(Path,'read_bytes',lambda p:payload if p.resolve()==dispatch_path else original_dispatch(p)):
+                try:validate(altered,sha)
+                except ValueError:checks.append(dict(name='read-dispatch '+mode+' rejected after resealing digest',passed=True))
+                else:raise AssertionError(mode)
     if b.get('probe_revision',0)>=36:
         altered=copy.deepcopy(meta);del altered['read-boundaries']
         try:validate(altered,sha)

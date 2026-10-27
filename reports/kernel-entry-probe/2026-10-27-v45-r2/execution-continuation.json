@@ -1,0 +1,78 @@
+{
+  "candidate_sha256": "6642a380c215de05b38fac2320f0a097011237bbf28e4e0c15b0b5869738128e",
+  "serial_execution": true,
+  "device_accessed": false,
+  "commands": [
+    {
+      "name": "shared-hex",
+      "exit_code": 0,
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/test-shared-hex.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v45-r2\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v45-r2\\shared-hex.json"
+      ],
+      "completed_log": "reports/kernel-entry-probe/2026-10-27-v45-preparation/shared-hex-controlled-console.txt",
+      "scope": "Same candidate; corrected same-coverage size comparator; prior failed execution retained"
+    },
+    {
+      "name": "compact-decmp",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-compact-decmp.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v45-r2\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v45-r2\\compact-decmp.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 25.294711099995766,
+      "stdout": "{\"checks\": 72, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "read-fetch",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-read-fetch.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v45-r2\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v45-r2\\read-fetch.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 125.69460370001616,
+      "stdout": "{\"checks\": 509, \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "name": "binding",
+      "argv": [
+        "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\scripts\\test-probe-evidence-binding.py",
+        "--build",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v45-r2\\build.json",
+        "--output",
+        "D:\\Code\\PortingiOS\\nuwa\\UniXNU-nuwa\\reports\\kernel-entry-probe\\2026-10-27-v45-r2\\binding.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 156.60971709998557,
+      "stdout": "{\"checks\": 59, \"passed\": true}\n",
+      "stderr": ""
+    }
+  ]
+}

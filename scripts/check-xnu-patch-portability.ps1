@@ -1,7 +1,7 @@
 param(
     [string]$Git = 'C:/Program Files/Git/cmd/git.exe',
-    [string]$Source = 'D:/Code/PortingiOS/common/sources/xnu-ios16-full',
-    [string]$Base = 'D:/Code/PortingiOS/common/sources/UniXNU',
+    [string]$Source = 'D:/Code/PortingiOSLegacy/common/sources/xnu-ios16-full',
+    [string]$Base = 'D:/Code/PortingiOSLegacy/common/sources/UniXNU',
     [string]$Output = 'reports/patch-portability-8796'
 )
 $ErrorActionPreference = 'Stop'

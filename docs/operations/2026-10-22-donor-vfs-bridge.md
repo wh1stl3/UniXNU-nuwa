@@ -11,7 +11,7 @@ scripts/ci/audit-donor-bindings.py读取实际MH_EXECUTE及donor的_PrelinkInfoD
 命令参数：
 
 ```text
-python -X utf8 -B scripts/ci/audit-donor-bindings.py --kernel out/kernel-ci/39742250205/nuwa-8796-source-39742250205/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped --donor D:/Code/PortingiOS/nuwa/artifacts/ios16-donor-inspection/20261020T115253317035Z/original-iphone-kernelcache.macho --selection-report D:/Code/PortingiOSWithUniXNU/.work/kernel-prelinked.json --output reports/donor-compat/current-kernel-bindings.json
+python -X utf8 -B scripts/ci/audit-donor-bindings.py --kernel out/kernel-ci/39742250205/nuwa-8796-source-39742250205/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped --donor D:/Code/PortingiOSLegacy/nuwa/artifacts/ios16-donor-inspection/20261020T115253317035Z/original-iphone-kernelcache.macho --selection-report D:/Code/PortingiOSWithUniXNU/.work/kernel-prelinked.json --output reports/donor-compat/current-kernel-bindings.json
 ```
 
 同一命令换成参考run24实际内核，输出reference-kernel-bindings.json。两次都是41,095项kernel绑定及24,253项component绑定，总数与已存在参考report的bindings/计数一致；参考输入0错误，本仓输入1错误，见inventory-crosscheck.json。缺失项为APFS原始指针位点0xfffffff006eac110，目标0xfffffff00734c520，其donor导出名为_vfs_getvfs_with_vfsops。这里只记录读取到的地址，不填入board或重定位镜像。

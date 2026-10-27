@@ -6,7 +6,7 @@ import re
 import struct
 
 ROOT = Path(__file__).resolve().parents[1]
-FW = Path('D:/Code/PortingiOS/common/sources/mu-nuwa-firmware')
+FW = Path('D:/Code/PortingiOSLegacy/common/sources/mu-nuwa-firmware')
 DT = Path('D:/Code/PortingiOSWithUniXNU/device/observed/nuwa-live.dtb')
 
 

@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-read-dispatch-integrated.py", line 68, in <module>
+    main()
+    ~~~~^^
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-read-dispatch-integrated.py", line 36, in main
+    actual = T.header_reset(raw, macho, build, b'', 0x600000, [], True, TILE)
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-read-dispatch-observer.py", line 90, in header_reset
+    u=machine(raw,m,proto,va,patches,candidate);ps={k:int(v,16) for k,v in b['probe']['symbols'].items()};u.mem_write(ps['probe_scratch'],struct.pack('<QQ',FB,ROW))
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-read-dispatch-observer.py", line 44, in machine
+    for i in range(31):u.reg_write(getattr(sys.modules[__name__],f'UC_ARM64_REG_X{i}'),0x101000+i*0x100)
+                                           ~~~~~~~~~~~^^^^^^^^^^
+KeyError: 'dispatch_model'

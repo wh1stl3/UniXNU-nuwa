@@ -10,7 +10,7 @@
 
 ## 本仓现状与证据
 
-只读源码根：`D:/Code/PortingiOS/common/sources/mu-nuwa-firmware`，固件固定输入见`config/firmware-ci-inputs.json`（Mu-Silicium 6c6755012728c9f7de748228758bad94d1e9a660）。下列源码路径相对此根：
+只读源码根：`D:/Code/PortingiOSLegacy/common/sources/mu-nuwa-firmware`，固件固定输入见`config/firmware-ci-inputs.json`（Mu-Silicium 6c6755012728c9f7de748228758bad94d1e9a660）。下列源码路径相对此根：
 
 - `Silicon/Silicium/SiliciumPkg/Library/FrameBufferSerialPortLib/FrameBufferSerialPortLib.c:243`：SerialPortWrite实际向屏幕绘字；`:326`初始化没有建立USB/UART。SEC当前链接此库，见Q-060审查与`reports/arm64-sec-entry-audit/audit.json`，名称中的Serial不能作为物理串口存在证据。
 - `Platforms/Xiaomi/nuwaPkg/Include/DXE.inc:88,96-99`：列入UsbfnDwc3Dxe、UsbMsdDxe、UsbDeviceDxe、UsbConfigDxe、UsbInitDxe。USB主机端UsbBus/键盘/存储驱动不能代替连接PC所需的设备端日志功能。
@@ -20,7 +20,7 @@
 复核命令（只读，无设备命令）：
 
 ```powershell
-$r='D:/Code/PortingiOS/common/sources/mu-nuwa-firmware'
+$r='D:/Code/PortingiOSLegacy/common/sources/mu-nuwa-firmware'
 rg -n 'Usbfn|UsbDevice|UsbConfig|UsbMsd|UsbInit|ULog' "$r/Platforms/Xiaomi/nuwaPkg/Include/DXE.inc"
 rg -n 'USB_DEVICE_SEND|USB_DEVICE_HANDLE_EVENT|USB_DEVICE_START|struct _EFI_USB_DEVICE_PROTOCOL' "$r/Silicon/Qualcomm/QcomPkg/Include/Protocol/EFIUsbDevice.h"
 rg -n 'MODULE_TYPE|LIBRARY_CLASS|PcdAdvancedLogger' "$r/Common/Mu/AdvLoggerPkg/Library/AdvancedLoggerLib/PeilessArm/AdvancedLoggerLib.inf"

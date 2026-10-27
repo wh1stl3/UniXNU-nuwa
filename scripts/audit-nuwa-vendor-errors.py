@@ -5,7 +5,7 @@ from pathlib import Path
 import subprocess
 
 ROOT=Path(__file__).resolve().parents[1]
-BINARY=Path('D:/Code/PortingiOS/common/sources/mu-nuwa-firmware/Binaries')
+BINARY=Path('D:/Code/PortingiOSLegacy/common/sources/mu-nuwa-firmware/Binaries')
 PIN='a1501e0c2e642d6ac0d8f52c85af2a67b75a7799'
 
 def blob(path):
@@ -27,7 +27,7 @@ def main():
     raw=blob('nuwa/RawFiles/uefiplat.cfg')
     vector=[line for line in raw.decode().splitlines() if 'CPU Vectors' in line]
     assert len(vector)==1
-    source=(Path('D:/Code/uefi-nuwa')/'Platforms/Xiaomi/nuwaPkg/Library/MemoryMapLib/MemoryMapLib.c').read_bytes().replace(b'\r\n',b'\n')
+    source=(Path('D:/Code/PortingiOS/nuwa/uefi-nuwa')/'Platforms/Xiaomi/nuwaPkg/Library/MemoryMapLib/MemoryMapLib.c').read_bytes().replace(b'\r\n',b'\n')
     assert b'"CPU Vectors"' not in source
     output.write_text(json.dumps(dict(scope='Offline attribution of user photographs, not runtime causality',vendor_inputs=items,config=dict(path='nuwa/RawFiles/uefiplat.cfg',commit=PIN,sha256=hashlib.sha256(raw).hexdigest(),vector_row=vector[0]),current_map=dict(sha256=hashlib.sha256(source).hexdigest(),cpu_vectors_row_present=False),device_changed=False,map_changed=False,conclusion='Real vector-name contract gap exists; do not dismiss as harmless, do not borrow another board address. Its effect on current boot and whether this archived raw config matches installed xbl_config require separate validation.'),indent=2)+'\n',encoding='utf-8')
     print(output.relative_to(ROOT))

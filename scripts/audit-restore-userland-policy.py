@@ -2,7 +2,7 @@
 import argparse,hashlib,json,plistlib,subprocess,os
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-TOOL=Path('/mnt/d/Code/PortingiOS/common/tools/apfs-fuse-linux/bin/apfs-fuse')
+TOOL=Path('/mnt/d/Code/PortingiOSLegacy/common/tools/apfs-fuse-linux/bin/apfs-fuse')
 def sha(data):return hashlib.sha256(data).hexdigest()
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--output',type=Path,required=True);p.add_argument('--mount',type=Path,required=True);a=p.parse_args()

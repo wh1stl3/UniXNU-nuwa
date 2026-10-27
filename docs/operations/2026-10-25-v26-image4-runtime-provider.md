@@ -50,12 +50,12 @@ IOKit helper 0xfffffff0046f07e8要求OSData，缺属性=2、类型错误=96、�
 
 ## 重放和边界
 
-在D:/Code/UniXNU-nuwa串行执行，任一步非零立即停止，不用旧bin冒充新编译：
+在D:/Code/PortingiOS/nuwa/UniXNU-nuwa串行执行，任一步非零立即停止，不用旧bin冒充新编译：
 
 ```powershell
-wsl -d Ubuntu-22.04 -- clang --target=aarch64-none-elf -c /mnt/d/Code/UniXNU-nuwa/patches/xnu-8796-candidates/image4-amnm-provider.S -o /mnt/d/Code/UniXNU-nuwa/out/image4-mainline-v26/amnm-provider.o
-wsl -d Ubuntu-22.04 -- ld.lld -Ttext=0xfffffff003dc4000 --entry=image4_amnm_provider /mnt/d/Code/UniXNU-nuwa/out/image4-mainline-v26/amnm-provider.o -o /mnt/d/Code/UniXNU-nuwa/out/image4-mainline-v26/amnm-provider.elf
-wsl -d Ubuntu-22.04 -- llvm-objcopy -O binary --only-section=.text /mnt/d/Code/UniXNU-nuwa/out/image4-mainline-v26/amnm-provider.elf /mnt/d/Code/UniXNU-nuwa/out/image4-mainline-v26/amnm-provider.bin
+wsl -d Ubuntu-22.04 -- clang --target=aarch64-none-elf -c /mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/patches/xnu-8796-candidates/image4-amnm-provider.S -o /mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/image4-mainline-v26/amnm-provider.o
+wsl -d Ubuntu-22.04 -- ld.lld -Ttext=0xfffffff003dc4000 --entry=image4_amnm_provider /mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/image4-mainline-v26/amnm-provider.o -o /mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/image4-mainline-v26/amnm-provider.elf
+wsl -d Ubuntu-22.04 -- llvm-objcopy -O binary --only-section=.text /mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/image4-mainline-v26/amnm-provider.elf /mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/image4-mainline-v26/amnm-provider.bin
 & 'C:/Users/Administrator/.workbuddy/binaries/python/versions/3.13.12/python.exe' -B scripts/audit-image4-runtime-provider.py --adt out/trial-boot/xnu-entry-probe-18-vectors/kernel.macho.adt --adapter out/image4-mainline-v26/amnm-provider.bin --output out/image4-mainline-v26/replay.json
 ```
 

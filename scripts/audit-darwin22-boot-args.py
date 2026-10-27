@@ -9,8 +9,8 @@ from pathlib import Path
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
-XNU = Path('D:/Code/PortingiOS/common/sources/xnu-ios16-full/pexpert/pexpert/arm64/boot.h')
-LOADER = Path('D:/Code/PortingiOS/common/sources/UniXNU/drivers/DarwinBoot/DarwinBootPkg/Driver/BootArgs.h')
+XNU = Path('D:/Code/PortingiOSLegacy/common/sources/xnu-ios16-full/pexpert/pexpert/arm64/boot.h')
+LOADER = Path('D:/Code/PortingiOSLegacy/common/sources/UniXNU/drivers/DarwinBoot/DarwinBootPkg/Driver/BootArgs.h')
 
 
 def layout(command_bytes):

@@ -1,7 +1,7 @@
 # 交接：以 UniXNU 为底座改造 nuwa 跑 iOS
 
-> 来源：`D:\Code\PortingiOS\docs\handoff-unixnu-route-2026-10-22.md`（2026-10-22 01:33 原件，仅拷入，不再改）。
-> 原文写「工作目录 `D:\Code\PortingiOSWithUniXNU`」，**该目录已废弃**；现行工作目录是本仓库 `D:\Code\UniXNU-nuwa`，其余内容仍然有效。
+> 来源：`D:\Code\PortingiOSLegacy\docs\handoff-unixnu-route-2026-10-22.md`（2026-10-22 01:33 原件，仅拷入，不再改）。
+> 原文写「工作目录 `D:\Code\PortingiOSWithUniXNU`」，**该目录已废弃**；现行工作目录是本仓库 `D:\Code\PortingiOS\nuwa\UniXNU-nuwa`，其余内容仍然有效。
 > 与 `AGENTS.md` 冲突时以 `AGENTS.md` 为准。
 > **2026-10-22 03:00 追加**：本文写于 01:33，当时还不知道官方移植指南。现行权威是
 > `docs/inherited/unixnu-official-2026-10-22.md`（官方 porting/devices 摘录）+ `docs/DECISIONS.md` D-002/D-003。
@@ -31,11 +31,11 @@
 4. 完成后按 §10 格式汇报，并就 §4 的 4K/16K 岔路给出带证据的建议，等用户拍板。
 5. 重活（长时间编译、CI）可以交给 Codex CLI，也可以自己跑；但**判断与汇报由你负责**，不要把结论外包。
 
-**不要做的事**：不要修改 `D:\Code\PortingiOS`；不要在没有 §5 结论前开始大规模 rebase；不要碰设备。
+**不要做的事**：不要修改 `D:\Code\PortingiOSLegacy`；不要在没有 §5 结论前开始大规模 rebase；不要碰设备。
 
 ## 1. 工作目录约定
 
-**新建**：`D:\Code\PortingiOSWithUniXNU`（与 `D:\Code\PortingiOS` 同级）
+**新建**：`D:\Code\PortingiOSWithUniXNU`（与 `D:\Code\PortingiOSLegacy` 同级）
 
 > ⚠️ **大小写必须严格照抄。** Windows 不敏感，但本项目的构建全在 WSL 里跑，`/mnt/d/Code/...` **区分大小写**；写成 `portingioswithunixnu`、`PortingIosWithUnixnu` 之类会直接 `No such file or directory`，而且报错位置常常离真正原因很远。
 >
@@ -44,14 +44,14 @@
 规则：
 
 - 新仓库里做所有实际工作：构建脚本、补丁、配置、报告、提交。
-- `D:\Code\PortingiOS` **只读参照**，不得修改、不得在其中提交。它是旧路线（自建 P16 链路）的存档，同时存放所有上游源码副本。
+- `D:\Code\PortingiOSLegacy` **只读参照**，不得修改、不得在其中提交。它是旧路线（自建 P16 链路）的存档，同时存放所有上游源码副本。
 - 新仓库建议第一次提交就把 `docs/STATUS.md`、`docs/WORKLOG.md`、`AGENTS.md` 建起来，规则沿用旧仓的纪律（见 §8）。
 - 上游源码**不要复制**进新仓库，用路径引用或符号链接：
   ```
-  D:\Code\PortingiOS\common\sources\UniXNU          # 框架 + 驱动 + 49 个内核补丁
-  D:\Code\PortingiOS\common\sources\UniXNU-sheng    # SM8550 板级（同 SoC！）
-  D:\Code\PortingiOS\common\sources\xnu-ios16-full  # XNU 8796 树
-  D:\Code\PortingiOS\common\sources\ios-sweet       # 81 个 iOS16 人格补丁
+  D:\Code\PortingiOSLegacy\common\sources\UniXNU          # 框架 + 驱动 + 49 个内核补丁
+  D:\Code\PortingiOSLegacy\common\sources\UniXNU-sheng    # SM8550 板级（同 SoC！）
+  D:\Code\PortingiOSLegacy\common\sources\xnu-ios16-full  # XNU 8796 树
+  D:\Code\PortingiOSLegacy\common\sources\ios-sweet       # 81 个 iOS16 人格补丁
   ```
 
 ## 2. 为什么换这条路线（宿主实测，不是推断）
@@ -147,7 +147,7 @@ trustcache_tag = "xnu-8796.101.5"    # 已经在用 8796 的 TrustCache 头
 
 | 资产 | 位置 | 状态 |
 | --- | --- | --- |
-| P16 boot_args 736 字节布局适配 | `PortingiOS/nuwa/` 相关补丁 | 已完成 |
+| P16 boot_args 736 字节布局适配 | `PortingiOSLegacy/nuwa/` 相关补丁 | 已完成 |
 | 自定义入口 stub + UTS 同次回传 | `f467359`、`nuwa/diagnostics/` | **真机已验证** |
 | 恢复路径实测（C1/C2） | `docs/operations/2026-10-22-nuwa-recovery-path-verification.md` | 真机已验证 |
 | ABL 入口 x0 = 0xB5DB1000 | 同上 | 真机已验证 |
@@ -217,7 +217,7 @@ trustcache_tag = "xnu-8796.101.5"    # 已经在用 8796 的 TrustCache 头
 - 只差用户按实体键的项 → 写 `docs/PENDING-HUMAN.md` 记为待办，**继续下一项**，不要整轮停工。
 - 每个里程碑往 `docs/WORKLOG.md` 追加一行。
 - 结论必须带证据（文件:行号、命令输出、哈希），**模拟器/QEMU 结果不得写成实机通过**。
-- 不修改 `D:\Code\PortingiOS`。
+- 不修改 `D:\Code\PortingiOSLegacy`。
 - 如果用户暂时离开，不要空转造产出：把待确认项写清楚就停下。
 
 ## 9. 明确不要做的事
@@ -226,7 +226,7 @@ trustcache_tag = "xnu-8796.101.5"    # 已经在用 8796 的 TrustCache 头
 - 不要在没有 §5 结论时就开始大规模 rebase 或编译。
 - 不要把 sheng 的板级配置直接套到 nuwa（平板 ≠ 手机）。
 - 不要用旧仓的 `nuwa-mmu16-v4.img` 去验证这条新路线（它是 P16 链路的产物）。
-- 不要删除或覆盖 `D:\Code\PortingiOS` 里的任何东西。
+- 不要删除或覆盖 `D:\Code\PortingiOSLegacy` 里的任何东西。
 
 ## 10. 汇报格式
 

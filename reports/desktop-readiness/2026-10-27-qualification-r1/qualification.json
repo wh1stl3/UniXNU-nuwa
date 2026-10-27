@@ -1,0 +1,54 @@
+{
+  "script_sha256": "ac0ef59c845a7a07cd8305c2ae4d7c2abac45f48bd59ad46297e6d7d6334e969",
+  "evidence": [
+    {
+      "name": "restore_inventory",
+      "path": "reports/desktop-readiness/2026-10-27-r2/audit.json",
+      "sha256": "ed8cae671eca841ea5767acd64195d398c72959a0f3c51ee45847fd9c63cb445"
+    },
+    {
+      "name": "inventory_tests",
+      "path": "reports/desktop-readiness/2026-10-27-r2/tests.json",
+      "sha256": "7dcdc4f1cceefe9249412fd64e27d264d911a2e60b3d4c8a5f1eedd8bbe4b25b"
+    },
+    {
+      "name": "system_inventory",
+      "path": "reports/desktop-readiness/2026-10-27-system-r1/audit.json",
+      "sha256": "ac19d5f279bf5895e02e7a5fa52827aa68c197a1ac3745ad4c4daa96262c26b9"
+    },
+    {
+      "name": "probe41",
+      "path": "reports/xnu-first-entry/entry-probe-41.json",
+      "sha256": "4362a40d2bdbabd1d242200077351d9bcdf33cf5b6d089d197bacb0c3eb2962e"
+    }
+  ],
+  "plan_sha256": "98ca7382c84f44ab156c9fd4d8214ebaf8e30e875f52557086d1e1659ba699ae",
+  "references": [
+    {
+      "url": "https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/CreatingLaunchdJobs.html",
+      "role": "Generic launch-on-demand semantics; not an iOS16 config-layout specification"
+    },
+    {
+      "repository": "dipa-studio/ios-sweet",
+      "commit": "45263bee51df4a0f55cdf9c649af886399488ddb",
+      "path": "tools/mkiosroot.sh",
+      "sha256": "b1b28a8ca69e572452872e0622f441c0cee170ddf94e51f6a8709adcb53e8655",
+      "bytes": 5594,
+      "license": "MIT at repository root",
+      "role": "Reference namespace/cache arrangement only; script not executed or copied; SM7150 board and policy modifications not adopted"
+    },
+    {
+      "repository": "UniXNU/GopFramebuffer",
+      "commit": "33e941a878dcf01b98dbd9160d798bd56e7551ea",
+      "license": "BSD-2-Clause-Patent",
+      "role": "Upstream display interface review; CPU/GPU scanout and MobileFramebuffer timer notification; nuwa/iOS16 ABI unqualified"
+    },
+    {
+      "url": "https://unixnu.com/drivers/repositories",
+      "role": "Driver selection references; SoC/device and OS ABI qualification remain separate"
+    }
+  ],
+  "scope": "Offline input qualification only; not assembled image, dependency closure, userland execution or desktop acceptance",
+  "device_accessed": false,
+  "release_guard_changed": false
+}

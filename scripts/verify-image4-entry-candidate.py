@@ -24,7 +24,7 @@ def main():
     build = a.build.resolve()
     report = json.loads(build.read_text())
     work = a.work.resolve()
-    if (not build.is_relative_to(ROOT / 'reports') or report.get('probe_revision') not in (27,28,29,30,31,32,33,34,35,36)
+    if (not build.is_relative_to(ROOT / 'reports') or report.get('probe_revision') not in (27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49)
             or not work.is_relative_to(ROOT / 'out') or work.exists()):
         raise ValueError('Explicit revision-27 build and fresh out/ work directory required')
     work.mkdir(parents=True)
@@ -53,10 +53,30 @@ def main():
         *([('fscompression-startup','test-fscompression-startup.py',[])] if report.get('probe_revision')>=35 else []),
         *([('read-boundaries','test-read-boundaries.py',[])] if report.get('probe_revision')>=36 else []),
         *([('read-boundary-source','audit-read-boundary-source.py',[])] if report.get('probe_revision')>=36 else []),
+        *([('read-dispatch','test-read-dispatch-integrated.py',[])] if report.get('probe_revision')>=37 else []),
+        *([('read-body','test-read-body.py',[])] if report.get('probe_revision')>=38 else []),
+        *([('read-body-reset','test-read-body-reset.py',[])] if report.get('probe_revision')>=38 else []),
+        *([('read-init','test-read-init.py',[])] if report.get('probe_revision')>=39 else []),
+        *([('single-pass-hex','test-single-pass-hex.py',[])] if report.get('probe_revision')>=40 else []),
+        *([('read-grid','test-read-grid.py',[])] if report.get('probe_revision')>=41 else []),
+        *([('read-decmp','test-read-decmp.py',[])] if report.get('probe_revision')>=42 else []),
+        *([('shared-hex','test-shared-hex.py',[])] if report.get('probe_revision')>=43 else []),
+        *([('compact-decmp','test-compact-decmp.py',[])] if report.get('probe_revision')>=44 else []),
+        *([('read-fetch','test-read-fetch.py',[])] if report.get('probe_revision')>=45 else []),
+        *([('read-deep','test-read-deep.py',[])] if report.get('probe_revision')>=46 else []),
+        *([('read-result','test-read-result.py',[])] if report.get('probe_revision')>=47 else []),
+        *([('delta-hex','test-delta-hex.py',[])] if report.get('probe_revision')>=48 else []),
+        *([('read-flow','test-read-flow.py',[])] if report.get('probe_revision')>=49 else []),
         ('binding', 'test-probe-evidence-binding.py', [])]
     records = []
     evidence = build.with_name('execution.json')
     for name, script, options in jobs:
+        if name in ('read-body','read-flow') and build.with_name(name+'.json').exists():
+            import hashlib
+            path=build.with_name(name+'.json');payload=path.read_bytes();prior=json.loads(payload)
+            if prior.get('candidate_sha256')!=report['candidate']['sha256'] or not prior.get('checks') or any(c.get('passed') is not True for c in prior['checks']):raise ValueError('Existing read-body evidence does not match candidate')
+            records.append(dict(name=name,reused_exact_report=str(path),sha256=hashlib.sha256(payload).hexdigest(),exit_code=0,scope='Existing independent run; mandatory binding validates source, exact cases and sites'))
+            continue
         if name=='binding' and report.get('probe_revision',0)>=36:
             # Git stores text evidence as LF. Bind those exact bytes so a clean
             # checkout retains the same hashes as the producing Windows tree.

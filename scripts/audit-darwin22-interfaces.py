@@ -9,9 +9,9 @@ import re
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE = Path('D:/Code/PortingiOS/common/sources/UniXNU')
-XNU = Path('D:/Code/PortingiOS/common/sources/xnu-ios16-full')
-SHENG = Path('D:/Code/PortingiOS/common/sources/UniXNU-sheng')
+BASE = Path('D:/Code/PortingiOSLegacy/common/sources/UniXNU')
+XNU = Path('D:/Code/PortingiOSLegacy/common/sources/xnu-ios16-full')
+SHENG = Path('D:/Code/PortingiOSLegacy/common/sources/UniXNU-sheng')
 OUT = ROOT / 'reports/darwin22-audit'
 GIT = 'C:/Program Files/Git/cmd/git.exe'
 

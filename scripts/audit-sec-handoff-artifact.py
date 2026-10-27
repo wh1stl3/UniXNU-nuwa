@@ -29,8 +29,8 @@ def main():
     profile = json.loads((ROOT / 'config/firmware-sec-handoff-profile.json').read_text())
     commit = profile['recipe']['sources']['firmware']['commit']
     path = 'Platforms/Xiaomi/nuwaPkg/Library/MemoryMapLib/MemoryMapLib.c'
-    source = subprocess.check_output(['git', '--no-optional-locks', '-c', 'safe.directory=D:/Code/uefi-nuwa',
-                                      '-C', 'D:/Code/uefi-nuwa', 'show', commit + ':' + path]).decode()
+    source = subprocess.check_output(['git', '--no-optional-locks', '-c', 'safe.directory=D:/Code/PortingiOS/nuwa/uefi-nuwa',
+                                      '-C', 'D:/Code/PortingiOS/nuwa/uefi-nuwa', 'show', commit + ':' + path]).decode()
     names = re.findall(r'^\s*\{"([^"]+)",\s*0x', source, re.M)
     if len(names) != 41 or names.count('DXE Heap') != 1:
         raise ValueError('Unexpected actual-source memory descriptor layout')

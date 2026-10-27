@@ -1,0 +1,501 @@
+{
+  "scope": "Execute native exec-header -> vn_rdwr -> vn_rdwr_64 -> VNOP_READ.\n\nMAC and filesystem bodies are explicit API models; this is a Unicorn boundary\nregression, never a hardware result. Native wrappers/branches and probes execute.\n",
+  "candidate_sha256": "4237d18ca1c4d1ac95d464c8828330ef8f833a53a6dd0942fd5c26c1a24099b5",
+  "source_sha256": "2f185518b4cfb617c7337d446abbc2898e6261019e684ff2900efcc676c00e23",
+  "checks": [
+    {
+      "name": "success",
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "lit": [
+            266,
+            267,
+            268,
+            269,
+            270,
+            271,
+            272,
+            273
+          ],
+          "state": [
+            "0x0",
+            "0x1111",
+            "0xf04000",
+            "0xf07ff0",
+            "0xf07fb0",
+            "0xf07f00",
+            "0x10b",
+            "0xf01000",
+            "0x0",
+            "0x0",
+            "0x0",
+            "0x0",
+            "0xffffffffffffffff",
+            "0x0"
+          ],
+          "calls": [
+            "_uio_createwithbuffer",
+            "_uio_addiov",
+            "_mac_vnode_check_read",
+            "_vnode_isswap",
+            "_uio_resid",
+            "filesystem-callback",
+            "_uio_resid",
+            "_uio_resid"
+          ],
+          "pc": "0xfffffff0084bfb6c"
+        }
+      ]
+    },
+    {
+      "name": "mac-denied",
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "lit": [
+            266,
+            267,
+            268,
+            269
+          ],
+          "state": [
+            "0x0",
+            "0x1111",
+            "0xf04000",
+            "0xf07ff0",
+            "0xf07fb0",
+            "0x0",
+            "0x10b",
+            "0x0",
+            "0xd",
+            "0xd",
+            "0xffffffffffffffff",
+            "0xffffffffffffffff",
+            "0xffffffffffffffff",
+            "0x0"
+          ],
+          "calls": [
+            "_uio_createwithbuffer",
+            "_uio_addiov",
+            "_mac_vnode_check_read",
+            "_uio_resid"
+          ],
+          "pc": "0xfffffff0084bfb6c"
+        }
+      ]
+    },
+    {
+      "name": "read-error",
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "lit": [
+            266,
+            267,
+            268,
+            269,
+            270,
+            271,
+            272,
+            273
+          ],
+          "state": [
+            "0x0",
+            "0x1111",
+            "0xf04000",
+            "0xf07ff0",
+            "0xf07fb0",
+            "0xf07f00",
+            "0x10b",
+            "0xf01000",
+            "0x5",
+            "0x0",
+            "0x5",
+            "0x5",
+            "0xffffffffffffffff",
+            "0x0"
+          ],
+          "calls": [
+            "_uio_createwithbuffer",
+            "_uio_addiov",
+            "_mac_vnode_check_read",
+            "_vnode_isswap",
+            "_uio_resid",
+            "filesystem-callback",
+            "_uio_resid",
+            "_uio_resid"
+          ],
+          "pc": "0xfffffff0084bfb6c"
+        }
+      ]
+    },
+    {
+      "name": "mac-pending",
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "lit": [
+            266,
+            268
+          ],
+          "state": [
+            "0x1",
+            "0x1111",
+            "0xf04000",
+            "0xf07ff0",
+            "0xf07fb0",
+            "0x0",
+            "0x10c",
+            "0x0",
+            "0xffffffffffffffff",
+            "0xffffffffffffffff",
+            "0xffffffffffffffff",
+            "0xffffffffffffffff",
+            "0xffffffffffffffff",
+            "0x3"
+          ],
+          "calls": [
+            "_uio_createwithbuffer",
+            "_uio_addiov",
+            "_mac_vnode_check_read"
+          ],
+          "pc": "0xfffffff007916d5c"
+        }
+      ]
+    },
+    {
+      "name": "dispatch-pending",
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "lit": [
+            266,
+            268,
+            269,
+            270,
+            272
+          ],
+          "state": [
+            "0x1",
+            "0x1111",
+            "0xf04000",
+            "0xf07ff0",
+            "0xf07fb0",
+            "0xf07f00",
+            "0x110",
+            "0xf01000",
+            "0xffffffffffffffff",
+            "0x0",
+            "0xffffffffffffffff",
+            "0xffffffffffffffff",
+            "0xffffffffffffffff",
+            "0xd"
+          ],
+          "calls": [
+            "_uio_createwithbuffer",
+            "_uio_addiov",
+            "_mac_vnode_check_read",
+            "_vnode_isswap",
+            "_uio_resid",
+            "filesystem-callback"
+          ],
+          "pc": "0xf01000"
+        }
+      ]
+    },
+    {
+      "name": "swap",
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "lit": [
+            266,
+            267,
+            268,
+            269,
+            274,
+            275
+          ],
+          "state": [
+            "0x0",
+            "0x1111",
+            "0xf04000",
+            "0xf07ff0",
+            "0xf07fb0",
+            "0x0",
+            "0x10b",
+            "0x0",
+            "0x0",
+            "0x0",
+            "0xffffffffffffffff",
+            "0xffffffffffffffff",
+            "0x0",
+            "0x0"
+          ],
+          "calls": [
+            "_uio_createwithbuffer",
+            "_uio_addiov",
+            "_mac_vnode_check_read",
+            "_vnode_isswap",
+            "_vn_read_swapfile",
+            "_uio_resid"
+          ],
+          "pc": "0xfffffff0084bfb6c"
+        }
+      ]
+    },
+    {
+      "name": "noauth",
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "lit": [
+            266,
+            267,
+            270,
+            271,
+            272,
+            273
+          ],
+          "state": [
+            "0x0",
+            "0x1111",
+            "0xf04000",
+            "0xf07ff0",
+            "0xf07fb0",
+            "0xf07f00",
+            "0x10b",
+            "0xf01000",
+            "0x0",
+            "0xffffffffffffffff",
+            "0x0",
+            "0x0",
+            "0xffffffffffffffff",
+            "0x0"
+          ],
+          "calls": [
+            "_uio_createwithbuffer",
+            "_uio_addiov",
+            "_vnode_isswap",
+            "_uio_resid",
+            "filesystem-callback",
+            "_uio_resid",
+            "_uio_resid"
+          ],
+          "pc": "0xfffffff0084bfb6c"
+        }
+      ]
+    },
+    {
+      "name": "foreign-thread",
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "lit": [],
+          "state": [
+            "0x0",
+            "0x1111",
+            "0xf04000",
+            "0x0",
+            "0x0",
+            "0x0",
+            "0x0",
+            "0x0",
+            "0xffffffffffffffff",
+            "0xffffffffffffffff",
+            "0xffffffffffffffff",
+            "0xffffffffffffffff",
+            "0xffffffffffffffff",
+            "0x0"
+          ],
+          "calls": [
+            "_uio_createwithbuffer",
+            "_uio_addiov",
+            "_mac_vnode_check_read",
+            "_vnode_isswap",
+            "_uio_resid",
+            "filesystem-callback",
+            "_uio_resid",
+            "_uio_resid"
+          ],
+          "pc": "0xfffffff0084bfb6c"
+        }
+      ]
+    },
+    {
+      "name": "foreign-frame",
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "lit": [
+            266,
+            267
+          ],
+          "state": [
+            "0x0",
+            "0x1111",
+            "0xf04000",
+            "0xf07ff0",
+            "0xf01234",
+            "0x0",
+            "0x10b",
+            "0x0",
+            "0x0",
+            "0xffffffffffffffff",
+            "0xffffffffffffffff",
+            "0xffffffffffffffff",
+            "0xffffffffffffffff",
+            "0x0"
+          ],
+          "calls": [
+            "_uio_createwithbuffer",
+            "_uio_addiov",
+            "_mac_vnode_check_read",
+            "_vnode_isswap",
+            "_uio_resid",
+            "filesystem-callback",
+            "_uio_resid",
+            "_uio_resid"
+          ],
+          "pc": "0xfffffff0084bfb6c"
+        }
+      ]
+    },
+    {
+      "name": "repeat",
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "lit": [
+            266,
+            267,
+            268,
+            269,
+            270,
+            271,
+            272,
+            273
+          ],
+          "state": [
+            "0x0",
+            "0x1111",
+            "0xf04000",
+            "0xf07ff0",
+            "0xf07fb0",
+            "0xf07f00",
+            "0x10b",
+            "0xf01000",
+            "0x0",
+            "0x0",
+            "0x0",
+            "0x0",
+            "0xffffffffffffffff",
+            "0x0"
+          ],
+          "calls": [
+            "_uio_createwithbuffer",
+            "_uio_addiov",
+            "_mac_vnode_check_read",
+            "_vnode_isswap",
+            "_uio_resid",
+            "filesystem-callback",
+            "_uio_resid",
+            "_uio_resid"
+          ],
+          "pc": "0xfffffff0084bfb6c"
+        },
+        {
+          "attempt": 2,
+          "lit": [
+            266,
+            267,
+            268,
+            269,
+            270,
+            271,
+            272,
+            273
+          ],
+          "state": [
+            "0x0",
+            "0x1111",
+            "0xf04000",
+            "0xf07ff0",
+            "0xf07fb0",
+            "0xf07f00",
+            "0x10b",
+            "0xf01000",
+            "0x0",
+            "0x0",
+            "0x0",
+            "0x0",
+            "0xffffffffffffffff",
+            "0x0"
+          ],
+          "calls": [
+            "_uio_createwithbuffer",
+            "_uio_addiov",
+            "_mac_vnode_check_read",
+            "_vnode_isswap",
+            "_uio_resid",
+            "filesystem-callback",
+            "_uio_resid",
+            "_uio_resid"
+          ],
+          "pc": "0xfffffff0084bfb6c"
+        }
+      ]
+    },
+    {
+      "name": "no-video",
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "lit": [],
+          "state": [
+            "0x0",
+            "0x1111",
+            "0xf04000",
+            "0xf07ff0",
+            "0xf07fb0",
+            "0xf07f00",
+            "0x10b",
+            "0xf01000",
+            "0x0",
+            "0x0",
+            "0x0",
+            "0x0",
+            "0xffffffffffffffff",
+            "0x0"
+          ],
+          "calls": [
+            "_uio_createwithbuffer",
+            "_uio_addiov",
+            "_mac_vnode_check_read",
+            "_vnode_isswap",
+            "_uio_resid",
+            "filesystem-callback",
+            "_uio_resid",
+            "_uio_resid"
+          ],
+          "pc": "0xfffffff0084bfb6c"
+        }
+      ]
+    }
+  ],
+  "device_accessed": false,
+  "real_filesystem_body_executed": false,
+  "real_mac_policy_executed": false
+}

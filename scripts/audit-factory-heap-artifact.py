@@ -23,7 +23,7 @@ def main():
     profile=json.loads((ROOT/'config/firmware-factory-heap-profile.json').read_text())
     path='Platforms/Xiaomi/nuwaPkg/Library/MemoryMapLib/MemoryMapLib.c'
     commit=profile['recipe']['sources']['firmware']['commit']
-    source=subprocess.check_output(['git','--no-optional-locks','-C','D:/Code/uefi-nuwa','show',commit+':'+path]).decode()
+    source=subprocess.check_output(['git','--no-optional-locks','-C','D:/Code/PortingiOS/nuwa/uefi-nuwa','show',commit+':'+path]).decode()
     names=re.findall(r'^\s*\{"([^"]+)",\s*0x',source,re.M)
     if not names or names.count('DXE Heap')!=1:raise ValueError('Unexpected descriptor source layout')
     # MemoryMapLib.h fixed struct: Name[32], Address/Length, five UINT32 fields

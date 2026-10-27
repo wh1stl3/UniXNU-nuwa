@@ -61,7 +61,7 @@ int main(void){
  assert(munmap(space,12288)==0);puts("PASS guard pages; 336 truncations; observed +0x118 zero length; malformed/oversized/early-end/count cap; trusted PHIT and no failed-state update");return 0;
 }
 '''
-  work=ROOT/'out/hob-stage-audit';work.mkdir(parents=True,exist_ok=True);exe='/mnt/d/Code/UniXNU-nuwa/out/hob-stage-audit/host-audit'
+  work=ROOT/'out/hob-stage-audit';work.mkdir(parents=True,exist_ok=True);exe='/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/hob-stage-audit/host-audit'
   cmd=['wsl','-d','Ubuntu-22.04','--','clang','-x','c','-std=gnu11','-O1','-g','-fsanitize=address,undefined','-fno-sanitize-recover=all','-fno-pie','-no-pie','-o',exe,'-']
   compile_result=subprocess.run(cmd,input=host,capture_output=True,text=True);self.assertEqual(compile_result.returncode,0,compile_result.stderr)
   result=subprocess.run(['wsl','-d','Ubuntu-22.04','--',exe],capture_output=True,text=True);self.assertEqual(result.returncode,0,result.stderr)

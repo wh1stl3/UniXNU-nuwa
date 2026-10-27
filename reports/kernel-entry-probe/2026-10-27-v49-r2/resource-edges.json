@@ -1,0 +1,91 @@
+{
+  "input_sha256": "1aeebf1352a86b0d31612a6bd6e77bd7292f676ad2ce43a99ec4a8f3999eedb6",
+  "disassembly_sha256": "44fc20d1a6f614e9bf4ced5aad29d21dd00b5a650ef1050471ae9bdaf31bd589",
+  "calls": [
+    {
+      "function": "resource_read_helper",
+      "pc": "0xfffffff005696d6c",
+      "stub": "0xfffffff0056976d0",
+      "target": "0xfffffff0076bcd0c",
+      "name": "_uio_create"
+    },
+    {
+      "function": "resource_read_helper",
+      "pc": "0xfffffff005696d7c",
+      "stub": "0xfffffff0056976c4",
+      "target": "0xfffffff0076bd09c",
+      "name": "_uio_addiov"
+    },
+    {
+      "function": "resource_read_helper",
+      "pc": "0xfffffff005696d9c",
+      "stub": "0xfffffff005697610",
+      "target": "0xfffffff00746e164",
+      "name": "_VNOP_GETXATTR"
+    },
+    {
+      "function": "resource_read_helper",
+      "pc": "0xfffffff005696da8",
+      "stub": "0xfffffff0056976dc",
+      "target": "0xfffffff0076bd008",
+      "name": "_uio_free"
+    },
+    {
+      "function": "resource_read_helper",
+      "pc": "0xfffffff005696dbc",
+      "stub": "0xfffffff005696b78",
+      "target": "0xfffffff005696b78",
+      "name": null
+    },
+    {
+      "function": "resource_read_helper",
+      "pc": "0xfffffff005696de8",
+      "stub": "0xfffffff0056976ac",
+      "target": "0xfffffff007283e88",
+      "name": "_printf"
+    },
+    {
+      "function": "resource_read_helper",
+      "pc": "0xfffffff005696df8",
+      "stub": "0xfffffff0056975e0",
+      "target": "0xfffffff00784fa30",
+      "name": "_IOFreeData"
+    },
+    {
+      "function": "resource_read_helper",
+      "pc": "0xfffffff005696e20",
+      "stub": "0xfffffff005696b78",
+      "target": "0xfffffff005696b78",
+      "name": null
+    },
+    {
+      "function": "resource_read_helper",
+      "pc": "0xfffffff005696e4c",
+      "stub": "0xfffffff0056976ac",
+      "target": "0xfffffff007283e88",
+      "name": "_printf"
+    },
+    {
+      "function": "resource_read_helper",
+      "pc": "0xfffffff005696e5c",
+      "stub": "0xfffffff0056975e0",
+      "target": "0xfffffff00784fa30",
+      "name": "_IOFreeData"
+    },
+    {
+      "function": "input_buffer_helper",
+      "pc": "0xfffffff005696eb4",
+      "stub": "0xfffffff0056975e0",
+      "target": "0xfffffff00784fa30",
+      "name": "_IOFreeData"
+    },
+    {
+      "function": "input_buffer_helper",
+      "pc": "0xfffffff005696ed4",
+      "stub": "0xfffffff0056975ec",
+      "target": "0xfffffff00784fa08",
+      "name": "_IOMallocData"
+    }
+  ],
+  "xattr_name": "com.apple.ResourceFork"
+}

@@ -1,0 +1,47 @@
+{
+  "probe": 31,
+  "revision": 39,
+  "transcription": "manual visual reading, not user character-confirmed",
+  "fields": {
+    "A02A": "0000000000000000",
+    "A02B": "00000000000000D9",
+    "A02C": "0000000000000002",
+    "A02D": "0000000000000002",
+    "A02E": "00000000000000F2",
+    "A02F": "0000000000000000",
+    "A030": "0000000000000002",
+    "A032": "0000000000000002",
+    "A033": "FFFFFFF005F48EF8",
+    "A034": "000000000000F901",
+    "A035": "FFFFFFFFFFFFFFFF"
+  },
+  "not_displayed": [
+    "A031",
+    "A036",
+    "A037",
+    "A038",
+    "A039"
+  ],
+  "new_body_markers_observed": false,
+  "user_observation": "Black stripes appeared over UniXNU logo after power-key trigger; user returned to Android",
+  "media_manifest": "D:\\Code\\PortingiOS\\nuwa\\Media-nuwa\\derived\\PROBE31\\review-01\\manifest.json",
+  "originals": [
+    {
+      "path": "D:\\Code\\PortingiOS\\nuwa\\Media-nuwa\\PROBE31.jpg",
+      "bytes": 5081826,
+      "sha256": "0e0fb50cd603ea3aeccbd2ec055f6ad0308052f1addfc780c9296fa065af5aa5",
+      "original": true
+    },
+    {
+      "path": "D:\\Code\\PortingiOS\\nuwa\\Media-nuwa\\PROBE31.mp4",
+      "bytes": 11896808,
+      "sha256": "db3ae912356ceb0e81e6555af3a08b11e195a709b150467a25b96a8c40196b5e",
+      "original": true
+    }
+  ],
+  "limits": [
+    "F901 is last visible checkpoint, not CPU halt proof",
+    "No read completion or userspace entry observed",
+    "Black stripe not geometrically attributed to a specific instruction"
+  ]
+}

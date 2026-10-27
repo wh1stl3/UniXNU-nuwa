@@ -16,8 +16,8 @@ import subprocess
 from virtual_patch import Tree
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE = Path('D:/Code/PortingiOS/common/sources/UniXNU')
-EDK = Path('D:/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include')
+BASE = Path('D:/Code/PortingiOSLegacy/common/sources/UniXNU')
+EDK = Path('D:/Code/PortingiOSLegacy/common/sources/mu-nuwa-firmware/Mu_Basecore/MdePkg/Include')
 COMMIT = 'd099354d0eab34df5088ca1ba89c9c88bc3260bb'
 PREFIX = 'drivers/DarwinBoot/DarwinBootPkg/Driver/'
 PATCH = ROOT / 'patches/loader-candidates/0005-darwin22-boot-args.patch'

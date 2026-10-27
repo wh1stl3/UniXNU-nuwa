@@ -20,8 +20,8 @@ build.json记录51个真实生成实现、51份适配记录，总共1296次模�
 
 ## 修复验证和边界
 
-- `git -C D:/Code/PortingiOS/common/sources/xnu-ios16-full apply --check D:/Code/UniXNU-nuwa/patches/xnu-8796-ci-candidates/disabled-kperf-ast.patch`返回0，只检查不写来源。
-- `python -B scripts/ci/check-ci-compat.py --base D:/Code/PortingiOS/common/sources/UniXNU --xnu D:/Code/PortingiOS/common/sources/xnu-ios16-full`：52项212 hunks精确顺序静态检查通过，清零和原IORPC头保留。
+- `git -C D:/Code/PortingiOSLegacy/common/sources/xnu-ios16-full apply --check D:/Code/PortingiOS/nuwa/UniXNU-nuwa/patches/xnu-8796-ci-candidates/disabled-kperf-ast.patch`返回0，只检查不写来源。
+- `python -B scripts/ci/check-ci-compat.py --base D:/Code/PortingiOSLegacy/common/sources/UniXNU --xnu D:/Code/PortingiOSLegacy/common/sources/xnu-ios16-full`：52项212 hunks精确顺序静态检查通过，清零和原IORPC头保留。
 - `build-8796-source.py --base ... --check`输入hash和bash配方语法检查通过，没有本机make。
 - workspace-check.json：三来源树tracked状态空，board与基座feed的既有hash不变。
 

@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-read-dispatch-integrated.py", line 68, in <module>
+    main()
+    ~~~~^^
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-read-dispatch-integrated.py", line 36, in main
+    actual = T.header_reset(raw, macho, build, b'', 0x600000, [], True, TILE)
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-read-dispatch-observer.py", line 89, in header_reset
+    u=machine(raw,m,proto,va,patches,candidate);ps={k:int(v,16) for k,v in b['probe']['symbols'].items()};u.mem_write(ps['probe_scratch'],struct.pack('<QQ',FB,ROW))
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-read-dispatch-observer.py", line 38, in machine
+    base=min(s['va'] for s in m['segments'] if s['size']);end=max(s['va']+s['size'] for s in m['segments']);u=U.Uc(U.UC_ARCH_ARM64,U.UC_MODE_ARM);u.mem_map(base,B.align(end-base));u.mem_map(STACK,0x10000);u.mem_map(FB,0x1200000);u.mem_map(va,B.align(len(proto)));u.mem_write(va,proto)
+                                                                                                                                                                                                                                     ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\out\python-tools\unicorn\unicorn_py3\unicorn.py", line 834, in mem_map
+    raise UcError(status)
+unicorn.unicorn_py3.unicorn.UcError: Invalid argument (UC_ERR_ARG)

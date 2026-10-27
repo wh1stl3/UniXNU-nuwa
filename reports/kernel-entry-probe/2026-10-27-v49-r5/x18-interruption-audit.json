@@ -1,0 +1,27 @@
+{
+  "candidate_sha256": "89fdd0a831500ff2f28d2245824c47a0d1ad5e7d1719c42f7ede3b7e9237eaad",
+  "cases": [
+    {
+      "x18_zeroed": false,
+      "result": "completed",
+      "events": []
+    },
+    {
+      "x18_zeroed": true,
+      "result": "Invalid memory read (UC_ERR_READ_UNMAPPED)",
+      "events": [
+        {
+          "pc": "0xfffffff0084da0f4",
+          "previous_x18": "0xfffffff0084db410"
+        },
+        {
+          "fault_pc": "0xfffffff0084da0f4",
+          "address": "0x8",
+          "size": 8
+        }
+      ]
+    }
+  ],
+  "scope": "Unicorn synthetic x18 clearing at observed PC; not an actual hardware IRQ reproduction",
+  "device_accessed": false
+}

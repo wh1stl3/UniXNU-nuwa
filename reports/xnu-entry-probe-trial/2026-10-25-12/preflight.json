@@ -1,0 +1,65 @@
+{
+  "at": "2026-10-25T05:22:00+00:00",
+  "scope": "Read-only preflight for the v20 entry probe trial; identity, Android completion, slot and the three partition digests that must come back unchanged after the trial",
+  "device": {
+    "model": "Qualcomm Technologies, Inc. 8550 nuwa",
+    "compatible": "qcom,kalama-mtp qcom,kalama qcom,mtp",
+    "machine": "KALAMA",
+    "unique_nuwa_target": true
+  },
+  "android_boot_completed": "1",
+  "slot": "_a",
+  "partition_hashes": {
+    "boot_a": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+    "vendor_boot_a": "5ad2a9dc751870fa3c367fa2833582147541f5b62b880dcbdf525003ad68cc23",
+    "init_boot_a": "19e95d952ded5172e8a17bd1af907a8d6b08b29734881c370961b09bbaf78f96"
+  },
+  "package": {
+    "image": "out/trial-boot/xnu-entry-probe-13/boot-xnu-first-entry.img",
+    "image_sha256": "d329e7c4ef7af38ee3aeecc484067007f8534ba33e8555fba78ac144abd0c826",
+    "kernel_sha256": "1f5178361a484fcd7fdde71917c394cd8d22b46bd5c91f3b3249f13a084a0369",
+    "adt_sha256": "7ebce5a6531429efb8a7450680fd05c59b20bbb15f54717dd403724cd11a6f2a",
+    "fat_sha256": "88a2497bb4cce5a0d5d7a55ef332e92ed7d0c1feed9958e1e40970b78cdddf13",
+    "menu_label": "XNU ENTRY PROBE 13 - DT AND TIMEBASE READOUT"
+  },
+  "readouts_expected": {
+    "1344": "_DTInitialized",
+    "1376": "_DTRootNode",
+    "1408": "_gPESoCBasePhys",
+    "1440": "PE_state.deviceTreeHead",
+    "1472": "PE_state.deviceTreeSize",
+    "1504": "gPEClockFrequencyInfo.timebase_frequency_hz",
+    "1536": "arm64_eventi",
+    "1088": "panic first variadic argument: function name, first eight bytes",
+    "1248": "panic first variadic argument: function name, next eight bytes",
+    "1568": "panic first variadic argument: the pointer value"
+  },
+  "hard_stop_conditions": [
+    "no flash, no erase, no slot change",
+    "single fastboot boot action",
+    "180 second observation window",
+    "postcondition: the three partition digests must equal the baseline above and Android must be back to boot_completed=1"
+  ],
+  "device_accessed": true,
+  "attempt_1": {
+    "at": "2026-10-25T05:52:00+00:00",
+    "action": "fastboot boot out/trial-boot/xnu-entry-probe-13/boot-xnu-first-entry.img",
+    "result": "NOT SENT",
+    "evidence": "fastboot devices listed no device; the boot command was terminated (SIGTERM) before any transfer. The nuwa uptime stayed at 34062 s (~9.5 h) across the attempt, so the device never rebooted and no kernel ran.",
+    "operator_error": "the command was issued without confirming the device was in fastboot mode first",
+    "device_state_after": {
+      "adb_serial": "fe5ed56e",
+      "boot_completed": "1",
+      "slot": "_a",
+      "partition_hashes_unchanged": true
+    },
+    "other_adb_devices_present": [
+      {
+        "serial": "d0fd0840",
+        "model": "Qualcomm Technologies, Inc. xiaomi enuma",
+        "compatible": "qcom,kona-mtp",
+        "note": "a different device (SM8450/kona), not the nuwa target; excluded from every command by explicit -s"
+      }
+    ]
+  }
+}

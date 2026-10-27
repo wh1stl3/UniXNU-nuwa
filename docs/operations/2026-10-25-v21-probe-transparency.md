@@ -63,7 +63,7 @@ pmap重建可能使诊断设备映射失效，后续无标记不能单独判停�
 
 ## 复现
 
-Windows Python固定路径 `C:/Users/Administrator/.workbuddy/binaries/python/versions/3.13.12/python.exe`，下列命令在D:/Code/UniXNU-nuwa串行执行。新建build须用新的out和reports目录；以下测试重跑会更新对应证据，已打包后应保留现有目录，复制到新目录重新绑定。
+Windows Python固定路径 `C:/Users/Administrator/.workbuddy/binaries/python/versions/3.13.12/python.exe`，下列命令在D:/Code/PortingiOS/nuwa/UniXNU-nuwa串行执行。新建build须用新的out和reports目录；以下测试重跑会更新对应证据，已打包后应保留现有目录，复制到新目录重新绑定。
 
 ```powershell
 python -B scripts/build-kernel-entry-probe.py --work out/kernel-entry-probe-NEW --output reports/kernel-entry-probe/NEW/build.json

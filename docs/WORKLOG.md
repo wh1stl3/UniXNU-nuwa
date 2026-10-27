@@ -514,3 +514,95 @@
 2026-10-26 · 用户允许PROBE28实测；完成新鲜nuwa Android1/_a/三SHA预检及有效包/原恢复boot校验，补显式目标筛选并通过3项隔离测试；未启动，待当轮拍摄/按键恢复确认 · 提交见本条所属Git提交 · reports/xnu-entry-probe-trial/2026-10-26-v36/state-before-confirmation.json、preparation.json、target-selection.json
 
 2026-10-26 12:24:07+08:00后 · PROBE28单次实测：A034272/A035全F，MAC已返回，原生文件系统分派调用点到达但未见返回；原boot恢复Android1/_a/三SHA闭环，原图仅本地，未启动新候选 · 提交见本条所属Git提交 · reports/xnu-entry-probe-trial/2026-10-26-v36/screen.json、postcondition.json、evidence-binding.json；docs/operations/2026-10-26-probe28-device-result.md
+
+2026-10-26 · revision37/PROBE29离线准备完成：1096透明性、11分派模型、41绑定、实际ADT补验及独立内核重建通过；最终包解析与FAT回读通过，首版资格失败保留；R-015缺当前实拍/恢复条件，未操作设备 · 未提交 · docs/operations/2026-10-26-v37-offline-qualification.md；reports/xnu-first-entry/entry-probe-29-qualified.json
+
+2026-10-26 · R-015本轮拍摄/恢复确认，新预检Android1/A槽/三SHA一致；合格PROBE29单次临时boot获ACK，consumed；待画面与恢复，未宣称内核通过 · 未提交 · reports/xnu-entry-probe-trial/2026-10-26-v37/{preflight,launch,consumed}.json
+
+2026-10-26 18:12:58+08:00后 · PROBE29闭环：A036=A037=FFFFFFF0051A5858/276绿色，固定目标入口插桩到达；272/全F/273暗，未观察返回；Android1/A槽/三SHA恢复一致，原媒体本地保留 · 未提交 · docs/operations/2026-10-26-probe29-device-result.md；reports/xnu-entry-probe-trial/2026-10-26-v37/postcondition.json
+
+2026-10-26 · PROBE30/revision38离线准备完成：47调用/返回+首指令后+RET前共96新标记；1472透明性、476逐位置、清零负对照及44绑定通过，独立内核逐字节一致，最终包解析/FAT回读通过；未启动设备 · 未提交 · reports/kernel-entry-probe/2026-10-26-v38/qualification.json；reports/xnu-first-entry/entry-probe-30.json；docs/operations/2026-10-26-probe30-preparation.md
+
+2026-10-26 · PROBE30新预检Android1/A槽/三SHA一致，合格包单次临时启动ACK，consumed；待画面及恢复，不宣称内核通过 · 未提交 · reports/xnu-entry-probe-trial/2026-10-26-v38/{preflight,launch,consumed}.json
+
+2026-10-26 20:06:41+08:00后 · PROBE30媒体核对：A034250/A0360，A037—39未显示，未取得内部点证据，优先审查观测初始化；用户已回Android，仅后验确认Android1/A槽/三SHA一致，无额外重启 · 未提交 · docs/operations/2026-10-26-probe30-device-result.md；reports/xnu-entry-probe-trial/2026-10-26-v38/{screen,postcondition}.json
+
+2026-10-26 20:27+08:00后 · PROBE30代码/模型审计：到A037前与29仅ADR重定位差异、指令数和写入量一致；正常初始化可完成，注入绘图快照禁用可复现字段缺失且仍进入vn_rdwr，不能由画面断定CPU停止位置；登记高度800/实际1039及原生异常向量后的观测缺口，未锁定实机根因，未改探针/编译/启动设备 · 未提交 · scripts/audit-probe30-initialization.py；reports/kernel-entry-probe/2026-10-26-v38-initialization-audit/trace-r2.json；docs/operations/2026-10-26-probe30-initialization-analysis.md
+
+2026-10-26 20:56+08:00 · PROBE31/revision39离线包完成：47调用/返回保留，新增初始化检查点与高度1040守卫；28项资格证据、独立内核逐字节重建及包/FAT回读通过；首轮透明性版本识别失败保留，修正后续跑通过。随后用户直接批准实机部署，新预检Android1/A槽/三SHA与v38后验一致，下一步单次临时启动 · 未提交 · reports/kernel-entry-probe/2026-10-26-v39/qualification.json；reports/xnu-first-entry/entry-probe-31.json；reports/xnu-entry-probe-trial/2026-10-26-v39/preflight.json
+
+2026-10-26 20:59:43+08:00 · PROBE31获明确批准后单次临时发送，fastboot boot返回0，consumed；待菜单触发媒体和人工恢复，ACK不证明内核执行；未flash/erase/改槽 · 未提交 · reports/xnu-entry-probe-trial/2026-10-26-v39/{preflight,launch,consumed}.json
+
+2026-10-26 21:04:03 +08 · PROBE31媒体已接收，最后可见A034=F901，未观察新增读取返回；用户自行回Android，只读后验Android1/A槽/三SHA与预检一致，无额外恢复boot，consumed禁止重发；继续离线准备下一包 · 未提交，HEAD855daaf · reports/xnu-entry-probe-trial/2026-10-26-v39/{screen,postcondition}.json；docs/operations/2026-10-26-probe31-device-result.md
+
+2026-10-26 21:41 +08 · PROBE32/revision40离线包完成，29检查、1472透明性/476位置/7像素对照、独立重建一致、最终49绑定及包回读通过；最大行首报元数据误写保留并纠正，内核字节不变；主线注册表五槽静态核对通过但无真实读取返回/UFS验收；未启动新包 · 未提交，HEAD855daaf · reports/kernel-entry-probe/2026-10-26-v40/qualification.json；reports/xnu-first-entry/entry-probe-32.json；docs/operations/2026-10-26-probe32-preparation.md
+
+2026-10-26 21:45:29 +08:00 · PROBE32经本轮录像确认和明确批准，新预检Android1/A槽/三SHA一致，单次临时boot ACK0，已消费禁止重发；待媒体及人工恢复，ACK不证明内核进入 · 未提交，HEAD855daaf · reports/xnu-entry-probe-trial/2026-10-26-v40/{preflight,launch,consumed}.json
+
+2026-10-26 21:49:12 +08 · PROBE32恢复后验Android1/A槽/三SHA一致；媒体A038=FFFFFFF0051A588C、A039=1000，uio_resid成对返回但非已读取4KiB，外层读取尚无返回；继续降低读取内部显示开销并准备下一包 · 未提交，HEAD855daaf · reports/xnu-entry-probe-trial/2026-10-26-v40/postcondition.json；docs/operations/2026-10-26-probe32-device-result.md
+
+2026-10-26 22:34 +08 · PROBE33媒体归档及22:21:17 Android1/A槽/三SHA后验闭环，294亮295未见，未证明完整读取；当前阶段实机持续授权已记AGENTS · 未提交 HEAD855daaf · v41/{screen,media-binding,postcondition}.json、operations/2026-10-26-probe33-device-result.md
+
+2026-10-26 23:10:52 +08 · PROBE34完成31项离线检查/独立重建/包回读，23:03:57单次临时启动已消费；媒体272但无276/294/373，等待10秒稳定；第一次后验门失败保留，随后Android1/A槽/三SHA闭环 · 未提交 HEAD855daaf · v42-r2/qualification.json、v42/{launch,screen,postcondition}.json
+
+2026-10-26 23:36 +08 · PROBE35首份共享显示候选的无栈异常回归失败，r2保留原无栈异常绘制后独立检查通过，重新完整核验；代码缩小36KiB，重复A035同值不重绘；不认定为实机根因修复 · 未提交 · v43-preparation/withdrawn-exception.json、operations/2026-10-26-probe35-preparation.md
+
+2026-10-26 23:55:00 +08:00 · PROBE35完成32项检查/55绑定/独立重建/包回读，新鲜Android1/A槽/三SHA预检后单次临时boot ACK，已消费，待媒体与恢复 · 未提交 HEAD855daaf · v43-r2/qualification.json、v43/{preflight,launch,consumed}.json
+`n2026-10-27 00:13 +08 · PROBE35媒体归档，373完整绿格/374部分青线；不能认定_current_act执行或锁死；Android1/A槽/三SHA后验闭环，PROBE36已编译正在33项串行回归 · 未提交 · reports/xnu-entry-probe-trial/2026-10-26-v43/{screen,media-binding,postcondition}.json; docs/operations/2026-10-27-probe35-device-result.md
+
+2026-10-27T00:28:08.5260204+08:00 · PROBE36资格33项通过，独立重建及包回读通过；新鲜预检通过后单次临时启动ACK0、consumed，待媒体和恢复 · 未提交 · reports/kernel-entry-probe/2026-10-27-v44/qualification.json; reports/xnu-entry-probe-trial/2026-10-27-v44/{preflight,launch,consumed}.json; out/probe36-source.diff
+
+2026-10-27T00:45:03.6374143+08:00 · PROBE36可见推进到416调用前，恢复后验闭环；37合并58个fetch/type4内部观察点已编译，完整回归中；首次供体清单遗漏失败保留 · 未提交 · docs/operations/2026-10-27-probe36-device-result.md; docs/operations/2026-10-27-probe37-preparation.md
+
+2026-10-27T01:08:57.7182001+08:00 · PROBE37资格34项完成、独立重建/包回读通过；01:05:07临时发送ACK0 consumed；用户随后报告媒体就绪及回Android，开始38接续 · 未提交 · reports/kernel-entry-probe/2026-10-27-v45-r2/qualification.json; reports/xnu-entry-probe-trial/2026-10-27-v45/launch.json
+
+2026-10-27T01:39:38.7876376+08:00 · PROBE37固定type4回调入口实机可见，恢复后验闭环；38合并83个深层观察点已编译，快速检查通过，35项回归中；夹具栈越界原失败保留 · 未提交 · docs/operations/2026-10-27-probe37-device-result.md; docs/operations/2026-10-27-probe38-preparation.md
+2026-10-27T02:18:06.0262028+08:00 · PROBE38：35项离线作业通过、独立复现及包读回完成，预检后单次临时启动ACK0并消费；待媒体/恢复后验 · 未提交，HEAD855daaf · reports/kernel-entry-probe/2026-10-27-v46/qualification.json；reports/xnu-entry-probe-trial/2026-10-27-v46/consumed.json
+2026-10-27T09:18:17.2657651+08:00 · PROBE38照片核对及Android1/A槽/三SHA闭环，至少一次分配器RET可见；39-r2结果/错误路径候选已编译，核验中 · 未提交HEAD855daaf · docs/operations/2026-10-27-probe38-result-probe39-preparation.md
+2026-10-27T09:47:43.3076351+08:00 · PROBE39完成36项离线资格、独立复现、包回读；新鲜预检后单次临时启动ACK0已消费，等待媒体/恢复后验 · 未提交HEAD855daaf · reports/kernel-entry-probe/2026-10-27-v47-r2/qualification.json；reports/xnu-entry-probe-trial/2026-10-27-v47/consumed.json
+2026-10-27T10:17:37.1299508+08:00 · PROBE39稳定照片及Android后验闭环；40低写入HEX候选已编译，725次更新像素一致，完整回归中 · 未提交HEAD855daaf · docs/operations/2026-10-27-probe39-result-probe40-preparation.md
+
+2026-10-27T10:43:07.3489306+08:00 · PROBE40/revision48离线合格：37项串行作业、独立内核复现和启动包回读通过；夹具失败原记录保留并绑定续验。用户暂时不上机，未部署/消费。未提交，HEAD855daaf。证据reports/kernel-entry-probe/2026-10-27-v48/qualification.json、execution-qualified.json；reports/xnu-first-entry/entry-probe-40.json；out/probe40-source.diff。
+2026-10-27T10:50:58.1633133+08:00 · 用户态输入闭包：38文件/355依赖声明/2508代码页、16KiB对齐与入口通过，11项夹具回归通过；5项启动服务清单落档，239门保留。无设备操作、无内核或包修改、未提交。证据reports/userland-closure/2026-10-27-r1/qualification.json；docs/operations/2026-10-27-userland-input-closure.md。
+2026-10-27T11:03:08.6321207+08:00 · 固定恢复根压缩输入闭包：38文件/188块/10960640字节独立展开SHA一致，188窗口与19边界用例通过；修正宿主解析器的流后剩余范围误判，保留r1失败与构建时钟警告。无设备操作，PROBE40和239门不变，未提交。证据reports/compressed-payloads/2026-10-27-r2/qualification.json；docs/operations/2026-10-27-compressed-payload-closure.md。
+2026-10-27T11:42:07.6322815+08:00 · PROBE40单次临时boot已发送并ACK0，已消费；预检Android1/nuwa/kalama/A槽/三SHA一致。用户已确认拍摄和恢复并要求直接启动。待媒体与Android后验，无flash/erase/改槽/提交。证据reports/xnu-entry-probe-trial/2026-10-27-v48/{preflight,launch,consumed}.json。
+2026-10-27T12:12:05.2452089+08:00 · PROBE40媒体与Android三SHA后验闭环，第二次分配续接证据推进；41重建及专项中，无提交。证据reports/xnu-entry-probe-trial/2026-10-27-v48/media-binding.json。
+
+2026-10-27T13:12:01.644370+08:00 · PROBE41资源版r4离线合格：38作业、977项flow、9项连续路径/重置、独立复现及包回读；最大疑点ResourceFork读取，新增22内部点 · 未提交，HEAD855daaf · reports/kernel-entry-probe/2026-10-27-v49-r4/qualification.json
+
+2026-10-27T14:05:15.771180+08:00 · 桌面离线准备：3完整组件摘要/挂载闭环、532主配置/44缓存头、6项测试；在线对照sheng/ishtar/ios-sweet，未改41/未用设备 · HEAD855daaf，未提交 · reports/desktop-readiness/2026-10-27-combined-r1/qualification.json
+
+2026-10-27T14:10:38.5350403+08:00 · 官网顺序复核：驱动依赖、root/Data、先CPU呈现再GPU、分层日志和OS ABI契约已对照；后续按docs/operations/2026-10-27-official-adaptation-sequence.md推进。仅查阅/文档维护，设备暂停，PROBE41与受审输入未变。
+
+2026-10-27T14:14:30.9449713+08:00 · 用户已确认将UniXNU官网内容作为后续开发指南。执行规则已写入设备仓AGENTS.md第0节，固件仓同步引用；按官网依赖/启动阶段/ABI与日志完成条件推进，保留既有用户指令、硬停和证据边界。决策D-071。当前仍仅离线、不操作设备，PROBE41未变。
+
+2026-10-27T14:25:45.9616435+08:00 · 用户要求各阶段具体方法/步骤落为规则：docs/DEVELOPMENT-STAGES.md已定义S00—S13及通用执行方法，两仓AGENTS强制引用，决策D-072。后续按前提、实施、离线/必要实测及完成/失败条件推进；当前阶段状态和证据不变。设备继续暂停，未改PROBE41，未提交。
+
+2026-10-27T14:45:00+08:00 · 按阶段规则重审ResourceFork卡点：固定UIO双分配、描述符静态注册及原生UIO/VFS夹具执行；6项CFG、3组UIO含错误检查及VFS模拟通过，真实分配/APFS/live目标未知，保留平台/Data/桌面闭包缺口；41摘要未变，未用设备/未提交 · HEAD855daaf · docs/operations/2026-10-27-mainline-reassessment.md；reports/mainline-reassessment/2026-10-27-r1/qualification.json
+
+2026-10-27T15:50:19+08:00 · S05/S06离线推进：42子缓存/symbols引用、2710镜像索引，4磁盘入口1103节点/17649依赖边，0必需缺失，14项回归；3组件只读摘要前后一致/卸载，虚拟命名空间未组装部署；设备/41/239不变，未提交 · HEAD855daaf · docs/operations/2026-10-27-desktop-cache-closure.md；reports/desktop-readiness/2026-10-27-cache-r1/qualification.json
+
+2026-10-27T16:21:31+08:00 · S05/S06根/Data/服务契约：OS原始5635081728B、两窗口预览8380219392B；532作业/1668端口名/63路径，条件参数保留；9跨组件程序找到，198项OS-var来源包回读，非APFS种子；15+9+9检查通过，3次原始失败独立留档，所有挂载退出/源摘要不变，未用设备/改41/解除239/提交 · HEAD855daaf · docs/operations/2026-10-27-root-data-service-contract.md；reports/desktop-readiness/2026-10-27-contract-r1/qualification.json
+
+2026-10-27T16:25:28+08:00 · 根/Data资格元数据计数修正：初版PowerShell逐属性Count被序列化成数组，最终qualification-r2.json改为服务名总数1668并更新文档绑定；测试/源报告/归档不变，原qualification保留 · 未提交 · reports/desktop-readiness/2026-10-27-contract-r1/qualification-r2.json
+
+2026-10-27T16:45:12+08:00 · S05/S06 OS原始输入：5635081728B/SHA256 6e87bfca...98906，3638块回读、5文件只读视图匹配、源DMG不变/卸载；System卷UUID独立读取，候选窗口契约不改板值；15上游+14本地检查通过，Clock skew和首次路径分隔符失败日志保留，设备/41/239不变，未提交 · HEAD855daaf · docs/operations/2026-10-27-raw-os-input.md；reports/desktop-readiness/2026-10-27-raw-os-r1/qualification.json
+
+2026-10-27T17:24:40+08:00 · 公开设备实现检索并复现Linux APFS Data：fajita固定builder/apfsprogs归档，1 GiB逻辑/160目录/106608B包；apfsck/独立读回/两次摘要复现/C++真实parser导入通过，8项检查/4000差分操作；当前内核Data链接仍待，Git所有权拒绝停止对应元数据操作无绕过，设备/41/239/板值不变，无新Git仓库/提交 · HEAD855daaf · docs/operations/2026-10-27-linux-apfs-data-candidate.md；reports/desktop-readiness/2026-10-27-data-linux-r1/qualification.json
+
+2026-10-27T18:29:35.355383+08:00 · PROBE41 r5实际getxattr分派目标/返回观测，38串行作业与独立复现/包回读通过；设备暂停 · 未提交，HEAD855daaf · reports/kernel-entry-probe/2026-10-27-v49-r5/qualification.json；docs/operations/2026-10-27-probe41-dispatch-r5.md
+
+2026-10-27T18:43:05.203664+08:00 · 用户恢复实机且当轮确认连续拍摄/实体键恢复已就绪。PROBE41 r5单次临时启动已获fastboot Sending/Booting OKAY，包SHA256 6d2d0023437ab0aa630372aeb57ff4925a6ef5e9db18a5131cf2ffab1e6cb748；ACK只证明命令接受，不证明菜单/内核/handler已执行。候选已消费，禁止重发。新鲜预检Android1、nuwa/kalama、A槽，三SHA与PROBE40一致。当前等待用户菜单电源Enter、连续录像/稳定照片和回Android；启动后设备状态尚未取得后验，不沿用启动前Android1冒充恢复。证据reports/xnu-entry-probe-trial/2026-10-27-v49-r5/{preflight,launch,consumed}.json。媒体目录D:/Code/PortingiOS/nuwa/Media-nuwa；恢复后补postcondition与三SHA。未flash/erase/改槽、未提交。
+2026-10-27 19:51 +08 · PROBE42修复HEX跨异常返回持有x18；38串行资格、29扰动、9连续路径、独立重编及整包回读通过。内核仅helper内19字节变化；239仍保留，未部署/提交。镜像SHA256 edae54d85c90d35458cfc97b412f92af5852afad35ba4633ada891c48a276a9b。证据reports/kernel-entry-probe/2026-10-27-probe42-x18/qualification.json；docs/operations/2026-10-27-probe42-x18.md。
+2026-10-27 · 用户要求将实机前充分分析实际代码、报告最大嫌疑及证伪范围写入持续规则；已更新设备仓AGENTS第8节、阶段通用方法及固件仓引用。仅资料修改，未提交、未操作设备。
+
+2026-10-27T20:05:46.332150+08:00 · PROBE42单次临时启动获Sending/Booting OKAY，已消费；待媒体与Android/三SHA后验。未flash/erase/改槽/提交。证据reports/xnu-entry-probe-trial/2026-10-27-probe42-x18/launch.json。
+
+2026-10-27 20:49 +08 · PROBE42五阶段媒体及Android/三SHA恢复闭环；PROBE43新增19个APFS handler调用/返回观测点，38项串行作业、2496透明性、1207流程（含192新增）、67绑定、29 x18扰动、9连续路径通过，独立重编字节一致及整包回读通过；镜像SHA256 ca73e9562f6236cddcba12c8cc2f62980804c419cb31ac05531c8f8007d8d585；43未启动、239保留，原证据与现有修改保留 · 未提交 · reports/kernel-entry-probe/2026-10-27-probe43-handler/qualification.json；docs/operations/2026-10-27-probe42-media-probe43-handler.md
+
+2026-10-27T20:54:31.4467599+08:00 · PROBE43新鲜预检通过，用户确认拍摄/恢复后单次fastboot临时启动，Sending/Booting OKAY；已消费、待媒体及Android恢复后验，未宣称内核执行 · 未提交 · reports/xnu-entry-probe-trial/2026-10-27-probe43-handler/launch.json
+
+2026-10-27 21:48 +08 · PROBE43照片稳定十秒以上，A03D=FFFFFFF00519CC10，handler已到属性处理调用前；Android/三SHA恢复后验通过。PROBE44覆盖属性/ResourceFork vnode lookup/read连续链，68新位置/96B状态，38串行作业、2768透明性、2025流程（818新增）、67绑定、29 x18扰动、9向量连续路径通过，独立内核一致及整包回读通过；镜像SHA b8e2395576460b8296589ea92a6cfa6b73f34abc4fe04090f0c982d3b6d38030，44未启动、239保留 · 未提交 · reports/kernel-entry-probe/2026-10-27-probe44-chain/qualification.json
+2026-10-27 21:48 +08 · 媒体1397文件按PROBE轮目录迁移并逐一比较SHA一致，历史manifest保持；44/original已预建，XNU包预检自动建目录及6项无设备检查通过；含空目录清理的组合命令被自动审批拒绝后停止，空目录保留 · 未提交 · D:/Code/PortingiOS/nuwa/Media-nuwa/media-path-migration-2026-10-27.json；docs/operations/2026-10-27-probe43-media-probe44-chain.md
+
+2026-10-27T22:00:03.2704791+08:00 · 用户明确要求会话落档/本地提交/新会话prompt；封存PROBE29—44源码与文字证据及既有路径迁移修改，新增精简交接和prompt；待提交176个Python文件语法检查通过，精确字节属性例外保留绑定源码/报告，不改写历史摘要；固件资料已提交2affc24864bf520bf6c830f704415dd655accf8e。本条随设备仓检查点提交，提交号以封存本条的Git记录为准；未push/未启动设备 · reports/session-closeout/2026-10-27；docs/operations/2026-10-27-session-handoff.md

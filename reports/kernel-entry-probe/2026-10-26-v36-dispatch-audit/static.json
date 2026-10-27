@@ -1,0 +1,1050 @@
+{
+  "level": "Static fixed-input audit only",
+  "native_input_sha256": "1aeebf1352a86b0d31612a6bd6e77bd7292f676ad2ce43a99ec4a8f3999eedb6",
+  "emission_report_sha256": "e10770f6a5f85a1430494114a136ba801f4ab062a9af1ba09408f60feb9fc5f2",
+  "original_donor_sha256": "2ec297bac95bcba01046fd0148e97e7e5885c05a6c18827f39f534ba375c1221",
+  "apfs_executable_extent": {
+    "module": "com.apple.filesystems.apfs",
+    "segment": "__TEXT_EXEC",
+    "va": "0xfffffff00515f000",
+    "size": 1050376
+  },
+  "apfs_executable_sha256": "ebc47d686c6917c7fb154a0b2e2ed19e3d6a277d994d1395b02d3214142577cc",
+  "descriptor": "0xfffffff0079fde80",
+  "descriptor_disk_offset_value": 0,
+  "dispatch_instructions": [
+    {
+      "pc": "0xfffffff00746c678",
+      "bytes": "696a40f9",
+      "instruction": "ldr x9, [x19, #0xd0]"
+    },
+    {
+      "pc": "0xfffffff00746c67c",
+      "bytes": "080180b9",
+      "instruction": "ldrsw x8, [x8]"
+    },
+    {
+      "pc": "0xfffffff00746c680",
+      "bytes": "287968f8",
+      "instruction": "ldr x8, [x9, x8, lsl #3]"
+    },
+    {
+      "pc": "0xfffffff00746c684",
+      "bytes": "e0230091",
+      "instruction": "add x0, sp, #8"
+    },
+    {
+      "pc": "0xfffffff00746c688",
+      "bytes": "00013fd6",
+      "instruction": "blr x8"
+    },
+    {
+      "pc": "0xfffffff00746c68c",
+      "bytes": "f60300aa",
+      "instruction": "mov x22, x0"
+    }
+  ],
+  "descriptor_references": [
+    {
+      "site": "0xfffffff005eac408",
+      "handler": "0xfffffff007284db8",
+      "neighbor_descriptors": [
+        null,
+        null
+      ],
+      "operation_pair_shape": false,
+      "handler_symbol": "_vprintf",
+      "handler_in_original_apfs_text": false
+    },
+    {
+      "site": "0xfffffff005eb0c88",
+      "handler": "0xfffffff00519041c",
+      "neighbor_descriptors": [
+        "_vnop_close_desc",
+        "_vnop_write_desc"
+      ],
+      "operation_pair_shape": true,
+      "handler_symbol": null,
+      "handler_in_original_apfs_text": true
+    },
+    {
+      "site": "0xfffffff005eb1308",
+      "handler": "0xfffffff0051b5580",
+      "neighbor_descriptors": [
+        "_vnop_setattr_desc",
+        "_vnop_write_desc"
+      ],
+      "operation_pair_shape": true,
+      "handler_symbol": null,
+      "handler_in_original_apfs_text": true
+    },
+    {
+      "site": "0xfffffff005eb1c98",
+      "handler": "0xfffffff005229760",
+      "neighbor_descriptors": [
+        "_vnop_close_desc",
+        "_vnop_write_desc"
+      ],
+      "operation_pair_shape": true,
+      "handler_symbol": null,
+      "handler_in_original_apfs_text": true
+    },
+    {
+      "site": "0xfffffff005eb0fb8",
+      "handler": "0xfffffff0051a5858",
+      "neighbor_descriptors": [
+        "_vnop_close_desc",
+        "_vnop_write_desc"
+      ],
+      "operation_pair_shape": true,
+      "handler_symbol": null,
+      "handler_in_original_apfs_text": true
+    },
+    {
+      "site": "0xfffffff005eb0e38",
+      "handler": "0xfffffff007461954",
+      "neighbor_descriptors": [
+        "_vnop_close_desc",
+        "_vnop_write_desc"
+      ],
+      "operation_pair_shape": true,
+      "handler_symbol": "_nop_read",
+      "handler_in_original_apfs_text": false
+    }
+  ],
+  "operation_candidates": [
+    {
+      "site": "0xfffffff005eb0c88",
+      "handler": "0xfffffff00519041c",
+      "neighbor_descriptors": [
+        "_vnop_close_desc",
+        "_vnop_write_desc"
+      ],
+      "operation_pair_shape": true,
+      "handler_symbol": null,
+      "handler_in_original_apfs_text": true
+    },
+    {
+      "site": "0xfffffff005eb1308",
+      "handler": "0xfffffff0051b5580",
+      "neighbor_descriptors": [
+        "_vnop_setattr_desc",
+        "_vnop_write_desc"
+      ],
+      "operation_pair_shape": true,
+      "handler_symbol": null,
+      "handler_in_original_apfs_text": true
+    },
+    {
+      "site": "0xfffffff005eb1c98",
+      "handler": "0xfffffff005229760",
+      "neighbor_descriptors": [
+        "_vnop_close_desc",
+        "_vnop_write_desc"
+      ],
+      "operation_pair_shape": true,
+      "handler_symbol": null,
+      "handler_in_original_apfs_text": true
+    },
+    {
+      "site": "0xfffffff005eb0fb8",
+      "handler": "0xfffffff0051a5858",
+      "neighbor_descriptors": [
+        "_vnop_close_desc",
+        "_vnop_write_desc"
+      ],
+      "operation_pair_shape": true,
+      "handler_symbol": null,
+      "handler_in_original_apfs_text": true
+    },
+    {
+      "site": "0xfffffff005eb0e38",
+      "handler": "0xfffffff007461954",
+      "neighbor_descriptors": [
+        "_vnop_close_desc",
+        "_vnop_write_desc"
+      ],
+      "operation_pair_shape": true,
+      "handler_symbol": "_nop_read",
+      "handler_in_original_apfs_text": false
+    }
+  ],
+  "regular_read_candidate": {
+    "entry": "0xfffffff0051a5858",
+    "prologue": "ff0304d1",
+    "bounded_scan_end": "0xfffffff0051a5df8",
+    "scope": "Window ends at adjacent operation write handler, not an asserted complete function CFG",
+    "direct_calls_in_window": [
+      {
+        "pc": "0xfffffff0051a5888",
+        "word": "f9e50294",
+        "direct_target": "0xfffffff00525f06c",
+        "resolved_target": "0xfffffff0076bc878",
+        "symbol": "_uio_resid",
+        "stub": {
+          "slot": 18446744005089345496,
+          "target": 18446744005114579064,
+          "instructions": [
+            {
+              "pc": "0xfffffff00525f06c",
+              "bytes": "70620090",
+              "instruction": "adrp x16, #0xfffffff005eab000"
+            },
+            {
+              "pc": "0xfffffff00525f070",
+              "bytes": "10ee47f9",
+              "instruction": "ldr x16, [x16, #0xfd8]"
+            },
+            {
+              "pc": "0xfffffff00525f074",
+              "bytes": "00021fd6",
+              "instruction": "br x16"
+            }
+          ]
+        }
+      },
+      {
+        "pc": "0xfffffff0051a5894",
+        "word": "f0e50294",
+        "direct_target": "0xfffffff00525f054",
+        "resolved_target": "0xfffffff0076bcca4",
+        "symbol": "_uio_offset",
+        "stub": {
+          "slot": 18446744005089345480,
+          "target": 18446744005114580132,
+          "instructions": [
+            {
+              "pc": "0xfffffff00525f054",
+              "bytes": "70620090",
+              "instruction": "adrp x16, #0xfffffff005eab000"
+            },
+            {
+              "pc": "0xfffffff00525f058",
+              "bytes": "10e647f9",
+              "instruction": "ldr x16, [x16, #0xfc8]"
+            },
+            {
+              "pc": "0xfffffff00525f05c",
+              "bytes": "00021fd6",
+              "instruction": "br x16"
+            }
+          ]
+        }
+      },
+      {
+        "pc": "0xfffffff0051a58a0",
+        "word": "40e70294",
+        "direct_target": "0xfffffff00525f5a0",
+        "resolved_target": "0xfffffff00746ac54",
+        "symbol": "_vnode_mount",
+        "stub": {
+          "slot": 18446744005089346384,
+          "target": 18446744005112147028,
+          "instructions": [
+            {
+              "pc": "0xfffffff00525f5a0",
+              "bytes": "706200b0",
+              "instruction": "adrp x16, #0xfffffff005eac000"
+            },
+            {
+              "pc": "0xfffffff00525f5a4",
+              "bytes": "10aa41f9",
+              "instruction": "ldr x16, [x16, #0x350]"
+            },
+            {
+              "pc": "0xfffffff00525f5a8",
+              "bytes": "00021fd6",
+              "instruction": "br x16"
+            }
+          ]
+        }
+      },
+      {
+        "pc": "0xfffffff0051a58a4",
+        "word": "5be60294",
+        "direct_target": "0xfffffff00525f210",
+        "resolved_target": "0xfffffff007469e3c",
+        "symbol": "_vfs_fsprivate",
+        "stub": {
+          "slot": 18446744005089345776,
+          "target": 18446744005112143420,
+          "instructions": [
+            {
+              "pc": "0xfffffff00525f210",
+              "bytes": "706200b0",
+              "instruction": "adrp x16, #0xfffffff005eac000"
+            },
+            {
+              "pc": "0xfffffff00525f214",
+              "bytes": "107a40f9",
+              "instruction": "ldr x16, [x16, #0xf0]"
+            },
+            {
+              "pc": "0xfffffff00525f218",
+              "bytes": "00021fd6",
+              "instruction": "br x16"
+            }
+          ]
+        }
+      },
+      {
+        "pc": "0xfffffff0051a58b0",
+        "word": "e5e60294",
+        "direct_target": "0xfffffff00525f444",
+        "resolved_target": "0xfffffff00746acf0",
+        "symbol": "_vnode_fsnode",
+        "stub": {
+          "slot": 18446744005089346152,
+          "target": 18446744005112147184,
+          "instructions": [
+            {
+              "pc": "0xfffffff00525f444",
+              "bytes": "706200b0",
+              "instruction": "adrp x16, #0xfffffff005eac000"
+            },
+            {
+              "pc": "0xfffffff00525f448",
+              "bytes": "103641f9",
+              "instruction": "ldr x16, [x16, #0x268]"
+            },
+            {
+              "pc": "0xfffffff00525f44c",
+              "bytes": "00021fd6",
+              "instruction": "br x16"
+            }
+          ]
+        }
+      },
+      {
+        "pc": "0xfffffff0051a592c",
+        "word": "aad1ff97",
+        "direct_target": "0xfffffff005199fd4",
+        "resolved_target": "0xfffffff005199fd4",
+        "symbol": null,
+        "stub": null
+      },
+      {
+        "pc": "0xfffffff0051a599c",
+        "word": "6499ff97",
+        "direct_target": "0xfffffff00518bf2c",
+        "resolved_target": "0xfffffff00518bf2c",
+        "symbol": null,
+        "stub": null
+      },
+      {
+        "pc": "0xfffffff0051a59b8",
+        "word": "d6e30294",
+        "direct_target": "0xfffffff00525e910",
+        "resolved_target": "0xfffffff007480028",
+        "symbol": "_decmpfs_read_compressed",
+        "stub": {
+          "slot": 18446744005089344136,
+          "target": 18446744005112234024,
+          "instructions": [
+            {
+              "pc": "0xfffffff00525e910",
+              "bytes": "706200b0",
+              "instruction": "adrp x16, #0xfffffff005eab000"
+            },
+            {
+              "pc": "0xfffffff00525e914",
+              "bytes": "104645f9",
+              "instruction": "ldr x16, [x16, #0xa88]"
+            },
+            {
+              "pc": "0xfffffff00525e918",
+              "bytes": "00021fd6",
+              "instruction": "br x16"
+            }
+          ]
+        }
+      },
+      {
+        "pc": "0xfffffff0051a59d8",
+        "word": "98e30294",
+        "direct_target": "0xfffffff00525e838",
+        "resolved_target": "0xfffffff00747e0c8",
+        "symbol": "_decmpfs_cnode_cmp_type",
+        "stub": {
+          "slot": 18446744005089343984,
+          "target": 18446744005112225992,
+          "instructions": [
+            {
+              "pc": "0xfffffff00525e838",
+              "bytes": "706200b0",
+              "instruction": "adrp x16, #0xfffffff005eab000"
+            },
+            {
+              "pc": "0xfffffff00525e83c",
+              "bytes": "10fa44f9",
+              "instruction": "ldr x16, [x16, #0x9f0]"
+            },
+            {
+              "pc": "0xfffffff00525e840",
+              "bytes": "00021fd6",
+              "instruction": "br x16"
+            }
+          ]
+        }
+      },
+      {
+        "pc": "0xfffffff0051a59f4",
+        "word": "1dc50194",
+        "direct_target": "0xfffffff005216e68",
+        "resolved_target": "0xfffffff005216e68",
+        "symbol": null,
+        "stub": null
+      },
+      {
+        "pc": "0xfffffff0051a59fc",
+        "word": "8fe30294",
+        "direct_target": "0xfffffff00525e838",
+        "resolved_target": "0xfffffff00747e0c8",
+        "symbol": "_decmpfs_cnode_cmp_type",
+        "stub": {
+          "slot": 18446744005089343984,
+          "target": 18446744005112225992,
+          "instructions": [
+            {
+              "pc": "0xfffffff00525e838",
+              "bytes": "706200b0",
+              "instruction": "adrp x16, #0xfffffff005eab000"
+            },
+            {
+              "pc": "0xfffffff00525e83c",
+              "bytes": "10fa44f9",
+              "instruction": "ldr x16, [x16, #0x9f0]"
+            },
+            {
+              "pc": "0xfffffff00525e840",
+              "bytes": "00021fd6",
+              "instruction": "br x16"
+            }
+          ]
+        }
+      },
+      {
+        "pc": "0xfffffff0051a5a3c",
+        "word": "409eff97",
+        "direct_target": "0xfffffff00518d33c",
+        "resolved_target": "0xfffffff00518d33c",
+        "symbol": null,
+        "stub": null
+      },
+      {
+        "pc": "0xfffffff0051a5a8c",
+        "word": "c9a6ff97",
+        "direct_target": "0xfffffff00518f5b0",
+        "resolved_target": "0xfffffff00518f5b0",
+        "symbol": null,
+        "stub": null
+      },
+      {
+        "pc": "0xfffffff0051a5aa4",
+        "word": "ff420194",
+        "direct_target": "0xfffffff0051f66a0",
+        "resolved_target": "0xfffffff0051f66a0",
+        "symbol": null,
+        "stub": null
+      },
+      {
+        "pc": "0xfffffff0051a5ad8",
+        "word": "b6a6ff97",
+        "direct_target": "0xfffffff00518f5b0",
+        "resolved_target": "0xfffffff00518f5b0",
+        "symbol": null,
+        "stub": null
+      },
+      {
+        "pc": "0xfffffff0051a5ae8",
+        "word": "59e40294",
+        "direct_target": "0xfffffff00525ec4c",
+        "resolved_target": "0xfffffff007277cbc",
+        "symbol": "_IORWLockWrite",
+        "stub": {
+          "slot": 18446744005089344768,
+          "target": 18446744005110103228,
+          "instructions": [
+            {
+              "pc": "0xfffffff00525ec4c",
+              "bytes": "706200b0",
+              "instruction": "adrp x16, #0xfffffff005eab000"
+            },
+            {
+              "pc": "0xfffffff00525ec50",
+              "bytes": "108246f9",
+              "instruction": "ldr x16, [x16, #0xd00]"
+            },
+            {
+              "pc": "0xfffffff00525ec54",
+              "bytes": "00021fd6",
+              "instruction": "br x16"
+            }
+          ]
+        }
+      },
+      {
+        "pc": "0xfffffff0051a5b00",
+        "word": "65e40294",
+        "direct_target": "0xfffffff00525ec94",
+        "resolved_target": "0xfffffff007279630",
+        "symbol": "_lck_rw_unlock_exclusive",
+        "stub": {
+          "slot": 18446744005089344816,
+          "target": 18446744005110109744,
+          "instructions": [
+            {
+              "pc": "0xfffffff00525ec94",
+              "bytes": "706200b0",
+              "instruction": "adrp x16, #0xfffffff005eab000"
+            },
+            {
+              "pc": "0xfffffff00525ec98",
+              "bytes": "109a46f9",
+              "instruction": "ldr x16, [x16, #0xd30]"
+            },
+            {
+              "pc": "0xfffffff00525ec9c",
+              "bytes": "00021fd6",
+              "instruction": "br x16"
+            }
+          ]
+        }
+      },
+      {
+        "pc": "0xfffffff0051a5b10",
+        "word": "4de60294",
+        "direct_target": "0xfffffff00525f444",
+        "resolved_target": "0xfffffff00746acf0",
+        "symbol": "_vnode_fsnode",
+        "stub": {
+          "slot": 18446744005089346152,
+          "target": 18446744005112147184,
+          "instructions": [
+            {
+              "pc": "0xfffffff00525f444",
+              "bytes": "706200b0",
+              "instruction": "adrp x16, #0xfffffff005eac000"
+            },
+            {
+              "pc": "0xfffffff00525f448",
+              "bytes": "103641f9",
+              "instruction": "ldr x16, [x16, #0x268]"
+            },
+            {
+              "pc": "0xfffffff00525f44c",
+              "bytes": "00021fd6",
+              "instruction": "br x16"
+            }
+          ]
+        }
+      },
+      {
+        "pc": "0xfffffff0051a5b18",
+        "word": "d9a4ff97",
+        "direct_target": "0xfffffff00518ee7c",
+        "resolved_target": "0xfffffff00518ee7c",
+        "symbol": null,
+        "stub": null
+      },
+      {
+        "pc": "0xfffffff0051a5b88",
+        "word": "bc350194",
+        "direct_target": "0xfffffff0051f3278",
+        "resolved_target": "0xfffffff0051f3278",
+        "symbol": null,
+        "stub": null
+      },
+      {
+        "pc": "0xfffffff0051a5bb4",
+        "word": "c4dd0294",
+        "direct_target": "0xfffffff00525d2c4",
+        "resolved_target": "0xfffffff00525d2c4",
+        "symbol": null,
+        "stub": null
+      },
+      {
+        "pc": "0xfffffff0051a5bbc",
+        "word": "2ae40294",
+        "direct_target": "0xfffffff00525ec64",
+        "resolved_target": "0xfffffff007277e80",
+        "symbol": "_IORWLockRead",
+        "stub": {
+          "slot": 18446744005089344784,
+          "target": 18446744005110103680,
+          "instructions": [
+            {
+              "pc": "0xfffffff00525ec64",
+              "bytes": "706200b0",
+              "instruction": "adrp x16, #0xfffffff005eab000"
+            },
+            {
+              "pc": "0xfffffff00525ec68",
+              "bytes": "108a46f9",
+              "instruction": "ldr x16, [x16, #0xd10]"
+            },
+            {
+              "pc": "0xfffffff00525ec6c",
+              "bytes": "00021fd6",
+              "instruction": "br x16"
+            }
+          ]
+        }
+      },
+      {
+        "pc": "0xfffffff0051a5bcc",
+        "word": "ecc4ff97",
+        "direct_target": "0xfffffff005196f7c",
+        "resolved_target": "0xfffffff005196f7c",
+        "symbol": null,
+        "stub": null
+      },
+      {
+        "pc": "0xfffffff0051a5bd4",
+        "word": "33e40294",
+        "direct_target": "0xfffffff00525eca0",
+        "resolved_target": "0xfffffff007279594",
+        "symbol": "_lck_rw_unlock_shared",
+        "stub": {
+          "slot": 18446744005089344824,
+          "target": 18446744005110109588,
+          "instructions": [
+            {
+              "pc": "0xfffffff00525eca0",
+              "bytes": "706200b0",
+              "instruction": "adrp x16, #0xfffffff005eab000"
+            },
+            {
+              "pc": "0xfffffff00525eca4",
+              "bytes": "109e46f9",
+              "instruction": "ldr x16, [x16, #0xd38]"
+            },
+            {
+              "pc": "0xfffffff00525eca8",
+              "bytes": "00021fd6",
+              "instruction": "br x16"
+            }
+          ]
+        }
+      },
+      {
+        "pc": "0xfffffff0051a5c08",
+        "word": "b5e20294",
+        "direct_target": "0xfffffff00525e6dc",
+        "resolved_target": "0xfffffff007438710",
+        "symbol": "_cluster_read",
+        "stub": {
+          "slot": 18446744005089343752,
+          "target": 18446744005111940880,
+          "instructions": [
+            {
+              "pc": "0xfffffff00525e6dc",
+              "bytes": "706200b0",
+              "instruction": "adrp x16, #0xfffffff005eab000"
+            },
+            {
+              "pc": "0xfffffff00525e6e0",
+              "bytes": "108644f9",
+              "instruction": "ldr x16, [x16, #0x908]"
+            },
+            {
+              "pc": "0xfffffff00525e6e4",
+              "bytes": "00021fd6",
+              "instruction": "br x16"
+            }
+          ]
+        }
+      },
+      {
+        "pc": "0xfffffff0051a5c44",
+        "word": "0ae50294",
+        "direct_target": "0xfffffff00525f06c",
+        "resolved_target": "0xfffffff0076bc878",
+        "symbol": "_uio_resid",
+        "stub": {
+          "slot": 18446744005089345496,
+          "target": 18446744005114579064,
+          "instructions": [
+            {
+              "pc": "0xfffffff00525f06c",
+              "bytes": "70620090",
+              "instruction": "adrp x16, #0xfffffff005eab000"
+            },
+            {
+              "pc": "0xfffffff00525f070",
+              "bytes": "10ee47f9",
+              "instruction": "ldr x16, [x16, #0xfd8]"
+            },
+            {
+              "pc": "0xfffffff00525f074",
+              "bytes": "00021fd6",
+              "instruction": "br x16"
+            }
+          ]
+        }
+      },
+      {
+        "pc": "0xfffffff0051a5c7c",
+        "word": "4da6ff97",
+        "direct_target": "0xfffffff00518f5b0",
+        "resolved_target": "0xfffffff00518f5b0",
+        "symbol": null,
+        "stub": null
+      },
+      {
+        "pc": "0xfffffff0051a5c84",
+        "word": "f8e30294",
+        "direct_target": "0xfffffff00525ec64",
+        "resolved_target": "0xfffffff007277e80",
+        "symbol": "_IORWLockRead",
+        "stub": {
+          "slot": 18446744005089344784,
+          "target": 18446744005110103680,
+          "instructions": [
+            {
+              "pc": "0xfffffff00525ec64",
+              "bytes": "706200b0",
+              "instruction": "adrp x16, #0xfffffff005eab000"
+            },
+            {
+              "pc": "0xfffffff00525ec68",
+              "bytes": "108a46f9",
+              "instruction": "ldr x16, [x16, #0xd10]"
+            },
+            {
+              "pc": "0xfffffff00525ec6c",
+              "bytes": "00021fd6",
+              "instruction": "br x16"
+            }
+          ]
+        }
+      },
+      {
+        "pc": "0xfffffff0051a5c98",
+        "word": "74c40194",
+        "direct_target": "0xfffffff005216e68",
+        "resolved_target": "0xfffffff005216e68",
+        "symbol": null,
+        "stub": null
+      },
+      {
+        "pc": "0xfffffff0051a5ca4",
+        "word": "ffe30294",
+        "direct_target": "0xfffffff00525eca0",
+        "resolved_target": "0xfffffff007279594",
+        "symbol": "_lck_rw_unlock_shared",
+        "stub": {
+          "slot": 18446744005089344824,
+          "target": 18446744005110109588,
+          "instructions": [
+            {
+              "pc": "0xfffffff00525eca0",
+              "bytes": "706200b0",
+              "instruction": "adrp x16, #0xfffffff005eab000"
+            },
+            {
+              "pc": "0xfffffff00525eca4",
+              "bytes": "109e46f9",
+              "instruction": "ldr x16, [x16, #0xd38]"
+            },
+            {
+              "pc": "0xfffffff00525eca8",
+              "bytes": "00021fd6",
+              "instruction": "br x16"
+            }
+          ]
+        }
+      },
+      {
+        "pc": "0xfffffff0051a5cac",
+        "word": "95dd0294",
+        "direct_target": "0xfffffff00525d300",
+        "resolved_target": "0xfffffff00525d300",
+        "symbol": null,
+        "stub": null
+      },
+      {
+        "pc": "0xfffffff0051a5cbc",
+        "word": "a7e40294",
+        "direct_target": "0xfffffff00525ef58",
+        "resolved_target": "0xfffffff007478478",
+        "symbol": "_throttle_lowpri_io",
+        "stub": {
+          "slot": 18446744005089345312,
+          "target": 18446744005112202360,
+          "instructions": [
+            {
+              "pc": "0xfffffff00525ef58",
+              "bytes": "706200b0",
+              "instruction": "adrp x16, #0xfffffff005eab000"
+            },
+            {
+              "pc": "0xfffffff00525ef5c",
+              "bytes": "109247f9",
+              "instruction": "ldr x16, [x16, #0xf20]"
+            },
+            {
+              "pc": "0xfffffff00525ef60",
+              "bytes": "00021fd6",
+              "instruction": "br x16"
+            }
+          ]
+        }
+      },
+      {
+        "pc": "0xfffffff0051a5cd0",
+        "word": "f2750194",
+        "direct_target": "0xfffffff005203498",
+        "resolved_target": "0xfffffff005203498",
+        "symbol": null,
+        "stub": null
+      },
+      {
+        "pc": "0xfffffff0051a5cdc",
+        "word": "e4e40294",
+        "direct_target": "0xfffffff00525f06c",
+        "resolved_target": "0xfffffff0076bc878",
+        "symbol": "_uio_resid",
+        "stub": {
+          "slot": 18446744005089345496,
+          "target": 18446744005114579064,
+          "instructions": [
+            {
+              "pc": "0xfffffff00525f06c",
+              "bytes": "70620090",
+              "instruction": "adrp x16, #0xfffffff005eab000"
+            },
+            {
+              "pc": "0xfffffff00525f070",
+              "bytes": "10ee47f9",
+              "instruction": "ldr x16, [x16, #0xfd8]"
+            },
+            {
+              "pc": "0xfffffff00525f074",
+              "bytes": "00021fd6",
+              "instruction": "br x16"
+            }
+          ]
+        }
+      },
+      {
+        "pc": "0xfffffff0051a5cf4",
+        "word": "d9e00294",
+        "direct_target": "0xfffffff00525e058",
+        "resolved_target": "0xfffffff0077f5318",
+        "symbol": "_OSAddAtomic64",
+        "stub": {
+          "slot": 18446744005089342384,
+          "target": 18446744005115859736,
+          "instructions": [
+            {
+              "pc": "0xfffffff00525e058",
+              "bytes": "706200b0",
+              "instruction": "adrp x16, #0xfffffff005eab000"
+            },
+            {
+              "pc": "0xfffffff00525e05c",
+              "bytes": "10da41f9",
+              "instruction": "ldr x16, [x16, #0x3b0]"
+            },
+            {
+              "pc": "0xfffffff00525e060",
+              "bytes": "00021fd6",
+              "instruction": "br x16"
+            }
+          ]
+        }
+      },
+      {
+        "pc": "0xfffffff0051a5d70",
+        "word": "10a6ff97",
+        "direct_target": "0xfffffff00518f5b0",
+        "resolved_target": "0xfffffff00518f5b0",
+        "symbol": null,
+        "stub": null
+      },
+      {
+        "pc": "0xfffffff0051a5d78",
+        "word": "62dd0294",
+        "direct_target": "0xfffffff00525d300",
+        "resolved_target": "0xfffffff00525d300",
+        "symbol": null,
+        "stub": null
+      },
+      {
+        "pc": "0xfffffff0051a5d90",
+        "word": "6fe40294",
+        "direct_target": "0xfffffff00525ef4c",
+        "resolved_target": "0xfffffff007478b60",
+        "symbol": "_throttle_info_reset_window",
+        "stub": {
+          "slot": 18446744005089345304,
+          "target": 18446744005112204128,
+          "instructions": [
+            {
+              "pc": "0xfffffff00525ef4c",
+              "bytes": "706200b0",
+              "instruction": "adrp x16, #0xfffffff005eab000"
+            },
+            {
+              "pc": "0xfffffff00525ef50",
+              "bytes": "108e47f9",
+              "instruction": "ldr x16, [x16, #0xf18]"
+            },
+            {
+              "pc": "0xfffffff00525ef54",
+              "bytes": "00021fd6",
+              "instruction": "br x16"
+            }
+          ]
+        }
+      },
+      {
+        "pc": "0xfffffff0051a5da4",
+        "word": "a8e50294",
+        "direct_target": "0xfffffff00525f444",
+        "resolved_target": "0xfffffff00746acf0",
+        "symbol": "_vnode_fsnode",
+        "stub": {
+          "slot": 18446744005089346152,
+          "target": 18446744005112147184,
+          "instructions": [
+            {
+              "pc": "0xfffffff00525f444",
+              "bytes": "706200b0",
+              "instruction": "adrp x16, #0xfffffff005eac000"
+            },
+            {
+              "pc": "0xfffffff00525f448",
+              "bytes": "103641f9",
+              "instruction": "ldr x16, [x16, #0x268]"
+            },
+            {
+              "pc": "0xfffffff00525f44c",
+              "bytes": "00021fd6",
+              "instruction": "br x16"
+            }
+          ]
+        }
+      },
+      {
+        "pc": "0xfffffff0051a5da8",
+        "word": "6ea4ff97",
+        "direct_target": "0xfffffff00518ef60",
+        "resolved_target": "0xfffffff00518ef60",
+        "symbol": null,
+        "stub": null
+      },
+      {
+        "pc": "0xfffffff0051a5db0",
+        "word": "02e60294",
+        "direct_target": "0xfffffff00525f5b8",
+        "resolved_target": "0xfffffff0074430e0",
+        "symbol": "_vnode_put",
+        "stub": {
+          "slot": 18446744005089346400,
+          "target": 18446744005111984352,
+          "instructions": [
+            {
+              "pc": "0xfffffff00525f5b8",
+              "bytes": "706200b0",
+              "instruction": "adrp x16, #0xfffffff005eac000"
+            },
+            {
+              "pc": "0xfffffff00525f5bc",
+              "bytes": "10b241f9",
+              "instruction": "ldr x16, [x16, #0x360]"
+            },
+            {
+              "pc": "0xfffffff00525f5c0",
+              "bytes": "00021fd6",
+              "instruction": "br x16"
+            }
+          ]
+        }
+      },
+      {
+        "pc": "0xfffffff0051a5db8",
+        "word": "b89dff97",
+        "direct_target": "0xfffffff00518d498",
+        "resolved_target": "0xfffffff00518d498",
+        "symbol": null,
+        "stub": null
+      },
+      {
+        "pc": "0xfffffff0051a5dd8",
+        "word": "923e0194",
+        "direct_target": "0xfffffff0051f5820",
+        "resolved_target": "0xfffffff0051f5820",
+        "symbol": null,
+        "stub": null
+      },
+      {
+        "pc": "0xfffffff0051a5dec",
+        "word": "14e60294",
+        "direct_target": "0xfffffff00525f63c",
+        "resolved_target": "0xfffffff00746b058",
+        "symbol": "_vnode_setnoreadahead",
+        "stub": {
+          "slot": 18446744005089346488,
+          "target": 18446744005112148056,
+          "instructions": [
+            {
+              "pc": "0xfffffff00525f63c",
+              "bytes": "706200b0",
+              "instruction": "adrp x16, #0xfffffff005eac000"
+            },
+            {
+              "pc": "0xfffffff00525f640",
+              "bytes": "10de41f9",
+              "instruction": "ldr x16, [x16, #0x3b8]"
+            },
+            {
+              "pc": "0xfffffff00525f644",
+              "bytes": "00021fd6",
+              "instruction": "br x16"
+            }
+          ]
+        }
+      }
+    ],
+    "decmpfs_call": {
+      "pc": "0xfffffff0051a59b8",
+      "word": "d6e30294",
+      "direct_target": "0xfffffff00525e910",
+      "resolved_target": "0xfffffff007480028",
+      "symbol": "_decmpfs_read_compressed",
+      "stub": {
+        "slot": 18446744005089344136,
+        "target": 18446744005112234024,
+        "instructions": [
+          {
+            "pc": "0xfffffff00525e910",
+            "bytes": "706200b0",
+            "instruction": "adrp x16, #0xfffffff005eab000"
+          },
+          {
+            "pc": "0xfffffff00525e914",
+            "bytes": "104645f9",
+            "instruction": "ldr x16, [x16, #0xa88]"
+          },
+          {
+            "pc": "0xfffffff00525e918",
+            "bytes": "00021fd6",
+            "instruction": "br x16"
+          }
+        ]
+      }
+    }
+  },
+  "runtime_target_known": false,
+  "limitations": [
+    "Disk descriptor offset0 is not proof of the runtime index assigned by vfs_op_init",
+    "Five static operation pairs are not a captured live vnode v_op table",
+    "Regular-read candidate classification follows matching operation descriptor plus direct decmpfs import, not a recovered symbol name",
+    "Other static handlers and runtime substitutions remain possible until x8 is observed",
+    "No device, memory/TCR/identity or permission changes"
+  ],
+  "source_sha256": "f9e2fdc6a92651250674cd2c1aac5f3fce9f6e9d55826867576e4f8910821a82",
+  "device_accessed": false
+}

@@ -1,0 +1,212 @@
+{
+  "input_sha256": "1aeebf1352a86b0d31612a6bd6e77bd7292f676ad2ce43a99ec4a8f3999eedb6",
+  "emission_sha256": "e10770f6a5f85a1430494114a136ba801f4ab062a9af1ba09408f60feb9fc5f2",
+  "descriptor": "0xfffffff0079fe9d8",
+  "references": [
+    {
+      "site": "0xfffffff005eb14b8",
+      "handler": "0xfffffff00519cb28",
+      "operation_pair_shape": true,
+      "same_static_table_read_handlers": [
+        "0xfffffff0051b5580"
+      ],
+      "same_table_as_observed_regular_read_candidate": false
+    },
+    {
+      "site": "0xfffffff005eb0c58",
+      "handler": "0xfffffff00518fa44",
+      "operation_pair_shape": true,
+      "same_static_table_read_handlers": [
+        "0xfffffff00519041c"
+      ],
+      "same_table_as_observed_regular_read_candidate": false
+    },
+    {
+      "site": "0xfffffff005eb1138",
+      "handler": "0xfffffff00519cb28",
+      "operation_pair_shape": true,
+      "same_static_table_read_handlers": [
+        "0xfffffff0051a5858"
+      ],
+      "same_table_as_observed_regular_read_candidate": true
+    },
+    {
+      "site": "0xfffffff005eb1de8",
+      "handler": "0xfffffff00522a4f4",
+      "operation_pair_shape": true,
+      "same_static_table_read_handlers": [
+        "0xfffffff005229760"
+      ],
+      "same_table_as_observed_regular_read_candidate": false
+    }
+  ],
+  "wrapper_window": [
+    {
+      "pc": "0xfffffff00746e164",
+      "bytes": "ff8301d1",
+      "instruction": "sub sp, sp, #0x60"
+    },
+    {
+      "pc": "0xfffffff00746e168",
+      "bytes": "f44f04a9",
+      "instruction": "stp x20, x19, [sp, #0x40]"
+    },
+    {
+      "pc": "0xfffffff00746e16c",
+      "bytes": "fd7b05a9",
+      "instruction": "stp x29, x30, [sp, #0x50]"
+    },
+    {
+      "pc": "0xfffffff00746e170",
+      "bytes": "fd430191",
+      "instruction": "add x29, sp, #0x50"
+    },
+    {
+      "pc": "0xfffffff00746e174",
+      "bytes": "f30300aa",
+      "instruction": "mov x19, x0"
+    },
+    {
+      "pc": "0xfffffff00746e178",
+      "bytes": "882c0090",
+      "instruction": "adrp x8, #0xfffffff0079fe000"
+    },
+    {
+      "pc": "0xfffffff00746e17c",
+      "bytes": "08612791",
+      "instruction": "add x8, x8, #0x9d8"
+    },
+    {
+      "pc": "0xfffffff00746e180",
+      "bytes": "e88300a9",
+      "instruction": "stp x8, x0, [sp, #8]"
+    },
+    {
+      "pc": "0xfffffff00746e184",
+      "bytes": "e18b01a9",
+      "instruction": "stp x1, x2, [sp, #0x18]"
+    },
+    {
+      "pc": "0xfffffff00746e188",
+      "bytes": "e3ff02a9",
+      "instruction": "stp x3, xzr, [sp, #0x28]"
+    },
+    {
+      "pc": "0xfffffff00746e18c",
+      "bytes": "e43300b9",
+      "instruction": "str w4, [sp, #0x30]"
+    },
+    {
+      "pc": "0xfffffff00746e190",
+      "bytes": "e51f00f9",
+      "instruction": "str x5, [sp, #0x38]"
+    },
+    {
+      "pc": "0xfffffff00746e194",
+      "bytes": "096840f9",
+      "instruction": "ldr x9, [x0, #0xd0]"
+    },
+    {
+      "pc": "0xfffffff00746e198",
+      "bytes": "080180b9",
+      "instruction": "ldrsw x8, [x8]"
+    },
+    {
+      "pc": "0xfffffff00746e19c",
+      "bytes": "287968f8",
+      "instruction": "ldr x8, [x9, x8, lsl #3]"
+    },
+    {
+      "pc": "0xfffffff00746e1a0",
+      "bytes": "e0230091",
+      "instruction": "add x0, sp, #8"
+    },
+    {
+      "pc": "0xfffffff00746e1a4",
+      "bytes": "00013fd6",
+      "instruction": "blr x8"
+    },
+    {
+      "pc": "0xfffffff00746e1a8",
+      "bytes": "e10300aa",
+      "instruction": "mov x1, x0"
+    },
+    {
+      "pc": "0xfffffff00746e1ac",
+      "bytes": "e00313aa",
+      "instruction": "mov x0, x19"
+    },
+    {
+      "pc": "0xfffffff00746e1b0",
+      "bytes": "1f2003d5",
+      "instruction": "nop "
+    },
+    {
+      "pc": "0xfffffff00746e1b4",
+      "bytes": "e00301aa",
+      "instruction": "mov x0, x1"
+    },
+    {
+      "pc": "0xfffffff00746e1b8",
+      "bytes": "fd7b45a9",
+      "instruction": "ldp x29, x30, [sp, #0x50]"
+    },
+    {
+      "pc": "0xfffffff00746e1bc",
+      "bytes": "f44f44a9",
+      "instruction": "ldp x20, x19, [sp, #0x40]"
+    },
+    {
+      "pc": "0xfffffff00746e1c0",
+      "bytes": "ff830191",
+      "instruction": "add sp, sp, #0x60"
+    },
+    {
+      "pc": "0xfffffff00746e1c4",
+      "bytes": "c0035fd6",
+      "instruction": "ret "
+    },
+    {
+      "pc": "0xfffffff00746e1c8",
+      "bytes": "ff4301d1",
+      "instruction": "sub sp, sp, #0x50"
+    },
+    {
+      "pc": "0xfffffff00746e1cc",
+      "bytes": "f44f03a9",
+      "instruction": "stp x20, x19, [sp, #0x30]"
+    },
+    {
+      "pc": "0xfffffff00746e1d0",
+      "bytes": "fd7b04a9",
+      "instruction": "stp x29, x30, [sp, #0x40]"
+    },
+    {
+      "pc": "0xfffffff00746e1d4",
+      "bytes": "fd030191",
+      "instruction": "add x29, sp, #0x40"
+    },
+    {
+      "pc": "0xfffffff00746e1d8",
+      "bytes": "f30300aa",
+      "instruction": "mov x19, x0"
+    },
+    {
+      "pc": "0xfffffff00746e1dc",
+      "bytes": "e00700f9",
+      "instruction": "str x0, [sp, #8]"
+    },
+    {
+      "pc": "0xfffffff00746e1e0",
+      "bytes": "882c0090",
+      "instruction": "adrp x8, #0xfffffff0079fe000"
+    }
+  ],
+  "window_limit": "128-byte fixed window, not asserted complete CFG",
+  "runtime_target_known": false,
+  "device_accessed": false,
+  "limitations": [
+    "Static operation-pair membership does not establish live v_op table or substituted target",
+    "No APFS lock or handler body qualification"
+  ]
+}

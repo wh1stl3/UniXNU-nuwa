@@ -1,0 +1,23 @@
+Traceback (most recent call last):
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-delta-hex.py", line 95, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-delta-hex.py", line 62, in main
+    checks=[sequence(d,old,row) for row in ROWS]
+            ~~~~~~~~^^^^^^^^^^^
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-delta-hex.py", line 50, in sequence
+    a=step(*actual[:2],row,value,*actual[2:]);r=step(*native[:2],row,value,*native[2:])
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-delta-hex.py", line 38, in step
+    u.emu_start(sy['probe_hex_shared'],0,count=200000)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\out\python-tools\unicorn\unicorn_py3\unicorn.py", line 769, in emu_start
+    raise self._hook_exception
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\out\python-tools\unicorn\unicorn_py3\unicorn.py", line 363, in wrapper
+    return func(uc, *args, **kwargs)
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\out\python-tools\unicorn\unicorn_py3\unicorn.py", line 1077, in __hook_mem_access_cb
+    callback(uc, access, address, size, value, user_data)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-delta-hex.py", line 35, in store
+    assert y<=yy<y+20 and 1024<=off and off+n<=2944 and n==8 and p%8==0
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

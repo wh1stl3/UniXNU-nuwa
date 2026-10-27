@@ -10,13 +10,13 @@ import struct
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
-FIRMWARE = Path('D:/Code/uefi-nuwa')
+FIRMWARE = Path('D:/Code/PortingiOS/nuwa/uefi-nuwa')
 COMMIT = '910ee079fbaef736c49c14fd24501b132e98bb90'
 SOURCE_SHA = '985a68764e965903b5b0b0b6958164db2861dfb981a28e468484f35cbdb3a2dd'
 FD_SHA = '9ea347a49e51472adac987cf12e20f9e0d99453a23f2113ad24efcd0a07f2eaf'
 SHIM_SHA = '9346a527441b242c69414fd7e3d6fa17813f281d562fef13d9ba8373d39007a9'
 OLD_PACKAGE_SHA = 'fbb7940a8ee8cb5f2577a30bc2e5fb5bc31e1b84930c05b40c6304dfe970bcde'
-STOCK = Path('D:/Code/PortingiOS/nuwa/backups/recovery-20261020T121245314787Z/boot_a.img')
+STOCK = Path('D:/Code/PortingiOSLegacy/nuwa/backups/recovery-20261020T121245314787Z/boot_a.img')
 STOCK_SHA = 'ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31'
 
 
@@ -62,10 +62,10 @@ def main():
         return result.stdout
     run('wsl', '-d', 'Ubuntu-22.04', '--', 'clang', '--version')
     run('wsl', '-d', 'Ubuntu-22.04', '--', 'llvm-objcopy', '--version')
-    unix_output = '/mnt/d/Code/UniXNU-nuwa/out/trial-boot/relative-offset-R008'
+    unix_output = '/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/trial-boot/relative-offset-R008'
     elf = unix_output + '/BootShim.elf'
     run('wsl', '-d', 'Ubuntu-22.04', '--', 'clang', '--target=aarch64-linux-gnu',
-        '-c', '/mnt/d/Code/uefi-nuwa/BootShim/BootShim.S', '-o', elf,
+        '-c', '/mnt/d/Code/PortingiOS/nuwa/uefi-nuwa/BootShim/BootShim.S', '-o', elf,
         '-DREQUIRES_KERNEL_HEADER=1', '-DFD_BASE=0xa7100000', '-DFD_SIZE=0x300000')
     run('wsl', '-d', 'Ubuntu-22.04', '--', 'llvm-objcopy', '-O', 'binary', elf, unix_output+'/shim.bin')
     symbols = run('wsl', '-d', 'Ubuntu-22.04', '--', 'llvm-nm', '-n', elf)

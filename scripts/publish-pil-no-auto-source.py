@@ -6,7 +6,7 @@ from pathlib import Path
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
-FIRMWARE = Path('D:/Code/uefi-nuwa')
+FIRMWARE = Path('D:/Code/PortingiOS/nuwa/uefi-nuwa')
 BASE = '910ee079fbaef736c49c14fd24501b132e98bb90'
 COMMIT = '2ab6827d77dfe15010534b52e1abb76a26464a7d'
 BRANCH = 'codex/nuwa-no-auto-abl'

@@ -9,9 +9,9 @@ import types
 from virtual_patch import Tree
 
 ROOT=Path(__file__).resolve().parents[1]
-BASE=Path('D:/Code/PortingiOS/common/sources/UniXNU')
+BASE=Path('D:/Code/PortingiOSLegacy/common/sources/UniXNU')
 NATIVE=ROOT/'out/kernel-ci/39793231214/nuwa-8796-source/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped'
-DONOR=Path('D:/Code/PortingiOS/nuwa/artifacts/ios16-donor-inspection/20261020T115253317035Z/original-iphone-kernelcache.macho')
+DONOR=Path('D:/Code/PortingiOSLegacy/nuwa/artifacts/ios16-donor-inspection/20261020T115253317035Z/original-iphone-kernelcache.macho')
 SELECTION=Path('D:/Code/PortingiOSWithUniXNU/.work/kernel-prelinked.json')
 
 def sha(data):return hashlib.sha256(data).hexdigest()

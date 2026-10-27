@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\out\smoke-probe38.py", line 6, in <module>
+    for mode in M.MODES:M.execute(raw,b,site,mode,orig,om)
+                        ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts/test-read-deep.py", line 34, in execute
+    u,m,sy=setup(raw,b,site,mode);writes=[]
+           ~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts/test-read-deep.py", line 17, in setup
+    u.mem_write(child,struct.pack('<QQ',cb,lr))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\out\python-tools\unicorn\unicorn_py3\unicorn.py", line 998, in mem_write
+    raise UcError(status, address, size)
+unicorn.unicorn_py3.unicorn.UcError: Invalid memory write (UC_ERR_WRITE_UNMAPPED)

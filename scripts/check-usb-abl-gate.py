@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def linux(path):
     text = path.resolve().as_posix()
-    if not text.startswith('D:/Code/UniXNU-nuwa/out/'):
+    if not text.startswith('D:/Code/PortingiOS/nuwa/UniXNU-nuwa/out/'):
         raise ValueError('Fixture paths must stay under device out/')
     return '/mnt/d/' + text[3:]
 

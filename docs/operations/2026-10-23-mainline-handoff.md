@@ -74,7 +74,7 @@
 
 # 主线交接（2026-10-24，USB v3实测闭环）
 
-当前设备仓main：运输实测已提交8de7b98bedd0778e7cf9b69544bf7a2cd6f8a113，新文件SHA探针Q-153待提交。先读AGENTS.md和STATUS.md。两旧资料库只读；firmware工作源D:/Code/uefi-nuwa，独立upstream检出D:/Code/UniXNU-integration。上轮恢复闭环，无需按键；新文件包未启动，待新鲜录像条件。
+当前设备仓main：运输实测已提交8de7b98bedd0778e7cf9b69544bf7a2cd6f8a113，新文件SHA探针Q-153待提交。先读AGENTS.md和STATUS.md。两旧资料库只读；firmware工作源D:/Code/PortingiOS/nuwa/uefi-nuwa，独立upstream检出D:/Code/UniXNU-integration。上轮恢复闭环，无需按键；新文件包未启动，待新鲜录像条件。
 
 ## 最新实际状态
 
@@ -335,3 +335,7 @@ v22新页表诊断映射与最终包ADT的四场景执行回归通过，保留�
 下一步看kernel_bootstrap/VM启动内存初始化；续跑模型20M指令耗尽，无错误，不把vm_page_release_startup+0x254判hang。先建立阶段证据，保留pmap诊断映射。来源/测试/边界见最新STATUS、operations/2026-10-25-v23-dt-panic-console.md。复跑：python -B scripts/test-probe-transition.py --build reports/kernel-entry-probe/2026-10-25-v23c/build.json --adt out/trial-boot/xnu-entry-probe-16/kernel.macho.adt --case normal --output out/NEW.json；脚本固定预算，不能当持续系统仿真。
 
 原始媒体本地，不push。新包仍需本包录像就绪与新鲜preflight。官网QR固件接入和Format2迁移仍独立，不替代内核诊断。
+
+> 2026-10-26续接覆盖：PROBE29离线准备及独立包验收完成，设备动作因当轮拍摄/恢复条件暂缺按R-015硬停。唯一当前入口为2026-10-26-mainline-handoff.md及2026-10-26-v37-offline-qualification.md；本文件历史启动命令不得执行。最后设备后验仍为12:24:07，未查询设备，不提交。
+
+2026-10-26 PROBE29已读图并恢复：18:12:58 Android1/A槽/三SHA一致，R-015闭环；A036/A037及276证明固定入口插桩到达，未观察返回。唯一当前交接为2026-10-26-mainline-handoff.md，历史启动命令不可执行。

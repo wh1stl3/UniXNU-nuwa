@@ -2,8 +2,8 @@
 # Approved first-stage scope: own tests, text-only compiler probes and MIG C/header output.
 # No installs, Git, kernel build, source view, firmware image or device command.
 set -u
-root=/mnt/d/Code/UniXNU-nuwa
-python=/mnt/d/Code/PortingiOS/.venv-wsl/bin/python
+root=/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa
+python=/mnt/d/Code/PortingiOSLegacy/.venv-wsl/bin/python
 report="$root/reports/wsl-firststage"
 mkdir -p "$report"
 cd "$root" || exit 1

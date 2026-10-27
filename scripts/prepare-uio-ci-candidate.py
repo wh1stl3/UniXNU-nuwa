@@ -6,7 +6,7 @@ import re
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = Path('D:/Code/PortingiOS/common/sources/xnu-ios16-full')
+SOURCE = Path('D:/Code/PortingiOSLegacy/common/sources/xnu-ios16-full')
 definition = 'typedef char __attribute__((aligned(_Alignof(union iovecs)))) uio_stackbuf_t;'
 macro = ('\n\n/* Keep byte-array size and apply alignment to the buffer declaration. */\n'
          '#define UIO_STACKBUF(name, niov) \\\n'

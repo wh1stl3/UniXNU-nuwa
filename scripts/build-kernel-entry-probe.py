@@ -38,7 +38,20 @@ def linux(p):return '/mnt/d/'+p.resolve().as_posix().split(':/',1)[1]
 
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--work',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--image4-launch',action='store_true',help='Integrate pinned AMNM/CHMH provider compatibility; requires measured launch ADT');p.add_argument('--pthread',action='store_true',help='Add audited iOS16 pthread and genuine OSKext load request before BSD');p.add_argument('--root-trace',action='store_true',help='Trace real root waits and matching without skipping calls');p.add_argument('--root-mount-stop',action='store_true',help='Halt after actual root mount return, before restore userspace');p.add_argument('--pre-exec-stop',action='store_true',help='Continue native BSD to first init exec; no mount stop');p.add_argument('--exec-trace',action='store_true',help='Continue native exec; guard only unreviewed restore task release');p.add_argument('--exec-detail',action='store_true',help='Persist actual exec errors across native fallback attempts');p.add_argument('--exec-paths',action='store_true',help='Trace native exec and dyld lookup errors without bypass');p.add_argument('--fscompression',action='store_true',help='Load genuine type4 decompressor component before init exec if unregistered');p.add_argument('--read-boundaries',action='store_true',help='Observe scoped native header MAC/VNOP calls and returns');a=p.parse_args()
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--work',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--image4-launch',action='store_true',help='Integrate pinned AMNM/CHMH provider compatibility; requires measured launch ADT');p.add_argument('--pthread',action='store_true',help='Add audited iOS16 pthread and genuine OSKext load request before BSD');p.add_argument('--root-trace',action='store_true',help='Trace real root waits and matching without skipping calls');p.add_argument('--root-mount-stop',action='store_true',help='Halt after actual root mount return, before restore userspace');p.add_argument('--pre-exec-stop',action='store_true',help='Continue native BSD to first init exec; no mount stop');p.add_argument('--exec-trace',action='store_true',help='Continue native exec; guard only unreviewed restore task release');p.add_argument('--exec-detail',action='store_true',help='Persist actual exec errors across native fallback attempts');p.add_argument('--exec-paths',action='store_true',help='Trace native exec and dyld lookup errors without bypass');p.add_argument('--fscompression',action='store_true',help='Load genuine type4 decompressor component before init exec if unregistered');p.add_argument('--read-boundaries',action='store_true',help='Observe scoped native header MAC/VNOP calls and returns');p.add_argument('--read-dispatch',action='store_true',help='Observe actual scoped x8 and one fixed candidate entry, not an inferred runtime target');p.add_argument('--read-body',action='store_true',help='Observe all native calls within the measured read target');p.add_argument('--read-init-checkpoints',action='store_true',help='Observe initialization progress and enforce full display height');p.add_argument('--single-pass-hex',action='store_true',help='Render each HEX rectangle pixel once');p.add_argument('--read-grid',action='store_true',help='Retain body tiles and defer body HEX to native RET');p.add_argument('--read-decmp',action='store_true',help='Observe scoped compressed read path');p.add_argument('--shared-hex',action='store_true',help='Share HEX code and skip unchanged result redraw');p.add_argument('--compact-decmp',action='store_true',help='Use 32x2 compressed-read strips');p.add_argument('--read-fetch',action='store_true',help='Observe native fetch and fixed type4 callback');p.add_argument('--read-deep',action='store_true',help='Observe allocation, vector preparation and native decode helper');p.add_argument('--read-result',action='store_true',help='Record second allocation results and callback error paths');p.add_argument('--delta-hex',action='store_true',help='Redraw only changed ordinary HEX value glyphs');p.add_argument('--read-flow',action='store_true',help='Readable scoped post-allocation and decode progress');a=p.parse_args()
+    if a.read_flow and not a.delta_hex:raise ValueError('Read flow requires delta HEX baseline')
+    if a.delta_hex and not a.read_result:raise ValueError('Delta HEX requires result baseline')
+    if a.read_result and not a.read_deep:raise ValueError('Result trace requires deep baseline')
+    if a.read_deep and not a.read_fetch:raise ValueError('Deep trace requires fetch baseline')
+    if a.read_fetch and not a.compact_decmp:raise ValueError('Fetch trace requires compact baseline')
+    if a.compact_decmp and not a.shared_hex:raise ValueError('Compact display requires shared HEX baseline')
+    if a.shared_hex and not a.read_decmp:raise ValueError('Shared HEX requires complete compressed-read baseline')
+    if a.read_decmp and not a.read_grid:raise ValueError('Compressed read requires deferred grid baseline')
+    if a.read_grid and not a.single_pass_hex:raise ValueError('Read-grid requires single-pass initialization baseline')
+    if a.single_pass_hex and not a.read_init_checkpoints:raise ValueError('Single-pass HEX requires initialization checkpoints')
+    if a.read_init_checkpoints and not a.read_body:raise ValueError('Initialization checkpoints require full read-body observations')
+    if a.read_body and not a.read_dispatch:raise ValueError('Read body requires dispatch observations')
+    if a.read_dispatch and not a.read_boundaries:raise ValueError('Dispatch observation requires read boundaries')
     if a.read_boundaries and not a.fscompression:raise ValueError('Read boundaries require retained FS startup baseline')
     if a.pthread and not a.image4_launch:raise ValueError('pthread continuation requires measured Image4 launch inputs')
     if a.root_trace and not a.pthread:raise ValueError('Root trace requires pthread continuation')
@@ -80,6 +93,12 @@ def main():
         if struct.unpack_from('<I',raw,backed(m,va))[0]!=word:raise ValueError(f'Unexpected instruction at {va:#x}')
     codeva=align(max(s['va']+s['size'] for s in m['segments']));fileoff=align(len(raw));work.mkdir(parents=True)
     template=(ROOT/'package/entry-probe/entry-probe.S').read_text(encoding='utf-8-sig')
+    if a.single_pass_hex:
+        from probe_single_pass_hex import transform
+        template=transform(template)
+    if a.shared_hex:
+        from probe_shared_hex import transform
+        template=transform(template)
     compat_sites=[];compat_sources={}
     if a.image4_launch:
         fragments=[]
@@ -124,6 +143,57 @@ def main():
         dense=dense.replace('    .if '+idx+' >= 220\n    mov x11, #(256+', '    .if '+idx+' >= 266\n    mov x11, #784\n    .elseif '+idx+' >= 220\n    mov x11, #(256+')
         dense=dense.replace('    .if '+idx+' >= 220\n    mov x11, #((1320+', '    .if '+idx+' >= 266\n    mov x11, #((832+('+idx+'-266)*48)*4)\n    .elseif '+idx+' >= 220\n    mov x11, #((1320+')
         template=template[:start]+dense+template[end:]
+    if a.read_dispatch:
+        start=template.index('.macro DENSE_ONCE');end=template.index('.endm',start)+len('.endm')
+        dense=template[start:end];idx=chr(92)+'idx';lf=chr(10)
+        dense=dense.replace('    .if '+idx+' >= 266'+lf+'    mov x11, #784', '    .if '+idx+' == 276'+lf+'    mov x11, #808'+lf+'    .elseif '+idx+' >= 266'+lf+'    mov x11, #784')
+        dense=dense.replace('    .if '+idx+' >= 266'+lf+'    mov x11, #((832+', '    .if '+idx+' == 276'+lf+'    mov x11, #(832*4)'+lf+'    .elseif '+idx+' >= 266'+lf+'    mov x11, #((832+')
+        template=template[:start]+dense+template[end:]
+    if a.read_body:
+        template=template.replace('.balign 4096\n.global probe_zero','.global probe_read_body_state\nprobe_read_body_state:\n    .quad 0\n.balign 4096\n.global probe_zero')
+        start=template.index('.macro DENSE_ONCE');end=template.index('.endm',start)+len('.endm')
+        dense=template[start:end];idx=chr(92)+'idx';lf=chr(10)
+        dense=dense.replace('    .if '+idx+' == 276'+lf+'    mov x11, #808', '    .if '+idx+' >= 276'+lf+'    mov x11, #(808+(('+idx+'-276)/10)*24)')
+        dense=dense.replace('    .if '+idx+' == 276'+lf+'    mov x11, #(832*4)', '    .if '+idx+' >= 276'+lf+'    mov x11, #((832+(('+idx+'-276)%10)*48)*4)')
+        template=template[:start]+dense+template[end:]
+    if a.read_grid:
+        template=template.replace('.balign 4096\n.global probe_zero','.global probe_read_trace_state\nprobe_read_trace_state:\n    .quad 0,-1\n.balign 4096\n.global probe_zero')
+    if a.read_decmp:
+        template=template.replace('.balign 4096\n.global probe_zero','.global probe_decmp_state\nprobe_decmp_state:\n    .quad 0,0,0,0\n.balign 4096\n.global probe_zero')
+        start=template.index('.macro DENSE_ONCE');end=template.index('.endm',start)+len('.endm')
+        dense=template[start:end];idx=chr(92)+'idx';lf=chr(10)
+        dense=dense.replace('    .if '+idx+' >= 276'+lf+'    mov x11, #(808+', '    .if '+idx+' >= 373'+lf+'    mov x11, #(224+(('+idx+'-373)/2)*24)'+lf+'    .elseif '+idx+' >= 276'+lf+'    mov x11, #(808+')
+        dense=dense.replace('    .if '+idx+' >= 276'+lf+'    mov x11, #((832+', '    .if '+idx+' >= 373'+lf+'    mov x11, #((736+(('+idx+'-373)%2)*48)*4)'+lf+'    .elseif '+idx+' >= 276'+lf+'    mov x11, #((832+')
+        template=template[:start]+dense+template[end:]
+    if a.compact_decmp:
+        from probe_compact_decmp import transform
+        template=transform(template)
+    if a.read_fetch:
+        from read_fetch_sites import transform
+        template=transform(template)
+    if a.read_deep:
+        from read_deep_sites import transform
+        template=transform(template)
+    if a.read_result:
+        from read_result_sites import transform
+        template=transform(template)
+    if a.delta_hex:
+        from probe_delta_hex import transform
+        template=transform(template)
+    if a.read_flow:
+        from read_resource_sites import transform
+        template=transform(template)
+        from resource_dispatch_sites import transform
+        template=transform(template)
+        from resource_handler_sites import transform
+        template=transform(template)
+        from resource_chain_sites import transform
+        template=transform(template)
+    if a.read_init_checkpoints:
+        from read_init_sites import MIN_HEIGHT
+        old='    cmp         x9, #800                          // all diagnostic output is above row 800'
+        if template.count(old)!=1:raise ValueError('Snapshot height guard changed')
+        template=template.replace(old, f'    cmp         x9, #{MIN_HEIGHT} // full revision39 diagnostic extent')
     for name in ('_current_percpu_base','_arm_vm_init','_pmap_bootstrap','_kernel_bootstrap',
                  '_panic','_panic_trap_to_debugger','_panic_with_options','_early_random',
                  '_SecureDTLookupEntry','_pe_arm_get_soc_base_phys','_ml_parse_cpu_topology',
@@ -234,7 +304,7 @@ def main():
         globals_.update(native_pthread_functions=symbols['_pthread_functions'],native_kext_load=symbols['_OSKextLoadKextWithIdentifier'])
     if a.fscompression:
         globals_.update(native_decompressors=symbols['_decompressors'])
-    dense_source,dense_constants,dense_sites,dense_edges=dense_generate(raw,m,backed,revision=36 if a.read_boundaries else 35 if a.fscompression else 34 if a.exec_paths else 33 if a.exec_detail else 32 if a.exec_trace else 31 if a.pre_exec_stop else 30 if a.root_mount_stop else 29 if a.root_trace else 28 if a.pthread else 25)
+    dense_source,dense_constants,dense_sites,dense_edges=dense_generate(raw,m,backed,revision=49 if a.read_flow else 48 if a.delta_hex else 47 if a.read_result else 46 if a.read_deep else 45 if a.read_fetch else 44 if a.compact_decmp else 43 if a.shared_hex else 42 if a.read_decmp else 41 if a.read_grid else 40 if a.single_pass_hex else 39 if a.read_init_checkpoints else 38 if a.read_body else 37 if a.read_dispatch else 36 if a.read_boundaries else 35 if a.fscompression else 34 if a.exec_paths else 33 if a.exec_detail else 32 if a.exec_trace else 31 if a.pre_exec_stop else 30 if a.root_mount_stop else 29 if a.root_trace else 28 if a.pthread else 25)
     constants.update(dense_constants)
     if a.read_boundaries:globals_['read_header_return']=FIRST+4
     template=template.replace('// DENSE_BOOTSTRAP_STUBS',dense_source)
@@ -245,7 +315,12 @@ def main():
     for argv in (['clang','--target=aarch64-none-elf','-c',linux(work/'probe.S'),'-o',linux(work/'probe.o')],
                  ['ld.lld','-Ttext='+hex(codeva),'--entry=probe_entry',*[f'--defsym={k}={v:#x}' for k,v in constants.items() if not k.endswith('_word')],linux(work/'probe.o'),'-o',linux(work/'probe.elf')],
                  ['llvm-objcopy','-O','binary','--only-section=.text',linux(work/'probe.elf'),linux(work/'probe.bin')]):
-        cmd=['wsl','-d','Ubuntu-22.04','--',*argv];r=subprocess.run(cmd,capture_output=True,text=True);commands.append(dict(argv=cmd,exit_code=r.returncode,stdout=r.stdout,stderr=r.stderr));r.check_returncode()
+        if a.read_body and argv[0]=='ld.lld':
+            import shlex
+            response='\n'.join(shlex.quote(value) for value in argv[1:])+'\n'
+            (work/'linker.rsp').write_text(response,encoding='utf-8',newline='\n')
+            argv=['ld.lld','@'+linux(work/'linker.rsp')]
+        cmd=['wsl','-d','Ubuntu-22.04','--',*argv];r=subprocess.run(cmd,capture_output=True,text=True);commands.append(dict(argv=cmd,exit_code=r.returncode,stdout=r.stdout,stderr=r.stderr));(work/'commands.json').write_text(json.dumps(commands,indent=2)+'\n',encoding='utf-8',newline='\n');r.check_returncode()
     nm=subprocess.check_output(['wsl','-d','Ubuntu-22.04','--','llvm-nm','--defined-only',linux(work/'probe.elf')],text=True)
     hooks={name:int(addr,16) for addr,kind,name in re.findall(r'^([0-9a-fA-F]+)\s+(\S)\s+(\S+)$',nm,re.M)}
     code=(work/'probe.bin').read_bytes()
@@ -305,7 +380,32 @@ def main():
         if seg['name'].startswith(('__PRELINK','__PLK')) and seg['filesize']:
             off=seg['fileoff'];n=seg['filesize']
             expected_segment=bytearray(prelink[off:off+n])
-            for va,label in compat_sites:
+            donor_hooks=list(compat_sites)
+            if a.read_dispatch:
+                from read_dispatch_sites import ENTRY
+                donor_hooks.append((ENTRY,'probe_dense_'+format(ENTRY&0xffffffff,'x')))
+            if a.read_body:
+                from read_body_sites import points
+                donor_hooks.extend((p['site'],'probe_dense_'+format(p['site']&0xffffffff,'x')) for p in points())
+            if a.read_fetch:
+                from read_fetch_sites import points as fetch_points
+                donor_hooks.extend((p['site'],'probe_dense_'+format(p['site']&0xffffffff,'x')) for p in fetch_points() if p['kind']=='callback')
+            if a.read_deep:
+                from read_deep_sites import points as deep_points
+                donor_hooks.extend((p['site'],'probe_dense_'+format(p['site']&0xffffffff,'x')) for p in deep_points() if p['kind'] in ('post','decode'))
+            if a.read_result:
+                from read_result_sites import points as result_points
+                donor_hooks.extend((p['site'],'probe_dense_'+format(p['site']&0xffffffff,'x')) for p in result_points())
+            if a.read_flow:
+                from read_resource_sites import points as resource_points
+                donor_hooks.extend((p['site'],'probe_dense_'+format(p['site']&0xffffffff,'x')) for p in resource_points())
+                from resource_dispatch_sites import points as dispatch_points
+                donor_hooks.extend((p['site'],'probe_dense_'+format(p['site']&0xffffffff,'x')) for p in dispatch_points())
+                from resource_handler_sites import points as handler_points
+                donor_hooks.extend((p['site'],'probe_dense_'+format(p['site']&0xffffffff,'x')) for p in handler_points())
+                from resource_chain_sites import points as chain_points
+                donor_hooks.extend((p['site'],'probe_dense_'+format(p['site']&0xffffffff,'x')) for p in chain_points())
+            for va,label in donor_hooks:
                 at=backed(m,va)
                 if off<=at and at+4<=off+n:expected_segment[at-off:at-off+4]=branch(va,hooks[label])
             if bytes(expected_segment)!=candidate[off:off+n]:raise ValueError('Donor changed outside explicit Image4 provider hooks')
@@ -314,7 +414,40 @@ def main():
             else:compat_segments.append(dict(name=seg['name'],before_sha256=sha(prelink[off:off+n]),after_sha256=sha(candidate[off:off+n]),bytes=n))
     target=work/'kernel-entry-probe.macho';target.write_bytes(candidate)
     report=dict(scope='Diagnostic binary instrumentation of fixed analysis prelink; not runtime qualification',input_sha256=EXPECTED,candidate=dict(path=target.relative_to(ROOT).as_posix(),sha256=sha(candidate),bytes=len(candidate)),probe=dict(va=hex(codeva),file_offset=fileoff,code_bytes=len(code),segment_bytes=len(payload),sha256=sha(payload),symbols={k:hex(v) for k,v in hooks.items() if k.startswith(('probe_','fault_stop','exception_stop'))}),patches=patches,original_changed_bytes=len(changed),preserved_donor_segments=preserved,commands=commands,source_sha256=sha(template.encode()),loadable=False,runtime_qualified=False,device_accessed=False,probe_zero=hex(hooks['probe_zero']),probe_flags=hex(hooks['probe_flags']),screen=dict(bands=[dict(stage=1,y=256,color='blue',means='XNU __start branch and diagnostic entry executed'),dict(stage=2,y=352,color='yellow',means='Bootstrap page tables generated; before translation control setup'),dict(stage=3,y=448,color='magenta',means='Passed BCM block with invalid write suppressed; before enabling MMU'),dict(stage=4,y=736,color='cyan',means='msr sctlr_el1 executed and the following fetch was translated (V=P identity)'),dict(stage=5,y=832,color='white',means='arm_init entered at the KVA: TTBR1 fetch and translation are live')],fault=dict(y=544,color='red',hex_rows=dict(ESR_EL1=608,ELR_EL1=640,FAR_EL1=672)),post_mmu_mapping=dict(l1_slot=2,virtual='0x80000000',physical='0x80000000',size='0x40000000',descriptor='0x6000008000040d',attributes='Device-nGnRnE (MAIR index 3), AF, PXN|UXN, installed only if the slot is invalid',source='probe_mmu stub before the SCTLR write',scratch='framebuffer base and line stride copied from boot_args into probe_scratch'),limitations=['Bands do not prove arm_init returned, arm_vm_init, kext start or iOS','Cyan and white depend on the diagnostic 1 GiB device mapping installed pre-MMU; if the L1 slot were occupied nothing is drawn and no mapping is changed','Fault logger active only through physical early vector; x20 must still be boot_args','Exact video ABI and MMIO/cache effects need nuwa trial']))
-    report['probe_revision']=36 if a.read_boundaries else 35 if a.fscompression else 34 if a.exec_paths else 33 if a.exec_detail else 32 if a.exec_trace else 31 if a.pre_exec_stop else 30 if a.root_mount_stop else 29 if a.root_trace else 28 if a.pthread else 27 if a.image4_launch else 25
+    if a.read_init_checkpoints:
+        from read_init_sites import CHECKPOINTS,MIN_HEIGHT
+        report['read_init']=dict(source_sha256=sha((ROOT/'scripts/read_init_sites.py').read_bytes()),checkpoints=CHECKPOINTS,minimum_height=MIN_HEIGHT,final_stage=250,native_policy_changed=False)
+    if a.single_pass_hex:
+        from probe_single_pass_hex import plan
+        report['single_pass_hex']=plan()
+    if a.read_grid:
+        from read_grid_sites import plan as grid_plan
+        report['read_grid']=grid_plan()
+    if a.read_decmp:
+        from read_decmp_sites import plan as decmp_plan
+        report['read_decmp']=decmp_plan()
+    if a.shared_hex:
+        from probe_shared_hex import plan as shared_plan
+        report['shared_hex']=shared_plan()
+    if a.compact_decmp:
+        from probe_compact_decmp import plan as compact_plan
+        report['compact_decmp']=compact_plan()
+    if a.read_fetch:
+        from read_fetch_sites import plan as fetch_plan
+        report['read_fetch']=fetch_plan()
+    if a.read_deep:
+        from read_deep_sites import plan as deep_plan
+        report['read_deep']=deep_plan()
+    if a.read_result:
+        from read_result_sites import plan as result_plan
+        report['read_result']=result_plan()
+    if a.delta_hex:
+        from probe_delta_hex import plan as delta_plan
+        report['delta_hex']=delta_plan()
+    if a.read_flow:
+        from read_flow_sites import plan as flow_plan
+        report['read_flow']=flow_plan()
+    report['probe_revision']=49 if a.read_flow else 48 if a.delta_hex else 47 if a.read_result else 46 if a.read_deep else 45 if a.read_fetch else 44 if a.compact_decmp else 43 if a.shared_hex else 42 if a.read_decmp else 41 if a.read_grid else 40 if a.single_pass_hex else 39 if a.read_init_checkpoints else 38 if a.read_body else 37 if a.read_dispatch else 36 if a.read_boundaries else 35 if a.fscompression else 34 if a.exec_paths else 33 if a.exec_detail else 32 if a.exec_trace else 31 if a.pre_exec_stop else 30 if a.root_mount_stop else 29 if a.root_trace else 28 if a.pthread else 27 if a.image4_launch else 25
     if a.root_mount_stop:
         report['root_mount_diagnostic']=dict(site='0xfffffff0076730e8',hook='probe_dense_76730e8',stop=hex(hooks['probe_root_mount_stop']),status_tag='A035',status_logical_y=1696,success_marker=212,error_marker=213,mode='Halt after actual vfs_mountroot return; never enter restore userspace',intentional_transparency_exemption=True)
     if a.pre_exec_stop:
@@ -328,6 +461,12 @@ def main():
         report['fscompression_startup']=dict(source_sha256=sha((ROOT/'patches/xnu-8796-candidates/fscompression-oskext-start.S').read_bytes()),bundle='com.apple.AppleFSCompression.AppleFSCompressionTypeZlib',compression_type=4,registration_address=hex(symbols['_decompressors']+32),loader_va=hex(symbols['_OSKextLoadKextWithIdentifier']),status=hex(hooks['probe_fscompression_load_status']),markers={'264':'blue load requested or yellow already registered','265':'API returned or registration already present; inspect real status/pointer'},status_tag='A02A',registration_tag='A033')
     if a.read_boundaries:
         report['read_boundaries']=dict(source_sha256=sha((ROOT/'scripts/read_boundary_sites.py').read_bytes()),state=hex(hooks['probe_read_state']),first='0xfffffff00769bf90',markers=list(range(266,276)),stage_tag='A034',return_tag='A035',scope='Exact header caller LR, TPIDR_EL1 and native caller frames; reset each header attempt',native_flow_preserved=True)
+    if a.read_body:
+        from read_body_sites import points
+        report['read_body']=dict(source_sha256=sha((ROOT/'scripts/read_body_sites.py').read_bytes()),points=points(),stage_tag='A038',return_tag='A039',native_policy_changed=False)
+    if a.read_dispatch:
+        from read_dispatch_sites import ENTRY
+        report['read_dispatch']=dict(source_sha256=sha((ROOT/'scripts/read_dispatch_sites.py').read_bytes()),entry=hex(ENTRY),entry_marker=276,target_tag='A036',entry_tag='A037',runtime_target_known=False,scope='actual scoped dispatch x8; entry observation only for one fixed static candidate',limitations=['Different target without A037 does not prove missing target entry','No lock, IRQ or filesystem body qualification'])
     if a.image4_launch:
         report['image4_compatibility']=dict(scope='Only AMNM/CHMH provider routing; no authentication result or policy value patched',source_sha256=compat_sources,changed_segments=compat_segments,hooks=[dict(va=hex(va),symbol=label,target=hex(hooks[label])) for va,label in compat_sites],requires_measured_launch_context=True)
         report['probe']['symbols'].update({label:hex(hooks[label]) for _,label in compat_sites})
@@ -341,8 +480,8 @@ def main():
     report['screen']={
         'stage_tiles':dict(width=96,height=32,x_formula='((logical_y-256)//512)*96',y_formula='256+(logical_y-256)%512'),
         'data':dict(x=256,value_x=352,width=480,glyph_pixel_scale=4,glyph_height=20,tag='A000 + logical_y//32',y_formula='224+28*((logical_y-1088)//32)',counter_y=756),
-        'records':{str(y):dict(tag=f'{0xa000+y//32:04X}',y=224+28*((y-1088)//32)) for y in (1088,1152,1184,1216,1248,1280,1312,1344,1376,1408,1440,1472,1504,1536,1568,1600,1632,1664)},
-        'max_written_row':799,
+        'records':{str(y):dict(tag=f'{0xa000+y//32:04X}',y=224+28*((y-1088)//32)) for y in ((1088,1152,1184,1216,1248,1280,1312,1344,1376,1408,1440,1472,1504,1536,1568,1600,1632,1664,1696,1728,1760,*((1792,1824) if a.read_body else ())) if a.read_dispatch else (1088,1152,1184,1216,1248,1280,1312,1344,1376,1408,1440,1472,1504,1536,1568,1600,1632,1664))},
+        'max_written_row':1039 if a.read_init_checkpoints else 1047 if a.read_body else 831 if a.read_dispatch else 799,
         'limitations':['No output is guaranteed after pmap removes the diagnostic framebuffer mapping','TPIDR_EL1 shim is an intentional behaviour change, distinct from transparent hooks','Stage tiles and field IDs must be read using this revision layout']}
     output.parent.mkdir(parents=True,exist_ok=True);output.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n');print(json.dumps(report['candidate']))
 if __name__=='__main__':main()

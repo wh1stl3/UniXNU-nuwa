@@ -32,7 +32,7 @@ def main():
     trees = {key: Tree(ROOT / 'out/nonexistent-source') for key in ('firmware', 'unixnu')}
     for item in profile['recipe']['inputs']:
         if item['root'] == 'unixnu':
-            source = Path('D:/Code/PortingiOS/common/sources/UniXNU')
+            source = Path('D:/Code/PortingiOSLegacy/common/sources/UniXNU')
             pin, path = profile['recipe']['sources']['unixnu']['commit'], item['path']
         elif item['path'].startswith('Mu_Basecore/'):
             source, pin, path = ctor.MU, ctor.PIN, item['path'].split('/', 1)[1]

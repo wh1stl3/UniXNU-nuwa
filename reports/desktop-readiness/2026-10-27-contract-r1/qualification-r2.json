@@ -1,0 +1,79 @@
+{
+  "time": "2026-10-27T16:26:44.3749735+08:00",
+  "head": "855daaff4cb99fdeec43dac6ec5045c1d591f52c",
+  "evidence": [
+    {
+      "path": "reports\\desktop-readiness\\2026-10-27-contract-r1\\audit-r2.json",
+      "sha256": "c2020a42681111af7db73736d1361fd422b55fcb83afd335a37400a7daa1d4db",
+      "bytes": 1805186
+    },
+    {
+      "path": "reports\\desktop-readiness\\2026-10-27-contract-r1\\data-source-r2.json",
+      "sha256": "02b6f678a645cfe39c873928e582d31820f6172e8bca7c75f49ded64a6ba3272",
+      "bytes": 94500
+    },
+    {
+      "path": "reports\\desktop-readiness\\2026-10-27-contract-r1\\service-layers-r2.json",
+      "sha256": "2179f6161de29b9e0f11e2a183467a9b8e7534ce9729a4c27c574ba1eff6f9fa",
+      "bytes": 84848
+    },
+    {
+      "path": "reports\\desktop-readiness\\2026-10-27-contract-r1\\tests-r3.json",
+      "sha256": "602f1dc9a634e0390479892f243dac439dec24da49b83e499e28783b21ab3d21",
+      "bytes": 1743
+    },
+    {
+      "path": "reports\\desktop-readiness\\2026-10-27-contract-r1\\data-tests-r3.json",
+      "sha256": "fd448209cf4b19850ce059978de355576d8d65e99a5680f09a21adfc85359c06",
+      "bytes": 1183
+    },
+    {
+      "path": "reports\\desktop-readiness\\2026-10-27-contract-r1\\service-tests-r2.json",
+      "sha256": "abdd311c96591eaf58ffc89a09b336b2f7ed238b29065d71927ef08d8d827512",
+      "bytes": 1212
+    },
+    {
+      "path": "out/desktop-root-contract-20261027-r2/os-var-source.tar",
+      "sha256": "100ab22088446f9cb224fff6e4721bbd343f71b8f8e3993a5198607cd4a99c83",
+      "bytes": 911360
+    },
+    {
+      "path": "out/desktop-root-contract-20261027-r2/assembly-contract.json",
+      "sha256": "19e998da574b05ad4addf322a4844780231e4a92964347cd03257f8549b5904d",
+      "bytes": 39251
+    },
+    {
+      "path": "out/desktop-root-contract-20261027-r1/INCOMPLETE.json",
+      "sha256": "54baba7684dedff8e2b974b9d0b0e2de1120f346bbd5faa154c64269ad904e3d",
+      "bytes": 469
+    },
+    {
+      "path": "docs/operations/2026-10-27-root-data-service-contract.md",
+      "sha256": "add938d4bb844f09985f8d08eaf81e0e674151308a4db6c15c073fcb903ecd40",
+      "bytes": 10556
+    }
+  ],
+  "checks": 33,
+  "root_window_bytes": 8380219392,
+  "jobs": 532,
+  "mach_service_names": 1668,
+  "data_source_entries": 198,
+  "cryptex_programs": 9,
+  "source_binding_checks_passed": true,
+  "probe41": {
+    "sha256": "8d242a2dd953146af5c3c8ae59c6805cba6599aa7283188180667bfca5c2ec2a",
+    "path": "out/trial-boot/xnu-entry-probe-41-resource/boot-xnu-first-entry.img"
+  },
+  "device_accessed": false,
+  "root_assembled": false,
+  "data_filesystem_seed_created": false,
+  "jobs_enabled": false,
+  "release_guard_changed": false,
+  "deployable": false,
+  "scope": "Host root geometry/service declarations and source archive; not native execution or a filesystem seed",
+  "previous_qualification": {
+    "issue": "Mach service count incorrectly serialized as per-property Count array",
+    "sha256": "47e7e285826fc6b8e5b8e6e2eb7ea440e97d1d27335f465f4793bc0be47565b5",
+    "path": "reports\\desktop-readiness\\2026-10-27-contract-r1\\qualification.json"
+  }
+}

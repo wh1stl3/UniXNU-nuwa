@@ -8,7 +8,7 @@ import struct
 import subprocess
 
 ROOT=Path(__file__).resolve().parents[1]
-FW=Path('D:/Code/uefi-nuwa')
+FW=Path('D:/Code/PortingiOS/nuwa/uefi-nuwa')
 PATH='Platforms/Xiaomi/nuwaPkg/Library/MemoryMapLib/MemoryMapLib.c'
 PIN='2ab6827d77dfe15010534b52e1abb76a26464a7d'
 

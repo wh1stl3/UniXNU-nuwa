@@ -2,7 +2,7 @@
 import argparse,hashlib,json,sys,zipfile
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-REF=Path('D:/Code/PortingiOS')
+REF=Path('D:/Code/PortingiOSLegacy')
 def sha(data):return hashlib.sha256(data).hexdigest()
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--work',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args()

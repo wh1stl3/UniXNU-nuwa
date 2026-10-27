@@ -17,8 +17,8 @@ import urllib.request
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'reports/system-volume-audit/discovery-chain.json'
 GIT = 'C:/Program Files/Git/cmd/git.exe'
-FW = Path('D:/Code/uefi-nuwa')
-BASE = Path('D:/Code/PortingiOS/common/sources/UniXNU')
+FW = Path('D:/Code/PortingiOS/nuwa/uefi-nuwa')
+BASE = Path('D:/Code/PortingiOSLegacy/common/sources/UniXNU')
 FW_PIN = '1ccf760d667b9eec6dd3491c90cc04ebb7c58340'
 BASE_PIN = '75bc13dd34dc4e403826793739e316a264ce00dd'
 MU_PIN = 'cfb93724a06ff86ff5ba971413368a7809ee42a5'

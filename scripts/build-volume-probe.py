@@ -12,7 +12,7 @@ import subprocess
 import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = Path('D:/Code/PortingiOS/common/sources/UniXNU')
+SOURCE = Path('D:/Code/PortingiOSLegacy/common/sources/UniXNU')
 PIN = '75bc13dd34dc4e403826793739e316a264ce00dd'
 GIT = 'C:/Program Files/Git/cmd/git.exe'
 OUT = ROOT / 'out/volume-probe'
@@ -46,7 +46,7 @@ def main():
 
     def wslpath(path):
         absolute = path.resolve().as_posix()
-        if not absolute.startswith('D:/Code/UniXNU-nuwa/out/volume-probe/'):
+        if not absolute.startswith('D:/Code/PortingiOS/nuwa/UniXNU-nuwa/out/volume-probe/'):
             raise ValueError('Fixture path escaped its output directory')
         return '/mnt/d/' + absolute[3:]
 

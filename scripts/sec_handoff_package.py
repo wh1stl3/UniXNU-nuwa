@@ -61,7 +61,7 @@ def validate(package_path):
     fd = (artifact / 'build/FV/SILICIUM_UEFI.fd').read_bytes()
     if raw[4096:4096 + len(shim) + len(fd)] != shim + fd:
         raise ValueError('SEC diagnostic container content changed')
-    original = Path('D:/Code/PortingiOS/nuwa/backups/recovery-20261020T121245314787Z/boot_a.img').read_bytes()
+    original = Path('D:/Code/PortingiOSLegacy/nuwa/backups/recovery-20261020T121245314787Z/boot_a.img').read_bytes()
     if hashlib.sha256(original).hexdigest() != expected['original_boot_sha256']:
         raise ValueError('Original recovery image changed')
     header = bytearray(original[:4096])

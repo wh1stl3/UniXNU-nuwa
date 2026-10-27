@@ -1,0 +1,161 @@
+{
+  "candidate_sha256": "e5df5bef0779347edc5d94becd1611f8c3ffe7d5595795f345872dc02fe74a8b",
+  "checks": [
+    {
+      "row": 1088,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1120,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1152,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1184,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1216,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1248,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1280,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1312,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1344,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1376,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1408,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1440,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1472,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1504,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1536,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1568,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1600,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1632,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1664,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1696,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1728,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1760,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1792,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1824,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1856,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1888,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1920,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1952,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    },
+    {
+      "row": 1984,
+      "passed": true,
+      "synthetic_x18_clear_every_instruction": true
+    }
+  ],
+  "old_candidate_negative": {
+    "completed": false,
+    "error": "Invalid memory read (UC_ERR_READ_UNMAPPED)",
+    "faults": [
+      {
+        "pc": "0xfffffff0084da02c",
+        "address": "0x8"
+      }
+    ]
+  },
+  "scope": "Unicorn register-clobber injection, not physical IRQ qualification"
+}

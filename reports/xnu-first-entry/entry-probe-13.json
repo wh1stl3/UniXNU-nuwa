@@ -1,0 +1,124 @@
+{
+  "scope": "Diagnostic XNU entry probe with BCM-only MMIO suppressed and early exception display; no device action",
+  "approval": "XNU-FIRST-ENTRY-ANALYSIS",
+  "run_id": null,
+  "image_path": "out/trial-boot/xnu-entry-probe-13/boot-xnu-first-entry.img",
+  "image_sha256": "d329e7c4ef7af38ee3aeecc484067007f8534ba33e8555fba78ac144abd0c826",
+  "image_bytes": 70266880,
+  "header_version": 3,
+  "xnu_included": true,
+  "fat_included": true,
+  "appended_dtb": false,
+  "adt_included": true,
+  "original_boot_sha256": "ef558db2a4fb021259d7af47a2398d7e56476d759162e7819959cd701a11ff31",
+  "fd_sha256": "2d606985ad768dcfaab66c2b28073c0a4c2820126b42b23286623fdc450e848f",
+  "shim_sha256": "8a3b54765c895a0366539130fdf6e4e4a01e364fe7de067a38d0193606f9d462",
+  "kernel_bytes": 58359808,
+  "kernel_sha256": "1f5178361a484fcd7fdde71917c394cd8d22b46bd5c91f3b3249f13a084a0369",
+  "fat_bytes": 67108864,
+  "fat_sha256": "88a2497bb4cce5a0d5d7a55ef332e92ed7d0c1feed9958e1e40970b78cdddf13",
+  "read_file_bytes": 13120,
+  "read_file_sha256": "7ebce5a6531429efb8a7450680fd05c59b20bbb15f54717dd403724cd11a6f2a",
+  "success_requires": "Blue band at row 256 proves the XNU entry branch executed; yellow row 352 and magenta row 448 identify later pre-MMU stages. Red row 544 captures ESR/ELR/FAR. Green/menu/ACK alone do not prove XNU execution.",
+  "firmware": {
+    "source": "CI 40014018074 upstream-merged profile (no diagnostic driver)",
+    "fd_bytes": 3145728,
+    "shim_bytes": 112
+  },
+  "kernel_source": {
+    "path": "out\\kernel-entry-probe-20\\kernel-entry-probe.macho",
+    "source": "hash-pinned early-security prelink plus bounded native entry diagnostic patches",
+    "loadable": false,
+    "runtime_qualified": false
+  },
+  "adt_detail": {
+    "command": [
+      "C:\\Users\\Administrator\\.workbuddy\\binaries\\python\\versions\\3.13.12\\python.exe",
+      "D:\\Code\\UniXNU-nuwa\\scripts\\make-nuwa-adt.py",
+      "--output",
+      "D:\\Code\\UniXNU-nuwa\\out\\trial-boot\\xnu-entry-probe-13\\kernel.macho.adt",
+      "--dram-size",
+      "0x240000000",
+      "--owned-memory-size",
+      "0x40000000",
+      "--ipad-identity",
+      "--cpu-regs",
+      "0,256,512,768,1024,1280,1536,1792",
+      "--psci-method",
+      "smc"
+    ],
+    "stdout": "nuwa ADT: 13120 bytes, dram 0x240000000 @ 0x8c0000000, 8 cpu(s), timebase 19200000 Hz",
+    "dram_size": "0x240000000",
+    "owned_memory_size": "0x40000000",
+    "cpu_regs": "0,256,512,768,1024,1280,1536,1792",
+    "psci_method": "smc",
+    "sidecar_placeholders": false,
+    "note": "no RAMDisk/TrustCache/GpuAddon placeholder, so the loader takes the no-sidecar path in DarwinBoot.c:561-567"
+  },
+  "fat_detail": {
+    "config": {
+      "version": 1,
+      "boot": {
+        "timeout": 60,
+        "default": "xnu"
+      },
+      "kits": {
+        "autoload": false
+      },
+      "ui": {
+        "title": "NUWA XNU ENTRY PROBE 13"
+      },
+      "entry": [
+        {
+          "id": "xnu",
+          "title": "XNU ENTRY PROBE 13 - DT AND TIMEBASE READOUT",
+          "type": "xnu",
+          "path": "Payloads/kernel.macho",
+          "args": "-v"
+        }
+      ]
+    },
+    "exact_files": [
+      "EFI/UniXNU/unixnu.toml",
+      "EFI/UniXNU/Payloads/kernel.macho",
+      "EFI/UniXNU/Payloads/kernel.macho.adt"
+    ]
+  },
+  "container_readback": {
+    "kernel_offset": 4096,
+    "ramdisk_offset": 3153920,
+    "header_changed_offsets": [
+      8,
+      9,
+      10,
+      11,
+      12,
+      15,
+      20,
+      40
+    ],
+    "original_cmdline_preserved": true
+  },
+  "expected_screen_outcomes": [
+    "Blue band at row 256 proves the XNU entry branch executed; yellow row 352 and magenta row 448 identify later pre-MMU stages. Red row 544 captures ESR/ELR/FAR. Green/menu/ACK alone do not prove XNU execution.",
+    "Any later XNU text or panic requires separate attribution; no band proves MMU enabled or iOS started"
+  ],
+  "recovery": "the original stock boot is preserved as the image header; after the trial the stock boot is loaded back and Android must report boot_completed=1 with the same boot_a/vendor_boot_a/init_boot_a digests",
+  "not_proven": [
+    "Real nuwa execution of this candidate",
+    "MMU activation and arm_init",
+    "Native timer/interrupt driver readiness",
+    "Full donor/native ABI or iOS boot"
+  ],
+  "device_executed": false,
+  "entry_probe": {
+    "build": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v20/build.json",
+      "sha256": "48921a10a229ff704084899d76570626a8a89be3fa05abfc058c7209bce4650b"
+    },
+    "software": {
+      "path": "reports/kernel-entry-probe/2026-10-25-v20/software.json",
+      "sha256": "4d788d85f091254e22ae08f3a06200f3a8eb5df570ac40c63fb3a0de1bc95f89"
+    }
+  }
+}

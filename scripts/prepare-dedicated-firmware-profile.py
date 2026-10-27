@@ -80,7 +80,7 @@ def main():
             if raw is None:
                 raw = (scope['FW']/item['path']).read_bytes()
         else:
-            raw = (Path('D:/Code/PortingiOS/common/sources/UniXNU')/item['path']).read_bytes()
+            raw = (Path('D:/Code/PortingiOSLegacy/common/sources/UniXNU')/item['path']).read_bytes()
         assert digest(raw) == item['lf_sha256'], item['path']
         checks.append(dict(root=item['root'], path=item['path'], source=source, passed=True))
     dsc = files['Platforms/Xiaomi/nuwaPkg/nuwa.dsc'].decode()

@@ -1,0 +1,63 @@
+diff --git a/out/status-before-probe32-ready-20261026.md b/docs/STATUS.md
+index 241fd1d..5cef651 100644
+--- a/out/status-before-probe32-ready-20261026.md
++++ b/docs/STATUS.md
+@@ -1,35 +1,39 @@
+ # STATUS
+ 
+-更新：2026-10-26 20:59:43 +08:00。PROBE31 / revision39已完成离线准备并获用户批准单次临时启动；fastboot boot返回0，已consumed、禁止重发。当前待菜单触发后的媒体及人工回fastboot/Android，恢复尚未闭环，不能将预检Android状态当成当前状态。ACK不证明内核执行。未提交、未推送、无新CI；HEAD855daaf。
++更新：2026-10-26 21:41 +08。PROBE31已消费并完成媒体/Android恢复闭环；PROBE32 / revision40离线包已完成，未启动、未消费。主线仍需真实header读取返回和init/exec推进，尚无进入用户态证据。HEAD855daaf，未提交、未推送、无新CI。
+ 
+-## 本轮唯一包（已消费）
++## 当前唯一待测包
+ 
+-- 包报告：`reports/xnu-first-entry/entry-probe-31.json`。
+-- 镜像：`out/trial-boot/xnu-entry-probe-31-read-init/boot-xnu-first-entry.img`，204484608字节。
+-- 镜像SHA256：`b970ee14ce8b257ab780160dab053de78c2c3dd6df70dd0e1fad8b5c7a82cb6c`。
+-- 内核SHA256：`bb70dbb1071b202dc4d49e4b70cc2200c44137f1e80b74ee13303e9ddbddb99e`。
+-- ADT SHA256：`d45511a111a964bc1bec3a258e71c26e63e3ea2312fe408f1580f624fd8e42b4`。
++- 包报告：`reports/xnu-first-entry/entry-probe-32.json`。
++- 镜像：`out/trial-boot/xnu-entry-probe-32-single-pass/boot-xnu-first-entry.img`，204484608 B。
++- 镜像SHA256：`420e23c83ae523029263cb899233a74ec1c1fa26a26f700da262bdb228542448`。
++- 内核SHA256：`59384a7dce1cb4f08705745484a3f8aa70943d558e9281889338476e77e00a01`。
++- ADT SHA256：`a169fae6f6d03a4f3ed41b0f4c41275f766df4b570d1810a5dcd61ce17aac304`。
+ 
+-28项离线检查证据齐备：1472透明性、476逐位置、96格清零与负对照、9项初始化/高度、46项绑定及既有回归。首次透明性测试遗漏revision39范围识别导致的失败保留，修正版本条件后续跑通过；没有扩大写入范围或删除断言。独立内核重建逐字节一致，最终包解析及FAT载荷回读通过。汇总 `reports/kernel-entry-probe/2026-10-26-v39/qualification.json`；[准备与判读](operations/2026-10-26-probe31-preparation.md)。这些不是实机通过。
++有效构建报告为v40/build-qualified.json，资格汇总v40/qualification.json。29项串行离线检查、独立内核逐字节重建、最终49项绑定检查、包解析及FAT载荷回读通过。首份build.json最大行误记1040，已保留原件并在独立重建报告纠正为1039；候选字节与生成源码摘要完全相同，未冒称重新执行全部测试。[准备与判读](operations/2026-10-26-probe32-preparation.md)。
+ 
+-## 验证范围及结论边界
++## 本轮改动与主线结果
+ 
+-保留47处原生调用及配对返回、首指令后和RET前的96标记。新增A034初始化检查点F901—F904，初始化尾部恢复250再继续原生调用；A037先于A036初始化。最低快照高度1040覆盖实际最大行1039。探针段大小、数据页/flags/read_state地址与PROBE30一致。原生错误、认证和239释放门不变，无新增成功停止点，未改板值/内存身份/任何*_verified。
++HEX改为每个像素只写一次，字段写入64000→38400 B，模型片段指令28275→16973，最终像素逐字节相同；不是黑条根因或实机修复证明。保留47个原生调用/返回、初始化检查点、实际目标/入口与错误记录、239释放门；成功时继续原生控制流。未改板值/内存身份/IRQ设置/任何*_verified。
+ 
+-PROBE30根因尚未锁定：A034250/A0360、A037—39未显示，只能说明最后可见信息来自初始化，不能确定CPU停在那里或APFS死锁。新检查点和同步会增加开销，不能宣称无时序扰动或已修复实机问题。[代码审计](operations/2026-10-26-probe30-initialization-analysis.md)。
++固定Apple8796.141.3与ArmCpu源码、同SoC适配记录已核对。实际映像的type4注册表为版本3，五个函数槽均正确重定位到Zlib代码，fetch非空；排除这些具体静态缺陷，不证明运行时回调返回。ArmCpu固定源已经使用INTID27，无依据照搬其他仓19改27。详见[公开实现与主线审计](operations/2026-10-26-probe31-public-research.md)及v40/read-mainline-contract.json。
+ 
+-## 设备与启动边界
++**UFS未完成XNU实机验收。** 当前根是RAMDisk/md0，APFS挂载成功不验证UFS，当前读取卡点尚无证据指向UFS。Android恢复不替代XNU存储接管、读块或错误恢复验收。
+ 
+-PROBE31的20:58:07新预检确认nuwa/kalama、Android boot_completed1、A槽、三SHA与PROBE30后验一致；随后已单次发送，20:59:43流程结束，仅有ACK。证据v39/preflight.json、launch.json、consumed.json。PROBE28/29/30/31均consumed，禁止重发；现在待画面及人工恢复，收到Android状态后补本轮三SHA后验，不能沿用预检当作恢复证明。此次仅对nuwa执行临时boot，未flash/erase/改槽。
++## 最新实测与设备
+ 
+-PROBE29支持固定读取目标入口插桩到达；未观察合格返回。PROBE30未复现该入口证据，不能将29结果当作30执行证明。原媒体与各轮原始报告保留。
++PROBE31照片最后可见A034=F901、A035全F，A036—A039未显示，未观察新增内部调用返回。用户见logo黑条；只能确定可见画面变化，不能认定CPU停点、APFS死锁或用户态推进。照片loader几何1440×3200，实际高度不足1040不符合该画面；后续映射/异常/IRQ和扫描输出仍有证据缺口。[PROBE31实测记录](operations/2026-10-26-probe31-device-result.md)。
+ 
+-## 工作流与遗留
++用户已自行回Android；2026-10-26 21:04:03 +08只读后验确认nuwa/kalama、Android1、A槽、boot_a/vendor_boot_a/init_boot_a三SHA与预检一致，无额外恢复boot，无待人工恢复。证据v39/{screen,postcondition,evidence-binding}.json。之后未再操作设备。
+ 
+-收到媒体后默认连续完成归档、分析、下一候选准备、串行编译与验收，不在分析结束时等待再次“继续”；该约定已写入AGENTS。实际设备动作独立满足日志/恢复门。
++PROBE28/29/30/31均consumed，禁止重发；31旧“待媒体/待恢复”状态和旧启动命令均为历史。PROBE32只准备，下一次启动仍须新鲜预检及具体拍摄/恢复条件；离线包通过不代替设备门。
+ 
+-统一根D:/Code/PortingiOS/nuwa；后续只用新路径，旧资料库D:/Code/PortingiOSLegacy只读。历史证据不改写，当前诊断资格不等于全量迁移或完整源构建CI验收。固定工具链历史路径/完整源构建CI及原具体访问拒绝的处理范围仍分别保留，不绕过拒绝。不操作其他机型、不启动第二写入者、不自动提交。
++## 遗留与边界
+ 
+-媒体仅本地Media-nuwa，原件不覆盖、不上传。PROBE14—28用户HEX更正保留；29/30视觉转录尚非用户逐字符确认。
++收到媒体默认连续完成归档、分析、下一候选编译核验，不在分析后等待“继续”。本轮已交付下一包；未取得真实读取返回，后续按实际调用/接续及原始错误推进，不跳过认证或锁。
+ 
+-前版STATUS原字节保存out/status-before-probe31-ready-20261026.md，SHA256 9e5021698465c37b368c0faaa082012bffb7920ea3e306959a1f08fc5b168261；此前备份与全部既有修改仍保留。
++后续统一使用D:/Code/PortingiOS/nuwa；Legacy只读，历史证据不改写。当前诊断资格不等于全量迁移或完整源构建CI验收，固定工具链历史路径/完整源构建CI缺口保留。现有未提交修改保留，不操作其他机型或第二写入者。
++
++本轮旧UniXNU-sheng检出Git查询遭dubious ownership拒绝，已停止该检出的Git操作；不改safe.directory/权限、不改读.git绕过。如需其Git元数据，由正式访问复核处理。独立公开来源不冒充该检出身份。
++
++媒体原件及派生图仅本地Media-nuwa，不上传。PROBE14—28用户更正保留；29—31视觉转录不是用户逐字符确认。前版STATUS原字节保存out/status-before-probe32-ready-20261026.md，SHA256 f08717f571e06d6e48b18a85d4718a7d057859d84da60e83a829db8ba042f976。

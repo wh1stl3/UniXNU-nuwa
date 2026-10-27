@@ -5,7 +5,7 @@ from pathlib import Path
 import struct
 
 ROOT = Path(__file__).resolve().parents[1]
-STOCK = Path('D:/Code/PortingiOS/nuwa/backups/recovery-20261020T121245314787Z/boot_a.img')
+STOCK = Path('D:/Code/PortingiOSLegacy/nuwa/backups/recovery-20261020T121245314787Z/boot_a.img')
 ARTIFACT = ROOT / 'out/firmware-ci/39764322744/nuwa-firmware-39764322744'
 OUT = ROOT / 'out/trial-boot/firmware-v4'
 
@@ -61,7 +61,7 @@ def main():
         'Static container checks passed; candidate has not been executed.\n'
         'No XNU payload, FAT initrd, appended DTB or automatic flashing script.\n'
         'Use only after verifying fastboot product=nuwa and reviewing package.json conditions.\n'
-        'Original recovery source: D:/Code/PortingiOS/nuwa/backups/recovery-20261020T121245314787Z/boot_a.img\n'
+        'Original recovery source: D:/Code/PortingiOSLegacy/nuwa/backups/recovery-20261020T121245314787Z/boot_a.img\n'
         'Its temporary boot reached Android boot_completed=1; persistent slot-A boot is unresolved.\n')
     evidence = ROOT / 'reports/trial-boot-preflight/package.json'
     evidence.write_text(json.dumps(report, indent=2) + '\n')

@@ -1,0 +1,27 @@
+{
+  "checks": [
+    {
+      "name": "restore root does not imply desktop",
+      "passed": true
+    },
+    {
+      "name": "presence does not imply runnable desktop",
+      "passed": true
+    },
+    {
+      "name": "cache presence leaves membership unresolved",
+      "passed": true
+    },
+    {
+      "name": "trigger declarations retained without activation claim",
+      "passed": true
+    },
+    {
+      "name": "symlink root escape rejected",
+      "passed": true
+    }
+  ],
+  "test_sha256": "f952e7e450962b3370d255450c035be6d7ab75615b9d77d56e010a851c78712d",
+  "script_sha256": "f0a3cdd99ea7d5e03e16a6c6bb92ec99cab3c63f6b196c3c90a14fd161efb91b",
+  "device_accessed": false
+}

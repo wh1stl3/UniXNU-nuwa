@@ -1,0 +1,60 @@
+{
+  "candidate_sha256": "8e98e5bd67c8ccda1f216ec195c47c316ea08cabe673f3ba0022e6ba7e72c72d",
+  "source_sha256": "188d18ad8f3bd00fecb0ede7005f0195e047a2c6d14ed8f50fbe5bdaf0d13f80",
+  "test_sha256": "7ad7db12f43104b4d21f1e8f2443a84e2f8b58cdac3cad9a34d21999ea125897",
+  "checks": [
+    {
+      "name": "prefix-zero",
+      "passed": true,
+      "framebuffer_bytes": 52736
+    },
+    {
+      "name": "prefix-offset",
+      "passed": true,
+      "framebuffer_bytes": 52736
+    },
+    {
+      "name": "prefix-no-video",
+      "passed": true,
+      "framebuffer_bytes": 0
+    },
+    {
+      "name": "prefix-foreign-thread",
+      "passed": true,
+      "framebuffer_bytes": 0
+    },
+    {
+      "name": "prefix-write-reduction",
+      "passed": true,
+      "old_bytes": 359936,
+      "new_bytes": 52736
+    },
+    {
+      "name": "ret-flush",
+      "passed": true
+    },
+    {
+      "name": "ret-inactive",
+      "passed": true
+    },
+    {
+      "name": "header-reset",
+      "passed": true
+    },
+    {
+      "name": "missing-buffer-store-negative",
+      "passed": true
+    }
+  ],
+  "device_accessed": false,
+  "complete_filesystem_body_executed": false,
+  "native_helpers_executed": [
+    "uio_resid",
+    "uio_offset"
+  ],
+  "stop_before": "vnode_mount",
+  "limitations": [
+    "Flat software model; no hardware IRQ, timing or scanout",
+    "Native RET flush is a separate fixture, not evidence of a completed real read"
+  ]
+}

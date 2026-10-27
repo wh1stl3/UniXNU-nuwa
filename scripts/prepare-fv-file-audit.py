@@ -8,8 +8,8 @@ import subprocess
 from native_prelink_inputs import ROOT
 from virtual_patch import Tree
 
-FW=Path('D:/Code/uefi-nuwa')
-MU=Path('D:/Code/PortingiOS/common/sources/mu-nuwa-firmware/Mu_Basecore')
+FW=Path('D:/Code/PortingiOS/nuwa/uefi-nuwa')
+MU=Path('D:/Code/PortingiOSLegacy/common/sources/mu-nuwa-firmware/Mu_Basecore')
 BASE=Path('D:/Code/UniXNU-integration')
 PIN='a155c495c863e06d400b515315e3b8f7791dc308'
 

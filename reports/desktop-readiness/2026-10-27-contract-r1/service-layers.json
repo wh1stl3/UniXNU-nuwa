@@ -1,0 +1,148 @@
+{
+  "parents": [
+    {
+      "path": "reports/desktop-readiness/2026-10-27-contract-r1/audit-r2.json",
+      "sha256": "c2020a42681111af7db73736d1361fd422b55fcb83afd335a37400a7daa1d4db"
+    },
+    {
+      "path": "reports/desktop-readiness/2026-10-27-cache-r1/audit-r3.json",
+      "sha256": "7cb05f2e0c8f0f6b2bfa68f88c4825949c9caf0cb114ab123caaf8af93807ad6"
+    }
+  ],
+  "programs": [],
+  "remaining_os_only": [],
+  "inputs": [
+    {
+      "component": "Cryptex1,SystemOS",
+      "path": "/mnt/d/Code/PortingiOSLegacy/common/cache/donor-ios16/components/087-86593-047.dmg",
+      "before": {
+        "sha256": "9cd738f3b0169055549df84ad6d8d13e50a2da39af618ce0522ca4e06df86849",
+        "sha384": "775e110985ba8fd0dd2ad21d3fd5a896eec8887af219fc0dbc1e55ace791de1d51ecca2477f2e650b24c557cb74a0627",
+        "bytes": 2743074816
+      },
+      "after": {
+        "sha256": "9cd738f3b0169055549df84ad6d8d13e50a2da39af618ce0522ca4e06df86849",
+        "sha384": "775e110985ba8fd0dd2ad21d3fd5a896eec8887af219fc0dbc1e55ace791de1d51ecca2477f2e650b24c557cb74a0627",
+        "bytes": 2743074816
+      }
+    },
+    {
+      "component": "Cryptex1,AppOS",
+      "path": "/mnt/d/Code/PortingiOSLegacy/common/cache/donor-ios16/components/087-86715-047.dmg",
+      "before": {
+        "sha256": "391f2df322c3172b021b2874f6da5c3e78b70b3df8f502e1a4af2b1d715c4608",
+        "sha384": "853c4f945ea09b1614bedeaffc777aefdf2c5bcb15f1a66986e965207757246c2d3f8712a5a5c491cfc49a5a45e81502",
+        "bytes": 10485760
+      },
+      "after": {
+        "sha256": "391f2df322c3172b021b2874f6da5c3e78b70b3df8f502e1a4af2b1d715c4608",
+        "sha384": "853c4f945ea09b1614bedeaffc777aefdf2c5bcb15f1a66986e965207757246c2d3f8712a5a5c491cfc49a5a45e81502",
+        "bytes": 10485760
+      }
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "/mnt/d/Code/PortingiOSLegacy/common/tools/apfs-fuse-linux/bin/apfs-fuse",
+        "-o",
+        "ro",
+        "/mnt/d/Code/PortingiOSLegacy/common/cache/donor-ios16/components/087-86593-047.dmg",
+        "/var/tmp/nuwa-service-layers-20261027-r1/0"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "mountpoint",
+        "-q",
+        "/var/tmp/nuwa-service-layers-20261027-r1/0"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/mnt/d/Code/PortingiOSLegacy/common/tools/apfs-fuse-linux/bin/apfs-fuse",
+        "-o",
+        "ro",
+        "/mnt/d/Code/PortingiOSLegacy/common/cache/donor-ios16/components/087-86715-047.dmg",
+        "/var/tmp/nuwa-service-layers-20261027-r1/1"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "mountpoint",
+        "-q",
+        "/var/tmp/nuwa-service-layers-20261027-r1/1"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "fusermount",
+        "-u",
+        "/var/tmp/nuwa-service-layers-20261027-r1/1"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "fusermount",
+        "-u",
+        "/var/tmp/nuwa-service-layers-20261027-r1/0"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "error": {
+    "type": "ValueError",
+    "message": "Unsupported Mach-O"
+  },
+  "mount_cleanup_complete": true,
+  "sources": [
+    {
+      "path": "scripts/audit-desktop-service-layers.py",
+      "sha256": "52d16d086f8aa39fae598e38fb71df59efa2c0e51c9220fed40d820436a62140"
+    },
+    {
+      "path": "scripts/desktop_namespace.py",
+      "sha256": "62581258a5d4bdbd633693557f0f8b0e42f6ac32f1b5395937f32fea15f8e7d7"
+    },
+    {
+      "path": "scripts/desktop_cache.py",
+      "sha256": "f5e0b4fa506517c768633c6d19417e3908dabd393f93f307a01ca8bbb463a7c5"
+    },
+    {
+      "path": "scripts/audit-desktop-system.py",
+      "sha256": "a708ed2ba1a3ae6e568984e66c0b5fb5e7c3a038881b486500d643c0bf76851f"
+    },
+    {
+      "path": "scripts/audit-desktop-root.py",
+      "sha256": "1205b549abf6f2b5bfe27985a8b9d49857075ecc96358cc53637fd9e43e008f8"
+    },
+    {
+      "path": "scripts/audit-userland-closure.py",
+      "sha256": "7dfc1c9ffac4d6d3db6f9f3dabe454e656369d33e9d8e0bbd79aca88d587a91f"
+    }
+  ],
+  "device_accessed": false,
+  "root_assembled": false,
+  "jobs_enabled": false,
+  "limitations": [
+    "Declared program provenance, not service enablement, IPC consumers or execution",
+    "Other dependency paths are not evaluated as missing; no recursive service dependency closure"
+  ]
+}

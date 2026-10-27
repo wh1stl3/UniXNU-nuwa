@@ -6,7 +6,7 @@ from pathlib import Path
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
-FW = Path('D:/Code/uefi-nuwa')
+FW = Path('D:/Code/PortingiOS/nuwa/uefi-nuwa')
 
 
 def main():

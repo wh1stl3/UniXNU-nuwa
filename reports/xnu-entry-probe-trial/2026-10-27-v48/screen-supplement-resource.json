@@ -1,0 +1,20 @@
+{
+  "probe": 40,
+  "reviewed_date": "2026-10-27",
+  "supplements_without_rewriting": "screen.json",
+  "original_sha256": "92028231674ad5bdbbb2c0e4eded8715662e48d35c223fef8fab9e3bb9a88abf",
+  "method": "Manual original-resolution crops, fixed build geometry, and RGB row inspection; no generated image or automatic OCR",
+  "crops": [
+    {"path": "D:/Code/PortingiOS/nuwa/Media-nuwa/derived/PROBE40/review-02/left-post-allocator.png", "filter": "crop=260:1150:400:460", "sha256": "83615f2b1f8d73c64166921b2837679c5d0e737c55ef6d2068660d46bdbfa421"},
+    {"path": "D:/Code/PortingiOS/nuwa/Media-nuwa/derived/PROBE40/review-02/decode.png", "filter": "crop=250:1500:1400:480", "sha256": "c6db52d721ef066b46de72b4036c6bd823999c02855629f86fc873da0e92f78a"}
+  ],
+  "crop_command": "ffmpeg -n -i ../Media-nuwa/PROBE40.jpg -vf <filter> -frames:v 1 <path>",
+  "geometry_source": "reports/kernel-entry-probe/2026-10-27-v48/build.json read_deep.points and rectangles",
+  "visible_post_ids": [499,500,501,502,503,504,505,506,507,509],
+  "visible_allocator_ids": [511,512,513,514,517,518,519,520,521],
+  "decode_entry_522": "Magenta at x736 y240; adjacent y232/y244 marks distinguished by vertical row position",
+  "resource_call_535": {"site": "0xfffffff005697154", "x": 784, "y": 384, "observation": "Amber visible; crop right-column yellow pixels at y338..345"},
+  "resource_continuation_536": {"site": "0xfffffff005697158", "x": 736, "y": 408, "observation": "No white strip discerned at the expected row, above logo obstruction; absence is not proof of nonexecution"},
+  "inference": "Highest-priority unresolved boundary is first resource block-table read call into 0xfffffff005696d2c. Allocation-return-only explanation is insufficient; no deadlock diagnosis or stopped-PC claim.",
+  "limits": ["Stable still photo lacks time sequence", "Later rows overlap logo and cannot be classified from absence", "Historical trials are not rerun or rehashed as new verification"]
+}

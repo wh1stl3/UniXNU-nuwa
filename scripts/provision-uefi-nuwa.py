@@ -16,8 +16,8 @@ import time
 from virtual_patch import Tree
 
 ROOT = Path(__file__).resolve().parents[1]
-FW = Path('D:/Code/PortingiOS/common/sources/mu-nuwa-firmware')
-SHENG = Path('D:/Code/PortingiOS/common/sources/uefi-sheng')
+FW = Path('D:/Code/PortingiOSLegacy/common/sources/mu-nuwa-firmware')
+SHENG = Path('D:/Code/PortingiOSLegacy/common/sources/uefi-sheng')
 PARENT = 'Project-Silicium/Mu-Silicium'
 BASE = '6c6755012728c9f7de748228758bad94d1e9a660'
 REPO = 'wh1stl3/uefi-nuwa'

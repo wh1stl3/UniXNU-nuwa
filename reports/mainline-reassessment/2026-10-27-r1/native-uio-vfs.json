@@ -1,0 +1,101 @@
+{
+  "input_sha256": "1aeebf1352a86b0d31612a6bd6e77bd7292f676ad2ce43a99ec4a8f3999eedb6",
+  "script_sha256": "d850c5a2867ee4ca7c204c160700ef86cded655ead64fb78259cf32cf1109247",
+  "cases": [
+    {
+      "offset": 264,
+      "length": 8,
+      "allocator_calls": [
+        {
+          "target": "0xfffffff00726f3d0",
+          "args": [
+            "0xfffffff0071fbea8",
+            "0x8004",
+            "0x2",
+            "0x0"
+          ]
+        },
+        {
+          "target": "0xfffffff00726e81c",
+          "args": [
+            "0xfffffff007207c09",
+            "0x10",
+            "0x4",
+            "0x0"
+          ]
+        }
+      ],
+      "uio": "0030f000000000000030f0000000000001000000010000000801000000000000020000000000000008000000000000000300000000000000",
+      "iovec": "0040f000000000000800000000000000",
+      "passed": true
+    },
+    {
+      "offset": 336,
+      "length": 23707,
+      "allocator_calls": [
+        {
+          "target": "0xfffffff00726f3d0",
+          "args": [
+            "0xfffffff0071fbea8",
+            "0x8004",
+            "0x2",
+            "0x0"
+          ]
+        },
+        {
+          "target": "0xfffffff00726e81c",
+          "args": [
+            "0xfffffff007207c09",
+            "0x10",
+            "0x4",
+            "0x0"
+          ]
+        }
+      ],
+      "uio": "0030f000000000000030f000000000000100000001000000500100000000000002000000000000009b5c0000000000000300000000000000",
+      "iovec": "0040f000000000009b5c000000000000",
+      "passed": true
+    },
+    {
+      "offset": 384,
+      "length": 33021,
+      "allocator_calls": [
+        {
+          "target": "0xfffffff00726f3d0",
+          "args": [
+            "0xfffffff0071fbea8",
+            "0x8004",
+            "0x2",
+            "0x0"
+          ]
+        },
+        {
+          "target": "0xfffffff00726e81c",
+          "args": [
+            "0xfffffff007207c09",
+            "0x10",
+            "0x4",
+            "0x0"
+          ]
+        }
+      ],
+      "uio": "0030f000000000000030f00000000000010000000100000080010000000000000200000000000000fd800000000000000300000000000000",
+      "iovec": "0040f00000000000fd80000000000000",
+      "passed": true
+    }
+  ],
+  "vfs": {
+    "simulated_descriptor_index": 51,
+    "runtime_index_known": false,
+    "handler_arguments": "d8e99f07f0ffffff0010f000000000000040f000000000000050f000000000000060f0000000000020000000000000000070f00000000000",
+    "fixture_errno": 93,
+    "passed": true
+  },
+  "device_accessed": false,
+  "kernel_modified": false,
+  "limitations": [
+    "Allocator returns and filesystem handler are fixtures; bodies do not execute",
+    "VFS initialization executes only in Unicorn; live descriptor index and v_op unknown",
+    "Not QEMU, hardware, timer, memory-pressure, lock, DMA or filesystem qualification"
+  ]
+}

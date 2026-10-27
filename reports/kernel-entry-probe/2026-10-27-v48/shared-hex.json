@@ -1,0 +1,79 @@
+{
+  "candidate_sha256": "4237d18ca1c4d1ac95d464c8828330ef8f833a53a6dd0942fd5c26c1a24099b5",
+  "source_sha256": "a93f29326bff59ec3344f9d8dde5c5fed672a8f463fa14198e0038774a575f5b",
+  "test_sha256": "bae542de73155d31877671ce7d7cc2bcededc15c59f5e924347cad47271f4f29",
+  "checks": [
+    {
+      "name": "field-pixels",
+      "passed": true
+    },
+    {
+      "name": "unchanged-result-no-write",
+      "passed": true
+    },
+    {
+      "name": "changed-result-redraw",
+      "passed": true
+    },
+    {
+      "name": "no-video",
+      "passed": true
+    },
+    {
+      "name": "header-reset",
+      "passed": true
+    },
+    {
+      "name": "omitted-reset-negative",
+      "passed": true
+    },
+    {
+      "name": "code-size-reduction",
+      "passed": true,
+      "old_bytes": 335872,
+      "new_bytes": 290816,
+      "comparison": {
+        "scope": "same observation set; inline HEX control; shared helper retained in both",
+        "code_bytes": 335872,
+        "source_sha256": "2739f967b503f6595b6cebaa6c829f3cfdd138bad3166355a19a4edc27e024d6",
+        "code_sha256": "1ee3d1c03e6e5598c99a4cd7fc22a5299d2901da736ecf78a28ae9e96c50641b",
+        "work": "out/hex-inline-control-2026-10-27-v48",
+        "bootable_image_created": false
+      }
+    },
+    {
+      "name": "dispatch-native-equivalence",
+      "passed": true
+    }
+  ],
+  "result_sequence": [
+    "0xffffffffffffffff",
+    "0xffffffffffffffff",
+    "0x0",
+    "0x0",
+    "0x5",
+    "0xffffffffffffffff"
+  ],
+  "framebuffer_bytes": [
+    38400,
+    0,
+    30720,
+    0,
+    1920,
+    30720
+  ],
+  "reference_bytes": [
+    38400,
+    38400,
+    38400,
+    38400,
+    38400,
+    38400
+  ],
+  "device_accessed": false,
+  "hardware_timing_measured": false,
+  "limitations": [
+    "Flat model; no IRQ, cache or scanout timing",
+    "No native filesystem body execution; not a proven PROBE34 root-cause fix"
+  ]
+}

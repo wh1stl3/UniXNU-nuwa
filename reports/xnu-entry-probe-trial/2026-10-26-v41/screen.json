@@ -1,0 +1,61 @@
+{
+  "transcription": "Manual visual reading, not user character-confirmed",
+  "media": [
+    {
+      "path": "D:\\Code\\PortingiOS\\nuwa\\Media-nuwa\\PROBE33.jpg",
+      "sha256": "112f3c21959fcbd5c7c9e11d4afed2a0f0845339f8b2def4c5b5d4ff12a1e66f",
+      "bytes": 5252708,
+      "original": true
+    }
+  ],
+  "user_observation": "媒体文件已落位 已回Android",
+  "probe": 33,
+  "not_displayed": [
+    "A031"
+  ],
+  "revision": 41,
+  "selected_tiles": {
+    "278": "cyan",
+    "279": "green",
+    "280": "cyan",
+    "281": "green",
+    "282": "cyan",
+    "283": "green",
+    "284": "cyan",
+    "285": "green",
+    "286": "cyan",
+    "287": "green",
+    "290": "cyan",
+    "291": "green",
+    "292": "cyan",
+    "293": "green",
+    "294": "cyan",
+    "276": "green",
+    "277": "green",
+    "273": "not observed lit",
+    "288": "not observed lit",
+    "289": "not observed lit",
+    "295": "not observed lit"
+  },
+  "fields": {
+    "A02A": "0000000000000000",
+    "A02B": "00000000000000D9",
+    "A02C": "0000000000000002",
+    "A02D": "0000000000000002",
+    "A02E": "00000000000000F2",
+    "A02F": "0000000000000000",
+    "A030": "0000000000000002",
+    "A032": "0000000000000002",
+    "A033": "FFFFFFF005F48EF8",
+    "A034": "0000000000000110",
+    "A035": "FFFFFFFFFFFFFFFF",
+    "A036": "FFFFFFF0051A5858",
+    "A037": "FFFFFFF0051A5858",
+    "A038": "0000000000000000",
+    "A039": "FFFFFFFFFFFFFFFF"
+  },
+  "meaning": "Observed native decmpfs_read_compressed call site294, no observed continuation295; does not prove callee body entry or deadlock. A038/A039 deliberately deferred until native APFS RET.",
+  "media_manifest": "D:\\Code\\PortingiOS\\nuwa\\Media-nuwa\\derived\\PROBE33\\review-01\\manifest.json",
+  "userspace_observed": false,
+  "complete_read_return_observed": false
+}

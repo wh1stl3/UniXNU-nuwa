@@ -1,0 +1,534 @@
+{
+  "scope": "Compare every post-MMU hook with its displaced native instruction.\n\nRegisters, NZCV, SP, next PC and native stack effects must agree. Framebuffer,\nflag bytes and scratch below the entry SP belong to the diagnostic hook.\nTPIDR_EL1 in probe_arm_init is an explicitly intentional platform shim.\n",
+  "candidate_sha256": "e7b641f220d12d8de4a0e34b79c2dd361e88896d5a1d1dae544ab77e848ad6bd",
+  "checks": [
+    {
+      "name": "probe_arm_init: first",
+      "passed": true,
+      "next_pc": "0xfffffff00797284c",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_arm_init: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00797284c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_arm_init: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00797284c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_arm_init: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00797284c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_cpu_base: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073bb194",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_cpu_base: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073bb194",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_cpu_base: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073bb194",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_cpu_base: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073bb194",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_arm_vm: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073be018",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_arm_vm: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073be018",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_arm_vm: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073be018",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_arm_vm: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073be018",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_pmap: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073a36c8",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_pmap: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073a36c8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_pmap: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073a36c8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_pmap: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073a36c8",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_kernel_bootstrap: first",
+      "passed": true,
+      "next_pc": "0xfffffff00729e808",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_kernel_bootstrap: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff00729e808",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_kernel_bootstrap: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff00729e808",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_kernel_bootstrap: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff00729e808",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_avm_bases: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073be06c",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_avm_bases: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073be06c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_avm_bases: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073be06c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_avm_bases: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073be06c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_avm_memcheck: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073be0bc",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_avm_memcheck: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073be0d0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_avm_memcheck: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073be0bc",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_avm_memcheck: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073be0d0",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_avm_physmap: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073be120",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_avm_physmap: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073be120",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_avm_physmap: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073be120",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_avm_physmap: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073be120",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_avm_slide: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073be148",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_avm_slide: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073be148",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_avm_slide: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073be148",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_avm_slide: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073be148",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dt_lookup: first",
+      "passed": true,
+      "next_pc": "0xfffffff007905854",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_dt_lookup: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007905854",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dt_lookup: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007905854",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_dt_lookup: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007905854",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_soc_base: first",
+      "passed": true,
+      "next_pc": "0xfffffff007907df4",
+      "framebuffer_writes": 83072
+    },
+    {
+      "name": "probe_soc_base: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007907df4",
+      "framebuffer_writes": 80000
+    },
+    {
+      "name": "probe_soc_base: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007907df4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_soc_base: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007907df4",
+      "framebuffer_writes": 80000
+    },
+    {
+      "name": "probe_cpu_topo: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073c9074",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_cpu_topo: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073c9074",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_cpu_topo: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073c9074",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_cpu_topo: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073c9074",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_cpu_bootstrap: first",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_cpu_bootstrap: repeat",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_cpu_bootstrap: no-video",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_cpu_bootstrap: count-saturated",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_machine_startup: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073c8cac",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_machine_startup: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073c8cac",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_machine_startup: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073c8cac",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_machine_startup: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073c8cac",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_panic: first",
+      "passed": true,
+      "next_pc": "0xfffffff007938004",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_panic: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007938004",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_panic: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007938004",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_panic: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007938004",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_panic_options: first",
+      "passed": true,
+      "next_pc": "0xfffffff007938054",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_panic_options: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007938054",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_panic_options: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007938054",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_panic_options: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007938054",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_panic_trap: first",
+      "passed": true,
+      "next_pc": "0xfffffff007261d18",
+      "framebuffer_writes": 35072
+    },
+    {
+      "name": "probe_panic_trap: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff007261d18",
+      "framebuffer_writes": 32000
+    },
+    {
+      "name": "probe_panic_trap: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff007261d18",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_panic_trap: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff007261d18",
+      "framebuffer_writes": 32000
+    },
+    {
+      "name": "probe_timer_regs: first",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_timer_regs: repeat",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_timer_regs: no-video",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_timer_regs: count-saturated",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_wfe_timeout: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073cae0c",
+      "framebuffer_writes": 35072
+    },
+    {
+      "name": "probe_wfe_timeout: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073cae0c",
+      "framebuffer_writes": 32000
+    },
+    {
+      "name": "probe_wfe_timeout: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073cae0c",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_wfe_timeout: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073cae0c",
+      "framebuffer_writes": 32000
+    },
+    {
+      "name": "probe_wfe_init: first",
+      "passed": true,
+      "next_pc": "0xfffffff0073cadb4",
+      "framebuffer_writes": 35072
+    },
+    {
+      "name": "probe_wfe_init: repeat",
+      "passed": true,
+      "next_pc": "0xfffffff0073cadb4",
+      "framebuffer_writes": 32000
+    },
+    {
+      "name": "probe_wfe_init: no-video",
+      "passed": true,
+      "next_pc": "0xfffffff0073cadb4",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_wfe_init: count-saturated",
+      "passed": true,
+      "next_pc": "0xfffffff0073cadb4",
+      "framebuffer_writes": 32000
+    },
+    {
+      "name": "probe_misc_boot_args: first",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_misc_boot_args: repeat",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_misc_boot_args: no-video",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_misc_boot_args: count-saturated",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_misc_regs: first",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 3072
+    },
+    {
+      "name": "probe_misc_regs: repeat",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_misc_regs: no-video",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 0
+    },
+    {
+      "name": "probe_misc_regs: count-saturated",
+      "passed": true,
+      "next_pc": "0xf01000",
+      "framebuffer_writes": 0
+    }
+  ]
+}

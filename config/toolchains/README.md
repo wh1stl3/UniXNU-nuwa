@@ -7,7 +7,7 @@
 在WSL运行：
 
 ```sh
-/mnt/d/Code/PortingiOS/.venv-wsl/bin/python -B scripts/wsl_kernel_adapter.py plan
+/mnt/d/Code/PortingiOSLegacy/.venv-wsl/bin/python -B scripts/wsl_kernel_adapter.py plan
 ```
 
 输出写本仓reports/wsl-firststage，缺输入退出2。`adapter-plan.json`明确executable=false；没有make执行子命令，没有fetch、Git apply、源树装配或镜像生成动作。

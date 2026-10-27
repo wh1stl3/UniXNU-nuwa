@@ -1,0 +1,59 @@
+{
+  "checked_date": "2026-10-27",
+  "scope": "Public primary-source comparison; external device results are maintainer reports, not nuwa verification",
+  "references": [
+    {
+      "repository": "UniXNU/UniXNU-sheng",
+      "commit": "08cde20edc3254ed6f7df8d0f5384fb887786e8f",
+      "soc": "SM8550",
+      "os": "iPadOS 17.7.11 / 21H461",
+      "progress_source": "https://github.com/UniXNU/UniXNU-sheng/blob/08cde20edc3254ed6f7df8d0f5384fb887786e8f/porting.toml",
+      "reported_stage": "Desktop/compositor GPU workload and userland presentation evidence recorded",
+      "code_path": "scripts/build-gop-legacy-display.py",
+      "code_sha256": "93e4bd23912dcbd26f090f7cf1f5b62fcb92a185c8e35dd5e0968deb31ebe777",
+      "code_bytes": 27606,
+      "license": "BSD-2-Clause-Patent at pinned repository LICENSE",
+      "use": "ABI evidence -> generated declarations -> original binding -> archive; storage/display/input ownership separation",
+      "nuwa_gap": "Need independently qualified iOS16 class layout and binding addresses; sheng board values and iPadOS ABI do not transfer",
+      "implementation_imported": false
+    },
+    {
+      "repository": "markakash/UniXNU-ishtar",
+      "commit": "9ee8ee510ebb38e12a6f61a8c0ddba7d006057c7",
+      "soc": "SM8550-AB",
+      "os": "iOS 18.7.8 / xnu-11215.81.4",
+      "progress_source": "https://github.com/markakash/UniXNU-ishtar/blob/9ee8ee510ebb38e12a6f61a8c0ddba7d006057c7/PORTING.md",
+      "reported_stage": "Detailed device log reports lock screen, keys, USB live logging; touch event delivery remains unresolved",
+      "code_path": "xnu/patches-ishtar/2009-ishtar-fb-keep-display-on.patch",
+      "code_sha256": "57c9e645162e89b336d536ade08ddbe2831cfc6554e45997dc9a81f38958bfb5",
+      "code_bytes": 867,
+      "license": "No root LICENSE found at pinned revision; README also describes an unlicensed base; implementation reuse not cleared",
+      "use": "Detailed boot history, display power versus scanout distinction, UFS and input failure attribution",
+      "nuwa_gap": "Kernel/OS ABI differs; touch sensor, rails, IRQs, stream IDs and display policy require nuwa evidence",
+      "readme_status_stale_relative_to_device_log": true,
+      "implementation_imported": false
+    },
+    {
+      "repository": "dipa-studio/ios-sweet",
+      "commit": "45263bee51df4a0f55cdf9c649af886399488ddb",
+      "soc": "SM7150",
+      "os": "iOS16 / 20H392 userland",
+      "progress_source": "https://github.com/dipa-studio/ios-sweet/blob/45263bee51df4a0f55cdf9c649af886399488ddb/NOTES.md",
+      "reported_stage": "Home screen and input reported in dated device notes",
+      "code_path": "tools/mkiosroot.sh",
+      "code_sha256": "b1b28a8ca69e572452872e0622f441c0cee170ddf94e51f6a8709adcb53e8655",
+      "code_bytes": 5594,
+      "license": "MIT at pinned repository LICENSE",
+      "local_reference_commit": "fdad0de8dc0e75c5ea84762adc03f7232dc91f19",
+      "local_reference_file_sha256": "43cc5f06289d8bd4df2efd03f5a90cb5075d2b7ddb1f23de36285e121113c8e5",
+      "use": "OS/cryptex namespace and shared-cache staging; complete root differs from RestoreRamDisk",
+      "nuwa_gap": "Filesystem/storage/layout, OS services and driver ABI still need qualification; do not adopt board or security-policy modifications",
+      "implementation_imported": false
+    }
+  ],
+  "local_changes": ["scripts/audit-desktop-root.py", "scripts/test-desktop-root.py", "scripts/audit-desktop-system.py", "scripts/qualify-desktop-inputs.py"],
+  "device_accessed": false,
+  "upstream_source_copied": false,
+  "board_values_changed": false,
+  "release_guard_changed": false
+}

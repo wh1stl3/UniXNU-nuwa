@@ -1,0 +1,18 @@
+{
+  "initial_console": "read-decmp-console.txt",
+  "cause": "Prefix fixture compared uninitialized native stack slots with pre-prologue observer scratch",
+  "register_snapshots_equal": true,
+  "different_byte_offsets": [
+    176,
+    177,
+    178,
+    192,
+    193,
+    194,
+    200,
+    201,
+    202
+  ],
+  "correction": "Compare saved registers and native initialized locals; all per-instruction writes remain checked",
+  "candidate_changed": false
+}

@@ -1,0 +1,55 @@
+{
+  "checks": [
+    {
+      "name": "thin ARM64-all",
+      "passed": true
+    },
+    {
+      "name": "universal selects ARM64-all over earlier ARM64e",
+      "passed": true
+    },
+    {
+      "name": "no ARM64e fallback",
+      "passed": true
+    },
+    {
+      "name": "slice extent rejected",
+      "passed": true
+    },
+    {
+      "name": "slice alignment rejected",
+      "passed": true
+    },
+    {
+      "name": "overlapping slices rejected",
+      "passed": true
+    },
+    {
+      "name": "duplicate architectures rejected",
+      "passed": true
+    },
+    {
+      "name": "64-bit universal table",
+      "passed": true
+    },
+    {
+      "name": "unhandled format remains unqualified",
+      "passed": true
+    }
+  ],
+  "sources": [
+    {
+      "path": "scripts/desktop_service_macho.py",
+      "sha256": "a6f5ec1c8314527c07100bd1a95de68d3dce39a6e7cf499873a119f03a37bfca"
+    },
+    {
+      "path": "scripts/test-desktop-service-macho.py",
+      "sha256": "b4f2f2bf32f9adf9340e268b9500f54836a2dbd6052c0284ab386e258a66afa5"
+    },
+    {
+      "path": "scripts/desktop_cache.py",
+      "sha256": "f5e0b4fa506517c768633c6d19417e3908dabd393f93f307a01ca8bbb463a7c5"
+    }
+  ],
+  "device_accessed": false
+}

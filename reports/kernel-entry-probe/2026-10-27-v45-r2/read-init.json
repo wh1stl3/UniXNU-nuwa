@@ -1,0 +1,54 @@
+{
+  "candidate_sha256": "6642a380c215de05b38fac2320f0a097011237bbf28e4e0c15b0b5869738128e",
+  "source_sha256": "a17c3dc118a1971aab3b64f3814f15d1740195ce22518dfd5b38d63078e0c496",
+  "test_sha256": "ce05d1eb4503d0e7efb38801b20f7d201bbd5472f9da6f7a3b84fd3c524614f3",
+  "checks": [
+    {
+      "name": "checkpoints-video",
+      "passed": true
+    },
+    {
+      "name": "checkpoints-no-video",
+      "passed": true
+    },
+    {
+      "name": "height-799",
+      "passed": true
+    },
+    {
+      "name": "height-800",
+      "passed": true
+    },
+    {
+      "name": "height-1039",
+      "passed": true
+    },
+    {
+      "name": "height-1040",
+      "passed": true
+    },
+    {
+      "name": "height-3200",
+      "passed": true
+    },
+    {
+      "name": "old-height-800-negative",
+      "passed": true
+    },
+    {
+      "name": "omitted-checkpoint-negative",
+      "passed": true
+    }
+  ],
+  "checkpoints": {
+    "F901": "before A037 reset; entry tile already cleared",
+    "F902": "A037 reset completed; before A036 reset",
+    "F903": "A036 reset completed; before body state and tile reset",
+    "F904": "body state and tiles reset; before A038/A039 reset"
+  },
+  "minimum_height": 1040,
+  "device_accessed": false,
+  "limitations": [
+    "Software execution; no hardware interrupts, timing or display scanout; not a PROBE30 root-cause proof"
+  ]
+}

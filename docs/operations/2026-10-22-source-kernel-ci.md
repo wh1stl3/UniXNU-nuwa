@@ -22,7 +22,7 @@
 本地执行：
 
 ```powershell
-& 'C:/Program Files/WorkBuddy/resources/vendor/python/python.exe' -X utf8 -B scripts/ci/build-8796-source.py --base D:/Code/PortingiOS/common/sources/UniXNU --check
+& 'C:/Program Files/WorkBuddy/resources/vendor/python/python.exe' -X utf8 -B scripts/ci/build-8796-source.py --base D:/Code/PortingiOSLegacy/common/sources/UniXNU --check
 ```
 
 `reports/official-ci-plan/source-input-check.json`记录48项输入hash与适配后脚本hash；适配脚本用`bash -n`检查，不执行make或Git写入。这里只能称输入/脚本静态检查通过。Windows没有运行内核构建。

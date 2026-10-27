@@ -22,7 +22,7 @@
 
 `zzzz-ci-public-profiling.patch`在其他补丁之后，仅从BCM2837 PERF_DBG_BASE去掉kpc和kperf。kperf_kpc.c:39-56直接调用KPC，故不能只移除缺失文件；源CI关闭这两个性能采样选项，保留调试/串口。没有添加stub、借用其他架构KPC或改变正式nuwa板配置。性能采样和donor相关符号需求留待正式archive/ABI审查。
 
-本地检查：`python -B scripts/ci/check-ci-compat.py --base D:/Code/PortingiOS/common/sources/UniXNU --xnu D:/Code/PortingiOS/common/sources/xnu-ios16-full`；51项210 hunks精确顺序通过，自动变量清零和原IORPC头保留。`build-8796-source.py --base ... --check`的hash/配方bash语法检查通过。均为静态检查，没有本机make证据。
+本地检查：`python -B scripts/ci/check-ci-compat.py --base D:/Code/PortingiOSLegacy/common/sources/UniXNU --xnu D:/Code/PortingiOSLegacy/common/sources/xnu-ios16-full`；51项210 hunks精确顺序通过，自动变量清零和原IORPC头保留。`build-8796-source.py --base ... --check`的hash/配方bash语法检查通过。均为静态检查，没有本机make证据。
 
 workspace-check.json记录三个只读来源树tracked状态空、board/feed哈希不变。预链接、driver archive、boot-progress/watchdog、QEMU与实机均未验证；没有设备动作、镜像构建或_verified=true。
 

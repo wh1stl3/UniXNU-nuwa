@@ -1,0 +1,141 @@
+{
+  "time": "2026-10-27T16:51:56.7015296+08:00",
+  "head": "855daaff4cb99fdeec43dac6ec5045c1d591f52c",
+  "evidence": [
+    {
+      "path": "reports/desktop-readiness/2026-10-27-raw-os-r1/tests-r2.json",
+      "bytes": 1785,
+      "sha256": "46d7638e11703559af721ba13734613fb0c0e7602efdc20d02c01f4140ff6f0d"
+    },
+    {
+      "path": "reports/desktop-readiness/2026-10-27-raw-os-r1/decode-r2.json",
+      "bytes": 1278318,
+      "sha256": "537df065d95225ae5221a80d94c491ee607cc7d442e85b8178fe6f06e06d3c10"
+    },
+    {
+      "path": "reports/desktop-readiness/2026-10-27-raw-os-r1/ctest-console.txt",
+      "bytes": 2310,
+      "sha256": "bf20e1feb9dea0aecef333a29fbe4e335fe51b4688e29d4cee976f90bfb8ab1b"
+    },
+    {
+      "path": "reports/desktop-readiness/2026-10-27-raw-os-r1/configure-console.txt",
+      "bytes": 1561,
+      "sha256": "111c29ce76e4ee53fb84cd573a867afb10f379edf8b576399fd7ce8a1e191f18"
+    },
+    {
+      "path": "reports/desktop-readiness/2026-10-27-raw-os-r1/build-console.txt",
+      "bytes": 1858,
+      "sha256": "d474c6593f44ad54bcb572aec1c3b87cb10bc14fedad8600bbe282b17e915e49"
+    },
+    {
+      "path": "reports/desktop-readiness/2026-10-27-raw-os-r1/decode-console.txt",
+      "bytes": 758,
+      "sha256": "efa0e26e14622cf4c0e8892d9229e6f85c966ee48e101700068e4dfe4a787824"
+    },
+    {
+      "path": "reports/desktop-readiness/2026-10-27-raw-os-r1/apfsutil-console.txt",
+      "bytes": 593,
+      "sha256": "8f950a2e48877eadd1b2bec622a85d01430029cb7ee13fa4ca23e40530fc78ce"
+    },
+    {
+      "path": "reports/desktop-readiness/2026-10-27-raw-os-r1/lzfse-source-before.json",
+      "bytes": 3522,
+      "sha256": "37360626d05dbb10b1fce44c1481ffef3b3759321ac7855325e89712108eefb4"
+    },
+    {
+      "path": "reports/desktop-readiness/2026-10-27-raw-os-r1/lzfse-source-after.json",
+      "bytes": 3522,
+      "sha256": "37360626d05dbb10b1fce44c1481ffef3b3759321ac7855325e89712108eefb4"
+    },
+    {
+      "path": "out/host-lzfse-20261027-r1/liblzfse.so",
+      "bytes": 54616,
+      "sha256": "fa61255b26dbaa33be0d9db90e5227b15f96eac3af5d488943073976035cb9a0"
+    },
+    {
+      "path": "out/host-lzfse-20261027-r1/lzfse",
+      "bytes": 16856,
+      "sha256": "c4b535a02fc28cf9c29023d7baeb8dfb412e9a32a70a149d2bf768a6524b97db"
+    },
+    {
+      "path": "out/desktop-raw-os-20261027-r2/raw-window-contract.json",
+      "bytes": 1788,
+      "sha256": "f8e05b28b6439b1e31757136c7b41974d610f74ec878c84ed95834def8664e16"
+    },
+    {
+      "path": "D:/Code/PortingiOSLegacy/common/tools/apfs-fuse-linux/bin/apfsutil",
+      "bytes": 407680,
+      "sha256": "1ad246148909835c180cd06bfa47c58c2f199a1ffe40e6103bcca3163aa8eddb"
+    },
+    {
+      "path": "D:/Code/PortingiOSLegacy/common/sources/apfs-fuse/ApfsUtil/ApfsUtil.cpp",
+      "bytes": 4202,
+      "sha256": "2d8116014d0a9443a7f909fc24687617e705e7bf086af70e063511062a5836fc"
+    },
+    {
+      "path": "docs/operations/2026-10-27-raw-os-input.md",
+      "bytes": 7076,
+      "sha256": "41594dc1282d58b3938bc3d9766a3d5a3d6e43e7979614e48770aa57ff48bc88"
+    }
+  ],
+  "sources": [
+    {
+      "path": "scripts/udif_raw_decode.py",
+      "sha256": "4dba7d1ebe8634a12b7cf0fe0267d99e815377ede9669e23774e3470c1976604"
+    },
+    {
+      "path": "scripts/prepare-desktop-raw-os.py",
+      "sha256": "d247e36e916e55b3e0bc137e21669e251b572800dce98453c643dabbb27aca02"
+    },
+    {
+      "path": "scripts/desktop_root_contract.py",
+      "sha256": "233b80a933dd4602b0b3fcce1c863a3f8e22322ce21da317c5be8882d738a658"
+    },
+    {
+      "path": "scripts/audit-desktop-system.py",
+      "sha256": "a708ed2ba1a3ae6e568984e66c0b5fb5e7c3a038881b486500d643c0bf76851f"
+    },
+    {
+      "path": "scripts/audit-desktop-root.py",
+      "sha256": "1205b549abf6f2b5bfe27985a8b9d49857075ecc96358cc53637fd9e43e008f8"
+    },
+    {
+      "path": "scripts/audit-userland-closure.py",
+      "sha256": "7dfc1c9ffac4d6d3db6f9f3dabe454e656369d33e9d8e0bbd79aca88d587a91f"
+    },
+    {
+      "path": "scripts/udif_raw_decode.py",
+      "sha256": "4dba7d1ebe8634a12b7cf0fe0267d99e815377ede9669e23774e3470c1976604"
+    },
+    {
+      "path": "scripts/test-udif-raw-decode.py",
+      "sha256": "fc01db6bb05c8a3d3fdbbaf0a08bf1a38de84906bdd7f958ff9ff618153e1f69"
+    },
+    {
+      "path": "scripts/desktop_root_contract.py",
+      "sha256": "233b80a933dd4602b0b3fcce1c863a3f8e22322ce21da317c5be8882d738a658"
+    }
+  ],
+  "lzfse_revision": "e634ca58b4821d9f3d560cdc6df5dec02ffc93fd",
+  "source_files_unchanged": 18,
+  "upstream_roundtrips": 15,
+  "local_checks": 14,
+  "chunks": 3638,
+  "raw_os": {
+    "sha256": "6e87bfcaa8eca952e00b719f333d1f1060715a63566112267ad8730e1ed98906",
+    "bytes": 5635081728,
+    "path": "out/desktop-raw-os-20261027-r2/os.raw.img"
+  },
+  "system_volume_uuid": "DADD93F8-DBBF-4B17-A1DF-0F11E64172F7",
+  "clock_skew_warning": true,
+  "source_dmg_unchanged": true,
+  "probe41": {
+    "sha256": "8d242a2dd953146af5c3c8ae59c6805cba6599aa7283188180667bfca5c2ec2a",
+    "path": "out/trial-boot/xnu-entry-probe-41-resource/boot-xnu-first-entry.img"
+  },
+  "device_accessed": false,
+  "root_image_assembled": false,
+  "data_seed_created": false,
+  "release_guard_changed": false,
+  "scope": "Decoded host OS input and file-volume identity; not target storage, native mount/exec/EL0 or desktop"
+}

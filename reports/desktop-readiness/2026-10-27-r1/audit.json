@@ -1,0 +1,244 @@
+{
+  "items": {
+    "launchd": {
+      "path": "/sbin/launchd",
+      "present": true,
+      "bytes": 541600
+    },
+    "dyld": {
+      "path": "/usr/lib/dyld",
+      "present": true,
+      "bytes": 922912
+    },
+    "SpringBoard": {
+      "path": "/System/Library/CoreServices/SpringBoard.app/SpringBoard",
+      "present": false
+    },
+    "backboardd": {
+      "path": "/usr/libexec/backboardd",
+      "present": false
+    },
+    "SpringBoard_job": {
+      "path": "/System/Library/LaunchDaemons/com.apple.SpringBoard.plist",
+      "present": false
+    },
+    "backboardd_job": {
+      "path": "/System/Library/LaunchDaemons/com.apple.backboardd.plist",
+      "present": false
+    },
+    "UIKitCore": {
+      "path": "/System/Library/PrivateFrameworks/UIKitCore.framework/UIKitCore",
+      "present": false
+    },
+    "QuartzCore": {
+      "path": "/System/Library/Frameworks/QuartzCore.framework/QuartzCore",
+      "present": false
+    },
+    "IOSurface": {
+      "path": "/System/Library/Frameworks/IOSurface.framework/IOSurface",
+      "present": true,
+      "bytes": 301936
+    },
+    "IOMobileFramebuffer": {
+      "path": "/System/Library/PrivateFrameworks/IOMobileFramebuffer.framework/IOMobileFramebuffer",
+      "present": true,
+      "bytes": 169216
+    }
+  },
+  "dyld_cache_files": [],
+  "launch_jobs": [
+    {
+      "path": "/System/Library/LaunchDaemons/com.apple.PurpleReverseProxy.ramdisk.plist",
+      "sha256": "76ebe29030bcd35999f41864395eb54aa1405afb3397d7508c05ec8b31c8a06d",
+      "label": "com.apple.PurpleReverseProxy.ramdisk",
+      "program": "/usr/libexec/PurpleReverseProxy",
+      "program_present": true,
+      "declared": {
+        "Sockets": {
+          "ctrl": {
+            "SockFamily": "IPv4v6",
+            "SockServiceName": "1082"
+          },
+          "notify": {
+            "SockFamily": "IPv4",
+            "SockNodeName": "127.0.0.1",
+            "SockServiceName": "1084"
+          },
+          "socks": {
+            "SockFamily": "IPv4",
+            "SockNodeName": "127.0.0.1",
+            "SockServiceName": "1081"
+          }
+        }
+      }
+    },
+    {
+      "path": "/System/Library/LaunchDaemons/com.apple.diskimagesiod.plist",
+      "sha256": "d851ed3fcc596b242448e4654f3dc514229221426c6e5efdac555543303aaf08",
+      "label": "com.apple.diskimagesiod",
+      "program": "/usr/libexec/diskimagesiod",
+      "program_present": true,
+      "declared": {
+        "MachServices": {
+          "com.apple.diskimagesiod.xpc": true,
+          "com.apple.diskimagesiod.cachedelete": true
+        },
+        "UserName": "_diskimagesiod"
+      }
+    },
+    {
+      "path": "/System/Library/LaunchDaemons/com.apple.diskimagesiod.ram.plist",
+      "sha256": "d3804db693ba4f83c4d5fa9eee1210b5307261c43a3c0e6fdae8fe4b5abbc659",
+      "label": "com.apple.diskimagesiod.ram",
+      "program": "/usr/libexec/diskimagesiod",
+      "program_present": true,
+      "declared": {
+        "MachServices": {
+          "com.apple.diskimagesiod.ram.xpc": true
+        },
+        "UserName": "_diskimagesiod"
+      }
+    },
+    {
+      "path": "/System/Library/LaunchDaemons/com.apple.restored_external.plist",
+      "sha256": "ac190dd86eb7c5dec961559d355eec55fcb55b6826113de5327f8974884c0bf9",
+      "label": "com.apple.restored_external",
+      "program": "/usr/local/bin/restored_external",
+      "program_present": true,
+      "declared": {
+        "RunAtLoad": true
+      }
+    },
+    {
+      "path": "/System/Library/LaunchDaemons/com.apple.syslogd.plist",
+      "sha256": "86ce6512803e6a20c04834f155a38e1b1a24ff66c9452a57850f65bf2056d5fe",
+      "label": "com.apple.syslogd",
+      "program": "/usr/sbin/syslogd",
+      "program_present": true,
+      "declared": {
+        "KeepAlive": true,
+        "Disabled": true,
+        "MachServices": {
+          "com.apple.system.logger": true
+        }
+      }
+    }
+  ],
+  "desktop_executable_gaps": [
+    "SpringBoard",
+    "backboardd"
+  ],
+  "framework_resolution": "Shared-cache membership not parsed; absent standalone framework is not by itself a missing dependency",
+  "classification": "desktop executable payload incomplete",
+  "image_sha256": "d180c38dcc754bc079cc92a40f58a4b5fad2c2b7ce72cf5e64a117453fd7c90a",
+  "tool_sha256": "4196d312862f49574fa5b0c870542544507b59ed2d93010be12cdbe0e1394922",
+  "script_sha256": "f0a3cdd99ea7d5e03e16a6c6bb92ec99cab3c63f6b196c3c90a14fd161efb91b",
+  "closure_parser_sha256": "7dfc1c9ffac4d6d3db6f9f3dabe454e656369d33e9d8e0bbd79aca88d587a91f",
+  "donor": {
+    "lock_sha256": "1eb5fd285f859f1412915a8d9e26e00003ac5b2e523067979f2b1cb2801681d0",
+    "manifest_sha256": "2d1452103a2f5ad71cb78d94454977fc70632472201980a468c247fba14b10b7",
+    "identity": {
+      "product": "iPhone10,3",
+      "version": "16.7.16",
+      "build": "20H392",
+      "device_class": "d22ap"
+    },
+    "components": {
+      "OS": {
+        "path": "087-86698-044.dmg",
+        "size": 4730814044,
+        "zip_crc32": "66ccd39f",
+        "manifest_digest_hex": "103b835176572a97ae36bc5ebe4c332c40b921e1f151b844116bbda49959c46c64364d343ceb0c4e9d95a51ba60d0e51",
+        "payload_downloaded": false,
+        "payload_digest_verified": false
+      },
+      "RestoreRamDisk": {
+        "path": "087-86719-047.dmg",
+        "size": 106954779,
+        "zip_crc32": "a5d494e5",
+        "manifest_digest_hex": "c3db39239ff755c9832112722da386879ec0b04067f2720d3a6a3397276ea5480863fb5d39f3286603b90fcae4e3afba",
+        "payload_downloaded": false,
+        "payload_digest_verified": false
+      },
+      "StaticTrustCache": {
+        "path": "Firmware/087-86698-044.dmg.trustcache",
+        "size": 66289,
+        "zip_crc32": "56cb25ff",
+        "manifest_digest_hex": "6aa93bf357fd7a96470428b72cd736062688cff7dbc5683ce7ef542426bd1348a43fbbdf55c8907af17dac02e74b8b89",
+        "payload_downloaded": false,
+        "payload_digest_verified": false
+      },
+      "Cryptex1,SystemOS": {
+        "path": "087-86593-047.dmg",
+        "size": 2743074816,
+        "zip_crc32": "7f8fabcd",
+        "manifest_digest_hex": "775e110985ba8fd0dd2ad21d3fd5a896eec8887af219fc0dbc1e55ace791de1d51ecca2477f2e650b24c557cb74a0627",
+        "payload_downloaded": false,
+        "payload_digest_verified": false
+      },
+      "Cryptex1,AppOS": {
+        "path": "087-86715-047.dmg",
+        "size": 10485760,
+        "zip_crc32": "ed284220",
+        "manifest_digest_hex": "853c4f945ea09b1614bedeaffc777aefdf2c5bcb15f1a66986e965207757246c2d3f8712a5a5c491cfc49a5a45e81502",
+        "payload_downloaded": false,
+        "payload_digest_verified": false
+      },
+      "Cryptex1,SystemTrustCache": {
+        "path": "Firmware/087-86593-047.dmg.trustcache",
+        "size": 1511,
+        "zip_crc32": "1b344d8e",
+        "manifest_digest_hex": "511a45a0f9cf5a4be75852521565074bb97a47e6cbdba42eb13be5b281508c4417bc4120ee90a53a9ac3fc1d2974fec6",
+        "payload_downloaded": false,
+        "payload_digest_verified": false
+      },
+      "Cryptex1,AppTrustCache": {
+        "path": "Firmware/087-86715-047.dmg.trustcache",
+        "size": 767,
+        "zip_crc32": "985456c3",
+        "manifest_digest_hex": "a58d8b89f43b8f0eeb097dc554df95def3ea62692b3bd9b0aeda2b710a1203815f829f56ef14e1c993245c130247f0ca",
+        "payload_downloaded": false,
+        "payload_digest_verified": false
+      }
+    },
+    "status": "Manifest metadata only; no new component downloaded, authenticated or installed"
+  },
+  "commands": [
+    {
+      "argv": [
+        "/mnt/d/Code/PortingiOSLegacy/common/tools/apfs-fuse-linux/bin/apfs-fuse",
+        "-o",
+        "ro",
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/root-mainline-v29/restore/restore-payload.bin",
+        "/var/tmp/nuwa-desktop-20261027-r1"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "mountpoint",
+        "-q",
+        "/var/tmp/nuwa-desktop-20261027-r1"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "fusermount",
+        "-u",
+        "/var/tmp/nuwa-desktop-20261027-r1"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "mount_cleaned_up": true,
+  "device_accessed": false,
+  "userland_executed": false,
+  "release_guard_changed": false
+}

@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-read-dispatch-integrated.py", line 69, in <module>
+    main()
+    ~~~~^^
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-read-dispatch-integrated.py", line 37, in main
+    actual = T.header_reset(raw, macho, build, b'', 0x600000, [], True, TILE)
+  File "D:\Code\PortingiOS\nuwa\UniXNU-nuwa\scripts\test-read-dispatch-observer.py", line 99, in header_reset
+    assert all(bytes(u.mem_read(FB+y*ROW+rx*4,rw*4))==bytes(rw*4) for y in range(ry,ry+rh)), 'Stale candidate-entry tile survived a new header attempt'
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Stale candidate-entry tile survived a new header attempt

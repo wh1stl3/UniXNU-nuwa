@@ -2,7 +2,7 @@
 import argparse,hashlib,json,os,subprocess
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-TOOL=Path('/mnt/d/Code/PortingiOS/common/tools/apfs-fuse-linux/bin/apfs-fuse')
+TOOL=Path('/mnt/d/Code/PortingiOSLegacy/common/tools/apfs-fuse-linux/bin/apfs-fuse')
 PIN='4196d312862f49574fa5b0c870542544507b59ed2d93010be12cdbe0e1394922'
 def sha(data):return hashlib.sha256(data).hexdigest()
 def main():

@@ -24,11 +24,11 @@
 
 新增config/firmware-dedicated-profile.json；构建入口--profile dedicated读取独立仓固定提交，四个模块的路径和发布器输出名已接入。原firmware/sheng补丁已经落在新仓，不再重复apply，只保留设备侧Darwin22 ABI patch。构建前后继续检查来源哈希；原manifest及patch文件保留，--profile legacy可用于历史回归。尚未调度新固件CI，没有新EFI/FD或boot.img。
 
-执行scripts/prepare-dedicated-firmware-profile.py --firmware-checkout D:/Code/uefi-nuwa通过31项输入检查；Mu_Basecore未初始化时，仅从同固定Gitlink的只读缓存校验其BaseFdtLib.inf，报告明确区分来源。四模块、两外部包、一条剩余patch及未变board/feed哈希检查通过。发布器以PiDxe.h及INF消耗GUID的AutoGen等价声明作AArch64语法检查通过；第一次简化前置头缺PI类型的失败也保留，不能把测试前置头问题误判为完整固件构建失败。
+执行scripts/prepare-dedicated-firmware-profile.py --firmware-checkout D:/Code/PortingiOS/nuwa/uefi-nuwa通过31项输入检查；Mu_Basecore未初始化时，仅从同固定Gitlink的只读缓存校验其BaseFdtLib.inf，报告明确区分来源。四模块、两外部包、一条剩余patch及未变board/feed哈希检查通过。发布器以PiDxe.h及INF消耗GUID的AutoGen等价声明作AArch64语法检查通过；第一次简化前置头缺PI类型的失败也保留，不能把测试前置头问题误判为完整固件构建失败。
 
 ## 本地检出
 
-用户要求补齐独立本地目录后建立D:/Code/uefi-nuwa，并更新设备AGENTS目录边界；旧资料库仍只读。普通HTTPS clone卡在0字节临时pack，固定提交归档下载也超时；只结束匹配本次目标URL/目录的clone进程树。
+用户要求补齐独立本地目录后建立D:/Code/PortingiOS/nuwa/uefi-nuwa，并更新设备AGENTS目录边界；旧资料库仍只读。普通HTTPS clone卡在0字节临时pack，固定提交归档下载也超时；只结束匹配本次目标URL/目录的clone进程树。
 
 scripts/bootstrap-local-uefi-nuwa.py利用原只读Git对象缓存和API元数据重建精确提交/树，加上RAM中已验证的12个变更blob；Git repack后移除alternate，本地仓库不再依赖旧缓存。工作区2256项与远端0a3a51a相同、干净，完整git fsck通过；dangling的旧基线commit不是完整性错误。初次alternate文件因Windows CRLF被Git当成路径尾字符，已以LF写入修正；未修改旧缓存。
 

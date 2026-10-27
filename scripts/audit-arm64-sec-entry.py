@@ -7,8 +7,8 @@ import re
 import struct
 
 ROOT = Path(__file__).resolve().parents[1]
-FW = Path('D:/Code/PortingiOS/common/sources/mu-nuwa-firmware')
-BACKUP = Path('D:/Code/PortingiOS/nuwa/backups/recovery-20261020T121245314787Z')
+FW = Path('D:/Code/PortingiOSLegacy/common/sources/mu-nuwa-firmware')
+BACKUP = Path('D:/Code/PortingiOSLegacy/nuwa/backups/recovery-20261020T121245314787Z')
 ART = ROOT / 'out/firmware-ci/39764322744/nuwa-firmware-39764322744'
 
 

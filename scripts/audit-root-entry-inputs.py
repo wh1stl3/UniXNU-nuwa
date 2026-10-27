@@ -7,7 +7,7 @@ import nuwa_launch_context as C
 from capstone import Cs,CS_ARCH_ARM64,CS_MODE_ARM
 spec=importlib.util.spec_from_file_location('B',ROOT/'scripts/build-kernel-entry-probe.py')
 B=importlib.util.module_from_spec(spec);spec.loader.exec_module(B)
-SOURCE=Path('D:/Code/PortingiOS/common/sources/xnu-ios16-full/iokit/bsddev/IOKitBSDInit.cpp')
+SOURCE=Path('D:/Code/PortingiOSLegacy/common/sources/xnu-ios16-full/iokit/bsddev/IOKitBSDInit.cpp')
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--output',type=Path,required=True);a=p.parse_args()
     package=json.loads((ROOT/'reports/xnu-first-entry/entry-probe-20.json').read_text())

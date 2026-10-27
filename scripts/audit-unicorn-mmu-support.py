@@ -31,7 +31,7 @@ def hosts():
         lambda script, flags=(): [sys.executable, '-B', str(script), *flags]
     yield 'wsl-ubuntu-22.04-unicorn-2.1.4', None, \
         lambda script, flags=(): ['wsl', '-d', 'Ubuntu-22.04', '--', 'bash', '-c',
-                                  'cd /mnt/d/Code/UniXNU-nuwa && python3 -B '
+                                  'cd /mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa && python3 -B '
                                   + script.relative_to(ROOT).as_posix() + ' ' + ' '.join(flags)]
 
 
