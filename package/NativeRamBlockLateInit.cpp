@@ -7,6 +7,7 @@
 #include <mach/kmod.h>
 
 extern "C" kmod_info_t g_kernel_kmod_info;
+extern "C" OSReturn native_ramblock_register_late(void);
 extern "C" void ramblock_static_init() __asm__("__GLOBAL__sub_I_NativeRamBlock.cpp");
 // Address-only declarations; the actual objects are concrete MetaClass subclasses.
 extern const unsigned char ramblock_parent[] __asm__("__ZN20IOBlockStorageDevice10gMetaClassE");

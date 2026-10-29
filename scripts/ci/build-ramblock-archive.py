@@ -90,6 +90,8 @@ def main():
         for name,unit in units:
             command=h.driver_command(record,unit,out/(name+'.o'),work)
             command+=['-I',str(out/'include'),'-MMD','-MF',str(out/(name+'.d'))]
+            if name in ('NativeRamBlock','IOBlockStorageReference'):
+                command+=['-include',str(ROOT/'include/nuwa/RamBlockCompilePrelude.h')]
             commands[name]=command
             run(command,record['directory'])
             h.inspect_object(out/(name+'.o'))

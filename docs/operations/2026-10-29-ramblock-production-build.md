@@ -35,3 +35,11 @@
 用户随后授权运行CI，提交a7a2a39已推送独立分支。该run的XNU源码编译、真实内核链接及平台archive链接步骤成功；RamBlock的command 0失败。取回artifact后确认唯一fatal error为 IOStorageDeviceCharacteristics.h:27 找不到 TargetConditionals.h；8条现有头风格警告不是终止原因。完整原始stderr位于 out/ci-ramblock-40851582287-proxy/nuwa-8796-source/reports/ramblock-archive/command-0.stderr。
 
 修复在保留-nostdinc及全部私有参数的前提下，从本次DEVELOPER_DIR下xcrun解析的真实iPhoneOS SDK单独链接TargetConditionals.h到临时include目录，验证文件存在及SDK归属，并记录路径/内容SHA；不生成平台常量或添加整个用户态SDK include树。依据：[Clang include选项说明](https://clang.llvm.org/docs/ClangCommandLineReference.html)。另将失败stdout/stderr直接输出到Actions日志，仍完整保留artifact原件。四项既有回归和Python语法检查通过；修复是否解除实际生产编译失败由新CI结果确认。
+
+## CI 40856339167 风格诊断和声明修复
+
+真实SDK头已被找到；本次内核编译/链接仍成功。RamBlock command 0报告10个错误：旧storage头7处零常量空指针、1处继承字段同名，以及gpu_addon/volume_seed两个导出函数缺前置声明。原始失败日志保留out/ramblock-ci-40856339167-failed.log。
+
+新增include/nuwa/RamBlockCompilePrelude.h：只在包含原storage头的push/pop范围内屏蔽zero-as-null-pointer-constant、shadow-field，不改原头/类布局；随后恢复全部原诊断策略并给两个真实导出函数补精确原型。late注册入口也补自身前置声明，避免下一个编译单元触发同一规则。未关闭missing-prototypes或全局Werror。
+
+首次尝试将局部诊断设为warning仍被Clang14提升为error，保留out/ramblock-ci-style-20261029/失败；修订后真实驱动参考配置编译通过，头包含之后注入零常量空指针仍被拒绝，证据out/ramblock-ci-style-20261029-r2/。这只验证声明和诊断作用域，不替代新CI的Apple私有编译。四项输入/ABI参数回归仍通过。
