@@ -7,6 +7,11 @@ on:
         description: Exact reviewed UniXNU-nuwa commit
         required: true
         type: string
+      ramblock_archive_check:
+        description: Compile the late RamBlock archive with this build's private headers (no runtime activation)
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -80,6 +85,15 @@ jobs:
           set -o pipefail
           GITHUB_TOKEN=${{ github.token }} python3 -u -B device/scripts/ci/build-8796-source.py --base base --profile merged \
             2>&1 | tee "$RUNNER_TEMP/nuwa-host/kernel-console.log"
+      - name: Build RamBlock with current private compiler inputs
+        if: ${{ inputs.ramblock_archive_check }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          brew install llvm
+          python3 -B device/scripts/ci/build-ramblock-archive.py \
+            --work "$RUNNER_TEMP/nuwa-8796-source" --base base \
+            --llvm-bin "$(brew --prefix llvm)/bin"
       - name: Collect build evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -90,5 +104,7 @@ jobs:
             ${{ runner.temp }}/nuwa-8796-source/reports/**
             ${{ runner.temp }}/nuwa-8796-source/build/xnu/ios-obj/**/mach.development.bcm2837*
             ${{ runner.temp }}/nuwa-8796-source/build/driver-archives/**
+            ${{ runner.temp }}/nuwa-8796-source/build/ramblock-archive/*.a
+            ${{ runner.temp }}/nuwa-8796-source/build/ramblock-archive/*.o
           if-no-files-found: error
           retention-days: 7

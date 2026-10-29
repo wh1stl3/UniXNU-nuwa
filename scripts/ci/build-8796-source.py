@@ -25,6 +25,16 @@ def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def selected_patch(device, base, item):
+    """Honor the reviewed origin; an unselected same-name file is not an override."""
+    name = item['patch']
+    reviewed = item['chosen'].replace('\\', '/')
+    if '/patches/xnu-8796-candidates/' in reviewed:
+        return device / 'patches/xnu-8796-candidates' / name
+    directory = 'kits/NativePrelink/patches' if name.startswith('xnu-10063.') else 'patches/xnu'
+    return base / directory / name
+
+
 def replace_exact(text, before, after, count):
     if text.count(before) != count:
         raise ValueError(f'Unexpected upstream context count for {before!r}')
@@ -61,10 +71,7 @@ def inputs(base, profile='baseline'):
         name = item['patch']
         if Path(name).name != name or not name.endswith('.patch'):
             raise ValueError('Unsafe patch name')
-        candidate = DEVICE / 'patches/xnu-8796-candidates' / name
-        if not candidate.exists():
-            directory = 'kits/NativePrelink/patches' if name.startswith('xnu-10063.') else 'patches/xnu'
-            candidate = base / directory / name
+        candidate = selected_patch(DEVICE, base, item)
         update = merged_inputs.get('updated_patch_inputs', {}).get(name)
         if update:
             candidate = (DEVICE if update['root'] == 'device' else base) / update['path']
