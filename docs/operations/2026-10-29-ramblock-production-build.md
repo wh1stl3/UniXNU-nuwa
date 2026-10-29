@@ -43,3 +43,11 @@
 新增include/nuwa/RamBlockCompilePrelude.h：只在包含原storage头的push/pop范围内屏蔽zero-as-null-pointer-constant、shadow-field，不改原头/类布局；随后恢复全部原诊断策略并给两个真实导出函数补精确原型。late注册入口也补自身前置声明，避免下一个编译单元触发同一规则。未关闭missing-prototypes或全局Werror。
 
 首次尝试将局部诊断设为warning仍被Clang14提升为error，保留out/ramblock-ci-style-20261029/失败；修订后真实驱动参考配置编译通过，头包含之后注入零常量空指针仍被拒绝，证据out/ramblock-ci-style-20261029-r2/。这只验证声明和诊断作用域，不替代新CI的Apple私有编译。四项输入/ABI参数回归仍通过。
+
+## CI 40864452397 参考对象诊断修复
+
+本轮XNU内核编译/链接成功，RamBlock主体及late注册对象的command 0/1成功，command 2参考IOBlockStorageDevice失败。实际只有两个error：IOUserClient::init隐藏基类重载、IOBlockStorageDevice.cpp:209调用自身标记deprecated的doSynchronizeCache兼容入口。21项其它warning没有导致失败。原始日志：out/ramblock-ci-40864452397-step.log。
+
+先核对固定609cbbdf源码及Clang官方诊断控制说明 https://clang.llvm.org/docs/UsersManual.html ，再仅对IOBlockStorageReference追加-Wno-error=overloaded-virtual和-Wno-error=deprecated-declarations，保留警告可见。不修改原始接口、虚表或函数行为，不改RamBlock和late注册对象的诊断参数。参考对象仅用于布局/ABI测量，不加入libNativeRamBlock.late.a；原始参考不是donor等同证明。
+
+四项真实输入/ABI参数回归及diff检查通过。本轮属于S01/S03/S05/S13离线编译修复，生产archive转换、最终内核集成和实机结果仍须分别验收。

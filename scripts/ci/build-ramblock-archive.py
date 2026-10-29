@@ -92,6 +92,11 @@ def main():
             command+=['-I',str(out/'include'),'-MMD','-MF',str(out/(name+'.d'))]
             if name in ('NativeRamBlock','IOBlockStorageReference'):
                 command+=['-include',str(ROOT/'include/nuwa/RamBlockCompilePrelude.h')]
+            if name == 'IOBlockStorageReference':
+                # This pinned reference is an ABI measurement, never archived.
+                # Preserve its legacy API diagnostics (CI 40864452397) as warnings.
+                command+=['-Wno-error=overloaded-virtual',
+                          '-Wno-error=deprecated-declarations']
             commands[name]=command
             run(command,record['directory'])
             h.inspect_object(out/(name+'.o'))
