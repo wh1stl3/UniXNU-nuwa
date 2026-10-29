@@ -60,7 +60,10 @@ def main():
         r=subprocess.run(cmd,cwd=cwd,capture_output=True)
         (reports/f'command-{index}.stdout').write_bytes(r.stdout)
         (reports/f'command-{index}.stderr').write_bytes(r.stderr)
-        if r.returncode:raise RuntimeError(f'Command {index} failed with {r.returncode}')
+        if r.returncode:
+            print(r.stdout.decode('utf-8',errors='replace'),flush=True)
+            print(r.stderr.decode('utf-8',errors='replace'),flush=True)
+            raise RuntimeError(f'Command {index} failed with {r.returncode}')
     try:
         tar=out/'storage.tar.gz'
         with urllib.request.urlopen('https://codeload.github.com/apple-oss-distributions/IOStorageFamily/tar.gz/'+STORAGE,timeout=60) as response:
@@ -70,6 +73,15 @@ def main():
         include=out/'include/IOKit';include.mkdir(parents=True)
         storage=out/('IOStorageFamily-'+STORAGE)
         (include/'storage').symlink_to(storage,target_is_directory=True)
+        # Kernel -nostdinc is intentional. Expose only this SDK platform header,
+        # not the entire userspace SDK include tree or synthesized constants.
+        sdk=Path(subprocess.check_output(['xcrun','--sdk','iphoneos','--show-sdk-path'],text=True).strip()).resolve()
+        platform_header=(sdk/'usr/include/TargetConditionals.h').resolve()
+        if not platform_header.is_relative_to(sdk) or not platform_header.is_file():
+            raise ValueError('Actual iPhoneOS SDK TargetConditionals.h unavailable')
+        (out/'include/TargetConditionals.h').symlink_to(platform_header)
+        report['sdk_platform_header']=dict(path=str(platform_header),sha256=sha(platform_header),
+                                          sdk_path=str(sdk),synthetic=False)
         report['storage_reference']=dict(revision=STORAGE,tar_sha256=TAR_SHA,donor_identical=False)
         units=[('NativeRamBlock',source/'NativeRamBlock.cpp'),
                ('NativeRamBlockLateInit',ROOT/'package/NativeRamBlockLateInit.cpp'),

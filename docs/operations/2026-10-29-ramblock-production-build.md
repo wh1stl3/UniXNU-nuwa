@@ -29,3 +29,9 @@
 需要发布精确审阅commit后运行新CI步骤，确认Apple私有编译、警告和新对象ABI。旧公开配置得到的0x90/0x160及dispatch结果不能自动覆盖新私有对象；DWARF与参考对象已纳入待生成证据。
 
 之后仍需把启动候选、功能宏、late archive及原storage绑定接入真正kernel make，按新布局完成prelink并验证实际call/GOT/构造器列表和6个UFS weak接口。此步骤未实现完毕、未通过，不以archive脚本或LLD用户态bundle失败替代最终链接验收。当前仍无新boot、设备操作、提交、推送或运行资格变更。
+
+## CI 40851582287 失败修复
+
+用户随后授权运行CI，提交a7a2a39已推送独立分支。该run的XNU源码编译、真实内核链接及平台archive链接步骤成功；RamBlock的command 0失败。取回artifact后确认唯一fatal error为 IOStorageDeviceCharacteristics.h:27 找不到 TargetConditionals.h；8条现有头风格警告不是终止原因。完整原始stderr位于 out/ci-ramblock-40851582287-proxy/nuwa-8796-source/reports/ramblock-archive/command-0.stderr。
+
+修复在保留-nostdinc及全部私有参数的前提下，从本次DEVELOPER_DIR下xcrun解析的真实iPhoneOS SDK单独链接TargetConditionals.h到临时include目录，验证文件存在及SDK归属，并记录路径/内容SHA；不生成平台常量或添加整个用户态SDK include树。依据：[Clang include选项说明](https://clang.llvm.org/docs/ClangCommandLineReference.html)。另将失败stdout/stderr直接输出到Actions日志，仍完整保留artifact原件。四项既有回归和Python语法检查通过；修复是否解除实际生产编译失败由新CI结果确认。
