@@ -1,0 +1,296 @@
+{
+  "passed": true,
+  "source_revision": "af785c1777161a62931425c2faaa536ce0bebd5b",
+  "source_sha256": {
+    "GccUfs.h": "1ef7030533184ecb7efebb8ad3a6fa8e155a8b5b9eea19a6a2af758027d483c3",
+    "Info.plist": "b32259d457790217e50e36e868a7bcaa99c7625eca6d47212e761d230ebd4e49",
+    "LICENSE": "d3cdce3b19df47f2e4dcafdfd54909eb9bc64ac722645ceb1feae58695c97b09",
+    "NativeUfs.cpp": "24f549be5006ab5c463c67aa01ee38511b185853f878e12b4bb70830313ae9ed",
+    "README.md": "8c5048b7903c3e5286a91ba61a27e4e472f0a483cb87c634c5f87be0792d8c70",
+    "RootCommands.h": "11f88727514b42c823c166b2d8da1090189d69d797f29bdff6532498f66b86ec",
+    "RootDiagnostics.h": "0ad96da909e87d161b17694e32768a9d84500da96f975dcc6913535c413fde29",
+    "RootLayout.h": "3e25127486a5102cd477fcfabd62366a3b3f02bb12a0b8db2294330a4b233484",
+    "RootPublication.h": "3c289b44f4d7c082b3f214eda2d4225f53860dd007f4a89402bdc910f268aeda",
+    "RootQueue.h": "001d06dcc4c3c7073704cffa3105a28d11e3e97985e7fcb49b8cc107216248bf",
+    "RootTransportLayout.h": "77699362f09e103ceda0d5f216d0be7749cdc1e88c6143ddd15ceb11dfd42e91",
+    "RootWindowRead.h": "e8d98556290cf540204227f863b043eb09996bb87d38e1d6894b83b351c8d112",
+    "SmmuTakeover.h": "54868bf0745ee6093627e73ba8cec9ac3c574446955c359463507d0f122f90a8",
+    "TransferPoll.h": "742df51cdce6d06df6bf93294176f01305c9d1359c8ffdfb99daff7b76a1ece3",
+    "tests/check_arm64_root_commands.py": "da942021d2d3f0e1f5efe9b43d7d1559133ac8544ebe231e456af4efc7b8faef",
+    "tests/check_legacy_descriptors.py": "d8513ef193bf56fe415082397a9657a7fa9131a78011e994c68deb29e9a9daba",
+    "tests/check_qemu_root_commands.py": "774b4687f8f69d439484d450e2de1a81a9a088ded792a5fbdc033ef25a5d6012",
+    "tests/check_root_path_host.py": "c290c3f32598a0787e0f261761a52cf263744a6aef0f6b16ede828a7b9c1e1e7",
+    "tests/RootCommands.cpp": "3c7690f1f1ef8d9ba0038e1d88f7fc6eb8c9c50a61dbcb99ec22d202004e5ff4",
+    "tests/RootCommandsArm64.cpp": "61b64a15d97715076850b4f129fbe491ca10ae8e1376a18ba3d0e5a36a618561",
+    "tests/RootCommandsArm64.S": "9954e70d00b5229c4df90d54dfa1860991499889c0d628e1afc9f0c2f7b4cb39",
+    "tests/RootCommandsBridge.cpp": "1d83cae28ede24fbaf520b7a675deb4b70fe392431fb7e2cbca9b004dc1d0855",
+    "tests/RootDiagnostics.cpp": "063e18e2a3776f5adae660ae8db6857d6298144722d055ad58826b13a323afad",
+    "tests/RootLayout.cpp": "e0fe37d24254847ad26e34c872f02b64a47993e0a8c77eeb0bc35a91841a9fe6",
+    "tests/RootPathBridge.cpp": "8f9ad55f8d7a5e38c6c81b668e72ffa01357ed0dba411395c3408bd6d52a327d",
+    "tests/RootPublication.cpp": "18090bc6fad3f1de39ecd83bbb23e904a263520c22c89274b76e7e64276a5b2d",
+    "tests/RootWindowRead.cpp": "93328899af9b256e4f149fab76cfcf3085fa662b0632971f2c642353ff82a1aa",
+    "tests/root_path_fixture.py": "15ae1cb9768d2d901bb29e6bef43a50b2a383fa8c1311e1002e7ef2c8f40d686",
+    "tests/SmmuTakeover.cpp": "d120613396e06d55a5d7c635b06b8bc8b2afe920748ca6e85d18c0b6f754d318",
+    "tests/TransferPoll.cpp": "4758a0afacd46d9138f627c50fc8efdc59c4068475750c31a43d0b5db2adda70"
+  },
+  "patch_sha256": "4243cde61333328e51ffc98b21bf43860fb23e77d22830c5b99f8a1a8e3f16d8",
+  "fixture_sha256": "b83ba0af63cd36b43849ce2cf77d6ada5b2520f3aee488109acbb2eba66c95c7",
+  "commands": [
+    {
+      "command": [
+        "/usr/bin/clang++",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wno-unused-function",
+        "-fsanitize=address,undefined",
+        "-fno-pie",
+        "-no-pie",
+        "-g",
+        "-pthread",
+        "-I",
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/ufs-storage-20261030-r2/source/tests",
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/tests/ufs_store_cycle.cpp",
+        "-o",
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/ufs-storage-20261030-r2/old-cycle"
+      ],
+      "exit": 0,
+      "expected": 0,
+      "log": "old-build.log"
+    },
+    {
+      "command": [
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/ufs-storage-20261030-r2/old-cycle",
+        "negative-control"
+      ],
+      "exit": 42,
+      "expected": 42,
+      "log": "old-negative.log"
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "--unsafe-paths",
+        "--directory=/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/ufs-storage-20261030-r2/source",
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/patches/driver-candidates/native-ufs-dma-write-ownership.patch"
+      ],
+      "exit": 0,
+      "expected": 0,
+      "log": "apply.log"
+    },
+    {
+      "command": [
+        "/usr/bin/clang++",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wno-unused-function",
+        "-fsanitize=address,undefined",
+        "-fno-pie",
+        "-no-pie",
+        "-g",
+        "-pthread",
+        "-I",
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/ufs-storage-20261030-r2/source/tests",
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/tests/ufs_store_cycle.cpp",
+        "-o",
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/ufs-storage-20261030-r2/cycle"
+      ],
+      "exit": 0,
+      "expected": 0,
+      "log": "cycle-build.log"
+    },
+    {
+      "command": [
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/ufs-storage-20261030-r2/cycle"
+      ],
+      "exit": 0,
+      "expected": 0,
+      "log": "cycle.log"
+    },
+    {
+      "command": [
+        "/usr/bin/clang++",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wno-unused-function",
+        "-fsanitize=address,undefined",
+        "-fno-pie",
+        "-no-pie",
+        "-g",
+        "-pthread",
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/ufs-storage-20261030-r2/source/tests/RootCommands.cpp",
+        "-o",
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/ufs-storage-20261030-r2/RootCommands"
+      ],
+      "exit": 0,
+      "expected": 0,
+      "log": "RootCommands-build.log"
+    },
+    {
+      "command": [
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/ufs-storage-20261030-r2/RootCommands"
+      ],
+      "exit": 0,
+      "expected": 0,
+      "log": "RootCommands.log"
+    },
+    {
+      "command": [
+        "/usr/bin/clang++",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wno-unused-function",
+        "-fsanitize=address,undefined",
+        "-fno-pie",
+        "-no-pie",
+        "-g",
+        "-pthread",
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/ufs-storage-20261030-r2/source/tests/RootLayout.cpp",
+        "-o",
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/ufs-storage-20261030-r2/RootLayout",
+        "-lcrypto",
+        "-Wno-deprecated-declarations"
+      ],
+      "exit": 0,
+      "expected": 0,
+      "log": "RootLayout-build.log"
+    },
+    {
+      "command": [
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/ufs-storage-20261030-r2/RootLayout"
+      ],
+      "exit": 0,
+      "expected": 0,
+      "log": "RootLayout.log"
+    },
+    {
+      "command": [
+        "/usr/bin/clang++",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wno-unused-function",
+        "-fsanitize=address,undefined",
+        "-fno-pie",
+        "-no-pie",
+        "-g",
+        "-pthread",
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/ufs-storage-20261030-r2/source/tests/RootWindowRead.cpp",
+        "-o",
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/ufs-storage-20261030-r2/RootWindowRead"
+      ],
+      "exit": 0,
+      "expected": 0,
+      "log": "RootWindowRead-build.log"
+    },
+    {
+      "command": [
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/ufs-storage-20261030-r2/RootWindowRead"
+      ],
+      "exit": 0,
+      "expected": 0,
+      "log": "RootWindowRead.log"
+    },
+    {
+      "command": [
+        "/usr/bin/clang++",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wno-unused-function",
+        "-fsanitize=address,undefined",
+        "-fno-pie",
+        "-no-pie",
+        "-g",
+        "-pthread",
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/ufs-storage-20261030-r2/source/tests/RootPublication.cpp",
+        "-o",
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/ufs-storage-20261030-r2/RootPublication"
+      ],
+      "exit": 0,
+      "expected": 0,
+      "log": "RootPublication-build.log"
+    },
+    {
+      "command": [
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/ufs-storage-20261030-r2/RootPublication"
+      ],
+      "exit": 0,
+      "expected": 0,
+      "log": "RootPublication.log"
+    },
+    {
+      "command": [
+        "/usr/bin/clang++",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wno-unused-function",
+        "-fsanitize=address,undefined",
+        "-fno-pie",
+        "-no-pie",
+        "-g",
+        "-pthread",
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/ufs-storage-20261030-r2/source/tests/TransferPoll.cpp",
+        "-o",
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/ufs-storage-20261030-r2/TransferPoll"
+      ],
+      "exit": 0,
+      "expected": 0,
+      "log": "TransferPoll-build.log"
+    },
+    {
+      "command": [
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/ufs-storage-20261030-r2/TransferPoll"
+      ],
+      "exit": 0,
+      "expected": 0,
+      "log": "TransferPoll.log"
+    },
+    {
+      "command": [
+        "/usr/bin/clang++",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wno-unused-function",
+        "-fsanitize=address,undefined",
+        "-fno-pie",
+        "-no-pie",
+        "-g",
+        "-pthread",
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/ufs-storage-20261030-r2/source/tests/SmmuTakeover.cpp",
+        "-o",
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/ufs-storage-20261030-r2/SmmuTakeover"
+      ],
+      "exit": 0,
+      "expected": 0,
+      "log": "SmmuTakeover-build.log"
+    },
+    {
+      "command": [
+        "/mnt/d/Code/PortingiOS/nuwa/UniXNU-nuwa/out/ufs-storage-20261030-r2/SmmuTakeover"
+      ],
+      "exit": 0,
+      "expected": 0,
+      "log": "SmmuTakeover.log"
+    }
+  ],
+  "compiler": "Ubuntu clang version 14.0.0-1ubuntu1.1",
+  "bridge_change": "Test-only lock callback models a previous request poisoning DMA while writer waits",
+  "host_fixture_change": "Explicit uint64_t zero in initializer list for Linux LP64; production unchanged",
+  "scope": "ASan/UBSan execution of real command/layout/window/publication code with simulated HC/DMA/media; no hardware or mount proof",
+  "device_accessed": false
+}

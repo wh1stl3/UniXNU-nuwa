@@ -109,6 +109,7 @@ def main():
     if vtable(work/'build/ramblock-archive/NativeRamBlock.o','NativeRamBlock')!=contract['production_vtable']:raise ValueError('Current private driver ABI differs')
     if vtable(work/'build/ramblock-archive/IOBlockStorageReference.o','IOBlockStorageDevice')!=contract['reference_vtable']:raise ValueError('Current private reference ABI differs')
     provider=archive_report.get('ufs_provider',{})
+    if provider.get('runtime_patch')!=contract['ufs_runtime_patch']:raise ValueError('UFS DMA ownership fix missing')
     if provider.get('source_revision')!='af785c1777161a62931425c2faaa536ce0bebd5b' or provider.get('hardware_enabled') is not False:raise ValueError('Real dormant UFS provider required')
     ufs_slots=vtable(work/'build/ramblock-archive/NativeUfs.o','NativeUfsBlock')
     if len(ufs_slots)!=190:raise ValueError('UFS block vtable size')
