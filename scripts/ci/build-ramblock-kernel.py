@@ -3,11 +3,32 @@
 Fixed donor addresses are external dependencies, NOT a deployable prelink.
 No synthetic class implementation, global undefined allowance or device action.
 """
-import argparse, hashlib, importlib.util, json, os, platform, struct, subprocess
+import argparse, hashlib, json, os, platform, re, struct, subprocess
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+
+def definitions(arguments):
+    result=[]
+    for i,arg in enumerate(arguments):
+        if arg=='-D':result.append(arguments[i+1])
+        elif arg.startswith('-D'):result.append(arg[2:])
+    return result
+
+def personality(raw,names,segments):
+    def offset(address,length=1):
+        va,size,off=next(s for s in segments if s[0]<=address and address+length<=s[0]+s[1])
+        return off+address-va
+    pointer=struct.unpack_from('<Q',raw,offset(names['_gIOKernelConfigTables']['value'],8))[0]
+    start=offset(pointer);end=raw.index(b'\0',start)
+    offset(pointer,end-start+1)
+    table=raw[start:end].decode()
+    matches=[block for block in re.findall(r'\{[^{}]*\}',table) if re.search(r"'IOClass'\s*=\s*NativeRamBlock;",block)]
+    if len(matches)!=1:raise ValueError('Missing or duplicate linked RamBlock personality')
+    for key,value in [('IOMatchCategory','NativeRamBlock'),('IOProviderClass','IOResources'),('IOResourceMatch','IOBSD')]:
+        if not re.search("'"+key+r"'\s*=\s*"+value+';',matches[0]):raise ValueError('Linked personality mismatch: '+key)
+    return matches[0]
 
 def vtable(path,classname):
     raw=path.read_bytes()
@@ -114,14 +135,29 @@ def main():
         patch=ROOT/contract['patch']['path']
         run(['git','-C',str(source),'apply','--check',str(patch)])
         run(['git','-C',str(source),'apply',str(patch)])
+        # Per-file make overrides are not themselves source dependencies.
+        # Only invalidate the three caller/personality units in the temporary tree.
+        run(['touch']+[str(source/p) for p in ('iokit/KernelConfigTables.cpp','iokit/bsddev/IOKitBSDInit.cpp','bsd/kern/bsd_init.c')])
         command=link_command(original,work,archives);report['make_arguments']=command
         run(command)
+        report['compile_records']={}
+        for obj,expected in {'KernelConfigTables.cpo':['XNU_NATIVE_RAM_BLOCK=1'],
+                             'IOKitBSDInit.cpo':['XNU_NATIVE_RAM_BLOCK=1','XNU_NATIVE_RAM_BLOCK_LATE_INIT=1'],
+                             'bsd_init.o':['XNU_NATIVE_RAM_BLOCK_LATE_INIT=1']}.items():
+            records=list(target.rglob(obj+'.json'))
+            if len(records)!=1:raise ValueError('Ambiguous compiler record: '+obj)
+            record=json.loads(records[0].read_text().strip().rstrip(','));defs=definitions(record['arguments'])
+            for define in expected:
+                if [d for d in defs if d.split('=')[0]==define.split('=')[0]]!=[define]:raise ValueError('Stale/conflicting compiler flag: '+obj+' '+define)
+            (evidence/(obj+'.json')).write_bytes(records[0].read_bytes())
+            report['compile_records'][obj]={'sha256':sha(records[0]),'expected':expected}
         raw=kernel.read_bytes();names,segments=symbols(raw)
+        report['linked_personality']=personality(raw,names,segments)
         undefined=[n for n,v in names.items() if v['kind']&0xe==0]
         if undefined:raise ValueError('Final undefined symbols: '+str(undefined))
         for name,value in contract['bindings'].items():
             if names.get(name,{}).get('value')!=int(value,16):raise ValueError('Final donor binding differs: '+name)
-        required=['_native_ramblock_register_late','__GLOBAL__sub_I_NativeRamBlock.cpp','__ZN14NativeRamBlock10gMetaClassE','_armcpu_registered','_armdt_platform_configured']
+        required=['_native_ramblock_register_late','__GLOBAL__sub_I_NativeRamBlock.cpp','__ZN14NativeRamBlock10gMetaClassE','_native_ram_block_volume_seed','_native_ram_block_ready','_armcpu_registered','_armdt_platform_configured']
         if any(n not in names for n in required):raise ValueError('Final required definition missing')
         def calls(name):
             start=names[name]['value'];end=min(v['value'] for v in names.values() if v['kind']&0xe==0xe and v['value']>start)
@@ -152,6 +188,9 @@ def main():
             at+=n
         if sha(kernel)==report['baseline_sha256']:raise ValueError('Stale kernel output')
         report.update(passed=True,final_source_link=True,kernel_sha256=sha(kernel),kernel_bytes=len(raw),required_symbols={n:hex(names[n]['value']) for n in required},init_direct_calls=[hex(v) for v in init_calls],donor_bindings=contract['bindings'],allowed_weak=contract['allowed_weak'],limitations=['Fixed donor external addresses require final donor prelink verification','No native mount, provider matching, metaclass execution or device proof'])
+    except Exception as error:
+        report['error']=str(error)
+        raise
     finally:
         report['script_sha256']=sha(Path(__file__));(evidence/'audit.json').write_text(json.dumps(report,indent=2)+'\n')
 

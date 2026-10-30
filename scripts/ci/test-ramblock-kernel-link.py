@@ -35,6 +35,14 @@ class LinkInputs(unittest.TestCase):
         self.assertIn('_IOKitBSDInit',sy);self.assertIn('__ZN6OSKext22loadKextWithIdentifierEPKcbbhhP7OSArray',sy)
         self.assertNotIn('_native_ramblock_register_late',sy)
         self.assertFalse([n for n,v in sy.items() if v['kind']&14==0])
+        with self.assertRaisesRegex(ValueError,'Missing or duplicate linked RamBlock personality'):M.personality(raw,sy,segments)
         with self.assertRaises(ValueError):M.symbols(b'BAD!'+raw[4:])
+    def test_actual_production_vtables(self):
+        contract=json.loads((ROOT/'config/ramblock-ios16-link-contract.json').read_bytes())
+        for filename,classname,key in [('NativeRamBlock.o','NativeRamBlock','production_vtable'),('IOBlockStorageReference.o','IOBlockStorageDevice','reference_vtable')]:
+            actual=M.vtable(CI/'build/ramblock-archive'/filename,classname)
+            self.assertEqual(len(actual),190);self.assertEqual(actual,contract[key])
+    def test_clang_definition_spellings(self):
+        self.assertEqual(M.definitions(['clang','-D','FEATURE=1','-DOTHER=0','-U','OFF']),['FEATURE=1','OTHER=0'])
 
 if __name__=='__main__':unittest.main(verbosity=2)

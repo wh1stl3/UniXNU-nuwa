@@ -17,3 +17,9 @@ The initialization patch loads IOStorageFamily, explicitly registers NativeRamBl
 Local six-case make-input/parser tests passed against the real successful CI kernel; workflow YAML parsed; the late-init patch replay and production ABI checks passed. These are not an executed final macOS link. New CI must establish that result.
 
 Even a successful source link does not qualify donor prelink, runtime metaclass/provider matching, complete root/Data mounting, persistence, init execution, or an on-device image. Full OS/SystemOS require their reviewed read-only block windows; the separate packed Data seed remains volatile. PROBE60 and the iOS16 mainline are unchanged.
+
+## CI revision: incremental build and personality validation
+
+Run 41014591773 tests commit 89d2768600a56e0d81063dd1436f191895db62a6. While it builds, review of the per-file compiler rules identified an additional admission requirement: touch only the three modified caller/personality source units in RUNNER_TEMP, preserve their real compiler records, and reject missing/conflicting enabled macros. Read the linked gIOKernelConfigTables pointer and require the unique NativeRamBlock/IOResources/IOBSD personality. Require the Data volume seed export as well as class registration. Eight local tests now pass, including rejection of the old actual kernel without that personality and both actual private-object vtables.
+
+This revision is needed even if the first CI link succeeds; class-symbol presence alone is insufficient. Public source reference: https://raw.githubusercontent.com/apple-oss-distributions/xnu/1b191cb58250d0705d8a51287127505aa4bc0789/makedefs/MakeInc.rule .
