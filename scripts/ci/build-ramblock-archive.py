@@ -32,6 +32,7 @@ def main():
     cli.add_argument('--work',type=Path,required=True)
     cli.add_argument('--base',type=Path,required=True)
     cli.add_argument('--llvm-bin',type=Path,required=True)
+    cli.add_argument('--ufs-provider',action='store_true',help='Compile real dormant UFS provider and explicit initializer')
     args=cli.parse_args();work=args.work.resolve();base=args.base.resolve()
     if platform.system()!='Darwin' or os.environ.get('GITHUB_ACTIONS')!='true':
         raise ValueError('Requires the actual macOS Actions XNU build')
@@ -120,7 +121,11 @@ def main():
         wrapper=out/'NativeRamBlockLateInit.o'
         if set(late['inspect'](wrapper.read_bytes())[0])&late['REMOVED']:raise ValueError('Wrapper has automatic initializer')
         archive=out/'libNativeRamBlock.late.a'
-        run([str(llvm/'llvm-ar'),'rcs',str(archive),str(out/'NativeRamBlock.late.o'),str(wrapper)])
+        extra=[]
+        if args.ufs_provider:
+            provider=runpy.run_path(str(ROOT/'scripts/ci/ufs-provider.py'))
+            extra=provider['build'](work,base,llvm,h,late,record,out,reports,report,run)
+        run([str(llvm/'llvm-ar'),'rcs',str(archive),str(out/'NativeRamBlock.late.o'),str(wrapper)]+list(map(str,extra)))
         run([str(llvm/'llvm-nm'),'-m',str(archive)])
         for name,_ in units:run([str(llvm/'llvm-dwarfdump'),'--debug-info',str(out/(name+'.o'))])
         run([record['arguments'][0],'--version']);run([objcopy,'--version'])

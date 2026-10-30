@@ -21,7 +21,7 @@
   },
   "patch": {
     "path": "patches/xnu-8796-candidates/native-ramblock-late-init.patch",
-    "sha256": "96b58626359baee72b95525ca8e2fcf73d575ca6db01e7e5a83542efaea04b68"
+    "sha256": "3fbff0cabf0b7eb93685e8c4567c512112e917e2f4af9311abbd73c9353cccd4"
   },
   "allowed_weak": [
     "_native_ufs_store_gpt_check",
@@ -416,5 +416,7 @@
     "__ZN20IOBlockStorageDevice13doSetPriorityEP26IOBlockStorageDeviceExtentjh",
     "__ZN20IOBlockStorageDevice13doSynchronizeEyyj",
     "__ZN20IOBlockStorageDevice20doGetProvisionStatusEyyPjP35IOBlockStorageProvisionDeviceExtenty"
-  ]
+  ],
+  "ufs_provider_revision": "af785c1777161a62931425c2faaa536ce0bebd5b",
+  "optional_import_policy": "Bind all six imports to the real dormant provider; no null aliases or fake functions"
 }

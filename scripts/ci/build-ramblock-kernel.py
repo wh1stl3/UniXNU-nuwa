@@ -108,6 +108,12 @@ def main():
     if not archive_report['passed'] or sha(archive)!=archive_report['archive_sha256']:raise ValueError('Production archive changed')
     if vtable(work/'build/ramblock-archive/NativeRamBlock.o','NativeRamBlock')!=contract['production_vtable']:raise ValueError('Current private driver ABI differs')
     if vtable(work/'build/ramblock-archive/IOBlockStorageReference.o','IOBlockStorageDevice')!=contract['reference_vtable']:raise ValueError('Current private reference ABI differs')
+    provider=archive_report.get('ufs_provider',{})
+    if provider.get('source_revision')!='af785c1777161a62931425c2faaa536ce0bebd5b' or provider.get('hardware_enabled') is not False:raise ValueError('Real dormant UFS provider required')
+    ufs_slots=vtable(work/'build/ramblock-archive/NativeUfs.o','NativeUfsBlock')
+    if len(ufs_slots)!=190:raise ValueError('UFS block vtable size')
+    for actual,expected in zip(ufs_slots,contract['reference_vtable']):
+        if not actual.startswith(('__ZN14NativeUfsBlock','__ZNK14NativeUfsBlock')) and actual!=expected:raise ValueError('UFS inherited slot mismatch: '+actual)
     target=work/'build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837';kernel=target/'mach.development.bcm2837.unstripped'
     platform_report=json.loads((work/'reports/platform-link/audit.json').read_bytes())
     if not platform_report['passed'] or sha(kernel)!=platform_report['kernel_sha256']:raise ValueError('Platform kernel changed')
@@ -153,11 +159,15 @@ def main():
             report['compile_records'][obj]={'sha256':sha(records[0]),'expected':expected}
         raw=kernel.read_bytes();names,segments=symbols(raw)
         report['linked_personality']=personality(raw,names,segments)
+        # Registering real provider classes is distinct from matching/starting them.
+        if b"'IOClass'         = NativeUfs;" in raw:raise ValueError('UFS personality must remain disabled')
         undefined=[n for n,v in names.items() if v['kind']&0xe==0]
         if undefined:raise ValueError('Final undefined symbols: '+str(undefined))
         for name,value in contract['bindings'].items():
             if names.get(name,{}).get('value')!=int(value,16):raise ValueError('Final donor binding differs: '+name)
-        required=['_native_ramblock_register_late','__GLOBAL__sub_I_NativeRamBlock.cpp','__ZN14NativeRamBlock10gMetaClassE','_native_ram_block_volume_seed','_native_ram_block_ready','_armcpu_registered','_armdt_platform_configured']
+        for name in contract['allowed_weak']:
+            if names.get(name,{}).get('kind',0)&14!=14:raise ValueError('Real UFS implementation missing: '+name)
+        required=['_native_ramblock_register_late','_native_ufs_register_late','__GLOBAL__sub_I_NativeRamBlock.cpp','__GLOBAL__sub_I_NativeUfs.cpp','__ZN14NativeRamBlock10gMetaClassE','_native_ram_block_volume_seed','_native_ram_block_ready','_armcpu_registered','_armdt_platform_configured']
         if any(n not in names for n in required):raise ValueError('Final required definition missing')
         def calls(name):
             start=names[name]['value'];end=min(v['value'] for v in names.values() if v['kind']&0xe==0xe and v['value']>start)
@@ -170,12 +180,15 @@ def main():
         init_calls=calls('_IOKitBSDInit')
         loader='__ZN6OSKext22loadKextWithIdentifierEPKcbbhhP7OSArray'
         wrapper=names['_native_ramblock_register_late']['value']
-        if names[loader]['value'] not in init_calls or wrapper not in init_calls or init_calls.index(names[loader]['value'])>=init_calls.index(wrapper):raise ValueError('Storage/late-init call order absent')
+        ufs_wrapper=names['_native_ufs_register_late']['value']
+        ordered=[names[loader]['value'],ufs_wrapper,wrapper]
+        if any(v not in init_calls for v in ordered) or [init_calls.index(v) for v in ordered]!=sorted(init_calls.index(v) for v in ordered):raise ValueError('Storage/UFS/RamBlock init order absent')
         publish=names['__ZN9IOService15publishResourceEPKcP8OSObject']['value']
         if publish not in init_calls or init_calls.index(wrapper)>=init_calls.index(publish):raise ValueError('IOBSD publication precedes registration')
         if names['__GLOBAL__sub_I_NativeRamBlock.cpp']['value'] not in calls('_native_ramblock_register_late'):raise ValueError('Explicit constructor call missing')
+        if names['__GLOBAL__sub_I_NativeUfs.cpp']['value'] not in calls('_native_ufs_register_late'):raise ValueError('Explicit UFS constructor call missing')
         # The late initializer must never also appear in an automatic init table.
-        at=32;ctor=names['__GLOBAL__sub_I_NativeRamBlock.cpp']['value']
+        at=32;ctors={names[n]['value'] for n in ('__GLOBAL__sub_I_NativeRamBlock.cpp','__GLOBAL__sub_I_NativeUfs.cpp')}
         for _ in range(struct.unpack_from('<I',raw,16)[0]):
             cmd,n=struct.unpack_from('<II',raw,at)
             if cmd==0x19:
@@ -184,7 +197,7 @@ def main():
                     if raw[sec:sec+16].split(b'\0')[0]==b'__mod_init_func':
                         size=struct.unpack_from('<Q',raw,sec+40)[0];off=struct.unpack_from('<I',raw,sec+48)[0]
                         if size%8 or off+size>len(raw):raise ValueError('Initializer table bounds')
-                        if ctor in [v[0] for v in struct.iter_unpack('<Q',raw[off:off+size])]:raise ValueError('Duplicate automatic RamBlock initializer')
+                        if ctors.intersection(v[0] for v in struct.iter_unpack('<Q',raw[off:off+size])):raise ValueError('Duplicate automatic storage initializer')
             at+=n
         if sha(kernel)==report['baseline_sha256']:raise ValueError('Stale kernel output')
         report.update(passed=True,final_source_link=True,kernel_sha256=sha(kernel),kernel_bytes=len(raw),required_symbols={n:hex(names[n]['value']) for n in required},init_direct_calls=[hex(v) for v in init_calls],donor_bindings=contract['bindings'],allowed_weak=contract['allowed_weak'],limitations=['Fixed donor external addresses require final donor prelink verification','No native mount, provider matching, metaclass execution or device proof'])

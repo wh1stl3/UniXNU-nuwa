@@ -96,9 +96,11 @@ jobs:
         run: |
           set -euo pipefail
           brew install llvm
+          provider_args=()
+          if [ "${{ inputs.ramblock_kernel_link_check }}" = "true" ]; then provider_args+=(--ufs-provider); fi
           python3 -B device/scripts/ci/build-ramblock-archive.py \
             --work "$RUNNER_TEMP/nuwa-8796-source" --base base \
-            --llvm-bin "$(brew --prefix llvm)/bin"
+            --llvm-bin "$(brew --prefix llvm)/bin" "${provider_args[@]}"
       - name: Link RamBlock and initialize before IOBSD publication
         if: ${{ inputs.ramblock_kernel_link_check }}
         shell: bash

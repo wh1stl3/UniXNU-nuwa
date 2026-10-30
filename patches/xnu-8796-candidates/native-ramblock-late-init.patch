@@ -1,6 +1,6 @@
 --- a/iokit/bsddev/IOKitBSDInit.cpp
 +++ b/iokit/bsddev/IOKitBSDInit.cpp
-@@ -106,9 +106,28 @@
+@@ -106,9 +106,31 @@
  thread_call_t corefile_open_call = NULL;
  #endif
  
@@ -10,6 +10,7 @@
 +#endif
 +#include <libkern/c++/OSKext.h>
 +extern "C" OSReturn native_ramblock_register_late(void);
++extern "C" OSReturn native_ufs_register_late(void);
 +#endif
 +
  kern_return_t
@@ -23,6 +24,8 @@
 +	    "com.apple.iokit.IOStorageFamily", false, false,
 +	    kOSKextExcludeNone, kOSKextExcludeNone, NULL);
 +	if (storageResult != kOSReturnSuccess) return storageResult;
++	OSReturn ufsResult = native_ufs_register_late();
++	if (ufsResult != kOSReturnSuccess) return ufsResult;
 +	OSReturn ramblockResult = native_ramblock_register_late();
 +	if (ramblockResult != kOSReturnSuccess) return ramblockResult;
 +#endif

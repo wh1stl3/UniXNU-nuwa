@@ -63,7 +63,7 @@ def inspect(raw):
                               s['desc'], s['value']-section['va'] if section else s['value'])
     return result, normalized
 
-def verify(before, after, removed=REMOVED):
+def verify(before, after, removed=REMOVED, init=INIT):
     a, sa=inspect(before); b, sb=inspect(after)
     if set(a)-set(b) != removed or set(b)-set(a):
         raise ValueError('Unexpected section removal')
@@ -73,8 +73,8 @@ def verify(before, after, removed=REMOVED):
     # Symbols are allowed to move in the table; references must still resolve
     # to the same names. Only the explicit initializer changes visibility.
     expected={n:v for n,v in sa.items() if v[1] not in removed}
-    kind, section, desc, value=expected[INIT]
-    expected[INIT]=(kind | 1, section, desc, value)
+    kind, section, desc, value=expected[init]
+    expected[init]=(kind | 1, section, desc, value)
     if expected != sb:
         changed=[n for n in set(expected)|set(sb) if expected.get(n)!=sb.get(n)]
         raise ValueError('Unexpected symbol change: '+str(changed))
