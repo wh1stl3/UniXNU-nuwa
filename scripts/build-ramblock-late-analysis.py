@@ -8,6 +8,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import re
 import struct
 import subprocess
 
@@ -79,6 +80,46 @@ def verify(before, after, removed=REMOVED, init=INIT):
         changed=[n for n in set(expected)|set(sb) if expected.get(n)!=sb.get(n)]
         raise ValueError('Unexpected symbol change: '+str(changed))
     return len(b), sum(len(s['relocations']) for s in b.values())
+
+
+def restore_cold_flags(before, after, removed=REMOVED, init=INIT):
+    """Preserve N_COLD_FUNC lost by Apple's textual assembly round trip.
+
+    Restore only the observed 0x400 -> 0 descriptor loss on matching local
+    .cold.N text symbols. All section bytes, relocations and remaining symbol
+    attributes still pass the original strict verifier before returning.
+    """
+    _, original = inspect(before)
+    _, rebuilt = inspect(after)
+    changes = {}
+    for name, old in original.items():
+        new = rebuilt.get(name)
+        if new is None or old[2] == new[2]:
+            continue
+        if (not re.search(r'\.cold\.\d+$', name) or
+                old != (0x0e, '__TEXT,__text', 0x400, new[3]) or
+                new != (0x0e, '__TEXT,__text', 0, old[3])):
+            raise ValueError('Unreviewed symbol descriptor change: ' + name)
+        changes[name] = old[2]
+    raw = bytearray(after)
+    at = 32
+    restored = []
+    for _ in range(struct.unpack_from('<I', raw, 16)[0]):
+        cmd, size = struct.unpack_from('<II', raw, at)
+        if cmd == 2:
+            table, count, strings, _ = struct.unpack_from('<4I', raw, at + 8)
+            for i in range(count):
+                entry = table + 16 * i
+                index = struct.unpack_from('<I', raw, entry)[0]
+                name = raw[strings + index:raw.index(0, strings + index)].decode()
+                if name in changes:
+                    struct.pack_into('<H', raw, entry + 6, changes[name])
+                    restored.append(name)
+        at += size
+    if sorted(restored) != sorted(changes):
+        raise ValueError('Ambiguous cold symbol metadata')
+    verify(before, bytes(raw), removed, init=init)
+    return bytes(raw), sorted(restored)
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)

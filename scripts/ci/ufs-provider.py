@@ -43,6 +43,8 @@ def build(work,base,llvm,h,late,record,out,reports,report,run):
     run([str(llvm/'llvm-objcopy'),'--strip-debug']+['--remove-section='+n for n in sorted(late['REMOVED'])]+[str(out/'ufs-explicit.o'),str(out/'NativeUfs.late.o')])
     baseline=(out/'ufs-baseline.o').read_bytes();removed=set(late['inspect'](baseline)[0])&late['REMOVED']
     if '__DATA,__mod_init_func' not in removed:raise ValueError('Missing original UFS initializer')
+    restored,cold_symbols=late['restore_cold_flags'](baseline,(out/'NativeUfs.late.o').read_bytes(),removed,init=init)
+    (out/'NativeUfs.late.o').write_bytes(restored)
     sections,relocs=late['verify'](baseline,(out/'NativeUfs.late.o').read_bytes(),removed,init=init)
     wrapper=out/'NativeUfsLateInit.o'
     cmd=h.driver_command(record,ROOT/'package/NativeUfsLateInit.cpp',wrapper,work)
@@ -54,6 +56,6 @@ def build(work,base,llvm,h,late,record,out,reports,report,run):
     if any(n not in symbols or symbols[n][0]&14!=14 for n in expected):raise ValueError('Real UFS exports missing')
     report['ufs_provider']=dict(source_revision=pin,class_sizes=sizes,retained_sections=sections,retained_relocations=relocs,
         exports=expected,initializer=init,hardware_enabled=False,personality_enabled=False,verified_root_enabled=False,
-        compile_patch=contract['ufs_compile_patch'],compiled_source_sha256=hashlib.sha256((source/'NativeUfs.cpp').read_bytes()).hexdigest())
+        compile_patch=contract['ufs_compile_patch'],compiled_source_sha256=hashlib.sha256((source/'NativeUfs.cpp').read_bytes()).hexdigest(),restored_cold_symbols=cold_symbols)
     for p in [Path(__file__),ROOT/'package/NativeUfsLateInit.cpp',ROOT/'include/nuwa/UfsCompilePrelude.h',patch]:(reports/p.name).write_bytes(p.read_bytes())
     return [out/'NativeUfs.late.o',wrapper]
