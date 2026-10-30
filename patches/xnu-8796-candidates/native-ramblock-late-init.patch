@@ -1,0 +1,48 @@
+--- a/iokit/bsddev/IOKitBSDInit.cpp
++++ b/iokit/bsddev/IOKitBSDInit.cpp
+@@ -106,9 +106,28 @@
+ thread_call_t corefile_open_call = NULL;
+ #endif
+ 
++#if defined(XNU_NATIVE_RAM_BLOCK_LATE_INIT) && XNU_NATIVE_RAM_BLOCK_LATE_INIT
++#if !defined(XNU_NATIVE_RAM_BLOCK) || !XNU_NATIVE_RAM_BLOCK
++#error Late RamBlock initialization requires its driver and personality
++#endif
++#include <libkern/c++/OSKext.h>
++extern "C" OSReturn native_ramblock_register_late(void);
++#endif
++
+ kern_return_t
+ IOKitBSDInit( void )
+ {
++#if defined(XNU_NATIVE_RAM_BLOCK_LATE_INIT) && XNU_NATIVE_RAM_BLOCK_LATE_INIT
++	/* Finish normal storage constructors/start before entering our own
++	 * metaclass transaction. Do not defer a boot dependency to userspace.
++	 */
++	OSReturn storageResult = OSKext::loadKextWithIdentifier(
++	    "com.apple.iokit.IOStorageFamily", false, false,
++	    kOSKextExcludeNone, kOSKextExcludeNone, NULL);
++	if (storageResult != kOSReturnSuccess) return storageResult;
++	OSReturn ramblockResult = native_ramblock_register_late();
++	if (ramblockResult != kOSReturnSuccess) return ramblockResult;
++#endif
+ 	IOService::publishResource("IOBSD");
+ 
+ #if IOPOLLED_COREFILE
+--- a/bsd/kern/bsd_init.c
++++ b/bsd/kern/bsd_init.c
+@@ -910,7 +910,14 @@
+ #endif
+ 
+ 	bsd_init_kprintf("calling bsd_autoconf\n");
++#if defined(XNU_NATIVE_RAM_BLOCK_LATE_INIT) && XNU_NATIVE_RAM_BLOCK_LATE_INIT
++	kern_return_t ramblockBootResult = bsd_autoconf();
++	if (ramblockBootResult != KERN_SUCCESS) {
++		panic("RamBlock boot dependency failed: 0x%x", ramblockBootResult);
++	}
++#else
+ 	bsd_autoconf();
++#endif
+ 
+ #if CONFIG_DTRACE
+ 	dtrace_postinit();

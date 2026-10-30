@@ -12,6 +12,11 @@ on:
         required: false
         default: false
         type: boolean
+      ramblock_kernel_link_check:
+        description: Link late RamBlock and its initialization into the source kernel (no donor prelink or device boot)
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -86,7 +91,7 @@ jobs:
           GITHUB_TOKEN=${{ github.token }} python3 -u -B device/scripts/ci/build-8796-source.py --base base --profile merged \
             2>&1 | tee "$RUNNER_TEMP/nuwa-host/kernel-console.log"
       - name: Build RamBlock with current private compiler inputs
-        if: ${{ inputs.ramblock_archive_check }}
+        if: ${{ inputs.ramblock_archive_check || inputs.ramblock_kernel_link_check }}
         shell: bash
         run: |
           set -euo pipefail
@@ -94,6 +99,13 @@ jobs:
           python3 -B device/scripts/ci/build-ramblock-archive.py \
             --work "$RUNNER_TEMP/nuwa-8796-source" --base base \
             --llvm-bin "$(brew --prefix llvm)/bin"
+      - name: Link RamBlock and initialize before IOBSD publication
+        if: ${{ inputs.ramblock_kernel_link_check }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B device/scripts/ci/build-ramblock-kernel.py \
+            --work "$RUNNER_TEMP/nuwa-8796-source"
       - name: Collect build evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -106,5 +118,6 @@ jobs:
             ${{ runner.temp }}/nuwa-8796-source/build/driver-archives/**
             ${{ runner.temp }}/nuwa-8796-source/build/ramblock-archive/*.a
             ${{ runner.temp }}/nuwa-8796-source/build/ramblock-archive/*.o
+            ${{ runner.temp }}/nuwa-8796-source/build/ramblock-link/**
           if-no-files-found: error
           retention-days: 7

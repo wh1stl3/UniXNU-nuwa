@@ -1,0 +1,206 @@
+{
+  "native_named_slots_matched": 176,
+  "method_count": 190,
+  "concrete_overrides": 24,
+  "original_methods": [
+    {
+      "slot": 0,
+      "reference_name": "__ZN20IOBlockStorageDeviceD1Ev",
+      "target": "0xfffffff0045d9dbc"
+    },
+    {
+      "slot": 1,
+      "reference_name": "__ZN20IOBlockStorageDeviceD0Ev",
+      "target": "0xfffffff0045d9dc0"
+    },
+    {
+      "slot": 7,
+      "reference_name": "__ZNK20IOBlockStorageDevice12getMetaClassEv",
+      "target": "0xfffffff0045d9dc4"
+    },
+    {
+      "slot": 21,
+      "reference_name": "__ZN20IOBlockStorageDevice4initEP12OSDictionary",
+      "target": "0xfffffff0045d9e30"
+    },
+    {
+      "slot": 33,
+      "reference_name": "__ZNK20IOBlockStorageDevice11getPropertyEPK8OSSymbol",
+      "target": "0xfffffff0045d9e88"
+    },
+    {
+      "slot": 44,
+      "reference_name": "__ZN20IOBlockStorageDevice13setPropertiesEP8OSObject",
+      "target": "0xfffffff0045d9f38"
+    },
+    {
+      "slot": 171,
+      "reference_name": "__ZN20IOBlockStorageDevice18doSynchronizeCacheEv",
+      "target": "0xfffffff0045da074"
+    },
+    {
+      "slot": 182,
+      "reference_name": "__ZN20IOBlockStorageDevice18getWriteCacheStateEPb",
+      "target": "0xfffffff0045da038"
+    },
+    {
+      "slot": 183,
+      "reference_name": "__ZN20IOBlockStorageDevice18setWriteCacheStateEb",
+      "target": "0xfffffff0045da044"
+    },
+    {
+      "slot": 185,
+      "reference_name": "__ZN20IOBlockStorageDevice11requestIdleEv",
+      "target": "0xfffffff0045da050"
+    },
+    {
+      "slot": 186,
+      "reference_name": "__ZN20IOBlockStorageDevice7doUnmapEP26IOBlockStorageDeviceExtentjj",
+      "target": "0xfffffff0045da05c"
+    },
+    {
+      "slot": 187,
+      "reference_name": "__ZN20IOBlockStorageDevice13doSetPriorityEP26IOBlockStorageDeviceExtentjh",
+      "target": "0xfffffff0045da068"
+    },
+    {
+      "slot": 188,
+      "reference_name": "__ZN20IOBlockStorageDevice13doSynchronizeEyyj",
+      "target": "0xfffffff0045da080"
+    },
+    {
+      "slot": 189,
+      "reference_name": "__ZN20IOBlockStorageDevice20doGetProvisionStatusEyyPjP35IOBlockStorageProvisionDeviceExtenty",
+      "target": "0xfffffff0045da08c"
+    }
+  ],
+  "unresolved_by_kernel_name": [
+    {
+      "name": "__ZN20IOBlockStorageDevice10gMetaClassE",
+      "weak": false
+    },
+    {
+      "name": "__ZN20IOBlockStorageDevice11requestIdleEv",
+      "weak": false
+    },
+    {
+      "name": "__ZN20IOBlockStorageDevice13doSetPriorityEP26IOBlockStorageDeviceExtentjh",
+      "weak": false
+    },
+    {
+      "name": "__ZN20IOBlockStorageDevice13setPropertiesEP8OSObject",
+      "weak": false
+    },
+    {
+      "name": "__ZN20IOBlockStorageDevice20doGetProvisionStatusEyyPjP35IOBlockStorageProvisionDeviceExtenty",
+      "weak": false
+    },
+    {
+      "name": "__ZN20IOBlockStorageDevice4initEP12OSDictionary",
+      "weak": false
+    },
+    {
+      "name": "__ZN20IOBlockStorageDevice7doUnmapEP26IOBlockStorageDeviceExtentjj",
+      "weak": false
+    },
+    {
+      "name": "__ZN20IOBlockStorageDeviceC2EPK11OSMetaClass",
+      "weak": false
+    },
+    {
+      "name": "__ZN20IOBlockStorageDeviceD2Ev",
+      "weak": false
+    },
+    {
+      "name": "__ZNK20IOBlockStorageDevice11getPropertyEPK8OSSymbol",
+      "weak": false
+    },
+    {
+      "name": "__ZTV20IOBlockStorageDevice",
+      "weak": false
+    },
+    {
+      "name": "_native_ufs_store_gpt_check",
+      "weak": true
+    },
+    {
+      "name": "_native_ufs_store_mode",
+      "weak": true
+    },
+    {
+      "name": "_native_ufs_store_open",
+      "weak": true
+    },
+    {
+      "name": "_native_ufs_store_read",
+      "weak": true
+    },
+    {
+      "name": "_native_ufs_store_sync",
+      "weak": true
+    },
+    {
+      "name": "_native_ufs_store_write",
+      "weak": true
+    }
+  ],
+  "negative_tests": [
+    {
+      "name": "wrong-signature",
+      "rejected": true,
+      "reason": "Override signature mismatch at 21"
+    },
+    {
+      "name": "abstract-slot",
+      "rejected": true,
+      "reason": "Missing concrete transport implementation"
+    }
+  ],
+  "analysis_only_import_map": {
+    "__ZN20IOBlockStorageDevice10gMetaClassE": "0xfffffff006a091d0",
+    "__ZN20IOBlockStorageDevice11requestIdleEv": "0xfffffff0045da050",
+    "__ZN20IOBlockStorageDevice13doSetPriorityEP26IOBlockStorageDeviceExtentjh": "0xfffffff0045da068",
+    "__ZN20IOBlockStorageDevice13setPropertiesEP8OSObject": "0xfffffff0045d9f38",
+    "__ZN20IOBlockStorageDevice20doGetProvisionStatusEyyPjP35IOBlockStorageProvisionDeviceExtenty": "0xfffffff0045da08c",
+    "__ZN20IOBlockStorageDevice4initEP12OSDictionary": "0xfffffff0045d9e30",
+    "__ZN20IOBlockStorageDevice7doUnmapEP26IOBlockStorageDeviceExtentjj": "0xfffffff0045da05c",
+    "__ZN20IOBlockStorageDeviceC2EPK11OSMetaClass": "0xfffffff0045d9d98",
+    "__ZN20IOBlockStorageDeviceD2Ev": "0xfffffff0045d9db8",
+    "__ZNK20IOBlockStorageDevice11getPropertyEPK8OSSymbol": "0xfffffff0045d9e88",
+    "__ZTV20IOBlockStorageDevice": "0xfffffff005c73f50"
+  },
+  "inherited_header_methods_matched": true,
+  "complete_abi_qualified": false,
+  "deployable": false,
+  "limitations": [
+    "Actual private compiler objects; reference headers still require native slot comparison",
+    "No live metaclass initialization or instance-size observation",
+    "No final link, native import aliases, mount or device execution"
+  ],
+  "evidence": [
+    {
+      "path": "reports\\desktop-readiness\\2026-10-29-storage-class-r1\\audit.json",
+      "sha256": "61245a77c591b96327e6f5c2c342946a21b85bf2b6d50103774d50b63047ddf1"
+    },
+    {
+      "path": "out\\ci-ramblock-40870837215\\nuwa-8796-merged-40870837215\\nuwa-8796-source\\reports\\ramblock-archive\\audit.json",
+      "sha256": "256f676cbbb9659e439d3b86f6be9a8d742ad1430a3845689c762934773593c9"
+    },
+    {
+      "path": "out\\ci-ramblock-40870837215\\nuwa-8796-merged-40870837215\\nuwa-8796-source\\build\\ramblock-archive\\IOBlockStorageReference.o",
+      "sha256": "416ac937191de1b00e9a1b524e130514c7f6d6395ba747933c93e666de6298f8"
+    },
+    {
+      "path": "out\\ci-ramblock-40870837215\\nuwa-8796-merged-40870837215\\nuwa-8796-source\\build\\ramblock-archive\\NativeRamBlock.o",
+      "sha256": "9a03bc024247e2d10f2ebebd83e1ea7c4ca84b980c70010928a3cc813889c9ec"
+    },
+    {
+      "path": "out\\ci-ramblock-40870837215\\nuwa-8796-merged-40870837215\\nuwa-8796-source\\build\\ramblock-archive\\libNativeRamBlock.late.a",
+      "sha256": "3a8d8f27584da5a7a1b91c3c01088efeaf8342870444e110cab8eef2bd7aae72"
+    },
+    {
+      "path": "scripts\\audit-ramblock-production-abi.py",
+      "sha256": "4a73d18b08ad050b869d70ecdc236127b0e64efa39eac5400d38ff5309d86086"
+    }
+  ]
+}
