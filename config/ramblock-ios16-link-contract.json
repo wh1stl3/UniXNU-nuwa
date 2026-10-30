@@ -418,5 +418,9 @@
     "__ZN20IOBlockStorageDevice20doGetProvisionStatusEyyPjP35IOBlockStorageProvisionDeviceExtenty"
   ],
   "ufs_provider_revision": "af785c1777161a62931425c2faaa536ce0bebd5b",
-  "optional_import_policy": "Bind all six imports to the real dormant provider; no null aliases or fake functions"
+  "optional_import_policy": "Bind all six imports to the real dormant provider; no null aliases or fake functions",
+  "ufs_compile_patch": {
+    "path": "patches/driver-candidates/native-ufs-ios16-compile.patch",
+    "sha256": "d17430c9e13c98fd7061e53c185fefcac1bc5e42000ee3035148371b11c82c1a"
+  }
 }

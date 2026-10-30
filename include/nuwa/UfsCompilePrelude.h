@@ -1,5 +1,9 @@
 #pragma once
 #include "RamBlockCompilePrelude.h"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Woverloaded-virtual"
+#include <IOKit/IOPlatformExpert.h>
+#pragma clang diagnostic pop
 // Exact declarations for the fixed NativeUfs provider, not implementations.
 extern "C" {
 unsigned native_ufs_store_mode(void);

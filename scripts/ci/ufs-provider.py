@@ -1,5 +1,5 @@
 """Compile the fixed real UFS provider; no personality or hardware activation."""
-import json, re, subprocess
+import hashlib, json, re, shutil, subprocess
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 
@@ -18,8 +18,15 @@ def build(work,base,llvm,h,late,record,out,reports,report,run):
     pin=json.loads((ROOT/'config/kernel-merged-profile.json').read_bytes())['modules']['drivers/NativeUfs']
     if subprocess.check_output(['git','-C',str(source),'rev-parse','HEAD'],text=True).strip()!=pin:raise ValueError('UFS revision differs')
     if subprocess.check_output(['git','-C',str(source),'status','--porcelain'],text=True).strip():raise ValueError('Dirty UFS source')
+    contract=json.loads((ROOT/'config/ramblock-ios16-link-contract.json').read_bytes())
+    patch=ROOT/contract['ufs_compile_patch']['path']
+    if hashlib.sha256(patch.read_bytes()).hexdigest()!=contract['ufs_compile_patch']['sha256']:raise ValueError('UFS patch changed')
+    copied=out/'ufs-source';shutil.copytree(source,copied,ignore=shutil.ignore_patterns('.git'))
+    run(['git','apply','--check',str(patch)],copied)
+    run(['git','apply',str(patch)],copied)
+    source=copied
     cmd=h.driver_command(record,source/'NativeUfs.cpp',out/'NativeUfs.o',work)
-    cmd+=['-I',str(out/'include'),'-include',str(ROOT/'include/nuwa/UfsCompilePrelude.h'),'-DNATIVE_VERIFIED_BLOCK=0']
+    cmd+=['-I',str(out/'include'),'-include',str(ROOT/'include/nuwa/UfsCompilePrelude.h'),'-DNATIVE_VERIFIED_BLOCK=0','-Wno-error=missing-noreturn']
     run(cmd,record['directory']);h.inspect_object(out/'NativeUfs.o')
     sizes={}
     for name in ('NativeUfs','NativeUfsBlock'):
@@ -46,6 +53,7 @@ def build(work,base,llvm,h,late,record,out,reports,report,run):
     expected=json.loads((ROOT/'config/ramblock-ios16-link-contract.json').read_bytes())['allowed_weak']
     if any(n not in symbols or symbols[n][0]&14!=14 for n in expected):raise ValueError('Real UFS exports missing')
     report['ufs_provider']=dict(source_revision=pin,class_sizes=sizes,retained_sections=sections,retained_relocations=relocs,
-        exports=expected,initializer=init,hardware_enabled=False,personality_enabled=False,verified_root_enabled=False)
-    for p in [Path(__file__),ROOT/'package/NativeUfsLateInit.cpp',ROOT/'include/nuwa/UfsCompilePrelude.h']:(reports/p.name).write_bytes(p.read_bytes())
+        exports=expected,initializer=init,hardware_enabled=False,personality_enabled=False,verified_root_enabled=False,
+        compile_patch=contract['ufs_compile_patch'],compiled_source_sha256=hashlib.sha256((source/'NativeUfs.cpp').read_bytes()).hexdigest())
+    for p in [Path(__file__),ROOT/'package/NativeUfsLateInit.cpp',ROOT/'include/nuwa/UfsCompilePrelude.h',patch]:(reports/p.name).write_bytes(p.read_bytes())
     return [out/'NativeUfs.late.o',wrapper]

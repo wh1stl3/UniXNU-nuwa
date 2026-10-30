@@ -1,0 +1,26 @@
+--- a/NativeUfs.cpp
++++ b/NativeUfs.cpp
+@@ -227,7 +227,8 @@
+ 
+ static void be32 (uint8_t *at, uint32_t value)
+ {
+-  at[0] = value >> 24; at[1] = value >> 16; at[2] = value >> 8; at[3] = value;
++  at[0] = static_cast<uint8_t>(value >> 24); at[1] = static_cast<uint8_t>(value >> 16);
++  at[2] = static_cast<uint8_t>(value >> 8); at[3] = static_cast<uint8_t>(value);
+ }
+ 
+ static uint32_t getBe32 (const uint8_t *at)
+@@ -1469,9 +1470,13 @@
+     void lock () { IOLockLock (mutex); }
+     void unlock () { IOLockUnlock (mutex); }
+     IOReturn read (uint64_t lba, uint32_t blocks, void *out) {
++#if defined(NATIVE_VERIFIED_BLOCK) && NATIVE_VERIFIED_BLOCK
+       uint64_t t0 = timerTicks ();
++#endif
+       IOReturn r = hostRead4k (0, lba, blocks, out);
++#if defined(NATIVE_VERIFIED_BLOCK) && NATIVE_VERIFIED_BLOCK
+       __atomic_fetch_add (&native_ufs_read_ticks, timerTicks () - t0, __ATOMIC_RELAXED);
++#endif
+       return r;
+     }
+     IOReturn verify (uint64_t index, const void *data, size_t length) {
