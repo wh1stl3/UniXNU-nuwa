@@ -16,7 +16,31 @@
    static bool waitSet (uintptr_t base, unsigned offset, uint32_t mask, unsigned loops);
  public:
    IOService *probe (IOService *provider, SInt32 *score) override;
-@@ -1741,8 +1743,86 @@
+@@ -963,7 +965,11 @@
+     return false;
+   }
+   gRootDiagnostic.power = power;
+-  if ((power & 0xff) != 0x11) {
++  if (power != 0x11 && power != 0x22 && power != 0x33) {
++    *why = "unrecognized nuwa device power mode";
++    return false;
++  }
++  if (power != 0x11) {
+     gRootDiagnostic.stage = "device wake";
+     // START STOP UNIT, power condition ACTIVE, to the UFS Device well-known LU (as Linux resumes).
+     uint8_t ssu[6] = { 0x1b, 0, 0, 0, 0x10, 0 };
+@@ -974,6 +980,10 @@
+       return false;
+     }
+     IOSleep (50);
++    if (hostQueryRead (0x03, 0x02, &power) != kIOReturnSuccess || power != 0x11) {
++      *why = "nuwa device ACTIVE readback";
++      return false;
++    }
+   }
+   gRootDiagnostic.stage = "LUN ready";
+   for (unsigned attempt = 0; attempt < 20; attempt++) {
+@@ -1741,8 +1751,141 @@
    panic ("%s", gMediaReport);
  }
  
@@ -26,6 +50,9 @@
 +extern "C" {
 +volatile uint32_t nuwa_metadata_stage;
 +volatile uint32_t nuwa_metadata_result;
++volatile uint32_t nuwa_metadata_crc;
++volatile uint32_t nuwa_metadata_bsd_unit;
++volatile uint32_t nuwa_metadata_completed_bytes;
 +}
 +static bool nuwaMetadataRequested ()
 +{
@@ -55,6 +82,58 @@
 +  if (list) list->release ();
 +  if (person) person->release ();
 +  return ok ? kIOReturnSuccess : kIOReturnError;
++}
++
++// Resolve through IOService and require the ancestry of the published medium.
++// The bounded window starts at physical LU0/LBA1. This read crosses the
++// production block driver's IOMemoryDescriptor and completion callback ABI.
++extern "C" void nuwa_ufs_metadata_observe ()
++{
++  if (__atomic_load_n (&nuwa_metadata_stage, __ATOMIC_ACQUIRE) != 6) return;
++  OSDictionary *match = IOService::serviceMatching ("IOMedia");
++  OSIterator *media = match ? IOService::getMatchingServices (match) : nullptr;
++  if (match) match->release ();
++  if (!media) return;
++  for (unsigned i = 0; i < 128; ++i) {
++    auto entry = OSDynamicCast (IORegistryEntry, media->getNextObject ());
++    if (!entry) break;
++    auto name = OSDynamicCast (OSString, entry->getProperty (kIOBSDNameKey));
++    auto unit = OSDynamicCast (OSNumber, entry->getProperty ("BSD Unit"));
++    auto size = OSDynamicCast (OSNumber, entry->getProperty ("Size"));
++    if (!name || !name->getLength () || !unit || !size || size->unsigned64BitValue () != 8192) continue;
++    NativeUfsBlock *disk = nullptr;
++    auto ancestor = entry;
++    for (unsigned depth = 0; ancestor && depth < 6; ++depth) {
++      disk = OSDynamicCast (NativeUfsBlock, ancestor);
++      if (disk) break;
++      ancestor = ancestor->getParentEntry (gIOServicePlane);
++    }
++    if (!disk || strcmp (disk->windowLabel (), "NuwaUfsMetadata") ||
++        !OSDynamicCast (NativeUfs, disk->getProvider ())) continue;
++    nuwa_metadata_bsd_unit = unit->unsigned32BitValue ();
++    nuwa_metadata_stage = 7;
++    IOBufferMemoryDescriptor *buffer = IOBufferMemoryDescriptor::inTaskWithOptions (
++        kernel_task, kIODirectionIn, 4096, 4096);
++    if (!buffer) { nuwa_metadata_result = kIOReturnNoMemory; break; }
++    struct Reply { unsigned calls; IOReturn result; UInt64 bytes; } reply = {};
++    IOStorageCompletion completion = {};
++    completion.target = &reply;
++    completion.action = [](void *target, void *, IOReturn result, UInt64 bytes) {
++      auto *r = static_cast<Reply *>(target);
++      ++r->calls; r->result = result; r->bytes = bytes;
++    };
++    IOReturn sent = disk->doAsyncReadWrite (buffer, 0, 8, nullptr, &completion);
++    nuwa_metadata_result = sent != kIOReturnSuccess ? sent : reply.result;
++    nuwa_metadata_completed_bytes = static_cast<uint32_t> (reply.bytes);
++    if (sent == kIOReturnSuccess && reply.calls == 1 && reply.result == kIOReturnSuccess &&
++        reply.bytes == 4096 && buffer->getBytesNoCopy ()) {
++      nuwa_metadata_crc = rootCrc32 (static_cast<const uint8_t *>(buffer->getBytesNoCopy ()),4096);
++      if (nuwa_metadata_crc == 0xe7514394U) nuwa_metadata_stage = 8;
++    }
++    buffer->release ();
++    break;
++  }
++  media->release ();
 +}
 +
 +bool NativeUfs::startMetadata (IOService *provider)
@@ -87,7 +166,7 @@
 +  if (disk && disk->init (static_cast<OSDictionary *>(nullptr)) &&
 +      disk->configure ("NuwaUfsMetadata",4096,8192) && (attached = disk->attach (this)) &&
 +      disk->start (this)) {
-+    nuwa_metadata_stage = 6;
++    __atomic_store_n (&nuwa_metadata_stage, 6, __ATOMIC_RELEASE);
 +    disk->release ();
 +    return true;
 +  }
