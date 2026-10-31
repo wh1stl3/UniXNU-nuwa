@@ -32,6 +32,10 @@ def build(work,base,llvm,h,late,record,out,reports,report,run):
     if hashlib.sha256(route_patch.read_bytes()).hexdigest()!=contract['ufs_route_patch']['sha256']:raise ValueError('Nuwa UFS route patch changed')
     run(['git','apply','--check',str(route_patch)],copied)
     run(['git','apply',str(route_patch)],copied)
+    meta_patch=ROOT/contract['ufs_metadata_patch']['path']
+    if hashlib.sha256(meta_patch.read_bytes()).hexdigest()!=contract['ufs_metadata_patch']['sha256']:raise ValueError('Nuwa UFS publication patch changed')
+    run(['git','apply','--check',str(meta_patch)],copied)
+    run(['git','apply',str(meta_patch)],copied)
     source=copied
     cmd=h.driver_command(record,source/'NativeUfs.cpp',out/'NativeUfs.o',work)
     cmd+=['-I',str(out/'include'),'-include',str(ROOT/'include/nuwa/UfsCompilePrelude.h'),'-DNATIVE_VERIFIED_BLOCK=0','-Wno-error=missing-noreturn']
@@ -64,6 +68,6 @@ def build(work,base,llvm,h,late,record,out,reports,report,run):
     if any(n not in symbols or symbols[n][0]&14!=14 for n in expected):raise ValueError('Real UFS exports missing')
     report['ufs_provider']=dict(source_revision=pin,class_sizes=sizes,retained_sections=sections,retained_relocations=relocs,
         exports=expected,initializer=init,hardware_enabled=False,personality_enabled=False,verified_root_enabled=False,
-        compile_patch=contract['ufs_compile_patch'],runtime_patch=contract['ufs_runtime_patch'],route_patch=contract['ufs_route_patch'],command_header_sha256=hashlib.sha256((source/'RootCommands.h').read_bytes()).hexdigest(),compiled_source_sha256=hashlib.sha256((source/'NativeUfs.cpp').read_bytes()).hexdigest(),restored_cold_symbols=cold_symbols)
-    for p in [Path(__file__),ROOT/'package/NativeUfsLateInit.cpp',ROOT/'include/nuwa/UfsCompilePrelude.h',patch,runtime_patch,route_patch]:(reports/p.name).write_bytes(p.read_bytes())
+        compile_patch=contract['ufs_compile_patch'],runtime_patch=contract['ufs_runtime_patch'],route_patch=contract['ufs_route_patch'],metadata_patch=contract['ufs_metadata_patch'],command_header_sha256=hashlib.sha256((source/'RootCommands.h').read_bytes()).hexdigest(),compiled_source_sha256=hashlib.sha256((source/'NativeUfs.cpp').read_bytes()).hexdigest(),restored_cold_symbols=cold_symbols)
+    for p in [Path(__file__),ROOT/'package/NativeUfsLateInit.cpp',ROOT/'include/nuwa/UfsCompilePrelude.h',patch,runtime_patch,route_patch,meta_patch]:(reports/p.name).write_bytes(p.read_bytes())
     return [out/'NativeUfs.late.o',wrapper]

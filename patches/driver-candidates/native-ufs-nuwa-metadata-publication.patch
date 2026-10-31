@@ -1,0 +1,105 @@
+--- a/NativeUfs.cpp
++++ b/NativeUfs.cpp
+@@ -2,6 +2,7 @@
+ // Native sheng SM8550 UFS bring-up. Default-off: no MMIO is touched unless
+ // native-ufs-probe=1 is present. This is a register probe, not a storage driver.
+ #include <IOKit/IOService.h>
++#include <IOKit/IOCatalogue.h>
+ #include <IOKit/IOPlatformExpert.h>
+ #include <IOKit/storage/IOBlockStorageDevice.h>
+ #include <libkern/crypto/sha2.h>
+@@ -69,6 +70,7 @@
+   void inspectSmmu (void);
+   void inspectContextBanks (void);
+   bool startRoot (IOService *provider);
++  bool startMetadata (IOService *provider);
+   static bool waitSet (uintptr_t base, unsigned offset, uint32_t mask, unsigned loops);
+ public:
+   IOService *probe (IOService *provider, SInt32 *score) override;
+@@ -1741,8 +1743,86 @@
+   panic ("%s", gMediaReport);
+ }
+ 
++
++// Explicit, non-root publication exercise. Expose only the two proven GPT
++// metadata blocks, never the Android partition beginning at LBA 3110976.
++extern "C" {
++volatile uint32_t nuwa_metadata_stage;
++volatile uint32_t nuwa_metadata_result;
++}
++static bool nuwaMetadataRequested ()
++{
++  unsigned enabled = 0;
++  return PE_parse_boot_argn ("nuwa-ufs-metadata", &enabled, sizeof (enabled)) && enabled == 1;
++}
++
++extern "C" IOReturn nuwa_ufs_metadata_install ()
++{
++  if (!nuwaMetadataRequested () || !gIOCatalogue) return kIOReturnNotPermitted;
++  // No bundle ID: IOCatalogue treats a statically registered class as in-kernel.
++  OSDictionary *person = OSDictionary::withCapacity (3);
++  OSArray *list = OSArray::withCapacity (1);
++  const OSSymbol *cls = OSSymbol::withCString ("NativeUfs");
++  const OSSymbol *provider = OSSymbol::withCString ("IOPlatformExpertDevice");
++  const OSSymbol *category = OSSymbol::withCString ("NuwaUfsMetadata");
++  bool ok = list && person && cls && provider && category &&
++      person->setObject ("IOClass", cls) && person->setObject ("IOProviderClass", provider) &&
++      person->setObject ("IOMatchCategory", category) && list->setObject (person);
++  if (ok) {
++    __atomic_store_n (&nuwa_metadata_stage, 1, __ATOMIC_RELEASE);
++    ok = gIOCatalogue->addDrivers (list, true);
++  }
++  if (category) category->release ();
++  if (provider) provider->release ();
++  if (cls) cls->release ();
++  if (list) list->release ();
++  if (person) person->release ();
++  return ok ? kIOReturnSuccess : kIOReturnError;
++}
++
++bool NativeUfs::startMetadata (IOService *provider)
++{
++  uint32_t pending = 1;
++  if (!__atomic_compare_exchange_n (&nuwa_metadata_stage, &pending, 2, false,
++                                    __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)) return false;
++  OSSharedPtr<IOMemoryMap> gccMap, hcMap;
++  uintptr_t gcc = mapPhys (0x177000, 4096, gccMap);
++  if (!gcc) return false;
++  uint32_t axi = read32 (gcc, 0x18), ahb = read32 (gcc, 0x24);
++  if (!(read32 (gcc, 4) & 0x80000000U) || !(axi & 1) || (axi >> 31) ||
++      !(ahb & 1) || ((ahb >> 31) && !(ahb & 2))) return false;
++  uintptr_t hc = mapPhys (UFS_HC_BASE, 4096, hcMap);
++  if (!hc || read32 (hc, 8) != 0x400 || read32 (hc, 0) != 0x3587031f ||
++      read32 (hc, 0x300) || read32 (hc, 0x24) || read32 (hc, 0x20) != 0x400 ||
++      read32 (hc, 0x60) != 1 || read32 (hc, 0x80)) return false;
++  nuwa_metadata_stage = 3;
++  const char *why = nullptr;
++  if (!hostBringUp (&why)) return false;
++  nuwa_metadata_stage = 4;
++  IOReturn result = hostRead4k (0, 1, 2, gScratch);
++  nuwa_metadata_result = result;
++  if (result != kIOReturnSuccess || rootCrc32 (gScratch,4096) != 0xe7514394U ||
++      rootCrc32 (gScratch+4096,4096) != 0x4edcb8b5U) return false;
++  nuwa_metadata_stage = 5;
++  if (!IOService::start (provider)) return false;
++  NativeUfsBlock *disk = OSTypeAlloc (NativeUfsBlock);
++  bool attached = false;
++  if (disk && disk->init (static_cast<OSDictionary *>(nullptr)) &&
++      disk->configure ("NuwaUfsMetadata",4096,8192) && (attached = disk->attach (this)) &&
++      disk->start (this)) {
++    nuwa_metadata_stage = 6;
++    disk->release ();
++    return true;
++  }
++  if (attached) disk->detach (this);
++  if (disk) disk->release ();
++  IOService::stop (provider);
++  return false;
++}
++
+ bool NativeUfs::start (IOService *provider)
+ {
++  if (nuwaMetadataRequested () && OSDynamicCast (IOPlatformExpertDevice, provider)) return startMetadata (provider);
+   unsigned probe = 0, rootMode = 0;
+   PE_parse_boot_argn ("native-ufs-probe", &probe, sizeof (probe));
+   PE_parse_boot_argn ("native-ufs-root", &rootMode, sizeof (rootMode));
