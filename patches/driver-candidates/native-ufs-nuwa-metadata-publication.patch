@@ -1,14 +1,17 @@
 --- a/NativeUfs.cpp
 +++ b/NativeUfs.cpp
-@@ -2,6 +2,7 @@
+@@ -2,6 +2,10 @@
  // Native sheng SM8550 UFS bring-up. Default-off: no MMIO is touched unless
  // native-ufs-probe=1 is present. This is a register probe, not a storage driver.
  #include <IOKit/IOService.h>
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Woverloaded-virtual"
 +#include <IOKit/IOCatalogue.h>
++#pragma clang diagnostic pop
  #include <IOKit/IOPlatformExpert.h>
  #include <IOKit/storage/IOBlockStorageDevice.h>
  #include <libkern/crypto/sha2.h>
-@@ -69,6 +70,7 @@
+@@ -69,6 +73,7 @@
    void inspectSmmu (void);
    void inspectContextBanks (void);
    bool startRoot (IOService *provider);
@@ -16,7 +19,7 @@
    static bool waitSet (uintptr_t base, unsigned offset, uint32_t mask, unsigned loops);
  public:
    IOService *probe (IOService *provider, SInt32 *score) override;
-@@ -963,7 +965,11 @@
+@@ -963,7 +968,11 @@
      return false;
    }
    gRootDiagnostic.power = power;
@@ -29,7 +32,7 @@
      gRootDiagnostic.stage = "device wake";
      // START STOP UNIT, power condition ACTIVE, to the UFS Device well-known LU (as Linux resumes).
      uint8_t ssu[6] = { 0x1b, 0, 0, 0, 0x10, 0 };
-@@ -974,6 +980,10 @@
+@@ -974,6 +983,10 @@
        return false;
      }
      IOSleep (50);
@@ -40,7 +43,7 @@
    }
    gRootDiagnostic.stage = "LUN ready";
    for (unsigned attempt = 0; attempt < 20; attempt++) {
-@@ -1741,8 +1751,141 @@
+@@ -1741,8 +1754,143 @@
    panic ("%s", gMediaReport);
  }
  
@@ -48,6 +51,8 @@
 +// Explicit, non-root publication exercise. Expose only the two proven GPT
 +// metadata blocks, never the Android partition beginning at LBA 3110976.
 +extern "C" {
++IOReturn nuwa_ufs_metadata_install ();
++void nuwa_ufs_metadata_observe ();
 +volatile uint32_t nuwa_metadata_stage;
 +volatile uint32_t nuwa_metadata_result;
 +volatile uint32_t nuwa_metadata_crc;
