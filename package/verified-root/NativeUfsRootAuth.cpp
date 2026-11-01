@@ -3,15 +3,11 @@
 // Called only after the original APFS root authentication has returned an error.
 #include <IOKit/IOService.h>
 #include <IOKit/IOBSD.h>
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wzero-as-null-pointer-constant"
-#pragma clang diagnostic ignored "-Wshadow-field"
-#include <IOKit/storage/IOMedia.h>
-#pragma clang diagnostic pop
 #include <libkern/c++/OSDictionary.h>
 #include <libkern/c++/OSIterator.h>
 #include <libkern/c++/OSNumber.h>
 #include <libkern/c++/OSString.h>
+#include <libkern/c++/OSSymbol.h>
 #include <libkern/libkern.h>
 #include <sys/mount.h>
 #include <sys/vnode.h>
@@ -40,7 +36,16 @@ struct RootMediaOps {
     return iterator;
   }
   OSObject *next(OSIterator *it) { return it->getNextObject(); }
-  IOService *media(OSObject *object) { return OSDynamicCast(IOMedia,object); }
+  IOService *media(OSObject *object) {
+    // The carrier exports the checked name lookup, not IOMedia::metaClass.
+    // Own the temporary symbol and reject allocation failure before lookup.
+    if (!object) return nullptr;
+    const OSSymbol *type = OSSymbol::withCStringNoCopy("IOMedia");
+    if (!type) return nullptr;
+    OSMetaClassBase *checked = OSMetaClass::checkMetaCastWithName(type,object);
+    type->release();
+    return static_cast<IOService *>(checked);
+  }
   const char *uuid(IOService *media, const char *expected) {
     OSString *value = OSDynamicCast(OSString,media->getProperty("UUID"));
     return value && value->getLength()==36 && !strcmp(value->getCStringNoCopy(),expected)
