@@ -3,7 +3,11 @@
 // Called only after the original APFS root authentication has returned an error.
 #include <IOKit/IOService.h>
 #include <IOKit/IOBSD.h>
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wzero-as-null-pointer-constant"
+#pragma clang diagnostic ignored "-Wshadow-field"
 #include <IOKit/storage/IOMedia.h>
+#pragma clang diagnostic pop
 #include <libkern/c++/OSDictionary.h>
 #include <libkern/c++/OSIterator.h>
 #include <libkern/c++/OSNumber.h>
