@@ -1,0 +1,50 @@
+--- a/NativeUfs.cpp
++++ b/NativeUfs.cpp
+@@ -1333,7 +1333,7 @@
+ volatile uint64_t native_ufs_verified_blocks = 0;
+ // Time spent hashing/verifying and reading from the UFS transport, in generic-timer ticks (diagnostic only).
+ volatile uint64_t native_ufs_verify_ticks = 0, native_ufs_read_ticks = 0;
+-static inline uint64_t timerTicks (void) {uint64_t v; __asm__ volatile ("isb\n\tmrs %0, cntpct_el0" : "=r" (v)); return v;}
++// Timing counters retained for symbol compatibility; hot-path sampling removed.
+ volatile uint32_t native_ufs_integrity_failures = 0;
+ 
+ bool NativeUfsBlock::configureVerification ()
+@@ -1492,20 +1492,11 @@
+     void lock () { IOLockLock (mutex); }
+     void unlock () { IOLockUnlock (mutex); }
+     IOReturn read (uint64_t lba, uint32_t blocks, void *out) {
+-#if defined(NATIVE_VERIFIED_BLOCK) && NATIVE_VERIFIED_BLOCK
+-      uint64_t t0 = timerTicks ();
+-#endif
+-      IOReturn r = hostRead4k (0, lba, blocks, out);
+-#if defined(NATIVE_VERIFIED_BLOCK) && NATIVE_VERIFIED_BLOCK
+-      __atomic_fetch_add (&native_ufs_read_ticks, timerTicks () - t0, __ATOMIC_RELAXED);
+-#endif
+-      return r;
++      return hostRead4k (0, lba, blocks, out);
+     }
+     IOReturn verify (uint64_t index, const void *data, size_t length) {
+ #if defined(NATIVE_VERIFIED_BLOCK) && NATIVE_VERIFIED_BLOCK
+-      uint64_t t0 = timerTicks ();
+       int status = vr_verify_block (view, index, data, length, &vr_xnu_crypto);
+-      __atomic_fetch_add (&native_ufs_verify_ticks, timerTicks () - t0, __ATOMIC_RELAXED);
+       if (status != VR_OK) {
+         gRootDiagnostic.stage = "read block integrity";
+         gRootDiagnostic.verify = static_cast<uint32_t> (status);
+@@ -1513,7 +1504,6 @@
+         return kIOReturnNotPrivileged;
+       }
+       __atomic_fetch_add (&native_ufs_verified_blocks, 1, __ATOMIC_RELAXED);
+-      if (boot_progress_poll) boot_progress_poll ();
+ #else
+       (void) index; (void) data; (void) length;
+ #endif
+@@ -1535,7 +1525,7 @@
+   if (result != kIOReturnSuccess) {
+     __atomic_fetch_add (&native_ufs_block_failures, 1, __ATOMIC_RELAXED);
+     gRootDiagnostic.result = static_cast<uint32_t> (result);
+-    rootDiagnosticFailure ("root window read failed");
++    // Return the real error through the completion, after releasing the window lock.
+   }
+   completion->action (completion->target, completion->parameter, result, done);
+   return kIOReturnSuccess;

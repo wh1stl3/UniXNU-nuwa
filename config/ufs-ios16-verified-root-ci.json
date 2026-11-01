@@ -1,0 +1,16 @@
+{
+  "sources": {
+    "package/verified-root/LICENSE": "0c4c3decc1706b584cd7c6cc54d8249fb817d5051c949c9eed25d3c1a5661e67",
+    "package/verified-root/SOURCE.json": "8b20b680797b97fa9d513ebe16e558dcd96236b90aa63d156fdec512ab19d18b",
+    "package/verified-root/VerifiedBlockPolicy.h": "71deb378d00faec4b1df133f1346bb08352172736b7da7e8c0c745c3df5ca73f",
+    "package/verified-root/verified_root.c": "d3a07258f96664c24764e429a860a47998b28475b945c1ba2ec78f832606c149",
+    "package/verified-root/verified_root.h": "1d88a25956f3221cfa509ee51fe38d89b772b843cd3386e56245b93251a723db",
+    "package/verified-root/xnu_crypto.c": "af24f73b42dbbd3d99d346fda62596bd2f6e525d7185d435a712b2b8a66d21b7"
+  },
+  "patches": {
+    "patches/driver-candidates/native-ufs-nuwa-root-publication.patch": "ac8a2ee563f94042e43a26d74a30776992f61aa6dd074b6e225bc4eb1e0daf6c",
+    "patches/driver-candidates/native-ufs-root-read-completion.patch": "e81a3337a40442d51912e227c8a153e9bc6ea0d8c903903af2635e97eaf5b359"
+  },
+  "bootable": false,
+  "root_policy_embedded": false
+}

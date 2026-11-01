@@ -1,0 +1,40 @@
+diff --git a/NativeUfs.cpp b/NativeUfs.cpp
+--- a/NativeUfs.cpp
++++ b/NativeUfs.cpp
+@@ -1773,6 +1773,36 @@ static bool nuwaMetadataRequested ()
+   return PE_parse_boot_argn ("nuwa-ufs-metadata", &enabled, sizeof (enabled)) && enabled == 1;
+ }
+ 
++// Root activation is separate from the GPT-only qualification personality.
++// No device is started directly; normal IOKit matching owns the lifetime.
++extern "C" IOReturn nuwa_ufs_root_install ()
++{
++#if !defined(NATIVE_VERIFIED_BLOCK) || !NATIVE_VERIFIED_BLOCK
++  return kIOReturnUnsupported;
++#else
++  unsigned root = 0, probe = 0;
++  PE_parse_boot_argn ("native-ufs-root", &root, sizeof (root));
++  PE_parse_boot_argn ("native-ufs-probe", &probe, sizeof (probe));
++  if (root != 1 || probe || nuwaMetadataRequested () || !gIOCatalogue)
++    return kIOReturnNotPermitted;
++  OSDictionary *person = OSDictionary::withCapacity (3);
++  OSArray *list = OSArray::withCapacity (1);
++  const OSSymbol *cls = OSSymbol::withCString ("NativeUfs");
++  const OSSymbol *provider = OSSymbol::withCString ("IOPlatformExpertDevice");
++  const OSSymbol *category = OSSymbol::withCString ("NuwaUfsRoot");
++  bool ok = list && person && cls && provider && category &&
++      person->setObject ("IOClass", cls) && person->setObject ("IOProviderClass", provider) &&
++      person->setObject ("IOMatchCategory", category) && list->setObject (person);
++  if (ok) ok = gIOCatalogue->addDrivers (list, true);
++  if (category) category->release ();
++  if (provider) provider->release ();
++  if (cls) cls->release ();
++  if (list) list->release ();
++  if (person) person->release ();
++  return ok ? kIOReturnSuccess : kIOReturnError;
++#endif
++}
++
+ extern "C" IOReturn nuwa_ufs_metadata_install ()
+ {
+   if (!nuwaMetadataRequested () || !gIOCatalogue) return kIOReturnNotPermitted;

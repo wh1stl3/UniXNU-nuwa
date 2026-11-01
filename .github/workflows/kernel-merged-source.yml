@@ -17,6 +17,11 @@ on:
         required: false
         default: false
         type: boolean
+      verified_ufs_check:
+        description: Build authenticated NativeUfs and crypto with current iOS16 private headers; no root policy or device activation
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -91,13 +96,13 @@ jobs:
           GITHUB_TOKEN=${{ github.token }} python3 -u -B device/scripts/ci/build-8796-source.py --base base --profile merged \
             2>&1 | tee "$RUNNER_TEMP/nuwa-host/kernel-console.log"
       - name: Build RamBlock with current private compiler inputs
-        if: ${{ inputs.ramblock_archive_check || inputs.ramblock_kernel_link_check }}
+        if: ${{ inputs.ramblock_archive_check || inputs.ramblock_kernel_link_check || inputs.verified_ufs_check }}
         shell: bash
         run: |
           set -euo pipefail
           brew install llvm
           provider_args=()
-          if [ "${{ inputs.ramblock_kernel_link_check }}" = "true" ]; then provider_args+=(--ufs-provider); fi
+          if [ "${{ inputs.ramblock_kernel_link_check }}" = "true" ] || [ "${{ inputs.verified_ufs_check }}" = "true" ]; then provider_args+=(--ufs-provider); fi
           python3 -B device/scripts/ci/build-ramblock-archive.py \
             --work "$RUNNER_TEMP/nuwa-8796-source" --base base \
             --llvm-bin "$(brew --prefix llvm)/bin" "${provider_args[@]}"
@@ -108,6 +113,13 @@ jobs:
           set -euo pipefail
           python3 -B device/scripts/ci/build-ramblock-kernel.py \
             --work "$RUNNER_TEMP/nuwa-8796-source"
+      - name: Compile authenticated NativeUfs separately
+        if: ${{ inputs.verified_ufs_check }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B device/scripts/ci/build-verified-ufs.py \
+            --work "$RUNNER_TEMP/nuwa-8796-source" --llvm-bin "$(brew --prefix llvm)/bin"
       - name: Collect build evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -121,5 +133,7 @@ jobs:
             ${{ runner.temp }}/nuwa-8796-source/build/ramblock-archive/*.a
             ${{ runner.temp }}/nuwa-8796-source/build/ramblock-archive/*.o
             ${{ runner.temp }}/nuwa-8796-source/build/ramblock-link/**
+            ${{ runner.temp }}/nuwa-8796-source/build/verified-ufs/*.a
+            ${{ runner.temp }}/nuwa-8796-source/build/verified-ufs/*.o
           if-no-files-found: error
           retention-days: 7
