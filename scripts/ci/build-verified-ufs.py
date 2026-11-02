@@ -65,7 +65,10 @@ def main():
             command+=['-I',str(ROOT/'package/verified-root')];run(command,c['directory']);h.inspect_object(out/(name+'.o'))
         auth=h.driver_command(cpp,ROOT/'package/verified-root/NativeUfsRootAuth.cpp',out/'NativeUfsRootAuth.o',work)
         auth+=['-I',str(previous/'include'),'-I',str(ROOT/'package/verified-root')];run(auth,cpp['directory']);h.inspect_object(out/'NativeUfsRootAuth.o')
-        objects=[out/n for n in ('NativeUfs.late.o','NativeUfsLateInit.o','verified_root.o','xnu_crypto.o','NativeUfsRootAuth.o')]
+        selector=h.driver_command(cpp,ROOT/'package/verified-root/NuwaUfsVolumeSelect.cpp',out/'NuwaUfsVolumeSelect.o',work)
+        selector+=['-I',str(previous/'include'),'-I',str(ROOT/'package/verified-root')]
+        run(selector,cpp['directory']);h.inspect_object(out/'NuwaUfsVolumeSelect.o')
+        objects=[out/n for n in ('NativeUfs.late.o','NativeUfsLateInit.o','verified_root.o','xnu_crypto.o','NativeUfsRootAuth.o','NuwaUfsVolumeSelect.o')]
         for obj in objects:
             if set(late['inspect'](obj.read_bytes())[0])&late['REMOVED']:raise ValueError('Unexpected automatic initializer')
         run([llvm/'llvm-ar','rcs',out/'libNativeUfs.verified.a']+objects)
