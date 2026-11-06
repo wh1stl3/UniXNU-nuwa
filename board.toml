@@ -1,37 +1,84 @@
+# 官方 format 2（schema_version = 2）。结构参考 UniXNU-sheng/board.toml，不含任何 sheng 板级值。
+# 解析器按 arch → soc → os → device 顺序合并；表按键合并，数组整体替换。
+schema_version = 2
+
 [board]
 name = "nuwa"
 soc = "SM8550"
-description = "Xiaomi 13 Pro / iOS 16 bring-up"
-# TODO: kit，尚无经审查的nuwa平台kit，不能照抄sheng实现。
+soc_source = "sm8550"
+# 官方 profiles/os 目前只提供 ipados-17.7.11-21H461 / ipados-26.5.2-23F84 / ipados-27.0.1-24A446。
+# iOS 16（8796 / 20H392）profile 需按 porting/steps 第 2 步自建后替换此值；替换前解析失败属预期。
+os_profile = "REQUIRED_OS_PROFILE"
+description = "Xiaomi 13 Pro (nuwa), SM8550, iOS 16.7.16 target"
+kit = "nuwa"
+
+[components]
+# 仅列输入已满足的组件；存储/显示/输入/GPU/AES 待板级输入与 ABI 审查后按规范 ID（ShengUfs、GopFramebuffer…）追加。
+include = ["ArmDTPlatform", "ArmCpu", "XnuPrelink", "DarwinBoot"]
+
+[kernel]
+defconfig = "nuwa_defconfig"
+config_fragments = ["arch:configs/common.config"]
+# SM8550 共享仓的 patches/xnu/series 面向 10063/12377 线，8796 兼容性未审；审查前不挂 soc series。
+patch_series = ["arch:patches/xnu/series", "device:patches/xnu/series"]
+
+[device_tree]
+source = "device:dts/nuwa.dts"
+include_dirs = ["soc:dts"]
 
 [ipsw]
 product = "iPhone10,3"
 version = "16.7.16"
 build = "20H392"
 device_class = "d22ap"
-# TODO: url/chip_id/board_id/sha256；缺donor BuildManifest及组件哈希核对。
+fetch = ["KernelCache", "DeviceTree", "StaticTrustCache"]
+# TODO: url / chip_id / board_id / [ipsw.sha256]——缺 donor BuildManifest 与组件哈希核对（见 porting.toml limits）。
 
 [payload]
-# R-012 批准 A（2026-10-24）：实机 FDT /memory 的 9 条 reg 合并后最大连续段跨度
-# 0x240000000（base 0x8c0000000，精确 9216 MiB，2 MiB 对齐），与 D-001 独立吻合。
-# 这是广告给内核的物理 DRAM 大小，不是分配承诺。
+volume = "NUWAESP"
+size_mib = 192
+loader = "firmware"
+title = "UniXNU"
+# R-012 批准 A（2026-10-24）：实机 FDT /memory 9 条 reg 合并后最大连续段跨度 0x240000000（base 0x8c0000000，9216 MiB）。
 dram_size = "0x240000000"
-# TODO: volume/size_mib/kernel_args、[userdata] LBA，缺本轮GPT证据核对。
+kernel_args = ["-v", "serial=3"]
+# TODO: [userdata] first_lba / last_lba / lba_bytes 需 nuwa 实测 GPT 证据。
 
 [payload.adt]
-# 2026-10-24: 设备仓自己的 ADT 生成器落地，契约见 UniXNU docs/zh/concepts/payload.md。
-# 设备仓 scripts/ 会被拷进构建树 scripts/，因此这里是相对路径。
-tool = "scripts/make-nuwa-adt.py"
-ipad_identity = true
+# format 2：ADT 由共享生成器从 dts/nuwa.dts + OS profile 身份产出，不再声明 tool。
+# TODO: chip_id 由 donor 设备树核对（sheng=207 不可照抄）。
+chip_id = "REQUIRED_CHIP_ID"
+# R-012 批准 A：窗口上界 1 GiB；固件能否返回该连续 conventional memory 未验证。
+owned_memory_size = "0x40000000"
 # 实机 FDT /cpus/cpu@0..cpu@700：Affinity1 编号 0x000..0x700，共 8 核。
 cpu_regs = "0,256,512,768,1024,1280,1536,1792"
 # 实机 FDT /soc/psci method = "smc"。
 psci_method = "smc"
-# R-012 批准 A（2026-10-24）：D-002 首版窗口 512 MiB–1 GiB，取上界 1 GiB。
-# 固件能否返回这样一段连续 conventional memory 仍未验证，属启动资格问题。
-owned_memory_size = "0x40000000"
-# TODO: chip_id/unique_chip_id —— 平台种子不入库，构建时用 --unique-chip-id 或
-#   UNIXNU_UNIQUE_CHIP_ID 传入；board 侧置 unique_chip_id = "required" 须先定 chip_id。
-# TODO: [kernel] defconfig/archives，缺8796配置及Darwin22接口审查。
-# TODO: [kernel.prelink] 全部数值，缺donor kernelcache分析；不借sheng/fuxi值。
-# TODO: [firmware] 配置/路径与 [bootimg.image] 地址/offset，缺nuwa装载证据。
+# nuwa 目标为 iOS（iPhone donor），不做 iPad 身份化。
+ipad_identity = false
+root_match_volume_uuid = "REQUIRED_ROOT_VOLUME_UUID"
+
+[firmware]
+config = "nuwa"
+dsc = "Platforms/Xiaomi/nuwaPkg/nuwa.dsc"
+fd = "Build/nuwaPkg/{target}_CLANGPDB/FV/SILICIUM_UEFI.fd"
+preflight = []
+# Mu-Silicium 子模块：Common/Mu 与 Mu_OEM_Sample 提供 MdePkg/MdeModulePkg，openssl 供 Silicium 的 TLS 库；
+# Mu_Basecore 通过 --edk2/UNIXNU_EDK2 指定，Binaries 是厂商二进制（不入库）。
+submodules = ["Common/Mu", "Common/Mu_OEM_Sample", "Silicium-ACPI", "Silicon/Silicium/OpensslPkg/Library/OpensslLib/openssl"]
+patches = []
+packages = [
+  "{uefi}", "{uefi}/Platforms/Xiaomi", "{tree}/package", "{tree}/drivers/DarwinBoot", "{edk2}",
+  "{uefi}/Common/Mu", "{uefi}/Common/Mu_OEM_Sample", "{uefi}/Silicon/Qualcomm", "{uefi}/Silicon/Silicium",
+]
+
+[firmware.defines]
+DEVICE_MODEL = "nuwa"
+
+# TODO: [bootimg] dtb 由板级 preflight 脚本生成（官方 sheng 用 build/sheng/sheng.dtb）；nuwa 尚无 preflight。
+
+[package]
+unixnu = "../../UniXNU"
+
+[package.defconfig]
+"ios-16.7.16-20H392" = "nuwa_defconfig"
