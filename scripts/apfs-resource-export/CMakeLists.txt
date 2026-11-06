@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.16)
+project(NuwaResourceExport LANGUAGES C CXX)
+set(APFS_SOURCE /mnt/d/Code/PortingiOSLegacy/common/sources/apfs-fuse)
+add_subdirectory(${APFS_SOURCE} apfs EXCLUDE_FROM_ALL)
+add_executable(nuwa-resource-export main.cpp)
+target_compile_features(nuwa-resource-export PRIVATE cxx_std_17)
+target_include_directories(nuwa-resource-export PRIVATE ${APFS_SOURCE})
+target_link_libraries(nuwa-resource-export PRIVATE apfs)
