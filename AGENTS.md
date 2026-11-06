@@ -13,3 +13,7 @@
 - flash/erase/改槽等设备写入动作：须用户当轮明确授权。
 - 唯一 ECID（--unique-chip-id）等设备种子只经命令行传入，不入库（治理 §6）。
 - 含 Apple 组件的产物（kernel-prelinked.macho、boot.img 等）只留本地 out/，不上传 GitHub（治理 §7）。
+
+## 关联文档
+- AI 分工与调度：`../../docs/ai-orchestration-2026-11-06.md`（Codex 主模型 + DeepSeek MCP + Luna/Terra 子模型，峰谷调度）。
+- 路线背景与备选路线：`../../docs/nuwa-ios17-sheng-migration-2026-11-06.md`。
