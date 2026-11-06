@@ -6,9 +6,8 @@ schema_version = 2
 name = "nuwa"
 soc = "SM8550"
 soc_source = "sm8550"
-# 官方 profiles/os 目前只提供 ipados-17.7.11-21H461 / ipados-26.5.2-23F84 / ipados-27.0.1-24A446。
-# iOS 16（8796 / 20H392）profile 需按 porting/steps 第 2 步自建后替换此值；替换前解析失败属预期。
-os_profile = "REQUIRED_OS_PROFILE"
+# 官方树不自带 iOS 16 profile；本工作区在 UniXNU/profiles/os/ios-16.7.16-20H392 自建（见 docs/nuwa-ios16-profile-plan-2026-11-06.md）。
+os_profile = "ios-16.7.16-20H392"
 description = "Xiaomi 13 Pro (nuwa), SM8550, iOS 16.7.16 target"
 kit = "nuwa"
 
