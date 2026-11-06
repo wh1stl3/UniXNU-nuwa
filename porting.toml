@@ -70,9 +70,9 @@ paths = ["drivers/ShengUfs", "scripts/*ufs*", "scripts/*storage*", "scripts/*use
 inputs = ["Identify the storage and root hardware, resources and existing component interfaces for this board."]
 configuration = ["Record the board.toml fields, DTS properties and defconfig values used for storage and root."]
 procedure = ["Follow the storage and root stage in the porting guide and record the actual commands."]
-findings = ["Repo hygiene: removed the committed __pycache__ copies of the format-1 legacy tooling; no source behaviour changes.", "Collect the first storage and root observation, its cause when established, and the resulting implementation decision."]
+findings = ["Launch route B decided 2026-11-06 (docs/launch-route-2026-11-06.md): bring-up runs from fastboot boot (route A, no partition writes), then the end state is the native UFS root with the userdata partition flashed as the root volume. B needs [userdata] LBA geometry from this board's GPT, root_match_volume_uuid from the built userdata image, native-ufs-root=1, CONFIG_XNU_NATIVE_UFS=y and the ShengUfs component; the flash overwrites Android data and requires explicit user authorisation.", "Repo hygiene: removed the committed __pycache__ copies of the format-1 legacy tooling; no source behaviour changes.", "Collect the first storage and root observation, its cause when established, and the resulting implementation decision."]
 completion = ["Host: register, clock, link and SMMU facts match the board inventory.", "Reads: SCSI capacity, GPT and known blocks are correct; OS/SystemOS windows stay within userdata.", "Root: the configured volume mounts and launchd starts. Persistence: writes survive reboot within the allocated Data region."]
-limits = ["Hardware inputs and implementation are pending for nuwa."]
+limits = ["Route B is unconfigured: [userdata] geometry, root volume UUID, ShengUfs/archives and the storage ABI inputs are missing, so only route A (RAM boot) runs today.", "Hardware inputs and implementation are pending for nuwa."]
 next_action = ["Inventory the required storage and root inputs before implementation."]
 evidence = []
 
