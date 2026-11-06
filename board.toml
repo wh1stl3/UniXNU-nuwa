@@ -66,7 +66,9 @@ preflight = []
 # Mu-Silicium 子模块：Common/Mu 与 Mu_OEM_Sample 提供 MdePkg/MdeModulePkg，openssl 供 Silicium 的 TLS 库；
 # Mu_Basecore 通过 --edk2/UNIXNU_EDK2 指定，Binaries 是厂商二进制（不入库）。
 submodules = ["Common/Mu", "Common/Mu_OEM_Sample", "Silicium-ACPI", "Silicon/Silicium/OpensslPkg/Library/OpensslLib/openssl"]
-patches = []
+# Mu-Silicium 的 GIC 伪中断修复：两个仓的 Resources/MuPatches 都有该补丁，sheng 同基座也在用；
+# 首次固件构建时须确认它仍能干净应用到共享 edk2 树。
+patches = ["Resources/MuPatches/Gic-Spurious.patch"]
 packages = [
   "{uefi}", "{uefi}/Platforms/Xiaomi", "{tree}/package", "{tree}/drivers/DarwinBoot", "{edk2}",
   "{uefi}/Common/Mu", "{uefi}/Common/Mu_OEM_Sample", "{uefi}/Silicon/Qualcomm", "{uefi}/Silicon/Silicium",
