@@ -15,5 +15,5 @@
 - 含 Apple 组件的产物（kernel-prelinked.macho、boot.img 等）只留本地 out/，不上传 GitHub（治理 §7）。
 
 ## 关联文档
-- AI 分工与调度：`../../docs/ai-orchestration-2026-11-06.md`（Codex 主模型 + DeepSeek MCP + Luna/Terra 子模型，峰谷调度）。
+- AI 分工与调度：`../../docs/ai-orchestration-2026-11-06.md`（主模型 GPT-6 Astra Low；子 agent Luna/Terra/Astra High；外部 DeepSeek Flash/V4-Pro via MCP；路由规则见该文档 §2）。
 - 路线背景与备选路线：`../../docs/nuwa-ios17-sheng-migration-2026-11-06.md`。
