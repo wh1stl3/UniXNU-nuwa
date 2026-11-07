@@ -1,2 +1,23 @@
-# 设备板级 XNU 补丁，每行一个文件、按应用顺序；相对路径从本 series 所在目录解析。
-# 当前为空：8796 线的 41+64 补丁仍在旧仓与备份中，未迁入 format 2。
+# Device XNU patch series for nuwa (xnu-8796.141.3 / iOS 16.7.16-20H392).
+# Minimal bring-up set to reach stage 5 (kernel entry -> platform expert).
+# Shared arch patches are referenced with the arch: prefix; the four patches that
+# fail on 8796 are ported locally as 8796-<name>.patch at their original positions.
+# OPTIONAL patches (storage/GPU/AES/exec/systemos/cryptex/trust/userland/mockfs)
+# are omitted; re-add them for later stages. Order mirrors profiles/arch/arm64/patches/xnu/series.
+8796-apple-only-cpu-tunables.patch
+arch:../../../patches/xnu/architectural-timer-entry.patch
+arch:../../../patches/xnu/armvirt-platform-personality.patch
+arch:../../../patches/xnu/cxx-flag-dependencies.patch
+arch:../../../patches/xnu/disabled-deferred-reclaim.patch
+arch:../../../patches/xnu/kernel-sdk-root.patch
+arch:../../../patches/xnu/local-availability.patch
+arch:../../../patches/xnu/native-4k-bootstrap-capacity.patch
+arch:../../../patches/xnu/native-4k-user-abi.patch
+arch:../../../patches/xnu/native-arm-pan.patch
+arch:../../../patches/xnu/non-apple-cache-monitor.patch
+8796-non-apple-iommu-bootstrap.patch
+arch:../../../patches/xnu/non-apple-pmap-field.patch
+arch:../../../patches/xnu/source-corecrypto14-bootstrap.patch
+8796-source-machine-layer.patch
+arch:../../../patches/xnu/source-pthread-bootstrap.patch
+8796-zzx-pmap-sync-64bit-pa.patch

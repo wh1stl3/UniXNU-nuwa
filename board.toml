@@ -18,8 +18,8 @@ include = ["ArmDTPlatform", "ArmCpu", "XnuPrelink", "DarwinBoot"]
 [kernel]
 defconfig = "nuwa_defconfig"
 config_fragments = ["arch:configs/common.config"]
-# SM8550 共享仓的 patches/xnu/series 面向 10063/12377 线，8796 兼容性未审；审查前不挂 soc series。
-patch_series = ["arch:patches/xnu/series", "device:patches/xnu/series"]
+# 8796 线：arch/soc series 仍面向 10063 且 13 条 arch 补丁对 8796 失效；device series 承载最小 8796 集（arch 经前缀引用，失败者改 8796- 移植版）。
+patch_series = ["device:patches/xnu/series"]
 
 [device_tree]
 source = "device:dts/nuwa.dts"
