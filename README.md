@@ -2,7 +2,7 @@
 
 Xiaomi 13 Pro（nuwa，SM8550）的 UniXNU 设备仓。目标：iOS 16.7.16 / 20H392，donor 身份 iPhone10,3（D22AP）。
 
-**当前阶段**：官方 `porting/steps` 第 2–3 步之间——仓库已转成 format 2（`schema_version = 2`），OS profile 与硬件输入仍在收集；`board.os_profile` 保持 `REQUIRED_OS_PROFILE`，解析失败属预期。
+**当前阶段**：官方 `porting/steps` **第 5 步（准备硬件描述与固件）进行中**。第 4 步已完成并留证：`defconfig` → `fetch` → `status --json` → `tree` 对本地 iOS 16.7.16-20H392 profile 解析通过，`unixnu.lock` 已提交。OS profile 在本地基座 `UniXNU` 的 `693f5d9cae8a408dd18b39f3f9fdc4228c934241`（xnu 8796.141.3 / `1b191cb58250d0705d8a51287127505aa4bc0789`）；本仓记录基线 `279c990a0c7a238aa0a5818493c6cd6a46528749`。第 5 步在做：`uefi-nuwa` 的 `nuwaPkg` 必需模块集成与固件日志导出，板级 DTS 与固件 DTB 的一致性核对。**下一步**：固件集成提交与构建日志落证后进入第 6 步驱动选型。
 
 ## 三仓关系
 
@@ -37,7 +37,7 @@ scripts/package.sh --check --os ios-16.7.16-20H392
 scripts/package.sh --os ios-16.7.16-20H392 --uefi ../uefi-nuwa
 ```
 
-`board.os_profile` 仍是占位值、`[ipsw] url/chip_id/board_id/sha256` 未填之前，上述命令会在解析阶段停止；待办见 `porting.toml` 的 `configuration` 与 `packaging` 区域。
+第 4 步的 `defconfig` / `fetch` / `status --json` / `tree` 已对 `board.os_profile = ios-16.7.16-20H392` 解析通过，不再停在解析阶段；镜像组装属第 7 步。仍缺：donor `KernelCache` 成员在 `[ipsw.sha256]` 的哈希、`[userdata]` 几何与 `[bootimg]` 实测值——待办见 `porting.toml` 的 `configuration`、`packaging` 区域。
 
 ## 记录
 

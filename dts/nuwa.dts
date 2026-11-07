@@ -15,8 +15,10 @@
 	};
 
 	/*
-	 * TODO: 用实机 FDT /memory 的 9 条 reg 逐条替换。
-	 * 当前仅写入 R-012 批准 A（2026-10-24）的合并跨度：base 0x8c0000000，size 0x240000000（9216 MiB）。
+	 * 单一连续 DRAM 范围是硬要求（UniXNU scripts/unixnu/devicetree.py 的 ADT 交接只接受一个
+	 * 连续 /memory 区间），所以不拆分实机 FDT 的多段 reg。此处保留 R-012 批准 A（2026-10-24）
+	 * 的合并跨度：base 0x8c0000000，size 0x240000000（9216 MiB），即 owned-window 契约的几何。
+	 * 高端末 4 KiB 与内部/动态保留区的归属未闭合（见 docs/step5-firmware.md），本次不改数值。
 	 */
 	memory@8c0000000 {
 		device_type = "memory";

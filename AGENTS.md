@@ -6,9 +6,10 @@
 小米 13 Pro（nuwa / SM8550）通过 UniXNU 运行 iOS 16（donor: iPhone10,3 / 16.7.16 / 20H392，xnu-8796 线）。
 
 ## 基线
-- 基座：`D:/Code/PortingiOS/UniXNU`（上游 main `e2fdae4` + 本地 submodule pin `af9d099`：ArmCpu=93a5030、XnuPrelink=f1d80d3）。
+- 基座：`D:/Code/PortingiOS/UniXNU`（上游 main `e2fdae4` + 本地 `af9d099`（submodule pin：ArmCpu=93a5030、XnuPrelink=f1d80d3）与 `693f5d9cae8a408dd18b39f3f9fdc4228c934241`（iOS 16.7.16-20H392 profile））。
 - **已是官方 format 2 骨架**：`schema_version = 2`、`feeds.toml`（钉 `UniXNU-sm8550-common@a9f45dc6…`）、`dts/nuwa.dts`、`configs/nuwa_defconfig`、`patches/xnu/series`、`porting.toml`、`scripts/package.sh`、`.github/workflows/*`。
-- 未完成：`board.os_profile` 仍是 `REQUIRED_OS_PROFILE`（官方未提供 iOS 16 profile）；`[ipsw]` 缺 url/chip_id/board_id/sha256；`[userdata]`、`[bootimg]` 缺实测值。
+- 进度：官方第 4 步已完成——`defconfig` → `fetch` → `status --json` → `tree` 对 `board.os_profile = ios-16.7.16-20H392` 解析通过，`unixnu.lock` 已提交（设备仓基线 `279c990a0c7a238aa0a5818493c6cd6a46528749`）；第 5 步（硬件描述与固件）进行中。
+- 未完成：`[ipsw.sha256]` 缺 donor `KernelCache` 成员哈希（url/chip_id/board_id 与 DeviceTree、StaticTrustCache 哈希由 profile 提供）；`[payload.adt]` 的 `chip_id`、`root_match_volume_uuid` 仍是 `REQUIRED_*`；`[userdata]`、`[bootimg]` 缺实测值。
 - 历史 8796 补丁（41+64）与 ADT 脚本仍在旧仓/备份，未迁入 format 2；`scripts/` 下是历史审计工具，可直接复用，但不再充当 ADT 生成器。
 
 ## 目录约定（官方布局）
