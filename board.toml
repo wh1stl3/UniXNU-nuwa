@@ -58,8 +58,11 @@ lba_bytes = 4096
 
 [payload.adt]
 # format 2：ADT 由共享生成器从 dts/nuwa.dts + OS profile 身份产出，不再声明 tool。
-# TODO: chip_id 由 donor 设备树核对（sheng=207 不可照抄）。
-chip_id = "REQUIRED_CHIP_ID"
+# chip_id is the u32 ADT /chosen/chip-id, a software identity value that seeds IOPlatformUUID together with the
+# unique-chip-id; it is not an Apple silicon ID. The donor DeviceTree carries chip-id = 0 (a template placeholder
+# that iBoot fills at run time), so there is no donor value to copy. This value was drawn at random on 2026-11-07,
+# is nonzero, and differs from sheng's value and from the donor ApChipID 0x8015. Keep it stable once images exist.
+chip_id = "4acab8db"
 # R-012 批准 A：窗口上界 1 GiB；固件能否返回该连续 conventional memory 未验证。
 owned_memory_size = "0x40000000"
 # 实机 FDT /cpus/cpu@0..cpu@700：Affinity1 编号 0x000..0x700，共 8 核。
@@ -68,7 +71,11 @@ cpu_regs = "0,256,512,768,1024,1280,1536,1792"
 psci_method = "smc"
 # nuwa 目标为 iOS（iPhone donor），不做 iPad 身份化。
 ipad_identity = false
-root_match_volume_uuid = "REQUIRED_ROOT_VOLUME_UUID"
+# root_match_volume_uuid is intentionally omitted for bring-up stages 1-5 (fastboot boot with the in-memory Data seed):
+# the generator then writes no /chosen/root-matching. A non-empty placeholder would fail uuid parsing, so it must not
+# be left in place. Bring-up stage 6 needs the OS APFS volume UUID read from the built userdata image, and the same
+# value belongs in the OS profile [root] os_volume_uuid.
+# root_match_volume_uuid = "<OS APFS volume UUID, after build userdata>"
 
 [firmware]
 config = "nuwa"

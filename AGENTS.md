@@ -8,8 +8,8 @@
 ## 基线
 - 基座：`D:/Code/PortingiOS/UniXNU`（上游 main `e2fdae4` + 本地 `af9d099`（submodule pin：ArmCpu=93a5030、XnuPrelink=f1d80d3）与 `693f5d9cae8a408dd18b39f3f9fdc4228c934241`（iOS 16.7.16-20H392 profile））。
 - **已是官方 format 2 骨架**：`schema_version = 2`、`feeds.toml`（钉 `UniXNU-sm8550-common@a9f45dc6…`）、`dts/nuwa.dts`、`configs/nuwa_defconfig`、`patches/xnu/series`、`porting.toml`、`scripts/package.sh`、`.github/workflows/*`。
-- 进度：官方第 4 步已完成——`defconfig` → `fetch` → `status --json` → `tree` 对 `board.os_profile = ios-16.7.16-20H392` 解析通过，`unixnu.lock` 已提交（设备仓基线 `279c990a0c7a238aa0a5818493c6cd6a46528749`）；第 5 步（硬件描述与固件）的固件配置已能构建（self-check，未独立复跑），`SILICIUM_UEFI.fd` 3145728 字节 = `0x300000`；Advanced Logger 已接线（`uefi-nuwa` `e494c01b`，self-checked 构建通过），未上机。
-- 未完成：第 5 步 Advanced Logger 已接线（`uefi-nuwa` `e494c01b`，self-checked 构建通过），但运行时未验证（Tools→Advanced Logger 页与 dispatch）、内存所有权证据与启动链交接的独立审查（Astra High 通道不可用）仍缺；`[ipsw.sha256]` 缺 donor `KernelCache` 成员哈希（url/chip_id/board_id 与 DeviceTree、StaticTrustCache 哈希由 profile 提供）；`[payload.adt]` 的 `chip_id`、`root_match_volume_uuid` 仍是 `REQUIRED_*`；`[userdata]`、`[bootimg]` 缺实测值。
+- 进度：官方第 4 步已完成——`defconfig` → `fetch` → `status --json` → `tree` 对 `board.os_profile = ios-16.7.16-20H392` 解析通过，`unixnu.lock` 已提交（设备仓基线 `279c990a0c7a238aa0a5818493c6cd6a46528749`）；第 5 步（硬件描述与固件）的固件配置已能构建，并由独立 Verifier 于 2026-11-07 复跑通过（PASS，`SILICIUM_UEFI.fd` 3145728 字节 = `0x300000`，对 `b1064eb8`/`e494c01b`）；Advanced Logger 已接线（`uefi-nuwa` `e494c01b`），未上机。
+- 未完成：第 5 步 Advanced Logger 运行时未验证（Tools→Advanced Logger 页与 dispatch）、内存所有权证据仍缺，启动链审查（reviewer 子 agent）进行中、结论未到；`[payload.adt]` 的 `chip_id` 已定（`4acab8db`，已写入 `board.toml`；`unique-chip-id` 种子仅存在于基座检出里被 git 忽略的 `unixnu.local.toml`，需用户自行备份），`root_match_volume_uuid` 待 userdata 镜像构建后、阶段 6 前补；`[ipsw.sha256]` 缺 donor `KernelCache` 成员哈希（url/chip_id/board_id 与 DeviceTree、StaticTrustCache 哈希由 profile 提供）；`[bootimg]` 缺实测值。
 - 历史 8796 补丁（41+64）与 ADT 脚本仍在旧仓/备份，未迁入 format 2；`scripts/` 下是历史审计工具，可直接复用，但不再充当 ADT 生成器。
 
 ## 目录约定（官方布局）
