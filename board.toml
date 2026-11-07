@@ -48,7 +48,13 @@ dram_size = "0x240000000"
 kernel_args = ["-v", "serial=3"]
 # Boot-menu Tools entry (id = "tools", action = "tools") for reading the firmware's exported log.
 tools = true
-# TODO: [userdata] first_lba / last_lba / lba_bytes 需 nuwa 实测 GPT 证据。
+
+[userdata]
+# Read-only GPT dump of the userdata entry (sda32, LUN 0) taken from the running device in recovery on 2026-11-07;
+# the primary GPT header and entry array were read with dd and parsed on the host, no partition was written.
+first_lba = 3110976
+last_lba = 61850618
+lba_bytes = 4096
 
 [payload.adt]
 # format 2：ADT 由共享生成器从 dts/nuwa.dts + OS profile 身份产出，不再声明 tool。
@@ -84,6 +90,9 @@ packages = [
 
 [firmware.defines]
 DEVICE_MODEL = "nuwa"
+# SiliciumPkg.dsc.inc passes -D ENABLE_SECUREBOOT=$(ENABLE_SECUREBOOT) unconditionally; unixnu runs the EDK II build
+# directly and skips Mu-Silicium's build_uefi.py, whose default is 0 (--enable-secureboot is opt-in), so set it here.
+ENABLE_SECUREBOOT = "0"
 
 [bootimg]
 # Relative to the build tree only (the base resolves ctx.tree / dtb; {uefi} and other templates are

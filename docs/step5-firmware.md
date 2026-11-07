@@ -2,8 +2,10 @@
 
 Reviewed on 2026-11-07 from an independent review of the archived platform observations. This
 file records conclusions only. It adds no host or device verification: no build ran, no firmware
-was executed and no device was touched for the facts below, so every porting area stays
-`planned` until real evidence exists.
+was executed and no device was touched for the platform facts below, so every porting area stays
+`planned` until real evidence exists. The one exception is "Reproducing the firmware build",
+which records a build that was self-checked but not independently re-run; it is still not device
+evidence and does not close any area.
 
 ## Revisions in scope
 
@@ -13,8 +15,19 @@ was executed and no device was touched for the facts below, so every porting are
 | This device repository | `279c990a0c7a238aa0a5818493c6cd6a46528749` |
 | SM8550 common | `a9f45dc60c035084b95463781538380f4c3606c9` |
 | uefi-nuwa | `322d742fd87d370aac96bb394d1feac61beb9b3a` |
+| uefi-nuwa (DSC/FDF integration, built here) | `becd65b921553957899cc069d6ac6c1278dedd08` |
+| Mu_Basecore edk2 (archive) | `cfb93724a06ff86ff5ba971413368a7809ee42a5` |
+| openssl (archive) | `67b5686b4419b4cb8caa502711c41815f5279751` |
+| Common/Mu | `b8d46c71` |
+| Common/Mu_OEM_Sample | `b70b4b7b` |
+| Silicium-ACPI | `2d465ad7` |
 
-Firmware changes after `322d742f` were not reviewed here.
+The last five rows are the hand-staged build inputs listed under "Reproducing the firmware
+build"; the Common/Mu, Common/Mu_OEM_Sample and Silicium-ACPI pins are quoted short because that
+is how they were supplied.
+
+Firmware changes after `322d742f` were not reviewed as platform facts; `becd65b9` is only the
+revision that was built.
 
 ## CPU topology
 
@@ -83,6 +96,55 @@ decision, not a step 5 blocker.
 deferred to a separate report. They stay unset (`REQUIRED_*` for the ADT fields), and no boot
 image is assembled.
 
+## Reproducing the firmware build
+
+Self-checked on 2026-11-07 and not independently re-run: the Verifier subagent returned
+"Country, region, or territory not supported" on both attempts, so Pro ran the build and checked
+it itself. The build does not boot, does not write a partition and does not touch a device.
+
+Inputs are hand-staged; no `fetch` step provisions them.
+
+1. edk2 tree: extract the Mu_Basecore GitHub archive
+   `cfb93724a06ff86ff5ba971413368a7809ee42a5` into WSL ext4 at `~/nuwa-fw/mu_basecore`. The
+   archive carries no submodule contents, so copy the five directories from the already
+   checked-out base `out/feeds` tree:
+   `MdePkg/Library/BaseFdtLib/libfdt`,
+   `MdePkg/Library/MipiSysTLib/mipisyst`,
+   `BaseTools/Source/C/BrotliCompress/brotli`,
+   `MdeModulePkg/Library/BrotliCustomDecompressLib/brotli`,
+   `SecurityPkg/DeviceSecurity/SpdmLib/libspdm`.
+2. openssl: place archive `67b5686b4419b4cb8caa502711c41815f5279751` at the `uefi-nuwa` gitlink
+   path `Silicon/Silicium/OpensslPkg/Library/OpensslLib/openssl`.
+3. Fixed pins: `Common/Mu` `b8d46c71`, `Common/Mu_OEM_Sample` `b70b4b7b` and `Silicium-ACPI`
+   `2d465ad7`; `Binaries` comes from the Device-Binaries sparse checkout listed in
+   `proprietary-files.txt`.
+4. Patch: `Resources/MuPatches/Gic-Spurious.patch` applies cleanly to the shared edk2 tree and
+   rolls back cleanly.
+5. Network inside WSL: link MTU 1400, proxy passed through environment variables to the Windows
+   host gateway port 7890 with allow-lan enabled.
+6. `board.toml` `[firmware.defines]` must carry `ENABLE_SECUREBOOT = "0"`: `SiliciumPkg.dsc.inc`
+   passes `-D ENABLE_SECUREBOOT=$(ENABLE_SECUREBOOT)` unconditionally, and `unixnu` runs the
+   EDK II build directly instead of Mu-Silicium's `build_uefi.py` (default `0`,
+   `--enable-secureboot` is opt-in). With the macro empty, `SecureBootHandler.c:216`
+   (`#if ENABLE_SECUREBOOT == 1`) fails preprocessing.
+7. Build from the base checkout (`cwd = UniXNU`):
+
+   ```sh
+   ./unixnu build firmware -D ../nuwa/UniXNU-nuwa --uefi ../nuwa/uefi-nuwa \
+     --edk2 /home/wh1stl3/nuwa-fw/mu_basecore
+   ```
+
+8. Result (self-checked): exit 0, artifact
+   `uefi-nuwa/Build/nuwaPkg/DEBUG_CLANGPDB/FV/SILICIUM_UEFI.fd`, 3145728 bytes = `0x300000`,
+   which matches `uefi_fd.size` in `uefi-nuwa/Resources/Configs/nuwa.toml`. `FVMAIN.inf` lists
+   `UniXNU`, `UniXNUDxe`, `UniXNURamDiskDxe`, `DarwinBoot` and `AdvancedLogDxe`.
+
+`AdvancedLogDxe` is compiled and linked into the FV, but at this build its depex
+`gAdvancedLoggerProtocolGuid` had no producer, so it would not be dispatched at runtime. That is
+an observation from the FV list and build log; the runtime behaviour is an assumption, because
+nothing booted. The producer is DXE_CORE's `AdvancedLoggerLib` DxeCore instance, which the
+current DSC does not map; connecting it is in progress.
+
 ## Provenance
 
 The conclusions above were taken from the archived platform observations kept outside this
@@ -100,16 +162,24 @@ reviewed conclusions instead of re-scanning the archives.
 
 ## Verification boundary
 
-Everything here is source-level review of archived observations. There is no host command, build
-result or device observation behind it, so it must not be cited as host-verified or
-device-verified evidence.
+The platform-review sections are source-level review of archived observations, with no host
+command behind them. The "Reproducing the firmware build" section records one self-checked build
+(exit 0 and the artifact size); it was not independently re-run, produced no boot, and no device
+was touched. Nothing here may be cited as host-verified or device-verified evidence.
 
 ## Open items
 
-- `Binaries/nuwa` is missing.
-- The submodule contents are not checked out.
-- Advanced Logger has no verified producer on AARCH64, and `AdvancedLogDxe` depends on
-  `gAdvancedLoggerProtocolGuid`, so no logs appear until a producer is connected.
+- `Binaries/nuwa` is in place (sparse checkout of Device-Binaries `4648d229`); the repository
+  declares no licence and the upstream origin of the binaries is unverified.
+- The submodule contents required by the build are staged by hand: five Mu_Basecore submodules
+  copied from the base `out/feeds` checkout, plus openssl at the `uefi-nuwa` gitlink path. They
+  are not provisioned by a checked-out submodule.
+- Advanced Logger producer: the producer is not "missing on AARCH64"; it is DXE_CORE's
+  `AdvancedLoggerLib` DxeCore instance. The current DSC does not map that instance, so
+  `gAdvancedLoggerProtocolGuid` has no producer and `AdvancedLogDxe` is linked into the FV but
+  is not dispatched. Wiring is in progress.
+- The firmware image builds (self-checked, not independently re-run) but has not booted; there
+  is no hardware evidence.
 - The memory ownership gate is still open.
 - `payload.adt.chip_id` and `root_match_volume_uuid` remain placeholders.
 - Whether to inject `splash_region` waits on ABL evidence.
