@@ -83,6 +83,126 @@ for the ADT handoff. The earlier "replace the nine `reg` entries with the live F
 was therefore wrong and is corrected in `dts/nuwa.dts` as a comment-only change. The contiguous
 geometry and the owned-window contract stay as they are: no numeric or structural change.
 
+## DarwinBoot window allocation (static reading)
+
+Static code reading by the main agent, not verified on hardware. Nothing in this section was
+executed on a device, and no firmware was run for it.
+
+1. Window contract. `DarwinBootPkg/Driver/WindowSize.h:6-8` requires the window address to lie in
+   `0x10000000..0x200000000` and to be 2 MiB aligned; `owned_memory_size = 0x40000000` (1 GiB)
+   satisfies both. The `WINDOW_SIZE` default of 256 MiB at `DarwinBoot.c:20` is only the parse
+   upper bound.
+2. Allocation path. `AllocateWindow` (`DarwinBoot.c:495-546`) searches only contiguous
+   `EfiConventionalMemory`. If no such range fits, it takes the NO WINDOW branch
+   (`DarwinBoot.c:531-544`) and prints the NO WINDOW/FREE lines on screen.
+3. `boot_args`. `DarwinBoot.c:745-748` sets `boot_args` `PhysicalBase` to the window address and
+   `MemorySize` to `WindowSize`, so XNU's physical memory range comes from `boot_args`, not from
+   the ADT.
+4. Conventional supply today. The nuwa `MemoryMapLib` static table (`uefi-nuwa`
+   `Platforms/Xiaomi/nuwaPkg/Library/MemoryMapLib/MemoryMapLib.c:9-35`) has one Conventional entry
+   that also produces a HOB: the DXE heap `0xBAE00000+0x4500000` (about 69 MiB). There is no high
+   DDR above `0x8c0000000` in that table.
+5. How high memory is added. `RamManager.c:48-113` maps gaps of the RAM range that the existing
+   EFI map does not cover as `EfiConventionalMemory` with no address or size filter; `ManageRam`
+   (`:187-215`) cleans up directly when the RAM range lookup fails; the depex is `TRUE`
+   (`RamManagerDxe.inf:26-27`); and `QcomPkg.dsc.inc:30` overrides `RamManagerLib` with
+   `QcomPkg/Library/RamManagerLib`, whose `RamManager.c:57` returns an error when
+   `LocateProtocol(gEfiRamPartitionProtocolGuid)` fails.
+6. Producer unconfirmed. In the nuwa vendor `Binaries/nuwa` `.efi` files the protocol bytes appear
+   once each in `EnvDxe.efi` and `QcomBds.efi`, neither in a depex, and the producer is
+   unconfirmed. If the protocol is not installed when `RamManagerDxe` runs, no high memory is
+   added and `DarwinBoot` reaches NO WINDOW. That is a silent failure point, unverified.
+7. `dram-base` consumers. Searches of `UniXNU/drivers` and the SoC repository find no consumer of
+   `dram-base`/`dram-size` (documentation only); whether the XNU patch side consumes them is
+   unconfirmed. Official `docs/zh/devices/luming-infinityex-rsxq.md:174` requires comparing the
+   firmware memory map, the DTS memory node, the ADT chosen `dram-base`/`dram-size` and the
+   DarwinBoot owned window.
+8. Inference and public reference. Inference (unverified): with a 1 GiB window the low Conventional
+   fragments are likely too small, so a first-fit search would land near `0x8c0000000`, and whether
+   XNU accepts a window outside the ADT dram range is unknown. Public reference, not nuwa evidence:
+   official `docs/zh/devices/alioth.md:193/200/226` records a Mu-Silicium Qualcomm port with 8 GiB
+   DRAM using a 4 GiB owned window, measured on hardware. The failure is benign: NO WINDOW only
+   prints the memory map on screen and writes no partition.
+
+The Reviewer subagent's follow-up investigation returned on 2026-11-07 with APPROVE WITH
+CONDITIONS, scoped to the first `fastboot boot` only; see "First fastboot boot: Reviewer verdict
+and conditions". Everything in this section remains static analysis, not verified on hardware.
+
+## MemoryMapLib reconciliation (static)
+
+Static analysis, not verified on hardware. The method was a read-only interval reconciliation of
+three sources: the live FDT `reserved-memory` nodes (`live.dts`), the live `/proc/iomem`
+`System RAM` list, and the static table in `uefi-nuwa`
+`Platforms/Xiaomi/nuwaPkg/Library/MemoryMapLib/MemoryMapLib.c:9-35`. Each table entry inside the
+DDR range was compared by address and size containment against those two live views. The local
+raw dumps were the input and are not copied into this repository; only aggregates are recorded.
+
+- The static table carries 41 entries, 27 of them inside the DDR range.
+- The live FDT carries 35 reserved regions with a fixed `reg`; 6 of them are `no-map` regions the
+  static table does not describe: `xbl_ramdump_region@81200000` (`0x81200000+0x280000`),
+  `global_sync_region@82600000` (`0x82600000+0x100000`), `mpss_dsm_region@d4d00000`
+  (`0xd4d00000+0x3300000`), `xbl_sc_region@d8100000` (`0xd8100000+0x40000`), `hwfence-shmem`
+  (`0xe6440000+0x2dd000`) and `llcc_lpi_region@ff800000` (`0xff800000+0x600000`).
+- If `RamManagerDxe` pads every uncovered gap of the `System RAM` range as
+  `EfiConventionalMemory`, the gaps total 16 fragments, about 10.80 GiB. The largest are
+  `0x8c0000000` + about 9216 MiB (ending at `0xafffff000`), `0x880000000` + about 925 MiB,
+  `0xe7cb0000` + about 379 MiB, `0xbf300000` + about 346 MiB and `0x82800000` + about 128 MiB.
+- Consequence for the 1 GiB window: no low fragment can hold it, so a first-fit search lands in
+  the `0x8c0000000` fragment, which is inside the ADT `dram-base`. Shrinking `owned_memory_size`
+  to below about 925 MiB would place the window at a low address outside the ADT `dram-base`, so
+  it must not be shrunk. Changing any memory number needs the user's explicit confirmation
+  regardless.
+- The observation that no reserved region overlaps a gap is not safety evidence: the
+  `/proc/iomem` `System RAM` list already excludes `no-map` regions, so that check is circular.
+  What decides the risk on the `fastboot boot` path is the content of the RAM Partition, which is
+  unknown.
+
+## First fastboot boot: Reviewer verdict and conditions
+
+Static analysis, not verified on hardware. The Reviewer subagent's extra investigation
+(2026-11-07, Claude Sonnet Low, read-only) downgraded the window-allocation risk from High to
+Medium and returned APPROVE WITH CONDITIONS, scoped to the first `fastboot boot` only.
+
+Verdict basis:
+
+1. The failure path writes no partition. `AllocateWindow` returns `EFI_OUT_OF_RESOURCES` when it
+   finds no contiguous Conventional range (`DarwinBoot.c:531-545`); the `Fail` path releases the
+   resources it held, prints `boot refused`, and shows the large on-screen `NO WINDOW` and `FREE`
+   lines (`DarwinBoot.c:534-541`). On success the screen prints `pa`, `va`, `entry`, `args` and
+   `owned` (`DarwinBoot.c:785-790`, `:797-811`).
+2. Two premises from the previous round were withdrawn. "The window lies outside the ADT DRAM" is
+   refuted, and XNU's physical memory range comes from `boot_args` (`DarwinBoot.c:745-748`);
+   whether the ADT `dram-base`/`dram-size` has an XNU-side consumer remains unconfirmed.
+3. The `RamManagerDxe` `LocateProtocol` silent-failure point is INSUFFICIENT EVIDENCE and cannot
+   be settled statically: `apriori` is dispatched before the remaining modules and lists EnvDxe,
+   SmemDxe and DALSYSDxe; `RamManagerDxe` is not in `apriori`, has `Depex = TRUE`, and therefore
+   executes in FV order at `nuwa.fdf:87`. What is missing is the producer of
+   `gEfiRamPartitionProtocolGuid` (EnvDxe is ready; if QcomBds or a deferred module produces it,
+   the lookup fails silently). How to obtain it: binary reference-point analysis
+   (`InstallProtocolInterface` versus `LocateProtocol`) and the first boot's DEBUG log.
+4. Five doubts that had been proposed for escalation to Deep Reviewer each failed the four
+   conditions of `docs/ai-orchestration-2026-11-06.md` §2.3; all five were reclassified
+   INSUFFICIENT EVIDENCE with the gap stated. No escalation package was produced and Deep
+   Reviewer was not used.
+
+Conditions for the first `fastboot boot`:
+
+| # | Condition | State |
+| --- | --- | --- |
+| 1 | Use a DEBUG build. | Done for the current artifact: `DEBUG_CLANGPDB`, `SILICIUM_UEFI.fd` 3145728 bytes. |
+| 2 | Statically reconcile `MemoryMapLib` with the live `live.dts`/`iomem`. | Done: see "MemoryMapLib reconciliation (static)". |
+| 3 | Establish the `RamPartition` protocol producer and its ordering. | Not done. |
+| 4 | `fastboot boot` only, no partition write; any device action needs the user's explicit authorisation in that round. | Plan only; no device action taken. |
+| 5 | Confirm SEC writes the entry parameters into the HOB (`UniXNURamDiskDxe.c:215-233`; a failure only logs and does not block). | Not done; static reading only. |
+| 6 | Capture plan: the DarwinBoot on-screen large text and the `NO WINDOW`/`FREE` lines, plus the DXE-stage AdvancedLogger page while the firmware is still running; SEC/PEI logs never enter the buffer and pstore/ramoops cannot serve as a channel because the FD lies in that region. | Plan only. |
+| 7 | The FD `0xA7100000..0xA7400000` overlaps the live ramoops region; keep the current value, user to confirm. | Recorded; user confirmation pending. |
+
+Additional hypothesis risk (Medium): the `MemoryMapLib` table was inherited from sheng and has not
+been reconciled item by item with the nuwa machine. If the RAM Partition lists a `no-map` region
+that the table lacks as RAM, it would be padded as Conventional and used by DXE; the consequence
+would be a wrong access and a reboot rather than flash corruption. The RAM Partition contents are
+unknown, so this cannot be judged yet.
+
 ## splash_region
 
 The firmware DTB carries no `splash_region` node, while the live machine reports
@@ -191,9 +311,9 @@ links `DxeCoreAdvancedLoggerLib`, `AdvancedLogDxe` and `UniXNUDxe` link
 `DxeAdvancedLoggerLib`, `Guid.xref` contains `gAdvancedLoggerProtocolGuid`, and `FVMAIN.inf`
 still lists the five modules. Runtime dispatch and the Tools -> Advanced Logger page are still
 unverified and need a device run. The assumption that the 4 MiB reserved-page allocation lands in
-the DXE heap is unconfirmed. The change alters every DXE module's debug output path; the
-boot-chain review is assigned to the reviewer subagent and is still in progress, so no review
-result is claimed.
+the DXE heap is unconfirmed. The change alters every DXE module's debug output path; the boot-chain review returned APPROVE
+WITH CONDITIONS on 2026-11-07, scoped to the first `fastboot boot` (see "First fastboot boot:
+Reviewer verdict and conditions"). That review is static analysis, not hardware evidence.
 
 ## Provenance
 
@@ -229,9 +349,9 @@ hits are example values for other vendors' devices in the upstream firmware `Res
 and searching both repositories for this device's serial number returns 0 hits, so this is a
 search-term issue rather than a leak.
 
-The boot-chain review of the Advanced Logger rework is assigned to the reviewer subagent and is
-still in progress; no result has been returned, so nothing here is claimed as a boot-chain
-review.
+The boot-chain review of the Advanced Logger rework was returned by the reviewer subagent on
+2026-11-07 as APPROVE WITH CONDITIONS, scoped to the first `fastboot boot`; it is static analysis
+only and nothing here is a boot-chain hardware result.
 
 ## Open items
 
@@ -246,12 +366,28 @@ review.
   the Dxe and Runtime instances, and the rebuild passed (independently re-run by the Verifier on
   2026-11-07) with the GUID present in `Guid.xref`. Runtime dispatch and the Tools -> Advanced
   Logger page are still unverified, the 4 MiB reserved-page allocation's placement in the DXE
-  heap is an assumption, and the boot-chain review is still in progress.
+  heap is an assumption, and the boot-chain review concluded APPROVE WITH CONDITIONS on
+  2026-11-07, scoped to the first `fastboot boot` only.
 - ADT identity is decided: `chip_id = 4acab8db` is in `board.toml`, the `unique-chip-id` seed is
   kept only in the base checkout's git-ignored `unixnu.local.toml` and needs a user backup, and
   `root_match_volume_uuid` is due before stage 6.
 - The firmware image builds (independently re-run by the Verifier on 2026-11-07: PASS) but has
   not booted; there is no hardware evidence.
-- The boot-chain review by the reviewer subagent is still in progress; no result has arrived.
+- Boot-chain review: concluded on 2026-11-07 with APPROVE WITH CONDITIONS, scoped to the first
+  `fastboot boot` only. Deep Reviewer was not used because no candidate met
+  `docs/ai-orchestration-2026-11-06.md` §2.3; see "First fastboot boot: Reviewer verdict and
+  conditions". This is not a release to boot: conditions 3, 5, 6 and 7 there are still open, and
+  any device action needs the user's explicit authorisation in that round.
 - The memory ownership gate is still open.
+- DarwinBoot window allocation (static analysis, not verified on hardware): the window risk is
+  Medium, not High. The `gEfiRamPartitionProtocolGuid` producer is unconfirmed (`RamManagerDxe`
+  is not in `apriori`, has `Depex = TRUE` and runs in FV order at `nuwa.fdf:87`); resolve it by
+  binary reference-point analysis and the first DEBUG boot log.
+- `MemoryMapLib` versus nuwa: 6 live `no-map` regions are not described by the static table
+  (`xbl_ramdump_region`, `global_sync_region`, `mpss_dsm_region`, `xbl_sc_region`,
+  `hwfence-shmem`, `llcc_lpi_region`; see "MemoryMapLib reconciliation (static)"), and whether
+  the RAM Partition reports them as RAM is unknown. Adding them to `MemoryMapLib` is an open user
+  decision, not an action taken here.
+- Do not shrink `owned_memory_size`: a first-fit window only reaches a low address below about
+  925 MiB, which is outside the ADT `dram-base`. Any memory-number change needs user confirmation.
 - Whether to inject `splash_region` waits on ABL evidence.
