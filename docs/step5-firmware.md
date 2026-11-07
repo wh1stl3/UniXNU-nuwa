@@ -191,10 +191,10 @@ Conditions for the first `fastboot boot`:
 | --- | --- | --- |
 | 1 | Use a DEBUG build. | Done for the current artifact: `DEBUG_CLANGPDB`, `SILICIUM_UEFI.fd` 3145728 bytes. |
 | 2 | Statically reconcile `MemoryMapLib` with the live `live.dts`/`iomem`. | Done: see "MemoryMapLib reconciliation (static)". |
-| 3 | Establish the `RamPartition` protocol producer and its ordering. | Not done. |
+| 3 | Establish the `RamPartition` protocol producer and its ordering. | Observed (run 4): `RamManagerDxe` mapped 14 RAM ranges including `0x8C0000000-0xB00000000`; see "Run 4". |
 | 4 | `fastboot boot` only, no partition write; any device action needs the user's explicit authorisation in that round. | Plan only; no device action taken. |
-| 5 | Confirm SEC writes the entry parameters into the HOB (`UniXNURamDiskDxe.c:215-233`; a failure only logs and does not block). | Not done; static reading only. |
-| 6 | Capture plan: the DarwinBoot on-screen large text and the `NO WINDOW`/`FREE` lines, plus the DXE-stage AdvancedLogger page while the firmware is still running; SEC/PEI logs never enter the buffer and pstore/ramoops cannot serve as a channel because the FD lies in that region. | Plan only. |
+| 5 | Confirm SEC writes the entry parameters into the HOB (`UniXNURamDiskDxe.c:215-233`; a failure only logs and does not block). | Observed (run 4): `UNIXNURAMDISK` found the FDT and published an initrd block device with status Success. |
+| 6 | Capture plan: the DarwinBoot on-screen large text and the `NO WINDOW`/`FREE` lines, plus the DXE-stage AdvancedLogger page while the firmware is still running; SEC/PEI logs never enter the buffer and pstore/ramoops cannot serve as a channel because the FD lies in that region. | Done for the DXE stage (run 4): 24 OneSend QR frames decoded to a 179-line log. |
 | 7 | The FD `0xA7100000..0xA7400000` overlaps the live ramoops region; keep the current value, user to confirm. | Recorded; user confirmation pending. |
 
 Additional hypothesis risk (Medium): the `MemoryMapLib` table was inherited from sheng and has not
@@ -214,6 +214,7 @@ or serial output exists, so causes below are inference unless stated.
 | 1 | header v1 (copied from sheng) | USB stayed in fastboot, black screen, later the phone reached recovery | bootloader did not hand over; header v1 suspected |
 | 2 | header v4, `os_version` 15.0.0, `os_patch_level` 2025-07 (copied from salami, not measured) | USB dropped, DXE log text, vendor DisplayDxe ran, then `abl Failed to read from partition` / `Failed to load ELF file` / `Auto processing of uefipil.cfg failed. Calling target panic`, reset to the Xiaomi logo | firmware runs; PIL `[AUTO] ABL` panics |
 | 3 | v4 + local `uefipil.cfg` with empty `[AUTO]` | PIL panic gone; many `AllocatePoolPages: failed to allocate N pages`, `UniXNUDxe: application 9B665204-A133-47A2-9396-9E2B370A4E25 not found in any FV`, `no DTB blob could be loaded`, `Bds Arch Protocol not present!!`, then `ASSERT [DxeCore] DxeMain.c(581) !EFI_ERROR(Status)`, frozen | DXE heap shortage and/or menu app missing from FV; not yet separated |
+| 4 | v4 + local uefipil + DXE Heap `0xBAB00000+0x0D1C0000` (`uefi-nuwa` `d7c97a7`) | assert gone; UniXNU menu shown (built-in configuration, 4 action entries, default `Return to firmware` after a 10 s countdown); the countdown ran out, the firmware found no OS and the phone went to the Android boot logo | stage 2 menu reached; Advanced Logger export works |
 
 Checked read-only in TWRP: `abl_a` GPT type GUID equals the `uefipil.cfg` `[ABL]` `PartiGuid`
 (`BD6928A1-4CE0-A038-4F3A-1495E3EDDFFB`) and the partition starts with a valid ELF32 (entry
@@ -225,6 +226,24 @@ empty list rests on the build config plus the run-3 behaviour.
 Slot side effect: after the failed runs slot A showed `slot-unbootable: yes`, `retry-count: 0` and the
 phone looped into fastboot with no logo. `fastboot set_active a` (authorised) restored it to
 `retry-count: 7`. Check the slot state before and after every run.
+
+## Run 4: Advanced Logger log (stage 2, 2026-11-07)
+
+Power key = Enter, volume keys = Up/Down. Tools -> Advanced Logger showed 24 OneSend QR frames; a second
+camera recorded them and the log was decoded on the host (`.cache/device-media/20261107-stage2-al-qr/`, not
+committed). Decoding note: `zbar` returns the binary QR payload Latin-1 expanded into UTF-8, so the decoder
+must undo that before parsing the 752-byte frames. All 24 blocks passed CRC; the 17000-byte log has 179 lines;
+its file name carries a bogus 2019 date because the RTC is unset. This is a DXE-stage snapshot only.
+
+Observed:
+
+- `RamManagerDxe` printed 14 `Successfully Mapped RAM Range` lines, including `0x8C0000000-0x980000000` and `0x980000000-0xB00000000`. The RAM Partition protocol producer therefore exists and ran before it (closes condition 3), and the high 9 GiB is reported to the firmware.
+- The PEI memory allocation dump shows the Conventional window `0xBAB00000-0xC7CBFFFF` (the new DXE Heap).
+- `UNIXNURAMDISK: device tree at 0xB5DB1000, 938804 bytes`; `initrd 0xB5FB2000-0xB7FFF1D4 rounded to 0x204D200 bytes`; `initrd block device ... Success` (closes condition 5). The boot image had an empty ramdisk, yet an initrd of about 32 MiB was published: ABL adds its own ramdisk. Unresolved for stage 3: `UniXNURamDiskDxe` publishes the whole chosen initrd, so a payload FAT volume would not sit at its start; check how `unixnu bootimg` and its `vendor_boot` handling place the payload before building one.
+- `[Bds]Booting UniXNU` and four FAT filesystems installed; `DarwinBoot.efi` and `AdvancedLogDxe.efi` loaded; `Advanced Logger Info` buffer `0xC6771000-0xC6B71000` (4 MiB, inside the new heap).
+- Errors in the log: `SPSSDxe.efi` `Load Error` and `RscDxe.efi` `No mapping` (vendor drivers, not investigated). No `NO WINDOW` line yet because DarwinBoot has not been asked to boot.
+
+Not established: whether the heap size or merely the layout fixed the run-3 assert; whether DarwinBoot can allocate its 1 GiB window.
 
 ## splash_region
 
