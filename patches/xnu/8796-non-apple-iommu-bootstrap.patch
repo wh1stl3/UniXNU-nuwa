@@ -1,5 +1,5 @@
 diff --git a/osfmk/arm/pmap/pmap.c b/osfmk/arm/pmap/pmap.c
-index fc2096f..30ba62a 100644
+index fc2096f..733c85a 100644
 --- a/osfmk/arm/pmap/pmap.c
 +++ b/osfmk/arm/pmap/pmap.c
 @@ -84,8 +84,12 @@
@@ -42,6 +42,24 @@ index fc2096f..30ba62a 100644
  
  	/**
  	 * Don't make any assumptions about the alignment of avail_start before this
+@@ -4671,13 +4681,13 @@ pmap_page_protect_options_with_flush_range(
+ 		if (pvh_ptep_is_iommu(pte_p)) {
+ #if XNU_MONITOR
+ 			if (__improbable(pvh_flags & PVH_FLAG_LOCKDOWN_MASK)) {
+-				panic("pmap_page_protect: ppnum 0x%x locked down, cannot be owned by iommu %p, pve_p=%p",
+-				    ppnum, ptep_get_iommu(pte_p), pve_p);
++				panic("pmap_page_protect: ppnum 0x%x locked down, cannot be owned by iommu ptep %p, pve_p=%p",
++				    ppnum, pte_p, pve_p);
+ 			}
+ #endif
+ 			if (remove && (options & PMAP_OPTIONS_COMPRESSOR)) {
+-				panic("pmap_page_protect: attempt to compress ppnum 0x%x owned by iommu %p, pve_p=%p",
+-				    ppnum, ptep_get_iommu(pte_p), pve_p);
++				panic("pmap_page_protect: attempt to compress ppnum 0x%x owned by iommu ptep %p, pve_p=%p",
++				    ppnum, pte_p, pve_p);
+ 			}
+ 			goto protect_skip_pve_pass1;
+ 		}
 @@ -11617,6 +11627,7 @@ pmap_unpin_kernel_pages(vm_offset_t kva __unused, size_t nbytes __unused)
  #endif /* !XNU_MONITOR */
  

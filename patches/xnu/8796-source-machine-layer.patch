@@ -12,7 +12,7 @@ index 07147cb..214e26b 100644
  options   NOS_ARM_PMAP			# <nos_arm_pmap>
  
 diff --git a/config/MASTER.arm64.bcm2837 b/config/MASTER.arm64.bcm2837
-index 1ed75ee..583f0fe 100644
+index 1ed75ee..6ba7569 100644
 --- a/config/MASTER.arm64.bcm2837
 +++ b/config/MASTER.arm64.bcm2837
 @@ -16,7 +16,7 @@
@@ -24,9 +24,12 @@ index 1ed75ee..583f0fe 100644
  #  KERNEL_RELEASE = [ KERNEL_BASE ]
  #  KERNEL_DEV =     [ KERNEL_BASE development mach_assert config_xnupost proc_ref_debug ]
  #  KERNEL_DEBUG =   [ KERNEL_BASE debug mach_assert config_xnupost config_waitq_stats config_workloop_debug ]
-@@ -50,8 +50,8 @@
+@@ -48,10 +48,10 @@
+ #  LIBKERN_RELEASE =[ LIBKERN_BASE ]
+ #  LIBKERN_DEV =    [ LIBKERN_BASE iotracking ]
  #  LIBKERN_DEBUG =  [ LIBKERN_BASE iotracking ]
- #  PERF_DBG_BASE =  [ mach_kdp config_serial_kdp kperf kpc ]
+-#  PERF_DBG_BASE =  [ mach_kdp config_serial_kdp kperf kpc ]
++#  PERF_DBG_BASE =  [ mach_kdp config_serial_kdp ]
  #  PERF_DBG_RELEASE=[ PERF_DBG_BASE ist_kdebug ]
 -#  PERF_DBG_DEV =   [ PERF_DBG_BASE config_dtrace zleaks kdp_interactive_debugging alternate_debugger sched_hygiene_debug config_iotrace]
 -#  PERF_DBG_DEBUG = [ PERF_DBG_BASE config_dtrace zleaks kdp_interactive_debugging alternate_debugger sched_hygiene_debug config_iotrace]
