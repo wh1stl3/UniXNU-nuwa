@@ -280,6 +280,31 @@ Constraints found: `vendor_boot_*` is 96 MiB, so the payload volume must stay we
 `[payload] size_mib = 192` does not fit); the stock layout leaves 15 MiB between the ramdisk address and the device
 tree, so a larger payload needs `--ramdisk-addr`.
 
+### Fixed-config run (stage 3, 2026-11-08)
+
+Rewrote `vendor_boot_b` from TWRP with the corrected test payload (Tools entry now `type = "action"`; image sha256
+`2286f81b…09cf`, re-read after dropping caches), switched to slot B with `bootctl`, `fastboot boot` the same r4 image,
+then `fastboot set_active a` (slot A `retry-count` back to 7) and a reboot into TWRP. Read from the phone-camera video
+(frames by Terra, log by the decoder; originals stay in `.cache/device-media/20261108-stage3-fixedcfg/`):
+
+- Menu: `config: \EFI\UniXNU\unixnu.toml`, entry 1 `UniXNU (stage 3 tes…` (`xnu`), entry 2 `Tools` (`action`); no red
+  `config error` line in any menu frame; footer `drivers 0 loaded / 0 failed`, `kits 0`, `acpi 0`.
+- Tools opens a submenu (`1 Back`, `2 Advanced Logger`); the Advanced Logger page shows `Advanced Logger  N/24  left K`
+  and its 24 frames decode (single session, 180-line DXE log, same driver and RamManager lines as run 4).
+- The log now shows `UNIXNURAMDISK: initrd 0xB7564000-0xB7FFF2EC rounded to 0xA9B400 bytes` (about 10.6 MiB), against
+  0x204D200 (about 32 MiB) with the stock vendor ramdisk: the initrd now holds the 8 MiB test volume plus the init_boot
+  ramdisk, so replacing the vendor ramdisk in `vendor_boot` takes effect.
+- Selecting the `xnu` test entry showed `'UniXNU (stage 3 test, no kernel)' returned: Unsupported` and returned to the
+  menu (no new Advanced Logger content). Reading: DarwinBoot rejected the placeholder file safely; the cause was not
+  logged, so this is not evidence about the memory window.
+- The DXE Advanced Logger snapshot has no `payload:` status line and no `UNIXNU:` lines (UniXNU application output is
+  not in this buffer); `fs <n>` was therefore not observed.
+
+Follow-ups: a menu entry that reboots to fastboot or recovery would save manual button presses (the built-in
+`Restart` and `Power off` actions exist; a bootloader or recovery reset reason needs a small EFI application or an
+ABL-honoured reset string, not yet investigated). `fastboot flash` of 96 MiB hung on this ABL/USB path twice-checked
+once; use the TWRP `dd` route for `vendor_boot_b`.
+
 ## splash_region
 
 The firmware DTB carries no `splash_region` node, while the live machine reports
