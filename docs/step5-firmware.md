@@ -16,6 +16,7 @@ evidence and does not close any area.
 | SM8550 common | `a9f45dc60c035084b95463781538380f4c3606c9` |
 | uefi-nuwa | `322d742fd87d370aac96bb394d1feac61beb9b3a` |
 | uefi-nuwa (DSC/FDF integration, built here) | `becd65b921553957899cc069d6ac6c1278dedd08` |
+| uefi-nuwa (Advanced Logger producer wiring, built here) | `e494c01b2f679439fdaeaf2084b693c7220543f5` |
 | Mu_Basecore edk2 (archive) | `cfb93724a06ff86ff5ba971413368a7809ee42a5` |
 | openssl (archive) | `67b5686b4419b4cb8caa502711c41815f5279751` |
 | Common/Mu | `b8d46c71` |
@@ -26,8 +27,8 @@ The last five rows are the hand-staged build inputs listed under "Reproducing th
 build"; the Common/Mu, Common/Mu_OEM_Sample and Silicium-ACPI pins are quoted short because that
 is how they were supplied.
 
-Firmware changes after `322d742f` were not reviewed as platform facts; `becd65b9` is only the
-revision that was built.
+Firmware changes after `322d742f` were not reviewed as platform facts; `becd65b9` and `e494c01b`
+are only the revisions that were built.
 
 ## CPU topology
 
@@ -139,11 +140,24 @@ Inputs are hand-staged; no `fetch` step provisions them.
    which matches `uefi_fd.size` in `uefi-nuwa/Resources/Configs/nuwa.toml`. `FVMAIN.inf` lists
    `UniXNU`, `UniXNUDxe`, `UniXNURamDiskDxe`, `DarwinBoot` and `AdvancedLogDxe`.
 
-`AdvancedLogDxe` is compiled and linked into the FV, but at this build its depex
-`gAdvancedLoggerProtocolGuid` had no producer, so it would not be dispatched at runtime. That is
-an observation from the FV list and build log; the runtime behaviour is an assumption, because
-nothing booted. The producer is DXE_CORE's `AdvancedLoggerLib` DxeCore instance, which the
-current DSC does not map; connecting it is in progress.
+`AdvancedLogDxe`'s depex `gAdvancedLoggerProtocolGuid` now has a producer, wired in uefi-nuwa
+`e494c01b2f679439fdaeaf2084b693c7220543f5`. DXE_CORE uses AdvLoggerPkg's DxeCore
+`AdvancedLoggerLib` instance, whose constructor installs the protocol; DXE_DRIVER, UEFI_DRIVER
+and UEFI_APPLICATION use the Dxe instance and DXE_RUNTIME_DRIVER the Runtime instance. The real
+`AdvancedLoggerHdwPortLib` runs over `SerialPortLib` (DEBUG keeps `FrameBufferSerialPortLib`, so
+the screen log remains and is also written to the buffer). In DEBUG the `DebugLib` is
+`BaseDebugLibAdvancedLogger` and RELEASE is unchanged. SEC keeps `BaseDebugLibSerialPort`
+because `Sec.c` calls `BaseDebugLibSerialPortConstructor` directly, which made the first link
+attempt fail before it was corrected. `PcdAdvancedLoggerBase` is 0 and the DXE_CORE library
+allocates a 4 MiB buffer with `AllocateReservedPages` instead of a fixed physical address.
+
+The self-checked rebuild exited 0 and produced a 3145728-byte `SILICIUM_UEFI.fd`. `DxeMain`
+links `DxeCoreAdvancedLoggerLib`, `AdvancedLogDxe` and `UniXNUDxe` link
+`DxeAdvancedLoggerLib`, `Guid.xref` contains `gAdvancedLoggerProtocolGuid`, and `FVMAIN.inf`
+still lists the five modules. Runtime dispatch and the Tools -> Advanced Logger page are not
+verified and need a device run. The assumption that the 4 MiB reserved-page allocation lands in
+the DXE heap is unconfirmed. The change alters every DXE module's debug output path and has had
+no independent boot-chain review.
 
 ## Provenance
 
@@ -174,10 +188,13 @@ was touched. Nothing here may be cited as host-verified or device-verified evide
 - The submodule contents required by the build are staged by hand: five Mu_Basecore submodules
   copied from the base `out/feeds` checkout, plus openssl at the `uefi-nuwa` gitlink path. They
   are not provisioned by a checked-out submodule.
-- Advanced Logger producer: the producer is not "missing on AARCH64"; it is DXE_CORE's
-  `AdvancedLoggerLib` DxeCore instance. The current DSC does not map that instance, so
-  `gAdvancedLoggerProtocolGuid` has no producer and `AdvancedLogDxe` is linked into the FV but
-  is not dispatched. Wiring is in progress.
+- Advanced Logger producer: wired in uefi-nuwa
+  `e494c01b2f679439fdaeaf2084b693c7220543f5`. DXE_CORE uses AdvLoggerPkg's DxeCore
+  `AdvancedLoggerLib` instance (constructor installs `gAdvancedLoggerProtocolGuid`), drivers use
+  the Dxe and Runtime instances, and the self-checked rebuild exited 0 with the GUID present in
+  `Guid.xref`. Runtime dispatch and the Tools -> Advanced Logger page are still unverified, the
+  4 MiB reserved-page allocation's placement in the DXE heap is an assumption, and the change
+  has had no independent boot-chain review.
 - The firmware image builds (self-checked, not independently re-run) but has not booted; there
   is no hardware evidence.
 - The memory ownership gate is still open.
