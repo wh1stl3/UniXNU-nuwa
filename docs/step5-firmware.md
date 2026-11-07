@@ -245,6 +245,41 @@ Observed:
 
 Not established: whether the heap size or merely the layout fixed the run-3 assert; whether DarwinBoot can allocate its 1 GiB window.
 
+## Payload delivery through vendor_boot (stage 3, 2026-11-08)
+
+Why `fastboot boot` alone cannot carry a payload: nuwa is a GKI layout (`boot_a` ramdisk_size 0,
+`init_boot_a` ramdisk 2968538 bytes, `vendor_boot_a` v4 vendor ramdisk 30899943 bytes, lz4, kernel modules).
+The ABL hands the firmware `vendor_boot` + `init_boot` ramdisks (plus bootconfig) as the initrd, so the payload
+FAT volume must be the vendor ramdisk, as `UniXNU/docs/zh/guide/boot.md` ("把 payload 放进 vendor_boot") says.
+`vendor_boot_a` and `vendor_boot_b` are byte-identical stock images (sha256 `5ad2a9dc…cc23`; read-only copies in
+the git-ignored `.cache/stock/`). `unixnu vendor_boot --verify-against` reproduced the stock image byte for byte.
+`vendor_boot_a` holds the Android vendor ramdisk, so it was left alone and the unused slot B was used.
+
+Procedure actually run (each device write authorised by the user in that round):
+
+1. Built an 8 MiB FAT16 test payload (`unixnu.toml` with an `xnu` entry and a Tools entry, placeholder files, no
+   kernel) and `unixnu vendor_boot --stock vendor_boot_a.img --ramdisk payload.img` (ramdisk 8 MiB at 0x1000, address
+   0x1000000).
+2. `fastboot flash vendor_boot_b` hung on the 96 MiB transfer (fastboot also stopped answering `getvar`; a
+   re-entered fastboot answered again). Nothing was written by it. The image was written from TWRP instead:
+   `adb push` to `/tmp`, `dd` to `/dev/block/by-name/vendor_boot_b`, sha256 re-read after dropping caches matched.
+3. `bootctl set-active-boot-slot 1`, `adb reboot bootloader`, `fastboot boot boot-stage12-v4-r4.img`; afterwards
+   `fastboot set_active a` and a normal reboot into TWRP (slot A `retry-count` is back to 7).
+
+Observed (photo, `.cache/device-media/20261108-stage3-payload/`): the menu header shows
+`config: \EFI\UniXNU\unixnu.toml`, entry 1 `UniXNU (stage 3 tes…` (`xnu`) and entry 2 `Tools`; the footer shows
+`'Tools' returned: Not Found` and `config error: entry tools: needs 'path'`. The Tools entry was my mistake (no
+`type = "action"`, so it parsed as an EFI entry and failed to find a path); the config itself was loaded, the rest
+of the entries stayed. Conclusions: the ABL reads the vendor_boot of the **active** slot during `fastboot boot`,
+the payload volume reaches UniXNU through the initrd, the FAT volume is mountable, and two official stage 3 checks
+are met (config path reported, `xnu` item present). Not yet checked: payload file hashes and the ADT sidecar
+(both need a real kernel), the `payload: initrd … fs <n>` status line (no Advanced Logger log was taken), and the
+fixed `unixnu.toml` (type = "action") has been built but not yet written to the device.
+
+Constraints found: `vendor_boot_*` is 96 MiB, so the payload volume must stay well under that (`board.toml`
+`[payload] size_mib = 192` does not fit); the stock layout leaves 15 MiB between the ramdisk address and the device
+tree, so a larger payload needs `--ramdisk-addr`.
+
 ## splash_region
 
 The firmware DTB carries no `splash_region` node, while the live machine reports
