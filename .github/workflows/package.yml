@@ -1,0 +1,103 @@
+name: package
+
+# The example's copy of the packaging action (docs/porting/packaging.md). Replace the
+# firmware repository below with this board's; the device name appears in the log paths.
+# The platform seed comes from the repository secret UNIXNU_UNIQUE_CHIP_ID and is baked
+# into the images, so a run's output belongs to one device alone: download the logs, then
+# delete the run. Run it in a fork of the device repository.
+# Only the packaging logs are published (governance section 7): boot.img, payload.img and
+# kernel.macho embed Apple components and stay on the runner's local out/. Logs are redacted
+# before upload, because the seed's masking only covers the console, not artifact contents.
+
+on:
+  workflow_dispatch:
+    inputs:
+      os:
+        description: "OS profile of the images"
+        type: choice
+        options: ["ios-16.7.16-20H392"]
+        default: "ios-16.7.16-20H392"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: package-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  package:
+    runs-on: macos-26
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: device
+          submodules: recursive
+      - uses: actions/checkout@v4
+        with:
+          repository: UniXNU/UniXNU
+          path: UniXNU
+          submodules: recursive
+      - uses: actions/checkout@v4
+        with:
+          repository: wh1stl3/uefi-nuwa   # this board's firmware checkout
+          path: uefi-nuwa
+          submodules: recursive   # the firmware volume builds from the checkout's submodules
+      - name: tools
+        run: |
+          brew install dtc llvm lld cmake mtools blacktop/tap/ipsw
+          # Fail fast, naming the tool, before forty minutes of build.
+          ok=1
+          for t in clang xcodebuild make git ninja cmake dtc fdtget fdtput aea compression_tool \
+                   mformat mcopy ipsw; do
+            command -v "$t" >/dev/null || { echo "missing tool: $t"; ok=0; }
+          done
+          for t in lld-link llvm-lib llvm-rc llvm-nm llvm-objcopy; do
+            [ -f "/opt/homebrew/opt/llvm/bin/$t" ] || [ -f "/opt/homebrew/opt/lld/bin/$t" ] || { echo "missing tool: $t"; ok=0; }
+          done
+          [ "$ok" = 1 ]
+      - name: platform seed
+        env:
+          seed: ${{ secrets.UNIXNU_UNIQUE_CHIP_ID }}
+        run: |
+          if ! [[ "$seed" =~ ^[0-9a-fA-F]{8}$ ]]; then
+            echo 'Set the repository secret UNIXNU_UNIQUE_CHIP_ID: the platform seed of the device, 8 hex digits.' >&2
+            exit 1
+          fi
+      - name: package
+        working-directory: device
+        env:
+          UNIXNU_UNIQUE_CHIP_ID: ${{ secrets.UNIXNU_UNIQUE_CHIP_ID }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: scripts/package.sh --os "${{ inputs.os }}" --uefi ../uefi-nuwa
+      - name: redact logs
+        env:
+          seed: ${{ secrets.UNIXNU_UNIQUE_CHIP_ID }}
+        run: |
+          # Only the packaging logs leave the runner. Log files hold subprocess output only
+          # (unixnu run() redirects stdout/stderr there and keeps command lines on the console,
+          # which GitHub masks), but the seed and any signed URL parameter are scrubbed anyway.
+          python3 - "${seed}" <<'PY'
+          import glob, re, sys
+          seed = sys.argv[1].strip().lower()
+          paths = sorted(glob.glob('UniXNU/out/nuwa/*/*/logs/*.log'))
+          if not paths:
+              sys.exit('no packaging logs found; refusing to publish nothing')
+          for path in paths:
+              text = open(path, encoding='utf-8', errors='replace').read()
+              if seed:
+                  text = re.sub(re.escape(seed), '<REDACTED>', text, flags=re.IGNORECASE)
+              text = re.sub(r'(?i)((?:x-amz-signature|x-amz-credential|signature|token)=)[^&\s"]+',
+                            r'\1<REDACTED>', text)
+              open(path, 'w', encoding='utf-8').write(text)
+          print(f'redacted {len(paths)} log files')
+          PY
+      - name: logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-${{ inputs.os }}
+          retention-days: 1
+          if-no-files-found: error
+          path: |
+            UniXNU/out/nuwa/*/*/logs/*.log

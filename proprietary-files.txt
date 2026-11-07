@@ -1,0 +1,4 @@
+# Required firmware inputs: relative path | source | SHA-256 | consumer
+# Fill each entry from this board's firmware package.
+# Vendor inputs stay out of this repository; they are checked out locally under uefi-nuwa/Binaries.
+Binaries/nuwa/** | https://github.com/Project-Silicium/Device-Binaries path=nuwa commit=4648d229f9bedf0d17ba6fe2bebd3fc6fb01422d tree=d8512b51f264cb4dc2114a788066a80fb77cf8b8 (333 files; the repository declares no licence and the upstream origin of the binaries is unverified) | 6cff995a23b458bcbee0518dbe9b9d74eeea388e410b17413c913a361e702cab (SHA-256 of the sorted per-file sha256sum manifest) | uefi-nuwa Platforms/Xiaomi/nuwaPkg/Include/{APRIORI,DXE,RAW}.inc

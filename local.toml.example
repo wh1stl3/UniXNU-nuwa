@@ -1,0 +1,13 @@
+# 复制为 local.toml（Git 忽略）后生效。命令行（--local、--local-module …）优先于本文件。
+# 每个子目录是一个模块；也可以按 [[source]] 单独覆盖某项源码。
+
+[local]
+drivers = "~/Code/dev/drivers"
+kits = "~/Code/dev/kits"
+
+# SM8550 共享仓的本地检出（与 feeds.toml 钉的 commit 同源，仅供本地开发/审阅使用）。
+# 打开后 unixnu status 会标注「未由 unixnu.lock 固定」，发布构建请删除本节以回到 feeds.toml 的固定版本。
+# [[source]]
+# kind = "soc"
+# name = "sm8550"
+# local = "../UniXNU-sm8550-common"

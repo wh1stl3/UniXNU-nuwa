@@ -1,0 +1,32 @@
+// SPDX-License-Identifier: BSD-3-Clause
+/dts-v1/;
+/*
+ * nuwa 板级设备树（官方 format 2：device:dts/nuwa.dts）。
+ * 共享资源由 feeds 钉的 SM8550 仓 dts/sm8550.dtsi 提供（include_dirs = ["soc:dts"]）。
+ * 所有硬件值必须来自本机证据；本文件当前只有已归档的实测跨度，其余以 TODO 标出。
+ */
+/include/ "sm8550.dtsi"
+
+/ {
+	model = "Xiaomi 13 Pro (nuwa)";
+	compatible = "xiaomi,nuwa", "qcom,sm8550";
+
+	chosen {
+	};
+
+	/*
+	 * 单一连续 DRAM 范围是硬要求（UniXNU scripts/unixnu/devicetree.py 的 ADT 交接只接受一个
+	 * 连续 /memory 区间），所以不拆分实机 FDT 的多段 reg。此处保留 R-012 批准 A（2026-10-24）
+	 * 的合并跨度：base 0x8c0000000，size 0x240000000（9216 MiB），即 owned-window 契约的几何。
+	 * 高端末 4 KiB 与内部/动态保留区的归属未闭合（见 docs/step5-firmware.md），本次不改数值。
+	 */
+	memory@8c0000000 {
+		device_type = "memory";
+		reg = <0x08 0xc0000000 0x02 0x40000000>;
+	};
+
+	/*
+	 * TODO: reserved-memory 逐段补入（需要 uefiplatLA.cfg 的 53 条描述符与启动镜像 splash_region 证据）。
+	 * TODO: wlan / bluetooth / 各外设节点，按 nuwa 证据逐项 status = "okay"。
+	 */
+};

@@ -1,0 +1,10 @@
+# 设备内核配置（官方 defconfig 语法）：CONFIG_XNU_<NAME> → XNU_<NAME>；值为 y/n/数字/带引号字符串。
+# 当前是官方模板基线，未做实机验证；每项开关的启用条件写在注释里。
+CONFIG_XNU_SOURCE_CORECRYPTO14=y
+CONFIG_XNU_SOURCE_PTHREAD=y
+CONFIG_XNU_ARM_DT_PLATFORM=y
+CONFIG_XNU_ARMCPU=y
+CONFIG_XNU_CRYPTO_BOOTSTRAP="prelinked"
+# 存储/显示/输入/GPU/AES 待板级输入与 8796 ABI 审查后按官方组件开关启用。
+# CONFIG_XNU_NATIVE_UFS is not set
+# CONFIG_XNU_NATIVE_ADRENO is not set
