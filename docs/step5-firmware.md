@@ -203,6 +203,29 @@ that the table lacks as RAM, it would be padded as Conventional and used by DXE;
 would be a wrong access and a reboot rather than flash corruption. The RAM Partition contents are
 unknown, so this cannot be judged yet.
 
+## First hardware runs (stage 1, 2026-11-07)
+
+Three `fastboot boot` runs by the user's per-run authorisation, no partition written. Results were read
+from phone-camera video (originals stay in the git-ignored `.cache/device-media/`); no bootloader log
+or serial output exists, so causes below are inference unless stated.
+
+| Run | Image | Observation | Reading |
+| --- | --- | --- | --- |
+| 1 | header v1 (copied from sheng) | USB stayed in fastboot, black screen, later the phone reached recovery | bootloader did not hand over; header v1 suspected |
+| 2 | header v4, `os_version` 15.0.0, `os_patch_level` 2025-07 (copied from salami, not measured) | USB dropped, DXE log text, vendor DisplayDxe ran, then `abl Failed to read from partition` / `Failed to load ELF file` / `Auto processing of uefipil.cfg failed. Calling target panic`, reset to the Xiaomi logo | firmware runs; PIL `[AUTO] ABL` panics |
+| 3 | v4 + local `uefipil.cfg` with empty `[AUTO]` | PIL panic gone; many `AllocatePoolPages: failed to allocate N pages`, `UniXNUDxe: application 9B665204-A133-47A2-9396-9E2B370A4E25 not found in any FV`, `no DTB blob could be loaded`, `Bds Arch Protocol not present!!`, then `ASSERT [DxeCore] DxeMain.c(581) !EFI_ERROR(Status)`, frozen | DXE heap shortage and/or menu app missing from FV; not yet separated |
+
+Checked read-only in TWRP: `abl_a` GPT type GUID equals the `uefipil.cfg` `[ABL]` `PartiGuid`
+(`BD6928A1-4CE0-A038-4F3A-1495E3EDDFFB`) and the partition starts with a valid ELF32 (entry
+`0x9FA00000`), so the GUID is not the cause. ABL is already running when the firmware starts, so PIL
+need not load it; `Binaries/nuwa` is untouched and `RAW.inc` points at the local copy
+(`uefi-nuwa` `e69e714`). The rebuilt FD could not be string-searched (compressed volume), so use of the
+empty list rests on the build config plus the run-3 behaviour.
+
+Slot side effect: after the failed runs slot A showed `slot-unbootable: yes`, `retry-count: 0` and the
+phone looped into fastboot with no logo. `fastboot set_active a` (authorised) restored it to
+`retry-count: 7`. Check the slot state before and after every run.
+
 ## splash_region
 
 The firmware DTB carries no `splash_region` node, while the live machine reports
