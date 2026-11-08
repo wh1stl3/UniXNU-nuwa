@@ -73,6 +73,22 @@ roots = [
 [os_overrides."ios-16.7.16-20H392".root]
 os_volume_uuid = ""
 
+# Donor identity values the local profile leaves as TODO. Read from the 20H392 (16.7.16) donor
+# DeviceTree (Firmware/all_flash/DeviceTree.d22ap.im4p -> decoded "bvx2" ADT in out/ipsw/20H392/dt.dtb):
+# /product/product-id (20-byte MGProductType, bytes table) and /product/artwork-device-subtype
+# (u32). They are device-class (d22ap) identities, so they belong to the OS profile, but the base
+# profile is read-only here; these os_overrides carry them. See packaging findings for offsets.
+[os_overrides."ios-16.7.16-20H392".adt.product.u32]
+artwork-device-subtype = 2436
+
+[os_overrides."ios-16.7.16-20H392".adt.product.bytes]
+product-id = "fd079b298144a7deb4d7c87fef3eb474d8f0e7eb"
+
+# The profile had compatible-device-fallback = "iPhone10,1"; the 20H392 donor DeviceTree carries
+# "iPhone9,2" (length 10 at dt.dtb offset 0x29698). Corrected to match the donor.
+[os_overrides."ios-16.7.16-20H392".adt.product.string]
+compatible-device-fallback = "iPhone9,2"
+
 [device_tree]
 source = "device:dts/nuwa.dts"
 include_dirs = ["soc:dts"]
@@ -92,7 +108,11 @@ fetch = ["KernelCache", "DeviceTree", "StaticTrustCache"]
 
 [payload]
 volume = "NUWAESP"
-size_mib = 192
+# 96 MiB vendor_boot partition holds the payload FAT volume as its vendor ramdisk; the prelinked
+# kernel (~53 MiB) plus trust cache and ADT needs 64 MiB, which stays under the partition while the
+# profile default of 192 MiB would not fit. The ramdisk load address stays the stock 0x01000000
+# (see step5-firmware.md stage 3: the ABL relocates the initrd to the Kernel region ~0xB7xxxxxx).
+size_mib = 64
 loader = "firmware"
 title = "UniXNU"
 # R-012 批准 A（2026-10-24）：实机 FDT /memory 9 条 reg 合并后最大连续段跨度 0x240000000（base 0x8c0000000，9216 MiB）。
