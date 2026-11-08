@@ -38,6 +38,8 @@ kernel = "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.u
 # Stage 5 does not need a root volume or the math kext: com.apple.filesystems.apfs references the Apple-only kernel symbol
 # _vfs_getvfs_with_vfsops (absent from open-source 8796) and com.apple.kec.Libm has a literal pool the planner mistakes for code.
 # Both come back with the storage / GPU steps (the VFS shim belongs to stage 6).
+# com.apple.iokit.IOAVFamily and com.apple.iokit.IOMobileGraphicsFamily are also dropped for stage 5: they return with the
+# GPU/media step, and dropping them here removes the transitive Libm dependency (whose literal pool still trips the prelink planner).
 roots = [
   "com.apple.AppleFSCompression.AppleFSCompressionTypeZlib",
   "com.apple.driver.AppleARMPlatform",
@@ -50,13 +52,11 @@ roots = [
   "com.apple.driver.ApplePMGR",
   "com.apple.driver.IODARTFamily",
   "com.apple.iokit.CoreAnalyticsFamily",
-  "com.apple.iokit.IOAVFamily",
   "com.apple.iokit.IOAudio2Family",
   "com.apple.iokit.IOCECFamily",
   "com.apple.iokit.IOCryptoAcceleratorFamily",
   "com.apple.iokit.IOGPUFamily",
   "com.apple.iokit.IOHDCPFamily",
-  "com.apple.iokit.IOMobileGraphicsFamily",
   "com.apple.iokit.IOReportFamily",
   "com.apple.iokit.IOSlowAdaptiveClockingFamily",
   "com.apple.iokit.IOStorageFamily",
