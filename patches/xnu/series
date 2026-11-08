@@ -60,3 +60,7 @@ arch:../../../patches/xnu/source-pthread-bootstrap.patch
 # 8796-compile-records.patch: 8796's makedefs/MakeInc.rule lacks the -MJ compile-record fragments (<obj>.o.json) that
 #   10063 emits and that unixnu's archive builders (build-arm-driver.py and others) read; add -MJ to the S/C/P rules. Build-system only.
 8796-compile-records.patch
+# 8796-sparse-prelink-index.patch: port of kits/XnuPrelink xnu-10063.141.1-sparse-index.patch. Exports kalloc_sparse_prelink_index_version = 1 and makes
+#   kalloc_type_view_parse (KCFormatKCGEN) walk the __PRELINK_TEXT,__macho_list header index when present (same bounds checks/panics);
+#   without the section the original contiguous walk is unchanged. Required by emit_prelink.py. Hunks identical to 10063 except line offsets.
+8796-sparse-prelink-index.patch
