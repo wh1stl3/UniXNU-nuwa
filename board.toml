@@ -120,6 +120,12 @@ dram_size = "0x240000000"
 kernel_args = ["-v", "serial=3"]
 # Boot-menu Tools entry (id = "tools", action = "tools") for reading the firmware's exported log.
 tools = true
+# DarwinBoot's ValidTrustCaches (DarwinBoot.c:371-397) only accepts the trust cache bundle format (u32 Count 1-128
+# + offset table + exact version-2 modules), not the raw StaticTrustCache IM4P. The 20H392 profile pins the raw
+# IM4P hash (63e01c03…), which is why the first payload's kernel.macho.trustcache (66289 B, 0x30 0x82… DER) was
+# rejected with EFI_COMPROMISED_DATA. Re-bundle the same donor module with scripts/bundle-ipsw-trust.py and pin the
+# bundle here; this device-level array replaces the profile's raw-hash array as a whole.
+trust_cache_sha256 = ["367e051548f9f0407fa9fe9d40007fa4e7c5ff27c45f5a7a30cedf344e24d98e"]
 
 [userdata]
 # Read-only GPT dump of the userdata entry (sda32, LUN 0) taken from the running device in recovery on 2026-11-07;
