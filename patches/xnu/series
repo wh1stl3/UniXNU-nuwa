@@ -24,6 +24,15 @@
 #   8796-uio-stackbuf.patch — 8796's `typedef char aligned(8) uio_stackbuf_t` makes an array whose
 #     element size (1) is not a multiple of its alignment (8), which clang-24 rejects. Port 10063's
 #     UIO_STACKBUF(uint64_t array) macro and convert all 36 call sites (plus nfs_serv.c char*->void*).
+#   8796-iorpc-kernel-content.patch -- the host iig (iig-port, 10063-era output) emits `.kernelContent`
+#     for KERNEL builds (OSObject/OSAction/IOService/IOUserClient .iig.cpp). 8796's struct IORPC has no
+#     such member. Add `IORPCMessage * kernelContent` under #ifdef KERNEL and set it at the two places
+#     8796 builds an IORPC from a kernel-resident message (IOUserServer::server, IOUserServerUEXTTrap) to
+#     the same pointer the old generated code derived via IORPCMessageFromMach(rpc.message).
+#   8796-kperf-kpc-link-guards.patch -- with kperf/kpc compiled out, the link still needs kperf_reset /
+#     kperf_disable_sampling / kperf_running_setup (kptimer) / kpc_off_cpu(_internal) from always-built
+#     files: guard those call sites in bsd/kern/kern_ktrace.c, osfmk/arm64/pcb.c, osfmk/kern/sched_prim.c
+#     with #if KPERF / #if KPC (dead paths while the options are off).
 8796-unifdef-headers.patch
 8796-clang-var-init-flag.patch
 8796-indirection.patch
@@ -46,3 +55,8 @@ arch:../../../patches/xnu/source-corecrypto14-bootstrap.patch
 8796-uio-stackbuf.patch
 arch:../../../patches/xnu/source-pthread-bootstrap.patch
 8796-zzx-pmap-sync-64bit-pa.patch
+8796-iorpc-kernel-content.patch
+8796-kperf-kpc-link-guards.patch
+# 8796-compile-records.patch: 8796's makedefs/MakeInc.rule lacks the -MJ compile-record fragments (<obj>.o.json) that
+#   10063 emits and that unixnu's archive builders (build-arm-driver.py and others) read; add -MJ to the S/C/P rules. Build-system only.
+8796-compile-records.patch

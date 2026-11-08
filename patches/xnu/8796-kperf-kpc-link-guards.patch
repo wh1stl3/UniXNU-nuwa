@@ -1,0 +1,88 @@
+diff --git a/bsd/kern/kern_ktrace.c b/bsd/kern/kern_ktrace.c
+index 9f521f6..a581075 100644
+--- a/bsd/kern/kern_ktrace.c
++++ b/bsd/kern/kern_ktrace.c
+@@ -207,9 +207,11 @@ ktrace_reset_internal(uint32_t reset_mask)
+ 		ktrace_active_mask &= ~reset_mask;
+ 	}
+ 
++#if KPERF
+ 	if (reset_mask & KTRACE_KPERF) {
+ 		kperf_reset();
+ 	}
++#endif /* KPERF */
+ 	if (reset_mask & KTRACE_KDEBUG) {
+ 		kdebug_reset();
+ 	}
+@@ -366,7 +368,9 @@ ktrace_disable(ktrace_state_t state_to_match)
+ {
+ 	if (ktrace_state == state_to_match) {
+ 		kernel_debug_disable();
++#if KPERF
+ 		kperf_disable_sampling();
++#endif /* KPERF */
+ 	}
+ }
+ 
+@@ -390,9 +394,11 @@ ktrace_kernel_configure(uint32_t config_mask)
+ 	}
+ 
+ 	if (ktrace_state != KTRACE_STATE_OFF) {
++#if KPERF
+ 		if (ktrace_active_mask & config_mask & KTRACE_KPERF) {
+ 			kperf_reset();
+ 		}
++#endif /* KPERF */
+ 		if (ktrace_active_mask & config_mask & KTRACE_KDEBUG) {
+ 			kdebug_reset();
+ 		}
+@@ -502,9 +508,11 @@ ktrace_set_owning_proc(proc_t p)
+ 			ktrace_state = KTRACE_STATE_BG;
+ 		} else {
+ 			if (ktrace_state == KTRACE_STATE_BG) {
++#if KPERF
+ 				if (ktrace_active_mask & KTRACE_KPERF) {
+ 					kperf_reset();
+ 				}
++#endif /* KPERF */
+ 				if (ktrace_active_mask & KTRACE_KDEBUG) {
+ 					kdebug_reset();
+ 				}
+diff --git a/osfmk/arm64/pcb.c b/osfmk/arm64/pcb.c
+index 7b98a33..f285231 100644
+--- a/osfmk/arm64/pcb.c
++++ b/osfmk/arm64/pcb.c
+@@ -180,7 +180,9 @@ machine_switch_context(thread_t old,
+ 		panic("machine_switch_context");
+ 	}
+ 
++#if KPC
+ 	kpc_off_cpu(old);
++#endif /* KPC */
+ 
+ 	machine_switch_pmap_and_extended_context(old, new);
+ 
+@@ -516,7 +518,9 @@ machine_stack_handoff(thread_t old,
+ 	}
+ #endif
+ 
++#if KPC
+ 	kpc_off_cpu(old);
++#endif /* KPC */
+ 
+ 	stack = machine_stack_detach(old);
+ #if CONFIG_STKSZ
+diff --git a/osfmk/kern/sched_prim.c b/osfmk/kern/sched_prim.c
+index 8e29586..35f409d 100644
+--- a/osfmk/kern/sched_prim.c
++++ b/osfmk/kern/sched_prim.c
+@@ -3751,7 +3751,9 @@ thread_dispatch(
+ 			 * kperf's running timer is active whenever the idle thread for a
+ 			 * CPU is not running.
+ 			 */
++#if KPERF
+ 			kperf_running_setup(processor, processor->last_dispatch);
++#endif /* KPERF */
+ 		}
+ 		running_timers_activate(processor);
+ 		processor->first_timeslice = TRUE;

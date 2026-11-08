@@ -20,10 +20,22 @@ defconfig = "nuwa_defconfig"
 config_fragments = ["arch:configs/common.config"]
 # 8796 线：arch/soc series 仍面向 10063 且 13 条 arch 补丁对 8796 失效；device series 承载最小 8796 集（arch 经前缀引用，失败者改 8796- 移植版）。
 patch_series = ["device:patches/xnu/series"]
+# The arch profile archive list includes SoftwareAES, its AES bindings, the mockfs fixture and the source libpthread. Stage 5 needs none of them (no root volume, no AES, mockfs is off),
+# and the series leaves their patches out (libpthread: the pinned source is libpthread-519, written for the 10063 pthread_callbacks_s layout, which 8796 does not have), so the list is replaced (plain arrays are replaced as a whole) with what stage 5 uses; re-add them with the storage/AES step.
+archives = [
+  "build-corecrypto-14.py",
+  "build-corecrypto-14.py --namespace",
+  "component:ArmDTPlatform",
+  "component:ArmCpu",
+]
 
 # The OS profile ships os_volume_uuid = "REQUIRED_ROOT_VOLUME_UUID" (a placeholder) which stops the kernel bootstrap pass.
 # Stages 1-5 do not use the owner boot manifest, so it is emptied for this profile (same reasoning as the omitted
 # [payload.adt] root_match_volume_uuid). The real OS APFS volume UUID is read from the built userdata image before stage 6.
+# 8796's makedefs have no CTF stage, so the linked kernel is mach.development.bcm2837.unstripped (the profile names the 10063 file .unstripped.noctf).
+[os_overrides."ios-16.7.16-20H392".kernel.prelink]
+kernel = "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped"
+
 [os_overrides."ios-16.7.16-20H392".root]
 os_volume_uuid = ""
 
