@@ -21,6 +21,12 @@ config_fragments = ["arch:configs/common.config"]
 # 8796 线：arch/soc series 仍面向 10063 且 13 条 arch 补丁对 8796 失效；device series 承载最小 8796 集（arch 经前缀引用，失败者改 8796- 移植版）。
 patch_series = ["device:patches/xnu/series"]
 
+# The OS profile ships os_volume_uuid = "REQUIRED_ROOT_VOLUME_UUID" (a placeholder) which stops the kernel bootstrap pass.
+# Stages 1-5 do not use the owner boot manifest, so it is emptied for this profile (same reasoning as the omitted
+# [payload.adt] root_match_volume_uuid). The real OS APFS volume UUID is read from the built userdata image before stage 6.
+[os_overrides."ios-16.7.16-20H392".root]
+os_volume_uuid = ""
+
 [device_tree]
 source = "device:dts/nuwa.dts"
 include_dirs = ["soc:dts"]

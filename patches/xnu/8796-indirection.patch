@@ -1,0 +1,49 @@
+diff --git a/libkern/os/alloc_util.h b/libkern/os/alloc_util.h
+index a494a52..62f8c04 100644
+--- a/libkern/os/alloc_util.h
++++ b/libkern/os/alloc_util.h
+@@ -72,4 +72,29 @@ extern "C++" {
+ 	__elem;                                                   \
+ })
+ 
++/*!
++ * @macro os_get_pointee_type
++ *
++ * @abstract
++ * Get the type pointed to by @c ptr.
++ *
++ * @discussion
++ * C++ forbids dereferencing a void pointer.
++ * This macro provides an abstraction that is safe to use with any pointer,
++ * both from C, and from C++.
++ *
++ * @param ptr           the pointer we want to get the pointee's type for
++ */
++#if defined(__cplusplus) && __has_builtin(__remove_pointer) && \
++        __has_builtin(__remove_reference_t)
++#define os_get_pointee_type(ptr)                               \
++	__remove_pointer(__remove_reference_t(__typeof__(ptr)))
++#else
++#define os_get_pointee_type(ptr)                                      \
++	_Pragma("clang diagnostic push")                               \
++	_Pragma("clang diagnostic ignored \"-Wvoid-ptr-dereference\"") \
++	__typeof__(*(ptr))                                             \
++	_Pragma("clang diagnostic pop")
++#endif
++
+ #endif /* _OS_ALLOC_UTIL_H */
+diff --git a/osfmk/kern/kalloc.h b/osfmk/kern/kalloc.h
+index 535bc7b..69f4c85 100644
+--- a/osfmk/kern/kalloc.h
++++ b/osfmk/kern/kalloc.h
+@@ -824,8 +824,8 @@ __options_decl(kt_granule_t, uint32_t, {
+ #define KALLOC_TYPE_IS_COMPATIBLE_PTR(ptr, type)                   \
+ 	_Pragma("clang diagnostic push")                               \
+ 	_Pragma("clang diagnostic ignored \"-Wvoid-ptr-dereference\"") \
+-	(__builtin_xnu_types_compatible(__typeof__(*(ptr)), type) ||   \
+-	    __builtin_xnu_types_compatible(__typeof__(*(ptr)), void))  \
++	(__builtin_xnu_types_compatible(os_get_pointee_type(ptr), type) ||   \
++	    __builtin_xnu_types_compatible(os_get_pointee_type(ptr), void))  \
+ 	_Pragma("clang diagnostic pop")
+ 
+ #define KALLOC_TYPE_ASSERT_COMPATIBLE_POINTER(ptr, type) \

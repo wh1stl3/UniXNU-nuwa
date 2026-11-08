@@ -1,0 +1,55 @@
+diff --git a/osfmk/kern/ast.c b/osfmk/kern/ast.c
+index ba26da2..a5087cd 100644
+--- a/osfmk/kern/ast.c
++++ b/osfmk/kern/ast.c
+@@ -71,7 +71,9 @@
+ #include <kern/waitq.h>
+ #include <kern/ledger.h>
+ #include <kern/machine.h>
++#if KPERF
+ #include <kperf/kperf_kpc.h>
++#endif
+ #include <mach/policy.h>
+ #include <security/mac_mach_internal.h> // for MACF AST hook
+ #include <stdatomic.h>
+@@ -254,10 +256,12 @@ ast_taken_user(void)
+ 		ledger_ast(thread);
+ 	}
+ 
++#if KPERF
+ 	if (reasons & AST_KPERF) {
+ 		thread_ast_clear(thread, AST_KPERF);
+ 		kperf_kpc_thread_ast(thread);
+ 	}
++#endif
+ 
+ 	if (reasons & AST_RESET_PCS) {
+ 		thread_ast_clear(thread, AST_RESET_PCS);
+diff --git a/osfmk/kern/processor.c b/osfmk/kern/processor.c
+index aad9f3b..efdc49b 100644
+--- a/osfmk/kern/processor.c
++++ b/osfmk/kern/processor.c
+@@ -148,7 +148,9 @@ processor_set_t         pset_array[MAX_PSETS] = { 0 };
+ 
+ static timer_call_func_t running_timer_funcs[] = {
+ 	[RUNNING_TIMER_QUANTUM] = thread_quantum_expire,
++#if KPERF
+ 	[RUNNING_TIMER_KPERF] = kperf_timer_expire,
++#endif /* KPERF */
+ };
+ static_assert(sizeof(running_timer_funcs) / sizeof(running_timer_funcs[0])
+     == RUNNING_TIMER_MAX, "missing running timer function");
+diff --git a/osfmk/kern/task.c b/osfmk/kern/task.c
+index 24ed326..67c5f79 100644
+--- a/osfmk/kern/task.c
++++ b/osfmk/kern/task.c
+@@ -1510,7 +1510,9 @@ task_create_internal(
+ 
+ 	new_task->affinity_space = NULL;
+ 
++#if KPC
+ 	new_task->t_kpc = 0;
++#endif /* KPC */
+ 
+ 	new_task->pidsuspended = FALSE;
+ 	new_task->frozen = FALSE;

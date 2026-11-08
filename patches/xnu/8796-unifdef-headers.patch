@@ -1,0 +1,28 @@
+diff --git a/bsd/net/pfvar.h b/bsd/net/pfvar.h
+index 09b3ac0..c624f0d 100644
+--- a/bsd/net/pfvar.h
++++ b/bsd/net/pfvar.h
+@@ -145,7 +145,7 @@ union sockaddr_union {
+ #define PF_MD5_DIGEST_LENGTH    16
+ #ifdef MD5_DIGEST_LENGTH
+ #if PF_MD5_DIGEST_LENGTH != MD5_DIGEST_LENGTH
+-#error
++#error "PF_MD5_DIGEST_LENGTH must match MD5_DIGEST_LENGTH"
+ #endif /* PF_MD5_DIGEST_LENGTH != MD5_DIGEST_LENGTH */
+ #endif /* MD5_DIGEST_LENGTH */
+ 
+diff --git a/libkern/libkern/c++/OSEndianTypes.h b/libkern/libkern/c++/OSEndianTypes.h
+index 487eb3e..fdd4ff9 100644
+--- a/libkern/libkern/c++/OSEndianTypes.h
++++ b/libkern/libkern/c++/OSEndianTypes.h
+@@ -177,8 +177,6 @@ class LittleSInt64 __OSEndianSignIntSizeDEF(LittleSInt64, Little, SInt, 64);
+ 
+ #undef __OSEndianSignIntSizeDEF
+ 
+-#endif /* __cplusplus
+-        */
++#endif /* __cplusplus */
+ 
+-#endif /* ! _OS_OSENDIANHELPER_H
+-        */
++#endif /* ! _OS_OSENDIANHELPER_H */
