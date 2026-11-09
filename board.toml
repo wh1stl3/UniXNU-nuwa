@@ -137,20 +137,23 @@ panic_screen = false
 # that reset to AFTER the Nth call to the named symbol inside entry_probe_reset_in (payload.py:169-177
 # maps it to --reset-after/--in/--occurrence/--reset-before). It REPLACES the stage 3 reset that
 # entry_probe_reset_delay alone would place right after the MMU enable (patch-xnu-entry-probe.py:389-396),
-# so stage 3 and stage 4 are never present together: there is no masking. A reset ~6 s later means
-# the call returned; no reset means the call did not return (or was never reached). The reset
+# so stage 3 and stage 4 are never present together: there is no masking. The ~6 s delay starts
+# after the callee returns, not at boot or at the magenta bar. A probe reset means the call
+# returned; no reset is inconclusive (not reached, did not return, or probe/reset failure). The reset
 # cold-boots the device (Android, not back to fastboot), so recovery is manual (hold power / reboot
 # to fastboot).
 entry_probe_reset_delay = 6
-# Previous point (07e1767): the user observed a reset after ~6 s on hardware, proving that
-# _ml_parse_cpu_topology returned. Next: _arm_vm_init in _arm_init, occurrence 1 (the default),
-# bl at 0xfffffff007998a3c. A reset means arm_vm_init returned; no reset is inconclusive
-# (not reached, did not return, or probe/reset failure). arm_vm_init replaces bootstrap tables
-# and removes the identity map, but maps the whole kernel __TEXT_EXEC RX at its KVA.
-# The stage-4 cave is inside that segment; its BL and literal load are PC-relative, its
-# literal is a tick count, and CNTPCT_EL0 / SMC use registers, not V=P memory addresses.
-# Thus identity-map removal alone does not prevent the post-return cave from executing.
-entry_probe_reset_after = "_arm_vm_init"
+# Previous point (2d55e2a8d223f558f01c948db45db3c71f747c96): the user observed the
+# six-second _arm_vm_init post-return probe reset on hardware. This proves that callee returned,
+# not that later code must stall. Next: _PE_create_console in _arm_init, occurrence 1,
+# BL at 0xfffffff007998b84; the cave at 0xfffffff0073ee620 is in __TEXT_EXEC RX.
+# _PE_create_console tail-calls initialize_screen, which can return. A probe reset covers this
+# callee's return only, not the following PE_init_printf. BCM2837's fixed panic-buffer access
+# at 0x3c0fc000 (pexpert/arm/pe_init.c) remains a risk; this diagnostic does not change it.
+entry_probe_reset_after = "_PE_create_console"
+entry_probe_reset_in = "_arm_init"
+entry_probe_reset_occurrence = 1
+entry_probe_reset_before = false
 # DarwinBoot's ValidTrustCaches (DarwinBoot.c:371-397) only accepts the trust cache bundle format (u32 Count 1-128
 # + offset table + exact version-2 modules), not the raw StaticTrustCache IM4P. The 20H392 profile pins the raw
 # IM4P hash (63e01c03…), which is why the first payload's kernel.macho.trustcache (66289 B, 0x30 0x82… DER) was
