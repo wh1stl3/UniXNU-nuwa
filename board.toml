@@ -120,6 +120,14 @@ dram_size = "0x240000000"
 kernel_args = ["-v", "serial=3"]
 # Boot-menu Tools entry (id = "tools", action = "tools") for reading the firmware's exported log.
 tools = true
+# Entry probe, no reset: payload.build patches a COPY of kernel.macho with
+# scripts/patch-xnu-entry-probe.py --panic-screen --no-reset. It installs stage 1 (blue bar at the
+# MMU-off kernel entry) and stage 2 (magenta bar just before SCTLR_EL1) below DarwinBoot's green
+# handoff bar, plus the panic-screen redirect of _panic/_panic_trap_to_debugger. The bars paint
+# boot_args.Video[0] (physical GOP framebuffer base) with MMU off, so no reset is needed to observe
+# kernel entry; the panel stays lit for the video recording and the device is recovered by holding
+# power (a PSCI SYSTEM_RESET would cold-boot Android and leave fastboot).
+panic_screen = true
 # DarwinBoot's ValidTrustCaches (DarwinBoot.c:371-397) only accepts the trust cache bundle format (u32 Count 1-128
 # + offset table + exact version-2 modules), not the raw StaticTrustCache IM4P. The 20H392 profile pins the raw
 # IM4P hash (63e01c03…), which is why the first payload's kernel.macho.trustcache (66289 B, 0x30 0x82… DER) was
