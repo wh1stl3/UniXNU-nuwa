@@ -120,14 +120,26 @@ dram_size = "0x240000000"
 kernel_args = ["-v", "serial=3"]
 # Boot-menu Tools entry (id = "tools", action = "tools") for reading the firmware's exported log.
 tools = true
-# Entry probe, no reset: payload.build patches a COPY of kernel.macho with
-# scripts/patch-xnu-entry-probe.py --panic-screen --no-reset. It installs stage 1 (blue bar at the
-# MMU-off kernel entry) and stage 2 (magenta bar just before SCTLR_EL1) below DarwinBoot's green
-# handoff bar, plus the panic-screen redirect of _panic/_panic_trap_to_debugger. The bars paint
-# boot_args.Video[0] (physical GOP framebuffer base) with MMU off, so no reset is needed to observe
-# kernel entry; the panel stays lit for the video recording and the device is recovered by holding
-# power (a PSCI SYSTEM_RESET would cold-boot Android and leave fastboot).
-panic_screen = true
+# Entry probe: payload.build patches a COPY of kernel.macho with
+# scripts/patch-xnu-entry-probe.py --reset-delay 6 (panic_screen off). It installs stage 1 (blue bar
+# at the MMU-off kernel entry) and stage 2 (magenta bar just before SCTLR_EL1) below DarwinBoot's
+# green handoff bar. The bars paint boot_args.Video[0] (physical GOP framebuffer base) with MMU off,
+# so entry is observable up to the MMU enable.
+# panic_screen is deliberately false: together with entry_probe_reset_delay the panic screen code
+# (0xa2f bytes for nuwa's kernel) overflows the zero padding after _start by 0x5f (95) bytes past
+# PANIC_CAVE_END, which scripts/patch-xnu-entry-probe.py refuses. This probe variant only needs the
+# stage 1/2 bars plus the stage 3 reset timing.
+panic_screen = false
+# Stage 3 (reset probe, the stage-4 handoff diagnosis): once the MMU is on, 0xB8000000 has no mapping
+# and the frame buffer can no longer be painted, so the only signal that the CPU got through the MMU
+# enable is a timed PSCI SYSTEM_RESET. The stage-3 cave re-executes the displaced `mov x0,#0x300000`
+# at the instruction after `msr SCTLR_EL1,x0`, then busy-waits on the architectural physical counter
+# cntpct_el0 for TIMEBASE*N counts (TIMEBASE=19200000 in patch-xnu-entry-probe.py) and issues
+# x0=0x84000009 / smc #0. nuwa's counter frequency is 19.2 MHz (sm8550.dtsi timebase-frequency
+# <19200000>; live FDT /soc/timer clock-frequency <0x124f800>), so 6 = 6.0 real seconds. A reset
+# N seconds later means the CPU passed the MMU enable; no reset means it did not. The reset cold-boots
+# the device (Android, not back to fastboot), so recovery is manual (hold power / reboot to fastboot).
+entry_probe_reset_delay = 6
 # DarwinBoot's ValidTrustCaches (DarwinBoot.c:371-397) only accepts the trust cache bundle format (u32 Count 1-128
 # + offset table + exact version-2 modules), not the raw StaticTrustCache IM4P. The 20H392 profile pins the raw
 # IM4P hash (63e01c03…), which is why the first payload's kernel.macho.trustcache (66289 B, 0x30 0x82… DER) was
