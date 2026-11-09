@@ -131,7 +131,7 @@ tools = true
 # stage 1/2 bars plus the stage 4 reset timing.
 panic_screen = false
 # Stage 4 bisect probe. Once the MMU is on there is no frame-buffer mapping, so the only signal is a
-# timed PSCI SYSTEM_RESET: the cave re-executes the displaced call and then busy-waits on the
+# PSCI SYSTEM_RESET. In after mode the cave re-executes the displaced call and then busy-waits on the
 # architectural physical counter cntpct_el0 for TIMEBASE*N counts (TIMEBASE=19200000; nuwa's counter
 # is 19.2 MHz, so 6 = 6.0 real seconds) before x0=0x84000009 / smc #0. entry_probe_reset_after moves
 # that reset to AFTER the Nth call to the named symbol inside entry_probe_reset_in (payload.py:169-177
@@ -141,19 +141,22 @@ panic_screen = false
 # after the callee returns, not at boot or at the magenta bar. A probe reset means the call
 # returned; no reset is inconclusive (not reached, did not return, or probe/reset failure). The reset
 # cold-boots the device (Android, not back to fastboot), so recovery is manual (hold power / reboot
-# to fastboot).
+# to fastboot). With entry_probe_reset_before=true the cave instead SKIPS the callee and immediately
+# constructs x0=0x84000009 / smc #0: no CNTPCT wait, and delay=6 is ignored on this path.
 entry_probe_reset_delay = 6
 # Previous point (2d55e2a8d223f558f01c948db45db3c71f747c96): the user observed the
 # six-second _arm_vm_init post-return probe reset on hardware. This proves that callee returned,
 # not that later code must stall. Next: _PE_create_console in _arm_init, occurrence 1,
 # BL at 0xfffffff007998b84; the cave at 0xfffffff0073ee620 is in __TEXT_EXEC RX.
-# _PE_create_console tail-calls initialize_screen, which can return. A probe reset covers this
-# callee's return only, not the following PE_init_printf. BCM2837's fixed panic-buffer access
-# at 0x3c0fc000 (pexpert/arm/pe_init.c) remains a risk; this diagnostic does not change it.
+# The user reports three bars but no reset with the after candidate at
+# 0114789e3b859f66a00b483ee7679dd9722e2bcf; that observation alone cannot establish the cause.
+# This before candidate tests reaching the call site, NOT the callee's return: positive means an
+# immediate reset, not six seconds. Cave starts mov w0,#9 (0x52800120), never BL _PE_create_console.
+# BCM2837's fixed panic-buffer access at 0x3c0fc000 (pexpert/arm/pe_init.c) remains unchanged.
 entry_probe_reset_after = "_PE_create_console"
 entry_probe_reset_in = "_arm_init"
 entry_probe_reset_occurrence = 1
-entry_probe_reset_before = false
+entry_probe_reset_before = true
 # DarwinBoot's ValidTrustCaches (DarwinBoot.c:371-397) only accepts the trust cache bundle format (u32 Count 1-128
 # + offset table + exact version-2 modules), not the raw StaticTrustCache IM4P. The 20H392 profile pins the raw
 # IM4P hash (63e01c03…), which is why the first payload's kernel.macho.trustcache (66289 B, 0x30 0x82… DER) was
