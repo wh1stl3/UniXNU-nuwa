@@ -1,5 +1,7 @@
 # UniXNU-nuwa
 
+**最新探针（2026-11-09）**：用户观察到 `07e176761020d3d7f01fb086d9a89af3e3531eb9` 的 `_ml_parse_cpu_topology` 后置探针约 6 秒复位，说明该调用已返回。下一候选改为 `_arm_init` 内第一次 `_arm_vm_init` 返回后复位（delay 6，panic_screen=false）；复位表示该调用已返回，不复位不能区分未到达、未返回或探针失败。主机检查仅 self-checked；新候选尚未上机。旧进度段保留作历史，最新配置与产物以 `porting.toml` 为准。
+
 Xiaomi 13 Pro（nuwa，SM8550）的 UniXNU 设备仓。目标：iOS 16.7.16 / 20H392，donor 身份 iPhone10,3（D22AP）。
 
 **最新进展（2026-11-07）**：官方 bring-up **阶段 1（UEFI）已通过、阶段 2（UniXNU 菜单）菜单已出现**。四次 `fastboot boot`（不写分区）：header v1 未交接；header v4 后固件跑起来；清空 `uefipil.cfg` 的 `[AUTO]` 消除 PIL panic；DXE Heap 改为 `0xBAB00000+0x0D1C0000`（`uefi-nuwa` `d7c97a7`）后 `DxeMain.c(581)` 断言消失，UniXNU 内置配置菜单出现（倒计时 10 s，默认 `Return to firmware`）。Tools → Advanced Logger 以 24 个 OneSend 二维码导出日志，主机已解码（179 行）：RamManager 映射了高 9 GiB，UniXNURamDisk 发布了 initrd 块设备。所有区域仍为 `planned`。详见 `docs/step5-firmware.md` 的 "First hardware runs" 与 "Run 4"。**第 7 步（内核）进展（2026-11-08，仅主机构建）**：8796 内核已能在 Linux 工具链上完整编译并链接（`patches/xnu/series` 26 项：13 个 arch 引用 + 本地 8796 移植/修补；归档只留阶段 5 所需的 4 项）。预链接已通过规划器（`board.toml` 的 `[kernel.prelink] roots` 去掉 `apfs` 和 `Libm`），现停在 `emit_prelink.py` 的 `External PC-relative encoding at 0xfffffff005b8c1cc`；尚无预链接内核、payload、DarwinBoot 与内核入口证据。分支 `feat/step7-kernel-patches-8796`（未合并 main）。详见 `porting.toml` 的 packaging 区域与 `../../docs/SESSION-HANDOFF.md`。

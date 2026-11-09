@@ -142,11 +142,15 @@ panic_screen = false
 # cold-boots the device (Android, not back to fastboot), so recovery is manual (hold power / reboot
 # to fastboot).
 entry_probe_reset_delay = 6
-# First bisect point: _ml_parse_cpu_topology is called exactly once from _arm_init (bl at
-# 0xfffffff007998914, occurrence 1), so --occurrence 1 (the default) is unambiguous. It parses the
-# CPU topology from the device tree before arm_vm_init and the console, so it is the first meaningful
-# branch point after the MMU-enable proof.
-entry_probe_reset_after = "_ml_parse_cpu_topology"
+# Previous point (07e1767): the user observed a reset after ~6 s on hardware, proving that
+# _ml_parse_cpu_topology returned. Next: _arm_vm_init in _arm_init, occurrence 1 (the default),
+# bl at 0xfffffff007998a3c. A reset means arm_vm_init returned; no reset is inconclusive
+# (not reached, did not return, or probe/reset failure). arm_vm_init replaces bootstrap tables
+# and removes the identity map, but maps the whole kernel __TEXT_EXEC RX at its KVA.
+# The stage-4 cave is inside that segment; its BL and literal load are PC-relative, its
+# literal is a tick count, and CNTPCT_EL0 / SMC use registers, not V=P memory addresses.
+# Thus identity-map removal alone does not prevent the post-return cave from executing.
+entry_probe_reset_after = "_arm_vm_init"
 # DarwinBoot's ValidTrustCaches (DarwinBoot.c:371-397) only accepts the trust cache bundle format (u32 Count 1-128
 # + offset table + exact version-2 modules), not the raw StaticTrustCache IM4P. The 20H392 profile pins the raw
 # IM4P hash (63e01c03…), which is why the first payload's kernel.macho.trustcache (66289 B, 0x30 0x82… DER) was
