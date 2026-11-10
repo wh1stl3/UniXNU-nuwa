@@ -2,12 +2,15 @@
 
 **当前（2026-11-10，self-checked）：官方第 7 步 / bring-up 内核入口至 platform expert 诊断。**
 旧 stage5 `998d284a…` 已测：照片确认 AppleImage4 panic `failed to get mix-n-match policy: 2`，
-未自动复位；panic 显示后 park 符合预期，不证明 stage5。既有日志记录 18:54:23 已回 A/TWRP current/active=0，未新查设备。
-本轮仅新增 `/chosen/mix-n-match-prevention-status` u32=0（AMNM=true，非 Apple 启动链 bring-up 软件策略，非 donor/熔丝事实；放宽反重放令牌/chained-manifest-hash 约束，不关闭 AMFI、不宣称 Apple secure boot）。
-既有 stage5/panic/kernel/prelink/crypto/trust 保持，仅组装一次 payload/vendor_boot，增量自检 exit 0，**self-checked，未独立验证、未上机**；本轮仅配置/文档一次本地提交，不 push/merge。
-**最终阻塞：外部 provider 接口支持缺失，AMNM-only 禁止设备放行。** BNCH 缺失且当前 secure-boot-level=0 会触发下一 panic；Deep 最终裁定固定 donor 无已证明的无 AP-token/no-shadow 入口，XNU nonce wrapper/custom runtime 不能替代内建初始化/PMAP_CS。需要 provider 源码或受支持兼容实现；不填假 BNCH、不改 level、不替换指针或跳 init，不再重复分析/构建/上机。
-下一动作：审阅[本地英文上游问题草稿](docs/appleimage4-provider-question-draft-20261110.md)，经用户许可发送或提供接口资料；草稿未发送。
-菜单自动下移仍仅用户观察；OEM SDAM/Reset 只是候选机制；日志级别过滤已确证但未修。多设备规则见根 AGENTS，身份/定向/回读门禁不变。
+未自动复位；panic 显示后 park 符合预期，不证明 stage5。18:54:23 A/TWRP current/active=0 仅最后已知历史快照；另 general 正执行已授权恢复 Android/清 userdata，最终结果待回报，不据旧记录断言当前设备状态。
+此前本地提交 `f660735b72e84331f4ea932b8f4002b745815412` 仅新增 `/chosen/mix-n-match-prevention-status` u32=0（AMNM=true，非 Apple 启动链 bring-up 软件策略，非 donor/熔丝事实；放宽反重放令牌/chained-manifest-hash 约束，不关闭 AMFI、不宣称 Apple secure boot）。
+该候选保持既有 stage5/panic/kernel/prelink/crypto/trust，仅组装一次 payload/vendor_boot，增量自检 exit 0，**self-checked，未独立验证、未上机**。本轮本地主机里程碑一次提交三个离线研究脚本及记录，无新镜像构建/设备操作，不 push/merge。
+**当前证据不足以批准任何 BNCH 运行候选，AMNM-only 禁止设备放行。** BNCH 缺失且当前 secure-boot-level=0 会触发下一 panic。用户要求的 Deep 复核已完成：此前“必须取得 AppleImage4 源码/等待外部 provider”的绝对裁定已撤回，仅作历史；完整 Apple 生产安全链不是官方 bring-up 阶段 5 前提。可研究明确实验软件域，以受限消费者闭环及充分认证负例证据解除门禁，不一定需闭源源码。不将任意值称真实硬件/donor nonce，不把初始化成功当认证成功；不改 level、不替换指针或跳 init。无新证据时不重复 BNCH 猜值、无效候选构建和上机；本地修复/分析/主机验证继续，适用审查门禁不变，上机前须用户确认。
+离线 BNCH 四矩阵+26 evidence robustness 独立 verifier PASS，静态 review 仅认可构造初态；consumer-parse 静态 review/独立 verifier PASS：实际注册一次 version18→index1/apin→畸形 manifest parser3→mapper92→wrapper92，仅三纯 log stub。firmware 构造/execute/auth callback/PMAP install 及 nonce/认证 NOT REACHED；trst 非 apin 阳性，无签名正例。见[证据](docs/image4-bnch-offline-20261110.md)。
+下一本地主机动作：确认可解析 manifest、对应 apin payload 及真实状态前提；缺则明确接口/输入边界，不猜值、不虚报认证通过。保留[英文问题清单](docs/appleimage4-provider-question-draft-20261110.md)；公开仅只读，不外发。general 发布任务已取消，未发送 comment/issue，无外部写入。
+PR187 核查：open 未 merged，3 文件 +5/-2，仅将 typed manifest properties 传入 ADT，无 producer/认证实现；NX769J / 20F66 报告未披露 BNCH 来源与准确配置，与 nuwa / 20H392 不同。公开 profile 缺字段不能否定作者陈述；仅传输线索，不解除运行门禁，初始化成功不等于认证成功。完整 revision/边界见下方证据。
+固件独立提交 `719afa67e3aebbf058c2a8beff4c801057fb2b20` 仅修 `nuwa.dsc` DEBUG 组件 mask `0x8007EE4F`，静态 review+机械检查 PASS；旧 edksetup 缺失，完整 EDKII 解析/AutoGen/编译/设备未验证，3 个脏子模块保留。本会话不改固件文件。
+菜单自动下移仍仅用户观察；OEM SDAM/Reset 只是候选机制，不能把日志 mask 修复视为已证明该症状因果。多设备规则见根 AGENTS，身份/定向/回读门禁不变。
 见 [本轮证据、完整 hash 与增量验证命令](docs/mix-n-match-host-20261110.md)。阶段验收等级不提升。
 
 Crypto 更正：`nuwa_defconfig` 为 `CRYPTO_BOOTSTRAP="prelinked"`，`prng_random.o` 最终

@@ -37,23 +37,65 @@ manifest-properties lacks BNCH and DarwinBoot does not inject it. Init
 **next panic**. AMNM-only candidate is therefore not suitable for a device run.
 CHMH may be absent with AMNM=true; LOVE permits ENOENT. ESEC absent in ap is
 not a current mandatory addition. No BNCH/other properties or level changes
-were made. Deep's final ruling (parent-delivered): the pinned donor provider
+were made. Historical Deep ruling (parent-delivered, corrected below): the pinned donor provider
 has no demonstrated supported no-AP-token/no-shadow entry point. Open-source
 XNU nonce wrappers cannot control earlier BNCH initialization or internal
 shadow state; registering a custom runtime does not replace built-in PMAP_CS,
 and interface registration is one-shot. The current bare-kernel path supplies
 neither an authenticated manifest nor a nonce producer.
 
-This is an **external provider-interface blocker**, not another board property
-to guess. Provider source or a supported compatible implementation is required.
-Do not fabricate BNCH, change secure-boot level, replace pointers, skip init,
-repeat analysis/builds or release this candidate to a device. Next action:
-review the [local upstream question draft](appleimage4-provider-question-draft-20261110.md)
-and obtain user permission to send it or obtain interface documentation/source.
-No upstream message was sent. Menu auto-down remains a user observation;
+Latest Deep correction (user-requested review completed, parent-delivered):
+the earlier absolute requirement to obtain AppleImage4 source or wait for an
+external provider is withdrawn. A complete Apple production security chain is
+not an official bring-up stage 5 prerequisite. An explicitly experimental
+software domain may be researched; lifting its gate requires a bounded consumer
+closure and sufficient authentication negative-test evidence, not necessarily
+closed-source code. Current evidence approves **no BNCH runtime candidate**;
+AMNM-only remains barred. Arbitrary values must not be described as real
+hardware/donor nonces; initialization success is not authentication success.
+Do not fabricate BNCH, change secure-boot level, replace pointers or skip init.
+Without new contract evidence, do not repeat guessed BNCH analysis, ineffective
+candidate builds or device attempts. Independent local fixes, analysis and host
+validation may continue under applicable review gates; this intermediate remains
+prohibited from device release, and any future device test needs user confirmation.
+Next action: use the [local question checklist](appleimage4-provider-question-draft-20261110.md)
+to assess interface evidence and define the experimental domain/consumer and
+authentication-negative-test requirements locally. Public material is
+read-only: no external messages or publication. The general publication task was
+cancelled; no comment/issue was sent and no external write occurred.
+Menu auto-down remains a user observation;
 OEM SDAM/Reset is only a candidate mechanism. Log-level filtering is confirmed
 but not fixed (parent-delivered findings, no new test here). Root AGENTS already
 contains the corrected multi-device targeting rule; its gates are unchanged.
+Separately, firmware commit `719afa67e3aebbf058c2a8beff4c801057fb2b20`
+fixes only the DEBUG component mask `0x8007EE4F` in `nuwa.dsc`: static review
+and mechanical checks PASS (parent-reported). Old edksetup is missing; full
+EDKII parsing/AutoGen/compilation/device validation remain undone, three dirty
+submodules retained. No firmware file is changed by this integration.
+Latest offline research review/verifier results and remaining parseable
+manifest/apin/state boundary are in [the offline evidence](image4-bnch-offline-20261110.md).
+They do not lift this AMNM-only device gate. Historical A/TWRP observation above
+is not current status: separate general Android restore/userdata-clear work is
+authorized and in progress, final result pending.
+
+## PR187 read-only finding (parent-delivered, 2026-11-10)
+
+Official PR <https://github.com/UniXNU/UniXNU/pull/187> was open, not merged,
+at head `7dd07bb46b751108e34bd796153daaf57b28e549`, preceding commit
+`fd71284ee795092a2ff325677af798923870cb60`. Its three-file diff is +5/-2;
+`devicetree.py:340–341` passes `config.adt.manifest_properties` through
+`typed_properties` into `/chosen/manifest-properties`. This is transport only,
+not a producer or authentication implementation.
+
+The author reports passing AppleImage4 on NX769J / iOS 16.5, but does not
+disclose BNCH provenance or the exact tested configuration. Public profile
+`2a265afdbd95d45e4a90664157e793c3bfee3755` lacks that field; this does **not**
+refute the author's report. Its 20F66 / XNU 8796.101.5 differs from nuwa's
+20H392 / 8796.141.3. No comments or approving reviews were present in the
+reported check. This clue does not lift the runtime gate or justify fake BNCH;
+passing initialization is not authentication success. The user-requested Deep
+re-review has completed with the correction above. This task records supplied evidence only;
+it did not independently re-query GitHub or reproduce the author's boot.
 
 ## One host assembly
 
@@ -130,7 +172,7 @@ Get-FileHash out/mix-n-match-20261110/payload/payload.img,out/mix-n-match-202611
 
 Any later independent verification should compare final host copies/table,
 audit diff and board scope without rebuilding. Final integration/acceptance
-remain with parent; self-check cannot lift the provider device-release block.
+remain with parent; this artifact self-check cannot lift the current runtime gate.
 
 Implementer ran the documented record command from base cwd: exit 0,
 `nuwa: 14 structured areas checked`; device `git diff --check` exit 0.
