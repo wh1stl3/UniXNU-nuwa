@@ -1,0 +1,108 @@
+Subject: [nuwa] Keep a volatile panic buffer in kernel-owned writable storage
+
+nuwa has no established persistent panic RAM reservation. Do not map the
+BCM2837 panic PA or consume a donor pram description. Keep the panic consumers'
+base, capacity and header valid for the kernel lifetime instead. This is not
+persistent storage and cannot recover a previous boot's panic log.
+
+Panic fallback selected only by the device defconfig's XNU_NUWA_PANIC_FALLBACK=1.
+Only the panic branches retain ordinary BCM2837/DT behavior with guard absent/0;
+this is not a no-behavior-change claim for the MakeInc wiring below.
+
+8796 does not consume the build script's CFLAGS_EXTRA by default. Wire that
+existing make variable into CFLAGS_GEN so the defconfig guard reaches clang.
+This also enables the existing PAN=1/corecrypto=1/BOOT_PROGRESS=0 script defines.
+
+diff --git a/makedefs/MakeInc.def b/makedefs/MakeInc.def
+--- a/makedefs/MakeInc.def
++++ b/makedefs/MakeInc.def
+@@ -310,7 +310,7 @@ CFLAGS_GEN = $(DEBUG_CFLAGS) -nostdinc \
+ 	-fmerge-all-constants \
+ 	-fno-c++-static-destructors \
+ 	-Wno-reserved-identifier -Wno-shadow-header -Wno-pre-c11-compat -Wno-unsafe-buffer-usage \
+-	$(OTHER_CFLAGS)
++	$(OTHER_CFLAGS) $(CFLAGS_EXTRA)
+ 
+ CFLAGS_RELEASE	=
+ CFLAGS_DEVELOPMENT	=
+
+diff --git a/pexpert/pexpert/arm64/BCM2837.h b/pexpert/pexpert/arm64/BCM2837.h
+--- a/pexpert/pexpert/arm64/BCM2837.h
++++ b/pexpert/pexpert/arm64/BCM2837.h
+@@ -65,8 +65,10 @@
+ #define BCM2837_PUT32(addr, value) do { *((volatile uint32_t *) addr) = value; } while(0)
+ #define BCM2837_GET32(addr) *((volatile uint32_t *) addr)
+ 
++#if !defined(XNU_NUWA_PANIC_FALLBACK) || !XNU_NUWA_PANIC_FALLBACK
+ #define PLATFORM_PANIC_LOG_PADDR        0x3c0fc000
+ #define PLATFORM_PANIC_LOG_SIZE         16384        // 16kb
++#endif
+ #endif /* ! ASSEMBLER */
+ 
+ #endif /* ! _PEXPERT_ARM_BCM2837_H */
+diff --git a/pexpert/arm/pe_init.c b/pexpert/arm/pe_init.c
+--- a/pexpert/arm/pe_init.c
++++ b/pexpert/arm/pe_init.c
+@@ -61,9 +61,30 @@
+ /* Clock Frequency Info */
+ clock_frequency_info_t gPEClockFrequencyInfo;
+ 
++#if defined(XNU_NUWA_PANIC_FALLBACK) && XNU_NUWA_PANIC_FALLBACK
++/*
++ * Kernel-owned, non-persistent storage: ordinary writable BSS, not init or
++ * DATA_CONST. The union supplies the header's alignment without a second PA
++ * mapping. Static initialization keeps all four panic-region values coherent
++ * before console creation; never clear an already active log on console entry.
++ * debug_log_init() and PE_init_panicheader() retain their normal roles.
++ */
++static union {
++	struct embedded_panic_header header;
++	unsigned char bytes[0x4000];
++} nuwa_panic_buffer;
++_Static_assert(sizeof(nuwa_panic_buffer) == 0x4000,
++    "nuwa panic buffer must remain 16 KiB");
++_Static_assert(sizeof(nuwa_panic_buffer) > sizeof(struct embedded_panic_header),
++    "nuwa panic buffer must have room for panic text");
++vm_offset_t gPanicBase = (vm_offset_t)&nuwa_panic_buffer;
++unsigned int gPanicSize = sizeof(nuwa_panic_buffer);
++struct embedded_panic_header *panic_info = &nuwa_panic_buffer.header;
++#else
+ vm_offset_t gPanicBase = 0;
+ unsigned int gPanicSize;
+ struct embedded_panic_header *panic_info = NULL;
++#endif
+ 
+ #if (DEVELOPMENT || DEBUG) && defined(XNU_TARGET_OS_BRIDGE)
+ /*
+@@ -77,7 +98,12 @@
+ #endif
+ 
+ /* Maximum size of panic log excluding headers, in bytes */
++#if defined(XNU_NUWA_PANIC_FALLBACK) && XNU_NUWA_PANIC_FALLBACK
++static unsigned int panic_text_len =
++    sizeof(nuwa_panic_buffer) - sizeof(struct embedded_panic_header);
++#else
+ static unsigned int panic_text_len;
++#endif
+ 
+ /* Whether a console is standing by for panic logging */
+ static boolean_t panic_console_available = FALSE;
+@@ -93,6 +119,10 @@
+ static void
+ check_for_panic_log(void)
+ {
++#if defined(XNU_NUWA_PANIC_FALLBACK) && XNU_NUWA_PANIC_FALLBACK
++	/* No previous-boot log or firmware shared console in this volatile buffer. */
++	return;
++#else
+ #ifdef PLATFORM_PANIC_LOG_PADDR
+ 	gPanicBase = ml_io_map_wcomb(PLATFORM_PANIC_LOG_PADDR, PLATFORM_PANIC_LOG_SIZE);
+ 	panic_text_len = PLATFORM_PANIC_LOG_SIZE - sizeof(struct embedded_panic_header);
+@@ -177,6 +207,7 @@
+ 
+ 	/* Clear panic region */
+ 	bzero((void *)gPanicBase, gPanicSize);
++#endif /* XNU_NUWA_PANIC_FALLBACK */
+ }
+ 
+ int

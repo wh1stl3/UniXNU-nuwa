@@ -1,5 +1,13 @@
 # UniXNU-nuwa
 
+**2026-11-10 current diagnostic (self-checked):** volatile panic fallback plus
+effective PAN=1/corecrypto=1/BOOT_PROGRESS=0 MakeInc wiring; console-after probe
+in `_arm_init`, occurrence 1, delay 6, before=false, panic_screen=false.
+Parent reports conditional deep approval and b-round artifact verifier PASS;
+final payload injection awaits independent verification. No device action or push.
+See [host evidence and final hashes](docs/panic-fallback-host-20261110.md).
+This supersedes the historical candidate descriptions below.
+
 **最新探针（2026-11-09）**：用户观察到 `07e176761020d3d7f01fb086d9a89af3e3531eb9` 的 `_ml_parse_cpu_topology` 后置探针约 6 秒复位，说明该调用已返回。下一候选改为 `_arm_init` 内第一次 `_arm_vm_init` 返回后复位（delay 6，panic_screen=false）；复位表示该调用已返回，不复位不能区分未到达、未返回或探针失败。主机检查仅 self-checked；新候选尚未上机。旧进度段保留作历史，最新配置与产物以 `porting.toml` 为准。
 
 Xiaomi 13 Pro（nuwa，SM8550）的 UniXNU 设备仓。目标：iOS 16.7.16 / 20H392，donor 身份 iPhone10,3（D22AP）。

@@ -12,3 +12,6 @@ CONFIG_XNU_CRYPTO_BOOTSTRAP="prelinked"
 CONFIG_XNU_NATIVE_AES=n
 # Source libpthread-519 does not match the 8796 pthread_callbacks_s layout (proc_get_jit_entitled is missing); the donor kernelcache pthread kext is the ABI-matched provider.
 CONFIG_XNU_SOURCE_PTHREAD=n
+# nuwa has no owned persistent panic RAM. Select the device-only writable fallback.
+# XNU_EXTRA_CFLAGS replaces (not appends to) the build script defaults; retain them.
+CONFIG_XNU_EXTRA_CFLAGS="-Wno-reserved-identifier -Wno-pre-c11-compat -Wno-missing-designated-field-initializers -Wno-suggest-override -Wno-unnecessary-virtual-specifier -Wno-suggest-destructor-override -Wno-ms-bitfield-padding -DXNU_NUWA_PANIC_FALLBACK=1"

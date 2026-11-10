@@ -147,16 +147,17 @@ entry_probe_reset_delay = 6
 # User reports: console-before (8a4063e51c437da62e031ea2a81d9e3d925988d9) reset
 # immediately after three bars; console-after (0114789e3b859f66a00b483ee7679dd9722e2bcf)
 # showed three bars without reset. These observations do not establish a root cause.
-# Single post-map probe: first _ml_io_map_wcomb in _PE_create_console, original BL
-# at 0xfffffff00796867c to 0xfffffff0073f35b0, with x0=0x3c0fc000, x1=0x4000.
-# Site B to RX cave 0xfffffff0073ee620 (0x17ea17e9); cave starts BL callee (0x940013e4),
-# then waits 115200000 (0x06ddd000) CNTPCT ticks before x0=0x84000009 / smc #0.
+# Console-after terminating probe for the b-round prelink da0d660f8336fa87...:
+# resolve _PE_create_console in _arm_init afresh, occurrence 1, before=false.
+# Original BL 0xfffffff0079993bc -> 0xfffffff007968f5c; return 0xfffffff0079993c0.
+# The fixed-PA mapping is absent in this kernel; the old post-map selector is invalid.
+# The RX cave calls console, then waits 115200000 (0x06ddd000) CNTPCT ticks
+# before x0=0x84000009 / smc #0.
 # This terminating probe does not preserve the return value or resume the original flow.
-# A positive reset proves only that mapping returned, before the first LDR at
-# 0xfffffff0079686a4; it does not prove that the fixed PA is readable or writable.
-# No reset remains inconclusive. Fixed PA, VM, firmware and memory window stay unchanged.
-entry_probe_reset_after = "_ml_io_map_wcomb"
-entry_probe_reset_in = "_PE_create_console"
+# A positive reset establishes only that console returned; no reset is inconclusive.
+# PAN=1 is effective before console; source corecrypto EARLY_BOOT is after this stop.
+entry_probe_reset_after = "_PE_create_console"
+entry_probe_reset_in = "_arm_init"
 entry_probe_reset_occurrence = 1
 entry_probe_reset_before = false
 # DarwinBoot's ValidTrustCaches (DarwinBoot.c:371-397) only accepts the trust cache bundle format (u32 Count 1-128

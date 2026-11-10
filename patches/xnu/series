@@ -64,3 +64,5 @@ arch:../../../patches/xnu/source-pthread-bootstrap.patch
 #   kalloc_type_view_parse (KCFormatKCGEN) walk the __PRELINK_TEXT,__macho_list header index when present (same bounds checks/panics);
 #   without the section the original contiguous walk is unchanged. Required by emit_prelink.py. Hunks identical to 10063 except line offsets.
 8796-sparse-prelink-index.patch
+# nuwa only: volatile kernel-owned panic storage, never the BCM2837 fixed PA.
+8796-nuwa-panic-fallback.patch
