@@ -117,49 +117,19 @@ loader = "firmware"
 title = "UniXNU"
 # R-012 批准 A（2026-10-24）：实机 FDT /memory 9 条 reg 合并后最大连续段跨度 0x240000000（base 0x8c0000000，9216 MiB）。
 dram_size = "0x240000000"
-kernel_args = ["-v", "serial=3"]
+kernel_args = ["-v", "serial=3", "sheng-platform-stage=5"]
 # Boot-menu Tools entry (id = "tools", action = "tools") for reading the firmware's exported log.
 tools = true
-# Entry probe: payload.build patches a COPY of kernel.macho with
-# scripts/patch-xnu-entry-probe.py --reset-delay 6 (panic_screen off). It installs stage 1 (blue bar
-# at the MMU-off kernel entry) and stage 2 (magenta bar just before SCTLR_EL1) below DarwinBoot's
-# green handoff bar. The bars paint boot_args.Video[0] (physical GOP framebuffer base) with MMU off,
-# so entry is observable up to the MMU enable.
-# panic_screen is deliberately false: together with entry_probe_reset_delay the panic screen code
-# (0xa2f bytes for nuwa's kernel) overflows the zero padding after _start by 0x5f (95) bytes past
-# PANIC_CAVE_END, which scripts/patch-xnu-entry-probe.py refuses. This probe variant only needs the
-# stage 1/2 bars plus the stage 4 reset timing.
-panic_screen = false
-# Stage 4 bisect probe. Once the MMU is on there is no frame-buffer mapping, so the only signal is a
-# PSCI SYSTEM_RESET. In after mode the cave re-executes the displaced call and then busy-waits on the
-# architectural physical counter cntpct_el0 for TIMEBASE*N counts (TIMEBASE=19200000; nuwa's counter
-# is 19.2 MHz, so 6 = 6.0 real seconds) before x0=0x84000009 / smc #0. entry_probe_reset_after moves
-# that reset to AFTER the Nth call to the named symbol inside entry_probe_reset_in (payload.py:169-177
-# maps it to --reset-after/--in/--occurrence/--reset-before). It REPLACES the stage 3 reset that
-# entry_probe_reset_delay alone would place right after the MMU enable (patch-xnu-entry-probe.py:389-396),
-# so stage 3 and stage 4 are never present together: there is no masking. The ~6 s delay starts
-# after the callee returns, not at boot or at the magenta bar. A probe reset means the call
-# returned; no reset is inconclusive (not reached, did not return, or probe/reset failure). The reset
-# cold-boots the device (Android, not back to fastboot), so recovery is manual (hold power / reboot
-# to fastboot). With entry_probe_reset_before=true the cave instead SKIPS the callee and immediately
-# constructs x0=0x84000009 / smc #0: no CNTPCT wait, and delay=6 is ignored on this path.
-entry_probe_reset_delay = 6
-# User reports: console-before (8a4063e51c437da62e031ea2a81d9e3d925988d9) reset
-# immediately after three bars; console-after (0114789e3b859f66a00b483ee7679dd9722e2bcf)
-# showed three bars without reset. These observations do not establish a root cause.
-# Console-after terminating probe for the b-round prelink da0d660f8336fa87...:
-# resolve _PE_create_console in _arm_init afresh, occurrence 1, before=false.
-# Original BL 0xfffffff0079993bc -> 0xfffffff007968f5c; return 0xfffffff0079993c0.
-# The fixed-PA mapping is absent in this kernel; the old post-map selector is invalid.
-# The RX cave calls console, then waits 115200000 (0x06ddd000) CNTPCT ticks
-# before x0=0x84000009 / smc #0.
-# This terminating probe does not preserve the return value or resume the original flow.
-# A positive reset establishes only that console returned; no reset is inconclusive.
-# PAN=1 is effective before console; source corecrypto EARLY_BOOT is after this stop.
-entry_probe_reset_after = "_PE_create_console"
-entry_probe_reset_in = "_arm_init"
-entry_probe_reset_occurrence = 1
-entry_probe_reset_before = false
+# Patch a COPY with --panic-screen --no-reset: retain entry/MMU bars, no stage 3/4 reset.
+# Renderer must fit unchanged padding 0xfffffff0073ee5c0..0xfffffff0073eeff0 (0xa30).
+# sheng-platform-stage=5 resets immediately after registerService() returns in the
+# existing ArmDTPlatform.cpp:191-208; it has no six-second delay and is not a panic request.
+# Positive reset proves that return, not normal boot; a panic screen may expose an
+# earlier failure. No reset/text is inconclusive (including renderer/mapping failure).
+# Latest tested console-after vendor_boot 3f46e8a8... reset after ~6 seconds (user report),
+# proving only b-round console returned; this next candidate has not run on hardware.
+panic_screen = true
+entry_probe_reset_delay = 0
 # DarwinBoot's ValidTrustCaches (DarwinBoot.c:371-397) only accepts the trust cache bundle format (u32 Count 1-128
 # + offset table + exact version-2 modules), not the raw StaticTrustCache IM4P. The 20H392 profile pins the raw
 # IM4P hash (63e01c03…), which is why the first payload's kernel.macho.trustcache (66289 B, 0x30 0x82… DER) was

@@ -8,9 +8,10 @@
 ## 基线
 - 基座：`D:/Code/PortingiOS/UniXNU`（上游 main `e2fdae4` + 本地 `af9d099`（submodule pin：ArmCpu=93a5030、XnuPrelink=f1d80d3）与 `693f5d9cae8a408dd18b39f3f9fdc4228c934241`（iOS 16.7.16-20H392 profile））。
 - **已是官方 format 2 骨架**：`schema_version = 2`、`feeds.toml`（钉 `UniXNU-sm8550-common@a9f45dc6…`）、`dts/nuwa.dts`、`configs/nuwa_defconfig`、`patches/xnu/series`、`porting.toml`、`scripts/package.sh`、`.github/workflows/*`。
-- 进度：官方第 4 步已完成——`defconfig` → `fetch` → `status --json` → `tree` 对 `board.os_profile = ios-16.7.16-20H392` 解析通过，`unixnu.lock` 已提交（设备仓基线 `279c990a0c7a238aa0a5818493c6cd6a46528749`）；第 5 步（硬件描述与固件）的固件配置已能构建，并由独立 Verifier 于 2026-11-07 复跑通过（PASS，`SILICIUM_UEFI.fd` 3145728 字节 = `0x300000`，对 `b1064eb8`/`e494c01b`）；Advanced Logger 已接线（`uefi-nuwa` `e494c01b`），未上机。
-- 未完成：第 5 步 Advanced Logger 运行时未验证（Tools→Advanced Logger 页与 dispatch）、内存所有权证据仍缺，启动链常规审查已出结论 **APPROVE WITH CONDITIONS**（仅针对首次 `fastboot boot`；未升级 Deep Reviewer，因无候选满足 `ai-orchestration` §2.3），首次 `fastboot boot` 的放行条件剩 RamPartition 协议生产者确认、SEC HOB 确认与用户当轮明确授权（不得写成已放行）；`[payload.adt]` 的 `chip_id` 已定（`4acab8db`，已写入 `board.toml`；`unique-chip-id` 种子仅存在于基座检出里被 git 忽略的 `unixnu.local.toml`，需用户自行备份），`root_match_volume_uuid` 待 userdata 镜像构建后、阶段 6 前补；`[ipsw.sha256]` 缺 donor `KernelCache` 成员哈希（url/chip_id/board_id 与 DeviceTree、StaticTrustCache 哈希由 profile 提供）；`[bootimg]` 缺实测值。
-- 历史 8796 补丁（41+64）与 ADT 脚本仍在旧仓/备份，未迁入 format 2；`scripts/` 下是历史审计工具，可直接复用，但不再充当 ADT 生成器。
+- 当前（2026-11-10）：官方第 7 步 / bring-up 内核入口至 platform expert 诊断；8796 kernel/prelink 已构建，Advanced Logger 已实机导出。b 轮 console-after 候选三色后约六秒复位（用户口述），只证明 console 返回，不证明正常启动；已回 A/TWRP current/active=0，非本轮新查。证据 `.cache/media/stage4-console-after-20261110-180641/execution.log`。
+- 下一单一候选：`sheng-platform-stage=5`、panic screen、无 entry reset；沿用 b 轮 prelink，禁止重编 kernel/prelink。现有 `registerService()` 返回后立即复位，无六秒延迟；Verifier 独立主机增量 PASS，候选未上机。证据见 `docs/stage5-panic-host-20261110.md`；下一轮仍需新授权及录像，判读排除其他复位后才支持 configure/registerService 返回，不代表正常启动。
+- crypto 事实：`CONFIG_XNU_CRYPTO_BOOTSTRAP="prelinked"`；`prng_random.o` 最终 `-U XNU_SOURCE_CORECRYPTO14`，当前 prelink 无 `_source_corecrypto14_bootstrap`，不能声称 console 后必经 source corecrypto EARLY_BOOT。不切换 crypto 模式。
+- 仍未验收：正常启动、平台服务发布、存储与用户态；内存所有权问题不因探针阳性自动关闭。ADT 身份/种子约定不变，root UUID 留待根卷阶段。`scripts/` 历史审计工具不再充当 ADT 生成器。
 
 ## 目录约定（官方布局）
 - 板级文件：`board.toml`、`porting.toml`、`feeds.toml`、`configs/`、`dts/`、`patches/xnu/series`、`package/`、`scripts/package.sh`、`proprietary-files.txt`、`local.toml.example`。

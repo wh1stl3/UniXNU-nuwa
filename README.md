@@ -1,12 +1,19 @@
 # UniXNU-nuwa
 
-**2026-11-10 current diagnostic (self-checked):** volatile panic fallback plus
-effective PAN=1/corecrypto=1/BOOT_PROGRESS=0 MakeInc wiring; console-after probe
-in `_arm_init`, occurrence 1, delay 6, before=false, panic_screen=false.
-Parent reports conditional deep approval and b-round artifact verifier PASS;
-final payload injection awaits independent verification. No device action or push.
-See [host evidence and final hashes](docs/panic-fallback-host-20261110.md).
-This supersedes the historical candidate descriptions below.
+**当前（2026-11-10，self-checked）：官方第 7 步 / bring-up 内核入口至 platform expert 诊断。**
+已测 b 轮 console-after vendor_boot `3f46e8a8dd213babec939e081d3273d17a03023e4fab107e22b07922d625a02a`：
+用户口述三色后约六秒复位，仅证明 console 返回；已回 A/TWRP current/active=0（既有日志，未新查设备）。
+新单一候选为 `sheng-platform-stage=5`、panic screen、无 stage 3/4 entry reset，
+沿用 b 轮 prelink，仅组装 payload/vendor_boot。现有 `registerService()` 返回后立即复位，无六秒延迟。
+主机组装 rc=0，**Verifier 独立增量检查 PASS，尚未上机**；本轮配置/文档本地提交，不 push/merge。
+见 [新候选路径、完整 hash 与验证命令](docs/stage5-panic-host-20261110.md)。
+下一步：由主控核对候选并取得新一轮上机授权；stage5 无六秒延迟，须录像判读，不能把任何复位都当作探针阳性。不代表正常启动或平台服务已验收。
+
+Crypto 更正：`nuwa_defconfig` 为 `CRYPTO_BOOTSTRAP="prelinked"`，`prng_random.o` 最终
+`-U XNU_SOURCE_CORECRYPTO14`，当前 prelink 无 `_source_corecrypto14_bootstrap`；不能声称 console 后必经
+source corecrypto EARLY_BOOT。不切换 crypto 模式。PAN/volatile fallback 事实见 [b 轮证据](docs/panic-fallback-host-20261110.md)。
+
+## 历史快照（以下进度、未完成项与“下一步”仅代表当日，不是当前状态）
 
 **最新探针（2026-11-09）**：用户观察到 `07e176761020d3d7f01fb086d9a89af3e3531eb9` 的 `_ml_parse_cpu_topology` 后置探针约 6 秒复位，说明该调用已返回。下一候选改为 `_arm_init` 内第一次 `_arm_vm_init` 返回后复位（delay 6，panic_screen=false）；复位表示该调用已返回，不复位不能区分未到达、未返回或探针失败。主机检查仅 self-checked；新候选尚未上机。旧进度段保留作历史，最新配置与产物以 `porting.toml` 为准。
 

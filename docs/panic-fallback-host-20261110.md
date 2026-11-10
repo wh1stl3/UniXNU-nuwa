@@ -1,6 +1,11 @@
 # nuwa panic fallback: host build, 2026-11-10
 
-Status: final payload **self-checked**; final injection awaits independent verifier.
+Historical console-after assembly record. Parent subsequently reports final
+injection verifier PASS. The tested vendor_boot below produced three bars then
+approximately six-second reset (user report), proving console returned only;
+recorded return to A/TWRP current/active=0 is in
+`.cache/media/stage4-console-after-20261110-180641/execution.log:99-155`.
+The next host-only candidate is documented in [stage5 evidence](stage5-panic-host-20261110.md).
 Parent reports Deep Reviewer **APPROVE WITH CONDITIONS** and independent verifier
 PASS for the b-round kernel/prelink artifact audit (not a kernel/prelink rebuild).
 No hardware release or acceptance is implied.
@@ -35,8 +40,12 @@ The MakeInc fix also restores existing script defines `XNU_NATIVE_PAN=1`,
 `XNU_SOURCE_CORECRYPTO14=1`, `XNU_BOOT_PROGRESS=0`. These are not new defconfig
 choices, but their newly effective compilation must be included in independent
 review; this is not a claim that the only binary difference is panic storage.
-PAN is effective before console; source corecrypto EARLY_BOOT is after this
-terminating probe and has not executed at its stop. Guard absent/0 preserves only
+PAN is effective before console. Crypto correction: the defconfig selects
+`CONFIG_XNU_CRYPTO_BOOTSTRAP="prelinked"`; the actual `prng_random.o.json`
+ends with `-U XNU_SOURCE_CORECRYPTO14`, and the current prelink has no
+`_source_corecrypto14_bootstrap`. The MakeInc define alone does not establish a
+source-corecrypto EARLY_BOOT path after console. No crypto mode is changed.
+Guard absent/0 preserves only
 the panic branches, not the behavior of the entire MakeInc wiring.
 
 Old native/prelink/manifest/config inputs were copied and SHA-compared before
@@ -163,5 +172,6 @@ it is not a rerunnable verifier command without a fresh output directory.
 
 The parent-reported host review/audit does not validate early/nested panic,
 coredump, nonzero slide, persistence or device behavior. Fallback is volatile,
-not persistent panic storage. Final payload remains **self-checked** only until
-verifier checks this final injection. Integration and acceptance belong to parent.
+not persistent panic storage. The original self-check status above describes
+assembly time; subsequent final injection PASS is parent-reported, not a new
+verifier run here. Integration and acceptance belong to parent.
