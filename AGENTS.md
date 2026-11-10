@@ -8,8 +8,9 @@
 ## 基线
 - 基座：`D:/Code/PortingiOS/UniXNU`（上游 main `e2fdae4` + 本地 `af9d099`（submodule pin：ArmCpu=93a5030、XnuPrelink=f1d80d3）与 `693f5d9cae8a408dd18b39f3f9fdc4228c934241`（iOS 16.7.16-20H392 profile））。
 - **已是官方 format 2 骨架**：`schema_version = 2`、`feeds.toml`（钉 `UniXNU-sm8550-common@a9f45dc6…`）、`dts/nuwa.dts`、`configs/nuwa_defconfig`、`patches/xnu/series`、`porting.toml`、`scripts/package.sh`、`.github/workflows/*`。
-- 当前（2026-11-10）：官方第 7 步 / bring-up 内核入口至 platform expert 诊断；8796 kernel/prelink 已构建，Advanced Logger 已实机导出。b 轮 console-after 候选三色后约六秒复位（用户口述），只证明 console 返回，不证明正常启动；已回 A/TWRP current/active=0，非本轮新查。证据 `.cache/media/stage4-console-after-20261110-180641/execution.log`。
-- 下一单一候选：`sheng-platform-stage=5`、panic screen、无 entry reset；沿用 b 轮 prelink，禁止重编 kernel/prelink。现有 `registerService()` 返回后立即复位，无六秒延迟；Verifier 独立主机增量 PASS，候选未上机。证据见 `docs/stage5-panic-host-20261110.md`；下一轮仍需新授权及录像，判读排除其他复位后才支持 configure/registerService 返回，不代表正常启动。
+- 当前（2026-11-10）：官方第 7 步；旧 stage5 实测 AppleImage4 `failed to get mix-n-match policy: 2`，显示后 park，无自动复位，不证明 stage5。`.cache/media/stage5-panic-20261110-183907/execution.log` 18:54:23 历史实查回 A/TWRP current/active=0；本轮未新查设备。
+- AMNM-only chosen u32=0 是已批准的非 Apple bring-up 软件策略；本地主机产物仅 self-checked，未独立 verifier、未上机，禁止设备放行。BNCH 缺失+level0 的下一 panic 已闭环；Deep 最终裁定固定 donor 无已证明无 AP-token/no-shadow 入口，需要 provider 源码或受支持兼容实现。XNU wrapper/custom runtime 不能控制前置 BNCH init/内部 shadow 或替换内建 PMAP_CS，interface register 仅一次。不填假 BNCH、不改 level、不替换指针/跳 init；无支持前停止重复分析、构建和上机。证据见 `docs/mix-n-match-host-20261110.md`。
+- 下一动作：审阅 `docs/appleimage4-provider-question-draft-20261110.md`，经用户许可发送或提供接口资料；本地草稿未发送。菜单自动下移仅用户观察；OEM SDAM/Reset 只是候选，日志级别过滤已确证未修。多设备规则以根 AGENTS 为准。
 - crypto 事实：`CONFIG_XNU_CRYPTO_BOOTSTRAP="prelinked"`；`prng_random.o` 最终 `-U XNU_SOURCE_CORECRYPTO14`，当前 prelink 无 `_source_corecrypto14_bootstrap`，不能声称 console 后必经 source corecrypto EARLY_BOOT。不切换 crypto 模式。
 - 仍未验收：正常启动、平台服务发布、存储与用户态；内存所有权问题不因探针阳性自动关闭。ADT 身份/种子约定不变，root UUID 留待根卷阶段。`scripts/` 历史审计工具不再充当 ADT 生成器。
 

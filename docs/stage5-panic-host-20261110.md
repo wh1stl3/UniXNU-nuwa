@@ -1,6 +1,12 @@
 # nuwa stage5 + panic screen, 2026-11-10
 
-Status: **independent verifier PASS** (parent-delivered result), **not device-tested**.
+Status: original host candidate **independent verifier PASS** (parent-delivered result).
+Subsequently device-tested: parent reports photo-confirmed AppleImage4 panic
+`failed to get mix-n-match policy: 2`, no automatic reset; panic-screen park is
+expected. This does not prove stage5. Recovery returned A/TWRP current/active=0
+at 18:54:23 in `.cache/media/stage5-panic-20261110-183907/execution.log`.
+See [AMNM-only successor and BNCH device-release blocker](mix-n-match-host-20261110.md).
+All statements below about an unbooted candidate describe the original host checkpoint.
 Device HEAD `982e92e67c0e266987a786865f53e9cd120a159c` plus current board/docs
 changes; base `693f5d9cae8a408dd18b39f3f9fdc4228c934241`. No source changes,
 crypto-mode switch, kernel/prelink rebuild, device command, commit or push.

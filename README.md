@@ -1,13 +1,14 @@
 # UniXNU-nuwa
 
 **当前（2026-11-10，self-checked）：官方第 7 步 / bring-up 内核入口至 platform expert 诊断。**
-已测 b 轮 console-after vendor_boot `3f46e8a8dd213babec939e081d3273d17a03023e4fab107e22b07922d625a02a`：
-用户口述三色后约六秒复位，仅证明 console 返回；已回 A/TWRP current/active=0（既有日志，未新查设备）。
-新单一候选为 `sheng-platform-stage=5`、panic screen、无 stage 3/4 entry reset，
-沿用 b 轮 prelink，仅组装 payload/vendor_boot。现有 `registerService()` 返回后立即复位，无六秒延迟。
-主机组装 rc=0，**Verifier 独立增量检查 PASS，尚未上机**；本轮配置/文档本地提交，不 push/merge。
-见 [新候选路径、完整 hash 与验证命令](docs/stage5-panic-host-20261110.md)。
-下一步：由主控核对候选并取得新一轮上机授权；stage5 无六秒延迟，须录像判读，不能把任何复位都当作探针阳性。不代表正常启动或平台服务已验收。
+旧 stage5 `998d284a…` 已测：照片确认 AppleImage4 panic `failed to get mix-n-match policy: 2`，
+未自动复位；panic 显示后 park 符合预期，不证明 stage5。既有日志记录 18:54:23 已回 A/TWRP current/active=0，未新查设备。
+本轮仅新增 `/chosen/mix-n-match-prevention-status` u32=0（AMNM=true，非 Apple 启动链 bring-up 软件策略，非 donor/熔丝事实；放宽反重放令牌/chained-manifest-hash 约束，不关闭 AMFI、不宣称 Apple secure boot）。
+既有 stage5/panic/kernel/prelink/crypto/trust 保持，仅组装一次 payload/vendor_boot，增量自检 exit 0，**self-checked，未独立验证、未上机**；本轮仅配置/文档一次本地提交，不 push/merge。
+**最终阻塞：外部 provider 接口支持缺失，AMNM-only 禁止设备放行。** BNCH 缺失且当前 secure-boot-level=0 会触发下一 panic；Deep 最终裁定固定 donor 无已证明的无 AP-token/no-shadow 入口，XNU nonce wrapper/custom runtime 不能替代内建初始化/PMAP_CS。需要 provider 源码或受支持兼容实现；不填假 BNCH、不改 level、不替换指针或跳 init，不再重复分析/构建/上机。
+下一动作：审阅[本地英文上游问题草稿](docs/appleimage4-provider-question-draft-20261110.md)，经用户许可发送或提供接口资料；草稿未发送。
+菜单自动下移仍仅用户观察；OEM SDAM/Reset 只是候选机制；日志级别过滤已确证但未修。多设备规则见根 AGENTS，身份/定向/回读门禁不变。
+见 [本轮证据、完整 hash 与增量验证命令](docs/mix-n-match-host-20261110.md)。阶段验收等级不提升。
 
 Crypto 更正：`nuwa_defconfig` 为 `CRYPTO_BOOTSTRAP="prelinked"`，`prng_random.o` 最终
 `-U XNU_SOURCE_CORECRYPTO14`，当前 prelink 无 `_source_corecrypto14_bootstrap`；不能声称 console 后必经

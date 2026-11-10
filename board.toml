@@ -73,6 +73,12 @@ roots = [
 [os_overrides."ios-16.7.16-20H392".root]
 os_volume_uuid = ""
 
+# Non-Apple boot-chain bring-up software policy: 0 means AMNM=true, not a
+# donor/fuse fact. Relaxes anti-replay token/chained-manifest-hash constraints;
+# does not disable AMFI or claim Apple secure boot. BNCH review still gates boot.
+[os_overrides."ios-16.7.16-20H392".adt.chosen.u32]
+mix-n-match-prevention-status = 0
+
 # Donor identity values the local profile leaves as TODO. Read from the 20H392 (16.7.16) donor
 # DeviceTree (Firmware/all_flash/DeviceTree.d22ap.im4p -> decoded "bvx2" ADT in out/ipsw/20H392/dt.dtb):
 # /product/product-id (20-byte MGProductType, bytes table) and /product/artwork-device-subtype
@@ -126,8 +132,8 @@ tools = true
 # existing ArmDTPlatform.cpp:191-208; it has no six-second delay and is not a panic request.
 # Positive reset proves that return, not normal boot; a panic screen may expose an
 # earlier failure. No reset/text is inconclusive (including renderer/mapping failure).
-# Latest tested console-after vendor_boot 3f46e8a8... reset after ~6 seconds (user report),
-# proving only b-round console returned; this next candidate has not run on hardware.
+# Tested stage5 vendor_boot 998d284a... parked on AppleImage4 missing-policy panic;
+# stage5 return is unproven. The chosen-policy-only successor is not device-tested.
 panic_screen = true
 entry_probe_reset_delay = 0
 # DarwinBoot's ValidTrustCaches (DarwinBoot.c:371-397) only accepts the trust cache bundle format (u32 Count 1-128
