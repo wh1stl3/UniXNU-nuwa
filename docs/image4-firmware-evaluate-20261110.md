@@ -712,3 +712,57 @@ Independent mechanical/schema completion is not authentication PASS or completed
 static review: the latter was blocked by service `cyber_policy`. Do not integrate
 research code or expand the model/resource gate on this evidence. No trusted
 positive, nonce closure or device release is established.
+
+## Main-controller static review of the Data-ledger script (2026-11-10, self-performed)
+
+Scope: `scripts/research-current-image4-firmware-evaluate.py` SHA256
+`94d09c6bebd7367d3b3211eb54fbd7453756af5742d78a366b965d6a48c7e73c` (739 lines,
+hash matches both reports). The main controller reviewed it directly because the
+delegated review was blocked by `cyber_policy`. It is a host-only emulation
+harness with no device, network or external-write path.
+
+**Verdict: PASS WITH CONDITIONS (static, limited to harness safety and model
+consistency). Not an authentication result.**
+
+Findings:
+
+- Output is confined to a fresh `out/` dir (`is_relative_to(ROOT/'out')` and not
+  exists). Inputs (kernel/payload/ADT/cert/key) are SHA-pinned and read-only.
+  OpenSSL is invoked via an argv list (no shell), fixed `/usr/bin/openssl`, exit
+  codes checked. No Apple certificate is embedded in source; the root Subject is
+  read at runtime from the pinned kernel and kept in ignored `out/`.
+- Allocator admission is fail-closed. It requires LR, saved workspace LR,
+  breadcrumb ctx, n==64 and request==2584 together. The 5152 request fails
+  `approved_ctx` (n=None, so `all(checks)` is False) and blocks before any
+  allocation. Count limit 1 and size limit 2584 are enforced in `allocate`.
+- Ledger lifecycle is consistent. Poison, guard and canary checks run before the
+  free-content read. Free requires full `workspace_clear` write coverage and
+  all-zero content. Host after-free cleanup is marked `native:false`. Normal
+  return requires a closed lifetime, so a leak or double free becomes
+  RESOURCE_FAILURE (exit 1). OOM returns NULL without mapping and records no
+  successful allocation.
+- Security results are never fabricated. The only stubs are the pure PMAP log
+  (return 0), the Data alloc/free ABI and the setup boundaries. Digest output is
+  only compared against host SHA384 (a mismatch is a hard failure and nothing is
+  replaced). evaluate==0 maps to UNEXPECTED_ZERO and exit 2, never a positive.
+
+Conditions and low-severity notes (no correction needed to retain the evidence):
+
+1. `H.require` failures inside Unicorn hooks (digest cache write guard, SHA384
+   mismatch) are not caught in `call()`. They end as a traceback with exit 1
+   instead of RESOURCE_FAILURE. This fails closed but is misclassified.
+2. `ledger_selftest` exercises only the model predicates, not the Unicorn
+   hook-to-exception propagation of `invalid`/`memory`. That path was not hit in
+   the actual runs.
+3. Exit 0 means only that evaluate returned nonzero (for example the OOM model
+   negative). Always read the JSON fields; never treat exit 0 as authentication.
+4. Out of scope for this review: the dependency scripts (consumer-parse, bnch,
+   runtime-provider audit, entry-probe, launch-context). They are tracked, hashed
+   in the report and were previously independently verified.
+5. The generated BNCH is a random experimental value per run, so certificate and
+   manifest hashes vary. Compare observations, not hashes.
+
+Gate effect: the "static review not completed" blocker for this ledger script is
+closed with the conditions above. The script remains unintegrated and untracked.
+The 5152 source stays BLOCKED, no model limit is widened, and the review gives no
+authentication, nonce or device-release credit.
