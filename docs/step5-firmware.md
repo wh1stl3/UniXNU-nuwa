@@ -181,7 +181,7 @@ Verdict basis:
    the lookup fails silently). How to obtain it: binary reference-point analysis
    (`InstallProtocolInterface` versus `LocateProtocol`) and the first boot's DEBUG log.
 4. Five doubts that had been proposed for escalation to Deep Reviewer each failed the four
-   conditions of `docs/ai-orchestration-2026-11-06.md` §2.3; all five were reclassified
+   conditions of `docs/routing.md`（升级门槛）; all five were reclassified
    INSUFFICIENT EVIDENCE with the gap stated. No escalation package was produced and Deep
    Reviewer was not used.
 
@@ -477,7 +477,7 @@ only and nothing here is a boot-chain hardware result.
   not booted; there is no hardware evidence.
 - Boot-chain review: concluded on 2026-11-07 with APPROVE WITH CONDITIONS, scoped to the first
   `fastboot boot` only. Deep Reviewer was not used because no candidate met
-  `docs/ai-orchestration-2026-11-06.md` §2.3; see "First fastboot boot: Reviewer verdict and
+  `docs/routing.md`（升级门槛）; see "First fastboot boot: Reviewer verdict and
   conditions". This is not a release to boot: conditions 3, 5, 6 and 7 there are still open, and
   any device action needs the user's explicit authorisation in that round.
 - The memory ownership gate is still open.

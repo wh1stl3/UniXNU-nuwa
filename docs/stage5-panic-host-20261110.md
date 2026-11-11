@@ -10,7 +10,7 @@ All statements below about an unbooted candidate describe the original host chec
 Device HEAD `982e92e67c0e266987a786865f53e9cd120a159c` plus current board/docs
 changes; base `693f5d9cae8a408dd18b39f3f9fdc4228c934241`. No source changes,
 crypto-mode switch, kernel/prelink rebuild, device command, commit or push.
-Shared SESSION-HANDOFF is updated only during final handoff, outside this device commit.
+The shared context brief and this repository's README carry the current state; this device commit does not edit workspace docs.
 
 ## Observation and experiment boundary
 

@@ -6,7 +6,7 @@ schema_version = 2
 name = "nuwa"
 soc = "SM8550"
 soc_source = "sm8550"
-# 官方树不自带 iOS 16 profile；本工作区在 UniXNU/profiles/os/ios-16.7.16-20H392 自建（见 docs/nuwa-ios16-profile-plan-2026-11-06.md）。
+# 官方树不自带 iOS 16 profile；本工作区在 UniXNU/profiles/os/ios-16.7.16-20H392 自建（见 docs/decisions.md D3）。
 os_profile = "ios-16.7.16-20H392"
 description = "Xiaomi 13 Pro (nuwa), SM8550, iOS 16.7.16 target"
 kit = "nuwa"
@@ -27,6 +27,7 @@ archives = [
   "build-corecrypto-14.py --namespace",
   "component:ArmDTPlatform",
   "component:ArmCpu",
+  "build-nuwa-pmap-ret-observer.py",
 ]
 
 # The OS profile ships os_volume_uuid = "REQUIRED_ROOT_VOLUME_UUID" (a placeholder) which stops the kernel bootstrap pass.
