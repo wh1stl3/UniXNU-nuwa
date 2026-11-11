@@ -1,8 +1,7 @@
 # UniXNU-nuwa
 
-**当前（2026-11-10，self-checked）：官方第 7 步 / bring-up 内核入口至 platform expert 诊断。**
-旧 stage5 `998d284a…` 已测：照片确认 AppleImage4 panic `failed to get mix-n-match policy: 2`，
-未自动复位；panic 显示后 park 符合预期，不证明 stage5。18:54:23 A/TWRP current/active=0 仅最后已知历史快照；另 general 正执行已授权恢复 Android/清 userdata，最终结果待回报，不据旧记录断言当前设备状态。
+**当前（2026-11-11）：官方第 7 步 / bring-up 内核入口至 platform expert；冻结 PMAP 正常 epilogue 诊断已单次上机并 STOP。**
+用户报告实机屏幕出现 `DIAG: PMAP initializer normal epilogue reached; STOP`；暂无录像文件做独立视觉确认，因此只记录该观察，不称原 RET 已执行、认证通过、stage5 完成或 launchd。设备已回 A 槽（Android `boot_completed=1` / `_a` / uid0），B 槽 `vendor_boot` 已还原本轮原厂备份并整分区回读一致；当前无设备任务授权，UFS 根未恢复。旧 stage5 `998d284a…` 已测：照片确认 AppleImage4 panic `failed to get mix-n-match policy: 2`，未自动复位；panic 显示后 park 符合预期，不证明 stage5。
 此前本地提交 `f660735b72e84331f4ea932b8f4002b745815412` 仅新增 `/chosen/mix-n-match-prevention-status` u32=0（AMNM=true，非 Apple 启动链 bring-up 软件策略，非 donor/熔丝事实；放宽反重放令牌/chained-manifest-hash 约束，不关闭 AMFI、不宣称 Apple secure boot）。
 该候选保持既有 stage5/panic/kernel/prelink/crypto/trust，仅组装一次 payload/vendor_boot，增量自检 exit 0，**self-checked，未独立验证、未上机**。本轮本地主机里程碑一次提交三个离线研究脚本及记录，无新镜像构建/设备操作，不 push/merge。
 **当前证据不足以批准任何 BNCH 运行候选，AMNM-only 禁止设备放行。** BNCH 缺失且当前 secure-boot-level=0 会触发下一 panic。用户要求的 Deep 复核已完成：此前“必须取得 AppleImage4 源码/等待外部 provider”的绝对裁定已撤回，仅作历史；完整 Apple 生产安全链不是官方 bring-up 阶段 5 前提。可研究明确实验软件域，以受限消费者闭环及充分认证负例证据解除门禁，不一定需闭源源码。不将任意值称真实硬件/donor nonce，不把初始化成功当认证成功；不改 level、不替换指针或跳 init。无新证据时不重复 BNCH 猜值、无效候选构建和上机；本地修复/分析/主机验证继续，适用审查门禁不变，上机前须用户确认。
@@ -12,6 +11,8 @@ PR187 核查：open 未 merged，3 文件 +5/-2，仅将 typed manifest properti
 固件独立提交 `719afa67e3aebbf058c2a8beff4c801057fb2b20` 仅修 `nuwa.dsc` DEBUG 组件 mask `0x8007EE4F`，静态 review+机械检查 PASS；旧 edksetup 缺失，完整 EDKII 解析/AutoGen/编译/设备未验证，3 个脏子模块保留。本会话不改固件文件。
 菜单自动下移仍仅用户观察；OEM SDAM/Reset 只是候选机制，不能把日志 mask 修复视为已证明该症状因果。多设备规则见根 AGENTS，身份/定向/回读门禁不变。
 见 [本轮证据、完整 hash 与增量验证命令](docs/mix-n-match-host-20261110.md)。阶段验收等级不提升。
+**最新设备里程碑（2026-11-11）**：冻结候选 `pmap-ret-stop-20261111-r1`（`vendor_boot` 100663296 B SHA256 `a4d789f06d74d2b8ea1aa9dff3b25556fcfae894454b766d7bf92f072567bfd0`，固定 r4 loader `692cfcca51af81230fecbba15425cf598182fbe53abb362b6046dec0f24dc2e5`）经主机验收（外层静态 review PASS WITH CONDITIONS、独立 verifier PASS）后，按当轮授权用 `scripts/run-pmap-ret-once.py` 执行一次三阶段（run `pmap-ret-20261111-r4`）：阶段 2 命令复核 PASS（A→B 实际读回 B；唯一 `fastboot boot` 固定 r4，exit 0），阶段 3 复核 PASS 并经独立重算主机回读（切回 A 读回 A、Android `boot_completed=1`/`_a`/root；B 槽已还原本轮原厂备份 100663296 B SHA256 `493ca426964adabb195a00ded4ff49793bc7efd5d7bea2a567bcfd0c970a8dad`，设备整分区 SHA 与 `restore-readback.img` 一致，r4 暂存已清理，原备份与证据保留）。用户观察到上述 `DIAG` 行后设备 STOP；无录像，故不做 RET/认证/stage5 结论，阶段等级不变。本地证据 `out/pmap-ret-run-pmap-ret-20261111-r4/`（`boot-complete.json`、`restore-complete.json`、`restore-readback.img`、`event-0041..0122`）只留本地、不含序列号。
+**下一步（主机侧）**：评估复用 renderer baseline `7fd3d933aae66d8e34a0d3ebfa142137978976d7521e04cef20321109750b6f4`（55386112 B）恢复正常 RET 并保留 panic 输出；限定路径/下一里程碑审查仍在 reviewer 进行中，尚无新候选、无新上机。上游只读调查显示 SoC 共享仓 ahead 6、XnuPrelink ahead 5，有效 pins 不动，影响待定，不记为“完全无关”。设备命令须另获当轮授权；UFS 根与 launchd 仍未达到。
 
 Crypto 更正：`nuwa_defconfig` 为 `CRYPTO_BOOTSTRAP="prelinked"`，`prng_random.o` 最终
 `-U XNU_SOURCE_CORECRYPTO14`，当前 prelink 无 `_source_corecrypto14_bootstrap`；不能声称 console 后必经
