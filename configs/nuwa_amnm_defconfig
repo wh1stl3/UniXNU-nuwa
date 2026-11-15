@@ -1,0 +1,21 @@
+# Dedicated host-only diagnostic; retain nuwa_defconfig options verbatim below.
+# 设备内核配置（官方 defconfig 语法）：CONFIG_XNU_<NAME> → XNU_<NAME>；值为 y/n/数字/带引号字符串。
+# 当前是官方模板基线，未做实机验证；每项开关的启用条件写在注释里。
+CONFIG_XNU_SOURCE_CORECRYPTO14=y
+CONFIG_XNU_SOURCE_PTHREAD=y
+CONFIG_XNU_ARM_DT_PLATFORM=y
+CONFIG_XNU_ARMCPU=y
+CONFIG_XNU_CRYPTO_BOOTSTRAP="prelinked"
+# 存储/显示/输入/GPU/AES 待板级输入与 8796 ABI 审查后按官方组件开关启用。
+# CONFIG_XNU_NATIVE_UFS is not set
+# CONFIG_XNU_NATIVE_ADRENO is not set
+# Stage 5 does not use the software AES provider (common.config turns it on); the series omits its patches.
+CONFIG_XNU_NATIVE_AES=n
+# Source libpthread-519 does not match the 8796 pthread_callbacks_s layout (proc_get_jit_entitled is missing); the donor kernelcache pthread kext is the ABI-matched provider.
+CONFIG_XNU_SOURCE_PTHREAD=n
+# nuwa has no owned persistent panic RAM. Select the device-only writable fallback.
+# XNU_EXTRA_CFLAGS replaces (not appends to) the build script defaults; retain them.
+CONFIG_XNU_EXTRA_CFLAGS="-Wno-reserved-identifier -Wno-pre-c11-compat -Wno-missing-designated-field-initializers -Wno-suggest-override -Wno-unnecessary-virtual-specifier -Wno-suggest-destructor-override -Wno-ms-bitfield-padding -DXNU_NUWA_PANIC_FALLBACK=1"
+
+CONFIG_XNU_NUWA_AMNM_OBSERVER=y
+CONFIG_XNU_EXTRA_LD_ARCHIVES="-Wl,-force_load,{tree}/build/nuwa-amnm-observer/libNuwaAmnmObserver.a -Wl,-u,_amnm_input_hook -Wl,-u,_amnm_store_hook -Wl,-u,_amnm_branch_hook -Wl,-u,_amnm_entry_hook -Wl,-u,_amnm_precall_hook -Wl,-u,_panic_screen -Wl,-u,_panic_screen_common -Wl,-map,{tree}/build/nuwa-amnm-observer/native-link.map"

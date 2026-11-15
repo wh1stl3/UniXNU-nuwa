@@ -1,0 +1,29 @@
+--- a/osfmk/kern/startup.c	2026-11-15 17:35:27.668338383 +0800
++++ b/osfmk/kern/startup.c	2026-11-15 17:35:27.695007411 +0800
+@@ -734,6 +734,26 @@
+ 	csm_initialize_provisioning_profiles();
+ #endif
+ 
++#if defined(BCM2837) && XNU_NUWA_TRUST_CACHE_INIT
++	/*
++	 * nuwa only: BCM2837 (the UniXNU arm64 machine config) removes the
++	 * upstream trust cache runtime initialisation below, which leaves
++	 * trust_cache_rt_lock zero and makes the first query_trust_cache()
++	 * panic in lock_rw.c ("Taking non-sleepable RW lock with preemption
++	 * enabled"). It must run here and not later: trustCacheInitializeRuntime()
++	 * writes trust_cache_rt_storage, which is SECURITY_READ_ONLY_LATE, and
++	 * machine_lockdown() (below) makes that memory read-only.
++	 * load_static_trust_cache() is the upstream companion call: it reads the
++	 * /chosen/memory-map TrustCache entry and loads those cdhashes, which is
++	 * what lets AMFI treat Apple binaries as platform binaries. With the
++	 * current packages that entry is {0, 0} and the call returns without
++	 * loading anything (see out/nuwa-launchd-cs-20261115-r4/REPORT.md).
++	 */
++	kernel_bootstrap_log("trust_cache_init");
++	trust_cache_runtime_init();
++	load_static_trust_cache();
++#endif
++
+ #ifndef BCM2837
+ 	kernel_bootstrap_log("trust_cache_init");
+ 

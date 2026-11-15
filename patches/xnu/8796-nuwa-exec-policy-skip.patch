@@ -1,0 +1,53 @@
+--- a/bsd/kern/kern_exec.c	2026-11-15 18:45:19.317390410 +0800
++++ b/bsd/kern/kern_exec.c	2026-11-15 18:45:19.367605392 +0800
+@@ -350,6 +350,16 @@
+ #define SPAWN_SET_PANIC_CRASH_BEHAVIOR "com.apple.private.spawn-panic-crash-behavior"
+ 
+ /* Platform Code Exec Logging */
++#if XNU_NUWA_EXEC_POLICY_SKIP
++/*
++ * nuwa only: last MAC/AMFI exec-policy return value that was ignored for
++ * initproc, so that the first user space exec is not killed while the runtime
++ * trust cache is empty. Only written by the guarded branch in
++ * process_signature(); 0 means no policy error was seen.
++ */
++volatile int nuwa_exec_policy_error;
++#endif /* XNU_NUWA_EXEC_POLICY_SKIP */
++
+ static int platform_exec_logging = 0;
+ 
+ SYSCTL_DECL(_security_mac);
+@@ -7364,12 +7374,27 @@
+ 	 * approve of exec, kill and return immediately.
+ 	 */
+ 	if (imgp->ip_mac_return != 0) {
+-		KERNEL_DEBUG_CONSTANT(BSDDBG_CODE(DBG_BSD_PROC, BSD_PROC_EXITREASON_CREATE) | DBG_FUNC_NONE,
+-		    proc_getpid(p), OS_REASON_EXEC, EXEC_EXIT_REASON_SECURITY_POLICY, 0, 0);
+-		signature_failure_reason = os_reason_create(OS_REASON_EXEC, EXEC_EXIT_REASON_SECURITY_POLICY);
+-		error = imgp->ip_mac_return;
+-		unexpected_failure = TRUE;
+-		goto done;
++#if XNU_NUWA_EXEC_POLICY_SKIP
++		/*
++		 * nuwa only: the init program is exec'd while the runtime trust cache
++		 * is empty, so AMFI's mpo_proc_label_update_execve denies it and XNU
++		 * would SIGKILL initproc. Record the policy error and let the exec
++		 * finish; every other process keeps the original behaviour.
++		 */
++		if (p == initproc) {
++			nuwa_exec_policy_error = imgp->ip_mac_return;
++			kprintf("nuwa: initproc exec mac policy returned %d for %s; continuing exec\n",
++			    imgp->ip_mac_return, p->p_name);
++		} else
++#endif /* XNU_NUWA_EXEC_POLICY_SKIP */
++		{
++			KERNEL_DEBUG_CONSTANT(BSDDBG_CODE(DBG_BSD_PROC, BSD_PROC_EXITREASON_CREATE) | DBG_FUNC_NONE,
++			    proc_getpid(p), OS_REASON_EXEC, EXEC_EXIT_REASON_SECURITY_POLICY, 0, 0);
++			signature_failure_reason = os_reason_create(OS_REASON_EXEC, EXEC_EXIT_REASON_SECURITY_POLICY);
++			error = imgp->ip_mac_return;
++			unexpected_failure = TRUE;
++			goto done;
++		}
+ 	}
+ 
+ 	if (imgp->ip_cs_error != OS_REASON_NULL) {

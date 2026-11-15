@@ -1,0 +1,24 @@
+diff --git a/iokit/Kernel/IOPlatformExpert.cpp b/iokit/Kernel/IOPlatformExpert.cpp
+--- a/iokit/Kernel/IOPlatformExpert.cpp
++++ b/iokit/Kernel/IOPlatformExpert.cpp
+@@ -2053,6 +2053,10 @@ IOPlatformExpertDevice::init( void * dtRoot )
+ 	return true;
+ }
+ 
++// Supplied only by the isolated nuwa PMGR integration link. Default off inside
++// the provider; no worker and no change to the root's matching options.
++extern "C" void nuwa_pmgr_run(IOService *publicationParent);
++
+ bool
+ IOPlatformExpertDevice::startIOServiceMatching(void)
+ {
+@@ -2061,6 +2065,9 @@ IOPlatformExpertDevice::startIOServiceMatching(void)
+ 		return false;
+ 	}
+ 
++	// Single bootstrap-thread call, after lockdown and before BSD policy hooks.
++	nuwa_pmgr_run(this);
++
+ 	registerService();
+ 
+ 	return true;

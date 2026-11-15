@@ -1,0 +1,36 @@
+nuwa only (SM8550 / xnu-8796.141.3): allow a non-ramdisk root filesystem to
+mount without the FSIOC_KERNEL_ROOTAUTH confirmation, recording the failing
+errno in the exported nuwa_root_auth_error instead of panicking.
+Inert unless built with -DXNU_NUWA_ROOT_AUTH_SKIP=1 (default 0 = unchanged).
+---
+--- a/bsd/kern/bsd_init.c
++++ b/bsd/kern/bsd_init.c
+@@ -331,6 +331,15 @@
+ 
+ static bool bsd_rooted_ramdisk(void);
+ 
++#if XNU_NUWA_ROOT_AUTH_SKIP
++/*
++ * nuwa only: last FSIOC_KERNEL_ROOTAUTH result when the non-ramdisk root
++ * could not be authenticated; 0 means the ioctl succeeded. Only written by
++ * the opt-in XNU_NUWA_ROOT_AUTH_SKIP branch below for post-mortem inspection.
++ */
++volatile int nuwa_root_auth_error;
++#endif
++
+ #if SYSV_SHM
+ extern void sysv_shm_lock_init(void);
+ #endif
+@@ -922,7 +931,12 @@
+ 			/* enforce sealedness */
+ 			int autherr = VNOP_IOCTL(rootvnode, FSIOC_KERNEL_ROOTAUTH, NULL, 0, vfs_context_kernel());
+ 			if (autherr) {
++#if XNU_NUWA_ROOT_AUTH_SKIP
++				nuwa_root_auth_error = autherr;
++				kprintf("nuwa: rootvp not authenticated after mounting (errno %d); continuing\n", autherr);
++#else
+ 				panic("rootvp not authenticated after mounting");
++#endif
+ 			}
+ 		}
+ 	}
