@@ -1,8 +1,10 @@
 # Native generic firmware evaluation and digest-helper increment (2026-11-10)
 
 **Bounded Data-ledger independent mechanical execution and schema verification
-completed (parent-reported); static review NOT completed because the service
-returned `cyber_policy`. Research code is not integrated.**
+completed (parent-reported). Delegated static review was blocked by
+`cyber_policy`; the later main-controller review below covers only the single
+script's harness safety/model consistency, not independent dependency/native-ABI
+acceptance. Research code is not integrated.**
 Digest-helper increment has static review PASS and independent verifier PASS
 (parent-reported); authentication was not established.
 The previous NULL-descriptor boundary and corrected exit propagation have
@@ -709,7 +711,8 @@ source/dependency hash checks. Actual paths are
 `result.allocation_observations`,
 `result.data_ledger.native_write_coverage` and `result.data_ledger.events`.
 Independent mechanical/schema completion is not authentication PASS or completed
-static review: the latter was blocked by service `cyber_policy`. Do not integrate
+independent static review: the delegated review was blocked by service
+`cyber_policy`; the later main-controller single-script review is scoped below. Do not integrate
 research code or expand the model/resource gate on this evidence. No trusted
 positive, nonce closure or device release is established.
 
@@ -759,10 +762,16 @@ Conditions and low-severity notes (no correction needed to retain the evidence):
 4. Out of scope for this review: the dependency scripts (consumer-parse, bnch,
    runtime-provider audit, entry-probe, launch-context). They are tracked, hashed
    in the report and were previously independently verified.
-5. The generated BNCH is a random experimental value per run, so certificate and
-   manifest hashes vary. Compare observations, not hashes.
+5. BNCH is a random experimental value per run, but it does not make the fixed
+   Issuer-mode certificate/manifest vary. Lines 261–304 retain the pinned own key
+   and baseline certificate, change only Issuer and re-sign; lines 711–724 build
+   the manifest from the fixed payload/certificate, independently of BNCH. With
+   these inputs fixed, compare their hashes as well as native observations.
 
-Gate effect: the "static review not completed" blocker for this ledger script is
-closed with the conditions above. The script remains unintegrated and untracked.
+Gate effect: this is a main-controller self-performed review of one script only,
+not a complete independent review of dependencies or the native ABI. It records
+the limited verdict above without closing all applicable review gates. The script
+remains unintegrated and untracked. Local checkpoint
+`63769f208783769f7fa4ec5cffc14d3eba37b21a` records this review, not the research code.
 The 5152 source stays BLOCKED, no model limit is widened, and the review gives no
 authentication, nonce or device-release credit.

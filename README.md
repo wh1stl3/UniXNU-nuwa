@@ -1,6 +1,24 @@
 # UniXNU-nuwa
 
-**当前（2026-11-11）：官方第 7 步 / bring-up 内核入口至 platform expert；冻结 PMAP 正常 epilogue 诊断已单次上机并 STOP。**
+**当前（2026-11-15）：原生 UFS 根卷挂载成功，launchd 进入用户态；交互目标未达成。**
+`userdata` 前 8446279680 B 写入并整镜像回读 `sha256=da429da6…68d7`；根卷
+`boot-uuid=DADD93F8-DBBF-4B17-A1DF-0F11E64172F7`、`native-ufs-root=1`、无 ramdisk。
+三处启动链绕过（root auth 跳过 / trust cache 在 lockdown 前初始化 / initproc exec
+策略跳过）与实机观测带（青 3 = exec 完成，橙 15 = initproc 回到内核）见
+[里程碑记录](docs/nuwa-launchd-reached-20261115.md)。启动载荷已写入 `boot_a`
+（`692cfcca…`）与 `vendor_boot_a`（r7 `24258f44…`、r8 `8e09fae2…`、r9 `37b665da…`）。
+认证仍为 NOT REACHED（未认证 CHMH）；launchd 之后的一切、显示服务、以及
+「断电重启仍回到同系统」均未验证。主机侧产物一律 self-checked，设备侧为
+主控转述的用户观测。
+
+**PMGR checkpoint (2026-11-13):** root-parent kernel built, SHA256
+`81b85228316574782f9d5390956c3ce3d8c97e4b345a9ea1631feacf3280b5d1`,
+55451648 B; 8 bindings / 325 final slots / 10 bounded real-code checks self-checked.
+[Evidence and commands](docs/nuwa-platform-power-kernel-20261113.md).
+Directed deep review and independent verifier pending; full IOKit lifecycle and
+pthread runtime unproven. Future CHMH rebind required; prior restore has independent host PASS.
+
+**历史（2026-11-14）：官方第 7 步，交接暂停。** 真实 UFS 持久交互当时未达成；NOP 曾实机成功并恢复。r5 只读 root kernel 和 r2 CHMH 包的主机审查/验证边界、产物 pin 及操作步骤见[userdata 交接](docs/handoff-userdata-20261114.md)。用户已授权无备份安装指定 userdata 前缀，不包括 root 启动或启动分区写；所有本轮尝试均在写前停止，写入 0 字节，无有效备份。最终 CRLF 安装器修复的 10 项定向测试仅 self-checked，独立复跑尚未完成；新会话按最新规则裁定并完成必要验证。目标是真实 UFS 持久可交互并断电重启；[机型进度](../AGENTS.md)。以下旧进度、授权与下一步均为历史快照。
 旧 stage5 `998d284a…` 已测：照片确认 AppleImage4 panic `failed to get mix-n-match policy: 2`，
 未自动复位；panic 显示后 park 符合预期，不证明 stage5。设备历史：用户手动 TWRP 非 root 卡刷，59/60 回读匹配但 super 不符；知悉后内置 Format Data（userdata F2FS/关联 metadata RC0）再观察进入 Launcher，随后锁屏反复重启，不能称稳定恢复。旧 exec-in 写 super 出现 remote stdin EIO，退出未知；首次完整回读 9663676416 B SHA256 `c1d974966eccdf8eba6685b03833c0635ddf2fa402bcf6e9da498aa8ee25f8b5`，不符目标 `1afda55e0395157ba643070944b7df2c5e504ece48ee89b0edda4e0375ffca7b`。未定案尾部截断，AOSP exec-in 关闭语义仅机制解释。`.cache/super-window-v1` 原144×64MiB local25tests/manifest独立PASS，新兼容修正尚未完成；当前0 byte停于bootmode unknown，general无后台writer、工具修复进行中，非分窗写进行中。用户本轮RAM smoke→super-only分窗写回读授权仍有效，身份/回读门禁不变。userdata已清Android，iOS UFS根不在；未来iOS恢复需新授权，boot_completed/实际版本未机器确认。
 此前本地提交 `f660735b72e84331f4ea932b8f4002b745815412` 仅新增 `/chosen/mix-n-match-prevention-status` u32=0（AMNM=true，非 Apple 启动链 bring-up 软件策略，非 donor/熔丝事实；放宽反重放令牌/chained-manifest-hash 约束，不关闭 AMFI、不宣称 Apple secure boot）。
@@ -35,7 +53,7 @@ Xiaomi 13 Pro（nuwa，SM8550）的 UniXNU 设备仓。目标：iOS 16.7.16 / 20
 
 **阶段 3（负载）进展（2026-11-08）**：payload 必须随 `vendor_boot` 送入 ABL 的 initrd（GKI 布局，官方 `guide/boot`）。已用空闲的 B 槽 `vendor_boot_b` 验证：菜单读到 `\EFI\UniXNU\unixnu.toml` 并列出 `xnu` 项（占位文件，无内核），A 槽与 TWRP 未动；原厂 vendor_boot 备份在 `.cache/stock/`。详见 `docs/step5-firmware.md` 的 "Payload delivery through vendor_boot"。**下一步**：构建内核（阶段 3 另一半——payload 哈希与 ADT 需要真内核；先清点 8796 补丁与 profile TODO），并把 payload 卷缩到 `vendor_boot` 分区（96 MiB）能容纳的大小；每次写设备或上机前须用户当轮授权并检查槽位。
 
-**此前阶段**：官方 `porting/steps` **第 5 步（准备硬件描述与固件）的固件配置已能构建，并由独立 Verifier 复跑（PASS）**。第 4 步已完成并留证：`defconfig` → `fetch` → `status --json` → `tree` 对本地 iOS 16.7.16-20H392 profile 解析通过，`unixnu.lock` 已提交。OS profile 在本地基座 `UniXNU` 的 `693f5d9cae8a408dd18b39f3f9fdc4228c934241`（xnu 8796.141.3 / `1b191cb58250d0705d8a51287127505aa4bc0789`）；本仓记录基线 `279c990a0c7a238aa0a5818493c6cd6a46528749`。第 5 步 `uefi-nuwa` 的 `nuwaPkg` DSC/FDF 集成（UniXNU、UniXNUDxe、UniXNURamDiskDxe、DarwinBoot、AdvancedLogDxe）构建退出码 0，产出 `SILICIUM_UEFI.fd` 3145728 字节（= `0x300000`，与 `nuwa.toml` 的 `uefi_fd.size` 一致），构建步骤见 `docs/step5-firmware.md`。**Advanced Logger 已接线**（`uefi-nuwa` `e494c01b`：DXE_CORE 用 DxeCore 版 `AdvancedLoggerLib` 安装 `gAdvancedLoggerProtocolGuid`，驱动用 Dxe/Runtime 实例，构建通过），但**仍未上机**。ADT 身份已定：`chip_id = 4acab8db` 已写入 `board.toml`；`unique-chip-id` 种子只存在于基座检出里被 git 忽略的 `unixnu.local.toml`（每次构建沿用同一值，需用户自行备份）；`root_match_volume_uuid` 已注释掉，待 userdata 镜像构建后、阶段 6 前补。仍缺：运行时验证（Tools→Advanced Logger 页与 dispatch）、内存所有权证据（`0xbe000000-0xd4c00000` 的现行所有者、`0xafffff000-0xb00000000` 尾部）。启动链常规审查已出结论——**APPROVE WITH CONDITIONS**（仅针对首次 `fastboot boot`；未升级 Deep Reviewer，因无候选满足 `ai-orchestration` §2.3）。静态对账另有两条约束：`MemoryMapLib` 未描述 6 个 live `no-map` 保留区；不要调小 `owned_memory_size`（低于约 925 MiB 窗口会落到 ADT `dram-base` 之外）。**下一步**：首次 `fastboot boot` 的放行条件还剩 RamPartition 协议生产者确认、SEC HOB 写入确认与用户当轮明确授权（**尚未放行**）；上机验证 Tools→Advanced Logger 与运行时 dispatch，内存门禁取证，root UUID 补齐后再进入第 6 步驱动选型。
+**此前阶段**：官方 `porting/steps` **第 5 步（准备硬件描述与固件）的固件配置已能构建，并由独立 Verifier 复跑（PASS）**。第 4 步已完成并留证：`defconfig` → `fetch` → `status --json` → `tree` 对本地 iOS 16.7.16-20H392 profile 解析通过，`unixnu.lock` 已提交。OS profile 在本地基座 `UniXNU` 的 `693f5d9cae8a408dd18b39f3f9fdc4228c934241`（xnu 8796.141.3 / `1b191cb58250d0705d8a51287127505aa4bc0789`）；本仓记录基线 `279c990a0c7a238aa0a5818493c6cd6a46528749`。第 5 步 `uefi-nuwa` 的 `nuwaPkg` DSC/FDF 集成（UniXNU、UniXNUDxe、UniXNURamDiskDxe、DarwinBoot、AdvancedLogDxe）构建退出码 0，产出 `SILICIUM_UEFI.fd` 3145728 字节（= `0x300000`，与 `nuwa.toml` 的 `uefi_fd.size` 一致），构建步骤见 `docs/step5-firmware.md`。**Advanced Logger 已接线**（`uefi-nuwa` `e494c01b`：DXE_CORE 用 DxeCore 版 `AdvancedLoggerLib` 安装 `gAdvancedLoggerProtocolGuid`，驱动用 Dxe/Runtime 实例，构建通过），但**仍未上机**。ADT 身份已定：`chip_id = 4acab8db` 已写入 `board.toml`；`unique-chip-id` 种子只存在于基座检出里被 git 忽略的 `unixnu.local.toml`（每次构建沿用同一值，需用户自行备份）；`root_match_volume_uuid` 已注释掉，待 userdata 镜像构建后、阶段 6 前补。仍缺：运行时验证（Tools→Advanced Logger 页与 dispatch）、内存所有权证据（`0xbe000000-0xd4c00000` 的现行所有者、`0xafffff000-0xb00000000` 尾部）。启动链常规审查已出结论——**APPROVE WITH CONDITIONS**（仅针对首次 `fastboot boot`；未升级 Deep Reviewer，因无候选满足 `../../docs/routing.md` 的升级门槛）。静态对账另有两条约束：`MemoryMapLib` 未描述 6 个 live `no-map` 保留区；不要调小 `owned_memory_size`（低于约 925 MiB 窗口会落到 ADT `dram-base` 之外）。**下一步**：首次 `fastboot boot` 的放行条件还剩 RamPartition 协议生产者确认、SEC HOB 写入确认与用户当轮明确授权（**尚未放行**）；上机验证 Tools→Advanced Logger 与运行时 dispatch，内存门禁取证，root UUID 补齐后再进入第 6 步驱动选型。
 
 ## 三仓关系
 

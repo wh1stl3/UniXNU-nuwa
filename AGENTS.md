@@ -6,6 +6,18 @@
 小米 13 Pro（nuwa / SM8550）通过 UniXNU 运行 iOS 16（donor: iPhone10,3 / 16.7.16 / 20H392，xnu-8796 线）。
 
 ## 基线
+- 2026-11-15 **原生 UFS 根卷 → launchd 用户态**（交互目标仍未达成）：`userdata` 前 8446279680 B 写入并整镜像回读 `da429da6…68d7`，根卷 `boot-uuid=DADD93F8-…-0F11E64172F7`、`native-ufs-root=1`、无 ramdisk；主控转述用户实机观测到青带 3（initproc exec 完成）与橙带 15（initproc 回到内核）。启动载荷已写入 `boot_a`(`692cfcca…`) 与 `vendor_boot_a`(r7 `24258f44…`/r8 `8e09fae2…`/r9 `37b665da…`)。主机侧一律 self-checked；认证 NOT REACHED；launchd 之后、显示服务、断电重启仍回同系统均未验证。详见 `docs/nuwa-launchd-reached-20261115.md`。
+- 2026-11-15 启动链绕行台账（现象 / 绕过 / 代价 / 解除条件）：
+  - root 卷挂载后 `rootvp not authenticated` 致 panic → `8796-nuwa-root-auth-skip` 记录 errno 继续 / 代价：认证未做、NOT REACHED / 解除：真实 trust cache 与 IPSW 认证链可用。
+  - `query_trust_cache()` 在 `lck_rw_lock_shared` 上 panic（`trust_cache_rt_lock` 零锁）→ `8796-nuwa-trust-cache-init` 在 `machine_lockdown()` 前恢复 `trust_cache_runtime_init()`+`load_static_trust_cache()` / 代价：ADT `TrustCache` 条目为 `{0,0}`，加载为空操作 / 解除：memory-map 指向真实打包 trust cache。
+  - launchd exec 被 AMFI 拒（EXEC/8）致死 initproc → `8796-nuwa-exec-policy-skip` 仅对 initproc 忽略 `ip_mac_return` / 代价：initproc 首 exec 不受签名策略约束；`amfi_get_out_of_my_way=1` 实测无效 / 解除：非空运行时 trust cache。
+  - 显示服务缺失 → `deferred`，只有 `vinfo` 观测带 / 代价：无 UI / 解除：接 `GopFramebuffer` 与 launchd 显示服务。
+  - 三个绕过补丁为 opt-in（`-DXNU_NUWA_*=1`），按既有约定不列入 `patches/xnu/series`；观测补丁保持未跟踪。
+- 2026-11-14 `ufs-queue-five-20261114-01`：主控转述用户两照片显示五次队列观察完成；最终 binary reviewer 的加载合同及画面/栈与产物一致，非认证。旧队列地址是 DMA 地址，RSR=1 未停、DB=0 仅瞬时，不证明 ownership；恢复独立 host verifier 18/18 PASS，A 无镜像级回读、serial 未重新硬件关联，不称当前 live/长期稳定。下一 host 有界 SID `0x60` 域只读候选已启动，TPL 支线 deferred，无新设备授权。详见 `docs/nuwa-ufs-queue-five-run-20261114.md`。
+- 2026-11-14 `ufs-hc-observe-20261114-01`：四读完成后预设 inspect panic；vision 终止画面约 2.5–13.27 秒无重启，最终 binary reviewer PASS WITH CONDITIONS。UFSHCI 4.0、32 transfer/8 task 仅为瞬时 HC 状态，不证 DMA/transport/root。恢复独立 verifier PASS，A 无镜像级回读，restore exit 原日志已清理且无 runid，整体 exit 未独立确认；不称当前 live/长期稳定。下一 host 单次 NOP 先处理 ownership、producer exclusion、SMMU 域；下一设备操作未授权。见 `docs/nuwa-ufs-hc-observe-20261114.md`。
+- 2026-11-13 PMGR：主控转述 kernel directed deep PASS WITH CONDITIONS / 独立 verifier PASS，mode2 CHMH 包装普通 review / 独立 verifier PASS；执行器新增 profile 仅 self-checked，待独立 review/verifier。观察真实 nub 发布和 AMFI 消费，不以旧 panic 消失证明 pthread 已过；三阶段均需新授权。见 `docs/pmgr-executor-host-20261113.md`。
+- 2026-11-13 PMGR：主控补 ordinary review PASS WITH CONDITIONS 的显式 root-parent 路线，撤回初始硬阻塞；已产隔离 kernel `81b85228…3280b5d1`/55451648 B，8 绑定重定、325 最终虚槽、10 项有界真实代码检查 self-checked。完整 IOKit 生命周期/pthread runtime 未证，实际启动链 ABI 待 deep_reviewer/独立 verifier；新 kernel 未来须 CHMH 重绑。集中证据 `docs/nuwa-platform-power-kernel-20261113.md`。r2 archive 及旧产物保留；此前恢复独立 host PASS 不代表当前 live。
+- 2026-11-12 主控转述：CHMH-only `chmh-20261112-01` 四帧经 reviewer 确认 `bsd_init`→`pthread_init` NULL 表 panic；备份及 restore-readback 100663296 B、SHA256 `493ca426964adabb195a00ded4ff49793bc7efd5d7bea2a567bcfd0c970a8dad` 独立 verifier PASS，原始 serial 关联限制不消除。donor pthread prelink、renderer 和 pthread+CHMH FAT/outer 均已获普通 review/独立 verifier PASS；静态启动链闭合但 runtime 未证。新执行器 profile 仅 self-checked；见 `docs/pthread-executor-host-20261112.md`。
 - 基座：`D:/Code/PortingiOS/UniXNU`（上游 main `e2fdae4` + 本地 `af9d099`（submodule pin：ArmCpu=93a5030、XnuPrelink=f1d80d3）与 `693f5d9cae8a408dd18b39f3f9fdc4228c934241`（iOS 16.7.16-20H392 profile））。
 - **已是官方 format 2 骨架**：`schema_version = 2`、`feeds.toml`（钉 `UniXNU-sm8550-common@a9f45dc6…`）、`dts/nuwa.dts`、`configs/nuwa_defconfig`、`patches/xnu/series`、`porting.toml`、`scripts/package.sh`、`.github/workflows/*`。
 - 当前（2026-11-10）：官方第 7 步；旧 stage5 实测 AppleImage4 `failed to get mix-n-match policy: 2`，显示后 park，无自动复位，不证明 stage5。`.cache/media/stage5-panic-20261110-183907/execution.log` 18:54:23 历史实查回 A/TWRP current/active=0；本轮未新查设备。
