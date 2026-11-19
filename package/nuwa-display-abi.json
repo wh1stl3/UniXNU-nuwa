@@ -1,0 +1,93 @@
+{
+ "kernelcache": {
+  "bytes": 50937856,
+  "sha256": "2ec297bac95bcba01046fd0148e97e7e5885c05a6c18827f39f534ba375c1221"
+ },
+ "family": {
+  "load": "0xfffffff004f60400",
+  "executable_size": 33656
+ },
+ "vtable": {
+  "vptr": "0xfffffff006def8e0",
+  "slots": 338,
+  "method_extent": [
+   "0xfffffff005c0e998",
+   "0xfffffff005c24c80"
+  ],
+  "abstract": [
+   211,
+   212,
+   242,
+   243,
+   292,
+   293,
+   321,
+   322,
+   329
+  ],
+  "pure_target": "0xfffffff00770ace4"
+ },
+ "instance_bytes": 5728,
+ "slots": {
+  "246": {
+   "address": "0xfffffff005c247ac",
+   "prototype": "void getDisplayDimensions(uint32_t *, uint32_t *)",
+   "abstract": false
+  },
+  "274": {
+   "address": "0xfffffff005c17e44",
+   "prototype": "bool startHardware()",
+   "abstract": false
+  },
+  "276": {
+   "address": "0xfffffff005c192b8",
+   "prototype": "void kickSwapQueue()",
+   "abstract": false
+  },
+  "281": {
+   "address": "0xfffffff005c1ace4",
+   "prototype": "void completeCurrentSwap()",
+   "abstract": false
+  },
+  "282": {
+   "address": "0xfffffff005c1ad10",
+   "prototype": "bool validateSwap(const OriginalLegacySwapRequest *)",
+   "abstract": false
+  },
+  "287": {
+   "address": "0xfffffff005c234b4",
+   "prototype": "bool getRefreshAttributes(uint64_t *, bool)",
+   "abstract": false
+  },
+  "336": {
+   "address": "0xfffffff005c1c1d8",
+   "prototype": "int applyStateRequest(OriginalLegacyStateRequest *, bool)",
+   "abstract": false
+  }
+ },
+ "instance": {
+  "current_request": 4872,
+  "pending_head": 4880,
+  "pending_tail": 4888,
+  "vsync_clients": 4992,
+  "vsync_object": 5064,
+  "width": 5208,
+  "height": 5212,
+  "state_requested": 5236,
+  "state_powered": 5240
+ },
+ "request": {
+  "surfaces": 2184,
+  "masks": 792,
+  "rect0": 17,
+  "rect1": 81,
+  "options": 804,
+  "dims": 816,
+  "node_next": 2408,
+  "node_previous": 2416
+ },
+ "outputs": [
+  "package/OriginalLegacyFramebufferABI.h",
+  "package/original-bindings.S"
+ ]
+}
