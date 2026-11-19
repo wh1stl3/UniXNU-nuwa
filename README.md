@@ -11,6 +11,11 @@
 「断电重启仍回到同系统」均未验证。主机侧产物一律 self-checked，设备侧为
 主控转述的用户观测。
 
+**用户态推进（2026-11-17 – 11-19，r16–r35）：**SpringBoard 与 mobileactivationd 在 r34 上以 SIGTRAP 退出，
+这是当前第一阻塞；显示服务未接、SMP 未开启、认证仍 NOT REACHED，r35（异常退出环）已构建**未上机**。
+逐轮载荷哈希、设备读数与关键发现见
+[用户态观察记录](docs/nuwa-userspace-20261119-observation.md)。
+
 **PMGR checkpoint (2026-11-13):** root-parent kernel built, SHA256
 `81b85228316574782f9d5390956c3ce3d8c97e4b345a9ea1631feacf3280b5d1`,
 55451648 B; 8 bindings / 325 final slots / 10 bounded real-code checks self-checked.
