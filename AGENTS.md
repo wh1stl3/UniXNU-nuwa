@@ -6,6 +6,7 @@
 小米 13 Pro（nuwa / SM8550）通过 UniXNU 运行 iOS 16（donor: iPhone10,3 / 16.7.16 / 20H392，xnu-8796 线）。
 
 ## 基线
+- 2026-11-20 **时基已核对、r35 主机复现一致，第一阻塞不变（交互目标仍未达成）**：r34 页面 CLK 行 `cntfrq=19200000 dt=19200000 dv=6143960ms cv=6143960ms`，`cntfrq_readback` 缺口闭合（仅 boot CPU、6144 s 零漂移）；r35 主机复现逐字节一致但**仍未上机**（上机授权在写入前由用户取消，槽位状态待确认），设备仍跑 r34（`vendor_boot_a` `46aa4fd9…891e`），第一阻塞仍是 SpringBoard/mobileactivationd 的 SIGTRAP 读数缺失。见 `docs/nuwa-r34-page-evidence-20261120.md`；逐轮细节见 `docs/nuwa-userspace-20261119-observation.md`。
 - 2026-11-19 **用户态推进 r16–r35（交互目标仍未达成）**：r34 上 SpringBoard 与 mobileactivationd 以 **SIGTRAP** 退出，为当前第一阻塞；显示服务（`GopFramebuffer`）未接、SMP 未开启、认证仍 **NOT REACHED**；r35（异常退出环）已构建**未上机**，设备现跑 r34（`vendor_boot_a` `46aa4fd9…891e`）。逐轮载荷/内核/seed 哈希、设备读数、八项关键发现与证据路径见 `docs/nuwa-userspace-20261119-observation.md`（主机侧 self-checked，设备侧主控转述）。
 - 2026-11-15 **原生 UFS 根卷 → launchd 用户态**（交互目标仍未达成）：`userdata` 前 8446279680 B 写入并整镜像回读 `da429da6…68d7`，根卷 `boot-uuid=DADD93F8-…-0F11E64172F7`、`native-ufs-root=1`、无 ramdisk；主控转述用户实机观测到青带 3（initproc exec 完成）与橙带 15（initproc 回到内核）。启动载荷已写入 `boot_a`(`692cfcca…`) 与 `vendor_boot_a`(r7 `24258f44…`/r8 `8e09fae2…`/r9 `37b665da…`)。主机侧一律 self-checked；认证 NOT REACHED；launchd 之后、显示服务、断电重启仍回同系统均未验证。详见 `docs/nuwa-launchd-reached-20261115.md`。
 - 2026-11-15 启动链绕行台账（现象 / 绕过 / 代价 / 解除条件）：

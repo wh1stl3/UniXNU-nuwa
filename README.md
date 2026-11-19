@@ -16,6 +16,8 @@
 逐轮载荷哈希、设备读数与关键发现见
 [用户态观察记录](docs/nuwa-userspace-20261119-observation.md)。
 
+**本页读数（2026-11-20）：**r34 页面 CLK 行 `cntfrq=19200000 dt=19200000 dv=6143960ms cv=6143960ms`，`cntfrq_readback` 时基缺口已闭合（仅 boot CPU、6144 s 零漂移）；r35 主机复现逐字节一致，r35 仍未上机。见 [时基与 EX 环记录](docs/nuwa-r34-page-evidence-20261120.md)。
+
 **PMGR checkpoint (2026-11-13):** root-parent kernel built, SHA256
 `81b85228316574782f9d5390956c3ce3d8c97e4b345a9ea1631feacf3280b5d1`,
 55451648 B; 8 bindings / 325 final slots / 10 bounded real-code checks self-checked.
