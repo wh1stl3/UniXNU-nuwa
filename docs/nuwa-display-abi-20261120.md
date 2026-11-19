@@ -110,7 +110,7 @@ request 基址（不是节点地址），`0x5c0fe50`、`0x5c0fe70`、`0x5c10010`
   9 个纯虚 `= 0`，7 个限定槽具名；实例大小 `static_assert == 5728`；
   `OriginalLegacySwapRequest` / `OriginalLegacyStateRequest` 与请求/实例偏移常量。
 - `package/original-bindings.S`：`__ZTV25IOMobileFramebufferLegacy` + 7 个 Legacy 入口的绝对绑定。
-- 生成器同时写 `package/nuwa-display-abi.json`（本机摘要，入库与否由后续决定）。
+- 生成器同时写 `package/nuwa-display-abi.json`（本机摘要，已随本分支入库）。
 
 复算（WSL，cwd = `UniXNU-nuwa`）：
 
