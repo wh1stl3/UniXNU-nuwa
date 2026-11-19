@@ -12,8 +12,10 @@ description = "Xiaomi 13 Pro (nuwa), SM8550, iOS 16.7.16 target"
 kit = "nuwa"
 
 [components]
-# 仅列输入已满足的组件；存储/显示/输入/GPU/AES 待板级输入与 ABI 审查后按规范 ID（ShengUfs、GopFramebuffer…）追加。
-include = ["ArmDTPlatform", "ArmCpu", "XnuPrelink", "DarwinBoot"]
+# 仅列输入已满足的组件；存储/输入/GPU/AES 待板级输入与 ABI 审查后按规范 ID（ShengUfs…）追加。
+# 显示：GopFramebuffer 的 build = []（build_stage = embedded），选中它不产出任何归档；
+# libNativeLegacyDisplay.late.a 仍须设备侧 builder（20H392 ABI 派生 + package/NuwaLegacyDisplay.cpp）。
+include = ["ArmDTPlatform", "ArmCpu", "XnuPrelink", "DarwinBoot", "GopFramebuffer"]
 
 [kernel]
 defconfig = "nuwa_defconfig"
