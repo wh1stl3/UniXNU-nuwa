@@ -1,0 +1,20 @@
+nuwa r13: NativeRamBlock IOKit personality.
+
+Baseline: out/nuwa-ufs-apfs-root-integration-20261114/run-r5-visible-candidate/
+tree/iokit/KernelConfigTables.cpp (r5: the NativeUfs persona).  The Data volume
+driver matches IOResources/IOBSD like the official XNU_NATIVE_RAM_BLOCK block.
+
+--- a/iokit/KernelConfigTables.cpp
++++ b/iokit/KernelConfigTables.cpp
+@@ -62,4 +62,11 @@
+     "     'IOProviderClass' = IOPlatformExpertDevice;"
+     "     'IOProbeScore'    = 500:32;"
+     "   }"
++    "   ,{"
++    "     'IOClass'         = NativeRamBlock;"
++    "     'IOMatchCategory' = NativeRamBlock;"
++    "     'IOProviderClass' = IOResources;"
++    "     'IOResourceMatch' = IOBSD;"
++    "     'IOProbeScore'    = 1000:32;"
++    "   }"
+     ")";

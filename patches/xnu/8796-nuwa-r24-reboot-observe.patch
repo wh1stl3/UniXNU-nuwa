@@ -1,0 +1,61 @@
+From: nuwa bring-up
+Subject: [PATCH] 8796-nuwa-r24-reboot-observe (opt-in, off by default)
+
+Records who requested a reboot: one printf in reboot_kernel() plus the two globals
+nuwa_reboot_pid / nuwa_reboot_comm that the diagnostic page draws as boot=<pid>/<comm>,
+so a frame captured after the reboot-path panic shows whether launchd, the userspace
+watchdog or another process asked for it.  Compiled only with
+-DXNU_NUWA_REBOOT_OBSERVE=1; observation only, no allocation, no change to the shutdown
+sequence.  Apply with -p1 in the XNU tree root.
+
+--- a/bsd/kern/kern_shutdown.c
++++ b/bsd/kern/kern_shutdown.c
+@@ -71,6 +71,20 @@
+ 
+ #include <sys/kdebug.h>
+ 
++#if defined(XNU_NUWA_REBOOT_OBSERVE) && XNU_NUWA_REBOOT_OBSERVE
++#include <sys/proc_internal.h>          /* current_proc(), p_pid, p_comm */
++/*
++ * nuwa bring-up observation (opt-in: compiled only with -DXNU_NUWA_REBOOT_OBSERVE=1).
++ *
++ * r24 printed who asked for the reboot.  r25 also publishes it, because the diagnostic page
++ * does not capture the console on this board: the renderer draws "boot=<pid>/<comm>" from
++ * these two (comm truncated to six characters there).  One printf and two stores, no
++ * allocation, before any teardown.
++ */
++volatile int32_t nuwa_reboot_pid = -1;
++char nuwa_reboot_comm[17];
++#endif /* XNU_NUWA_REBOOT_OBSERVE */
++
+ uint32_t system_inshutdown = 0;
+ uint32_t final_shutdown_stage = 0;
+ 
+@@ -190,6 +204,27 @@
+ 		return EBUSY;
+ 	}
+ 
++#if defined(XNU_NUWA_REBOOT_OBSERVE) && XNU_NUWA_REBOOT_OBSERVE
++	{
++		proc_t nuwa_reboot_proc = current_proc();
++
++		if (nuwa_reboot_proc != PROC_NULL) {
++			int nuwa_i;
++			const char *nuwa_comm = nuwa_reboot_proc->p_comm;
++
++			nuwa_reboot_pid = nuwa_reboot_proc->p_pid;
++			for (nuwa_i = 0; nuwa_i < (int)sizeof(nuwa_reboot_comm) - 1 &&
++			    nuwa_comm[nuwa_i] != 0; nuwa_i++) {
++				nuwa_reboot_comm[nuwa_i] = nuwa_comm[nuwa_i];
++			}
++			nuwa_reboot_comm[nuwa_i] = 0;
++		}
++		printf("nuwa: reboot requested by pid=%d comm=%.16s\n",
++		    nuwa_reboot_proc != PROC_NULL ? nuwa_reboot_proc->p_pid : -1,
++		    nuwa_reboot_proc != PROC_NULL ? nuwa_reboot_proc->p_comm : "-");
++	}
++#endif /* XNU_NUWA_REBOOT_OBSERVE */
++
+ 	lck_mtx_lock(&vm_swap_data_lock);
+ 
+ 	/* Turn OFF future swapfile reclaimation / compaction etc.*/

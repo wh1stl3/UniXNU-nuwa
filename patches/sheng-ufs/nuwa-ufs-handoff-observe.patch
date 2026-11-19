@@ -1,0 +1,93 @@
+--- a/NativeUfs.cpp
++++ b/NativeUfs.cpp
+@@ -34,2 +34,3 @@
+ #include <libkern/libkern.h>
++#include <mach/kmod.h>
+ #include <pexpert/pexpert.h>
+@@ -90,4 +91,35 @@
+ OSDefineMetaClassAndStructors (NativeUfs, IOService)
+ 
++// Isolated nuwa checkpoint only. No hardware access has been authorized.
++extern "C" {
++extern kmod_info_t g_kernel_kmod_info;
++kern_return_t OSKextLoadKextWithIdentifier(const char *);
++void nuwa_ufs_static_init(void) __asm__("__GLOBAL__sub_I_NativeUfs.cpp");
++volatile unsigned nuwa_ufs_init_state;
++volatile unsigned nuwa_ufs_attempt, nuwa_ufs_completed, nuwa_ufs_hc_read;
++volatile uint32_t nuwa_ufs_raw[14];
++volatile unsigned nuwa_ufs_terminal;
++}
++
++// Called once on the bootstrap thread, before root registerService(). The
++// late-object transform removes auto-init; no worker/lock/transport is added.
++extern "C" void nuwa_ufs_handoff_init(void)
++{
++  unsigned probe = 0, root = 0;
++  PE_parse_boot_argn("native-ufs-probe", &probe, sizeof(probe));
++  PE_parse_boot_argn("native-ufs-root", &root, sizeof(root));
++  if (probe != 2 || root || nuwa_ufs_init_state) return;
++  nuwa_ufs_init_state = 1;
++  if (OSKextLoadKextWithIdentifier("com.apple.iokit.IOStorageFamily")) {
++    nuwa_ufs_init_state = 2;
++    return;
++  }
++  void *handle = OSMetaClass::preModLoad(g_kernel_kmod_info.name);
++  if (!handle) { nuwa_ufs_init_state = 3; OSMetaClass::postModLoad(handle); return; }
++  nuwa_ufs_static_init();
++  if (OSMetaClass::postModLoad(handle)) { nuwa_ufs_init_state = 4; return; }
++  nuwa_ufs_init_state = 5;
++}
++
+ static uint32_t read32 (uintptr_t base, unsigned offset)
+ {
+@@ -121,2 +153,12 @@
+ {
++  unsigned probe = 0, root = 0;
++  PE_parse_boot_argn("native-ufs-probe", &probe, sizeof(probe));
++  PE_parse_boot_argn("native-ufs-root", &root, sizeof(root));
++  if (probe != 2 || root || nuwa_ufs_init_state != 5 ||
++      !OSDynamicCast(IOPlatformExpertDevice, provider)) return nullptr;
++  native_ufs_probe_calls = native_ufs_probe_calls + 1;
++  native_ufs_matched = 1;
++  if (score) *score = 500;
++  return this;
++#if 0 // Original reference-board nub matching is not a nuwa access permit.
+   native_ufs_probe_calls = native_ufs_probe_calls + 1;
+@@ -151,2 +196,3 @@
+   return this;
++#endif
+ }
+@@ -181,2 +224,13 @@
+ {
++  // Single cached sample with an empty read whitelist. attempt/completed are
++  // zero because no load was attempted, not because a load hung. No mapping.
++  if (nuwa_ufs_terminal) return;
++  nuwa_ufs_terminal = 1;
++  panic("NUWA UFS handoff: startup checkpoint ONLY\n"
++        "attempt=%u completed=%u hc_read=%u terminal=%u init=%u\n"
++        "register reads DENIED (0/14); raw values NOT SAMPLED\n"
++        "no firmware-state or storage-readiness claim",
++        nuwa_ufs_attempt, nuwa_ufs_completed, nuwa_ufs_hc_read,
++        nuwa_ufs_terminal, nuwa_ufs_init_state);
++#if 0 // Original inspect requires unproven nuwa post-EBS access prerequisites.
+   OSSharedPtr<IOMemoryMap> gccMap, memPhyMap, hcMap;
+@@ -221,2 +282,3 @@
+          gdsc, memGdsc, axi, ahb, unipro, txs, rxs, aux, readHc, cap, ver, is, hcs, hce, utrlba);
++#endif
+ }
+@@ -2139,2 +2201,11 @@
+ {
++  unsigned probe = 0, root = 0;
++  PE_parse_boot_argn("native-ufs-probe", &probe, sizeof(probe));
++  PE_parse_boot_argn("native-ufs-root", &root, sizeof(root));
++  if (probe != 2 || root || nuwa_ufs_init_state != 5 ||
++      !OSDynamicCast(IOPlatformExpertDevice, provider)) return false;
++  native_ufs_probe_requested = 1;
++  inspect();
++  return false;
++#if 0 // No root, bring-up, adoption, queue, or submit path in this entry.
+   unsigned probe = 0, rootMode = 0;
+@@ -2254,2 +2325,3 @@
+   return false;
++#endif
+ }

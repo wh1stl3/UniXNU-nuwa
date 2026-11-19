@@ -1,0 +1,67 @@
+--- a/NativeUfs.cpp
++++ b/NativeUfs.cpp
+@@ -101,4 +101,6 @@
+ volatile unsigned nuwa_ufs_terminal;
+ }
++#include "NuwaUfsMarker.h"
++static void nuwa_ufs_register_classes(void);
+ 
+ // Called once on the bootstrap thread, before root registerService(). The
+@@ -112,2 +113,7 @@
+   nuwa_ufs_init_state = 1;
++  if (!nuwa_ufs_marker(0, 0, 0, 0, 1)) { nuwa_ufs_init_state = 6; return; }
++  nuwa_ufs_register_classes();
++  if (!nuwa_ufs_marker(1, 0, 0, 0, nuwa_ufs_init_state)) nuwa_ufs_init_state = 7;
++}
++static void nuwa_ufs_register_classes(void) {
+   if (OSKextLoadKextWithIdentifier("com.apple.iokit.IOStorageFamily")) {
+@@ -212,2 +219,2 @@
+-static uintptr_t mapPhys (uint64_t phys, uint64_t length, OSSharedPtr<IOMemoryMap> &keep)
++__attribute__((noinline)) static uintptr_t mapPhys (uint64_t phys, uint64_t length, OSSharedPtr<IOMemoryMap> &keep)
+ {
+@@ -227,10 +234,39 @@
+   if (nuwa_ufs_terminal) return;
+   nuwa_ufs_terminal = 1;
+-  panic("NUWA UFS handoff: startup checkpoint ONLY\n"
+-        "attempt=%u completed=%u hc_read=%u terminal=%u init=%u\n"
+-        "register reads DENIED (0/14); raw values NOT SAMPLED\n"
+-        "no firmware-state or storage-readiness claim",
+-        nuwa_ufs_attempt, nuwa_ufs_completed, nuwa_ufs_hc_read,
+-        nuwa_ufs_terminal, nuwa_ufs_init_state);
++  if (!nuwa_ufs_marker(2, 0, 0, 0, 0)) return;
++  if (!nuwa_ufs_marker(3, 0, 0, UFS_HC_BASE, PAGE_SIZE)) return;
++  uintptr_t hc = mapPhys(UFS_HC_BASE, 0x38, fMap);
++  if (!hc) {
++    nuwa_ufs_terminal = 2;
++    if (!nuwa_ufs_marker(4, 0, 0, UFS_HC_BASE, 0)) return;
++    panic("NUWA UFS MAP_FAILED completed=0 (NOT REACHED; no cause inferred)");
++  }
++  // AT is translation-only: refuse the mapped VA unless it really translates
++  // to our HC page with Device-nGnRnE Attr=0. No target register read here.
++  uint64_t par = nuwa_ufs_translate(hc);
++  if ((par & 1) || (par >> 56) ||
++      ((par & 0x0000fffffffff000ULL) | (hc & 4095)) != UFS_HC_BASE) {
++    nuwa_ufs_terminal = 3;
++    if (!nuwa_ufs_marker(4, 0, 0, UFS_HC_BASE, 3)) return;
++    panic("NUWA UFS MAP_FAILED mapping contract refused; completed=0; no cause inferred");
++  }
++  static const unsigned offsets[4] = {0x08, 0x00, 0x30, 0x34};
++  for (unsigned i = 0; i < 4; ++i) {
++    unsigned n = i + 1;
++    nuwa_ufs_attempt = n;
++    if (!nuwa_ufs_marker(5, n, i, UFS_HC_BASE + offsets[i], 0)) return;
++    // Precisely one aligned u32 load, after marker publication returned.
++    uint32_t raw = read32(hc, offsets[i]);
++    nuwa_ufs_raw[i] = raw;
++    nuwa_ufs_completed = n;
++    nuwa_ufs_hc_read = n;
++    if (!nuwa_ufs_marker(6, n, n, UFS_HC_BASE + offsets[i], raw)) return;
++  }
++  nuwa_ufs_terminal = 4;
++  if (!nuwa_ufs_marker(7, 4, 4, 0, 0)) return;
++  panic("NUWA HC_SNAPSHOT_DONE attempt=4 completed=4 hc_read=4\n"
++        "VER=%08x CAP=%08x HCS=%08x HCE=%08x\n"
++        "read-only experimental sample; not transport/readiness proof",
++        nuwa_ufs_raw[0], nuwa_ufs_raw[1], nuwa_ufs_raw[2], nuwa_ufs_raw[3]);
+ #if 0 // Original inspect requires unproven nuwa post-EBS access prerequisites.
+   OSSharedPtr<IOMemoryMap> gccMap, memPhyMap, hcMap;

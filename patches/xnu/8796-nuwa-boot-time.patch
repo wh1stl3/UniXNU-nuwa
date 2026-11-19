@@ -1,0 +1,31 @@
+From: nuwa bring-up
+Subject: [PATCH] 8796-nuwa-boot-time (opt-in, off by default)
+
+Records mach_absolute_time() at the top of bsd_init(), the origin for the bsd_init ->
+keybagd time (milliseconds) that nuwa_systemos.c publishes as nuwa_keybagd_ms and the
+page draws as t=<ms>.  Compiled only with -DXNU_NUWA_BOOT_TIME=1; one store, no other
+behaviour.  Applies on top of 8796-nuwa-root-cdir-ref.patch (-p1, XNU tree root).
+
+--- a/bsd/kern/bsd_init.c
++++ b/bsd/kern/bsd_init.c
+@@ -511,9 +511,20 @@
+  * of the tro_ucred field so that the uthread structure can be
+  * used like any other.
+  */
++#if defined(XNU_NUWA_BOOT_TIME) && XNU_NUWA_BOOT_TIME
++#include <mach/mach_time.h>
++/* r30: clock origin for the bsd_init -> keybagd time the page shows as t= (milliseconds).
++ * nuwa_systemos.c converts the difference with absolutetime_to_nanoseconds(); the reboot
++ * watchdog question needs to know whether early boot took 20 s or 200 s. */
++volatile uint64_t nuwa_bsd_init_time;
++#endif
++
+ void
+ bsd_init(void)
+ {
++#if defined(XNU_NUWA_BOOT_TIME) && XNU_NUWA_BOOT_TIME
++	nuwa_bsd_init_time = mach_absolute_time();
++#endif
+ 	boot_progress_stage("bsd_init enter");
+ 	struct uthread *ut;
+ 	vnode_t init_rootvnode = NULLVP;

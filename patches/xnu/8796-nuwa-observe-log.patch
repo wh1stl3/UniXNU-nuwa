@@ -1,0 +1,380 @@
+--- a/bsd/kern/kern_exec.c	2026-11-15 20:14:46.099083241 +0800
++++ b/bsd/kern/kern_exec.c	2026-11-15 20:14:46.102013844 +0800
+@@ -360,6 +360,270 @@ extern int nextpidversion;
+ volatile int nuwa_exec_policy_error;
+ #endif /* XNU_NUWA_EXEC_POLICY_SKIP */
+ 
++#if XNU_NUWA_OBSERVE
++#include <console/video_console.h>
++
++extern struct vc_info vinfo;
++
++/*
++ * nuwa observation only (XNU_NUWA_OBSERVE). Two frame-buffer bands, painted
++ * once each: band 3 (cyan, rows 3/16..4/16) when initproc's exec completed and
++ * band 15 (orange, last 1/16) on initproc's first BSD syscall. Bands 1 and 2
++ * (blue, magenta) belong to the build's MMU-off / MMU-on entry markers.
++ *
++ * Plus a readable event log: a 14-line grid in the middle of the screen
++ * (rows from 1/2 height, 42 px apart, 5x12 glyphs scaled 3) drawn with the same
++ * font the panic screen uses. Every emitter writes one line and repaints only
++ * that line box, so an event costs one 42-row clear plus the glyph stores.
++ * All of it is stores to vinfo.v_baseaddr: no lock, no allocation, no sleep,
++ * no call out. Concurrent CPUs may interleave or lose a line; that is fine.
++ */
++
++static const unsigned long long nuwa_font[96] = {
++	0x0000000000000000, 0x0842108000020084, 0x0005294000000000, 0x15F528000000295F,
++	0x1C52F88000023E94, 0x088556400004D542, 0x04528800000B2725, 0x0002108000000000,
++	0x0421108800821042, 0x1084108200221108, 0x0957548000000000, 0x3E42000000000084,
++	0x0000000000223000, 0x3E00000000000000, 0x0000000000471000, 0x0884420000008442,
++	0x2318A88000022A31, 0x08429880000F9084, 0x1108C5C0000F8444, 0x1C4443E000074610,
++	0x14A62100000423E9, 0x26D087E000074610, 0x1E10C5C000074631, 0x088443E000010844,
++	0x1D18C5C000074631, 0x3D18C5C000074610, 0x08E2000000471000, 0x08E2000000223000,
++	0x0222220000082082, 0x01F00000000003E0, 0x2082082000008888, 0x1108C5C000020084,
++	0x2B98C5C0000F05B5, 0x2318A8800008C63F, 0x1D2949E00007CA52, 0x0210C5C000074421,
++	0x252949E00007CA52, 0x1E1087E0000F8421, 0x1E1087E000008421, 0x0210C5C000074639,
++	0x3F18C6200008C631, 0x084211C000071084, 0x1084238000032508, 0x0654C6200008C525,
++	0x02108420000F8421, 0x2B5DC6200008C631, 0x2B59CE200008C739, 0x2318C5C000074631,
++	0x1F18C5E000008421, 0x2318C5C001075631, 0x1F18C5E00008C525, 0x1C10C5C000074610,
++	0x084213E000021084, 0x2318C62000074631, 0x1518C6200002114A, 0x2B18C620000556B5,
++	0x08A546200008C54A, 0x08A5462000021084, 0x088443E0000F8442, 0x0421084E00E10842,
++	0x0821042000084108, 0x1084210E00E42108, 0x0008A88000000000, 0x0000000001F00000,
++	0x0000010400000000, 0x20E00000000B663E, 0x22F084200007C631, 0x22E0000000074421,
++	0x23E84200000F4631, 0x22E000000007443F, 0x1E21498000010842, 0x22E000001D187A31,
++	0x26D084200008C631, 0x0860100000071084, 0x10C020000C94A108, 0x0A9084200008A4A3,
++	0x084210C000071084, 0x2AB000000008D6B5, 0x26D000000008C631, 0x22E0000000074631,
++	0x22F000000210BE31, 0x23E0000021087A31, 0x26D0000000008421, 0x22E0000000074506,
++	0x04F1080000064842, 0x23100000000B6631, 0x2310000000022951, 0x23100000000556B5,
++	0x151000000008A884, 0x231000001D185B31, 0x11F00000000F8444, 0x0642109801821084,
++	0x0842108000021084, 0x3042108300321084, 0x0004D64000000000, 0x0000000000000000,
++};
++
++
++#define NUWA_LINES     14
++#define NUWA_COLS      72
++#define NUWA_SCALE     3
++#define NUWA_CELL      (6 * NUWA_SCALE)
++#define NUWA_ROWH      (14 * NUWA_SCALE)
++
++static char nuwa_line[NUWA_LINES][NUWA_COLS];
++static unsigned int nuwa_line_next;
++static boolean_t nuwa_observe_painted[16];
++static unsigned int nuwa_exit_count;
++
++static void
++nuwa_paint_line(unsigned int slot)
++{
++	const struct vc_info *v = &vinfo;
++	unsigned int y0, x, gy, gx, dy, dx, i, bpp4, ch;
++	unsigned int *fb;
++	unsigned long long glyph, data;
++
++	if (v->v_baseaddr == 0 || v->v_rowbytes == 0 || v->v_width == 0 || v->v_height == 0) {
++		return;
++	}
++	y0 = v->v_height / 2 + slot * NUWA_ROWH;
++	if (y0 + NUWA_ROWH > v->v_height) {
++		return;
++	}
++	bpp4 = v->v_rowbytes / 4;
++	fb = (unsigned int *)v->v_baseaddr;
++	for (gy = 0; gy < NUWA_ROWH; gy++) {
++		for (gx = 0; gx < bpp4; gx++) {
++			fb[(y0 + gy) * bpp4 + gx] = 0;
++		}
++	}
++	for (i = 0; i < NUWA_COLS - 1 && nuwa_line[slot][i] != 0; i++) {
++		ch = (unsigned char)nuwa_line[slot][i];
++		if (ch < 32 || ch > 126) {
++			continue;
++		}
++		glyph = nuwa_font[ch - 32];
++		x = i * NUWA_CELL;
++		for (gy = 0; gy < 12; gy++) {
++			data = (gy < 6) ? ((glyph >> 32) >> (gy * 5))
++			    : ((glyph & 0xFFFFFFFFULL) >> ((gy - 6) * 5));
++			for (gx = 0; gx < 5; gx++) {
++				if (((data >> gx) & 1) == 0) {
++					continue;
++				}
++				for (dy = 0; dy < NUWA_SCALE; dy++) {
++					for (dx = 0; dx < NUWA_SCALE; dx++) {
++						fb[(y0 + gy * NUWA_SCALE + dy) * bpp4 + x + gx * NUWA_SCALE + dx] =
++						    0xFFFFFFFFu;
++					}
++				}
++			}
++		}
++	}
++}
++
++static char *
++nuwa_str(char *p, const char *s)
++{
++	while (*s != 0 && (p - nuwa_line[0]) < (long)sizeof(nuwa_line)) {
++		*p++ = *s++;
++	}
++	return p;
++}
++
++static char *
++nuwa_num(char *p, unsigned long v)
++{
++	char t[12];
++	int n = 0;
++
++	if (v == 0) {
++		*p++ = '0';
++		return p;
++	}
++	while (v != 0) {
++		t[n++] = (char)('0' + (v % 10));
++		v /= 10;
++	}
++	while (n > 0) {
++		*p++ = t[--n];
++	}
++	return p;
++}
++
++static char *
++nuwa_name(char *p, const char *name)
++{
++	int n = 0;
++
++	while (name != NULL && name[n] != 0 && n < 16) {
++		*p++ = name[n++];
++	}
++	return p;
++}
++
++static char *
++nuwa_begin(void)
++{
++	unsigned int slot = nuwa_line_next % NUWA_LINES;
++	char *p = nuwa_line[slot];
++
++	nuwa_line_next++;
++	p[0] = 0;
++	return p;
++}
++
++static void
++nuwa_end(char *p)
++{
++	unsigned int slot = (nuwa_line_next - 1) % NUWA_LINES;
++	*p = 0;
++	nuwa_paint_line(slot);
++}
++
++void
++nuwa_observe_band(unsigned int band, unsigned int pixel)
++{
++	uint64_t total, chunk, off, i, pattern;
++	volatile uint64_t *q;
++
++	if (band >= 16 || nuwa_observe_painted[band]) {
++		return;
++	}
++	if (vinfo.v_baseaddr == 0 || vinfo.v_rowbytes == 0 || vinfo.v_height == 0) {
++		return;
++	}
++	nuwa_observe_painted[band] = TRUE;
++	total = (uint64_t)vinfo.v_rowbytes * (uint64_t)vinfo.v_height;
++	chunk = (total / 16) & ~7ULL;
++	if (chunk == 0) {
++		return;
++	}
++	off = chunk * band;
++	pattern = ((uint64_t)pixel << 32) | (uint64_t)pixel;
++	q = (volatile uint64_t *)(vinfo.v_baseaddr + off);
++	for (i = 0; i < chunk; i += 8) {
++		*q++ = pattern;
++	}
++}
++
++void
++nuwa_observe_exec(int ok, int err, int pid, const char *name)
++{
++	char *p = nuwa_begin();
++
++	p = nuwa_str(p, ok ? "EXEC ok  pid " : "EXEC err ");
++	if (!ok) {
++		p = nuwa_num(p, (unsigned long)err);
++		p = nuwa_str(p, " pid ");
++	}
++	p = nuwa_num(p, (unsigned long)pid);
++	p = nuwa_str(p, " ");
++	p = nuwa_name(p, name);
++	nuwa_end(p);
++}
++
++void
++nuwa_observe_reject(int code, int pid, const char *name)
++{
++	char *p = nuwa_begin();
++
++	p = nuwa_str(p, "AMFI rej c=");
++	p = nuwa_num(p, (unsigned long)code);
++	p = nuwa_str(p, " pid ");
++	p = nuwa_num(p, (unsigned long)pid);
++	p = nuwa_str(p, " ");
++	p = nuwa_name(p, name);
++	nuwa_end(p);
++}
++
++void
++nuwa_observe_launchc(int code, int pid, const char *name)
++{
++	char *p = nuwa_begin();
++
++	p = nuwa_str(p, "LCHAIN e=");
++	p = nuwa_num(p, (unsigned long)code);
++	p = nuwa_str(p, " pid ");
++	p = nuwa_num(p, (unsigned long)pid);
++	p = nuwa_str(p, " ");
++	p = nuwa_name(p, name);
++	nuwa_end(p);
++}
++
++void
++nuwa_observe_syscall(int code)
++{
++	char *p = nuwa_begin();
++
++	p = nuwa_str(p, "SYS ");
++	p = nuwa_num(p, (unsigned long)code);
++	nuwa_end(p);
++}
++
++void
++nuwa_observe_exit(int pid, int rv, const char *name)
++{
++	char *p;
++
++	if (nuwa_exit_count >= 20) {
++		return;
++	}
++	nuwa_exit_count++;
++	p = nuwa_begin();
++	p = nuwa_str(p, "EXIT pid ");
++	p = nuwa_num(p, (unsigned long)pid);
++	p = nuwa_str(p, " rv ");
++	p = nuwa_num(p, (unsigned long)(rv & 0xFFFF));
++	p = nuwa_str(p, " ");
++	p = nuwa_name(p, name);
++	nuwa_end(p);
++}
++#endif /* XNU_NUWA_OBSERVE */
++
+ static int platform_exec_logging = 0;
+ 
+ SYSCTL_DECL(_security_mac);
+@@ -4466,6 +4730,12 @@ bad:
+ 	 */
+ 	if (error == 0) {
+ 		error = process_signature(p, imgp);
++#if XNU_NUWA_OBSERVE
++		nuwa_observe_exec(error == 0, error, proc_getpid(p), p->p_name);
++		if (p == initproc && error == 0) {
++			nuwa_observe_band(3, 0xFF00FFFFu);
++		}
++#endif
+ 
+ 		/*
+ 		 * Pay for our earlier safety; deliver the delayed signals from
+@@ -5058,6 +5328,12 @@ __mac_execve(proc_t p, struct __mac_exec
+ 
+ 		exec_resettextvp(p, imgp);
+ 		error = process_signature(p, imgp);
++#if XNU_NUWA_OBSERVE
++		nuwa_observe_exec(error == 0, error, proc_getpid(p), p->p_name);
++		if (p == initproc && error == 0) {
++			nuwa_observe_band(3, 0xFF00FFFFu);
++		}
++#endif
+ 	}
+ 
+ #if defined(HAS_APPLE_PAC)
+@@ -7388,6 +7664,9 @@ process_signature(proc_t p, struct image
+ 		} else
+ #endif /* XNU_NUWA_EXEC_POLICY_SKIP */
+ 		{
++#if XNU_NUWA_OBSERVE
++			nuwa_observe_reject(EXEC_EXIT_REASON_SECURITY_POLICY, proc_getpid(p), p->p_name);
++#endif
+ 			KERNEL_DEBUG_CONSTANT(BSDDBG_CODE(DBG_BSD_PROC, BSD_PROC_EXITREASON_CREATE) | DBG_FUNC_NONE,
+ 			    proc_getpid(p), OS_REASON_EXEC, EXEC_EXIT_REASON_SECURITY_POLICY, 0, 0);
+ 			signature_failure_reason = os_reason_create(OS_REASON_EXEC, EXEC_EXIT_REASON_SECURITY_POLICY);
+@@ -7407,6 +7686,9 @@ process_signature(proc_t p, struct image
+ 	/* call the launch constraints hook */
+ 	os_reason_t launch_constraint_reason;
+ 	if ((error = mac_proc_check_launch_constraints(p, imgp, &launch_constraint_reason)) != 0) {
++#if XNU_NUWA_OBSERVE
++		nuwa_observe_launchc(error, proc_getpid(p), p->p_name);
++#endif
+ 		signature_failure_reason = launch_constraint_reason;
+ 		goto done;
+ 	}
+--- a/bsd/dev/arm/systemcalls.c	2026-11-15 20:14:46.102153346 +0800
++++ b/bsd/dev/arm/systemcalls.c	2026-11-15 20:14:46.102287599 +0800
+@@ -86,6 +86,14 @@ extern int mach_trap_count;
+  *
+  * Outputs:	none
+  */
++#if XNU_NUWA_OBSERVE
++/* Defined in bsd/kern/kern_exec.c (observation build only). */
++extern void nuwa_observe_band(unsigned int band, unsigned int pixel);
++extern void nuwa_observe_syscall(int code);
++static unsigned long long nuwa_sys_seen[8];
++static unsigned int nuwa_sys_count;
++#endif
++
+ void
+ unix_syscall(
+ 	struct arm_saved_state * state,
+@@ -102,6 +110,22 @@ unix_syscall(
+ 
+ 	code = arm_get_syscall_number(state);
+ 
++#if XNU_NUWA_OBSERVE
++	if (proc == initproc) {
++		nuwa_observe_band(15, 0xFFFF8000u);
++	}
++	if (code < 512) {
++		unsigned long long bit = 1ULL << (code & 63);
++		if ((nuwa_sys_seen[code >> 6] & bit) == 0) {
++			nuwa_sys_seen[code >> 6] |= bit;
++			if (nuwa_sys_count < 30) {
++				nuwa_sys_count++;
++				nuwa_observe_syscall(code);
++			}
++		}
++	}
++#endif
++
+ #define unix_syscall_kprintf(x...)      /* kprintf("unix_syscall: " x) */
+ 
+ 	if (kdebug_enable && !code_is_kdebug_trace(code)) {
+--- a/bsd/kern/kern_exit.c	2026-11-15 20:14:46.102387020 +0800
++++ b/bsd/kern/kern_exit.c	2026-11-15 20:14:46.102600644 +0800
+@@ -1464,10 +1464,18 @@ exit1_internal(proc_t p, int rv, int *re
+ /*
+  * NOTE: exit_with_reason drops a reference on the passed exit_reason
+  */
++#if XNU_NUWA_OBSERVE
++/* Defined in bsd/kern/kern_exec.c (observation build only). */
++extern void nuwa_observe_exit(int pid, int rv, const char *name);
++#endif
++
+ int
+ exit_with_reason(proc_t p, int rv, int *retval, boolean_t thread_can_terminate, boolean_t perf_notify,
+     int jetsam_flags, struct os_reason *exit_reason)
+ {
++#if XNU_NUWA_OBSERVE
++	nuwa_observe_exit(proc_getpid(p), rv, p->p_name);
++#endif
+ 	thread_t self = current_thread();
+ 	struct task *task = proc_task(p);
+ 	struct uthread *ut;

@@ -1,0 +1,43 @@
+nuwa r14: the r13 Data-mount hunk, rebased onto the r12 SystemOS-patched kern_exec.c.
+
+Both r12 (SystemOS) and r13 (Data) inserted code at the same two anchors (after
+#include <sys/reboot.h>, and after the mach_vm_allocate_kernel() call), so the r13
+patch cannot be applied unchanged on top of the r12 one.  This patch carries the same
+two insertions re-expressed against the SystemOS-patched text; apply it after
+8796-nuwa-systemos-mount.patch.  Resulting order in load_init_program():
+SystemOS mount (writes init_envp) -> Data mount (opens the store window and mounts
+/private/var) -> the initproc exec that consumes init_envp.
+
+Opt-in: -DXNU_NUWA_DATA_MOUNT=1.  Implementation: package/nuwa-data/nuwa_data_mount.c.
+
+--- a/bsd/kern/kern_exec.c
++++ b/bsd/kern/kern_exec.c
+@@ -6749,6 +6749,17 @@
+ extern int nuwa_systemos_prepare(proc_t, user_addr_t, user_addr_t *);
+ #endif
+ 
++#if defined(XNU_NUWA_DATA_MOUNT) && XNU_NUWA_DATA_MOUNT
++/*
++ * nuwa r14: mount the ram-disk Data volume at /private/var after the SystemOS mount
++ * and before the initproc exec.  Implemented in package/nuwa-data/nuwa_data_mount.c:
++ * it obtains the volume through native_ram_block_volume_seed() (which also opens the
++ * persistent store window), mounts apfs, verifies it, and records stage/errno into
++ * the boot progress extension rows.  A failure never panics.
++ */
++extern int nuwa_data_mount_prepare(proc_t, user_addr_t);
++#endif
++
+ /*
+  * load_init_program_at_path
+  *
+@@ -6909,6 +6920,10 @@
+ #if defined(XNU_NUWA_SYSTEMOS_MOUNT) && XNU_NUWA_SYSTEMOS_MOUNT
+ 	/* Also records the SystemOS mount stage/errno for the boot progress page. */
+ 	(void) nuwa_systemos_prepare(p, (user_addr_t)scratch_addr, &init_envp);
++#endif
++#if defined(XNU_NUWA_DATA_MOUNT) && XNU_NUWA_DATA_MOUNT
++	/* Mounts the Data volume at /private/var; records stage/errno, never panics. */
++	(void) nuwa_data_mount_prepare(p, (user_addr_t)scratch_addr);
+ #endif
+ #if CONFIG_MEMORYSTATUS
+ 	(void) memorystatus_init_at_boot_snapshot();

@@ -1,0 +1,105 @@
+--- a/bsd/kern/kern_exec.c	2026-11-15 19:35:13.985788642 +0800
++++ b/bsd/kern/kern_exec.c	2026-11-15 19:35:13.988628540 +0800
+@@ -360,6 +360,48 @@ extern int nextpidversion;
+ volatile int nuwa_exec_policy_error;
+ #endif /* XNU_NUWA_EXEC_POLICY_SKIP */
+ 
++#if XNU_NUWA_OBSERVE
++#include <console/video_console.h>
++
++extern struct vc_info vinfo;
++
++/*
++ * nuwa observation only (XNU_NUWA_OBSERVE): paint one 1/16 band of the live
++ * frame buffer through the kernel mapping vinfo.v_baseaddr. Bands 1 and 2 are
++ * the build's MMU-off / MMU-on entry markers (blue, magenta); band 3 (cyan,
++ * rows 3/16..4/16) and band 15 (orange, last 1/16) are free and touch neither
++ * those bands nor the loader's text block that starts at 1/4 of the screen.
++ * Stores only: no lock, no allocation, no sleep. Each band is painted once.
++ */
++static boolean_t nuwa_observe_painted[16];
++
++void
++nuwa_observe_band(unsigned int band, unsigned int pixel)
++{
++	uint64_t total, chunk, off, i, pattern;
++	volatile uint64_t *p;
++
++	if (band >= 16 || nuwa_observe_painted[band]) {
++		return;
++	}
++	if (vinfo.v_baseaddr == 0 || vinfo.v_rowbytes == 0 || vinfo.v_height == 0) {
++		return;
++	}
++	nuwa_observe_painted[band] = TRUE;
++	total = (uint64_t)vinfo.v_rowbytes * (uint64_t)vinfo.v_height;
++	chunk = (total / 16) & ~7ULL;
++	if (chunk == 0) {
++		return;
++	}
++	off = chunk * band;
++	pattern = ((uint64_t)pixel << 32) | (uint64_t)pixel;
++	p = (volatile uint64_t *)(vinfo.v_baseaddr + off);
++	for (i = 0; i < chunk; i += 8) {
++		*p++ = pattern;
++	}
++}
++#endif /* XNU_NUWA_OBSERVE */
++
+ static int platform_exec_logging = 0;
+ 
+ SYSCTL_DECL(_security_mac);
+@@ -4466,6 +4508,12 @@ bad:
+ 	 */
+ 	if (error == 0) {
+ 		error = process_signature(p, imgp);
++#if XNU_NUWA_OBSERVE
++		if (p == initproc && error == 0) {
++			/* cyan band 3: initproc's image activation completed */
++			nuwa_observe_band(3, 0xFF00FFFFu);
++		}
++#endif
+ 
+ 		/*
+ 		 * Pay for our earlier safety; deliver the delayed signals from
+@@ -5058,6 +5106,12 @@ __mac_execve(proc_t p, struct __mac_exec
+ 
+ 		exec_resettextvp(p, imgp);
+ 		error = process_signature(p, imgp);
++#if XNU_NUWA_OBSERVE
++		if (p == initproc && error == 0) {
++			/* cyan band 3: initproc's image activation completed */
++			nuwa_observe_band(3, 0xFF00FFFFu);
++		}
++#endif
+ 	}
+ 
+ #if defined(HAS_APPLE_PAC)
+--- a/bsd/dev/arm/systemcalls.c	2026-11-15 19:35:13.988828143 +0800
++++ b/bsd/dev/arm/systemcalls.c	2026-11-15 19:35:13.988987556 +0800
+@@ -86,6 +86,11 @@ extern int mach_trap_count;
+  *
+  * Outputs:	none
+  */
++#if XNU_NUWA_OBSERVE
++/* Defined in bsd/kern/kern_exec.c (observation build only). */
++extern void nuwa_observe_band(unsigned int band, unsigned int pixel);
++#endif
++
+ void
+ unix_syscall(
+ 	struct arm_saved_state * state,
+@@ -100,6 +105,13 @@ unix_syscall(
+ 
+ 	uthread_reset_proc_refcount(uthread);
+ 
++#if XNU_NUWA_OBSERVE
++	if (proc == initproc) {
++		/* orange band 15: initproc re-entered the kernel through a syscall */
++		nuwa_observe_band(15, 0xFFFF8000u);
++	}
++#endif
++
+ 	code = arm_get_syscall_number(state);
+ 
+ #define unix_syscall_kprintf(x...)      /* kprintf("unix_syscall: " x) */

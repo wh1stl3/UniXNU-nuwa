@@ -1,0 +1,60 @@
+From: nuwa bring-up
+Subject: [PATCH] 8796-nuwa-lookup-trace (opt-in, off by default)
+
+Traces namei() lookups whose path starts with /System/Library/Caches, printing the path and
+the final errno through printf() (the kernel's kprintf alias; kprintf itself is not declared
+by this file's include set).  Compiled only with -DXNU_NUWA_LOOKUP_TRACE=1; without it the
+strings and the state do not exist.  Used to tell "the union does not cover the dyld cache
+path" from "the mapping is refused later (AMFI / dyld)".  Apply with -p1 in the XNU tree
+root.
+
+--- a/bsd/vfs/vfs_lookup.c	2026-11-18 00:54:42.660738656 +0800
++++ b/bsd/vfs/vfs_lookup.c	2026-11-18 00:54:42.660946520 +0800
+@@ -162,6 +162,17 @@
+  *		lookup: ???
+  *		VNOP_READLINK:???
+  */
++#if defined(XNU_NUWA_LOOKUP_TRACE) && XNU_NUWA_LOOKUP_TRACE
++/*
++ * nuwa r19 (opt-in): remember the last namei() path that starts with the dyld shared-cache
++ * directory so the error exit can print it.  namei() NUL-terminates components inside that
++ * buffer while it walks, so the copy is taken at entry and the address match keeps the
++ * error exit to its own call.  With the switch off nothing is compiled in; with it on the
++ * cost is one strncmp per namei() plus one bounded copy for matching paths.
++ */
++static char nuwa_lookup_trace_path[MAXPATHLEN];
++static uintptr_t nuwa_lookup_trace_addr;
++#endif
+ int
+ namei(struct nameidata *ndp)
+ {
+@@ -376,6 +387,17 @@
+ 
+ 	cnp->cn_nameptr = cnp->cn_pnbuf;
+ 
++#if defined(XNU_NUWA_LOOKUP_TRACE) && XNU_NUWA_LOOKUP_TRACE
++	if (strncmp(cnp->cn_pnbuf, "/System/Library/Caches",
++	    sizeof("/System/Library/Caches") - 1) == 0) {
++		(void) strlcpy(nuwa_lookup_trace_path, cnp->cn_pnbuf,
++		    sizeof(nuwa_lookup_trace_path));
++		nuwa_lookup_trace_addr = (uintptr_t)cnp->cn_pnbuf;
++	} else if (nuwa_lookup_trace_addr == (uintptr_t)cnp->cn_pnbuf) {
++		nuwa_lookup_trace_addr = 0;
++	}
++#endif
++
+ 	ndp->ni_usedvp = NULLVP;
+ 
+ 	if (*(cnp->cn_nameptr) == '/') {
+@@ -552,6 +574,11 @@
+ 		rootdir_with_usecount = NULLVP;
+ 	}
+ 
++#if defined(XNU_NUWA_LOOKUP_TRACE) && XNU_NUWA_LOOKUP_TRACE
++	if (error != 0 && nuwa_lookup_trace_addr == (uintptr_t)cnp->cn_pnbuf) {
++		printf("nuwa: lookup <%s> err=%d\n", nuwa_lookup_trace_path, error);
++	}
++#endif
+ 	if ((cnp->cn_flags & HASBUF)) {
+ 		cnp->cn_flags &= ~HASBUF;
+ 		zfree(ZV_NAMEI, cnp->cn_pnbuf);

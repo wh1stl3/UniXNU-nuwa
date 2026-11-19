@@ -1,0 +1,65 @@
+nuwa r12: accept the SystemOS cryptex mount as a shared-cache location.
+
+bsd/vm/vm_unix.c:2541-2573 (CONFIG_CSR == 0, which is what this kernel builds)
+requires the dyld shared cache to be on the process root volume or on the same
+mount as /private/preboot/Cryptexes, and returns EPERM otherwise.  The cryptex
+window is a separate read-only APFS volume and /private/preboot/Cryptexes does
+not exist in the OS image (host apfs-fuse read), so the official non-union shape
+(mount on /private/preboot + DYLD_SHARED_CACHE_DIR) would always be refused here.
+
+This patch accepts exactly one mount, identified by the device number that
+package/nuwa-systemos/nuwa_systemos.c recorded after its verified-block lookup
+and mount(), and counts the event (nuwa_shared_cache_location_bypass).  Nothing
+else is relaxed.  Opt-in: -DXNU_NUWA_CACHE_LOCATION_SKIP=1.
+Removal condition: a real CSR/owner chain, or a cache that lives on the root volume.
+--- a/bsd/vm/vm_unix.c
++++ b/bsd/vm/vm_unix.c
+@@ -2213,6 +2213,14 @@
+ 	struct _sr_file_mappings *sr_file_mappings,
+ 	struct vm_shared_region  *shared_region);
+ 
++#if defined(XNU_NUWA_CACHE_LOCATION_SKIP) && XNU_NUWA_CACHE_LOCATION_SKIP
++/* Defined in package/nuwa-systemos/nuwa_systemos.c.  nuwa_systemos_device is the
++ * device number of the SystemOS cryptex volume once it is mounted (stage 4/5);
++ * nuwa_shared_cache_location_bypass counts the mappings accepted below. */
++extern volatile dev_t nuwa_systemos_device;
++extern volatile uint32_t nuwa_systemos_stage;
++extern volatile uint32_t nuwa_shared_cache_location_bypass;
++#endif
+ /*
+  * Setup part of _shared_region_map_and_slide().
+  * It had to be broken out of _shared_region_map_and_slide() to
+@@ -2547,6 +2555,23 @@
+ 		assert(rdir_vp != NULL);
+ 		if (srfmp->vp->v_mount != rdir_vp->v_mount) {
+ 			vnode_t preboot_vp = NULL;
++#if defined(XNU_NUWA_CACHE_LOCATION_SKIP) && XNU_NUWA_CACHE_LOCATION_SKIP
++			/* nuwa r12: accept exactly the SystemOS volume that
++			 * nuwa_systemos_prepare() mounted after its verified-block lookup.
++			 * Identity is the volume's device number, re-derived from the live
++			 * mount, so no stale mount pointer is compared. */
++			if (nuwa_systemos_stage >= 4 && nuwa_systemos_device != NODEV) {
++				vnode_t cache_devvp = vfs_devvp(srfmp->vp->v_mount);
++				dev_t cache_dev = cache_devvp ? vnode_specrdev(cache_devvp) : NODEV;
++				if (cache_devvp) {
++					(void)vnode_put(cache_devvp);
++				}
++				if (cache_dev == nuwa_systemos_device) {
++					__atomic_fetch_add(&nuwa_shared_cache_location_bypass, 1, __ATOMIC_RELAXED);
++					goto nuwa_cache_location_ok;
++				}
++			}
++#endif
+ #if XNU_TARGET_OS_OSX
+ #define PREBOOT_CRYPTEX_PATH "/System/Volumes/Preboot/Cryptexes"
+ #else
+@@ -2570,6 +2595,9 @@
+ 				(void)vnode_put(preboot_vp);
+ 			}
+ 		}
++#if defined(XNU_NUWA_CACHE_LOCATION_SKIP) && XNU_NUWA_CACHE_LOCATION_SKIP
++nuwa_cache_location_ok:
++#endif
+ #endif /* CONFIG_CSR */
+ 
+ 		if (scdir_enforce) {

@@ -1,0 +1,132 @@
+From: nuwa bring-up
+Subject: [PATCH] 8796-nuwa-reboot-observe r30 (opt-in, off by default)
+
+Records who requested the reboot and with which flags at the three entry points that
+can start it -- reboot(2) (src=1, howto = the syscall opt), reboot_kernel() (src=2,
+howto = its howto) and host_reboot() (src=3, howto = the HOST_REBOOT_* option) -- with
+a first-wins latch so the cascaded internal calls keep the original requester, and
+repaints the diagnostic page right there.  The globals are nuwa_reboot_pid /
+nuwa_reboot_comm (boot=<pid>/<comm> on the page) and nuwa_reboot_howto (the flags on
+the console and as the third page field).  Compiled only with
+-DXNU_NUWA_REBOOT_OBSERVE=1; no allocation, no change to the shutdown sequence.
+Apply with -p1 in the XNU tree root.
+
+--- a/bsd/kern/kern_shutdown.c
++++ b/bsd/kern/kern_shutdown.c
+@@ -71,6 +71,66 @@
+ 
+ #include <sys/kdebug.h>
+ 
++#if defined(XNU_NUWA_REBOOT_OBSERVE) && XNU_NUWA_REBOOT_OBSERVE
++#include <sys/proc_internal.h>          /* current_proc(), p_pid, p_comm */
++#include <libkern/OSAtomic.h>           /* OSCompareAndSwap for the first-request latch */
++extern void boot_progress_sync_draw(void) __attribute__((weak_import));
++/*
++ * nuwa bring-up observation (opt-in: compiled only with -DXNU_NUWA_REBOOT_OBSERVE=1).
++ *
++ * The diagnostic page does not capture the console on this board, so who asked for the
++ * reboot is published as two globals the renderer draws as "boot=<pid>/<comm>" (plus the
++ * howto flag word, r30), and the page is repainted right here: the reboot path can panic in
++ * the same second, and the r28 run kept the pre-reboot frame even though the requester had
++ * been recorded.
++ *
++ * Every entry point calls nuwa_reboot_record() with its own number, and the first caller
++ * wins, so the cascaded internal calls cannot overwrite the process that started it:
++ *   1 = reboot(2) syscall entry (kern_xxx.c), 2 = reboot_kernel() entry, 3 = host_reboot().
++ * The howto word tells the two kinds of restart apart: RB_AUTOBOOT (0) is a plain
++ * userspace-requested restart, RB_QUICK (0x400) skips the unmount pass, RB_PANIC (0x800) is
++ * a panic reboot, RB_HALT (0x08) halts instead of restarting; src=3 records HOST_REBOOT_*
++ * options instead (HALT 1, UPSDELAY 2, DEBUGGER 4).
++ */
++volatile int32_t nuwa_reboot_pid = -1;
++volatile uint32_t nuwa_reboot_src;
++volatile uint32_t nuwa_reboot_howto;
++char nuwa_reboot_comm[17];
++
++void
++nuwa_reboot_record(int src, int howto)
++{
++	proc_t p;
++	int i;
++
++	if (!OSCompareAndSwap(0, (UInt32)src, &nuwa_reboot_src)) {
++		/* an earlier entry point already named the requester; keep it */
++		return;
++	}
++	nuwa_reboot_howto = (uint32_t)howto;
++
++	p = current_proc();
++	if (p != PROC_NULL) {
++		nuwa_reboot_pid = p->p_pid;
++		for (i = 0; i < (int)sizeof(nuwa_reboot_comm) - 1 && p->p_comm[i] != 0; i++) {
++			nuwa_reboot_comm[i] = p->p_comm[i];
++		}
++		nuwa_reboot_comm[i] = 0;
++	} else {
++		/* no process context: say so on the console instead of a silent -1/- */
++		printf("nuwa: reboot record has no current process (src=%d howto=0x%x)\n",
++		    src, (unsigned)howto);
++	}
++	printf("nuwa: reboot request src=%d howto=0x%x pid=%d comm=%.16s\n", src,
++	    (unsigned)howto, p != PROC_NULL ? p->p_pid : -1,
++	    p != PROC_NULL ? p->p_comm : "-");
++
++	if (&boot_progress_sync_draw) {
++		boot_progress_sync_draw();
++	}
++}
++#endif /* XNU_NUWA_REBOOT_OBSERVE */
++
+ uint32_t system_inshutdown = 0;
+ uint32_t final_shutdown_stage = 0;
+ 
+@@ -179,6 +239,12 @@
+ 	int hostboot_option = 0;
+ 	uint64_t startTime;
+ 
++#if defined(XNU_NUWA_REBOOT_OBSERVE) && XNU_NUWA_REBOOT_OBSERVE
++	/* At entry: before the RB_PANIC/RB_QUICK exits and before the system_inshutdown CAS
++	 * can turn this thread away with EBUSY. */
++	nuwa_reboot_record(2, howto);
++#endif
++
+ 	if ((howto & (RB_PANIC | RB_QUICK)) == (RB_PANIC | RB_QUICK)) {
+ 		panic_kernel(howto, message);
+ 	}
+--- a/bsd/kern/kern_xxx.c
++++ b/bsd/kern/kern_xxx.c
+@@ -109,8 +109,15 @@
+ 	kauth_cred_t my_cred;
+ #endif
+ 
+-	AUDIT_ARG(cmd, uap->opt);
+-
++#if defined(XNU_NUWA_REBOOT_OBSERVE) && XNU_NUWA_REBOOT_OBSERVE
++	/* syscall entry, before suser()/MACF can refuse it: the requester and the flags it
++	 * asked for are the interesting part even for a request that never reaches
++	 * reboot_kernel(). */
++	{
++		extern void nuwa_reboot_record(int src, int howto);
++		nuwa_reboot_record(1, (int)uap->opt);
++	}
++#endif
+ 	if ((error = suser(kauth_cred_get(), &p->p_acflag))) {
+ #if (DEVELOPMENT || DEBUG)
+ 		if (uap->opt & RB_PANIC) {
+--- a/osfmk/kern/machine.c
++++ b/osfmk/kern/machine.c
+@@ -225,6 +225,14 @@
+ 		return KERN_INVALID_HOST;
+ 	}
+ 
++#if defined(XNU_NUWA_REBOOT_OBSERVE) && XNU_NUWA_REBOOT_OBSERVE
++	{
++		/* src=3: the recorded word is the HOST_REBOOT_* option, not an RB_* flag. */
++		extern void nuwa_reboot_record(int src, int howto);
++		nuwa_reboot_record(3, options);
++	}
++#endif
++
+ #if DEVELOPMENT || DEBUG
+ 	if (options & HOST_REBOOT_DEBUGGER) {
+ 		Debugger("Debugger");

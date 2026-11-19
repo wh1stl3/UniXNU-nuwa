@@ -1,0 +1,39 @@
+From: nuwa bring-up
+Subject: [PATCH] 8796-nuwa-r22-dyld-flags-readback
+
+Records what the commpage dyld flags alias holds right after commpage_update_dyld_flags()
+(r22), prints it, and repaints once so the SYSOS rows carry it in the frame that survives
+the initproc panic.  Applies on top of 8796-nuwa-dyld-observe-kern-exec.patch; observation
+only (plus one weak call to the renderer's synchronous repaint).
+
+--- a/bsd/kern/kern_exec.c	2026-11-18 01:51:28.785436961 +0800
++++ b/bsd/kern/kern_exec.c	2026-11-18 01:51:28.791409607 +0800
+@@ -6773,6 +6773,9 @@
+ extern void commpage_update_dyld_flags(uint64_t);
+ extern volatile uint32_t nuwa_dyld_flags_value;
+ extern volatile uint32_t nuwa_dyld_flags_set;
++/* r22: what the commpage holds after the write, for the SYSOS row and one console line. */
++volatile uint64_t nuwa_dyld_flags_read;
++extern void boot_progress_sync_draw(void) __attribute__((weak_import));
+ #endif
+ 
+ /*
+@@ -6947,6 +6950,18 @@
+ 	commpage_update_dyld_flags(dyld_flags);
+ 	nuwa_dyld_flags_value = (uint32_t)dyld_flags;
+ 	nuwa_dyld_flags_set = 1;
++	/* r22: read the value back through the same commpage RW alias the update wrote
++	 * (osfmk/arm/commpage/commpage.c:921), so the SYSOS row shows what dyld will actually
++	 * see rather than only what we asked for. */
++	nuwa_dyld_flags_read =
++	    *((volatile uint64_t *)(_COMM_PAGE_DYLD_FLAGS + _COMM_PAGE_RW_OFFSET));
++	printf("nuwa: dyld flags set=0x%x read=0x%llx\n", (unsigned)nuwa_dyld_flags_value,
++	    (unsigned long long)nuwa_dyld_flags_read);
++	/* r22: the SYSOS rows are formatted on demand, so one synchronous repaint here puts
++	 * flg/rd into the frame that survives the initproc panic. */
++	if (&boot_progress_sync_draw) {
++		boot_progress_sync_draw();
++	}
+ #endif
+ #if CONFIG_MEMORYSTATUS
+ 	(void) memorystatus_init_at_boot_snapshot();

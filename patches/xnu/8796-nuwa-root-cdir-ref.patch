@@ -1,0 +1,60 @@
+From: nuwa bring-up
+Subject: [PATCH] 8796-nuwa-root-cdir-ref (opt-in, off by default)
+
+set_rootvnode(): give kernproc's fd_cdir its own reference instead of letting it ride
+on the reference the caller hands in for the root vnode itself, and drop that hold when
+the cdir moves to another vnode.  The teardown releases the cdir once per process that
+points at the root plus the root once (kernproc cdir + initproc cdir + rootvnode), so a
+third hold is needed to keep the last release from running the usecount negative on the
+reboot path (vnode_rele_ext usecount -ve, reached through apfs vflush -> vclean ->
+vnode_update_identity).  Compiled only with -DXNU_NUWA_ROOT_CDIR_REF=1; checkdirs(),
+vfs_switch_root() and dounmount() are not modified.  Apply with -p1 in the XNU tree root.
+
+--- a/bsd/kern/bsd_init.c
++++ b/bsd/kern/bsd_init.c
+@@ -430,10 +430,32 @@
+ 	mount_t new_mount = (new_rootvnode != NULL) ? new_rootvnode->v_mount : NULL;
+ 	vnode_t new_devvp = (new_mount != NULL) ? new_mount->mnt_devvp : NULL;
+ 	vnode_t old_rootvnode = rootvnode;
++#if defined(XNU_NUWA_ROOT_CDIR_REF) && XNU_NUWA_ROOT_CDIR_REF
++	vnode_t old_cdir = (kernproc != PROC_NULL) ? kernproc->p_fd.fd_cdir : NULLVP;
++#endif
+ 
+ 	new_rootvnode->v_flag |= VROOT;
+ 	rootvp = new_devvp;
+ 	rootvnode = new_rootvnode;
++#if defined(XNU_NUWA_ROOT_CDIR_REF) && XNU_NUWA_ROOT_CDIR_REF
++	/*
++	 * nuwa r29 (opt-in: -DXNU_NUWA_ROOT_CDIR_REF=1): kernproc's cdir gets its own
++	 * usecount instead of riding on the reference the caller handed in for the root
++	 * itself.  The teardown releases the cdir once per process that points at the root
++	 * (checkdirs() per proc when a mount covers it, vfs_unmountall() at shutdown) and the
++	 * root once more, i.e. kernproc cdir + initproc cdir + rootvnode.  The holds after
++	 * this function are exactly those three: this ref, the one fdcopy() takes for
++	 * initproc's cdir, and the caller's own reference for the root.  Without the extra
++	 * hold the third release runs a usecount past zero (vnode_rele_ext usecount -ve on
++	 * the reboot path, reached through apfs vflush -> vclean -> vnode_update_identity).
++	 * The hold travels with fd_cdir and is dropped below only when the cdir actually
++	 * moves to another vnode; checkdirs()/vfs_switch_root() reassign rootvnode without
++	 * calling here, and dounmount()'s covered-vnode handling is untouched.
++	 */
++	if (old_cdir != new_rootvnode) {
++		vnode_ref(new_rootvnode);
++	}
++#endif
+ 	kernproc->p_fd.fd_cdir = new_rootvnode;
+ 	if (new_devvp != NULL) {
+ 		rootdev = vnode_specrdev(new_devvp);
+@@ -445,6 +467,12 @@
+ 
+ 	if (old_rootvnode) {
+ 		vnode_rele(old_rootvnode);
++#if defined(XNU_NUWA_ROOT_CDIR_REF) && XNU_NUWA_ROOT_CDIR_REF
++		/* and the cdir's own hold, which just moved to the new root above */
++		if (old_cdir == old_rootvnode && old_rootvnode != new_rootvnode) {
++			vnode_rele(old_rootvnode);
++		}
++#endif
+ 	}
+ }
+ 

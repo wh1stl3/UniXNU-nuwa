@@ -1,0 +1,31 @@
+From: nuwa bring-up
+Subject: [PATCH] 8796-nuwa-cs-observe (opt-in, off by default)
+
+Adds nuwa_cs_config(), a read-only accessor for the file-static cs_config record, so the
+SystemOS diagnostics can report the code-signing configuration dyld/AMFI run under.
+Compiled only with -DXNU_NUWA_CS_OBSERVE=1; without it no symbol or string exists.
+Apply with -p1 in the XNU tree root.
+
+--- a/bsd/kern/kern_codesigning.c	2026-11-18 00:50:20.364642191 +0800
++++ b/bsd/kern/kern_codesigning.c	2026-11-18 00:50:20.364728543 +0800
+@@ -56,6 +56,20 @@
+ SYSCTL_UINT(_security_codesigning, OID_AUTO, monitor, CTLFLAG_RD, &cs_monitor, 0, "code signing monitor type");
+ SYSCTL_UINT(_security_codesigning, OID_AUTO, config, CTLFLAG_RD, &cs_config, 0, "code signing configuration");
+ 
++#if defined(XNU_NUWA_CS_OBSERVE) && XNU_NUWA_CS_OBSERVE
++/*
++ * nuwa r20: read-only accessor for the code-signing configuration record.  cs_config is
++ * file-static, so a diagnostic in another translation unit cannot read it otherwise; this
++ * returns exactly the value the security.codesigning.config sysctl reports and changes no
++ * state.  Compiled only with -DXNU_NUWA_CS_OBSERVE=1.
++ */
++uint32_t
++nuwa_cs_config(void)
++{
++	return os_atomic_load(&cs_config, relaxed);
++}
++#endif
++
+ void
+ code_signing_configuration(
+ 	code_signing_monitor_type_t *monitor_type_out,

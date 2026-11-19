@@ -1,0 +1,53 @@
+--- a/NativeUfs.cpp
++++ b/NativeUfs.cpp
+@@ -97,7 +97,7 @@
+ void nuwa_ufs_static_init(void) __asm__("__GLOBAL__sub_I_NativeUfs.cpp");
+ volatile unsigned nuwa_ufs_init_state;
+ volatile unsigned nuwa_ufs_attempt, nuwa_ufs_completed, nuwa_ufs_hc_read;
+-volatile uint32_t nuwa_ufs_raw[14];
++volatile uint32_t nuwa_ufs_raw[5];
+ volatile unsigned nuwa_ufs_terminal;
+ }
+ #include "NuwaUfsMarker.h"
+@@ -235,7 +235,7 @@
+   nuwa_ufs_terminal = 1;
+   if (!nuwa_ufs_marker(2, 0, 0, 0, 0)) return;
+   if (!nuwa_ufs_marker(3, 0, 0, UFS_HC_BASE, PAGE_SIZE)) return;
+-  uintptr_t hc = mapPhys(UFS_HC_BASE, 0x38, fMap);
++  uintptr_t hc = mapPhys(UFS_HC_BASE, 0x64, fMap);
+   if (!hc) {
+     nuwa_ufs_terminal = 2;
+     if (!nuwa_ufs_marker(4, 0, 0, UFS_HC_BASE, 0)) return;
+@@ -250,8 +250,8 @@
+     if (!nuwa_ufs_marker(4, 0, 0, UFS_HC_BASE, 3)) return;
+     panic("NUWA UFS MAP_FAILED mapping contract refused; completed=0; no cause inferred");
+   }
+-  static const unsigned offsets[4] = {0x08, 0x00, 0x30, 0x34};
+-  for (unsigned i = 0; i < 4; ++i) {
++  static const unsigned offsets[5] = {0x34, 0x58, 0x60, 0x50, 0x54};
++  for (unsigned i = 0; i < 5; ++i) {
+     unsigned n = i + 1;
+     nuwa_ufs_attempt = n;
+     if (!nuwa_ufs_marker(5, n, i, UFS_HC_BASE + offsets[i], 0)) return;
+@@ -261,13 +261,17 @@
+     nuwa_ufs_completed = n;
+     nuwa_ufs_hc_read = n;
+     if (!nuwa_ufs_marker(6, n, n, UFS_HC_BASE + offsets[i], raw)) return;
++    if (i == 0 && !(raw & 1)) {
++      nuwa_ufs_terminal = 5;
++      panic("NUWA QUEUE_ONLY HCE_DISABLED attempt=1 completed=1 hc_read=1 HCE=%08x", raw);
++    }
+   }
+   nuwa_ufs_terminal = 4;
+-  if (!nuwa_ufs_marker(7, 4, 4, 0, 0)) return;
+-  panic("NUWA HC_SNAPSHOT_DONE attempt=4 completed=4 hc_read=4\n"
+-        "VER=%08x CAP=%08x HCS=%08x HCE=%08x\n"
++  if (!nuwa_ufs_marker(7, 5, 5, 0, 0)) return;
++  panic("NUWA QUEUE_ONLY_DONE attempt=5 completed=5 hc_read=5\n"
++        "HCE=%08x UTRLDBR=%08x UTRLRSR=%08x UTRLBA=%08x UTRLBAU=%08x\n"
+         "read-only experimental sample; not transport/readiness proof",
+-        nuwa_ufs_raw[0], nuwa_ufs_raw[1], nuwa_ufs_raw[2], nuwa_ufs_raw[3]);
++        nuwa_ufs_raw[0], nuwa_ufs_raw[1], nuwa_ufs_raw[2], nuwa_ufs_raw[3], nuwa_ufs_raw[4]);
+ #if 0 // Original inspect requires unproven nuwa post-EBS access prerequisites.
+   OSSharedPtr<IOMemoryMap> gccMap, memPhyMap, hcMap;
+   uintptr_t gcc = mapPhys (GCC_BASE + 0x77000, 0x1000, gccMap);

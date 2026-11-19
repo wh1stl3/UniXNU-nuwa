@@ -1,0 +1,39 @@
+nuwa r13: mount the Data volume at /private/var before the first exec.
+
+Baseline: out/nuwa-bootprogress-20261115-r1/tree/bsd/kern/kern_exec.c (r11: the
+exec-policy skip and the boot progress call sites; no SystemOS mount patch).
+The implementation is package/nuwa-data/nuwa_data_mount.c.  Opt-in:
+-DXNU_NUWA_DATA_MOUNT=1.  Failure records stage/errno (boot_progress_ext[0..1])
+and continues; it never panics and never touches init_envp.
+
+--- a/bsd/kern/kern_exec.c
++++ b/bsd/kern/kern_exec.c
+@@ -6739,6 +6739,17 @@
+ 
+ #include <sys/reboot.h>
+ 
++#if defined(XNU_NUWA_DATA_MOUNT) && XNU_NUWA_DATA_MOUNT
++/*
++ * nuwa r13: mount the ram-disk Data volume at /private/var before the first exec.
++ * Implemented in package/nuwa-data/nuwa_data_mount.c (bsd object): it obtains the
++ * volume through native_ram_block_volume_seed() (which also opens the persistent
++ * store window), mounts apfs, verifies it, and records stage/errno into the boot
++ * progress extension rows.  A failure never panics.
++ */
++extern int nuwa_data_mount_prepare(proc_t, user_addr_t);
++#endif
++
+ /*
+  * load_init_program_at_path
+  *
+@@ -6894,6 +6905,10 @@
+ 	mach_vm_size_t map_page_size = vm_map_page_size(map);
+ 
+ 	(void) mach_vm_allocate_kernel(map, &scratch_addr, map_page_size, VM_FLAGS_ANYWHERE, VM_KERN_MEMORY_NONE);
++#if defined(XNU_NUWA_DATA_MOUNT) && XNU_NUWA_DATA_MOUNT
++	/* Mounts the Data volume at /private/var; records stage/errno, never panics. */
++	(void) nuwa_data_mount_prepare(p, (user_addr_t)scratch_addr);
++#endif
+ #if CONFIG_MEMORYSTATUS
+ 	(void) memorystatus_init_at_boot_snapshot();
+ #endif /* CONFIG_MEMORYSTATUS */

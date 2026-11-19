@@ -1,0 +1,25 @@
+nuwa r13: call the NativeRamBlock initializer once from the platform expert.
+
+Baseline: out/nuwa-ufs-apfs-root-integration-20261114/run-r5-visible-candidate/
+tree/iokit/Kernel/IOPlatformExpert.cpp (r5: nuwa_ufs_handoff_init).
+nuwa_ram_block_init() (package/nuwa-data/nuwa_data_mount.c) calls the late-
+transformed __GLOBAL__sub_I_NativeRamBlock.cpp exactly once; no worker, no locks.
+
+--- a/iokit/Kernel/IOPlatformExpert.cpp
++++ b/iokit/Kernel/IOPlatformExpert.cpp
+@@ -2057,6 +2057,7 @@
+ // the provider; no worker and no change to the root's matching options.
+ extern "C" void nuwa_pmgr_run(IOService *publicationParent);
+ extern "C" void nuwa_ufs_handoff_init(void);
++extern "C" void nuwa_ram_block_init(void);  /* r13: NativeRamBlock initializer */
+ 
+ bool
+ IOPlatformExpertDevice::startIOServiceMatching(void)
+@@ -2069,6 +2070,7 @@
+ 	// Single bootstrap-thread call, after lockdown and before BSD policy hooks.
+ 	nuwa_pmgr_run(this);
+ 	nuwa_ufs_handoff_init();
++	nuwa_ram_block_init();
+ 
+ 	registerService();
+ 

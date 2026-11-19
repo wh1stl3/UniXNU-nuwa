@@ -1,0 +1,21 @@
+--- a/iokit/Kernel/IOPlatformExpert.cpp
++++ b/iokit/Kernel/IOPlatformExpert.cpp
+@@ -2058,2 +2058,3 @@
+ extern "C" void nuwa_pmgr_run(IOService *publicationParent);
++extern "C" void nuwa_ufs_handoff_init(void);
+ 
+@@ -2069,2 +2070,3 @@
+ 	nuwa_pmgr_run(this);
++	nuwa_ufs_handoff_init();
+ 
+--- a/iokit/KernelConfigTables.cpp
++++ b/iokit/KernelConfigTables.cpp
+@@ -58,2 +58,8 @@
+     "   }"
++    "   ,{"
++    "     'IOClass'         = NativeUfs;"
++    "     'IOMatchCategory' = NativeUfsRoot;"
++    "     'IOProviderClass' = IOPlatformExpertDevice;"
++    "     'IOProbeScore'    = 500:32;"
++    "   }"
+     ")";
