@@ -629,6 +629,40 @@ $PY -B scripts/test-nuwa-display-teardown.py
 归档 SHA256 `43ed9c5de0cfe1fb141d9e0649e8b03f6c213287e2df85ac11b7413e40f5a89c`；
 含调试路径，新输出目录不要求对象同哈希。夹具通过，未独立复跑；
 无实际发布、运行路径、最终链接、Libm／guard 改动或设备操作。
+## 15A. nuwa 的 QuartzCore timer 选择证据（self-checked）
+
+**判定：undetermined。** 尚缺 compositor 进程中 MobileGestalt
+`MGGetSInt64Answer("ChipID", 0)` 的返回值、其 `CA_FORCE_TIMER`、
+`CA_BENCHMARK` / `LK_BENCHMARK` 环境值；不能把启动 ADT 的种子当成查询值，
+也不能把条件路径存在当成已选择或 selector 5 已执行。
+
+* 已写入 r34 的输入记录为 `out/nuwa-ufs-apfs-root-chmh-20261119-r34/record.json`；
+  本地同轮 `derived.adt` SHA256
+  `dd1734b3dcddef1b7b49b64cea2adf4c68bcd7e09da9d860fef77682879c326a`，
+  解析 `/chosen/chip-id` 得四字节 `db b8 ca 4a`，小端 `0x4acab8db`。
+  `board.toml:159–163` 明确这是软件身份种子；`scripts/make-nuwa-adt.py:244–245`
+  将其写到 chosen。它不是 donor profile 的 `0x8015`，也不是用户态查询的实测返回。
+  记录中的 kernel args 没有这些 CA/LK 名称，但 kernel args 不等于进程环境；
+  r34 的设备运行与载荷身份沿用已有主控转述，未作设备回读。
+* 同版 SystemOS cache `.03` 映射基址 `0x186d8c000`，`0x18836d0ec–100`
+  读取 `CA_FORCE_TIMER` 并调用 `atoi`；非零跳到 `0x18836d11c` 设置 1。
+  否则 `0x18836d104–110` 以 `ChipID`、默认参数 0 调查询入口
+  `0x18dbcc7a8`；跳板指向 `0x19c5570c8`，`.42.dyldlinkedit`
+  的 nlist 值与字符串表标识该入口为 `_MGGetSInt64Answer`。
+  该函数 `0x19c5570d8–10c` 在查询失败时返回调用者提供的默认值 0；
+  本批未闭合 MobileGestalt 的 `ChipID` 后端 provider 到 ADT 或其他来源，
+  也没有证明查询失败，因此不能断言返回 0 或 `0x4acab8db`。
+* 非覆盖查询结果仅当等于 §16 列出的八个值时产生 1；其他值（包括默认 0
+  和假设返回的 `0x4acab8db`）产生 0。构造函数 `0x1883da1c0–1d4`
+  将此结果放进 server `+0x30d` bit 1。`0x1882d9f10–28` 先检查该位，
+  位清才再检查 benchmark；`0x1882cf1a4–1c8` 依序读取 `CA_BENCHMARK`
+  与 `LK_BENCHMARK` 并解析数值。只有位清且 benchmark 检查为零才进入
+  §16 的用户 Mach timer 候选路径；位设置或 benchmark 非零都不能据此称选中该路径。
+  缺实际进程环境，不能据 kernel args 推出这些环境变量缺省。
+* 即便选择 timer，§16 的 callback→render→`SwapEnd`→selector 5 是静态可达链，
+  不证明进程已启动、实际提交或返回成功。此次只读 SystemOS 与输入记录，
+  没有运行候选、构建或操作设备；未独立 verifier。
+
 ## 16. 方案 A：保留软件 vsync 与无软件 vsync 首帧（self-checked）
 
 设备基线 `790e4669fe7a20b3d5610a3cec5e9275c9bf3f39`，基座只读 `693f5d9c`。
