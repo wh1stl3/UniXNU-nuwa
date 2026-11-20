@@ -1,7 +1,7 @@
 # 20H392 显示 ABI 取证（G1 收尾，2026-11-20）
 
 状态：**self-checked（主机侧、未独立复核）**。输入是本机 20H392 donor kernelcache，无设备操作、无内核构建。
-最新主机结果见 §11；§0–10 保留各批次历史结论。
+最新时序取证见 §13；最近一次 host-only 归档复跑见 §12。
 
 ## 0. 结论
 
@@ -344,3 +344,80 @@ llvm-readobj --relocations "$HOST/NativeLegacyDisplay.manual.o"
 clang 在 `NativeLegacyDisplay.cpp:770:36` 拒绝 `override`（exit 1，无对象）；§11 的
 derive 命令改用 1 字节零输入和新输出目录，拒绝非固定 donor（exit 1，无输出目录）。
 未链接、未改 Libm／guard、无可运行候选、无设备操作，未独立复跑。
+
+## 13. 方案 A：20H392 refresh 生产合同与 vsync 写者（self-checked）
+
+设备基线 `a50714c`，基座和驱动 pin 同 §12。重新核对 50,937,856 B donor 的完整
+SHA256（§1），按 Mach-O 映射反汇编、用 vtable/GOT 和符号表确认下列地址。地址省略
+`0xfffffff000000000` 前缀。
+
+### Refresh：六个键已定，消费合同未闭合
+
+`5c23610` 调 slot 287 填六个 u64，再将下表字典挂为 `IOMFBDisplayRefresh`
+（`4f67d52`，`5c237b8`）。表中的数值来自 **Legacy fallback** `5c234b4`，
+不等于 H10P 的硬件返回值。`ticks(ns)` 是 slot 271 换算：Legacy
+`5c24a58 → 5c25b54 → [6deb498] → _nanoseconds_to_absolutetime`。
+
+| word | 字典键（字符串地址／插入调用） | `fixed=1` | `fixed=0` |
+| --- | --- | --- | --- |
+| 0 | `displayMinRefreshInterval` (`4f67cac` / `5c23710`) | `0x04444444` | 同左 |
+| 1 | `displayMinRefreshIntervalMachTime` (`4f67cc6` / `5c2372c`) | `ticks(16666666)` | 同左 |
+| 2 | `displayMaxRefreshInterval` (`4f67ce8` / `5c23748`) | `0x04444444` | `0x0aaaaaaa` |
+| 3 | `displayMaxRefreshIntervalMachTime` (`4f67d02` / `5c23764`) | `ticks(16666666)` | `ticks(41666666)` |
+| 4 | `displayRefreshStep` (`4f67d24` / `5c23780`) | `0` | `0` |
+| 5 | `displayRefreshStepMachTime` (`4f67d37` / `5c2379c`) | `0` | `0` |
+
+偶数字是 32.32 秒；min/max 转换先截断 `word * 10^9 / 2^32`。
+**字典实际不是无条件保留 64 位数值**：`5c1d818/828` 以 `w2` 存／取，
+零扩展到 `x0` 后调用 `OSNumber::withNumber(unsigned long long, unsigned int)`
+（`5c270e8 → [6deb130]`）；位宽参数仍是 64。不能由此推断消费者要求截断，
+也不能把高 32 位非零的输入视为 donor 会原样发布。
+
+- **状态写者**：Legacy `5c0d3dc` 先清 `self+5410`。H10P gated hardware
+  start `5cd0298` 经 `5cd02d0 → 5ccf7ac` 读取 provider 的 `external`
+  （`4f8c1b0`，要求 4 字节数据）。`5cd03d0–3d8` 对存于 `self+5416`
+  的非零布尔值取反，再写 `self+5236+174`（即 +5410）。无有效属性时该
+  分支不更新 +5416；`5cd03d8` 仍从其当前值计算 +5410。`5c236b4`
+  取 +5410 的低位，不读 nuwa 的 `primary` 或 `sheng-vsync-fixed`。
+  H10P slot 287 `5ccf498` 在该位为真时优先调用 `self+7208` 对象的
+  `vptr+1456`；返回假或该位为零才回落 Legacy。已有一个独立内核消费点
+  `5c221a0–5c221e0`：成功才以 `words[1]` 的两倍作 swap 时间比较；
+  它直接调用 slot 287，**不读取该字典**。
+- **失败分流**：`OSDictionary::withCapacity(1)` 返回空时，`5c23678–90`
+  直接返回假；slot 287 返回假时 `5c236bc–f0` 记录
+  `get_timing_attributes_gated failed` 后返回假，该分支未走字典 release。
+  两者均不发布，沿 §12 的 H10P boot/start 返回链阻止注册。进入六键路径后，
+  `5c1d848` 遇 OSNumber 分配失败跳过该键，`5c1d864` 不消费插入结果；
+  `5c237b8` 也不消费 `setProperty` 的返回值，release 后仍返回真。
+  这不是“六键齐全且注册表写入成功”的保证。nuwa `NativeLegacyDisplay.cpp:530`
+  则不消费整个 helper 的返回值。
+- **首个缺口**：缺同版渲染端读取 `IOMFBDisplayRefresh` 的调用点，无法证明
+  它用哪一对单位、怎样处理缺键或发布失败。`NativeLegacyDisplay.cpp:527–547`
+  的其它轮次注释和 slot 287 的内核比较都不能代替该证据。GOP 的映射大小也不是
+  刷新率证据。保留 refresh import 未解析，不实现 formatter、不写私有状态。
+
+### Vsync：定位写者；不改 gate
+
+- fake timer 的 +5672/+5680/+5688 在 `5c0d08c–94` 清零；
+  `5c0dbb4–c8` 分别填间隔、时标、递增序号。Legacy 取时 slot 239
+  `5c2475c → 5c17770 → 5c17784 → [6deb478]` 是 `_mach_continuous_time`；
+  首间隔用 +5696 的纳秒配置经 slot 271 转换，否则用相邻时标差。
+- 直接路径的 +176/+184/+192 在 `5c0d520/5c0dce4/5c0dce8` 清零；
+  `5c1b744` 中 `5c1b78c` 递增序号，`5c1b810` 保存 slot 239 时标，
+  `5c1b7c8/7f8` 写时标差或首帧由纳秒参数换算的间隔。
+  Legacy slot 330 的 `5c10078–84 → 5c1082c → 5c10894` 从这些字段发消息；
+  `5c1b90c–944` 依次拆为序号、时标、间隔各自的低／高 32 位，共六个标量。
+- 已证的 timeout 入口之一：`5c121ac–5c12214` 以 +5040 `runAction`
+  执行 `5c10d44 → 5c10e90/5c10fcc → 5c11160`；其 `5c118d8` 是
+  同一 gate 的 `commandSleep`，返回后才可能调用 slot 330（`5c11a78/af0`）。
+  这不是 sender 自身进 gate，也不能把 H10P slot 330（`5cd16e0`）当成
+  同一个 Legacy 函数。stop 的 `5c0e24c/254` 清 timer，`5c0e2d4` 才移除
+  +5040 gate，没有包住这段的显式 `runAction`。
+- **首个串行缺口**：缺 `NativeLegacyDisplay.cpp:456 → stopVsync()` 进入
+  `cancelTimeout/removeEventSource/release` 前已持与 tick 相同 workloop gate
+  的调用链证据；局部 `removeEventSource` 不覆盖整段。未接 sender，也未改 timer。
+
+复算：沿用 §11 的 `PY`／`BASE` 与 derive + 三文件 `cmp`（新输出目录）；
+按上表和 writer VA 用 donor 段映射复核指令，`0x04444444` 与 `0x0aaaaaaa`
+分别乘 `10^9` 右移 32 位复算纳秒值。无适配，故本轮未重编 8796 归档，
+不把 §12 的归档复跑计作本轮结果。未链接、未上机、未独立复跑。
