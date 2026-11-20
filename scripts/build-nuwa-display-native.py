@@ -353,7 +353,8 @@ def main():
     print(f"host-only native SHA256 {digest(native)}", flush=True)
 
     sys.path.insert(0, str(base / "kits/XnuPrelink"))
-    import emit_prelink
+    import scoped_libm_emitter
+    emit_prelink = scoped_libm_emitter.load(base)
     abi = json.loads((out / "derived/nuwa-display-abi.json").read_text())
     native_bytes = native.read_bytes()
     got = audit_linked_metaclass(native_bytes, abi["metaclass"])
@@ -364,8 +365,17 @@ def main():
     roots = board["os_overrides"]["ios-16.7.16-20H392"]["kernel"]["prelink"]["roots"]
     roots = list(dict.fromkeys([*roots, FAMILY]))
     # Read-only gate: do not persist or package emitted bytes, even if accepted.
-    emitted, report = emit_prelink.emit(
-        native_bytes, donor.read_bytes(), roots, abi["metaclass"]["collection_slide"])
+    donor_bytes = donor.read_bytes()
+    slide = abi["metaclass"]["collection_slide"]
+    emitted, report = emit_prelink.emit(native_bytes, donor_bytes, roots, slide)
+    emitted_segments = emit_prelink.macho(emitted)["segments"]
+    region_at = emit_prelink.backed_offset(
+        emitted_segments, scoped_libm_emitter.START + slide,
+        scoped_libm_emitter.END - scoped_libm_emitter.START, len(emitted))
+    if emitted[region_at:region_at + 1224] != donor_bytes[
+            scoped_libm_emitter.FILE_OFFSET:scoped_libm_emitter.FILE_OFFSET + 1224]:
+        raise ValueError("emitted Libm region differs from donor")
+    print(f"host-only emitted SHA256 {hashlib.sha256(emitted).hexdigest()}", flush=True)
     audit_emitted_originals(emitted, report, abi)
     if audit_linked_metaclass(emitted, abi["metaclass"]) != got:
         raise SystemExit("prelink emission moved the native gMetaClass GOT entry")

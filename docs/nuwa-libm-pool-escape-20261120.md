@@ -1,5 +1,8 @@
 # 20H392 Libm pool escape: bounded stop (self-checked)
 
+2026-11-20 scoped-region follow-up (self-checked, plan B review pending):
+see `docs/nuwa-libm-scoped-region-20261120.md`; dataflow remains unqualified.
+
 **NOT-QUALIFIED / no data-area qualification.** The first bounded pass finds additional
 pool references and unresolved ADR uses; the requested exact-five criterion
 is not established. Per stop condition, no whitelist or scanner change.
