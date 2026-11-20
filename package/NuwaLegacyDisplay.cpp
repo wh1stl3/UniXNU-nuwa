@@ -21,11 +21,10 @@
 //
 // Not defined here on purpose: the IOSurface field readers
 // (native_legacy_surface_descriptor/_width/_height/_stride/_allocation/_format/
-// _planes), native_legacy_set_refresh_properties() and
-// native_legacy_vsync_notify() are ABI-derived (original text entry points and
-// IOSurface instance offsets) and belong to the display archive builder that
-// generates OriginalLegacyFramebufferABI.h + original-bindings.S. The
-// native_legacy_<counter> data symbols the diagnostic page reads stay owned by
+// _planes) are ABI-derived and emitted by the host display archive builder.
+// The host TU publishes the refresh fallback from startHardware; the vsync
+// sender remains unresolved. The native_legacy_<counter> data symbols the
+// diagnostic page reads stay owned by
 // package/boot-progress-r13/nuwa_boot_progress_stubs.c (absolute 0) until that
 // builder lands; defining them here too would be a duplicate symbol.
 #include <IOKit/IOPlatformExpert.h>

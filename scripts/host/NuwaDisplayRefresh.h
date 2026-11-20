@@ -2,7 +2,7 @@
 #pragma once
 #include <stdint.h>
 
-// Offline 20H392 Legacy fallback contract, not a panel timing policy.
+// 20H392 Legacy fallback contract, not a measured panel timing.
 namespace NuwaDisplayRefresh {
 enum class Mode { Fixed, NonFixed };
 enum class Result {
@@ -64,4 +64,15 @@ Result publishFallback(Backend &backend, Mode mode)
     backend.release(dictionary);
     return published ? Result::Published : Result::Publish;
 }
+
+template<class Backend>
+bool publishFixedForStart(Backend &backend, unsigned requestedHz)
+{
+    // Absent/zero selects the software fallback; 60 is compatible with it.
+    return (requestedHz == 0 || requestedHz == 60) &&
+        publishFallback(backend, Mode::Fixed) == Result::Published;
 }
+}
+
+class IOService;
+extern "C" bool nuwa_legacy_publish_start_refresh(IOService &display, unsigned requestedHz);

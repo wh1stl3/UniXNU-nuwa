@@ -14,11 +14,13 @@ ROOT = Path(__file__).resolve().parents[1]
 DRIVER_REV = 'e47c1b8de169cd2bd0b885c7d85e433010e3cdf2'
 BASE_REV = '693f5d9cae8a408dd18b39f3f9fdc4228c934241'
 INIT = '__GLOBAL__sub_I_NativeLegacyDisplay.cpp'
-DEFERRED = {'_native_legacy_set_refresh_properties', '_native_legacy_vsync_notify'}
+DEFERRED = {'_native_legacy_vsync_notify'}
+START_REFRESH = '_nuwa_legacy_publish_start_refresh'
+OLD_REFRESH = '_native_legacy_set_refresh_properties'
 # The pinned 8796 reference import list includes owner and weak-ref bits;
 # different toolchains may need a deliberate requalification, not a whitelist
 # that silently swallows new unresolved symbols.
-UNRESOLVED_SHA256 = '62e4fc66cb6d0acf4f9e9bddcba145911e13572871cb0847e0f15defd6fe5c8f'
+UNRESOLVED_SHA256 = 'c2b547267d51f69a79995ecceab0c6bd12b315b358e8720849b8f29795c12862'
 SLOTS = {
     184: '__ZN19NativeLegacyDisplay13isMainDisplayEv',
     188: '__ZN19NativeLegacyDisplay11getDotPitchEPj',
@@ -35,6 +37,33 @@ NUWA_METHOD = '''    IOReturn supportedFrameInfo(uint32_t,uint32_t *count,char *
         if(!count || !key)return kIOReturnBadArgument;
         *count=0;bzero(key,64);return kIOReturnUnsupported;
     }'''
+BASE_REGISTER_REFRESH = '''        // Nothing in the family publishes IOMFBDisplayRefresh (its platform subclass does), and without it the render server keeps its own
+        // 1/60 s heartbeat (int-210: refresh=0). Publish it before any client can find the display, only when sheng-vsync asks for more.
+        unsigned hz=native_legacy_refresh_hz();
+        if(primary && hz>60 && hz<=240)native_legacy_set_refresh_properties(this);
+'''
+BASE_HARDWARE_RETURN = '        OSSafeReleaseNULL(mapping);return valid;'
+NUWA_HARDWARE_RETURN = '''        OSSafeReleaseNULL(mapping);
+        // Legacy start tests this slot before its first registerService.
+        if(valid && primary && !nuwa_legacy_publish_start_refresh(*this,native_legacy_refresh_hz())) {
+            primary=false;
+            OSSafeReleaseNULL(bootMapping);
+            return false;
+        }
+        return valid;'''
+
+
+def adapt_source(text, original):
+    for before, after in (
+            (BASE_METHOD, NUWA_METHOD),
+            ('extern "C" bool native_legacy_set_refresh_properties(void *display);',
+             '#include "NuwaDisplayRefresh.h"'),
+            (BASE_REGISTER_REFRESH, ''),
+            (BASE_HARDWARE_RETURN, NUWA_HARDWARE_RETURN)):
+        if text.count(before) != 1:
+            raise SystemExit(f'{original}: expected exactly one match for {before.splitlines()[0]}')
+        text = text.replace(before, after, 1)
+    return text
 
 
 def sha256(path):
@@ -312,6 +341,10 @@ def inspect_archive(base, archive, members):
         ('_native_legacy_surface_', '_native_legacy_set_refresh_', '_native_legacy_vsync_'))}
     if missing_glue != DEFERRED:
         raise SystemExit(f'unexpected unresolved glue: {sorted(missing_glue)}')
+    if (OLD_REFRESH in definitions or OLD_REFRESH in undefined or
+            definitions.get(START_REFRESH) != [(members[4].name, False)] or
+            undefined.get(START_REFRESH) != [(members[0].name, False)]):
+        raise SystemExit('start refresh must have one formatter definition and one driver import')
     glued = ['descriptor', 'width', 'height', 'stride', 'allocation', 'format', 'planes']
     for getter in glued:
         name = '_native_legacy_surface_' + getter
@@ -347,9 +380,7 @@ def main():
         raise SystemExit(f'expected GopFramebuffer at {DRIVER_REV}')
     if subprocess.check_output(git + ['status', '--porcelain', '--', '.']):
         raise SystemExit('GopFramebuffer inputs are dirty')
-    text = original.read_text()
-    if text.count(BASE_METHOD) != 1:
-        raise SystemExit(f'{original}: expected exactly one qualified frame-info body')
+    text = adapt_source(original.read_text(), original)
     record = json.loads(cpo.read_text().strip().rstrip(','))
     if Path(record['file']).name != 'IOPMGR.cpp' or not Path(record['directory']).is_absolute():
         raise SystemExit(f'{cpo}: expected the IOPMGR.cpp compilation record')
@@ -358,9 +389,11 @@ def main():
     # Clang's integrated assembler exports the exact synthetic constructor
     # while maintaining the normal Mach-O symbol ordering. Objcopy only
     # drops the automatic pointer; no handwritten rewriting of nlist.
-    source.write_text(text.replace(BASE_METHOD, NUWA_METHOD, 1) +
-                      f'\n__asm__(".globl {INIT}");\n')
-    command = compile_args(record, source, obj, driver)
+    source.write_text(text + f'\n__asm__(".globl {INIT}");\n')
+    refresh = ROOT / 'scripts/host/NuwaDisplayRefresh.cpp'
+    refresh_obj = out / 'NuwaDisplayRefresh.o'
+    refresh_cmd = compile_args(record, refresh, refresh_obj, driver)
+    command = compile_args(record, source, obj, driver) + ['-iquote', str(refresh.parent)]
     provider = ROOT / 'package/NuwaLegacyDisplay.cpp'
     provider_obj = out / 'NuwaLegacyDisplay.o'
     provider_cmd = compile_args(record, provider, provider_obj, driver)
@@ -375,12 +408,14 @@ def main():
     write_json(out / 'compile.json', {
         'directory': record['directory'], 'arguments': command,
         'provider_arguments': provider_cmd, 'bindings_arguments': bindings_cmd,
+        'refresh_arguments': refresh_cmd, 'refresh_source_sha256': sha256(refresh),
+        'refresh_header_sha256': sha256(refresh.with_suffix('.h')),
         'addresses_arguments': addresses_cmd, 'addresses_source_sha256': sha256(addresses),
         'cpo': str(cpo), 'cpo_sha256': sha256(cpo),
         'driver_revision': DRIVER_REV, 'adapted_source_sha256': sha256(source),
         'board_source_sha256': sha256(provider), 'bindings_source_sha256': sha256(bindings),
     })
-    for argv in (command, provider_cmd, bindings_cmd, addresses_cmd):
+    for argv in (command, provider_cmd, bindings_cmd, addresses_cmd, refresh_cmd):
         status = subprocess.run(argv, cwd=record['directory']).returncode
         if status:
             return status
@@ -392,7 +427,7 @@ def main():
     result.update(bytes=late.stat().st_size, sha256=sha256(late))
     write_json(out / 'object.json', result)
     archive = out / 'HOST-ONLY-incomplete-display.a'
-    members = [late, provider_obj, bindings_obj, addresses_obj]
+    members = [late, provider_obj, bindings_obj, addresses_obj, refresh_obj]
     subprocess.run(['llvm-ar', '--format=darwin', 'rcs', archive, *members], check=True)
     audit = inspect_archive(base, archive, members)
     write_json(out / 'archive.json', audit)

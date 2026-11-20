@@ -1,7 +1,7 @@
 # 20H392 显示 ABI 取证（G1 收尾，2026-11-20）
 
 状态：**self-checked（主机侧、未独立复核）**。输入是本机 20H392 donor kernelcache，无设备操作、无内核构建。
-最新两条路线及放行判据见 §16；host-only formatter 与 teardown 夹具见 §15。
+最新完整链接见 §21；两条运行路线的放行判据见 §16，formatter 与 teardown 夹具见 §15。
 
 ## 0. 结论
 
@@ -538,6 +538,46 @@ fallback 和 MediaToolbox 三个独立输出，再用 20H392 真实 TU 检查获
 拒绝路径。夹具不代替真实 reader 或实际 IOKit 调度测试。
 本轮未改变 import、timer、Libm 或设备构建输入，故未跑适配 TU/拒绝测试、未上机、
 未独立复跑。
+
+## 21. 方案 A：refresh 接入 start 后的 r35 完整重链（self-checked）
+
+基线 `0ad2e64`，基座 `693f5d9c`、实际编译的驱动 `e47c1b8` 不变。只读查得
+UniXNU HEAD `8542980d`、GopFramebuffer HEAD `b0d812d5`。固定版与 HEAD 都在
+普通 swap 的 `note()` 取 trace/fence，而非只在 GPU offer 成功时调用；
+`gpuWrote()` 也保留两个 fence 查询。未找到可复用的 CPU-only 条件编译路径。
+真实 8796 Mach-O 的四项都带 `N_WEAK_REF`，但原 r35 `-static` 链接拒绝无
+provider 的弱引用。基座 `build-fileset-release-reference.py` 的私有比较桩
+不是可复用的弱引用实现。本轮不更改四处链接合同，不加假定义。
+
+复用本仓 §15 六键 formatter 和真实 8796 `RegistryBackend`。只在生成 TU 的
+`startHardware` 末尾、GOP 映射校验通过且 `primary` 为真时接入：
+`sheng-vsync` 缺省/0 或显式 60 接受固定 60 Hz **软件回退**（不声称面板速率），
+其他值拒绝；任何 formatter 失败均返回 `false`，并清除 `primary`、释放
+`bootMapping`。Legacy `start` 在 slot 274 返回假时不进入 slot 84（§12）；
+板级 late probe 的失败分支也不注册。移除 `void registerService` 的旧发布调用，
+保留注册 guard、slot 287 和原 donor 绑定。未找到经深审支持、真正编译移除
+软件 sender 调用的路径，vsync 保持未解析，timer 与 teardown 不改。
+
+实际 8796 对象：`startHardware`（`__text+0x13e8`）在 `__text+0x15cc` 有唯一
+formatter `BR26`，紧随 `tbz w0,#0` 进入失败分支。五成员归档审计确认 formatter
+是唯一强定义、驱动是唯一强引用、旧 refresh 导入消失，自动 init 为 0、六个槽
+重定位不变。归档 812048 B，SHA256
+`a005b77b4fc01e1111078a2888e1e826ddb4713e2af028c2b84e88f61b63af08`。
+归档外部导入净数仍为 221：旧 refresh 导入换成 `OSSymbol::withCString`，
+后者由实际 r35 内核提供；完整未解析指纹
+`c2b547267d51f69a79995ecceab0c6bd12b315b358e8720849b8f29795c12862`。
+
+按 §20 复跑完整链接，仅改用新 `--out out/nuwa-display-r35-refresh-01`，两条
+fixture 命令同样替换输出路径。控制组除 UUID/路径外仍一致；刷新 fixture（含
+速率与失败分流）和 teardown 10 例通过。显示组 ld 退出 1，**首错仍是
+`NativeLegacyDisplay.cpp:193` 的 `note()` 引用无提供者的 `_native_adreno_fences`**。
+与 §20 的六项相比只消去旧 refresh；四项弱 GPU 和一个强 vsync 仍未定义。
+`native-link.log` SHA256
+`0a8d8cf488be86c172e75db068232042d979274dfccc70dd18b01df81760ff68`。
+再用新控制组 native、§17 的 29 项 roots 和 `-0x1000000` 复跑不改动的 strict
+`emit`，在 `emit_prelink.py:111` 拒绝 Libm `0xfffffff005b8c1cc`，无写出。
+显示组未生成 native，未到其 strict emit；329/330 门保留。未验证运行时注册，
+未产运行候选，无设备操作，未独立复跑。
 
 ## 20. 方案 A：r35 完整输入重链（self-checked）
 

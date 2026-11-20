@@ -10,6 +10,7 @@
 
 using NuwaDisplayRefresh::Mode;
 using NuwaDisplayRefresh::Result;
+using NuwaDisplayRefresh::publishFixedForStart;
 namespace {
 constexpr auto minKey = "displayMinRefreshInterval";
 constexpr auto maxKey = "displayMaxRefreshInterval";
@@ -214,11 +215,31 @@ void failures()
     publish.failPublish = true;
     reject(publish, Result::Publish, 6, 1);
 }
+
+void startPolicy()
+{
+    for (unsigned hz : {0U, 60U}) {
+        Fixture f;
+        assert(publishFixedForStart(f, hz));
+        assert(!f.live && f.publications == 1 && f.registry.size() == 6);
+        media(&f.registry, 60, 60, 0);
+    }
+    for (unsigned hz : {59U, 120U, 241U}) {
+        Fixture f;
+        assert(!publishFixedForStart(f, hz));
+        assert(!f.live && f.ns.empty() && !f.publications);
+    }
+    Fixture f;
+    f.failPublish = true;
+    assert(!publishFixedForStart(f, 0));
+    assert(!f.live && f.publications == 1 && f.registry.at("previous").value == 42);
+}
 }
 
 int main()
 {
     readers();
     failures();
+    startPolicy();
     std::puts("20H392 refresh formatter, reader models and publication rejection: PASS");
 }

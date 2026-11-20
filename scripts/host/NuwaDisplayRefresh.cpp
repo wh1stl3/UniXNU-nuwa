@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-2-Clause-Patent
-// Compile-only with the real 8796 CPO. Never part of a device build.
+// Staged only in the host-only 20H392 display archive.
 #include "NuwaDisplayRefresh.h"
 #include <IOKit/IOService.h>
 #include <kern/clock.h>
@@ -32,9 +32,8 @@ struct RegistryBackend {
 };
 }
 
-NuwaDisplayRefresh::Result nuwa_host_publish_refresh_fallback(
-    IOService &display, NuwaDisplayRefresh::Mode mode)
+extern "C" bool nuwa_legacy_publish_start_refresh(IOService &display, unsigned requestedHz)
 {
     RegistryBackend backend{display};
-    return NuwaDisplayRefresh::publishFallback(backend, mode);
+    return NuwaDisplayRefresh::publishFixedForStart(backend, requestedHz);
 }
