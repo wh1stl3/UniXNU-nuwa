@@ -1,7 +1,7 @@
 # 20H392 显示 ABI 取证（G1 收尾，2026-11-20）
 
 状态：**self-checked（主机侧、未独立复核）**。输入是本机 20H392 donor kernelcache，无设备操作、无内核构建。
-最新时序取证见 §13；最近一次 host-only 归档复跑见 §12。
+最新 host-only formatter、teardown 夹具与取证见 §15。
 
 ## 0. 结论
 
@@ -538,3 +538,94 @@ fallback 和 MediaToolbox 三个独立输出，再用 20H392 真实 TU 检查获
 拒绝路径。夹具不代替真实 reader 或实际 IOKit 调度测试。
 本轮未改变 import、timer、Libm 或设备构建输入，故未跑适配 TU/拒绝测试、未上机、
 未独立复跑。
+
+## 15. 方案 A：独立 refresh formatter 与 teardown 夹具（self-checked）
+
+设备基线 `d5f3fe4`，基座 `693f5d9c`，驱动 `e47c1b8`，donor 与 §1 相同。
+`scripts/host/NuwaDisplayRefresh.*` 只格式化 §13 的 **Legacy fallback**：调用方必须
+显式给 `Fixed`／`NonFixed`，不从 primary、boot-arg、GOP 模式或面板推导。min/max
+分别以 32.32 秒和先截断纳秒再换算的 Mach ticks 表示；两个 step 保持零。
+对超出 donor `w2` 表示范围或变成零的周期 ticks 返回错误，不做截断包装。
+6 个 `OSNumber` 位宽都是 64。只在整个临时字典成功后尝试一次 `setProperty`；
+依次区分字典／键／数字分配、插入及属性写入失败。直接使用 8796 的 OSSymbol
+重载；`IORegistryEntry.cpp:873–879` 的 C 字符串重载不检查临时 symbol 是否为空。
+这是 host-only 编译物，不替换导入符号，也不决定服务注册遇失败后是继续还是拒绝。
+
+同一 formatter 用 typed-input 夹具执行：两种正例、两类读者的缺／错型字典、
+六个单键的缺失／零／错型、独立变更时制并检查另一读者不变；注入每个键
+（含属性名）、每个数字、每次插入、字典、转换和属性写入失败，检查零遗留引用、
+不尝试发布半成品且保留原属性。不是运行 QuartzCore、MediaToolbox 或 IORegistry。
+首轮夹具错误在旧 `test-nuwa-display-refresh.cpp:108` 的 MediaToolbox step 断言：
+重置输入后 step 仍为 20,000,000 ns，末例错期望了前一个用例的 40（应为 50）；已改期望，
+未改单位换算。
+
+**同步清理点取证。** `IOService.cpp:3274–3275` 的 `actionFinalize(victim)` 是一条
+可在显示 gate 下同步完成清理的候选：`_workLoopAction:2476–2482` 持该 loop 引用
+运行，Legacy slot 95 `6defbd8 → 7745520` 继承 `IOService::finalize`。但它只从
+finalize 队列调度；phase-3 `actionStop(provider, client)` 是独立队列，仍以 provider
+为目标；`willTerminate`／`didTerminate` 作为 client 回调时还可由父 victim loop 调用
+（`:2943–2965,2982–2997,3218–3247`），不能无条件作为入口。板级
+`native_legacy_display_late_probe` 的同步失败清理在 `package/NuwaLegacyDisplay.cpp:165–177`，
+由基座 `offline-legacy-start.patch` 的 `bsd_autoconf` 在 `IOKitBSDInit` 后调用；它只负责
+未成功 start 路径（`NativeLegacyDisplay.cpp:473–476` 在失败返回前不会启动该 timer）。
+成功分支保留两个初始引用，不存在对应的显式板级 stop 调用。因此没找到覆盖所有
+成功启动后 teardown 的无 provider gate 调用点；不新增回调或改变锁序。
+
+**sender 寿命。** `5c1b948` 借用链首，`5c1b96c/980` 把节点内 `+0x18` 的 reference
+和栈上六个 scalar 交给 `5bfe258 → 5c26e54 → [6deaf38] → 77b19a8`
+（`IOUserClient::sendAsyncResult64WithOptions`），选项是 1。8796 对照源
+`IOUserClient.cpp:2168–2254` 将引用和标量复制进同步 Mach 消息，使用 `COPY_SEND`，
+`CanDrop` 分支用零超时发送；错误还可写回 reference[0]。返回后 donor 在
+`5c1b9b4` 从**同一借用节点**读 next；这段没有节点或 owner retain，也没有中途重验
+active。只能确认此发送路径不是异步保留节点指针；缺全部调用域、摘链/端口寿命以及
+重入或让 gate 时借用仍有效的证据。零超时不等价于对这些生命周期的证明。
+
+`scripts/test-nuwa-display-teardown.py` 的确定性双 gate 与引用账本分别建模 driver、
+链表、排队／在途、保存 loop、同步 action 与 sender 的 owner 租约。覆盖排队撤销、
+脱队但等待 gate、已在发送、同线程 stop 重入、sender 让 gate、摘链失败后重试、
+反向锁序、重复 stop、最后 client 摘链、错误 source 和 start 失败回滚。
+sender 租约及逐次发送检查是模型要求，不是 donor 已实现的行为；无真实 IOKit 调度。
+
+**复跑**（WSL root，在设备仓，沿用 §10 的 `PY`／`BASE`／`CPO`；`GEN`、`HOST` 必须不存在）：
+
+```sh
+set -e
+GEN=out/nuwa-display-refresh-donor-verifier
+HOST=out/nuwa-display-host-refresh-verifier
+$PY -B scripts/derive-nuwa-display-abi.py --base "$BASE" \
+  --kernelcache "$BASE/out/ipsw/20H392/kernelcache.decompressed" --out "$GEN"
+for f in OriginalLegacyFramebufferABI.h original-bindings.S nuwa-display-abi.json; do
+  cmp "$GEN/$f" "package/$f"
+done
+$PY -B scripts/verify-nuwa-display-host-abi.py --base "$BASE" --cpo "$CPO" --out "$HOST"
+$PY -B - "$HOST" <<'PY'
+import json, subprocess, sys
+from pathlib import Path
+host = Path(sys.argv[1]).resolve()
+r = json.loads((host / 'compile.json').read_text())
+a = r['arguments'][:]
+a[a.index(str(host / 'NativeLegacyDisplay.cpp'))] = str(Path('scripts/host/NuwaDisplayRefresh.cpp').resolve())
+a[a.index('-o') + 1] = str(host / 'NuwaDisplayRefresh.o')
+subprocess.run(a, cwd=r['directory'], check=True)
+a = r['arguments'][:]
+a[a.index('-DNATIVE_LEGACY_CANCEL_SWAPS=0')] = '-DNATIVE_LEGACY_CANCEL_SWAPS=1'
+o = host / 'cancel-rejection.o'
+a[a.index('-o') + 1] = str(o)
+p = subprocess.run(a, cwd=r['directory'], text=True, stderr=subprocess.PIPE)
+first = next(line for line in p.stderr.splitlines() if 'error:' in line)
+print(first)
+assert p.returncode == 1 and not o.exists() and '770:36: error:' in first
+PY
+llvm-nm --format=posix "$HOST/NuwaDisplayRefresh.o"
+c++ -std=c++17 -Wall -Wextra -Werror scripts/host/test-nuwa-display-refresh.cpp -o "$HOST/refresh-fixture"
+"$HOST/refresh-fixture"
+$PY -B scripts/test-nuwa-display-teardown.py
+```
+
+真实 CPO 的完整 8796 显示 TU、板级 TU 和独立 formatter 均编译成功；donor 三文件逐字节
+一致，归档六槽及 381 项未解析指纹不变，两项 timing glue 仍未解析。取消负例的首错仍是
+`NativeLegacyDisplay.cpp:770:36`：20H392 没有匹配的 `cancelSwapsAfterTimeout` 虚函数。
+本次独立 formatter 对象 SHA256 `6676fe31a3897d8e55160a10842c40e131540a54e3e6493c512d18f959cfa771`，
+归档 SHA256 `43ed9c5de0cfe1fb141d9e0649e8b03f6c213287e2df85ac11b7413e40f5a89c`；
+含调试路径，新输出目录不要求对象同哈希。夹具通过，未独立复跑；
+无实际发布、运行路径、最终链接、Libm／guard 改动或设备操作。
