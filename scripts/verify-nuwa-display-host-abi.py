@@ -23,6 +23,7 @@ OLD_REFRESH = '_native_legacy_set_refresh_properties'
 # that silently swallows new unresolved symbols.
 UNRESOLVED_SHA256 = 'c2b547267d51f69a79995ecceab0c6bd12b315b358e8720849b8f29795c12862'
 CPU_UNRESOLVED_SHA256 = 'bd169e2fd505971d5cb6b15978e787b831f5bfaee160ef7fcc5a5ae1e475a121'
+NO_VSYNC_UNRESOLVED_SHA256 = '68d9d8af3c989548b4830fa19c975b38f061b01716cc6816876b32f2797afbe1'
 GPU_IMPORTS = {
     '_native_adreno_fences', '_native_adreno_fences_detail',
     '_native_gpu_trace_enabled', '_native_gpu_trace_record',
@@ -138,6 +139,32 @@ def cpu_only_source(text, original):
     return text
 
 
+def no_software_vsync_source(text, original):
+    """Remove the GOP timer lifecycle from the pinned CPU-only source copy."""
+    for first, after in (
+            ('// Display refresh tick (boot-arg sheng-vsync=', 'extern "C" __attribute__((weak)) unsigned native_legacy_refresh_hz(void) {'),
+            ("    // The refresh tick runs on the family's work loop,", '    bool vsyncWanted() const {'),
+            ('    bool vsyncWanted() const {', 'public:\n    void free() override {stopVsync();'),
+    ):
+        if text.count(first) != 1 or text.count(after) != 1 or text.index(first) >= text.index(after):
+            raise SystemExit(f'{original}: no-software-vsync range mismatch at {first}')
+        text = text[:text.index(first)] + text[text.index(after):]
+    for before, after in (
+            ('#include <IOKit/IOTimerEventSource.h>\n', ''),
+            ('extern "C" void native_legacy_vsync_observed(unsigned event,unsigned hz);\n', ''),
+            ('extern "C" uint64_t mach_continuous_time(void);\n', ''),
+            (' override {stopVsync();if(logicalPM)', ' override {if(logicalPM)'),
+            ('        stopVsync();\n', ''),
+            ('        startVsync();return true;', '        return true;'),
+            ('        armVsync();\n', ''),
+            ('        native_legacy_vsync_observed(5,hz);\n', ''),
+    ):
+        if text.count(before) != 1:
+            raise SystemExit(f'{original}: no-software-vsync replacement mismatch at {before.strip()}')
+        text = text.replace(before, after, 1)
+    return text
+
+
 def sha256(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -217,6 +244,25 @@ def inspect_cpu_only(base, obj):
         raise SystemExit(f'{obj.name}: GPU/DPU symbol or relocation survived CPU-only compilation')
     if any(arg in blob for arg in (b'sheng-dpu-scanout\0', b'sheng-early-retire\0')):
         raise SystemExit(f'{obj.name}: GPU/DPU boot-arg branch survived')
+
+
+def inspect_no_software_vsync(base, obj, *, driver):
+    blob = obj.read_bytes()
+    sections, symbols = object_layout(base, blob)
+    refs = list(relocations(blob, sections, symbols))
+    for name in {s[0] for s in symbols} | {name for _, _, _, name in refs}:
+        if 'vsync' in name.lower() or 'IOTimerEventSource' in name or name == '_mach_continuous_time':
+            raise SystemExit(f'{obj.name}: software vsync symbol/relocation survived: {name}')
+    if driver:
+        calls = {name for sec, _, kind, name in refs if sec['name'] == '__text' and kind == 0x2d}
+        required = {
+            START_REFRESH, '__ZN19NativeLegacyDisplay14finishTransferEPK25OriginalLegacySwapRequestb',
+            '_native_legacy_prepare_scanout', '_flush_dcache64', '_native_legacy_copy_timing_observed',
+            '_native_legacy_swap_validation_observed', '_native_legacy_transfer_observed',
+            '_native_legacy_retirement_observed',
+        }
+        if not required <= calls:
+            raise SystemExit(f'{obj.name}: missing CPU/refresh branches: {sorted(required - calls)}')
 
 
 def inspect_original_imports(blob, sections, symbols, original, meta):
@@ -356,7 +402,7 @@ def inspect_metaclass_import(blob, sections, symbols, name):
     return {'got_pages': pairs, 'plain_pointers': pointers}
 
 
-def inspect_archive(base, archive, members):
+def inspect_archive(base, archive, members, *, no_software_vsync):
     names = subprocess.check_output(['llvm-ar', 't', archive], text=True).splitlines()
     if names != [obj.name for obj in members]:
         raise SystemExit('unexpected archive member list')
@@ -423,7 +469,7 @@ def inspect_archive(base, archive, members):
         raise SystemExit('original-class import closure failed')
     missing_glue = {name for name in unresolved if name.startswith(
         ('_native_legacy_surface_', '_native_legacy_set_refresh_', '_native_legacy_vsync_'))}
-    if missing_glue != DEFERRED:
+    if missing_glue != (set() if no_software_vsync else DEFERRED):
         raise SystemExit(f'unexpected unresolved glue: {sorted(missing_glue)}')
     if (OLD_REFRESH in definitions or OLD_REFRESH in undefined or
             definitions.get(START_REFRESH) != [(members[4].name, False)] or
@@ -450,7 +496,11 @@ def main():
     parser.add_argument('--cpo', required=True, type=Path, help='real 8796 IOPMGR.cpo.json')
     parser.add_argument('--out', required=True, type=Path, help='new directory below device out/')
     parser.add_argument('--cpu-only', action='store_true', help='exclude GPU and DPU scanout at compile time')
+    parser.add_argument('--no-software-vsync', action='store_true',
+                        help='exclude the GOP software timer lifecycle (requires --cpu-only)')
     args = parser.parse_args()
+    if args.no_software_vsync and not args.cpu_only:
+        parser.error('--no-software-vsync requires --cpu-only')
     base, cpo, out = (p.resolve() for p in (args.base, args.cpo, args.out))
     if ROOT / 'out' not in out.parents:
         parser.error('--out must be below the device out/ directory')
@@ -478,6 +528,8 @@ def main():
     text = adapt_source(original.read_text(), original)
     if args.cpu_only:
         text = cpu_only_source(text, original)
+        if args.no_software_vsync:
+            text = no_software_vsync_source(text, original)
         original.write_text(text)
     source, obj = (out / ('NativeLegacyDisplay' + suffix) for suffix in ('.cpp', '.o'))
     # Clang's integrated assembler exports the exact synthetic constructor
@@ -493,6 +545,8 @@ def main():
     provider_cmd = compile_args(record, provider, provider_obj, driver)
     if args.cpu_only:
         provider_cmd.append('-DNUWA_DISPLAY_HOST_CPU_ONLY=1')
+    if args.no_software_vsync:
+        provider_cmd.append('-DNUWA_DISPLAY_HOST_NO_SOFTWARE_VSYNC=1')
     bindings = ROOT / 'package/original-bindings.S'
     bindings_obj = out / 'original-bindings.o'
     target = [arg for arg in command if arg.startswith('--target=')][-1]
@@ -510,6 +564,7 @@ def main():
         'cpo': str(cpo), 'cpo_sha256': sha256(cpo),
         'driver_revision': DRIVER_REV, 'adapted_source_sha256': sha256(source),
         'cpu_only': args.cpu_only,
+        'no_software_vsync': args.no_software_vsync,
         'board_source_sha256': sha256(provider), 'bindings_source_sha256': sha256(bindings),
     })
     for argv in (command, provider_cmd, bindings_cmd, addresses_cmd, refresh_cmd):
@@ -528,10 +583,16 @@ def main():
     if args.cpu_only:
         for item in [obj, *members]:
             inspect_cpu_only(base, item)
+    if args.no_software_vsync:
+        for item in [obj, *members]:
+            inspect_no_software_vsync(base, item, driver=item in (obj, late))
     subprocess.run(['llvm-ar', '--format=darwin', 'rcs', archive, *members], check=True)
-    audit = inspect_archive(base, archive, members)
+    audit = inspect_archive(base, archive, members, no_software_vsync=args.no_software_vsync)
+    audit['no_software_vsync'] = args.no_software_vsync
     write_json(out / 'archive.json', audit)
     expected = CPU_UNRESOLVED_SHA256 if args.cpu_only else UNRESOLVED_SHA256
+    if args.no_software_vsync:
+        expected = NO_VSYNC_UNRESOLVED_SHA256
     if audit['unresolved_sha256'] != expected:
         raise SystemExit(f'unresolved symbol fingerprint changed: see {out / "archive.json"}')
     print(f'{archive}: {len(audit["unresolved"])} unresolved externals; not runtime-eligible')

@@ -293,6 +293,8 @@ def main():
                       help="recorded r35 native link directory under device out/")
     p.add_argument("--cpu-only", action="store_true",
                    help="compile out GPU/DPU paths in the host display TU (requires --r35-dir)")
+    p.add_argument("--no-software-vsync", action="store_true",
+                   help="compile out the GOP software timer lifecycle (requires --cpu-only)")
     p.add_argument("--out", type=Path, required=True, help="new directory under out/")
     a = p.parse_args()
     base, cpo, linker, out = (x.resolve() for x in (a.base, a.cpo, a.linker_dir, a.out))
@@ -306,6 +308,8 @@ def main():
         p.error("--renderer requires --link-dir")
     if a.cpu_only and not a.r35_dir:
         p.error("--cpu-only requires --r35-dir")
+    if a.no_software_vsync and not a.cpu_only:
+        p.error("--no-software-vsync requires --cpu-only")
     out.mkdir(parents=True, exist_ok=False)
     donor = base / "out/ipsw/20H392/kernelcache.decompressed"
     require_pin(donor, DONOR_SHA)
@@ -321,8 +325,10 @@ def main():
         if (out / "derived" / name).read_bytes() != (ROOT / "package" / name).read_bytes():
             raise SystemExit(f"derived {name} differs from device package")
     host = out / "archive"
+    features = [name for enabled, name in ((a.cpu_only, "--cpu-only"),
+                (a.no_software_vsync, "--no-software-vsync")) if enabled]
     run([sys.executable, "-B", ROOT / "scripts/verify-nuwa-display-host-abi.py",
-         "--base", base, "--cpo", cpo, "--out", host, *(["--cpu-only"] if a.cpu_only else [])])
+         "--base", base, "--cpo", cpo, "--out", host, *features])
     archive = host / "HOST-ONLY-incomplete-display.a"
     print(f"host-only archive SHA256 {digest(archive)}", flush=True)
 

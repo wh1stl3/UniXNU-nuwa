@@ -1,7 +1,7 @@
 # 20H392 显示 ABI 取证（G1 收尾，2026-11-20）
 
 状态：**self-checked（主机侧、未独立复核）**。输入是本机 20H392 donor kernelcache，无设备操作、无内核构建。
-最新 CPU-only 完整链接见 §22；两条运行路线的放行判据见 §16，formatter 与 teardown 夹具见 §15。
+最新 A2（CPU-only / no-software-vsync）完整链接与 strict emit 见 §23；两条运行路线的放行判据见 §16，formatter 与 teardown 夹具见 §15。
 
 ## 0. 结论
 
@@ -538,6 +538,74 @@ fallback 和 MediaToolbox 三个独立输出，再用 20H392 真实 TU 检查获
 拒绝路径。夹具不代替真实 reader 或实际 IOKit 调度测试。
 本轮未改变 import、timer、Libm 或设备构建输入，故未跑适配 TU/拒绝测试、未上机、
 未独立复跑。
+
+## 23. 方案 A2：无 GOP 软件 vsync 的真实 r35 完整链接（self-checked）
+
+基线 `d6aad0c02e7e1203f73e4aab5f437a97e21817b6`，沿用 §22 的基座、驱动
+和固定输入。新增 `--no-software-vsync`（必须与 `--cpu-only` 同用）只剪裁输出目录
+中的 GOP 驱动副本：删除 timer 状态、client 队首读取、创建/挂载/首次 arm、发送、
+重挂和 stop/free 的取消/摘除/释放；`kickSwapQueue` 只删 `armVsync()`，仍按原
+条件 re-kick。板级 TU 不生成原空 vsync observer，不添加 sender、空回调或弱占位。
+`startHardware` 的 fallible 固定 60 Hz 属性发布、slot 287 的非诊断逻辑、CPU copy、
+退休条件与通用观测不变。不改 donor 自己的计时/slot 330 路径。
+
+真实 8796 CPO：五成员归档 749384 B，SHA256
+`e271ed7c33228b1b52c187725980091b2f9073eeb7707f11089bc6656ba1a629`；
+`NativeLegacyDisplay.manual.o` 326771 B，SHA256
+`fc75c81c00ebf7b2fb2ff8a9be3c668806e92b09b86b3d04e82caf9c6813220e`。
+对原始对象和归档成员检查 Mach-O 符号和外部重定位，并用 `llvm-nm` / `llvm-objdump`
+复核：无 GOP timer/sender/observer，仍有 refresh formatter、scanout、cache flush、
+`finishTransfer`、validation/transfer/copy-timing/retirement 的 BR26 引用；
+六槽重定位继续匹配（329 为 guard，330 为 donor）。归档 213 → 210：仅减
+`IOTimerEventSource::timerEventSource`、`_mach_continuous_time`、`_native_legacy_vsync_notify`
+三项外部依赖；只用 `--cpu-only` 的对照仍为 213。两入口单传新选项均拒绝（exit 2）；
+refresh、上游 request-state 和 teardown 十个模型用例通过，均不代替运行时。
+
+完整 r35 控制组仍只差 UUID/map 首行，显示组 **ld exit 0**，沿用原 r35 renderer、
+完整 object filelist 和原链接参数；实际 `HOST-ONLY-display-native.unstripped`
+17718344 B，SHA256 `f03ae8488c97c26bf6467ec1b960b965bae81cda7bda4beaa83e52e5d70356cf`，
+`native-link.log` SHA256 `7abd1a1453b842efc37352087d1a77a760ca2904ef2858fea66626b516895387`。
+构建脚本的首错是 `build-nuwa-display-native.py:188`：链接器把
+`NativeLegacyDisplay::MetaClass::MetaClass()` (`0xfffffff0079bc704`) 的
+`ADRP/LDR x2` 化成 +0x10 的 `NOP` 与 +0x14 的 `LDR x2, literal`，
+旧审计只接受前一种形式，未改。单独解码确认后者仍从 `__got` 的
+`0xfffffff0079e0008` 取 `0xfffffff006a45540`，与 `superClass` 指针和 ABI pin 一致；
+这不是最终 prelink 绑定或生命周期验证。
+
+按要求对**实际显示 native**直接运行未修改的严格 `emit()`（不是控制组）。
+XnuPrelink `f1d80d37528a33e24643583787123c652b70a268`，两个 Python 输入同 HEAD
+（仅工作树 CRLF）。29 roots、slide `-0x1000000`，exit 1；首错
+`emit_prelink.py:111` / `instruction_inventory`：
+`External PC-relative encoding at 0xfffffff005b8c1cc; no instruction rewrite supported`，
+位于 Libm。`strict-emit.log` SHA256
+`0c28811ab60077bdea40c5499f169580b090e8102d8ed6d4a25f3e55a6371e98`。
+
+复跑（WSL root，设备仓 cwd）：沿用 §20 命令，追加 `--cpu-only --no-software-vsync`
+并设置 `--out "$out"` 为新的 `out/` 子目录。保留链接后的文件；即使外层因旧
+metaclass 指令形状检查退出，也不要放宽检查或改 scanner。仅作离线 strict 诊断：
+
+```sh
+"$python" -B - ../../UniXNU "$out" > "$out/strict-emit.log" 2>&1 <<'PY'
+import hashlib, json, sys, tomllib
+from pathlib import Path
+base, out = map(Path, sys.argv[1:])
+sys.path.insert(0, str(base / 'kits/XnuPrelink'))
+from emit_prelink import emit
+native = (out / 'HOST-ONLY-display-native.unstripped').read_bytes()
+donor = (base / 'out/ipsw/20H392/kernelcache.decompressed').read_bytes()
+slide = json.loads((out / 'derived/nuwa-display-abi.json').read_text())['metaclass']['collection_slide']
+roots = tomllib.loads(Path('board.toml').read_text())['os_overrides']['ios-16.7.16-20H392']['kernel']['prelink']['roots']
+roots = list(dict.fromkeys([*roots, 'com.apple.iokit.IOMobileGraphicsFamily']))
+print(f'native sha256={hashlib.sha256(native).hexdigest()} slide={slide:#x} roots={len(roots)}', flush=True)
+emit(native, donor, roots, slide)
+print('strict emit accepted; bytes discarded, runtime still ineligible')
+PY
+```
+
+无 GOP VBL 软件发送是 A2 的取舍，不是用户态已选 `CADisplayTimer` 的证据：实际
+同进程选路/回调与首帧、329/330 超时请求生命周期、Libm 严格门均**未闭合**。
+若实际选择依赖 GOP VBL，则须另证 sender 消息契约及 teardown 串行化方能恢复。
+未启 hooks，未保存 prelink 输出、未打包运行候选、无设备操作、未独立复跑。
 
 ## 22. 方案 A：CPU-only 8796 TU 与 r35 完整重链（self-checked）
 

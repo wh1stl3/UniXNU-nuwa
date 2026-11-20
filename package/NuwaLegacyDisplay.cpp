@@ -212,7 +212,9 @@ void native_legacy_surface_rejected(uint64_t, uint64_t, uint32_t, uint32_t, uint
 void native_legacy_transfer_observed(IOReturn, const void *, uint64_t) {}
 void native_legacy_copy_timing_observed(uint64_t, uint64_t) {}
 void native_legacy_retirement_observed(IOService *) {}
+#if !defined(NUWA_DISPLAY_HOST_NO_SOFTWARE_VSYNC)
 void native_legacy_vsync_observed(unsigned, unsigned) {}
+#endif
 __attribute__((noreturn)) void native_legacy_backend_guard(unsigned slot, void *, void *) {
   panic("NuwaLegacyDisplay: unqualified backend slot %u", slot);
 }
