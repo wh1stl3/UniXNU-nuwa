@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: BSD-2-Clause-Patent
-"""Reproduce the incomplete display archive and attempt an isolated native link.
+"""Reproduce the incomplete display archive and attempt an r35 or isolated native link.
 
 Host-only: this deliberately does not install hooks, package an image, or
 qualify the 329/330 contracts. Outputs must stay in the device out directory.
 """
 import argparse
+from collections import Counter
 import hashlib
 import json
+import os
 from pathlib import Path
 import shlex
 import struct
@@ -20,6 +22,17 @@ DONOR_SHA = "2ec297bac95bcba01046fd0148e97e7e5885c05a6c18827f39f534ba375c1221"
 FAMILY = "com.apple.iokit.IOMobileGraphicsFamily"
 RENDERER_SHA = "acbbf9f569961f4e58947020cd297a16682cddaa096bb6f0e353447ca3b77224"
 STARTUP_RECORD_SHA = "8e85399e601ece0259f6e53889adb65fc862d91b638d986dbde06c4cffe8694e"
+R35_PINS = {
+    "commands.json": "1e3b9dee1cce2592043e821c5f860d0f778b06644adfa2ef3090c8de5b556518",
+    "link.filelist": "0974ae0405b7c53261c7520e5ea5fc024240d5dea3d93b375bd30bfea525e978",
+    "native-link.map": "36abd5e601fbf9e6de89a61333f63b93468bb81111d9c2909ed3e47152ee5c0f",
+    "native.macho": "a9fd5e43d647384626dcd64ce480ca4dd3918a710b0fb8f8d11e8505828932cb",
+    "libBootProgress.a": "44a0f124dd5db234cd8f19d2d59d36cabf70cfba8a560ddd6cd9e3c389454fd1",
+}
+R35_CPO_SHA = "d390eb4440c6854e0243d041f0cd329be419a10ef78facf9a90102f3822e0c70"
+R35_RENDERER_SHA = "491aa302b627be782abcd2991f3e723e559904a641689105efabb79e592fc144"
+LINKER_SHA = "4f8a881dd4e4c1ff29c217a67bfd265582c1fb3bfebf989fdf5a3a4d9ba390a9"
+EARLY_COUNTERS = ("_native_legacy_early_failures", "_native_legacy_early_retires")
 
 
 def digest(path):
@@ -29,6 +42,126 @@ def digest(path):
 def run(args, cwd=None):
     print("+", shlex.join(map(str, args)), flush=True)
     subprocess.run(list(map(str, args)), cwd=cwd, check=True)
+
+
+def require_pin(path, expected):
+    if digest(path) != expected:
+        raise SystemExit(f"{path}: SHA256 mismatch (expected {expected})")
+
+
+def without_uuid(blob):
+    # Apple's ld hashes the output basename into LC_UUID. Only mask its payload.
+    if blob[:4] != b"\xcf\xfa\xed\xfe":
+        raise SystemExit("r35 native output is not a 64-bit little endian Mach-O")
+    offset = 32
+    uuids = []
+    for _ in range(struct.unpack_from("<I", blob, 16)[0]):
+        cmd, size = struct.unpack_from("<II", blob, offset)
+        if (cmd, size) == (0x1b, 24):
+            uuids.append(offset + 8)
+        offset += size
+    if len(uuids) != 1:
+        raise SystemExit("r35 native output must have one LC_UUID")
+    at, = uuids
+    return blob[:at] + bytes(16) + blob[at + 16:]
+
+
+def nm_rows(path):
+    return [tuple(line.split()) for line in subprocess.check_output(
+        ["llvm-nm", "-P", "-g", str(path)], text=True).splitlines()
+        if line and not line.endswith(":")]
+
+
+def definitions(path):
+    return Counter(row[0] for row in nm_rows(path) if row[1] != "U")
+
+
+def replay_r35(r35, linker, cpo, out, archive, native):
+    for name, pin in R35_PINS.items():
+        require_pin(r35 / name, pin)
+    require_pin(cpo, R35_CPO_SHA)
+    require_pin(linker / "ld", LINKER_SHA)
+    records = json.loads((r35 / "commands.json").read_text())
+    record, = [r for r in records if r["label"] == "native-link" and r["exit"] == 0]
+    argv = record["argv"]
+    cwd = Path(record["cwd"])
+    require_pin(cwd / "osfmk/DEVELOPMENT/startup.o.json", STARTUP_RECORD_SHA)
+    if (Path(argv[0]).parent != linker
+            or argv[argv.index("-filelist") + 1] != str(r35 / "link.filelist")):
+        raise SystemExit("r35 replay requires the recorded linker and filelist locations")
+    original_map = r35 / "native-link.map"
+    renderer = r35 / "libBootProgress.a"
+    map_at = argv.index(f"-Wl,-map,{original_map}")
+    force_at = argv.index(f"-Wl,-force_load,{renderer}")
+    output_at = argv.index("-o") + 1
+    # r35 build.py's run_factory env; clang++ is the CLT wrapper, not host clang.
+    env = dict(os.environ, DARWIN_TRIPLE="arm64-apple-ios17.0",
+               CROSS_CLANG=str(linker.parents[2] / "llvm/bin/clang"),
+               CROSS_EXTRA_FLAGS="-mllvm -disable-atexit-based-global-dtor-lowering",
+               PYTHONDONTWRITEBYTECODE="1")
+    env["PATH"] = f"{linker}:{linker.parents[2] / 'bin'}:" + env["PATH"]
+
+    def link(label, dest, inputs):
+        mapfile = out / (label + ".map")
+        command = list(inputs)
+        command[output_at] = str(dest)
+        command[map_at] = f"-Wl,-map,{mapfile}"
+        (out / (label + "-argv.json")).write_text(json.dumps(command, indent=2) + "\n")
+        logfile = out / (label + ".log")
+        with logfile.open("wb") as log:
+            status = subprocess.run(command, cwd=cwd, env=env, stdout=log,
+                                    stderr=subprocess.STDOUT).returncode
+        print(logfile.read_text(errors="replace"), end="", flush=True)
+        if status:
+            raise SystemExit(status)
+        return mapfile
+
+    control = out / "HOST-ONLY-r35-control.unstripped"
+    control_map = link("r35-control", control, argv)
+    if (without_uuid(control.read_bytes()) != without_uuid((r35 / "native.macho").read_bytes())
+            or control_map.read_bytes().partition(b"\n")[2] !=
+            original_map.read_bytes().partition(b"\n")[2]):
+        raise SystemExit("r35 link replay differs beyond LC_UUID or map output path")
+    print("r35 control matches native and map except output UUID/path", flush=True)
+
+    # Two early display counters are real storage in NativeLegacyDisplay, but
+    # the r35 renderer companion exports absolute-zero fallbacks for them.
+    # Localize exactly those aliases in a copy, retaining the real renderer,
+    # companion code and original force-load position/member order.
+    display = definitions(archive)
+    baseline = definitions(control)
+    if (set(baseline) & set(display) != set(EARLY_COUNTERS)
+            or any(display[name] != 1 or baseline[name] != 1 for name in EARLY_COUNTERS)
+            or baseline["_boot_progress_prepare_scanout"] != 1):
+        raise SystemExit("r35/display definition inventory changed")
+    staging = out / "renderer"
+    staging.mkdir()
+    members = ["BootProgress.o", "nuwa_boot_progress_stubs.o"]
+    if subprocess.check_output(["llvm-ar", "t", renderer], text=True).splitlines() != members:
+        raise SystemExit("r35 renderer member order changed")
+    run(["llvm-ar", "x", renderer], cwd=staging)
+    require_pin(staging / members[0], R35_RENDERER_SHA)
+    companion = staging / members[1]
+    original = companion.rename(staging / "companion.original.o")
+    before = nm_rows(original)
+    aliases = [row for row in before if row[0] in EARLY_COUNTERS]
+    if ({row[0] for row in aliases} != set(EARLY_COUNTERS)
+            or any(row[1:3] != ("A", "0") for row in aliases)):
+        raise SystemExit("r35 renderer overlaps are not the two expected zero aliases")
+    localize = staging / "localize.txt"
+    localize.write_text("\n".join(EARLY_COUNTERS) + "\n")
+    run([linker / "nmedit", "-R", localize, "-o", companion, original])
+    if Counter(nm_rows(companion)) != Counter(before) - Counter(aliases):
+        raise SystemExit("r35 renderer companion changed beyond the two external aliases")
+    staged = staging / renderer.name
+    run(["llvm-ar", "rcs", staged, *members], cwd=staging)
+    print("r35 renderer retains one prepare_scanout; display owns both early counters", flush=True)
+    command = list(argv)
+    command[force_at] = f"-Wl,-force_load,{staged}"
+    link("native-link", native, [*command, f"-Wl,-force_load,{archive}"])
+    linked = definitions(native)
+    if any(linked[name] != 1 for name in (*EARLY_COUNTERS, "_boot_progress_prepare_scanout")):
+        raise SystemExit("linked renderer/display symbols are not single definitions")
 
 
 def audit_linked_metaclass(blob, meta):
@@ -144,26 +277,34 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--base", type=Path, required=True)
     p.add_argument("--cpo", type=Path, required=True)
-    p.add_argument("--link-dir", type=Path, required=True,
-                   help="8796 mach.development.bcm2837.link directory")
+    p.add_argument("--link-dir", type=Path,
+                   help="8796 mach.development.bcm2837.link directory for the isolated path")
     p.add_argument("--linker-dir", type=Path, required=True,
                    help="directory containing the 8796 Mach-O ld")
-    p.add_argument("--renderer", type=Path, required=True,
-                   help="pinned real BootProgress.o (not the stub-containing archive)")
+    mode = p.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--renderer", type=Path,
+                      help="pinned real BootProgress.o for the isolated path (requires --link-dir)")
+    mode.add_argument("--r35-dir", type=Path,
+                      help="recorded r35 native link directory under device out/")
     p.add_argument("--out", type=Path, required=True, help="new directory under out/")
     a = p.parse_args()
-    base, cpo, link, out = (x.resolve() for x in (a.base, a.cpo, a.link_dir, a.out))
+    base, cpo, linker, out = (x.resolve() for x in (a.base, a.cpo, a.linker_dir, a.out))
     if not out.is_relative_to((ROOT / "out").resolve()) or out == (ROOT / "out").resolve():
         p.error("--out must be a new directory inside device out/")
+    if a.r35_dir:
+        r35 = a.r35_dir.resolve()
+        if a.link_dir or (ROOT / "out").resolve() not in r35.parents:
+            p.error("--r35-dir must be inside device out/ and replaces --link-dir")
+    elif not a.link_dir:
+        p.error("--renderer requires --link-dir")
     out.mkdir(parents=True, exist_ok=False)
     donor = base / "out/ipsw/20H392/kernelcache.decompressed"
-    if digest(donor) != DONOR_SHA:
-        raise SystemExit("20H392 donor SHA256 mismatch")
-    renderer = a.renderer.resolve()
-    if digest(renderer) != RENDERER_SHA:
-        raise SystemExit("BootProgress.o SHA256 mismatch")
-    if digest(link.parent / "osfmk/DEVELOPMENT/startup.o.json") != STARTUP_RECORD_SHA:
-        raise SystemExit("renderer compile record does not match link tree")
+    require_pin(donor, DONOR_SHA)
+    if a.renderer:
+        renderer = a.renderer.resolve()
+        link = a.link_dir.resolve()
+        require_pin(renderer, RENDERER_SHA)
+        require_pin(link.parent / "osfmk/DEVELOPMENT/startup.o.json", STARTUP_RECORD_SHA)
     run([sys.executable, "-B", ROOT / "scripts/derive-nuwa-display-abi.py",
          "--base", base, "--kernelcache", donor, "--out", out / "derived"])
     for name in ("OriginalLegacyFramebufferABI.h", "original-bindings.S",
@@ -176,20 +317,22 @@ def main():
     archive = host / "HOST-ONLY-incomplete-display.a"
     print(f"host-only archive SHA256 {digest(archive)}", flush=True)
 
-    # Replay XNU's exported link inputs, without its historical map output.
-    # Force-loading the incomplete archive cannot make it runtime eligible.
-    stem = "mach.development.bcm2837"
-    flags = shlex.split((link / (stem + ".linkarguments")).read_text())
-    libs = shlex.split((link / (stem + ".linkarchives")).read_text())
-    libs = [x for x in libs if not x.startswith("-Wl,-map,")]
-    record = json.loads(cpo.read_text().strip().rstrip(","))
     native = out / "HOST-ONLY-display-native.unstripped"
-    target = [arg for arg in record["arguments"] if arg.startswith("--target=")][-1]
-    command = [record["arguments"][0], target, "-B" + str(a.linker_dir.resolve()), *flags,
-               "-Wl,-force_load," + str(link / (stem + ".a")),
-               "-Wl,-force_load," + str(archive), str(renderer), *libs, "-o", str(native)]
-    (out / "link-argv.json").write_text(json.dumps(command, indent=2) + "\n")
-    run(command, cwd=record["directory"])
+    if a.r35_dir:
+        replay_r35(r35, linker, cpo, out, archive, native)
+    else:
+        # Replay XNU's exported link inputs, without its historical map output.
+        stem = "mach.development.bcm2837"
+        flags = shlex.split((link / (stem + ".linkarguments")).read_text())
+        libs = shlex.split((link / (stem + ".linkarchives")).read_text())
+        libs = [x for x in libs if not x.startswith("-Wl,-map,")]
+        record = json.loads(cpo.read_text().strip().rstrip(","))
+        target = [arg for arg in record["arguments"] if arg.startswith("--target=")][-1]
+        command = [record["arguments"][0], target, "-B" + str(linker), *flags,
+                   "-Wl,-force_load," + str(link / (stem + ".a")),
+                   "-Wl,-force_load," + str(archive), str(renderer), *libs, "-o", str(native)]
+        (out / "link-argv.json").write_text(json.dumps(command, indent=2) + "\n")
+        run(command, cwd=record["directory"])
     print(f"host-only native SHA256 {digest(native)}", flush=True)
 
     sys.path.insert(0, str(base / "kits/XnuPrelink"))

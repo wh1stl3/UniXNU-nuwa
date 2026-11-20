@@ -539,6 +539,58 @@ fallback 和 MediaToolbox 三个独立输出，再用 20H392 真实 TU 检查获
 本轮未改变 import、timer、Libm 或设备构建输入，故未跑适配 TU/拒绝测试、未上机、
 未独立复跑。
 
+## 20. 方案 A：r35 完整输入重链（self-checked）
+
+基线 `1352727`。`--r35-dir` 复用已成功的 r35 `native-link` argv/cwd 和工具环境；
+不执行旧 builder、不用隔离 XNU archive 替代对象列表、不接新的 Adreno/GPU 或 timing 实现。
+入口校验 r35 命令记录、961 行 `link.filelist`、原 map（990 个输入条目，含 linker
+synthesized）、native、renderer archive、CPO、startup record、ld 与 donor 的 pin；
+显示归档沿用基座和 driver 的 revision/ABI 门。控制组重链仅重定向输出及 map：
+Mach-O 除 `LC_UUID` 的 16 字节字段外逐字节相同，map 除首行输出路径外逐字节相同。
+
+显示组保留 r35 对象、`lastkernelconstructor.o` 与原 archive 次序，末尾 force-load
+原有四成员手动初始化显示归档（自动 init 为 0，不装 hook）。r35 renderer `BootProgress.o`
+原字节复用，`_boot_progress_prepare_scanout` 单定义。与显示归档仅有两个同名外部定义：
+`_native_legacy_early_failures` 和 `_native_legacy_early_retires`。用同工具链 `nmedit -R`
+在输出目录局部化旧 companion 中这两个绝对零占位，归档同位置、同成员顺序；
+`llvm-nm` 核对两个重名各有且仅有一个新的外部提供者，其余 companion 外部符号不变，
+`llvm-objdump -s -r` 核对其段内容与重定位不变。没有新增 stub 或修改任何既有产物。
+
+§19 的 131 项经 map、`llvm-nm` 和实际 ld 对照：45 个由 r35 的真实输入供给
+（renderer 15、UFS archive 14、RamBlock archive 13、`vm_user.o` 2、`vm_map.o` 1），
+80 个是 r35 已有的 renderer 观测绝对零占位；这 80 个都不在显示归档导入表，不算显示 ABI
+实现。实际完整重链退出 **1**，仅剩以下六项，没有新增未定义；首错是
+`GopFramebuffer/NativeLegacyDisplay.cpp:193` 的 `NativeLegacyDisplay::note` 引用
+`_native_adreno_fences`，该完整静态链接未提供它：
+
+| 对象导入 | 剩余符号 |
+| --- | --- |
+| 弱（本静态链接仍拒绝） | `_native_adreno_fences`, `_native_adreno_fences_detail`, `_native_gpu_trace_enabled`, `_native_gpu_trace_record` |
+| 强（timing 未闭合） | `_native_legacy_set_refresh_properties`, `_native_legacy_vsync_notify` |
+
+WSL root，设备仓 cwd，独立复跑用新 `--out`：
+
+```sh
+obj=/root/nuwa-pmap-ret-native-20261111/nuwa/ios-16.7.16-20H392/nuwa_pmap_ret/tree/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837
+python=/home/wh1stl3/.local/bin/python3.11
+"$python" -B scripts/build-nuwa-display-native.py --base ../../UniXNU \
+  --cpo "$obj/iokit/DEVELOPMENT/IOPMGR.cpo.json" \
+  --linker-dir /opt/unixnu-linux/CommandLineTools/usr/bin \
+  --r35-dir out/nuwa-r35-20261119 --out out/nuwa-display-r35-full-02
+c++ -std=c++17 -Wall -Wextra -Werror scripts/host/test-nuwa-display-refresh.cpp \
+  -o out/nuwa-display-r35-full-02/refresh-fixture
+out/nuwa-display-r35-full-02/refresh-fixture
+"$python" -B scripts/test-nuwa-display-teardown.py
+```
+
+完整 ld 日志 `out/nuwa-display-r35-full-02/native-link.log` SHA256
+`06c68fe56c48ed98bbd427823d6c19cacb5528df438a6b37b24f839b8b74555a`。
+旧隔离入口按 §19 复跑，退出 1，131 项及顺序不变。refresh 夹具和 teardown 10 例通过。
+用控制组 native 按 §17 相同 roots/slide 调严格
+`emit`，仍在 `emit_prelink.py:111` 拒绝 Libm `0xfffffff005b8c1cc`（无写出）。
+完整显示 native/map 均未生成，其 strict emit 未到达；329/330、refresh/vsync 及扫描
+规则均未改。归档、控制组和中间文件不是设备候选；未上机、未独立复跑。
+
 ## 19. 真实 renderer 接入及剩余链接项（self-checked）
 
 基线 `3f42e8ea760c524d539c05e7c96e659bcf8e11cc`。复用本仓
