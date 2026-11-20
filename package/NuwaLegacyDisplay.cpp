@@ -196,8 +196,10 @@ bool native_legacy_prepare_scanout(void) {
   return boot_progress_prepare_scanout() != 0;
 }
 // CPU-copy policy: refusing the GPU hand-off is not claiming a completed copy.
+#if !defined(NUWA_DISPLAY_HOST_CPU_ONLY)
 bool native_legacy_gpu_offer(void *, IOMemoryDescriptor *, uint64_t, uint32_t, uint32_t, uint32_t) { return false; }
 void native_legacy_gpu_fallback_observed(int) {}
+#endif
 void native_legacy_registration_observed(IOService *) {}
 void native_legacy_swap_stage(unsigned) {}
 void native_legacy_client_enter(task_t, uint32_t) {}

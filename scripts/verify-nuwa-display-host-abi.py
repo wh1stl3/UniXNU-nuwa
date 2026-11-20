@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import shutil
 import struct
 import subprocess
 import sys
@@ -21,6 +22,19 @@ OLD_REFRESH = '_native_legacy_set_refresh_properties'
 # different toolchains may need a deliberate requalification, not a whitelist
 # that silently swallows new unresolved symbols.
 UNRESOLVED_SHA256 = 'c2b547267d51f69a79995ecceab0c6bd12b315b358e8720849b8f29795c12862'
+CPU_UNRESOLVED_SHA256 = 'bd169e2fd505971d5cb6b15978e787b831f5bfaee160ef7fcc5a5ae1e475a121'
+GPU_IMPORTS = {
+    '_native_adreno_fences', '_native_adreno_fences_detail',
+    '_native_gpu_trace_enabled', '_native_gpu_trace_record',
+}
+CPU_REMOVED_IMPORTS = GPU_IMPORTS | {
+    '_native_ufs_dpu_map', '_native_ufs_dpu_state',
+}
+CPU_EXCLUDED = CPU_REMOVED_IMPORTS | {
+    '_native_legacy_gpu_offer', '_native_legacy_gpu_complete',
+    '_native_legacy_gpu_fallback_observed', '_native_legacy_direct_snapshot',
+    '_native_legacy_direct', '_native_legacy_early_retires', '_native_legacy_early_failures',
+}
 SLOTS = {
     184: '__ZN19NativeLegacyDisplay13isMainDisplayEv',
     188: '__ZN19NativeLegacyDisplay11getDotPitchEPj',
@@ -62,6 +76,64 @@ def adapt_source(text, original):
             (BASE_HARDWARE_RETURN, NUWA_HARDWARE_RETURN)):
         if text.count(before) != 1:
             raise SystemExit(f'{original}: expected exactly one match for {before.splitlines()[0]}')
+        text = text.replace(before, after, 1)
+    return text
+
+
+def cpu_only_source(text, original):
+    """Pinned e47c1b8 overlay: omit offload and direct scanout, not just imports."""
+    # Each range starts/ends on one exact line. The revision/cleanliness gate
+    # before staging also pins the contents between these boundaries.
+    for first, after in (
+        ('#define NATIVE_GPU_TRACE_OPTIONAL', '#include "NativeLegacyRequest.h"'),
+        ('// GPU hand-off (boot-arg sheng-fb-gpu=1): the frame is offered to the privileged GPU client instead of being copied; the swap retires when the',
+         "// The compositor's swapped surfaces, for a display that fetches them itself: [0] distinct surfaces seen, [1] swaps checked; for the first four, at"),
+        ("// Direct scanout (sheng-dpu-scanout=2): the display's two pipes fetch the compositor's surface through the display bank's window",
+         "// The swap lifecycle: native_legacy_ring holds the newest native_legacy_ring_cap events (allocated at start: a static array of this size no longer fits the kernel's data segment), {[0] microseconds since boot (64 bit), [1] event << 56 | slot + 1 << 48 |"),
+        ('extern "C" uint32_t native_ufs_dpu_map(unsigned slot,const uint64_t *pages,unsigned count) __attribute__((weak_import));',
+         'static void noteSurface(OSObject *surface,IOMemoryDescriptor *memory)'),
+        ('extern "C" void native_legacy_gpu_fallback_observed(int status);',
+         '// Swaps the family gave up on after waiting 5 s for them (cancelSwapsAfterTimeout).'),
+        ('class NativeLegacyDisplay;', 'class NativeLegacyDisplay : public IOMobileFramebufferLegacy {'),
+        ('    uint64_t traceRequestIds[8];', '    uint64_t validatedAt[8];   // no initializer: IOKit objects are allocated zeroed, and a member memset would push the constructor\'s call to the original C2 out of the binding check\'s window'),
+        ('        if(&native_gpu_trace_enabled && native_gpu_trace_enabled()) {',
+         '        if(!native_legacy_ring_cap)return;'),
+        ('    // Microseconds since this request was validated, 0 when it is not tracked.',
+         '    void addValidated(const OriginalLegacySwapRequest *request) {'),
+        ('    const OriginalLegacySwapRequest *gpuRequest=nullptr;',
+         "    // The refresh tick runs on the family's work loop, the loop of the command gate that registers and removes the vsync clients, so the"),
+        ('    // Direct scanout state, used on the work loop only. DPU 9.2 inside the MDP block (0xae01000): VIG 0 and 1 at 0x4000 and 0x6000 (source',
+         '    bool vsyncWanted() const {'),
+        ("    // Called by the GPU client's completion (any thread): the swap is finished on the framebuffer's work loop.",
+         '    void free() override {stopVsync();if(logicalPM){PMstop();logicalPM=false;}primary=false;OSSafeReleaseNULL(bootMapping);IOMobileFramebufferLegacy::free();}'),
+        ('        directToBoot();latchRequest=nullptr;pendingSlot=-1;',
+         '        if(logicalPM){PMstop();logicalPM=false;}'),
+        ('        if(directOn && !half && !gpuBypass && latchRequest)stat(5);',
+         '        // Surfaces may be write-combined (iPadOS 27 display surfaces are): reading them uncached costs seconds per frame. Read through'),
+        ('    // The GPU client reported its copy (status 0) or lost it. Success retires the swap like a finished copy; anything else uses the CPU copy.',
+         '    // Hands the pending head to the unchanged family\'s completion. Leaves transferred alone: the callers decide when the next frame may go.'),
+    ):
+        first, after = first + '\n', after + '\n'
+        if text.count(first) != 1 or text.count(after) != 1 or text.index(first) >= text.index(after):
+            raise SystemExit(f'{original}: CPU-only range mismatch at {first.strip()}')
+        replacement = '        stat(7);note(7,-1,request);\n' if first.startswith(
+            '        if(directOn') else ''
+        text = text[:text.index(first)] + replacement + text[text.index(after):]
+    for before, after in (
+        (';traceRequestIds[i]=0', ''),
+        ('|uint64_t(outstanding)<<24', ''),  # Reserved ring bits stay zero without a fence provider.
+        (';gpuRequest=nullptr;gpuRetired=false;', ';'),
+        ('        startVsync();startDirect();return true;', '        startVsync();return true;'),
+        ('            gpuBypass=false;\n', ''),
+        ('            directToBoot();\n', ''),
+        ('''        if(!gpuBypass) {
+            if(!native_legacy_prepare_scanout()) {native_legacy_transfer_observed(kIOReturnNotReady,request,0);return;}
+        }''', '''        if(!native_legacy_prepare_scanout()) {native_legacy_transfer_observed(kIOReturnNotReady,request,0);return;}'''),
+        ('extern "C" void native_legacy_direct_snapshot(void) {if(gDirectDisplay)gDirectDisplay->snapshot();}\n', ''),
+        ('extern "C" void native_legacy_gpu_complete(void *display,int status) {if(display)static_cast<NativeLegacyDisplay *>(display)->gpuComplete(status);}\n', ''),
+    ):
+        if text.count(before) != 1:
+            raise SystemExit(f'{original}: CPU-only replacement mismatch at {before.splitlines()[0]}')
         text = text.replace(before, after, 1)
     return text
 
@@ -133,6 +205,18 @@ def relocations(blob, sections, symbols):
         for off, word in struct.iter_unpack('<II', blob[start:start + count * 8]):
             if word & (1 << 27):
                 yield sec, off, word >> 24, symbols[word & 0xffffff][0]
+
+
+def inspect_cpu_only(base, obj):
+    blob = obj.read_bytes()
+    sections, symbols = object_layout(base, blob)
+    nm = subprocess.check_output(['llvm-nm', '-P', obj], text=True)
+    if (CPU_EXCLUDED.intersection(line.split()[0] for line in nm.splitlines() if line)
+            or CPU_EXCLUDED.intersection(name for name, *_ in symbols)
+            or CPU_EXCLUDED.intersection(name for _, _, _, name in relocations(blob, sections, symbols))):
+        raise SystemExit(f'{obj.name}: GPU/DPU symbol or relocation survived CPU-only compilation')
+    if any(arg in blob for arg in (b'sheng-dpu-scanout\0', b'sheng-early-retire\0')):
+        raise SystemExit(f'{obj.name}: GPU/DPU boot-arg branch survived')
 
 
 def inspect_original_imports(blob, sections, symbols, original, meta):
@@ -365,6 +449,7 @@ def main():
     parser.add_argument('--base', required=True, type=Path)
     parser.add_argument('--cpo', required=True, type=Path, help='real 8796 IOPMGR.cpo.json')
     parser.add_argument('--out', required=True, type=Path, help='new directory below device out/')
+    parser.add_argument('--cpu-only', action='store_true', help='exclude GPU and DPU scanout at compile time')
     args = parser.parse_args()
     base, cpo, out = (p.resolve() for p in (args.base, args.cpo, args.out))
     if ROOT / 'out' not in out.parents:
@@ -380,11 +465,20 @@ def main():
         raise SystemExit(f'expected GopFramebuffer at {DRIVER_REV}')
     if subprocess.check_output(git + ['status', '--porcelain', '--', '.']):
         raise SystemExit('GopFramebuffer inputs are dirty')
-    text = adapt_source(original.read_text(), original)
     record = json.loads(cpo.read_text().strip().rstrip(','))
     if Path(record['file']).name != 'IOPMGR.cpp' or not Path(record['directory']).is_absolute():
         raise SystemExit(f'{cpo}: expected the IOPMGR.cpp compilation record')
     out.mkdir(parents=True)
+    if args.cpu_only:
+        # The only base sources this replay can modify are the driver copies.
+        # The real 8796 headers/CPO and XnuPrelink remain read-only inputs.
+        staged = out / 'base/drivers/GopFramebuffer'
+        shutil.copytree(driver, staged, ignore=shutil.ignore_patterns('.git'))
+        driver, original = staged, staged / original.name
+    text = adapt_source(original.read_text(), original)
+    if args.cpu_only:
+        text = cpu_only_source(text, original)
+        original.write_text(text)
     source, obj = (out / ('NativeLegacyDisplay' + suffix) for suffix in ('.cpp', '.o'))
     # Clang's integrated assembler exports the exact synthetic constructor
     # while maintaining the normal Mach-O symbol ordering. Objcopy only
@@ -397,6 +491,8 @@ def main():
     provider = ROOT / 'package/NuwaLegacyDisplay.cpp'
     provider_obj = out / 'NuwaLegacyDisplay.o'
     provider_cmd = compile_args(record, provider, provider_obj, driver)
+    if args.cpu_only:
+        provider_cmd.append('-DNUWA_DISPLAY_HOST_CPU_ONLY=1')
     bindings = ROOT / 'package/original-bindings.S'
     bindings_obj = out / 'original-bindings.o'
     target = [arg for arg in command if arg.startswith('--target=')][-1]
@@ -413,6 +509,7 @@ def main():
         'addresses_arguments': addresses_cmd, 'addresses_source_sha256': sha256(addresses),
         'cpo': str(cpo), 'cpo_sha256': sha256(cpo),
         'driver_revision': DRIVER_REV, 'adapted_source_sha256': sha256(source),
+        'cpu_only': args.cpu_only,
         'board_source_sha256': sha256(provider), 'bindings_source_sha256': sha256(bindings),
     })
     for argv in (command, provider_cmd, bindings_cmd, addresses_cmd, refresh_cmd):
@@ -428,10 +525,14 @@ def main():
     write_json(out / 'object.json', result)
     archive = out / 'HOST-ONLY-incomplete-display.a'
     members = [late, provider_obj, bindings_obj, addresses_obj, refresh_obj]
+    if args.cpu_only:
+        for item in [obj, *members]:
+            inspect_cpu_only(base, item)
     subprocess.run(['llvm-ar', '--format=darwin', 'rcs', archive, *members], check=True)
     audit = inspect_archive(base, archive, members)
     write_json(out / 'archive.json', audit)
-    if audit['unresolved_sha256'] != UNRESOLVED_SHA256:
+    expected = CPU_UNRESOLVED_SHA256 if args.cpu_only else UNRESOLVED_SHA256
+    if audit['unresolved_sha256'] != expected:
         raise SystemExit(f'unresolved symbol fingerprint changed: see {out / "archive.json"}')
     print(f'{archive}: {len(audit["unresolved"])} unresolved externals; not runtime-eligible')
     return 0

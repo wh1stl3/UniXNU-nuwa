@@ -76,7 +76,7 @@ def definitions(path):
     return Counter(row[0] for row in nm_rows(path) if row[1] != "U")
 
 
-def replay_r35(r35, linker, cpo, out, archive, native):
+def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only):
     for name, pin in R35_PINS.items():
         require_pin(r35 / name, pin)
     require_pin(cpo, R35_CPO_SHA)
@@ -124,16 +124,21 @@ def replay_r35(r35, linker, cpo, out, archive, native):
         raise SystemExit("r35 link replay differs beyond LC_UUID or map output path")
     print("r35 control matches native and map except output UUID/path", flush=True)
 
-    # Two early display counters are real storage in NativeLegacyDisplay, but
-    # the r35 renderer companion exports absolute-zero fallbacks for them.
-    # Localize exactly those aliases in a copy, retaining the real renderer,
-    # companion code and original force-load position/member order.
     display = definitions(archive)
     baseline = definitions(control)
-    if (set(baseline) & set(display) != set(EARLY_COUNTERS)
-            or any(display[name] != 1 or baseline[name] != 1 for name in EARLY_COUNTERS)
-            or baseline["_boot_progress_prepare_scanout"] != 1):
+    overlap = set() if cpu_only else set(EARLY_COUNTERS)
+    if (set(baseline) & set(display) != overlap
+            or any(baseline[name] != 1 for name in (*EARLY_COUNTERS, "_boot_progress_prepare_scanout"))
+            or any(display[name] != 1 for name in overlap)):
         raise SystemExit("r35/display definition inventory changed")
+    if cpu_only:
+        # No early GPU retire in the board TU: use the original r35 renderer
+        # archive byte for byte, including its observation counter aliases.
+        link("native-link", native, [*argv, f"-Wl,-force_load,{archive}"])
+        return
+
+    # The historical display TU owns both early GPU counters. Localize only
+    # the shadowing absolute-zero aliases in a copy of the renderer archive.
     staging = out / "renderer"
     staging.mkdir()
     members = ["BootProgress.o", "nuwa_boot_progress_stubs.o"]
@@ -286,6 +291,8 @@ def main():
                       help="pinned real BootProgress.o for the isolated path (requires --link-dir)")
     mode.add_argument("--r35-dir", type=Path,
                       help="recorded r35 native link directory under device out/")
+    p.add_argument("--cpu-only", action="store_true",
+                   help="compile out GPU/DPU paths in the host display TU (requires --r35-dir)")
     p.add_argument("--out", type=Path, required=True, help="new directory under out/")
     a = p.parse_args()
     base, cpo, linker, out = (x.resolve() for x in (a.base, a.cpo, a.linker_dir, a.out))
@@ -297,6 +304,8 @@ def main():
             p.error("--r35-dir must be inside device out/ and replaces --link-dir")
     elif not a.link_dir:
         p.error("--renderer requires --link-dir")
+    if a.cpu_only and not a.r35_dir:
+        p.error("--cpu-only requires --r35-dir")
     out.mkdir(parents=True, exist_ok=False)
     donor = base / "out/ipsw/20H392/kernelcache.decompressed"
     require_pin(donor, DONOR_SHA)
@@ -313,13 +322,13 @@ def main():
             raise SystemExit(f"derived {name} differs from device package")
     host = out / "archive"
     run([sys.executable, "-B", ROOT / "scripts/verify-nuwa-display-host-abi.py",
-         "--base", base, "--cpo", cpo, "--out", host])
+         "--base", base, "--cpo", cpo, "--out", host, *(["--cpu-only"] if a.cpu_only else [])])
     archive = host / "HOST-ONLY-incomplete-display.a"
     print(f"host-only archive SHA256 {digest(archive)}", flush=True)
 
     native = out / "HOST-ONLY-display-native.unstripped"
     if a.r35_dir:
-        replay_r35(r35, linker, cpo, out, archive, native)
+        replay_r35(r35, linker, cpo, out, archive, native, cpu_only=a.cpu_only)
     else:
         # Replay XNU's exported link inputs, without its historical map output.
         stem = "mach.development.bcm2837"

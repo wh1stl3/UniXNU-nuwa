@@ -1,7 +1,7 @@
 # 20H392 显示 ABI 取证（G1 收尾，2026-11-20）
 
 状态：**self-checked（主机侧、未独立复核）**。输入是本机 20H392 donor kernelcache，无设备操作、无内核构建。
-最新完整链接见 §21；两条运行路线的放行判据见 §16，formatter 与 teardown 夹具见 §15。
+最新 CPU-only 完整链接见 §22；两条运行路线的放行判据见 §16，formatter 与 teardown 夹具见 §15。
 
 ## 0. 结论
 
@@ -538,6 +538,47 @@ fallback 和 MediaToolbox 三个独立输出，再用 20H392 真实 TU 检查获
 拒绝路径。夹具不代替真实 reader 或实际 IOKit 调度测试。
 本轮未改变 import、timer、Libm 或设备构建输入，故未跑适配 TU/拒绝测试、未上机、
 未独立复跑。
+
+## 22. 方案 A：CPU-only 8796 TU 与 r35 完整重链（self-checked）
+
+基线 `9791cef`。复用 `UniXNU/GopFramebuffer@e47c1b8de169cd2bd0b885c7d85e433010e3cdf2`
+（BSD-2-Clause-Patent）；基座 `693f5d9c` 不写入。两次只读检查的上游 HEAD 一致：
+UniXNU `8542980d`、GopFramebuffer `b0d812d5`。`--cpu-only` 仅用于主机；基座驱动
+暂存于输出下的 `archive/base/drivers/GopFramebuffer`，只改副本。历史路径仍可复跑。
+
+四项弱导入使 `-static` 失败。版适配在编译前去掉 `note()` 的 GPU trace/fence 采样，
+以及 `startDirect → gpuWrote → DPU flip` 和 `kickOnce → gpu_offer → gpu_complete`
+两条完整路径（包括 latch/fence timer、异步回调、提前 retire、专用诊断和板级拒绝桩）。
+不能只把 `gpuWrote()` 改成成功：那会留下 `sheng-dpu-scanout=2` 下可达的硬件翻页。
+`kickOnce()` 回到原 CPU 分支：仍需验证请求、放行 scanout、映射并维护缓存、执行
+blank/half/plain/diff 写入及 store barrier，再走原 retire 条件；没有伪造 fence 或完成。
+保留 `noteSurface`、通用 ring/stat 和 transfer/copy/validation/retirement 日志；
+ring 中 GPU outstanding 位为零。原 r35 renderer 归档（含校验与日志）逐字节复用，
+不再需要局部化两项 early GPU counter 的旧观察 alias。代价是无 GPU offload、
+direct scanout 或对应诊断；只有真实 GPU/DPU provider、同步与生命周期经审查后才恢复。
+
+真实 8796 CPO：五成员归档 762000 B，SHA256
+`48aaf8c8b96d99f5b57163e8711d4d7c218cfba1ded8c36a4a9bbf81625e6e03`。
+`llvm-nm` 与 Mach-O relocation 双检确认四项 GPU、两个 DPU 导入及 GPU 回调无定义、
+无引用；`llvm-objdump --macho --reloc` 同时确认 copy timing、cache flush、validation
+和 transfer 调用仍在。归档未解析 221 → 213，无新增；除四 GPU、两 DPU 外，去掉
+direct 专用 `_IOFreeData` 和 `___ubsan_handle_add_overflow_minimal`；`IODeviceMemory::withRange`
+仍由板级 TU 引用。329 仍为 native guard，330 仍为 donor relocation；两者不放行，
+源级比较确认 `vsyncWanted` 至 `stopVsync`、CPU copy 段、retire/validate 及 fallible start
+未变。上游 `Test/request-state.c`、refresh fixture、teardown 10 例均 self-checked。
+
+独立复跑：设 `out` 为 `out/` 下的新路径，用 §20 的 WSL 命令，附加 `--cpu-only`
+并改用 `--out "$out"`；另用新输出路径
+执行 §20 的两个 fixture。可直接对 `archive/NativeLegacyDisplay.manual.o` 执行
+`llvm-nm -Pa` 与 `llvm-objdump --macho --reloc`。上游布局/复制 fixture：
+`cc -std=c11 -O2 -Wall -Wextra -Werror "$out/archive/base/drivers/GopFramebuffer/Test/request-state.c" -o "$out/request-state" && "$out/request-state"`。
+
+实跑 `out/nuwa-display-r35-cpu-01`：控制组除 UUID/路径外与固定 r35 一致，
+显示组完整 ld **退出 1，唯一未定义为 `_native_legacy_vsync_notify`**：
+生成的 `NativeLegacyDisplay.cpp:187`（固定上游 :417）在 `vsyncTick()` 调用 sender，
+编译后由 `vsyncFired` 引用（`__text+0x2290`，BR26）；r35 没有 provider。
+`native-link.log` SHA256 `4d593c89ac21d42f2beafa687ea29e58d9ff98004833abe14ceee222db1709ed`。
+未生成显示 native，Libm strict emit 未到且未改；无打包、无设备操作、未独立复跑。
 
 ## 21. 方案 A：refresh 接入 start 后的 r35 完整重链（self-checked）
 
