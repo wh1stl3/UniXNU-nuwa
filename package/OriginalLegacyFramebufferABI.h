@@ -225,7 +225,7 @@ public:
     virtual void opaque318();
     virtual void opaque319();
     virtual void opaque320();
-    virtual __attribute__((noreturn)) void opaque321() = 0;
+    virtual IOReturn collectCompletionReports(uint32_t, void *, uint32_t *, uint32_t) = 0;
     virtual __attribute__((noreturn)) void opaque322() = 0;
     virtual void opaque323();
     virtual void opaque324();
@@ -251,6 +251,7 @@ enum : unsigned {
     kInstanceCurrentRequest = 4872, kInstancePendingHead = 4880,
     kInstancePendingTail = 4888, kInstanceVsyncClients = 4992,
     kInstanceVsyncObject = 5064, kInstanceWidth = 5208, kInstanceHeight = 5212,
-    kInstanceStateRequested = 5236, kInstanceStatePowered = 5240
+    kInstanceStateRequested = 5236, kInstanceStatePowered = 5240,
+    kLegacyVsyncClients = 4992
 };
-#define NATIVE_LEGACY_LEAVES(LEAF) LEAF(211) LEAF(212) LEAF(242) LEAF(243) LEAF(292) LEAF(293) LEAF(321) LEAF(322) LEAF(329)
+#define NATIVE_LEGACY_LEAVES(LEAF) LEAF(211) LEAF(212) LEAF(242) LEAF(243) LEAF(292) LEAF(293) LEAF(322) LEAF(329)
