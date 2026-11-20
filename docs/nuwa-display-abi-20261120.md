@@ -421,3 +421,120 @@ SHA256（§1），按 Mach-O 映射反汇编、用 vtable/GOT 和符号表确认
 按上表和 writer VA 用 donor 段映射复核指令，`0x04444444` 与 `0x0aaaaaaa`
 分别乘 `10^9` 右移 32 位复算纳秒值。无适配，故本轮未重编 8796 归档，
 不把 §12 的归档复跑计作本轮结果。未链接、未上机、未独立复跑。
+
+## 14. 方案 A：20H392 用户态读者与 stop 边界（self-checked）
+
+设备仓 `06e4f11`，基座 `693f5d9c`、驱动 `e47c1b8`。只读挂载
+`out/root-inputs-20261113/os-window.raw`（SHA256 `6e87bfca…8906`）与
+`ipsw/20H392/087-86593-047.dmg`（`9cd738f3…6849`），使用本地
+`sgan81/apfs-fuse@66b86bd525e8cb90f9012543be89b1f092b75cf3` 的 `apfs-fuse -o ro`；
+两卷 `SystemVersion.plist` 都报 iPhone OS 16.7.16 / 20H392。递归遍历两个 `root/`，
+在 Mach-O/fat magic 或 `dyld_v1` 的常规文件中找 `IOMFBDisplayRefresh` 及 §13 六个
+以 NUL 结尾的键。OS 计 2,769 文件 / 1,091,890,394 B（含 `backboardd` 和
+`SpringBoard.app/SpringBoard`，无 cache 文件），零命中；SystemOS 计 61 文件 /
+3,341,336,528 B，含 46 个 cache 文件（主 cache、`.01`–`.40` 各片、`.41.dylddata`、
+`.42.dyldlinkedit`、`.symbols` 和两个 DriverKit cache 文件）；两卷均无读取错误。
+字面量仅主 cache `.03/.07` 命中；这不是对动态拼键或间接消费者的排除。
+
+以 cache mapping 将文件偏移还原为未 slide 的用户 VA；以 Mach-O `LC_ID_DYLIB`
+及各节边界确认归属，在 `.27.dylddata` 取相应 `__cfstring` 对象，在 `__text` 找
+`ADRP/ADD` xref，沿 branch island 解出实际入口并以 `.42.dyldlinkedit` 的
+`LC_SYMTAB` 复核符号。以下用户 VA 不使用 §13 的内核地址前缀。
+
+- **QuartzCore / WindowServer：** `.03:0x17eed25`（VA `0x18857ad25`）
+  → CFString `0x1d5b4d280` → `0x1883adf54–60`。`copy_display_property`
+  (`0x1883ac314`) 先通过 `AppleDisplay+0x318` 的连接调用
+  `IOMobileFramebufferCopyProperty`；取不到才以 `+0x310` 的 registry entry
+  在 `IOService` plane 调 `IORegistryEntrySearchCFProperty`（选项 0）。
+  结果必须是 CFDictionary，否则释放并当作缺字典。
+  `0x1883adf74/94` 分别取 `displayMinRefreshInterval` 和 `displayRefreshStepMachTime`；
+  非空时 `CA_CFIntValue` 以 `kCFNumberIntType` 取值（另接受 CFBoolean），随后
+  `sxtw`。min 存 `+0xaf0`；step 经 `CATimeWithHostTime`（`mach_timebase_info` 的
+  `numer/denom * 10^-9`）变成秒存 `+0xaf8`，另受功能条件控制可被清零。
+  字典不存在时跳过两次写入，前面 `0x1883ad700/704` 已清零；单键不存在也按零。
+  在没有已缓存周期或 `CA_HEARTBEAT_RATE` 覆盖时，
+  `0x1882dc360–3a4` 优先非零 step，其次非零 min 乘 `2^-32`（`+0x220` bit 4
+  置位时减半），否则取 `0x18855caa0` 的 `1/60` 秒。该读点不取 max 或 min/max MachTime。
+- **MediaToolbox：** `.07:0xdee43c`（VA `0x19572e43c`）→ CFString
+  `0x1d6a4a528` → `FPSupport_GetDisplayRefreshInformation` (`0x1951ce2d8`) 内的
+  `0x1951ce58c–594`。`IOMobileFramebufferCreateDisplayList` →
+  找到条目中 `+8 == 0` 的显示 → `IOMobileFramebufferOpenByName` →
+  `IOMobileFramebufferCopyProperty`，再检查 CFDictionary。该 CopyProperty
+  (`0x1af2236d4`) 分派到连接 `+0x6b0`，常规实现 `0x1af224aac` 用连接 `+0x10`
+  的 registry entry 在 `IOService` plane 调 `IORegistryEntrySearchCFProperty`；
+  另一实现 `0x1af22be40` 先查本地字典再走后端，不能把所有连接都视作直接查 registry。
+  `0x1951ce66c/6c0/714` 经 `FigCFDictionaryGetInt64IfPresent` 分别取
+  `displayMaxRefreshInterval`、`displayMinRefreshInterval`、`displayRefreshStep`；
+  仅 helper 返回真且有符号值 `>=1` 时单独覆盖对应输出。max/min 用
+  `CMTimeMake(1, round(2^32/v))`，step 用
+  `CMTimeMake(1, round(10^9/v))`（`0x195765800` 是 double `10^9`，不能按 32.32
+  套用）。默认分别为 `1/60`、`1/60`、`kCMTimeInvalid`；缺字典或类型错走
+  `0x1951ce76c` 的 `FigSignalErrorAt` 再到公共输出路径，保留三个默认值。
+  缺单键、非 CFNumber 或非正值仅保留该项默认。该读者不用 `*MachTime`。
+
+这两条闭合了各自实际读取的格式和缺键分流，不意味着 GOP 物理速率已知；
+§13 donor 的两个 step 字都为零，也不是设备侧可以从当前模式推导非零 step 的证据。
+`displayRefreshStep` 和 `displayRefreshStepMachTime` 不能用同一整数互换。
+
+### 8796 gate 和取消边界
+
+- 固定 feed `xnu-c465a9f8` 检出 `1b191cb5`；`IOService.cpp`、`IOWorkLoop.cpp`、
+  `IOTimerEventSource.cpp` 与 nuwa 8796 实际构建树副本逐字节一致。
+  `IOService.cpp:3274–3275` 的 finalize 路径用 **victim** 的 loop；
+  `:3087 → :3387` 确有在该路线上直接调用虚 `stop(provider)` 的分支。
+  但 phase-3 stop (`:3323–3324 → :3106`) 以 **provider** 为 `_workLoopAction`
+  的目标，`:2476–2482` 取目标的 loop，有 loop 才 `runAction`，否则直接调用。
+  本板 provider 是挂在 IOResources 下的 `IOPlatformDevice`（`package/NuwaLegacyDisplay.cpp:113–145`），
+  其继承的取 loop 路线是 `IOService.cpp:1347–1355,7066–7075` 的 provider /
+  platform loop；显示对象则用 donor `getWorkLoop` slot 111 (`5c122bc`，`self+5048`)。
+  没有同一性保证，不能把 phase-3 stop 或 `free()` 当成已持显示 gate。
+- `NativeLegacyDisplay.cpp:423–436` 把 timer 加到显示 loop；首次 arm 用 `runAction`，
+  但 `vsyncTimer` 和速率字段先在 gate 外发布。默认两参工厂是 KernelHigh，
+  即 passive `timeoutAndRelease`：`IOTimerEventSource.cpp:359–363,259–262,291–302`。
+  `wakeAtTime` 保存 loop、递增 generation、为排队调用保留 timer/loop (`:546–575`)；
+  到期先关同一 loop gate，再比较 generation，才会调用 owner (`:174–193`)。
+  `IOEventSource.cpp:158–169` 的 owner 只是裸指针，不能把 timer retention 当成 owner retention。
+- 同一个 donor gate 串行化 client 链表：selector 72/73 落在 §12 的两个
+  `runAction`，index 5 插入后走跳表 `5c1b200 → 5c1b168 → 5c1b18c`，
+  后者 `vptr+0x8a0` 是 **slot 276** (`kickSwapQueue`)，不是驱动注释里的 slot 290。
+  移除在 gate 内摘链（例如 `5c1b41c/440` 更新相邻节点／队尾），不是取消 timer。
+  `NativeLegacyDisplay.cpp:412–421` 的 tick 读队头、发送并 rearm；若最后一个
+  client 已被移除且未重新注册，下一 tick 在 `:415` 退出，不发送或重挂。
+  但 `kickSwapQueue → armVsync` (`:555–556`) 本身不进 gate；注册这一个 caller
+  持 gate，不能推到所有调用路径（如 `gpuComplete:452` 明有无 loop 的 fallback）。
+- `stopVsync:438–442` 先在外层 gate 未证时 `cancelTimeout()`；默认 passive
+  的实现只递增 generation 并撤队，不等待已在途回调
+  (`IOTimerEventSource.cpp:356,386–396`；`thread_call.c:1387–1401`)。
+  `removeEventSource` 才通过同一 loop 的 control gate 摘链、`setWorkLoop(NULL)`
+  （会 `disable`，再次使 generation 失效）并释放 loop 对 event source 的引用
+  (`IOWorkLoop.cpp:313–315,623–670`；`IOEventSource.cpp:279–285`)。
+  成功移除不是 callout 线程 join，也不覆盖移除前的 cancel 和移除后的成员清零。
+  具体未排除的交错：tick 已通过 generation 检查并持 gate → 外线程 cancel →
+  该 tick 仍可 send/rearm → 外线程等到 gate 才 remove。未观测到实机竞态，
+  不能把上述交错说成 remove 成功后仍会调用 owner。
+
+**可复用方案，未实现：** 复用 `IOWorkLoop::runAction`（8796 `IOWorkLoop.cpp:565–576`
+同步、可递归），以 timer 注册时所用且在调用窗口内保活的 **显示 loop** 为唯一串行域。
+将 timer 发布、首次 arm、所有 kick 的 vsync 部分、tick 的队列读/发送/rearm、stop
+的状态撤销和 `cancel → remove → release` 放在这个域；不把整个 swap 或
+`IOMobileFramebufferLegacy::stop` 移入新 action。不得在取 gate 前读 timer 成员
+决定是否清理；在 gate 内先使 vsync 不再 active、清成员和 armed，再对保留的局部
+timer cancel/remove，只在成功摘链后释放驱动持有的 timer 引用。摘链失败不得当作已停止，
+更不能带着活动 timer 走 owner free。`free` 应依赖正常/失败 unwind 已清理的同一
+不变量，不从已拆掉的父类 loop 猜取一个新 loop。外层若已经持 provider gate，需先证
+两者的锁序或选无外层 gate 的显式清理点。递归 gate 也不是禁止重入：若 sender
+有同线程 stop 重入或会让 gate，须分别验证中途不再继续发送以及返回后按原 source /
+active 状态拒绝 rearm。timer action 应在第一次改状态前确认 source 仍是 active
+timer；不得在持 gate 时等待需要同 gate 的 passive callout。
+
+**解除判据：** 在实际 8796 IOKit 验证中区分显示/注册 gate 和 provider gate；
+覆盖已排队未入 gate 的 tick、正在发送且马上 rearm 的 tick、最后 client remove 在
+tick 前/后、stop 后 kick、重复 stop/free、start 失败回滚及 sender 重入。判据是
+停机 action 撤销后无 owner 回调发送、无新 wake；过期 callout 可退场且引用平衡，
+成功摘链、无双释放、无 gate 自等或锁序逆转。消息字序仍按 §13 的计数／时标／间隔，
+不复用现有三参数语义。属性侧可先用已定位的两个 reader 建离线 CF 输入夹具：
+整字典缺失/错型、逐键缺失、零值、替换一个单位而保持其它键固定；断言 Quartz
+fallback 和 MediaToolbox 三个独立输出，再用 20H392 真实 TU 检查获批 formatter /
+拒绝路径。夹具不代替真实 reader 或实际 IOKit 调度测试。
+本轮未改变 import、timer、Libm 或设备构建输入，故未跑适配 TU/拒绝测试、未上机、
+未独立复跑。
