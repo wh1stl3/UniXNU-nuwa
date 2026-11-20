@@ -1,6 +1,6 @@
 # 20H392 Libm pool escape: bounded stop (self-checked)
 
-**INCONCLUSIVE / no qualification.** The first bounded pass finds additional
+**NOT-QUALIFIED / no data-area qualification.** The first bounded pass finds additional
 pool references and unresolved ADR uses; the requested exact-five criterion
 is not established. Per stop condition, no whitelist or scanner change.
 This is an incomplete candidate inventory, not a proof that the unresolved
@@ -29,7 +29,7 @@ references escape or are reachable instructions.
   ADD and LDP decoded as expected in a preliminary test.
 * Re-run from this repo in WSL:
   `python3 scripts/audit-libm-pool-escape.py > /tmp/libm-audit.json`.
-  Exit 2 denotes inconclusive, not a pass. JSON includes complete module list
+  Exit 2 denotes not-qualified, not a pass. JSON includes complete module list
   and raw hit table; output is not required for input or stored in Git.
 
 ## A1 candidate hits
@@ -91,10 +91,67 @@ Both in Libm. Initial slot values are `0xfffffff005b8b000` and
 `0xfffffff005b8b008` respectively, both in Libm executable file backing and
 outside the pool. Function-entry status is **unproven**.
 
-The script stops tracking at a write to the ADRP register, including ADD to
+In the initial pass the script stopped tracking at a write to the ADRP register, including ADD to
 the same register; it does not follow the resulting slot pointer, reconstruct
 all stores or their values, inspect `__mod_init_func` / kmod start, or prove
-function entries. Direct ADR uses are not tracked. Thus the two slot hits are
-not a complete writer inventory. A1, A2 and A3 are **not established**; no
+function entries. Direct ADR uses were not yet tracked. Thus the two slot hits
+were not a complete writer inventory. A1, A2 and A3 were **not established**; no
 runtime, ABI, or device conclusion follows. The incomplete implementation is
-explicitly fail-closed and exits 2.
+initial pass was explicitly fail-closed and exited 2. The continuation below
+supersedes these initial method limitations where explicitly stated.
+
+## Continuation: bounded address tracing (self-checked)
+
+The current script carries address-register aliases through an ADD and
+post-indexed data loads, for up to 16 instructions. Its output replaces the
+earlier classifications in the table, but not the candidate addresses.
+Of the 33 candidates: 20 literal reads; 4 ADR-derived data reads whose
+tracked lifetime terminates in the bounded trace; 6 ADR-derived reads with a
+remaining live address at a branch or the 16-instruction limit; and 3
+pool-internal self-reference candidates. The last 3 are not demonstrated
+instructions: treating them as data would assume the conclusion.
+
+| ADR PC | observed uses | unresolved boundary |
+|---|---|---|
+| `0xfffffff005b8bcd8` | ADD `0xfffffff005b8bcdc`, LDP `0xfffffff005b8bce0` | branch `0xfffffff005b8bcf0`, address remains live |
+| `0xfffffff005b8bd94` | LDP `0xfffffff005b8bd98` | conditional branch `0xfffffff005b8bdb4`, address remains live |
+| `0xfffffff005b8bdb8` | LDP `0xfffffff005b8bdbc`, LDR `0xfffffff005b8bdc0` | 16-instruction limit, address remains live |
+| `0xfffffff005b8be68` | ADD `0xfffffff005b8be6c`, LDP `0xfffffff005b8be70` | 16-instruction limit, address remains live |
+| `0xfffffff005b8bf78` | LD1 `0xfffffff005b8bf7c`, `0xfffffff005b8bf80`, `0xfffffff005b8bf94` | conditional branch `0xfffffff005b8bfac`, address remains live |
+| `0xfffffff005b8bff8` | ADD `0xfffffff005b8bffc`, LDP `0xfffffff005b8c000` | branch `0xfffffff005b8c01c`, address remains live |
+
+The JSON has an instruction-by-instruction use list for every ADR. None of
+the six table entries has an observed address escape in its bounded window;
+the missing fact is what happens to its still-live alias beyond that window
+or branch. The three interior candidates `c384/c394/c3a4` are raw decodings,
+not proof of pool entry. This conservative result does not establish that
+an actual escape occurs.
+
+Slot path tracing now shows:
+
+| path | actual instructions | writer evidence |
+|---|---|---|
+| start | `e97c` ADRP; `e980` ADD; `e984` LDR x2; `e988` CBZ; `e98c` BR x2 | read and indirect branch, **not** a store |
+| stop | `e9c8` ADRP; `e9cc` ADD; `e9d0` LDR x2; `e9d4` CBZ; `e9d8` BR x2 | read and indirect branch, **not** a store |
+
+PCs in the table have prefix `0xfffffff005b8`. The module has no
+`__mod_init_func` section. Its `_PrelinkKmodInfo` is
+`0xfffffff007a3d3c0`; the standard packed kmod start/stop fields at +180
+are `0xfffffff005b8e97c` and `0xfffffff005b8e9c8`, respectively.
+Neither local path writes a slot. The page-derived scan with ADD propagation
+found no STR/STP to either slot, but is not a complete indirect-writer proof:
+the exact missing fact is whether any selected code writes either slot
+through a pointer obtained by another route, including passed parameters or
+memory-derived aliases. No particular such writer has been established.
+
+Libm has no `LC_FUNCTION_STARTS` and its symbol table has zero entries.
+Each initial slot points to a distinct aligned `mov w0,#0; ret` two-word
+stub, and each is used as the initial target of the respective start/stop
+indirect branch. That cross-check supports the entry interpretation, but does
+not provide function-start metadata or establish later slot values.
+
+**Final qualification: NOT-QUALIFIED.** The six live-address boundaries
+above and the unclosed indirect-writer set prevent proving no pool-address
+escape or future control-flow target. The observed initial slot values being
+outside the pool is insufficient. No whitelist, production scanner, device,
+or runtime was changed or exercised.
