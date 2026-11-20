@@ -18,6 +18,10 @@
 .globl __ZN25IOMobileFramebufferLegacy17applyStateRequestEP26OriginalLegacyStateRequestb
 .set __ZN25IOMobileFramebufferLegacy17applyStateRequestEP26OriginalLegacyStateRequestb, 0xfffffff005c1c1d8
 
+// Original gMetaClass static storage at donor VA + collection slide.
+.globl __ZN25IOMobileFramebufferLegacy10gMetaClassE
+.set __ZN25IOMobileFramebufferLegacy10gMetaClassE, 0xfffffff006a45540
+
 // Qualified IOSurface getters. Descriptor is borrowed; W loads zero-extend.
 .text
 .p2align 2

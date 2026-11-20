@@ -86,6 +86,8 @@ REQUEST = {
     'node_previous': 2416,
 }
 INSTANCE_BYTES = 0x1660
+COLLECTION_SLIDE = -0x1000000
+METACLASS = '__ZN25IOMobileFramebufferLegacy10gMetaClassE'
 
 
 def va(text):
@@ -148,6 +150,59 @@ def check_words(image, address, words, label):
 def check_string(image, address, text):
     if image.read(va(address), len(text) + 1) != text.encode() + b'\0':
         raise SystemExit(f'{address}: expected donor string {text!r}')
+
+
+def adrp_page(pc, word):
+    imm = ((word >> 5) & 0x7ffff) << 2 | ((word >> 29) & 3)
+    return (pc & ~0xfff) + ((imm ^ 0x100000) - 0x100000) * 0x1000
+
+
+def derive_metaclass(image, vptr):
+    init_table = next(s for seg in image.module['segments'] if seg['name'] == '__DATA_CONST'
+                      for s in seg['sections'] if s['name'] == '__mod_init_func')
+    init_entry = init_table['va'] + 9 * 8
+    init, ctor = va('5c25b94'), va('5c0bc6c')
+    if init_table['size'] != 0x50 or image.qword(init_entry) != init:
+        raise SystemExit('Legacy gMetaClass: family initializer table entry changed')
+    check_words(image, '5c25b94', [0xa9bf7bfd, 0x910003fd, 0x97ff97e9],
+                'Legacy gMetaClass initializer calls x0 materializer')
+    check_words(image, '5c0bb40', [0xa9bf7bfd, 0x910003fd, 0xd000f1c0, 0x91150000, 0x94000003],
+                'Legacy gMetaClass materializes x0 and calls constructor wrapper')
+    check_words(image, '5c0bb5c', [0xd10083ff, 0xa9017bfd, 0x910043fd, 0xf90007e0,
+                0xf94007e0, 0xf90003e0, 0x9400003e], 'Legacy gMetaClass wrapper forwards x0 to ctor')
+    check_words(image, '5c0bc6c', [0xd100c3ff, 0xa9027bfd, 0x910083fd], 'Legacy metaclass ctor entry')
+    check_words(image, '5c0bc94', [0xd0ff9ac1, 0x91192821, 0xd000f1a2, 0x91000042,
+                0x5282cc03, 0x94006c59, 0xf94007e0, 0xf9400be8, 0xf9000008],
+                'Legacy metaclass ctor names class, passes size and stores vptr')
+    check_string(image, '4f6564a', 'IOMobileFramebufferLegacy')
+
+    def address(pc):
+        return adrp_page(pc, image.word(pc)) + ((image.word(pc + 4) >> 10) & 0xfff)
+
+    obj = address(va('5c0bb48'))
+    getter_site = vptr + 7 * 8
+    getter = image.qword(getter_site)
+    if getter != va('5c0bc54'):
+        raise SystemExit('Legacy gMetaClass: original slot 7 getter changed')
+    check_words(image, '5c0bc54', [0xd10043ff, 0xf90007e0, 0xd000f1c0, 0x91150000,
+                0x910043ff, 0xd65f03c0], 'Legacy getMetaClass independently returns object')
+    if obj == ctor or obj != address(getter + 8):
+        raise SystemExit('Legacy gMetaClass: getter does not corroborate distinct static object')
+    data = next(s for s in image.module['segments'] if s['name'] == '__DATA')
+    common = next(s for s in data['sections'] if s['name'] == '__common')
+    parent = next(s for s in image.image['segments'] if s['name'] == '__PRELINK_DATA')
+    text = next(s for s in image.module['segments'] if s['name'] == '__TEXT_EXEC')
+    if (not common['va'] <= obj <= common['va'] + common['size'] - 8
+            or not data['va'] <= obj <= data['va'] + data['filesize'] - 8
+            or not parent['va'] <= obj <= parent['va'] + parent['filesize'] - 8
+            or data['initprot'] != 3 or parent['initprot'] != 3 or image.qword(obj) != 0
+            or text['initprot'] != 5 or not text['va'] <= ctor < text['va'] + text['filesize']):
+        raise SystemExit('Legacy gMetaClass: unexpected object/constructor placement')
+    return dict(symbol=METACLASS, object=hex(obj), ctor=hex(ctor), init_entry=hex(init_entry),
+                getter_site=hex(getter_site), getter=hex(getter), segment='__DATA',
+                section='__common', parent_segment='__PRELINK_DATA',
+                data_offset=hex(obj - data['va']), collection_slide=COLLECTION_SLIDE,
+                linked_address=hex(obj + COLLECTION_SLIDE))
 
 
 def derive_surfaces(family, surface):
@@ -286,6 +341,7 @@ def main():
     surfaces = derive_surfaces(image, Image(args.base, args.kernelcache, SURFACE))
     timing = inspect_unbound_timing(image, Image(args.base, args.kernelcache, DONOR_DISPLAY))
     vptr, slots, values = find_vtable(image)
+    metaclass = derive_metaclass(image, vptr)
     if slots != SLOTS:
         raise SystemExit('slot count %d, expected %d' % (slots, SLOTS))
     abstract = [i for i, value in enumerate(values) if value == values[PURE[0]]]
@@ -544,6 +600,9 @@ enum : unsigned {
              '// Absolute bindings for the original Legacy entry points that the port calls directly.']
     for symbol, address in bindings:
         lines += ['.globl ' + symbol, '.set ' + symbol + ', 0x%x' % address]
+    # Data imports use sheng's slide-adjusted absolute symbol / GOT method.
+    lines += ['', '// Original gMetaClass static storage at donor VA + collection slide.',
+              '.globl ' + METACLASS, f'.set {METACLASS}, {metaclass["linked_address"]}']
     lines += ['', '// Qualified IOSurface getters. Descriptor is borrowed; W loads zero-extend.',
               '.text', '.p2align 2']
     for name, info in surfaces.items():
@@ -562,6 +621,7 @@ enum : unsigned {
                                    hex(max(v for i, v in enumerate(values[168:], 168) if i not in PURE))],
                     abstract=abstract, pure_target=hex(values[abstract[0]])),
         instance_bytes=INSTANCE_BYTES,
+        metaclass=metaclass,
         slots={str(slot): dict(address=hex(values[slot]), prototype=text, abstract=slot in PURE)
                for slot, text in sorted(named.items())},
         instance=INSTANCE,

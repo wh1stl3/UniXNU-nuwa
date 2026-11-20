@@ -766,3 +766,71 @@ QuartzCore `.03`、IOMobileFramebuffer `.13`、vtable `.27.dylddata` 及符号
 指令逐项对照上述 VA。8796 核对上述 `IOService`/IPC 行号，Libm 用上段原函数复跑，
 预期同一拒绝。没有新增 DUT/模型用例、未改真实 TU 或构建/链接输入；没有运行
 新编译、上机或独立 verifier。显示仍 `planned`；优先取证 A2，不宣称首帧已运行。
+
+## 17. Legacy 静态 `gMetaClass`：20H392 主机链接
+
+方法复用：`UniXNU/UniXNU-sheng@c8f92b208068eeaa4cd2b0f592671f04ee70076e`
+（BSD-2-Clause-Patent，见该提交 `LICENSE`），
+`scripts/build-gop-legacy-display-27.py` 的 data import「donor VA + collection slide，
+`.globl` / `.set`」及 `scripts/check-legacy27-binds.py` 的构造函数 `x2` GOT
+读回。未移植 sheng 的地址、arm64e 签名、函数 thunks 或任何板值。
+
+- **初始化表 → x0。** 锁定 §1 的 20H392 kernelcache。`IOMobileGraphicsFamily`
+  `__DATA_CONST,__mod_init_func` 起始 `0xfffffff006deb4d8`，10 项；
+  第 10 项 `0xfffffff006deb520` 指向 `0xfffffff005c25b94`，其 `+8` 的 BL
+  调 `0xfffffff005c0bb40`。`0xfffffff005c0bb48/4c` 的 `ADRP x0` / `ADD x0`
+  得 `0xfffffff007a45540`；`0xfffffff005c0bb50` 调
+  `0xfffffff005c0bb5c`，wrapper 保存并恢复同一 `x0`，在
+  `0xfffffff005c0bb74` 调锚点 `0xfffffff005c0bc6c`。锚点给 base ctor
+  传 `x1="IOMobileFramebufferLegacy"`（`0xfffffff004f6564a`）和 `w3=0x1660`，
+  随后在 `0xfffffff005c0bcb4` 给对象首字写入 metaclass vptr。
+- **独立 getter。** 原类 vptr `0xfffffff006def8e0` 的 slot 7
+  （`0xfffffff006def918`）指向 `0xfffffff005c0bc54`；函数在 `+8/+12`
+  用另一组 `ADRP/ADD` 返回 `0xfffffff007a45540`，没有经过上述 init/caller。
+  目标为原 family 可写 `__DATA,__common` 中的静态对象，首 qword 初始为零，
+  相对 `__DATA` 起点偏移 `0x7280`，并非 `__TEXT_EXEC,__text` 的构造函数。
+- **放置合同。** `XnuPrelink@f1d80d37528a33e24643583787123c652b70a268`
+  对选中的 family 保持其 coalesced 段内偏移；`-0x1000000` 时其
+  `__DATA` 变为 `[0xfffffff006a3e2c0, 0xfffffff006a5d588)`，
+  位于 RW `__PRELINK_DATA` `[0xfffffff006a08000, 0xfffffff006bbc000)`；
+  对象是 `0xfffffff006a45540`，构造入口则是 RX `0xfffffff004c0bc6c`。
+  同一页对齐 slide 保留 family 内 `ADRP/ADD` 相对位移。donor
+  `_PrelinkLinkKASLROffsets` 包含 init 表项和 getter 槽，不包含对象的初始零字。
+  原生端为唯一 `N_ABS` 导入绑定，不分配对象内存，也不把 native GOT 交给 donor
+  指针表修补。若真实 emit 成功，构建器再核查 family 数据段及 getter 槽、以及原生
+  GOT 是否仍指向同一个静态对象；这里是合同，不是本轮已有最终 kernel 的证据。
+
+**自检（WSL root，基线 `6372657` + 本节变更）。** 实际 8796 CPO 编译的对象
+在 `__text+0x44/0x260/0x4fc0` 有三组 `GOT_LOAD_PAGE21/PAGEOFF12`，
+全为 `ADRP/LDR x2`；另有一个 `__const` 的 8 字节 `superClass` 指针重定位。
+独立同工具链的最小静态链接探针（不是驱动链接替代）使用真实生成的
+`original-bindings.o`，在 GOT `0xfffffff007008000` 和 `superClass` 均读到
+`0xfffffff006a45540`。将 GOT 改回未 slide 的对象地址会被拒绝；将 donor init 表项
+或 getter 槽单独替换为构造入口也各自被拒绝。探针和 `check.py` 仅留在本地
+`out/nuwa-display-native-metaclass-04/`。生成头文件与旧版逐字节一致。
+
+```sh
+obj=/root/nuwa-pmap-ret-native-20261111/nuwa/ios-16.7.16-20H392/nuwa_pmap_ret/tree/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837
+python=/home/wh1stl3/.local/bin/python3.11
+"$python" -B scripts/build-nuwa-display-native.py --base ../../UniXNU \
+  --cpo "$obj/iokit/DEVELOPMENT/IOPMGR.cpo.json" \
+  --link-dir "$obj/mach.development.bcm2837.link" \
+  --linker-dir /opt/unixnu-linux/CommandLineTools/usr/bin \
+  --out out/nuwa-display-native-metaclass-04
+```
+
+复跑须换新 `--out`。实际 `-new_linker -static` native 重链退出 1，首错为
+`__ZN25IOMobileFramebufferLegacy13setPropertiesEP8OSObject` 未定义，由
+`NativeLegacyDisplay.manual.o` 的 `__ZTV19NativeLegacyDisplay` 引用。
+archive SHA256 `41f0c34dbd6ebab7be24e6b39beca5992da3372ee18a490daf78c7fe1ce398c7`；
+380 个未解导入相对上轮仅少 `gMetaClass`，引用归属和弱引用位均不变。
+剩余 **159 个原类 imports**：
+
+- `setProperties(OSObject*)`、`systemWillShutdown(unsigned)`、`init(OSDictionary*)`、
+  `probe(IOService*, int*)`、`getWorkLoop() const`、基类 `C2(OSMetaClass const*)` 和 `D2()`。
+- 152 个 `opaque<N>()`：168–183、185–187、189–210、213–241、244–245、247–273、
+  275、277–280、283–286、288–291、294–320、323–328、330–335、337。
+
+真实 native 产物及 strict emit 未到达，不以 §16 的独立 Libm 拒绝当成本轮首错。
+既有函数/vtable 绑定的最终落位不在这一项数据导入的资格声明内。未造剩余定义、
+未改扫描/329/330 门禁、未启用 runtime 或触碰设备；尚无独立 verifier。

@@ -18,7 +18,7 @@ DEFERRED = {'_native_legacy_set_refresh_properties', '_native_legacy_vsync_notif
 # The pinned 8796 reference import list includes owner and weak-ref bits;
 # different toolchains may need a deliberate requalification, not a whitelist
 # that silently swallows new unresolved symbols.
-UNRESOLVED_SHA256 = '18c7dc556bb9a3c27a2338e960bd13ebff9b98edb51cc568e9793a8d285e915d'
+UNRESOLVED_SHA256 = 'ec82b3611863f1cbca42d8525655c098fae248cc4a18ce020c4faa7d885f604d'
 SLOTS = {
     184: '__ZN19NativeLegacyDisplay13isMainDisplayEv',
     188: '__ZN19NativeLegacyDisplay11getDotPitchEPj',
@@ -149,12 +149,43 @@ def inspect_initializers(base, raw, late):
         raise SystemExit('expected one external manual initializer in the host archive member')
 
 
+def inspect_metaclass_import(blob, sections, symbols, name):
+    got_page, got_pageoff = 0x5d, 0x6c  # ARM64_RELOC_GOT_LOAD_* plus width/extern/pcrel
+    index, = (i for i, sym in enumerate(symbols) if sym[0] == name)
+    if symbols[index][1:3] != (1, 0) or symbols[index][4] != 0:
+        raise SystemExit(f'{name}: expected an undefined object import in the driver')
+    pairs = []
+    pointers = []
+    for sec in sections:
+        start, count = struct.unpack_from('<II', blob, sec['command_offset'] + 56)
+        relocs = [(off, word >> 24) for off, word in
+                  struct.iter_unpack('<II', blob[start:start + count * 8])
+                  if word & (1 << 27) and word & 0xffffff == index]
+        for off, kind in relocs:
+            at = sec['fileoff'] + off
+            if sec['name'] == '__text' and kind == got_page and (off + 4, got_pageoff) in relocs:
+                if struct.unpack_from('<II', blob, at) != (0x90000002, 0xf9400042):
+                    raise SystemExit(f'{name}: expected ADRP/LDR into x2')
+                pairs.append(hex(sec['va'] + off))
+            elif sec['name'] == '__text' and kind == got_pageoff and (off - 4, got_page) in relocs:
+                continue
+            elif sec['name'] == '__const' and kind == 0x0e and not struct.unpack_from('<Q', blob, at)[0]:
+                pointers.append(hex(sec['va'] + off))
+            else:
+                raise SystemExit(f'{name}: unexpected relocation {sec["name"]}+{off:#x} ({kind:#x})')
+    if len(pairs) != 3 or len(pointers) != 1:
+        raise SystemExit(f'{name}: expected three GOT load pairs and one plain pointer')
+    return {'got_pages': pairs, 'plain_pointers': pointers}
+
+
 def inspect_archive(base, archive, members):
     names = subprocess.check_output(['llvm-ar', 't', archive], text=True).splitlines()
     if names != [obj.name for obj in members]:
         raise SystemExit('unexpected archive member list')
     definitions, undefined = {}, {}
     paths = {}
+    abi = json.loads((ROOT / 'package/nuwa-display-abi.json').read_text())
+    meta = abi['metaclass']
     for obj in members:
         blob = subprocess.check_output(['llvm-ar', 'p', archive, obj.name])
         original = obj.read_bytes()
@@ -165,9 +196,13 @@ def inspect_archive(base, archive, members):
         sections, symbols = object_layout(base, blob)
         if constructor_sections(blob, sections):
             raise SystemExit(f'{obj.name}: archive contains automatic initialization/termination')
+        if obj == members[0]:
+            meta_relocs = inspect_metaclass_import(blob, sections, symbols, meta['symbol'])
         if obj == members[2]:
-            for getter, info in json.loads(
-                    (ROOT / 'package/nuwa-display-abi.json').read_text())['surfaces'].items():
+            binding, = (sym for sym in symbols if sym[0] == meta['symbol'])
+            if binding[1:] != (0x03, 0, 0x20, int(meta['linked_address'], 16)):
+                raise SystemExit(f'{obj.name}: expected absolute slid gMetaClass, not a definition of storage')
+            for getter, info in abi['surfaces'].items():
                 name = '_native_legacy_surface_' + getter
                 (_, kind, section, _, value), = (sym for sym in symbols if sym[0] == name)
                 sec = sections[section - 1]
@@ -192,6 +227,9 @@ def inspect_archive(base, archive, members):
     if definitions.get(INIT) != [(members[0].name, False)] or undefined.get(INIT) != [
             (members[1].name, False)]:
         raise SystemExit('manual initializer must be defined by the driver and imported by the board TU')
+    if definitions.get(meta['symbol']) != [(members[2].name, False)] or undefined.get(meta['symbol']) != [
+            (members[0].name, False)]:
+        raise SystemExit('original gMetaClass must be a strong binding only for the driver import')
     unresolved = {name: imports for name, imports in sorted(undefined.items()) if name not in definitions}
     missing_glue = {name for name in unresolved if name.startswith(
         ('_native_legacy_surface_', '_native_legacy_set_refresh_', '_native_legacy_vsync_'))}
@@ -206,6 +244,7 @@ def inspect_archive(base, archive, members):
     fingerprint = hashlib.sha256(json.dumps(
         unresolved, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
     return {'members': paths, 'unresolved': unresolved, 'unresolved_sha256': fingerprint,
+            'metaclass_relocations': meta_relocs,
             'automatic_initializers': 0,
             'manual_initializer': INIT, 'runtime_eligible': False, 'sha256': sha256(archive)}
 
