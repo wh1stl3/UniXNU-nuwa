@@ -287,3 +287,60 @@ llvm-readobj --relocations "$HOST/NativeLegacyDisplay.manual.o"
 这是未解析清单校验而非链接通过。两个计时入口仍未解析，Legacy 剩余外部解析需另证。
 运行仍禁用：329 TimingEnable 和 330 超时后的请求/队列生命周期未闭合。没有改 hook、
 内核档案列表、Libm 或 prelink；没有做最终链接、上机候选或设备操作。
+
+## 12. 方案 A：refresh 注册阶段与 vsync 串行域（self-checked）
+
+输入同 §11：20H392 donor SHA256 `2ec297bac95bcba01046fd0148e97e7e5885c05a6c18827f39f534ba375c1221`，
+设备基线 `f0a85a2`、基座 `693f5d9c`、驱动 `e47c1b8`。以下 donor VA 省略 `0xfffffff000000000`；
+以 Mach-O 段映射、ARM64 反汇编、vtable/GOT 和内核符号表交叉核对。只记录证据，不加绑定。
+
+**Refresh 在硬件启动成功路径、首次服务注册之前发布。**
+
+- H10P vptr `6e06980` 的 slot 86 为 `5ccff04`，`5ccff70` 经 `[6dfba78]` 调用 Legacy
+  `start`（`5c0c8cc`）。该函数在 `5c0d5dc` 调 slot 274，返回假即跳到失败返回，不到
+  `5c0d77c` 的 slot 84 (`registerService(0)`；`6e06c20 → IOService::registerService`)。
+- H10P slot 274 `5cd0238` 在 `5cd0280` 同步取 gated action 的结果；wrapper vptr
+  `6dec2b0` slot 13 `5bfac78` 在 `5bfad6c` 调 gate `runAction`。action `5cdd558`
+  → `5cd0298` → `5cd03f8` → `start_hardware_boot` `5ccfb0c`。late-init 成功才到
+  `5ccfc74 → 5ce1650 → [6dfb618] → 5c23610`；helper 返回假沿 `5cd03fc` 退出，
+  不进入注册。`5c237b8` 的属性写入本身不检查返回值，不能把 helper 为真当作 IORegistry 回读。
+- nuwa `NativeLegacyDisplay.cpp:862–888` 确实在同一个 slot 274 验证 GOP 映射并设置
+  子类 `primary`；`:524–531` 的发布也在 `IOService::registerService` 前。因此**阶段已对齐**，
+  但不能直绑：donor `5c23698–5c236b8` 读 `self+5410` 的位作为 slot 287 的 `fixed`
+  输入，不走子类 `isMainDisplay()`；Legacy `5c0d3dc` 清该字节，GOP `primary` 写的是
+  子类成员。`:539–547` 用 `fixed` 决定是否改最大间隔，而 `:530` 不消费发布函数返回值。
+  最小下一步：用不启动内核的用例核对六个属性值（32.32 秒／mach ticks，含固定／非固定）、
+  GOP 模式对应的显式速率策略及发布失败行为，再决定设备侧 formatter；不写 donor 私有状态来凑输入。
+
+**vsync 注册／移除与定时发送锚定同一个 workloop；不是整个发送／停机链都已证明串行。**
+
+| donor 路径 | 锚点与结论 |
+| --- | --- |
+| 注册／移除 | selector 72/73 行 `6ded218/230` → `5c00b44/bac` → 用户客户端 framebuffer 的 vslots 208/209（`5bfead8/5bfeb68`）。`5c1b00c/5c1b2a0` 都从 `self+5040` 调 `IOCommandGate::runAction`（gate vptr `715cce0` slot 29 → `777a24c`）。gated bodies `5c1b01c/5c1b2b0` 插入／摘链，从 `self+4912+16*index` 取队列；index 5 正是 sender 的 `+4992`。 |
+| 定时发送 | `5c0c4e8 → 5c26e90 → [6deaf68]` 创建 +5040 gate，`5c0c59c` 挂到 +5048 loop。donor 的 **fake benchmark** timer `5c0d138` 的 action 是 `5c0daec`，`5c0d19c` 把 timer 挂到 slot 111 所返的同一个 +5048 loop（`5c122bc`）。`5c1b838` 本身不进 gate；在 `5c1b948` 读头、`5c1b980` 发送、`5c1b9b4` 走 next。 |
+| 直接发送／停机 | `5c10084` 在 Legacy slot 330 `5c0fbe8` 内；经 `5c1082c` 的非 benchmark 分支到 `5c10894`，无自身 gate，不能由定时器锚点推导所有调用者已持 gate。Legacy slot 87 `5c0dff4` 的 `5c0e24c/254` 释放并清 timer 成员，`5c0e2d4` 在同一 loop 上移除 command gate；没有包住整个 stop 的 `runAction` 锚点。nuwa `:423–442` 同样把 timer 挂到 `getWorkLoop()`，但 `stop/free` 改状态、cancel/remove/release 没有整体 gated action。真实 8796 的 `IOTimerEventSource.cpp:149–156,176–184` 在回调前关 loop gate；不等于证明 teardown 全段持 gate，也不等于观测到竞态。 |
+
+即使串行域补齐，现有 `NativeLegacyDisplay.cpp:417` 也不能绑定该 sender：`5c0dbbc–5c0dbc8`
+把本次时标与递增计数分别写到 +5680/+5672，`5c0db88–5c0dbb4` 生成相邻时标间隔
+（首帧用配置间隔），`5c0dc28–34` 依次传**计数、时标、间隔**，并非 nuwa 的
+`absoluteTime、continuousTime、interval`。直接路径另从 +176/+184/+192 取值（`5c10078–84`）。
+最小下一步：只读追这三个直接路径字段的写者和 slot 330 的 caller gate，再用 host-only
+测试固定消息六字的顺序与单位，覆盖注册→tick→移除、tick 已排队→stop 后无发送／重挂。
+没有通过上述检查前，不改 timer／gate，不加空 sender。
+
+**CPU-only 范围。** `package/NuwaLegacyDisplay.cpp:200` 拒绝 GPU offer；若同时保持
+`startDirect` 条件不成立（驱动 `:268–270`），GPU completion 请求、direct latch 和 fence
+分支不可达，但 `validated`、`transferred` 仍非空操作（`:600,718,743–763`）。
+例如未设置两个退休选项时，CPU copy 已结束而 `retireSwap(...,false)` 不完成请求，
+`transferred` 留置。donor 5 秒 wait 并不以 GPU/direct scanout 为前提（`5c11884/5c118d8`）；
+超时支线的 slot 329/330 调用（`5c11984/5c11a78`）不能以 CPU-only 判为不可达，
+也不能以禁用 C++ cancel override 判为已实现。没有执行此支线，guard 保持。
+
+**复跑。** WSL root 按 §11 的命令，`GEN=out/nuwa-display-timing-donor-recheck` 重派生，
+三个生成文件逐字节一致；真实 CPO 使用新 `HOST=out/nuwa-display-host-timing-recheck`。
+归档 612752 B，SHA256 `a8fc69395ebe0e314d1f9ec1ef13bf1931aae1359ff7691a9ce7ae904dd5bf1a`；
+归档三成员、手动初始化、六个槽和 381 项未解析指纹同 §11，`runtime_eligible=false`。
+两个负例：复用新 `compile.json` 的 `directory`/`arguments` 仅把取消宏置 1、改 `-o` 到新对象，
+clang 在 `NativeLegacyDisplay.cpp:770:36` 拒绝 `override`（exit 1，无对象）；§11 的
+derive 命令改用 1 字节零输入和新输出目录，拒绝非固定 donor（exit 1，无输出目录）。
+未链接、未改 Libm／guard、无可运行候选、无设备操作，未独立复跑。
