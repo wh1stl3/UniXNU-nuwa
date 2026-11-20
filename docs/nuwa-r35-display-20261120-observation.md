@@ -1,5 +1,8 @@
 # r35 display integration — host only, self-checked
 
+Historical experiment: product policy now separates OFF (original r35) and
+ON (display kernel). See [budget and split](nuwa-r35-display-budget-20261120-observation.md).
+
 Full diagnostic kernel linked and emitted; **no vendor_boot candidate**. No
 device I/O, base changes, runtime verification or merge. `6bfd722` had Plan B
 PASS WITH CONDITIONS (parent report); that review did not cover this integration.

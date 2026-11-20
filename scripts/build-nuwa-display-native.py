@@ -83,6 +83,59 @@ def definitions(path):
     return Counter(row[0] for row in nm_rows(path) if row[1] != "U")
 
 
+def audit_debug_strip(full, compact):
+    from native_prelink import macho
+
+    before, after = macho(full), macho(compact)
+    if full[:32] != compact[:32] or before["commands"] != after["commands"]:
+        raise SystemExit("debug-free relink changed Mach-O header or command layout")
+    header_end = 32 + struct.unpack_from("<I", full, 20)[0]
+    ignored = {2, 0x1b}  # LC_SYMTAB, LC_UUID
+    for code, at, size in before["commands"]:
+        orig, new = full[at:at + size], compact[at:at + size]
+        if code == 0x19 and orig[8:24].rstrip(b"\0") == b"__LINKEDIT":
+            # Only vmsize and filesize may change, not the mapping or protections.
+            orig, new = (cmd[:32] + cmd[40:48] + cmd[56:] for cmd in (orig, new))
+        elif code == 0xb:
+            # The first six uint32s are the local/external/undefined table
+            # ranges. All offsets and counts for auxiliary tables must agree.
+            orig, new = orig[32:], new[32:]
+        elif code in ignored:
+            continue
+        if orig != new:
+            raise SystemExit(f"debug-free relink changed load command {code:#x}")
+    for seg in before["segments"]:
+        if seg["name"] != "__LINKEDIT":
+            start, size = seg["fileoff"], seg["filesize"]
+            if full[max(start, header_end):start + size] != compact[max(start, header_end):start + size]:
+                raise SystemExit(f"debug-free relink changed mapped bytes of {seg['name']}")
+
+    _, at, _ = next(cmd for cmd in before["commands"] if cmd[0] == 2)
+
+    def symbols(blob):
+        symoff, count, stroff, size = struct.unpack_from("<IIII", blob, at + 8)
+        if not symoff + count * 16 == stroff or stroff + size != len(blob):
+            raise SystemExit("unexpected linkedit symbol/string table extents")
+        strings = blob[stroff:]
+        entries, stabs = Counter(), 0
+        for index, kind, section, desc, value in struct.iter_unpack("<IBBHQ", blob[symoff:stroff]):
+            if kind & 0xe0:
+                stabs += 1
+            else:
+                name = strings[index:strings.index(0, index)]
+                entries[name, kind, section, desc, value] += 1
+        return symoff, entries, stabs
+
+    end, names, stabs = symbols(full)
+    new_end, new_names, new_stabs = symbols(compact)
+    linkedit = next(seg["fileoff"] for seg in before["segments"] if seg["name"] == "__LINKEDIT")
+    if (not stabs or new_stabs or names != new_names or end != new_end
+            or full[linkedit:end] != compact[linkedit:end] or len(compact) >= len(full)):
+        raise SystemExit("debug-free relink did not remove only STABS and their strings")
+    return {"stabs_removed": stabs, "non_debug_symbols_preserved": sum(names.values()),
+            "native_bytes_saved": len(full) - len(compact)}
+
+
 def candidate_link(r35, out, records, argv, env):
     recipe, = [r for r in records if r["label"] == "compile-bsd_init" and r["exit"] == 0]
     command = list(recipe["argv"])
@@ -115,7 +168,7 @@ def candidate_link(r35, out, records, argv, env):
     return adjusted
 
 
-def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate):
+def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate, keep_link_debug):
     for name, pin in R35_PINS.items():
         require_pin(r35 / name, pin)
     require_pin(cpo, R35_CPO_SHA)
@@ -176,8 +229,15 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate):
         # Preserve the ADRP/LDR GOT sequence required by the linked audit.
         if candidate:
             argv = candidate_link(r35, out, records, argv, env)
-        return link("native-link", native, [*argv, "-Wl,-ignore_optimization_hints",
-                                            f"-Wl,-force_load,{archive}"])
+        argv = [*argv, "-Wl,-ignore_optimization_hints", f"-Wl,-force_load,{archive}"]
+        if not candidate or keep_link_debug:
+            return link("native-link", native, argv)
+        full = out / "native-with-stabs.macho"
+        link("native-with-stabs", full, argv)
+        mapfile = link("native-link", native, [*argv, "-Wl,-S"])
+        audit = audit_debug_strip(full.read_bytes(), native.read_bytes())
+        (out / "debug-strip.json").write_text(json.dumps(audit, indent=2) + "\n")
+        return mapfile
 
     # The historical display TU owns both early GPU counters. Localize only
     # the shadowing absolute-zero aliases in a copy of the renderer archive.
@@ -347,7 +407,7 @@ def device_archive():
     scratch.mkdir(exist_ok=True)
     work = Path(tempfile.mkdtemp(prefix="nuwa-display-archive-", dir=scratch))
     archive = build_archive(root, base, base / "out/ipsw/20H392/kernelcache.decompressed",
-                            cpo, work, ["--cpu-only", "--no-software-vsync"])
+                            cpo, work, ["--cpu-only", "--no-software-vsync", "--strip-debug"])
     dest = tree / "build/native-legacy-display"
     dest.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(archive, dest / "libNativeLegacyDisplay.late.a")
@@ -395,6 +455,8 @@ def main():
                    help="compile out the GOP software timer lifecycle (requires --cpu-only)")
     p.add_argument("--candidate", action="store_true",
                    help="apply device hooks and write the r35-display diagnostic kernel")
+    p.add_argument("--keep-link-debug", action="store_true",
+                   help="measure the archive-only size reduction before stripping linked STABS")
     p.add_argument("--out", type=Path, required=True, help="new directory under out/")
     a = p.parse_args()
     base, cpo, linker, out = (x.resolve() for x in (a.base, a.cpo, a.linker_dir, a.out))
@@ -412,6 +474,8 @@ def main():
         p.error("--no-software-vsync requires --cpu-only")
     if a.candidate and not (a.r35_dir and a.cpu_only and a.no_software_vsync):
         p.error("--candidate requires --r35-dir --cpu-only --no-software-vsync")
+    if a.keep_link_debug and not a.candidate:
+        p.error("--keep-link-debug requires --candidate")
     out.mkdir(parents=True, exist_ok=False)
     donor = base / "out/ipsw/20H392/kernelcache.decompressed"
     if a.renderer:
@@ -420,14 +484,17 @@ def main():
         require_pin(renderer, RENDERER_SHA)
         require_pin(link.parent / "osfmk/DEVELOPMENT/startup.o.json", STARTUP_RECORD_SHA)
     features = [name for enabled, name in ((a.cpu_only, "--cpu-only"),
-                 (a.no_software_vsync, "--no-software-vsync")) if enabled]
+                 (a.no_software_vsync, "--no-software-vsync"),
+                 (a.candidate, "--strip-debug")) if enabled]
     archive = build_archive(ROOT, base, donor, cpo, out, features)
     print(f"host-only archive SHA256 {digest(archive)}", flush=True)
 
     native = out / ("native.macho" if a.candidate else "HOST-ONLY-display-native.unstripped")
+    sys.path.insert(0, str(base / "kits/XnuPrelink"))
     if a.r35_dir:
         mapfile = replay_r35(r35, linker, cpo, out, archive, native,
-                             cpu_only=a.cpu_only, candidate=a.candidate)
+                             cpu_only=a.cpu_only, candidate=a.candidate,
+                             keep_link_debug=a.keep_link_debug)
     else:
         # Replay XNU's exported link inputs, without its historical map output.
         stem = "mach.development.bcm2837"
@@ -443,7 +510,6 @@ def main():
         run(command, cwd=record["directory"])
     print(f"host-only native SHA256 {digest(native)}", flush=True)
 
-    sys.path.insert(0, str(base / "kits/XnuPrelink"))
     import scoped_libm_emitter
     emit_prelink = scoped_libm_emitter.load(base)
     abi = json.loads((out / "derived/nuwa-display-abi.json").read_text())

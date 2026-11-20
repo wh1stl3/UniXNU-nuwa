@@ -498,6 +498,8 @@ def main():
     parser.add_argument('--cpu-only', action='store_true', help='exclude GPU and DPU scanout at compile time')
     parser.add_argument('--no-software-vsync', action='store_true',
                         help='exclude the GOP software timer lifecycle (requires --cpu-only)')
+    parser.add_argument('--strip-debug', action='store_true',
+                        help='compile the display members with -g0; preserve relocations and symbols')
     args = parser.parse_args()
     if args.no_software_vsync and not args.cpu_only:
         parser.error('--no-software-vsync requires --cpu-only')
@@ -547,6 +549,9 @@ def main():
         provider_cmd.append('-DNUWA_DISPLAY_HOST_CPU_ONLY=1')
     if args.no_software_vsync:
         provider_cmd.append('-DNUWA_DISPLAY_HOST_NO_SOFTWARE_VSYNC=1')
+    if args.strip_debug:
+        for cpp_cmd in (command, provider_cmd, refresh_cmd):
+            cpp_cmd.append('-g0')
     bindings = ROOT / 'package/original-bindings.S'
     bindings_obj = out / 'original-bindings.o'
     target = [arg for arg in command if arg.startswith('--target=')][-1]
@@ -565,6 +570,7 @@ def main():
         'driver_revision': DRIVER_REV, 'adapted_source_sha256': sha256(source),
         'cpu_only': args.cpu_only,
         'no_software_vsync': args.no_software_vsync,
+        'strip_debug': args.strip_debug,
         'board_source_sha256': sha256(provider), 'bindings_source_sha256': sha256(bindings),
     })
     for argv in (command, provider_cmd, bindings_cmd, addresses_cmd, refresh_cmd):

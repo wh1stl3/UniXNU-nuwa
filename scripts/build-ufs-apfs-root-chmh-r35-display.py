@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Package one audited r35 display kernel with the pinned r35 packaging chain."""
+"""Package pinned r35 OFF or an audited display ON kernel with the r35 chain."""
 import argparse
 import hashlib
 import importlib.util
@@ -9,6 +9,11 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "scripts/build-ufs-apfs-root-chmh-r35.py"
 SOURCE_SHA = "cbdaff922bd2e335cf73268e55a56c98b74dffd36e5a3b5c5a1759b3d088a9b5"
+R35_SHA = "787610183dc7f772e2d01aa183f72f2fcc52245fc44407e6c815ced614412464"
+DISPLAY_KERNELS = {
+    "476477dab77fe2342128ddd79881d6fd26b1d7b4d48d65e723860478aafdcb17",
+    "89355aa4e0dc0f3d2e9ef1971e94d45f6584f66d4ae318e6ac2bdc832fce4b39",
+}
 DISPLAY_ARGS = b" offline-mobile-graphics-load=1 offline-legacy-register=1 offline-legacy-gop=1"
 
 
@@ -31,6 +36,11 @@ def main():
     blob = kernel.read_bytes()
     if hashlib.sha256(blob).hexdigest() != a.kernel_sha256:
         parser.error("kernel SHA256 mismatch")
+    if a.enable_display:
+        if a.kernel_sha256 not in DISPLAY_KERNELS:
+            parser.error("on profile requires a pinned display kernel SHA256")
+    elif a.kernel_sha256 != R35_SHA:
+        parser.error("off profile requires the original r35 kernel SHA256")
     if hashlib.sha256(SOURCE.read_bytes()).hexdigest() != SOURCE_SHA:
         raise ValueError("Pinned r35 packager changed")
 
