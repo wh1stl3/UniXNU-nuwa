@@ -11,6 +11,31 @@ introduced by this correction. OFF is **rejected**, not repacked or released.
 | split-off / original r35 | 8,420,864 B | 8,355,328 B | −33,280 B | FAIL |
 | split-on | 11,996,672 B | 11,931,136 B | +3,542,528 B | PASS |
 
+## r35b versus ON — same corrected accounting
+
+The existing r35b package from `diag/r35b-packaging@e0aae81` and the ON
+package were examined read-only using the corrected `fat_clusters()` from
+`ed9746a`, with FSInfo and `fsck.fat -vn` directory-chain cross-checks.
+The package `payload.img` hash matches the separately captured
+`actual-vendor-ramdisk.img` for each. No package was modified.
+
+| | r35b | ON |
+| --- | --- | --- |
+| Outer SHA-256 | `3c5c2df89ff67341af3fdc4a40eef82467a7360389685f4303f241315ecc9388` | `09d11016b7710a29f8aba936fe397aae79bf7ec01cef5ef27b760ec37b967efa` |
+| FAT SHA-256 | `de26794988414ec4280fbe6937f86de5b6fd8868a0a69cc3d25c1f5fffb30afd` | `3d8ed2bd8009d704c570adda524aa3b378165c243feb61d044fda66a4a620664` |
+| Data clusters / used | 129,022 / 112,703 | 129,022 / 105,719 |
+| FSInfo free clusters | 16,319 | 23,303 |
+| Correct free bytes / 8 MiB difference | 8,355,328 / −33,280 | 11,931,136 / +3,542,528 |
+| Gate | FAIL | PASS |
+
+**r35b 按现行门槛不应上机。** Potential remedies are a separately built
+r35b candidate with debug information removed while retaining its diagnostic
+symbols and audited behavior, or a separate r35b-specific payload layout
+that still enforces the full 8 MiB floor. Either changes the package and
+requires its own build, independent audit and review; a layout change also
+requires boot-chain review. Neither option is implemented or authorized for
+device use by this result. Host observations only; self-checked.
+
 FAT BPB: 512 B per sector/cluster, 131,072 total sectors, 32 reserved
 sectors, 2 FATs of 1,009 sectors. Data starts at sector 2,050;
 `N=(131072-32-2*1009)/1=129022` data clusters, numbered 2..129023
