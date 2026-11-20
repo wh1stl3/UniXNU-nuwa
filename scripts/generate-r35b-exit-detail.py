@@ -19,21 +19,29 @@ def generate(data):
         "  char comm[7];\n  unsigned pid, sig, ns, code, nprocs, aks_calls, aks_opens;",
         "  char comm[33];\n  unsigned pid, sig, ns, nprocs, aks_calls, aks_opens, count, pc_valid;\n  uint64_t code, pc;")
     text = replace_once(text, "static unsigned exit_ring_count;",
-                        "static unsigned exit_ring_count;\nstatic struct bp_exit_ring_entry exit_ring_snapshot[4];\nstatic unsigned exit_ring_snapshot_count;")
-    text = replace_once(text, "    exit_snapshot=exit_records;",
-                        "    exit_snapshot=exit_records;\n    memcpy(exit_ring_snapshot,exit_ring,sizeof(exit_ring));\n    exit_ring_snapshot_count=exit_ring_count;")
+                        """static unsigned exit_ring_count;
+struct bp_exit_view { struct bp_exit_ring_entry entries[4]; unsigned count; };
+static int bp_exit_view_take(struct bp_exit_view *view) {
+  if(__atomic_exchange_n(&exit_lock,1,__ATOMIC_ACQUIRE)) return 0;
+  memcpy(view->entries,exit_ring,sizeof(exit_ring));
+  view->count=exit_ring_count;
+  __atomic_store_n(&exit_lock,0,__ATOMIC_RELEASE);
+  return 1;
+}""")
+    text = replace_once(text, "  const struct bp_core *visible=started ? &render_snapshot : &state;",
+                        "  struct bp_exit_view exit_view;\n  if(!bp_exit_view_take(&exit_view)) return;\n  const struct bp_core *visible=started ? &render_snapshot : &state;")
     start = text.index("  if(exit_ring_count) {\n", text.index("// r35: the bar row"))
     end = text.index("  // r21: labels shortened", start)
-    text = text[:start] + '''  if (!exit_ring_count) {
+    text = text[:start] + '''  if (!exit_view.count) {
     if(build_tag[0]) snprintf(b,sizeof(b)," [%s] %s",build_tag,title); else snprintf(b,sizeof(b)," %s",title);
     bar(0,b,0xffffffff,visible->reason && !visible->continuous ? BP_BAR_STOP : BP_BAR_LIVE);
   }
 ''' + text[end:]
     # Draw last: rows 0,2,3,4 replace the title/UFS/PID1 rows, never counters row 1.
     text = replace_once(text, "  nuwa_rows();\n", '''  nuwa_rows();
-  if (exit_ring_snapshot_count) {
-    for (unsigned i=0; i<exit_ring_snapshot_count && i<4; ++i) {
-      const struct bp_exit_ring_entry *e=&exit_ring_snapshot[i];
+  if (exit_view.count) {
+    for (unsigned i=0; i<exit_view.count && i<4; ++i) {
+      const struct bp_exit_ring_entry *e=&exit_view.entries[i];
       if(e->pc_valid)
         snprintf(b,sizeof(b),"EX%u %-6.6s sig=%u ns=%08x code=0x%08x n=%u pc=%016llx",
           i+1,e->comm[0]?e->comm:"?",e->sig,e->ns,(unsigned)e->code,e->count,(unsigned long long)e->pc);
@@ -85,4 +93,7 @@ def generate(data):
 ''' + text[end:]
     text = replace_once(text, "memcpy(nuwa_exit_ring_comm[i],exit_ring[i].comm,7);",
                         "memcpy(nuwa_exit_ring_comm[i],exit_ring[i].comm,6); nuwa_exit_ring_comm[i][6]=0;")
+    text = replace_once(text,
+                        "(unsigned)nprocs, exit_ring[0].aks_calls, exit_ring[0].aks_opens);",
+                        "(unsigned)nprocs, exit_ring[slot].aks_calls, exit_ring[slot].aks_opens);")
     return text.encode()

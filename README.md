@@ -1,5 +1,7 @@
 # UniXNU-nuwa
 
+**r35d 快照修复（仅主机，未上机，待复审）：** [本轮记录](docs/nuwa-r35d-snapshot-20261120-observation.md)。
+
 **r35c 退出诊断候选（仅主机，未上机，复审待完成）：** [本轮记录](docs/nuwa-r35c-exit-detail-20261120-observation.md)。
 
 **r35b 瘦身候选（仅主机，未上机）：** [构建与审计记录](docs/nuwa-r35b-compact-20261120-observation.md)。

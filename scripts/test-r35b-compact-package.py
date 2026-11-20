@@ -19,6 +19,7 @@ BUILD = Path(os.environ.get("NUWA_DETAIL_BUILD", OUT / "nuwa-r35b-compact-r3-202
 VERIFY_SHA = "aa76ca5add61a9a552043cc01b287f9fb2bfabb0549d68bbda678090840f6f2c"
 OLD_CHMH = "9ea4853ca37f2e59310720d6803a30d39c2a74da60d12c30896d168ed80fafbe246969138120f6b1b512a3d6fc3be0be"
 COMPACT_CHMH = "ca463c3f4ba9168203323e4350255d2b0c5f53e4033211dcf2f3124291c63ea7104b5d6fac7da9a3b859dafaefe58528"
+DETAIL_CHMH = "a2a63d57d618553ee89e986d820c36fbc329c88d7d5ff8850208d4fe56a5303c382ef030f1990b082d441a583bfa2010"
 OLD_KERNEL_SHA = "ad7e70f7e615494c6162cec1a72610e119e897414bb89e4e038075244442da2f"
 
 
@@ -124,7 +125,7 @@ def main():
     report["final_non_stab_symbols_preserved"] = sum(new_symbols.values())
     record = json.loads((package / "record.json").read_text())
     digest = record["chmh_hex"]
-    if digest == OLD_CHMH or (reference and digest == COMPACT_CHMH) or len(digest) != 96:
+    if digest == OLD_CHMH or (reference and digest in (COMPACT_CHMH, DETAIL_CHMH)) or len(digest) != 96:
         raise ValueError("new CHMH missing")
     report["chmh"] = digest
     (BUILD / "strict-package.json").write_text(json.dumps(report, indent=2) + "\n")
