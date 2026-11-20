@@ -539,6 +539,81 @@ fallback 和 MediaToolbox 三个独立输出，再用 20H392 真实 TU 检查获
 本轮未改变 import、timer、Libm 或设备构建输入，故未跑适配 TU/拒绝测试、未上机、
 未独立复跑。
 
+## 19. 真实 renderer 接入及剩余链接项（self-checked）
+
+基线 `3f42e8ea760c524d539c05e7c96e659bcf8e11cc`。复用本仓
+`scripts/build-boot-progress-nuwa.py` 构建的真实 `BootProgress.o`，来源
+`UniXNU/UniXNU-sheng@998d0cc5023d4eff54a1ef40cce6ec89dc10083c`（MIT），
+不接同 archive 的 stub 成员。对象 SHA256
+`acbbf9f569961f4e58947020cd297a16682cddaa096bb6f0e353447ca3b77224`；
+构建时 startup 编译记录 SHA256
+`8e85399e601ece0259f6e53889adb65fc862d91b638d986dbde06c4cffe8694e`，
+与链接树同一记录逐字节一致；构建器检查这两个 pin。在原有 XNU 与 display
+force-load 之后、原始 linkarchives 之前加入对象；未改基座或扫描规则。
+
+复跑 §17 命令，追加
+`--renderer out/nuwa-bootprogress-20261115-r1/BootProgress.o`，
+`--out out/nuwa-display-native-renderer-01`。显示归档 SHA256
+`960cb19d1d448cd59076dd2c407793698b096617877cdf573f73b1effcecc0d4`。
+实际 ld 退出 1：原 `_boot_progress_prepare_scanout` 已不在错误表，首错是
+`package/boot-progress/BootProgress.c:1311` 引用的 `_boot_diag_scan`，
+真实 renderer 带入额外依赖；不以 stub 补齐。以下为 ld 报出的全部 131 项，
+包括原来的另外 11 项（各行均为 Mach-O 符号）：
+
+```text
+_boot_diag_scan _boot_diag_stream _boot_log_tick _boot_process_attempts
+_boot_process_busy _boot_process_capture _boot_process_passes _boot_process_rows
+_boot_process_seen _boot_process_snapshot _boot_progress_exit_fault
+_boot_progress_exit_reason _boot_progress_throw_text _boot_ui_trace_index
+_boot_ui_trace_label _boot_ui_trace_phase _boot_ui_trace_ready
+_boot_ui_trace_role_rows _boot_ui_trace_rows _boot_ui_trace_snapshot
+_mach_vm_allocate _mach_vm_remap _native_adreno_audit_attr
+_native_adreno_audit_ticks _native_adreno_cache_stats _native_adreno_coherence
+_native_adreno_fences _native_adreno_fences_detail _native_adreno_reassert_ticks
+_native_adreno_wc_audit _native_adreno_wc_distrusted _native_cpufreq_row
+_native_cpufreq_stage _native_data_persist_errors _native_data_persist_first_lba
+_native_data_persist_gpt _native_data_persist_gpt_after _native_data_persist_header
+_native_data_persist_loaded _native_data_persist_present _native_data_persist_state
+_native_data_persist_syncs _native_data_persist_writes _native_gop_gpu_abandoned
+_native_gop_gpu_completions _native_gop_gpu_failures _native_gop_gpu_offers
+_native_gpu_trace_enabled _native_gpu_trace_record _native_hid_input_events
+_native_hid_input_results _native_legacy_client_calls _native_legacy_client_class
+_native_legacy_client_pid _native_legacy_client_status _native_legacy_client_type
+_native_legacy_copy_bytes_last _native_legacy_copy_bytes_sum _native_legacy_copy_last
+_native_legacy_copy_max _native_legacy_copy_n _native_legacy_copy_sum
+_native_legacy_frame_color_counts _native_legacy_frame_color_other
+_native_legacy_frame_colors _native_legacy_frame_count _native_legacy_frame_kind
+_native_legacy_frame_stats _native_legacy_frame_time _native_legacy_gop_bytes
+_native_legacy_gop_physical _native_legacy_gop_virtual _native_legacy_gpu_fallbacks
+_native_legacy_gpu_last_status _native_legacy_guard_slot _native_legacy_pm_callbacks
+_native_legacy_pm_calls _native_legacy_pm_stage _native_legacy_prepare_attempts
+_native_legacy_prepare_calls _native_legacy_prepare_reason _native_legacy_rej_class
+_native_legacy_rej_reason _native_legacy_rej_size _native_legacy_rej_state
+_native_legacy_rej_surface _native_legacy_rej_surfaces _native_legacy_retirement_calls
+_native_legacy_set_refresh_properties _native_legacy_stage
+_native_legacy_swap_accepted_count _native_legacy_swap_rejected_count
+_native_legacy_swap_validation_calls _native_legacy_swap_validation_reason
+_native_legacy_swap_validation_result _native_legacy_transfer_bytes
+_native_legacy_transfer_calls _native_legacy_transfer_status _native_legacy_vsync_notify
+_native_owner_root_accepted _native_ram_block_bytes _native_ram_block_resident_bytes
+_native_ram_block_sparse _native_touch_count _native_touch_rows _native_touch_seq
+_native_touch_stage_req _native_touch_xs _native_touch_ys _native_ufs_block_failures
+_native_ufs_block_reads _native_ufs_blocks_published _native_ufs_dpu_map
+_native_ufs_dpu_state _native_ufs_integrity_failures _native_ufs_matched
+_native_ufs_probe_calls _native_ufs_progress_text _native_ufs_read_ticks
+_native_ufs_root_failure _native_ufs_root_step _native_ufs_verified_blocks
+_native_ufs_verify_ticks _native_virtio_read_failures _native_virtio_read_requests
+_native_virtio_ready _native_virtio_verified_blocks _native_wi_count _native_wi_log
+_sheng_cpufreq_poll _vm_map_create
+```
+
+完整链接日志（含引用者）仅在 `out/nuwa-display-native-renderer-01/link.log`，
+SHA256 `dc4596ce0f9daed429a602b430842c67fc0ed0eb8386b5304ac9d483c9059783`。
+原 Adreno 实现位于 `drivers/Adreno740/NativeAdrenoPublish.cpp`，DPU map 属于
+存储/SMMU；没有本批可证明兼容且无额外硬件/并发合同的现成对象，因此未强接。
+`mach_vm_*` / `vm_map_create` 是原 XNU archive 中 vm_tests 的引用，未伪造导出。
+未产生 native，strict emit 未到达；329/330、refresh/vsync 未改，非上机候选。
+
 ## 15. 方案 A：独立 refresh formatter 与 teardown 夹具（self-checked）
 
 设备基线 `d5f3fe4`，基座 `693f5d9c`，驱动 `e47c1b8`，donor 与 §1 相同。

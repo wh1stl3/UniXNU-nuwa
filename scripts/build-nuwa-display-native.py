@@ -18,6 +18,8 @@ import tomllib
 ROOT = Path(__file__).resolve().parents[1]
 DONOR_SHA = "2ec297bac95bcba01046fd0148e97e7e5885c05a6c18827f39f534ba375c1221"
 FAMILY = "com.apple.iokit.IOMobileGraphicsFamily"
+RENDERER_SHA = "acbbf9f569961f4e58947020cd297a16682cddaa096bb6f0e353447ca3b77224"
+STARTUP_RECORD_SHA = "8e85399e601ece0259f6e53889adb65fc862d91b638d986dbde06c4cffe8694e"
 
 
 def digest(path):
@@ -146,6 +148,8 @@ def main():
                    help="8796 mach.development.bcm2837.link directory")
     p.add_argument("--linker-dir", type=Path, required=True,
                    help="directory containing the 8796 Mach-O ld")
+    p.add_argument("--renderer", type=Path, required=True,
+                   help="pinned real BootProgress.o (not the stub-containing archive)")
     p.add_argument("--out", type=Path, required=True, help="new directory under out/")
     a = p.parse_args()
     base, cpo, link, out = (x.resolve() for x in (a.base, a.cpo, a.link_dir, a.out))
@@ -155,6 +159,11 @@ def main():
     donor = base / "out/ipsw/20H392/kernelcache.decompressed"
     if digest(donor) != DONOR_SHA:
         raise SystemExit("20H392 donor SHA256 mismatch")
+    renderer = a.renderer.resolve()
+    if digest(renderer) != RENDERER_SHA:
+        raise SystemExit("BootProgress.o SHA256 mismatch")
+    if digest(link.parent / "osfmk/DEVELOPMENT/startup.o.json") != STARTUP_RECORD_SHA:
+        raise SystemExit("renderer compile record does not match link tree")
     run([sys.executable, "-B", ROOT / "scripts/derive-nuwa-display-abi.py",
          "--base", base, "--kernelcache", donor, "--out", out / "derived"])
     for name in ("OriginalLegacyFramebufferABI.h", "original-bindings.S",
@@ -178,7 +187,7 @@ def main():
     target = [arg for arg in record["arguments"] if arg.startswith("--target=")][-1]
     command = [record["arguments"][0], target, "-B" + str(a.linker_dir.resolve()), *flags,
                "-Wl,-force_load," + str(link / (stem + ".a")),
-               "-Wl,-force_load," + str(archive), *libs, "-o", str(native)]
+               "-Wl,-force_load," + str(archive), str(renderer), *libs, "-o", str(native)]
     (out / "link-argv.json").write_text(json.dumps(command, indent=2) + "\n")
     run(command, cwd=record["directory"])
     print(f"host-only native SHA256 {digest(native)}", flush=True)
