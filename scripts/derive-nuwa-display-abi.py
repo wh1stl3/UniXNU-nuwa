@@ -5,7 +5,7 @@
 Read-only inputs: the 20H392 kernelcache and the base checkout's XnuPrelink Mach-O parser.
 Outputs: package/OriginalLegacyFramebufferABI.h, package/original-bindings.S and a JSON summary.
 
-Every number below is anchored to an instruction in the family executable; the checks assert the
+The ABI below is anchored to instructions in 20H392 donor modules; the checks assert the
 anchors before anything is written. Slot roles were found by structure (callers, argument use,
 return shape) and by the same base-class stub sequence, never by carrying a number from another
 board's build. See docs/nuwa-display-abi-20261120.md for the per-item derivation.
@@ -23,6 +23,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 FAMILY = 'com.apple.iokit.IOMobileGraphicsFamily'
+SURFACE = 'com.apple.iokit.IOSurface'
+DONOR_DISPLAY = 'com.apple.driver.AppleMobileDispH10P'
+DONOR_SHA256 = '2ec297bac95bcba01046fd0148e97e7e5885c05a6c18827f39f534ba375c1221'
 SLOTS = 338
 PURE = [211, 212, 242, 243, 292, 293, 321, 322, 329]
 
@@ -90,20 +93,25 @@ def va(text):
 
 
 class Image:
-    def __init__(self, base, kernelcache):
-        sys.path.insert(0, str(base / 'kits/XnuPrelink'))
+    def __init__(self, base, kernelcache, family=FAMILY):
+        location = str(base / 'kits/XnuPrelink')
+        if location not in sys.path:
+            sys.path.insert(0, location)
+        sys.dont_write_bytecode = True
         from native_prelink import macho, backed_offset, unserialize_xml
 
         self.macho = macho
         self.backed_offset = backed_offset
         self.blob = kernelcache.read_bytes()
+        if hashlib.sha256(self.blob).hexdigest() != DONOR_SHA256:
+            raise SystemExit('expected the pinned 20H392 donor kernelcache')
         self.image = macho(self.blob)
         info = next(s for s in self.image['segments'] if s['name'] == '__PRELINK_INFO')
         at = backed_offset(self.image['segments'], info['va'], info['filesize'], len(self.blob))
         entries = {e['CFBundleIdentifier']: e for e in
                    unserialize_xml(self.blob[at:at + info['filesize']])['_PrelinkInfoDictionary']
                    if e.get('CFBundleIdentifier')}
-        self.entry = entries[FAMILY]
+        self.entry = entries[family]
         self.module = macho(self.blob, backed_offset(
             self.image['segments'], self.entry['_PrelinkExecutableLoadAddr'], 32, len(self.blob)))
         self.segments = {}
@@ -130,6 +138,109 @@ def check_word(image, address, value, label):
     actual = image.word(address)
     if actual != value:
         raise SystemExit('%s: %s is %08x, expected %08x' % (label, hex(address), actual, value))
+
+
+def check_words(image, address, words, label):
+    for index, word in enumerate(words):
+        check_word(image, va(address) + index * 4, word, label)
+
+
+def check_string(image, address, text):
+    if image.read(va(address), len(text) + 1) != text.encode() + b'\0':
+        raise SystemExit(f'{address}: expected donor string {text!r}')
+
+
+def derive_surfaces(family, surface):
+    # Each family stub's pointer must land on the complete IOSurface leaf.
+    # Check the unsigned load itself: a W load zero-extends even for the
+    # four consumer declarations with uint64_t return types.
+    result = {}
+    for name, stub, got_offset, target, field, width in (
+        ('descriptor', '5c2737c', 0x320, '5a4e724', 56, 64),
+        ('width',      '5c2740c', 0x380, '5a4e7f4', 144, 32),
+        ('height',     '5c27418', 0x388, '5a4e7fc', 148, 32),
+        ('stride',     '5c272f8', 0x2c8, '5a4e80c', 152, 32),
+        ('allocation', '5c27298', 0x288, '5a4e834', 172, 32),
+        ('format',     '5c27304', 0x2d0, '5a4e7e4', 164, 32),
+        ('planes',     '5c272d4', 0x2b0, '5a4e82c', 176, 32),
+    ):
+        check_words(family, stub, (0x90008e30, 0xf9400210 | (got_offset // 8 << 10),
+                                   0xd61f0200), name + ' family stub')
+        got = va('6deb000') + got_offset
+        if family.qword(got) != va(target):
+            raise SystemExit(f'{name}: donor stub target changed')
+        scale = width // 8
+        load = (0xf9400000 if width == 64 else 0xb9400000) | (field // scale << 10)
+        check_words(surface, target, (load, 0xd65f03c0), name + ' IOSurface getter')
+        result[name] = dict(stub=hex(va(stub)), got=hex(got), target=hex(va(target)),
+                            offset=field, load_bits=width,
+                            ownership='borrowed' if name == 'descriptor' else 'value')
+
+    # Independent uses distinguish adjacent getters. Descriptor is read
+    # straight from the request's surface, with no retain in the leaf.
+    check_words(family, '5c0f050', (0x91222108, 0xb89b43a9, 0xf8697900, 0x940060c8,
+                                    0xf9400008, 0xf9407108, 0x52800001, 0xd63f0100),
+                'surface descriptor consumed as an object in swap path')
+    check_words(family, '5c159c4', (0x91222108, 0xb89983a9, 0xf8697900, 0x9400468f,
+                                    0xb94037e8, 0x6b000108), 'width coverage')
+    check_words(family, '5c15b0c', (0x91222108, 0xb89983a9, 0xf8697900, 0x94004640,
+                                    0xb94033e8, 0x6b000108), 'height coverage')
+    check_words(family, '5c15a54', (0xb0ff9a80, 0x911cb800), 'width diagnostic')
+    check_words(family, '5c15b9c', (0xb0ff9a80, 0x911e4400), 'height diagnostic')
+    check_string(family, '4f6672e', "%s Buffer width (%d) doesn't cover read region (x = %d, w = %d)\n")
+    check_string(family, '4f66791', "%s Buffer height (%d) doesn't cover read region(y = %d, h = %d)\n")
+    check_words(family, '5c1d6cc', (0x9400270b, 0xaa0003e2, 0xf9400be0,
+                                    0xd0ff9a41, 0x91069421), 'stride property')
+    check_string(family, '4f671a5', 'src_stride')
+    check_words(family, '5c1d7dc', (0x940026ca, 0xb94007e3, 0xaa0003e2, 0xf94007e0,
+                                    0xd0ff9a41, 0x9107c821), 'format property')
+    check_string(family, '4f671f2', 'format')
+    check_string(surface, '4ed0aad', 'IOSurfaceAllocSize')
+    check_words(surface, '5a4b2cc', (0xb0ffa421, 0x912ab421, 0xaa1403e0, 0xd63f0100,
+                                     0xaa1503e1, 0x9400707d, 0xb4000180, 0xf9400008,
+                                     0xf9405908, 0xd63f0100, 0xd360fc08, 0xb5ffcd68,
+                                     0x1400002e), 'checked allocation size property')
+    check_words(surface, '5a4b3b4', (0xb900ae60,), 'allocation size stored at +172')
+    check_string(surface, '4ed0ad6', 'IOSurfacePlaneInfo')
+    check_words(surface, '5a47894', (0xb0ffa441, 0x912b5821, 0xaa1403e0, 0xd63f0100,
+                                     0xd00099e8, 0xf9412d08, 0xf9400117, 0xaa1703e1,
+                                     0x94007f08, 0xb4000420, 0xaa0003f9, 0xf9400008,
+                                     0xf9404908, 0xd63f0100, 0xb900b260),
+                'plane array count stored at +176')
+    return result
+
+
+def inspect_unbound_timing(family, display):
+    # Evidence only: neither entry is emitted as a callable binding.
+    check_words(display, '5ccfc5c', (0xf94e1660, 0xf9400008, 0xf9402108, 0xd63f0100,
+                                     0x36000080, 0xaa1303e0, 0x94004677),
+                'hardware boot calls refresh only after readiness test')
+    check_words(display, '5ce1650', (0xd00088d0, 0xf9430e10, 0xd61f0200),
+                'hardware boot refresh stub')
+    if display.qword(va('6dfb618')) != va('5c23610'):
+        raise SystemExit('refresh properties donor target changed')
+    check_string(display, '4f97c81', 'bool UnifiedPipeline::start_hardware_boot()')
+    check_words(family, '5c2360c', (0xd65f03c0, 0xd10203ff, 0xa9077bfd,
+                                    0x9101c3fd, 0xf81f03a0),
+                'refresh properties method entry')
+    check_words(family, '5c236a8', (0xf9400008, 0xf9447d08, 0x9100a3e1, 0x12000122,
+                                    0xd63f0100, 0x370001c0), 'refresh slot 287')
+    check_words(family, '5c237b0', (0x90ff9a21, 0x91354821, 0xd63f0100),
+                'refresh publishes IOMFBDisplayRefresh')
+    check_string(family, '4f67d52', 'IOMFBDisplayRefresh')
+    check_word(family, va('5c237e4'), 0x12000100, 'refresh returns bool')
+    check_words(family, '5c0dc28', (0xf94b1401, 0xf94b1802, 0xf94b1c03, 0x94003701),
+                'donor VBL send from recorded timestamps')
+    check_words(family, '5c1b844', (0xf81f83a0, 0xf81f03a1, 0xf81e83a2, 0xf81e03a3),
+                'VBL sender saves four 64-bit arguments')
+    check_word(family, va('5c1b948'), 0xf949c108, 'VBL sender loads client queue')
+    check_words(family, '5c1b9b0', (0xf85d83a8, 0xf9400108, 0xf81d83a8, 0x17ffffe6),
+                'VBL sender walks next links directly')
+    check_string(family, '4f66ddf', 'dropped VBL message\n')
+    return dict(refresh=dict(target=hex(va('5c23610')), caller=hex(va('5ccfc74')),
+                             bound=False),
+                vsync=dict(target=hex(va('5c1b838')), caller=hex(va('5c0dc34')),
+                           bound=False))
 
 
 def find_vtable(image):
@@ -172,6 +283,8 @@ def main():
     args = parser.parse_args()
 
     image = Image(args.base, args.kernelcache)
+    surfaces = derive_surfaces(image, Image(args.base, args.kernelcache, SURFACE))
+    timing = inspect_unbound_timing(image, Image(args.base, args.kernelcache, DONOR_DISPLAY))
     vptr, slots, values = find_vtable(image)
     if slots != SLOTS:
         raise SystemExit('slot count %d, expected %d' % (slots, SLOTS))
@@ -431,6 +544,13 @@ enum : unsigned {
              '// Absolute bindings for the original Legacy entry points that the port calls directly.']
     for symbol, address in bindings:
         lines += ['.globl ' + symbol, '.set ' + symbol + ', 0x%x' % address]
+    lines += ['', '// Qualified IOSurface getters. Descriptor is borrowed; W loads zero-extend.',
+              '.text', '.p2align 2']
+    for name, info in surfaces.items():
+        symbol = '_native_legacy_surface_' + name
+        register = 'x0' if info['load_bits'] == 64 else 'w0'
+        lines += ['.globl ' + symbol, symbol + ':',
+                  f"    ldr {register}, [x0, #{info['offset']}]", '    ret']
     (out / 'original-bindings.S').write_text('\n'.join(lines) + '\n')
 
     summary = dict(
@@ -446,7 +566,9 @@ enum : unsigned {
                for slot, text in sorted(named.items())},
         instance=INSTANCE,
         request=REQUEST,
-        outputs=[str(out / 'OriginalLegacyFramebufferABI.h'), str(out / 'original-bindings.S')],
+        surfaces=surfaces,
+        unbound_timing=timing,
+        outputs=['OriginalLegacyFramebufferABI.h', 'original-bindings.S'],
     )
     (out / 'nuwa-display-abi.json').write_text(json.dumps(summary, indent=1) + '\n')
     print('vtable', hex(vptr), slots, 'abstract', abstract)

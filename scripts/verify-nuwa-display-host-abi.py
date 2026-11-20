@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: BSD-2-Clause-Patent
-"""Compile and inspect the complete 20H392 display TU; do not link or run it."""
+"""Build and audit an incomplete, host-only 20H392 CPU display archive."""
 
 import argparse
 import hashlib
@@ -12,6 +12,13 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 DRIVER_REV = 'e47c1b8de169cd2bd0b885c7d85e433010e3cdf2'
+BASE_REV = '693f5d9cae8a408dd18b39f3f9fdc4228c934241'
+INIT = '__GLOBAL__sub_I_NativeLegacyDisplay.cpp'
+DEFERRED = {'_native_legacy_set_refresh_properties', '_native_legacy_vsync_notify'}
+# The pinned 8796 reference import list includes owner and weak-ref bits;
+# different toolchains may need a deliberate requalification, not a whitelist
+# that silently swallows new unresolved symbols.
+UNRESOLVED_SHA256 = '18c7dc556bb9a3c27a2338e960bd13ebff9b98edb51cc568e9793a8d285e915d'
 SLOTS = {
     184: '__ZN19NativeLegacyDisplay13isMainDisplayEv',
     188: '__ZN19NativeLegacyDisplay11getDotPitchEPj',
@@ -41,11 +48,18 @@ def write_json(path, data):
 def compile_args(record, source, obj, driver):
     # Replay the previous real 8796 IOPMGR command, substituting inputs and
     # dropping that XNU TU's warning policy (including -Xclang -W pairs).
-    args = iter(record['arguments'])
+    original = record['arguments']
+    if original.count('-c') != 1 or original.count('-o') != 1 or original.count(record['file']) != 1:
+        raise SystemExit('expected a single XNU compile-only input/output')
+    args = iter(original)
     command = []
     for arg in args:
         if arg == record['file']:
             command.append(str(source))
+        elif arg in ('-MF', '-MJ', '-MT', '-MQ'):
+            next(args)
+        elif arg in ('-MD', '-MMD', '-MP'):
+            continue
         elif arg == '-o':
             next(args)
             command.extend(['-o', str(obj)])
@@ -61,8 +75,11 @@ def compile_args(record, source, obj, driver):
                       '-ferror-limit=1']
 
 
-def inspect_object(base, blob):
-    sys.path.insert(0, str(base / 'kits/XnuPrelink'))
+def object_layout(base, blob):
+    location = str(base / 'kits/XnuPrelink')
+    if location not in sys.path:
+        sys.path.insert(0, location)
+    sys.dont_write_bytecode = True
     from native_prelink import macho
 
     if struct.unpack_from('<III', blob) != (0xfeedfacf, 0x0100000c, 0):
@@ -75,13 +92,18 @@ def inspect_object(base, blob):
     strings = blob[stroff:stroff + strsize]
     symbols = []
     for i in range(nsyms):
-        ix, kind, section, _, value = struct.unpack_from('<IBBHQ', blob, symoff + i * 16)
-        symbols.append((strings[ix:strings.index(b'\0', ix)].decode(), kind, section, value))
+        ix, kind, section, desc, value = struct.unpack_from('<IBBHQ', blob, symoff + i * 16)
+        symbols.append((strings[ix:strings.index(b'\0', ix)].decode(), kind, section, desc, value))
+    sections = [s for segment in image['segments'] for s in segment['sections']]
+    return sections, symbols
+
+
+def inspect_object(base, blob):
+    sections, symbols = object_layout(base, blob)
     table_name = '__ZTV19NativeLegacyDisplay'
-    (_, kind, ordinal, value), = (sym for sym in symbols if sym[0] == table_name)
+    (_, kind, ordinal, _, value), = (sym for sym in symbols if sym[0] == table_name)
     if kind & 0x0e != 0x0e or not ordinal:  # N_SECT
         raise SystemExit(f'{table_name} is not defined in a section')
-    sections = [s for segment in image['segments'] for s in segment['sections']]
     section = sections[ordinal - 1]
     table = value - section['va']
     if not 0 <= table <= section['size'] - (2 + max(SLOTS)) * 8 - 8:
@@ -103,6 +125,91 @@ def inspect_object(base, blob):
     return {'vtable': table_name, 'section': section['name'], 'slots': results}
 
 
+def constructor_sections(blob, sections):
+    return [s for s in sections if struct.unpack_from(
+        '<I', blob, s['command_offset'] + 64)[0] & 0xff in (0x9, 0xA, 0x16)]
+
+
+def inspect_initializers(base, raw, late):
+    sections, symbols = object_layout(base, raw)
+    auto = constructor_sections(raw, sections)
+    if len(auto) != 1 or (auto[0]['name'], auto[0]['size']) != ('__mod_init_func', 8):
+        raise SystemExit('expected exactly one original NativeLegacyDisplay initializer pointer')
+    rel, count = struct.unpack_from('<II', raw, auto[0]['command_offset'] + 56)
+    if count != 1:
+        raise SystemExit('expected one relocation for the original initializer pointer')
+    offset, word = struct.unpack_from('<II', raw, rel)
+    if (offset, word >> 24, symbols[word & 0xffffff][0]) != (0, 0x0e, INIT) or \
+            struct.unpack_from('<Q', raw, auto[0]['fileoff'])[0] != 0:
+        raise SystemExit('initializer pointer does not reference the explicit board entry')
+    sections, symbols = object_layout(base, late)
+    if constructor_sections(late, sections):
+        raise SystemExit('automatic initializer/terminator survived in the host archive member')
+    if sum(n == INIT and k == 0x0f and s > 0 for n, k, s, _, _ in symbols) != 1:
+        raise SystemExit('expected one external manual initializer in the host archive member')
+
+
+def inspect_archive(base, archive, members):
+    names = subprocess.check_output(['llvm-ar', 't', archive], text=True).splitlines()
+    if names != [obj.name for obj in members]:
+        raise SystemExit('unexpected archive member list')
+    definitions, undefined = {}, {}
+    paths = {}
+    for obj in members:
+        blob = subprocess.check_output(['llvm-ar', 'p', archive, obj.name])
+        original = obj.read_bytes()
+        # Darwin archives include up to seven newline alignment bytes in
+        # the extracted member. No other change to the object is permitted.
+        if blob != original + b'\n' * (-len(original) % 8):
+            raise SystemExit(f'{obj.name}: archive member does not match inspected object')
+        sections, symbols = object_layout(base, blob)
+        if constructor_sections(blob, sections):
+            raise SystemExit(f'{obj.name}: archive contains automatic initialization/termination')
+        if obj == members[2]:
+            for getter, info in json.loads(
+                    (ROOT / 'package/nuwa-display-abi.json').read_text())['surfaces'].items():
+                name = '_native_legacy_surface_' + getter
+                (_, kind, section, _, value), = (sym for sym in symbols if sym[0] == name)
+                sec = sections[section - 1]
+                at = sec['fileoff'] + value - sec['va']
+                bits = info['load_bits']
+                load = (0xf9400000 if bits == 64 else 0xb9400000) | (
+                    info['offset'] // (bits // 8) << 10)
+                if kind != 0x0f or sec['name'] != '__text' or struct.unpack_from(
+                        '<II', blob, at) != (load, 0xd65f03c0):
+                    raise SystemExit(f'{name}: assembly does not match qualified getter')
+        for name, kind, _, desc, value in symbols:
+            if kind & 0xe0 or not kind & 1:
+                continue
+            if kind & 0x0e or value:  # includes tentative common symbols
+                definitions.setdefault(name, []).append((obj.name, bool(desc & 0x80)))
+            else:
+                undefined.setdefault(name, []).append((obj.name, bool(desc & 0x40)))
+        paths[obj.name] = sha256(obj)
+    for name, owners in definitions.items():
+        if sum(not weak for _, weak in owners) > 1:
+            raise SystemExit(f'{name}: duplicate strong archive definitions: {owners}')
+    if definitions.get(INIT) != [(members[0].name, False)] or undefined.get(INIT) != [
+            (members[1].name, False)]:
+        raise SystemExit('manual initializer must be defined by the driver and imported by the board TU')
+    unresolved = {name: imports for name, imports in sorted(undefined.items()) if name not in definitions}
+    missing_glue = {name for name in unresolved if name.startswith(
+        ('_native_legacy_surface_', '_native_legacy_set_refresh_', '_native_legacy_vsync_'))}
+    if missing_glue != DEFERRED:
+        raise SystemExit(f'unexpected unresolved glue: {sorted(missing_glue)}')
+    glued = ['descriptor', 'width', 'height', 'stride', 'allocation', 'format', 'planes']
+    for getter in glued:
+        name = '_native_legacy_surface_' + getter
+        if definitions.get(name) != [(members[2].name, False)] or undefined.get(name) != [
+                (members[0].name, False)]:
+            raise SystemExit(f'{name}: expected one assembly definition and one driver import')
+    fingerprint = hashlib.sha256(json.dumps(
+        unresolved, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+    return {'members': paths, 'unresolved': unresolved, 'unresolved_sha256': fingerprint,
+            'automatic_initializers': 0,
+            'manual_initializer': INIT, 'runtime_eligible': False, 'sha256': sha256(archive)}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--base', required=True, type=Path)
@@ -116,6 +223,9 @@ def main():
     original = driver / 'NativeLegacyDisplay.cpp'
     # WSL reads the Windows checkout, whose tracked text may have CRLF.
     git = ['git', '--no-optional-locks', '-c', 'core.autocrlf=true', '-C', str(driver)]
+    if subprocess.check_output(git[:-1] + [str(base), 'rev-parse', 'HEAD'],
+                               text=True).strip() != BASE_REV:
+        raise SystemExit(f'expected UniXNU at {BASE_REV}')
     if subprocess.check_output(git + ['rev-parse', 'HEAD'], text=True).strip() != DRIVER_REV:
         raise SystemExit(f'expected GopFramebuffer at {DRIVER_REV}')
     if subprocess.check_output(git + ['status', '--porcelain', '--', '.']):
@@ -124,24 +234,50 @@ def main():
     if text.count(BASE_METHOD) != 1:
         raise SystemExit(f'{original}: expected exactly one qualified frame-info body')
     record = json.loads(cpo.read_text().strip().rstrip(','))
-    if Path(record['file']).name != 'IOPMGR.cpp':
+    if Path(record['file']).name != 'IOPMGR.cpp' or not Path(record['directory']).is_absolute():
         raise SystemExit(f'{cpo}: expected the IOPMGR.cpp compilation record')
     out.mkdir(parents=True)
     source, obj = (out / ('NativeLegacyDisplay' + suffix) for suffix in ('.cpp', '.o'))
-    source.write_text(text.replace(BASE_METHOD, NUWA_METHOD, 1))
+    # Clang's integrated assembler exports the exact synthetic constructor
+    # while maintaining the normal Mach-O symbol ordering. Objcopy only
+    # drops the automatic pointer; no handwritten rewriting of nlist.
+    source.write_text(text.replace(BASE_METHOD, NUWA_METHOD, 1) +
+                      f'\n__asm__(".globl {INIT}");\n')
     command = compile_args(record, source, obj, driver)
+    provider = ROOT / 'package/NuwaLegacyDisplay.cpp'
+    provider_obj = out / 'NuwaLegacyDisplay.o'
+    provider_cmd = compile_args(record, provider, provider_obj, driver)
+    bindings = ROOT / 'package/original-bindings.S'
+    bindings_obj = out / 'original-bindings.o'
+    target = [arg for arg in command if arg.startswith('--target=')][-1]
+    bindings_cmd = [command[0], target, '-x', 'assembler-with-cpp', '-c',
+                    str(bindings), '-o', str(bindings_obj)]
     write_json(out / 'compile.json', {
         'directory': record['directory'], 'arguments': command,
+        'provider_arguments': provider_cmd, 'bindings_arguments': bindings_cmd,
         'cpo': str(cpo), 'cpo_sha256': sha256(cpo),
         'driver_revision': DRIVER_REV, 'adapted_source_sha256': sha256(source),
+        'board_source_sha256': sha256(provider), 'bindings_source_sha256': sha256(bindings),
     })
-    status = subprocess.run(command, cwd=record['directory']).returncode
-    if status:
-        return status
-    result = inspect_object(base, obj.read_bytes())
-    result.update(bytes=obj.stat().st_size, sha256=sha256(obj))
+    for argv in (command, provider_cmd, bindings_cmd):
+        status = subprocess.run(argv, cwd=record['directory']).returncode
+        if status:
+            return status
+    late = out / 'NativeLegacyDisplay.manual.o'
+    subprocess.run(['llvm-objcopy', '--remove-section=__DATA,__mod_init_func', obj, late],
+                   check=True)
+    inspect_initializers(base, obj.read_bytes(), late.read_bytes())
+    result = inspect_object(base, late.read_bytes())
+    result.update(bytes=late.stat().st_size, sha256=sha256(late))
     write_json(out / 'object.json', result)
-    print(json.dumps(result, indent=2))
+    archive = out / 'HOST-ONLY-incomplete-display.a'
+    members = [late, provider_obj, bindings_obj]
+    subprocess.run(['llvm-ar', '--format=darwin', 'rcs', archive, *members], check=True)
+    audit = inspect_archive(base, archive, members)
+    write_json(out / 'archive.json', audit)
+    if audit['unresolved_sha256'] != UNRESOLVED_SHA256:
+        raise SystemExit(f'unresolved symbol fingerprint changed: see {out / "archive.json"}')
+    print(f'{archive}: {len(audit["unresolved"])} unresolved externals; not runtime-eligible')
     return 0
 
 

@@ -106,8 +106,78 @@
   "node_next": 2408,
   "node_previous": 2416
  },
+ "surfaces": {
+  "descriptor": {
+   "stub": "0xfffffff005c2737c",
+   "got": "0xfffffff006deb320",
+   "target": "0xfffffff005a4e724",
+   "offset": 56,
+   "load_bits": 64,
+   "ownership": "borrowed"
+  },
+  "width": {
+   "stub": "0xfffffff005c2740c",
+   "got": "0xfffffff006deb380",
+   "target": "0xfffffff005a4e7f4",
+   "offset": 144,
+   "load_bits": 32,
+   "ownership": "value"
+  },
+  "height": {
+   "stub": "0xfffffff005c27418",
+   "got": "0xfffffff006deb388",
+   "target": "0xfffffff005a4e7fc",
+   "offset": 148,
+   "load_bits": 32,
+   "ownership": "value"
+  },
+  "stride": {
+   "stub": "0xfffffff005c272f8",
+   "got": "0xfffffff006deb2c8",
+   "target": "0xfffffff005a4e80c",
+   "offset": 152,
+   "load_bits": 32,
+   "ownership": "value"
+  },
+  "allocation": {
+   "stub": "0xfffffff005c27298",
+   "got": "0xfffffff006deb288",
+   "target": "0xfffffff005a4e834",
+   "offset": 172,
+   "load_bits": 32,
+   "ownership": "value"
+  },
+  "format": {
+   "stub": "0xfffffff005c27304",
+   "got": "0xfffffff006deb2d0",
+   "target": "0xfffffff005a4e7e4",
+   "offset": 164,
+   "load_bits": 32,
+   "ownership": "value"
+  },
+  "planes": {
+   "stub": "0xfffffff005c272d4",
+   "got": "0xfffffff006deb2b0",
+   "target": "0xfffffff005a4e82c",
+   "offset": 176,
+   "load_bits": 32,
+   "ownership": "value"
+  }
+ },
+ "unbound_timing": {
+  "refresh": {
+   "target": "0xfffffff005c23610",
+   "caller": "0xfffffff005ccfc74",
+   "bound": false
+  },
+  "vsync": {
+   "target": "0xfffffff005c1b838",
+   "caller": "0xfffffff005c0dc34",
+   "bound": false
+  }
+ },
  "outputs": [
-  "package/OriginalLegacyFramebufferABI.h",
-  "package/original-bindings.S"
+  "OriginalLegacyFramebufferABI.h",
+  "original-bindings.S"
  ]
 }

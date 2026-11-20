@@ -1,6 +1,7 @@
 # 20H392 显示 ABI 取证（G1 收尾，2026-11-20）
 
 状态：**self-checked（主机侧、未独立复核）**。输入是本机 20H392 donor kernelcache，无设备操作、无内核构建。
+最新主机结果见 §11；§0–10 保留各批次历史结论。
 
 ## 0. 结论
 
@@ -222,3 +223,67 @@ llvm-readobj --relocations out/nuwa-display-host-abi-verifier/NativeLegacyDispla
 ```
 
 复跑输出路径不同且保留 `-g`，对象哈希只标识各自的对象，不替代槽位核验。
+
+## 11. 方案 A：七个 IOSurface 读取器与 host-only 归档（self-checked）
+
+生成器钉住第 1 节的 20H392 donor SHA256。下表地址省略 `0xfffffff000000000`；
+每行独立校验 family 的三条跳板指令、GOT 指针、IOSurface 的完整 `ldr; ret` 及语义锚点。
+`original-bindings.S` 只新增下列七个读取器；338 槽的头与此前的 Legacy 绑定不变。
+
+| 读取器 | family 跳板 → IOSurface leaf | load | 独立语义锚点 |
+| --- | --- | --- | --- |
+| descriptor | `5c2737c → 5a4e724` | `x0`, +56 | `5c0f050–5c0f06c` 从 swap 的 surface 数组取对象，返回值立即作为对象调用。leaf 不 retain，返回借用指针；调用方须持有活 surface，不能因调用而 release descriptor。 |
+| width | `5c2740c → 5a4e7f4` | `w0`, +144 | `5c159d0` 比较 `srcRect.x + width`，失败日志 `4f6672e` 明示 Buffer width。 |
+| height | `5c27418 → 5a4e7fc` | `w0`, +148 | `5c15b18` 比较 `srcRect.y + height`，失败日志 `4f66791` 明示 Buffer height。 |
+| stride | `5c272f8 → 5a4e80c` | `w0`, +152 | `5c1d6cc` 返回值关联 `src_stride`；`5c1d67c` 非零 plane 分支另读 plane 0。新 getter 不把 plane stride 当普通 stride。 |
+| allocation | `5c27298 → 5a4e834` | `w0`, +172 | `5a4b2cc–5a4b2fc` 读取 `IOSurfaceAllocSize`，拒绝非零高 32 位，随后在 `5a4b3b4` 存到 +172。不是相邻 +160。 |
+| format | `5c27304 → 5a4e7e4` | `w0`, +164 | `5c1d7dc` 返回值作为 `format` 属性的值。 |
+| planes | `5c272d4 → 5a4e82c` | `w0`, +176 | `5a47894–5a478cc` 从 `IOSurfacePlaneInfo` 数组取计数写到 +176；不是 +180。 |
+
+在 AArch64，写 `w0` 将 `x0` 高 32 位清零，故 width/height/stride/allocation
+适配驱动的 `uint64_t` 返回无需读取相邻字段。format/planes 保留 `uint32_t`。
+读取器无分配、引用计数或锁操作；没有改变请求所有权。
+
+**两个未绑定的计时入口：**
+
+- Refresh：`5c23610` 调用 slot 287，发布 `IOMFBDisplayRefresh`，以 `w0 & 1` 返回。
+  AppleMobileDispH10P 的 `start_hardware_boot()` 在 `5ccfc5c–5ccfc74` 通过自己的 late-init 成功判断，
+  再经 `5ce1650 → [6dfb618]` 调用。nuwa 消费点在 `NativeLegacyDisplay.cpp:530` 的
+  `registerService()`，不能用这条 donor 硬件就绪条件证明其等价。保留未解析，不造返回值。
+- Vsync：`5c0dc28–5c0dc34` 从对象读三条 64 位计时值传给 `5c1b838`；发送体直接遍历
+  +4992 链表，报 `dropped VBL message`。`5c10894` 是另一处调用。不能从四寄存器匹配
+  证明 nuwa 的定时器 (`NativeLegacyDisplay.cpp:417`) 与注册、移除及 teardown 在同一序列化域，
+  也未确认三项计时的语义与每条路径等价。保留未解析，不引入空 sender。
+
+**归档复算。** 沿用 §10 的 `PY`/`BASE`/`CPO`，并用 LLVM 14 `llvm-objcopy`、
+`llvm-ar`。`GopFramebuffer@e47c1b8` (BSD-2-Clause-Patent) 是唯一驱动源码，基座只读。
+真实 CPO 保留原目标（`arm64-apple-ios17.0.0`，这是该 8796 CPO 的编译目标，不是 donor 版本）
+及内核编译选项；去掉 CPO 的 warning 和依赖记录输出，取消回调仍只在 host TU 关闭。
+板级 provider 也用同一 CPO 编译。CPU 路径不用 `NativeGOPPresenter`，不把 GPU presenter
+归档进来。构造器策略复用基座 `scripts/build-adreno740-accelerator.py`（UniXNU
+`693f5d9c`，BSD-2-Clause-Patent）的 manual-only 做法；本机 LLVM 的 Mach-O objcopy
+不支持 `--globalize-symbol`，改由 TU 副本中的 `.globl` 交给 Clang 汇编器，objcopy 只去
+`__mod_init_func`。校验 raw init 指针重定位到该入口、三个归档成员无自动 init/term section、
+唯一全局手动入口由板级 TU 引用、六槽重定位仍与 §10 相同。未实际调用初始化器。
+
+```sh
+GEN=out/nuwa-display-abi-verifier
+HOST=out/nuwa-display-host-archive-verifier
+$PY -B scripts/derive-nuwa-display-abi.py \
+  --base "$BASE" --kernelcache "$BASE/out/ipsw/20H392/kernelcache.decompressed" --out "$GEN"
+for f in OriginalLegacyFramebufferABI.h original-bindings.S nuwa-display-abi.json; do
+  cmp "$GEN/$f" "package/$f" || exit 1
+done
+$PY -B scripts/verify-nuwa-display-host-abi.py --base "$BASE" --cpo "$CPO" --out "$HOST"
+llvm-nm --format=posix "$HOST/HOST-ONLY-incomplete-display.a"
+llvm-readobj --relocations "$HOST/NativeLegacyDisplay.manual.o"
+```
+
+实际三成员归档 `HOST-ONLY-incomplete-display.a` 为 612752 B，本次 SHA256
+`2c808e4c037859f593f9cfbb074ff7e07aec18a6558fa60f0e1467f053b0e5ee`（对象含调试路径）。
+从实际归档取出成员校对其字节及七个 getter，按外部定义消去归档内部引用后还有 381 个
+未解析符号，含 160 个 Legacy 类符号及 6 个仅弱引用符号。`archive.json` 列出每项来源及弱引用位；
+固定 CPO 的完整清单指纹 `18c7dc556bb9a3c27a2338e960bd13ebff9b98edb51cc568e9793a8d285e915d`。
+这是未解析清单校验而非链接通过。两个计时入口仍未解析，Legacy 剩余外部解析需另证。
+运行仍禁用：329 TimingEnable 和 330 超时后的请求/队列生命周期未闭合。没有改 hook、
+内核档案列表、Libm 或 prelink；没有做最终链接、上机候选或设备操作。

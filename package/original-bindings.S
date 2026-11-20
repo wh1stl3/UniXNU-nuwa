@@ -17,3 +17,35 @@
 .set __ZN25IOMobileFramebufferLegacy20getRefreshAttributesEPyb, 0xfffffff005c234b4
 .globl __ZN25IOMobileFramebufferLegacy17applyStateRequestEP26OriginalLegacyStateRequestb
 .set __ZN25IOMobileFramebufferLegacy17applyStateRequestEP26OriginalLegacyStateRequestb, 0xfffffff005c1c1d8
+
+// Qualified IOSurface getters. Descriptor is borrowed; W loads zero-extend.
+.text
+.p2align 2
+.globl _native_legacy_surface_descriptor
+_native_legacy_surface_descriptor:
+    ldr x0, [x0, #56]
+    ret
+.globl _native_legacy_surface_width
+_native_legacy_surface_width:
+    ldr w0, [x0, #144]
+    ret
+.globl _native_legacy_surface_height
+_native_legacy_surface_height:
+    ldr w0, [x0, #148]
+    ret
+.globl _native_legacy_surface_stride
+_native_legacy_surface_stride:
+    ldr w0, [x0, #152]
+    ret
+.globl _native_legacy_surface_allocation
+_native_legacy_surface_allocation:
+    ldr w0, [x0, #172]
+    ret
+.globl _native_legacy_surface_format
+_native_legacy_surface_format:
+    ldr w0, [x0, #164]
+    ret
+.globl _native_legacy_surface_planes
+_native_legacy_surface_planes:
+    ldr w0, [x0, #176]
+    ret
