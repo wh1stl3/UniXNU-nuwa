@@ -276,13 +276,13 @@ def fat_clusters(fat_bytes):
     require(bytes_per_sector in (512, 4096) and sectors_per_cluster and fats and fat_sectors,
             'FAT BPB geometry')
     cluster_bytes = bytes_per_sector * sectors_per_cluster
-    total_clusters = total_sectors // sectors_per_cluster
+    total_clusters = (total_sectors - reserved - fats * fat_sectors) // sectors_per_cluster
     at = reserved * bytes_per_sector
     used = 0
-    for index in range(2, total_clusters):
+    for index in range(2, total_clusters + 2):
         if struct.unpack_from('<I', fat_bytes, at + index * 4)[0] & 0x0fffffff:
             used += 1
-    return cluster_bytes, total_clusters, total_clusters - 2 - used
+    return cluster_bytes, total_clusters, total_clusters - used
 
 
 def seed_entry(fat_bytes):

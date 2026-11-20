@@ -81,7 +81,7 @@ import pathlib
 sys.dont_write_bytecode = True
 ROOT = Path(__file__).resolve().parents[1]
 R14 = ROOT / 'scripts/build-ufs-apfs-root-chmh-r14.py'
-R14_SHA = 'a95d906159e0d8f1f9fa2ff3846890c6cd6ef63ae269129a12083af4c32a10cd'
+R14_SHA = 'e2ec17524710fc78e53e9f7d7058297f9ddb0b288fb4bd2a736c8b348994e24e'
 KERNEL = ROOT / 'out/nuwa-r35-20261119/kernel.macho'
 KERNEL_BYTES = 55721984
 KERNEL_SHA = '787610183dc7f772e2d01aa183f72f2fcc52245fc44407e6c815ced614412464'

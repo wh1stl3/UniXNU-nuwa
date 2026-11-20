@@ -1,6 +1,6 @@
 # UniXNU-nuwa
 
-**显示分支（2026-11-20）：**[原 r35 OFF / 显示 ON 分流、预算与包回读](docs/nuwa-r35-display-budget-20261120-observation.md)（主机 self-checked，未上机）。
+**显示分支（2026-11-20）：**[FAT 计数更正：ON 通过、原 r35 OFF 低于门槛](docs/nuwa-r35-display-fat-correction-20261120-observation.md)（主机 self-checked，未上机）。
 
 **当前（2026-11-15）：原生 UFS 根卷挂载成功，launchd 进入用户态；交互目标未达成。**
 `userdata` 前 8446279680 B 写入并整镜像回读 `sha256=da429da6…68d7`；根卷

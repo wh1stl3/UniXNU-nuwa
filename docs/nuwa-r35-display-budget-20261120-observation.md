@@ -1,7 +1,11 @@
-# r35 OFF / display ON products — host only, self-checked
+# r35 OFF / display ON products — historical budget, corrected
 
-Both images passed the unchanged 64 MiB FAT / 8 MiB free-space checks,
-and separate host outer/FAT readback. OFF and ON are **different artifacts**,
+**Correction:** the old FAT calculation overcounted by 65,536 B; OFF fails
+the unchanged 8 MiB floor, ON passes. Use the corrected counts and outer
+pin in [FAT regression and release status](nuwa-r35-display-fat-correction-20261120-observation.md).
+
+The former checker reported both images as passing; that OFF result is
+invalid. OFF and ON are **different artifacts**,
 not supported as two runtime modes of the display kernel. Use only
 `out/nuwa-r35-display-split-{off,on}` for this round. Earlier same-kernel
 experiments in `out/nuwa-r35-display-compact-package-*` are superseded.
@@ -45,8 +49,10 @@ All other segment file lengths are unchanged. The metadata XML delta is
 Libm +2,053 (shared bundle entries total delta 0), and `_PrelinkLinkKASLROffsets`
 +68,100 Base64 bytes for 12,769 more 32-bit fixup sites: IOAVFamily 10,421
 (41,684 raw bytes), IOMobileGraphicsFamily 2,344 (9,376), and Libm 4 (16).
-Those are required fixups, not redundant data. r35 had 32,256 B above the FAT floor;
-143,360 − 32,256 = 111,104 B short, as measured on its failed successor FAT.
+Those are required fixups, not redundant data. The old calculation reported
+r35 32,256 B above the floor and the first display FAT 111,104 B short.
+Correcting both by 65,536 B means r35 is actually 33,280 B short and the
+first display FAT is 176,640 B short.
 
 ## ON reductions, in order
 
@@ -55,7 +61,7 @@ Those are required fixups, not redundant data. r35 had 32,256 B above the FAT fl
    board provider to 7,824 B, refresh to 2,016 B; both generated assembly
    members keep their sizes. Archive: 749,360 → 117,160 B. The fully linked,
    emitted and rendered kernel measures 55,857,152 B (−8,192); at 512 B per
-   FAT cluster that would still be 102,912 B below the floor on the same
+   FAT cluster that would still be 168,448 B below the floor on the corrected
    budget. No constructor or functional section was dropped.
    The assembled-layout device archive callback also emitted 117,160 B
    and passed the base linker's archive/report hash checks.
@@ -106,7 +112,7 @@ Seed, loader, trust and outer layout are unchanged.
 | FAT / `actual-vendor-ramdisk.img` readback SHA-256 | `90a5447c8c67a18c9f14fdb6a67c1620252f5ab472555b018478c9149518121e` | `3d8ed2bd8009d704c570adda524aa3b378165c243feb61d044fda66a4a620664` |
 | `outer-record.json` SHA-256 | `0c2b0d4a52b3cc9200d03161b0a5f5bca48207489c8f766084f58f697c76b3e3` | `c5c9241d9a1a2e10a00906732c7f974f94433aafd402c081015100756d9ae594` |
 | Outer readback `audit.json` SHA-256 | `ef1ffc5ef46f97b9086294af9fa6566a2feeac17d84d0678f95551724349e6a5` | `40549bc2b80e752079124960f7e64e55e0d62a331942c68c2d43a02edf86ce5a` |
-| FAT free (above floor) | 8,420,864 B (+32,256) | 11,996,672 B (+3,608,064) |
+| FAT free (above floor), corrected | 8,355,328 B (−33,280) | 11,931,136 B (+3,542,528) |
 
 ## Reproduce independently
 
