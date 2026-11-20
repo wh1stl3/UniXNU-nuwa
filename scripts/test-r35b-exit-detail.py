@@ -20,6 +20,13 @@ assert draw.index("bp_exit_view_take(&exit_view)") < draw.index("bar(0,")
 view = src[src.index("struct bp_exit_view {"):src.index("// Published so", src.index("struct bp_exit_view {"))]
 take = "  struct bp_exit_view exit_view;\n  if(!bp_exit_view_take(&exit_view)) return;"
 assert take in draw
+guard_start = src.index("static __attribute__((noinline)) void draw_thread_only(")
+guard_end = src.index("// A framebuffer write", guard_start)
+guard = src[guard_start:guard_end]
+assert src.count("draw(now);") == 1 and src.count("draw(seconds());") == 0
+assert src.count("draw_thread_only(now);") == 5 and src.count("draw_thread_only(seconds());") == 2
+assert "if (!ml_at_interrupt_context()) boot_progress_poll();" in src
+assert "static void refresh(unsigned now) {\n  if (ml_at_interrupt_context()) return;" in src
 function = src[src.index("void boot_progress_exit(int pid,"):src.index("// The log's [spawn] section")]
 fmt = src[src.index('      if(e->pc_valid)'):src.index('      if (!i) bar(0,b', src.index('      if(e->pc_valid)'))]
 harness = r'''
@@ -137,3 +144,20 @@ with tempfile.TemporaryDirectory() as tmp:
     subprocess.run(["cc", "-std=c11", "-O0", str(c), "-o", str(exe)], check=True)
     result = subprocess.run([str(exe)], check=True, text=True, capture_output=True)
     print(result.stdout, end="")
+    guard_c = pathlib.Path(tmp) / "guard.c"
+    guard_exe = pathlib.Path(tmp) / "guard"
+    guard_c.write_text(r'''
+#include <assert.h>
+#include <stdio.h>
+static int irq,draws;
+static int ml_at_interrupt_context(void) { return irq; }
+static void draw(unsigned n) { draws+=(int)n; }
+''' + guard + r'''
+int main(void) {
+  irq=1;draw_thread_only(1);assert(draws==0);
+  irq=0;draw_thread_only(1);draw_thread_only(1);assert(draws==2);
+  printf("IRQ gate skips draw; thread/continuous calls reach draw\n");
+}
+''')
+    subprocess.run(["cc", "-std=c11", "-O0", str(guard_c), "-o", str(guard_exe)], check=True)
+    subprocess.run([str(guard_exe)], check=True)

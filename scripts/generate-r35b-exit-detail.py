@@ -96,4 +96,27 @@ static int bp_exit_view_take(struct bp_exit_view *view) {
     text = replace_once(text,
                         "(unsigned)nprocs, exit_ring[0].aks_calls, exit_ring[0].aks_opens);",
                         "(unsigned)nprocs, exit_ring[slot].aks_calls, exit_ring[slot].aks_opens);")
+    # Keep the interrupt check outside draw's large frame, including early
+    # putc/stage and the frozen-poll call sites.
+    if text.count("draw(now);") != 5 or text.count("draw(seconds());") != 2:
+        raise ValueError("draw call inventory changed")
+    text = text.replace("draw(now);", "draw_thread_only(now);")
+    text = text.replace("draw(seconds());", "draw_thread_only(seconds());")
+    text = replace_once(text, "// A framebuffer write must never delay timer acknowledgement.",
+                        """static __attribute__((noinline)) void draw_thread_only(unsigned now) {
+  if (ml_at_interrupt_context()) return;
+  draw(now);
+}
+
+// A framebuffer write must never delay timer acknowledgement.""")
+    text = replace_once(text, "static void refresh(unsigned now) {\n",
+                        "static void refresh(unsigned now) {\n  if (ml_at_interrupt_context()) return;\n")
+    text = replace_once(text, "    if (geometry_changed) bp_clear(&display);\n    draw_thread_only(seconds());",
+                        "    if (!ml_at_interrupt_context()) {\n      if (geometry_changed) bp_clear(&display);\n      draw_thread_only(seconds());\n    }")
+    text = replace_once(text, "    bp_clear(&display);\n    draw_thread_only(seconds());",
+                        "    if (!ml_at_interrupt_context()) {\n      bp_clear(&display);\n      draw_thread_only(seconds());\n    }")
+    text = replace_once(text, "  release();\n  boot_progress_poll();\n",
+                        "  release();\n  if (!ml_at_interrupt_context()) boot_progress_poll();\n")
+    text = replace_once(text, "  if (!boot_progress_display_owned) {\n    line(0,",
+                        "  if (!boot_progress_display_owned && !ml_at_interrupt_context()) {\n    line(0,")
     return text.encode()
