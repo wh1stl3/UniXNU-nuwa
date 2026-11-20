@@ -134,7 +134,9 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only):
     if cpu_only:
         # No early GPU retire in the board TU: use the original r35 renderer
         # archive byte for byte, including its observation counter aliases.
-        link("native-link", native, [*argv, f"-Wl,-force_load,{archive}"])
+        # Preserve the ADRP/LDR GOT sequence required by the linked audit.
+        link("native-link", native, [*argv, "-Wl,-ignore_optimization_hints",
+                                    f"-Wl,-force_load,{archive}"])
         return
 
     # The historical display TU owns both early GPU counters. Localize only

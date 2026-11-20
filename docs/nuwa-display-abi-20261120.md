@@ -539,6 +539,34 @@ fallback 和 MediaToolbox 三个独立输出，再用 20H392 真实 TU 检查获
 本轮未改变 import、timer、Libm 或设备构建输入，故未跑适配 TU/拒绝测试、未上机、
 未独立复跑。
 
+## 24. 保留已审 GOT 序列及 Libm 路线边界（self-checked）
+
+基线 `f1ad000757bb59e2b6e457f9ff639b85398efb0a`。本机 ld 二进制含
+`-ignore_optimization_hints`；仅对 CPU-only 显示组链接传入该选项，r35 控制组
+参数不变。真实 r35 控制组仍除 UUID/map 首行外一致，显示组 ld 成功；现有
+`audit_linked_metaclass` 的 ADRP/LDR、GOT 段和实际指针检查以及
+`audit_linked_originals` 均运行到完成，随后原样 strict emit 停于
+`emit_prelink.py:111`，Libm `0xfffffff005b8c1cc`。
+native SHA256 `c690783526424828e23aae3e279f0db0b0141bb60af21a98233c13162b9a7c1c`。
+这是禁用该次显示组链接的所有 linker optimization hints，不是对单一指令的优化；
+不修改审计或 scanner。原有 metaclass 夹具重跑，错误 GOT 指针、initializer 及
+getter 各拒绝；不代表最终 prelink 或运行时通过。
+
+复跑 §23 命令，将 `--out` 换为新目录；本次输出目录为
+`out/nuwa-display-ignore-loh-02`，链接后由构建脚本直接调用 strict emit，
+未保存 emit 输出。首次执行时 shell 意外展开变量造成 CPO 路径为
+`/iokit/DEVELOPMENT/IOPMGR.cpo.json`，未到链接；第二次使用完整绝对路径。
+
+Libm 有界核对：研究分支 `6bfaa2f` 的
+`docs/nuwa-20h392-libm-boundary-20261120.md` 未证数据边界或所有间接入边，
+不能据此排除候选区间。固定的 XnuPrelink `f1d80d3` 的普通路径在
+`emit_prelink.py:74–114` 扫描被选模块全部可执行段并拒绝外部 PC 相对编码；
+`README.md:9–25` 的分段重定位布局是 MH_FILESET 路径，不是该传统 prelink
+donor 的可直接替换选项。所查本地上游工具未发现无需排除未证区间的受支持
+传统布局/重定位路线。最小下一步是取得可证明的代码/数据边界和完整相关入边证据，
+或取得针对该传统 donor 的上游支持路径；当前缺此证据，strict emit 阻断不变。
+未变更认证、329/330 或设备；无独立 verifier。
+
 ## 23. 方案 A2：无 GOP 软件 vsync 的真实 r35 完整链接（self-checked）
 
 基线 `d6aad0c02e7e1203f73e4aab5f437a97e21817b6`，沿用 §22 的基座、驱动
