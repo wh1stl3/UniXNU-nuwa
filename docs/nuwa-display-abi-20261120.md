@@ -1,7 +1,7 @@
 # 20H392 显示 ABI 取证（G1 收尾，2026-11-20）
 
 状态：**self-checked（主机侧、未独立复核）**。输入是本机 20H392 donor kernelcache，无设备操作、无内核构建。
-最新 host-only formatter、teardown 夹具与取证见 §15。
+最新两条路线及放行判据见 §16；host-only formatter 与 teardown 夹具见 §15。
 
 ## 0. 结论
 
@@ -629,3 +629,106 @@ $PY -B scripts/test-nuwa-display-teardown.py
 归档 SHA256 `43ed9c5de0cfe1fb141d9e0649e8b03f6c213287e2df85ac11b7413e40f5a89c`；
 含调试路径，新输出目录不要求对象同哈希。夹具通过，未独立复跑；
 无实际发布、运行路径、最终链接、Libm／guard 改动或设备操作。
+## 16. 方案 A：保留软件 vsync 与无软件 vsync 首帧（self-checked）
+
+设备基线 `790e4669fe7a20b3d5610a3cec5e9275c9bf3f39`，基座只读 `693f5d9c`。
+一次上游检查：UniXNU HEAD `8542980d02b4d2cc5c32ee3542de1760b2562aac`；
+`UniXNU/GopFramebuffer@b0d812d578efa2acb005b66f73168891719af09a`（BSD-2-Clause-Patent）
+的 `NativeLegacyDisplay.cpp` 仍是 `startVsync` 创建 workloop timer、`stopVsync` 从
+`stop/free` 直接 cancel/remove/release、tick 调原 sender；上游允许零或不传 `vsync`
+来不分配软件 timer，但没有可直接复用的 teardown 契约。设备继续钉 `e47c1b8`，不迁移参数名。
+另查本机正式 8796 feed `1b191cb58250d0705d8a51287127505aa4bc0789`（§14 的实际构建输入）。
+不引入第三方实现。
+
+### A1：保留软件 vsync — 首阻断是清理入口的锁序
+
+`NativeLegacyDisplay.cpp:456 → stopVsync:438–442` 不能直接包一次显示 `runAction`：
+8796 `IOService.cpp:2914–2924` 能由 `didTerminate` 独立排 `scheduleStop`（`:2863–2865`）；
+phase 3 的 `:3302–3324` 只在 **client inactive** 的分支等待 `finalize`，
+其它已排队、仍连接的 client 可直接走 provider `_workLoopAction` (`:2476–2482`) →
+`actionStop:3106`。因此不能把 `finalize:3387` 或 `terminateWorker:3274–3275` 的
+victim loop 当成所有 stop 的前置清理点；也不能把 `removeEventSource` 当成无取锁的操作。
+板级 `package/NuwaLegacyDisplay.cpp:121–145` 的 provider 和 donor `self+5048` 的
+显示 loop 没有同一性保证。这是**不能证明新 provider→display 边成立**，不是实测死锁。
+`thread_call_cancel_wait` 也不能放进 provider/display gate 内等待一个需要该 gate 的工作；
+仅排异步清理又不能证明它先于 Legacy stop 拆队列／拆 loop。
+
+sender 也不能因 `CanDrop` 就视为安全：§15 的 `5c1b948 → 5c1b980 → 5c1b9b4`
+在 send 后仍解引用同一借用节点。8796 的 `IOUserClient.cpp:2244` →
+`ipc_mig.c:121–127,139–164` → `ipc_kmsg.c:2964–2977,3020–3021` 表明，
+普通用户端口走队列，队列满且零超时在 `ipc_mqueue.c:425–427` 返回；
+对内核空间目的端口则**可同步调用** `ipc_kobject_server`。这不表示正常 compositor
+使用内核端口；它排除了用零超时为任意目的端口证明不重入。消息复制/`COPY_SEND`
+也不保活原链节点，不等价于在回到 `5c1b9b4` 前禁止摘链。
+
+**下一可测判据：** 在实际 8796 IOKit 路径标记两把 gate 的身份与持有者，
+分别触发 programmatic finalize、provider phase-3 stop，并让 tick 已入 gate。
+先证可清理于 provider gate 外、且在父类拆队列/loop 之前（或证无反向边及全路径同一性）；
+然后对实际 type-5 注册/发送/摘链核对端口来源以及节点从 `5c1b948` 到
+`5c1b9b4` 的寿命。在 sender 返回、最后一个 client 摘链和 stop 的交错中，清理后
+不能有 send/rearm，过期 callout 可退场。未证该入口前不把 sender 接到真实 TU。
+
+### A2：无软件 vsync 的 CPU 首帧 — 同版存在提交路径，首阻断仍是请求生命周期
+
+复查 §14 的只读 SystemOS cache；用户 VA 不加内核前缀。QuartzCore 的默认路径不是
+“等内核 VBL，否则不能 submit”，选择项也**不是** GOP timer 是否启用：
+
+1. `0x1883da1b0–d4/0x1883da908` 的构造路径把 `CADeviceUseVBL` 结果置入
+   server `+0x30d` bit 1。`0x18836d0e4–164` 查询 `ChipID`；无有效环境覆盖时，
+   只对 `0x7000,0x7001,0x8000,0x8003,0x8001,0x8002,0x8004,0x8010` 置位，
+   不含 donor `0x8015`。这不是实际 nuwa 用户态读到的 `ChipID` 证据。虽有
+   `CA_FORCE_TIMER` 字面量，`getenv → atoi` 非零在该构建反而跳到置位分支；
+   不把它作为强制 timer 的旋钮，也不改用户态。
+2. bit 1 清时，`IOMFBServer::add_vsync_source` 的 `0x1882d9f10–90` 在非 benchmark
+   路线上创建 `CADisplayTimer`；`0x18837bd24–64` 启用 timing reference 后挂 runloop，
+   不是 `0x18837bd6c–7c` 的 IOMFB VSync 通知注册。该用户 timer 的
+   `0x18832fb5c → _mk_timer_create` 建 Mach timer，`0x18832fb80–98` 建 CF source；
+   `0x1882badf0` 执行 timer 的 callback。timing reference 取不到时
+   `0x1882bc450–458` 返回零参考，不是 return-without-render 的等候条件。
+3. 正常计时分支 `timer_callback:0x188350c60` 直接调用本地 `vsync_callback`
+   （此处是函数名，不是等收到内核消息），后者 `0x1882ba434` 调
+   `Server::render_for_time`。该函数在 `0x1884f6030–44` 调 display `vptr+0x180`；
+   `AppleCLCDDisplay` vtable 项 `0x1d5b38918` 对应
+   `IOMFBDisplay::finish_update`，在 `0x1882d3008` 调 `SwapEnd`。跳板
+   `0x18dbcc3f4 → 0x1af223fa8` 经连接分派；普通 kernel backend
+   `_kern_SwapEnd:0x1af223544–55c` 用 `IOConnectCallStructMethod` 提交 selector **5**、
+   输入 **0x46c** B；donor dispatch 行 `6decbd0 → 5bff998` 的结构尺寸也为 `0x46c`。
+   两端是同版真实提交链，不等于证明 nuwa 已选这条分支或提交成功。
+
+首帧候选只复用基座“零速率不建软件 timer”的边界；预期代价是不提供 GOP 合成的
+VBL 通知，不宣称连续呈现或物理刷新率。这可从**新增软件 timer 链**移除
+provider→display 清理取锁与借用 sender，不会移除 donor 自身的通知/状态路径。
+**首阻断：** `package/OriginalLegacyFramebufferABI.h:236` 的 slot 329 仍是纯虚，
+host TU 的 `opaque329` 是 guard；donor `5c10e40/5c10f7c` 的状态分支和
+`5c11980` 的 timeout 路径读它，均不测试 nuwa 软件 timer 是否存在；
+`5c11a74/af0` 的 slot 330 处理请求时也不会为 CPU-only 免除请求所有权。
+不能用“禁 vsync”或“禁 host cancel override”移除 guard / 推定 `validated`、
+`transferred` 与 donor current/pending 已对账。
+
+**下一可测判据：** 先在同版调用链判明 329 的真实状态输入/转移，及 330 对
+CPU copy 已结束但未退休请求的释放和 completion 顺序，要求成功和 timeout 都
+使子类及 donor 对同一请求只完成/释放一次。另独立核对 Libm 后，若获准构建并在
+真实 20H392 环境验证，须同时捕获：QuartzCore 选择 timer 分支、无 nuwa 软件 timer
+或 type-5 tick、首个正常 selector 5 返回成功、同一 swap ID 恰一次退休并在 GOP
+出现该帧。仅有 60 Hz fallback 或 `present_surface` 的独立接口不计合格。
+
+### 独立 Libm 门禁及复核输入
+
+donor `__PRELINK_INFO` 直接给出 `IOMobileGraphicsFamily → IOAVFamily → Libm`，
+与是否启用软件 timer 无关。对 §1 的未修改 kernelcache，使用
+`XnuPrelink@f1d80d37528a33e24643583787123c652b70a268` 原样
+`instruction_inventory(data, parent, {"com.apple.kec.Libm": module})`，
+其中 `parent = macho(data)["segments"]`，`module = macho(data, backed_offset(parent,
+entry["_PrelinkExecutableLoadAddr"], 32, len(data)))`。**首错** `emit_prelink.py:111`：
+`External PC-relative encoding at 0xfffffff005b8c07c; no instruction rewrite supported`。
+该处的四字节 `55 73 cc 37` 被解成出段分支；不是对数据区分类的充分证据。
+`scripts/audit-target-libm-inline-data.py` 是基座已有的鉴证方法，但钉另一 donor；
+不能移植它的池偏移或 hash。后续只接受 20H392 本身的完整范围/指纹、真实 literal
+指向、边界和反例在原扫描下复算；本轮不改 scanner、profiles 或 security gates。
+
+复核：按 §14 只读挂载同一 SystemOS，主 cache SHA256 `76874e8375252ee643011ff8063f0cce12355f05cf5f9897a34e5679667a65aa`；
+QuartzCore `.03`、IOMobileFramebuffer `.13`、vtable `.27.dylddata` 及符号
+`.42.dyldlinkedit/.symbols` 用 cache mappings、`LC_ID_DYLIB`、符号表和 ARM64
+指令逐项对照上述 VA。8796 核对上述 `IOService`/IPC 行号，Libm 用上段原函数复跑，
+预期同一拒绝。没有新增 DUT/模型用例、未改真实 TU 或构建/链接输入；没有运行
+新编译、上机或独立 verifier。显示仍 `planned`；优先取证 A2，不宣称首帧已运行。
