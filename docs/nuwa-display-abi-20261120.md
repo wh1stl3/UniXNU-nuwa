@@ -169,3 +169,56 @@ swap 节点链接 2408/2416。
 复跑第 8 节的真实 8796 translation unit（`-DNATIVE_LEGACY_CANCEL_SWAPS=1`）：clang 退出 1，**首错 `NativeLegacyDisplay.cpp:770:36`**，`cancelSwapsAfterTimeout()` 拒绝 `override`，没有可匹配的基类虚函数。无目标对象，未检查最终子类槽 321。复跑时用该 `IOPMGR.cpo.json` 的 `directory` 和 `arguments`：把 `file` 替换为基座 `drivers/GopFramebuffer/NativeLegacyDisplay.cpp`，`-o` 指到临时对象，移除 `-W*`（连带其 `-Xclang` 包装），追加 `-I<设备仓>/package`、`-I<同一构建树>/.cache/xnu-work/osfmk`、上述宏和 `-ferror-limit=1`。
 
 未链接、未上机；ABI 待方案 A 的 `deep_reviewer` 审查及独立 verifier 复跑。
+
+## 10. 方案 A：20H392 host TU 适配（self-checked）
+
+按主控转述的本轮深审结论实施。第 8–9 节的编译失败是历史结果；本轮使用基座
+`693f5d9cae8a408dd18b39f3f9fdc4228c934241`、`GopFramebuffer@e47c1b8de169cd2bd0b885c7d85e433010e3cdf2`
+的完整 TU，仅在设备仓 `out/` 副本中适配。槽 212 仍为九个原始纯虚位之一，从
+guard 列表改由三参 `supportedFrameInfo(uint32_t, uint32_t *, char *)` 覆盖；有效输出写
+`count=0`、清 64 B key 并返回 `kIOReturnUnsupported`，无 mask 参数或访问。生成器断言
+selector 74 的 dispatch 行、转发指令、槽 212 调用和结果转发，以及 321/329/330 的调用锚。
+donor 338 槽、九个纯虚位置和 `original-bindings.S` 均不变。
+
+真实 xnu-8796 构建的 `IOPMGR.cpo.json` 提供 cwd 和参数。保留其架构、代码生成、
+defines 和生成头；替换输入/输出，去掉原 TU 的 `-W*`（含 `-Xclang` 包装），追加
+基座驱动 quote include、设备 `package` 和构建树 `osfmk` include、
+`-DNATIVE_LEGACY_CANCEL_SWAPS=0 -ferror-limit=1`。Clang 24
+`58c46bae21181fb4240cf964461bea738d96d50e` 退出 0（17 条指定初始化警告）。
+完整 cwd/argv 与输入校验信息保留在本地 `out/nuwa-display-host-abi-20261120/compile.json`，
+SHA256 `9b5786db627f6dd40d56d6ebccd7e29e24eeb4d1cea1bf732b856585bd853ba8`；
+原 CPO SHA256 `d390eb4440c6854e0243d041f0cd329be419a10ef78facf9a90102f3822e0c70`。
+
+实际 ARM64 Mach-O `NativeLegacyDisplay.o`：388400 B，
+SHA256 `13759effe67bd68ec1db3316fd0e4847deecd2e37aaeaf31bd5515070d335ffe`。
+从 `__ZTV19NativeLegacyDisplay` 的 section/value 锚定 `__const` 内重定位，六项均是
+无 addend 的 8 字节 `ARM64_RELOC_UNSIGNED`；另用 `llvm-readobj --relocations` 交叉核对：
+
+| 槽 | section offset | 目标 |
+| --- | --- | --- |
+| 184 | `0x5e0` | `NativeLegacyDisplay::isMainDisplay` |
+| 188 | `0x600` | `NativeLegacyDisplay::getDotPitch` |
+| 212 | `0x6c0` | `NativeLegacyDisplay::supportedFrameInfo`（三参） |
+| 321 | `0xa28` | `NativeLegacyDisplay::collectCompletionReports` |
+| 329 | `0xa68` | `NativeLegacyDisplay::opaque329`（guard） |
+| 330 | `0xa70` | `IOMobileFramebufferLegacy::opaque330`（继承，未增加直接绑定） |
+
+**禁止以该对象运行。** 槽 329 的 TimingEnable 合同仍未实现；关闭取消回调只隔离
+host 编译，未证明 donor 取消后 `validated`、GPU 请求和 fence 的生命周期正确。
+两项都需独立合格证据才能解除运行门禁。本轮未链接、未上机，未进行独立 verifier。
+
+复跑（WSL，cwd = `UniXNU-nuwa`；输出目录须不存在）：
+
+```sh
+PY=/home/wh1stl3/.local/bin/python3.11
+BASE=/mnt/d/Code/PortingiOS/UniXNU
+TREE=/root/nuwa-pmap-ret-native-20261111/nuwa/ios-16.7.16-20H392/nuwa_pmap_ret/tree
+CPO=$TREE/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/IOPMGR.cpo.json
+$PY -B scripts/derive-nuwa-display-abi.py \
+  --base "$BASE" --kernelcache "$BASE/out/ipsw/20H392/kernelcache.decompressed" --out package
+$PY -B scripts/verify-nuwa-display-host-abi.py \
+  --base "$BASE" --cpo "$CPO" --out out/nuwa-display-host-abi-verifier
+llvm-readobj --relocations out/nuwa-display-host-abi-verifier/NativeLegacyDisplay.o
+```
+
+复跑输出路径不同且保留 `-g`，对象哈希只标识各自的对象，不替代槽位核验。

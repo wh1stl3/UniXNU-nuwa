@@ -39,6 +39,11 @@
    "prototype": "IOReturn getDotPitch(uint32_t *)",
    "abstract": false
   },
+  "212": {
+   "address": "0xfffffff00770ace4",
+   "prototype": "IOReturn supportedFrameInfo(uint32_t, uint32_t *, char *)",
+   "abstract": true
+  },
   "246": {
    "address": "0xfffffff005c247ac",
    "prototype": "void getDisplayDimensions(uint32_t *, uint32_t *)",
@@ -69,15 +74,15 @@
    "prototype": "bool getRefreshAttributes(uint64_t *, bool)",
    "abstract": false
   },
-  "336": {
-   "address": "0xfffffff005c1c1d8",
-   "prototype": "int applyStateRequest(OriginalLegacyStateRequest *, bool)",
-   "abstract": false
-  },
   "321": {
    "address": "0xfffffff00770ace4",
    "prototype": "IOReturn collectCompletionReports(uint32_t, void *, uint32_t *, uint32_t)",
    "abstract": true
+  },
+  "336": {
+   "address": "0xfffffff005c1c1d8",
+   "prototype": "int applyStateRequest(OriginalLegacyStateRequest *, bool)",
+   "abstract": false
   }
  },
  "instance": {

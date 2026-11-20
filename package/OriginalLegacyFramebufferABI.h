@@ -116,7 +116,7 @@ public:
     virtual void opaque209();
     virtual void opaque210();
     virtual __attribute__((noreturn)) void opaque211() = 0;
-    virtual __attribute__((noreturn)) void opaque212() = 0;
+    virtual IOReturn supportedFrameInfo(uint32_t, uint32_t *, char *) = 0;
     virtual void opaque213();
     virtual void opaque214();
     virtual void opaque215();
@@ -254,4 +254,4 @@ enum : unsigned {
     kInstanceStateRequested = 5236, kInstanceStatePowered = 5240,
     kLegacyVsyncClients = 4992
 };
-#define NATIVE_LEGACY_LEAVES(LEAF) LEAF(211) LEAF(212) LEAF(242) LEAF(243) LEAF(292) LEAF(293) LEAF(322) LEAF(329)
+#define NATIVE_LEGACY_LEAVES(LEAF) LEAF(211) LEAF(242) LEAF(243) LEAF(292) LEAF(293) LEAF(322) LEAF(329)
