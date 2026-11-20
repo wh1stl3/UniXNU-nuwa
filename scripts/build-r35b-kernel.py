@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import importlib.util
+import json
 import sys
 from pathlib import Path
 
@@ -11,6 +12,10 @@ HEADER_SHA = "86311631e7cf66881bd6d1a57a927c78db9ea9bb579deb025136252e3e218c72"
 RENDERER_SHA = "a4163ecd10ecfd6bb429f2ce9c919f9a67a6dab85c936beeabb8f7fba2fe89be"
 OLD_ASSERT = "assert ring_body.count('if(status || ns) {') == 1, 'ring must keep abnormal exits only'"
 NEW_ASSERT = "assert ring_body.count('if(signal || ns) {') == 1 and ring_body.count('if(status || ns) {') == 0, 'ring must keep signal or reason exits only'"
+BOOT_BUILD_SHA = "0d283d07764d9bdcf72bc756994592c5cdb2264dab87361601406ab21e227156"
+DISPLAY_AUDIT_SHA = "5da768f17a93ad433c4a59edc7911ebac1fad9228ad64b79f629f24f6c9d9834"
+OLD_NATIVE_SHA = "f4648bcfd02bbbabb7d2a5ac4719d62c9c62d5eb6c79f3a2b61770eda53bd668"
+OLD_PRELINK_SHA = "ebec5e7b0df39d772e7a204108b799d280798d89d2a4edb455cd1a0d240496eb"
 
 
 def pin(data, expected):
@@ -19,10 +24,63 @@ def pin(data, expected):
     return data
 
 
+def replace_once(text, old, new):
+    if text.count(old) != 1:
+        raise ValueError("recipe anchor changed: " + old)
+    return text.replace(old, new, 1)
+
+
+def compact_recipe(build, r35, out):
+    recipe = r35.parent / "nuwa-r12bisect-20261116/build-boot-progress.py"
+    boot_build = pin(recipe.read_bytes(), BOOT_BUILD_SHA).decode()
+    slim = out / "build-boot-progress-compact.py"
+    slim.write_text(replace_once(boot_build, "command_for(renderer, renderer_obj))",
+                                "command_for(renderer, renderer_obj) + ['-g0'])"))
+    build = replace_once(build, "'-B', BOOT_PROGRESS_BUILD,",
+                         f"'-B', {str(slim)!r},")
+    # Preserve the compiler's literal-pool order as well as __FILE__ spelling.
+    previous = r35.parent / "nuwa-r35b-exit-selection-20261120"
+    build = replace_once(build, "        argv[argv.index(rec['file'])] = str(source)\n"
+                                 "        argv[argv.index('-o') + 1] = str(out / (label + '.o'))",
+                         "        if label in ('machine', 'vm_unix'):\n"
+                         f"            old_source = Path({str(previous)!r}) / source.relative_to(out)\n"
+                         "            assert old_source.read_bytes() == source.read_bytes(), label\n"
+                         "            source = old_source\n"
+                         "        argv[argv.index(rec['file'])] = str(source)\n"
+                         "        argv[argv.index('-o') + 1] = str(out / (label + '.o'))")
+    return replace_once(build, "    run('native-link', argv, link['cwd'])",
+                        "    argv.append('-Wl,-S')\n    run('native-link', argv, link['cwd'])")
+
+
+def audit_compact(r35, out):
+    root = r35.parents[1]
+    before = r35.parent / "nuwa-r35b-exit-selection-20261120"
+    display = root / "scripts/build-nuwa-display-native.py"
+    source = pin(display.read_bytes(), DISPLAY_AUDIT_SHA)
+    sys.path.insert(0, str(root / "scripts"))
+    namespace = {"__name__": "display_debug_audit", "__file__": str(display)}
+    exec(compile(source, str(display), "exec"), namespace)
+    audit = namespace["audit_debug_strip"](
+        pin((before / "native.macho").read_bytes(), OLD_NATIVE_SHA),
+        (out / "native.macho").read_bytes())
+    old = json.loads(pin((before / "prelink.json").read_bytes(), OLD_PRELINK_SHA))
+    new = json.loads((out / "prelink.json").read_bytes())
+    # Symbol/string shrinkage changes file offsets, sizes and hashes, not bindings.
+    fields = ("bindings", "original_sha256", "original_executable_sha256", "components",
+              "codeless_components", "kernel_interfaces", "module_entrypoints", "pointer_counts",
+              "slide", "early_security_initializers")
+    for key in fields:
+        if old[key] != new[key]:
+            raise ValueError("prelink inventory changed: " + key)
+    audit.update(prelink_bindings_preserved=len(new["bindings"]), matching_prelink_fields=fields)
+    (out / "debug-strip.json").write_text(json.dumps(audit, indent=2) + "\n")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("r35", type=Path, help="original r35 directory")
     parser.add_argument("out", type=Path, help="new directory under the original repository out/")
+    parser.add_argument("--compact", action="store_true", help="remove only debug metadata and audit against r35b")
     args = parser.parse_args()
     r35 = args.r35.resolve()
     out = args.out.resolve()
@@ -34,16 +92,19 @@ def main():
     selection = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(selection)
     renderer = pin(selection.generate((r35 / "BootProgress.c").read_bytes()), RENDERER_SHA)
-    if build.count(OLD_ASSERT) != 1:
-        raise ValueError("r35 assertion anchor changed")
+    build = replace_once(build, OLD_ASSERT, NEW_ASSERT)
     out.mkdir()
     (out / "BootProgress.c").write_bytes(renderer)
     (out / "BootProgressDisplay.h").write_bytes(header)
     namespace = {"__file__": str(r35 / "build.py"), "__name__": "r35b_recipe"}
-    exec(compile(build.replace(OLD_ASSERT, NEW_ASSERT, 1), str(r35 / "build.py"), "exec"), namespace)
+    if args.compact:
+        build = compact_recipe(build, r35, out)
+    exec(compile(build, str(r35 / "build.py"), "exec"), namespace)
     namespace["RENDERER"] = out / "BootProgress.c"
     sys.argv = [str(r35 / "build.py"), "--out", str(out)]
     namespace["main"]()
+    if args.compact:
+        audit_compact(r35, out)
 
 
 if __name__ == "__main__":
