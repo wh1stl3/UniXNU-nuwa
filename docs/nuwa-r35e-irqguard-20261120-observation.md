@@ -52,11 +52,37 @@ match the same-source full-symbol kernel. All are self-checked.
 
 The inherited profile still says `r35c-detail` and the screen tag is
 `nuwa-r35`; identify this candidate by its hashes, not those labels.
-Authentication remains NOT REACHED. The final candidate needs fresh
-reviewer and deep_reviewer review; independent verifier has not rerun the
-build or tests. No device operation or main merge. The first full build
+Authentication remains NOT REACHED. The final candidate's release chain
+is recorded below; independent verifier has not rerun the build or tests.
+No device operation or main merge. The first full build
 command reported exit 1 with no captured error; a fresh-directory
 foreground rerun produced the reference above and exited 0.
+
+## 方案 A 放行链（主控转述，适用 `13308c1`）
+
+- **deep_reviewer，IRQ 栈阻断销项原文：**“该 High 可关闭，IRQ 路径先返回不进入
+  `_draw`，因此不在 IRQ 栈分配 3,472 B 帧；静态审查放行。”
+- **reviewer：PASS WITH CONDITIONS。** 六处链接后的门禁调用、单一线程态进入
+  `_draw` 的直接边；EX 快照、合并键、`dropped` 和 PC 采样语义未变；outer
+  中从偏移 `0x1000` 开始的 payload 与独立 payload 逐字节一致。
+- **候选：**kernel SHA-256
+  `9464ca7d5102de700e35afa0b36094b3cc042054daeac07ecfd2fb1eb7c8ba03`；
+  outer SHA-256
+  `e33207c6e13d1f95ad6192f704dd01ef78beeb45ad76c41596cdc2e03a37ace1`；
+  CHMH SHA-384
+  `2fc372e93029aabee9b2d5a7e0139382576e9b9518285f1fbb72be7583946e8f9afd48b714adf8f782a189d4d10236e8`；
+  FAT 空闲 12,070,400 B。
+- **回滚目标与原厂备份：**r34 vendor boot SHA-256
+  `46aa4fd9f575a30824543fed7c128c5013d35af8d62a98715d0312d1752c891e`；
+  stock `boot_a` SHA-256
+  `d530872b80f9cc44a260411a1a7d1c6357a9d3e562577e803e7a82945226c0d9`；
+  stock `vendor_boot_a` SHA-256
+  `493ca426964adabb195a00ded4ff49793bc7efd5d7bea2a567bcfd0c970a8dad`。
+  原厂整分区备份的写入及回读限制见
+  [r35b preflight](nuwa-r35b-flash-round-20261120.md)。
+
+独立 verifier **未复跑**；放行依据为方案 A 深审 + reviewer +
+self-checked，不称独立验证通过。上机须用户当轮明确授权；本留痕不授权设备操作。
 
 ## Independent rerun (WSL Ubuntu-22.04 root)
 
