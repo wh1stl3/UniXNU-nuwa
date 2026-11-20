@@ -24,6 +24,8 @@ commands (allowing only audited symbol metadata, UUID and LINKEDIT extent
 changes), mapped bytes outside LINKEDIT, the non-symbol LINKEDIT prefix,
 and the multiset of non-STAB `(name, type, section, desc, value)` tuples.
 The strict check repeats the tuple comparison on the final emitted kernels.
+The final kernels are not identical across all non-LINKEDIT bytes:
+`__PRELINK_INFO` shifts and only `_PrelinkKCID` differs by about 22 bytes.
 The prelink manifests' complete ordered binding arrays are compared as
 JSON, along with donor executable hashes, component sets, entrypoints,
 kernel interfaces, pointer counts, slide and early security initializers.
@@ -62,11 +64,13 @@ the new one uses 105,447.
 | FAT free vs 8 MiB floor | 8,355,328 B (−33,280 B, FAIL) | 12,070,400 B (+3,681,792 B, PASS) |
 
 CHMH was derived from the new pinned kernel and unchanged boot arguments;
-old CHMH was not reused. Authentication remains NOT REACHED. This is a
-candidate for final diff review, not a device release. The prior review of
-the unstripped r35b does not cover this image. Final boot-chain review
-(`deep_reviewer`), an independent verifier rerun and current-round device
-authorization remain outstanding.
+old CHMH was not reused. Authentication remains NOT REACHED. The parent
+reports final diff review of this compact candidate by `deep_reviewer` as
+plan A **PASS WITH CONDITIONS**; see [preflight](nuwa-r35b-flash-round-20261120.md).
+The earlier review of unstripped r35b did not cover this image. 未独立验证，
+放行基于方案 A 深审 + self-checked；no independent verifier reran the final
+build or tests. Current-round device authorization and the preflight
+conditions remain outstanding.
 
 ## Reproduction
 
