@@ -30,6 +30,9 @@ archives = [
   "component:ArmDTPlatform",
   "component:ArmCpu",
   "build-nuwa-pmap-ret-observer.py",
+  # Native archive only. The r35 display candidate uses the device's scoped
+  # prelink entry, not the stock stage-5 roots below.
+  "build-nuwa-display-native.py --device-archive",
 ]
 
 # The OS profile ships os_volume_uuid = "REQUIRED_ROOT_VOLUME_UUID" (a placeholder) which stops the kernel bootstrap pass.

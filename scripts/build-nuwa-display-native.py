@@ -1,20 +1,23 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: BSD-2-Clause-Patent
-"""Reproduce the incomplete display archive and attempt an r35 or isolated native link.
+"""Build the audited display archive or replay a native link.
 
-Host-only: this deliberately does not install hooks, package an image, or
-qualify the 329/330 contracts. Outputs must stay in the device out directory.
+The explicit candidate mode adds the device hooks to r35 and emits the final
+diagnostic kernel. No mode qualifies the runtime 329/330 contracts.
 """
 import argparse
 from collections import Counter
 import hashlib
+import importlib.util
 import json
 import os
 from pathlib import Path
 import shlex
+import shutil
 import struct
 import subprocess
 import sys
+import tempfile
 import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -32,7 +35,11 @@ R35_PINS = {
 R35_CPO_SHA = "d390eb4440c6854e0243d041f0cd329be419a10ef78facf9a90102f3822e0c70"
 R35_RENDERER_SHA = "491aa302b627be782abcd2991f3e723e559904a641689105efabb79e592fc144"
 LINKER_SHA = "4f8a881dd4e4c1ff29c217a67bfd265582c1fb3bfebf989fdf5a3a4d9ba390a9"
+R35_BSD_SHA = "a6cbabcb09456936471bb8d9bceb93e9b9257c3dc6025f57c21005286245b4bc"
+R35_BUILD_SHA = "c2e8bcc0aae8a6736592079b4f0bd1fba9032490ddfa432f30df9e6fbc619979"
+R35_PROVENANCE_SHA = "1183fe650735557053d09ef8de36ce9d689fe0b5b2f85acc677a0fb544a8d62d"
 EARLY_COUNTERS = ("_native_legacy_early_failures", "_native_legacy_early_retires")
+HOOKS = ("8796-offline-legacy-display-early.patch", "8796-offline-legacy-display-late.patch")
 
 
 def digest(path):
@@ -76,7 +83,39 @@ def definitions(path):
     return Counter(row[0] for row in nm_rows(path) if row[1] != "U")
 
 
-def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only):
+def candidate_link(r35, out, records, argv, env):
+    recipe, = [r for r in records if r["label"] == "compile-bsd_init" and r["exit"] == 0]
+    command = list(recipe["argv"])
+    source = r35 / "tree/bsd/kern/bsd_init.c"
+    require_pin(source, R35_BSD_SHA)
+    work = out / "tree"
+    staged = work / "bsd/kern/bsd_init.c"
+    staged.parent.mkdir(parents=True)
+    shutil.copyfile(source, staged)
+    series = (ROOT / "patches/xnu/series").read_text().splitlines()
+    if [name for name in series if name in HOOKS] != list(HOOKS):
+        raise SystemExit("display hook order differs from device series")
+    for name in HOOKS:
+        run(["patch", "--batch", "--fuzz=0", "-p1", "-i", ROOT / "patches/xnu" / name], cwd=work)
+    obj = out / "bsd_init.o"
+    command[command.index(str(source))] = str(staged)
+    command[command.index("-o") + 1] = str(obj)
+    command.append("-DXNU_NATIVE_LEGACY_DISPLAY=1")
+    (out / "bsd-init-argv.json").write_text(json.dumps(command, indent=2) + "\n")
+    subprocess.run(command, cwd=recipe["cwd"], env=env, check=True)
+
+    filelist = (r35 / "link.filelist").read_text()
+    old = str(r35 / "bsd_init.o") + "\n"
+    if filelist.splitlines(keepends=True).count(old) != 1:
+        raise SystemExit("expected one r35 bsd_init.o in the native filelist")
+    dest = out / "link.filelist"
+    dest.write_text(filelist.replace(old, str(obj) + "\n", 1))
+    adjusted = list(argv)
+    adjusted[adjusted.index("-filelist") + 1] = str(dest)
+    return adjusted
+
+
+def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate):
     for name, pin in R35_PINS.items():
         require_pin(r35 / name, pin)
     require_pin(cpo, R35_CPO_SHA)
@@ -135,9 +174,10 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only):
         # No early GPU retire in the board TU: use the original r35 renderer
         # archive byte for byte, including its observation counter aliases.
         # Preserve the ADRP/LDR GOT sequence required by the linked audit.
-        link("native-link", native, [*argv, "-Wl,-ignore_optimization_hints",
-                                    f"-Wl,-force_load,{archive}"])
-        return
+        if candidate:
+            argv = candidate_link(r35, out, records, argv, env)
+        return link("native-link", native, [*argv, "-Wl,-ignore_optimization_hints",
+                                            f"-Wl,-force_load,{archive}"])
 
     # The historical display TU owns both early GPU counters. Localize only
     # the shadowing absolute-zero aliases in a copy of the renderer archive.
@@ -165,10 +205,11 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only):
     print("r35 renderer retains one prepare_scanout; display owns both early counters", flush=True)
     command = list(argv)
     command[force_at] = f"-Wl,-force_load,{staged}"
-    link("native-link", native, [*command, f"-Wl,-force_load,{archive}"])
+    mapfile = link("native-link", native, [*command, f"-Wl,-force_load,{archive}"])
     linked = definitions(native)
     if any(linked[name] != 1 for name in (*EARLY_COUNTERS, "_boot_progress_prepare_scanout")):
         raise SystemExit("linked renderer/display symbols are not single definitions")
+    return mapfile
 
 
 def audit_linked_metaclass(blob, meta):
@@ -280,7 +321,62 @@ def audit_emitted_originals(blob, report, abi):
             raise SystemExit(f"emitted donor Legacy slot {slot} was not slid to {target:#x}")
 
 
+def build_archive(root, base, donor, cpo, out, features):
+    require_pin(donor, DONOR_SHA)
+    run([sys.executable, "-B", root / "scripts/derive-nuwa-display-abi.py",
+         "--base", base, "--kernelcache", donor, "--out", out / "derived"])
+    for name in ("OriginalLegacyFramebufferABI.h", "original-bindings.S",
+                 "original-addresses.S", "nuwa-display-abi.json"):
+        if (out / "derived" / name).read_bytes() != (root / "package" / name).read_bytes():
+            raise SystemExit(f"derived {name} differs from device package")
+    run([sys.executable, "-B", root / "scripts/verify-nuwa-display-host-abi.py",
+         "--base", base, "--cpo", cpo, "--out", out / "archive", *features])
+    return out / "archive/HOST-ONLY-incomplete-display.a"
+
+
+def device_archive():
+    """The pinned base's [kernel].archives callback, cwd = assembled tree."""
+    if os.environ.get("XNU_NATIVE_LEGACY_DISPLAY") != "1":
+        return
+    root = Path(os.environ["UNIXNU_DEVICE"]).resolve()
+    board = tomllib.loads((root / "board.toml").read_text())
+    base = (root / board["package"]["unixnu"]).resolve()
+    tree = Path.cwd()
+    cpo = tree / "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/IOPMGR.cpo.json"
+    scratch = root / "out"
+    scratch.mkdir(exist_ok=True)
+    work = Path(tempfile.mkdtemp(prefix="nuwa-display-archive-", dir=scratch))
+    archive = build_archive(root, base, base / "out/ipsw/20H392/kernelcache.decompressed",
+                            cpo, work, ["--cpu-only", "--no-software-vsync"])
+    dest = tree / "build/native-legacy-display"
+    dest.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(archive, dest / "libNativeLegacyDisplay.late.a")
+    sources = ("scripts/build-nuwa-display-native.py", "scripts/derive-nuwa-display-abi.py",
+               "scripts/verify-nuwa-display-host-abi.py", "scripts/host/NuwaDisplayRefresh.cpp",
+               "scripts/host/NuwaDisplayRefresh.h", "kits/nuwa/NuwaLegacyDisplay.cpp",
+               "kits/nuwa/OriginalLegacyFramebufferABI.h", "kits/nuwa/original-bindings.S",
+               "kits/nuwa/original-addresses.S", "kits/nuwa/nuwa-display-abi.json",
+               "drivers/GopFramebuffer/NativeLegacyDisplay.cpp")
+    (dest / "build-report.json").write_text(json.dumps({
+        "archive_sha256": digest(archive),
+        "source_sha256": {name: digest(tree / name) for name in sources},
+    }, indent=2) + "\n")
+
+
+def render_candidate(r35, out, native, mapfile):
+    source = r35 / "build.py"
+    require_pin(source, R35_BUILD_SHA)
+    spec = importlib.util.spec_from_file_location("r35_display_renderer", source)
+    recipe = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(recipe)
+    render, _ = recipe.run_factory(out)
+    return recipe.B.renderer(out, out / "prelink.macho", native, mapfile, render)
+
+
 def main():
+    if sys.argv[1:] == ["--device-archive"]:
+        device_archive()
+        return
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--base", type=Path, required=True)
     p.add_argument("--cpo", type=Path, required=True)
@@ -297,6 +393,8 @@ def main():
                    help="compile out GPU/DPU paths in the host display TU (requires --r35-dir)")
     p.add_argument("--no-software-vsync", action="store_true",
                    help="compile out the GOP software timer lifecycle (requires --cpu-only)")
+    p.add_argument("--candidate", action="store_true",
+                   help="apply device hooks and write the r35-display diagnostic kernel")
     p.add_argument("--out", type=Path, required=True, help="new directory under out/")
     a = p.parse_args()
     base, cpo, linker, out = (x.resolve() for x in (a.base, a.cpo, a.linker_dir, a.out))
@@ -312,31 +410,24 @@ def main():
         p.error("--cpu-only requires --r35-dir")
     if a.no_software_vsync and not a.cpu_only:
         p.error("--no-software-vsync requires --cpu-only")
+    if a.candidate and not (a.r35_dir and a.cpu_only and a.no_software_vsync):
+        p.error("--candidate requires --r35-dir --cpu-only --no-software-vsync")
     out.mkdir(parents=True, exist_ok=False)
     donor = base / "out/ipsw/20H392/kernelcache.decompressed"
-    require_pin(donor, DONOR_SHA)
     if a.renderer:
         renderer = a.renderer.resolve()
         link = a.link_dir.resolve()
         require_pin(renderer, RENDERER_SHA)
         require_pin(link.parent / "osfmk/DEVELOPMENT/startup.o.json", STARTUP_RECORD_SHA)
-    run([sys.executable, "-B", ROOT / "scripts/derive-nuwa-display-abi.py",
-         "--base", base, "--kernelcache", donor, "--out", out / "derived"])
-    for name in ("OriginalLegacyFramebufferABI.h", "original-bindings.S",
-                 "original-addresses.S", "nuwa-display-abi.json"):
-        if (out / "derived" / name).read_bytes() != (ROOT / "package" / name).read_bytes():
-            raise SystemExit(f"derived {name} differs from device package")
-    host = out / "archive"
     features = [name for enabled, name in ((a.cpu_only, "--cpu-only"),
-                (a.no_software_vsync, "--no-software-vsync")) if enabled]
-    run([sys.executable, "-B", ROOT / "scripts/verify-nuwa-display-host-abi.py",
-         "--base", base, "--cpo", cpo, "--out", host, *features])
-    archive = host / "HOST-ONLY-incomplete-display.a"
+                 (a.no_software_vsync, "--no-software-vsync")) if enabled]
+    archive = build_archive(ROOT, base, donor, cpo, out, features)
     print(f"host-only archive SHA256 {digest(archive)}", flush=True)
 
-    native = out / "HOST-ONLY-display-native.unstripped"
+    native = out / ("native.macho" if a.candidate else "HOST-ONLY-display-native.unstripped")
     if a.r35_dir:
-        replay_r35(r35, linker, cpo, out, archive, native, cpu_only=a.cpu_only)
+        mapfile = replay_r35(r35, linker, cpo, out, archive, native,
+                             cpu_only=a.cpu_only, candidate=a.candidate)
     else:
         # Replay XNU's exported link inputs, without its historical map output.
         stem = "mach.development.bcm2837"
@@ -358,13 +449,17 @@ def main():
     abi = json.loads((out / "derived/nuwa-display-abi.json").read_text())
     native_bytes = native.read_bytes()
     got = audit_linked_metaclass(native_bytes, abi["metaclass"])
-    refs = json.loads((host / "archive.json").read_text())["original_relocations"]
+    refs = json.loads((archive.parent / "archive.json").read_text())["original_relocations"]
     slots = audit_linked_originals(native_bytes, abi["original_imports"], refs)
     (out / "linked-original-slots.json").write_text(json.dumps(slots, indent=2) + "\n")
-    board = tomllib.loads((ROOT / "board.toml").read_text())
-    roots = board["os_overrides"]["ios-16.7.16-20H392"]["kernel"]["prelink"]["roots"]
+    if a.candidate:
+        provenance = ROOT / "out/nuwa-ufs-apfs-root-integration-20261114/run-r5-visible-candidate/provenance.json"
+        require_pin(provenance, R35_PROVENANCE_SHA)
+        roots = json.loads(provenance.read_text())["roots"]
+    else:
+        board = tomllib.loads((ROOT / "board.toml").read_text())
+        roots = board["os_overrides"]["ios-16.7.16-20H392"]["kernel"]["prelink"]["roots"]
     roots = list(dict.fromkeys([*roots, FAMILY]))
-    # Read-only gate: do not persist or package emitted bytes, even if accepted.
     donor_bytes = donor.read_bytes()
     slide = abi["metaclass"]["collection_slide"]
     emitted, report = emit_prelink.emit(native_bytes, donor_bytes, roots, slide)
@@ -381,7 +476,16 @@ def main():
         raise SystemExit("prelink emission moved the native gMetaClass GOT entry")
     if audit_linked_originals(emitted, abi["original_imports"], refs) != slots:
         raise SystemExit("prelink emission changed a linked Legacy slot")
-    print("strict emitter accepted; output discarded, runtime still ineligible")
+    if not a.candidate:
+        print("strict emitter accepted; output discarded, runtime still ineligible")
+        return
+    (out / "prelink.macho").write_bytes(emitted)
+    (out / "prelink.json").write_text(json.dumps(report, indent=2) + "\n")
+    final = render_candidate(r35, out, native, mapfile)
+    if (audit_linked_metaclass(final.read_bytes(), abi["metaclass"]) != got
+            or audit_linked_originals(final.read_bytes(), abi["original_imports"], refs) != slots):
+        raise SystemExit("r35 renderer changed the linked display ABI")
+    print(f"r35 display diagnostic candidate SHA256 {digest(final)}")
 
 
 if __name__ == "__main__":

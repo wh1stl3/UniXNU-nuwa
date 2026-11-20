@@ -1,5 +1,7 @@
 # UniXNU-nuwa
 
+**显示分支（2026-11-20）：**[r35 默认关闭显示的诊断内核与打包阻塞](docs/nuwa-r35-display-20261120-observation.md)（主机 self-checked，未上机）。
+
 **当前（2026-11-15）：原生 UFS 根卷挂载成功，launchd 进入用户态；交互目标未达成。**
 `userdata` 前 8446279680 B 写入并整镜像回读 `sha256=da429da6…68d7`；根卷
 `boot-uuid=DADD93F8-DBBF-4B17-A1DF-0F11E64172F7`、`native-ufs-root=1`、无 ramdisk。

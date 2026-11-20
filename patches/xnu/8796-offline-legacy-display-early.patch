@@ -1,0 +1,43 @@
+Port of UniXNU@693f5d9cae8a408dd18b39f3f9fdc4228c934241
+patches/xnu/offline-component-load-probes.patch (Legacy path only).
+Build the probe in DEVELOPMENT/DEBUG; load the family only on full opt-in.
+
+--- a/bsd/kern/bsd_init.c
++++ b/bsd/kern/bsd_init.c
+@@ -315,6 +315,23 @@
+ extern int customnbuf;
+ 
+ kern_return_t bsd_autoconf(void);
++#if (DEVELOPMENT || DEBUG) && defined(XNU_NATIVE_LEGACY_DISPLAY) && XNU_NATIVE_LEGACY_DISPLAY
++extern kern_return_t OSKextLoadKextWithIdentifier(const char *identifier);
++extern void native_legacy_display_probe(void);
++
++static bool
++nuwa_legacy_display_enabled(void)
++{
++	int load = 0, reg = 0, gop = 0;
++	return PE_parse_boot_argn("offline-mobile-graphics-load", &load, sizeof(load)) &&
++	       load == 1 &&
++	       PE_parse_boot_argn("offline-legacy-register", &reg, sizeof(reg)) &&
++	       reg == 1 &&
++	       PE_parse_boot_argn("offline-legacy-gop", &gop, sizeof(gop)) &&
++	       gop == 1;
++}
++#endif
++
+ void bsd_utaskbootstrap(void);
+ 
+ #if CONFIG_DEV_KMEM
+@@ -690,6 +707,12 @@
+ 	/* Initialize the file systems. */
+ 	bsd_init_kprintf("calling vfsinit\n");
+ 	vfsinit();
++#if (DEVELOPMENT || DEBUG) && defined(XNU_NATIVE_LEGACY_DISPLAY) && XNU_NATIVE_LEGACY_DISPLAY
++	if (nuwa_legacy_display_enabled() &&
++	    OSKextLoadKextWithIdentifier("com.apple.iokit.IOMobileGraphicsFamily") == KERN_SUCCESS) {
++		native_legacy_display_probe();
++	}
++#endif
+ 
+ #if CONFIG_PROC_UUID_POLICY
+ 	/* Initial proc_uuid_policy subsystem */

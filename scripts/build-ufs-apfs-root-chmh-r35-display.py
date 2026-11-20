@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+"""Package one audited r35 display kernel with the pinned r35 packaging chain."""
+import argparse
+import hashlib
+import importlib.util
+from pathlib import Path
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+SOURCE = ROOT / "scripts/build-ufs-apfs-root-chmh-r35.py"
+SOURCE_SHA = "cbdaff922bd2e335cf73268e55a56c98b74dffd36e5a3b5c5a1759b3d088a9b5"
+DISPLAY_ARGS = b" offline-mobile-graphics-load=1 offline-legacy-register=1 offline-legacy-gop=1"
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__, allow_abbrev=False)
+    parser.add_argument("--kernel", type=Path, required=True)
+    parser.add_argument("--kernel-sha256", required=True)
+    parser.add_argument("--enable-display", action="store_true")
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--audit", type=Path)
+    a = parser.parse_args()
+    kernel = a.kernel.resolve()
+    output = a.output.resolve()
+    audit = a.audit.resolve() if a.audit else None
+    for path in (kernel, output, *([audit] if audit else [])):
+        if ROOT / "out" not in path.parents:
+            parser.error(f"expected a path inside device out/: {path}")
+    if output.exists():
+        parser.error("--output must be new")
+    blob = kernel.read_bytes()
+    if hashlib.sha256(blob).hexdigest() != a.kernel_sha256:
+        parser.error("kernel SHA256 mismatch")
+    if hashlib.sha256(SOURCE.read_bytes()).hexdigest() != SOURCE_SHA:
+        raise ValueError("Pinned r35 packager changed")
+
+    # r35b reuses the pinned r35 packager and overrides its profile inputs.
+    # Here kernel size and (optionally) args change as well, without editing
+    # the parent or weakening any of its root/ADT/FAT/outer audits.
+    sys.argv = [str(SOURCE), "--output", str(output)]
+    if audit:
+        sys.argv.extend(("--audit", str(audit)))
+    spec = importlib.util.spec_from_file_location("r35_display_packager", SOURCE)
+    r35 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r35)
+    profile = "nuwa-ufs-apfs-root-chmh-20261120-r35-display"
+    inputs = dict(KERNEL=kernel, KERNEL_BYTES=len(blob), KERNEL_SHA=a.kernel_sha256,
+                  PROFILE=profile + ("-on" if a.enable_display else "-off"),
+                  ARGS=r35.ARGS + (DISPLAY_ARGS if a.enable_display else b""))
+    for module in (r35, r35.X, r35.M):
+        vars(module).update(inputs)
+    r35.M.main()
+
+
+if __name__ == "__main__":
+    sys.dont_write_bytecode = True
+    main()
