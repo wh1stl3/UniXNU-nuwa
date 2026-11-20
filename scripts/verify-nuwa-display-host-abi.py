@@ -18,7 +18,7 @@ DEFERRED = {'_native_legacy_set_refresh_properties', '_native_legacy_vsync_notif
 # The pinned 8796 reference import list includes owner and weak-ref bits;
 # different toolchains may need a deliberate requalification, not a whitelist
 # that silently swallows new unresolved symbols.
-UNRESOLVED_SHA256 = 'ec82b3611863f1cbca42d8525655c098fae248cc4a18ce020c4faa7d885f604d'
+UNRESOLVED_SHA256 = '62e4fc66cb6d0acf4f9e9bddcba145911e13572871cb0847e0f15defd6fe5c8f'
 SLOTS = {
     184: '__ZN19NativeLegacyDisplay13isMainDisplayEv',
     188: '__ZN19NativeLegacyDisplay11getDotPitchEPj',
@@ -96,6 +96,71 @@ def object_layout(base, blob):
         symbols.append((strings[ix:strings.index(b'\0', ix)].decode(), kind, section, desc, value))
     sections = [s for segment in image['segments'] for s in segment['sections']]
     return sections, symbols
+
+
+def relocations(blob, sections, symbols):
+    for sec in sections:
+        start, count = struct.unpack_from('<II', blob, sec['command_offset'] + 56)
+        for off, word in struct.iter_unpack('<II', blob[start:start + count * 8]):
+            if word & (1 << 27):
+                yield sec, off, word >> 24, symbols[word & 0xffffff][0]
+
+
+def inspect_original_imports(blob, sections, symbols, original, meta):
+    functions = original['functions']
+    expected = set(functions) | {original['vtable_symbol'], meta['symbol']}
+    imports = {n for n, k, _, _, v in symbols if '25IOMobileFramebufferLegacy' in n
+               and k & 0xef == 1 and not v}
+    if imports != expected:
+        raise SystemExit(f'original-class import mismatch: missing {sorted(expected - imports)}, '
+                         f'unexpected {sorted(imports - expected)}')
+    _, _, ordinal, _, value = next(s for s in symbols if s[0] == '__ZTV19NativeLegacyDisplay')
+    table = sections[ordinal - 1]
+    refs = {n: [] for n in functions}
+    for sec, off, kind, name in relocations(blob, sections, symbols):
+        if name in refs:
+            refs[name].append((sec, off, kind))
+    audited = {}
+    for name, entry in functions.items():
+        slot = entry['slot']
+        seen = []
+        for sec, off, kind in refs[name]:
+            fileoff = sec['fileoff'] + off
+            if (slot is not None and sec == table and kind == 0x0e and
+                    sec['va'] + off == value + 16 + slot * 8 and
+                    struct.unpack_from('<Q', blob, fileoff)[0] == 0):
+                seen.append({'slot': slot})
+            elif (not entry['inherited_only'] and sec['name'] == '__text' and kind == 0x2d
+                  and struct.unpack_from('<I', blob, fileoff)[0] in (0x14000000, 0x94000000)):
+                seen.append({'branch_offset': hex(sec['va'] + off)})
+            else:
+                raise SystemExit(f'{name}: unexpected reference {sec["name"]}+{off:#x} ({kind:#x})')
+        if not seen or (entry['inherited_only'] and seen != [{'slot': slot}]):
+            raise SystemExit(f'{name}: expected an actual import and only its own slot for opaque entries')
+        audited[name] = seen
+    return audited
+
+
+def inspect_veneers(blob, sections, symbols, entries):
+    sym = {row[0]: row[1:] for row in symbols}
+    expected = set(entries)
+    if {n for n, k, _, _, _ in symbols if '25IOMobileFramebufferLegacy' in n
+            and k & 1} != expected | {n + '.original' for n in expected}:
+        raise SystemExit('unexpected original-class symbols in veneer object')
+    positions = {}
+    for name in entries:
+        kind, ordinal, _, va = sym[name]
+        sec = sections[ordinal - 1]
+        off = va - sec['va']
+        if kind != 0x0f or sec['name'] != '__text' or struct.unpack_from(
+                '<I', blob, sec['fileoff'] + off)[0] != 0x14000000:
+            raise SystemExit(f'{name}: expected an owned B veneer')
+        if sym[name + '.original'] != (1, 0, 0, 0) or off in positions:
+            raise SystemExit(f'{name}: expected unique veneer and external target')
+        positions[off] = name + '.original'
+    actual = [(sec['name'], off, kind, name) for sec, off, kind, name in relocations(blob, sections, symbols)]
+    if sorted(actual) != sorted(('__text', off, 0x2d, name) for off, name in positions.items()):
+        raise SystemExit('veneer branch relocations do not match exact original targets')
 
 
 def inspect_object(base, blob):
@@ -186,6 +251,11 @@ def inspect_archive(base, archive, members):
     paths = {}
     abi = json.loads((ROOT / 'package/nuwa-display-abi.json').read_text())
     meta = abi['metaclass']
+    original_abi = abi['original_imports']
+    functions = original_abi['functions']
+    addresses = {n + '.original': int(e['linked_address'], 16) for n, e in functions.items()}
+    addresses[meta['symbol']] = int(meta['linked_address'], 16)
+    addresses[original_abi['vtable_symbol']] = int(original_abi['vtable_linked_address'], 16)
     for obj in members:
         blob = subprocess.check_output(['llvm-ar', 'p', archive, obj.name])
         original = obj.read_bytes()
@@ -198,10 +268,13 @@ def inspect_archive(base, archive, members):
             raise SystemExit(f'{obj.name}: archive contains automatic initialization/termination')
         if obj == members[0]:
             meta_relocs = inspect_metaclass_import(blob, sections, symbols, meta['symbol'])
+            original_refs = inspect_original_imports(blob, sections, symbols, original_abi, meta)
+        if obj == members[3]:
+            if {n: (k, s, d, v) for n, k, s, d, v in symbols if k & 1} != {
+                    n: (0x03, 0, 0x20, va) for n, va in addresses.items()}:
+                raise SystemExit('original-addresses.o: expected the exact collection-slid N_ABS table')
         if obj == members[2]:
-            binding, = (sym for sym in symbols if sym[0] == meta['symbol'])
-            if binding[1:] != (0x03, 0, 0x20, int(meta['linked_address'], 16)):
-                raise SystemExit(f'{obj.name}: expected absolute slid gMetaClass, not a definition of storage')
+            inspect_veneers(blob, sections, symbols, functions)
             for getter, info in abi['surfaces'].items():
                 name = '_native_legacy_surface_' + getter
                 (_, kind, section, _, value), = (sym for sym in symbols if sym[0] == name)
@@ -227,10 +300,14 @@ def inspect_archive(base, archive, members):
     if definitions.get(INIT) != [(members[0].name, False)] or undefined.get(INIT) != [
             (members[1].name, False)]:
         raise SystemExit('manual initializer must be defined by the driver and imported by the board TU')
-    if definitions.get(meta['symbol']) != [(members[2].name, False)] or undefined.get(meta['symbol']) != [
-            (members[0].name, False)]:
-        raise SystemExit('original gMetaClass must be a strong binding only for the driver import')
+    for name in addresses.keys() | functions.keys():
+        owner = members[2] if name in functions else members[3]
+        importer = members[2] if name.endswith('.original') else members[0]
+        if definitions.get(name) != [(owner.name, False)] or undefined.get(name) != [(importer.name, False)]:
+            raise SystemExit(f'{name}: original binding must have exactly its expected definition and importer')
     unresolved = {name: imports for name, imports in sorted(undefined.items()) if name not in definitions}
+    if any('25IOMobileFramebufferLegacy' in name for name in unresolved):
+        raise SystemExit('original-class import closure failed')
     missing_glue = {name for name in unresolved if name.startswith(
         ('_native_legacy_surface_', '_native_legacy_set_refresh_', '_native_legacy_vsync_'))}
     if missing_glue != DEFERRED:
@@ -244,7 +321,8 @@ def inspect_archive(base, archive, members):
     fingerprint = hashlib.sha256(json.dumps(
         unresolved, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
     return {'members': paths, 'unresolved': unresolved, 'unresolved_sha256': fingerprint,
-            'metaclass_relocations': meta_relocs,
+             'metaclass_relocations': meta_relocs,
+             'original_relocations': original_refs,
             'automatic_initializers': 0,
             'manual_initializer': INIT, 'runtime_eligible': False, 'sha256': sha256(archive)}
 
@@ -291,14 +369,18 @@ def main():
     target = [arg for arg in command if arg.startswith('--target=')][-1]
     bindings_cmd = [command[0], target, '-x', 'assembler-with-cpp', '-c',
                     str(bindings), '-o', str(bindings_obj)]
+    addresses = ROOT / 'package/original-addresses.S'
+    addresses_obj = out / 'original-addresses.o'
+    addresses_cmd = [*bindings_cmd[:-3], str(addresses), '-o', str(addresses_obj)]
     write_json(out / 'compile.json', {
         'directory': record['directory'], 'arguments': command,
         'provider_arguments': provider_cmd, 'bindings_arguments': bindings_cmd,
+        'addresses_arguments': addresses_cmd, 'addresses_source_sha256': sha256(addresses),
         'cpo': str(cpo), 'cpo_sha256': sha256(cpo),
         'driver_revision': DRIVER_REV, 'adapted_source_sha256': sha256(source),
         'board_source_sha256': sha256(provider), 'bindings_source_sha256': sha256(bindings),
     })
-    for argv in (command, provider_cmd, bindings_cmd):
+    for argv in (command, provider_cmd, bindings_cmd, addresses_cmd):
         status = subprocess.run(argv, cwd=record['directory']).returncode
         if status:
             return status
@@ -310,7 +392,7 @@ def main():
     result.update(bytes=late.stat().st_size, sha256=sha256(late))
     write_json(out / 'object.json', result)
     archive = out / 'HOST-ONLY-incomplete-display.a'
-    members = [late, provider_obj, bindings_obj]
+    members = [late, provider_obj, bindings_obj, addresses_obj]
     subprocess.run(['llvm-ar', '--format=darwin', 'rcs', archive, *members], check=True)
     audit = inspect_archive(base, archive, members)
     write_json(out / 'archive.json', audit)

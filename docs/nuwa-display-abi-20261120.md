@@ -834,3 +834,66 @@ archive SHA256 `41f0c34dbd6ebab7be24e6b39beca5992da3372ee18a490daf78c7fe1ce398c7
 真实 native 产物及 strict emit 未到达，不以 §16 的独立 Libm 拒绝当成本轮首错。
 既有函数/vtable 绑定的最终落位不在这一项数据导入的资格声明内。未造剩余定义、
 未改扫描/329/330 门禁、未启用 runtime 或触碰设备；尚无独立 verifier。
+
+## 18. 方案 A：固定 20H392 原类 import 集合（self-checked）
+
+基线 `a304d2d9b5d36a298c546d4f2ca180e6e681719e`；基座 `693f5d9c`、驱动 `e47c1b8`、
+donor 同 §1。复用 `UniXNU/UniXNU-sheng@c8f92b208068eeaa4cd2b0f592671f04ee70076e`
+（BSD-2-Clause-Patent）`build-gop-legacy-display-27.py` 的精确 import 集合、独立
+绝对目标对象与本地跳板，以及 `check-legacy27-binds.py` 的链接后逐槽追踪。
+nuwa 为非 arm64e，只有一条 `B` 的跳板，不移植 sheng 的地址、BTI 或签名合同。
+
+| 具名 import | 20H392 目标（省略 `0xfffffff000000000`） | 独立证据 |
+| --- | --- | --- |
+| `init(OSDictionary*)` | 槽 21 / `5c0c404` | `__ZTV9IOService` 第 21 槽按符号表解析为 `IOService::init(OSDictionary*)`；`5c0c454–46c` 转发 x1 调用父槽并掩取布尔返回。 |
+| `setProperties(OSObject*)` | 槽 44 / `5c17abc` | `IOService[44]` 独立解析为 `IORegistryEntry::setProperties(OSObject*)`；`5c17b00–10 → 5c26efc` 以 x1 入参作 `safeMetaCast`，GOT 符号为 `OSDictionary::metaClass` 与 `OSMetaClassBase::safeMetaCast`；转换失败字符串 `4f668c1`，返回状态 `5c17e1c`。 |
+| `systemWillShutdown(unsigned)` | 槽 79 / `5c108a8` | `IOService[79]` 符号同名；`5c1090c–14` 经父槽转发 `w1`。 |
+| `probe(IOService*, int*)` | 槽 85 / `5c0c644` | `IOService[85]` 符号同名；`5c0c670–84` 经父槽转发 x1/x2、返回 x0。 |
+| `getWorkLoop() const` | 槽 111 / `5c122bc` | `IOService[111]` 符号同名；完整 getter 返回 `self+5048` 指针。 |
+| `C2(OSMetaClass const*)` | `5c0bbbc` | H10P `5cce4e4/e8 → 5ce16c8 → [6dfb668]` 先传 metaclass、调用后装 H10P vptr；Legacy `5c0bbe8–bf8` 传同参数给父构造再装 Legacy vptr。 |
+| `D2()` | `5c0bc08` | H10P teardown `5cce3bc–cc → 5ce16d4 → [6dfb670]` 恢复实参并尾调；目标只调用父析构、不释放存储，不是槽 0/1 的 trap。 |
+
+实编 TU 的 164 个原类 imports：新增 159（7 具名 + 152 opaque）及原有 5
+（3 具名入口、vtable、gMetaClass）。以前声明的另 4 个有名原入口在该 TU
+没有 import，不再额外导出；声明及对应槽不移除。opaque 精确集合沿用 §17；
+每个函数目标都在家族 `__TEXT_EXEC,__text`，由 `__PLK_TEXT_EXEC` RX 文件区承载；
+虚函数在 donor 原表按同槽取目标，并有 `_PrelinkLinkKASLROffsets` 站点。原 vtable
+位于家族 `__DATA_CONST,__const` / `__PLK_DATA_CONST`（RO）；gMetaClass 仍在
+§17 RW 段。`-0x1000000` 只加一次；未改 `XnuPrelink`。未改的 `plan` 对照验证
+162 个可执行目标处在选中家族范围，160 个原槽修正均精确等于 `donor VA + slide`。
+
+实际归档中每个 opaque 只有同号 `__ZTV19NativeLegacyDisplay` 的一条零 addend
+外部 8 B 指针重定位，没有代码重定位或其它引用；C++ 声明标为 `unavailable`，
+直接写 `p->opaque330()` 的真实 CPO 负例被编译器拒绝。没有按占位签名调用，
+没有绑定纯虚或重复目标；329 仍是 native guard，330 仍是 donor 槽，未证明其超时合同。
+独立小链接仅投影真实归档的 160 条原类槽重定位，使用相同 ld 和真实 veneer /
+N_ABS 对象，无完整 TU、内核或 donor 代码。其全部 160 个实际链接槽逐一指到各自
+跳板，再跳 `donor VA + slide`；全部 162 个跳板均解码检查。投影中 330 为
+`0xfffffff00722f50c → 0xfffffff004c0fbe8`；这不是完整 native 槽审计。
+错误 donor、单字节篡改、纯虚目标、并槽、数据段作代码、移位的 opaque 重定位、
+投影槽错指相邻跳板、跳板未 slide 各被拒绝。局部投影及篡改检查命令：
+`$python -B out/nuwa-display-native-imports-01/check.py`（需本轮 `out/`，不提交夹具产物）。
+
+**真实重跑：** §17 同一命令，仅把 `--out` 换成
+`out/nuwa-display-native-imports-01`（独立复跑须用新目录）。真实 8796 CPO 生成四成员
+归档 665144 B，SHA256 `c8623a89cc1a213ddc4b0caa0abb3356bf92d29ff0ba5d6b882cc1263f1d9d8f`；
+未解析清单 SHA256 `62e4fc66cb6d0acf4f9e9bddcba145911e13572871cb0847e0f15defd6fe5c8f`，
+从 380 到 221，仅移除这 159 项（原类剩 0，其他项与 owner/weak 位不变）。
+局部投影 SHA256 `5d251af55e603f470357b524a7c70c7c167f33b2e125e26081defa735afaec40`。
+
+真实 `-new_linker -static` 链接退出 1，首错为
+`package/NuwaLegacyDisplay.cpp:197` (`_native_legacy_prepare_scanout`) 所引用的
+`_boot_progress_prepare_scanout` 在该链接输入中无定义。链接器共报 12 个未定义项；
+其余为 `_mach_vm_allocate`、`_mach_vm_remap`、`_vm_map_create`、
+`_native_adreno_fences`、`_native_adreno_fences_detail`、`_native_gpu_trace_enabled`、
+`_native_gpu_trace_record`、`_native_legacy_set_refresh_properties`、
+`_native_legacy_vsync_notify`、`_native_ufs_dpu_map`、`_native_ufs_dpu_state`。
+无完整 native、无其最终槽哈希或其 strict emit 结果。
+另用同一 `--link-dir` 的同级未改 `mach.development.bcm2837.unstripped`（SHA256
+`4a5bf5cc4f6920409b09fdf11eea21389b52b490e247515ab07ffdd38a7f8aa2`）作控制：
+调用原样 `emit_prelink.emit(native, donor, roots, -0x1000000)`，`roots` 为
+`board.toml` 的 `os_overrides.ios-16.7.16-20H392.kernel.prelink.roots` 加 `IOMobileGraphicsFamily`
+去重（29 项）。该控制的首错是 `emit_prelink.py:111`，Libm `0xfffffff005b8c1cc` 的
+`48 5f 9d f0` 被解码成覆盖范围外的 PC 相对编码；未发射。不同于 §16 的仅 Libm
+inventory 控制；不放宽扫描、不改变 329/330 门禁、无上机候选、无设备操作，
+未独立复跑。

@@ -3,7 +3,8 @@
 """Derive the nuwa (iOS 16.7.16 / 20H392) IOMobileFramebufferLegacy ABI from our donor kernelcache.
 
 Read-only inputs: the 20H392 kernelcache and the base checkout's XnuPrelink Mach-O parser.
-Outputs: package/OriginalLegacyFramebufferABI.h, package/original-bindings.S and a JSON summary.
+Outputs: package/OriginalLegacyFramebufferABI.h, original-bindings.S, original-addresses.S
+and a JSON summary.
 
 The ABI below is anchored to instructions in 20H392 donor modules; the checks assert the
 anchors before anything is written. Slot roles were found by structure (callers, argument use,
@@ -88,6 +89,14 @@ REQUEST = {
 INSTANCE_BYTES = 0x1660
 COLLECTION_SLIDE = -0x1000000
 METACLASS = '__ZN25IOMobileFramebufferLegacy10gMetaClassE'
+ORIGINAL_VTABLE = '__ZTV25IOMobileFramebufferLegacy'
+CLASS = '__ZN25IOMobileFramebufferLegacy'
+C2 = CLASS + 'C2EPK11OSMetaClass'
+D2 = CLASS + 'D2Ev'
+# Exactly the compiled inherited imports, not all declarations or all non-pure slots.
+OPAQUE = (*range(168, 184), *range(185, 188), *range(189, 211), *range(213, 242),
+          244, 245, *range(247, 274), 275, *range(277, 281), *range(283, 287),
+          *range(288, 292), *range(294, 321), *range(323, 329), *range(330, 336), 337)
 
 
 def va(text):
@@ -110,9 +119,15 @@ class Image:
         self.image = macho(self.blob)
         info = next(s for s in self.image['segments'] if s['name'] == '__PRELINK_INFO')
         at = backed_offset(self.image['segments'], info['va'], info['filesize'], len(self.blob))
-        entries = {e['CFBundleIdentifier']: e for e in
-                   unserialize_xml(self.blob[at:at + info['filesize']])['_PrelinkInfoDictionary']
+        metadata = unserialize_xml(self.blob[at:at + info['filesize']])
+        entries = {e['CFBundleIdentifier']: e for e in metadata['_PrelinkInfoDictionary']
                    if e.get('CFBundleIdentifier')}
+        self.pointer_sites = set()
+        if family == FAMILY:
+            packed = metadata['_PrelinkLinkKASLROffsets']
+            start = next(s['va'] for s in self.image['segments'] if s['name'] == '__PRELINK_TEXT')
+            count, = struct.unpack_from('<I', packed)
+            self.pointer_sites = {start + off for off in struct.unpack_from(f'<{count}I', packed, 4)}
         self.entry = entries[family]
         self.module = macho(self.blob, backed_offset(
             self.image['segments'], self.entry['_PrelinkExecutableLoadAddr'], 32, len(self.blob)))
@@ -203,6 +218,99 @@ def derive_metaclass(image, vptr):
                 section='__common', parent_segment='__PRELINK_DATA',
                 data_offset=hex(obj - data['va']), collection_slide=COLLECTION_SLIDE,
                 linked_address=hex(obj + COLLECTION_SLIDE))
+
+
+def derive_original_imports(image, display, vptr, values):
+    from native_prelink import exports
+
+    names = exports(image.blob, image.image)
+    io_vtable, = (addr for addr, symbols in names.items() if '__ZTV9IOService' in symbols)
+
+    def parent_pointer(address):
+        return struct.unpack_from('<Q', image.blob, image.backed_offset(
+            image.image['segments'], address, 8, len(image.blob)))[0]
+
+    # Inherited slots are identified independently by the kernel's IOService slot symbols.
+    # For the overrides that call through the IOFramebuffer superclass vptr, cross-check
+    # the call's offset and argument forwarding as well (not just the Legacy slot number).
+    named = (
+        (21, '4initEP12OSDictionary', '5c0c404', '__ZN9IOService4initEP12OSDictionary'),
+        (44, '13setPropertiesEP8OSObject', '5c17abc', '__ZN15IORegistryEntry13setPropertiesEP8OSObject'),
+        (79, '18systemWillShutdownEj', '5c108a8', '__ZN9IOService18systemWillShutdownEj'),
+        (85, '5probeEP9IOServicePi', '5c0c644', '__ZN9IOService5probeEPS_Pi'),
+        (111, '11getWorkLoopEv', '5c122bc', '__ZNK9IOService11getWorkLoopEv'),
+    )
+    for slot, _, _, parent in named:
+        if parent not in names.get(parent_pointer(io_vtable + 16 + slot * 8), ()):
+            raise SystemExit(f'IOService slot {slot} is not independently named {parent}')
+    check_words(image, '5c0c454', (0xf9405d08, 0xf85e83a1, 0xd63f0100, 0xb9400fe9,
+                                    0xf9400be8, 0xf9400fe1, 0x0a090009), 'Legacy init forwards properties and masks bool')
+    check_words(image, '5c17b00', (0xf85e83a0, 0xf0008e88, 0xf947ad08, 0xf9400101,
+                                    0x94003cfb), 'Legacy setProperties casts its x1 to OSDictionary')
+    if ('__ZN12OSDictionary9metaClassE' not in names.get(image.qword(va('6deaf58')), ())
+            or '__ZN15OSMetaClassBase12safeMetaCastEPKS_PK11OSMetaClass' not in
+            names.get(image.qword(va('6deafb0')), ())):
+        raise SystemExit('Legacy setProperties cast imports changed')
+    check_words(image, '5c26efc', (0x90008e30, 0xf947da10, 0xd61f0200), 'safeMetaCast stub')
+    check_string(image, '4f668c1', '%s: could not cast properties to OSDictionary\n')
+    check_words(image, '5c17e1c', (0xb85fc3a0, 0xa9477bfd, 0x910203ff, 0xd65f03c0), 'setProperties status return')
+    check_words(image, '5c1090c', (0xf9414508, 0xb85f43a1, 0xd63f0100), 'shutdown forwards w1')
+    check_words(image, '5c0c670', (0xf9415d08, 0xf9400be1, 0xf94007e2, 0xd63f0100,
+                                    0xf90003e0, 0xf94003e0), 'probe forwards x1/x2 and returns provider')
+    check_words(image, '5c122bc', (0xd10043ff, 0xf90007e0, 0xf94007e8, 0xf949dd00,
+                                    0x910043ff, 0xd65f03c0), 'getWorkLoop returns self+5048')
+
+    # Independent H10P subclass call sites. D2 is not the trapping abstract
+    # class's slot 0 or 1. C2 forwards the metaclass before installing vptr.
+    check_words(display, '5cce4dc', (0x9000ee74, 0x910ce294, 0xaa1403e1, 0x94004c78,
+                                     0x900089c8, 0x91260108, 0xf9000008), 'H10P calls the Legacy C2 base')
+    check_words(display, '5cce3bc', (0x97ffee07, 0xaa1303e0, 0xa9417bfd, 0xa8c24ff4,
+                                     0x14004cc2), 'H10P teardown tail-calls the Legacy D2 base')
+    check_words(display, '5ce16c8', (0xd00088d0, 0xf9433610, 0xd61f0200,
+                                     0xd00088d0, 0xf9433a10, 0xd61f0200), 'H10P C2/D2 stubs')
+    if (display.qword(va('6dfb668')), display.qword(va('6dfb670'))) != (va('5c0bbbc'), va('5c0bc08')):
+        raise SystemExit('H10P C2/D2 GOT targets changed')
+    check_words(image, '5c0bbbc', (0xd100c3ff, 0xa9027bfd, 0x910083fd), 'C2 entry')
+    check_words(image, '5c0bbe8', (0xf9400be1, 0x97ffd720, 0xf94003e0, 0xf94007e8,
+                                    0xf9000008), 'C2 calls parent then stores Legacy vptr')
+    check_words(image, '5c0bc08', (0xd10083ff, 0xa9017bfd, 0x910043fd, 0xf90007e0,
+                                    0xf94007e0, 0xf90003e0, 0x97ffd726, 0xf94003e0,
+                                    0xa9417bfd, 0x910083ff, 0xd65f03c0), 'D2 invokes parent destructor, no delete')
+
+    def placement(segment, section, parent, prot, address, size):
+        seg = next(s for s in image.module['segments'] if s['name'] == segment)
+        sec = next(s for s in seg['sections'] if s['name'] == section)
+        outer = next(s for s in image.image['segments'] if s['name'] == parent)
+        if not (seg['initprot'] == outer['initprot'] == prot and
+                seg['va'] <= sec['va'] <= address <= address + size <= sec['va'] + sec['size']
+                <= seg['va'] + seg['filesize'] and
+                outer['va'] <= seg['va'] <= seg['va'] + seg['filesize'] <= outer['va'] + outer['filesize']):
+            raise SystemExit(f'{address:#x}: expected {parent}/{segment},{section} protection {prot}')
+        image.read(address, size)
+
+    placement('__DATA_CONST', '__const', '__PLK_DATA_CONST', 1, vptr - 16, 16 + 8 * SLOTS)
+    entries = {}
+
+    def bind(name, address, slot=None, inherited_only=False):
+        placement('__TEXT_EXEC', '__text', '__PLK_TEXT_EXEC', 5, address, 4)
+        if address % 4 or address == values[PURE[0]] or (slot is not None and
+                (slot in PURE or values[slot] != address or vptr + slot * 8 not in image.pointer_sites)):
+            raise SystemExit(f'{name}: unqualified original entry at {address:#x}, slot {slot}')
+        entries[name] = dict(address=hex(address), linked_address=hex(address + COLLECTION_SLIDE),
+                             slot=slot, inherited_only=inherited_only)
+
+    for slot, suffix, target, _ in named:
+        bind(('__ZNK25IOMobileFramebufferLegacy' if slot == 111 else CLASS) + suffix, va(target), slot)
+    bind(C2, va('5c0bbbc'))
+    bind(D2, va('5c0bc08'))
+    for slot in (246, 281, 336):
+        bind(MANGLED[SLOT_SYMBOL[slot]], values[slot], slot)
+    for slot in OPAQUE:
+        bind(CLASS + f'9opaque{slot}Ev', values[slot], slot, inherited_only=True)
+    if len(OPAQUE) != 152 or len(entries) != 162 or len({e['address'] for e in entries.values()}) != len(entries):
+        raise SystemExit('Legacy import count or unique donor targets changed')
+    return dict(functions=entries, vtable_symbol=ORIGINAL_VTABLE,
+                vtable_linked_address=hex(vptr - 16 + COLLECTION_SLIDE))
 
 
 def derive_surfaces(family, surface):
@@ -339,7 +447,8 @@ def main():
 
     image = Image(args.base, args.kernelcache)
     surfaces = derive_surfaces(image, Image(args.base, args.kernelcache, SURFACE))
-    timing = inspect_unbound_timing(image, Image(args.base, args.kernelcache, DONOR_DISPLAY))
+    display = Image(args.base, args.kernelcache, DONOR_DISPLAY)
+    timing = inspect_unbound_timing(image, display)
     vptr, slots, values = find_vtable(image)
     metaclass = derive_metaclass(image, vptr)
     if slots != SLOTS:
@@ -430,6 +539,7 @@ def main():
             check_word(image, va(start) + index * 4, word, label)
     if values[330] != va('5c0fbe8'):
         raise SystemExit('slot 330 donor queue target changed')
+    original = derive_original_imports(image, display, vptr, values)
 
     # Instance fields.
     for address, expected, label in (
@@ -475,7 +585,7 @@ def main():
         elif slot in PURE:
             virtuals.append('    virtual __attribute__((noreturn)) void opaque%d() = 0;' % slot)
         else:
-            virtuals.append('    virtual void opaque%d();' % slot)
+            virtuals.append('    virtual __attribute__((unavailable("Inherited ABI slot only"))) void opaque%d();' % slot)
     if len(virtuals) != SLOTS - 168:
         raise SystemExit('virtual count %d' % len(virtuals))
 
@@ -592,17 +702,19 @@ enum : unsigned {
     )
     (out / 'OriginalLegacyFramebufferABI.h').write_text(header)
 
-    bindings = [('__ZTV25IOMobileFramebufferLegacy', vptr - 16)]
-    for slot in sorted(ROLES):
-        bindings.append((MANGLED[SLOT_SYMBOL[slot]], values[slot]))
     lines = ['// SPDX-License-Identifier: BSD-2-Clause-Patent',
-             '// Generated by scripts/derive-nuwa-display-abi.py from the 20H392 donor kernelcache.',
-             '// Absolute bindings for the original Legacy entry points that the port calls directly.']
-    for symbol, address in bindings:
-        lines += ['.globl ' + symbol, '.set ' + symbol + ', 0x%x' % address]
-    # Data imports use sheng's slide-adjusted absolute symbol / GOT method.
-    lines += ['', '// Original gMetaClass static storage at donor VA + collection slide.',
-              '.globl ' + METACLASS, f'.set {METACLASS}, {metaclass["linked_address"]}']
+              '// Generated by scripts/derive-nuwa-display-abi.py from the 20H392 donor kernelcache.',
+              '// Owned veneers; see UniXNU-sheng c8f92b2 (BSD-2-Clause-Patent).',
+              '.text', '.p2align 2']
+    addresses = lines[:2] + ['// Original collection addresses after the fixed slide.']
+    for symbol, target in ((ORIGINAL_VTABLE, original['vtable_linked_address']),
+                           (METACLASS, metaclass['linked_address'])):
+        addresses += [f'.globl {symbol}', f'.set {symbol}, {target}']
+    for symbol, entry in original['functions'].items():
+        target = f'{symbol}.original'
+        lines += [f'.globl {symbol}', f'{symbol}:', f'    b {target}']
+        addresses += [f'.globl {target}', f'.set {target}, {entry["linked_address"]}']
+    (out / 'original-addresses.S').write_text('\n'.join(addresses) + '\n')
     lines += ['', '// Qualified IOSurface getters. Descriptor is borrowed; W loads zero-extend.',
               '.text', '.p2align 2']
     for name, info in surfaces.items():
@@ -622,13 +734,14 @@ enum : unsigned {
                     abstract=abstract, pure_target=hex(values[abstract[0]])),
         instance_bytes=INSTANCE_BYTES,
         metaclass=metaclass,
+        original_imports=original,
         slots={str(slot): dict(address=hex(values[slot]), prototype=text, abstract=slot in PURE)
                for slot, text in sorted(named.items())},
         instance=INSTANCE,
         request=REQUEST,
         surfaces=surfaces,
         unbound_timing=timing,
-        outputs=['OriginalLegacyFramebufferABI.h', 'original-bindings.S'],
+        outputs=['OriginalLegacyFramebufferABI.h', 'original-bindings.S', 'original-addresses.S'],
     )
     (out / 'nuwa-display-abi.json').write_text(json.dumps(summary, indent=1) + '\n')
     print('vtable', hex(vptr), slots, 'abstract', abstract)

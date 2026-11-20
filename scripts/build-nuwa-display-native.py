@@ -55,7 +55,40 @@ def audit_linked_metaclass(blob, meta):
     return got
 
 
-def audit_emitted_metaclass(blob, report, abi):
+def audit_linked_originals(blob, original, refs, *, table="__ZTV19NativeLegacyDisplay"):
+    from emit_prelink import backed_offset, exports, macho, pc_relative_target
+
+    image = macho(blob)
+    segments = image["segments"]
+    symbols = {name: va for va, names in exports(blob, image).items() for name in names}
+    vptr = symbols[table] + 16
+    text = [s for seg in segments if seg["initprot"] == 5 for s in seg["sections"]
+            if s["name"] == "__text"]
+    if not text:
+        raise SystemExit("linked image has no executable __text")
+    audited = {}
+    for name, entry in original["functions"].items():
+        veneer = symbols[name]
+        if not any(s["va"] <= veneer <= s["va"] + s["size"] - 4 for s in text):
+            raise SystemExit(f"{name}: veneer is not in executable __text")
+        op, = struct.unpack_from("<I", blob, backed_offset(segments, veneer, 4, len(blob)))
+        want = int(entry["linked_address"], 16)
+        if op >> 26 != 5 or pc_relative_target(op, veneer)[0] != want:
+            raise SystemExit(f"{name}: veneer at {veneer:#x} does not branch to {want:#x}")
+        for ref in refs[name]:
+            if "slot" not in ref:
+                continue
+            slot = ref["slot"]
+            at = backed_offset(segments, vptr + slot * 8, 8, len(blob))
+            if struct.unpack_from("<Q", blob, at)[0] != veneer:
+                raise SystemExit(f"{table}[{slot}]: slot does not point to its own veneer")
+            audited[slot] = {"veneer": hex(veneer), "donor": hex(want)}
+    if len(set(symbols[name] for name in original["functions"])) != len(original["functions"]):
+        raise SystemExit("different original functions share a linked veneer")
+    return audited
+
+
+def audit_emitted_originals(blob, report, abi):
     from emit_prelink import backed_offset, macho
 
     meta = abi["metaclass"]
@@ -83,6 +116,27 @@ def audit_emitted_metaclass(blob, report, abi):
     if struct.unpack_from("<Q", blob, at(site, 8))[0] != int(meta["getter"], 16) + slide:
         raise SystemExit("emitted original gMetaClass getter pointer was not slid")
 
+    def in_section(segment, section, outer, prot, va, size):
+        child = next(s for s in family["segments"] if s["name"] == segment)
+        sec = next(s for s in child["sections"] if s["name"] == section)
+        parent = next(s for s in segments if s["name"] == outer)
+        if (child["initprot"] != prot or parent["initprot"] != prot
+                or not sec["va"] <= va <= sec["va"] + sec["size"] - size
+                or not child["va"] <= va <= child["va"] + child["filesize"] - size
+                or not parent["va"] <= va <= parent["va"] + parent["filesize"] - size):
+            raise SystemExit(f"emitted address {va:#x} outside {outer}/{segment},{section}")
+        return at(va, size)
+
+    original = abi["original_imports"]
+    table = int(original["vtable_linked_address"], 16)
+    table_at = in_section("__DATA_CONST", "__const", "__PLK_DATA_CONST", 1,
+                          table, 16 + abi["vtable"]["slots"] * 8)
+    for entry in original["functions"].values():
+        target, slot = int(entry["linked_address"], 16), entry["slot"]
+        in_section("__TEXT_EXEC", "__text", "__PLK_TEXT_EXEC", 5, target, 4)
+        if slot is not None and struct.unpack_from("<Q", blob, table_at + 16 + slot * 8)[0] != target:
+            raise SystemExit(f"emitted donor Legacy slot {slot} was not slid to {target:#x}")
+
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
@@ -103,7 +157,8 @@ def main():
         raise SystemExit("20H392 donor SHA256 mismatch")
     run([sys.executable, "-B", ROOT / "scripts/derive-nuwa-display-abi.py",
          "--base", base, "--kernelcache", donor, "--out", out / "derived"])
-    for name in ("OriginalLegacyFramebufferABI.h", "original-bindings.S", "nuwa-display-abi.json"):
+    for name in ("OriginalLegacyFramebufferABI.h", "original-bindings.S",
+                 "original-addresses.S", "nuwa-display-abi.json"):
         if (out / "derived" / name).read_bytes() != (ROOT / "package" / name).read_bytes():
             raise SystemExit(f"derived {name} differs from device package")
     host = out / "archive"
@@ -133,15 +188,20 @@ def main():
     abi = json.loads((out / "derived/nuwa-display-abi.json").read_text())
     native_bytes = native.read_bytes()
     got = audit_linked_metaclass(native_bytes, abi["metaclass"])
+    refs = json.loads((host / "archive.json").read_text())["original_relocations"]
+    slots = audit_linked_originals(native_bytes, abi["original_imports"], refs)
+    (out / "linked-original-slots.json").write_text(json.dumps(slots, indent=2) + "\n")
     board = tomllib.loads((ROOT / "board.toml").read_text())
     roots = board["os_overrides"]["ios-16.7.16-20H392"]["kernel"]["prelink"]["roots"]
     roots = list(dict.fromkeys([*roots, FAMILY]))
     # Read-only gate: do not persist or package emitted bytes, even if accepted.
     emitted, report = emit_prelink.emit(
         native_bytes, donor.read_bytes(), roots, abi["metaclass"]["collection_slide"])
-    audit_emitted_metaclass(emitted, report, abi)
+    audit_emitted_originals(emitted, report, abi)
     if audit_linked_metaclass(emitted, abi["metaclass"]) != got:
         raise SystemExit("prelink emission moved the native gMetaClass GOT entry")
+    if audit_linked_originals(emitted, abi["original_imports"], refs) != slots:
+        raise SystemExit("prelink emission changed a linked Legacy slot")
     print("strict emitter accepted; output discarded, runtime still ineligible")
 
 
