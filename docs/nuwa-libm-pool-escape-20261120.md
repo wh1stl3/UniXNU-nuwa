@@ -210,3 +210,94 @@ and no store is established; its callee's full alias use is not audited.
 The other boundaries likewise are not proven writers. Thus neither those
 boundaries nor the unowned executable gaps may be presented as a clean
 writer-absence proof. No scanner, whitelist, or device was changed.
+
+## Continuation: candidate callers and tail paths
+
+**NOT-QUALIFIED remains.** Libm has no `LC_FUNCTION_STARTS` and its
+`LC_SYMTAB` contains zero symbols. Two instruction-shape/CFG entry
+candidates cover the three ADRs, not three independently established entries:
+
+* `0xfffffff005b8bc80`: `stp x29,x30,[sp,#-0x10]!; mov x29,sp`, reaching
+  ADR `0xfffffff005b8bd00` and the shared `be78` tail. Its immediate
+  predecessor `bc7c` is not RET; this prologue does not prove the entry.
+* `0xfffffff005b8bd5c`: same prologue immediately after RET at
+  `0xfffffff005b8bd58`, reaching ADR `0xfffffff005b8bed8` and the shared
+  tail's `0xfffffff005b8be98`. Branch `0xfffffff005b8bcf0` also enters
+  that tail; other entry paths are not excluded.
+
+Donor-wide raw scanning finds zero direct BLs to either candidate. Two
+distinct pointers in `com.apple.driver.IOAudioCodecs` `__DATA_CONST` are
+`0xfffffff006f41448 → 0xfffffff005b8bc80` and
+`0xfffffff006f414a0 → 0xfffffff005b8bd5c`; they are also seen through the
+overlapping parent segment. Stubs `0xfffffff00667e7a0` and
+`0xfffffff00667e824` load these into x16 and `br x16`. The scan finds 27 BLs
+and zero direct B instructions to these stubs. IOAudioCodecs belongs to
+the donor superset, not the 30 selected prelink modules.
+
+The following table lists each BL; suffixes have prefix `0xfffffff006`.
+Target A is `0xfffffff00667e7a0`, B is `0xfffffff00667e824`.
+`N` = passed to the next known stub, whose initial target overwrites `w0`
+with `s0` within four instructions; `K` = overwritten in the caller;
+`R` = still live in x0 at caller RET. Multiple letters indicate CFG paths.
+JSON records each exact terminal address/instruction.
+
+| BL suffix | target | paths |
+|---|---|---|
+| 648330 | A | N |
+| 648340 | A | N |
+| 648350 | A | N |
+| 648374 | B | N |
+| 648380 | B | N |
+| 64838c | B | K / N |
+| 64b334 | B | R / K |
+| 64c3e8 | B | R / K |
+| 64de5c | A | N |
+| 64de6c | B | N |
+| 64de84 | A | N |
+| 64de98 | B | K / N |
+| 64dfb8 | A | N |
+| 64dfc8 | B | N |
+| 64dfe0 | A | N |
+| 64dff4 | B | N |
+| 64e00c | A | N |
+| 64e020 | B | N |
+| 64e038 | A | N |
+| 64e04c | B | K / N |
+| 65cd24 | A | N |
+| 65cd34 | B | N |
+| 65cd40 | A | K / N |
+| 65cd70 | A | N |
+| 65cd80 | B | K / N |
+| 65ce10 | A | N |
+| 65ce20 | B | R / N |
+
+Path endpoints, not unique callsites: 25 N, 11 K, 3 R. R is observed at BL
+`0xfffffff00664b334` → RET `0xfffffff00664b82c`,
+`0xfffffff00664c3e8` → RET `0xfffffff00664c33c`, and
+`0xfffffff00665ce20` → RET `0xfffffff00665ce48`. Next-level callers have
+not been traced; no observed endpoint is a data-pointer read, storage, or
+control-flow use. N assumes the slots retain their donor initial values;
+the indirect-writer gap is not closed.
+
+There are 167928 raw BLR-decoding word sites in scanned executable segments;
+some may be inline data and register targets were not resolved. Thus the 27
+calls are not an exhaustive BL/BLR caller set. For example,
+`0xfffffff0071b42dc: blr x8` has an unresolved runtime target. Return to
+the next caller and unqualified alternative entries also prevent closing
+the three return-address cases. CFG tracing is bounded to 256 instructions
+per path and is static evidence only.
+
+ADR `0xfffffff005b8bcd8` goes through B `0xfffffff005b8bcf0` to
+`0xfffffff005b8be78`: the derived x0 is overwritten by ADR `be98` before
+data loads `be9c`/`bea0`; the prior x1 alias has no observed use on that
+tail before RET `bec8`. The new x0 is the separate `be98` return case.
+ADR `0xfffffff005b8bff8` goes through B `0xfffffff005b8c01c` to
+`0xfffffff005b8bf70`: x0 was overwritten by `fcvtns x0,d4` at `c00c`,
+and x1 is overwritten by ADR `bf78`, then used for LD1 data reads at
+`bf7c`, `bf80`, `bf94`. Neither tail demonstrates control-flow use of
+the original aliases.
+
+Capstone runtime 5.0.7 reports `lsl x0,x8,#3` at
+`0xfffffff0066483bc` as reading and writing x0; its decoded source is x8,
+so it overwrites x0. The caller classifier explicitly corrects this LSL
+form; other Capstone access metadata has not been independently qualified.

@@ -71,6 +71,79 @@ def main():
         return ins.reg_name(op.reg)
     def hx(n):
         return hex(n & MASK)
+    entries_of_interest = {0xfffffff005b8bc80, 0xfffffff005b8bd5c}
+    pointer_stubs = {0xfffffff00667e7a0, 0xfffffff00667e824}
+    entry_pointer_slots = {0xfffffff006f41448, 0xfffffff006f414a0}
+    for entry in entries_of_interest:
+        prologue = list(engine.disasm(read(entry, 16), entry))
+        if len(prologue) != 4 or prologue[0].mnemonic != "stp" or prologue[1].mnemonic != "mov":
+            raise ValueError("candidate function prologue changed")
+        if not any(i.mnemonic == "fmov" and i.op_str == "w0, s0" for i in prologue):
+            raise ValueError("candidate function no longer overwrites w0 on entry")
+    for stub, slot, entry in ((0xfffffff00667e7a0, 0xfffffff006f41448, 0xfffffff005b8bc80),
+                              (0xfffffff00667e824, 0xfffffff006f414a0, 0xfffffff005b8bd5c)):
+        instructions = list(engine.disasm(read(stub, 12), stub))
+        if (len(instructions) != 3 or [i.mnemonic for i in instructions] != ["adrp", "ldr", "br"]
+                or struct.unpack("<Q", read(slot, 8))[0] != entry):
+            raise ValueError("candidate pointer stub or initial target changed")
+    def caller_use(blob, offset, pc):
+        """Follow caller paths until the returned x0 is used or killed."""
+        base = pc-offset
+        pending = [(pc+4, 0)]
+        visited, outcomes = set(), []
+        while pending:
+            address, step = pending.pop()
+            if address in visited:
+                continue
+            visited.add(address)
+            if step >= 256:
+                outcomes.append({"classification": "unresolved-window", "at": hx(address)})
+                continue
+            at = address-base
+            n = decode(address, blob[at:at+4]) if 0 <= at <= len(blob)-4 else None
+            if n is None:
+                outcomes.append({"classification": "unresolved-decode", "at": hx(address)})
+                continue
+            reads, writes = n.regs_access()
+            r = {n.reg_name(x) for x in reads}
+            w = {n.reg_name(x) for x in writes}
+            if n.mnemonic in ("blr", "br") and n.operands and reg(n, n.operands[0]) in ("x0", "w0"):
+                kind = "control-flow"
+            elif n.mnemonic in ("bl", "blr"):
+                dst = n.operands[0].imm & MASK if n.mnemonic == "bl" and n.operands[0].type == arm64.ARM64_OP_IMM else None
+                kind = "next-known-callee-overwrites-x0" if dst in pointer_stubs | entries_of_interest else "next-call-argument-unresolved"
+            elif (n.mnemonic == "lsl" and len(n.operands) >= 2
+                  and n.operands[0].type == arm64.ARM64_OP_REG
+                  and n.operands[1].type == arm64.ARM64_OP_REG
+                  and reg(n, n.operands[0]) in ("x0", "w0")
+                  and reg(n, n.operands[1]) not in ("x0", "w0")):
+                # Capstone 5.0.7 reports the LSL destination as read+write.
+                kind = "overwritten"
+            elif r.intersection({"x0", "w0"}):
+                if n.mnemonic.startswith("st"):
+                    kind = "memory-store-or-address-unresolved"
+                elif n.mnemonic.startswith(("ldr", "ldp", "ld1")):
+                    kind = "data-read-or-other-use"
+                else:
+                    kind = "other-use-unresolved"
+            elif w.intersection({"x0", "w0"}):
+                kind = "overwritten"
+            elif n.mnemonic == "ret":
+                kind = "returned-to-caller"
+            else:
+                if n.mnemonic == "b" or n.mnemonic.startswith(("b.", "cb", "tb")):
+                    targets = [o.imm & MASK for o in n.operands if o.type == arm64.ARM64_OP_IMM]
+                    if targets:
+                        pending.append((targets[-1], step+1))
+                    else:
+                        outcomes.append({"classification": "branch-target-unresolved", "at": hx(address)})
+                    if n.mnemonic == "b":
+                        continue
+                pending.append((address+4, step+1))
+                continue
+            outcomes.append({"classification": kind, "at": hx(n.address),
+                             "instruction": n.mnemonic + " " + n.op_str})
+        return outcomes
     def trace_address(blob, offset, ins):
         """Trace to clobber, return, unconditional branch or 256 instructions."""
         uses = []
@@ -142,6 +215,7 @@ def main():
         return uses, ",".join(unresolved) if unresolved else (
             "data-read" if any(" ld" in u for u in uses) else "unresolved-no-data-read")
     a1, a2, pointers, coverage, page_limits = [], [], [], [], []
+    direct_calls, indirect_calls, entry_pointers, tail_entries, pointer_uses = [], [], [], [], []
     images = {"kernel": parent, **modules}
     for name, image in images.items():
         for seg in image["segments"]:
@@ -152,6 +226,19 @@ def main():
                                      size=seg["filesize"]))
                 blob = read(seg["va"], seg["filesize"])
                 for pc, size, mnemonic, _ in lite.disasm_lite(blob, seg["va"]):
+                    if mnemonic in ("b", "bl", "blr"):
+                        i = pc - seg["va"]
+                        call = decode(pc, blob[i:i+4])
+                        if call and mnemonic == "blr":
+                            indirect_calls.append(dict(module=name, pc=hx(pc), instruction=call.mnemonic+" "+call.op_str))
+                        elif call and call.operands and call.operands[0].type == arm64.ARM64_OP_IMM:
+                            dst = call.operands[0].imm & MASK
+                            if dst in entries_of_interest | pointer_stubs:
+                                if mnemonic == "bl":
+                                    direct_calls.append(dict(module=name, pc=hx(pc), target=hx(dst),
+                                                             x0_use=caller_use(blob, i, pc)))
+                                elif mnemonic == "b":
+                                    tail_entries.append(dict(module=name, pc=hx(pc), target=hx(dst)))
                     if mnemonic not in ("adr", "adrp", "ldr"):
                         continue
                     i = pc - seg["va"]
@@ -175,7 +262,8 @@ def main():
                                            instruction=ins.mnemonic+" "+ins.op_str,
                                            uses=uses, classification=classification))
                         continue
-                    if target not in (START & ~4095, min(SLOTS) & ~4095):
+                    if target not in (START & ~4095, min(SLOTS) & ~4095,
+                                      min(entry_pointer_slots) & ~4095):
                         continue
                     base = reg(ins, ins.operands[0])
                     addresses = {base: target}
@@ -200,6 +288,25 @@ def main():
                                 a1.append({**row, "classification": "unresolved"})
                             if address in SLOTS or (n.mnemonic in ("ldp", "stp") and address + 8 in SLOTS):
                                 a2.append({**row, "classification": "unresolved-value-source" if n.mnemonic.startswith("st") else "read-or-address"})
+                            if address in entry_pointer_slots:
+                                use = {**row, "following": [], "classification": "address-only-unresolved"}
+                                if n.mnemonic == "ldr" and ops[0].type == arm64.ARM64_OP_REG:
+                                    loaded = reg(n, ops[0])
+                                    use["classification"] = "loaded-value-unresolved"
+                                    for k in range(1, 33):
+                                        follow = decode(n.address + k*4, blob[i+(j+k)*4:i+(j+k)*4+4])
+                                        if follow is None:
+                                            break
+                                        reads, writes = follow.regs_access()
+                                        rn = {follow.reg_name(x) for x in reads}
+                                        wn = {follow.reg_name(x) for x in writes}
+                                        if loaded in rn:
+                                            use["following"].append(hx(follow.address) + " " + follow.mnemonic + " " + follow.op_str)
+                                            use["classification"] = ("indirect-call" if follow.mnemonic == "blr" and follow.operands and reg(follow, follow.operands[0]) == loaded else "other-use-unresolved")
+                                            break
+                                        if loaded in wn or follow.mnemonic in ("b", "br", "ret", "bl", "blr") or follow.mnemonic.startswith(("b.", "cb", "tb")):
+                                            break
+                                pointer_uses.append(use)
                         reads, writes = n.regs_access()
                         for written in writes:
                             addresses.pop(n.reg_name(written), None)
@@ -223,6 +330,9 @@ def main():
                 for width, fmt in ((8, "<Q"), (4, "<I")):
                     for off in range(0, len(blob)-width+1, width):
                         value = struct.unpack_from(fmt, blob, off)[0]
+                        if width == 8 and value in entries_of_interest:
+                            entry_pointers.append(dict(module=name, segment=seg["name"],
+                                                       site=hx(seg["va"]+off), target=hx(value)))
                         if START <= value < END or value in SLOTS:
                             pointers.append(dict(module=name, segment=seg["name"], site=hx(seg["va"]+off), width=width, target=hx(value)))
     libm = modules["com.apple.kec.Libm"]
@@ -249,6 +359,12 @@ def main():
                   scan_coverage=coverage, page_tracking_limits=page_limits,
                   unselected_executable_modules=sorted(set(modules) - selected_modules),
                   unparsed_modules=unparsed,
+                  candidate_function_entries=[hx(x) for x in sorted(entries_of_interest)],
+                  direct_calls_to_candidate_entries=direct_calls,
+                  direct_tail_branches_to_candidate_entries=tail_entries,
+                  raw_entry_pointer_candidates=entry_pointers,
+                  entry_pointer_slot_uses=pointer_uses,
+                  indirect_call_sites=indirect_calls,
                   libm_init_sections=init_sections, libm_kmod_info=hx(kmod_va),
                   libm_kmod_start=hx(kmod_start), libm_kmod_stop=hx(kmod_stop),
                   conclusion="NOT-QUALIFIED: unresolved address lifetimes and indirect slot writers")
