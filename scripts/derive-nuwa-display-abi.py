@@ -37,6 +37,12 @@ ROLES = {
     336: ('int applyStateRequest(OriginalLegacyStateRequest *, bool)', '5c1c1d8'),
 }
 
+# Override-only roles used by NativeLegacyDisplay.cpp, not direct-call bindings.
+CONSUMER_ROLES = {
+    184: ('bool isMainDisplay()', '5c12264'),
+    188: ('IOReturn getDotPitch(uint32_t *)', '5c1d128'),
+}
+
 # Mangled names verified with clang++ -target arm64-apple-ios16.0 and llvm-nm against this class shape.
 MANGLED = {
     'getDisplayDimensions': '__ZN25IOMobileFramebufferLegacy20getDisplayDimensionsEPjS0_',
@@ -178,8 +184,9 @@ def main():
     check_word(image, va('5c0bca4'), 0x5282cc03, 'metadata size movz')
     check_word(image, va('5c0bc98'), 0x91192821, 'metadata name add')
 
-    # The seven limited slots and their identical addresses in the vtable.
-    for slot, (_, address) in ROLES.items():
+    # Named concrete slots must retain their original addresses in the vtable.
+    named_roles = {**ROLES, **CONSUMER_ROLES}
+    for slot, (_, address) in named_roles.items():
         if values[slot] != va(address):
             raise SystemExit('slot %d is %s, expected %s' % (slot, hex(values[slot]), address))
 
@@ -202,6 +209,26 @@ def main():
     check_word(image, va('5c1c240'), 0xb9547529, 'state requested read')
     check_word(image, va('5c1c260'), 0xb9147528, 'state requested store')
     check_word(image, va('5c1c294'), 0xb9547929, 'state powered read')
+
+    # Main-display scalar query (selector 18) and dot-pitch property getter.
+    if image.read(va('6decd08'), 24) != struct.pack('<QIIII', va('5c00658'), 0, 0, 1, 0):
+        raise SystemExit('selector 18 scalar-query dispatch entry changed')
+    check_word(image, va('5bff47c'), 0xb0008f69, 'externalMethod dispatch table page')
+    check_word(image, va('5bff480'), 0x912d6129, 'externalMethod dispatch table offset')
+    check_word(image, va('5c00688'), 0x97fff79f, 'selector 18 calls scalar query')
+    check_word(image, va('5bfe52c'), 0xf942e108, 'scalar query dispatch slot 184')
+    check_word(image, va('5bfe534'), 0x360000c0, 'scalar query reads boolean')
+    check_word(image, va('5c12274'), 0xd282a449, 'main display flag offset')
+    check_word(image, va('5c12294'), 0xd282a569, 'main display exclusion flag offset')
+    check_word(image, va('5c122b0'), 0x12000100, 'main display returns boolean')
+    if image.read(va('4f6718d'), len(b'dot-pitch\0')) != b'dot-pitch\0':
+        raise SystemExit('dot-pitch property string changed')
+    check_word(image, va('5c1d184'), 0xd0ff9a41, 'dot-pitch property page')
+    check_word(image, va('5c1d188'), 0x91063421, 'dot-pitch property offset')
+    check_word(image, va('5c1d248'), 0xf85f03a9, 'dot-pitch output pointer')
+    check_word(image, va('5c1d24c'), 0xb9000128, 'dot-pitch uint32_t output')
+    check_word(image, va('5c1d250'), 0xb85ec3a0, 'dot-pitch IOReturn')
+    check_word(image, va('5bfe818'), 0xf942f108, 'dot-pitch dispatch slot 188')
 
     # Instance fields.
     for address, expected, label in (
@@ -239,7 +266,7 @@ def main():
     out = args.out
     out.mkdir(parents=True, exist_ok=True)
 
-    named = {slot: text for slot, (text, _) in ROLES.items()}
+    named = {slot: text for slot, (text, _) in named_roles.items()}
     virtuals = []
     for slot in range(168, SLOTS):
         if slot == 321:
@@ -386,7 +413,7 @@ enum : unsigned {
                     abstract=abstract, pure_target=hex(values[abstract[0]])),
         instance_bytes=INSTANCE_BYTES,
         slots={**{str(slot): dict(address=hex(values[slot]), prototype=text,
-                                  abstract=slot in PURE) for slot, (text, _) in ROLES.items()},
+                                   abstract=slot in PURE) for slot, (text, _) in sorted(named_roles.items())},
                '321': dict(address=hex(values[321]), prototype='IOReturn collectCompletionReports(uint32_t, void *, uint32_t *, uint32_t)', abstract=True)},
         instance=INSTANCE,
         request=REQUEST,
@@ -394,7 +421,7 @@ enum : unsigned {
     )
     (out / 'nuwa-display-abi.json').write_text(json.dumps(summary, indent=1) + '\n')
     print('vtable', hex(vptr), slots, 'abstract', abstract)
-    print('instance', INSTANCE_BYTES, 'roles', sorted(ROLES))
+    print('instance', INSTANCE_BYTES, 'roles', sorted(named_roles))
     print('wrote', out / 'OriginalLegacyFramebufferABI.h', out / 'original-bindings.S')
     return 0
 

@@ -88,11 +88,11 @@ public:
     virtual void opaque181();
     virtual void opaque182();
     virtual void opaque183();
-    virtual void opaque184();
+    virtual bool isMainDisplay();
     virtual void opaque185();
     virtual void opaque186();
     virtual void opaque187();
-    virtual void opaque188();
+    virtual IOReturn getDotPitch(uint32_t *);
     virtual void opaque189();
     virtual void opaque190();
     virtual void opaque191();

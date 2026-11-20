@@ -152,3 +152,20 @@ swap 节点链接 2408/2416。
 - 使用 `/root/nuwa-pmap-ret-native-20261111/.../IOPMGR.cpo.json` 的真实 8796 编译选项和头，将输入换为基座 `drivers/GopFramebuffer/NativeLegacyDisplay.cpp`、加本设备 package include 和 `-DNATIVE_LEGACY_CANCEL_SWAPS=1`，编译失败：首个错误 `NativeLegacyDisplay.cpp:533`，`isMainDisplay()` 标为 override 但当前生成基类没有对应虚函数。未生成对象；最终子类槽 321 无二进制证据。编译命令重建脚本位于本机临时路径 `C:/Users/Administrator/AppData/Local/Temp/opencode/nuwa-abi-compile.py`，不作为持久证据。
 - `isMainDisplay`、`getDotPitch`、`supportedFrameInfo`、`cancelSwapsAfterTimeout` 的 donor 槽位尚未限定；不以其他系统或编译成功推断槽位。其余九项 surface/vsync glue、设备 builder、用户态 swap 合同和 prelink 仍未闭合。已有基座 GopFramebuffer 翻译单元可复用，需独立派生本 donor 的链接入口与构建步骤；本轮未实现 builder 或九项胶水。
 - 此修正仅为 host 静态合同，未完成实际编译、链接、运行、设备或独立 verifier；需要 deep review 复核 ABI。
+
+## 9. 20H392 消费端复查（self-checked，仍未闭合）
+
+基座 `693f5d9cae8a408dd18b39f3f9fdc4228c934241`，消费者 `GopFramebuffer@e47c1b8de169cd2bd0b885c7d85e433010e3cdf2`，donor 仍为第 1 节的哈希。下列 donor 地址省略 `0xfffffff000000000` 前缀。
+
+| 消费者 override | 20H392 证据与处理 |
+| --- | --- |
+| `bool isMainDisplay()` | **184，具体虚函数** `0x5c12264`。dispatch 表 `0x6decb58` 的 selector 18 行 `0x6decd08` 指向 `0x5c00658`（单标量输出）；经 `0x5c00688` 调用包装器，`0x5bfe52c` 从 framebuffer 取 `vptr+1472`，只读返回值的第 0 位并输出 0/1。函数体读 `self+0x1522` 和 `self+0x152b`，在 `0x5c122b0` 返回布尔值；与基座 `:533` 的无参数布尔 override 一致。 |
+| `IOReturn getDotPitch(uint32_t *)` | **188，具体虚函数** `0x5c1d128`。`0x5c1d184/188` 引用 `"dot-pitch"`，`0x5c1d24c` 向保存的 x1 指针写 32 位，`0x5c1d250` 返回 IOReturn；`0x5bfe818` 从 framebuffer 取 `vptr+1504` 并转发该输出。与基座 `:842` 一致。 |
+| `supportedFrameInfo` | selector 74 的 `0x6ded248` 行指向 `0x5c00c04`（1 标量入、1 标量出、64 B 结构出），再到 `0x5bfec14`。`0x5bfec58` 从 `vptr+1696` 调用纯虚槽 **212**，w1 为索引，x2 为本地 32 位计数输出，x3 为 key 缓冲区，w0 为状态。该调用**不设置 x4**；基座 `:853` 要求并写第四个 `uint32_t *mask`。缺同签名的 20H392 调用锚，不能把该四参 override 装进 212。 |
+| `cancelSwapsAfterTimeout` | `0x5c11928/2c` 引用五秒超时日志；之后 `0x5c11980` 的布尔调用是纯虚槽 **329**，其返回值在 `0x5c119dc/e0` 入日志的 `TimingEnable` 位（格式串 `0x4f66224`）。`0x5c10e40` 和 `0x5c10f7c` 也把这个布尔值用于状态分支。实际清队列路径另经 `0x5c11a74` 的槽 **330**，目标 `0x5c0fbe8` 从 `self+4872` 读当前请求，调用者不消费返回值。两者均不构成基座 `:770` 所需的独立布尔取消回调锚。 |
+
+生成器只具名替换原 184、188 两项并断言 donor 锚点；338 槽、九个纯虚位和直接绑定不变。不改基座 override。
+
+复跑第 8 节的真实 8796 translation unit（`-DNATIVE_LEGACY_CANCEL_SWAPS=1`）：clang 退出 1，**首错 `NativeLegacyDisplay.cpp:770:36`**，`cancelSwapsAfterTimeout()` 拒绝 `override`，没有可匹配的基类虚函数。无目标对象，未检查最终子类槽 321。复跑时用该 `IOPMGR.cpo.json` 的 `directory` 和 `arguments`：把 `file` 替换为基座 `drivers/GopFramebuffer/NativeLegacyDisplay.cpp`，`-o` 指到临时对象，移除 `-W*`（连带其 `-Xclang` 包装），追加 `-I<设备仓>/package`、`-I<同一构建树>/.cache/xnu-work/osfmk`、上述宏和 `-ferror-limit=1`。
+
+未链接、未上机；ABI 待方案 A 的 `deep_reviewer` 审查及独立 verifier 复跑。
