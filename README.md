@@ -1,5 +1,7 @@
 # UniXNU-nuwa
 
+**r35c 退出诊断候选（仅主机，未上机，复审待完成）：** [本轮记录](docs/nuwa-r35c-exit-detail-20261120-observation.md)。
+
 **r35b 瘦身候选（仅主机，未上机）：** [构建与审计记录](docs/nuwa-r35b-compact-20261120-observation.md)。
 
 **当前（2026-11-15）：原生 UFS 根卷挂载成功，launchd 进入用户态；交互目标未达成。**

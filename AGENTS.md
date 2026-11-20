@@ -6,6 +6,7 @@
 小米 13 Pro（nuwa / SM8550）通过 UniXNU 运行 iOS 16（donor: iPhone10,3 / 16.7.16 / 20H392，xnu-8796 线）。
 
 ## 基线
+- 2026-11-20 **r35c 退出诊断候选（仅主机，未上机，复审待完成）**：见 [本轮记录](docs/nuwa-r35c-exit-detail-20261120-observation.md)。
 - 2026-11-20 **r35b 瘦身候选（仅主机，未上机）**：见 [本轮记录](docs/nuwa-r35b-compact-20261120-observation.md)；旧 r35b 未达到 FAT 门槛。
 - 2026-11-20 **时基已核对、r35 主机复现一致，第一阻塞不变（交互目标仍未达成）**：r34 页面 CLK 行 `cntfrq=19200000 dt=19200000 dv=6143960ms cv=6143960ms`，`cntfrq_readback` 缺口闭合（仅 boot CPU、6144 s 零漂移）；r35 主机复现逐字节一致但**仍未上机**（上机授权在写入前由用户取消，槽位状态待确认），设备仍跑 r34（`vendor_boot_a` `46aa4fd9…891e`），第一阻塞仍是 SpringBoard/mobileactivationd 的 SIGTRAP 读数缺失。见 `docs/nuwa-r34-page-evidence-20261120.md`；逐轮细节见 `docs/nuwa-userspace-20261119-observation.md`。
 - 2026-11-19 **用户态推进 r16–r35（交互目标仍未达成）**：r34 上 SpringBoard 与 mobileactivationd 以 **SIGTRAP** 退出，为当前第一阻塞；显示服务（`GopFramebuffer`）未接、SMP 未开启、认证仍 **NOT REACHED**；r35（异常退出环）已构建**未上机**，设备现跑 r34（`vendor_boot_a` `46aa4fd9…891e`）。逐轮载荷/内核/seed 哈希、设备读数、八项关键发现与证据路径见 `docs/nuwa-userspace-20261119-observation.md`（主机侧 self-checked，设备侧主控转述）。

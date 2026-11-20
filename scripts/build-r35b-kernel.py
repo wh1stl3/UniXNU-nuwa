@@ -30,12 +30,12 @@ def replace_once(text, old, new):
     return text.replace(old, new, 1)
 
 
-def compact_recipe(build, r35, out):
+def compact_recipe(build, r35, out, strip=True):
     recipe = r35.parent / "nuwa-r12bisect-20261116/build-boot-progress.py"
     boot_build = pin(recipe.read_bytes(), BOOT_BUILD_SHA).decode()
     slim = out / "build-boot-progress-compact.py"
     slim.write_text(replace_once(boot_build, "command_for(renderer, renderer_obj))",
-                                "command_for(renderer, renderer_obj) + ['-g0'])"))
+                                 "command_for(renderer, renderer_obj) + ['-g0'])") if strip else boot_build)
     build = replace_once(build, "'-B', BOOT_PROGRESS_BUILD,",
                          f"'-B', {str(slim)!r},")
     # Preserve the compiler's literal-pool order as well as __FILE__ spelling.
@@ -49,21 +49,23 @@ def compact_recipe(build, r35, out):
                          "        argv[argv.index(rec['file'])] = str(source)\n"
                          "        argv[argv.index('-o') + 1] = str(out / (label + '.o'))")
     return replace_once(build, "    run('native-link', argv, link['cwd'])",
-                        "    argv.append('-Wl,-S')\n    run('native-link', argv, link['cwd'])")
+                        "    argv.append('-Wl,-S')\n    run('native-link', argv, link['cwd'])") if strip else build
 
 
-def audit_compact(r35, out):
+def audit_compact(r35, out, before=None):
     root = r35.parents[1]
-    before = r35.parent / "nuwa-r35b-exit-selection-20261120"
+    legacy = before is None
+    before = before or r35.parent / "nuwa-r35b-exit-selection-20261120"
     display = root / "scripts/build-nuwa-display-native.py"
     source = pin(display.read_bytes(), DISPLAY_AUDIT_SHA)
     sys.path.insert(0, str(root / "scripts"))
     namespace = {"__name__": "display_debug_audit", "__file__": str(display)}
     exec(compile(source, str(display), "exec"), namespace)
     audit = namespace["audit_debug_strip"](
-        pin((before / "native.macho").read_bytes(), OLD_NATIVE_SHA),
+        pin((before / "native.macho").read_bytes(), OLD_NATIVE_SHA) if legacy else (before / "native.macho").read_bytes(),
         (out / "native.macho").read_bytes())
-    old = json.loads(pin((before / "prelink.json").read_bytes(), OLD_PRELINK_SHA))
+    old_data = (before / "prelink.json").read_bytes()
+    old = json.loads(pin(old_data, OLD_PRELINK_SHA) if legacy else old_data)
     new = json.loads((out / "prelink.json").read_bytes())
     # Symbol/string shrinkage changes file offsets, sizes and hashes, not bindings.
     fields = ("bindings", "original_sha256", "original_executable_sha256", "components",
@@ -81,6 +83,8 @@ def main():
     parser.add_argument("r35", type=Path, help="original r35 directory")
     parser.add_argument("out", type=Path, help="new directory under the original repository out/")
     parser.add_argument("--compact", action="store_true", help="remove only debug metadata and audit against r35b")
+    parser.add_argument("--detail", action="store_true", help="generate the detailed exit recorder")
+    parser.add_argument("--audit-against", type=Path, help="unstripped build of identical detail source")
     args = parser.parse_args()
     r35 = args.r35.resolve()
     out = args.out.resolve()
@@ -92,19 +96,38 @@ def main():
     selection = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(selection)
     renderer = pin(selection.generate((r35 / "BootProgress.c").read_bytes()), RENDERER_SHA)
+    if args.detail:
+        spec = importlib.util.spec_from_file_location("detail", Path(__file__).with_name("generate-r35b-exit-detail.py"))
+        detail = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(detail)
+        renderer = detail.generate(renderer)
+        build = replace_once(build, "assert 'bar(0, line,' in renderer_r35, 'row 0 not drawn from the ring'",
+                             "assert 'if (!i) bar(0,b,' in renderer_r35, 'row 0 not drawn from the ring'")
+        build = replace_once(build, "'\"%sEX%u %.6s %x:%x:%x\"', 'struct bp_exit_ring_entry'",
+                             "'\"EX%u %-6.6s sig=%u ns=%08x code=0x%08x n=%u pc=%016llx\"', 'struct bp_exit_ring_entry'")
+        build = replace_once(build, "b'EX%u %.6s %x:%x:%x'",
+                             "b'EX%u %-6.6s sig=%u ns=%08x code=0x%08x n=%u pc=%016llx'")
+        if args.compact and not args.audit_against:
+            parser.error("--detail --compact requires --audit-against")
     build = replace_once(build, OLD_ASSERT, NEW_ASSERT)
     out.mkdir()
     (out / "BootProgress.c").write_bytes(renderer)
     (out / "BootProgressDisplay.h").write_bytes(header)
     namespace = {"__file__": str(r35 / "build.py"), "__name__": "r35b_recipe"}
-    if args.compact:
-        build = compact_recipe(build, r35, out)
+    if args.compact or args.detail:
+        build = compact_recipe(build, r35, out, strip=args.compact)
     exec(compile(build, str(r35 / "build.py"), "exec"), namespace)
     namespace["RENDERER"] = out / "BootProgress.c"
     sys.argv = [str(r35 / "build.py"), "--out", str(out)]
     namespace["main"]()
     if args.compact:
-        audit_compact(r35, out)
+        if args.detail:
+            before = args.audit_against.resolve()
+            if (before / "BootProgress.c").read_bytes() != renderer:
+                raise ValueError("audit reference renderer differs")
+            audit_compact(r35, out, before)
+        else:
+            audit_compact(r35, out)
 
 
 if __name__ == "__main__":

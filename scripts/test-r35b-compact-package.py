@@ -3,6 +3,7 @@
 from collections import Counter
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 import runpy
@@ -14,9 +15,10 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 ORIGINAL = ROOT.parent / "UniXNU-nuwa"
 OUT = ORIGINAL / "out"
-BUILD = OUT / "nuwa-r35b-compact-r3-20261120"
+BUILD = Path(os.environ.get("NUWA_DETAIL_BUILD", OUT / "nuwa-r35b-compact-r3-20261120"))
 VERIFY_SHA = "aa76ca5add61a9a552043cc01b287f9fb2bfabb0549d68bbda678090840f6f2c"
 OLD_CHMH = "9ea4853ca37f2e59310720d6803a30d39c2a74da60d12c30896d168ed80fafbe246969138120f6b1b512a3d6fc3be0be"
+COMPACT_CHMH = "ca463c3f4ba9168203323e4350255d2b0c5f53e4033211dcf2f3124291c63ea7104b5d6fac7da9a3b859dafaefe58528"
 OLD_KERNEL_SHA = "ad7e70f7e615494c6162cec1a72610e119e897414bb89e4e038075244442da2f"
 
 
@@ -40,6 +42,11 @@ def linked(package):
             "['load_profile']()",
         "mod.X.C.extract(pkg / 'payload.img', work)": "profile['X'].C.extract(pkg / 'payload.img', work)",
     }
+    if os.environ.get("NUWA_DETAIL_BUILD"):
+        replacements["grep -qaF 'bar(0, line,' \"$R\""] = \
+            "grep -qaF 'if (!i) bar(0,b,' \"$R\""
+        replacements['ck "EX%u %.6s %x:%x:%x"'] = \
+            'ck "EX%u %-6.6s sig=%u ns=%08x code=0x%08x n=%u pc=%016llx"'
     for old, new in replacements.items():
         if text.count(old) != 1:
             raise ValueError("linked audit anchor changed: " + old)
@@ -105,9 +112,10 @@ def main():
     profile = runpy.run_path(str(ROOT / "scripts/build-ufs-apfs-root-chmh-r35b.py"))["load_profile"]()
     linked(package)
     report = strict_fat(package, audit, profile["X"].fat_clusters)
-    old_kernel = (OUT / "nuwa-r35b-exit-selection-20261120/kernel.macho").read_bytes()
+    reference = os.environ.get("NUWA_DETAIL_REFERENCE")
+    old_kernel = (Path(reference) if reference else OUT / "nuwa-r35b-exit-selection-20261120/kernel.macho").read_bytes()
     new_kernel = (package / "kernel.macho").read_bytes()
-    if hashlib.sha256(old_kernel).hexdigest() != OLD_KERNEL_SHA or hashlib.sha256(
+    if (not reference and hashlib.sha256(old_kernel).hexdigest() != OLD_KERNEL_SHA) or hashlib.sha256(
             new_kernel).hexdigest() != profile["KERNEL_SHA"]:
         raise ValueError("final kernel pin mismatch")
     old_symbols, new_symbols = final_symbols(old_kernel), final_symbols(new_kernel)
@@ -116,7 +124,7 @@ def main():
     report["final_non_stab_symbols_preserved"] = sum(new_symbols.values())
     record = json.loads((package / "record.json").read_text())
     digest = record["chmh_hex"]
-    if digest == OLD_CHMH or len(digest) != 96:
+    if digest == OLD_CHMH or (reference and digest == COMPACT_CHMH) or len(digest) != 96:
         raise ValueError("new CHMH missing")
     report["chmh"] = digest
     (BUILD / "strict-package.json").write_text(json.dumps(report, indent=2) + "\n")
