@@ -155,3 +155,58 @@ above and the unclosed indirect-writer set prevent proving no pool-address
 escape or future control-flow target. The observed initial slot values being
 outside the pool is insufficient. No whitelist, production scanner, device,
 or runtime was changed or exercised.
+
+## Continuation: 256-instruction CFG and donor-wide coverage
+
+**Result: NOT-QUALIFIED.** This section supersedes the preceding six-boundary
+classification. The ADR analysis now follows both sides of conditional
+branches, through alias clobber, RET or an unconditional branch, up to 256
+instructions. No pool-address argument to BL/BLR was encountered in these
+candidate traces, so no pool-address callee was available to follow.
+
+The 33 raw candidates now classify as 20 literal reads, 5 ADR-derived data
+reads, 3 pool-internal possible self-decodings, 3 raw return-register
+escapes, and 2 live aliases at unconditional branches. In particular:
+
+| ADR | observed endpoint | fact and remaining question |
+|---|---|---|
+| `0xfffffff005b8bd00` | RET `0xfffffff005b8bd40` | x0 still contains `0xfffffff005b8c084` after post-index data read |
+| `0xfffffff005b8be98` | RET `0xfffffff005b8bec8` | x0 still contains `0xfffffff005b8c0bc` after post-index data read |
+| `0xfffffff005b8bed8` | RET `0xfffffff005b8bf08` | x0 still contains `0xfffffff005b8c098` after post-index data reads |
+| `0xfffffff005b8bcd8` | B `0xfffffff005b8bcf0` → `0xfffffff005b8be78` | x0 and x1 remain live across the requested terminal |
+| `0xfffffff005b8bff8` | B `0xfffffff005b8c01c` → `0xfffffff005b8bf70` | x1 remains live across the requested terminal |
+
+The three RETs physically leave pool-derived values in x0. The routines
+produce floating-point results, so this is **not** evidence that a caller
+uses x0 as a pointer or branches to it; caller consumption is unproven.
+Nonetheless it is an unclassified address escape under the requested
+conservative criterion. No actual pool instruction fetch has been shown.
+
+The scan now includes the parent kernel and all donor metadata entries with
+file-backed non-resource executable images: 221 kexts plus kernel, with
+zero unparsed modules. The 30 actually selected kexts are marked `selected`
+in JSON; the other 191 are the donor-wide superset. JSON `scan_coverage`
+lists every segment name, VA, file size and owner: 892 executable/data
+segment observations, including overlapping parent coalesced data and
+embedded module views. Raw scans cover file-backed `__TEXT`, `__DATA`,
+`__DATA_CONST`, `__PRELINK_DATA`, `__PLK_DATA_CONST`, `__LASTDATA_CONST`,
+`__KLDDATA`, and `__BOOTDATA`. There are no matching raw full-width pool or
+slot pointers. A 4-byte raw word cannot equal these 64-bit addresses; encoded,
+relative, reconstructed, or dynamically supplied pointers remain uncovered.
+Executable scanning covers parent and kext `__TEXT_EXEC`; the parent
+coalesced `__PLK_TEXT_EXEC` is covered only where an embedded kext owns it,
+not its unowned gaps. Other parent segments are not treated as executable.
+
+The slot-address scan reports only the two known ADD/LDR paths, **but cannot
+establish that no other code materializes the slots**: it records 1078
+slot-page tracking boundaries at calls or unconditional branches. One concrete
+boundary is IOAVFamily `0xfffffff005b91010` (ADRP slot page), ADD
+`0xfffffff005b91014` produces `0xfffffff007a3d8c8` in x2, then BL
+`0xfffffff005b9101c` → in-image stub `0xfffffff005bedc98`; the stub loads
+the pointer at `0xfffffff006dd3410` and branches to
+`0xfffffff0076dfc74` (`OSMetaClass::OSMetaClass`, kernel symbol
+`__ZN11OSMetaClassC2EPKcPKS_j`). This argument is not itself either slot,
+and no store is established; its callee's full alias use is not audited.
+The other boundaries likewise are not proven writers. Thus neither those
+boundaries nor the unowned executable gaps may be presented as a clean
+writer-absence proof. No scanner, whitelist, or device was changed.
