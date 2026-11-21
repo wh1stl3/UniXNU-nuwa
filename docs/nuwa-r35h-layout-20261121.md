@@ -1,8 +1,32 @@
 # r35h layout and PID-aware exit aggregation
 
-Host-only candidate, self-checked; no device command. Independent verifier and
-deep_reviewer review of layout, aggregation semantics, stack and locks remain
-required. Authentication remains NOT REACHED.
+Host-only candidate, self-checked; no device command. Independent verifier has
+not rerun the final build and tests, and layout, aggregation semantics, stack
+and locks have not received deep_reviewer review. Authentication remains NOT
+REACHED.
+
+## Release disposition and device evidence
+
+The parent reports **plan B ordinary review PASS, without deep_reviewer**.
+Acceptance is: no text on row 0; row 1 retains the build tag and counters;
+EX1 is fixed on row 2, X1 on row 6, and stg on row 7. Full-screen clearing
+on the first bind/resume is permitted. This disposition does not imply that
+the physical crop boundary has been measured or that the interactive milestone
+has been reached.
+
+Outer SHA-256
+`aee06fad56c6ea21ffd872abd961223bdeb4a76f844ffcad9f4d6d1e105f341e`
+is a **single-use diagnostic candidate**, pending explicit authorization for
+that device round; it is not authorization to operate the device.
+The device-round record must include the full outer hash, the exact
+authorization text, the continuous video hash, and a line-by-line
+transcription. Mark anything not observed as `未见`. Matching the PID in X1
+and EX is recorded only as correlation, not proof of the same event.
+
+`n=` is the number of same-key observations while that slot is retained,
+not a cumulative crash count. The modeled 74-column EX/X1 cases fit the
+80-column, 1440-pixel width at scale 3; this is a host calculation, not
+physical display verification.
 
 Row 0 is suppressed by the diagnostic line/bar wrappers. Row 1 has the fixed
 `[nuwa-r35]` tag and t/m/np; rows 2–5 are EX1–EX4, row 6 X1 and row 7 stg.
