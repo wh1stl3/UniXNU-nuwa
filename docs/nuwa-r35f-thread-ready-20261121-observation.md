@@ -79,9 +79,34 @@ the same-source full build. These are self-checks. The inherited package
 profile remains `r35c-detail` and the screen tag `nuwa-r35`; use hashes
 for candidate identity.
 
-Reviewer/deep_reviewer must re-review the final candidate. No device
-operation, main merge or independent verifier rerun in this round.
-Authentication remains NOT REACHED.
+### 方案 A 深审及实机判据（主控转述）
+
+对候选代码 `361c010`，deep_reviewer 方案 A 结论为
+**PASS WITH CONDITIONS**，仅适用于单核 nuwa 的一次性诊断：
+
+- 就绪点依次为 `0xfffffff0079c47b8` → `0xfffffff0079c47bc` →
+  `0xfffffff0079c47c0` → `0xfffffff0079c47c4`，发布 `stlr` 位于
+  `0xfffffff0079a7548`；`arm_init` 只加发布调用，不改变既有操作顺序。
+- 未就绪时跳过 `0xfffffff0079a8408` 的 `ml` 调用；`_draw` 栈帧分配位于
+  `0xfffffff0079ab8e4` / `0xfffffff0079ab900`，合计 3,472 B。镜像中
+  有 6 处门禁调用、1 条进入 `_draw` 的直接边。
+- 候选 kernel SHA-256
+  `459b4a49db3a81258d5a5c937b125e1677b85affbd98d0ccb598637e69254e5a`；
+  outer SHA-256
+  `46527f4d1b56a883592a360f18e6952aa584db53e7aa09d4456c002afaca7c6b`；
+  CHMH SHA-384
+  `668509e5c9c627265cc45d101424afb914981668bd5375c8e618759b4e4162279a6e738cfdde9162da884e069084caea`；
+  FAT 剩余 12,070,400 B。
+
+候选通过静态深审及主机 self-check，**不得写成 r35e 根因已证**。
+后续实机判据：
+
+1. 出现文字页：就绪发布后至少一次绘制成功。
+2. 两帧的 `t` 增大：两帧之间刷新仍在。
+3. 只出现三色带：无法区分停在哪一步。
+
+普通 reviewer 结论未在本条提供，独立 verifier 未复跑；本条不记录新的设备操作
+或 main 合并。上机须用户当轮明确授权；认证仍为 NOT REACHED。
 
 ### Reproduction (WSL Ubuntu-22.04 root)
 
