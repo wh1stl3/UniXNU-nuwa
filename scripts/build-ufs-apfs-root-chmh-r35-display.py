@@ -15,6 +15,7 @@ DISPLAY_KERNELS = {
     "89355aa4e0dc0f3d2e9ef1971e94d45f6584f66d4ae318e6ac2bdc832fce4b39",
     "7ae5623c8a82ddbbcef1da905de3e39fb4c5e4ec4d5f35e7b9bb3348e062674f",
     "d33ef2ccf95478959ada320174f19203d0d7d6d17077ac60e69a00efbda6dfc5",
+    "70575178c4f32674630de7da44ebea3224b10a82db005d6e88527e3880002cae",
 }
 DISPLAY_ARGS = (b" offline-mobile-graphics-load=1 offline-legacy-register=1 offline-legacy-gop=1"
                 b" offline-legacy-pm=1 offline-legacy-phase=4 offline-legacy-validate=1"

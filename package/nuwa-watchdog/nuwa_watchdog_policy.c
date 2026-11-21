@@ -31,6 +31,7 @@
 
 #define NUWA_POLICY_DIR   "/private/var/db/com.apple.xpc.launchd"
 #define NUWA_POLICY_PATH  NUWA_POLICY_DIR "/disabled.plist"
+#define NUWA_POLICY_TMP   NUWA_POLICY_DIR "/disabled.plist.tmp"
 #define NUWA_POLICY_MARK  NUWA_POLICY_DIR "/disabled.migrated"
 
 static const char nuwa_policy_head[] =
@@ -55,6 +56,7 @@ static char nuwa_policy_jobs[400];
 
 volatile int32_t nuwa_watchdog_policy_status = -1;
 volatile uint32_t nuwa_watchdog_policy_labels;
+volatile uint32_t nuwa_watchdog_policy_committed;
 
 /* "<label>" for one comma-separated entry; label characters are restricted the way upstream
  * restricts them, so a boot argument cannot inject plist markup. */
@@ -171,8 +173,11 @@ nuwa_boot_watchdog_policy(void *process, uint64_t scratch)
 	unsigned lite = 0;
 	int error = 0, fd = -1;
 	int32_t result = 0;
+	int tmp_created = 0;
 
+	nuwa_watchdog_policy_committed = 0;
 	if (p == PROC_NULL) {
+		nuwa_watchdog_policy_status = EINVAL;
 		return EINVAL;
 	}
 	/* Unprefixed names first; the sheng- spellings stay accepted so an image built with the
@@ -218,21 +223,21 @@ nuwa_boot_watchdog_policy(void *process, uint64_t scratch)
 			goto done;
 		}
 	}
-	if ((error = copyout(NUWA_POLICY_PATH, scratch, sizeof(NUWA_POLICY_PATH))) != 0) {
+	if ((error = copyout(NUWA_POLICY_TMP, scratch + 0x100, sizeof(NUWA_POLICY_TMP))) != 0) {
 		goto done;
 	}
 	{
-		/* Rewritten in place on every boot (the policy must follow the boot arguments);
-		 * O_NOFOLLOW and the fstat check below insist on a root-owned regular file. */
+		/* Never truncate the current policy: exclusively create a same-directory temp. */
 		struct open_args op = {
-			.path = scratch,
-			.flags = O_WRONLY | O_CREAT | O_TRUNC | O_NOFOLLOW,
+			.path = scratch + 0x100,
+			.flags = O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW,
 			.mode = 0644,
 		};
 		if ((error = open(p, &op, &result)) != 0) {
 			goto done;
 		}
 		fd = result;
+		tmp_created = 1;
 	}
 	{
 		/* The scratch page keeps the cache-mount environment slots at +0x400, so the
@@ -305,9 +310,39 @@ done:
 				struct close_args cl = { .fd = result };
 				error = sys_close(p, &cl, &result);
 			} else if (error == EEXIST) {
-				error = 0;
+				struct open_args existing = {
+					.path = scratch, .flags = O_RDONLY | O_NOFOLLOW,
+				};
+				struct stat64 st;
+				error = open(p, &existing, &result);
+				if (!error) {
+					struct fstat64_args sa = { .fd = result, .ub = scratch + 0x800 };
+					struct close_args cl = { .fd = result };
+					error = sys_fstat64(p, &sa, &result);
+					if (!error) error = copyin(sa.ub, &st, sizeof(st));
+					if (!error && (!S_ISREG(st.st_mode) || st.st_size != 0 ||
+					    st.st_uid != 0 || st.st_gid != 0)) error = EINVAL;
+					int e = sys_close(p, &cl, &result);
+					if (!error) error = e;
+				}
 			}
 		}
+	}
+	if (!error) {
+		error = copyout(NUWA_POLICY_PATH, scratch, sizeof(NUWA_POLICY_PATH));
+		if (!error) {
+			struct rename_args rn = { .from = scratch + 0x100, .to = scratch };
+			error = rename(p, &rn, &result);
+			if (!error) {
+				tmp_created = 0;
+				nuwa_watchdog_policy_committed = 1;
+			}
+		}
+	}
+	if (tmp_created) {
+		struct unlink_args un = { .path = scratch + 0x100 };
+		int cleanup = unlink(p, &un, &result);
+		if (cleanup) printf("nuwa: policy temp cleanup failed: %d\n", cleanup);
 	}
 	nuwa_watchdog_policy_status = error;
 	printf("nuwa: launchd disabled policy: %d labels=%u (watchdogd=%u)\n", error,

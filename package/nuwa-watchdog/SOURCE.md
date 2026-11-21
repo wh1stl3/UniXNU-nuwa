@@ -12,13 +12,14 @@
 ## Kept from upstream
 
 - The write path and format: `/private/var/db/com.apple.xpc.launchd/disabled.plist` as an XML
-  plist, `com.apple.watchdogd` and `com.apple.watchdog` = true, mode 0644 root:root, rewritten
-  in place every boot, `O_NOFOLLOW`, and a `disabled.migrated` marker created `O_EXCL` so
+  plist, `com.apple.watchdogd` and `com.apple.watchdog` = true, mode 0644 root:root, replaced
+  by same-directory rename when requested, `O_NOFOLLOW`, and a `disabled.migrated` marker created `O_EXCL` so
   launchd picks the modern override loader.
 - The in-kernel syscall route (`copyout` a path into the initproc scratch page, then
-  `mkdir`/`open`/`write`/`fchown`/`fchmod`/`fsync`/`sys_fstat64`/`sys_close`), including the
+  `mkdir`/`open`/`write`/`fchown`/`fchmod`/`fsync`/`sys_fstat64`/`sys_close`/`rename`), including the
   scratch layout (+0x200 for the payload, +0x800 for the stat buffer) and the
-  `st_uid/st_gid/mode/size` re-check before the write counts as successful.
+  `st_uid/st_gid/mode/size` re-check before the write counts as successful. Failed transactions
+  attempt to unlink their temp file; a cleanup failure is logged. Existing markers are checked.
 - The label-character restriction, so a boot argument cannot inject plist markup.
 
 ## Dropped or changed
@@ -29,7 +30,7 @@
 | `sheng_boot_setup_reset()` (rewrites Setup/first-boot plists) | not ported: the Data seed is written on the host |
 | `uke_gunyah_wdt_*` petting and `autoreset` | not ported: this board has no Gunyah backend and no autoreset path |
 | `sheng-lite` daemon list | list borrowed from `UniXNU/UniXNU-sheng@460179565a018c741b93e0b1efa07c55d4de497a`, `package/BootWatchdogPolicy.c` (MIT); nuwa defines its own `nuwa-lite` semantics and does not accept `sheng-lite` |
-| `sheng_watchdog_policy_status` | `nuwa_watchdog_policy_status` (plus `nuwa_watchdog_policy_labels` for the console line) |
+| `sheng_watchdog_policy_status` | `nuwa_watchdog_policy_status` (errno), `nuwa_watchdog_policy_committed` (rename succeeded), and `nuwa_watchdog_policy_labels` |
 | prints "sheng bring-up watchdogd launch policy" | prints "nuwa: launchd disabled policy: <errno> labels=<n> (watchdogd=<0|1>)" |
 
 ## Effect
