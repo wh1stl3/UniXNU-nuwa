@@ -25,16 +25,34 @@
 
 | upstream | here |
 | --- | --- |
-| `sheng-disable-watchdogd`, `sheng-disable-jobs`, `sheng-lite`, `sheng-setup`, `sheng-data-reset` | `disable-watchdogd`, `disable-jobs` (the unprefixed names this kernel documents); the `sheng-` spellings are still accepted as aliases for `disable-watchdogd`/`disable-jobs` |
+| `sheng-disable-watchdogd`, `sheng-disable-jobs`, `sheng-lite`, `sheng-setup`, `sheng-data-reset` | `disable-watchdogd`, `disable-jobs` and `nuwa-lite`; the `sheng-` spellings are aliases only for the first two |
 | `sheng_boot_setup_reset()` (rewrites Setup/first-boot plists) | not ported: the Data seed is written on the host |
 | `uke_gunyah_wdt_*` petting and `autoreset` | not ported: this board has no Gunyah backend and no autoreset path |
-| `sheng-lite` daemon list | not ported: no radios/accounts on this board yet; use `disable-jobs=` explicitly when needed |
+| `sheng-lite` daemon list | list borrowed from `UniXNU/UniXNU-sheng@460179565a018c741b93e0b1efa07c55d4de497a`, `package/BootWatchdogPolicy.c` (MIT); nuwa defines its own `nuwa-lite` semantics and does not accept `sheng-lite` |
 | `sheng_watchdog_policy_status` | `nuwa_watchdog_policy_status` (plus `nuwa_watchdog_policy_labels` for the console line) |
 | prints "sheng bring-up watchdogd launch policy" | prints "nuwa: launchd disabled policy: <errno> labels=<n> (watchdogd=<0|1>)" |
 
 ## Effect
 
-watchdogd never starts, so it cannot `brk #1` on a board without IOWatchdog. Nothing else is
-disabled unless a caller passes `disable-jobs=`. The file is rewritten on every boot from the
-current boot arguments, so removing the argument restores the daemon on the next boot (the
-marker is harmless and stays).
+When requested, watchdogd is disabled so it cannot `brk #1` on a board without IOWatchdog.
+`nuwa-lite=1` adds the 30 upstream labels; `nuwa-lite=2` also disables
+`com.apple.iconservices.iconservicesagent` (icons can disappear). Other values and absence do
+not enable lite. Explicit `disable-jobs=` is additive and duplicates are suppressed.
+Neither SpringBoard nor mobileactivationd is in the list; this does not fix their SIGTRAP.
+
+Bypass ledger: observed SpringBoard/mobileactivationd SIGTRAP and limited resources during
+bring-up / opt-in disable background jobs to reduce competition, not a demonstrated fix /
+losses include identity, location, cellular, Bluetooth, photo and media analysis, iCloud,
+Find My, family, finance, software updates, mail, ads, FairPlay, Wallet, device erasure,
+Siri, suggestions, metrics and power statistics / remove the bypass after normal services
+and the interaction path are qualified. Actual functional effects on nuwa are unverified.
+
+The policy is assembled before opening the file; if the 2048-byte XML buffer cannot hold
+the complete plist, the call fails with `ENAMETOOLONG` and records that errno in
+`nuwa_watchdog_policy_status`. A failed build does not rewrite the previous plist.
+**No automatic restoration:** with no policy arguments the function does not touch the
+persistent `disabled.plist` or `disabled.migrated`; prior disabled jobs remain. If another
+policy argument is supplied, the plist is replaced with that boot's requested labels, so
+omitted lite labels are no longer present. No explicit restore command or preservation of
+pre-existing unrelated overrides is implemented; recovery requires separately authorized
+offline editing/restoration of the plist, preserving unrelated overrides as appropriate.

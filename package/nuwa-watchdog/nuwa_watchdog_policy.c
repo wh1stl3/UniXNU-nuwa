@@ -39,6 +39,16 @@ static const char nuwa_policy_head[] =
     "\"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n"
     "<plist version=\"1.0\"><dict>";
 static const char nuwa_policy_tail[] = "</dict></plist>\n";
+/* UniXNU/UniXNU-sheng 460179565a018c741b93e0b1efa07c55d4de497a,
+ * package/BootWatchdogPolicy.c, MIT. */
+static const char nuwa_lite_jobs[] =
+    "com.apple.identityservicesd,com.apple.locationd,com.apple.CommCenter,com.apple.bluetoothd,"
+    "com.apple.photoanalysisd,com.apple.mediaanalysisd,com.apple.mediastream.mstreamd,com.apple.icloud.searchpartyd,"
+    "com.apple.findmy.findmybeaconingd,com.apple.familycircled,com.apple.financed,com.apple.softwareupdateservicesd,"
+    "com.apple.ndoagent,com.apple.biomesyncd,com.apple.email.maild,com.apple.amsengagementd,com.apple.adid,com.apple.eyereliefd,"
+    "com.apple.fairplayd.A2,com.apple.passd,com.apple.mobile.obliteration,com.apple.coreduetd,"
+    "com.apple.PerfPowerServices,com.apple.PerfPowerServicesExtended,com.apple.perfpowermetricd,com.apple.siriinferenced,"
+    "com.apple.siriknowledged,com.apple.siriactionsd,com.apple.duetexpertd,com.apple.modelcatalogd";
 
 static char nuwa_policy[2048];
 static char nuwa_policy_jobs[400];
@@ -65,6 +75,18 @@ nuwa_policy_append(const char **cursor)
 	if (length == 0 || length > 127) {
 		return EINVAL;
 	}
+	/* Keys already emitted by this builder are safe to compare literally. */
+	for (const char *key = nuwa_policy + strlen(nuwa_policy_head);
+	    (key = strstr(key, "<key>")) != NULL; key += 5) {
+		if (strncmp(key + 5, label, length) == 0 &&
+		    strncmp(key + 5 + length, "</key>", 6) == 0) {
+			*cursor = label + length;
+			if (**cursor == ',') {
+				(*cursor)++;
+			}
+			return 0;
+		}
+	}
 	{
 		size_t used = strlen(nuwa_policy);
 
@@ -83,6 +105,43 @@ nuwa_policy_append(const char **cursor)
 	*cursor = label + length;
 	if (**cursor == ',') {
 		(*cursor)++;
+	}
+	return 0;
+}
+
+/* Build completely before touching the persistent plist. */
+static int
+nuwa_policy_build(unsigned disable_watchdogd, unsigned lite, const char *jobs)
+{
+	int error;
+	const char *cursor;
+
+	nuwa_policy[0] = 0;
+	nuwa_watchdog_policy_labels = 0;
+	if (strlcat(nuwa_policy, nuwa_policy_head, sizeof(nuwa_policy)) >= sizeof(nuwa_policy)) {
+		return ENAMETOOLONG;
+	}
+	if (disable_watchdogd) {
+		cursor = "com.apple.watchdogd,com.apple.watchdog";
+		while (*cursor) {
+			if ((error = nuwa_policy_append(&cursor)) != 0) return error;
+		}
+	}
+	if (lite == 1 || lite == 2) {
+		cursor = nuwa_lite_jobs;
+		while (*cursor) {
+			if ((error = nuwa_policy_append(&cursor)) != 0) return error;
+		}
+	}
+	if (lite == 2) {
+		cursor = "com.apple.iconservices.iconservicesagent";
+		if ((error = nuwa_policy_append(&cursor)) != 0) return error;
+	}
+	while (*jobs) {
+		if ((error = nuwa_policy_append(&jobs)) != 0) return error;
+	}
+	if (strlcat(nuwa_policy, nuwa_policy_tail, sizeof(nuwa_policy)) >= sizeof(nuwa_policy)) {
+		return ENAMETOOLONG;
 	}
 	return 0;
 }
@@ -108,9 +167,9 @@ nuwa_boot_watchdog_policy(void *process, uint64_t scratch)
 {
 	proc_t p = process;
 	unsigned disable_watchdogd = 0;
+	unsigned lite = 0;
 	int error = 0, fd = -1;
 	int32_t result = 0;
-	const char *jobs = nuwa_policy_jobs;
 
 	if (p == PROC_NULL) {
 		return EINVAL;
@@ -127,37 +186,25 @@ nuwa_boot_watchdog_policy(void *process, uint64_t scratch)
 		}
 	}
 	nuwa_policy_jobs[sizeof(nuwa_policy_jobs) - 1] = 0;
+	(void)nuwa_policy_parse_uint("nuwa-lite", &lite);
+	if (lite != 1 && lite != 2) {
+		lite = 0;
+	}
 
 	if (disable_watchdogd != 1) {
 		disable_watchdogd = 0;
 	}
-	if (!disable_watchdogd && nuwa_policy_jobs[0] == 0) {
+	if (!disable_watchdogd && !lite && nuwa_policy_jobs[0] == 0) {
+		nuwa_watchdog_policy_labels = 0;
 		nuwa_watchdog_policy_status = 0;
 		return 0;
 	}
 
-	nuwa_policy[0] = 0;
-	nuwa_watchdog_policy_labels = 0;
-	if (strlcat(nuwa_policy, nuwa_policy_head, sizeof(nuwa_policy)) >= sizeof(nuwa_policy)) {
-		return ENAMETOOLONG;
-	}
-	if (disable_watchdogd) {
-		/* Both labels: the daemon's job and the service name old images used. */
-		if (strlcat(nuwa_policy,
-		    "<key>com.apple.watchdogd</key><true/><key>com.apple.watchdog</key><true/>",
-		    sizeof(nuwa_policy)) >= sizeof(nuwa_policy)) {
-			return ENAMETOOLONG;
-		}
-		nuwa_watchdog_policy_labels += 2;
-	}
-	while (*jobs) {
-		if ((error = nuwa_policy_append(&jobs)) != 0) {
-			nuwa_watchdog_policy_status = error;
-			return error;
-		}
-	}
-	if (strlcat(nuwa_policy, nuwa_policy_tail, sizeof(nuwa_policy)) >= sizeof(nuwa_policy)) {
-		return ENAMETOOLONG;
+	if ((error = nuwa_policy_build(disable_watchdogd, lite, nuwa_policy_jobs)) != 0) {
+		nuwa_watchdog_policy_status = error;
+		printf("nuwa: launchd disabled policy build failed: %d labels=%u\n",
+		    error, (unsigned)nuwa_watchdog_policy_labels);
+		return error;
 	}
 
 	if ((error = copyout(NUWA_POLICY_DIR, scratch, sizeof(NUWA_POLICY_DIR))) != 0) {
