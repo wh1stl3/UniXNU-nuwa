@@ -136,6 +136,7 @@ def main():
     parser.add_argument("--compact", action="store_true", help="remove only debug metadata and audit against r35b")
     parser.add_argument("--detail", action="store_true", help="generate the detailed exit recorder")
     parser.add_argument("--exception", action="store_true", help="add the isolated r35g exception recorder")
+    parser.add_argument("--layout-r35h", action="store_true", help="use the r35h row layout and PID-aware aggregation")
     parser.add_argument("--audit-against", type=Path, help="unstripped build of identical detail source")
     args = parser.parse_args()
     r35 = args.r35.resolve()
@@ -144,6 +145,8 @@ def main():
         parser.error("output must be a new sibling of the original r35 directory")
     if args.exception and not args.detail:
         parser.error("--exception requires --detail")
+    if args.layout_r35h and not args.exception:
+        parser.error("--layout-r35h requires --exception")
     build = pin((r35 / "build.py").read_bytes(), BUILD_SHA).decode()
     header = pin((r35 / "BootProgressDisplay.h").read_bytes(), HEADER_SHA)
     spec = importlib.util.spec_from_file_location("selection", Path(__file__).with_name("generate-r35-exit-selection.py"))
@@ -168,6 +171,18 @@ def main():
         ux = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(ux)
         renderer = ux.generate_renderer(renderer)
+    if args.layout_r35h:
+        spec = importlib.util.spec_from_file_location("layout", Path(__file__).with_name("generate-r35h-layout.py"))
+        layout = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(layout)
+        renderer = layout.generate(renderer)
+        build = replace_once(build, "assert 'if (!i) bar(0,b,' in renderer_r35, 'row 0 not drawn from the ring'",
+                             "assert 'line(i+2,b,0xffffffff);' in renderer_r35, 'exit rows missing'")
+        build = build.replace("EX%u %-6.6s sig=%u ns=%08x code=0x%08x n=%u pc=%016llx",
+                              "EX%u p%u %-6.6s sig=%u code=0x%08x n=%u pc=%016llx")
+        build = build.replace("line(6, b, 0xff00ffff);", "line(7, b, 0xff00ffff);")
+        build = build.replace("line(5,nuwa_systemos_row3(),0xff00ffcc);", "line(6,nuwa_systemos_row3(),0xff00ffcc);")
+        build = build.replace("assert 6 < safe_rows", "assert 7 < safe_rows")
     build = replace_once(build, OLD_ASSERT, NEW_ASSERT)
     out.mkdir()
     (out / "BootProgress.c").write_bytes(renderer)

@@ -49,6 +49,35 @@ def linked(package):
             "grep -qaF 'if (!i) bar(0,b,' \"$R\""
         replacements['ck "EX%u %.6s %x:%x:%x"'] = \
             'ck "EX%u %-6.6s sig=%u ns=%08x code=0x%08x n=%u pc=%016llx"'
+        if os.environ.get("NUWA_LAYOUT_R35H") == "1":
+            renderer = (BUILD / "BootProgress.c").read_text()
+            expected_counter = '"[nuwa-r35] t=%us m=%llu np=%d i=%us q=%llu l=%u r=%d f=%u"'
+            if expected_counter not in renderer:
+                actual = re.search(r'"\[nuwa-r35\] t=[^"]*"', renderer)
+                raise ValueError(f"counter: expected {expected_counter!r}; actual "
+                                 f"{actual.group(0) if actual else '<not found>'!r}")
+            checks = {
+                "line row-zero guard": (r"static void line\(unsigned row[^{}]*\{\s*if \(!row\) return;", r"static void line\(unsigned row[^{}]*\{[^\n]*\n[^\n]*"),
+                "bar row-zero guard": (r"static void bar\(unsigned row[^{}]*\{\s*if \(!row\) return;", r"static void bar\(unsigned row[^{}]*\{[^\n]*\n[^\n]*"),
+                "EX rows 2..5": (r"for \(unsigned i=0; i<4; \+\+i\).*?line\(i\+2,b,0xffffffff\);", r"line\(i\+\d+,b,0xffffffff\);"),
+                "X1 row 6": (r'X1 pid=%d[^"]*".*?line\(6,b,0xff00ffcc\);', r'X1 pid=%d[^"]*".*?line\(\d+,b,0xff00ffcc\);'),
+                "stg row 7": (r'"stg %.20s".*?line\(7, b, 0xff00ffff\);', r'"stg %.20s".*?line\(\d+, b, 0xff00ffff\);'),
+                "EX PID format": (r'"EX%u p%u %-6\.6s sig=%u code=0x%08x n=%u pc=%016llx"', r'"EX%u [^"]+"'),
+            }
+            for name, (expected, actual_pattern) in checks.items():
+                if not re.search(expected, renderer, re.S):
+                    found = re.search(actual_pattern, renderer, re.S)
+                    actual = found.group(0) if found else "<not found>"
+                    raise ValueError(f"{name}: expected regex {expected!r}; actual {actual!r}")
+                print(f"layout {name}: PASS")
+            replacements['"t=%us i=%us q=%llu m=%llu l=%u r=%d np=%d f=%u"'] = \
+                expected_counter
+            replacements["grep -qaF ' [%s] t=%us i=%us' \"$R\""] = \
+                "grep -qaF '[nuwa-r35] t=%us m=%llu np=%d' \"$R\""
+            replacements["grep -qaF 'bar(0, line,' \"$R\""] = \
+                "grep -qaF 'line(i+2,b,0xffffffff);' \"$R\""
+            replacements['ck "EX%u %.6s %x:%x:%x"'] = \
+                'ck "EX%u p%u %-6.6s sig=%u code=0x%08x n=%u pc=%016llx"'
     for old, new in replacements.items():
         if text.count(old) != 1:
             raise ValueError("linked audit anchor changed: " + old)
