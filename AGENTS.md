@@ -36,6 +36,9 @@
 - crypto 事实：`CONFIG_XNU_CRYPTO_BOOTSTRAP="prelinked"`；`prng_random.o` 最终 `-U XNU_SOURCE_CORECRYPTO14`，当前 prelink 无 `_source_corecrypto14_bootstrap`，不能声称 console 后必经 source corecrypto EARLY_BOOT。不切换 crypto 模式。
 - 仍未验收：正常启动、平台服务发布、存储与用户态；内存所有权问题不因探针阳性自动关闭。ADT 身份/种子约定不变，root UUID 留待根卷阶段。`scripts/` 历史审计工具不再充当 ADT 生成器。
 
+## 阻塞
+- CPU-only 显示 ON 候选按 329 止损条件冻结，OFF 诊断路径保留，329 guard 不动；这是 deferral，非绕过。三项止损均未闭合，解除条件及证据见 [329 决策记录](docs/nuwa-329-stop-20261121.md)；ON 产物保留分支、不上机。self-checked。
+
 ## 目录约定（官方布局）
 - 板级文件：`board.toml`、`porting.toml`、`feeds.toml`、`configs/`、`dts/`、`patches/xnu/series`、`package/`、`scripts/package.sh`、`proprietary-files.txt`、`local.toml.example`。
 - `drivers/`、`kits/` 不是设备仓目录——驱动与库来自组件仓，共享资源来自 SM8550 仓；设备 `package/` 在构建树内成为 `kits/nuwa`。
