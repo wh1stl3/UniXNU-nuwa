@@ -23,6 +23,20 @@ BSD translation for that PID. X1 is not an exit verdict or a backtrace, and
 cannot prove the source of an unmatched EX entry: earlier Mach handlers, signal
 delivery outside this call chain, overwrite and lock drops are not covered.
 
+Interpretation rules:
+
+1. If X1 is present but its PC does not point to a `brk` instruction, record
+   that result and investigate the actual instruction and exception fields;
+   do not force a `brk` interpretation or infer the exit cause from PC alone.
+2. A completely absent X1 shows only that no drawing occurred after a
+   successful capture; it does not prove that no exception occurred.
+3. EX and X1 appearing on the same screen do not automatically refer to the
+   same process; check the PID and event context before associating them.
+
+X1 replaces row 5 on capture, sacrificing the SYSOS amfi/cs row. EX and X1
+share the try-lock, so contention can lose evidence in either direction;
+`exit_dropped` is not a count of lost X1 events.
+
 The host C replay measured 44 columns for breakpoint, 74 with all 64-bit
 fields maxed at `PID_MAX`, and 79/80 columns (1,422/1,440 px at scale 3) at
 the conservative `INT_MAX` PID. No exception leaves SYSOS in place. The replay
@@ -55,9 +69,9 @@ the 8 MiB floor). The strict linked audit returned `ALL PASS` and the
 final 49,615 non-STAB symbol tuples matched. The reused packager labels
 this as `r35c-detail`; identify the r35g candidate by these hashes.
 
-**Review gate:** `deep_reviewer` must review the linked exception path and target
-thread/saved-state lifetime, plus the shared try-lock, drop behavior, snapshot
-and draw stack. Host results are `self-checked`, not independent verification.
+**Review:** The parent reports that `deep_reviewer` assessed plan A as
+**PASS WITH CONDITIONS**; the interpretation and loss limitations above apply.
+Host results are `self-checked`, not independent verification.
 No device commands were run; runtime exception origin and authentication remain
 unverified (authentication NOT REACHED).
 
