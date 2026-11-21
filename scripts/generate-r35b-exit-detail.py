@@ -103,20 +103,32 @@ static int bp_exit_view_take(struct bp_exit_view *view) {
     text = text.replace("draw(now);", "draw_thread_only(now);")
     text = text.replace("draw(seconds());", "draw_thread_only(seconds());")
     text = replace_once(text, "// A framebuffer write must never delay timer acknowledgement.",
-                        """static __attribute__((noinline)) void draw_thread_only(unsigned now) {
-  if (ml_at_interrupt_context()) return;
+                        """// Published by arm_init once TPIDR_EL1 and the bootstrap CpuDatap are installed.
+static unsigned bp_thread_context_ready;
+void boot_progress_thread_context_ready(void);
+void boot_progress_thread_context_ready(void) {
+  __atomic_store_n(&bp_thread_context_ready,1,__ATOMIC_RELEASE);
+}
+static inline int bp_thread_can_draw(void) {
+  return __atomic_load_n(&bp_thread_context_ready,__ATOMIC_ACQUIRE) &&
+         !ml_at_interrupt_context();
+}
+static __attribute__((noinline)) void draw_thread_only(unsigned now) {
+  if (!bp_thread_can_draw()) return;
   draw(now);
 }
 
 // A framebuffer write must never delay timer acknowledgement.""")
     text = replace_once(text, "static void refresh(unsigned now) {\n",
-                        "static void refresh(unsigned now) {\n  if (ml_at_interrupt_context()) return;\n")
+                        "static void refresh(unsigned now) {\n  if (!bp_thread_can_draw()) return;\n")
     text = replace_once(text, "    if (geometry_changed) bp_clear(&display);\n    draw_thread_only(seconds());",
-                        "    if (!ml_at_interrupt_context()) {\n      if (geometry_changed) bp_clear(&display);\n      draw_thread_only(seconds());\n    }")
+                        "    if (bp_thread_can_draw()) {\n      if (geometry_changed) bp_clear(&display);\n      draw_thread_only(seconds());\n    }")
     text = replace_once(text, "    bp_clear(&display);\n    draw_thread_only(seconds());",
-                        "    if (!ml_at_interrupt_context()) {\n      bp_clear(&display);\n      draw_thread_only(seconds());\n    }")
+                        "    if (bp_thread_can_draw()) {\n      bp_clear(&display);\n      draw_thread_only(seconds());\n    }")
     text = replace_once(text, "  release();\n  boot_progress_poll();\n",
-                        "  release();\n  if (!ml_at_interrupt_context()) boot_progress_poll();\n")
-    text = replace_once(text, "  if (!boot_progress_display_owned) {\n    line(0,",
-                        "  if (!boot_progress_display_owned && !ml_at_interrupt_context()) {\n    line(0,")
+                        "  release();\n  if (bp_thread_can_draw()) boot_progress_poll();\n")
+    text = replace_once(text, "  if (started && !ml_at_interrupt_context()) {",
+                        "  if (started && bp_thread_can_draw()) {")
+    text = replace_once(text, "int boot_progress_prepare_scanout(void) {\n  if (!enabled) return 1;",
+                        "int boot_progress_prepare_scanout(void) {\n  if (!enabled) return 1;\n  if (!bp_thread_can_draw()) return 0;")
     return text.encode()

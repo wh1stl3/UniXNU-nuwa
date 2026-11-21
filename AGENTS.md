@@ -6,6 +6,7 @@
 小米 13 Pro（nuwa / SM8550）通过 UniXNU 运行 iOS 16（donor: iPhone10,3 / 16.7.16 / 20H392，xnu-8796 线）。
 
 ## 基线
+- 2026-11-21 **r35f bootstrap 绘制门禁（仅主机，待复审）**：见 [本轮记录](docs/nuwa-r35f-thread-ready-20261121-observation.md)。
 - 2026-11-20 **r35e IRQ 绘制门禁（仅主机，未上机，待复审）**：见 [本轮记录](docs/nuwa-r35e-irqguard-20261120-observation.md)。
 - 2026-11-20 **r35d 快照修复（仅主机，未上机，待复审）**：见 [本轮记录](docs/nuwa-r35d-snapshot-20261120-observation.md)。
 - 2026-11-20 **r35c 退出诊断候选（仅主机，未上机，复审待完成）**：见 [本轮记录](docs/nuwa-r35c-exit-detail-20261120-observation.md)。

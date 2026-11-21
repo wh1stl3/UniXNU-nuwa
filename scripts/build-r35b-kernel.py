@@ -16,6 +16,8 @@ BOOT_BUILD_SHA = "0d283d07764d9bdcf72bc756994592c5cdb2264dab87361601406ab21e2271
 DISPLAY_AUDIT_SHA = "5da768f17a93ad433c4a59edc7911ebac1fad9228ad64b79f629f24f6c9d9834"
 OLD_NATIVE_SHA = "f4648bcfd02bbbabb7d2a5ac4719d62c9c62d5eb6c79f3a2b61770eda53bd668"
 OLD_PRELINK_SHA = "ebec5e7b0df39d772e7a204108b799d280798d89d2a4edb455cd1a0d240496eb"
+ARM_INIT_SHA = "a9931973da35aa0eaa50079ba1e011a02fad843e2c211648b284f313c2db28a4"
+ARM_INIT_RECIPE_SHA = "3dc45c43fb9ae09ea9ef1a0430fe99e26a38234c1a64c79bf8069307e29362bb"
 
 
 def pin(data, expected):
@@ -78,6 +80,31 @@ def audit_compact(r35, out, before=None):
     (out / "debug-strip.json").write_text(json.dumps(audit, indent=2) + "\n")
 
 
+def ready_recipe(build, r35, out, reference):
+    base = r35.parent / "nuwa-bootprogress-20261115-r1"
+    original = base / "tree/osfmk/arm/arm_init.c"
+    source = pin(original.read_bytes(), ARM_INIT_SHA).decode()
+    source = replace_once(source, "#include <kern/boot_progress.h>\n",
+                          "#include <kern/boot_progress.h>\nextern void boot_progress_thread_context_ready(void);\n")
+    source = replace_once(source, "\tthread->machine.preemption_count = 0;\n\tcpu_bootstrap();",
+                          "\tthread->machine.preemption_count = 0;\n\tboot_progress_thread_context_ready();\n\tcpu_bootstrap();")
+    assert source.index("thread->machine.CpuDatap = &BootCpuData;") < source.index("machine_set_current_thread(thread);") < source.index("\tboot_progress_thread_context_ready();")
+    local = out / "arm_init.c"
+    local.write_bytes(source.encode())
+    compile_source = reference / local.name if reference else local
+    if compile_source.read_bytes() != local.read_bytes():
+        raise ValueError("full/compact arm_init source mismatch")
+    commands = json.loads(pin((base / "commands.json").read_bytes(), ARM_INIT_RECIPE_SHA))
+    rec, = (c for c in commands if c["label"] == "compile-arm_init")
+    argv = rec["argv"]
+    argv[argv.index(str(original))] = str(compile_source)
+    argv[argv.index("-o") + 1] = str(out / "arm_init.o")
+    return replace_once(build, "    replacements = {\n",
+                        f"    run('compile-arm_init', {argv!r}, {rec['cwd']!r})\n"
+                        "    replacements = {\n"
+                        f"        {str(base / 'arm_init.o')!r}: str(out / 'arm_init.o'),\n")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("r35", type=Path, help="original r35 directory")
@@ -116,6 +143,8 @@ def main():
     namespace = {"__file__": str(r35 / "build.py"), "__name__": "r35b_recipe"}
     if args.compact or args.detail:
         build = compact_recipe(build, r35, out, strip=args.compact)
+    if args.detail:
+        build = ready_recipe(build, r35, out, args.audit_against.resolve() if args.compact else None)
     exec(compile(build, str(r35 / "build.py"), "exec"), namespace)
     namespace["RENDERER"] = out / "BootProgress.c"
     sys.argv = [str(r35 / "build.py"), "--out", str(out)]

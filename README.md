@@ -1,5 +1,7 @@
 # UniXNU-nuwa
 
+**r35f bootstrap 绘制门禁（仅主机，待复审）：** [本轮记录](docs/nuwa-r35f-thread-ready-20261121-observation.md)。
+
 **r35e IRQ 绘制门禁（仅主机，未上机，待复审）：** [本轮记录](docs/nuwa-r35e-irqguard-20261120-observation.md)。
 
 **r35d 快照修复（仅主机，未上机，待复审）：** [本轮记录](docs/nuwa-r35d-snapshot-20261120-observation.md)。
