@@ -77,7 +77,8 @@ nuwa_policy_append(const char **cursor)
 	}
 	/* Keys already emitted by this builder are safe to compare literally. */
 	for (const char *key = nuwa_policy + strlen(nuwa_policy_head);
-	    (key = strstr(key, "<key>")) != NULL; key += 5) {
+	    (key = strnstr(key, "<key>", sizeof(nuwa_policy) - (size_t)(key - nuwa_policy))) != NULL;
+	    key += 5) {
 		if (strncmp(key + 5, label, length) == 0 &&
 		    strncmp(key + 5 + length, "</key>", 6) == 0) {
 			*cursor = label + length;

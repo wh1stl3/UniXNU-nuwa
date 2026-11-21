@@ -20,6 +20,14 @@ typedef void *proc_t;
 static unsigned arg_lite, arg_watchdog, arg_sheng;
 static const char *arg_jobs;
 static char saved[2048];
+static char *strnstr(const char *s, const char *needle, size_t n) {
+ size_t k = strlen(needle);
+ while (n >= k && *s) {
+  if (!strncmp(s, needle, k)) return (char *)s;
+  s++; n--;
+ }
+ return NULL;
+}
 static size_t strlcat(char *d, const char *s, size_t n) {
  size_t a = strlen(d), b = strlen(s);
  if (a < n) { size_t k = b < n-a-1 ? b : n-a-1; memcpy(d+a,s,k); d[a+k]=0; }

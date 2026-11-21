@@ -146,7 +146,7 @@ def audit_debug_strip(full, compact):
             "native_bytes_saved": len(full) - len(compact)}
 
 
-def candidate_link(r35, out, records, argv, env):
+def candidate_link(r35, out, records, argv, env, *, bringup_diag):
     recipe, = [r for r in records if r["label"] == "compile-bsd_init" and r["exit"] == 0]
     command = list(recipe["argv"])
     source = r35 / "tree/bsd/kern/bsd_init.c"
@@ -161,18 +161,46 @@ def candidate_link(r35, out, records, argv, env):
     for name in HOOKS:
         run(["patch", "--batch", "--fuzz=0", "-p1", "-i", ROOT / "patches/xnu" / name], cwd=work)
     obj = out / "bsd_init.o"
-    command[command.index(str(source))] = str(staged)
+    source_at, = [i for i, arg in enumerate(command)
+                  if arg.endswith("/tree/bsd/kern/bsd_init.c")]
+    require_pin(Path(command[source_at]), digest(source))
+    command[source_at] = str(staged)
     command[command.index("-o") + 1] = str(obj)
     command.append("-DXNU_NATIVE_LEGACY_DISPLAY=1")
     (out / "bsd-init-argv.json").write_text(json.dumps(command, indent=2) + "\n")
     subprocess.run(command, cwd=recipe["cwd"], env=env, check=True)
 
     filelist = (r35 / "link.filelist").read_text()
-    old = str(r35 / "bsd_init.o") + "\n"
+    old = recipe["argv"][recipe["argv"].index("-o") + 1] + "\n"
+    require_pin(Path(old.strip()), digest(r35 / "bsd_init.o"))
     if filelist.splitlines(keepends=True).count(old) != 1:
         raise SystemExit("expected one r35 bsd_init.o in the native filelist")
+    filelist = filelist.replace(old, str(obj) + "\n", 1)
+    if bringup_diag:
+        watchdog, = [r for r in records if r["label"] == "compile-nuwa_watchdog_policy"
+                     and r["exit"] == 0]
+        watchdog_command = list(watchdog["argv"])
+        source_at, = [i for i, arg in enumerate(watchdog_command)
+                      if arg.endswith("/package/nuwa-watchdog/nuwa_watchdog_policy.c")]
+        old_obj = Path(watchdog_command[watchdog_command.index("-o") + 1])
+        require_pin(old_obj, digest(r35 / old_obj.name))
+        old_line = str(old_obj) + "\n"
+        if filelist.splitlines(keepends=True).count(old_line) != 1:
+            raise SystemExit("expected one r35 watchdog object in the native filelist")
+        policy_source = ROOT / "package/nuwa-watchdog/nuwa_watchdog_policy.c"
+        policy_obj = out / old_obj.name
+        watchdog_command[source_at] = str(policy_source)
+        watchdog_command[watchdog_command.index("-o") + 1] = str(policy_obj)
+        (out / "watchdog-argv.json").write_text(json.dumps(watchdog_command, indent=2) + "\n")
+        subprocess.run(watchdog_command, cwd=watchdog["cwd"], env=env, check=True)
+        (out / "watchdog-inputs.json").write_text(json.dumps({
+            "source_sha256": digest(policy_source),
+            "recorded_object_sha256": digest(old_obj),
+            "replacement_object_sha256": digest(policy_obj),
+        }, indent=2) + "\n")
+        filelist = filelist.replace(old_line, str(policy_obj) + "\n", 1)
     dest = out / "link.filelist"
-    dest.write_text(filelist.replace(old, str(obj) + "\n", 1))
+    dest.write_text(filelist)
     adjusted = list(argv)
     adjusted[adjusted.index("-filelist") + 1] = str(dest)
     return adjusted
@@ -207,13 +235,17 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
     argv = record["argv"]
     cwd = Path(record["cwd"])
     require_pin(cwd / "osfmk/DEVELOPMENT/startup.o.json", STARTUP_RECORD_SHA)
-    if (Path(argv[0]).parent != linker
-            or argv[argv.index("-filelist") + 1] != str(r35 / "link.filelist")):
-        raise SystemExit("r35 replay requires the recorded linker and filelist locations")
+    # Replay requires the same input contents, not identical directory strings:
+    # a worktree may have a different root, but changed inputs must still fail.
+    require_pin(Path(argv[0]), digest(linker / Path(argv[0]).name))
+    require_pin(Path(argv[argv.index("-filelist") + 1]), digest(r35 / "link.filelist"))
     original_map = r35 / "native-link.map"
     renderer = r35 / "libBootProgress.a"
-    map_at = argv.index(f"-Wl,-map,{original_map}")
-    force_at = argv.index(f"-Wl,-force_load,{renderer}")
+    map_at, = [i for i, arg in enumerate(argv) if arg.startswith("-Wl,-map,")]
+    require_pin(Path(argv[map_at].removeprefix("-Wl,-map,")), digest(original_map))
+    force_at, = [i for i, arg in enumerate(argv)
+                 if arg.startswith("-Wl,-force_load,") and arg.endswith("/libBootProgress.a")]
+    require_pin(Path(argv[force_at].removeprefix("-Wl,-force_load,")), digest(renderer))
     output_at = argv.index("-o") + 1
     # r35 build.py's run_factory env; clang++ is the CLT wrapper, not host clang.
     env = dict(os.environ, DARWIN_TRIPLE="arm64-apple-ios17.0",
@@ -257,7 +289,7 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
         # archive byte for byte, including its observation counter aliases.
         # Preserve the ADRP/LDR GOT sequence required by the linked audit.
         if candidate:
-            argv = candidate_link(r35, out, records, argv, env)
+            argv = candidate_link(r35, out, records, argv, env, bringup_diag=bringup_diag)
         if bringup_diag:
             argv = list(argv)
             argv[force_at] = f"-Wl,-force_load,{diag_archive(r35, out)}"

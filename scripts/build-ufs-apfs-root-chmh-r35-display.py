@@ -14,6 +14,7 @@ DISPLAY_KERNELS = {
     "476477dab77fe2342128ddd79881d6fd26b1d7b4d48d65e723860478aafdcb17",
     "89355aa4e0dc0f3d2e9ef1971e94d45f6584f66d4ae318e6ac2bdc832fce4b39",
     "7ae5623c8a82ddbbcef1da905de3e39fb4c5e4ec4d5f35e7b9bb3348e062674f",
+    "d33ef2ccf95478959ada320174f19203d0d7d6d17077ac60e69a00efbda6dfc5",
 }
 DISPLAY_ARGS = (b" offline-mobile-graphics-load=1 offline-legacy-register=1 offline-legacy-gop=1"
                 b" offline-legacy-pm=1 offline-legacy-phase=4 offline-legacy-validate=1"
@@ -59,7 +60,7 @@ def main():
     profile = "nuwa-ufs-apfs-root-chmh-20261120-r35-display"
     inputs = dict(KERNEL=kernel, KERNEL_BYTES=len(blob), KERNEL_SHA=a.kernel_sha256,
                   PROFILE=profile + ("-on" if a.enable_display else "-off"),
-                  ARGS=r35.ARGS + (DISPLAY_ARGS if a.enable_display else b""))
+                  ARGS=r35.ARGS + (DISPLAY_ARGS + b" nuwa-lite=1" if a.enable_display else b""))
     for module in (r35, r35.X, r35.M):
         vars(module).update(inputs)
     r35.M.main()
