@@ -1,5 +1,7 @@
 # UniXNU-nuwa
 
+**r35h PID 退出布局（仅主机 self-checked，待深审与独立验证）：** [记录](docs/nuwa-r35h-layout-20261121.md)。
+
 **r35f 首次实机观察（用户录像及 vision 转录，非独立 verifier）：** [本轮记录](docs/nuwa-r35f-first-boot-20261121-observation.md)；[主机构建与深审记录](docs/nuwa-r35f-thread-ready-20261121-observation.md)。
 
 **r35e IRQ 绘制门禁（仅主机，未上机，待复审）：** [本轮记录](docs/nuwa-r35e-irqguard-20261120-observation.md)。
