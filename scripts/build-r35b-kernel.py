@@ -18,6 +18,8 @@ OLD_NATIVE_SHA = "f4648bcfd02bbbabb7d2a5ac4719d62c9c62d5eb6c79f3a2b61770eda53bd6
 OLD_PRELINK_SHA = "ebec5e7b0df39d772e7a204108b799d280798d89d2a4edb455cd1a0d240496eb"
 ARM_INIT_SHA = "a9931973da35aa0eaa50079ba1e011a02fad843e2c211648b284f313c2db28a4"
 ARM_INIT_RECIPE_SHA = "3dc45c43fb9ae09ea9ef1a0430fe99e26a38234c1a64c79bf8069307e29362bb"
+UX_OBJECT_SHA = "5b71e61db42dda63d3d9fa96719dd6b8e8913a4658a83fa83702bbb4799423f1"
+UX_RECIPE_SHA = "b5c4b38d59099380fbdb51041c4e9be9dbf04879b87410c6043cdf868ae5e8b7"
 
 
 def pin(data, expected):
@@ -105,18 +107,43 @@ def ready_recipe(build, r35, out, reference):
                         f"        {str(base / 'arm_init.o')!r}: str(out / 'arm_init.o'),\n")
 
 
+def exception_recipe(build, reference):
+    compile_hook = """    # 6. Link from r12fix's file list with both parents' replacements plus the new objects."""
+    source = f"Path({str(reference / 'ux_exception.c')!r})" if reference else "ux_local"
+    build = replace_once(build, compile_hook, f"""    ux_object = B.OBJ / 'bsd/DEVELOPMENT/ux_exception.o'
+    assert hashlib.sha256(ux_object.read_bytes()).hexdigest() == {UX_OBJECT_SHA!r}
+    ux_recipe = ux_object.with_suffix('.o.json').read_bytes()
+    assert hashlib.sha256(ux_recipe).hexdigest() == {UX_RECIPE_SHA!r}
+    ux_rec = json.loads(ux_recipe.decode().strip().rstrip(','))
+    ux_local = out / 'ux_exception.c'
+    ux_data = generate_exception(Path(ux_rec['file']).read_bytes())
+    ux_local.write_bytes(ux_data)
+    ux_source = {source}
+    assert ux_source.read_bytes() == ux_data, 'full/compact ux_exception source mismatch'
+    ux_argv = list(ux_rec['arguments'])
+    ux_argv[ux_argv.index(ux_rec['file'])] = str(ux_source)
+    ux_argv[ux_argv.index('-o') + 1] = str(ux_local.with_suffix('.o'))
+    run('compile-ux_exception', ux_argv, cwd=ux_rec['directory'])
+{compile_hook}""")
+    return replace_once(build, "    replacements = {\n",
+                        "    replacements = {\n        str(ux_object): str(ux_local.with_suffix('.o')),\n")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("r35", type=Path, help="original r35 directory")
     parser.add_argument("out", type=Path, help="new directory under the original repository out/")
     parser.add_argument("--compact", action="store_true", help="remove only debug metadata and audit against r35b")
     parser.add_argument("--detail", action="store_true", help="generate the detailed exit recorder")
+    parser.add_argument("--exception", action="store_true", help="add the isolated r35g exception recorder")
     parser.add_argument("--audit-against", type=Path, help="unstripped build of identical detail source")
     args = parser.parse_args()
     r35 = args.r35.resolve()
     out = args.out.resolve()
     if r35.name != "nuwa-r35-20261119" or out.parent != r35.parent or out == r35:
         parser.error("output must be a new sibling of the original r35 directory")
+    if args.exception and not args.detail:
+        parser.error("--exception requires --detail")
     build = pin((r35 / "build.py").read_bytes(), BUILD_SHA).decode()
     header = pin((r35 / "BootProgressDisplay.h").read_bytes(), HEADER_SHA)
     spec = importlib.util.spec_from_file_location("selection", Path(__file__).with_name("generate-r35-exit-selection.py"))
@@ -136,6 +163,11 @@ def main():
                              "b'EX%u %-6.6s sig=%u ns=%08x code=0x%08x n=%u pc=%016llx'")
         if args.compact and not args.audit_against:
             parser.error("--detail --compact requires --audit-against")
+    if args.exception:
+        spec = importlib.util.spec_from_file_location("ux", Path(__file__).with_name("generate-r35g-ux-exception.py"))
+        ux = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(ux)
+        renderer = ux.generate_renderer(renderer)
     build = replace_once(build, OLD_ASSERT, NEW_ASSERT)
     out.mkdir()
     (out / "BootProgress.c").write_bytes(renderer)
@@ -145,6 +177,9 @@ def main():
         build = compact_recipe(build, r35, out, strip=args.compact)
     if args.detail:
         build = ready_recipe(build, r35, out, args.audit_against.resolve() if args.compact else None)
+    if args.exception:
+        build = exception_recipe(build, args.audit_against.resolve() if args.compact else None)
+        namespace["generate_exception"] = ux.generate_ux
     exec(compile(build, str(r35 / "build.py"), "exec"), namespace)
     namespace["RENDERER"] = out / "BootProgress.c"
     sys.argv = [str(r35 / "build.py"), "--out", str(out)]
