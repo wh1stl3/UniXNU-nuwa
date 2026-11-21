@@ -17,7 +17,9 @@ def generate(src):
     if sha256(src).hexdigest() != RENDERER_SHA:
         raise ValueError("expected the pinned r35l full renderer")
     anchor = b"char boot_progress_page_text[48][BP_COLS];"
-    src = replace_once(src, anchor, b"""// Diagnostic only: two independent byte samples; no synchronization of display state.
+    src = replace_once(src, anchor, b"""// FDR exits are independent of the best-effort exit ring.
+static uint64_t bp_fdr_exit;
+// Diagnostic only: two independent byte samples; no synchronization of display state.
 static uint8_t bp_dsp_stage, bp_dsp_reason;
 void boot_progress_diag_set(uint8_t stage, uint8_t reason);
 void boot_progress_diag_set(uint8_t stage, uint8_t reason) {
@@ -28,8 +30,26 @@ void boot_progress_diag_set(uint8_t stage, uint8_t reason) {
     # Use the short DATA-summary slot; its full detail remains on row 39.
     start = src.index(b"  // Row 9: the Data mount result")
     end = src.index(b"#endif\n", start)
-    return src[:start] + b"""  unsigned dsp_stage = __atomic_load_n(&bp_dsp_stage,__ATOMIC_RELAXED);
+    src = src[:start] + b"""  unsigned dsp_stage = __atomic_load_n(&bp_dsp_stage,__ATOMIC_RELAXED);
   unsigned dsp_reason = __atomic_load_n(&bp_dsp_reason,__ATOMIC_RELAXED);
   snprintf(b,sizeof(b),"DSP s=%u r=%u",dsp_stage,dsp_reason);
   line(9,b,dsp_reason ? 0xffffaa00 : 0xff00ffcc);
 """ + src[end:]
+    src = replace_once(src, b"  nuwa_rows();\n", b"""  nuwa_rows();
+  uint64_t fdr = __atomic_load_n(&bp_fdr_exit,__ATOMIC_RELAXED);
+  if (fdr)
+    snprintf(b,sizeof(b),"FDR %us st=%u sig=%u",(unsigned)(fdr>>32),
+      (unsigned)((fdr>>16)&0xffffu),(unsigned)(fdr&0xffu));
+  else snprintf(b,sizeof(b),"FDR no exit seen");
+  line(10,b,0xff00ffcc);
+""")
+    src = replace_once(src, b"  census_note(name,1);\n", b"""  if(name && !strcmp(name,"IOMFB_FDR_Loader")) {
+    uint64_t fdr = ((uint64_t)seconds()<<32) | (((uint64_t)(unsigned)status&0xffffu)<<16) |
+      ((unsigned)status&127u);
+    __atomic_store_n(&bp_fdr_exit,fdr,__ATOMIC_RELAXED);
+  }
+  census_note(name,1);
+""")
+    src = replace_once(src, b"  if(signal || ns) {\n",
+                       b'  if((signal || ns) && !(name && !strcmp(name,"IOMFB_FDR_Loader"))) {\n')
+    return src
