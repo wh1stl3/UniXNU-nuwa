@@ -500,11 +500,12 @@ def main():
                         help='exclude the GOP software timer lifecycle (requires --cpu-only)')
     parser.add_argument('--strip-debug', action='store_true',
                         help='compile the display members with -g0; preserve relocations and symbols')
+    parser.add_argument('--bringup-diag', action='store_true')
     args = parser.parse_args()
     if args.no_software_vsync and not args.cpu_only:
         parser.error('--no-software-vsync requires --cpu-only')
     base, cpo, out = (p.resolve() for p in (args.base, args.cpo, args.out))
-    if ROOT / 'out' not in out.parents:
+    if (ROOT / 'out').resolve() not in out.parents:
         parser.error('--out must be below the device out/ directory')
     driver = base / 'drivers/GopFramebuffer'
     original = driver / 'NativeLegacyDisplay.cpp'
@@ -549,6 +550,8 @@ def main():
         provider_cmd.append('-DNUWA_DISPLAY_HOST_CPU_ONLY=1')
     if args.no_software_vsync:
         provider_cmd.append('-DNUWA_DISPLAY_HOST_NO_SOFTWARE_VSYNC=1')
+    if args.bringup_diag:
+        provider_cmd.append('-DNUWA_DISPLAY_BRINGUP_DIAG=1')
     if args.strip_debug:
         for cpp_cmd in (command, provider_cmd, refresh_cmd):
             cpp_cmd.append('-g0')
@@ -599,7 +602,14 @@ def main():
     expected = CPU_UNRESOLVED_SHA256 if args.cpu_only else UNRESOLVED_SHA256
     if args.no_software_vsync:
         expected = NO_VSYNC_UNRESOLVED_SHA256
-    if audit['unresolved_sha256'] != expected:
+    fingerprint = audit['unresolved_sha256']
+    if args.bringup_diag:
+        unresolved = audit['unresolved'].copy()
+        if unresolved.pop('_boot_progress_diag_set', None) != [(provider_obj.name, False)]:
+            raise SystemExit('expected a strong diagnostic import from the board member only')
+        fingerprint = hashlib.sha256(json.dumps(
+            unresolved, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+    if fingerprint != expected:
         raise SystemExit(f'unresolved symbol fingerprint changed: see {out / "archive.json"}')
     print(f'{archive}: {len(audit["unresolved"])} unresolved externals; not runtime-eligible')
     return 0

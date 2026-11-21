@@ -49,6 +49,9 @@ IOService *native_legacy_display_allocate(void); // Supplied by the component.
 // irreversible without the opt-in boot-diag-resume), 0 = a renderer pass was
 // still running. Thread context only.
 int boot_progress_prepare_scanout(void);
+#if defined(NUWA_DISPLAY_BRINGUP_DIAG)
+void boot_progress_diag_set(uint8_t stage, uint8_t reason);
+#endif
 }
 namespace {
 IOService *displayObject, *displayNub;
@@ -73,6 +76,11 @@ bool enabled() {
   return PE_parse_boot_argn("offline-legacy-register", &value, sizeof(value)) && value == 1;
 }
 void failure(unsigned code) {
+#if defined(NUWA_DISPLAY_BRINGUP_DIAG)
+  // At stage 1, missing displayObject at the late hook is a consequence
+  // of an already recorded early failure. Keep the original reason.
+  if (code != 6 || stage != 1) boot_progress_diag_set(stage, code);
+#endif
   IOLog("NuwaLegacyDisplay: refused stage=%u reason=%u\n", stage, code);
 }
 }
@@ -95,6 +103,9 @@ void native_legacy_display_probe(void) {
   }
   displayObject = object;
   stage = 2;
+#if defined(NUWA_DISPLAY_BRINGUP_DIAG)
+  boot_progress_diag_set(stage, 0);
+#endif
 }
 void native_legacy_display_late_probe(void) {
   if (!enabled() || lateEntered) return;
@@ -151,6 +162,9 @@ void native_legacy_display_late_probe(void) {
   displayNub = nub;
   displayObject->registerService();
   stage = 4;
+#if defined(NUWA_DISPLAY_BRINGUP_DIAG)
+  boot_progress_diag_set(stage, 0);
+#endif
   success = true;
 finish:
   OSSafeReleaseNULL(surface);

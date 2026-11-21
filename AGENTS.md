@@ -7,6 +7,11 @@
 
 ## 基线
 - 2026-11-20 **FAT 计数更正（主机 self-checked，未上机）**：ON 通过，原 r35 OFF 低于原门槛；见 [本轮记录](docs/nuwa-r35-display-fat-correction-20261120-observation.md)。
+- 2026-11-21 **r35f 首次实机观察（用户录像及 vision 转录，非独立 verifier）**：见 [本轮记录](docs/nuwa-r35f-first-boot-20261121-observation.md)；主机构建及深审见 [原记录](docs/nuwa-r35f-thread-ready-20261121-observation.md)。
+- 2026-11-20 **r35e IRQ 绘制门禁（仅主机，未上机，待复审）**：见 [本轮记录](docs/nuwa-r35e-irqguard-20261120-observation.md)。
+- 2026-11-20 **r35d 快照修复（仅主机，未上机，待复审）**：见 [本轮记录](docs/nuwa-r35d-snapshot-20261120-observation.md)。
+- 2026-11-20 **r35c 退出诊断候选（仅主机，未上机，复审待完成）**：见 [本轮记录](docs/nuwa-r35c-exit-detail-20261120-observation.md)。
+- 2026-11-20 **r35b 瘦身候选（仅主机，未上机）**：见 [本轮记录](docs/nuwa-r35b-compact-20261120-observation.md)；旧 r35b 未达到 FAT 门槛。
 - 2026-11-20 **时基已核对、r35 主机复现一致，第一阻塞不变（交互目标仍未达成）**：r34 页面 CLK 行 `cntfrq=19200000 dt=19200000 dv=6143960ms cv=6143960ms`，`cntfrq_readback` 缺口闭合（仅 boot CPU、6144 s 零漂移）；r35 主机复现逐字节一致但**仍未上机**（上机授权在写入前由用户取消，槽位状态待确认），设备仍跑 r34（`vendor_boot_a` `46aa4fd9…891e`），第一阻塞仍是 SpringBoard/mobileactivationd 的 SIGTRAP 读数缺失。见 `docs/nuwa-r34-page-evidence-20261120.md`；逐轮细节见 `docs/nuwa-userspace-20261119-observation.md`。
 - 2026-11-19 **用户态推进 r16–r35（交互目标仍未达成）**：r34 上 SpringBoard 与 mobileactivationd 以 **SIGTRAP** 退出，为当前第一阻塞；显示服务（`GopFramebuffer`）未接、SMP 未开启、认证仍 **NOT REACHED**；r35（异常退出环）已构建**未上机**，设备现跑 r34（`vendor_boot_a` `46aa4fd9…891e`）。逐轮载荷/内核/seed 哈希、设备读数、八项关键发现与证据路径见 `docs/nuwa-userspace-20261119-observation.md`（主机侧 self-checked，设备侧主控转述）。
 - 2026-11-15 **原生 UFS 根卷 → launchd 用户态**（交互目标仍未达成）：`userdata` 前 8446279680 B 写入并整镜像回读 `da429da6…68d7`，根卷 `boot-uuid=DADD93F8-…-0F11E64172F7`、`native-ufs-root=1`、无 ramdisk；主控转述用户实机观测到青带 3（initproc exec 完成）与橙带 15（initproc 回到内核）。启动载荷已写入 `boot_a`(`692cfcca…`) 与 `vendor_boot_a`(r7 `24258f44…`/r8 `8e09fae2…`/r9 `37b665da…`)。主机侧一律 self-checked；认证 NOT REACHED；launchd 之后、显示服务、断电重启仍回同系统均未验证。详见 `docs/nuwa-launchd-reached-20261115.md`。
@@ -31,6 +36,9 @@
 - 最新设备状态：Launcher 后锁屏反复重启，非稳定恢复；旧 exec-in EIO退出未知、完整super回读不符仍保留，不定案尾部截断。`.cache/super-window-v1` 原25tests/manifest独立PASS不代表新兼容修正已完成：当前0 byte停于bootmode unknown，无后台writer，general在修复工具，非分窗写进行中。用户本轮RAM smoke→super-only分窗写回读授权不撤销，身份/回读门禁不变。userdata已清Android，iOS UFS不在，未来iOS恢复需新授权。主机提交 `8ae344cc05879a27cf77b5103e30b2ca51a6d41d` 不变，本轮记录未提交。本次文档更新未运行研究/设备命令、未改脚本或恢复工具；其他已授权任务仍按各自边界推进。本地主机实现/验证继续，上机前确认，super恢复另有本轮授权。公开资料只读，不对外发消息。
 - crypto 事实：`CONFIG_XNU_CRYPTO_BOOTSTRAP="prelinked"`；`prng_random.o` 最终 `-U XNU_SOURCE_CORECRYPTO14`，当前 prelink 无 `_source_corecrypto14_bootstrap`，不能声称 console 后必经 source corecrypto EARLY_BOOT。不切换 crypto 模式。
 - 仍未验收：正常启动、平台服务发布、存储与用户态；内存所有权问题不因探针阳性自动关闭。ADT 身份/种子约定不变，root UUID 留待根卷阶段。`scripts/` 历史审计工具不再充当 ADT 生成器。
+
+## 阻塞
+- CPU-only 显示 ON 候选按 329 止损条件冻结，OFF 诊断路径保留，329 guard 不动；这是 deferral，非绕过。三项止损均未闭合，解除条件及证据见 [329 决策记录](docs/nuwa-329-stop-20261121.md)；ON 产物保留分支、不上机。self-checked。
 
 ## 目录约定（官方布局）
 - 板级文件：`board.toml`、`porting.toml`、`feeds.toml`、`configs/`、`dts/`、`patches/xnu/series`、`package/`、`scripts/package.sh`、`proprietary-files.txt`、`local.toml.example`。

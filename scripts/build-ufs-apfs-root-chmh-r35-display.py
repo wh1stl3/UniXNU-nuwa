@@ -13,6 +13,7 @@ R35_SHA = "787610183dc7f772e2d01aa183f72f2fcc52245fc44407e6c815ced614412464"
 DISPLAY_KERNELS = {
     "476477dab77fe2342128ddd79881d6fd26b1d7b4d48d65e723860478aafdcb17",
     "89355aa4e0dc0f3d2e9ef1971e94d45f6584f66d4ae318e6ac2bdc832fce4b39",
+    "7ae5623c8a82ddbbcef1da905de3e39fb4c5e4ec4d5f35e7b9bb3348e062674f",
 }
 DISPLAY_ARGS = (b" offline-mobile-graphics-load=1 offline-legacy-register=1 offline-legacy-gop=1"
                 b" offline-legacy-pm=1 offline-legacy-phase=4 offline-legacy-validate=1"
@@ -31,7 +32,7 @@ def main():
     output = a.output.resolve()
     audit = a.audit.resolve() if a.audit else None
     for path in (kernel, output, *([audit] if audit else [])):
-        if ROOT / "out" not in path.parents:
+        if (ROOT / "out").resolve() not in path.parents:
             parser.error(f"expected a path inside device out/: {path}")
     if output.exists():
         parser.error("--output must be new")

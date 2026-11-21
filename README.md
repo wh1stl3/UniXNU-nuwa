@@ -2,6 +2,18 @@
 
 **显示分支（2026-11-20）：**[FAT 计数更正：ON 通过、原 r35 OFF 低于门槛](docs/nuwa-r35-display-fat-correction-20261120-observation.md)（主机 self-checked，未上机）。
 
+**r35h PID 退出布局（仅主机 self-checked，待深审与独立验证）：** [记录](docs/nuwa-r35h-layout-20261121.md)。
+
+**r35f 首次实机观察（用户录像及 vision 转录，非独立 verifier）：** [本轮记录](docs/nuwa-r35f-first-boot-20261121-observation.md)；[主机构建与深审记录](docs/nuwa-r35f-thread-ready-20261121-observation.md)。
+
+**r35e IRQ 绘制门禁（仅主机，未上机，待复审）：** [本轮记录](docs/nuwa-r35e-irqguard-20261120-observation.md)。
+
+**r35d 快照修复（仅主机，未上机，待复审）：** [本轮记录](docs/nuwa-r35d-snapshot-20261120-observation.md)。
+
+**r35c 退出诊断候选（仅主机，未上机，复审待完成）：** [本轮记录](docs/nuwa-r35c-exit-detail-20261120-observation.md)。
+
+**r35b 瘦身候选（仅主机，未上机）：** [构建与审计记录](docs/nuwa-r35b-compact-20261120-observation.md)。
+
 **当前（2026-11-15）：原生 UFS 根卷挂载成功，launchd 进入用户态；交互目标未达成。**
 `userdata` 前 8446279680 B 写入并整镜像回读 `sha256=da429da6…68d7`；根卷
 `boot-uuid=DADD93F8-DBBF-4B17-A1DF-0F11E64172F7`、`native-ufs-root=1`、无 ramdisk。

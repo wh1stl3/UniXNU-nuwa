@@ -32,6 +32,16 @@ R35_PINS = {
     "native.macho": "a9fd5e43d647384626dcd64ce480ca4dd3918a710b0fb8f8d11e8505828932cb",
     "libBootProgress.a": "44a0f124dd5db234cd8f19d2d59d36cabf70cfba8a560ddd6cd9e3c389454fd1",
 }
+R35L_PINS = {
+    "commands.json": "1800c58e47041f25c580458f05e169c4803aa6fdb7b15513e6b7b068d44f0818",
+    "link.filelist": "f7ad5a33f2d9b924f18a8a367c7409e7e0b64c33faeba64910d3d9d1876ed19a",
+    "native-link.map": "47883de722e9ba4d5ca39d2caf1f553939530a7d7b5f3c81d932716c034ce7d1",
+    "native.macho": "d04e6044b6452737b3b0fe1734bd1ec1acb58e8230ba7b88c754e024470fa829",
+    "libBootProgress.a": "1ec5b96a5dbddf9e2c81dab52051f38496e29f807271798e1e804a2358845ca9",
+    "build-boot-progress-compact.py": "0d283d07764d9bdcf72bc756994592c5cdb2264dab87361601406ab21e227156",
+    "BootProgressDisplay.h": "86311631e7cf66881bd6d1a57a927c78db9ea9bb579deb025136252e3e218c72",
+}
+DSP_SET = "_boot_progress_diag_set"
 R35_CPO_SHA = "d390eb4440c6854e0243d041f0cd329be419a10ef78facf9a90102f3822e0c70"
 R35_RENDERER_SHA = "491aa302b627be782abcd2991f3e723e559904a641689105efabb79e592fc144"
 LINKER_SHA = "4f8a881dd4e4c1ff29c217a67bfd265582c1fb3bfebf989fdf5a3a4d9ba390a9"
@@ -168,8 +178,27 @@ def candidate_link(r35, out, records, argv, env):
     return adjusted
 
 
-def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate, keep_link_debug):
-    for name, pin in R35_PINS.items():
+def diag_archive(r35, out):
+    from generate_r35_display_diag import generate
+
+    source = out / "BootProgress.c"
+    source.write_bytes(generate((r35 / "BootProgress.c").read_bytes()))
+    shutil.copyfile(r35 / "BootProgressDisplay.h", out / "BootProgressDisplay.h")
+    stubs = ROOT / "package/boot-progress-r13/nuwa_boot_progress_stubs.c"
+    require_pin(stubs, "94a93f5f0b3180e80532e4cb9f5600bec8e7f9b5bc9e8a19273fd2e3c7d4bcae")
+    run([sys.executable, "-B", r35 / "build-boot-progress-compact.py",
+         "--out", out, "--tree", r35 / "tree", "--stubs", stubs, "--renderer", source,
+         "--define", "NUWA_VIRTIO_STUBS=1", "--define", "NUWA_RENDER_FIXES=1",
+         "--define", "NUWA_BOLD_GLYPHS=1"])
+    staged = out / "libBootProgress.a"
+    if definitions(staged) != definitions(r35 / staged.name) + Counter({DSP_SET: 1}):
+        raise SystemExit("r35l renderer changed global definitions beyond DSP")
+    return staged
+
+
+def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
+               keep_link_debug, bringup_diag=False):
+    for name, pin in (R35L_PINS if bringup_diag else R35_PINS).items():
         require_pin(r35 / name, pin)
     require_pin(cpo, R35_CPO_SHA)
     require_pin(linker / "ld", LINKER_SHA)
@@ -229,6 +258,9 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate, k
         # Preserve the ADRP/LDR GOT sequence required by the linked audit.
         if candidate:
             argv = candidate_link(r35, out, records, argv, env)
+        if bringup_diag:
+            argv = list(argv)
+            argv[force_at] = f"-Wl,-force_load,{diag_archive(r35, out)}"
         argv = [*argv, "-Wl,-ignore_optimization_hints", f"-Wl,-force_load,{archive}"]
         if not candidate or keep_link_debug:
             return link("native-link", native, argv)
@@ -455,6 +487,8 @@ def main():
                    help="compile out the GOP software timer lifecycle (requires --cpu-only)")
     p.add_argument("--candidate", action="store_true",
                    help="apply device hooks and write the r35-display diagnostic kernel")
+    p.add_argument("--r35l-dir", type=Path,
+                   help="pinned full r35l inputs for the display bring-up probe")
     p.add_argument("--keep-link-debug", action="store_true",
                    help="measure the archive-only size reduction before stripping linked STABS")
     p.add_argument("--out", type=Path, required=True, help="new directory under out/")
@@ -476,6 +510,8 @@ def main():
         p.error("--candidate requires --r35-dir --cpu-only --no-software-vsync")
     if a.keep_link_debug and not a.candidate:
         p.error("--keep-link-debug requires --candidate")
+    if a.r35l_dir and (not a.candidate or not a.r35l_dir.resolve().is_relative_to((ROOT / "out").resolve())):
+        p.error("--r35l-dir requires --candidate and must be inside device out/")
     out.mkdir(parents=True, exist_ok=False)
     donor = base / "out/ipsw/20H392/kernelcache.decompressed"
     if a.renderer:
@@ -485,16 +521,18 @@ def main():
         require_pin(link.parent / "osfmk/DEVELOPMENT/startup.o.json", STARTUP_RECORD_SHA)
     features = [name for enabled, name in ((a.cpu_only, "--cpu-only"),
                  (a.no_software_vsync, "--no-software-vsync"),
-                 (a.candidate, "--strip-debug")) if enabled]
+                  (a.candidate, "--strip-debug"),
+                  (a.r35l_dir, "--bringup-diag")) if enabled]
     archive = build_archive(ROOT, base, donor, cpo, out, features)
     print(f"host-only archive SHA256 {digest(archive)}", flush=True)
 
     native = out / ("native.macho" if a.candidate else "HOST-ONLY-display-native.unstripped")
     sys.path.insert(0, str(base / "kits/XnuPrelink"))
     if a.r35_dir:
-        mapfile = replay_r35(r35, linker, cpo, out, archive, native,
-                             cpu_only=a.cpu_only, candidate=a.candidate,
-                             keep_link_debug=a.keep_link_debug)
+        link_inputs = a.r35l_dir.resolve() if a.r35l_dir else r35
+        mapfile = replay_r35(link_inputs, linker, cpo, out, archive, native,
+                              cpu_only=a.cpu_only, candidate=a.candidate,
+                              keep_link_debug=a.keep_link_debug, bringup_diag=bool(a.r35l_dir))
     else:
         # Replay XNU's exported link inputs, without its historical map output.
         stem = "mach.development.bcm2837"
@@ -548,6 +586,8 @@ def main():
     (out / "prelink.macho").write_bytes(emitted)
     (out / "prelink.json").write_text(json.dumps(report, indent=2) + "\n")
     final = render_candidate(r35, out, native, mapfile)
+    if a.r35l_dir and any(definitions(image)[DSP_SET] != 1 for image in (native, final)):
+        raise SystemExit("DSP setter must have one linked definition")
     if (audit_linked_metaclass(final.read_bytes(), abi["metaclass"]) != got
             or audit_linked_originals(final.read_bytes(), abi["original_imports"], refs) != slots):
         raise SystemExit("r35 renderer changed the linked display ABI")
