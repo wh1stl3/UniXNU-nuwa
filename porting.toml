@@ -146,6 +146,7 @@ inputs = ["Identify the display hardware, resources and existing component inter
 configuration = ["Record the board.toml fields, DTS properties and defconfig values used for display."]
 procedure = ["Follow the display stage in the porting guide and record the actual commands."]
 findings = [
+  "2026-11-22 IOResources-parented display nub changes from IOPlatformDevice to IOService; host build stopped at the unresolved-symbol fingerprint check after local input staging. Deep review, final build and runtime remain pending; see docs/nuwa-r35-display-ioservice-20261122.md.",
   "2026-11-22 display ON + r35l DSP reports the existing board refusal codes and early-init/registration-call completion without changing 329 or the eight offline options. Host only; reviewer and independent verifier pending. See docs/nuwa-r35l-display-dsp-20261122-observation.md.",
   "2026-11-22 display ON packaging adds five offline-legacy parameters after the existing three; root WSL host build, outer readback and FAT capacity are self-checked, runtime remains unverified and reaching donor slot 329 is expected to panic. See docs/nuwa-r35-display-gates-20261122.md.",
   "2026-11-20 r35 display products separate fixed original r35 OFF from pinned display ON; corrected FAT scan rejects OFF below the unchanged floor and accepts ON. ON outer SHA256 is 09d11016b7710a29f8aba936fe397aae79bf7ec01cef5ef27b760ec37b967efa. Review, verifier and runtime remain pending.",

@@ -3,7 +3,7 @@
 //
 // Shape follows UniXNU-enuma's board provider, out/enuma-gop-legacy-20261114-r2/
 // package/EnumaLegacyDisplay.cpp (BSD-2-Clause-Patent): same probe/late-probe
-// split, same failure-code order, same IOPlatformDevice nub over the firmware GOP
+// split, same failure-code order, an IOService nub over the firmware GOP
 // range. Everything Apple-specific is nuwa's own input: no proxy-frame address,
 // geometry or display class is copied from another board; geometry comes from
 // PE_current_console() at run time.
@@ -115,7 +115,7 @@ void native_legacy_display_late_probe(void) {
   if (!displayObject) { failure(6); return; }
   stage = 3;
   bool success = false, nubAttached = false, nubStarted = false, displayAttached = false;
-  IOPlatformDevice *nub = nullptr;
+  IOService *nub = nullptr;
   IODeviceMemory *memory = nullptr;
   OSArray *ranges = nullptr;
   IORegistryEntry *parentDT = nullptr;
@@ -128,7 +128,7 @@ void native_legacy_display_late_probe(void) {
   matching = IOService::nameMatching("IOCoreSurfaceRoot");
   surface = matching ? IOService::waitForMatchingService(matching, 5000000000ULL) : nullptr;
   if (!surface || !console(v)) { failure(8); goto finish; }
-  nub = new IOPlatformDevice;
+  nub = new IOService;
   memory = IODeviceMemory::withRange(v.v_baseAddr, v.v_rowBytes * v.v_height);
   ranges = OSArray::withCapacity(1);
   if (!nub || !memory || !ranges || !resource || !nub->init() || !ranges->setObject(memory)) {

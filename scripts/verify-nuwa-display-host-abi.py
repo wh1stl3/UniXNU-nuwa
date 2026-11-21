@@ -23,7 +23,11 @@ OLD_REFRESH = '_native_legacy_set_refresh_properties'
 # that silently swallows new unresolved symbols.
 UNRESOLVED_SHA256 = 'c2b547267d51f69a79995ecceab0c6bd12b315b358e8720849b8f29795c12862'
 CPU_UNRESOLVED_SHA256 = 'bd169e2fd505971d5cb6b15978e787b831f5bfaee160ef7fcc5a5ae1e475a121'
-NO_VSYNC_UNRESOLVED_SHA256 = '68d9d8af3c989548b4830fa19c975b38f061b01716cc6816876b32f2797afbe1'
+# Intentional nub IOPlatformDevice -> IOService fix: IOPlatformDevice's
+# compareName/getResources unconditionally cast the provider to IOPlatformExpert.
+# Added: __ZN9IOServiceC1Ev, __ZN9IOServicenwEm
+# Removed: __ZN16IOPlatformDeviceC1Ev, __ZN16IOPlatformDevicenwEm
+NO_VSYNC_UNRESOLVED_SHA256 = '7a2dfde615090010c88f00867913a30606650012b148b36ad1c4b34cf0859e9e'
 GPU_IMPORTS = {
     '_native_adreno_fences', '_native_adreno_fences_detail',
     '_native_gpu_trace_enabled', '_native_gpu_trace_record',
