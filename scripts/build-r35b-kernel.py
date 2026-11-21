@@ -137,6 +137,7 @@ def main():
     parser.add_argument("--detail", action="store_true", help="generate the detailed exit recorder")
     parser.add_argument("--exception", action="store_true", help="add the isolated r35g exception recorder")
     parser.add_argument("--layout-r35h", action="store_true", help="use the r35h row layout and PID-aware aggregation")
+    parser.add_argument("--springboard-lr", action="store_true", help="sample up to three SpringBoard breakpoint return addresses")
     parser.add_argument("--audit-against", type=Path, help="unstripped build of identical detail source")
     args = parser.parse_args()
     r35 = args.r35.resolve()
@@ -147,6 +148,8 @@ def main():
         parser.error("--exception requires --detail")
     if args.layout_r35h and not args.exception:
         parser.error("--layout-r35h requires --exception")
+    if args.springboard_lr and not args.layout_r35h:
+        parser.error("--springboard-lr requires --layout-r35h")
     build = pin((r35 / "build.py").read_bytes(), BUILD_SHA).decode()
     header = pin((r35 / "BootProgressDisplay.h").read_bytes(), HEADER_SHA)
     spec = importlib.util.spec_from_file_location("selection", Path(__file__).with_name("generate-r35-exit-selection.py"))
@@ -183,6 +186,11 @@ def main():
         build = build.replace("line(6, b, 0xff00ffff);", "line(7, b, 0xff00ffff);")
         build = build.replace("line(5,nuwa_systemos_row3(),0xff00ffcc);", "line(6,nuwa_systemos_row3(),0xff00ffcc);")
         build = build.replace("assert 6 < safe_rows", "assert 7 < safe_rows")
+    if args.springboard_lr:
+        spec = importlib.util.spec_from_file_location("lr", Path(__file__).with_name("generate-r35j-ux-lr.py"))
+        lr = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(lr)
+        renderer = lr.generate_renderer(renderer)
     build = replace_once(build, OLD_ASSERT, NEW_ASSERT)
     out.mkdir()
     (out / "BootProgress.c").write_bytes(renderer)
@@ -194,7 +202,9 @@ def main():
         build = ready_recipe(build, r35, out, args.audit_against.resolve() if args.compact else None)
     if args.exception:
         build = exception_recipe(build, args.audit_against.resolve() if args.compact else None)
-        namespace["generate_exception"] = ux.generate_ux
+        namespace["generate_exception"] = (
+            lambda base: lr.generate_ux(ux.generate_ux(base))
+        ) if args.springboard_lr else ux.generate_ux
     exec(compile(build, str(r35 / "build.py"), "exec"), namespace)
     namespace["RENDERER"] = out / "BootProgress.c"
     sys.argv = [str(r35 / "build.py"), "--out", str(out)]
