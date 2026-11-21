@@ -145,6 +145,7 @@ inputs = ["Identify the display hardware, resources and existing component inter
 configuration = ["Record the board.toml fields, DTS properties and defconfig values used for display."]
 procedure = ["Follow the display stage in the porting guide and record the actual commands."]
 findings = [
+  "2026-11-22 display ON packaging adds five offline-legacy parameters after the existing three; root WSL host build, outer readback and FAT capacity are self-checked, runtime remains unverified and reaching donor slot 329 is expected to panic. See docs/nuwa-r35-display-gates-20261122.md.",
   "2026-11-20 r35 display products separate fixed original r35 OFF from pinned display ON; corrected FAT scan rejects OFF below the unchanged floor and accepts ON. ON outer SHA256 is 09d11016b7710a29f8aba936fe397aae79bf7ec01cef5ef27b760ec37b967efa. Review, verifier and runtime remain pending.",
   "Historical first integration: CPU-only/no-software-vsync archive, post-vfsinit family load, and post-IOBSD late probe require all three opt-in args. The original display build failed the FAT floor before debug data was removed.",
   "2026-11-20 offline Libm pool escape NOT-QUALIFIED: donor-wide caller scan found 27 IOAudioCodecs stub BLs with three return-to-caller paths, while raw BLR targets and indirect slot writers remain unresolved. Two tail paths are traced; initial slot values are outside the pool. No scanner or device changes. See docs/nuwa-libm-pool-escape-20261120.md (self-checked).",

@@ -14,7 +14,9 @@ DISPLAY_KERNELS = {
     "476477dab77fe2342128ddd79881d6fd26b1d7b4d48d65e723860478aafdcb17",
     "89355aa4e0dc0f3d2e9ef1971e94d45f6584f66d4ae318e6ac2bdc832fce4b39",
 }
-DISPLAY_ARGS = b" offline-mobile-graphics-load=1 offline-legacy-register=1 offline-legacy-gop=1"
+DISPLAY_ARGS = (b" offline-mobile-graphics-load=1 offline-legacy-register=1 offline-legacy-gop=1"
+                b" offline-legacy-pm=1 offline-legacy-phase=4 offline-legacy-validate=1"
+                b" offline-legacy-transfer=1 offline-legacy-cpu-present=1")
 
 
 def main():
