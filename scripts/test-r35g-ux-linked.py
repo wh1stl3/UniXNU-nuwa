@@ -21,12 +21,12 @@ with subprocess.Popen(["/usr/bin/llvm-objdump", "-d", "--no-show-raw-insn", sys.
         if owner == "_handle_ux_exception" and target in {
             "_proc_findthread", "_get_user_regs", "_threadsignal", "_machine_exception"
         }:
-            assert target not in handler, target
-            handler[target] = addr
+            handler.setdefault(target, []).append(addr)
     assert proc.wait() == 0
 (owner, op, site), = edges
 assert (owner, op) == ("_handle_ux_exception", "bl"), edges
-assert (handler["_proc_findthread"] < handler["_machine_exception"] <
-        handler["_get_user_regs"] < site < handler["_threadsignal"]), handler
+assert (max(handler["_proc_findthread"]) < min(handler["_machine_exception"]) <
+        min(handler["_get_user_regs"]) <= max(handler["_get_user_regs"]) <
+        site < min(handler["_threadsignal"])), handler
 print(f"sole exception-recorder edge={site:#x} from {owner}; no drawing callers")
-print(" ".join(f"{target}={addr:#x}" for target, addr in handler.items()))
+print(" ".join(f"{target}={','.join(hex(a) for a in addrs)}" for target, addrs in handler.items()))

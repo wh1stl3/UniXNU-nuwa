@@ -137,7 +137,7 @@ def main():
     parser.add_argument("--detail", action="store_true", help="generate the detailed exit recorder")
     parser.add_argument("--exception", action="store_true", help="add the isolated r35g exception recorder")
     parser.add_argument("--layout-r35h", action="store_true", help="use the r35h row layout and PID-aware aggregation")
-    parser.add_argument("--springboard-lr", action="store_true", help="sample up to three SpringBoard breakpoint return addresses")
+    parser.add_argument("--springboard-lr", action="store_true", help="sample saved x29/x30 for SpringBoard breakpoints")
     parser.add_argument("--audit-against", type=Path, help="unstripped build of identical detail source")
     args = parser.parse_args()
     r35 = args.r35.resolve()
