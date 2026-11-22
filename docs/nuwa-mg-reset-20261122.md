@@ -164,3 +164,11 @@ the only args changes are removal of `sheng-data-reset=1` and addition of
 `nuwa-mg-reset=1`. Confirm `sheng-data-reset` has no value or bare token in
 the outer readback. Recompute SHA-384 over `record.json`'s decoded
 `material_hex`.
+
+## 复审记录
+
+- 结论：PASS WITH CONDITIONS（deep_reviewer，方案 A）。
+- 要点：outer `867996b9…5c95` 回读确认无 `sheng-data-reset`；`discardRequested()` 仅在 reset 为 1 或 2 时成立；`PersistOverlay.h:87–108` 匹配 overlay 原位续用，不匹配且未请求 reset 返回 `Kept`；`==2` 门禁足够（RW Resumed=2，Kept=7，Fresh=3）；MG 在打开目录/journal 前检查状态，非 2 直接返回。
+- 放行表述：保持 userdata 原样、不选 Install/reset，可做一次缓存失效实验；须记录 DS、MG 标记、journal 逐项结果与 SpringBoard 是否仍断言。
+
+该复审由主控转述，未经文档内自证。
