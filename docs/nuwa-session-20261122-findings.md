@@ -59,3 +59,37 @@ or relayed, not independently verified.
 
 Interaction and persistent reboot acceptance remain unmet; authentication
 remains **NOT REACHED**. No independent verifier rerun in this documentation pass.
+
+## SpringBoard display-mode assertion: updated localization
+
+The following findings are relayed by the parent session; the disassembly and
+runtime captures were not independently examined in this documentation pass.
+They update the earlier statement that the precise assertion site was unknown.
+
+- The latest SpringBoard crash PC ending in `0xbd4` is in
+  FrontBoardServices, not SpringBoard.framework: unslid `0x19b91abd4` is
+  `brk #0` at
+  `-[FBSDisplayMode _initWithWidth:height:preferredScale:scaleOverride:refreshRate:gamut:hdr:rotation:virtual:validityCheck:] +0x244`.
+  The parent reports the same origin as the crash recorded for venus.
+- When `validityCheck == 1`, failure of any check reaches `brk`: height and
+  width must each be neither zero nor all ones; refreshRate must be greater
+  than zero on both the zero and nonzero preferredScale branches;
+  scaleOverride must be at least 2^-52 when preferredScale is zero; gamut
+  must be in `{0,1}`, hdr in `{0,1,2}`, and rotation in `{0,1,2,3}`.
+- At construction point `0x19b92dda4`, the source object is sent `width`,
+  `height`, `preferredScale`, `refreshRate`, `colorGamut`, and `hdrMode`,
+  in that order. The receiver comes from the constructor's `x2` via
+  `_objc_retain_x2`; its runtime class and the data sources of the three
+  IMPs remain unresolved.
+- We publish `canvas-width/height` on the provider nub and the six
+  `IOMFBDisplayRefresh` keys, with a software 60 Hz fallback; rotation is
+  not published. Whether this construction path actually reads any of these
+  properties is unproven.
+- The leading candidates are refreshRate or width/height being read as zero,
+  not a confirmed runtime diagnosis. Do not change external interfaces on
+  this basis without runtime readings.
+- Next candidates, without selecting a conclusion: (a) trace the caller's
+  `x2` source and class; (b) enumerate the actual property tables of our
+  display service and provider read-only on the kernel side to confirm
+  publication; (c) if missing refresh is confirmed, publish a value backed
+  by evidence.
