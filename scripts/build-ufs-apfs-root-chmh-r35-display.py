@@ -127,6 +127,13 @@ def main():
                 raise ValueError("parent ADT window is not a unique u64")
             i = matches[0]
             props[i] = (props[i][0], props[i][1], size.to_bytes(8, "little"))
+            if a.enable_mg_reset_resume_only:
+                value = (3).to_bytes(4, "little")
+                if "display-scale" in adt.properties(chosen):
+                    raise ValueError("parent already has /chosen/display-scale")
+                if adt.properties(adt.find(tree, "/product")).get("artwork-scale-factor") != value:
+                    raise ValueError("/product/artwork-scale-factor is not u32 3")
+                props.append(("display-scale", 0, value))
             return adt.encode(tree)
 
         r35.X.derived = r35.X.C.derived = derived
