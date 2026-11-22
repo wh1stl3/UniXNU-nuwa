@@ -9,7 +9,7 @@ from generate_r35_display_diag import generate
 root = Path(__file__).resolve().parents[1]
 src = generate((root / "out/nuwa-r35l-regs-full-20261121/BootProgress.c").read_bytes(),
                mg_reset=True).decode()
-body = src.split("static void bp_proc_census(unsigned restart) {", 1)[1].split(
+body = src.split("static void bp_proc_census(unsigned restart, unsigned now) {", 1)[1].split(
     "static void touch_monitor(", 1)[0]
 assert "pid<=4096" in body and "proc_find(pid)" in body
 assert "if (!p) continue;" in body and "proc_rele(p);" in body
@@ -20,14 +20,17 @@ assert "p->" not in body and "proc_list_lock" not in body
 assert body.index("proc_rele(p);") < body.index("__atomic_store_n")
 monitor = src.split("static void touch_monitor(", 1)[1].split("static void monitor(", 1)[0]
 assert "now-census_at>=10" in monitor
-assert monitor.index("bp_proc_census(restart);") < monitor.index("touch_overlay();")
+assert monitor.index("bp_proc_census(restart,now);") < monitor.index("touch_overlay();")
 assert 'extern void psignal(struct proc *, int);' in src
 assert body.count("psignal(p,9);") == 1 and body.count("proc_rele(p);") == 1
 assert "restart && !killed_pid" in body
 assert 'PE_parse_boot_argn("nuwa-sb-restart",&restart_at,sizeof(restart_at))' in monitor
 assert "restart_at && restart_at<60" in monitor
-assert "restart_at && !restart_done && now>=restart_at" in monitor
-assert monitor.index("restart_done=1;") < monitor.index("bp_proc_census(restart);")
+assert 'PE_parse_boot_argn("nuwa-sb-restart-every",&restart_every,sizeof(restart_every))' in monitor
+assert "restart_every && restart_every<120" in monitor
+assert "restart_at && restart_count<4" in monitor
+assert "restart_count && restart_every && now-restart_last>=restart_every" in monitor
+assert monitor.index("restart=++restart_count;") < monitor.index("bp_proc_census(restart,now);")
 banner = src.split("static void crash_banner(", 1)[1].split(
     "static void touch_overlay_locked(", 1)[0]
 assert "PROC n=%d SB=%s bb=%s lsd=%s ld=%s lk=%s cm=%s" in banner
@@ -42,8 +45,8 @@ for bit, name in enumerate(("runningboardd", "distnoted", "cfprefsd",
                              "notifyd", "securityd", "mobileactivation")):
     assert f'!strcmp(name,"{name}")) services|=1u<<{bit};' in body
 assert '__atomic_store_n(&bp_svc_mask,services,__ATOMIC_RELAXED)' in body
-assert '"SVC %02x K=%u",__atomic_load_n(&bp_svc_mask,__ATOMIC_RELAXED)' in banner
-assert len("SVC 3f K=2") == 10
+assert '"SVC %02x K=%ux%u",__atomic_load_n(&bp_svc_mask,__ATOMIC_RELAXED)' in banner
+assert len("SVC 3f K=4x4") == 12
 assert "n+16+6<=cap" in banner and "unsigned room=cap-16-n;" in banner
 for row in ("DSP ", "CLI ", "EX", "LOAD ", "UFS ", "SCHED ", "SC "):
     assert row in src
