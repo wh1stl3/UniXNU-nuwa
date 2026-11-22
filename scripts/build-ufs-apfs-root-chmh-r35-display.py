@@ -5,6 +5,7 @@ import hashlib
 import importlib.util
 from pathlib import Path
 import sys
+import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "scripts/build-ufs-apfs-root-chmh-r35.py"
@@ -32,6 +33,8 @@ def main():
     parser.add_argument("--kernel", type=Path, required=True)
     parser.add_argument("--kernel-sha256", required=True)
     parser.add_argument("--enable-display", action="store_true")
+    parser.add_argument("--board-window", action="store_true",
+                        help="derive the window from board.toml")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--audit", type=Path)
     a = parser.parse_args()
@@ -69,6 +72,26 @@ def main():
                   ARGS=r35.ARGS + (DISPLAY_ARGS + b" nuwa-lite=1" if a.enable_display else b""))
     for module in (r35, r35.X, r35.M):
         vars(module).update(inputs)
+    if a.board_window:
+        size = int(tomllib.loads((ROOT / "board.toml").read_text(encoding="utf-8"))
+                   ["payload"]["adt"]["owned_memory_size"], 0)
+        if not 0x10000000 <= size <= 0x200000000 or size % 0x200000:
+            raise ValueError("board window outside UniXNU's ADT size contract")
+        previous = r35.X.derived
+        adt = r35.A
+
+        def derived(parent, digest):
+            tree = adt.parse(previous(parent, digest))
+            chosen = adt.find(tree, "/chosen")
+            props = chosen["properties"]
+            matches = [i for i, p in enumerate(props) if p[0] == "darwinboot-memory-size"]
+            if len(matches) != 1 or len(props[matches[0]][2]) != 8:
+                raise ValueError("parent ADT window is not a unique u64")
+            i = matches[0]
+            props[i] = (props[i][0], props[i][1], size.to_bytes(8, "little"))
+            return adt.encode(tree)
+
+        r35.X.derived = r35.X.C.derived = derived
     r35.M.main()
 
 
