@@ -25,7 +25,7 @@ extern void proc_name(int, char *, int);
     src = replace_once(src, b"static void touch_monitor(void *arg, wait_result_t result) {", b"""
 // Only touch_monitor calls this, before acquiring render_busy.
 static void bp_proc_census(void) {
-  uint32_t found[5]={0};
+  uint32_t found[6]={0};
   for (int pid=1;pid<=4096;++pid) {
     struct proc *p=proc_find(pid);
     if (!p) continue;
@@ -34,11 +34,12 @@ static void bp_proc_census(void) {
     if (!strcmp(name,"SpringBoard")) found[0]=(uint32_t)pid;
     else if (!strcmp(name,"backboardd")) found[1]=(uint32_t)pid;
     else if (!strcmp(name,"lsd")) found[2]=(uint32_t)pid;
-    else if (!strcmp(name,"lcd")) found[3]=(uint32_t)pid;
-    else if (!strcmp(name,"launchd")) found[4]=(uint32_t)pid;
+    else if (!strcmp(name,"launchd")) found[3]=(uint32_t)pid;
+    else if (!strcmp(name,"lockdownd")) found[4]=(uint32_t)pid;
+    else if (!strcmp(name,"containermanager")) found[5]=(uint32_t)pid;
     proc_rele(p);
   }
-  for (unsigned i=0;i<5;++i) __atomic_store_n(&bp_proc_pid[i],found[i],__ATOMIC_RELAXED);
+  for (unsigned i=0;i<6;++i) __atomic_store_n(&bp_proc_pid[i],found[i],__ATOMIC_RELAXED);
   __atomic_fetch_add(&bp_proc_generation,1,__ATOMIC_RELEASE);
 }
 static void touch_monitor(void *arg, wait_result_t result) {""")
@@ -51,7 +52,7 @@ static void touch_monitor(void *arg, wait_result_t result) {""")
     }
     touch_overlay();""")
     anchor = b"char boot_progress_page_text[48][BP_COLS];"
-    src = replace_once(src, anchor, b"""static uint32_t bp_proc_pid[5], bp_proc_generation;
+    src = replace_once(src, anchor, b"""static uint32_t bp_proc_pid[6], bp_proc_generation;
 // FDR exits are independent of the best-effort exit ring.
 static uint64_t bp_fdr_exit;
 // Diagnostic only: two independent byte samples; no synchronization of display state.
@@ -108,15 +109,15 @@ void boot_progress_prop_set(uint16_t properties) {
 """)
     src = replace_once(src, b"  // Presentation cost: swaps in the last second", b"""  // Sample the bridge after handoff, not the earlier diagnostic page.
   {
-    uint32_t pid[5];
-    char value[5][12];
-    for (unsigned i=0;i<5;++i) {
+    uint32_t pid[6];
+    char value[6][12];
+    for (unsigned i=0;i<6;++i) {
       pid[i]=__atomic_load_n(&bp_proc_pid[i],__ATOMIC_RELAXED);
       if(pid[i]) snprintf(value[i],sizeof(value[i]),"%u",pid[i]);
       else { value[i][0]='-'; value[i][1]=0; }
     }
-    snprintf(rows[n++],120,"PROC n=%d SB=%s bb=%s lsd=%s lcd=%s ld=%s",
-      nprocs,value[0],value[1],value[2],value[3],value[4]);
+    snprintf(rows[n++],120,"PROC n=%d SB=%s bb=%s lsd=%s ld=%s lk=%s cm=%s",
+      nprocs,value[0],value[1],value[2],value[3],value[4],value[5]);
   }
   if (&nuwa_sc_calls && &nuwa_sc_rejects && &nuwa_sc_ok) {
     static unsigned previous_calls, previous_time;

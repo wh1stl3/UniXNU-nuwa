@@ -71,6 +71,7 @@ inputs = ["Identify the storage and root hardware, resources and existing compon
 configuration = ["Record the board.toml fields, DTS properties and defconfig values used for storage and root."]
 procedure = ["Follow the storage and root stage in the porting guide and record the actual commands."]
 findings = [
+  "2026-11-22 census uses proc_name and six exact p_comm names; 17-character containermanagerd is matched by its 16-character prefix containermanager, which can collide. Generic trap capture deferred under stop-loss; see docs/nuwa-trap-census-work-20261122.md.",
   "2026-11-22 post-handoff process census candidate scans PID 1-4096 using proc_find in a monitor thread before render_busy; PID snapshots are diagnostic only, review and independent verification pending; see docs/nuwa-handoff-proc-census-20261122.md.",
   "2026-11-22 parent reports DS=4 and linked mode-2 open refusal; Data RAM overlay is not persistent. Single retained-slot writes are disallowed by relayed deep review; see docs/nuwa-session-20261122-findings.md.",
   "2026-11-20 corrected FAT accounting: original r35 OFF contains 8355328 free bytes and fails the 8 MiB floor; ON contains 11931136 and passes. FSInfo and read-only directory-chain fsck agree; no FAT or device changed.",
