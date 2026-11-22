@@ -40,15 +40,26 @@ int main(void) {
  render(rows,&n); assert(n==1);
  printf("%zu %s\n",strlen(rows[0]),rows[0]);
  assert(strlen(rows[0])<=80);
- assert(strstr(rows[0],"abcdef sig=127"));
- exit_ring[1].pc_valid=0; render(rows,&n);
+ assert(strlen(rows[0])==41);
+ assert(strstr(rows[0],"89abcdef sig=127"));
+ assert(strstr(rows[0]," |")==NULL);
+ exit_ring[0].pc_valid=0; render(rows,&n);
  assert(strstr(rows[0]," - sig=127"));
  exit_ring_count=0; render(rows,&n); assert(n==0);
 }
 '''
+two = body.replace('char xr[80]="XR";', 'char xr[120]="XR";').replace(
+    'i<1;', 'i<2;').replace('part[48]', 'part[80]')
+two_program = program.replace(body, two).replace(
+    'assert(strlen(rows[0])<=80);', 'assert(strlen(rows[0])==82);').replace(
+    'assert(strlen(rows[0])==41);', '').replace(
+    'assert(strstr(rows[0]," |")==NULL);', '')
 with tempfile.TemporaryDirectory() as tmp:
     c = Path(tmp) / "test.c"
     exe = Path(tmp) / "test"
     c.write_text(program)
+    subprocess.run(["cc", "-std=c11", "-Wall", "-Werror", str(c), "-o", str(exe)], check=True)
+    subprocess.run([str(exe)], check=True)
+    c.write_text(two_program)
     subprocess.run(["cc", "-std=c11", "-Wall", "-Werror", str(c), "-o", str(exe)], check=True)
     subprocess.run([str(exe)], check=True)

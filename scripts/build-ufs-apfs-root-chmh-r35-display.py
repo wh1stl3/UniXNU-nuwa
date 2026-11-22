@@ -23,6 +23,7 @@ MG_HANDOFF_SC_KERNEL = "ba1f6913cf0412b3e8714b3f3dfca8daa8922768aa427e12b6d8d0f4
 MG_HANDOFF_PROC_KERNEL = "46babd3f23a10295c25fc72b948958f2807926741a0d7b359572a9fbd5846a99"
 MG_HANDOFF_PROC_SIX_KERNEL = "c7fcaabdd9274847f75da48ffcc7aca41b2ec330ba8d2e2b3bf65408f5e1d63d"
 MG_HANDOFF_XR_KERNEL = "22af086c04d463f9be74ae302a180fa20c31346ee124a32dcd1791e89595ddc1"
+MG_HANDOFF_XR32_KERNEL = "2e4437d4e9b26eb2ed896df96e40733a34ec90d7c89de4a382e7b90d9e1c9ada"
 DISPLAY_KERNELS = {
     # Client identity probe (sticky bb); fingerprint delta recorded separately.
     "daa0288fb7786a0b6078a0608b2d09fc5c4a71252a5d4a42944ac5b7da14293b",
@@ -70,7 +71,7 @@ def main():
     if a.enable_mg_reset_resume_only:
         if not (a.enable_display and a.board_window) or a.enable_hid_standin:
             parser.error("--enable-mg-reset-resume-only requires --enable-display --board-window without HID")
-        if a.kernel_sha256 not in (MG_KERNEL, MG_PROP_KERNEL, MG_PROP_SC_KERNEL, MG_PROP_SC_REFRESH_KERNEL, MG_ROTATION_KERNEL, MG_HANDOFF_SC_KERNEL, MG_HANDOFF_PROC_KERNEL, MG_HANDOFF_PROC_SIX_KERNEL, MG_HANDOFF_XR_KERNEL):
+        if a.kernel_sha256 not in (MG_KERNEL, MG_PROP_KERNEL, MG_PROP_SC_KERNEL, MG_PROP_SC_REFRESH_KERNEL, MG_ROTATION_KERNEL, MG_HANDOFF_SC_KERNEL, MG_HANDOFF_PROC_KERNEL, MG_HANDOFF_PROC_SIX_KERNEL, MG_HANDOFF_XR_KERNEL, MG_HANDOFF_XR32_KERNEL):
             parser.error("MG ON profile requires the pinned MG reset kernel")
     elif a.enable_hid_standin:
         if not (a.enable_display and a.board_window):

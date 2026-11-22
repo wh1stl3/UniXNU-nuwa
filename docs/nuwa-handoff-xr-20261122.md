@@ -1,6 +1,6 @@
 # Post-handoff XR exit-ring display
 
-XR displays up to two entries, in existing ring order, independently of
+XR displays the newest inserted entry independently of
 the CRASH lines: no association with a CRASH line is asserted. Entries are
 deduplicated by PID, name, signal, namespace and reason code; the first
 record is retained and a matching later exit only increments its count.
@@ -17,19 +17,65 @@ an exit initiated by a kernel thread or another thread invalidates that
 inference. It is a user virtual address; matching it to symbols may require
 unsliding using the corresponding process image mapping.
 
-Valid PCs are displayed as exactly six hexadecimal digits, the low 24 bits.
-`-` means `pc_valid` is zero, not PC zero. The full address cannot be
-reconstructed from the suffix alone: obtain the omitted high bits from an
-independent process mapping or full PC, and check that the resulting address
-has the displayed low 24 bits before applying the image slide.
+Valid PCs are displayed as exactly eight hexadecimal digits, the low 32 bits.
+`-` means `pc_valid` is zero, not PC zero. A repeated matching entry does not
+move to the front, so the displayed entry is not necessarily the latest exit.
+
+## How to locate a symbol
+
+Obtain the process's runtime image mappings for that same run and locate
+the full PC in a mapped range; the suffix by itself cannot identify a mapping.
+A range belonging to dyld's shared cache must be resolved against the matching
+cache and its constituent image's mapping, not against the standalone
+executable. A range belonging to the executable outside the cache uses that
+executable's matching Mach-O. UUIDs and mapping ranges are needed to select
+the correct images, cache version and symbols.
+
+The slide is aligned to the applicable mapping/ASLR page granularity. Only
+bits below that alignment are necessarily unchanged by adding the slide:
+matching low 12 bits is not proof of the same instruction (and the actual
+granularity must be established for that mapping). For a candidate full PC,
+subtract the corresponding image or shared-cache slide to obtain the unslid
+VM address, then use the matching Mach-O segment's VM address and file offset
+to translate it to a file offset, or symbolicate the unslid VM address.
+Cache images may require cache-specific mapping and extraction rules; a
+simple executable-base subtraction is not a general file-offset rule.
+
+The display is PC modulo 2^32: all bits above bit 31 are lost, so addresses
+separated by 4 GiB collide. An address in the hypothesized
+`0x180000000`–`0x1ffffffff` range has omitted high bits `1`, but that range
+is not established by this display. Independently establish the full mapping
+and verify its low 32 bits before unsliding; no unique full PC or file offset
+follows from the displayed value alone.
 
 The existing `exit_lock` protects the read and formatting; no cross-ring
-lookup or new capture is introduced. Host formatter test measured 78 columns
-for two maximal-width PIDs, 9-character names, 6-digit PCs and signal 127.
-This is self-checked only. Reviewer re-review of concurrent ring reading and
-deduplication semantics is required. No device operation was performed.
+lookup or new capture is introduced. The host test of the generated formatter
+measured 82 columns with two maximal-width PIDs, 9-character names, 8-digit
+PCs and signal 127, using enlarged test-only buffers to avoid truncation.
+One entry measures 41 columns and is used instead. This is self-checked only.
+Reviewer re-review of width and truncation semantics is required; the earlier
+concurrent ring reading and deduplication review remains pending.
+No device operation was performed.
 
-## Host artifacts and checks
+## 32-bit host artifacts
+
+| Artifact | Digest |
+| --- | --- |
+| Kernel SHA-256 | `2e4437d4e9b26eb2ed896df96e40733a34ec90d7c89de4a382e7b90d9e1c9ada` |
+| Outer SHA-256 | `25d6dee727a69155c96f7de09306216c21d6b5cafb9689768056a4c6261aedb4` |
+| FAT SHA-256 | `5b43f0e37082b75523d9fcd2b6e2f4430b63f05088d4e440860a966394efef7d` |
+| CHMH SHA-384 | `665635959946813556861f6f47fcb0d75e5ccfdb0fd5d756494c5d88caa7fffed84f7864bbc7ad6b028c8bcf85ef2f93` |
+
+The compact build and packaging are self-checked, not independently verified.
+Separate outer readback and CHMH audit are self-checked; `fsck.fat -vn` and
+`mdir` report 11,898,368 bytes free (minimum 8,388,608). The readback
+`unixnu.toml` is byte-identical to the previous six-digit XR audit.
+Outputs are `out/nuwa-handoff-xr32-build-root-20261122`,
+`out/nuwa-handoff-xr32-package-20261122` and
+`out/nuwa-handoff-xr32-audit-20261122`. Build and package flags match the
+six-digit recipe below; use a root WSL user for the root-owned compile tree.
+
+## Previous six-digit host artifacts and checks
 
 | Artifact | Digest |
 | --- | --- |

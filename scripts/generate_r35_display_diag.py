@@ -110,10 +110,10 @@ void boot_progress_prop_set(uint16_t properties) {
     src = replace_once(src, b"  __atomic_store_n(&exit_lock,0,__ATOMIC_RELEASE);\n  // Presentation cost: swaps in the last second", b"""  // exit_lock already protects both rings; XR describes only exit_ring.
   {
     char xr[80]="XR";
-    for(unsigned i=0;i<exit_ring_count && i<2;++i) {
+    for(unsigned i=0;i<exit_ring_count && i<1;++i) {
       const struct bp_exit_ring_entry *e=&exit_ring[i];
-      char pc[7], part[40];
-      if(e->pc_valid) snprintf(pc,sizeof(pc),"%06x",(unsigned)(e->pc&0xffffffULL));
+      char pc[9], part[48];
+      if(e->pc_valid) snprintf(pc,sizeof(pc),"%08x",(unsigned)(e->pc&0xffffffffULL));
       else { pc[0]='-'; pc[1]=0; }
       snprintf(part,sizeof(part),"%s p%u %.9s %s sig=%u",
         i?" |":"",e->pid,e->comm,pc,e->sig&127u);
