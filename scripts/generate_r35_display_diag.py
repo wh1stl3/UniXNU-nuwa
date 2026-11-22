@@ -21,17 +21,25 @@ struct proc;
 extern struct proc *proc_find(int);
 extern int proc_rele(struct proc *);
 extern void proc_name(int, char *, int);
+extern void psignal(struct proc *, int);
 """)
     src = replace_once(src, b"static void touch_monitor(void *arg, wait_result_t result) {", b"""
 // Only touch_monitor calls this, before acquiring render_busy.
-static void bp_proc_census(void) {
+static void bp_proc_census(unsigned restart) {
   uint32_t found[6]={0}, services=0;
+  unsigned killed_pid=0;
   for (int pid=1;pid<=4096;++pid) {
     struct proc *p=proc_find(pid);
     if (!p) continue;
     char name[32];
     proc_name(pid,name,sizeof(name));
-    if (!strcmp(name,"SpringBoard")) found[0]=(uint32_t)pid;
+    if (!strcmp(name,"SpringBoard")) {
+      found[0]=(uint32_t)pid;
+      if (restart && !killed_pid) {
+        killed_pid=(unsigned)pid;
+        psignal(p,9);
+      }
+    }
     else if (!strcmp(name,"backboardd")) found[1]=(uint32_t)pid;
     else if (!strcmp(name,"lsd")) found[2]=(uint32_t)pid;
     else if (!strcmp(name,"launchd")) found[3]=(uint32_t)pid;
@@ -45,21 +53,33 @@ static void bp_proc_census(void) {
     else if (!strcmp(name,"mobileactivation")) services|=1u<<5;
     proc_rele(p);
   }
+  if (restart) {
+    __atomic_store_n(&bp_sb_restart_state,killed_pid ? 1u : 2u,__ATOMIC_RELAXED);
+    printf("nuwa-sb-restart: time=%u pid=%u psignal=%s\\n",
+      restart,killed_pid,killed_pid ? "called" : "not-called");
+  }
   for (unsigned i=0;i<6;++i) __atomic_store_n(&bp_proc_pid[i],found[i],__ATOMIC_RELAXED);
   __atomic_store_n(&bp_svc_mask,services,__ATOMIC_RELAXED);
   __atomic_fetch_add(&bp_proc_generation,1,__ATOMIC_RELEASE);
 }
 static void touch_monitor(void *arg, wait_result_t result) {""")
-    src = replace_once(src, b"  for(;;) {\n    touch_overlay();", b"""  unsigned census_at=0, census_started=0;
+    src = replace_once(src, b"  for(;;) {\n    touch_overlay();", b"""  unsigned census_at=0, census_started=0, restart_at=0, restart_done=0;
+  PE_parse_boot_argn("nuwa-sb-restart",&restart_at,sizeof(restart_at));
+  if (restart_at && restart_at<60) restart_at=60;
   for(;;) {
     unsigned now=seconds();
     if (nprocs>0 && (!census_started || now-census_at>=10)) {
-      bp_proc_census();
+      unsigned restart=0;
+      if (restart_at && !restart_done && now>=restart_at) {
+        restart_done=1;
+        restart=now;
+      }
+      bp_proc_census(restart);
       census_at=now; census_started=1;
     }
     touch_overlay();""")
     anchor = b"char boot_progress_page_text[48][BP_COLS];"
-    src = replace_once(src, anchor, b"""static uint32_t bp_proc_pid[6], bp_proc_generation, bp_svc_mask;
+    src = replace_once(src, anchor, b"""static uint32_t bp_proc_pid[6], bp_proc_generation, bp_svc_mask, bp_sb_restart_state;
 // FDR exits are independent of the best-effort exit ring.
 static uint64_t bp_fdr_exit;
 // Diagnostic only: two independent byte samples; no synchronization of display state.
@@ -144,7 +164,8 @@ void boot_progress_prop_set(uint16_t properties) {
     snprintf(rows[n++],120,"PROC n=%d SB=%s bb=%s lsd=%s ld=%s lk=%s cm=%s",
       nprocs,value[0],value[1],value[2],value[3],value[4],value[5]);
   }
-  snprintf(rows[n++],120,"SVC %02x",__atomic_load_n(&bp_svc_mask,__ATOMIC_RELAXED));
+  snprintf(rows[n++],120,"SVC %02x K=%u",__atomic_load_n(&bp_svc_mask,__ATOMIC_RELAXED),
+    __atomic_load_n(&bp_sb_restart_state,__ATOMIC_RELAXED));
   if (&nuwa_sc_calls && &nuwa_sc_rejects && &nuwa_sc_ok) {
     static unsigned previous_calls, previous_time;
     unsigned calls = __atomic_load_n(&nuwa_sc_calls,__ATOMIC_RELAXED);
