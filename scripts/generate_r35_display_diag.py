@@ -107,6 +107,22 @@ void boot_progress_prop_set(uint16_t properties) {
   else snprintf(b,sizeof(b),"SC unavailable");
   line(11,b,0xff00ffcc);
 """)
+    src = replace_once(src, b"  __atomic_store_n(&exit_lock,0,__ATOMIC_RELEASE);\n  // Presentation cost: swaps in the last second", b"""  // exit_lock already protects both rings; XR describes only exit_ring.
+  {
+    char xr[80]="XR";
+    for(unsigned i=0;i<exit_ring_count && i<2;++i) {
+      const struct bp_exit_ring_entry *e=&exit_ring[i];
+      char pc[7], part[40];
+      if(e->pc_valid) snprintf(pc,sizeof(pc),"%06x",(unsigned)(e->pc&0xffffffULL));
+      else { pc[0]='-'; pc[1]=0; }
+      snprintf(part,sizeof(part),"%s p%u %.9s %s sig=%u",
+        i?" |":"",e->pid,e->comm,pc,e->sig&127u);
+      strlcat(xr,part,sizeof(xr));
+    }
+    if(exit_ring_count) snprintf(rows[n++],120,"%s",xr);
+  }
+  __atomic_store_n(&exit_lock,0,__ATOMIC_RELEASE);
+  // Presentation cost: swaps in the last second""")
     src = replace_once(src, b"  // Presentation cost: swaps in the last second", b"""  // Sample the bridge after handoff, not the earlier diagnostic page.
   {
     uint32_t pid[6];
