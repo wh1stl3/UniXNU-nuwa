@@ -1,5 +1,7 @@
 # UniXNU-nuwa
 
+**2026-11-22 Apple logo 里程碑（主控转述 / self-checked；持久交互未达成）：** [记录](docs/nuwa-logo-milestone-20261122.md)。
+
 **2026-11-22 本轮结论（主控转述 / self-checked）：** [记录](docs/nuwa-session-20261122-findings.md)。
 
 **显示分支（2026-11-20）：**[FAT 计数更正：ON 通过、原 r35 OFF 低于门槛](docs/nuwa-r35-display-fat-correction-20261120-observation.md)（主机 self-checked，未上机）。
