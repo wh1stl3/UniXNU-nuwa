@@ -165,6 +165,10 @@ void native_legacy_display_late_probe(void) {
   nub->setName("nuwa-gop-display", gIODTPlane);
   if (!(dtAttached = nub->attachToParent(parentDT, gIODTPlane)) ||
       !(displayAttached = displayObject->attach(nub))) { failure(12); goto finish; }
+  if (!displayObject->setProperty("NormalModeEnable", kOSBooleanTrue) ||
+      !displayObject->setProperty("ADCLLoadAll", kOSBooleanFalse)) {
+    failure(15); goto finish;
+  }
   {
     SInt32 score = 0;
     if (displayObject->probe(nub, &score) != displayObject || !displayObject->start(nub)) {

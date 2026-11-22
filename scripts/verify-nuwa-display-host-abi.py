@@ -27,7 +27,9 @@ CPU_UNRESOLVED_SHA256 = 'bd169e2fd505971d5cb6b15978e787b831f5bfaee160ef7fcc5a5ae
 # compareName/getResources unconditionally cast the provider to IOPlatformExpert.
 # Added: __ZN9IOServiceC1Ev, __ZN9IOServicenwEm
 # Removed: __ZN16IOPlatformDeviceC1Ev, __ZN16IOPlatformDevicenwEm
-NO_VSYNC_UNRESOLVED_SHA256 = '7a2dfde615090010c88f00867913a30606650012b148b36ad1c4b34cf0859e9e'
+# NormalModeEnable/ADCLLoadAll publication adds _kOSBooleanTrue and
+# _kOSBooleanFalse to the board object's imports.
+NO_VSYNC_UNRESOLVED_SHA256 = 'a2d0d02b50e7819b421d742e489a9761e6d8e808f4258bbd9a2c4be8460d8120'
 GPU_IMPORTS = {
     '_native_adreno_fences', '_native_adreno_fences_detail',
     '_native_gpu_trace_enabled', '_native_gpu_trace_record',
