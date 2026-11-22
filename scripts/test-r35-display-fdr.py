@@ -17,7 +17,11 @@ assert len(f"PROP {0xffff:04x} FDR {0xffffffff}s st={0xffff} sig={0xff}") <= 80
 assert len(f"SC n={0xffffffff} r={0xffffffff} o={0xffffffff}") <= 80
 assert 'line(11,b,0xff00ffcc);' in src
 for name in ("calls", "rejects", "ok"):
-    assert src.count(f'__atomic_load_n(&nuwa_sc_{name},__ATOMIC_RELAXED)') == 1
+    assert src.count(f'__atomic_load_n(&nuwa_sc_{name},__ATOMIC_RELAXED)') == 2
+banner = src[src.index("static void crash_banner(unsigned now)"):]
+assert 'SC n=%u r=%u o=%u' in banner
+assert 'SC +%u in %us' in banner
+assert len(f"SC +{0xffffffff} in {0xffffffff}s") <= 80
 provider = Path("package/NuwaLegacyDisplay.cpp").read_text()
 assert 'displayObject->setProperty("IOFBRotation", (unsigned long long)0, 32)' in provider
 assert provider.index('setProperty("IOFBRotation"') < provider.index('displayObject->registerService();')

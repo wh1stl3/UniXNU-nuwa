@@ -70,6 +70,19 @@ void boot_progress_prop_set(uint16_t properties) {
   else snprintf(b,sizeof(b),"SC unavailable");
   line(11,b,0xff00ffcc);
 """)
+    src = replace_once(src, b"  // Presentation cost: swaps in the last second", b"""  // Sample the bridge after handoff, not the earlier diagnostic page.
+  if (&nuwa_sc_calls && &nuwa_sc_rejects && &nuwa_sc_ok) {
+    static unsigned previous_calls, previous_time;
+    unsigned calls = __atomic_load_n(&nuwa_sc_calls,__ATOMIC_RELAXED);
+    unsigned rejects = __atomic_load_n(&nuwa_sc_rejects,__ATOMIC_RELAXED);
+    unsigned ok = __atomic_load_n(&nuwa_sc_ok,__ATOMIC_RELAXED);
+    snprintf(rows[n++],120,"SC n=%u r=%u o=%u",calls,rejects,ok);
+    if (previous_time)
+      snprintf(rows[n++],120,"SC +%u in %us",calls-previous_calls,now-previous_time);
+    else snprintf(rows[n++],120,"SC interval unavailable");
+    previous_calls=calls; previous_time=now;
+  } else snprintf(rows[n++],120,"SC unavailable");
+  // Presentation cost: swaps in the last second""")
     src = replace_once(src, b"  census_note(name,1);\n", b"""  if(name && !strcmp(name,"IOMFB_FDR_Loader")) {
     uint64_t fdr = ((uint64_t)seconds()<<32) | (((uint64_t)(unsigned)status&0xffffu)<<16) |
       ((unsigned)status&127u);
