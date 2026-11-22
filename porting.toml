@@ -150,6 +150,7 @@ inputs = ["Identify the display hardware, resources and existing component inter
 configuration = ["Record the board.toml fields, DTS properties and defconfig values used for display."]
 procedure = ["Follow the display stage in the porting guide and record the actual commands."]
 findings = [
+  "2026-11-22 refresh step software fallback is 60 Hz, not measured panel timing; combined PROP/SC host build and packaging are self-checked, pending deep review and independent verification: docs/nuwa-refresh-step-fallback-20261122.md.",
   "2026-11-22 follow-up holds copyProperty references through type/length reads and adds scanout bridge counters; bridge success does not prove CPU copy. Host candidate and pending deep review: docs/nuwa-display-property-mask-20261122.md.",
   "2026-11-22 display property mask is a read-only registration-return sample; no runtime publication result is claimed. Host candidate and review limits: docs/nuwa-display-property-mask-20261122.md.",
   "2026-11-22 experimental bypass: SpringBoard assertion and suspected stale MobileGestalt scale -> default-off pre-initproc cache backup rename, no deletion, only on RW Resumed Data -> first boot may take longer while caches rebuild -> remove once MG derives correct scale from ADT. See docs/nuwa-mg-reset-20261122.md; deep_reviewer must re-review the overlay gate and experiment premise.",

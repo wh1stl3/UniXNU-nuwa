@@ -19,9 +19,13 @@ Result publishFallback(Backend &backend, Mode mode)
     };
     const uint64_t minTicks = ticks(min);
     const uint64_t maxTicks = mode == Mode::Fixed ? minTicks : ticks(max);
+    // Software 60 Hz fallback, not a measured panel period.
+    constexpr uint64_t stepNs = 16666667;
+    const uint64_t stepTicks = backend.ticks(stepNs);
     // Donor writes zero-extended w2 into a 64-bit OSNumber. Reject a
     // nonrepresentable conversion instead of silently wrapping the period.
-    if (!minTicks || !maxTicks || minTicks > UINT32_MAX || maxTicks > UINT32_MAX) {
+    if (!minTicks || !maxTicks || !stepTicks || minTicks > UINT32_MAX ||
+        maxTicks > UINT32_MAX || stepTicks > UINT32_MAX) {
         return Result::TickRange;
     }
     const char *const keys[] = {
@@ -29,7 +33,7 @@ Result publishFallback(Backend &backend, Mode mode)
         "displayMaxRefreshInterval", "displayMaxRefreshIntervalMachTime",
         "displayRefreshStep", "displayRefreshStepMachTime",
     };
-    const uint64_t values[] = {min, minTicks, max, maxTicks, 0, 0};
+    const uint64_t values[] = {min, minTicks, max, maxTicks, stepNs, stepTicks};
     auto *dictionary = backend.dictionary(6);
     if (!dictionary) {
         return Result::DictionaryAllocation;

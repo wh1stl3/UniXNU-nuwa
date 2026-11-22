@@ -122,19 +122,21 @@ void readers()
     Fixture fixed, variable;
     assert(publishFallback(fixed, Mode::Fixed) == Result::Published);
     assert(publishFallback(variable, Mode::NonFixed) == Result::Published);
-    assert(fixed.ns == std::vector<uint64_t>{16666666});
-    assert((variable.ns == std::vector<uint64_t>{16666666, 41666666}));
+    assert((fixed.ns == std::vector<uint64_t>{16666666, 16666667}));
+    assert((variable.ns == std::vector<uint64_t>{16666666, 41666666, 16666667}));
     assert(!fixed.live && !variable.live);
     for (const auto &f : {fixed, variable}) {
         assert(f.registry.size() == 6 && f.publications == 1);
         assert(read(&f.registry, minKey) == 0x04444444 && read(&f.registry, minMach) == 399999);
-        assert(f.registry.at(step).value == 0 && f.registry.at(stepMach).value == 0);
-        near(quartz(&f.registry), std::ldexp(0x04444444, -32));
+        assert(f.registry.at(step).value == 16666667 && f.registry.at(stepMach).value == 400000);
+        near(quartz(&f.registry), 1.0 / 60);
     }
     assert(read(&fixed.registry, maxKey) == 0x04444444 && read(&fixed.registry, maxMach) == 399999);
     assert(read(&variable.registry, maxKey) == 0x0aaaaaaa && read(&variable.registry, maxMach) == 999999);
-    media(&fixed.registry, 60, 60, 0);
-    media(&variable.registry, 24, 60, 0);
+    media(&fixed.registry, 60, 60, 60);
+    media(&variable.registry, 24, 60, 60);
+    // 19.2 MHz, integer conversion truncates toward zero.
+    assert(16666667ULL * 19200000ULL / 1000000000ULL == 320000);
     using Property = std::variant<std::monostate, Value, Dict>;
     for (const Property &p : {Property{}, Property{Value{42}}}) {
         const auto *dictionary = std::get_if<Dict>(&p);
@@ -222,7 +224,7 @@ void startPolicy()
         Fixture f;
         assert(publishFixedForStart(f, hz));
         assert(!f.live && f.publications == 1 && f.registry.size() == 6);
-        media(&f.registry, 60, 60, 0);
+        media(&f.registry, 60, 60, 60);
     }
     for (unsigned hz : {59U, 120U, 241U}) {
         Fixture f;
