@@ -139,6 +139,21 @@ void native_legacy_display_late_probe(void) {
   if (!(nubAttached = nub->attach(resource)) || !(nubStarted = nub->start(resource))) {
     failure(10); goto finish;
   }
+  {
+    // Match the provider's ADT u32 byte representation consumed by IOMFB.
+    uint32_t width = (uint32_t)v.v_width, height = (uint32_t)v.v_height;
+    uint8_t widthLE[] = { (uint8_t)width, (uint8_t)(width >> 8),
+                          (uint8_t)(width >> 16), (uint8_t)(width >> 24) };
+    uint8_t heightLE[] = { (uint8_t)height, (uint8_t)(height >> 8),
+                           (uint8_t)(height >> 16), (uint8_t)(height >> 24) };
+    OSData *w = OSData::withBytes(widthLE, sizeof(widthLE));
+    OSData *h = OSData::withBytes(heightLE, sizeof(heightLE));
+    bool set = w && h && nub->setProperty("canvas-width", w) &&
+        nub->setProperty("canvas-height", h);
+    OSSafeReleaseNULL(w);
+    OSSafeReleaseNULL(h);
+    if (!set) { failure(14); goto finish; }
+  }
   parentDT = IORegistryEntry::fromPath("/arm-io", gIODTPlane);
   {
     const char type[] = "display-subsystem";
