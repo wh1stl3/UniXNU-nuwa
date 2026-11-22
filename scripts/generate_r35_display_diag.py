@@ -13,7 +13,7 @@ def replace_once(src, anchor, replacement):
     return src.replace(anchor, replacement, 1)
 
 
-def generate(src):
+def generate(src, *, mg_reset=False):
     if sha256(src).hexdigest() != RENDERER_SHA:
         raise ValueError("expected the pinned r35l full renderer")
     anchor = b"char boot_progress_page_text[48][BP_COLS];"
@@ -63,4 +63,15 @@ void boot_progress_diag_set(uint8_t stage, uint8_t reason) {
 """)
     src = replace_once(src, b"  if(signal || ns) {\n",
                        b'  if((signal || ns) && !(name && !strcmp(name,"IOMFB_FDR_Loader"))) {\n')
+    if mg_reset:
+        src = replace_once(src, anchor, b"extern uint32_t nuwa_mg_reset_diag;\n" + anchor)
+        src = replace_once(src, b"  if (&nuwa_cli_enter", b"""  char mg[16] = "";
+  uint32_t mr = __atomic_load_n(&nuwa_mg_reset_diag,__ATOMIC_RELAXED);
+  if (mr & 0x100u)
+    snprintf(mg,sizeof(mg)," MG r=%u/%u%s",mr&15u,(mr>>4)&15u,(mr&0x200u)?" j!":"");
+  if (&nuwa_cli_enter""")
+        src = replace_once(src, b' bb=%c",', b' bb=%c%s",')
+        src = replace_once(src, b"(unsigned)out,bb);", b"(unsigned)out,bb,mg);")
+        src = replace_once(src, b' CLI unavailable",dsp_stage,dsp_reason);',
+                           b' CLI unavailable%s",dsp_stage,dsp_reason,mg);')
     return src

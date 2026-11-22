@@ -13,6 +13,7 @@ SOURCE = ROOT / "scripts/build-ufs-apfs-root-chmh-r35.py"
 SOURCE_SHA = "16ed1a3b762152a0426701942224d5c7008edb01829c97bc8132a5262e7d3b96"
 R35_SHA = "787610183dc7f772e2d01aa183f72f2fcc52245fc44407e6c815ced614412464"
 HID_KERNEL = "0a17b5fde4264546bbfcb710adb1752252cdbafb184c796342d8ade53e2a5509"
+MG_KERNEL = "ef9920d5e5f4db69c1368da2a73c788633d69029bc68e7b7e1a0139a056bba65"
 DISPLAY_KERNELS = {
     # Client identity probe (sticky bb); fingerprint delta recorded separately.
     "daa0288fb7786a0b6078a0608b2d09fc5c4a71252a5d4a42944ac5b7da14293b",
@@ -39,6 +40,8 @@ def main():
     parser.add_argument("--enable-display", action="store_true")
     parser.add_argument("--enable-hid-standin", action="store_true",
                         help="append only nuwa-hid-standin=1 to the 4.75 GiB display ON profile")
+    parser.add_argument("--enable-mg-reset", action="store_true",
+                        help="append only nuwa-mg-reset=1 to the 4.75 GiB display ON profile")
     parser.add_argument("--board-window", action="store_true",
                         help="derive the window from board.toml")
     parser.add_argument("--output", type=Path, required=True)
@@ -55,7 +58,12 @@ def main():
     blob = kernel.read_bytes()
     if hashlib.sha256(blob).hexdigest() != a.kernel_sha256:
         parser.error("kernel SHA256 mismatch")
-    if a.enable_hid_standin:
+    if a.enable_mg_reset:
+        if not (a.enable_display and a.board_window) or a.enable_hid_standin:
+            parser.error("--enable-mg-reset requires --enable-display --board-window without HID")
+        if a.kernel_sha256 != MG_KERNEL:
+            parser.error("MG ON profile requires the pinned MG reset kernel")
+    elif a.enable_hid_standin:
         if not (a.enable_display and a.board_window):
             parser.error("--enable-hid-standin requires --enable-display and --board-window")
         if a.kernel_sha256 != HID_KERNEL:
@@ -87,6 +95,9 @@ def main():
     if a.enable_hid_standin:
         inputs["PROFILE"] += "-hid"
         inputs["ARGS"] += b" nuwa-hid-standin=1"
+    if a.enable_mg_reset:
+        inputs["PROFILE"] += "-mg-reset"
+        inputs["ARGS"] += b" nuwa-mg-reset=1"
     for module in (r35, r35.X, r35.M):
         vars(module).update(inputs)
     if a.board_window:
@@ -94,6 +105,8 @@ def main():
                    ["payload"]["adt"]["owned_memory_size"], 0)
         if not 0x10000000 <= size <= 0x200000000 or size % 0x200000:
             raise ValueError("board window outside UniXNU's ADT size contract")
+        if a.enable_mg_reset and size != 0x130000000:
+            raise ValueError("MG ON profile requires the 4.75 GiB baseline window")
         previous = r35.X.derived
         adt = r35.A
 

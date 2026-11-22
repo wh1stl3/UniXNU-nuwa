@@ -146,7 +146,7 @@ def audit_debug_strip(full, compact):
             "native_bytes_saved": len(full) - len(compact)}
 
 
-def candidate_link(r35, out, records, argv, env, *, bringup_diag, hid):
+def candidate_link(r35, out, records, argv, env, *, bringup_diag, hid, mg_reset):
     recipe, = [r for r in records if r["label"] == "compile-bsd_init" and r["exit"] == 0]
     command = list(recipe["argv"])
     source = r35 / "tree/bsd/kern/bsd_init.c"
@@ -193,6 +193,15 @@ def candidate_link(r35, out, records, argv, env, *, bringup_diag, hid):
         policy_obj = out / old_obj.name
         watchdog_command[source_at] = str(policy_source)
         watchdog_command[watchdog_command.index("-o") + 1] = str(policy_obj)
+        if mg_reset:
+            mg_command = list(watchdog_command)
+            mg_command[source_at] = str(policy_source.with_name("nuwa_mg_reset.c"))
+            mg_obj = out / "nuwa_mg_reset.o"
+            mg_command[mg_command.index("-o") + 1] = str(mg_obj)
+            (out / "mg-reset-argv.json").write_text(json.dumps(mg_command, indent=2) + "\n")
+            subprocess.run(mg_command, cwd=watchdog["cwd"], env=env, check=True)
+            watchdog_command.append("-DXNU_NUWA_MG_RESET=1")
+            filelist = filelist.replace(old_line, old_line + str(mg_obj) + "\n", 1)
         (out / "watchdog-argv.json").write_text(json.dumps(watchdog_command, indent=2) + "\n")
         subprocess.run(watchdog_command, cwd=watchdog["cwd"], env=env, check=True)
         (out / "watchdog-inputs.json").write_text(json.dumps({
@@ -208,11 +217,11 @@ def candidate_link(r35, out, records, argv, env, *, bringup_diag, hid):
     return adjusted
 
 
-def diag_archive(r35, out, *, hid):
+def diag_archive(r35, out, *, hid, mg_reset):
     from generate_r35_display_diag import generate
 
     source = out / "BootProgress.c"
-    source.write_bytes(generate((r35 / "BootProgress.c").read_bytes()))
+    source.write_bytes(generate((r35 / "BootProgress.c").read_bytes(), mg_reset=mg_reset))
     shutil.copyfile(r35 / "BootProgressDisplay.h", out / "BootProgressDisplay.h")
     stubs = ROOT / "package/boot-progress-r13/nuwa_boot_progress_stubs.c"
     require_pin(stubs, "14817837f64b37f36c65ac5e6debd187c2d8e6a24e8b0396eb280239108c6b47")
@@ -234,7 +243,7 @@ def diag_archive(r35, out, *, hid):
 
 
 def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
-               keep_link_debug, bringup_diag=False, hid_objects=()):
+               keep_link_debug, bringup_diag=False, hid_objects=(), mg_reset=False):
     for name, pin in (R35L_PINS if bringup_diag else R35_PINS).items():
         require_pin(r35 / name, pin)
     require_pin(cpo, R35_CPO_SHA)
@@ -299,10 +308,11 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
         # Preserve the ADRP/LDR GOT sequence required by the linked audit.
         if candidate:
             argv = candidate_link(r35, out, records, argv, env, bringup_diag=bringup_diag,
-                                  hid=bool(hid_objects))
+                                  hid=bool(hid_objects), mg_reset=mg_reset)
         if bringup_diag:
             argv = list(argv)
-            argv[force_at] = f"-Wl,-force_load,{diag_archive(r35, out, hid=bool(hid_objects))}"
+            diag = diag_archive(r35, out, hid=bool(hid_objects), mg_reset=mg_reset)
+            argv[force_at] = f"-Wl,-force_load,{diag}"
         argv = [*argv, "-Wl,-ignore_optimization_hints", f"-Wl,-force_load,{archive}", *map(str, hid_objects)]
         if not candidate or keep_link_debug:
             return link("native-link", native, argv)
@@ -535,6 +545,8 @@ def main():
                    help="measure the archive-only size reduction before stripping linked STABS")
     p.add_argument("--hid-standin", action="store_true",
                    help="include the default-off HID board probe and require its final ABI audit")
+    p.add_argument("--mg-reset", action="store_true",
+                   help="include the board cache reset (off unless nuwa-mg-reset=1)")
     p.add_argument("--out", type=Path, required=True, help="new directory under out/")
     a = p.parse_args()
     base, cpo, linker, out = (x.resolve() for x in (a.base, a.cpo, a.linker_dir, a.out))
@@ -558,6 +570,8 @@ def main():
         p.error("--r35l-dir requires --candidate and must be inside device out/")
     if a.hid_standin and not a.r35l_dir:
         p.error("--hid-standin requires the pinned --r35l-dir candidate")
+    if a.mg_reset and not a.r35l_dir:
+        p.error("--mg-reset requires the pinned --r35l-dir candidate")
     out.mkdir(parents=True, exist_ok=False)
     donor = base / "out/ipsw/20H392/kernelcache.decompressed"
     hid_objects = []
@@ -585,7 +599,7 @@ def main():
         mapfile = replay_r35(link_inputs, linker, cpo, out, archive, native,
                               cpu_only=a.cpu_only, candidate=a.candidate,
                               keep_link_debug=a.keep_link_debug, bringup_diag=bool(a.r35l_dir),
-                              hid_objects=hid_objects)
+                              hid_objects=hid_objects, mg_reset=a.mg_reset)
     else:
         # Replay XNU's exported link inputs, without its historical map output.
         stem = "mach.development.bcm2837"

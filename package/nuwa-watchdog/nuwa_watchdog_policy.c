@@ -58,6 +58,11 @@ volatile int32_t nuwa_watchdog_policy_status = -1;
 volatile uint32_t nuwa_watchdog_policy_labels;
 volatile uint32_t nuwa_watchdog_policy_committed;
 
+#ifdef XNU_NUWA_MG_RESET
+extern volatile int32_t nuwa_data_readonly;
+extern void nuwa_mg_reset(proc_t, user_addr_t, int);
+#endif
+
 /* "<label>" for one comma-separated entry; label characters are restricted the way upstream
  * restricts them, so a boot argument cannot inject plist markup. */
 static int
@@ -180,6 +185,10 @@ nuwa_boot_watchdog_policy(void *process, uint64_t scratch)
 		nuwa_watchdog_policy_status = EINVAL;
 		return EINVAL;
 	}
+#ifdef XNU_NUWA_MG_RESET
+	/* Independent of all watchdog policy boot arguments and return paths. */
+	nuwa_mg_reset(p, scratch, nuwa_data_readonly);
+#endif
 	/* Unprefixed names first; the sheng- spellings stay accepted so an image built with the
 	 * upstream argument list behaves the same. */
 	if (!nuwa_policy_parse_uint("disable-watchdogd", &disable_watchdogd)) {
