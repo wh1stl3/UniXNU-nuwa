@@ -29,6 +29,15 @@ assert "__atomic_load_n(&bp_proc_pid[i],__ATOMIC_RELAXED)" in banner
 assert len("PROC n=99999 SB=99999 bb=99999 lsd=99999 ld=99999 lk=99999 cm=99999") <= 80
 assert len("containermanagerd") == 17
 assert "containermanagerd"[:16] == "containermanager"
+assert len("mobileactivationd") == 17
+assert "mobileactivationd"[:16] == "mobileactivation"
+for bit, name in enumerate(("runningboardd", "distnoted", "cfprefsd",
+                             "notifyd", "securityd", "mobileactivation")):
+    assert f'!strcmp(name,"{name}")) services|=1u<<{bit};' in body
+assert '__atomic_store_n(&bp_svc_mask,services,__ATOMIC_RELAXED)' in body
+assert '"SVC %02x",__atomic_load_n(&bp_svc_mask,__ATOMIC_RELAXED)' in banner
+assert len("SVC 3f") == 6
+assert "n+16+6<=cap" in banner and "unsigned room=cap-16-n;" in banner
 for row in ("DSP ", "CLI ", "EX", "LOAD ", "UFS ", "SCHED ", "SC "):
     assert row in src
 print("handoff process census source contract: self-checked")

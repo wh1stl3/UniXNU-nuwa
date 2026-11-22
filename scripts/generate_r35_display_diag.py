@@ -25,7 +25,7 @@ extern void proc_name(int, char *, int);
     src = replace_once(src, b"static void touch_monitor(void *arg, wait_result_t result) {", b"""
 // Only touch_monitor calls this, before acquiring render_busy.
 static void bp_proc_census(void) {
-  uint32_t found[6]={0};
+  uint32_t found[6]={0}, services=0;
   for (int pid=1;pid<=4096;++pid) {
     struct proc *p=proc_find(pid);
     if (!p) continue;
@@ -37,9 +37,16 @@ static void bp_proc_census(void) {
     else if (!strcmp(name,"launchd")) found[3]=(uint32_t)pid;
     else if (!strcmp(name,"lockdownd")) found[4]=(uint32_t)pid;
     else if (!strcmp(name,"containermanager")) found[5]=(uint32_t)pid;
+    else if (!strcmp(name,"runningboardd")) services|=1u<<0;
+    else if (!strcmp(name,"distnoted")) services|=1u<<1;
+    else if (!strcmp(name,"cfprefsd")) services|=1u<<2;
+    else if (!strcmp(name,"notifyd")) services|=1u<<3;
+    else if (!strcmp(name,"securityd")) services|=1u<<4;
+    else if (!strcmp(name,"mobileactivation")) services|=1u<<5;
     proc_rele(p);
   }
   for (unsigned i=0;i<6;++i) __atomic_store_n(&bp_proc_pid[i],found[i],__ATOMIC_RELAXED);
+  __atomic_store_n(&bp_svc_mask,services,__ATOMIC_RELAXED);
   __atomic_fetch_add(&bp_proc_generation,1,__ATOMIC_RELEASE);
 }
 static void touch_monitor(void *arg, wait_result_t result) {""")
@@ -52,7 +59,7 @@ static void touch_monitor(void *arg, wait_result_t result) {""")
     }
     touch_overlay();""")
     anchor = b"char boot_progress_page_text[48][BP_COLS];"
-    src = replace_once(src, anchor, b"""static uint32_t bp_proc_pid[6], bp_proc_generation;
+    src = replace_once(src, anchor, b"""static uint32_t bp_proc_pid[6], bp_proc_generation, bp_svc_mask;
 // FDR exits are independent of the best-effort exit ring.
 static uint64_t bp_fdr_exit;
 // Diagnostic only: two independent byte samples; no synchronization of display state.
@@ -75,6 +82,8 @@ void boot_progress_prop_set(uint16_t properties) {
 }
 """ + anchor)
     src = replace_once(src, b"+gpu_sig*17ULL;", b"+gpu_sig*17ULL+__atomic_load_n(&bp_proc_generation,__ATOMIC_ACQUIRE)*65537ULL;")
+    src = replace_once(src, b"n+15+6<=cap", b"n+16+6<=cap")
+    src = replace_once(src, b"unsigned room=cap-15-n;", b"unsigned room=cap-16-n;")
     # Use the short DATA-summary slot; its full detail remains on row 39.
     start = src.index(b"  // Row 9: the Data mount result")
     end = src.index(b"#endif\n", start)
@@ -135,6 +144,7 @@ void boot_progress_prop_set(uint16_t properties) {
     snprintf(rows[n++],120,"PROC n=%d SB=%s bb=%s lsd=%s ld=%s lk=%s cm=%s",
       nprocs,value[0],value[1],value[2],value[3],value[4],value[5]);
   }
+  snprintf(rows[n++],120,"SVC %02x",__atomic_load_n(&bp_svc_mask,__ATOMIC_RELAXED));
   if (&nuwa_sc_calls && &nuwa_sc_rejects && &nuwa_sc_ok) {
     static unsigned previous_calls, previous_time;
     unsigned calls = __atomic_load_n(&nuwa_sc_calls,__ATOMIC_RELAXED);
