@@ -7,7 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT.parent / 'UniXNU-nuwa/scripts/build-ufs-apfs-root-chmh-r35.py'
-SOURCE_SHA = '16ed1a3b762152a0426701942224d5c7008edb01829c97bc8132a5262e7d3b96'
+SOURCE_SHA = 'b5ce56a1784ec1395efa86f32468e8772da516b4b8e4c5e0f6535021c90537e7'
 
 
 def load_profile():

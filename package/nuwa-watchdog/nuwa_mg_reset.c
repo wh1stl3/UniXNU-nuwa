@@ -11,6 +11,7 @@
 #include <libkern/libkern.h>
 
 #define DATA "/private/var"
+extern volatile uint32_t native_data_persist_state;
 #define PREF DATA "/mobile/Library/Preferences"
 #define CACHE DATA "/containers/Shared/SystemGroup/systemgroup.com.apple.mobilegestaltcache/Library/Caches"
 #define MG_UPPER "com.apple.MobileGestalt.plist"
@@ -163,6 +164,13 @@ nuwa_mg_reset(proc_t p, user_addr_t scratch, int readonly)
 	int32_t result;
 
 	if (!PE_parse_boot_argn("nuwa-mg-reset", &enabled, sizeof(enabled)) || enabled != 1) {
+		return;
+	}
+	/* NativeRamBlock::attachStore: 2 is an existing overlay resumed read-write. */
+	uint32_t state = native_data_persist_state;
+	if (state != 2) {
+		printf("nuwa: MG not attempted: DS=%u (requires RW Resumed)\n", state);
+		__atomic_store_n(&nuwa_mg_reset_diag, 0x400u, __ATOMIC_RELAXED);
 		return;
 	}
 	journal_error = readonly ? EROFS :

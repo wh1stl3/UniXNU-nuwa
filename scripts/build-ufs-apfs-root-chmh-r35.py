@@ -115,7 +115,7 @@ M.ARGS = ARGS
 
 # Same checks as r14's check_inputs; only the expected build tag moves (it is a literal
 # in that function, so the wrapper carries the whole body).
-def check_inputs(inputs):
+def check_inputs(inputs, *, resume_only=False):
     pins = dict(X.C.PINS, kernel=KERNEL_SHA)
     for key, pin in pins.items():
         require(sha(inputs['parent-config'] if key == 'config' else inputs[key]) == pin,
@@ -131,11 +131,17 @@ def check_inputs(inputs):
     require(all(e.get('initrd') is None for e in config['entry'] if e.get('id') != 'xnu'),
             'Unexpected initrd on a non-xnu entry')
     text = ARGS.decode()
+    tokens = text.split()
+    if resume_only:
+        require(not any(t.split('=', 1)[0] == 'sheng-data-reset' for t in tokens),
+                'Resume-only args must not include sheng-data-reset')
+    else:
+        require('sheng-data-reset=1' in tokens, 'args missing sheng-data-reset=1')
     for token in ('boot-uuid=' + X.ROOT_UUID, 'native-ufs-root=1', 'boot-progress=2',
-                  'boot-progress-scale=3', 'sheng-data-persist=2', 'sheng-data-reset=1',
+                  'boot-progress-scale=3', 'sheng-data-persist=2',
                   'sheng-log-reserve=1024', 'aks=1', 'disable-watchdogd=1',
                   'build-tag=nuwa-r35'):
-        require(token in text.split(), 'args missing ' + token)
+        require(token in tokens, 'args missing ' + token)
     require('amfi_get_out_of_my_way' not in text, 'AMFI opt-out must not be packed')
     material, digest = X.C.digest_material(inputs)
     require(digest == M.DIGEST, 'Fixed r20 CHMH material mismatch')

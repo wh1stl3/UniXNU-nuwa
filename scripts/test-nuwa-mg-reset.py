@@ -106,10 +106,12 @@ static int fake_fsync(proc_t p,struct fsync_args *a,int *r) {
 #define openat fake_openat
 #define write fake_write
 #define fsync fake_fsync
+volatile uint32_t native_data_persist_state;
 """
 suffix = r"""
 static void reset(void) {
  arg=cs=1; source_mode=S_IFREG|0600;
+ native_data_persist_state=2;
  opens=attempt=writes=short_at=sync_error=journal_error=case_error=parent_error=0;
  used=0; logbuf[0]=0; nuwa_mg_reset_diag=0;
  for(int i=0;i<3;i++) { present[i]=1; backup[i]=rename_error[i]=0; }
@@ -121,6 +123,10 @@ static void run(int ro,unsigned diag,int n) {
 }
 int main(void) {
  for(int a=-1;a<=2;a++) if(a!=1) { reset(); arg=a; run(0,0,0); assert(!opens); }
+ for(unsigned ds=0;ds<=8;ds++) if(ds!=2) {
+  reset(); native_data_persist_state=ds; run(0,0x400,0);
+  assert(!opens && !writes && present[0] && present[1] && present[2]);
+ }
  reset(); run(1,0x300,0); assert(!opens);
  reset(); run(0,0x103,3); assert(strstr(logbuf,"mobilegestalt.plist exists=yes result=renamed"));
  reset(); cs=0; run(0,0x102,2); assert(strstr(logbuf,"exists=yes result=case-alias-see-first"));

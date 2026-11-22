@@ -65,13 +65,17 @@ void boot_progress_diag_set(uint8_t stage, uint8_t reason) {
                        b'  if((signal || ns) && !(name && !strcmp(name,"IOMFB_FDR_Loader"))) {\n')
     if mg_reset:
         src = replace_once(src, anchor, b"extern uint32_t nuwa_mg_reset_diag;\n" + anchor)
-        src = replace_once(src, b"  if (&nuwa_cli_enter", b"""  char mg[16] = "";
+        src = replace_once(src, b"  if (&nuwa_cli_enter", b"""  unsigned ds = &native_data_persist_state ? native_data_persist_state : 0;
+  char mg[16] = "";
   uint32_t mr = __atomic_load_n(&nuwa_mg_reset_diag,__ATOMIC_RELAXED);
-  if (mr & 0x100u)
+  if (mr & 0x400u)
+    snprintf(mg,sizeof(mg)," MG skip");
+  else if (mr & 0x100u)
     snprintf(mg,sizeof(mg)," MG r=%u/%u%s",mr&15u,(mr>>4)&15u,(mr&0x200u)?" j!":"");
   if (&nuwa_cli_enter""")
-        src = replace_once(src, b' bb=%c",', b' bb=%c%s",')
-        src = replace_once(src, b"(unsigned)out,bb);", b"(unsigned)out,bb,mg);")
+        src = replace_once(src, b'DSP s=%u r=%u CLI in=', b'DSP s=%u r=%u DS=%u%s CLI in=')
+        src = replace_once(src, b'dsp_stage,dsp_reason,(unsigned)(in>>32)',
+                           b'dsp_stage,dsp_reason,ds,mg,(unsigned)(in>>32)')
         src = replace_once(src, b' CLI unavailable",dsp_stage,dsp_reason);',
-                           b' CLI unavailable%s",dsp_stage,dsp_reason,mg);')
+                           b' DS=%u%s CLI unavailable",dsp_stage,dsp_reason,ds,mg);')
     return src

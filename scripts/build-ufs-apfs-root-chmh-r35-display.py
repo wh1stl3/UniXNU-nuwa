@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Package pinned r35 OFF or an audited display ON kernel with the r35 chain."""
 import argparse
+from functools import partial
 import hashlib
 import importlib.util
 import json
@@ -10,10 +11,10 @@ import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "scripts/build-ufs-apfs-root-chmh-r35.py"
-SOURCE_SHA = "16ed1a3b762152a0426701942224d5c7008edb01829c97bc8132a5262e7d3b96"
+SOURCE_SHA = "b5ce56a1784ec1395efa86f32468e8772da516b4b8e4c5e0f6535021c90537e7"
 R35_SHA = "787610183dc7f772e2d01aa183f72f2fcc52245fc44407e6c815ced614412464"
 HID_KERNEL = "0a17b5fde4264546bbfcb710adb1752252cdbafb184c796342d8ade53e2a5509"
-MG_KERNEL = "ef9920d5e5f4db69c1368da2a73c788633d69029bc68e7b7e1a0139a056bba65"
+MG_KERNEL = "0637d5f37a78370085c03da762888dadb6ba6269dbbb0b2a517d3b47972a5d9b"
 DISPLAY_KERNELS = {
     # Client identity probe (sticky bb); fingerprint delta recorded separately.
     "daa0288fb7786a0b6078a0608b2d09fc5c4a71252a5d4a42944ac5b7da14293b",
@@ -40,8 +41,8 @@ def main():
     parser.add_argument("--enable-display", action="store_true")
     parser.add_argument("--enable-hid-standin", action="store_true",
                         help="append only nuwa-hid-standin=1 to the 4.75 GiB display ON profile")
-    parser.add_argument("--enable-mg-reset", action="store_true",
-                        help="append only nuwa-mg-reset=1 to the 4.75 GiB display ON profile")
+    parser.add_argument("--enable-mg-reset-resume-only", action="store_true",
+                        help="4.75 GiB display ON, resume Data without reset and enable MG backup")
     parser.add_argument("--board-window", action="store_true",
                         help="derive the window from board.toml")
     parser.add_argument("--output", type=Path, required=True)
@@ -58,9 +59,9 @@ def main():
     blob = kernel.read_bytes()
     if hashlib.sha256(blob).hexdigest() != a.kernel_sha256:
         parser.error("kernel SHA256 mismatch")
-    if a.enable_mg_reset:
+    if a.enable_mg_reset_resume_only:
         if not (a.enable_display and a.board_window) or a.enable_hid_standin:
-            parser.error("--enable-mg-reset requires --enable-display --board-window without HID")
+            parser.error("--enable-mg-reset-resume-only requires --enable-display --board-window without HID")
         if a.kernel_sha256 != MG_KERNEL:
             parser.error("MG ON profile requires the pinned MG reset kernel")
     elif a.enable_hid_standin:
@@ -95,9 +96,12 @@ def main():
     if a.enable_hid_standin:
         inputs["PROFILE"] += "-hid"
         inputs["ARGS"] += b" nuwa-hid-standin=1"
-    if a.enable_mg_reset:
-        inputs["PROFILE"] += "-mg-reset"
-        inputs["ARGS"] += b" nuwa-mg-reset=1"
+    if a.enable_mg_reset_resume_only:
+        inputs["PROFILE"] += "-mg-reset-resume-only"
+        tokens = inputs["ARGS"].split()
+        tokens.remove(b"sheng-data-reset=1")
+        inputs["ARGS"] = b" ".join(tokens + [b"nuwa-mg-reset=1"])
+        r35.M.check_inputs = partial(r35.check_inputs, resume_only=True)
     for module in (r35, r35.X, r35.M):
         vars(module).update(inputs)
     if a.board_window:
@@ -105,7 +109,7 @@ def main():
                    ["payload"]["adt"]["owned_memory_size"], 0)
         if not 0x10000000 <= size <= 0x200000000 or size % 0x200000:
             raise ValueError("board window outside UniXNU's ADT size contract")
-        if a.enable_mg_reset and size != 0x130000000:
+        if a.enable_mg_reset_resume_only and size != 0x130000000:
             raise ValueError("MG ON profile requires the 4.75 GiB baseline window")
         previous = r35.X.derived
         adt = r35.A
@@ -123,6 +127,14 @@ def main():
 
         r35.X.derived = r35.X.C.derived = derived
     r35.M.main()
+    if a.enable_mg_reset_resume_only:
+        readback = output if audit else output / "outer-audit"
+        config = tomllib.loads((readback / "outer-readback/EFI/UniXNU/unixnu.toml")
+                               .read_text(encoding="utf-8"))
+        for entry in config["entry"]:
+            tokens = entry.get("args", "").split()
+            r35.require(not any(t.split("=", 1)[0] == "sheng-data-reset" for t in tokens),
+                        "Outer readback contains sheng-data-reset")
 
 
 if __name__ == "__main__":
