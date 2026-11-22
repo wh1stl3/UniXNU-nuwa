@@ -202,12 +202,12 @@ void native_legacy_display_late_probe(void) {
 #if defined(NUWA_DISPLAY_BRINGUP_DIAG)
   {
     uint16_t properties = 0;
-    OSObject *width = nub->getProperty("canvas-width");
+    OSObject *width = nub->copyProperty("canvas-width");
     if (width) properties |= 1u << 0;
     if (nub->getProperty("canvas-height")) properties |= 1u << 1;
     if (nub->getProperty("device_type")) properties |= 1u << 2;
     if (displayObject->getProperty("IOMFBNumLayers")) properties |= 1u << 3;
-    OSObject *refresh = displayObject->getProperty("IOMFBDisplayRefresh");
+    OSObject *refresh = displayObject->copyProperty("IOMFBDisplayRefresh");
     if (refresh) properties |= 1u << 4;
     if (displayObject->getProperty("NormalModeEnable")) properties |= 1u << 5;
     if (displayObject->getProperty("ADCLLoadAll")) properties |= 1u << 6;
@@ -215,6 +215,8 @@ void native_legacy_display_late_probe(void) {
     if (refresh && !OSDynamicCast(OSDictionary, refresh)) properties |= 1u << 8;
     OSData *widthData = OSDynamicCast(OSData, width);
     if (widthData && widthData->getLength() != 4) properties |= 1u << 9;
+    OSSafeReleaseNULL(refresh);
+    OSSafeReleaseNULL(width);
     boot_progress_prop_set(properties);
   }
   boot_progress_diag_set(stage, propertyReadbackFailed ? 16 : 0);
@@ -255,13 +257,17 @@ bool native_legacy_gop_mapping_observed(IOService *object, IOMemoryMap *mapping,
 // The renderer serializes itself and, on success, sets
 // boot_progress_display_owned=1 with display.bound=0; from then on nothing
 // repaints the page (the only way back is the opt-in boot-diag-resume=N).
+uint32_t nuwa_sc_calls, nuwa_sc_rejects, nuwa_sc_ok;
 bool native_legacy_prepare_scanout(void) {
+  __atomic_fetch_add(&nuwa_sc_calls, 1u, __ATOMIC_RELAXED);
   PE_Video v = {};
-  if (!displayObject || !console(v)) return false;
   // boot_progress_prepare_scanout() CASes render_busy and paints one status
   // line; neither is legal from an interrupt context.
-  if (ml_at_interrupt_context() || !ml_get_interrupts_enabled()) return false;
-  return boot_progress_prepare_scanout() != 0;
+  bool ok = displayObject && console(v) && !ml_at_interrupt_context() &&
+      ml_get_interrupts_enabled() && boot_progress_prepare_scanout() != 0;
+  if (ok) __atomic_fetch_add(&nuwa_sc_ok, 1u, __ATOMIC_RELAXED);
+  else __atomic_fetch_add(&nuwa_sc_rejects, 1u, __ATOMIC_RELAXED);
+  return ok;
 }
 // CPU-copy policy: refusing the GPU hand-off is not claiming a completed copy.
 #if !defined(NUWA_DISPLAY_HOST_CPU_ONLY)

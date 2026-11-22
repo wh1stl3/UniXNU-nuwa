@@ -615,6 +615,11 @@ def main():
         if unresolved.pop(symbol, None) != [(provider_obj.name, False)]:
             raise SystemExit(f'unexpected identity import {symbol}')
     if args.bringup_diag:
+        # copyProperty(const char *) is virtual: the board calls its vtable slot,
+        # so it adds no direct provider import. Retain the existing vtable import
+        # in the strict fingerprint and assert its exact owner.
+        if unresolved.get('__ZNK15IORegistryEntry12copyPropertyEPKc') != [('NativeLegacyDisplay.manual.o', False)]:
+            raise SystemExit('unexpected copyProperty virtual-table import')
         if unresolved.pop('_boot_progress_diag_set', None) != [(provider_obj.name, False)]:
             raise SystemExit('expected a strong diagnostic import from the board member only')
         if unresolved.pop('_boot_progress_prop_set', None) != [(provider_obj.name, False)]:

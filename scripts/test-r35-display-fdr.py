@@ -14,14 +14,27 @@ assert 'line(10,b,0xff00ffcc);' in src
 assert 'FDR no exit seen' in src
 assert src.count('__atomic_load_n(&bp_dsp_properties,__ATOMIC_RELAXED)') == 1
 assert len(f"PROP {0xffff:04x} FDR {0xffffffff}s st={0xffff} sig={0xff}") <= 80
+assert len(f"SC n={0xffffffff} r={0xffffffff} o={0xffffffff}") <= 80
+assert 'line(11,b,0xff00ffcc);' in src
+for name in ("calls", "rejects", "ok"):
+    assert src.count(f'__atomic_load_n(&nuwa_sc_{name},__ATOMIC_RELAXED)') == 1
 provider = Path("package/NuwaLegacyDisplay.cpp").read_text()
 for bit, key in enumerate(("canvas-width", "canvas-height", "device_type",
                            "IOMFBNumLayers", "IOMFBDisplayRefresh",
                            "NormalModeEnable", "ADCLLoadAll", "IOFBRotation")):
-    assert f'getProperty("{key}")' in provider
+    method = "copyProperty" if bit in (0, 4) else "getProperty"
+    assert f'{method}("{key}")' in provider
     assert f'properties |= 1u << {bit}' in provider
 assert 'refresh && !OSDynamicCast(OSDictionary, refresh)' in provider
 assert 'widthData && widthData->getLength() != 4' in provider
+for name in ("width", "refresh"):
+    assert provider.count(f'OSSafeReleaseNULL({name});') == 1
+    assert provider.index(f'OSDynamicCast({"OSData" if name == "width" else "OSDictionary"}, {name})') < provider.index(f'OSSafeReleaseNULL({name});')
+bridge = provider[provider.index("bool native_legacy_prepare_scanout(void) {"):
+                  provider.index("// CPU-copy policy:")]
+for name in ("calls", "rejects", "ok"):
+    assert bridge.count(f'__atomic_fetch_add(&nuwa_sc_{name}, 1u, __ATOMIC_RELAXED)') == 1
+assert 'return ok;' in bridge
 assert provider.index('displayObject->registerService();') < provider.index('boot_progress_prop_set(properties);')
 assert 'CLI in=%u out=%u ret=%08x bb=%c' in src
 assert len(f"DSP s={255} r={255} CLI in={0xffffffff} out={0xffffffff} ret={0xffffffff:08x} bb=?") <= 80

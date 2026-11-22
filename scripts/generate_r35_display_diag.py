@@ -25,6 +25,9 @@ static uint16_t bp_dsp_properties;
 extern uint64_t nuwa_cli_enter __attribute__((weak_import));
 extern uint64_t nuwa_cli_observed __attribute__((weak_import));
 extern uint64_t nuwa_cli_identity __attribute__((weak_import));
+extern uint32_t nuwa_sc_calls __attribute__((weak_import));
+extern uint32_t nuwa_sc_rejects __attribute__((weak_import));
+extern uint32_t nuwa_sc_ok __attribute__((weak_import));
 void boot_progress_diag_set(uint8_t stage, uint8_t reason);
 void boot_progress_diag_set(uint8_t stage, uint8_t reason) {
   __atomic_store_n(&bp_dsp_reason,reason,__ATOMIC_RELAXED);
@@ -59,6 +62,13 @@ void boot_progress_prop_set(uint16_t properties) {
       (unsigned)((fdr>>16)&0xffffu),(unsigned)(fdr&0xffu));
   else snprintf(b,sizeof(b),"PROP %04x FDR no exit seen",prop);
   line(10,b,0xff00ffcc);
+  if (&nuwa_sc_calls && &nuwa_sc_rejects && &nuwa_sc_ok)
+    snprintf(b,sizeof(b),"SC n=%u r=%u o=%u",
+      __atomic_load_n(&nuwa_sc_calls,__ATOMIC_RELAXED),
+      __atomic_load_n(&nuwa_sc_rejects,__ATOMIC_RELAXED),
+      __atomic_load_n(&nuwa_sc_ok,__ATOMIC_RELAXED));
+  else snprintf(b,sizeof(b),"SC unavailable");
+  line(11,b,0xff00ffcc);
 """)
     src = replace_once(src, b"  census_note(name,1);\n", b"""  if(name && !strcmp(name,"IOMFB_FDR_Loader")) {
     uint64_t fdr = ((uint64_t)seconds()<<32) | (((uint64_t)(unsigned)status&0xffffu)<<16) |
