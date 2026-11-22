@@ -1,5 +1,7 @@
 # UniXNU-nuwa
 
+**2026-11-22 SystemGroup seed: mobileactivationd crashes=0 at 754s; SpringBoard remains blocked (parent-reported / self-checked record).** [Result](docs/nuwa-systemgroup-fix-result-20261122.md).
+
 **2026-11-22 mobileactivationd migration：六进程在场，迁移失败候选待查；交互未达（主控转述 / self-checked）。** [观察](docs/nuwa-mobileactivation-migration-20261122.md)。
 
 **2026-11-22 Apple logo 里程碑（主控转述 / self-checked；持久交互未达成）：** [记录](docs/nuwa-logo-milestone-20261122.md)。
