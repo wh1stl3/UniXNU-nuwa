@@ -231,8 +231,26 @@ void native_legacy_gpu_fallback_observed(int) {}
 #endif
 void native_legacy_registration_observed(IOService *) {}
 void native_legacy_swap_stage(unsigned) {}
-void native_legacy_client_enter(task_t, uint32_t) {}
-void native_legacy_client_observed(IOReturn, IOUserClient *) {}
+// High word is the count, low word is the latest independent value. CAS
+// permits overlapping callers without a lock or a fabricated enter/exit pair.
+uint64_t nuwa_cli_enter;
+uint64_t nuwa_cli_observed;
+void native_legacy_client_enter(task_t, uint32_t type) {
+  uint64_t old = __atomic_load_n(&nuwa_cli_enter, __ATOMIC_RELAXED);
+  uint64_t next;
+  do {
+    next = ((uint64_t)((uint32_t)(old >> 32) + 1) << 32) | type;
+  } while (!__atomic_compare_exchange_n(&nuwa_cli_enter, &old, next, false,
+                                        __ATOMIC_RELAXED, __ATOMIC_RELAXED));
+}
+void native_legacy_client_observed(IOReturn result, IOUserClient *) {
+  uint64_t old = __atomic_load_n(&nuwa_cli_observed, __ATOMIC_RELAXED);
+  uint64_t next;
+  do {
+    next = ((uint64_t)((uint32_t)(old >> 32) + 1) << 32) | (uint32_t)result;
+  } while (!__atomic_compare_exchange_n(&nuwa_cli_observed, &old, next, false,
+                                        __ATOMIC_RELAXED, __ATOMIC_RELAXED));
+}
 void native_legacy_pm_observed(unsigned, IOReturn, unsigned long) {}
 void native_legacy_frame_observed(unsigned, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t) {}
 void native_legacy_frame_colors_observed(const uint32_t *, const uint64_t *, uint64_t) {}
