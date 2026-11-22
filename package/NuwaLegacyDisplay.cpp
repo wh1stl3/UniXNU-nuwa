@@ -55,6 +55,7 @@ IOService *native_legacy_display_allocate(void); // Supplied by the component.
 int boot_progress_prepare_scanout(void);
 #if defined(NUWA_DISPLAY_BRINGUP_DIAG)
 void boot_progress_diag_set(uint8_t stage, uint8_t reason);
+void boot_progress_prop_set(uint16_t properties);
 #endif
 }
 namespace {
@@ -199,6 +200,23 @@ void native_legacy_display_late_probe(void) {
   displayObject->registerService();
   stage = 4;
 #if defined(NUWA_DISPLAY_BRINGUP_DIAG)
+  {
+    uint16_t properties = 0;
+    OSObject *width = nub->getProperty("canvas-width");
+    if (width) properties |= 1u << 0;
+    if (nub->getProperty("canvas-height")) properties |= 1u << 1;
+    if (nub->getProperty("device_type")) properties |= 1u << 2;
+    if (displayObject->getProperty("IOMFBNumLayers")) properties |= 1u << 3;
+    OSObject *refresh = displayObject->getProperty("IOMFBDisplayRefresh");
+    if (refresh) properties |= 1u << 4;
+    if (displayObject->getProperty("NormalModeEnable")) properties |= 1u << 5;
+    if (displayObject->getProperty("ADCLLoadAll")) properties |= 1u << 6;
+    if (displayObject->getProperty("IOFBRotation")) properties |= 1u << 7;
+    if (refresh && !OSDynamicCast(OSDictionary, refresh)) properties |= 1u << 8;
+    OSData *widthData = OSDynamicCast(OSData, width);
+    if (widthData && widthData->getLength() != 4) properties |= 1u << 9;
+    boot_progress_prop_set(properties);
+  }
   boot_progress_diag_set(stage, propertyReadbackFailed ? 16 : 0);
 #endif
   success = true;

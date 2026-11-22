@@ -12,7 +12,17 @@ assert 'if((signal || ns) && !(name && !strcmp(name,"IOMFB_FDR_Loader")))' in ex
 assert src.count('__atomic_load_n(&bp_fdr_exit,__ATOMIC_RELAXED)') == 1
 assert 'line(10,b,0xff00ffcc);' in src
 assert 'FDR no exit seen' in src
-assert len(f"FDR {0xffffffff}s st={0xffff} sig={0xff}") <= 80
+assert src.count('__atomic_load_n(&bp_dsp_properties,__ATOMIC_RELAXED)') == 1
+assert len(f"PROP {0xffff:04x} FDR {0xffffffff}s st={0xffff} sig={0xff}") <= 80
+provider = Path("package/NuwaLegacyDisplay.cpp").read_text()
+for bit, key in enumerate(("canvas-width", "canvas-height", "device_type",
+                           "IOMFBNumLayers", "IOMFBDisplayRefresh",
+                           "NormalModeEnable", "ADCLLoadAll", "IOFBRotation")):
+    assert f'getProperty("{key}")' in provider
+    assert f'properties |= 1u << {bit}' in provider
+assert 'refresh && !OSDynamicCast(OSDictionary, refresh)' in provider
+assert 'widthData && widthData->getLength() != 4' in provider
+assert provider.index('displayObject->registerService();') < provider.index('boot_progress_prop_set(properties);')
 assert 'CLI in=%u out=%u ret=%08x bb=%c' in src
 assert len(f"DSP s={255} r={255} CLI in={0xffffffff} out={0xffffffff} ret={0xffffffff:08x} bb=?") <= 80
 assert 'CLI unavailable' in src

@@ -617,6 +617,15 @@ def main():
     if args.bringup_diag:
         if unresolved.pop('_boot_progress_diag_set', None) != [(provider_obj.name, False)]:
             raise SystemExit('expected a strong diagnostic import from the board member only')
+        if unresolved.pop('_boot_progress_prop_set', None) != [(provider_obj.name, False)]:
+            raise SystemExit('expected a strong property diagnostic import from the board member only')
+        if unresolved.pop('__ZN12OSDictionary9metaClassE', None) != [(provider_obj.name, False)]:
+            raise SystemExit('expected dictionary type check from the board member only')
+        for symbol in ('__ZN6OSData9metaClassE', '__ZN15OSMetaClassBase12safeMetaCastEPKS_PK11OSMetaClass'):
+            imports = unresolved.get(symbol, [])
+            if imports.count((provider_obj.name, False)) != 1:
+                raise SystemExit(f'expected property type check import {symbol}')
+            unresolved[symbol] = [entry for entry in imports if entry != (provider_obj.name, False)]
     fingerprint = hashlib.sha256(json.dumps(
         unresolved, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
     if fingerprint != expected:

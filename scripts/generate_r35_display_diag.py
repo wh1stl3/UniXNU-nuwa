@@ -21,6 +21,7 @@ def generate(src, *, mg_reset=False):
 static uint64_t bp_fdr_exit;
 // Diagnostic only: two independent byte samples; no synchronization of display state.
 static uint8_t bp_dsp_stage, bp_dsp_reason;
+static uint16_t bp_dsp_properties;
 extern uint64_t nuwa_cli_enter __attribute__((weak_import));
 extern uint64_t nuwa_cli_observed __attribute__((weak_import));
 extern uint64_t nuwa_cli_identity __attribute__((weak_import));
@@ -28,6 +29,10 @@ void boot_progress_diag_set(uint8_t stage, uint8_t reason);
 void boot_progress_diag_set(uint8_t stage, uint8_t reason) {
   __atomic_store_n(&bp_dsp_reason,reason,__ATOMIC_RELAXED);
   __atomic_store_n(&bp_dsp_stage,stage,__ATOMIC_RELAXED);
+}
+void boot_progress_prop_set(uint16_t properties);
+void boot_progress_prop_set(uint16_t properties) {
+  __atomic_store_n(&bp_dsp_properties,properties,__ATOMIC_RELAXED);
 }
 """ + anchor)
     # Use the short DATA-summary slot; its full detail remains on row 39.
@@ -48,10 +53,11 @@ void boot_progress_diag_set(uint8_t stage, uint8_t reason) {
 """ + src[end:]
     src = replace_once(src, b"  nuwa_rows();\n", b"""  nuwa_rows();
   uint64_t fdr = __atomic_load_n(&bp_fdr_exit,__ATOMIC_RELAXED);
+  unsigned prop = __atomic_load_n(&bp_dsp_properties,__ATOMIC_RELAXED);
   if (fdr)
-    snprintf(b,sizeof(b),"FDR %us st=%u sig=%u",(unsigned)(fdr>>32),
+    snprintf(b,sizeof(b),"PROP %04x FDR %us st=%u sig=%u",prop,(unsigned)(fdr>>32),
       (unsigned)((fdr>>16)&0xffffu),(unsigned)(fdr&0xffu));
-  else snprintf(b,sizeof(b),"FDR no exit seen");
+  else snprintf(b,sizeof(b),"PROP %04x FDR no exit seen",prop);
   line(10,b,0xff00ffcc);
 """)
     src = replace_once(src, b"  census_note(name,1);\n", b"""  if(name && !strcmp(name,"IOMFB_FDR_Loader")) {

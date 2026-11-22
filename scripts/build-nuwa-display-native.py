@@ -231,7 +231,7 @@ def diag_archive(r35, out, *, hid, mg_reset):
          "--define", "NUWA_VIRTIO_STUBS=1", "--define", "NUWA_RENDER_FIXES=1",
          "--define", "NUWA_BOLD_GLYPHS=1", *hid_define])
     staged = out / "libBootProgress.a"
-    expected = definitions(r35 / staged.name) + Counter({DSP_SET: 1})
+    expected = definitions(r35 / staged.name) + Counter({DSP_SET: 1, "_boot_progress_prop_set": 1})
     if hid:
         for name in ("seq", "count", "xs", "ys"):
             require = expected.pop(f"_native_touch_{name}", 0)

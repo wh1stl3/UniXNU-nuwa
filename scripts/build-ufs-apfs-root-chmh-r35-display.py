@@ -15,6 +15,7 @@ SOURCE_SHA = "b5ce56a1784ec1395efa86f32468e8772da516b4b8e4c5e0f6535021c90537e7"
 R35_SHA = "787610183dc7f772e2d01aa183f72f2fcc52245fc44407e6c815ced614412464"
 HID_KERNEL = "0a17b5fde4264546bbfcb710adb1752252cdbafb184c796342d8ade53e2a5509"
 MG_KERNEL = "0637d5f37a78370085c03da762888dadb6ba6269dbbb0b2a517d3b47972a5d9b"
+MG_PROP_KERNEL = "591957c24f510e5e77c43936fe6480cd874dce49fb0b3b48b09db51b3ebbb1f9"
 DISPLAY_KERNELS = {
     # Client identity probe (sticky bb); fingerprint delta recorded separately.
     "daa0288fb7786a0b6078a0608b2d09fc5c4a71252a5d4a42944ac5b7da14293b",
@@ -62,7 +63,7 @@ def main():
     if a.enable_mg_reset_resume_only:
         if not (a.enable_display and a.board_window) or a.enable_hid_standin:
             parser.error("--enable-mg-reset-resume-only requires --enable-display --board-window without HID")
-        if a.kernel_sha256 != MG_KERNEL:
+        if a.kernel_sha256 not in (MG_KERNEL, MG_PROP_KERNEL):
             parser.error("MG ON profile requires the pinned MG reset kernel")
     elif a.enable_hid_standin:
         if not (a.enable_display and a.board_window):
