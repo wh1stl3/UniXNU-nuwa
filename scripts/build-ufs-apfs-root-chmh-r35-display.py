@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import importlib.util
+import json
 from pathlib import Path
 import sys
 import tomllib
@@ -11,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "scripts/build-ufs-apfs-root-chmh-r35.py"
 SOURCE_SHA = "16ed1a3b762152a0426701942224d5c7008edb01829c97bc8132a5262e7d3b96"
 R35_SHA = "787610183dc7f772e2d01aa183f72f2fcc52245fc44407e6c815ced614412464"
+HID_KERNEL = "0a17b5fde4264546bbfcb710adb1752252cdbafb184c796342d8ade53e2a5509"
 DISPLAY_KERNELS = {
     # NormalModeEnable/ADCLLoadAll publication build; fingerprint change is
     # separately recorded in docs/nuwa-fdr-properties-20261122.md.
@@ -33,6 +35,8 @@ def main():
     parser.add_argument("--kernel", type=Path, required=True)
     parser.add_argument("--kernel-sha256", required=True)
     parser.add_argument("--enable-display", action="store_true")
+    parser.add_argument("--enable-hid-standin", action="store_true",
+                        help="append only nuwa-hid-standin=1 to the 4.75 GiB display ON profile")
     parser.add_argument("--board-window", action="store_true",
                         help="derive the window from board.toml")
     parser.add_argument("--output", type=Path, required=True)
@@ -49,7 +53,15 @@ def main():
     blob = kernel.read_bytes()
     if hashlib.sha256(blob).hexdigest() != a.kernel_sha256:
         parser.error("kernel SHA256 mismatch")
-    if a.enable_display:
+    if a.enable_hid_standin:
+        if not (a.enable_display and a.board_window):
+            parser.error("--enable-hid-standin requires --enable-display and --board-window")
+        if a.kernel_sha256 != HID_KERNEL:
+            parser.error("HID ON profile requires the pinned audited kernel")
+        report = kernel.parent / "hid/final-audit.json"
+        if not report.is_file() or json.loads(report.read_text()).get("kernel_sha256") != HID_KERNEL:
+            parser.error("HID ON profile requires the matching final-link audit")
+    elif a.enable_display:
         if a.kernel_sha256 not in DISPLAY_KERNELS:
             parser.error("on profile requires a pinned display kernel SHA256")
     elif a.kernel_sha256 != R35_SHA:
@@ -70,6 +82,9 @@ def main():
     inputs = dict(KERNEL=kernel, KERNEL_BYTES=len(blob), KERNEL_SHA=a.kernel_sha256,
                   PROFILE=profile + ("-on" if a.enable_display else "-off"),
                   ARGS=r35.ARGS + (DISPLAY_ARGS + b" nuwa-lite=1" if a.enable_display else b""))
+    if a.enable_hid_standin:
+        inputs["PROFILE"] += "-hid"
+        inputs["ARGS"] += b" nuwa-hid-standin=1"
     for module in (r35, r35.X, r35.M):
         vars(module).update(inputs)
     if a.board_window:

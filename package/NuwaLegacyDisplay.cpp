@@ -34,6 +34,7 @@
 #include <IOKit/IOUserClient.h>
 #include <libkern/c++/OSMetaClass.h>
 #include <libkern/c++/OSData.h>
+#include <libkern/c++/OSBoolean.h>
 #include <pexpert/pexpert.h>
 #include <console/video_console.h>
 #include <mach/kmod.h>
@@ -114,6 +115,9 @@ void native_legacy_display_late_probe(void) {
   // instance. Never initialize a subclass against an unloaded original base.
   if (!displayObject) { failure(6); return; }
   stage = 3;
+#if defined(NUWA_DISPLAY_BRINGUP_DIAG)
+  bool propertyReadbackFailed = false;
+#endif
   bool success = false, nubAttached = false, nubStarted = false, displayAttached = false;
   IOService *nub = nullptr;
   IODeviceMemory *memory = nullptr;
@@ -169,6 +173,16 @@ void native_legacy_display_late_probe(void) {
       !displayObject->setProperty("ADCLLoadAll", kOSBooleanFalse)) {
     failure(15); goto finish;
   }
+#if defined(NUWA_DISPLAY_BRINGUP_DIAG)
+  {
+    const auto *normal = displayObject->getProperty("NormalModeEnable");
+    const auto *adcl = displayObject->getProperty("ADCLLoadAll");
+    // OSBoolean consists of two canonical singleton instances.
+    propertyReadbackFailed = (normal != kOSBooleanTrue && normal != kOSBooleanFalse) ||
+                             (adcl != kOSBooleanTrue && adcl != kOSBooleanFalse);
+    if (propertyReadbackFailed) boot_progress_diag_set(stage, 16);
+  }
+#endif
   {
     SInt32 score = 0;
     if (displayObject->probe(nub, &score) != displayObject || !displayObject->start(nub)) {
@@ -182,7 +196,7 @@ void native_legacy_display_late_probe(void) {
   displayObject->registerService();
   stage = 4;
 #if defined(NUWA_DISPLAY_BRINGUP_DIAG)
-  boot_progress_diag_set(stage, 0);
+  boot_progress_diag_set(stage, propertyReadbackFailed ? 16 : 0);
 #endif
   success = true;
 finish:

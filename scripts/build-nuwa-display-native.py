@@ -146,7 +146,7 @@ def audit_debug_strip(full, compact):
             "native_bytes_saved": len(full) - len(compact)}
 
 
-def candidate_link(r35, out, records, argv, env, *, bringup_diag):
+def candidate_link(r35, out, records, argv, env, *, bringup_diag, hid):
     recipe, = [r for r in records if r["label"] == "compile-bsd_init" and r["exit"] == 0]
     command = list(recipe["argv"])
     source = r35 / "tree/bsd/kern/bsd_init.c"
@@ -167,6 +167,8 @@ def candidate_link(r35, out, records, argv, env, *, bringup_diag):
     command[source_at] = str(staged)
     command[command.index("-o") + 1] = str(obj)
     command.append("-DXNU_NATIVE_LEGACY_DISPLAY=1")
+    if hid:
+        command.append("-DXNU_NUWA_HID_STANDIN=1")
     (out / "bsd-init-argv.json").write_text(json.dumps(command, indent=2) + "\n")
     subprocess.run(command, cwd=recipe["cwd"], env=env, check=True)
 
@@ -206,26 +208,33 @@ def candidate_link(r35, out, records, argv, env, *, bringup_diag):
     return adjusted
 
 
-def diag_archive(r35, out):
+def diag_archive(r35, out, *, hid):
     from generate_r35_display_diag import generate
 
     source = out / "BootProgress.c"
     source.write_bytes(generate((r35 / "BootProgress.c").read_bytes()))
     shutil.copyfile(r35 / "BootProgressDisplay.h", out / "BootProgressDisplay.h")
     stubs = ROOT / "package/boot-progress-r13/nuwa_boot_progress_stubs.c"
-    require_pin(stubs, "94a93f5f0b3180e80532e4cb9f5600bec8e7f9b5bc9e8a19273fd2e3c7d4bcae")
+    require_pin(stubs, "14817837f64b37f36c65ac5e6debd187c2d8e6a24e8b0396eb280239108c6b47")
+    hid_define = ["--define", "NUWA_HID_STANDIN=1"] if hid else []
     run([sys.executable, "-B", r35 / "build-boot-progress-compact.py",
          "--out", out, "--tree", r35 / "tree", "--stubs", stubs, "--renderer", source,
          "--define", "NUWA_VIRTIO_STUBS=1", "--define", "NUWA_RENDER_FIXES=1",
-         "--define", "NUWA_BOLD_GLYPHS=1"])
+         "--define", "NUWA_BOLD_GLYPHS=1", *hid_define])
     staged = out / "libBootProgress.a"
-    if definitions(staged) != definitions(r35 / staged.name) + Counter({DSP_SET: 1}):
+    expected = definitions(r35 / staged.name) + Counter({DSP_SET: 1})
+    if hid:
+        for name in ("seq", "count", "xs", "ys"):
+            require = expected.pop(f"_native_touch_{name}", 0)
+            if require != 1:
+                raise SystemExit(f"expected one original renderer alias for native_touch_{name}")
+    if definitions(staged) != expected:
         raise SystemExit("r35l renderer changed global definitions beyond DSP")
     return staged
 
 
 def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
-               keep_link_debug, bringup_diag=False):
+               keep_link_debug, bringup_diag=False, hid_objects=()):
     for name, pin in (R35L_PINS if bringup_diag else R35_PINS).items():
         require_pin(r35 / name, pin)
     require_pin(cpo, R35_CPO_SHA)
@@ -289,11 +298,12 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
         # archive byte for byte, including its observation counter aliases.
         # Preserve the ADRP/LDR GOT sequence required by the linked audit.
         if candidate:
-            argv = candidate_link(r35, out, records, argv, env, bringup_diag=bringup_diag)
+            argv = candidate_link(r35, out, records, argv, env, bringup_diag=bringup_diag,
+                                  hid=bool(hid_objects))
         if bringup_diag:
             argv = list(argv)
-            argv[force_at] = f"-Wl,-force_load,{diag_archive(r35, out)}"
-        argv = [*argv, "-Wl,-ignore_optimization_hints", f"-Wl,-force_load,{archive}"]
+            argv[force_at] = f"-Wl,-force_load,{diag_archive(r35, out, hid=bool(hid_objects))}"
+        argv = [*argv, "-Wl,-ignore_optimization_hints", f"-Wl,-force_load,{archive}", *map(str, hid_objects)]
         if not candidate or keep_link_debug:
             return link("native-link", native, argv)
         full = out / "native-with-stabs.macho"
@@ -523,6 +533,8 @@ def main():
                    help="pinned full r35l inputs for the display bring-up probe")
     p.add_argument("--keep-link-debug", action="store_true",
                    help="measure the archive-only size reduction before stripping linked STABS")
+    p.add_argument("--hid-standin", action="store_true",
+                   help="include the default-off HID board probe and require its final ABI audit")
     p.add_argument("--out", type=Path, required=True, help="new directory under out/")
     a = p.parse_args()
     base, cpo, linker, out = (x.resolve() for x in (a.base, a.cpo, a.linker_dir, a.out))
@@ -544,8 +556,16 @@ def main():
         p.error("--keep-link-debug requires --candidate")
     if a.r35l_dir and (not a.candidate or not a.r35l_dir.resolve().is_relative_to((ROOT / "out").resolve())):
         p.error("--r35l-dir requires --candidate and must be inside device out/")
+    if a.hid_standin and not a.r35l_dir:
+        p.error("--hid-standin requires the pinned --r35l-dir candidate")
     out.mkdir(parents=True, exist_ok=False)
     donor = base / "out/ipsw/20H392/kernelcache.decompressed"
+    hid_objects = []
+    if a.hid_standin:
+        spec = importlib.util.spec_from_file_location("nuwa_hid_abi", ROOT / "scripts/derive-nuwa-hid-abi.py")
+        hid = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(hid)
+        hid_objects = hid.compile_archive(base, donor, cpo, out / "hid")
     if a.renderer:
         renderer = a.renderer.resolve()
         link = a.link_dir.resolve()
@@ -564,7 +584,8 @@ def main():
         link_inputs = a.r35l_dir.resolve() if a.r35l_dir else r35
         mapfile = replay_r35(link_inputs, linker, cpo, out, archive, native,
                               cpu_only=a.cpu_only, candidate=a.candidate,
-                              keep_link_debug=a.keep_link_debug, bringup_diag=bool(a.r35l_dir))
+                              keep_link_debug=a.keep_link_debug, bringup_diag=bool(a.r35l_dir),
+                              hid_objects=hid_objects)
     else:
         # Replay XNU's exported link inputs, without its historical map output.
         stem = "mach.development.bcm2837"
@@ -584,6 +605,9 @@ def main():
     emit_prelink = scoped_libm_emitter.load(base)
     abi = json.loads((out / "derived/nuwa-display-abi.json").read_text())
     native_bytes = native.read_bytes()
+    if a.hid_standin:
+        hid_abi = json.loads((out / "hid/hid-abi.json").read_text())
+        hid_native = hid.audit_linked(native_bytes, hid_abi)
     got = audit_linked_metaclass(native_bytes, abi["metaclass"])
     refs = json.loads((archive.parent / "archive.json").read_text())["original_relocations"]
     slots = audit_linked_originals(native_bytes, abi["original_imports"], refs)
@@ -623,6 +647,14 @@ def main():
     if (audit_linked_metaclass(final.read_bytes(), abi["metaclass"]) != got
             or audit_linked_originals(final.read_bytes(), abi["original_imports"], refs) != slots):
         raise SystemExit("r35 renderer changed the linked display ABI")
+    if a.hid_standin:
+        final_bytes = final.read_bytes()
+        hid_final = hid.audit_linked(final_bytes, hid_abi)
+        if hid_final != hid_native:
+            raise SystemExit("rendered kernel changed the linked HID ABI")
+        hid.audit_family(final_bytes, hid_abi, report)
+        (out / "hid/final-audit.json").write_text(json.dumps({
+            **hid_final, "kernel_sha256": digest(final)}, indent=2) + "\n")
     print(f"r35 display diagnostic candidate SHA256 {digest(final)}")
 
 
