@@ -14,6 +14,8 @@ SOURCE_SHA = "16ed1a3b762152a0426701942224d5c7008edb01829c97bc8132a5262e7d3b96"
 R35_SHA = "787610183dc7f772e2d01aa183f72f2fcc52245fc44407e6c815ced614412464"
 HID_KERNEL = "0a17b5fde4264546bbfcb710adb1752252cdbafb184c796342d8ade53e2a5509"
 DISPLAY_KERNELS = {
+    # Client identity probe (sticky bb); fingerprint delta recorded separately.
+    "daa0288fb7786a0b6078a0608b2d09fc5c4a71252a5d4a42944ac5b7da14293b",
     # NormalModeEnable/ADCLLoadAll publication build; fingerprint change is
     # separately recorded in docs/nuwa-fdr-properties-20261122.md.
     "e9f0b5e125be778b9c3fff8939659a6c9f67c61fb722c70a331c5ee8c8547b2d",

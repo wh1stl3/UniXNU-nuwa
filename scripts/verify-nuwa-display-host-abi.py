@@ -608,13 +608,17 @@ def main():
     expected = CPU_UNRESOLVED_SHA256 if args.cpu_only else UNRESOLVED_SHA256
     if args.no_software_vsync:
         expected = NO_VSYNC_UNRESOLVED_SHA256
-    fingerprint = audit['unresolved_sha256']
+    # Identity probe adds exactly these four strong board imports; removes none.
+    # Check them separately so all existing profile fingerprints remain strict.
+    unresolved = audit['unresolved'].copy()
+    for symbol in ('_current_task', '_pid_from_task', '_proc_selfname', '_strcmp'):
+        if unresolved.pop(symbol, None) != [(provider_obj.name, False)]:
+            raise SystemExit(f'unexpected identity import {symbol}')
     if args.bringup_diag:
-        unresolved = audit['unresolved'].copy()
         if unresolved.pop('_boot_progress_diag_set', None) != [(provider_obj.name, False)]:
             raise SystemExit('expected a strong diagnostic import from the board member only')
-        fingerprint = hashlib.sha256(json.dumps(
-            unresolved, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+    fingerprint = hashlib.sha256(json.dumps(
+        unresolved, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
     if fingerprint != expected:
         raise SystemExit(f'unresolved symbol fingerprint changed: see {out / "archive.json"}')
     print(f'{archive}: {len(audit["unresolved"])} unresolved externals; not runtime-eligible')

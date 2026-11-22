@@ -13,8 +13,8 @@ assert src.count('__atomic_load_n(&bp_fdr_exit,__ATOMIC_RELAXED)') == 1
 assert 'line(10,b,0xff00ffcc);' in src
 assert 'FDR no exit seen' in src
 assert len(f"FDR {0xffffffff}s st={0xffff} sig={0xff}") <= 80
-assert 'CLI in=%u out=%u ret=%08x lastin=%08x' in src
-assert len(f"DSP s={255} r={255} CLI in={0xffffffff} out={0xffffffff} ret={0xffffffff:08x} lastin={0xffffffff:08x}") <= 80
+assert 'CLI in=%u out=%u ret=%08x bb=%c' in src
+assert len(f"DSP s={255} r={255} CLI in={0xffffffff} out={0xffffffff} ret={0xffffffff:08x} bb=?") <= 80
 assert 'CLI unavailable' in src
 for second, status in [(1, 0), (388, 0x100), (42, 5), (0xffffffff, 0xffff)]:
     value = second << 32 | (status & 0xffff) << 16 | status & 127

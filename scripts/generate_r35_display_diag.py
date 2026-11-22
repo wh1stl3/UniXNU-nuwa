@@ -23,6 +23,7 @@ static uint64_t bp_fdr_exit;
 static uint8_t bp_dsp_stage, bp_dsp_reason;
 extern uint64_t nuwa_cli_enter __attribute__((weak_import));
 extern uint64_t nuwa_cli_observed __attribute__((weak_import));
+extern uint64_t nuwa_cli_identity __attribute__((weak_import));
 void boot_progress_diag_set(uint8_t stage, uint8_t reason);
 void boot_progress_diag_set(uint8_t stage, uint8_t reason) {
   __atomic_store_n(&bp_dsp_reason,reason,__ATOMIC_RELAXED);
@@ -34,12 +35,14 @@ void boot_progress_diag_set(uint8_t stage, uint8_t reason) {
     end = src.index(b"#endif\n", start)
     src = src[:start] + b"""  unsigned dsp_stage = __atomic_load_n(&bp_dsp_stage,__ATOMIC_RELAXED);
   unsigned dsp_reason = __atomic_load_n(&bp_dsp_reason,__ATOMIC_RELAXED);
-  if (&nuwa_cli_enter && &nuwa_cli_observed) {
+  if (&nuwa_cli_enter && &nuwa_cli_observed && &nuwa_cli_identity) {
     uint64_t in = __atomic_load_n(&nuwa_cli_enter,__ATOMIC_RELAXED);
     uint64_t out = __atomic_load_n(&nuwa_cli_observed,__ATOMIC_RELAXED);
-    snprintf(b,sizeof(b),"DSP s=%u r=%u CLI in=%u out=%u ret=%08x lastin=%08x",
+    uint64_t identity = __atomic_load_n(&nuwa_cli_identity,__ATOMIC_RELAXED);
+    char bb = ((identity >> 32) || (identity & 2)) ? '?' : ((identity & 1) ? '1' : '0');
+    snprintf(b,sizeof(b),"DSP s=%u r=%u CLI in=%u out=%u ret=%08x bb=%c",
       dsp_stage,dsp_reason,(unsigned)(in>>32),(unsigned)(out>>32),
-      (unsigned)out,(unsigned)in);
+      (unsigned)out,bb);
   } else snprintf(b,sizeof(b),"DSP s=%u r=%u CLI unavailable",dsp_stage,dsp_reason);
   line(9,b,dsp_reason ? 0xffffaa00 : 0xff00ffcc);
 """ + src[end:]

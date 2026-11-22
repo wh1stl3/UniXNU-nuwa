@@ -39,7 +39,10 @@
 #include <console/video_console.h>
 #include <mach/kmod.h>
 #include <machine/machine_routines.h>
+#include <kern/task.h>
 extern "C" {
+void proc_selfname(char *, int);
+int pid_from_task(task_t);
 extern kmod_info_t g_kernel_kmod_info;
 kern_return_t OSKextLoadKextWithIdentifier(const char *);
 void nuwa_legacy_static_init(void) __asm__("__GLOBAL__sub_I_NativeLegacyDisplay.cpp");
@@ -253,7 +256,21 @@ void native_legacy_swap_stage(unsigned) {}
 // permits overlapping callers without a lock or a fabricated enter/exit pair.
 uint64_t nuwa_cli_enter;
 uint64_t nuwa_cli_observed;
-void native_legacy_client_enter(task_t, uint32_t type) {
+// Low bits: backboardd seen, unavailable seen. High word: lookups in flight.
+uint64_t nuwa_cli_identity;
+uint32_t nuwa_cli_pid;
+void native_legacy_client_enter(task_t task, uint32_t type) {
+  __atomic_fetch_add(&nuwa_cli_identity, 1ULL << 32, __ATOMIC_RELAXED);
+  __atomic_store_n(&nuwa_cli_pid, (uint32_t)pid_from_task(task), __ATOMIC_RELAXED);
+  char name[64] = {};
+  uint64_t flag = 0;
+  if (task == current_task()) {
+    proc_selfname(name, sizeof(name));
+    if (!name[0]) flag = 2;
+    else if (!strcmp(name, "backboardd")) flag = 1;
+  } else flag = 2;
+  if (flag) __atomic_fetch_or(&nuwa_cli_identity, flag, __ATOMIC_RELAXED);
+  __atomic_fetch_sub(&nuwa_cli_identity, 1ULL << 32, __ATOMIC_RELAXED);
   uint64_t old = __atomic_load_n(&nuwa_cli_enter, __ATOMIC_RELAXED);
   uint64_t next;
   do {
