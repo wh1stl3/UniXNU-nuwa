@@ -177,6 +177,10 @@ void native_legacy_display_late_probe(void) {
       !displayObject->setProperty("ADCLLoadAll", kOSBooleanFalse)) {
     failure(15); goto finish;
   }
+  // Experimental unrotated default; the userspace consumer contract is unknown.
+  if (!displayObject->setProperty("IOFBRotation", (unsigned long long)0, 32)) {
+    failure(17); goto finish;
+  }
 #if defined(NUWA_DISPLAY_BRINGUP_DIAG)
   {
     const auto *normal = displayObject->getProperty("NormalModeEnable");

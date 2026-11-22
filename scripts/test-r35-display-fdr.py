@@ -19,6 +19,9 @@ assert 'line(11,b,0xff00ffcc);' in src
 for name in ("calls", "rejects", "ok"):
     assert src.count(f'__atomic_load_n(&nuwa_sc_{name},__ATOMIC_RELAXED)') == 1
 provider = Path("package/NuwaLegacyDisplay.cpp").read_text()
+assert 'displayObject->setProperty("IOFBRotation", (unsigned long long)0, 32)' in provider
+assert provider.index('setProperty("IOFBRotation"') < provider.index('displayObject->registerService();')
+assert 'failure(17); goto finish;' in provider
 for bit, key in enumerate(("canvas-width", "canvas-height", "device_type",
                            "IOMFBNumLayers", "IOMFBDisplayRefresh",
                            "NormalModeEnable", "ADCLLoadAll", "IOFBRotation")):
