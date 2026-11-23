@@ -6,6 +6,7 @@
 小米 13 Pro（nuwa / SM8550）通过 UniXNU 运行 iOS 16（donor: iPhone10,3 / 16.7.16 / 20H392，xnu-8796 线）。
 
 ## 基线
+- 2026-11-23 **SpringBoard 重启后仍无新帧，原因未证，交互未达**（主控转述 / self-checked）：[记录](docs/nuwa-sb-stall-20261123.md)。
 - 2026-11-22 **六进程在场，mobileactivationd 迁移失败候选待查，交互未达**（主控转述 / self-checked）：[观察](docs/nuwa-mobileactivation-migration-20261122.md)。
 - 2026-11-22 **Apple logo 里程碑**（主控转述实机、self-checked；持久交互未达成）：见 [记录](docs/nuwa-logo-milestone-20261122.md)。
 - 2026-11-20 **FAT 计数更正（主机 self-checked，未上机）**：ON 通过，原 r35 OFF 低于原门槛；见 [本轮记录](docs/nuwa-r35-display-fat-correction-20261120-observation.md)。
