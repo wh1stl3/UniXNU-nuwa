@@ -15,7 +15,7 @@ static unsigned bp_banner_priority(const char *s, unsigned previous) {
       !strncmp(s,"XR",2) || !strncmp(s,"PROC",4) ||
       !strncmp(s,"SVC",3) || !strncmp(s,"SC ",3)) return 0;
   if (!strncmp(s,"LOAD",4) || !strncmp(s,"UFS",3) ||
-      !strncmp(s,"SCHED",5)) return 1;
+      !strncmp(s,"SCHED",5) || !strncmp(s,"SHOT",4)) return 1;
   if (!strncmp(s,"GPU",3)) return 3;
   return 2;
 }
@@ -37,6 +37,190 @@ static unsigned bp_banner_select(char rows[][120], unsigned n, unsigned budget) 
 }
 """
 
+# nuwa-sb-stack=<seconds>: one-shot SpringBoard thread snapshot. The state and the
+# buffer are declared before the banner (which renders them) and the helpers before
+# touch_monitor (which arms and takes the snapshot).
+SHOT_STATE = b"""
+// nuwa-sb-stack=<seconds>: one-shot SpringBoard thread snapshot. One static MiB,
+// page aligned; every field is written by the monitor thread only.
+#define BP_SHOT_BUF (1u << 20)
+#define BP_SHOT_NO_PID 1000u     // no confirmed positive pid, or that pid no longer names SpringBoard
+#define BP_SHOT_INTEGRITY 1001u  // BEGIN, bounds, container balance or BUFFER_END failed
+#define BP_SHOT_IDENTITY 1002u   // container count, pid, unique id or process name mismatch
+#define BP_SHOT_LONG_MS 1000u    // durations above this append "to"
+#define BP_SHOT_BEGIN 0x59a25807u
+#define BP_SHOT_END 0xf19158edu
+#define BP_SHOT_CONTAINER_BEGIN 0x13u
+#define BP_SHOT_CONTAINER_END 0x14u
+#define BP_SHOT_TASK_CONTAINER 0x903u
+#define BP_SHOT_TRANSITIONING_TASK 0x931u
+#define BP_SHOT_TASK_SNAPSHOT 0x905u
+#define BP_SHOT_THREAD_SNAPSHOT 0x906u
+#define BP_SHOT_TH_WAIT 0x01u
+static uint8_t bp_shot_buf[BP_SHOT_BUF] __attribute__((aligned(4096)));
+static unsigned bp_shot_armed, bp_shot_seq, bp_shot_beat;
+static unsigned bp_shot_pid, bp_shot_total, bp_shot_wait, bp_shot_rc, bp_shot_ms, bp_shot_to;
+static uint64_t bp_shot_uid;
+"""
+
+# Helpers, inserted before touch_monitor. The call is made from the monitor thread,
+# after touch_overlay() has returned and released render_busy, and before the 30 ms
+# wait: no recorder, overlay or process-list lock is held. The stackshot takes its own
+# subsystem lock (try-lock only) and disables interrupts around the snapshot trap for a
+# window with no upper bound, so the counter delta is measured and shown. Only record
+# headers are walked; stack frames are never decoded. "w=n" means every thread record
+# carried SS_TH_WAIT at that instant; it does not prove a deadlock.
+SHOT_PROBE = b"""
+struct bp_shot_item { uint32_t type; uint32_t size; uint64_t flags; };
+// osfmk/kern/kcdata.h: items are 16-byte aligned and item->size already includes the
+// padding of the payload, so only the leading fields below are read.
+struct bp_shot_task_snapshot {
+  uint64_t unique_pid, ss_flags, user_time, system_time, p_start_sec, task_size, max_resident_size;
+  uint32_t suspend_count, faults, pageins, cow_faults, was_throttled, did_throttle, latency_qos;
+  int32_t pid;
+  char comm[32];
+} __attribute__((packed));
+struct bp_shot_thread_snapshot {
+  uint64_t tid, wait_event, continuation, total_syscalls, voucher, dqserialnum;
+  uint64_t user_time, sys_time, ss_flags, last_run_time, last_made_runnable_time;
+  uint32_t state, sched_flags;
+  int16_t base_priority, sched_priority;
+  uint8_t eqos, rqos, rqos_override, io_tier;
+} __attribute__((packed));
+static int bp_shot_name_is(const char *text, const char *want, unsigned cap) {
+  for (unsigned i = 0; i < cap; ++i) {
+    if (text[i] != want[i]) return 0;
+    if (!text[i]) return 1;
+  }
+  return 0;
+}
+// Whole-buffer check: BEGIN first, every item inside bytes_traced, containers balanced
+// and matched by identifier, exactly one ordinary task container carrying our unique id,
+// exactly one task snapshot agreeing on pid, unique id and name, BUFFER_END last.
+static unsigned bp_shot_parse(unsigned pid, uint64_t uid, unsigned bytes, unsigned *totalp, unsigned *waitp) {
+  const unsigned char *const begin = bp_shot_buf, *const end = begin + bytes;
+  const unsigned char *at = begin;
+  uint32_t depth = 0, container[8];
+  uint64_t identity[8];
+  int task_depth = -1, header = 1, ended = 0;
+  unsigned tasks = 0, snapshots = 0, total = 0, wait = 0;
+  if (bytes < sizeof(struct bp_shot_item)) return BP_SHOT_INTEGRITY;
+  while ((size_t)(end - at) >= sizeof(struct bp_shot_item)) {
+    const struct bp_shot_item *item = (const struct bp_shot_item *)at;
+    const unsigned char *data = at + sizeof(*item);
+    if (header) {
+      if (item->type != BP_SHOT_BEGIN || item->size != 0) return BP_SHOT_INTEGRITY;
+      header = 0;
+    } else if (item->type == BP_SHOT_END) {
+      if (item->size != 0) return BP_SHOT_INTEGRITY;
+      at = data;
+      ended = 1;
+      break;
+    }
+    if ((size_t)item->size > (size_t)(end - data)) return BP_SHOT_INTEGRITY;
+    if (item->type == BP_SHOT_CONTAINER_BEGIN) {
+      if (item->size < sizeof(uint32_t) || depth >= 8) return BP_SHOT_INTEGRITY;
+      memcpy(&container[depth], data, sizeof(uint32_t));
+      identity[depth] = item->flags;
+      if (container[depth] == BP_SHOT_TRANSITIONING_TASK && item->flags == uid) return BP_SHOT_IDENTITY;
+      if (container[depth] == BP_SHOT_TASK_CONTAINER && item->flags == uid) { ++tasks; task_depth = (int)depth; }
+      ++depth;
+    } else if (item->type == BP_SHOT_CONTAINER_END) {
+      if (!depth || identity[depth - 1] != item->flags) return BP_SHOT_INTEGRITY;
+      --depth;
+      if (task_depth >= 0 && (uint32_t)task_depth == depth) task_depth = -1;
+    } else if (task_depth >= 0 && (uint32_t)task_depth < depth) {
+      if (item->type == BP_SHOT_TASK_SNAPSHOT) {
+        const struct bp_shot_task_snapshot *task = (const void *)data;
+        if (item->size < sizeof(*task)) return BP_SHOT_INTEGRITY;
+        if (++snapshots > 1 || task->unique_pid != uid || task->pid != (int32_t)pid ||
+            !bp_shot_name_is(task->comm, "SpringBoard", sizeof(task->comm))) return BP_SHOT_IDENTITY;
+      } else if (item->type == BP_SHOT_THREAD_SNAPSHOT) {
+        const struct bp_shot_thread_snapshot *thread = (const void *)data;
+        // thread_snapshot_v2 (padded) and v3 are 112 bytes, v4 is 128; state is at +88.
+        if (item->size != 112 && item->size != 128) return BP_SHOT_INTEGRITY;
+        ++total;
+        if (thread->state & BP_SHOT_TH_WAIT) ++wait;
+      }
+    }
+    at = data + item->size;
+  }
+  if (!ended || header || depth || at != end) return BP_SHOT_INTEGRITY;
+  if (tasks != 1 || snapshots != 1) return BP_SHOT_IDENTITY;
+  *totalp = total;
+  *waitp = wait;
+  return 0;
+}
+extern uint64_t proc_uniqueid(struct proc *);
+static unsigned bp_shot_resolve(unsigned pid, uint64_t *uid) {
+  char name[32];
+  if (!pid || pid > 0x7fffffffu) return 0;
+  struct proc *p = proc_find((int)pid);
+  if (!p) return 0;
+  *uid = proc_uniqueid(p);
+  proc_name((int)pid, name, sizeof(name));
+  proc_rele(p);
+  return bp_shot_name_is(name, "SpringBoard", sizeof(name));
+}
+// Runs before touch_overlay() so the overlay paints the pending heartbeat; a panel that
+// still shows "pending <k>" with no matching done/fail never returned from the call.
+static void bp_shot_arm(void) {
+  uint64_t uid = 0;
+  unsigned pid = __atomic_load_n(&bp_proc_pid[0], __ATOMIC_RELAXED);
+  ++bp_shot_seq;
+  bp_shot_armed = 0;
+  bp_shot_total = bp_shot_wait = bp_shot_ms = bp_shot_to = 0;
+  if (!pid || !bp_shot_resolve(pid, &uid)) {
+    bp_shot_rc = BP_SHOT_NO_PID;
+    __atomic_store_n(&bp_shot_beat, (bp_shot_seq << 8) | 3u, __ATOMIC_RELEASE);
+    printf("nuwa-sb-stack: seq=%u pid=%u rc=%u not attempted\\n", bp_shot_seq, pid, bp_shot_rc);
+    return;
+  }
+  bp_shot_pid = pid;
+  bp_shot_uid = uid;
+  bp_shot_rc = 0;
+  bp_shot_armed = 1;
+  __atomic_store_n(&bp_shot_beat, (bp_shot_seq << 8) | 1u, __ATOMIC_RELEASE);
+}
+static void bp_shot_take(void) {
+  uint64_t frequency, start, stop;
+  unsigned bytes = 0, total = 0, wait = 0, rc;
+  __asm__ volatile("mrs %0, cntfrq_el0" : "=r"(frequency));
+  if (!frequency) frequency = 19200000;
+  __asm__ volatile("isb\\n\\tmrs %0, cntpct_el0" : "=r"(start));
+  rc = (unsigned)stack_snapshot_from_kernel((int)bp_shot_pid, bp_shot_buf, (uint32_t)sizeof(bp_shot_buf),
+    (uint64_t)STACKSHOT_KCDATA_FORMAT | (uint64_t)STACKSHOT_TRYLOCK, 0, 0, &bytes);
+  __asm__ volatile("isb\\n\\tmrs %0, cntpct_el0" : "=r"(stop));
+  bp_shot_ms = (unsigned)((stop - start) * 1000 / frequency);
+  if (bp_shot_ms > BP_SHOT_LONG_MS) bp_shot_to = 1;
+  if (rc == KERN_SUCCESS && (bytes == 0 || bytes > sizeof(bp_shot_buf))) rc = BP_SHOT_INTEGRITY;
+  if (rc == KERN_SUCCESS) rc = bp_shot_parse(bp_shot_pid, bp_shot_uid, bytes, &total, &wait);
+  bp_shot_rc = rc;
+  if (rc == KERN_SUCCESS) { bp_shot_total = total; bp_shot_wait = wait; }
+  __atomic_store_n(&bp_shot_beat, (bp_shot_seq << 8) | (rc ? 3u : 2u), __ATOMIC_RELEASE);
+  printf("nuwa-sb-stack: seq=%u pid=%u uid=%llx rc=%u n=%u w=%u ms=%u%s\\n", bp_shot_seq, bp_shot_pid,
+    (unsigned long long)bp_shot_uid, rc, bp_shot_total, bp_shot_wait, bp_shot_ms, bp_shot_to ? " to" : "");
+}
+"""
+
+# Two banner rows: the heartbeat with its sequence number, then the result.
+SHOT_ROWS = b"""
+  {
+    unsigned beat = __atomic_load_n(&bp_shot_beat, __ATOMIC_RELAXED);
+    unsigned shot_seq = beat >> 8, shot_state = beat & 255u;
+    if (shot_seq && n + 2 < 48) {
+      unsigned shot_rc = __atomic_load_n(&bp_shot_rc, __ATOMIC_RELAXED);
+      snprintf(rows[n++],120,"SHOT %s %u",
+        shot_state == 1 ? "pending" : shot_state == 2 ? "done" : "fail", shot_seq);
+      if (shot_state != 1) {
+        const char *to = bp_shot_to ? " to" : "";
+        if (shot_rc) snprintf(rows[n++],120,"SHOT n=- w=- r=%u%s",shot_rc,to);
+        else snprintf(rows[n++],120,"SHOT n=%u w=%u r=0%s",bp_shot_total,bp_shot_wait,to);
+      }
+    }
+  }
+"""
+
 
 def replace_once(src, anchor, replacement):
     if src.count(anchor) != 1:
@@ -47,6 +231,10 @@ def replace_once(src, anchor, replacement):
 def generate(src, *, mg_reset=False):
     if sha256(src).hexdigest() != RENDERER_SHA:
         raise ValueError("expected the pinned r35l full renderer")
+    # stack_snapshot_from_kernel and the STACKSHOT_* flags live in <kern/debug.h>
+    # (XNU_KERNEL_PRIVATE), the same declaration kern_stackshot.c implements.
+    src = replace_once(src, b"#include <kern/boot_progress.h>\n",
+                       b"#include <kern/boot_progress.h>\n#include <kern/debug.h>\n")
     src = replace_once(src, b"static void crash_banner(unsigned now) {", b"""
 // At most six characters including unit; a prefix denotes rounding down.
 static void bp_short_value(char out[7], uint64_t value, const char *unit) {
@@ -125,12 +313,19 @@ static void bp_proc_census(unsigned restart, unsigned now) {
   __atomic_fetch_add(&bp_proc_generation,1,__ATOMIC_RELEASE);
 }
 static void touch_monitor(void *arg, wait_result_t result) {""")
+    src = replace_once(src, b"static void touch_monitor(void *arg, wait_result_t result) {",
+                       SHOT_PROBE + b"static void touch_monitor(void *arg, wait_result_t result) {")
     src = replace_once(src, b"  for(;;) {\n    touch_overlay();", b"""  unsigned census_at=0, census_started=0, restart_at=0, restart_every=0;
   unsigned restart_count=0, restart_last=0;
+  unsigned shot_at=0, shot_used=0;
   PE_parse_boot_argn("nuwa-sb-restart",&restart_at,sizeof(restart_at));
   PE_parse_boot_argn("nuwa-sb-restart-every",&restart_every,sizeof(restart_every));
+  // One shot only: absent or zero disables it, values below 60 are raised to 60 and a
+  // failed attempt is never retried.
+  PE_parse_boot_argn("nuwa-sb-stack",&shot_at,sizeof(shot_at));
   if (restart_at && restart_at<60) restart_at=60;
   if (restart_every && restart_every<120) restart_every=120;
+  if (shot_at && shot_at<60) shot_at=60;
   for(;;) {
     unsigned now=seconds();
     if (nprocs>0 && (!census_started || now-census_at>=10)) {
@@ -144,9 +339,11 @@ static void touch_monitor(void *arg, wait_result_t result) {""")
       bp_proc_census(restart,now);
       census_at=now; census_started=1;
     }
-    touch_overlay();""")
+    if (shot_at && !shot_used && now>=shot_at) { shot_used=1; bp_shot_arm(); }
+    touch_overlay();
+    if (bp_shot_armed) { bp_shot_armed=0; bp_shot_take(); }""")
     anchor = b"char boot_progress_page_text[48][BP_COLS];"
-    src = replace_once(src, anchor, b"""static uint32_t bp_proc_pid[6], bp_proc_generation, bp_svc_mask, bp_sb_restart_state;
+    src = replace_once(src, anchor, SHOT_STATE + b"""static uint32_t bp_proc_pid[6], bp_proc_generation, bp_svc_mask, bp_sb_restart_state;
 // FDR exits are independent of the best-effort exit ring.
 static uint64_t bp_fdr_exit;
 // Diagnostic only: two independent byte samples; no synchronization of display state.
@@ -283,6 +480,8 @@ void boot_progress_prop_set(uint16_t properties) {
 """)
     src = replace_once(src, b"  if(signal || ns) {\n",
                        b'  if((signal || ns) && !(name && !strcmp(name,"IOMFB_FDR_Loader"))) {\n')
+    src = replace_once(src, b"  // Presentation cost: swaps in the last second",
+                       SHOT_ROWS + b"  // Presentation cost: swaps in the last second")
     if mg_reset:
         src = replace_once(src, anchor, b"extern uint32_t nuwa_mg_reset_diag;\n" + anchor)
         src = replace_once(src, b"  if (&nuwa_cli_enter", b"""  unsigned ds = &native_data_persist_state ? native_data_persist_state : 0;
