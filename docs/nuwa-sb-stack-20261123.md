@@ -147,8 +147,19 @@ Product: `out/nuwa-systemgroup-seed-20261122/vendor-boot-sb-stack/vendor_boot.im
 Kernel, outer, CHMH and FAT digests above are from that directory; `payload.img` and
 `outer-audit/actual-vendor-ramdisk.img` both hash to the FAT value.
 
-## What the reviewer must re-decide
+## Layout effect the reviewer must accept
 
+The 1 MiB zero-fill buffer grows `__DATA` vmsize from `0x34c000` to `0x44c000`, so every
+segment above it moves up by exactly `0x100000`: `__BOOTDATA` `0xfffffff007d34000` →
+`0xfffffff007e34000`, `__PRELINK_INFO` `0xfffffff008070000` → `0xfffffff008170000`, and
+`__LINKEDIT` likewise, leaving the top of the image at `0xfffffff008170000`. Segment
+file offsets and the 52,187,136-byte file are unchanged, so the loader walks the same
+`LC_SEGMENT_64` records and maps one more MiB of zero-fill where the header now says.
+Nothing in this repository pins the old addresses — the linked guard tests recompute
+them from the image and pass — but whether the loader's reserved kernel window covers
+the new top is **not** checked here.
+
+## What the reviewer must re-decide
 1. The kcdata walk: offsets, 112/128-byte thread records (v2 padded, v3, v4), the
    task snapshot layout, and the `at == end` strictness for `BUFFER_END`.
 2. The identity rule: is a single `0x903` container + matching `ts_unique_pid`/
