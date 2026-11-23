@@ -47,6 +47,35 @@ def replace_once(src, anchor, replacement):
 def generate(src, *, mg_reset=False):
     if sha256(src).hexdigest() != RENDERER_SHA:
         raise ValueError("expected the pinned r35l full renderer")
+    src = replace_once(src, b"static void crash_banner(unsigned now) {", b"""
+// At most six characters including unit; a prefix denotes rounding down.
+static void bp_short_value(char out[7], uint64_t value, const char *unit) {
+  static const char prefix[] = " kMGTPE";
+  unsigned p=0;
+  if (value > (unit[0] ? 9999ULL : 999999ULL)) {
+    do { value /= 1000; ++p; } while (value > 999 && p < 6);
+    snprintf(out,7,"%llu%c%s",(unsigned long long)value,prefix[p],unit);
+  } else snprintf(out,7,"%llu%s",(unsigned long long)value,unit);
+}
+static void crash_banner(unsigned now) {""")
+    src = replace_once(src, b"""      snprintf(rows[n++],120,"UFS   since last: verify=%llums read=%llums blocks=%llu reqs=%llu | total verify=%llums read=%llums reqs=%llu",
+        (unsigned long long)((v-banner_ufs_v)*1000/f),(unsigned long long)((r-banner_ufs_r)*1000/f),(unsigned long long)(b-banner_ufs_b),
+        (unsigned long long)(q-banner_ufs_n),(unsigned long long)(v*1000/f),(unsigned long long)(r*1000/f),(unsigned long long)q);""", b"""      char lr[7],ld[7],tr[7],td[7];
+      bp_short_value(lr,q-banner_ufs_n,"");
+      bp_short_value(ld,(r-banner_ufs_r)*1000/f,"ms");
+      bp_short_value(tr,q,"");
+      bp_short_value(td,r*1000/f,"ms");
+      (void)(v-banner_ufs_v); (void)(b-banner_ufs_b);
+      snprintf(rows[n++],120,"UFS L r=%s rd=%s T r=%s rd=%s",lr,ld,tr,td);""")
+    src = replace_once(src, b"""    snprintf(rows[n++],120,"SCHED 30ms sleeps since last: n=%llu mean_late_us=%llu max_late_us=%llu >50ms=%llu | irq timer=%llu ipi=%llu",
+      (unsigned long long)(sn-banner_sleep_n),(unsigned long long)((ss-banner_sleep_sum)/dn),(unsigned long long)sm,
+      (unsigned long long)(sl-banner_sleep_late),(unsigned long long)(ti-banner_tint),(unsigned long long)(ip-banner_ipi));""", b"""    char count[7],mean[7],max[7],late[7];
+    bp_short_value(count,sn-banner_sleep_n,"");
+    bp_short_value(mean,(ss-banner_sleep_sum)/dn,"us");
+    bp_short_value(max,sm,"us");
+    bp_short_value(late,sl-banner_sleep_late,"");
+    (void)(ti-banner_tint); (void)(ip-banner_ipi);
+    snprintf(rows[n++],120,"SCHED n=%s m=%s x=%s >50=%s",count,mean,max,late);""")
     src = replace_once(src, b'#include <string.h>\n', b"""#include <string.h>
 struct proc;
 extern struct proc *proc_find(int);
