@@ -252,3 +252,6 @@ unobserved.
 2. Deep review: the call is gated on the paint path's record; a pass that never stores
    the row cannot call, and `r=1003` reports it. Evidence wording corrected (frozen
    pending is not proof of being inside the trap; image top; parser-versus-producer).
+3. Argument variant for an undisturbed run: `nuwa-sb-restart=400` and
+   `nuwa-sb-restart-every=180` are absent (kernel unchanged); see
+   [nuwa-sb-stack3-20261123.md](nuwa-sb-stack3-20261123.md).
