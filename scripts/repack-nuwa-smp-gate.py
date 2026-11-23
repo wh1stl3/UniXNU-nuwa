@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 """Package the SMP-gate kernel with the current display ON argument set.
 
-Host only: no device I/O, no flash. The base r35 display packager is reused with
-one override (the HID kernel pin moves to the freshly built kernel); nothing else
-changes, so the root/ADT/FAT/outer/CHMH audits of the parent all still run.
+Host only: no device I/O, no flash. Reuse the pinned r35 display packager
+with the freshly built kernel and the selected argument set, preserving all
+parent root/ADT/FAT/outer/CHMH audits.
 
-The boot arguments must stay exactly the ones the device currently runs, minus
-the two restart probes that the next run must not arm, and with no new token: the
-SMP gate is default-off and is not a boot argument.
+By default, remove only the two restart probes from the old HID-stage args.
+With --enable-smp-entry, append only sheng-smp=1 to the default-off SMP package.
 
   --baseline  a previous vendor_boot package whose args differ only by
               " nuwa-sb-restart=400 nuwa-sb-restart-every=180" (default: the
-              hid-stage package). Its outer SHA is pinned.
+              hid-stage package), or the default-off SMP package in entry mode.
+              The outer SHA is pinned in each mode.
 
 The FAT and the non-FAT bytes are compared against that baseline; the args are
 then re-extracted from the produced vendor_boot.img itself (FAT sliced out,
@@ -40,6 +40,10 @@ SEED_UUID = "B0E0F71F-A265-4038-8F5C-6D3632859DEF"
 BASELINE = ROOT / "out/nuwa-systemgroup-seed-20261122/vendor-boot-hid-stage"
 BASELINE_SHA = "01e6e1c71346c05fb7cc9885d1179346b72e296ef3bbd993952017b6edd6479d"
 RESTART = b" nuwa-sb-restart=400 nuwa-sb-restart-every=180"
+SMP_BASELINE = ROOT / "out/nuwa-smp-gate-20261123-package"
+SMP_BASELINE_SHA = "b02007f707302915ec62516dff21bec5d1dd4e0dbaa95ccfe5440d18b3655999"
+SMP_KERNEL_SHA = "6af982c35ba95de30ac33d68f040cae384878b78236d40d2f9d9c8a0f7dc683f"
+SMP_SUFFIX = b" sheng-smp=1"
 # Exact argument text of outer d6de71fcb7caa4c210f2d40e4729fe98611e5336b267eba301fdc8595b723769
 # (worktree-textfixup final4): the same profile without any SMP token.
 EXPECTED_ARGS = (
@@ -76,8 +80,8 @@ def split_build(directory):
     return outer, fat, outside
 
 
-def extract_args(outer_path):
-    """Slice the FAT out of vendor_boot.img and read ::/EFI/UniXNU/unixnu.toml."""
+def extract_boot_inputs(outer_path):
+    """Read the boot config and ADT directly from the outer's FAT."""
     fat, _ = geometry(outer_path.read_bytes())
     with tempfile.TemporaryDirectory(dir=ROOT / "out", prefix="smp-gate-args-") as tmp:
         image = Path(tmp) / "payload.img"
@@ -85,7 +89,16 @@ def extract_args(outer_path):
         config = Path(tmp) / "unixnu.toml"
         subprocess.run(["mcopy", "-o", "-i", str(image), "::/EFI/UniXNU/unixnu.toml", str(config)],
                        check=True, capture_output=True)
-        return config.read_bytes(), fat
+        adt = Path(tmp) / "kernel.macho.adt"
+        subprocess.run(["mcopy", "-o", "-i", str(image),
+                        "::/EFI/UniXNU/Payloads/kernel.macho.adt", str(adt)],
+                       check=True, capture_output=True)
+        return config.read_bytes(), adt.read_bytes(), fat
+
+
+def xnu_args(config):
+    args, = [e["args"].encode() for e in tomllib.loads(config.decode())["entry"] if e["id"] == "xnu"]
+    return args
 
 
 class CandidateSeedLoader(importlib.machinery.SourceFileLoader):
@@ -113,7 +126,7 @@ class CandidateSeedLoader(importlib.machinery.SourceFileLoader):
         CandidateSeedLoader.modules.append(r35)
 
 
-def run_packager(argv, kernel_sha256):
+def run_packager(argv, kernel_sha256, *, enable_smp_entry):
     spec_from_file = importlib.util.spec_from_file_location
     CandidateSeedLoader.modules.clear()
 
@@ -128,6 +141,10 @@ def run_packager(argv, kernel_sha256):
         packager = SOURCE.read_text()
         require(packager.count(OLD_HID_PIN) == 1, "HID kernel pin anchor changed")
         packager = packager.replace(OLD_HID_PIN, 'HID_KERNEL = "' + kernel_sha256 + '"')
+        if enable_smp_entry:
+            anchor = '        inputs["ARGS"] += b" nuwa-hid-standin=1"'
+            require(packager.count(anchor) == 1, "HID argument anchor changed")
+            packager = packager.replace(anchor, anchor + f'\n        inputs["ARGS"] += {SMP_SUFFIX!r}')
         exec(compile(packager, str(SOURCE), "exec"), {"__name__": "__main__", "__file__": str(SOURCE)})
     finally:
         importlib.util.spec_from_file_location = spec_from_file
@@ -141,15 +158,20 @@ def main():
     parser.add_argument("--kernel-sha256", required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--audit", type=Path, help="optional second pass that re-extracts the package")
-    parser.add_argument("--baseline", type=Path, default=BASELINE)
+    parser.add_argument("--enable-smp-entry", action="store_true",
+                        help="append only sheng-smp=1 to the pinned default-off SMP package")
+    parser.add_argument("--baseline", type=Path)
     a = parser.parse_args()
-    kernel, output, baseline = a.kernel.resolve(), a.output.resolve(), a.baseline.resolve()
+    default_baseline = SMP_BASELINE if a.enable_smp_entry else BASELINE
+    kernel, output, baseline = a.kernel.resolve(), a.output.resolve(), (a.baseline or default_baseline).resolve()
     audit = a.audit.resolve() if a.audit else None
     for path in (kernel, output, baseline, *([audit] if audit else [])):
         if (ROOT / "out").resolve() not in path.parents:
             parser.error(f"expected a path inside device out/: {path}")
     if output.exists() or (audit and audit.exists()):
         parser.error("--output and --audit must be new")
+    if a.enable_smp_entry:
+        require(a.kernel_sha256 == SMP_KERNEL_SHA, "entry mode requires the default-off SMP kernel")
     require(sha(kernel.read_bytes()) == a.kernel_sha256, "kernel SHA256 mismatch")
     require(sha(SOURCE.read_bytes()) == SOURCE_SHA, "display packager changed")
     require(sha(SEED.read_bytes()) == SEED_SHA, "SystemGroup seed changed")
@@ -157,14 +179,16 @@ def main():
     require(report.is_file() and json.loads(report.read_text()).get("kernel_sha256") == a.kernel_sha256,
             "kernel is not the audited HID final link")
     baseline_outer, baseline_fat, baseline_outside = split_build(baseline)
-    require(sha(baseline_outer) == BASELINE_SHA, "baseline outer SHA256 mismatch")
+    baseline_sha = SMP_BASELINE_SHA if a.enable_smp_entry else BASELINE_SHA
+    require(sha(baseline_outer) == baseline_sha, "baseline outer SHA256 mismatch")
 
     flags = ["--kernel", kernel, "--kernel-sha256", a.kernel_sha256,
              "--enable-display", "--board-window", "--enable-mg-reset-resume-only",
              "--enable-hid-standin"]
-    r35 = run_packager([*flags, "--output", output], a.kernel_sha256)
+    r35 = run_packager([*flags, "--output", output], a.kernel_sha256, enable_smp_entry=a.enable_smp_entry)
     if audit:
-        run_packager([*flags, "--output", audit, "--audit", output], a.kernel_sha256)
+        run_packager([*flags, "--output", audit, "--audit", output], a.kernel_sha256,
+                     enable_smp_entry=a.enable_smp_entry)
 
     outer, fat, outside = split_build(output)
     require(outside == baseline_outside, "bytes outside the vendor ramdisk FAT changed")
@@ -172,16 +196,20 @@ def main():
     require(len(fat) == len(baseline_fat), "payload FAT size changed")
 
     readback = (output / "outer-audit/outer-readback/EFI/UniXNU")
-    config = tomllib.loads((readback / "unixnu.toml").read_text())
-    args, = [e["args"].encode() for e in config["entry"] if e["id"] == "xnu"]
-    baseline_config = tomllib.loads(
-        (baseline / "outer-audit/outer-readback/EFI/UniXNU/unixnu.toml").read_text())
-    baseline_args, = [e["args"].encode() for e in baseline_config["entry"] if e["id"] == "xnu"]
-    require(baseline_args.count(RESTART) == 1, "baseline does not carry the restart pair once")
-    require(args == baseline_args.replace(RESTART, b""), "args differ beyond the restart pair")
-    require(args == EXPECTED_ARGS, "args are not the pinned current-device set")
+    args = xnu_args((readback / "unixnu.toml").read_bytes())
+    baseline_config, baseline_adt, _ = extract_boot_inputs(baseline / "vendor_boot.img")
+    baseline_args = xnu_args(baseline_config)
+    if a.enable_smp_entry:
+        require(baseline_args == EXPECTED_ARGS, "default-off SMP baseline args differ")
+        require(args == baseline_args + SMP_SUFFIX, "args differ beyond appending sheng-smp=1")
+    else:
+        require(baseline_args.count(RESTART) == 1, "baseline does not carry the restart pair once")
+        require(args == baseline_args.replace(RESTART, b""), "args differ beyond the restart pair")
+        require(args == EXPECTED_ARGS, "args are not the pinned current-device set")
     tokens = args.split()
     for key in FORBIDDEN_KEYS:
+        if a.enable_smp_entry and key == b"sheng-smp":
+            continue
         require(not any(t == key or t.startswith(key + b"=") for t in tokens),
                 f"forbidden argument present: {key!r}")
     for token in (b"sheng-data-persist=2", b"nuwa-lite=1", b"nuwa-mg-reset=1", b"boot-progress=2",
@@ -189,22 +217,36 @@ def main():
         require(tokens.count(token) == 1, f"expected once in args: {token!r}")
 
     # Re-extract from the produced image itself, not only from the packager's readback.
-    direct, direct_fat = extract_args(output / "vendor_boot.img")
+    direct, direct_adt, direct_fat = extract_boot_inputs(output / "vendor_boot.img")
     require(direct_fat == fat, "re-extracted FAT differs from payload.img")
-    direct_args, = [e["args"].encode() for e in tomllib.loads(direct.decode())["entry"]
-                    if e["id"] == "xnu"]
+    direct_args = xnu_args(direct)
     require(direct_args == args, "args re-extracted from vendor_boot.img differ")
+    if a.enable_smp_entry:
+        require(direct == baseline_config.replace(baseline_args, baseline_args + SMP_SUFFIX, 1),
+                "boot config differs beyond appending sheng-smp=1")
 
     require(sha((readback / "Payloads/kernel.macho").read_bytes()) == a.kernel_sha256,
             "outer readback kernel differs from the requested SHA256")
     require(sha((readback / "Payloads/scratch-data.img").read_bytes()) == SEED_SHA,
             "outer readback seed differs")
     adt = r35.A
-    chosen = adt.properties(adt.find(adt.parse((readback / "Payloads/kernel.macho.adt").read_bytes()), "/chosen"))
+    tree = adt.parse(direct_adt)
+    chosen = adt.properties(adt.find(tree, "/chosen"))
     require(chosen.get("display-scale") == bytes.fromhex("03000000"), "unexpected display-scale")
     record = json.loads((output / "record.json").read_text())
     chmh = chosen.get("boot-manifest-hash", b"").hex()
     require(chmh == record["chmh_hex"], "CHMH differs from the package record")
+    if a.enable_smp_entry:
+        original_chmh = adt.properties(adt.find(adt.parse(baseline_adt), "/chosen"))["boot-manifest-hash"]
+        require(chmh != original_chmh.hex() and
+                direct_adt == baseline_adt.replace(original_chmh, bytes.fromhex(chmh), 1),
+                "rebound CHMH must be the only ADT change")
+        states = {adt.properties(node)["name"].rstrip(b"\0").decode(): adt.properties(node)["state"]
+                  for node in adt.find(tree, "/cpus")["children"]}
+        require(states == {f"cpu{i}": b"running\0" if i == 0 else b"waiting\0" for i in range(8)},
+                "unexpected /cpus state")
+        method = adt.properties(adt.find(tree, "/psci"))["method"]
+        require(method == b"smc\0", "unexpected /psci/method")
     cluster_bytes, _, free_clusters = r35.X.fat_clusters(fat)
     require(cluster_bytes * free_clusters >= 8388608, "FAT free space below 8 MiB")
     if audit:
@@ -219,7 +261,11 @@ def main():
     print(f"FAT SHA-256: {sha(fat)}")
     print(f"FAT free bytes: {cluster_bytes * free_clusters}")
     print(f"args ({len(args)} bytes, {len(tokens)} tokens) SHA-256: {sha(args)}")
-    print(args.decode())
+    print(direct_args.decode())
+    if a.enable_smp_entry:
+        for cpu, state in sorted(states.items()):
+            print(f"/cpus/{cpu}/state: {state[:-1].decode()}")
+        print(f"/psci/method: {method[:-1].decode()}")
     print("PACKAGE_VERIFY_DONE")
 
 
