@@ -50,6 +50,12 @@ R35_BUILD_SHA = "c2e8bcc0aae8a6736592079b4f0bd1fba9032490ddfa432f30df9e6fbc61997
 R35_PROVENANCE_SHA = "1183fe650735557053d09ef8de36ce9d689fe0b5b2f85acc677a0fb544a8d62d"
 EARLY_COUNTERS = ("_native_legacy_early_failures", "_native_legacy_early_retires")
 HOOKS = ("8796-offline-legacy-display-early.patch", "8796-offline-legacy-display-late.patch")
+# 8796-native-text-fixup: inputs of the two rebuilt TUs and the patch itself.
+TEXT_FIXUP_PATCH = ROOT / "patches/xnu/8796-native-text-fixup.patch"
+TEXT_FIXUP_PATCH_SHA = "080587ec7d20c55ca7f9bdec5ecc98d3eef982a74dbb102e247dbac4e7e36a71"
+R35L_UBC_SHA = "6d9dbdcda146110f1d739803630bae11a1d042a723f1acf76fdbe7c615739be0"
+R35_VM_FAULT_SHA = "990814178e80da7c3d7ddff855d497f9b863fdb4a45415e71534cf4e2c75b934"
+R35_VM_PROTOS_SHA = "3ef4c0ca9d71b329ad3952cb5f3f52c6ce157b0575f0bdb4eef044380d8679ee"
 
 
 def digest(path):
@@ -146,7 +152,87 @@ def audit_debug_strip(full, compact):
             "native_bytes_saved": len(full) - len(compact)}
 
 
-def candidate_link(r35, out, records, argv, env, *, bringup_diag, hid, mg_reset):
+def load_o_json(path):
+    """Parse one or more concatenated clang -MJ fragments."""
+    raw = path.read_text()
+    decoder, records, index = json.JSONDecoder(), [], 0
+    while index < len(raw):
+        while index < len(raw) and raw[index] in " \t\r\n,":
+            index += 1
+        if index >= len(raw):
+            break
+        record, index = decoder.raw_decode(raw, index)
+        records.append(record)
+    if len(records) != 1:
+        raise SystemExit(f"{path}: expected one compile record")
+    return records[0]
+
+
+def text_fixup_objects(r35, out, records, env):
+    """Rebuild the two TUs the signed-text fixup patch changes, from the same
+    source bases the r35l kernel already used, and return their objects.
+
+    ubc_subr.c comes from the r35l staged tree (it carries the 4K hash-cache
+    change); vm_fault.c and vm_protos.h come from the xnu source tree recorded
+    in that kernel's own compile database. The patch is applied to copies only.
+    """
+    require_pin(r35 / "tree/bsd/kern/ubc_subr.c", R35L_UBC_SHA)
+    require_pin(TEXT_FIXUP_PATCH, TEXT_FIXUP_PATCH_SHA)
+    ubc, = [r for r in records if r["label"] == "compile-ubc_subr" and r["exit"] == 0]
+    ubc_argv = list(ubc["argv"])
+    source_root_at, = [i for i, arg in enumerate(ubc_argv)
+                       if arg.endswith("/.cache/xnu-work/bsd")]
+    xnu = Path(ubc_argv[source_root_at]).parent
+    require_pin(xnu / "osfmk/vm/vm_fault.c", R35_VM_FAULT_SHA)
+    require_pin(xnu / "osfmk/vm/vm_protos.h", R35_VM_PROTOS_SHA)
+    obj_root = Path(ubc["cwd"]).parent.parent
+    vm = load_o_json(obj_root / "osfmk/DEVELOPMENT/vm_fault.o.json")
+
+    tus = out / "tus"
+    (tus / "bsd/kern").mkdir(parents=True)
+    (tus / "osfmk/vm").mkdir(parents=True)
+    shutil.copyfile(r35 / "tree/bsd/kern/ubc_subr.c", tus / "bsd/kern/ubc_subr.c")
+    shutil.copyfile(xnu / "osfmk/vm/vm_fault.c", tus / "osfmk/vm/vm_fault.c")
+    shutil.copyfile(xnu / "osfmk/vm/vm_protos.h", tus / "osfmk/vm/vm_protos.h")
+    run(["patch", "--batch", "--fuzz=0", "-p1", "-i", TEXT_FIXUP_PATCH], cwd=tus)
+
+    # The patched vm_protos.h must shadow the exported copy for both TUs.
+    osfm = ["-I", str(tus / "osfmk")]
+
+    ubc_argv[2:2] = osfm
+    source_at = [i for i, arg in enumerate(ubc_argv)
+                 if arg.endswith("/tree/bsd/kern/ubc_subr.c")]
+    if len(source_at) != 1:
+        raise SystemExit("expected one ubc_subr.c in the recorded compile")
+    ubc_argv[source_at[0]] = str(tus / "bsd/kern/ubc_subr.c")
+    ubc_obj = out / "ubc_subr.o"
+    ubc_argv[ubc_argv.index("-o") + 1] = str(ubc_obj)
+    (out / "text-fixup-ubc-argv.json").write_text(json.dumps(ubc_argv, indent=2) + "\n")
+    subprocess.run(ubc_argv, cwd=ubc["cwd"], env=env, check=True)
+
+    vm_argv = list(vm["arguments"])
+    vm_argv[2:2] = osfm
+    source_at, = [i for i, arg in enumerate(vm_argv)
+                  if arg.endswith("/osfmk/vm/vm_fault.c")]
+    vm_argv[source_at] = str(tus / "osfmk/vm/vm_fault.c")
+    vm_obj = out / "vm_fault.o"
+    vm_argv[vm_argv.index("-o") + 1] = str(vm_obj)
+    (out / "text-fixup-vm-argv.json").write_text(json.dumps(vm_argv, indent=2) + "\n")
+    subprocess.run(vm_argv, cwd=vm["directory"], env=env, check=True)
+
+    (out / "text-fixup.json").write_text(json.dumps({
+        "patch": {"path": str(TEXT_FIXUP_PATCH), "sha256": TEXT_FIXUP_PATCH_SHA},
+        "sources_sha256": {
+            "bsd/kern/ubc_subr.c": R35L_UBC_SHA,
+            "osfmk/vm/vm_fault.c": R35_VM_FAULT_SHA,
+            "osfmk/vm/vm_protos.h": R35_VM_PROTOS_SHA,
+        },
+        "objects_sha256": {"ubc_subr.o": digest(ubc_obj), "vm_fault.o": digest(vm_obj)},
+    }, indent=2) + "\n")
+    return {"ubc_subr.o": ubc_obj, "vm_fault.o": vm_obj}
+
+
+def candidate_link(r35, out, records, argv, env, *, bringup_diag, hid, mg_reset, text_fixup=False):
     recipe, = [r for r in records if r["label"] == "compile-bsd_init" and r["exit"] == 0]
     command = list(recipe["argv"])
     source = r35 / "tree/bsd/kern/bsd_init.c"
@@ -178,6 +264,13 @@ def candidate_link(r35, out, records, argv, env, *, bringup_diag, hid, mg_reset)
     if filelist.splitlines(keepends=True).count(old) != 1:
         raise SystemExit("expected one r35 bsd_init.o in the native filelist")
     filelist = filelist.replace(old, str(obj) + "\n", 1)
+    if text_fixup:
+        for name, path in text_fixup_objects(r35, out, records, env).items():
+            line, = [entry for entry in filelist.splitlines(keepends=True)
+                     if entry.rstrip().endswith("/" + name)]
+            if filelist.count(line) != 1:
+                raise SystemExit(f"expected one {name} in the native filelist")
+            filelist = filelist.replace(line, str(path) + "\n", 1)
     if bringup_diag:
         watchdog, = [r for r in records if r["label"] == "compile-nuwa_watchdog_policy"
                      and r["exit"] == 0]
@@ -243,7 +336,8 @@ def diag_archive(r35, out, *, hid, mg_reset):
 
 
 def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
-               keep_link_debug, bringup_diag=False, hid_objects=(), mg_reset=False):
+               keep_link_debug, bringup_diag=False, hid_objects=(), mg_reset=False,
+               text_fixup=False):
     for name, pin in (R35L_PINS if bringup_diag else R35_PINS).items():
         require_pin(r35 / name, pin)
     require_pin(cpo, R35_CPO_SHA)
@@ -308,7 +402,8 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
         # Preserve the ADRP/LDR GOT sequence required by the linked audit.
         if candidate:
             argv = candidate_link(r35, out, records, argv, env, bringup_diag=bringup_diag,
-                                  hid=bool(hid_objects), mg_reset=mg_reset)
+                                  hid=bool(hid_objects), mg_reset=mg_reset,
+                                  text_fixup=text_fixup)
         if bringup_diag:
             argv = list(argv)
             diag = diag_archive(r35, out, hid=bool(hid_objects), mg_reset=mg_reset)
@@ -547,6 +642,8 @@ def main():
                    help="include the default-off HID board probe and require its final ABI audit")
     p.add_argument("--mg-reset", action="store_true",
                    help="include the board cache reset (off unless nuwa-mg-reset=1)")
+    p.add_argument("--text-fixup", action="store_true",
+                   help="rebuild ubc_subr/vm_fault with the signed-text fixup patch (requires --r35l-dir)")
     p.add_argument("--out", type=Path, required=True, help="new directory under out/")
     a = p.parse_args()
     base, cpo, linker, out = (x.resolve() for x in (a.base, a.cpo, a.linker_dir, a.out))
@@ -572,6 +669,8 @@ def main():
         p.error("--hid-standin requires the pinned --r35l-dir candidate")
     if a.mg_reset and not a.r35l_dir:
         p.error("--mg-reset requires the pinned --r35l-dir candidate")
+    if a.text_fixup and not a.r35l_dir:
+        p.error("--text-fixup requires the pinned --r35l-dir candidate")
     out.mkdir(parents=True, exist_ok=False)
     donor = base / "out/ipsw/20H392/kernelcache.decompressed"
     hid_objects = []
@@ -599,7 +698,8 @@ def main():
         mapfile = replay_r35(link_inputs, linker, cpo, out, archive, native,
                               cpu_only=a.cpu_only, candidate=a.candidate,
                               keep_link_debug=a.keep_link_debug, bringup_diag=bool(a.r35l_dir),
-                              hid_objects=hid_objects, mg_reset=a.mg_reset)
+                              hid_objects=hid_objects, mg_reset=a.mg_reset,
+                              text_fixup=a.text_fixup)
     else:
         # Replay XNU's exported link inputs, without its historical map output.
         stem = "mach.development.bcm2837"

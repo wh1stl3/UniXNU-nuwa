@@ -67,5 +67,11 @@ arch:../../../patches/xnu/source-pthread-bootstrap.patch
 # nuwa only: volatile kernel-owned panic storage, never the BCM2837 fixed PA.
 8796-nuwa-panic-fallback.patch
 8796-vfs-getvfs-with-vfsops.patch
+# Official UniXNU signed-text fixup mechanism (port of UniXNU/patches/xnu/native-text-fixup.patch):
+# after signature validation the validated page is matched by vnode name + file offset + original
+# bytes and rewritten through the physical alias, then cache_sync_page(). Driven by /chosen/text-fixups
+# (scripts/make-nuwa-adt.py --text-fixup); an absent/empty table is a no-op. Bypass ledger and limits:
+# docs/nuwa-text-fixup-20261123.md.
+8796-native-text-fixup.patch
 8796-offline-legacy-display-early.patch
 8796-offline-legacy-display-late.patch

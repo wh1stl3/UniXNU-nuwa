@@ -1,5 +1,7 @@
 # UniXNU-nuwa
 
+**2026-11-23 签名文本 fixup（官方机制）移植入 8796 series，20H392 dyld 共享缓存一条 ADT 条目；主机 self-checked，SVC 行新增 TF=parsed/applied，待 deep_reviewer（VM/pmap、签名语义、并发）。** [记录](docs/nuwa-text-fixup-20261123.md)。
+
 **2026-11-23：SpringBoard 重启后仍无新帧，原因未证（主控转述 / self-checked 记录）。** [记录](docs/nuwa-sb-stall-20261123.md)。
 
 **2026-11-22 SystemGroup seed: mobileactivationd crashes=0 at 754s; SpringBoard makes no observed frame progress (parent-reported / self-checked record).** [Result](docs/nuwa-systemgroup-fix-result-20261122.md).

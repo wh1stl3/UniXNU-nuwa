@@ -158,6 +158,9 @@ extern uint64_t nuwa_cli_identity __attribute__((weak_import));
 extern uint32_t nuwa_sc_calls __attribute__((weak_import));
 extern uint32_t nuwa_sc_rejects __attribute__((weak_import));
 extern uint32_t nuwa_sc_ok __attribute__((weak_import));
+// 8796-native-text-fixup exports these; absent means the mechanism is not compiled in.
+extern uint32_t cs_text_fixup_parsed __attribute__((weak_import));
+extern uint32_t cs_text_fixup_applied __attribute__((weak_import));
 #if NUWA_HID_STANDIN
 extern uint32_t nuwa_hid_stage;
 #endif
@@ -262,6 +265,14 @@ void boot_progress_prop_set(uint16_t properties) {
 #endif
   snprintf(rows[n++],120,"SVC %02x K=%ux%u H=%u",__atomic_load_n(&bp_svc_mask,__ATOMIC_RELAXED),
     restart_state&255u,restart_state>>8,hid_stage);
+  // Signed-text fixup readout: parsed/applied, only when the mechanism is linked in.
+  if (&cs_text_fixup_parsed && &cs_text_fixup_applied) {
+    char *row=rows[n-1];
+    size_t used=strlen(row);
+    snprintf(row+used,120-used," TF=%u/%u",
+      __atomic_load_n(&cs_text_fixup_parsed,__ATOMIC_RELAXED),
+      __atomic_load_n(&cs_text_fixup_applied,__ATOMIC_RELAXED));
+  }
   if (&nuwa_sc_calls && &nuwa_sc_rejects && &nuwa_sc_ok) {
     static unsigned previous_calls, previous_time;
     unsigned calls = __atomic_load_n(&nuwa_sc_calls,__ATOMIC_RELAXED);

@@ -41,6 +41,14 @@ DISPLAY_KERNELS = {
 DISPLAY_ARGS = (b" offline-mobile-graphics-load=1 offline-legacy-register=1 offline-legacy-gop=1"
                 b" offline-legacy-pm=1 offline-legacy-phase=4 offline-legacy-validate=1"
                 b" offline-legacy-transfer=1 offline-legacy-cpu-present=1")
+# 20H392 dyld shared cache fixup: replace +[AWAttentionAwarenessConfiguration initialize]'s
+# first adrp with ret. Same entry syntax scripts/make-nuwa-adt.py --text-fixup writes.
+# The offset field is bare hex: both make-nuwa-adt's validator and cs_text_fixup_parse
+# accept only hex digits, so the conventional "0x" prefix is not part of the stored entry.
+TEXT_FIXUP_ENTRY = "dyld_shared_cache_arm64.13,1cd5a9c,684a19d0004d47f9,c0035fd6004d47f9"
+TEXT_FIXUPS = TEXT_FIXUP_ENTRY.encode() + b"\0"
+TEXT_FIXUP_PATCH_SHA = "080587ec7d20c55ca7f9bdec5ecc98d3eef982a74dbb102e247dbac4e7e36a71"
+TEXT_FIXUP_KERNEL = "f0a52c9a9841db982d24fc0f961b44300cf10f2030f290a191421f1c23dd1798"
 
 
 def main():
@@ -54,6 +62,8 @@ def main():
                         help="4.75 GiB display ON, resume Data without reset and enable MG backup")
     parser.add_argument("--board-window", action="store_true",
                         help="derive the window from board.toml")
+    parser.add_argument("--text-fixup", action="store_true",
+                        help="add the pinned 20H392 /chosen/text-fixups entry to the display ON profile")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--audit", type=Path)
     a = parser.parse_args()
@@ -81,11 +91,22 @@ def main():
         report = kernel.parent / "hid/final-audit.json"
         if not report.is_file() or json.loads(report.read_text()).get("kernel_sha256") != HID_KERNEL:
             parser.error("HID ON profile requires the matching final-link audit")
-    elif a.enable_display and not a.enable_mg_reset_resume_only:
+    elif a.enable_display and not (a.enable_mg_reset_resume_only or a.text_fixup):
         if a.kernel_sha256 not in DISPLAY_KERNELS:
             parser.error("on profile requires a pinned display kernel SHA256")
     elif not a.enable_display and a.kernel_sha256 != R35_SHA:
         parser.error("off profile requires the original r35 kernel SHA256")
+    if a.text_fixup:
+        if not (a.enable_display and a.board_window):
+            parser.error("--text-fixup requires --enable-display and --board-window")
+        if a.kernel_sha256 != TEXT_FIXUP_KERNEL:
+            parser.error("text-fixup profile requires the pinned rebuilt kernel")
+        report = kernel.parent / "text-fixup.json"
+        if not report.is_file():
+            parser.error("text-fixup profile requires the builder's text-fixup.json")
+        recorded = json.loads(report.read_text())
+        if recorded.get("patch", {}).get("sha256") != TEXT_FIXUP_PATCH_SHA:
+            parser.error("text-fixup audit does not bind the pinned patch")
     if hashlib.sha256(SOURCE.read_bytes()).hexdigest() != SOURCE_SHA:
         raise ValueError("Pinned r35 packager changed")
 
@@ -111,6 +132,8 @@ def main():
     if a.enable_hid_standin:
         inputs["PROFILE"] += "-hid"
         inputs["ARGS"] += b" nuwa-hid-standin=1"
+    if a.text_fixup:
+        inputs["PROFILE"] += "-textfixup"
     for module in (r35, r35.X, r35.M):
         vars(module).update(inputs)
     if a.board_window:
@@ -139,9 +162,23 @@ def main():
                 if adt.properties(adt.find(tree, "/product")).get("artwork-scale-factor") != value:
                     raise ValueError("/product/artwork-scale-factor is not u32 3")
                 props.append(("display-scale", 0, value))
+            if a.text_fixup:
+                if "text-fixups" in adt.properties(chosen):
+                    raise ValueError("parent already has /chosen/text-fixups")
+                props.append(("text-fixups", 0, TEXT_FIXUPS))
             return adt.encode(tree)
 
         r35.X.derived = r35.X.C.derived = derived
+        if a.text_fixup:
+            previous_check = r35.X.check_adt
+
+            def check_adt(parent, actual, digest):
+                previous_check(parent, actual, digest)
+                chosen = r35.A.properties(r35.A.find(r35.A.parse(actual), "/chosen"))
+                if chosen.get("text-fixups") != TEXT_FIXUPS:
+                    raise ValueError("text-fixups missing or changed")
+
+            r35.X.check_adt = r35.X.C.check_adt = check_adt
     r35.M.main()
     if a.enable_mg_reset_resume_only:
         readback = output if audit else output / "outer-audit"

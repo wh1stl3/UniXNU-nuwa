@@ -16,6 +16,8 @@ helper = generated[start:end]
 assert 'UFS L r=%s rd=%s T r=%s rd=%s' in generated
 assert 'SCHED n=%s m=%s x=%s >50=%s' in generated
 assert 'SVC %02x K=%ux%u H=%u' in generated
+assert ' TF=%u/%u' in generated
+assert 'cs_text_fixup_parsed __attribute__((weak_import))' in generated
 test = r"""
 #include <stdint.h>
 #include <stdio.h>
@@ -45,6 +47,11 @@ int main(void) {
   printf("%zu %s\n",strlen(row),row); assert(strlen(row)==43);
   snprintf(row,sizeof(row),"SVC %02x K=%ux%u H=%u", 0xffffffffu, 255u, 16777215u, 7u);
   printf("%zu %s\n",strlen(row),row); assert(strlen(row)==31);
+  snprintf(row,sizeof(row),"SVC %02x K=%ux%u H=%u TF=%u/%u", 0xffffffffu, 255u, 16777215u, 7u,
+           UINT32_MAX, UINT32_MAX);
+  printf("%zu %s\n",strlen(row),row); assert(strlen(row)<=80);
+  snprintf(row,sizeof(row),"SVC 00 K=0x0 H=0 TF=0/0");
+  printf("%zu %s\n",strlen(row),row); assert(strlen(row)<=80);
 }
 """.replace("HELPER", helper)
 with tempfile.TemporaryDirectory() as tmp:
