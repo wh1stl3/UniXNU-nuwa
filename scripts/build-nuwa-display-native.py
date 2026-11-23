@@ -52,7 +52,7 @@ EARLY_COUNTERS = ("_native_legacy_early_failures", "_native_legacy_early_retires
 HOOKS = ("8796-offline-legacy-display-early.patch", "8796-offline-legacy-display-late.patch")
 # 8796-native-text-fixup: inputs of the two rebuilt TUs and the patch itself.
 TEXT_FIXUP_PATCH = ROOT / "patches/xnu/8796-native-text-fixup.patch"
-TEXT_FIXUP_PATCH_SHA = "080587ec7d20c55ca7f9bdec5ecc98d3eef982a74dbb102e247dbac4e7e36a71"
+TEXT_FIXUP_PATCH_SHA = "492355cfb37f87970de3444496aea488c7769704d94e97baa204fcc7b142344a"
 R35L_UBC_SHA = "6d9dbdcda146110f1d739803630bae11a1d042a723f1acf76fdbe7c615739be0"
 R35_VM_FAULT_SHA = "990814178e80da7c3d7ddff855d497f9b863fdb4a45415e71534cf4e2c75b934"
 R35_VM_PROTOS_SHA = "3ef4c0ca9d71b329ad3952cb5f3f52c6ce157b0575f0bdb4eef044380d8679ee"

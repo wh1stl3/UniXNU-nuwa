@@ -2,11 +2,20 @@ From: UniXNU upstream
 Subject: [PATCH] 8796-native-text-fixup (official signed-text fixup mechanism)
 
 Port of UniXNU/patches/xnu/native-text-fixup.patch into the nuwa 8796 series.
-The upstream file is unmodified except for this preamble; its content is the
-official mechanism (signature page validated, then "vnode name + file offset +
-original bytes" matched and replaced through the physical page alias, followed
-by cache_sync_page()). The table comes from /chosen/text-fixups (NUL-separated
+The upstream file is unmodified except for this preamble and one parser
+hardening hunk marked below; the mechanism itself is the official one
+(signature page validated, then "vnode name + file offset + original bytes"
+matched and replaced through the physical page alias, followed by
+cache_sync_page()). The table comes from /chosen/text-fixups (NUL-separated
 entries), written by scripts/make-nuwa-adt.py --text-fixup.
+
+Deviation from upstream (parser only, requested by review):
+  cs_text_fixup_init() rejected the last entry only implicitly. If the
+  property ends without a NUL, strnlen() returns the remaining length and the
+  entry is copied and parsed as if terminated. The hunk now checks
+  "s + length == end" first and ignores that unterminated tail entry (printf
+  "unterminated, ignored"), leaving every earlier entry unchanged.
+  This is not a mechanism change: no fixup that parsed before is dropped.
 
 8796 context differences (hunk headers only; no context or semantic change):
   bsd/kern/ubc_subr.c   upstream @@ -6043,6 +6043,172 @@ cs_validate_hash
@@ -27,9 +36,10 @@ entries), written by scripts/make-nuwa-adt.py --text-fixup.
   - TUNABLE_STR/STARTUP and os_atomic_inc resolve through ubc_subr.c's existing
     includes; phystokv and the <arm/caches_internal.h> cache_sync_page() the
     patch adds are already reachable in vm_fault.c.
-  - An empty table leaves cs_text_fixup_page() returning 0, so the validated
-    page is untouched and cache_sync_page() is not called; the only cost is one
-    zero-iteration call on the slow validation path.
+  - An empty table leaves cs_text_fixup_page() returning 0, so this hook
+    changes no page bytes and does not call cache_sync_page(). It does not make
+    the image equivalent to an unpatched build: the patched TU, early-boot
+    parsing, exported symbols and the banner's TF=0/0 are all still present.
 
 Apply with -p1 in the XNU tree root.
 ---
@@ -37,7 +47,7 @@ diff --git a/bsd/kern/ubc_subr.c b/bsd/kern/ubc_subr.c
 index 22c5bf1..05c6504 100644
 --- a/bsd/kern/ubc_subr.c
 +++ b/bsd/kern/ubc_subr.c
-@@ -6043,6 +6043,172 @@ cs_validate_hash(
+@@ -6043,6 +6043,177 @@ cs_validate_hash(
  	return validated;
  }
  
@@ -146,7 +156,12 @@ index 22c5bf1..05c6504 100644
 +		const char *s = table, *end = s + size;
 +		for (int i = 0; s < end && *s; i++) {
 +			char entry[160];
++			/* A property that ends without NUL leaves the last entry unterminated: reject it. */
 +			size_t length = strnlen(s, (size_t)(end - s));
++			if (s + length == end) {
++				printf("text-fixups[%d]: unterminated, ignored\n", i);
++				break;
++			}
 +			if (length < sizeof(entry) && cs_text_fixup_count < CS_TEXT_FIXUP_MAX) {
 +				strlcpy(entry, s, length + 1);
 +				if (cs_text_fixup_parse(entry, &cs_text_fixups[cs_text_fixup_count])) {

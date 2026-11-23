@@ -47,8 +47,8 @@ DISPLAY_ARGS = (b" offline-mobile-graphics-load=1 offline-legacy-register=1 offl
 # accept only hex digits, so the conventional "0x" prefix is not part of the stored entry.
 TEXT_FIXUP_ENTRY = "dyld_shared_cache_arm64.13,1cd5a9c,684a19d0004d47f9,c0035fd6004d47f9"
 TEXT_FIXUPS = TEXT_FIXUP_ENTRY.encode() + b"\0"
-TEXT_FIXUP_PATCH_SHA = "080587ec7d20c55ca7f9bdec5ecc98d3eef982a74dbb102e247dbac4e7e36a71"
-TEXT_FIXUP_KERNEL = "f0a52c9a9841db982d24fc0f961b44300cf10f2030f290a191421f1c23dd1798"
+TEXT_FIXUP_PATCH_SHA = "492355cfb37f87970de3444496aea488c7769704d94e97baa204fcc7b142344a"
+TEXT_FIXUP_KERNEL = "8ca2e912638f6250352bb682a2ec2af1e019f6dc61b23545a581de080196dafb"
 
 
 def main():
