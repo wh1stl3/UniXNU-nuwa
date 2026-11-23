@@ -47,6 +47,8 @@ SHOT_STATE = b"""
 #define BP_SHOT_NO_PID 1000u     // no confirmed positive pid, or that pid no longer names SpringBoard
 #define BP_SHOT_INTEGRITY 1001u  // BEGIN, bounds, container balance or BUFFER_END failed
 #define BP_SHOT_IDENTITY 1002u   // container count, pid, unique id or process name mismatch
+#define BP_SHOT_NO_PAINT 1003u   // the pending row was never painted, so the stackshot was not called
+#define BP_SHOT_PAINT_WAIT 60u   // seconds to wait for the pending row before giving up
 #define BP_SHOT_LONG_MS 1000u    // durations above this append "to"
 #define BP_SHOT_BEGIN 0x59a25807u
 #define BP_SHOT_END 0xf19158edu
@@ -58,18 +60,24 @@ SHOT_STATE = b"""
 #define BP_SHOT_THREAD_SNAPSHOT 0x906u
 #define BP_SHOT_TH_WAIT 0x01u
 static uint8_t bp_shot_buf[BP_SHOT_BUF] __attribute__((aligned(4096)));
-static unsigned bp_shot_armed, bp_shot_seq, bp_shot_beat;
+static unsigned bp_shot_armed, bp_shot_seq, bp_shot_beat, bp_shot_armed_at;
 static unsigned bp_shot_pid, bp_shot_total, bp_shot_wait, bp_shot_rc, bp_shot_ms, bp_shot_to;
 static uint64_t bp_shot_uid;
+// The pending row is expected for bp_shot_pending_seq and is confirmed only by the paint
+// path's own record in bp_shot_painted. Nothing infers "it should have been painted".
+static unsigned bp_shot_pending_seq, bp_shot_painted;
+static char bp_shot_pending_row[24];
+static void bp_shot_paint_row(const char *row);
 """
 
 # Helpers, inserted before touch_monitor. The call is made from the monitor thread,
 # after touch_overlay() has returned and released render_busy, and before the 30 ms
 # wait: no recorder, overlay or process-list lock is held. The stackshot takes its own
 # subsystem lock (try-lock only) and disables interrupts around the snapshot trap for a
-# window with no upper bound, so the counter delta is measured and shown. Only record
-# headers are walked; stack frames are never decoded. "w=n" means every thread record
-# carried SS_TH_WAIT at that instant; it does not prove a deadlock.
+# window with no upper bound, so the counter delta is measured and shown. Nothing calls
+# it before the banner's paint path has stored the pending row: no pixel, no call.
+# Only record headers are walked; stack frames are never decoded. "w=n" means every
+# thread record carried SS_TH_WAIT at that instant; it does not prove a deadlock.
 SHOT_PROBE = b"""
 struct bp_shot_item { uint32_t type; uint32_t size; uint64_t flags; };
 // osfmk/kern/kcdata.h: items are 16-byte aligned and item->size already includes the
@@ -162,13 +170,15 @@ static unsigned bp_shot_resolve(unsigned pid, uint64_t *uid) {
   proc_rele(p);
   return bp_shot_name_is(name, "SpringBoard", sizeof(name));
 }
-// Runs before touch_overlay() so the overlay paints the pending heartbeat; a panel that
-// still shows "pending <k>" with no matching done/fail never returned from the call.
-static void bp_shot_arm(void) {
+// Runs before touch_overlay() so this pass is eligible to repaint. Whether the pending
+// row really reaches the panel is not decided here: only bp_shot_paint_row() records it.
+static void bp_shot_arm(unsigned now) {
   uint64_t uid = 0;
   unsigned pid = __atomic_load_n(&bp_proc_pid[0], __ATOMIC_RELAXED);
   ++bp_shot_seq;
   bp_shot_armed = 0;
+  bp_shot_pending_seq = 0;
+  __atomic_store_n(&bp_shot_painted, 0, __ATOMIC_RELAXED);
   bp_shot_total = bp_shot_wait = bp_shot_ms = bp_shot_to = 0;
   if (!pid || !bp_shot_resolve(pid, &uid)) {
     bp_shot_rc = BP_SHOT_NO_PID;
@@ -179,19 +189,56 @@ static void bp_shot_arm(void) {
   bp_shot_pid = pid;
   bp_shot_uid = uid;
   bp_shot_rc = 0;
+  snprintf(bp_shot_pending_row, sizeof(bp_shot_pending_row), "SHOT pending %u", bp_shot_seq);
+  bp_shot_pending_seq = bp_shot_seq;
   bp_shot_armed = 1;
+  bp_shot_armed_at = now;
   __atomic_store_n(&bp_shot_beat, (bp_shot_seq << 8) | 1u, __ATOMIC_RELEASE);
 }
-static void bp_shot_take(void) {
-  uint64_t frequency, start, stop;
-  unsigned bytes = 0, total = 0, wait = 0, rc;
+// Called by the banner's row loop for every row it is about to store: after the yield
+// check, and only for rows that survived the height and budget selection. This is the
+// only record of "the pending row was painted"; nothing infers it from the flags.
+static void bp_shot_paint_row(const char *row) {
+  if (bp_shot_pending_seq && !strcmp(row, bp_shot_pending_row))
+    __atomic_store_n(&bp_shot_painted, bp_shot_pending_seq, __ATOMIC_RELEASE);
+}
+// The gate itself: without the paint path's record for this sequence there is no call.
+static int bp_shot_may_call(void) {
+  return bp_shot_pending_seq && bp_shot_seq == bp_shot_pending_seq &&
+         __atomic_load_n(&bp_shot_painted, __ATOMIC_ACQUIRE) == bp_shot_seq;
+}
+static uint64_t bp_shot_ticks(void) {
+  uint64_t ticks;
+  __asm__ volatile("isb\\n\\tmrs %0, cntpct_el0" : "=r"(ticks));
+  return ticks;
+}
+static uint64_t bp_shot_frequency(void) {
+  uint64_t frequency;
   __asm__ volatile("mrs %0, cntfrq_el0" : "=r"(frequency));
-  if (!frequency) frequency = 19200000;
-  __asm__ volatile("isb\\n\\tmrs %0, cntpct_el0" : "=r"(start));
+  return frequency ? frequency : 19200000;
+}
+static void bp_shot_take(unsigned now) {
+  uint64_t start;
+  unsigned bytes = 0, total = 0, wait = 0, rc;
+  if (!bp_shot_armed) return;
+  if (!bp_shot_may_call()) {
+    // Painting only. The pending row has not been stored yet, so the stackshot is not
+    // called; a later pass may paint it. Give up after BP_SHOT_PAINT_WAIT seconds.
+    if (now - bp_shot_armed_at < BP_SHOT_PAINT_WAIT) return;
+    bp_shot_armed = 0;
+    bp_shot_pending_seq = 0;
+    bp_shot_rc = BP_SHOT_NO_PAINT;
+    __atomic_store_n(&bp_shot_beat, (bp_shot_seq << 8) | 3u, __ATOMIC_RELEASE);
+    printf("nuwa-sb-stack: seq=%u pid=%u rc=%u not attempted: pending row never painted\\n",
+      bp_shot_seq, bp_shot_pid, bp_shot_rc);
+    return;
+  }
+  bp_shot_armed = 0;
+  bp_shot_pending_seq = 0;
+  start = bp_shot_ticks();
   rc = (unsigned)stack_snapshot_from_kernel((int)bp_shot_pid, bp_shot_buf, (uint32_t)sizeof(bp_shot_buf),
     (uint64_t)STACKSHOT_KCDATA_FORMAT | (uint64_t)STACKSHOT_TRYLOCK, 0, 0, &bytes);
-  __asm__ volatile("isb\\n\\tmrs %0, cntpct_el0" : "=r"(stop));
-  bp_shot_ms = (unsigned)((stop - start) * 1000 / frequency);
+  bp_shot_ms = (unsigned)((bp_shot_ticks() - start) * 1000 / bp_shot_frequency());
   if (bp_shot_ms > BP_SHOT_LONG_MS) bp_shot_to = 1;
   if (rc == KERN_SUCCESS && (bytes == 0 || bytes > sizeof(bp_shot_buf))) rc = BP_SHOT_INTEGRITY;
   if (rc == KERN_SUCCESS) rc = bp_shot_parse(bp_shot_pid, bp_shot_uid, bytes, &total, &wait);
@@ -339,9 +386,9 @@ static void touch_monitor(void *arg, wait_result_t result) {""")
       bp_proc_census(restart,now);
       census_at=now; census_started=1;
     }
-    if (shot_at && !shot_used && now>=shot_at) { shot_used=1; bp_shot_arm(); }
+    if (shot_at && !shot_used && now>=shot_at) { shot_used=1; bp_shot_arm(now); }
     touch_overlay();
-    if (bp_shot_armed) { bp_shot_armed=0; bp_shot_take(); }""")
+    bp_shot_take(now);""")
     anchor = b"char boot_progress_page_text[48][BP_COLS];"
     src = replace_once(src, anchor, SHOT_STATE + b"""static uint32_t bp_proc_pid[6], bp_proc_generation, bp_svc_mask, bp_sb_restart_state;
 // FDR exits are independent of the best-effort exit ring.
@@ -368,7 +415,14 @@ void boot_progress_prop_set(uint16_t properties) {
   __atomic_store_n(&bp_dsp_properties,properties,__ATOMIC_RELAXED);
 }
 """ + anchor)
-    src = replace_once(src, b"+gpu_sig*17ULL;", b"+gpu_sig*17ULL+__atomic_load_n(&bp_proc_generation,__ATOMIC_ACQUIRE)*65537ULL;")
+    src = replace_once(src, b"+gpu_sig*17ULL;", b"+gpu_sig*17ULL+__atomic_load_n(&bp_proc_generation,__ATOMIC_ACQUIRE)*65537ULL+__atomic_load_n(&bp_shot_beat,__ATOMIC_ACQUIRE)*131071ULL;")
+    # The pending row is confirmed only after it has been stored by this loop: the record
+    # sits past the yield check and past the height/budget selection, so a skipped pass,
+    # a throttle, an unchanged signature or a clipped row cannot confirm anything.
+    src = replace_once(src, b"""    if(__atomic_load_n(&display.yield_requested,__ATOMIC_ACQUIRE))return;
+    const char *r=rows[i];""", b"""    if(__atomic_load_n(&display.yield_requested,__ATOMIC_ACQUIRE))return;
+    const char *r=rows[i];
+    bp_shot_paint_row(r);""")
     src = replace_once(src, b"static void crash_banner(unsigned now) {",
                        BANNER_SELECTION + b"static void crash_banner(unsigned now) {")
     start = src.index(b"  // SpringBoard's threads as the stack tracer")
