@@ -24,9 +24,8 @@ start = generated.index("struct bp_shot_item {")
 stop = generated.index("extern uint64_t proc_uniqueid")
 parser = generated[start:stop]
 assert "BP_SHOT_IDENTITY" in parser and "BP_SHOT_TH_WAIT" in defines
-assert 'snprintf(rows[n++],120,"SHOT %s %u"' in generated
-assert 'snprintf(rows[n++],120,"SHOT n=- w=- r=%u%s",shot_rc,to);' in generated
-assert 'snprintf(rows[n++],120,"SHOT n=%u w=%u r=0%s",bp_shot_total,bp_shot_wait,to);' in generated
+assert 'snprintf(rows[n++],120,"SHOT pending %u",shot_seq);' in generated
+assert generated.index("n += bp_shot_format(rows + n") < generated.index("    for(unsigned part=0;part<4")
 
 test = r"""
 #include <stdint.h>
@@ -34,7 +33,6 @@ test = r"""
 #include <string.h>
 #include <assert.h>
 DEFINES
-#define BP_SHOT_THREAD_CONTAINER 0x904u
 static uint8_t bp_shot_buf[BP_SHOT_BUF] __attribute__((aligned(4096)));
 PARSER
 SELECTOR
@@ -44,6 +42,8 @@ SELECTOR
 #define TRANSITIONING 8
 #define PID_OFF 16
 #define BAD_COMM 32
+#define DETAILS 64
+#define BAD_ARRAY 128
 static unsigned char *emit(unsigned char *at, uint32_t type, uint32_t size, uint64_t flags) {
   struct bp_shot_item header;
   header.type = type; header.size = size; header.flags = flags;
@@ -73,16 +73,47 @@ static unsigned char *thread_snapshot(unsigned char *at, uint32_t state, uint32_
   thread->state = state;
   return out;
 }
+static unsigned char *words(unsigned char *at, uint32_t kind, unsigned count, unsigned stride,
+    const uint64_t *values, int legacy, int bad) {
+  unsigned size = (count * stride + 15) & ~15u;
+  unsigned pad = size - count * stride;
+  unsigned char *out = emit(at, legacy ? BP_SHOT_ARRAY : BP_SHOT_ARRAY_PAD0 + pad,
+    size, ((uint64_t)kind << 32) | (count + bad));
+  for (unsigned i = 0; i < count; ++i)
+    memcpy(at + sizeof(struct bp_shot_item) + stride * i, &values[i], sizeof(values[i]));
+  return out;
+}
 // One ordinary task container with one task snapshot and nthreads thread containers.
 static unsigned build(unsigned pid, uint64_t uid, const unsigned *states, unsigned nthreads,
     uint32_t thread_size, int variant) {
   unsigned char *at = bp_shot_buf;
   at = emit(at, BP_SHOT_BEGIN, 0, 0);
+  uint64_t sc = 0x31323334;
+  unsigned char *sc_item = at;
+  at = emit(at, BP_SHOT_SHAREDCACHE_LOADINFO, 48, 0);
+  memcpy(sc_item + sizeof(struct bp_shot_item), &sc, sizeof sc);
   at = begin_container(at, uid, (variant & TRANSITIONING) ? BP_SHOT_TRANSITIONING_TASK : BP_SHOT_TASK_CONTAINER);
   at = task_snapshot(at, pid + ((variant & PID_OFF) ? 1 : 0), uid, variant & BAD_COMM);
+  if (variant & DETAILS) {
+    ((struct bp_shot_task_snapshot *)(at - 128))->ss_flags = BP_SHOT_SHARED_SYSTEM;
+    const uint64_t base[] = {0x104123000};
+    at = words(at, BP_SHOT_LOADINFO64, 1, 24, base, 0, variant & BAD_ARRAY ? 1 : 0);
+  }
   for (unsigned i = 0; i < nthreads; ++i) {
     at = begin_container(at, 0x9000u + i, BP_SHOT_THREAD_CONTAINER);
     at = thread_snapshot(at, states[i], thread_size);
+    if ((variant & DETAILS) && i == 0) {
+      ((struct bp_shot_thread_snapshot *)(at - thread_size))->continuation = 0xfffffff00700cafeULL;
+      const uint64_t lr[] = {0x104123450, 0x18123abcd, 0x192340008, 0x11234000c, 0x202020204};
+      at = words(at, BP_SHOT_USER_STACKLR64, 5, 8, lr, 0, 0);
+    }
+    if ((variant & DETAILS) && i == 1) {
+      const uint64_t kern[] = {0xfffffff007123456ULL, 0xfffffff007abcdefULL, 0xfffffff007abcdefULL};
+      const uint64_t user[] = {0x104dead00, 0x104dead04};
+      ((struct bp_shot_thread_snapshot *)(at - thread_size))->ss_flags = BP_SHOT_TRUNC_USER;
+      at = words(at, BP_SHOT_KERN_STACKLR64, 3, 8, kern, 0, 0);
+      at = words(at, BP_SHOT_USER_STACKFRAME64, 2, 16, user, 1, 0);
+    }
     at = end_container(at, 0x9000u + i);
   }
   at = end_container(at, (variant & BAD_END_ID) ? uid + 1 : uid);
@@ -94,73 +125,79 @@ static unsigned build(unsigned pid, uint64_t uid, const unsigned *states, unsign
   if (!(variant & DROP_END)) at = emit(at, BP_SHOT_END, 0, 0);
   return (unsigned)(at - bp_shot_buf);
 }
+static void check_rows(char rows[][120], unsigned n) {
+  for (unsigned i = 0; i < n; ++i) {
+    printf("%zu: %s\n", strlen(rows[i]), rows[i]);
+    assert(strlen(rows[i]) <= 78);
+    assert(bp_banner_priority(rows[i], 2) == 0);
+  }
+}
 int main(void) {
   const unsigned mixed[2] = {1u, 4u};      /* queueing for wait, running */
   const unsigned waiting[1] = {1u};
   const unsigned running[1] = {4u};
-  unsigned total = 0xdead, wait = 0xdead, bytes;
+  struct bp_shot_sample s;
+  unsigned bytes;
+  char rows[48][120];
+#define PARSE(n) bp_shot_parse(170, 0x1234, (n), &s)
   bytes = build(170, 0x1234, mixed, 2, 128, 0);
-  assert(bp_shot_parse(170, 0x1234, bytes, &total, &wait) == 0);
-  assert(total == 2 && wait == 1);
+  assert(PARSE(bytes) == 0);
+  assert(s.total == 2 && s.wait == 1);
+  assert(bp_shot_format(rows, &s, 0, 0, 0) == 5);
+  assert(!strcmp(rows[0], "SHOT n=2 w=1 r=0 ks=00000000 sc=- sb=-"));
+  assert(!strcmp(rows[1], "T0 K=-,- U=- f=0"));
+  assert(!strcmp(rows[3], "T2 C=- U=- f=-"));
+  check_rows(rows, 5);
+  bytes = build(170, 0x1234, mixed, 2, 128, DETAILS);
+  assert(PARSE(bytes) == 0);
+  assert(bp_shot_format(rows, &s, 0x123456789ULL, 0, 0) == 6);
+  assert(!strcmp(rows[0], "SHOT n=2 w=1 r=0 ks=23456789 sc=31323334 sb=04123000"));
+  assert(!strcmp(rows[1], "T0 C=fffffff00700cafe U=104123450,18123abcd,192340008,11234000c f=5!"));
+  assert(!strcmp(rows[2], "T1 K=f007123456,f007abcdef U=104dead00,104dead04 f=2!"));
+  assert(!strcmp(rows[5], "SHOT2 ks=0000000123456789 sb=0000000104123000"));
+  check_rows(rows, 6);
+  strcpy(rows[6], "CRASH excerpt");
+  assert(bp_banner_select(rows, 7, 6) == 6 && !strncmp(rows[5], "SHOT2 ", 6));
+  s.cache_slide = 0x20031323334ULL;
+  s.threads[1].users = 131072;  /* upper bound from the size of the capture buffer */
+  assert(bp_shot_format(rows, &s, 0, 0, 1) == 6);
+  assert(!strcmp(rows[5], "SHOT2 ks=0000000000000000 sb=0000000104123000 sc=0000020031323334"));
+  assert(strlen(rows[2]) == 78);
+  check_rows(rows, 6);
+  bytes = build(170, 0x1234, mixed, 2, 128, DETAILS | BAD_ARRAY);
+  s.total = s.wait = 0xdead;
+  assert(PARSE(bytes) == BP_SHOT_INTEGRITY && s.total == 0xdead && s.wait == 0xdead);
   bytes = build(170, 0x1234, running, 1, 128, 0);
-  total = wait = 0xdead;
-  assert(bp_shot_parse(170, 0x1234, bytes, &total, &wait) == 0);
-  assert(total == 1 && wait == 0);
+  assert(PARSE(bytes) == 0);
+  assert(s.total == 1 && s.wait == 0);
   bytes = build(170, 0x1234, waiting, 1, 112, 0);   /* v2 padded / v3 */
-  total = wait = 0xdead;
-  assert(bp_shot_parse(170, 0x1234, bytes, &total, &wait) == 0);
-  assert(total == 1 && wait == 1);
+  assert(PARSE(bytes) == 0);
+  assert(s.total == 1 && s.wait == 1);
   /* Integrity failures: nothing may be published. */
   bytes = build(170, 0x1234, mixed, 2, 128, DROP_END);
-  total = wait = 0xdead;
-  assert(bp_shot_parse(170, 0x1234, bytes, &total, &wait) == BP_SHOT_INTEGRITY);
-  assert(total == 0xdead && wait == 0xdead);
+  s.total = s.wait = 0xdead;
+  assert(PARSE(bytes) == BP_SHOT_INTEGRITY);
+  assert(s.total == 0xdead && s.wait == 0xdead);
   bytes = build(170, 0x1234, mixed, 2, 128, BAD_END_ID);
-  total = wait = 0xdead;
-  assert(bp_shot_parse(170, 0x1234, bytes, &total, &wait) == BP_SHOT_INTEGRITY);
-  assert(total == 0xdead && wait == 0xdead);
+  assert(PARSE(bytes) == BP_SHOT_INTEGRITY);
+  assert(s.total == 0xdead && s.wait == 0xdead);
   bytes = build(170, 0x1234, mixed, 2, 120, 0);     /* unknown thread record size */
-  assert(bp_shot_parse(170, 0x1234, bytes, &total, &wait) == BP_SHOT_INTEGRITY);
+  assert(PARSE(bytes) == BP_SHOT_INTEGRITY);
   /* Identity failures: PID reuse, exec copy, transitioning, duplicate task, name. */
   bytes = build(170, 0x1234, mixed, 2, 128, TWICE);
-  total = wait = 0xdead;
-  assert(bp_shot_parse(170, 0x1234, bytes, &total, &wait) == BP_SHOT_IDENTITY);
-  assert(total == 0xdead && wait == 0xdead);
+  assert(PARSE(bytes) == BP_SHOT_IDENTITY);
+  assert(s.total == 0xdead && s.wait == 0xdead);
   bytes = build(170, 0x1234, mixed, 2, 128, TRANSITIONING);
-  assert(bp_shot_parse(170, 0x1234, bytes, &total, &wait) == BP_SHOT_IDENTITY);
+  assert(PARSE(bytes) == BP_SHOT_IDENTITY);
   bytes = build(170, 0x1234, mixed, 2, 128, PID_OFF);
-  assert(bp_shot_parse(170, 0x1234, bytes, &total, &wait) == BP_SHOT_IDENTITY);
+  assert(PARSE(bytes) == BP_SHOT_IDENTITY);
   bytes = build(170, 0x1234, mixed, 2, 128, BAD_COMM);
-  assert(bp_shot_parse(170, 0x1234, bytes, &total, &wait) == BP_SHOT_IDENTITY);
+  assert(PARSE(bytes) == BP_SHOT_IDENTITY);
   bytes = build(170, 0x1234, mixed, 2, 128, 0);
-  assert(bp_shot_parse(170, 0x5678, bytes, &total, &wait) == BP_SHOT_IDENTITY);  /* uid mismatch */
+  assert(bp_shot_parse(170, 0x5678, bytes, &s) == BP_SHOT_IDENTITY);  /* uid mismatch */
   /* Truncation is caught by the bounds check. */
-  assert(bp_shot_parse(170, 0x1234, 8, &total, &wait) == BP_SHOT_INTEGRITY);
-  /* Banner rows: measured widths and the SHOT priority class. */
-  char row[120];
-  unsigned lengths[4], at = 0;
-  snprintf(row,sizeof row,"SHOT pending %u",255u);
-  lengths[at++] = (unsigned)strlen(row);
-  snprintf(row,sizeof row,"SHOT done %u",255u);
-  lengths[at++] = (unsigned)strlen(row);
-  snprintf(row,sizeof row,"SHOT n=- w=- r=%u%s",1002u," to");
-  lengths[at++] = (unsigned)strlen(row);
-  snprintf(row,sizeof row,"SHOT n=%u w=%u r=0%s",4294967295u,4294967295u," to");
-  lengths[at++] = (unsigned)strlen(row);
-  for (unsigned i = 0; i < at; ++i) {
-    printf("row width %u\n", lengths[i]);
-    assert(lengths[i] <= 80);
-  }
-  {
-    char ordered[48][120];
-    memset(ordered, 0, sizeof ordered);
-    strcpy(ordered[0], "SHOT done 1");
-    strcpy(ordered[1], "CRASH x");
-    assert(bp_banner_select(ordered, 2, 2) == 2);
-    assert(!strcmp(ordered[0], "CRASH x") && !strcmp(ordered[1], "SHOT done 1"));
-  }
-  assert(bp_banner_priority("SHOT done 1",2) == 1);
-  assert(bp_banner_priority("SHOT n=1 w=1 r=0",0) == 1);
+  assert(PARSE(8) == BP_SHOT_INTEGRITY);
+  assert(bp_banner_priority("SHOT pending 1",2) == 0);
   printf("kcdata walker, identity, wait bit and rows: PASS\n");
   return 0;
 }

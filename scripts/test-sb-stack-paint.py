@@ -49,8 +49,10 @@ test = r"""
 typedef int kern_return_t;
 #define KERN_SUCCESS 0
 #define KERN_LOCK_OWNED 40
+#define KERN_INSUFFICIENT_BUFFER_SIZE 52
 #define STACKSHOT_KCDATA_FORMAT 0x10000
 #define STACKSHOT_TRYLOCK 0x100000
+#define STACKSHOT_SAVE_LOADINFO 0x02
 struct proc { int unused; };
 static struct proc shot_proc;
 static int shot_proc_found = 1;
@@ -66,7 +68,7 @@ static unsigned shot_calls, shot_rc, shot_valid;
 static uint64_t shot_flags;
 kern_return_t stack_snapshot_from_kernel(int pid, void *buf, uint32_t size, uint64_t flags,
     uint64_t delta, uint32_t mask, unsigned *bytes) {
-  (void)size; (void)delta; (void)mask;
+  assert(size == (1u << 20) && delta == 0 && mask == 0);
   ++shot_calls;
   shot_flags = flags;
   *bytes = shot_valid ? build_valid(buf, (unsigned)pid, 0x1234) : 0;
@@ -111,7 +113,8 @@ static void reset(unsigned now) {
   bp_proc_pid[0] = 170;
   bp_shot_beat = 0; bp_shot_armed = 0; bp_shot_pending_seq = 0; bp_shot_painted = 0;
   bp_shot_seq = 0;
-  bp_shot_rc = 0; bp_shot_total = 0; bp_shot_wait = 0; bp_shot_to = 0;
+  bp_shot_rc = 0; bp_shot_to = 0;
+  memset(&bp_shot_result, 0, sizeof(bp_shot_result));
   bp_shot_arm(now);
 }
 int main(void) {
@@ -142,8 +145,8 @@ int main(void) {
   shot_valid = 1;
   bp_shot_take(101);
   assert(shot_calls == 1);
-  assert(shot_flags == (uint64_t)(STACKSHOT_KCDATA_FORMAT | STACKSHOT_TRYLOCK));
-  assert(bp_shot_rc == 0 && bp_shot_total == 1 && bp_shot_wait == 1);
+  assert(shot_flags == (uint64_t)(STACKSHOT_KCDATA_FORMAT | STACKSHOT_TRYLOCK | STACKSHOT_SAVE_LOADINFO));
+  assert(bp_shot_rc == 0 && bp_shot_result.total == 1 && bp_shot_result.wait == 1);
   assert((bp_shot_beat & 255u) == 2u);
   bp_shot_take(102);
   bp_shot_take(200);
@@ -155,12 +158,21 @@ int main(void) {
   shot_rc = KERN_LOCK_OWNED;
   bp_shot_take(101);
   assert(shot_calls == 1);
-  assert(bp_shot_rc == KERN_LOCK_OWNED && bp_shot_total == 0 && bp_shot_wait == 0);
+  assert(bp_shot_rc == KERN_LOCK_OWNED && bp_shot_result.total == 0 && bp_shot_result.wait == 0);
   assert((bp_shot_beat & 255u) == 3u);
   bp_shot_take(102);
   bp_shot_take(300);
   assert(shot_calls == 1);
   printf("lock owned         -> stackshot calls 1, rc %u, no counts, no retry\n", bp_shot_rc);
+  reset(100);
+  bp_shot_paint_row(bp_shot_pending_row);
+  shot_rc = KERN_INSUFFICIENT_BUFFER_SIZE;
+  bp_shot_take(101);
+  bp_shot_take(102);
+  assert(shot_calls == 1 && bp_shot_rc == 52 && (bp_shot_beat & 255u) == 3u);
+  char rows[6][120];
+  assert(bp_shot_format(rows, &bp_shot_result, 0, bp_shot_rc, bp_shot_to) == 1);
+  assert(!strcmp(rows[0], "SHOT n=- w=- r=52 ks=- sc=- sb=-"));
   /* An unresolvable process arms nothing and never calls. */
   reset(100);
   shot_proc_found = 0;

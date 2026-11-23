@@ -13,9 +13,11 @@ static unsigned bp_banner_priority(const char *s, unsigned previous) {
   if (!strncmp(s,"CRASH",5) || !strncmp(s,"REASON",6) ||
       !strncmp(s,"PANIC",5) || !strncmp(s,"EXIT",4) ||
       !strncmp(s,"XR",2) || !strncmp(s,"PROC",4) ||
-      !strncmp(s,"SVC",3) || !strncmp(s,"SC ",3)) return 0;
+      !strncmp(s,"SVC",3) || !strncmp(s,"SC ",3) ||
+      // Temporary: keep the stackshot readout ahead of normal diagnostics.
+      !strncmp(s,"SHOT",4) || (s[0]=='T' && s[1]>='0' && s[1]<='3' && s[2]==' ')) return 0;
   if (!strncmp(s,"LOAD",4) || !strncmp(s,"UFS",3) ||
-      !strncmp(s,"SCHED",5) || !strncmp(s,"SHOT",4)) return 1;
+      !strncmp(s,"SCHED",5)) return 1;
   if (!strncmp(s,"GPU",3)) return 3;
   return 2;
 }
@@ -54,20 +56,45 @@ SHOT_STATE = b"""
 #define BP_SHOT_END 0xf19158edu
 #define BP_SHOT_CONTAINER_BEGIN 0x13u
 #define BP_SHOT_CONTAINER_END 0x14u
+#define BP_SHOT_ARRAY 0x11u
+#define BP_SHOT_ARRAY_PAD0 0x20u
+#define BP_SHOT_LOADINFO64 0x31u
 #define BP_SHOT_TASK_CONTAINER 0x903u
+#define BP_SHOT_THREAD_CONTAINER 0x904u
 #define BP_SHOT_TRANSITIONING_TASK 0x931u
 #define BP_SHOT_TASK_SNAPSHOT 0x905u
 #define BP_SHOT_THREAD_SNAPSHOT 0x906u
+#define BP_SHOT_SHAREDCACHE_LOADINFO 0x908u
+#define BP_SHOT_USER_STACKFRAME64 0x90du
+#define BP_SHOT_KERN_STACKLR64 0x914u
+#define BP_SHOT_USER_STACKLR64 0x916u
 #define BP_SHOT_TH_WAIT 0x01u
+#define BP_SHOT_SHARED_SYSTEM 0x40000000u // kTaskSharedRegionSystem
+#define BP_SHOT_TRUNC_USER 0x8000u      // kThreadTruncUserBT
+#define BP_SHOT_THREADS 4u
+#define BP_SHOT_USER_PCS 4u
+#define BP_SHOT_KERN_PCS 2u
+struct bp_shot_thread {
+  uint64_t continuation, user[BP_SHOT_USER_PCS], kern[BP_SHOT_KERN_PCS];
+  unsigned users, kerns, truncated;
+};
+struct bp_shot_sample {
+  uint64_t cache_slide, binary_base;
+  unsigned total, wait, have_cache;
+  struct bp_shot_thread threads[BP_SHOT_THREADS];
+};
 static uint8_t bp_shot_buf[BP_SHOT_BUF] __attribute__((aligned(4096)));
+static struct bp_shot_sample bp_shot_result;
 static unsigned bp_shot_armed, bp_shot_seq, bp_shot_beat, bp_shot_armed_at;
-static unsigned bp_shot_pid, bp_shot_total, bp_shot_wait, bp_shot_rc, bp_shot_ms, bp_shot_to;
+static unsigned bp_shot_pid, bp_shot_rc, bp_shot_ms, bp_shot_to;
 static uint64_t bp_shot_uid;
 // The pending row is expected for bp_shot_pending_seq and is confirmed only by the paint
 // path's own record in bp_shot_painted. Nothing infers "it should have been painted".
 static unsigned bp_shot_pending_seq, bp_shot_painted;
 static char bp_shot_pending_row[24];
 static void bp_shot_paint_row(const char *row);
+static unsigned bp_shot_format(char rows[][120], const struct bp_shot_sample *s,
+                               uint64_t ks, unsigned rc, unsigned late);
 """
 
 # Helpers, inserted before touch_monitor. The call is made from the monitor thread,
@@ -76,7 +103,7 @@ static void bp_shot_paint_row(const char *row);
 # subsystem lock (try-lock only) and disables interrupts around the snapshot trap for a
 # window with no upper bound, so the counter delta is measured and shown. Nothing calls
 # it before the banner's paint path has stored the pending row: no pixel, no call.
-# Only record headers are walked; stack frames are never decoded. "w=n" means every
+# The parser reads recorded addresses, not task memory. "w=n" means every
 # thread record carried SS_TH_WAIT at that instant; it does not prove a deadlock.
 SHOT_PROBE = b"""
 struct bp_shot_item { uint32_t type; uint32_t size; uint64_t flags; };
@@ -102,17 +129,40 @@ static int bp_shot_name_is(const char *text, const char *want, unsigned cap) {
   }
   return 0;
 }
+static uint64_t bp_shot_word(const unsigned char *data) {
+  uint64_t word;
+  memcpy(&word, data, sizeof(word));
+  return word;
+}
+
+// KCData array flags carry element type in the high word and count in the low word.
+// Legacy arrays infer the tail padding from count and known stride; PADn declares it.
+static int bp_shot_elements(const struct bp_shot_item *item, unsigned stride, unsigned *count) {
+  unsigned type = item->type;
+  if (type != BP_SHOT_ARRAY && (type & ~15u) != BP_SHOT_ARRAY_PAD0) {
+    if (item->size != ((stride + 15u) & ~15u)) return 0;
+    *count = 1;
+    return 1;
+  }
+  *count = (uint32_t)item->flags;
+  if (*count > item->size / stride) return 0;
+  unsigned padding = item->size - *count * stride;
+  return type == BP_SHOT_ARRAY ? padding < 16 : padding == (type & 15u);
+}
 // Whole-buffer check: BEGIN first, every item inside bytes_traced, containers balanced
 // and matched by identifier, exactly one ordinary task container carrying our unique id,
 // exactly one task snapshot agreeing on pid, unique id and name, BUFFER_END last.
-static unsigned bp_shot_parse(unsigned pid, uint64_t uid, unsigned bytes, unsigned *totalp, unsigned *waitp) {
+static unsigned bp_shot_parse(unsigned pid, uint64_t uid, unsigned bytes, struct bp_shot_sample *out) {
+  if (bytes < sizeof(struct bp_shot_item) || bytes > BP_SHOT_BUF) return BP_SHOT_INTEGRITY;
   const unsigned char *const begin = bp_shot_buf, *const end = begin + bytes;
   const unsigned char *at = begin;
   uint32_t depth = 0, container[8];
   uint64_t identity[8];
+  struct bp_shot_sample sample = {0};
+  struct bp_shot_thread thread = {0};
+  uint64_t system_slide = 0, task_flags = 0;
   int task_depth = -1, header = 1, ended = 0;
-  unsigned tasks = 0, snapshots = 0, total = 0, wait = 0;
-  if (bytes < sizeof(struct bp_shot_item)) return BP_SHOT_INTEGRITY;
+  unsigned tasks = 0, snapshots = 0, have_system = 0, have_thread = 0;
   while ((size_t)(end - at) >= sizeof(struct bp_shot_item)) {
     const struct bp_shot_item *item = (const struct bp_shot_item *)at;
     const unsigned char *data = at + sizeof(*item);
@@ -125,39 +175,133 @@ static unsigned bp_shot_parse(unsigned pid, uint64_t uid, unsigned bytes, unsign
       ended = 1;
       break;
     }
-    if ((size_t)item->size > (size_t)(end - data)) return BP_SHOT_INTEGRITY;
+    if ((item->size & 15u) || (size_t)item->size > (size_t)(end - data)) return BP_SHOT_INTEGRITY;
     if (item->type == BP_SHOT_CONTAINER_BEGIN) {
       if (item->size < sizeof(uint32_t) || depth >= 8) return BP_SHOT_INTEGRITY;
       memcpy(&container[depth], data, sizeof(uint32_t));
       identity[depth] = item->flags;
       if (container[depth] == BP_SHOT_TRANSITIONING_TASK && item->flags == uid) return BP_SHOT_IDENTITY;
       if (container[depth] == BP_SHOT_TASK_CONTAINER && item->flags == uid) { ++tasks; task_depth = (int)depth; }
+      if (task_depth >= 0 && (int)depth == task_depth + 1 && container[depth] == BP_SHOT_THREAD_CONTAINER) {
+        memset(&thread, 0, sizeof(thread));
+        have_thread = 0;
+      }
       ++depth;
     } else if (item->type == BP_SHOT_CONTAINER_END) {
       if (!depth || identity[depth - 1] != item->flags) return BP_SHOT_INTEGRITY;
       --depth;
+      if (task_depth >= 0 && (int)depth == task_depth + 1 &&
+          container[depth] == BP_SHOT_THREAD_CONTAINER && have_thread) {
+        if (sample.total < BP_SHOT_THREADS) sample.threads[sample.total] = thread;
+        ++sample.total;
+      }
       if (task_depth >= 0 && (uint32_t)task_depth == depth) task_depth = -1;
-    } else if (task_depth >= 0 && (uint32_t)task_depth < depth) {
-      if (item->type == BP_SHOT_TASK_SNAPSHOT) {
+    } else {
+      unsigned type = item->type, count;
+      if (type == BP_SHOT_ARRAY || (type & ~15u) == BP_SHOT_ARRAY_PAD0) type = item->flags >> 32;
+      const int in_task = task_depth >= 0 && (int)depth == task_depth + 1;
+      const int in_thread = task_depth >= 0 && (int)depth == task_depth + 2 &&
+        container[depth - 1] == BP_SHOT_THREAD_CONTAINER;
+      if (item->type == BP_SHOT_SHAREDCACHE_LOADINFO && (!depth || in_task)) {
+        if (item->size < 32) return BP_SHOT_INTEGRITY; // padded v1 has 24 bytes of data
+        if (in_task) {
+          sample.cache_slide = bp_shot_word(data);
+          sample.have_cache = 1;
+        } else {
+          system_slide = bp_shot_word(data);
+          have_system = 1;
+        }
+      } else if (in_task && type == BP_SHOT_LOADINFO64) {
+        if (!bp_shot_elements(item, 24, &count)) return BP_SHOT_INTEGRITY;
+        // dyld's first UUID entry is the main image (also the kernel's one-entry fallback).
+        if (count && !sample.binary_base) sample.binary_base = bp_shot_word(data);
+      } else if (in_task && item->type == BP_SHOT_TASK_SNAPSHOT) {
         const struct bp_shot_task_snapshot *task = (const void *)data;
         if (item->size < sizeof(*task)) return BP_SHOT_INTEGRITY;
         if (++snapshots > 1 || task->unique_pid != uid || task->pid != (int32_t)pid ||
             !bp_shot_name_is(task->comm, "SpringBoard", sizeof(task->comm))) return BP_SHOT_IDENTITY;
-      } else if (item->type == BP_SHOT_THREAD_SNAPSHOT) {
-        const struct bp_shot_thread_snapshot *thread = (const void *)data;
+        task_flags = task->ss_flags;
+      } else if (in_thread && item->type == BP_SHOT_THREAD_SNAPSHOT) {
+        const struct bp_shot_thread_snapshot *snap = (const void *)data;
         // thread_snapshot_v2 (padded) and v3 are 112 bytes, v4 is 128; state is at +88.
-        if (item->size != 112 && item->size != 128) return BP_SHOT_INTEGRITY;
-        ++total;
-        if (thread->state & BP_SHOT_TH_WAIT) ++wait;
+        if (have_thread || (item->size != 112 && item->size != 128)) return BP_SHOT_INTEGRITY;
+        have_thread = 1;
+        thread.continuation = snap->continuation; // already VM_KERNEL_UNSLIDE'd by the producer
+        thread.truncated = (snap->ss_flags & BP_SHOT_TRUNC_USER) != 0;
+        if (snap->state & BP_SHOT_TH_WAIT) ++sample.wait;
+      } else if (in_thread && (type == BP_SHOT_USER_STACKFRAME64 || type == BP_SHOT_USER_STACKLR64 ||
+                               type == BP_SHOT_KERN_STACKLR64)) {
+        unsigned stride = type == BP_SHOT_USER_STACKFRAME64 ? 16 : 8;
+        if (!bp_shot_elements(item, stride, &count)) return BP_SHOT_INTEGRITY;
+        unsigned *used = type == BP_SHOT_KERN_STACKLR64 ? &thread.kerns : &thread.users;
+        unsigned limit = type == BP_SHOT_KERN_STACKLR64 ? BP_SHOT_KERN_PCS : BP_SHOT_USER_PCS;
+        uint64_t *pc = type == BP_SHOT_KERN_STACKLR64 ? thread.kern : thread.user;
+        for (unsigned i = 0; i < count && *used + i < limit; ++i)
+          pc[*used + i] = bp_shot_word(data + i * stride);
+        *used += count;
       }
     }
     at = data + item->size;
   }
   if (!ended || header || depth || at != end) return BP_SHOT_INTEGRITY;
   if (tasks != 1 || snapshots != 1) return BP_SHOT_IDENTITY;
-  *totalp = total;
-  *waitp = wait;
+  if (!sample.have_cache && have_system && (task_flags & BP_SHOT_SHARED_SYSTEM)) {
+    sample.have_cache = 1;
+    sample.cache_slide = system_slide;
+  }
+  *out = sample;
   return 0;
+}
+static void bp_shot_hex(char out[17], int present, uint64_t value, unsigned digits) {
+  if (!present) { out[0] = '-'; out[1] = 0; return; }
+  const char hex[] = "0123456789abcdef";
+  out[digits] = 0;
+  while (digits) { out[--digits] = hex[value & 15u]; value >>= 4; }
+}
+static unsigned bp_shot_format(char rows[][120], const struct bp_shot_sample *s,
+                               uint64_t ks, unsigned rc, unsigned late) {
+  char k[17], sc[17], sb[17];
+  if (rc) {
+    snprintf(rows[0], 120, "SHOT n=- w=- r=%u ks=- sc=- sb=-%s", rc, late ? " to" : "");
+    return 1;
+  }
+  bp_shot_hex(k, 1, ks, 8);
+  bp_shot_hex(sc, s->have_cache, s->cache_slide, 8);
+  bp_shot_hex(sb, s->binary_base != 0, s->binary_base, 8);
+  snprintf(rows[0], 120, "SHOT n=%u w=%u r=0 ks=%s sc=%s sb=%s%s",
+    s->total, s->wait, k, sc, sb, late ? " to" : "");
+  for (unsigned i = 0; i < BP_SHOT_THREADS; ++i) {
+    char *row = rows[1 + i];
+    if (i >= s->total) { snprintf(row, 120, "T%u C=- U=- f=-", i); continue; }
+    const struct bp_shot_thread *t = &s->threads[i];
+    char top[24], pcs[40] = "-";
+    if (t->continuation) {
+      bp_shot_hex(k, 1, t->continuation, 16);
+      snprintf(top, sizeof(top), "C=%s", k);
+    } else {
+      bp_shot_hex(k, t->kerns > 0, t->kern[0], 10);
+      bp_shot_hex(sc, t->kerns > 1, t->kern[1], 10);
+      snprintf(top, sizeof(top), "K=%.10s,%.10s", k, sc);
+    }
+    // iOS arm64 user VA fits in 36 bits. K uses the low 40 of a canonical kernel VA.
+    for (unsigned j = 0; j < t->users && j < BP_SHOT_USER_PCS; ++j) {
+      bp_shot_hex(k, 1, t->user[j], 9);
+      memcpy(pcs + 10 * j, k, 10);
+      if (j) pcs[10 * j - 1] = ',';
+    }
+    snprintf(row, 120, "T%u %s U=%s f=%u%s", i, top, pcs, t->users,
+      t->users > BP_SHOT_USER_PCS || t->truncated ? "!" : "");
+  }
+  if ((ks >> 32) || (s->binary_base >> 32) || (s->have_cache && (s->cache_slide >> 32))) {
+    bp_shot_hex(k, 1, ks, 16);
+    bp_shot_hex(sb, s->binary_base != 0, s->binary_base, 16);
+    bp_shot_hex(sc, 1, s->cache_slide, 16);
+    snprintf(rows[5], 120, "SHOT2 ks=%s sb=%s%s%s", k, sb,
+      s->have_cache && (s->cache_slide >> 32) ? " sc=" : "",
+      s->have_cache && (s->cache_slide >> 32) ? sc : "");
+    return 6;
+  }
+  return 5;
 }
 extern uint64_t proc_uniqueid(struct proc *);
 static unsigned bp_shot_resolve(unsigned pid, uint64_t *uid) {
@@ -179,7 +323,7 @@ static void bp_shot_arm(unsigned now) {
   bp_shot_armed = 0;
   bp_shot_pending_seq = 0;
   __atomic_store_n(&bp_shot_painted, 0, __ATOMIC_RELAXED);
-  bp_shot_total = bp_shot_wait = bp_shot_ms = bp_shot_to = 0;
+  bp_shot_ms = bp_shot_to = 0;
   if (!pid || !bp_shot_resolve(pid, &uid)) {
     bp_shot_rc = BP_SHOT_NO_PID;
     __atomic_store_n(&bp_shot_beat, (bp_shot_seq << 8) | 3u, __ATOMIC_RELEASE);
@@ -219,7 +363,7 @@ static uint64_t bp_shot_frequency(void) {
 }
 static void bp_shot_take(unsigned now) {
   uint64_t start;
-  unsigned bytes = 0, total = 0, wait = 0, rc;
+  unsigned bytes = 0, rc;
   if (!bp_shot_armed) return;
   if (!bp_shot_may_call()) {
     // Painting only. The pending row has not been stored yet, so the stackshot is not
@@ -237,33 +381,28 @@ static void bp_shot_take(unsigned now) {
   bp_shot_pending_seq = 0;
   start = bp_shot_ticks();
   rc = (unsigned)stack_snapshot_from_kernel((int)bp_shot_pid, bp_shot_buf, (uint32_t)sizeof(bp_shot_buf),
-    (uint64_t)STACKSHOT_KCDATA_FORMAT | (uint64_t)STACKSHOT_TRYLOCK, 0, 0, &bytes);
+    (uint64_t)STACKSHOT_KCDATA_FORMAT | STACKSHOT_TRYLOCK | STACKSHOT_SAVE_LOADINFO, 0, 0, &bytes);
   bp_shot_ms = (unsigned)((bp_shot_ticks() - start) * 1000 / bp_shot_frequency());
   if (bp_shot_ms > BP_SHOT_LONG_MS) bp_shot_to = 1;
-  if (rc == KERN_SUCCESS && (bytes == 0 || bytes > sizeof(bp_shot_buf))) rc = BP_SHOT_INTEGRITY;
-  if (rc == KERN_SUCCESS) rc = bp_shot_parse(bp_shot_pid, bp_shot_uid, bytes, &total, &wait);
+  if (rc == KERN_SUCCESS) rc = bp_shot_parse(bp_shot_pid, bp_shot_uid, bytes, &bp_shot_result);
   bp_shot_rc = rc;
-  if (rc == KERN_SUCCESS) { bp_shot_total = total; bp_shot_wait = wait; }
   __atomic_store_n(&bp_shot_beat, (bp_shot_seq << 8) | (rc ? 3u : 2u), __ATOMIC_RELEASE);
   printf("nuwa-sb-stack: seq=%u pid=%u uid=%llx rc=%u n=%u w=%u ms=%u%s\\n", bp_shot_seq, bp_shot_pid,
-    (unsigned long long)bp_shot_uid, rc, bp_shot_total, bp_shot_wait, bp_shot_ms, bp_shot_to ? " to" : "");
+    (unsigned long long)bp_shot_uid, rc, rc ? 0 : bp_shot_result.total,
+    rc ? 0 : bp_shot_result.wait, bp_shot_ms, bp_shot_to ? " to" : "");
 }
 """
 
-# Two banner rows: the heartbeat with its sequence number, then the result.
+# Put the temporary stackshot priority-0 block first, ahead of other priority-0 rows.
 SHOT_ROWS = b"""
   {
-    unsigned beat = __atomic_load_n(&bp_shot_beat, __ATOMIC_RELAXED);
+    unsigned beat = __atomic_load_n(&bp_shot_beat, __ATOMIC_ACQUIRE);
     unsigned shot_seq = beat >> 8, shot_state = beat & 255u;
-    if (shot_seq && n + 2 < 48) {
+    if (shot_seq && shot_state == 1) {
+      snprintf(rows[n++],120,"SHOT pending %u",shot_seq);
+    } else if (shot_seq) {
       unsigned shot_rc = __atomic_load_n(&bp_shot_rc, __ATOMIC_RELAXED);
-      snprintf(rows[n++],120,"SHOT %s %u",
-        shot_state == 1 ? "pending" : shot_state == 2 ? "done" : "fail", shot_seq);
-      if (shot_state != 1) {
-        const char *to = bp_shot_to ? " to" : "";
-        if (shot_rc) snprintf(rows[n++],120,"SHOT n=- w=- r=%u%s",shot_rc,to);
-        else snprintf(rows[n++],120,"SHOT n=%u w=%u r=0%s",bp_shot_total,bp_shot_wait,to);
-      }
+      n += bp_shot_format(rows + n, &bp_shot_result, vm_kernel_slide, shot_rc, bp_shot_to);
     }
   }
 """
@@ -586,8 +725,8 @@ void boot_progress_prop_set(uint16_t properties) {
 """)
     src = replace_once(src, b"  if(signal || ns) {\n",
                        b'  if((signal || ns) && !(name && !strcmp(name,"IOMFB_FDR_Loader"))) {\n')
-    src = replace_once(src, b"  // Presentation cost: swaps in the last second",
-                       SHOT_ROWS + b"  // Presentation cost: swaps in the last second")
+    src = replace_once(src, b"  char rows[48][120];unsigned n=0;\n",
+                       b"  char rows[48][120];unsigned n=0;\n" + SHOT_ROWS)
     if mg_reset:
         src = replace_once(src, anchor, b"extern uint32_t nuwa_mg_reset_diag;\n" + anchor)
         src = replace_once(src, b"  if (&nuwa_cli_enter", b"""  unsigned ds = &native_data_persist_state ? native_data_persist_state : 0;

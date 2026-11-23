@@ -7,6 +7,7 @@ parent root/ADT/FAT/outer/CHMH audits.
 
 By default, remove only the two restart probes from the old HID-stage args.
 With --enable-smp-entry, append only sheng-smp=1 to the default-off SMP package.
+With --sb-stack, preserve the sb-stack3 boot config and replace its kernel.
 
   --baseline  a previous vendor_boot package whose args differ only by
               " nuwa-sb-restart=400 nuwa-sb-restart-every=180" (default: the
@@ -47,6 +48,9 @@ ENTRY_BASELINE = ROOT / "out/nuwa-smp-observe-20261123-package"
 ENTRY_BASELINE_SHA = "9db3c82bd36b6953d3eb35e17a418053a192d78d5d18442a38372ad50e20f599"
 ENTRY_KERNEL_SHA = "825eaa8ffdb12fde9f57d7f5bd3cb66fe2d9ac234ffa0955d1038bcbe633332d"
 SMP_SUFFIX = b" sheng-smp=1"
+STACK_BASELINE = ROOT / "out/nuwa-systemgroup-seed-20261122/vendor-boot-sb-stack3"
+STACK_BASELINE_SHA = "2335fd6c79965698f8e89eaa1cd1980f557b85ef6465037e0ab0d826cd85b492"
+STACK_SUFFIX = b" nuwa-sb-stack=360"
 # Exact argument text of outer d6de71fcb7caa4c210f2d40e4729fe98611e5336b267eba301fdc8595b723769
 # (worktree-textfixup final4): the same profile without any SMP token.
 EXPECTED_ARGS = (
@@ -129,7 +133,7 @@ class CandidateSeedLoader(importlib.machinery.SourceFileLoader):
         CandidateSeedLoader.modules.append(r35)
 
 
-def run_packager(argv, kernel_sha256, *, enable_smp_entry):
+def run_packager(argv, kernel_sha256, *, enable_smp_entry, sb_stack=False):
     spec_from_file = importlib.util.spec_from_file_location
     CandidateSeedLoader.modules.clear()
 
@@ -144,10 +148,11 @@ def run_packager(argv, kernel_sha256, *, enable_smp_entry):
         packager = SOURCE.read_text()
         require(packager.count(OLD_HID_PIN) == 1, "HID kernel pin anchor changed")
         packager = packager.replace(OLD_HID_PIN, 'HID_KERNEL = "' + kernel_sha256 + '"')
-        if enable_smp_entry:
+        if enable_smp_entry or sb_stack:
             anchor = '        inputs["ARGS"] += b" nuwa-hid-standin=1"'
             require(packager.count(anchor) == 1, "HID argument anchor changed")
-            packager = packager.replace(anchor, anchor + f'\n        inputs["ARGS"] += {SMP_SUFFIX!r}')
+            suffix = SMP_SUFFIX if enable_smp_entry else STACK_SUFFIX
+            packager = packager.replace(anchor, anchor + f'\n        inputs["ARGS"] += {suffix!r}')
         exec(compile(packager, str(SOURCE), "exec"), {"__name__": "__main__", "__file__": str(SOURCE)})
     finally:
         importlib.util.spec_from_file_location = spec_from_file
@@ -161,11 +166,14 @@ def main():
     parser.add_argument("--kernel-sha256", required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--audit", type=Path, help="optional second pass that re-extracts the package")
-    parser.add_argument("--enable-smp-entry", action="store_true",
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--enable-smp-entry", action="store_true",
                         help="append only sheng-smp=1 to the pinned default-off SMP package")
+    mode.add_argument("--sb-stack", action="store_true",
+                      help="keep the pinned sb-stack3 arguments (no SMP, restart or data reset)")
     parser.add_argument("--baseline", type=Path)
     a = parser.parse_args()
-    default_baseline = ENTRY_BASELINE if a.enable_smp_entry else BASELINE
+    default_baseline = ENTRY_BASELINE if a.enable_smp_entry else STACK_BASELINE if a.sb_stack else BASELINE
     kernel, output, baseline = a.kernel.resolve(), a.output.resolve(), (a.baseline or default_baseline).resolve()
     audit = a.audit.resolve() if a.audit else None
     for path in (kernel, output, baseline, *([audit] if audit else [])):
@@ -182,16 +190,16 @@ def main():
     require(report.is_file() and json.loads(report.read_text()).get("kernel_sha256") == a.kernel_sha256,
             "kernel is not the audited HID final link")
     baseline_outer, baseline_fat, baseline_outside = split_build(baseline)
-    baseline_sha = ENTRY_BASELINE_SHA if a.enable_smp_entry else BASELINE_SHA
+    baseline_sha = ENTRY_BASELINE_SHA if a.enable_smp_entry else STACK_BASELINE_SHA if a.sb_stack else BASELINE_SHA
     require(sha(baseline_outer) == baseline_sha, "baseline outer SHA256 mismatch")
 
     flags = ["--kernel", kernel, "--kernel-sha256", a.kernel_sha256,
              "--enable-display", "--board-window", "--enable-mg-reset-resume-only",
              "--enable-hid-standin"]
-    r35 = run_packager([*flags, "--output", output], a.kernel_sha256, enable_smp_entry=a.enable_smp_entry)
+    mode = dict(enable_smp_entry=a.enable_smp_entry, sb_stack=a.sb_stack)
+    r35 = run_packager([*flags, "--output", output], a.kernel_sha256, **mode)
     if audit:
-        run_packager([*flags, "--output", audit, "--audit", output], a.kernel_sha256,
-                     enable_smp_entry=a.enable_smp_entry)
+        run_packager([*flags, "--output", audit, "--audit", output], a.kernel_sha256, **mode)
 
     outer, fat, outside = split_build(output)
     require(outside == baseline_outside, "bytes outside the vendor ramdisk FAT changed")
@@ -205,13 +213,15 @@ def main():
     if a.enable_smp_entry:
         require(baseline_args == EXPECTED_ARGS, "default-off SMP baseline args differ")
         require(args == baseline_args + SMP_SUFFIX, "args differ beyond appending sheng-smp=1")
+    elif a.sb_stack:
+        require(args == baseline_args == EXPECTED_ARGS + STACK_SUFFIX, "args differ from pinned sb-stack3")
     else:
         require(baseline_args.count(RESTART) == 1, "baseline does not carry the restart pair once")
         require(args == baseline_args.replace(RESTART, b""), "args differ beyond the restart pair")
         require(args == EXPECTED_ARGS, "args are not the pinned current-device set")
     tokens = args.split()
     for key in FORBIDDEN_KEYS:
-        if a.enable_smp_entry and key == b"sheng-smp":
+        if (a.enable_smp_entry and key == b"sheng-smp") or (a.sb_stack and key == b"nuwa-sb-stack"):
             continue
         require(not any(t == key or t.startswith(key + b"=") for t in tokens),
                 f"forbidden argument present: {key!r}")
@@ -227,6 +237,8 @@ def main():
     if a.enable_smp_entry:
         require(direct == baseline_config.replace(baseline_args, baseline_args + SMP_SUFFIX, 1),
                 "boot config differs beyond appending sheng-smp=1")
+    elif a.sb_stack:
+        require(direct == baseline_config, "boot config differs from pinned sb-stack3")
 
     require(sha((readback / "Payloads/kernel.macho").read_bytes()) == a.kernel_sha256,
             "outer readback kernel differs from the requested SHA256")
@@ -239,11 +251,12 @@ def main():
     record = json.loads((output / "record.json").read_text())
     chmh = chosen.get("boot-manifest-hash", b"").hex()
     require(chmh == record["chmh_hex"], "CHMH differs from the package record")
-    if a.enable_smp_entry:
+    if a.enable_smp_entry or a.sb_stack:
         original_chmh = adt.properties(adt.find(adt.parse(baseline_adt), "/chosen"))["boot-manifest-hash"]
         require(chmh != original_chmh.hex() and
                 direct_adt == baseline_adt.replace(original_chmh, bytes.fromhex(chmh), 1),
                 "rebound CHMH must be the only ADT change")
+    if a.enable_smp_entry:
         states = {adt.properties(node)["name"].rstrip(b"\0").decode(): adt.properties(node)["state"]
                   for node in adt.find(tree, "/cpus")["children"]}
         require(states == {f"cpu{i}": b"running\0" if i == 0 else b"waiting\0" for i in range(8)},
