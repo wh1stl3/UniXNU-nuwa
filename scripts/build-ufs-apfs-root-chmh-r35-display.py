@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "scripts/build-ufs-apfs-root-chmh-r35.py"
 SOURCE_SHA = "b5ce56a1784ec1395efa86f32468e8772da516b4b8e4c5e0f6535021c90537e7"
 R35_SHA = "787610183dc7f772e2d01aa183f72f2fcc52245fc44407e6c815ced614412464"
-HID_KERNEL = "0a17b5fde4264546bbfcb710adb1752252cdbafb184c796342d8ade53e2a5509"
+HID_KERNEL = "27a287d37a964306cf85c0600cf07b471e2069b111bb087f930e22ddb9076bcb"
 MG_KERNEL = "0637d5f37a78370085c03da762888dadb6ba6269dbbb0b2a517d3b47972a5d9b"
 MG_PROP_KERNEL = "591957c24f510e5e77c43936fe6480cd874dce49fb0b3b48b09db51b3ebbb1f9"
 MG_PROP_SC_KERNEL = "a6f2218eb2ee544390d344c1b555c9d5b226f70d7d702e971079af79f24525a5"
@@ -69,11 +69,11 @@ def main():
     if hashlib.sha256(blob).hexdigest() != a.kernel_sha256:
         parser.error("kernel SHA256 mismatch")
     if a.enable_mg_reset_resume_only:
-        if not (a.enable_display and a.board_window) or a.enable_hid_standin:
-            parser.error("--enable-mg-reset-resume-only requires --enable-display --board-window without HID")
-        if a.kernel_sha256 not in (MG_KERNEL, MG_PROP_KERNEL, MG_PROP_SC_KERNEL, MG_PROP_SC_REFRESH_KERNEL, MG_ROTATION_KERNEL, MG_HANDOFF_SC_KERNEL, MG_HANDOFF_PROC_KERNEL, MG_HANDOFF_PROC_SIX_KERNEL, MG_HANDOFF_XR_KERNEL, MG_HANDOFF_XR32_KERNEL):
+        if not (a.enable_display and a.board_window):
+            parser.error("--enable-mg-reset-resume-only requires --enable-display --board-window")
+        if not a.enable_hid_standin and a.kernel_sha256 not in (MG_KERNEL, MG_PROP_KERNEL, MG_PROP_SC_KERNEL, MG_PROP_SC_REFRESH_KERNEL, MG_ROTATION_KERNEL, MG_HANDOFF_SC_KERNEL, MG_HANDOFF_PROC_KERNEL, MG_HANDOFF_PROC_SIX_KERNEL, MG_HANDOFF_XR_KERNEL, MG_HANDOFF_XR32_KERNEL):
             parser.error("MG ON profile requires the pinned MG reset kernel")
-    elif a.enable_hid_standin:
+    if a.enable_hid_standin:
         if not (a.enable_display and a.board_window):
             parser.error("--enable-hid-standin requires --enable-display and --board-window")
         if a.kernel_sha256 != HID_KERNEL:
@@ -81,10 +81,10 @@ def main():
         report = kernel.parent / "hid/final-audit.json"
         if not report.is_file() or json.loads(report.read_text()).get("kernel_sha256") != HID_KERNEL:
             parser.error("HID ON profile requires the matching final-link audit")
-    elif a.enable_display:
+    elif a.enable_display and not a.enable_mg_reset_resume_only:
         if a.kernel_sha256 not in DISPLAY_KERNELS:
             parser.error("on profile requires a pinned display kernel SHA256")
-    elif a.kernel_sha256 != R35_SHA:
+    elif not a.enable_display and a.kernel_sha256 != R35_SHA:
         parser.error("off profile requires the original r35 kernel SHA256")
     if hashlib.sha256(SOURCE.read_bytes()).hexdigest() != SOURCE_SHA:
         raise ValueError("Pinned r35 packager changed")
@@ -102,15 +102,15 @@ def main():
     inputs = dict(KERNEL=kernel, KERNEL_BYTES=len(blob), KERNEL_SHA=a.kernel_sha256,
                   PROFILE=profile + ("-on" if a.enable_display else "-off"),
                   ARGS=r35.ARGS + (DISPLAY_ARGS + b" nuwa-lite=1" if a.enable_display else b""))
-    if a.enable_hid_standin:
-        inputs["PROFILE"] += "-hid"
-        inputs["ARGS"] += b" nuwa-hid-standin=1"
     if a.enable_mg_reset_resume_only:
         inputs["PROFILE"] += "-mg-reset-resume-only"
         tokens = inputs["ARGS"].split()
         tokens.remove(b"sheng-data-reset=1")
         inputs["ARGS"] = b" ".join(tokens + [b"nuwa-mg-reset=1"])
         r35.M.check_inputs = partial(r35.check_inputs, resume_only=True)
+    if a.enable_hid_standin:
+        inputs["PROFILE"] += "-hid"
+        inputs["ARGS"] += b" nuwa-hid-standin=1"
     for module in (r35, r35.X, r35.M):
         vars(module).update(inputs)
     if a.board_window:
