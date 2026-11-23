@@ -20,8 +20,9 @@ SEED_SHA = "692355638b31d347ced5983a5910491f0556156f79675c2e371ebe9987683247"
 SEED_IDENTITY = "fd554672b1b97df139e533e2d8e74964f6351963d55e4a4483abcec654f1a172"
 SEED_UUID = "B0E0F71F-A265-4038-8F5C-6D3632859DEF"
 SEED_BYTES = 2121888
-# Byte-for-byte pin of vendor-boot-hid-stage/unixnu.toml.
-CONFIG_SHA = "91bb0d9e1256f3dd3fd5a6dd4b1c0c276342ef92bf4b684c6609fadfa5f87e62"
+# Byte-for-byte pin: vendor-boot-hid-stage/unixnu.toml with the two
+# nuwa-sb-restart tokens removed (917 B). The reference file is 963 B / 91bb0d9e.
+CONFIG_SHA = "0d9a968e9df888c1e8bebe98b023267e9b7ade6239c3f4f9c74b1d96e6189d41"
 DISPLAY_SCALE = (3).to_bytes(4, "little")
 ARGS = (b"-v serial=3 native-ufs-root=1 native-ufs-lun=0 nuwa-pmgr=2 rd=uuid"
         b" boot-uuid=DADD93F8-DBBF-4B17-A1DF-0F11E64172F7 boot-progress=2 aks=1 disable-watchdogd=1"
@@ -29,7 +30,7 @@ ARGS = (b"-v serial=3 native-ufs-root=1 native-ufs-lun=0 nuwa-pmgr=2 rd=uuid"
         b" offline-mobile-graphics-load=1 offline-legacy-register=1 offline-legacy-gop=1"
         b" offline-legacy-pm=1 offline-legacy-phase=4 offline-legacy-validate=1"
         b" offline-legacy-transfer=1 offline-legacy-cpu-present=1 nuwa-lite=1 nuwa-mg-reset=1"
-        b" nuwa-sb-restart=400 nuwa-sb-restart-every=180 nuwa-hid-standin=1")
+        b" nuwa-hid-standin=1")
 
 # 20H392 dyld shared cache fixup, bare hex (make-nuwa-adt and cs_text_fixup_parse
 # both reject a 0x prefix). The resume-only reference package has no such property.
@@ -46,11 +47,17 @@ def check_args(args, *, xnu=True):
     if any(t.split("=", 1)[0] == "sheng-data-reset" for t in tokens):
         raise ValueError("Resume-only args contain sheng-data-reset")
     if xnu:
-        for required in ("nuwa-hid-standin=1", "nuwa-sb-restart=400",
-                         "nuwa-sb-restart-every=180", "nuwa-mg-reset=1", "sheng-data-persist=2"):
+        for required in ("nuwa-hid-standin=1", "nuwa-mg-reset=1", "sheng-data-persist=2"):
             key = required.split("=", 1)[0]
             if [t for t in tokens if t.split("=", 1)[0] == key] != [required]:
                 raise ValueError(f"Resume-only args require exactly one {required}")
+        # The periodic SpringBoard kill is optional: absent means disabled, but a
+        # present value must be the canonical one.
+        for key, value in (("nuwa-sb-restart", "400"),
+                           ("nuwa-sb-restart-every", "180")):
+            got = [t for t in tokens if t.split("=", 1)[0] == key]
+            if got and got != [f"{key}={value}"]:
+                raise ValueError(f"Optional {key} must be exactly one {key}={value}")
 
 
 def check_config(config):

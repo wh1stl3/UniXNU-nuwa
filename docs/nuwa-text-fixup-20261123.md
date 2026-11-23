@@ -146,56 +146,66 @@ CPO=/root/nuwa-pmap-ret-native-20261111/nuwa/ios-16.7.16-20H392/nuwa_pmap_ret/tr
   --kernel-sha256 e161a629690a503d63a1f4a346b3e1f488df6f09ecfb375e51d7e5a62e7e0c5e \
   --systemgroup-seed out/nuwa-textfixup-20261123-r3-seed/data-8g-sg.dbr \
   --enable-display --board-window --enable-mg-reset-resume-only --enable-hid-standin \
-  --text-fixup --output out/nuwa-textfixup-20261123-final3-package
+  --text-fixup --output out/nuwa-textfixup-20261123-final4-package
 ```
 
 The packager (`scripts/build-ufs-apfs-root-chmh-r35-display.py`) is the
-resume-only entry: it pins the exact HID-stage argument string, the SystemGroup
-seed (SHA-256, identity, 2,121,888 encoded bytes, APFS UUID), the 4.75 GiB window
-and the reference TOML byte-for-byte, adds `/chosen/display-scale` u32 3 and, in
+resume-only entry: it pins the argument string, the SystemGroup seed (SHA-256,
+identity, 2,121,888 encoded bytes, APFS UUID), the 4.75 GiB window and the
+expected TOML byte-for-byte, adds `/chosen/display-scale` u32 3 and, in
 `--text-fixup` mode, `/chosen/text-fixups`. The parallel guard rewrite is kept;
-the only change made here is to update `PINS['seed']` only when the key already
-exists (the unconditional insert failed the parent-input check with
-`KeyError: 'seed'`).
+changes made here:
+
+- `PINS['seed']` is updated only when the key already exists (the unconditional
+  insert failed the parent-input check with `KeyError: 'seed'`).
+- The two periodic-kill arguments are now **optional**: absent means disabled,
+  but if present each must be exactly `nuwa-sb-restart=400` /
+  `nuwa-sb-restart-every=180`. All other guards (no `sheng-data-reset`, one
+  display-scale, one hid-standin, seed, ADT, TOML pin) are unchanged.
+- `CONFIG_SHA` is now the HID-stage TOML with the two restart tokens removed
+  (917 B, `0d9a968e…9d41`; the reference file is 963 B / `91bb0d9e…7e62`).
+
+Relative to the `4c3b686` candidate (`final3-package`) the **only** change is the
+removal of `nuwa-sb-restart=400` and `nuwa-sb-restart-every=180`: this round
+observes whether the system advances by itself after the fixup, so a periodic
+SIGKILL must not interrupt it. `nuwa-hid-standin=1` is retained to match the
+current device baseline and keep the variable at "one extra fixup" only. The
+kernel is rebuilt unchanged in content (same source, same SHA-256).
 
 ## Artifacts (final candidate, host self-checked)
 
 | Artifact | Bytes | SHA-256 |
 | --- | --- | --- |
 | Kernel | 52,191,232 | `e161a629690a503d63a1f4a346b3e1f488df6f09ecfb375e51d7e5a62e7e0c5e` |
-| Outer `vendor_boot.img` | 100,663,296 | `008292803585920f7753ef8f895987a41fa031b37d14093666d192d90cd547d3` |
-| FAT `payload.img` (outer-readback identical) | 67,108,864 | `bf145419a849c28aec6568fc2bae5f216136001c98352c29e722fcd86e7ee0f5` |
-| Derived ADT | 13,788 | `c5a0a229ff1aef266449aadd3e31dd93e4a61ec69a7a0dbba5b061f7a74795c8` |
-| CHMH (SHA-384) | — | `acac3c657720e8a392ecd247029cda83a2a0e9298333dd84797a37fd60ec2546a356357540a7dc5b2bace8bea7807a5c` |
-| `record.json` | — | `78c3ddc810ea2b4c0ac0790c43f2e8e41d6a7f1aaca346cfd22ba9d39cfd90c4` |
+| Outer `vendor_boot.img` | 100,663,296 | `d6de71fcb7caa4c210f2d40e4729fe98611e5336b267eba301fdc8595b723769` |
+| FAT `payload.img` (outer-readback identical) | 67,108,864 | `d30267dacf010562b81772bf21d3fe6bd5081d6ff223cd95ca4b4487da005309` |
+| Derived ADT | 13,788 | `b69af949fddea33d7a06a5e71dc8f50aaa8fa01822eec8a7bc8650e3d34afca8` |
+| CHMH (SHA-384) | — | `ee2572144b44974202422c9d70b274df5ddb8077542a23e6349a99d54bcbf7f0f6ff5d16785e25c97aea189834920db1` |
+| `record.json` | — | `efc368eed537e21df6ff6c3bfaea8089c4e56d01a1562c0b0065e48160fdf18b` |
 
 `fsck.fat -vn` reports 106,247 / 129,022 clusters used and **11,660,800 bytes
 free** (≥ 8 MiB). The packaged `unixnu.toml` SHA-256 is
-`91bb0d9e1256f3dd3fd5a6dd4b1c0c276342ef92bf4b684c6609fadfa5f87e62`, i.e. the
-same bytes as `vendor-boot-hid-stage/unixnu.toml`; the args string is therefore
-identical character for character.
+`0d9a968e9df888c1e8bebe98b023267e9b7ade6239c3f4f9c74b1d96e6189d41` (917 B),
+which is the HID-stage file with only the two restart tokens deleted.
 
 Self-check extracted directly from the shipped `vendor_boot.img` (FAT sliced at
 4096, asserted byte-identical to `payload.img`, files read with `mcopy`):
 
-- args (535 bytes): `-v serial=3 native-ufs-root=1 native-ufs-lun=0 nuwa-pmgr=2
+- args (489 bytes): `-v serial=3 native-ufs-root=1 native-ufs-lun=0 nuwa-pmgr=2
   rd=uuid boot-uuid=DADD93F8-DBBF-4B17-A1DF-0F11E64172F7 boot-progress=2 aks=1
   disable-watchdogd=1 build-tag=nuwa-r35 boot-progress-scale=3
   sheng-data-persist=2 sheng-log-reserve=1024 offline-mobile-graphics-load=1
   offline-legacy-register=1 offline-legacy-gop=1 offline-legacy-pm=1
   offline-legacy-phase=4 offline-legacy-validate=1 offline-legacy-transfer=1
-  offline-legacy-cpu-present=1 nuwa-lite=1 nuwa-mg-reset=1 nuwa-sb-restart=400
-  nuwa-sb-restart-every=180 nuwa-hid-standin=1` — no `sheng-data-reset`.
+  offline-legacy-cpu-present=1 nuwa-lite=1 nuwa-mg-reset=1 nuwa-hid-standin=1` —
+  no `sheng-data-reset`, no `nuwa-sb-restart*`.
 - `/chosen/text-fixups` = `b"dyld_shared_cache_arm64.13,1cd5a9c,684a19d0004d47f9,c0035fd6004d47f9\0"`.
 - `/chosen/display-scale` = `03 00 00 00`.
 - embedded seed SHA-256 = `692355638b31d347ced5983a5910491f0556156f79675c2e371ebe9987683247`.
 
-Compared with `vendor-boot-hid-stage`, the args are exactly equal and the ADT
-differs only by the new `boot-manifest-hash` and the added `text-fixups` property;
-every other `/chosen` value is unchanged.
-
-The earlier r2 package (kernel `8ca2e912…dafb`, no HID/MG) and r1 package
-(kernel `f0a52c9a…b1798`) are superseded and must not be used.
+The args `diff` against `final3-package` is exactly the two removed tokens; the
+ADT differs only by the new `boot-manifest-hash` (and its random-free derived
+bytes). The earlier `final3`/r2/r1 packages are superseded and must not be used.
 
 ## Risks (not softened)
 
