@@ -44,6 +44,11 @@ SELECTOR
 #define BAD_COMM 32
 #define DETAILS 64
 #define BAD_ARRAY 128
+#define ZERO_LOAD 256
+#define EMPTY_LOAD 512
+#define ZERO_SC 1024
+#define TAG_THREADS 2048
+#define USER_PRESENCE 4096
 static unsigned char *emit(unsigned char *at, uint32_t type, uint32_t size, uint64_t flags) {
   struct bp_shot_item header;
   header.type = type; header.size = size; header.flags = flags;
@@ -88,20 +93,29 @@ static unsigned build(unsigned pid, uint64_t uid, const unsigned *states, unsign
     uint32_t thread_size, int variant) {
   unsigned char *at = bp_shot_buf;
   at = emit(at, BP_SHOT_BEGIN, 0, 0);
-  uint64_t sc = 0x31323334;
+  uint64_t sc = variant & ZERO_SC ? 0 : 0x31323334;
   unsigned char *sc_item = at;
   at = emit(at, BP_SHOT_SHAREDCACHE_LOADINFO, 48, 0);
   memcpy(sc_item + sizeof(struct bp_shot_item), &sc, sizeof sc);
   at = begin_container(at, uid, (variant & TRANSITIONING) ? BP_SHOT_TRANSITIONING_TASK : BP_SHOT_TASK_CONTAINER);
   at = task_snapshot(at, pid + ((variant & PID_OFF) ? 1 : 0), uid, variant & BAD_COMM);
-  if (variant & DETAILS) {
+  if (variant & (DETAILS | ZERO_LOAD | EMPTY_LOAD | ZERO_SC)) {
     ((struct bp_shot_task_snapshot *)(at - 128))->ss_flags = BP_SHOT_SHARED_SYSTEM;
-    const uint64_t base[] = {0x104123000};
-    at = words(at, BP_SHOT_LOADINFO64, 1, 24, base, 0, variant & BAD_ARRAY ? 1 : 0);
+    const uint64_t base[] = {variant & ZERO_LOAD ? 0 : 0x104123000};
+    if (variant & (DETAILS | ZERO_LOAD | EMPTY_LOAD))
+      at = words(at, BP_SHOT_LOADINFO64, variant & EMPTY_LOAD ? 0 : 1, 24, base, 0,
+        variant & BAD_ARRAY ? 1 : 0);
   }
   for (unsigned i = 0; i < nthreads; ++i) {
     at = begin_container(at, 0x9000u + i, BP_SHOT_THREAD_CONTAINER);
     at = thread_snapshot(at, states[i], thread_size);
+    if (variant & TAG_THREADS)
+      ((struct bp_shot_thread_snapshot *)(at - thread_size))->continuation = 0xfffffff007020000ULL + 4 * i;
+    if (variant & USER_PRESENCE) {
+      const uint64_t zero[] = {0};
+      if (i == 1 || i == 2) at = words(at, BP_SHOT_USER_STACKLR64, i - 1, 8, zero, 0, 0);
+      if (i == 3) ((struct bp_shot_thread_snapshot *)(at - thread_size))->ss_flags = BP_SHOT_TRUNC_USER;
+    }
     if ((variant & DETAILS) && i == 0) {
       ((struct bp_shot_thread_snapshot *)(at - thread_size))->continuation = 0xfffffff00700cafeULL;
       const uint64_t lr[] = {0x104123450, 0x18123abcd, 0x192340008, 0x11234000c, 0x202020204};
@@ -136,22 +150,48 @@ int main(void) {
   const unsigned mixed[2] = {1u, 4u};      /* queueing for wait, running */
   const unsigned waiting[1] = {1u};
   const unsigned running[1] = {4u};
+  const unsigned two_waiting[2] = {1u, 1u};
+  const unsigned run_then_wait[5] = {4u, 1u, 1u, 1u, 1u};
+  const unsigned four_waiting[4] = {1u, 1u, 1u, 1u};
   struct bp_shot_sample s;
   unsigned bytes;
   char rows[48][120];
 #define PARSE(n) bp_shot_parse(170, 0x1234, (n), &s)
-  bytes = build(170, 0x1234, mixed, 2, 128, 0);
+  bytes = build(170, 0x1234, mixed, 2, 128, TAG_THREADS);
   assert(PARSE(bytes) == 0);
   assert(s.total == 2 && s.wait == 1);
   assert(bp_shot_format(rows, &s, 0, 0, 0) == 5);
   assert(!strcmp(rows[0], "SHOT n=2 w=1 r=0 ks=00000000 sc=- sb=-"));
-  assert(!strcmp(rows[1], "T0 K=-,- U=- f=0"));
-  assert(!strcmp(rows[3], "T2 C=- U=- f=-"));
+  assert(!strcmp(rows[1], "T0 C=fffffff007020000 U=- f=-"));
+  assert(!strcmp(rows[2], "T1 -") && !strcmp(rows[3], "T2 -") && !strcmp(rows[4], "T3 -"));
   check_rows(rows, 5);
-  bytes = build(170, 0x1234, mixed, 2, 128, DETAILS);
+  bytes = build(170, 0x1234, run_then_wait, 5, 128, TAG_THREADS);
+  assert(PARSE(bytes) == 0 && s.total == 5 && s.wait == 4);
+  assert(bp_shot_format(rows, &s, 0, 0, 0) == 5);
+  assert(!strcmp(rows[1], "T0 C=fffffff007020004 U=- f=-"));
+  assert(!strcmp(rows[2], "T1 C=fffffff007020008 U=- f=-"));
+  assert(!strcmp(rows[3], "T2 C=fffffff00702000c U=- f=-"));
+  assert(!strcmp(rows[4], "T3 C=fffffff007020010 U=- f=-"));
+  check_rows(rows, 5);
+  bytes = build(170, 0x1234, four_waiting, 4, 128, USER_PRESENCE | EMPTY_LOAD | ZERO_SC);
+  assert(PARSE(bytes) == 0 && !s.have_binary && s.have_cache && s.cache_slide == 0);
+  assert(bp_shot_format(rows, &s, 0, 0, 0) == 5);
+  assert(!strcmp(rows[0], "SHOT n=4 w=4 r=0 ks=00000000 sc=00000000 sb=-"));
+  assert(!strcmp(rows[1], "T0 K=-,- U=- f=-"));
+  assert(!strcmp(rows[2], "T1 K=-,- U=- f=0"));
+  assert(!strcmp(rows[3], "T2 K=-,- U=000000000 f=1"));
+  assert(!strcmp(rows[4], "T3 K=-,- U=- f=-!"));
+  check_rows(rows, 5);
+  bytes = build(170, 0x1234, waiting, 1, 128, ZERO_LOAD);
+  assert(PARSE(bytes) == 0 && s.have_binary && s.binary_base == 0);
+  assert(bp_shot_format(rows, &s, 0x123456789ULL, 0, 0) == 6);
+  assert(!strcmp(rows[0], "SHOT n=1 w=1 r=0 ks=23456789 sc=31323334 sb=0!"));
+  assert(!strcmp(rows[5], "SHOT2 ks=0000000123456789 sb=0!"));
+  check_rows(rows, 6);
+  bytes = build(170, 0x1234, two_waiting, 2, 128, DETAILS);
   assert(PARSE(bytes) == 0);
   assert(bp_shot_format(rows, &s, 0x123456789ULL, 0, 0) == 6);
-  assert(!strcmp(rows[0], "SHOT n=2 w=1 r=0 ks=23456789 sc=31323334 sb=04123000"));
+  assert(!strcmp(rows[0], "SHOT n=2 w=2 r=0 ks=23456789 sc=31323334 sb=04123000"));
   assert(!strcmp(rows[1], "T0 C=fffffff00700cafe U=104123450,18123abcd,192340008,11234000c f=5!"));
   assert(!strcmp(rows[2], "T1 K=f007123456,f007abcdef U=104dead00,104dead04 f=2!"));
   assert(!strcmp(rows[5], "SHOT2 ks=0000000123456789 sb=0000000104123000"));

@@ -76,11 +76,11 @@ SHOT_STATE = b"""
 #define BP_SHOT_KERN_PCS 2u
 struct bp_shot_thread {
   uint64_t continuation, user[BP_SHOT_USER_PCS], kern[BP_SHOT_KERN_PCS];
-  unsigned users, kerns, truncated;
+  unsigned users, kerns, have_user, truncated;
 };
 struct bp_shot_sample {
   uint64_t cache_slide, binary_base;
-  unsigned total, wait, have_cache;
+  unsigned total, wait, have_cache, have_binary;
   struct bp_shot_thread threads[BP_SHOT_THREADS];
 };
 static uint8_t bp_shot_buf[BP_SHOT_BUF] __attribute__((aligned(4096)));
@@ -145,6 +145,7 @@ static int bp_shot_elements(const struct bp_shot_item *item, unsigned stride, un
     return 1;
   }
   *count = (uint32_t)item->flags;
+  if (!*count) return item->size == 0 && (type == BP_SHOT_ARRAY || type == BP_SHOT_ARRAY_PAD0);
   if (*count > item->size / stride) return 0;
   unsigned padding = item->size - *count * stride;
   return type == BP_SHOT_ARRAY ? padding < 16 : padding == (type & 15u);
@@ -162,7 +163,7 @@ static unsigned bp_shot_parse(unsigned pid, uint64_t uid, unsigned bytes, struct
   struct bp_shot_thread thread = {0};
   uint64_t system_slide = 0, task_flags = 0;
   int task_depth = -1, header = 1, ended = 0;
-  unsigned tasks = 0, snapshots = 0, have_system = 0, have_thread = 0;
+  unsigned tasks = 0, snapshots = 0, have_system = 0, have_thread = 0, waiting = 0;
   while ((size_t)(end - at) >= sizeof(struct bp_shot_item)) {
     const struct bp_shot_item *item = (const struct bp_shot_item *)at;
     const unsigned char *data = at + sizeof(*item);
@@ -184,7 +185,7 @@ static unsigned bp_shot_parse(unsigned pid, uint64_t uid, unsigned bytes, struct
       if (container[depth] == BP_SHOT_TASK_CONTAINER && item->flags == uid) { ++tasks; task_depth = (int)depth; }
       if (task_depth >= 0 && (int)depth == task_depth + 1 && container[depth] == BP_SHOT_THREAD_CONTAINER) {
         memset(&thread, 0, sizeof(thread));
-        have_thread = 0;
+        have_thread = waiting = 0;
       }
       ++depth;
     } else if (item->type == BP_SHOT_CONTAINER_END) {
@@ -192,7 +193,10 @@ static unsigned bp_shot_parse(unsigned pid, uint64_t uid, unsigned bytes, struct
       --depth;
       if (task_depth >= 0 && (int)depth == task_depth + 1 &&
           container[depth] == BP_SHOT_THREAD_CONTAINER && have_thread) {
-        if (sample.total < BP_SHOT_THREADS) sample.threads[sample.total] = thread;
+        if (waiting) {
+          if (sample.wait < BP_SHOT_THREADS) sample.threads[sample.wait] = thread;
+          ++sample.wait;
+        }
         ++sample.total;
       }
       if (task_depth >= 0 && (uint32_t)task_depth == depth) task_depth = -1;
@@ -214,7 +218,10 @@ static unsigned bp_shot_parse(unsigned pid, uint64_t uid, unsigned bytes, struct
       } else if (in_task && type == BP_SHOT_LOADINFO64) {
         if (!bp_shot_elements(item, 24, &count)) return BP_SHOT_INTEGRITY;
         // dyld's first UUID entry is the main image (also the kernel's one-entry fallback).
-        if (count && !sample.binary_base) sample.binary_base = bp_shot_word(data);
+        if (count && !sample.have_binary) {
+          sample.have_binary = 1;
+          sample.binary_base = bp_shot_word(data);
+        }
       } else if (in_task && item->type == BP_SHOT_TASK_SNAPSHOT) {
         const struct bp_shot_task_snapshot *task = (const void *)data;
         if (item->size < sizeof(*task)) return BP_SHOT_INTEGRITY;
@@ -228,11 +235,12 @@ static unsigned bp_shot_parse(unsigned pid, uint64_t uid, unsigned bytes, struct
         have_thread = 1;
         thread.continuation = snap->continuation; // already VM_KERNEL_UNSLIDE'd by the producer
         thread.truncated = (snap->ss_flags & BP_SHOT_TRUNC_USER) != 0;
-        if (snap->state & BP_SHOT_TH_WAIT) ++sample.wait;
+        waiting = (snap->state & BP_SHOT_TH_WAIT) != 0;
       } else if (in_thread && (type == BP_SHOT_USER_STACKFRAME64 || type == BP_SHOT_USER_STACKLR64 ||
                                type == BP_SHOT_KERN_STACKLR64)) {
         unsigned stride = type == BP_SHOT_USER_STACKFRAME64 ? 16 : 8;
         if (!bp_shot_elements(item, stride, &count)) return BP_SHOT_INTEGRITY;
+        if (type != BP_SHOT_KERN_STACKLR64) thread.have_user = 1;
         unsigned *used = type == BP_SHOT_KERN_STACKLR64 ? &thread.kerns : &thread.users;
         unsigned limit = type == BP_SHOT_KERN_STACKLR64 ? BP_SHOT_KERN_PCS : BP_SHOT_USER_PCS;
         uint64_t *pc = type == BP_SHOT_KERN_STACKLR64 ? thread.kern : thread.user;
@@ -258,6 +266,10 @@ static void bp_shot_hex(char out[17], int present, uint64_t value, unsigned digi
   out[digits] = 0;
   while (digits) { out[--digits] = hex[value & 15u]; value >>= 4; }
 }
+static void bp_shot_base(char out[17], const struct bp_shot_sample *s, unsigned digits) {
+  if (s->have_binary && !s->binary_base) { memcpy(out, "0!", 3); return; }
+  bp_shot_hex(out, s->have_binary, s->binary_base, digits);
+}
 static unsigned bp_shot_format(char rows[][120], const struct bp_shot_sample *s,
                                uint64_t ks, unsigned rc, unsigned late) {
   char k[17], sc[17], sb[17];
@@ -267,12 +279,12 @@ static unsigned bp_shot_format(char rows[][120], const struct bp_shot_sample *s,
   }
   bp_shot_hex(k, 1, ks, 8);
   bp_shot_hex(sc, s->have_cache, s->cache_slide, 8);
-  bp_shot_hex(sb, s->binary_base != 0, s->binary_base, 8);
+  bp_shot_base(sb, s, 8);
   snprintf(rows[0], 120, "SHOT n=%u w=%u r=0 ks=%s sc=%s sb=%s%s",
     s->total, s->wait, k, sc, sb, late ? " to" : "");
   for (unsigned i = 0; i < BP_SHOT_THREADS; ++i) {
     char *row = rows[1 + i];
-    if (i >= s->total) { snprintf(row, 120, "T%u C=- U=- f=-", i); continue; }
+    if (i >= s->wait) { snprintf(row, 120, "T%u -", i); continue; }
     const struct bp_shot_thread *t = &s->threads[i];
     char top[24], pcs[40] = "-";
     if (t->continuation) {
@@ -289,12 +301,14 @@ static unsigned bp_shot_format(char rows[][120], const struct bp_shot_sample *s,
       memcpy(pcs + 10 * j, k, 10);
       if (j) pcs[10 * j - 1] = ',';
     }
-    snprintf(row, 120, "T%u %s U=%s f=%u%s", i, top, pcs, t->users,
+    char frames[12] = "-";
+    if (t->have_user) snprintf(frames, sizeof(frames), "%u", t->users);
+    snprintf(row, 120, "T%u %s U=%s f=%s%s", i, top, pcs, frames,
       t->users > BP_SHOT_USER_PCS || t->truncated ? "!" : "");
   }
   if ((ks >> 32) || (s->binary_base >> 32) || (s->have_cache && (s->cache_slide >> 32))) {
     bp_shot_hex(k, 1, ks, 16);
-    bp_shot_hex(sb, s->binary_base != 0, s->binary_base, 16);
+    bp_shot_base(sb, s, 16);
     bp_shot_hex(sc, 1, s->cache_slide, 16);
     snprintf(rows[5], 120, "SHOT2 ks=%s sb=%s%s%s", k, sb,
       s->have_cache && (s->cache_slide >> 32) ? " sc=" : "",

@@ -1,7 +1,8 @@
-# SpringBoard stackshot detail — host candidate, 2026-11-24
+# SpringBoard stackshot detail — host candidate rev 2, 2026-11-24
 
 Host build, package and readback are **self-checked**. No device access or
-write. Authentication **NOT REACHED**. Reviewer re-review is pending.
+write. Authentication **NOT REACHED**. Reviewer re-review is pending. Rev 2
+supersedes `99fc672`, addressing the wait-only selection and record-presence findings.
 
 `nuwa-sb-stack=360` keeps the one-shot paint gate and static 1 MiB capture
 buffer, with no retry on `r=52`. The flags add `STACKSHOT_SAVE_LOADINFO`
@@ -13,28 +14,37 @@ thread container, and invalid buffers are not published.
 
 * `ks` is `vm_kernel_slide`, `sc` is the shared-cache slide (task record,
   or the system record only when the task declares the system shared region),
-  `sb` is the first `LOADINFO64` image-load address (not a slide). Zeroed or
-  absent load-info yields `sb=-`; a reported zero shared-cache slide is valid.
+  `sb` is the first `LOADINFO64` image-load address (not a slide). No element
+  (including a zero-count array) means `sb=-`; a present zeroed element means
+  `sb=0!`. `sc` has its own presence bit: zero slide prints `sc=00000000`.
   `SHOT2` restores all bits of `ks` and `sb` when any field overflows 32 bits,
   with `sc=` appended if its upper bits are also needed.
-* The first four thread records in KCData order become `T0` through `T3`.
+* Only threads with `TH_WAIT` fill `T0` through `T3`, in KCData order.
+  The number of populated thread rows is `min(w,4)`; `Tn -` fills the
+  remaining slots. The list is all threads only if `n==w` **and** `n<=4`.
   `C` is the full continuation as emitted by XNU, already unslid. With no
   continuation, `K` uses the low 40 bits of up to two unslid kernel LRs
   (`ffffff` prefix implicit for kernel addresses on this target). `U` uses
   up to four recorded iOS user PCs/LRs, with the full 36-bit user VA in nine
-  hex digits. `f` counts all recorded synchronous user frames; `!` means
-  display capping or producer-reported user-backtrace truncation. Missing
-  thread/frame fields use `-`; `f=0` means a thread with no user frames.
+  hex digits. `f` counts all recorded synchronous user frames, not the
+  number displayed. No user-frame record is `U=- f=-`; an explicitly empty
+  array is `U=- f=0`. A recorded zero address is `000000000`, not missing.
+  `!` means more than four display slots are needed or the producer set
+  the user-truncation bit (even with no frame record); it gives no cause.
   The parser performs no task-memory reads; the producer can still access
   task memory and holds interrupts off during capture.
 * `SHOT*` and `T0..T3` are **temporarily** priority 0 and emitted first, so
   normal priority-0 diagnostics cannot displace them within the row budget.
-  `SHOT pending <seq>` is unchanged; the terminal block replaces the old
-  redundant done row. Restore normal priority after the diagnostic round.
+  `SHOT pending <seq>` is unchanged. A successful result occupies five rows
+  (six with `SHOT2`); an error occupies one. Restore normal priority after
+  the diagnostic round.
 
-Measured host fixture widths: `SHOT` 38/52/55, `T0` 16/68, `T1` 16/53/78,
-absent `T2`/`T3` 14 each, `SHOT2` 45/65 columns. The 78-column case
-synthesizes a six-digit frame count. Physical panel rendering is unobserved.
+The host fixtures exercise runnable-before-waiting ordering, padding with
+fewer than four waiters, the four load-info and five user-frame cases, and
+the one-row capacity failure. Measured widths: summary 38–55, populated
+thread rows 16–78, placeholders 4, `SHOT2` 31–65, `r=52` 32 columns.
+The 78-column case synthesizes a six-digit frame count. Physical panel
+rendering is unobserved.
 
 ## Repeat commands
 
@@ -44,9 +54,9 @@ From the device worktree in WSL Ubuntu-22.04 as root, use fresh output paths:
 PY=/home/wh1stl3/.local/bin/python3.11
 BASE=/mnt/d/Code/PortingiOS/UniXNU
 CPO=/root/nuwa-pmap-ret-native-20261111/nuwa/ios-16.7.16-20H392/nuwa_pmap_ret/tree/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/IOPMGR.cpo.json
-B=out/nuwa-sb-stack-detail-20261124-build
-P=out/nuwa-sb-stack-detail-20261124-package
-A=out/nuwa-sb-stack-detail-20261124-audit
+B=out/nuwa-sb-stack-detail-20261124-r2-build
+P=out/nuwa-sb-stack-detail-20261124-r2-package
+A=out/nuwa-sb-stack-detail-20261124-r2-audit
 "$PY" -B scripts/build-nuwa-display-native.py --base "$BASE" --cpo "$CPO" \
   --linker-dir /opt/unixnu-linux/CommandLineTools/usr/bin \
   --r35-dir out/nuwa-r35-20261119 --r35l-dir out/nuwa-r35l-regs-full-20261121 \
@@ -75,16 +85,16 @@ It includes `nuwa-hid-standin=1` and `nuwa-sb-stack=360` and has no
 `nuwa-sb-restart*`, `sheng-smp`, or `sheng-data-reset`. The new CHMH is the
 only ADT change; bytes outside the FAT are unchanged. The embedded seed
 read back as `692355638b31d347ced5983a5910491f0556156f79675c2e371ebe9987683247`.
-`fsck.fat -vn`: 9 files, 106,239/129,022 clusters. `mdir`: 11,664,896 bytes free.
+`fsck.fat -vn`: 9 files, 106,271/129,022 clusters. `mdir`: 11,648,512 bytes free.
 
 | Artifact | Digest |
 | --- | --- |
-| Kernel SHA-256 (52,187,136 B) | `29e587209acaa60df0a5ca1e1eda1b49f765082119363d56a81c2ba0d73bc025` |
-| Outer SHA-256 (100,663,296 B) | `959814ccb3864eb147ce30e47440337e5330e8273efa7b4a3434354c14f906e4` |
-| CHMH SHA-384 | `21b4e33c09fddbd3261170da1adc8cdcd6350f23b723441377d3a253f80a624a3bd0f047bca2ddc6bccebb52b655e4db` |
-| Outer-readback FAT SHA-256 (67,108,864 B) | `a9f357b12b5c128783bc13c74878c4d46b56087df912d8ddfa307e9d066f220b` |
+| Kernel SHA-256 (52,203,520 B) | `f2841146dbdea044fd289795b946ed12f4c303316d62f864e4dc70682fdab786` |
+| Outer SHA-256 (100,663,296 B) | `a26b2655d71e35fb5e6e1b63c1a3dd107a4df7b54f15be46ef9a3224f65b2b4c` |
+| CHMH SHA-384 | `08cf510e6ee49d582058b40eaa599addf2f44267ccd5303ed4c5d850536bedf3e0b91e5d30cff6e23b53d10bfa9b5123` |
+| Outer-readback FAT SHA-256 (67,108,864 B) | `11fc024cee60df5a888b171d8401ba900089c05b4a125ce2049cfbb92cb76554` |
 
-Local package: `out/nuwa-sb-stack-detail-20261124-package/vendor_boot.img`.
-Reviewer: recheck array scope and stride, main-image/load-info ordering,
-address encoding, and visibility of the temporary priority block before
-device use. Independent verifier: rerun the commands above.
+Local package: `out/nuwa-sb-stack-detail-20261124-r2-package/vendor_boot.img`.
+Reviewer: recheck wait-only selection, missing/empty/zero records, frame
+counts and truncation, and the five/six/one-row layout. Independent verifier:
+rerun the commands above.

@@ -173,6 +173,7 @@ int main(void) {
   char rows[6][120];
   assert(bp_shot_format(rows, &bp_shot_result, 0, bp_shot_rc, bp_shot_to) == 1);
   assert(!strcmp(rows[0], "SHOT n=- w=- r=52 ks=- sc=- sb=-"));
+  printf("capacity error     -> %zu columns, one row, no retry\n", strlen(rows[0]));
   /* An unresolvable process arms nothing and never calls. */
   reset(100);
   shot_proc_found = 0;
