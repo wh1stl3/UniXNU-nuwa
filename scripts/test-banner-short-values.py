@@ -15,6 +15,7 @@ end = generated.index("\n}\n", start) + 3
 helper = generated[start:end]
 assert 'UFS L r=%s rd=%s T r=%s rd=%s' in generated
 assert 'SCHED n=%s m=%s x=%s >50=%s' in generated
+assert 'SVC %02x K=%ux%u H=%u' in generated
 test = r"""
 #include <stdint.h>
 #include <stdio.h>
@@ -42,6 +43,8 @@ int main(void) {
   printf("%zu %s\n",strlen(row),row); assert(strlen(row)==45);
   snprintf(row,sizeof(row),"SCHED n=%s m=%s x=%s >50=%s","999999","9999us","9999us","999999");
   printf("%zu %s\n",strlen(row),row); assert(strlen(row)==43);
+  snprintf(row,sizeof(row),"SVC %02x K=%ux%u H=%u", 0xffffffffu, 255u, 16777215u, 7u);
+  printf("%zu %s\n",strlen(row),row); assert(strlen(row)==31);
 }
 """.replace("HELPER", helper)
 with tempfile.TemporaryDirectory() as tmp:

@@ -15,6 +15,7 @@ extern kmod_info_t g_kernel_kmod_info;
 kern_return_t OSKextLoadKextWithIdentifier(const char *);
 void nuwa_hid_static_init() __asm__("__GLOBAL__sub_I_NuwaHidStandin.cpp");
 volatile uint32_t native_touch_seq, native_touch_count, native_touch_hid_reports;
+uint32_t nuwa_hid_stage;
 volatile int native_touch_xs[12], native_touch_ys[12], native_touch_ids[12];
 void native_touch_set_sink(void (*)(void *), void *) {}
 void native_buttons_set_sink(void (*)(void *, uint32_t), void *) {}
@@ -111,6 +112,7 @@ extern "C" void native_hid_live_checkpoint(IOService *device) {
             IOService *driver = registeredChild(interface, "IOHIDEventDriver");
             if (driver) {
                 bool published = publishDigitizer(driver) && publishDigitizer(interface);
+                __atomic_store_n(&nuwa_hid_stage, published ? 5u : 7u, __ATOMIC_RELAXED);
                 driver->release();
                 interface->release();
                 native_hid_input_observed(5, published ? kIOReturnSuccess : kIOReturnError);
@@ -120,6 +122,7 @@ extern "C" void native_hid_live_checkpoint(IOService *device) {
         }
         IOSleep(10);
     }
+    __atomic_store_n(&nuwa_hid_stage, 6u, __ATOMIC_RELAXED);
     native_hid_input_observed(5, kIOReturnTimeout);
 }
 
@@ -127,22 +130,28 @@ extern "C" void nuwa_hid_standin_probe() {
     unsigned enabled = 0;
     if (!PE_parse_boot_argn("nuwa-hid-standin", &enabled, sizeof(enabled)) || enabled != 1)
         return;
+    __atomic_store_n(&nuwa_hid_stage, 1u, __ATOMIC_RELAXED);
     kern_return_t status = OSKextLoadKextWithIdentifier("com.apple.iokit.IOHIDFamily");
     if (!status)
         status = OSKext::loadKextWithIdentifier("com.apple.iokit.IOHIDEventDriver",
             true, false, kOSKextExcludeNone, kOSKextExcludeNone, nullptr);
     if (status || !classReady("IOHIDDevice", sizeof(IOHIDDevice)) ||
         !classReady("IOHIDInterface") || !classReady("IOHIDEventDriver")) {
+        __atomic_store_n(&nuwa_hid_stage, 7u, __ATOMIC_RELAXED);
         native_hid_input_observed(1, status ? status : kIOReturnNotReady);
         return;
     }
     OSDictionary *match = IOService::serviceMatching("IOHIDResource");
     IOService *resource = match ? IOService::waitForMatchingService(match, 5000000000ULL) : nullptr;
     OSSafeReleaseNULL(match);
-    if (!resource) { native_hid_input_observed(2, kIOReturnTimeout); return; }
+    if (!resource) {
+        __atomic_store_n(&nuwa_hid_stage, 2u, __ATOMIC_RELAXED);
+        native_hid_input_observed(2, kIOReturnTimeout); return;
+    }
 
     void *handle = OSMetaClass::preModLoad(g_kernel_kmod_info.name);
     if (!handle) {
+        __atomic_store_n(&nuwa_hid_stage, 7u, __ATOMIC_RELAXED);
         resource->release();
         native_hid_input_observed(3, kIOReturnError);
         return;
@@ -150,13 +159,16 @@ extern "C" void nuwa_hid_standin_probe() {
     nuwa_hid_static_init();
     status = OSMetaClass::postModLoad(handle);
     if (status) {
+        __atomic_store_n(&nuwa_hid_stage, 7u, __ATOMIC_RELAXED);
         resource->release();
         native_hid_input_observed(3, status);
         return;
     }
     IOService *device = new NuwaHidStandin;
     bool attached = device && device->init() && device->attach(resource);
+    if (attached) __atomic_store_n(&nuwa_hid_stage, 3u, __ATOMIC_RELAXED);
     bool started = attached && device->start(resource);
+    __atomic_store_n(&nuwa_hid_stage, started ? 4u : 7u, __ATOMIC_RELAXED);
     if (!started) {
         if (attached) device->detach(resource);
         OSSafeReleaseNULL(device);

@@ -158,6 +158,9 @@ extern uint64_t nuwa_cli_identity __attribute__((weak_import));
 extern uint32_t nuwa_sc_calls __attribute__((weak_import));
 extern uint32_t nuwa_sc_rejects __attribute__((weak_import));
 extern uint32_t nuwa_sc_ok __attribute__((weak_import));
+#if NUWA_HID_STANDIN
+extern uint32_t nuwa_hid_stage;
+#endif
 void boot_progress_diag_set(uint8_t stage, uint8_t reason);
 void boot_progress_diag_set(uint8_t stage, uint8_t reason) {
   __atomic_store_n(&bp_dsp_reason,reason,__ATOMIC_RELAXED);
@@ -253,8 +256,12 @@ void boot_progress_prop_set(uint16_t properties) {
       nprocs,value[0],value[1],value[2],value[3],value[4],value[5]);
   }
   unsigned restart_state=__atomic_load_n(&bp_sb_restart_state,__ATOMIC_RELAXED);
-  snprintf(rows[n++],120,"SVC %02x K=%ux%u",__atomic_load_n(&bp_svc_mask,__ATOMIC_RELAXED),
-    restart_state&255u,restart_state>>8);
+  unsigned hid_stage=0;
+#if NUWA_HID_STANDIN
+  hid_stage=__atomic_load_n(&nuwa_hid_stage,__ATOMIC_RELAXED);
+#endif
+  snprintf(rows[n++],120,"SVC %02x K=%ux%u H=%u",__atomic_load_n(&bp_svc_mask,__ATOMIC_RELAXED),
+    restart_state&255u,restart_state>>8,hid_stage);
   if (&nuwa_sc_calls && &nuwa_sc_rejects && &nuwa_sc_ok) {
     static unsigned previous_calls, previous_time;
     unsigned calls = __atomic_load_n(&nuwa_sc_calls,__ATOMIC_RELAXED);
