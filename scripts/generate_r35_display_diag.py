@@ -6,6 +6,37 @@ from hashlib import sha256
 
 RENDERER_SHA = "bdfa725105977af83a9917be0209fe6701914587808d7f1b9c04a6fb4adb0c3e"
 
+BANNER_SELECTION = b"""
+// Stable within each priority class; continuation rows inherit their header.
+static unsigned bp_banner_priority(const char *s, unsigned previous) {
+  if (s[0]==' ') return previous;
+  if (!strncmp(s,"CRASH",5) || !strncmp(s,"REASON",6) ||
+      !strncmp(s,"PANIC",5) || !strncmp(s,"EXIT",4) ||
+      !strncmp(s,"XR",2) || !strncmp(s,"PROC",4) ||
+      !strncmp(s,"SVC",3) || !strncmp(s,"SC ",3)) return 0;
+  if (!strncmp(s,"LOAD",4) || !strncmp(s,"UFS",3) ||
+      !strncmp(s,"SCHED",5)) return 1;
+  if (!strncmp(s,"GPU",3)) return 3;
+  return 2;
+}
+static unsigned bp_banner_select(char rows[][120], unsigned n, unsigned budget) {
+  unsigned priority[48], previous=2;
+  for (unsigned i=0;i<n;++i) {
+    previous=bp_banner_priority(rows[i],previous);
+    priority[i]=previous;
+  }
+  for (unsigned i=1;i<n;++i) {
+    char row[120]; unsigned p=priority[i],j=i;
+    memcpy(row,rows[i],120);
+    while (j && priority[j-1]>p) {
+      memcpy(rows[j],rows[j-1],120); priority[j]=priority[j-1]; --j;
+    }
+    memcpy(rows[j],row,120); priority[j]=p;
+  }
+  return n<budget?n:budget;
+}
+"""
+
 
 def replace_once(src, anchor, replacement):
     if src.count(anchor) != 1:
@@ -109,17 +140,29 @@ void boot_progress_prop_set(uint16_t properties) {
 }
 """ + anchor)
     src = replace_once(src, b"+gpu_sig*17ULL;", b"+gpu_sig*17ULL+__atomic_load_n(&bp_proc_generation,__ATOMIC_ACQUIRE)*65537ULL;")
+    src = replace_once(src, b"static void crash_banner(unsigned now) {",
+                       BANNER_SELECTION + b"static void crash_banner(unsigned now) {")
+    start = src.index(b"  // SpringBoard's threads as the stack tracer")
+    end = src.index(b"  // Where the time goes:", start)
+    src = src[:start] + b"  unsigned stack_rows=0;\n" + src[end:]
     src = replace_once(src,
-        b"  unsigned cell=14*display.scale,cols=display.width/(6*display.scale);if(cols>119)cols=119;\n  if(display.height<(n+2)*cell+8)return;",
-        b"""  unsigned cell=14*display.scale,cols=display.width/(6*display.scale);if(cols>80)cols=80;
+        b"  if(!n)return;\n  unsigned cell=14*display.scale,cols=display.width/(6*display.scale);if(cols>119)cols=119;\n  if(display.height<(n+2)*cell+8)return;",
+        b"""  unsigned cell=14*display.scale,cols=display.width/(6*display.scale);if(cols>119)cols=119;
   unsigned half=display.height/2;
   if(half<8+2*cell)return;
   unsigned budget=(half-8)/cell-2;
   if(budget>24)budget=24;
-  if(n>budget)n=budget;
+  n=bp_banner_select(rows,n,budget);
+  // Existing diagnostic rows own the budget first; stacks use only the remainder.
+  if(&boot_ui_trace_role_rows && n<budget) {
+    static const unsigned roles[3]={1,3,0},limit[3]={8,7,6};
+    for(unsigned k=0;k<3 && n<budget;++k) {
+      unsigned room=budget-n;
+      unsigned got=boot_ui_trace_role_rows(roles[k],rows+n,room<limit[k]?room:limit[k],k==0);
+      n+=got;
+    }
+  }
   if(!n || display.height<(n+2)*cell+8)return;""")
-    src = replace_once(src, b"n+15+6<=cap", b"n+16+6<=cap")
-    src = replace_once(src, b"unsigned room=cap-15-n;", b"unsigned room=cap-16-n;")
     # Use the short DATA-summary slot; its full detail remains on row 39.
     start = src.index(b"  // Row 9: the Data mount result")
     end = src.index(b"#endif\n", start)
