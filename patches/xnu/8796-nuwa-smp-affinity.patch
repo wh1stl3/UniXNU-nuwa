@@ -1,0 +1,30 @@
+From: nuwa smp bring-up
+Subject: [PATCH] arm64: decode the reset-vector CPU id from Affinity1 too on BCM2837
+
+The nuwa device tree numbers the SM8550 cores in MPIDR Affinity1 (cpu0 reg
+0x000, cpu1 reg 0x100, ... cpu7 reg 0x700).  reset_vector decodes the
+physical CPU id with AFF0 only whenever HAS_CLUSTER is unset, and the
+BCM2837 board configuration (MAX_CPU_CLUSTERS 1) leaves it unset.  A
+secondary whose affinity is 0x100 is therefore masked to 0x000, matches
+the boot core's cpu_data entry, and the core never finds its own reset
+handler: CPU_ON parks it in the reset loop.
+
+Take AFF1:AFF0 when BCM2837 is configured, the same condition the upstream
+SM8550 shared support uses for its native SMP series
+(UniXNU-sm8550-common@a9f45dc6 patches/xnu/native-smp-secondary.patch).
+Only the secondary entry path reads this value; the boot CPU enters at
+_start, and ML's ml_get_cpu_number() already masks AFF1:AFF0.
+
+--- a/osfmk/arm64/start.s
++++ b/osfmk/arm64/start.s
+@@ -145,8 +145,8 @@
+ 	adrp	x19, EXT(ResetHandlerData)@page			// Get address of the reset handler data
+ 	add		x19, x19, EXT(ResetHandlerData)@pageoff
+ 	mrs		x15, MPIDR_EL1						// Load MPIDR to get CPU number
+-#if HAS_CLUSTER
+-	and		x0, x15, #0xFFFF					// CPU number in Affinity0, cluster ID in Affinity1
++#if HAS_CLUSTER || defined(BCM2837)
++	and		x0, x15, #0xFFFF					// CPU number in Affinity0, cluster ID in Affinity1 (nuwa: SM8550 numbers cores in Affinity1)
+ #else
+ 	and		x0, x15, #0xFF						// CPU number is in MPIDR Affinity Level 0
+ #endif

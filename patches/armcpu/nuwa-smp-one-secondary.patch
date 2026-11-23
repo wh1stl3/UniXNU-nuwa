@@ -1,0 +1,30 @@
+From: nuwa smp bring-up
+Subject: [PATCH] ArmCpu: admit at most one secondary (the ADT's 0x100 core)
+
+sheng-smp is the single opt-in for secondary CPU start-up.  Until now a
+nonzero value let IOCPU probe every cpu node the topology knows about
+(MAX_CPUS 4 keeps cpu0..cpu3, so three secondaries would be registered and
+started).  The bring-up test needs exactly one secondary, the first one the
+device tree numbers 0x100, so that a failure has one cause and the boot core
+keeps a single peer.
+
+Every other cpu node stays unprobed, i.e. it remains in the device tree's
+"waiting" state and no PSCI CPU_ON is issued for it.  With sheng-smp absent
+the branch is unchanged: the function returns nullptr exactly as before and
+the boot-only path is untouched.
+
+--- a/drivers/ArmCpu/ArmCpu.cpp
++++ b/drivers/ArmCpu/ArmCpu.cpp
+@@ -223,6 +223,12 @@
+     if (smp == 0 || ml_get_cpu_number (id) < 0 || ml_get_cpu_number (id) >= ARMCPU_SMP_SLOTS) {
+       return nullptr; // Secondary startup is opt-in (sheng-smp=1).
+     }
++    // One secondary only: the ADT numbers the SM8550 cores in Affinity1, so the first
++    // secondary reports reg 0x100. Every other node stays unprobed (waiting) and no
++    // CPU_ON is issued for it.
++    if (id != 0x100) {
++      return nullptr;
++    }
+   }
+   return IOCPU::probe (provider, score);
+ }

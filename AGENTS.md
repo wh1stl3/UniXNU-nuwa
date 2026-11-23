@@ -6,6 +6,7 @@
 小米 13 Pro（nuwa / SM8550）通过 UniXNU 运行 iOS 16（donor: iPhone10,3 / 16.7.16 / 20H392，xnu-8796 线）。
 
 ## 基线
+- 2026-11-23 **SMP 入口门：默认关闭、仅主机、未上机**。`reset_vector` 在 BCM2837 改用 AFF1:AFF0（`0xFF→0xFFFF`，已入 device series），`ArmCpu::probe` 只在 `sheng-smp` 非零时准入 `reg 0x100` 一个次核；未新增 boot arg。kernel `6af982c3…`、outer `b02007f7…`、CHMH `1f9c8fef…`、FAT 剩余 11,664,896 B；入口关/运行关未验，需 `deep_reviewer` 复审。见 [记录](docs/nuwa-smp-gate-20261123.md)。
 - 2026-11-23 **nuwa-sb-stack rev3 参数版：去掉两个 restart 参数、kernel 不变（仅主机打包，未上机；待复审 args 差异）**：[记录](docs/nuwa-sb-stack3-20261123.md)；探针本体见 [rev2](docs/nuwa-sb-stack-20261123.md)。
 - 2026-11-23 **SpringBoard 重启后仍无新帧，原因未证，交互未达**（主控转述 / self-checked）：[记录](docs/nuwa-sb-stall-20261123.md)。
 - 2026-11-22 **六进程在场，mobileactivationd 迁移失败候选待查，交互未达**（主控转述 / self-checked）：[观察](docs/nuwa-mobileactivation-migration-20261122.md)。

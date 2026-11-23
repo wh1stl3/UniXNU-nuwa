@@ -50,6 +50,19 @@ R35_BUILD_SHA = "c2e8bcc0aae8a6736592079b4f0bd1fba9032490ddfa432f30df9e6fbc61997
 R35_PROVENANCE_SHA = "1183fe650735557053d09ef8de36ce9d689fe0b5b2f85acc677a0fb544a8d62d"
 EARLY_COUNTERS = ("_native_legacy_early_failures", "_native_legacy_early_retires")
 HOOKS = ("8796-offline-legacy-display-early.patch", "8796-offline-legacy-display-late.patch")
+# SMP bring-up gate (--smp-gate): the reset-vector affinity fix and the one-secondary admission.
+# The two sources are pinned by their upstream contents; the built objects are audited to differ
+# from the recorded originals only through the intended hunks (the unmodified recipes reproduce
+# both recorded objects bit for bit - see docs/nuwa-smp-gate-20261123.md).
+SMP_START_PATCH = ROOT / "patches/xnu/8796-nuwa-smp-affinity.patch"
+SMP_START_PATCH_SHA = "bd19f351eb63f1d628815192f98a27444a5df8f10a9b8e732349c888e385e4ff"
+SMP_ARMCPU_PATCH = ROOT / "patches/armcpu/nuwa-smp-one-secondary.patch"
+SMP_ARMCPU_PATCH_SHA = "cdd58b888871f33d2df8e271c9796d74822c482f41421a840f3b8670849a9fcc"
+XNU_START_SHA = "58e5235c3392802782f28bebc3d16e0db17be8fbea9ca87c2a40880257c5ca31"
+START_RECORD_SHA = "889aef40dcdc5c9f97167f270b230603da85ff1f26862ae69e0bb5e0f36e53aa"
+ARMCPU_SOURCE_SHA = "7671ab15842f26db3081526e3e546faa8d48c7787f78edddc4815dc5b292845c"
+ARMCPU_RECORD_SHA = "5ac144f5734e33011f60997afaa1ade7f5d6b7a5f7db7cfce95a31f52790207e"
+ARMCPU_RECORDED_OBJECT_SHA = "c18059c1354a6012c878ae059145b2c2b4c57679cd8a1ea7aea4bc895d63b73f"
 
 
 def digest(path):
@@ -146,7 +159,99 @@ def audit_debug_strip(full, compact):
             "native_bytes_saved": len(full) - len(compact)}
 
 
-def candidate_link(r35, out, records, argv, env, *, bringup_diag, hid, mg_reset):
+def smp_gate_link(base, out, cwd, filelist, argv):
+    """Replace start.o and the ArmCpu archive with builds of the two gated sources.
+
+    Both hunks are no-ops without sheng-smp: the boot CPU never enters reset_vector and
+    the ArmCpu probe keeps its sheng-smp==0 early return. The unmodified recipes (same
+    toolchain, same cwd, same flags) reproduce the recorded start.o and ArmCpu.o bit for
+    bit, so the recorded objects and the two sources stay pinned while the new objects
+    come from the staged copies. The ArmCpu component checkout is CRLF on this host; the
+    staged copy is normalised to LF before patching, and -ffile-prefix-map keeps the
+    embedded __FILE__ at the upstream path so the object differs only by the hunk.
+    """
+    require_pin(SMP_START_PATCH, SMP_START_PATCH_SHA)
+    require_pin(SMP_ARMCPU_PATCH, SMP_ARMCPU_PATCH_SHA)
+    tree = cwd.parents[3]
+    work = out / "tree"
+
+    # reset_vector affinity mask: 0xFF -> 0xFFFF when BCM2837 is configured.
+    start_source = tree / ".cache/xnu-work/osfmk/arm64/start.s"
+    require_pin(start_source, XNU_START_SHA)
+    staged_start = work / "osfmk/arm64/start.s"
+    staged_start.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(start_source, staged_start)
+    run(["patch", "--batch", "--fuzz=0", "--no-backup-if-mismatch", "-p1",
+         "-i", SMP_START_PATCH], cwd=work)
+    start_record = cwd / "osfmk/DEVELOPMENT/start.o.json"
+    require_pin(start_record, START_RECORD_SHA)
+    record = json.loads(start_record.read_text().strip().rstrip(","))
+    command = list(record["arguments"])
+    start_object = out / "osfmk/DEVELOPMENT/start.o"
+    start_object.parent.mkdir(parents=True, exist_ok=True)
+    command[command.index(record["file"])] = str(staged_start)
+    command[command.index("-o") + 1] = str(start_object)
+    run(command, cwd=record["directory"])
+    old_line = str(cwd / "osfmk/DEVELOPMENT/start.o") + "\n"
+    if filelist.splitlines(keepends=True).count(old_line) != 1:
+        raise SystemExit("expected one r35 start.o in the native filelist")
+    filelist = filelist.replace(old_line, str(start_object) + "\n", 1)
+
+    # One admitted secondary: the ArmCpu probe keeps only reg 0x100 when sheng-smp is set.
+    armcpu_source = base / "drivers/ArmCpu/ArmCpu.cpp"
+    require_pin(armcpu_source, ARMCPU_SOURCE_SHA)
+    raw = armcpu_source.read_bytes()
+    if b"\r\n" not in raw:
+        raise SystemExit("ArmCpu component checkout is not the expected CRLF copy")
+    lf = raw.replace(b"\r\n", b"\n")
+    if b"\r" in lf:
+        raise SystemExit("ArmCpu component has a bare CR after normalisation")
+    staged_armcpu = work / "drivers/ArmCpu/ArmCpu.cpp"
+    staged_armcpu.parent.mkdir(parents=True, exist_ok=True)
+    staged_armcpu.write_bytes(lf)
+    run(["patch", "--batch", "--fuzz=0", "--no-backup-if-mismatch", "-p1",
+         "-i", SMP_ARMCPU_PATCH], cwd=work)
+    armcpu_dir = cwd.parents[2] / "armcpu"
+    armcpu_record = armcpu_dir / "compile-command.json"
+    require_pin(armcpu_record, ARMCPU_RECORD_SHA)
+    require_pin(armcpu_dir / "ArmCpu.o", ARMCPU_RECORDED_OBJECT_SHA)
+    command = json.loads(armcpu_record.read_text())
+    command[command.index("-xc++") + 1] = str(staged_armcpu)
+    command[command.index("-o") + 1] = str(out / "ArmCpu.o")
+    # Two warnings clang-24 raises on this source that the recorded machine did not have
+    # enabled; they change no code (the unmodified compile reproduces ArmCpu.o bit for bit
+    # with them added). -ffile-prefix-map keeps __FILE__ at the upstream tree path.
+    command += ["-Wno-missing-designated-field-initializers", "-Wno-unused-but-set-global",
+                "-ffile-prefix-map=" + str(work) + "=" + str(tree)]
+    run(command, cwd=cwd / "iokit/DEVELOPMENT")
+    run(["llvm-ar", "rcs", out / "libArmCpu.a", out / "ArmCpu.o"], cwd=armcpu_dir)
+    force_at, = [i for i, arg in enumerate(argv)
+                 if arg.startswith("-Wl,-force_load,") and arg.endswith("/build/armcpu/libArmCpu.a")]
+    argv[force_at] = "-Wl,-force_load," + str(out / "libArmCpu.a")
+    (out / "smp-gate.json").write_text(json.dumps({
+        "tree": str(tree),
+        "xnu_start_sha256": digest(start_source),
+        "armcpu_source_sha256": digest(armcpu_source),
+        "armcpu_source_normalised_sha256": digest(staged_armcpu),
+        "start_patch_sha256": digest(SMP_START_PATCH),
+        "armcpu_patch_sha256": digest(SMP_ARMCPU_PATCH),
+        "start_object_sha256": digest(start_object),
+        "armcpu_object_sha256": digest(out / "ArmCpu.o"),
+        "armcpu_archive_sha256": digest(out / "libArmCpu.a"),
+        "recorded_start_object_sha256": digest(cwd / "osfmk/DEVELOPMENT/start.o"),
+        "recorded_armcpu_object_sha256": digest(armcpu_dir / "ArmCpu.o"),
+        "recorded_armcpu_archive_sha256": digest(armcpu_dir / "libArmCpu.a"),
+        "armcpu_extra_flags": ["-Wno-missing-designated-field-initializers",
+                               "-Wno-unused-but-set-global",
+                               "-ffile-prefix-map=" + str(work) + "=" + str(tree)],
+        "filelist_start_line": str(start_object),
+        "argv_armcpu_force_load": argv[force_at],
+    }, indent=2) + "\n")
+    return filelist
+
+
+def candidate_link(r35, out, records, argv, env, *, bringup_diag, hid, mg_reset,
+                   smp_gate=False, base=None, cwd=None):
     recipe, = [r for r in records if r["label"] == "compile-bsd_init" and r["exit"] == 0]
     command = list(recipe["argv"])
     source = r35 / "tree/bsd/kern/bsd_init.c"
@@ -210,6 +315,10 @@ def candidate_link(r35, out, records, argv, env, *, bringup_diag, hid, mg_reset)
             "replacement_object_sha256": digest(policy_obj),
         }, indent=2) + "\n")
         filelist = filelist.replace(old_line, str(policy_obj) + "\n", 1)
+    if smp_gate:
+        if base is None or cwd is None:
+            raise SystemExit("--smp-gate requires the base checkout and the XNU build cwd")
+        filelist = smp_gate_link(base, out, cwd, filelist, argv)
     dest = out / "link.filelist"
     dest.write_text(filelist)
     adjusted = list(argv)
@@ -243,7 +352,8 @@ def diag_archive(r35, out, *, hid, mg_reset):
 
 
 def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
-               keep_link_debug, bringup_diag=False, hid_objects=(), mg_reset=False):
+               keep_link_debug, bringup_diag=False, hid_objects=(), mg_reset=False,
+               smp_gate=False, base=None):
     for name, pin in (R35L_PINS if bringup_diag else R35_PINS).items():
         require_pin(r35 / name, pin)
     require_pin(cpo, R35_CPO_SHA)
@@ -308,7 +418,8 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
         # Preserve the ADRP/LDR GOT sequence required by the linked audit.
         if candidate:
             argv = candidate_link(r35, out, records, argv, env, bringup_diag=bringup_diag,
-                                  hid=bool(hid_objects), mg_reset=mg_reset)
+                                  hid=bool(hid_objects), mg_reset=mg_reset,
+                                  smp_gate=smp_gate, base=base, cwd=cwd)
         if bringup_diag:
             argv = list(argv)
             diag = diag_archive(r35, out, hid=bool(hid_objects), mg_reset=mg_reset)
@@ -547,6 +658,8 @@ def main():
                    help="include the default-off HID board probe and require its final ABI audit")
     p.add_argument("--mg-reset", action="store_true",
                    help="include the board cache reset (off unless nuwa-mg-reset=1)")
+    p.add_argument("--smp-gate", action="store_true",
+                   help="rebuild start.o and ArmCpu.o: reset-vector affinity fix plus one-secondary admission")
     p.add_argument("--out", type=Path, required=True, help="new directory under out/")
     a = p.parse_args()
     base, cpo, linker, out = (x.resolve() for x in (a.base, a.cpo, a.linker_dir, a.out))
@@ -572,6 +685,8 @@ def main():
         p.error("--hid-standin requires the pinned --r35l-dir candidate")
     if a.mg_reset and not a.r35l_dir:
         p.error("--mg-reset requires the pinned --r35l-dir candidate")
+    if a.smp_gate and not (a.candidate and a.cpu_only):
+        p.error("--smp-gate requires --candidate --cpu-only")
     out.mkdir(parents=True, exist_ok=False)
     donor = base / "out/ipsw/20H392/kernelcache.decompressed"
     hid_objects = []
@@ -599,7 +714,8 @@ def main():
         mapfile = replay_r35(link_inputs, linker, cpo, out, archive, native,
                               cpu_only=a.cpu_only, candidate=a.candidate,
                               keep_link_debug=a.keep_link_debug, bringup_diag=bool(a.r35l_dir),
-                              hid_objects=hid_objects, mg_reset=a.mg_reset)
+                              hid_objects=hid_objects, mg_reset=a.mg_reset,
+                              smp_gate=a.smp_gate, base=base)
     else:
         # Replay XNU's exported link inputs, without its historical map output.
         stem = "mach.development.bcm2837"

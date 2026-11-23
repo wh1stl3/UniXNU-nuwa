@@ -37,6 +37,14 @@
 8796-clang-var-init-flag.patch
 8796-indirection.patch
 8796-apple-only-cpu-tunables.patch
+# 8796-nuwa-smp-affinity.patch -- the nuwa device tree numbers the SM8550 cores in MPIDR Affinity1
+#    (cpu0 0x000, cpu1 0x100, ... cpu7 0x700). reset_vector decodes the physical id with AFF0 only
+#    when HAS_CLUSTER is unset, and the BCM2837 board configuration (MAX_CPU_CLUSTERS 1) leaves it
+#    unset, so a 0x100 secondary is masked to 0x000, matches the boot core's cpu_data entry and
+#    never finds its own reset handler. Use the upstream SM8550 condition (native-smp-secondary in
+#    UniXNU-sm8550-common@a9f45dc6): take AFF1:AFF0 on BCM2837 too. Only the secondary entry path
+#    changes; without sheng-smp no secondary runs and the boot CPU decodes 0 either way.
+8796-nuwa-smp-affinity.patch
 arch:../../../patches/xnu/architectural-timer-entry.patch
 arch:../../../patches/xnu/armvirt-platform-personality.patch
 arch:../../../patches/xnu/cxx-flag-dependencies.patch
