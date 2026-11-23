@@ -1,193 +1,228 @@
 #!/usr/bin/env python3
-"""Package pinned r35 OFF or an audited display ON kernel with the r35 chain."""
+"""Package the pinned SystemGroup/HID resume-only control (host only)."""
 import argparse
-from functools import partial
 import hashlib
 import importlib.util
 import json
+import os
 from pathlib import Path
+import struct
+import subprocess
 import sys
 import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "scripts/build-ufs-apfs-root-chmh-r35.py"
 SOURCE_SHA = "b5ce56a1784ec1395efa86f32468e8772da516b4b8e4c5e0f6535021c90537e7"
-R35_SHA = "787610183dc7f772e2d01aa183f72f2fcc52245fc44407e6c815ced614412464"
 HID_KERNEL = "5ba1be16d8e83c35405ec8d7595e16132be41a22932437e4b23ae90d794ce798"
-MG_KERNEL = "0637d5f37a78370085c03da762888dadb6ba6269dbbb0b2a517d3b47972a5d9b"
-MG_PROP_KERNEL = "591957c24f510e5e77c43936fe6480cd874dce49fb0b3b48b09db51b3ebbb1f9"
-MG_PROP_SC_KERNEL = "a6f2218eb2ee544390d344c1b555c9d5b226f70d7d702e971079af79f24525a5"
-MG_PROP_SC_REFRESH_KERNEL = "8358b013cf9f28a7fb8649491cd7f0b9931ab4750f05260ff7ef1e178ac94f1c"
-MG_ROTATION_KERNEL = "0bf8950fba416b9537782df245c43f8099e0e10f7c93c6f2d3fc35e604f50e5a"
-MG_HANDOFF_SC_KERNEL = "ba1f6913cf0412b3e8714b3f3dfca8daa8922768aa427e12b6d8d0f4cf53729b"
-MG_HANDOFF_PROC_KERNEL = "46babd3f23a10295c25fc72b948958f2807926741a0d7b359572a9fbd5846a99"
-MG_HANDOFF_PROC_SIX_KERNEL = "c7fcaabdd9274847f75da48ffcc7aca41b2ec330ba8d2e2b3bf65408f5e1d63d"
-MG_HANDOFF_XR_KERNEL = "22af086c04d463f9be74ae302a180fa20c31346ee124a32dcd1791e89595ddc1"
-MG_HANDOFF_XR32_KERNEL = "2e4437d4e9b26eb2ed896df96e40733a34ec90d7c89de4a382e7b90d9e1c9ada"
-DISPLAY_KERNELS = {
-    # Client identity probe (sticky bb); fingerprint delta recorded separately.
-    "daa0288fb7786a0b6078a0608b2d09fc5c4a71252a5d4a42944ac5b7da14293b",
-    # NormalModeEnable/ADCLLoadAll publication build; fingerprint change is
-    # separately recorded in docs/nuwa-fdr-properties-20261122.md.
-    "e9f0b5e125be778b9c3fff8939659a6c9f67c61fb722c70a331c5ee8c8547b2d",
-    "c5e0d39475111198acd7d0ce8900178134f7b6a08785963e25652c34ccf503db",
-    "033f1065893aaf489565d732f04672cefa868dd6c71fc80a431ec741d1053c52",
-    "476477dab77fe2342128ddd79881d6fd26b1d7b4d48d65e723860478aafdcb17",
-    "89355aa4e0dc0f3d2e9ef1971e94d45f6584f66d4ae318e6ac2bdc832fce4b39",
-    "7ae5623c8a82ddbbcef1da905de3e39fb4c5e4ec4d5f35e7b9bb3348e062674f",
-    "d33ef2ccf95478959ada320174f19203d0d7d6d17077ac60e69a00efbda6dfc5",
-    "70575178c4f32674630de7da44ebea3224b10a82db005d6e88527e3880002cae",
-}
-DISPLAY_ARGS = (b" offline-mobile-graphics-load=1 offline-legacy-register=1 offline-legacy-gop=1"
-                b" offline-legacy-pm=1 offline-legacy-phase=4 offline-legacy-validate=1"
-                b" offline-legacy-transfer=1 offline-legacy-cpu-present=1")
-# 20H392 dyld shared cache fixup: replace +[AWAttentionAwarenessConfiguration initialize]'s
-# first adrp with ret. Same entry syntax scripts/make-nuwa-adt.py --text-fixup writes.
-# The offset field is bare hex: both make-nuwa-adt's validator and cs_text_fixup_parse
-# accept only hex digits, so the conventional "0x" prefix is not part of the stored entry.
+TEXT_FIXUP_KERNEL = "e161a629690a503d63a1f4a346b3e1f488df6f09ecfb375e51d7e5a62e7e0c5e"
+SEED_SHA = "692355638b31d347ced5983a5910491f0556156f79675c2e371ebe9987683247"
+SEED_IDENTITY = "fd554672b1b97df139e533e2d8e74964f6351963d55e4a4483abcec654f1a172"
+SEED_UUID = "B0E0F71F-A265-4038-8F5C-6D3632859DEF"
+SEED_BYTES = 2121888
+# Byte-for-byte pin of vendor-boot-hid-stage/unixnu.toml.
+CONFIG_SHA = "91bb0d9e1256f3dd3fd5a6dd4b1c0c276342ef92bf4b684c6609fadfa5f87e62"
+DISPLAY_SCALE = (3).to_bytes(4, "little")
+ARGS = (b"-v serial=3 native-ufs-root=1 native-ufs-lun=0 nuwa-pmgr=2 rd=uuid"
+        b" boot-uuid=DADD93F8-DBBF-4B17-A1DF-0F11E64172F7 boot-progress=2 aks=1 disable-watchdogd=1"
+        b" build-tag=nuwa-r35 boot-progress-scale=3 sheng-data-persist=2 sheng-log-reserve=1024"
+        b" offline-mobile-graphics-load=1 offline-legacy-register=1 offline-legacy-gop=1"
+        b" offline-legacy-pm=1 offline-legacy-phase=4 offline-legacy-validate=1"
+        b" offline-legacy-transfer=1 offline-legacy-cpu-present=1 nuwa-lite=1 nuwa-mg-reset=1"
+        b" nuwa-sb-restart=400 nuwa-sb-restart-every=180 nuwa-hid-standin=1")
+
+# 20H392 dyld shared cache fixup, bare hex (make-nuwa-adt and cs_text_fixup_parse
+# both reject a 0x prefix). The resume-only reference package has no such property.
 TEXT_FIXUP_ENTRY = "dyld_shared_cache_arm64.13,1cd5a9c,684a19d0004d47f9,c0035fd6004d47f9"
 TEXT_FIXUPS = TEXT_FIXUP_ENTRY.encode() + b"\0"
-TEXT_FIXUP_PATCH_SHA = "492355cfb37f87970de3444496aea488c7769704d94e97baa204fcc7b142344a"
-TEXT_FIXUP_KERNEL = "8ca2e912638f6250352bb682a2ec2af1e019f6dc61b23545a581de080196dafb"
+
+
+def sha(blob):
+    return hashlib.sha256(blob).hexdigest()
+
+
+def check_args(args, *, xnu=True):
+    tokens = args.split()
+    if any(t.split("=", 1)[0] == "sheng-data-reset" for t in tokens):
+        raise ValueError("Resume-only args contain sheng-data-reset")
+    if xnu:
+        for required in ("nuwa-hid-standin=1", "nuwa-sb-restart=400",
+                         "nuwa-sb-restart-every=180", "nuwa-mg-reset=1", "sheng-data-persist=2"):
+            key = required.split("=", 1)[0]
+            if [t for t in tokens if t.split("=", 1)[0] == key] != [required]:
+                raise ValueError(f"Resume-only args require exactly one {required}")
+
+
+def check_config(config):
+    for entry in tomllib.loads(config.decode())["entry"]:
+        check_args(entry.get("args", ""), xnu=entry["id"] == "xnu")
+    if sha(config) != CONFIG_SHA:
+        raise ValueError("unixnu.toml differs from the pinned HID-stage baseline")
+
+
+def check_chosen(props, *, text_fixup):
+    if [p[2] for p in props if p[0] == "display-scale"] != [DISPLAY_SCALE]:
+        raise ValueError("/chosen/display-scale must be one u32 3")
+    got = [p[2] for p in props if p[0] == "text-fixups"]
+    if text_fixup:
+        if got != [TEXT_FIXUPS]:
+            raise ValueError("/chosen/text-fixups must be the one pinned 20H392 entry")
+    elif got:
+        raise ValueError("Resume-only control must not contain /chosen/text-fixups")
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, allow_abbrev=False)
     parser.add_argument("--kernel", type=Path, required=True)
     parser.add_argument("--kernel-sha256", required=True)
-    parser.add_argument("--enable-display", action="store_true")
-    parser.add_argument("--enable-hid-standin", action="store_true",
-                        help="append only nuwa-hid-standin=1 to the 4.75 GiB display ON profile")
-    parser.add_argument("--enable-mg-reset-resume-only", action="store_true",
-                        help="4.75 GiB display ON, resume Data without reset and enable MG backup")
-    parser.add_argument("--board-window", action="store_true",
-                        help="derive the window from board.toml")
+    parser.add_argument("--enable-display", action="store_true", required=True)
+    parser.add_argument("--enable-hid-standin", action="store_true", required=True)
+    parser.add_argument("--enable-mg-reset-resume-only", action="store_true", required=True)
+    parser.add_argument("--board-window", action="store_true", required=True)
+    parser.add_argument("--systemgroup-seed", type=Path, required=True)
     parser.add_argument("--text-fixup", action="store_true",
-                        help="add the pinned 20H392 /chosen/text-fixups entry to the display ON profile")
+                        help="add the pinned 20H392 /chosen/text-fixups entry and require the rebuilt kernel")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--audit", type=Path)
     a = parser.parse_args()
     kernel = a.kernel.resolve()
+    seed = a.systemgroup_seed.resolve()
     output = a.output.resolve()
     audit = a.audit.resolve() if a.audit else None
-    for path in (kernel, output, *([audit] if audit else [])):
+    for path in (kernel, seed, output, *([audit] if audit else [])):
         if (ROOT / "out").resolve() not in path.parents:
             parser.error(f"expected a path inside device out/: {path}")
     if output.exists():
         parser.error("--output must be new")
     blob = kernel.read_bytes()
-    if hashlib.sha256(blob).hexdigest() != a.kernel_sha256:
-        parser.error("kernel SHA256 mismatch")
-    if a.enable_mg_reset_resume_only:
-        if not (a.enable_display and a.board_window):
-            parser.error("--enable-mg-reset-resume-only requires --enable-display --board-window")
-        if not a.enable_hid_standin and a.kernel_sha256 not in (MG_KERNEL, MG_PROP_KERNEL, MG_PROP_SC_KERNEL, MG_PROP_SC_REFRESH_KERNEL, MG_ROTATION_KERNEL, MG_HANDOFF_SC_KERNEL, MG_HANDOFF_PROC_KERNEL, MG_HANDOFF_PROC_SIX_KERNEL, MG_HANDOFF_XR_KERNEL, MG_HANDOFF_XR32_KERNEL):
-            parser.error("MG ON profile requires the pinned MG reset kernel")
-    if a.enable_hid_standin:
-        if not (a.enable_display and a.board_window):
-            parser.error("--enable-hid-standin requires --enable-display and --board-window")
-        if a.kernel_sha256 != HID_KERNEL:
-            parser.error("HID ON profile requires the pinned audited kernel")
-        report = kernel.parent / "hid/final-audit.json"
-        if not report.is_file() or json.loads(report.read_text()).get("kernel_sha256") != HID_KERNEL:
-            parser.error("HID ON profile requires the matching final-link audit")
-    elif a.enable_display and not (a.enable_mg_reset_resume_only or a.text_fixup):
-        if a.kernel_sha256 not in DISPLAY_KERNELS:
-            parser.error("on profile requires a pinned display kernel SHA256")
-    elif not a.enable_display and a.kernel_sha256 != R35_SHA:
-        parser.error("off profile requires the original r35 kernel SHA256")
-    if a.text_fixup:
-        if not (a.enable_display and a.board_window):
-            parser.error("--text-fixup requires --enable-display and --board-window")
-        if a.kernel_sha256 != TEXT_FIXUP_KERNEL:
-            parser.error("text-fixup profile requires the pinned rebuilt kernel")
-        report = kernel.parent / "text-fixup.json"
-        if not report.is_file():
-            parser.error("text-fixup profile requires the builder's text-fixup.json")
-        recorded = json.loads(report.read_text())
-        if recorded.get("patch", {}).get("sha256") != TEXT_FIXUP_PATCH_SHA:
-            parser.error("text-fixup audit does not bind the pinned patch")
-    if hashlib.sha256(SOURCE.read_bytes()).hexdigest() != SOURCE_SHA:
+    expected_kernel = TEXT_FIXUP_KERNEL if a.text_fixup else HID_KERNEL
+    if sha(blob) != a.kernel_sha256 or a.kernel_sha256 != expected_kernel:
+        parser.error("resume-only profile requires the pinned audited kernel")
+    report = kernel.parent / "hid/final-audit.json"
+    if not report.is_file() or json.loads(report.read_text()).get("kernel_sha256") != a.kernel_sha256:
+        parser.error("HID ON profile requires the matching final-link audit")
+    seed_blob = seed.read_bytes()
+    if len(seed_blob) != SEED_BYTES or sha(seed_blob) != SEED_SHA:
+        parser.error("SystemGroup seed must match the HID-stage baseline")
+    if sha(SOURCE.read_bytes()) != SOURCE_SHA:
         raise ValueError("Pinned r35 packager changed")
+    check_args(ARGS.decode())
 
-    # r35b reuses the pinned r35 packager and overrides its profile inputs.
-    # Here kernel size and (optionally) args change as well, without editing
-    # the parent or weakening any of its root/ADT/FAT/outer audits.
     sys.argv = [str(SOURCE), "--output", str(output)]
     if audit:
         sys.argv.extend(("--audit", str(audit)))
     spec = importlib.util.spec_from_file_location("r35_display_packager", SOURCE)
     r35 = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(r35)
-    profile = "nuwa-ufs-apfs-root-chmh-20261120-r35-display"
+    x = r35.X
+    meta = x.PK.inspect(seed)[0]
+    if meta != dict(bytes=8589934592, sha256=SEED_IDENTITY, encoded_bytes=SEED_BYTES,
+                    encoded_sha256=SEED_SHA, packed=True):
+        raise ValueError("SystemGroup packed seed metadata differs from baseline")
+    xid, uuid = x.seed_volume_uuid(seed_blob)
+    if uuid != SEED_UUID:
+        raise ValueError("SystemGroup seed APFS UUID differs from baseline")
+    x.SEED, x.SEED_SHA, x.SEED_ENCODED_BYTES = seed, SEED_SHA, SEED_BYTES
+    x.SEED_IDENTITY, x.SEED_XID, x.SEED_APSB_UUID = SEED_IDENTITY, xid, uuid
+    x.DELTA_SEED = seed_blob
+    # Only replace an existing pin: the base parent-input check iterates PINS
+    # against a parent dict that has no seed member.
+    if "seed" in x.C.PINS:
+        x.C.PINS["seed"] = SEED_SHA
+
     inputs = dict(KERNEL=kernel, KERNEL_BYTES=len(blob), KERNEL_SHA=a.kernel_sha256,
-                  PROFILE=profile + ("-on" if a.enable_display else "-off"),
-                  ARGS=r35.ARGS + (DISPLAY_ARGS + b" nuwa-lite=1" if a.enable_display else b""))
-    if a.enable_mg_reset_resume_only:
-        inputs["PROFILE"] += "-mg-reset-resume-only"
-        tokens = inputs["ARGS"].split()
-        tokens.remove(b"sheng-data-reset=1")
-        inputs["ARGS"] = b" ".join(tokens + [b"nuwa-mg-reset=1"])
-        r35.M.check_inputs = partial(r35.check_inputs, resume_only=True)
-    if a.enable_hid_standin:
-        inputs["PROFILE"] += "-hid"
-        inputs["ARGS"] += b" nuwa-hid-standin=1"
-    if a.text_fixup:
-        inputs["PROFILE"] += "-textfixup"
-    for module in (r35, r35.X, r35.M):
+                  PROFILE="nuwa-r35-display-systemgroup-hid-resume-only-control"
+                          + ("-textfixup" if a.text_fixup else ""), ARGS=ARGS)
+    for module in (r35, x, r35.M):
         vars(module).update(inputs)
-    if a.board_window:
-        size = int(tomllib.loads((ROOT / "board.toml").read_text(encoding="utf-8"))
-                   ["payload"]["adt"]["owned_memory_size"], 0)
-        if not 0x10000000 <= size <= 0x200000000 or size % 0x200000:
-            raise ValueError("board window outside UniXNU's ADT size contract")
-        if a.enable_mg_reset_resume_only and size != 0x130000000:
-            raise ValueError("MG ON profile requires the 4.75 GiB baseline window")
-        previous = r35.X.derived
-        adt = r35.A
 
-        def derived(parent, digest):
-            tree = adt.parse(previous(parent, digest))
-            chosen = adt.find(tree, "/chosen")
-            props = chosen["properties"]
-            matches = [i for i, p in enumerate(props) if p[0] == "darwinboot-memory-size"]
-            if len(matches) != 1 or len(props[matches[0]][2]) != 8:
-                raise ValueError("parent ADT window is not a unique u64")
-            i = matches[0]
-            props[i] = (props[i][0], props[i][1], size.to_bytes(8, "little"))
-            if a.enable_mg_reset_resume_only:
-                value = (3).to_bytes(4, "little")
-                if "display-scale" in adt.properties(chosen):
-                    raise ValueError("parent already has /chosen/display-scale")
-                if adt.properties(adt.find(tree, "/product")).get("artwork-scale-factor") != value:
-                    raise ValueError("/product/artwork-scale-factor is not u32 3")
-                props.append(("display-scale", 0, value))
-            if a.text_fixup:
-                if "text-fixups" in adt.properties(chosen):
-                    raise ValueError("parent already has /chosen/text-fixups")
-                props.append(("text-fixups", 0, TEXT_FIXUPS))
-            return adt.encode(tree)
+    def check_inputs(actual):
+        check_config(actual["config"])
+        return r35.check_inputs(actual, resume_only=True)
 
-        r35.X.derived = r35.X.C.derived = derived
+    r35.M.check_inputs = check_inputs
+    size = int(tomllib.loads((ROOT / "board.toml").read_text(encoding="utf-8"))
+               ["payload"]["adt"]["owned_memory_size"], 0)
+    if size != 0x130000000:
+        raise ValueError("Resume-only control requires the 4.75 GiB baseline window")
+    previous = x.derived
+    adt = r35.A
+
+    def derived(parent, digest):
+        tree = adt.parse(previous(parent, digest))
+        props = adt.find(tree, "/chosen")["properties"]
+        matches = [i for i, p in enumerate(props) if p[0] == "darwinboot-memory-size"]
+        if len(matches) != 1 or len(props[matches[0]][2]) != 8:
+            raise ValueError("parent ADT window is not a unique u64")
+        i = matches[0]
+        props[i] = (props[i][0], props[i][1], size.to_bytes(8, "little"))
+        if adt.properties(adt.find(tree, "/product")).get("artwork-scale-factor") != DISPLAY_SCALE:
+            raise ValueError("/product/artwork-scale-factor is not u32 3")
+        props.append(("display-scale", 0, DISPLAY_SCALE))
         if a.text_fixup:
-            previous_check = r35.X.check_adt
+            if any(p[0] == "text-fixups" for p in props):
+                raise ValueError("parent already has /chosen/text-fixups")
+            props.append(("text-fixups", 0, TEXT_FIXUPS))
+        check_chosen(props, text_fixup=a.text_fixup)
+        return adt.encode(tree)
 
-            def check_adt(parent, actual, digest):
-                previous_check(parent, actual, digest)
-                chosen = r35.A.properties(r35.A.find(r35.A.parse(actual), "/chosen"))
-                if chosen.get("text-fixups") != TEXT_FIXUPS:
-                    raise ValueError("text-fixups missing or changed")
+    x.derived = x.C.derived = derived
+    previous_audit = r35.M.audit_image
 
-            r35.X.check_adt = r35.X.C.check_adt = check_adt
+    def audit_image(blob, selected, actual, material, ev, stock, work):
+        report = previous_audit(blob, selected, actual, material, ev, stock, work)
+        readback = work / "outer-readback/EFI/UniXNU"
+        check_config((readback / "unixnu.toml").read_bytes())
+        payloads = readback / "Payloads"
+        tree = adt.parse((payloads / "kernel.macho.adt").read_bytes())
+        check_chosen(adt.find(tree, "/chosen")["properties"], text_fixup=a.text_fixup)
+        if sha((payloads / "scratch-data.img").read_bytes()) != SEED_SHA:
+            raise ValueError("Outer readback SystemGroup seed mismatch")
+        return report
+
+    r35.M.audit_image = audit_image
     r35.M.main()
-    if a.enable_mg_reset_resume_only:
-        readback = output if audit else output / "outer-audit"
-        config = tomllib.loads((readback / "outer-readback/EFI/UniXNU/unixnu.toml")
-                               .read_text(encoding="utf-8"))
-        for entry in config["entry"]:
-            tokens = entry.get("args", "").split()
-            r35.require(not any(t.split("=", 1)[0] == "sheng-data-reset" for t in tokens),
-                        "Outer readback contains sheng-data-reset")
+    if a.text_fixup and not audit:
+        direct_readback(output, adt)
+
+
+def direct_readback(output, adt):
+    """Extract the shipped vendor_boot ramdisk itself and re-check the profile."""
+    outer = (output / "vendor_boot.img").read_bytes()
+    if outer[:8] != b"VNDRBOOT":
+        raise ValueError("vendor_boot magic changed")
+    page, fat_size = struct.unpack_from("<I8xI", outer, 12)
+    if (page, fat_size) != (4096, 67108864):
+        raise ValueError(f"unexpected vendor_boot geometry: {page}, {fat_size}")
+    fat = outer[page:page + fat_size]
+    if sha(fat) != sha((output / "payload.img").read_bytes()):
+        raise ValueError("vendor_boot ramdisk differs from payload.img")
+    work = output / "direct-readback"
+    work.mkdir()
+    (work / "fat.img").write_bytes(fat)
+    env = dict(os.environ, MTOOLS_SKIP_CHECK="1")
+    wanted = {
+        "config": "EFI/UniXNU/unixnu.toml",
+        "adt": "EFI/UniXNU/Payloads/kernel.macho.adt",
+        "seed": "EFI/UniXNU/Payloads/scratch-data.img",
+    }
+    for name, dest in wanted.items():
+        subprocess.run(["mcopy", "-i", str(work / "fat.img"), "::/" + dest,
+                        str(work / name)], check=True, env=env)
+    config = (work / "config").read_bytes()
+    check_config(config)
+    tree = adt.parse((work / "adt").read_bytes())
+    node = adt.find(tree, "/chosen")
+    check_chosen(node["properties"], text_fixup=True)
+    chosen = adt.properties(node)
+    seed = (work / "seed").read_bytes()
+    if sha(seed) != SEED_SHA:
+        raise ValueError("direct vendor_boot seed mismatch")
+    args, = [e["args"] for e in tomllib.loads(config.decode())["entry"] if e["id"] == "xnu"]
+    print("args:", args)
+    print("display-scale:", chosen["display-scale"].hex())
+    print("text-fixups:", chosen["text-fixups"])
+    print("seed sha256:", sha(seed))
 
 
 if __name__ == "__main__":

@@ -119,16 +119,18 @@ into the recorded native link; everything else is the unchanged r35l replay:
 - `osfmk/vm/vm_fault.c` and `osfmk/vm/vm_protos.h` from the xnu tree recorded in
   the compile database, SHA-256 `99081417…b934` / `3ef4c0ca…79ee`.
 - Patch SHA-256 `492355cf…344a`; rebuilt objects `ubc_subr.o`
-  `541fe20e…3a7d`, `vm_fault.o` `83fcc6ec…9efc` (`text-fixup.json` beside the
+  `d8dea798…ab19`, `vm_fault.o` `35dc0c27…ff34` (`text-fixup.json` beside the
   kernel).
 
-The linked kernel defines `_cs_text_fixup_page` at `fffffff007753e48`,
-`_cs_text_fixup_parsed` at `fffffff007ab9e88` and `_cs_text_fixup_applied` at
-`fffffff007ab9e8c`; `libBootProgress.a` keeps them as undefined imports resolved
-by the link, and the `TF=%u/%u` and `unterminated, ignored` strings are present
-once in the image.
+The final kernel also carries the HID stand-in (`_nuwa_hid_stage`) and the MG
+reset diagnostic (`_nuwa_mg_reset_diag`), and defines `_cs_text_fixup_page` at
+`fffffff007753e4c`, `_cs_text_fixup_parsed` at `fffffff007ab9e88` and
+`_cs_text_fixup_applied` at `fffffff007ab9e8c`; `libBootProgress.a` keeps them as
+undefined imports resolved by the link, and the `TF=%u/%u` and
+`unterminated, ignored` strings are present once in the image.
 
-Recipe (WSL, root, worktree `out/`):
+Recipe (WSL root, worktree `out/`; the resume-only chain, not the old
+`--enable-display` shortcut):
 
 ```sh
 PY=/home/wh1stl3/.local/bin/python3.11
@@ -137,42 +139,63 @@ CPO=/root/nuwa-pmap-ret-native-20261111/nuwa/ios-16.7.16-20H392/nuwa_pmap_ret/tr
 "$PY" -B scripts/build-nuwa-display-native.py --base "$BASE" --cpo "$CPO" \
   --linker-dir /opt/unixnu-linux/CommandLineTools/usr/bin \
   --r35-dir out/nuwa-r35-20261119 --r35l-dir out/nuwa-r35l-regs-full-20261121 \
-  --cpu-only --no-software-vsync --candidate --text-fixup \
-  --out out/nuwa-textfixup-20261123-r2
+  --cpu-only --no-software-vsync --candidate --hid-standin --mg-reset --text-fixup \
+  --out out/nuwa-textfixup-20261123-r3
 "$PY" -B scripts/build-ufs-apfs-root-chmh-r35-display.py \
-  --kernel out/nuwa-textfixup-20261123-r2/kernel.macho \
-  --kernel-sha256 8ca2e912638f6250352bb682a2ec2af1e019f6dc61b23545a581de080196dafb \
-  --enable-display --board-window --text-fixup \
-  --output out/nuwa-textfixup-20261123-r2-package
-# separate --audit into out/nuwa-textfixup-20261123-r2-outer-audit
+  --kernel out/nuwa-textfixup-20261123-r3/kernel.macho \
+  --kernel-sha256 e161a629690a503d63a1f4a346b3e1f488df6f09ecfb375e51d7e5a62e7e0c5e \
+  --systemgroup-seed out/nuwa-textfixup-20261123-r3-seed/data-8g-sg.dbr \
+  --enable-display --board-window --enable-mg-reset-resume-only --enable-hid-standin \
+  --text-fixup --output out/nuwa-textfixup-20261123-final3-package
 ```
 
-`--board-window` derives `darwinboot-memory-size = 0x130000000` (4.75 GiB) from
-`board.toml`; the display ON args and `nuwa-lite=1` are the existing set.
+The packager (`scripts/build-ufs-apfs-root-chmh-r35-display.py`) is the
+resume-only entry: it pins the exact HID-stage argument string, the SystemGroup
+seed (SHA-256, identity, 2,121,888 encoded bytes, APFS UUID), the 4.75 GiB window
+and the reference TOML byte-for-byte, adds `/chosen/display-scale` u32 3 and, in
+`--text-fixup` mode, `/chosen/text-fixups`. The parallel guard rewrite is kept;
+the only change made here is to update `PINS['seed']` only when the key already
+exists (the unconditional insert failed the parent-input check with
+`KeyError: 'seed'`).
 
-## Artifacts (host, self-checked)
+## Artifacts (final candidate, host self-checked)
 
 | Artifact | Bytes | SHA-256 |
 | --- | --- | --- |
-| Kernel | 52,178,944 | `8ca2e912638f6250352bb682a2ec2af1e019f6dc61b23545a581de080196dafb` |
-| Outer `vendor_boot.img` | 100,663,296 | `a3e72a131b5689d4a6046dd96b09b23069d8fc0ea1bccadbeabda53e08f2078b` |
-| FAT `payload.img` (outer-readback identical) | 67,108,864 | `528d6724b3678f402c6e579c1d52391017e46d97641cc0ba5be89b0d102c290f` |
-| Derived ADT | 13,748 | `8acfe453004c174710a9b2bf4fcc5678f09873bc68479b1a1d935194be8f5517` |
-| CHMH (SHA-384) | — | `1ba38434ee6cd39169c9e273a7674d7015300cea2d503f08e1c5a8e3676f1604ccae75862d6c15d35b748d1239a3d926` |
-| `record.json` | — | `88e189d025fea3cf6c5a3befb1e79c0cd55c857faed2b2e174d07532ae0a026f` |
+| Kernel | 52,191,232 | `e161a629690a503d63a1f4a346b3e1f488df6f09ecfb375e51d7e5a62e7e0c5e` |
+| Outer `vendor_boot.img` | 100,663,296 | `008292803585920f7753ef8f895987a41fa031b37d14093666d192d90cd547d3` |
+| FAT `payload.img` (outer-readback identical) | 67,108,864 | `bf145419a849c28aec6568fc2bae5f216136001c98352c29e722fcd86e7ee0f5` |
+| Derived ADT | 13,788 | `c5a0a229ff1aef266449aadd3e31dd93e4a61ec69a7a0dbba5b061f7a74795c8` |
+| CHMH (SHA-384) | — | `acac3c657720e8a392ecd247029cda83a2a0e9298333dd84797a37fd60ec2546a356357540a7dc5b2bace8bea7807a5c` |
+| `record.json` | — | `78c3ddc810ea2b4c0ac0790c43f2e8e41d6a7f1aaca346cfd22ba9d39cfd90c4` |
 
-`fsck.fat -vn` reports 105,783 / 129,022 clusters used and **11,898,368 bytes
-free** (≥ 8 MiB). The pre-change control kernel from the same recipe without
-`--text-fixup` is
-`67d71d55908b92240d0e5b22e4fcdb8bcfe2c08cae91709960e9cf8bb064f3f3`, which
-contains no `TF=%u/%u` string and no fixup symbols. The earlier r1 package
-(kernel `f0a52c9a…b1798`, patch `080587ec…6a71`) is superseded by r2 and must not
-be used.
+`fsck.fat -vn` reports 106,247 / 129,022 clusters used and **11,660,800 bytes
+free** (≥ 8 MiB). The packaged `unixnu.toml` SHA-256 is
+`91bb0d9e1256f3dd3fd5a6dd4b1c0c276342ef92bf4b684c6609fadfa5f87e62`, i.e. the
+same bytes as `vendor-boot-hid-stage/unixnu.toml`; the args string is therefore
+identical character for character.
 
-Both `derived.adt` and the extracted outer-readback ADT carry exactly
-`b"dyld_shared_cache_arm64.13,1cd5a9c,684a19d0004d47f9,c0035fd6004d47f9\0"`;
-`scripts/test-nuwa-text-fixup-adt.py` proves those bytes equal what
-`make-nuwa-adt.py --text-fixup` writes for the same entry.
+Self-check extracted directly from the shipped `vendor_boot.img` (FAT sliced at
+4096, asserted byte-identical to `payload.img`, files read with `mcopy`):
+
+- args (535 bytes): `-v serial=3 native-ufs-root=1 native-ufs-lun=0 nuwa-pmgr=2
+  rd=uuid boot-uuid=DADD93F8-DBBF-4B17-A1DF-0F11E64172F7 boot-progress=2 aks=1
+  disable-watchdogd=1 build-tag=nuwa-r35 boot-progress-scale=3
+  sheng-data-persist=2 sheng-log-reserve=1024 offline-mobile-graphics-load=1
+  offline-legacy-register=1 offline-legacy-gop=1 offline-legacy-pm=1
+  offline-legacy-phase=4 offline-legacy-validate=1 offline-legacy-transfer=1
+  offline-legacy-cpu-present=1 nuwa-lite=1 nuwa-mg-reset=1 nuwa-sb-restart=400
+  nuwa-sb-restart-every=180 nuwa-hid-standin=1` — no `sheng-data-reset`.
+- `/chosen/text-fixups` = `b"dyld_shared_cache_arm64.13,1cd5a9c,684a19d0004d47f9,c0035fd6004d47f9\0"`.
+- `/chosen/display-scale` = `03 00 00 00`.
+- embedded seed SHA-256 = `692355638b31d347ced5983a5910491f0556156f79675c2e371ebe9987683247`.
+
+Compared with `vendor-boot-hid-stage`, the args are exactly equal and the ADT
+differs only by the new `boot-manifest-hash` and the added `text-fixups` property;
+every other `/chosen` value is unchanged.
+
+The earlier r2 package (kernel `8ca2e912…dafb`, no HID/MG) and r1 package
+(kernel `f0a52c9a…b1798`) are superseded and must not be used.
 
 ## Risks (not softened)
 
