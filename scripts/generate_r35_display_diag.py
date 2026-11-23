@@ -109,6 +109,15 @@ void boot_progress_prop_set(uint16_t properties) {
 }
 """ + anchor)
     src = replace_once(src, b"+gpu_sig*17ULL;", b"+gpu_sig*17ULL+__atomic_load_n(&bp_proc_generation,__ATOMIC_ACQUIRE)*65537ULL;")
+    src = replace_once(src,
+        b"  unsigned cell=14*display.scale,cols=display.width/(6*display.scale);if(cols>119)cols=119;\n  if(display.height<(n+2)*cell+8)return;",
+        b"""  unsigned cell=14*display.scale,cols=display.width/(6*display.scale);if(cols>80)cols=80;
+  unsigned half=display.height/2;
+  if(half<8+2*cell)return;
+  unsigned budget=(half-8)/cell-2;
+  if(budget>24)budget=24;
+  if(n>budget)n=budget;
+  if(!n || display.height<(n+2)*cell+8)return;""")
     src = replace_once(src, b"n+15+6<=cap", b"n+16+6<=cap")
     src = replace_once(src, b"unsigned room=cap-15-n;", b"unsigned room=cap-16-n;")
     # Use the short DATA-summary slot; its full detail remains on row 39.
