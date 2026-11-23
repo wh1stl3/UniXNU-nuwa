@@ -40,9 +40,12 @@ SEED_UUID = "B0E0F71F-A265-4038-8F5C-6D3632859DEF"
 BASELINE = ROOT / "out/nuwa-systemgroup-seed-20261122/vendor-boot-hid-stage"
 BASELINE_SHA = "01e6e1c71346c05fb7cc9885d1179346b72e296ef3bbd993952017b6edd6479d"
 RESTART = b" nuwa-sb-restart=400 nuwa-sb-restart-every=180"
+# The renderer's default-off regression test compares against the gate-only package.
 SMP_BASELINE = ROOT / "out/nuwa-smp-gate-20261123-package"
 SMP_BASELINE_SHA = "b02007f707302915ec62516dff21bec5d1dd4e0dbaa95ccfe5440d18b3655999"
-SMP_KERNEL_SHA = "6af982c35ba95de30ac33d68f040cae384878b78236d40d2f9d9c8a0f7dc683f"
+ENTRY_BASELINE = ROOT / "out/nuwa-smp-observe-20261123-package"
+ENTRY_BASELINE_SHA = "9db3c82bd36b6953d3eb35e17a418053a192d78d5d18442a38372ad50e20f599"
+ENTRY_KERNEL_SHA = "825eaa8ffdb12fde9f57d7f5bd3cb66fe2d9ac234ffa0955d1038bcbe633332d"
 SMP_SUFFIX = b" sheng-smp=1"
 # Exact argument text of outer d6de71fcb7caa4c210f2d40e4729fe98611e5336b267eba301fdc8595b723769
 # (worktree-textfixup final4): the same profile without any SMP token.
@@ -162,7 +165,7 @@ def main():
                         help="append only sheng-smp=1 to the pinned default-off SMP package")
     parser.add_argument("--baseline", type=Path)
     a = parser.parse_args()
-    default_baseline = SMP_BASELINE if a.enable_smp_entry else BASELINE
+    default_baseline = ENTRY_BASELINE if a.enable_smp_entry else BASELINE
     kernel, output, baseline = a.kernel.resolve(), a.output.resolve(), (a.baseline or default_baseline).resolve()
     audit = a.audit.resolve() if a.audit else None
     for path in (kernel, output, baseline, *([audit] if audit else [])):
@@ -171,7 +174,7 @@ def main():
     if output.exists() or (audit and audit.exists()):
         parser.error("--output and --audit must be new")
     if a.enable_smp_entry:
-        require(a.kernel_sha256 == SMP_KERNEL_SHA, "entry mode requires the default-off SMP kernel")
+        require(a.kernel_sha256 == ENTRY_KERNEL_SHA, "entry mode requires the default-off observational SMP kernel")
     require(sha(kernel.read_bytes()) == a.kernel_sha256, "kernel SHA256 mismatch")
     require(sha(SOURCE.read_bytes()) == SOURCE_SHA, "display packager changed")
     require(sha(SEED.read_bytes()) == SEED_SHA, "SystemGroup seed changed")
@@ -179,7 +182,7 @@ def main():
     require(report.is_file() and json.loads(report.read_text()).get("kernel_sha256") == a.kernel_sha256,
             "kernel is not the audited HID final link")
     baseline_outer, baseline_fat, baseline_outside = split_build(baseline)
-    baseline_sha = SMP_BASELINE_SHA if a.enable_smp_entry else BASELINE_SHA
+    baseline_sha = ENTRY_BASELINE_SHA if a.enable_smp_entry else BASELINE_SHA
     require(sha(baseline_outer) == baseline_sha, "baseline outer SHA256 mismatch")
 
     flags = ["--kernel", kernel, "--kernel-sha256", a.kernel_sha256,
