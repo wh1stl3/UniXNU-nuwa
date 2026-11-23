@@ -1,0 +1,52 @@
+diff --git a/drivers/ArmCpu/ArmCpu.cpp b/drivers/ArmCpu/ArmCpu.cpp
+--- a/drivers/ArmCpu/ArmCpu.cpp
++++ b/drivers/ArmCpu/ArmCpu.cpp
+@@ -46,6 +46,10 @@
+ // System registers seen on each secondary core at initCPU entry: CurrentEL, SCTLR_EL1, TCR_EL1, MAIR_EL1 (low words), MIDR_EL1.
+ volatile uint32_t armcpu_smp_sys[8][5], armcpu_boot_sys[5];
+ volatile int32_t armcpu_smp_psci_rc[8];
++// CPU_ON result state: 0 = unpublished, 1 = no conduit, 2 = firmware result.
++volatile uint32_t armcpu_smp_on_state[8], armcpu_smp_on_attempts[8];
++volatile uint64_t armcpu_smp_on_target[8], armcpu_smp_seen_aff[8];
++volatile uint32_t armcpu_smp_seen_aff_valid[8];
+ }
+ 
+ #define ARMCPU_SMP_SLOTS 8
+@@ -567,6 +571,8 @@
+     uint64_t mpidr;
+     __asm__ volatile ("mrs %0, mpidr_el1" : "=r" (mpidr));
+     armcpu_smp_seen_mpidr[logicalId] = static_cast<uint32_t> (mpidr);
++    __atomic_store_n (&armcpu_smp_seen_aff[logicalId], mpidr & 0xff00ffffffULL, __ATOMIC_RELAXED);
++    __atomic_store_n (&armcpu_smp_seen_aff_valid[logicalId], 1U, __ATOMIC_RELEASE);
+     // A failure is recorded and the core parked (rather than a panic that hides the other cores' state).
+     if ((mpidr & 0xffff) != (affinity & 0xffff)) { armcpu_smp_fail[logicalId] = 1; parkCore (); }
+     if (!gRemoteGic && !wakeRedistributor (true)) { armcpu_smp_fail[logicalId] = 2; parkCore (); }
+@@ -819,7 +825,11 @@
+ {
+   if (!secondary) { return KERN_NOT_SUPPORTED; }
+   bool hvc = false;
+-  if (!psciConduit (&hvc)) { armcpu_smp_psci_rc[logicalId] = -1001; return KERN_NOT_SUPPORTED; }
++  if (!psciConduit (&hvc)) {
++    __atomic_store_n (&armcpu_smp_psci_rc[logicalId], -1001, __ATOMIC_RELAXED);
++    __atomic_store_n (&armcpu_smp_on_state[logicalId], 1U, __ATOMIC_RELEASE);
++    return KERN_NOT_SUPPORTED;
++  }
+   armcpu_smp_conduit = hvc ? 2 : 1;
+   // PSCI 0.2 CPU_ON (SMC64 function id); the entry point is the kernel's physical reset vector page, whose reset
+   // code selects this core's cpu_data entry by MPIDR affinity. The context id is unused by that code.
+@@ -828,8 +838,13 @@
+   cleanToMemory (ResetHandlerData, 0x1000);
+   cleanToMemory (const_boot_args, 0x1000);
+   armcpu_smp_step[logicalId] = 4;
+-  int64_t result = psciCall (hvc, 0xc4000003ULL, affinity & 0xff00ffffffULL, entry, 0);
+-  armcpu_smp_psci_rc[logicalId] = static_cast<int32_t> (result);
++  uint64_t target = affinity & 0xff00ffffffULL;
++  __atomic_store_n (&armcpu_smp_on_state[logicalId], 0U, __ATOMIC_RELAXED);
++  __atomic_store_n (&armcpu_smp_on_target[logicalId], target, __ATOMIC_RELAXED);
++  __atomic_add_fetch (&armcpu_smp_on_attempts[logicalId], 1U, __ATOMIC_RELEASE);
++  int64_t result = psciCall (hvc, 0xc4000003ULL, target, entry, 0);
++  __atomic_store_n (&armcpu_smp_psci_rc[logicalId], static_cast<int32_t> (result), __ATOMIC_RELAXED);
++  __atomic_store_n (&armcpu_smp_on_state[logicalId], 2U, __ATOMIC_RELEASE);
+   return result == 0 ? KERN_SUCCESS : KERN_FAILURE;
+ }
+ 

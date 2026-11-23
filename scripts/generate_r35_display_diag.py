@@ -275,7 +275,59 @@ def replace_once(src, anchor, replacement):
     return src.replace(anchor, replacement, 1)
 
 
-def generate(src, *, mg_reset=False):
+SMP_OBSERVE_FORMAT = b"""
+// The gate admits only logical CPU 1 (ADT reg 0x100).
+extern volatile uint32_t armcpu_smp_on_state[8],armcpu_smp_on_attempts[8],armcpu_smp_seen_aff_valid[8];
+extern volatile uint64_t armcpu_smp_on_target[8],armcpu_smp_seen_aff[8];
+
+static void bp_smp_entry_values(char rc[12], char aff[11]) {
+  unsigned state=__atomic_load_n(&armcpu_smp_on_state[1],__ATOMIC_ACQUIRE);
+  if(state==2)
+    snprintf(rc,12,"%d",__atomic_load_n(&armcpu_smp_psci_rc[1],__ATOMIC_RELAXED));
+  else snprintf(rc,12,"%s",state==1?"nc":"-");
+  if(__atomic_load_n(&armcpu_smp_seen_aff_valid[1],__ATOMIC_ACQUIRE))
+    snprintf(aff,11,"%llx",(unsigned long long)__atomic_load_n(&armcpu_smp_seen_aff[1],__ATOMIC_RELAXED));
+  else snprintf(aff,11,"-");
+}
+
+static void bp_smp_entry_page(char *out, size_t len) {
+  unsigned attempts=__atomic_load_n(&armcpu_smp_on_attempts[1],__ATOMIC_ACQUIRE);
+  char to[11]="-",rc[12],aff[11],fail[16]="";
+  if(attempts)
+    snprintf(to,sizeof(to),"%llx",(unsigned long long)__atomic_load_n(&armcpu_smp_on_target[1],__ATOMIC_RELAXED));
+  unsigned f=armcpu_smp_fail[1];
+  if(f)snprintf(fail,sizeof(fail),"!fail%u",f);
+  bp_smp_entry_values(rc,aff);
+  snprintf(out,len,"SMP %u/%x/%u c1=step%u%s n=%x t=%s rc=%s aff=%s",
+    armcpu_smp_requested,armcpu_smp_running,armcpu_smp_conduit,armcpu_smp_step[1],fail,attempts,to,rc,aff);
+}
+
+static void bp_smp_entry_title(char *out, size_t len, const char *tag, unsigned now,
+                               unsigned crashes, unsigned failed) {
+  char rc[12],aff[11];
+  bp_smp_entry_values(rc,aff);
+  // Use the title slot so diagnostics and stacks keep exactly their original budget.
+  snprintf(out,len," LIVE rc=%s aff=%s %.8s %us C%u E%u",rc,aff,tag,now,crashes,failed);
+}
+"""
+
+
+def add_smp_observe(src):
+    anchor = b"extern volatile int32_t __attribute__((weak_import)) armcpu_smp_psci_rc[8];\n"
+    src = replace_once(src, anchor, anchor + SMP_OBSERVE_FORMAT)
+    return replace_once(replace_once(src, b"""      unsigned n=(unsigned)snprintf(b,sizeof(b),"SMP req=%u run=%u cond=%u boot=%x |",
+        armcpu_smp_requested,armcpu_smp_running,armcpu_smp_conduit,armcpu_boot_mpidr&0xffffff);
+      for(unsigned c=1;c<8&&n<sizeof(b)-14;++c)if(armcpu_smp_step[c]||armcpu_smp_psci_rc[c])
+      {
+        n+=(unsigned)snprintf(b+n,sizeof(b)-n," c%u=step%u",c,armcpu_smp_step[c]);
+        if(armcpu_smp_fail[c]&&n<sizeof(b)-14)n+=(unsigned)snprintf(b+n,sizeof(b)-n,"!fail%u",armcpu_smp_fail[c]);
+      }
+""", b"      bp_smp_entry_page(b,sizeof(b));\n"), b"""  snprintf(head,sizeof head," UniXNU live diagnostics%s%s%s  t=%us  crashes=%u exits=%u",build_tag[0]?"  [":"",build_tag,
+    build_tag[0]?"]":"",now,crashes,failed);""",
+        b"  bp_smp_entry_title(head,sizeof head,build_tag,now,crashes,failed);")
+
+
+def generate(src, *, mg_reset=False, smp_observe=False):
     if sha256(src).hexdigest() != RENDERER_SHA:
         raise ValueError("expected the pinned r35l full renderer")
     # stack_snapshot_from_kernel and the STACKSHOT_* flags live in <kern/debug.h>
@@ -551,4 +603,4 @@ void boot_progress_prop_set(uint16_t properties) {
                            b'dsp_stage,dsp_reason,ds,mg,(unsigned)(in>>32)')
         src = replace_once(src, b' CLI unavailable",dsp_stage,dsp_reason);',
                            b' DS=%u%s CLI unavailable",dsp_stage,dsp_reason,ds,mg);')
-    return src
+    return add_smp_observe(src) if smp_observe else src

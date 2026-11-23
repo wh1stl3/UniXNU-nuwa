@@ -58,6 +58,8 @@ SMP_START_PATCH = ROOT / "patches/xnu/8796-nuwa-smp-affinity.patch"
 SMP_START_PATCH_SHA = "bd19f351eb63f1d628815192f98a27444a5df8f10a9b8e732349c888e385e4ff"
 SMP_ARMCPU_PATCH = ROOT / "patches/armcpu/nuwa-smp-one-secondary.patch"
 SMP_ARMCPU_PATCH_SHA = "cdd58b888871f33d2df8e271c9796d74822c482f41421a840f3b8670849a9fcc"
+SMP_OBSERVE_PATCH = ROOT / "patches/armcpu/nuwa-smp-observe.patch"
+SMP_OBSERVE_PATCH_SHA = "e582d12bcf043968bce6b24529dce1415fd68b6e367290c560a6bdbd31595669"
 XNU_START_SHA = "58e5235c3392802782f28bebc3d16e0db17be8fbea9ca87c2a40880257c5ca31"
 START_RECORD_SHA = "889aef40dcdc5c9f97167f270b230603da85ff1f26862ae69e0bb5e0f36e53aa"
 ARMCPU_SOURCE_SHA = "7671ab15842f26db3081526e3e546faa8d48c7787f78edddc4815dc5b292845c"
@@ -159,7 +161,7 @@ def audit_debug_strip(full, compact):
             "native_bytes_saved": len(full) - len(compact)}
 
 
-def smp_gate_link(base, out, cwd, filelist, argv):
+def smp_gate_link(base, out, cwd, filelist, argv, *, smp_observe):
     """Replace start.o and the ArmCpu archive with builds of the two gated sources.
 
     Both hunks are no-ops without sheng-smp: the boot CPU never enters reset_vector and
@@ -211,6 +213,10 @@ def smp_gate_link(base, out, cwd, filelist, argv):
     staged_armcpu.write_bytes(lf)
     run(["patch", "--batch", "--fuzz=0", "--no-backup-if-mismatch", "-p1",
          "-i", SMP_ARMCPU_PATCH], cwd=work)
+    if smp_observe:
+        require_pin(SMP_OBSERVE_PATCH, SMP_OBSERVE_PATCH_SHA)
+        run(["patch", "--batch", "--fuzz=0", "--no-backup-if-mismatch", "-p1",
+             "-i", SMP_OBSERVE_PATCH], cwd=work)
     armcpu_dir = cwd.parents[2] / "armcpu"
     armcpu_record = armcpu_dir / "compile-command.json"
     require_pin(armcpu_record, ARMCPU_RECORD_SHA)
@@ -235,6 +241,7 @@ def smp_gate_link(base, out, cwd, filelist, argv):
         "armcpu_source_normalised_sha256": digest(staged_armcpu),
         "start_patch_sha256": digest(SMP_START_PATCH),
         "armcpu_patch_sha256": digest(SMP_ARMCPU_PATCH),
+        **({"observe_patch_sha256": digest(SMP_OBSERVE_PATCH)} if smp_observe else {}),
         "start_object_sha256": digest(start_object),
         "armcpu_object_sha256": digest(out / "ArmCpu.o"),
         "armcpu_archive_sha256": digest(out / "libArmCpu.a"),
@@ -251,7 +258,7 @@ def smp_gate_link(base, out, cwd, filelist, argv):
 
 
 def candidate_link(r35, out, records, argv, env, *, bringup_diag, hid, mg_reset,
-                   smp_gate=False, base=None, cwd=None):
+                   smp_gate=False, smp_observe=False, base=None, cwd=None):
     recipe, = [r for r in records if r["label"] == "compile-bsd_init" and r["exit"] == 0]
     command = list(recipe["argv"])
     source = r35 / "tree/bsd/kern/bsd_init.c"
@@ -318,7 +325,7 @@ def candidate_link(r35, out, records, argv, env, *, bringup_diag, hid, mg_reset,
     if smp_gate:
         if base is None or cwd is None:
             raise SystemExit("--smp-gate requires the base checkout and the XNU build cwd")
-        filelist = smp_gate_link(base, out, cwd, filelist, argv)
+        filelist = smp_gate_link(base, out, cwd, filelist, argv, smp_observe=smp_observe)
     dest = out / "link.filelist"
     dest.write_text(filelist)
     adjusted = list(argv)
@@ -326,11 +333,12 @@ def candidate_link(r35, out, records, argv, env, *, bringup_diag, hid, mg_reset,
     return adjusted
 
 
-def diag_archive(r35, out, *, hid, mg_reset):
+def diag_archive(r35, out, *, hid, mg_reset, smp_observe):
     from generate_r35_display_diag import generate
 
     source = out / "BootProgress.c"
-    source.write_bytes(generate((r35 / "BootProgress.c").read_bytes(), mg_reset=mg_reset))
+    source.write_bytes(generate((r35 / "BootProgress.c").read_bytes(),
+                                mg_reset=mg_reset, smp_observe=smp_observe))
     shutil.copyfile(r35 / "BootProgressDisplay.h", out / "BootProgressDisplay.h")
     stubs = ROOT / "package/boot-progress-r13/nuwa_boot_progress_stubs.c"
     require_pin(stubs, "14817837f64b37f36c65ac5e6debd187c2d8e6a24e8b0396eb280239108c6b47")
@@ -353,7 +361,7 @@ def diag_archive(r35, out, *, hid, mg_reset):
 
 def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
                keep_link_debug, bringup_diag=False, hid_objects=(), mg_reset=False,
-               smp_gate=False, base=None):
+               smp_gate=False, smp_observe=False, base=None):
     for name, pin in (R35L_PINS if bringup_diag else R35_PINS).items():
         require_pin(r35 / name, pin)
     require_pin(cpo, R35_CPO_SHA)
@@ -419,10 +427,11 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
         if candidate:
             argv = candidate_link(r35, out, records, argv, env, bringup_diag=bringup_diag,
                                   hid=bool(hid_objects), mg_reset=mg_reset,
-                                  smp_gate=smp_gate, base=base, cwd=cwd)
+                                  smp_gate=smp_gate, smp_observe=smp_observe, base=base, cwd=cwd)
         if bringup_diag:
             argv = list(argv)
-            diag = diag_archive(r35, out, hid=bool(hid_objects), mg_reset=mg_reset)
+            diag = diag_archive(r35, out, hid=bool(hid_objects), mg_reset=mg_reset,
+                                smp_observe=smp_observe)
             argv[force_at] = f"-Wl,-force_load,{diag}"
         argv = [*argv, "-Wl,-ignore_optimization_hints", f"-Wl,-force_load,{archive}", *map(str, hid_objects)]
         if not candidate or keep_link_debug:
@@ -660,6 +669,8 @@ def main():
                    help="include the board cache reset (off unless nuwa-mg-reset=1)")
     p.add_argument("--smp-gate", action="store_true",
                    help="rebuild start.o and ArmCpu.o: reset-vector affinity fix plus one-secondary admission")
+    p.add_argument("--smp-observe", action="store_true",
+                   help="show CPU_ON and secondary affinity observations; does not enable SMP")
     p.add_argument("--out", type=Path, required=True, help="new directory under out/")
     a = p.parse_args()
     base, cpo, linker, out = (x.resolve() for x in (a.base, a.cpo, a.linker_dir, a.out))
@@ -687,6 +698,8 @@ def main():
         p.error("--mg-reset requires the pinned --r35l-dir candidate")
     if a.smp_gate and not (a.candidate and a.cpu_only):
         p.error("--smp-gate requires --candidate --cpu-only")
+    if a.smp_observe and not (a.smp_gate and a.r35l_dir):
+        p.error("--smp-observe requires --smp-gate and the pinned --r35l-dir candidate")
     out.mkdir(parents=True, exist_ok=False)
     donor = base / "out/ipsw/20H392/kernelcache.decompressed"
     hid_objects = []
@@ -715,7 +728,7 @@ def main():
                               cpu_only=a.cpu_only, candidate=a.candidate,
                               keep_link_debug=a.keep_link_debug, bringup_diag=bool(a.r35l_dir),
                               hid_objects=hid_objects, mg_reset=a.mg_reset,
-                              smp_gate=a.smp_gate, base=base)
+                              smp_gate=a.smp_gate, smp_observe=a.smp_observe, base=base)
     else:
         # Replay XNU's exported link inputs, without its historical map output.
         stem = "mach.development.bcm2837"
