@@ -186,6 +186,7 @@ inputs = ["Identify the display hardware, resources and existing component inter
 configuration = ["Record the board.toml fields, DTS properties and defconfig values used for display."]
 procedure = ["Follow the display stage in the porting guide and record the actual commands."]
 findings = [
+  "2026-11-25 host-only stack900 candidate changes only nuwa-sb-stack=360 to 900, with CHMH rebound; no device action, deep review pending: docs/nuwa-stack900-20261125.md.",
   "2026-11-25 user/parent-reported icon-disable run: the PID census did not find the candidate agent and displayed lsd T0 moved from IconServices to LS initialization; single sample, causal attribution and persistent interaction unproven. See docs/nuwa-icondisabled-20261125-observation.md.",
   "2026-11-25 explicit disable-jobs candidate adds only the IconServices agent label to baseline args, preserves seed and PEER, and rebinds CHMH; host-only self-checked, not run on device: docs/nuwa-icondisabled-20261125.md.",
   "2026-11-25 host-only final candidate combines full directory seed, system-domain IconServices agent disable and exact-name PEER census; self-checked, not run on device, deep review and independent verifier pending. See docs/nuwa-final-20261125.md.",
@@ -235,6 +236,7 @@ completion = ["A known frame appears with correct geometry and colors, then user
 limits = ["Hardware inputs and implementation are pending for nuwa."]
 next_action = ["Keep runtime gated until the 20H392 329/330 request lifecycle, actual userspace timer selection and strict Libm evidence gate are qualified; see sections 16 and 23 of docs/nuwa-display-abi-20261120.md."]
 evidence = [
+  { kind = "host", reference = "docs/nuwa-stack900-20261125.md", revision = "10fb1e1f80c53046deeafa2dee0d976ada4a1489", command = "single-core host repack, Python FAT/CHMH audit, fsck.fat and mdir", result = "Self-checked on this parent plus record changes; no device action, boot-chain deep review and independent verification pending." },
   { kind = "source", reference = "docs/nuwa-icondisabled-20261125-observation.md", result = "User/parent-reported run and vision transcription, host symbolization self-checked; no independent image, device or write-review record verification in this update." },
   { kind = "host", reference = "docs/nuwa-icondisabled-20261125.md", revision = "82ed812df22f87508c2920a2fbdfc8cf9418871c", command = "Policy fixtures, single-core package, pure Python FAT/CHMH audit, fsck.fat and mdir", result = "Self-checked on this parent plus record changes; no device action, deep review and independent verifier pending." },
   { kind = "host", reference = "docs/nuwa-final-20261125.md", revision = "a268f9f942d8dbf201b9a912e3776c1f6042874a", command = "Single-core compact build; PEER and stack/banner fixtures; final package and readback audits", result = "Self-checked on this parent plus working-tree changes; system-domain disable and process census experimental, no device action, deep review and independent verifier pending." },

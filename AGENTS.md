@@ -6,6 +6,7 @@
 小米 13 Pro（nuwa / SM8550）通过 UniXNU 运行 iOS 16（donor: iPhone10,3 / 16.7.16 / 20H392，xnu-8796 线）。
 
 ## 基线
+- 2026-11-25 lsd 900 秒采样候选仅主机 self-checked，未刷写、待启动链深审：[记录](docs/nuwa-stack900-20261125.md)。
 - 2026-11-25 IconServices 禁用项后 lsd 观察（主控转述 / self-checked）：[记录](docs/nuwa-icondisabled-20261125-observation.md)。
 - 2026-11-25 显式禁用 IconServices job 候选主机包 self-checked、待深审：[打包记录](docs/nuwa-icondisabled-20261125.md)，[本轮观察](docs/nuwa-icondisabled-20261125-observation.md)。
 - 2026-11-25 full seed + candidate disable + PEER 仅主机 self-checked，未上机、待深审：[记录](docs/nuwa-final-20261125.md)。

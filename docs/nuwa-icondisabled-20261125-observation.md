@@ -13,9 +13,16 @@
 用户/主控报告 outer
 SHA-256 `a2243ee872a11aa34dab3f9d778625e9fa1ec8112cb3637e08ac1ec96ba344fc`
 已刷写并重启，重启时刻 **2026-11-25 01:52:21 UTC+08:00**。
-本记录未独立复核刷写日志、载荷回读或运行时身份。该次设备写入的最终
-diff 审查 agent、结论及是否为未经 deep_reviewer 的方案 B 未随本次转述提供，
-审查留痕尚待主控补充。
+本记录未独立复核刷写日志、载荷回读或运行时身份。
+
+### 设备写入前审查留痕
+
+主控转述：`reviewer` 给出 **PASS WITH CONDITIONS（方案 c）**，两项条件
+在该次刷写前已核：(a) job 为 system 域，plist 路径为
+`/System/Library/LaunchDaemons/`，使用 `disabled.plist` 而非
+`disabled.501.plist`；(b) `p_comm` 为 `iconservicesagen`，依据
+`MAXCOMLEN=16` 和 `kern_exec.c:917–923`。此处按主控提供的“方案 c”
+原文记录，不将其改称方案 B 或声称本次独立复核了审查过程。
 
 ## t=374s 转录
 
