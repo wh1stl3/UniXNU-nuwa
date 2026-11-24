@@ -1,6 +1,6 @@
 # UniXNU-nuwa
 
-**2026-11-24 lsd deep-frame host package, self-checked; not flashed:** [record](docs/nuwa-lsd-deep-20261124.md).
+**2026-11-24 lsd deep-frame priority revision, host self-checked; not flashed:** [record](docs/nuwa-lsd-deep-20261124.md).
 
 **2026-11-23：SpringBoard 重启后仍无新帧，原因未证（主控转述 / self-checked 记录）。** [记录](docs/nuwa-sb-stall-20261123.md)。
 

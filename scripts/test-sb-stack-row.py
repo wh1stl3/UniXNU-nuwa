@@ -150,7 +150,6 @@ static void check_rows(char rows[][120], unsigned n) {
   for (unsigned i = 0; i < n; ++i) {
     printf("%zu: %s\n", strlen(rows[i]), rows[i]);
     assert(strlen(rows[i]) <= 78);
-    assert(bp_banner_priority(rows[i], 2) == (strchr(rows[i], '+') ? 4u : 0u));
   }
 }
 int main(void) {
@@ -188,7 +187,42 @@ int main(void) {
     };
     unsigned n = bp_banner_select(budget_rows, 14, 12);
     assert(n == 12);
-    for (unsigned j = 0; j < n; ++j) assert(!strchr(budget_rows[j], '+'));
+    assert(!strcmp(budget_rows[2], "T0+4 U=x"));
+    assert(!strcmp(budget_rows[3], "T0+8 U=x"));
+  }
+  {
+    char full[64][120];
+    frame_case = 35;
+    bytes = build(170, 0x1234, four_waiting, 4, 128, FRAME_CASE);
+    assert(PARSE(bytes) == 0);
+    for (unsigned i = 1; i < 4; ++i) {
+      s.threads[i] = s.threads[0];
+    }
+    unsigned n = bp_shot_format(full, &s, 0x100000000ULL, 0, 0);
+    const char *extra[] = {"EXIT a", "EXIT b", "EXIT c", "XR x", "PROC n=6",
+      "SVC x", "SC n=12", "SC +0", "LOAD x", "UFS x", "SCHED x",
+      "SS x", "SU x", "FB x", "SWAP x", "GPU1 x", "GPU2 x",
+      "GPU3 x", "GPU4 x", "GPU5 x", "GPU6 x", "GPU7 x", "GPU8 x"};
+    for (unsigned i = 0; i < sizeof(extra)/sizeof(extra[0]); ++i)
+      snprintf(full[n++], 120, "%s", extra[i]);
+    for (unsigned i = 0; i < 10; ++i)
+      snprintf(full[n++], 120, "PROC  detail%u", i);
+    assert(n > 24);
+    n = bp_banner_select(full, n, 24);
+    const char *must[] = {"SHOT lsd", "SHOT2 ", "T0 ", "T0+4 ", "T0+8 ",
+      "EXIT a", "EXIT b", "EXIT c", "PROC n=", "SC n=", "SC +", "LOAD "};
+    for (unsigned i = 0; i < sizeof(must)/sizeof(must[0]); ++i) {
+      int found = 0;
+      for (unsigned j = 0; j < n; ++j)
+        if (!strncmp(full[j], must[i], strlen(must[i]))) found = 1;
+      assert(found);
+    }
+    unsigned proc_details = 0;
+    for (unsigned j = 0; j < n; ++j)
+      if (!strncmp(full[j], "PROC  detail", 12)) ++proc_details;
+    assert(proc_details == 10);
+    for (unsigned j = 0; j < n; ++j) assert(strlen(full[j]) <= 78);
+    printf("full banner 35 frames: T0 main/+4/+8 and required rows retained\n");
   }
   bytes = build(170, 0x1234, mixed, 2, 128, TAG_THREADS);
   assert(PARSE(bytes) == 0);
@@ -230,7 +264,7 @@ int main(void) {
   assert(!strcmp(rows[5], "SHOT2 ks=0000000123456789 sb=0000000104123000"));
   check_rows(rows, 7);
   strcpy(rows[7], "CRASH excerpt");
-  assert(bp_banner_select(rows, 8, 7) == 7 && !strncmp(rows[5], "SHOT2 ", 6));
+  assert(bp_banner_select(rows, 8, 7) == 7 && !strncmp(rows[2], "SHOT2 ", 6));
   s.cache_slide = 0x20031323334ULL;
   s.threads[1].users = 131072;  /* upper bound from the size of the capture buffer */
   assert(bp_shot_format(rows, &s, 0, 0, 1) == 9);

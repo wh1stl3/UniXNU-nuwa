@@ -32,8 +32,8 @@ int main(void) {
     "PROC one","SVC one","SC one","FB one","SWAP one","GPUC one",
     "GPUW one","PROC two","LOAD one","UFS one","SCHED one","CPU one",
     "GPU1 one","GPU2 one"};
-  const char *expected[]={"CRASH one","      continuation","EXIT one","XR one",
-    "PROC one","SVC one","SC one","PROC two","LOAD one","UFS one","SCHED one",
+  const char *expected[]={"EXIT one","PROC one","SC one","PROC two","LOAD one",
+    "CRASH one","      continuation","XR one","SVC one","UFS one","SCHED one",
     "FB one","SWAP one","CPU one","GPUC one","GPUW one","GPU1 one","GPU2 one",
     "STACK one"};
   unsigned n=bp_banner_select(rows,18,19);
@@ -42,10 +42,13 @@ int main(void) {
   for(unsigned i=0;i<n;++i) assert(!strcmp(rows[i],expected[i]));
   char limited[48][120]={"GPU1","FB","LOAD","CRASH","EXIT","XR","PROC",
     "SVC","SC n","UFS","SCHED","GPU2"};
-  const char *first[]={"CRASH","EXIT","XR","PROC","SVC","SC n","LOAD","UFS","SCHED"};
+  const char *first[]={"LOAD","EXIT","PROC","SC n","CRASH","XR","SVC","UFS","SCHED"};
   n=bp_banner_select(limited,12,9);
   assert(n==9);
-  for(unsigned i=0;i<n;++i) assert(!strcmp(limited[i],first[i]));
+  for(unsigned i=0;i<n;++i) {
+    if (strcmp(limited[i],first[i])) fprintf(stderr,"%u got %s expected %s\n",i,limited[i],first[i]);
+    assert(!strcmp(limited[i],first[i]));
+  }
   return 0;
 }
 """

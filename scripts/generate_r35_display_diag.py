@@ -10,17 +10,18 @@ BANNER_SELECTION = b"""
 // Stable within each priority class; continuation rows inherit their header.
 static unsigned bp_banner_priority(const char *s, unsigned previous) {
   if (s[0]==' ') return previous;
-  if (s[0]=='T' && s[1]>='0' && s[1]<='3' && s[2]=='+') return 4;
+  if (!strncmp(s,"SHOT",4) || !strncmp(s,"T0 ",3) ||
+      !strncmp(s,"T0+",3) || !strncmp(s,"EXIT",4) ||
+      !strncmp(s,"PROC",4) || !strncmp(s,"SC ",3) ||
+      !strncmp(s,"LOAD",4)) return 0;
   if (!strncmp(s,"CRASH",5) || !strncmp(s,"REASON",6) ||
-      !strncmp(s,"PANIC",5) || !strncmp(s,"EXIT",4) ||
-      !strncmp(s,"XR",2) || !strncmp(s,"PROC",4) ||
-      !strncmp(s,"SVC",3) || !strncmp(s,"SC ",3) ||
-      // Temporary: keep the stackshot readout ahead of normal diagnostics.
-      !strncmp(s,"SHOT",4) || (s[0]=='T' && s[1]>='0' && s[1]<='3' && s[2]==' ')) return 0;
-  if (!strncmp(s,"LOAD",4) || !strncmp(s,"UFS",3) ||
-      !strncmp(s,"SCHED",5)) return 1;
-  if (!strncmp(s,"GPU",3)) return 3;
-  return 2;
+      !strncmp(s,"PANIC",5) || !strncmp(s,"XR",2) ||
+      !strncmp(s,"SVC",3) ||
+      (s[0]=='T' && s[1]>='1' && s[1]<='3' && s[2]==' ')) return 1;
+  if (!strncmp(s,"UFS",3) || !strncmp(s,"SCHED",5)) return 2;
+  if (s[0]=='T' && s[1]>='1' && s[1]<='3' && s[2]=='+') return 5;
+  if (!strncmp(s,"GPU",3)) return 4;
+  return 3;
 }
 static unsigned bp_banner_select(char rows[][120], unsigned n, unsigned budget) {
   unsigned priority[64], previous=2;
