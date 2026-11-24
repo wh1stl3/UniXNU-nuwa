@@ -39,14 +39,14 @@ static unsigned bp_banner_select(char rows[][120], unsigned n, unsigned budget) 
 }
 """
 
-# nuwa-sb-stack=<seconds>: one-shot SpringBoard thread snapshot. The state and the
+# nuwa-sb-stack=<seconds>: one-shot lsd thread snapshot. The state and the
 # buffer are declared before the banner (which renders them) and the helpers before
 # touch_monitor (which arms and takes the snapshot).
 SHOT_STATE = b"""
-// nuwa-sb-stack=<seconds>: one-shot SpringBoard thread snapshot. One static MiB,
+// nuwa-sb-stack=<seconds>: one-shot lsd thread snapshot. One static MiB,
 // page aligned; every field is written by the monitor thread only.
 #define BP_SHOT_BUF (1u << 20)
-#define BP_SHOT_NO_PID 1000u     // no confirmed positive pid, or that pid no longer names SpringBoard
+#define BP_SHOT_NO_PID 1000u     // no confirmed positive pid, or that pid no longer names lsd
 #define BP_SHOT_INTEGRITY 1001u  // BEGIN, bounds, container balance or BUFFER_END failed
 #define BP_SHOT_IDENTITY 1002u   // container count, pid, unique id or process name mismatch
 #define BP_SHOT_NO_PAINT 1003u   // the pending row was never painted, so the stackshot was not called
@@ -226,7 +226,7 @@ static unsigned bp_shot_parse(unsigned pid, uint64_t uid, unsigned bytes, struct
         const struct bp_shot_task_snapshot *task = (const void *)data;
         if (item->size < sizeof(*task)) return BP_SHOT_INTEGRITY;
         if (++snapshots > 1 || task->unique_pid != uid || task->pid != (int32_t)pid ||
-            !bp_shot_name_is(task->comm, "SpringBoard", sizeof(task->comm))) return BP_SHOT_IDENTITY;
+            !bp_shot_name_is(task->comm, "lsd", sizeof(task->comm))) return BP_SHOT_IDENTITY;
         task_flags = task->ss_flags;
       } else if (in_thread && item->type == BP_SHOT_THREAD_SNAPSHOT) {
         const struct bp_shot_thread_snapshot *snap = (const void *)data;
@@ -274,13 +274,13 @@ static unsigned bp_shot_format(char rows[][120], const struct bp_shot_sample *s,
                                uint64_t ks, unsigned rc, unsigned late) {
   char k[17], sc[17], sb[17];
   if (rc) {
-    snprintf(rows[0], 120, "SHOT n=- w=- r=%u ks=- sc=- sb=-%s", rc, late ? " to" : "");
+    snprintf(rows[0], 120, "SHOT lsd n=- w=- r=%u ks=- sc=- sb=-%s", rc, late ? " to" : "");
     return 1;
   }
   bp_shot_hex(k, 1, ks, 8);
   bp_shot_hex(sc, s->have_cache, s->cache_slide, 8);
   bp_shot_base(sb, s, 8);
-  snprintf(rows[0], 120, "SHOT n=%u w=%u r=0 ks=%s sc=%s sb=%s%s",
+  snprintf(rows[0], 120, "SHOT lsd n=%u w=%u r=0 ks=%s sc=%s sb=%s%s",
     s->total, s->wait, k, sc, sb, late ? " to" : "");
   for (unsigned i = 0; i < BP_SHOT_THREADS; ++i) {
     char *row = rows[1 + i];
@@ -326,13 +326,13 @@ static unsigned bp_shot_resolve(unsigned pid, uint64_t *uid) {
   *uid = proc_uniqueid(p);
   proc_name((int)pid, name, sizeof(name));
   proc_rele(p);
-  return bp_shot_name_is(name, "SpringBoard", sizeof(name));
+  return bp_shot_name_is(name, "lsd", sizeof(name));
 }
 // Runs before touch_overlay() so this pass is eligible to repaint. Whether the pending
 // row really reaches the panel is not decided here: only bp_shot_paint_row() records it.
 static void bp_shot_arm(unsigned now) {
   uint64_t uid = 0;
-  unsigned pid = __atomic_load_n(&bp_proc_pid[0], __ATOMIC_RELAXED);
+  unsigned pid = __atomic_load_n(&bp_proc_pid[2], __ATOMIC_RELAXED);
   ++bp_shot_seq;
   bp_shot_armed = 0;
   bp_shot_pending_seq = 0;

@@ -58,7 +58,7 @@ static struct proc shot_proc;
 static int shot_proc_found = 1;
 struct proc *proc_find(int pid) { (void)pid; return shot_proc_found ? &shot_proc : NULL; }
 int proc_rele(struct proc *p) { (void)p; return 0; }
-void proc_name(int pid, char *out, int cap) { (void)pid; snprintf(out, (size_t)cap, "SpringBoard"); }
+void proc_name(int pid, char *out, int cap) { (void)pid; snprintf(out, (size_t)cap, "lsd"); }
 uint64_t proc_uniqueid(struct proc *p) { (void)p; return 0x1234; }
 static uint32_t bp_proc_pid[6];
 static uint64_t bp_shot_ticks(void);
@@ -97,7 +97,7 @@ static unsigned build_valid(unsigned char *buf, unsigned pid, uint64_t uid) {
   at = begin_container(at, uid, BP_SHOT_TASK_CONTAINER);
   at = emit(at, BP_SHOT_TASK_SNAPSHOT, 128, 0);
   struct bp_shot_task_snapshot *task = (struct bp_shot_task_snapshot *)(at - 128);
-  task->unique_pid = uid; task->pid = (int32_t)pid; memcpy(task->comm, "SpringBoard", 12);
+  task->unique_pid = uid; task->pid = (int32_t)pid; memcpy(task->comm, "lsd", 4);
   at = begin_container(at, 0x9001u, 0x904u);
   at = emit(at, BP_SHOT_THREAD_SNAPSHOT, 128, 0);
   ((struct bp_shot_thread_snapshot *)(at - 128))->state = 1u;
@@ -110,7 +110,7 @@ static uint64_t bp_shot_ticks(void) { static uint64_t t = 1000; return t += 1920
 static uint64_t bp_shot_frequency(void) { return 19200000; }
 static void reset(unsigned now) {
   shot_calls = 0; shot_rc = 0; shot_valid = 0; shot_proc_found = 1;
-  bp_proc_pid[0] = 170;
+  bp_proc_pid[2] = 170;
   bp_shot_beat = 0; bp_shot_armed = 0; bp_shot_pending_seq = 0; bp_shot_painted = 0;
   bp_shot_seq = 0;
   bp_shot_rc = 0; bp_shot_to = 0;
@@ -172,7 +172,7 @@ int main(void) {
   assert(shot_calls == 1 && bp_shot_rc == 52 && (bp_shot_beat & 255u) == 3u);
   char rows[6][120];
   assert(bp_shot_format(rows, &bp_shot_result, 0, bp_shot_rc, bp_shot_to) == 1);
-  assert(!strcmp(rows[0], "SHOT n=- w=- r=52 ks=- sc=- sb=-"));
+  assert(!strcmp(rows[0], "SHOT lsd n=- w=- r=52 ks=- sc=- sb=-"));
   printf("capacity error     -> %zu columns, one row, no retry\n", strlen(rows[0]));
   /* An unresolvable process arms nothing and never calls. */
   reset(100);
@@ -184,7 +184,7 @@ int main(void) {
   bp_shot_paint_row("SHOT pending 1");
   bp_shot_take(101);
   assert(shot_calls == 0);
-  printf("no SpringBoard     -> stackshot calls 0, rc %u\n", bp_shot_rc);
+  printf("no lsd     -> stackshot calls 0, rc %u\n", bp_shot_rc);
   printf("paint-confirmation gate: PASS\n");
   return 0;
 }

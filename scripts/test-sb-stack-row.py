@@ -69,7 +69,7 @@ static unsigned char *task_snapshot(unsigned char *at, unsigned pid, uint64_t ui
   struct bp_shot_task_snapshot *task = (struct bp_shot_task_snapshot *)(at + sizeof(struct bp_shot_item));
   task->unique_pid = uid;
   task->pid = (int32_t)pid;
-  memcpy(task->comm, bad_comm ? "SpringBoardX" : "SpringBoard", 12);
+  memcpy(task->comm, bad_comm ? "lsdX" : "lsd", bad_comm ? 5 : 4);
   return out;
 }
 static unsigned char *thread_snapshot(unsigned char *at, uint32_t state, uint32_t size) {
@@ -161,7 +161,7 @@ int main(void) {
   assert(PARSE(bytes) == 0);
   assert(s.total == 2 && s.wait == 1);
   assert(bp_shot_format(rows, &s, 0, 0, 0) == 5);
-  assert(!strcmp(rows[0], "SHOT n=2 w=1 r=0 ks=00000000 sc=- sb=-"));
+  assert(!strcmp(rows[0], "SHOT lsd n=2 w=1 r=0 ks=00000000 sc=- sb=-"));
   assert(!strcmp(rows[1], "T0 C=fffffff007020000 U=- f=-"));
   assert(!strcmp(rows[2], "T1 -") && !strcmp(rows[3], "T2 -") && !strcmp(rows[4], "T3 -"));
   check_rows(rows, 5);
@@ -176,7 +176,7 @@ int main(void) {
   bytes = build(170, 0x1234, four_waiting, 4, 128, USER_PRESENCE | EMPTY_LOAD | ZERO_SC);
   assert(PARSE(bytes) == 0 && !s.have_binary && s.have_cache && s.cache_slide == 0);
   assert(bp_shot_format(rows, &s, 0, 0, 0) == 5);
-  assert(!strcmp(rows[0], "SHOT n=4 w=4 r=0 ks=00000000 sc=00000000 sb=-"));
+  assert(!strcmp(rows[0], "SHOT lsd n=4 w=4 r=0 ks=00000000 sc=00000000 sb=-"));
   assert(!strcmp(rows[1], "T0 K=-,- U=- f=-"));
   assert(!strcmp(rows[2], "T1 K=-,- U=- f=0"));
   assert(!strcmp(rows[3], "T2 K=-,- U=000000000 f=1"));
@@ -185,13 +185,13 @@ int main(void) {
   bytes = build(170, 0x1234, waiting, 1, 128, ZERO_LOAD);
   assert(PARSE(bytes) == 0 && s.have_binary && s.binary_base == 0);
   assert(bp_shot_format(rows, &s, 0x123456789ULL, 0, 0) == 6);
-  assert(!strcmp(rows[0], "SHOT n=1 w=1 r=0 ks=23456789 sc=31323334 sb=0!"));
+  assert(!strcmp(rows[0], "SHOT lsd n=1 w=1 r=0 ks=23456789 sc=31323334 sb=0!"));
   assert(!strcmp(rows[5], "SHOT2 ks=0000000123456789 sb=0!"));
   check_rows(rows, 6);
   bytes = build(170, 0x1234, two_waiting, 2, 128, DETAILS);
   assert(PARSE(bytes) == 0);
   assert(bp_shot_format(rows, &s, 0x123456789ULL, 0, 0) == 6);
-  assert(!strcmp(rows[0], "SHOT n=2 w=2 r=0 ks=23456789 sc=31323334 sb=04123000"));
+  assert(!strcmp(rows[0], "SHOT lsd n=2 w=2 r=0 ks=23456789 sc=31323334 sb=04123000"));
   assert(!strcmp(rows[1], "T0 C=fffffff00700cafe U=104123450,18123abcd,192340008,11234000c f=5!"));
   assert(!strcmp(rows[2], "T1 K=f007123456,f007abcdef U=104dead00,104dead04 f=2!"));
   assert(!strcmp(rows[5], "SHOT2 ks=0000000123456789 sb=0000000104123000"));
