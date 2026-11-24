@@ -2,6 +2,8 @@
 
 卡点优先查 [已知差异与跨项目关停手段清单](docs/nuwa-open-deltas-20261125.md)。
 
+**2026-11-25 explicit IconServices job-disable candidate, host self-checked; not flashed, deep review pending:** [record](docs/nuwa-icondisabled-20261125.md).
+
 **2026-11-25 full seed + candidate disable + PEER, host self-checked; not flashed, deep review pending:** [record](docs/nuwa-final-20261125.md).
 
 **2026-11-24 8-directory seed + lsd probe package, host self-checked; not flashed, deep review pending:** [record](docs/nuwa-seed-containers-20261124.md).
