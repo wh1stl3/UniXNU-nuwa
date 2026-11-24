@@ -1,5 +1,158 @@
 # lsd stackshot address check — 2026-11-24
 
+## 第四轮（禁用 iconservicesagent 后 t=374s）
+
+仅主机 **self-checked**。输入为用户提供的 vision 转录，未独立核对原图；
+“禁用后”是本轮条件，不单凭栈证明禁用生效。运行时 cache UUID 未观察，
+以下用户态归属均以候选 arm64 缓存 UUID
+`8F970452-C9E3-3E88-B114-FEB1864BC9E0` 与运行时一致为前提。
+`sc=0x44594000`，运行时基址 `0x1c4594000`。表中偏移为观察 PC 减此基址，
+非文件偏移。总计 30 个非零用户值；T0 的 `f=11` 实际给出 **11 个**
+用户值，其中 U10 是记录的零，不是 12 个非零帧，也不能仅凭零断言栈结束。
+
+### 内核 continuation
+
+用候选 kernel `out/nuwa-peer-probe-20261125-build/kernel.macho`，
+SHA-256 `44158f0fea54fc54b48c243aed864ec7567e5c566bafb4bdaeaad1e11184cc94`，
+执行 `llvm-nm -n`，下列地址均**恰为符号起点**；`ks=0` 只反映显示的低
+32 位，未用它证明完整 slide。候选 kernel 与本轮运行内核一致仍依赖载荷身份。
+
+| C | 候选内核符号 | 对应本轮可见用户态陷入 |
+|---|---|---|
+| `fffffff0076e4880` | `filt_wlwait_continue` | `kevent_id` |
+| `fffffff0072c619c` | `semaphore_wait_continue` | `semaphore_wait_trap` |
+| `fffffff00725dd74` | `ipc_mqueue_receive_continue` | `mach_msg2_trap` |
+| `fffffff007744d68` | `ulock_wait_continue` | `__ulock_wait` |
+| `fffffff0076c099c` | `workq_unpark_continue` | 前轮用户帧为 `__workq_kernreturn` |
+
+因此前面把后三个 **C 值本身**称为 `mach_msg2_trap`、`__ulock_wait`、
+`__workq_kernreturn` 不准确：这些是用户态陷入函数，C 是对应内核 continuation。
+
+### 用户帧
+
+置信级别 `S`：`.symbols` 本地 nlist 起点与 `LC_FUNCTION_STARTS` 一致；
+`E`：映像 `LC_SYMTAB` 导出符号起点与函数边界一致（符号上界）；
+`F`：仅有函数边界，没有该函数的可用名称。去掉一个 Mach-O nlist 前缀
+下划线；ObjC 方法保持原名。
+
+| 线程/帧 | 观察 PC | 相对偏移 | 库 | 函数 + 偏移 | 级别 |
+|---|---|---|---|---|---|
+| T0 U0 | `206ba5538` | `42611538` | libsystem_kernel | `kevent_id + 0x8` | E |
+| T0 U1 | `1d2119c78` | `0db85c78` | libdispatch | `_dispatch_event_loop_wait_for_ownership$VARIANT$armv81 + 0x1b0` | S |
+| T0 U2 | `1d210ece0` | `0db7ace0` | libdispatch | `__DISPATCH_WAIT_FOR_QUEUE__ + 0x138` | S |
+| T0 U3 | `1d210e8fc` | `0db7a8fc` | libdispatch | `_dispatch_sync_f_slow + 0x8c` | S |
+| T0 U4 | `1c62a4ea8` | `01d10ea8` | CoreServices | `-[_LSInstallProgressService performJournalRecovery] + 0x58` | S |
+| T0 U5 | `1c629e654` | `01d0a654` | CoreServices | `__43+[_LSInstallProgressService beginListening]_block_invoke + 0x28` | S |
+| T0 U6 | `1d212c780` | `0db98780` | libdispatch | `_dispatch_client_callout + 0x10` | S |
+| T0 U7 | `1d20fcddc` | `0db68ddc` | libdispatch | `_dispatch_once_callout + 0x1c` | S |
+| T0 U8 | `1c6280b44` | `01cecb44` | CoreServices | `_LSServerMain + 0x7d8` | E |
+| T0 U9 | `1e8bb8344` | `24624344` | dyld | `start + 0x744` | S |
+| T0 U10 | `000000000` | — | — | 记录的零，无符号 | — |
+| T1 U0 | `206ba5030` | `42611030` | libsystem_kernel | `mach_msg2_trap + 0x8` | E |
+| T1 U1 | `206bb6db8` | `42622db8` | libsystem_kernel | `mach_msg_overwrite + 0x1e4` | E |
+| T1 U2 | `206ba5524` | `42611524` | libsystem_kernel | `mach_msg + 0x14` | E |
+| T1 U3 | `1d20fe308` | `0db6a308` | libdispatch | `_dispatch_mach_send_and_wait_for_reply + 0x214` | S |
+| T1 U4 | `1d20fe694` | `0db6a694` | libdispatch | `dispatch_mach_send_with_result_and_wait_for_reply$VARIANT$armv81 + 0x38` | S |
+| T1 U5 | `2161820ec` | `51bee0ec` | libxpc | `xpc_connection_send_message_with_reply_sync + 0xec` | E |
+| T1 U6 | `1c57a0224` | `0120c224` | Foundation | `__NSXPCCONNECTION_IS_WAITING_FOR_A_SYNCHRONOUS_REPLY__ + 0xc` | S |
+| T1 U7 | `1c5739cb0` | `011a5cb0` | Foundation | `-[NSXPCConnection _sendInvocation:orArguments:count:methodSignature:selector:withProxy:] + 0x7e8` | S |
+| T1 U8 | `1c57386e0` | `011a46e0` | Foundation | `-[NSXPCConnection _sendSelector:withProxy:arg1:] + 0x70` | S |
+| T1 U9 | `1c573861c` | `011a461c` | Foundation | `_NSXPCDistantObjectSimpleMessageSend1 + 0x38` | S |
+| T1 U10 | `20d663a8c` | `490cfa8c` | MobileActivation | `-[MadGate copyActivationRecord:] + 0xf0` | S |
+| T1 U11 | `20d66652c` | `490d252c` | MobileActivation | `copyActivationRecord + 0x28` | S |
+| T2 U0 | `206ba5ad0` | `42611ad0` | libsystem_kernel | `__ulock_wait + 0x8` | E |
+| T2 U1 | `1d20fc4a0` | `0db684a0` | libdispatch | `_dispatch_group_wait_slow + 0x34` | S |
+| T2 U2 | `1c625b990` | `01cc7990` | CoreServices | `__LAUNCH_SERVICES_CLIENTS_ARE_WAITING_FOR_THE_DATABASE_TO_FINISH_SEEDING__ + 0x20` | S |
+| T2 U3 | `1c625b8c4` | `01cc78c4` | CoreServices | `-[LSDatabaseBlockingFetchClient getServerStoreBlockingWithCompletionHandler:] + 0x30` | S |
+| T3 U0 | `206ba4fac` | `42610fac` | libsystem_kernel | `semaphore_wait_trap + 0x8` | E |
+| T3 U1 | `1d20fc360` | `0db68360` | libdispatch | `_dispatch_semaphore_wait_slow + 0x80` | S |
+| T3 U2 | `1e0b104bc` | `1c57c4bc` | libMobileGestalt | 未命名函数 `0x19c57c430 + 0x8c` | F |
+| T3 U3 | `1e0b106e8` | `1c57c6e8` | libMobileGestalt | 未命名函数 `0x19c57c644 + 0xa4` | F |
+
+T0 U8 的最近本地符号跨越函数边界，不采用；`_LSServerMain` 的
+LC_SYMTAB 起点与最近 `LC_FUNCTION_STARTS` 边界一致。T3 的 MobileGestalt
+映像在此 `.symbols` 集中无本地符号；最近导出符号跨越多处函数边界，
+故只报告函数边界，不猜函数名。
+
+### 判读与边界
+
+* **T0**：`kevent_id` → dispatch event-loop ownership/queue sync →
+  `performJournalRecovery` → `beginListening` block → dispatch once →
+  `_LSServerMain` → dyld `start`。显示其在 LS 安装进度 journal recovery
+  路径等待队列所有权，不证明已经读取某文件或完成数据库构建。
+* **T1**：Mach message → dispatch 同步等待 → libxpc → Foundation NSXPC
+  → `-[MadGate copyActivationRecord:]` → `copyActivationRecord`；
+  MobileActivation activation-record 同步请求，具体对端及 selector 未证。
+* **T2**：`__ulock_wait` → dispatch group wait → LS 数据库 seeding
+  等待标识 → `LSDatabaseBlockingFetchClient`；显示在等数据库 seeding
+  完成，不证明 seeding 工作线程或造成等待的原因。
+* **T3**：semaphore wait → libdispatch → 两个未命名 MobileGestalt 函数；
+  显示等待信号量，无法从已命名帧确认具体操作。
+
+相对前三轮 T0 的 IconServices 初始化等待，本轮 **T0 已不在所显示的
+IconServices 栈上**，且观察线程总数从 2 增至 9；这支持可见执行路径发生
+变化，但不证明禁用导致变化、数据库正常推进或该进程整体已脱离所有
+IconServices 路径。`n=9 w=8` 仅展示四个等待线程、每线程最多 12 帧，
+其他线程与截断帧不可据此推断。单次采样不能区分短暂等待与长期卡住。
+
+复用 `out/lsd-symbolize-20261124.py`，内存替换目标和缓存路径，并断言
+映射含执行权限。42 个分片 UUID、`.symbols` UUID、映射边界、Mach-O
+`__TEXT` 及函数边界检查对全部 30 个非零 PC 完成；它们均落在候选缓存
+可执行映像中，**无非缓存非零帧**。零不是缓存或非缓存帧。
+`sb=012f3000` 仅为低 32 位，不能单独恢复主映像完整地址区间。
+本轮未修改除本记录以外的文件，未提交、未访问设备。
+
+## 第三轮（禁用后 t=374s）
+
+主机符号化 **self-checked**；输入为用户提供的 vision 转录，未独立核对图像。
+“禁用后”仅指使用了禁用候选载荷，不证明禁用生效。候选根卷 arm64 缓存
+UUID `8F970452-C9E3-3E88-B114-FEB1864BC9E0`；运行时 UUID 未观测，
+所以符号归属以运行时缓存与候选缓存一致为前提。
+
+本轮 `sc=0x2f5f0000`，缓存运行时基址
+`0x180000000 + 0x2f5f0000 = 0x1af5f0000`。表内偏移是观察 PC 减该
+**运行时基址**；不是 PC 减 slide 后得到的 unslid VA，也不是文件偏移。
+
+| 帧 | 观察 PC | 缓存相对偏移 | 库 | 函数 + 偏移 | 置信级别 |
+|---|---|---|---|---|---|
+| U0 | `0x1f1c01030` | `0x42611030` | libsystem_kernel | `mach_msg2_trap + 0x8` | 导出符号上界 |
+| U1 | `0x1f1c12db8` | `0x42622db8` | libsystem_kernel | `mach_msg_overwrite + 0x1e4` | 导出符号上界 |
+| U2 | `0x1f1c01524` | `0x42611524` | libsystem_kernel | `mach_msg + 0x14` | 导出符号上界 |
+| U3 | `0x1bd15a308` | `0x0db6a308` | libdispatch | `_dispatch_mach_send_and_wait_for_reply + 0x214` | `.symbols` 精确 |
+| U4 | `0x1bd15a694` | `0x0db6a694` | libdispatch | `dispatch_mach_send_with_result_and_wait_for_reply$VARIANT$armv81 + 0x38` | `.symbols` 精确 |
+| U5 | `0x2011de0ec` | `0x51bee0ec` | libxpc | `xpc_connection_send_message_with_reply_sync + 0xec` | 导出符号上界 |
+| U6 | `0x1b07fc224` | `0x0120c224` | Foundation | `__NSXPCCONNECTION_IS_WAITING_FOR_A_SYNCHRONOUS_REPLY__ + 0xc` | `.symbols` 精确 |
+| U7 | `0x1b0795cb0` | `0x011a5cb0` | Foundation | `-[NSXPCConnection _sendInvocation:orArguments:count:methodSignature:selector:withProxy:] + 0x7e8` | `.symbols` 精确 |
+| U8 | `0x1b07946e0` | `0x011a46e0` | Foundation | `-[NSXPCConnection _sendSelector:withProxy:arg1:] + 0x70` | `.symbols` 精确 |
+| U9 | `0x1b079461c` | `0x011a461c` | Foundation | `_NSXPCDistantObjectSimpleMessageSend1 + 0x38` | `.symbols` 精确 |
+| U10 | `0x1d713b36c` | `0x27b4b36c` | IconServices | `-[ISIconManager _init] + 0x1b8` | `.symbols` 精确 |
+| U11 | `0x1d713fdd4` | `0x27b4fdd4` | IconServices | `__31+[ISIconManager sharedInstance]_block_invoke + 0x18` | `.symbols` 精确 |
+
+**12 帧偏移与上面的 t=384s 版本逐项完全一致**，不只前五帧一致；
+初轮只显示四帧，其 U0–U3 也完全一致。观察 PC 不同是因为 slide
+不同，不能由此认定外层路径变化。本轮 U5 的 unslid VA 为
+`0x1d1bee0ec`，U10 为 `0x1a7b4b36c`，U11 为 `0x1a7b4fdd4`。
+
+在候选缓存匹配假设下，内→外顺序为：
+`mach_msg2_trap` → `mach_msg_overwrite` → `mach_msg` →
+`_dispatch_mach_send_and_wait_for_reply` →
+`dispatch_mach_send_with_result_and_wait_for_reply$VARIANT$armv81` →
+`xpc_connection_send_message_with_reply_sync` →
+`__NSXPCCONNECTION_IS_WAITING_FOR_A_SYNCHRONOUS_REPLY__` →
+`-[NSXPCConnection _sendInvocation:orArguments:count:methodSignature:selector:withProxy:]`
+→ `-[NSXPCConnection _sendSelector:withProxy:arg1:]` →
+`_NSXPCDistantObjectSimpleMessageSend1` → `-[ISIconManager _init]` →
+`__31+[ISIconManager sharedInstance]_block_invoke`。这是仍在
+IconServices `sharedInstance` block 内初始化并走同步 NSXPC 等待路径；
+不以这些栈帧断言服务名、对端或每对帧直接调用，U11 之外的调用者亦未显示。
+
+复用 `out/lsd-symbolize-20261124.py`，在内存替换缓存路径与 12 个目标，
+另加 mapping 当前保护包含 `VM_PROT_EXECUTE`（bit 4）的断言；42 个分片
+UUID、`.symbols` UUID、映像 `__TEXT`、可执行映射和 `LC_FUNCTION_STARTS`
+断言均完成。12 帧都落在候选映像的可执行 `__TEXT`，**没有非缓存帧**；
+不是仅凭正偏移作此判断。`sb=0044e000` 仅提供低 32 位，不用于推定主映像。
+本节只做主机分析，无设备访问或 Git 提交。
+
 Host arithmetic and source inspection: **self-checked**. Input is a vision
 transcription, not independently checked against the image. No build, device
 access, flash, or Git commit.
