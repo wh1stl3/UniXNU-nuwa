@@ -118,6 +118,22 @@ static void reset(unsigned now) {
   bp_shot_arm(now);
 }
 int main(void) {
+  const unsigned counts[] = {0, 1, 4, 5, 12, 35};
+  for (unsigned c = 0; c < 6; ++c) {
+    struct bp_shot_sample sample = {0};
+    char lines[14][120];
+    sample.wait = sample.total = 1;
+    sample.threads[0].have_user = 1;
+    sample.threads[0].users = counts[c];
+    for (unsigned j = 0; j < 12; ++j) sample.threads[0].user[j] = 0x100000000ULL + j;
+    unsigned n = bp_shot_format(lines, &sample, 0, 0, 0);
+    unsigned kept = counts[c] < 12 ? counts[c] : 12;
+    assert(n == 5u + (kept > 4) + (kept > 8));
+    for (unsigned j = 0; j < n; ++j) assert(strlen(lines[j]) <= 78);
+    if (kept > 4) assert(!strncmp(lines[5], "T0+4 U=", 7));
+    if (kept > 8) assert(!strncmp(lines[6], "T0+8 U=", 7));
+    if (kept == 5) assert(!strcmp(lines[5], "T0+4 U=100000004"));
+  }
   /* Four passes that never reach bp_shot_paint_row: render_busy taken, the two-second
      throttle, the row clipped by the budget, and a yield before that row. From the
      gate's side all four are "no paint record", so no call may happen. */

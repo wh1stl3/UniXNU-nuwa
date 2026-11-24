@@ -10,6 +10,7 @@ BANNER_SELECTION = b"""
 // Stable within each priority class; continuation rows inherit their header.
 static unsigned bp_banner_priority(const char *s, unsigned previous) {
   if (s[0]==' ') return previous;
+  if (s[0]=='T' && s[1]>='0' && s[1]<='3' && s[2]=='+') return 4;
   if (!strncmp(s,"CRASH",5) || !strncmp(s,"REASON",6) ||
       !strncmp(s,"PANIC",5) || !strncmp(s,"EXIT",4) ||
       !strncmp(s,"XR",2) || !strncmp(s,"PROC",4) ||
@@ -22,7 +23,7 @@ static unsigned bp_banner_priority(const char *s, unsigned previous) {
   return 2;
 }
 static unsigned bp_banner_select(char rows[][120], unsigned n, unsigned budget) {
-  unsigned priority[48], previous=2;
+  unsigned priority[64], previous=2;
   for (unsigned i=0;i<n;++i) {
     previous=bp_banner_priority(rows[i],previous);
     priority[i]=previous;
@@ -72,7 +73,7 @@ SHOT_STATE = b"""
 #define BP_SHOT_SHARED_SYSTEM 0x40000000u // kTaskSharedRegionSystem
 #define BP_SHOT_TRUNC_USER 0x8000u      // kThreadTruncUserBT
 #define BP_SHOT_THREADS 4u
-#define BP_SHOT_USER_PCS 4u
+#define BP_SHOT_USER_PCS 12u
 #define BP_SHOT_KERN_PCS 2u
 struct bp_shot_thread {
   uint64_t continuation, user[BP_SHOT_USER_PCS], kern[BP_SHOT_KERN_PCS];
@@ -296,7 +297,7 @@ static unsigned bp_shot_format(char rows[][120], const struct bp_shot_sample *s,
       snprintf(top, sizeof(top), "K=%.10s,%.10s", k, sc);
     }
     // iOS arm64 user VA fits in 36 bits. K uses the low 40 of a canonical kernel VA.
-    for (unsigned j = 0; j < t->users && j < BP_SHOT_USER_PCS; ++j) {
+    for (unsigned j = 0; j < t->users && j < 4; ++j) {
       bp_shot_hex(k, 1, t->user[j], 9);
       memcpy(pcs + 10 * j, k, 10);
       if (j) pcs[10 * j - 1] = ',';
@@ -304,8 +305,9 @@ static unsigned bp_shot_format(char rows[][120], const struct bp_shot_sample *s,
     char frames[12] = "-";
     if (t->have_user) snprintf(frames, sizeof(frames), "%u", t->users);
     snprintf(row, 120, "T%u %s U=%s f=%s%s", i, top, pcs, frames,
-      t->users > BP_SHOT_USER_PCS || t->truncated ? "!" : "");
+      t->users > 4 || t->truncated ? "!" : "");
   }
+  unsigned n = 5;
   if ((ks >> 32) || (s->binary_base >> 32) || (s->have_cache && (s->cache_slide >> 32))) {
     bp_shot_hex(k, 1, ks, 16);
     bp_shot_base(sb, s, 16);
@@ -313,9 +315,21 @@ static unsigned bp_shot_format(char rows[][120], const struct bp_shot_sample *s,
     snprintf(rows[5], 120, "SHOT2 ks=%s sb=%s%s%s", k, sb,
       s->have_cache && (s->cache_slide >> 32) ? " sc=" : "",
       s->have_cache && (s->cache_slide >> 32) ? sc : "");
-    return 6;
+    n = 6;
   }
-  return 5;
+  for (unsigned i = 0; i < BP_SHOT_THREADS && i < s->wait; ++i) {
+    const struct bp_shot_thread *t = &s->threads[i];
+    for (unsigned start = 4; start < t->users && start < BP_SHOT_USER_PCS; start += 4) {
+      char pcs[40] = "";
+      for (unsigned j = start; j < t->users && j < start + 4 && j < BP_SHOT_USER_PCS; ++j) {
+        bp_shot_hex(k, 1, t->user[j], 9);
+        memcpy(pcs + 10 * (j - start), k, 10);
+        if (j > start) pcs[10 * (j - start) - 1] = ',';
+      }
+      snprintf(rows[n++], 120, "T%u+%u U=%s", i, start, pcs);
+    }
+  }
+  return n;
 }
 extern uint64_t proc_uniqueid(struct proc *);
 static unsigned bp_shot_resolve(unsigned pid, uint64_t *uid) {
@@ -740,7 +754,7 @@ void boot_progress_prop_set(uint16_t properties) {
     src = replace_once(src, b"  if(signal || ns) {\n",
                        b'  if((signal || ns) && !(name && !strcmp(name,"IOMFB_FDR_Loader"))) {\n')
     src = replace_once(src, b"  char rows[48][120];unsigned n=0;\n",
-                       b"  char rows[48][120];unsigned n=0;\n" + SHOT_ROWS)
+                       b"  char rows[64][120];unsigned n=0;\n" + SHOT_ROWS)
     if mg_reset:
         src = replace_once(src, anchor, b"extern uint32_t nuwa_mg_reset_diag;\n" + anchor)
         src = replace_once(src, b"  if (&nuwa_cli_enter", b"""  unsigned ds = &native_data_persist_state ? native_data_persist_state : 0;

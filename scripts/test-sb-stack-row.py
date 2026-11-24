@@ -49,6 +49,8 @@ SELECTOR
 #define ZERO_SC 1024
 #define TAG_THREADS 2048
 #define USER_PRESENCE 4096
+#define FRAME_CASE 8192
+static unsigned frame_case;
 static unsigned char *emit(unsigned char *at, uint32_t type, uint32_t size, uint64_t flags) {
   struct bp_shot_item header;
   header.type = type; header.size = size; header.flags = flags;
@@ -116,6 +118,11 @@ static unsigned build(unsigned pid, uint64_t uid, const unsigned *states, unsign
       if (i == 1 || i == 2) at = words(at, BP_SHOT_USER_STACKLR64, i - 1, 8, zero, 0, 0);
       if (i == 3) ((struct bp_shot_thread_snapshot *)(at - thread_size))->ss_flags = BP_SHOT_TRUNC_USER;
     }
+    if ((variant & FRAME_CASE) && i == 0) {
+      uint64_t values[35];
+      for (unsigned j = 0; j < 35; ++j) values[j] = 0x100000000ULL + j;
+      at = words(at, BP_SHOT_USER_STACKLR64, frame_case, 8, values, 0, 0);
+    }
     if ((variant & DETAILS) && i == 0) {
       ((struct bp_shot_thread_snapshot *)(at - thread_size))->continuation = 0xfffffff00700cafeULL;
       const uint64_t lr[] = {0x104123450, 0x18123abcd, 0x192340008, 0x11234000c, 0x202020204};
@@ -143,7 +150,7 @@ static void check_rows(char rows[][120], unsigned n) {
   for (unsigned i = 0; i < n; ++i) {
     printf("%zu: %s\n", strlen(rows[i]), rows[i]);
     assert(strlen(rows[i]) <= 78);
-    assert(bp_banner_priority(rows[i], 2) == 0);
+    assert(bp_banner_priority(rows[i], 2) == (strchr(rows[i], '+') ? 4u : 0u));
   }
 }
 int main(void) {
@@ -157,6 +164,32 @@ int main(void) {
   unsigned bytes;
   char rows[48][120];
 #define PARSE(n) bp_shot_parse(170, 0x1234, (n), &s)
+  const unsigned cases[] = {0, 1, 4, 5, 12, 35};
+  for (unsigned c = 0; c < 6; ++c) {
+    frame_case = cases[c];
+    bytes = build(170, 0x1234, waiting, 1, 128, FRAME_CASE);
+    assert(PARSE(bytes) == 0 && s.threads[0].users == frame_case);
+    unsigned n = bp_shot_format(rows, &s, 0, 0, 0);
+    unsigned kept = frame_case < 12 ? frame_case : 12;
+    assert(n == 5u + (kept > 4) + (kept > 8));
+    for (unsigned j = 0; j < kept; ++j) assert(s.threads[0].user[j] == 0x100000000ULL + j);
+    if (kept > 4) assert(!strncmp(rows[5], "T0+4 U=", 7));
+    if (kept > 8) assert(!strncmp(rows[6], "T0+8 U=", 7));
+    if (kept == 5) assert(!strcmp(rows[5], "T0+4 U=100000004"));
+    printf("CASE %u\n", frame_case);
+    for (unsigned j = 0; j < n; ++j) printf("%zu: %s\n", strlen(rows[j]), rows[j]);
+    for (unsigned j = 0; j < n; ++j) assert(strlen(rows[j]) <= 78);
+  }
+  {
+    char budget_rows[64][120] = {
+      "SHOT lsd", "T0 C=x", "T0+4 U=x", "T0+8 U=x",
+      "SHOT2 x", "EXIT x", "XR x", "PROC x", "SVC x", "SC x",
+      "LOAD x", "UFS x", "SCHED x", "SU x"
+    };
+    unsigned n = bp_banner_select(budget_rows, 14, 12);
+    assert(n == 12);
+    for (unsigned j = 0; j < n; ++j) assert(!strchr(budget_rows[j], '+'));
+  }
   bytes = build(170, 0x1234, mixed, 2, 128, TAG_THREADS);
   assert(PARSE(bytes) == 0);
   assert(s.total == 2 && s.wait == 1);
@@ -190,20 +223,20 @@ int main(void) {
   check_rows(rows, 6);
   bytes = build(170, 0x1234, two_waiting, 2, 128, DETAILS);
   assert(PARSE(bytes) == 0);
-  assert(bp_shot_format(rows, &s, 0x123456789ULL, 0, 0) == 6);
+  assert(bp_shot_format(rows, &s, 0x123456789ULL, 0, 0) == 7);
   assert(!strcmp(rows[0], "SHOT lsd n=2 w=2 r=0 ks=23456789 sc=31323334 sb=04123000"));
   assert(!strcmp(rows[1], "T0 C=fffffff00700cafe U=104123450,18123abcd,192340008,11234000c f=5!"));
   assert(!strcmp(rows[2], "T1 K=f007123456,f007abcdef U=104dead00,104dead04 f=2!"));
   assert(!strcmp(rows[5], "SHOT2 ks=0000000123456789 sb=0000000104123000"));
-  check_rows(rows, 6);
-  strcpy(rows[6], "CRASH excerpt");
-  assert(bp_banner_select(rows, 7, 6) == 6 && !strncmp(rows[5], "SHOT2 ", 6));
+  check_rows(rows, 7);
+  strcpy(rows[7], "CRASH excerpt");
+  assert(bp_banner_select(rows, 8, 7) == 7 && !strncmp(rows[5], "SHOT2 ", 6));
   s.cache_slide = 0x20031323334ULL;
   s.threads[1].users = 131072;  /* upper bound from the size of the capture buffer */
-  assert(bp_shot_format(rows, &s, 0, 0, 1) == 6);
+  assert(bp_shot_format(rows, &s, 0, 0, 1) == 9);
   assert(!strcmp(rows[5], "SHOT2 ks=0000000000000000 sb=0000000104123000 sc=0000020031323334"));
   assert(strlen(rows[2]) == 78);
-  check_rows(rows, 6);
+  check_rows(rows, 9);
   bytes = build(170, 0x1234, mixed, 2, 128, DETAILS | BAD_ARRAY);
   s.total = s.wait = 0xdead;
   assert(PARSE(bytes) == BP_SHOT_INTEGRITY && s.total == 0xdead && s.wait == 0xdead);
