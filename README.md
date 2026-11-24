@@ -1,5 +1,7 @@
 # UniXNU-nuwa
 
+**2026-11-24 8-directory seed + lsd probe package, host self-checked; not flashed, deep review pending:** [record](docs/nuwa-seed-containers-20261124.md).
+
 **2026-11-24 lsd deep-frame priority revision, host self-checked; not flashed:** [record](docs/nuwa-lsd-deep-20261124.md).
 
 **2026-11-23：SpringBoard 重启后仍无新帧，原因未证（主控转述 / self-checked 记录）。** [记录](docs/nuwa-sb-stall-20261123.md)。
