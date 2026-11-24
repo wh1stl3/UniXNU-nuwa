@@ -47,6 +47,7 @@
 - 仍未验收：正常启动、平台服务发布、存储与用户态；内存所有权问题不因探针阳性自动关闭。ADT 身份/种子约定不变，root UUID 留待根卷阶段。`scripts/` 历史审计工具不再充当 ADT 生成器。
 
 ## 阻塞
+- 卡点优先查 [已知差异与跨项目关停手段清单](docs/nuwa-open-deltas-20261125.md)。
 - 2026-11-22：持久 Data 与显示/交互仍受阻，认证 NOT REACHED；主控转述实机与深审、主机 self-checked，详见 [本轮结论](docs/nuwa-session-20261122-findings.md)。
 - CPU-only 显示 ON 候选按 329 止损条件冻结，OFF 诊断路径保留，329 guard 不动；这是 deferral，非绕过。三项止损均未闭合，解除条件及证据见 [329 决策记录](docs/nuwa-329-stop-20261121.md)；ON 产物保留分支、不上机。self-checked。
 
