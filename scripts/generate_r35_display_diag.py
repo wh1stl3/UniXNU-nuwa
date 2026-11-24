@@ -12,7 +12,7 @@ static unsigned bp_banner_priority(const char *s, unsigned previous) {
   if (s[0]==' ') return previous;
   if (!strncmp(s,"SHOT",4) || !strncmp(s,"T0 ",3) ||
       !strncmp(s,"T0+",3) || !strncmp(s,"EXIT",4) ||
-      !strncmp(s,"PROC",4) || !strncmp(s,"SC ",3) ||
+      !strncmp(s,"PROC",4) || !strncmp(s,"PEER",4) || !strncmp(s,"SC ",3) ||
       !strncmp(s,"LOAD",4)) return 0;
   if (!strncmp(s,"CRASH",5) || !strncmp(s,"REASON",6) ||
       !strncmp(s,"PANIC",5) || !strncmp(s,"XR",2) ||
@@ -541,7 +541,7 @@ extern void psignal(struct proc *, int);
     src = replace_once(src, b"static void touch_monitor(void *arg, wait_result_t result) {", b"""
 // Only touch_monitor calls this, before acquiring render_busy.
 static void bp_proc_census(unsigned restart, unsigned now) {
-  uint32_t found[6]={0}, services=0;
+  uint32_t found[6]={0}, icon_pid=0, services=0;
   unsigned killed_pid=0;
   for (int pid=1;pid<=4096;++pid) {
     struct proc *p=proc_find(pid);
@@ -560,6 +560,7 @@ static void bp_proc_census(unsigned restart, unsigned now) {
     else if (!strcmp(name,"launchd")) found[3]=(uint32_t)pid;
     else if (!strcmp(name,"lockdownd")) found[4]=(uint32_t)pid;
     else if (!strcmp(name,"containermanager")) found[5]=(uint32_t)pid;
+    else if (!strcmp(name,"iconservicesagen")) icon_pid=(uint32_t)pid;
     else if (!strcmp(name,"runningboardd")) services|=1u<<0;
     else if (!strcmp(name,"distnoted")) services|=1u<<1;
     else if (!strcmp(name,"cfprefsd")) services|=1u<<2;
@@ -576,6 +577,7 @@ static void bp_proc_census(unsigned restart, unsigned now) {
       restart,now,killed_pid,killed_pid ? "called" : "not-called");
   }
   for (unsigned i=0;i<6;++i) __atomic_store_n(&bp_proc_pid[i],found[i],__ATOMIC_RELAXED);
+  __atomic_store_n(&bp_icon_pid,icon_pid,__ATOMIC_RELAXED);
   __atomic_store_n(&bp_svc_mask,services,__ATOMIC_RELAXED);
   __atomic_fetch_add(&bp_proc_generation,1,__ATOMIC_RELEASE);
 }
@@ -611,6 +613,7 @@ static void touch_monitor(void *arg, wait_result_t result) {""")
     bp_shot_take(now);""")
     anchor = b"char boot_progress_page_text[48][BP_COLS];"
     src = replace_once(src, anchor, SHOT_STATE + b"""static uint32_t bp_proc_pid[6], bp_proc_generation, bp_svc_mask, bp_sb_restart_state;
+static uint32_t bp_icon_pid;
 // FDR exits are independent of the best-effort exit ring.
 static uint64_t bp_fdr_exit;
 // Diagnostic only: two independent byte samples; no synchronization of display state.
@@ -725,6 +728,11 @@ void boot_progress_prop_set(uint16_t properties) {
     }
     snprintf(rows[n++],120,"PROC n=%d SB=%s bb=%s lsd=%s ld=%s lk=%s cm=%s",
       nprocs,value[0],value[1],value[2],value[3],value[4],value[5]);
+    uint32_t icon=__atomic_load_n(&bp_icon_pid,__ATOMIC_RELAXED);
+    char icon_value[12]="-";
+    if(icon) snprintf(icon_value,sizeof(icon_value),"%u",icon);
+    snprintf(rows[n++],120,"PEER icon=%s cm=%s lsd=%s SB=%s",
+      icon_value,value[5],value[2],value[0]);
   }
   unsigned restart_state=__atomic_load_n(&bp_sb_restart_state,__ATOMIC_RELAXED);
   unsigned hid_stage=0;

@@ -6,6 +6,7 @@
 小米 13 Pro（nuwa / SM8550）通过 UniXNU 运行 iOS 16（donor: iPhone10,3 / 16.7.16 / 20H392，xnu-8796 线）。
 
 ## 基线
+- 2026-11-25 full seed + candidate disable + PEER 仅主机 self-checked，未上机、待深审：[记录](docs/nuwa-final-20261125.md)。
 - 2026-11-24 8 目录 seed + lsd 探针包仅主机 self-checked，未上机、待 deep review：[记录](docs/nuwa-seed-containers-20261124.md)。
 - 2026-11-24 lsd 深帧优先级修订主机包 self-checked、未上机：[记录](docs/nuwa-lsd-deep-20261124.md)。
 - 2026-11-23 **SMP 入口关候选：观测版仅追加 `sheng-smp=1`，未上机**。判据、止损与复跑见 [记录](docs/nuwa-smp-observe-entry-20261123.md)；需 `deep_reviewer` 复审启用后的失败面与可观测性。
