@@ -4,6 +4,7 @@
 #include "../package/nuwa-data-write/DualBankLogOverlay.h"
 #include "NuwaDataFixtureGpt.h"
 #include "../package/nuwa-ramblock/PersistOpenReason.h"
+#include "../package/nuwa-ramblock/DataView.h"
 #include "PersistOverlay.h"
 #include <cassert>
 #include <array>
@@ -243,11 +244,13 @@ static struct { bool valid; uint64_t first, last, imageBytes; } gStoreGeometry;
 static constexpr NuwaData::GptIdentity nuwaDataIdentity{
   61850624, 6, 61850618, 3110976, 61850618, {1}, {2}, {3}
 };
-static unsigned descOptIn;
+static unsigned descOptIn, ramReadOnly;
 static bool PE_parse_boot_argn(const char *name, void *value, size_t n) {
-  if (strcmp(name, "nuwa-ufs-desc") || !descOptIn) return false;
+  const auto arg = !strcmp(name, "nuwa-ufs-desc") ? descOptIn :
+                   !strcmp(name, "nuwa-data-ro") ? ramReadOnly : 0U;
+  if (!arg) return false;
   assert(n == sizeof descOptIn);
-  memcpy(value, &descOptIn, n);
+  memcpy(value, &arg, n);
   return true;
 }
 static size_t seenAllocations, seenFrees;
@@ -311,9 +314,15 @@ struct RamMedia {
   std::unordered_map<uint64_t, MediaPage> pages;
   size_t reads = 0, writes = 0, syncs = 0;
   bool failLog = false, failed = false;
+  uint64_t failRead = UINT64_MAX;
+  bool quarantineRead = false;
   bool read(uint64_t b, uint32_t n, void *d) {
     assert(b < DataOverlay::Media.blocks && n == 1);
     ++reads;
+    if (b == failRead) {
+      failed = quarantineRead;
+      return false;
+    }
     const auto i = pages.find(b);
     if (i == pages.end()) memset(d, 0, NuwaData::Block);
     else memcpy(d, i->second.data(), NuwaData::Block);
@@ -332,6 +341,7 @@ struct RamMedia {
   bool sync() { assert(!failed); ++syncs; return true; }
 };
 static RamMedia *ramMedia;
+static bool ramCreate;
 static uint64_t candidateFirst, candidateBlocks;
 static bool fixtureOpenCandidateData(uint64_t first, uint64_t blocks, uint64_t reserve) {
   candidateFirst = first;
@@ -351,7 +361,7 @@ static unsigned native_ufs_store_mode() { return storeMode(); }
 static int native_ufs_store_read(uint64_t, uint32_t, void *) { assert(false); return 0; }
 static void IOLog(const char *, ...) {}
 static uint32_t native_data_persist_state, native_data_persist_header, native_data_persist_gpt,
-                native_data_persist_gpt_after;
+                 native_data_persist_gpt_after, native_data_persist_view;
 static uint64_t native_data_persist_pages, native_data_persist_loaded, native_data_persist_first_lba,
                  native_data_persist_present, native_ram_block_resident_bytes, native_data_persist_writes,
                  native_data_persist_syncs, native_data_persist_errors;
@@ -359,20 +369,25 @@ static const char *nuwa_data_persist_open_why;
 static const MediaPage seedPage = [] { MediaPage p{}; p.fill(0x5e); return p; }();
 struct NativeRamBlock {
   IOLock *gate = &ramGate;
+  uint64_t capacity = 8589934592ULL / 512;
+  uint8_t *memory = nullptr;
   struct { uint64_t bytes, resident; uint8_t **pages; const uint8_t *find(uint64_t) { return nullptr; } } sparse{};
   struct { uint64_t bytes = 8589934592ULL; const uint8_t *find(uint64_t) { return seedPage.data(); } } big;
-  bool online = true, isBig = true, storeAttached = false, direct = false, directFailed = false;
+  bool online = true, isBig = true, storeAttached = false, direct = false;
+  bool candidateData = false;
+  NuwaDataView dataView = NuwaDataView::SeedOnly;
   uint8_t seedHash[32]{};
   persist::Overlay overlay{};
   DataOverlay dataOverlay{};
   DataOverlay::Workspace *dataWorkspace = nullptr;
   uint8_t *overlayBits = nullptr, *stage = nullptr;
   static constexpr uint32_t kStagePages = 32;
-  static bool discardRequested() { return ramMedia != nullptr; }
+  static bool discardRequested() { return ramCreate; }
   struct StoreOps {
     bool read(uint64_t b, uint32_t n, void *d) { return ramMedia ? ramMedia->read(b, n, d) : native_ufs_store_read(b, n, d); }
     bool write(uint64_t b, uint32_t n, const void *p) { return ramMedia ? ramMedia->write(b, n, p) : native_ufs_store_write(b, n, p); }
     bool sync() { return ramMedia ? ramMedia->sync() : native_ufs_store_sync(); }
+    bool isolated() { return ramMedia ? ramMedia->failed : native_ufs_store_isolated(); }
   };
   ~NativeRamBlock() { std::free(dataWorkspace); std::free(stage); std::free(overlayBits); }
 #include "FixtureAttach.inc"
@@ -394,6 +409,8 @@ static void startMockBoot(Response wire) {
   // Fixture-only process replacement across independent test scenarios.
   new (&retainedSlot) NuwaData::Slot;
   descOptIn = ufsDescClaimed = ufsDescPublished = liveGptStatus = 0;
+  ramReadOnly = native_data_persist_view = 0;
+  ramCreate = true;
   ufsDescSnapshot = {};
   ufsModeSnapshot = {};
 }
@@ -406,16 +423,22 @@ static void testAttach(const char *state) {
   native_data_persist_gpt = 0xff;
   ram.attachStore();
   assert(!heldLocks && ram.storeAttached && native_data_persist_state == 4 &&
-         native_data_persist_gpt == 0 && combined_hardware.submissions == before &&
-         combined_hardware.mmioReads == mmio);
+          native_data_persist_gpt == 0 && combined_hardware.submissions == before &&
+          combined_hardware.mmioReads == mmio);
+  bool protectedFromWrites = false;
+  assert(ram.candidateData && ram.dataView == NuwaDataView::SeedOnly &&
+         ram.doSynchronizeCache() == kIOReturnNotWritable &&
+         ram.reportWriteProtection(&protectedFromWrites) == kIOReturnSuccess && protectedFromWrites);
   std::printf("PASS attachStore %s: cached GPT; diagnostic UFS submissions=0\n", state);
 }
 
 struct RamBuffer {
   std::vector<uint8_t> data;
   size_t limit = SIZE_MAX;
+  unsigned sourceReads = 0;
   RamBuffer(size_t n, uint8_t byte) : data(n, byte) {}
   uint64_t read(uint64_t at, void *dst, uint64_t n) {
+    ++sourceReads;
     assert(at <= data.size() && n <= data.size() - at);
     if (at + n > limit) return 0;
     memcpy(dst, data.data() + at, n);
@@ -428,10 +451,13 @@ struct RamBuffer {
   }
 };
 
-static size_t ramIO(NativeRamBlock &ram, bool write, uint64_t offset, RamBuffer &buffer) {
+static size_t ramIO(NativeRamBlock &ram, bool write, uint64_t offset, RamBuffer &buffer,
+                    IOReturn *status = nullptr) {
   IOLockLock(ram.gate);
-  const auto n = ram.candidateIO(write, offset, buffer.data.size(), buffer);
+  uint64_t n = 0;
+  const auto result = ram.candidateIO(write, offset, buffer.data.size(), buffer, n);
   IOLockUnlock(ram.gate);
+  if (status) *status = result;
   return n;
 }
 
@@ -444,7 +470,8 @@ static void testRamOverlay() {
   const auto allocations = seenAllocations, frees = seenFrees;
   ram.attachStore();
   assert(seenAllocations == allocations + 1 && seenFrees == frees + 1);
-  assert(ram.direct && native_data_persist_state == 1 && native_data_persist_present == 0);
+  assert(ram.candidateData && ram.dataView == NuwaDataView::Writable &&
+         native_data_persist_state == 1 && native_data_persist_present == 0);
   assert(candidateFirst == 57393401 && candidateBlocks == 4195074 &&
          candidateFirst + candidateBlocks == 61588475 && gStoreRegionFirst == candidateFirst);
   RamBuffer one(block, 0x11);
@@ -480,10 +507,12 @@ static void testRamOverlay() {
   RamBuffer shortSource(3 * block, 0xff);
   shortSource.limit = 2 * block;
   const auto beforeShort = media.writes;
-  assert(ramIO(ram, true, offset, shortSource) == 0 && media.writes == beforeShort && !ram.directFailed);
+  assert(ramIO(ram, true, offset, shortSource) == 0 && media.writes == beforeShort &&
+         ram.dataView == NuwaDataView::Writable);
   media.failLog = true;
   RamBuffer cut(2 * block, 0x44);
-  assert(ramIO(ram, true, offset, cut) == 0 && ram.directFailed && native_data_persist_state == 5);
+  assert(ramIO(ram, true, offset, cut) == 0 && ram.dataView == NuwaDataView::Isolated &&
+         native_data_persist_state == 5);
   const auto submitted = media.writes, synced = media.syncs, loaded = media.reads;
   assert(ramIO(ram, true, offset, cut) == 0 && ram.doSynchronizeCache() == kIOReturnIOError);
   ram.attachStore();
@@ -526,6 +555,79 @@ static void testRamAmplification() {
     std::printf("PASS RamBlock %zu-page amplification: %.6fx\n", run, double(media.writes - initial) / user);
     ramMedia = nullptr;
   }
+}
+
+static void testRamViews() {
+  constexpr size_t block = NuwaData::Block;
+  RamMedia media;
+  ramMedia = &media;
+  {
+    startMockBoot({});
+    ramCreate = false;
+    NativeRamBlock ram;
+    ram.prepareCandidateView();
+    assert(ram.dataView == NuwaDataView::SeedOnly && native_data_persist_state == 1);
+    RamBuffer part(512, 0xff);
+    IOReturn status;
+    const auto reads = media.reads, failures = native_data_persist_errors;
+    assert(!ramIO(ram, true, 512, part, &status) && status == kIOReturnNotWritable &&
+           part.sourceReads == 0 && media.reads == reads && !media.writes && !media.syncs);
+    assert(ram.doSynchronizeCache() == kIOReturnNotWritable &&
+           ramIO(ram, false, 512, part, &status) == 512 && status == kIOReturnSuccess &&
+           !memcmp(part.data.data(), seedPage.data() + 512, 512) &&
+           ram.dataView == NuwaDataView::SeedOnly && native_data_persist_errors == failures);
+    std::puts("PASS blank/no-create: NotWritable before RMW; read remains seed, no submission");
+  }
+  {
+    startMockBoot({});
+    NativeRamBlock writer;
+    writer.prepareCandidateView();
+    RamBuffer payload(block, 0x42);
+    assert(ramIO(writer, true, 0, payload) == block &&
+           writer.doSynchronizeCache() == kIOReturnSuccess &&
+           seedPage.front() != payload.data.front());
+  }
+  startMockBoot({});
+  ramReadOnly = 1;
+  NativeRamBlock disk;
+  disk.online = false;
+  disk.prepareCandidateView(); // same start helper, before simulated publication
+  assert(disk.dataView == NuwaDataView::ReadOnly && native_data_persist_state == 6 &&
+         disk.doSynchronizeCache() == kIOReturnNotReady);
+  disk.online = true;
+  RamBuffer firstProbe(block, 0), mountedRead(block, 0), patch(512, 0x66);
+  IOReturn status;
+  bool protectedFromWrites = false;
+  assert(disk.reportWriteProtection(&protectedFromWrites) == kIOReturnSuccess && protectedFromWrites);
+  assert(ramIO(disk, false, 0, firstProbe, &status) == block && status == kIOReturnSuccess);
+  assert(firstProbe.data == std::vector<uint8_t>(block, 0x42));
+  const auto reads = media.reads, writes = media.writes, syncs = media.syncs;
+  disk.attachStore(); // UUID lookup's legacy attach call is now idempotent
+  uint64_t base = UINT64_MAX, bytes = 0;
+  uint8_t hash[32];
+  assert(disk.seedInfo(&base, &bytes, hash) && !base && bytes == disk.big.bytes &&
+         NuwaData::zero(hash, sizeof hash) && media.reads == reads);
+  assert(!ramIO(disk, true, 512, patch, &status) && status == kIOReturnNotWritable &&
+         patch.sourceReads == 0 && disk.doSynchronizeCache() == kIOReturnNotWritable &&
+         media.reads == reads && media.writes == writes && media.syncs == syncs);
+  assert(ramIO(disk, false, 0, mountedRead, &status) == block && status == kIOReturnSuccess &&
+         mountedRead.data == firstProbe.data && disk.dataView == NuwaDataView::ReadOnly);
+  std::puts("PASS read-only recovered view: first probe and post-lookup bytes=0x42, seed=0x5e; reject write/sync");
+
+  media.failRead = DataOverlay::Data0;
+  assert(!ramIO(disk, false, 0, mountedRead, &status) && status == kIOReturnIOError &&
+         disk.dataView == NuwaDataView::ReadOnly && native_data_persist_state == 6);
+  media.failRead = UINT64_MAX;
+  assert(ramIO(disk, false, 0, mountedRead, &status) == block && mountedRead.data == firstProbe.data);
+  media.failRead = DataOverlay::Data0;
+  media.quarantineRead = true;
+  assert(!ramIO(disk, false, 0, mountedRead, &status) && status == kIOReturnIOError &&
+         disk.dataView == NuwaDataView::Isolated && native_data_persist_state == 5);
+  const auto quarantined = media.reads;
+  assert(!ramIO(disk, false, 0, mountedRead, &status) && status == kIOReturnIOError &&
+         disk.doSynchronizeCache() == kIOReturnIOError && media.reads == quarantined);
+  std::puts("PASS attributed read error preserves overlay view; transport quarantine isolates without seed fallback");
+  ramMedia = nullptr;
 }
 
 static void test(const char *label, Response wire, CombinedRead::End end, NuwaData::State state,
@@ -723,15 +825,21 @@ static void testWrites() {
   std::puts("PASS real WRITE(10): LUN0, FUA=1, 4096 B, DB0 once, GOOD; sync no hardware");
 
   IOLockLock(gHost.lock);
-  assert(retainedSlot.submit(true, true));
   assert(port.writePageLocked(1, window, window.first, 1, page) == Evidence::Unowned);
   assert(port.writePageLocked(0, window, window.first + window.blocks, 1, page) == Evidence::Unowned);
   assert(port.writePageLocked(0, window, window.first, 2, page) == Evidence::Unowned);
+  assert(retainedSlot.state() == State::COMPLETED_OK && retainedSlot.rootAllowed());
+  assert(retainedSlot.submit(true, true));
   IOLockUnlock(gHost.lock);
   assert(!provider.sync() && combined_hardware.submissions == 5 &&
          combined_hardware.prepares == 5 && combined_hardware.mmioReads == afterWrite);
+  IOLockLock(gHost.lock);
+  assert(retainedSlot.complete(Evidence::FullFua)); // synthetic in-flight gate check
+  IOLockUnlock(gHost.lock);
+  assert(provider.read(0, 1, page) && combined_hardware.submissions == 6 &&
+         combined_hardware.writeSubmissions == 1);
   provider.close();
-  std::puts("PASS write port rejects non-LUN0, out-of-window and multi-block before DMA; sync rejects in-flight");
+  std::puts("PASS non-LUN0, wrong window and multi-block reject before DMA; subsequent read works, in-flight sync rejected");
 
   for (unsigned fault = 0; fault < 3; ++fault) {
     startMockBoot({});
@@ -1042,4 +1150,5 @@ int main() {
   testModeSense();
   testRamOverlay();
   testRamAmplification();
+  testRamViews();
 }

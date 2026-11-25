@@ -31,14 +31,22 @@ def main(build, base):
         body(ufs, 'extern "C" int native_ufs_store_open (') +
         body(ufs, 'extern "C" unsigned native_ufs_store_gpt_check (') +
         body(ufs, 'extern "C" int native_ufs_store_write (') +
-        body(ufs, 'extern "C" int native_ufs_store_sync ('))
+        body(ufs, 'extern "C" int native_ufs_store_sync (') +
+        body(ufs, 'extern "C" int native_ufs_store_isolated ('))
     (build / "FixturePart.inc").write_text(
         body(ufs, 'extern "C" int native_ufs_part_find (') +
         body(ufs, 'extern "C" int native_ufs_part_read ('))
     (build / "FixtureAttach.inc").write_text(body(ram, "  void attachStore()", "  }"))
+    start = body(ram, "bool NativeRamBlock::start(")
+    assert start.index("  prepareCandidateView();") < start.index("  online = true;") < start.index("  registerService();")
+    helpers = "".join(body(ram, name, "  }") for name in (
+        "  void setDataView(", "  void prepareCandidateView()", "  void isolateCandidate()",
+        "  static bool candidateReadOnly()", "  bool seedInfo("))
+    available, = (line for line in ram.splitlines() if line.startswith("  bool available()"))
     (build / "FixtureRamIO.inc").write_text(
-        "  template<class BufferOps>\n" + body(ram, "  uint64_t candidateIO(", "  }") +
-        body(ram, "  IOReturn doSynchronizeCache()", "  }").replace(" override", ""))
+        helpers + available + "\n  template<class BufferOps>\n" + body(ram, "  IOReturn candidateIO(", "  }") +
+        "".join(body(ram, name, "  }").replace(" override", "") for name in (
+            "  IOReturn doSynchronizeCache()", "  IOReturn reportWriteProtection(")))
     binary = build / "test-retained-response"
     subprocess.run([
         os.environ.get("CXX", "c++"), "-std=c++17", "-Wall", "-Wextra", "-Werror",

@@ -21,6 +21,7 @@
 #include "PersistOpenReason.h"
 #if defined(NUWA_DATA_CANDIDATE)
 #include "../nuwa-data-write/DualBankLogOverlay.h"
+#include "DataView.h"
 #endif
 
 extern "C" {
@@ -41,6 +42,10 @@ int native_ufs_store_open(uint64_t, uint64_t *, const char **) __attribute__((we
 int native_ufs_store_read(uint64_t, uint32_t, void *) __attribute__((weak_import));
 int native_ufs_store_write(uint64_t, uint32_t, const void *) __attribute__((weak_import));
 int native_ufs_store_sync(void) __attribute__((weak_import));
+#if defined(NUWA_DATA_CANDIDATE)
+int native_ufs_store_isolated(void) __attribute__((weak_import));
+uint32_t native_data_persist_view = 0;
+#endif
 unsigned native_ufs_store_gpt_check(void) __attribute__((weak_import));
 // Diagnostics. state: 0 off, 1 blank (read-only probe), 2 resumed, 3 fresh (Install and boot), 4 refused/failed, 5 degraded after an I/O
 // error, 6 resumed read-only (probe), 7 kept: the store holds no Data of this seed and no reset was asked, so it is left untouched and
@@ -68,8 +73,8 @@ class NativeRamBlock : public IOBlockStorageDevice {
   uint64_t capacity = 0;
   bool online = false;
   RamSparseDisk sparse = {};
-  // A disk above 2 GiB keeps only the nonzero pages of its seed (SeedDisk.h), in memory proportional to the content, and is served by the
-  // direct (store-backed) path alone: it needs the persistent store open read-write, or its requests fail.
+  // A disk above 2 GiB keeps only the nonzero seed pages (SeedDisk.h).
+  // It can serve seed reads without a store, but has no volatile write path.
   SeedDisk big = {};
   bool isBig = false;
   uint8_t seedHash[32] = {};
@@ -84,38 +89,70 @@ class NativeRamBlock : public IOBlockStorageDevice {
   using DataOverlay = NuwaData::DualBankLogOverlay<>;
   DataOverlay dataOverlay;
   DataOverlay::Workspace *dataWorkspace = nullptr;
+  bool candidateData = false;
+  NuwaDataView dataView = NuwaDataView::SeedOnly;
 #endif
   struct StoreOps {
     bool read(uint64_t b, uint32_t n, void *d) { __atomic_fetch_add(&native_data_persist_loaded, n, __ATOMIC_RELAXED); return native_ufs_store_read(b, n, d); }
     bool write(uint64_t b, uint32_t n, const void *s) { return native_ufs_store_write(b, n, s); }
     bool sync() { return native_ufs_store_sync(); }
+#if defined(NUWA_DATA_CANDIDATE)
+    bool isolated() { return &native_ufs_store_isolated && native_ufs_store_isolated(); }
+#endif
   };
   void persistFailed() { overlay.active = false; native_data_persist_state = 5; __atomic_fetch_add(&native_data_persist_errors, 1, __ATOMIC_RELAXED); }
 #if defined(NUWA_DATA_CANDIDATE)
+  void setDataView(NuwaDataView view) {
+    dataView = view;
+    __atomic_store_n(&native_data_persist_view, static_cast<uint32_t>(view), __ATOMIC_RELEASE);
+  }
+  void prepareCandidateView() {
+    if (&native_ufs_store_mode && native_ufs_store_mode() == 2) attachStore();
+  }
+  void isolateCandidate() {
+    native_data_persist_state = 5;
+    __atomic_fetch_add(&native_data_persist_errors, 1, __ATOMIC_RELAXED);
+    setDataView(NuwaDataView::Isolated);
+  }
+  static bool candidateReadOnly() {
+    uint32_t v = 0;
+    return PE_parse_boot_argn("nuwa-data-ro", &v, sizeof v) && v;
+  }
   // Caller holds gate. Bytes in a write run are acknowledged only after its
   // single commit succeeds. A short descriptor read never submits that run.
   template<class BufferOps>
-  uint64_t candidateIO(bool write, uint64_t offset, uint64_t bytes, BufferOps &buffer) {
+  IOReturn candidateIO(bool write, uint64_t offset, uint64_t bytes, BufferOps &buffer, uint64_t &actual) {
+    actual = 0;
+    if (dataView == NuwaDataView::Isolated) return kIOReturnIOError;
+    if (write && dataView != NuwaDataView::Writable) return kIOReturnNotWritable;
     StoreOps store;
-    const auto load = [&](uint64_t page, uint8_t *dst) {
-      if (dataOverlay.has(page)) return dataOverlay.read(store, page, dst);
-      const uint8_t *seed = isBig ? big.find(page) : sparse.find(page);
-      if (seed) memcpy(dst, seed, NuwaData::Block);
-      else memset(dst, 0, NuwaData::Block);
-      return true;
+    const auto seedAt = [&](uint64_t page) {
+      static const uint8_t zero[NuwaData::Block] = {};
+      const uint8_t *seed = isBig ? big.find(page) :
+                            memory ? memory + page * NuwaData::Block : sparse.find(page);
+      return seed ? seed : zero;
     };
-    uint64_t actual = 0;
-    bool storeError = false;
-    while (!directFailed && actual < bytes) {
+    const auto readError = [&] {
+      if (store.isolated()) isolateCandidate();
+      return kIOReturnIOError;
+    };
+    while (actual < bytes) {
       const uint64_t at = offset + actual;
       if (!write) {
+        const uint64_t page = at / NuwaData::Block;
         const uint64_t skip = at % NuwaData::Block;
         uint64_t n = NuwaData::Block - skip;
         if (n > bytes - actual) n = bytes - actual;
-        if (!load(at / NuwaData::Block, stage)) { storeError = true; break; }
-        const uint64_t got = buffer.copy(actual, stage + skip, n);
+        const uint8_t *src;
+        if (dataOverlay.has(page)) {
+          if (!dataOverlay.read(store, page, stage)) return readError();
+          src = stage;
+        } else {
+          src = seedAt(page);
+        }
+        const uint64_t got = buffer.copy(actual, src + skip, n);
         actual += got;
-        if (got != n) break;
+        if (got != n) return kIOReturnIOError;
         continue;
       }
       const uint64_t runFirst = at / NuwaData::Block;
@@ -126,38 +163,39 @@ class NativeRamBlock : public IOBlockStorageDevice {
         uint64_t n = NuwaData::Block - skip;
         if (n > bytes - actual - runBytes) n = bytes - actual - runBytes;
         auto *dst = stage + runCount * NuwaData::Block;
-        if ((skip || n != NuwaData::Block) && !load(runFirst + runCount, dst)) {
-          storeError = true;
-          break;
+        if (skip || n != NuwaData::Block) {
+          const uint64_t page = runFirst + runCount;
+          if (dataOverlay.has(page)) {
+            if (!dataOverlay.read(store, page, dst)) return readError();
+          } else {
+            memcpy(dst, seedAt(page), NuwaData::Block);
+          }
         }
-        if (buffer.read(actual + runBytes, dst + skip, n) != n) return actual;
+        if (buffer.read(actual + runBytes, dst + skip, n) != n) return kIOReturnIOError;
         runBytes += n;
         ++runCount;
       }
-      if (storeError || !dataOverlay.writeRun(store, runFirst, runCount, stage)) {
-        storeError = true;
-        break;
+      if (!dataOverlay.writeRun(store, runFirst, runCount, stage)) {
+        isolateCandidate();
+        return kIOReturnIOError;
       }
       actual += runBytes;
       __atomic_fetch_add(&native_data_persist_writes, runCount, __ATOMIC_RELAXED);
       __atomic_fetch_add(&native_data_persist_syncs, 1, __ATOMIC_RELAXED);
       native_data_persist_present = dataOverlay.presentCount();
+      if (!dataOverlay.writable()) {
+        native_data_persist_state = 6;
+        setDataView(NuwaDataView::ReadOnly);
+        if (actual < bytes) return kIOReturnNotWritable;
+      }
     }
-    if (storeError) {
-      directFailed = true;
-      native_data_persist_state = 5;
-      __atomic_fetch_add(&native_data_persist_errors, 1, __ATOMIC_RELAXED);
-    }
-    return actual;
+    return kIOReturnSuccess;
   }
 #endif
 public:
-  // Called once, before the Data volume is mounted (native_ram_block_volume_seed): open the store window, put the pages that
-  // earlier boots changed back into the sparse disk, and from then on write changed pages through. The seed identity
-  // (seedHash) is not affected. Any refusal or error leaves the disk volatile, exactly as without persistence.
-  // sheng-data-reset=1 or 2 (the boot menu's Install and boot) starts the overlay over (the old pages are dropped, not applied); 2 also
-  // asks for Setup (BootWatchdogPolicy.c). It is the only way the store is made anew: a store of another seed, a blank or a damaged one
-  // is kept as it is on any other boot.
+  // One-shot: the mode-2 candidate calls this before media publication; the
+  // legacy path calls it during volume lookup. Seed identity never changes.
+  // Install and boot permits blank v3 creation; it does not discard a v3 epoch.
   static bool discardRequested() { uint32_t v = 0; return PE_parse_boot_argn("sheng-data-reset", &v, sizeof v) && (v == 1 || v == 2); }
   void attachStore() {
     if (!gate) return;
@@ -165,6 +203,12 @@ public:
     if (storeAttached) { IOLockUnlock(gate); return; }
     storeAttached = true;
     unsigned mode = &native_ufs_store_mode ? native_ufs_store_mode() : 0;
+#if defined(NUWA_DATA_CANDIDATE)
+    if (mode == 2) {
+      candidateData = true;
+      setDataView(NuwaDataView::SeedOnly);
+    }
+#endif
     if (mode && (sparse.pages || isBig) && &native_ufs_store_open && &native_ufs_store_read && &native_ufs_store_write &&
         &native_ufs_store_sync && &native_ufs_store_gpt_check) {
       uint64_t pages = (isBig ? big.bytes : sparse.bytes) / 4096, first = 0;
@@ -188,21 +232,23 @@ public:
         if (mode == 2) {
           // Once a window is attached, never use the seed-only path for
           // damaged, foreign, or indeterminate overlay state.
-          direct = true;
           dataWorkspace = static_cast<DataOverlay::Workspace *>(IOMallocZero(sizeof(DataOverlay::Workspace)));
           auto *seenScratch = static_cast<DataOverlay::SeenScratch *>(IOMallocZero(sizeof(DataOverlay::SeenScratch)));
           stage = static_cast<uint8_t *>(IOMallocZero(kStagePages * NuwaData::Block));
           StoreOps ops;
           auto result = stage && seenScratch && dataWorkspace
-                       ? dataOverlay.open(ops, seedHash, *dataWorkspace, *seenScratch, true, discardRequested())
+                       ? dataOverlay.open(ops, seedHash, *dataWorkspace, *seenScratch,
+                                          !candidateReadOnly(), discardRequested())
                        : DataOverlay::Open::Failed;
           if (seenScratch) IOFree(seenScratch, sizeof(DataOverlay::SeenScratch));
-          directFailed = result == DataOverlay::Open::Failed;
-          native_data_persist_state = directFailed ? 4 :
+          native_data_persist_state = result == DataOverlay::Open::Failed ? 4 :
                                       result == DataOverlay::Open::Empty ? 1 :
                                       dataOverlay.writable() ? 2 : 6;
           native_data_persist_present = dataOverlay.presentCount();
           native_data_persist_gpt_after = native_ufs_store_gpt_check();
+          setDataView(result == DataOverlay::Open::Failed ? NuwaDataView::Isolated :
+                      dataOverlay.writable() ? NuwaDataView::Writable :
+                      result == DataOverlay::Open::Empty ? NuwaDataView::SeedOnly : NuwaDataView::ReadOnly);
           IOLockUnlock(gate);
           return;
         }
@@ -265,6 +311,7 @@ public:
   }
 
   bool available() const { return online && (memory || sparse.pages || isBig) && capacity; }
+  // Seed/identity discovery only; does not assert overlay admission or durability.
   bool seedInfo(uint64_t *base,uint64_t *bytes,uint8_t hash[32]) {
     if(!gate || !base || !bytes || !hash)return false;
     IOLockLock(gate);bool ready=available();
@@ -288,13 +335,29 @@ public:
     *present = online; if (changed) *changed = false; return kIOReturnSuccess;
   }
   IOReturn reportRemovability(bool *value) override { *value = false; return kIOReturnSuccess; }
-  IOReturn reportWriteProtection(bool *value) override { *value = false; return kIOReturnSuccess; }
+  IOReturn reportWriteProtection(bool *value) override {
+#if defined(NUWA_DATA_CANDIDATE)
+    if (gate) {
+      IOLockLock(gate);
+      *value = candidateData && dataView != NuwaDataView::Writable;
+      IOLockUnlock(gate);
+      return kIOReturnSuccess;
+    }
+#endif
+    *value = false;
+    return kIOReturnSuccess;
+  }
   IOReturn doSynchronizeCache() override {
 #if defined(NUWA_DATA_CANDIDATE)
     if (!gate) return kIOReturnNotReady;
     IOLockLock(gate);
-    const IOReturn status = !online ? kIOReturnNotReady :
-                            directFailed ? kIOReturnIOError : kIOReturnSuccess;
+    IOReturn status = kIOReturnSuccess;
+    if (!online) status = kIOReturnNotReady;
+    else if (candidateData) {
+      if (dataView == NuwaDataView::Writable && StoreOps{}.isolated()) isolateCandidate();
+      status = dataView == NuwaDataView::Isolated ? kIOReturnIOError :
+               dataView == NuwaDataView::Writable ? kIOReturnSuccess : kIOReturnNotWritable;
+    }
     IOLockUnlock(gate);
     return status;
 #else
@@ -399,6 +462,11 @@ bool NativeRamBlock::start(IOService *provider)
   native_ram_block_bytes = logical;
   native_ram_block_sparse=(sparse.pages||isBig)?1:0;
   native_ram_block_resident_bytes=isBig?big.resident:sparse.pages?sparse.resident:logical;
+#if defined(NUWA_DATA_CANDIDATE)
+  // Resolve mode 2 before APFS can probe this disk. UUID selection later
+  // does not switch the bytes under the already published media.
+  prepareCandidateView();
+#endif
   online = true;
   native_ram_block_ready = 1;
   IOLog("NativeRamBlock: ready logical=%llu packed=%d resident=%llu\n",
@@ -417,6 +485,24 @@ IOReturn NativeRamBlock::doAsyncReadWrite(IOMemoryDescriptor *buffer, UInt64 blo
   const uint64_t bytes = count * 512;
   IOLockLock(gate);
   if (!online) { IOLockUnlock(gate); return kIOReturnNotReady; }
+#if defined(NUWA_DATA_CANDIDATE)
+  if (candidateData) {
+    struct BufferOps {
+      IOMemoryDescriptor *buffer;
+      uint64_t read(uint64_t at, void *p, uint64_t n) { return buffer->readBytes(at, p, n); }
+      uint64_t copy(uint64_t at, const void *p, uint64_t n) { return buffer->writeBytes(at, p, n); }
+    } bops = {buffer};
+    uint64_t actual;
+    const bool write = buffer->getDirection() == kIODirectionOut;
+    const IOReturn status = candidateIO(write, block * 512, bytes, bops, actual);
+    if (write) __atomic_fetch_add(&native_ram_block_writes, 1, __ATOMIC_RELAXED);
+    else __atomic_fetch_add(&native_ram_block_reads, 1, __ATOMIC_RELAXED);
+    if (status) __atomic_fetch_add(&native_ram_block_failures, 1, __ATOMIC_RELAXED);
+    IOLockUnlock(gate);
+    completion->action(completion->target, completion->parameter, status, actual);
+    return kIOReturnSuccess;
+  }
+#endif
   uint64_t actual;bool noMemory=false;
   if(isBig && !direct) {
     // Before the store is attached (APFS probes the disk for its volume UUID long before the kernel asks for the Data volume, which is what
@@ -458,9 +544,6 @@ IOReturn NativeRamBlock::doAsyncReadWrite(IOMemoryDescriptor *buffer, UInt64 blo
         uint64_t read(uint64_t at,void *p,uint64_t n){return buffer->readBytes(at,p,n);}
         uint64_t copy(uint64_t at,const void *p,uint64_t n){return buffer->writeBytes(at,p,n);}
       } bops={buffer};
-      #if defined(NUWA_DATA_CANDIDATE)
-      actual = candidateIO(write, block * 512, bytes, bops);
-      #else
       StoreOps store;bool storeError=false;
       if(write && directFailed)actual=0;
       else actual=isBig?directDiskIO(big,overlay,store,stage,kStagePages,write,block*512,bytes,bops,&storeError)
@@ -470,7 +553,6 @@ IOReturn NativeRamBlock::doAsyncReadWrite(IOMemoryDescriptor *buffer, UInt64 blo
         native_data_persist_state=5;__atomic_fetch_add(&native_data_persist_errors,1,__ATOMIC_RELAXED);
       }
       if(write && actual){__atomic_fetch_add(&native_data_persist_writes,(actual+4095)/4096,__ATOMIC_RELAXED);__atomic_fetch_add(&native_data_persist_syncs,1,__ATOMIC_RELAXED);native_data_persist_present=overlay.present;}
-      #endif
     } else {
     actual=ramSparseIO(sparse,write,block*512,bytes,ops,noMemory);
     }

@@ -269,7 +269,9 @@ public:
 
   template<class Ops> bool read(Ops &ops, uint64_t page, void *dst) {
     if (!dst || !has(page)) return false;
-    return ops.read(dataLba(bit(active(), page), page), 1, dst) || stop();
+    // A failed read does not make an overlay page absent. The port owns
+    // timeout/ownership isolation; never make the caller fall back to seed.
+    return ops.read(dataLba(bit(active(), page), page), 1, dst);
   }
 
   // One contiguous run, committed by one log block. src must not alias Workspace.

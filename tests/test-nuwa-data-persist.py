@@ -38,7 +38,9 @@ def main(base):
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
+#include <initializer_list>
 #include "{ROOT / 'package/nuwa-ramblock/PersistOpenReason.h'}"
+#include "{ROOT / 'package/nuwa-ramblock/DataView.h'}"
 #include "{ROOT / 'package/nuwa-data-write/DualBankLogOverlay.h'}"
 #include "{overlay}"
 struct {{ bool ready; }} gHost;
@@ -50,6 +52,7 @@ static uint64_t reserveBlocks() {{ return 262144; }}
 {function(ufs, 'extern "C" int native_ufs_store_open (')}
 volatile uint32_t native_data_persist_state = 4, native_data_persist_header = 9,
   native_data_persist_gpt = 0, native_data_persist_gpt_after = 0xff;
+uint32_t native_data_persist_view;
 volatile uint64_t native_data_persist_first_lba = 0, native_data_persist_present = 0,
   native_data_persist_loaded = 0, native_data_persist_writes = 0,
   native_data_persist_syncs = 0, native_data_persist_errors = 0;
@@ -119,6 +122,18 @@ int main() {{
   ext_data_rows();
   assert(strstr(boot_progress_ext[2], "l=ffffffffffffffff"));
   assert(!strcmp(nuwa_persist_open_reason(0, "unexpected"), "unknown"));
+  native_data_persist_first_lba = DualBank::Media.first;
+  nuwa_data_persist_open_why = "nolayout";
+  constexpr const char *expected[] = {{"v=seed", "v=ro", "v=rw", "v=iso"}};
+  for (auto view : {{NuwaDataView::SeedOnly, NuwaDataView::ReadOnly,
+                     NuwaDataView::Writable, NuwaDataView::Isolated}}) {{
+    native_data_persist_view = static_cast<uint32_t>(view);
+    ext_data_rows();
+    assert(strstr(boot_progress_ext[2], expected[native_data_persist_view - 1]));
+    assert(strstr(boot_progress_ext[2], "why=nolayout l=36bc0f9"));
+    printf("PU1 %.47s\\n", boot_progress_ext[2]);
+  }}
+  puts("PASS PU1 distinguishes seed/ro/rw/iso within 47 columns");
 }}
 """)
         binary = temp / "fixture"

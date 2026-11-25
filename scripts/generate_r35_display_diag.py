@@ -519,15 +519,23 @@ def add_smp_observe(src):
 
 def data_persist_row(src):
     anchor = b"static void ext_data_rows(void) {"
-    src = replace_once(src, anchor, b"extern const char *volatile nuwa_data_persist_open_why;\n" + anchor)
+    src = replace_once(src, anchor, b"extern const char *volatile nuwa_data_persist_open_why;\n"
+                       b"extern uint32_t native_data_persist_view __attribute__((weak_import));\n" + anchor)
     return replace_once(src, b"""  char a[48],b[48];
   snprintf(a,sizeof a,"DATA st=%u hdr=%u gpt=%x/%x lba=%llx",native_data_persist_state,native_data_persist_header,
     native_data_persist_gpt,native_data_persist_gpt_after,(unsigned long long)native_data_persist_first_lba);
 """, b"""  char a[48]={0},b[48]={0};
   const char *why = nuwa_data_persist_open_why;
-  snprintf(a,sizeof a,"DATA st=%u h=%u g=%x/%x why=%s l=%llx",
-    native_data_persist_state,native_data_persist_header,native_data_persist_gpt,
-    native_data_persist_gpt_after,why ? why : "-", (unsigned long long)native_data_persist_first_lba);
+  const char *views[] = {0, "seed", "ro", "rw", "iso"};
+  unsigned view = &native_data_persist_view ? __atomic_load_n(&native_data_persist_view,__ATOMIC_ACQUIRE) : 0;
+  if (view && view < sizeof views / sizeof views[0])
+    snprintf(a,sizeof a,"DATA v=%s st=%u g=%x/%x why=%s l=%llx",views[view],
+      native_data_persist_state,native_data_persist_gpt,native_data_persist_gpt_after,why ? why : "-",
+      (unsigned long long)native_data_persist_first_lba);
+  else
+    snprintf(a,sizeof a,"DATA st=%u h=%u g=%x/%x why=%s l=%llx",
+      native_data_persist_state,native_data_persist_header,native_data_persist_gpt,
+      native_data_persist_gpt_after,why ? why : "-", (unsigned long long)native_data_persist_first_lba);
 """)
 
 

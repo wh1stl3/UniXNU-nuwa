@@ -521,8 +521,11 @@ def persist_diag_link(r35, out, records, argv, env, data_candidate=False):
     require_pin(original, pin)
     require_pin(r35 / dest.name, pin)
     run([*archive_recipe["argv"][:2], dest, late_obj])
-    if definitions(dest) != definitions(original) + Counter({"_nuwa_data_persist_open_why": 1}):
-        raise SystemExit("RamBlock diagnostic archive definitions changed beyond the reason field")
+    added = Counter({"_nuwa_data_persist_open_why": 1})
+    if data_candidate:
+        added["_native_data_persist_view"] = 1
+    if definitions(dest) != definitions(original) + added:
+        raise SystemExit("RamBlock diagnostic archive definitions changed beyond the diagnostic fields")
     args = list(argv)
     force_at, = (i for i, arg in enumerate(args) if arg == f"-Wl,-force_load,{original}")
     args[force_at] = f"-Wl,-force_load,{dest}"
@@ -674,6 +677,11 @@ extern "C" int native_ufs_store_sync (void)
   return storeMode () == 2 && gHost.lock && dataProvider.sync ();
 }
 
+extern "C" int native_ufs_store_isolated (void)
+{
+  return retainedIsolationSnapshot();
+}
+
 ''' + text[write_end:]
     log_start = text.index('extern "C" int native_ufs_log_open ')
     log_end = text.index("// One read-only window of the root image", log_start)
@@ -730,7 +738,8 @@ extern "C" unsigned native_ufs_store_gpt_check (void)
     require_pin(Path(original), "150bc8439d365249a884033011ef255537618909f97c42fc9bdfad6476a89c75")
     dst = private / Path(original).name
     run([ar, mode, dst, late_obj, *members])
-    if definitions(dst) != definitions(Path(original)) + Counter({"_nuwa_ufs_desc_row": 1, "_nuwa_ufs_mode_row": 1}):
+    if definitions(dst) != definitions(Path(original)) + Counter({
+            "_nuwa_ufs_desc_row": 1, "_nuwa_ufs_mode_row": 1, "_native_ufs_store_isolated": 1}):
         raise SystemExit("restricted provider changed the retained archive export inventory")
     args = list(argv)
     at, = (i for i, arg in enumerate(args) if arg == f"-Wl,-force_load,{original}")

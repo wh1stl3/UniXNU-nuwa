@@ -2,6 +2,8 @@
 #include "../package/nuwa-data-write/DualBankLogOverlay.h"
 
 #include <array>
+#include <algorithm>
+#include <chrono>
 #include <cstdio>
 #include <cstdlib>
 #include <memory>
@@ -454,6 +456,47 @@ static void writeAmplification() {
   }
 }
 
+static void latency() {
+  using Clock = std::chrono::steady_clock;
+  constexpr uint32_t run = 32, samples = 5;
+  constexpr uint32_t pages = Full::LogBlocks * run;
+  Disk d;
+  Handle<Full> h;
+  const std::vector<Page> data(run, payload(777));
+  CHECK(h.open(d) == Full::Open::Empty);
+  for (uint32_t i = 0; i < Full::LogBlocks; ++i)
+    CHECK(h.overlay.writeRun(d, i * run, run, data.data()));
+  const auto measure = [](auto f) {
+    const auto before = Clock::now();
+    f();
+    return std::chrono::duration<double, std::milli>(Clock::now() - before).count();
+  };
+  std::array<double, samples> resume{}, checkpoint{}, steady{};
+  for (auto &sample : resume) {
+    sample = measure([&] { CHECK(h.open(d) == Full::Open::Resumed); });
+    CHECK(h.overlay.generation() == Full::LogBlocks && h.overlay.presentCount() == pages);
+  }
+  for (uint32_t i = 0; i < samples; ++i) {
+    d.arm(SIZE_MAX, Cut::Before);
+    checkpoint[i] = measure([&] { CHECK(h.overlay.writeRun(d, 0, run, data.data())); });
+    CHECK(d.writes == run + 130 && d.events.size() == d.writes + 4);
+    d.arm(SIZE_MAX, Cut::Before);
+    steady[i] = measure([&] { CHECK(h.overlay.writeRun(d, 0, run, data.data())); });
+    CHECK(d.writes == run + 1 && d.events.size() == d.writes + 2);
+    if (i + 1 != samples)
+      for (uint32_t j = 2; j < Full::LogBlocks; ++j)
+        CHECK(h.overlay.writeRun(d, 0, run, data.data()));
+  }
+  const auto print = [](const char *label, auto &values) {
+    std::sort(values.begin(), values.end());
+    std::printf("  %s (n=%u): p50=%.3f ms max=%.3f ms\n",
+                label, samples, values[samples / 2], values.back());
+  };
+  print("full-ring recovery (512 x 32 distinct pages)", resume);
+  print("32-page steady commit (33 writes, 2 barriers)", steady);
+  print("32-page checkpoint commit (162 writes, 4 barriers)", checkpoint);
+}
+
 int main() {
   const auto run = [](const char *name, void (*fn)()) {
     test = name;
@@ -473,4 +516,5 @@ int main() {
   run("ring wrap", wrap);
   run("fail-closed matrix", failClosed);
   run("write amplification", writeAmplification);
+  run("host recovery and checkpoint tail timings", latency);
 }

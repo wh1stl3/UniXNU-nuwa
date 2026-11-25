@@ -17,6 +17,16 @@ static bool retainedReadySnapshot() {
   return ready;
 }
 
+// Software-only status for RamBlock after an attributed store read failure.
+// This never enters RamBlock, polls hardware, or attempts recovery.
+static bool retainedIsolationSnapshot() {
+  if (!gHost.lock) return false;
+  IOLockLock(gHost.lock);
+  const bool isolated = gHost.poisoned || combined_state.quarantined || !retainedSlot.rootAllowed();
+  IOLockUnlock(gHost.lock);
+  return isolated;
+}
+
 static void blockRetainedHostLocked() {
   combined_state.quarantined = gHost.poisoned = true;
   gHost.ready = false;
