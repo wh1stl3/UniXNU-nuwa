@@ -54,6 +54,9 @@
 - crypto 事实：`CONFIG_XNU_CRYPTO_BOOTSTRAP="prelinked"`；`prng_random.o` 最终 `-U XNU_SOURCE_CORECRYPTO14`，当前 prelink 无 `_source_corecrypto14_bootstrap`，不能声称 console 后必经 source corecrypto EARLY_BOOT。不切换 crypto 模式。
 - 仍未验收：正常启动、平台服务发布、存储与用户态；内存所有权问题不因探针阳性自动关闭。ADT 身份/种子约定不变，root UUID 留待根卷阶段。`scripts/` 历史审计工具不再充当 ADT 生成器。
 
+## 下一步
+- 2026-11-25：lsd 崩溃分析冻结，主线转显示接线；下一版用已审的 pixsig 探针（outer `28d45ab6c3d7c5ec79cf14543af4836dadf04de7eddaa91fd876b36bc831dbcc`）区分 `bk` 清屏与 `so` 真 surface，再按结果决定是否处理 CA 软件后端、转换/扫描输出或 vsync。
+
 ## 阻塞
 - 卡点优先查 [已知差异与跨项目关停手段清单](docs/nuwa-open-deltas-20261125.md)。
 - 2026-11-22：持久 Data 与显示/交互仍受阻，认证 NOT REACHED；主控转述实机与深审、主机 self-checked，详见 [本轮结论](docs/nuwa-session-20261122-findings.md)。
