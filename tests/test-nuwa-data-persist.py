@@ -39,6 +39,7 @@ def main(base):
 #include <cstdio>
 #include <cstring>
 #include "{ROOT / 'package/nuwa-ramblock/PersistOpenReason.h'}"
+#include "{ROOT / 'package/nuwa-data-write/DualBankLogOverlay.h'}"
 #include "{overlay}"
 struct {{ bool ready; }} gHost;
 static uint32_t requested_mode;
@@ -107,6 +108,12 @@ int main() {{
   expect("ok", blocks, 1);
   assert(lba == 59491258 && lba + blocks == 61588475);
   assert(lba - first - image_bytes / 4096 == 54318202);
+  gStoreRegionBlocks = 0;
+  using DualBank = NuwaData::DualBankLogOverlay<>;
+  const uint64_t dual = DualBank::overlayBlocks(pages);
+  assert(dual == 4195074);
+  expect("ok", dual, 1); // same end-anchoring formula; mode 2 stays refused
+  assert(lba == DualBank::Media.first && lba + dual == 61588475);
   native_data_persist_first_lba = UINT64_MAX;
   native_data_persist_gpt = 0xff;
   ext_data_rows();
