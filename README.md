@@ -161,6 +161,7 @@ python3 scripts/porting-record.py check --device .
 
 ## 文档
 
+- Data 双槽与只读门禁集成候选：[设计与主机结果](docs/nuwa-data-write-design-20261125.md)。
 - 移植流程：<https://unixnu.com/zh/porting/steps>
 - 设备仓规范：<https://unixnu.com/zh/porting/device-repository>
 - 迁移指南：<https://unixnu.com/zh/porting/migration>

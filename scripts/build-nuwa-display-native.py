@@ -13,6 +13,7 @@ import json
 import os
 from pathlib import Path
 import shlex
+import zlib
 import shutil
 import struct
 import subprocess
@@ -405,7 +406,7 @@ def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False, pixsig
     return staged
 
 
-def persist_diag_link(r35, out, records, argv, env):
+def persist_diag_link(r35, out, records, argv, env, data_candidate=False):
     recipe, = (r for r in records if r["label"] == "compile-NativeRamBlock" and r["exit"] == 0)
     archive_recipe, = (r for r in records if r["label"] == "archive-NativeRamBlock" and r["exit"] == 0)
     command = list(recipe["argv"])
@@ -413,6 +414,8 @@ def persist_diag_link(r35, out, records, argv, env):
     command[at] = str(ROOT / "package/nuwa-ramblock/NativeRamBlock.cpp")
     obj = out / "NativeRamBlock.o"
     command[command.index("-o") + 1] = str(obj)
+    if data_candidate:
+        command.append("-DNUWA_DATA_CANDIDATE=1")
     (out / "ramblock-argv.json").write_text(json.dumps(command, indent=2) + "\n")
     with (out / "compile-NativeRamBlock.log").open("wb") as log:
         subprocess.run(command, cwd=recipe["cwd"], env=env, stdout=log, stderr=subprocess.STDOUT, check=True)
@@ -443,10 +446,98 @@ def persist_diag_link(r35, out, records, argv, env):
     return args
 
 
+def data_candidate_link(out, argv, env, gpt):
+    root = ROOT / "out/nuwa-ufs-apfs-root-integration-20261114/run-r5-visible-candidate"
+    source = root / "source/NativeUfs.cpp"
+    require_pin(source, "bb994c583382755ddfae954b23aff94d77a97428c7c933232b574ad3cd64b2bf")
+    require_pin(source.with_name("RootCommands.h"), "a16e55e1c1b3665231ec5d4c07fe9b1cdeb7edf834bd48f79e3aa80d6f8fa13a")
+    raw = gpt.read_bytes()
+    h, table = raw[4096:8192], raw[8192:12288]
+    u = table[31 * 128:]
+
+    def num(buf, pos, width=8):
+        return int.from_bytes(buf[pos:pos + width], "little")
+
+    if (len(table) != 4096 or h[:8] != b"EFI PART" or
+            (num(h, 8, 4), num(h, 12, 4), num(h, 24), num(h, 32), num(h, 40),
+             num(h, 48), num(h, 72), num(h, 80, 4), num(h, 84, 4),
+             num(u, 32), num(u, 40)) !=
+            (0x10000, 92, 1, 61850623, 6, 61850618, 2, 32, 128, 3110976, 61850618) or
+            zlib.crc32(h[:16] + b"\0"*4 + h[20:92]) != num(h, 16, 4) or
+            zlib.crc32(table) != num(h, 88, 4) or
+            u[56:128] != "userdata".encode("utf-16-le").ljust(72, b"\0") or
+            not all(any(x) for x in (h[56:72], u[:16], u[16:32]))):
+        raise SystemExit("local nuwa GPT identity capture failed validation")
+    private = out / "nuwa-data-provider"
+    private.mkdir()
+    code = ROOT / "package/nuwa-data-write"
+    guids = ", ".join("{" + ",".join(map(str, value)) + "}" for value in (h[56:72], u[:16], u[16:32]))
+    text = source.read_text()
+
+    def replace(old, new):
+        nonlocal text
+        if text.count(old) != 1:
+            raise SystemExit("unexpected retained provider splice anchor")
+        text = text.replace(old, new)
+
+    text = f'#include "{code / "Provider.h"}"\n' + text
+    replace("\nStoreGeometry gStoreGeometry;", "\nStoreGeometry gStoreGeometry;\n"
+            "static constexpr NuwaData::GptIdentity nuwaDataIdentity = "
+            "{61850624, 6, 61850618, 3110976, 61850618, " + guids + "};\n"
+            f'#include "{code / "KernelPort.inc"}"')
+    replace("!hostStoreOpen (first, blocks)", "!openCandidateData (first, blocks, reserve)")
+    replace("  if (!gStoreRegionBlocks || !dst || !blocks || rel >= gStoreRegionBlocks || blocks > gStoreRegionBlocks - rel) return 0;",
+            "  if (storeMode () == 2) return gHost.lock && dataProvider.read (rel, blocks, dst);\n"
+            "  if (!gStoreRegionBlocks || !dst || !blocks || rel >= gStoreRegionBlocks || blocks > gStoreRegionBlocks - rel) return 0;")
+    write_start = text.index('extern "C" int native_ufs_store_write ')
+    write_end = text.index("// ---- Read-only access", write_start)
+    text = text[:write_start] + '''extern "C" int native_ufs_store_write (uint64_t rel, uint32_t blocks, const void *src)
+{
+  return storeMode () == 2 && gHost.lock && dataProvider.write (rel, blocks, src);
+}
+
+extern "C" int native_ufs_store_sync (void)
+{
+  return storeMode () == 2 && gHost.lock && dataProvider.sync ();
+}
+
+''' + text[write_end:]
+    staged = private / source.name
+    staged.write_text(text)
+    records = json.loads((root / "commands.json").read_text())
+    recipe, = (r for r in records if r["label"] == "driver-compile" and r["exit"] == 0)
+    command = list(recipe["argv"])
+    at, = (i for i, arg in enumerate(command) if arg.endswith("/source/NativeUfs.cpp"))
+    command[at] = str(staged)
+    obj = private / "NativeUfs.o"
+    command[command.index("-o") + 1] = str(obj)
+    command.extend(("-I", str(source.parent), "-Wno-unused-function"))
+    with (out / "compile-data-provider.log").open("wb") as log:
+        subprocess.run(command, cwd=recipe["cwd"], env=env, stdout=log, stderr=subprocess.STDOUT, check=True)
+    spec = importlib.util.spec_from_file_location("ufs_late", ROOT / "scripts/build-nuwa-platform-power.py")
+    late = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(late)
+    late.INIT_NAME = "__GLOBAL__sub_I_NativeUfs.cpp"
+    late_obj = private / "NativeUfs.late.o"
+    late.late_transform(obj, late_obj, late.INIT_NAME)
+    late.verify_late(late_obj.read_bytes())
+    rec, = (r for r in records if r["label"] == "ufs-archive" and r["exit"] == 0)
+    ar, mode, original, _, *members = rec["argv"]
+    require_pin(Path(original), "150bc8439d365249a884033011ef255537618909f97c42fc9bdfad6476a89c75")
+    dst = private / Path(original).name
+    run([ar, mode, dst, late_obj, *members])
+    if definitions(dst) != definitions(Path(original)):
+        raise SystemExit("restricted provider changed the retained archive export inventory")
+    args = list(argv)
+    at, = (i for i, arg in enumerate(args) if arg == f"-Wl,-force_load,{original}")
+    args[at] = f"-Wl,-force_load,{dst}"
+    return args
+
+
 def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
                keep_link_debug, bringup_diag=False, hid_objects=(), mg_reset=False,
                smp_gate=False, smp_observe=False, crashcap=False, pixsig=False,
-               data_persist=False, base=None):
+               data_persist=False, data_gpt=None, base=None):
     for name, pin in (R35L_PINS if bringup_diag else R35_PINS).items():
         require_pin(r35 / name, pin)
     require_pin(cpo, R35_CPO_SHA)
@@ -521,7 +612,9 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
                                 data_persist=data_persist)
             argv[force_at] = f"-Wl,-force_load,{diag}"
         if data_persist:
-            argv = persist_diag_link(r35, out, records, argv, env)
+            argv = persist_diag_link(r35, out, records, argv, env, data_candidate=data_gpt is not None)
+        if data_gpt is not None:
+            argv = data_candidate_link(out, argv, env, data_gpt)
         argv = [*argv, "-Wl,-ignore_optimization_hints", f"-Wl,-force_load,{archive}", *map(str, hid_objects)]
         if not candidate or keep_link_debug:
             return link("native-link", native, argv)
@@ -750,6 +843,8 @@ def main():
                    help="add bounded CPU source pixel diagnostics to the crashframes replay")
     p.add_argument("--data-persist-diag", action="store_true",
                    help="show the unchanged Data store open's reason in the PIX candidate")
+    p.add_argument("--data-candidate-gpt", type=Path,
+                   help="link the write-disabled v2 Data candidate using this local 4 KiB GPT capture")
     p.add_argument("--candidate", action="store_true",
                    help="apply device hooks and write the r35-display diagnostic kernel")
     p.add_argument("--r35l-dir", type=Path,
@@ -801,6 +896,8 @@ def main():
         p.error("--pixsig requires --crashcap and --no-software-vsync")
     if a.data_persist_diag and not (a.pixsig and not a.smp_gate):
         p.error("--data-persist-diag requires --pixsig and the single-core candidate")
+    if a.data_candidate_gpt and not a.data_persist_diag:
+        p.error("--data-candidate-gpt requires --data-persist-diag")
     out.mkdir(parents=True, exist_ok=False)
     donor = base / "out/ipsw/20H392/kernelcache.decompressed"
     hid_objects = []
@@ -831,7 +928,8 @@ def main():
                               keep_link_debug=a.keep_link_debug, bringup_diag=bool(a.r35l_dir),
                               hid_objects=hid_objects, mg_reset=a.mg_reset,
                               smp_gate=a.smp_gate, smp_observe=a.smp_observe, crashcap=a.crashcap,
-                              pixsig=a.pixsig, data_persist=a.data_persist_diag, base=base)
+                              pixsig=a.pixsig, data_persist=a.data_persist_diag,
+                              data_gpt=a.data_candidate_gpt, base=base)
     else:
         # Replay XNU's exported link inputs, without its historical map output.
         stem = "mach.development.bcm2837"

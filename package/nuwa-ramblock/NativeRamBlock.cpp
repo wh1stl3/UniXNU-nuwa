@@ -19,6 +19,9 @@
 #include "PersistOverlay.h"
 #include "DirectDisk.h"
 #include "PersistOpenReason.h"
+#if defined(NUWA_DATA_CANDIDATE)
+#include "../nuwa-data-write/Overlay.h"
+#endif
 
 extern "C" {
 extern unsigned long gPhysBase, gPhysSize;
@@ -77,6 +80,12 @@ class NativeRamBlock : public IOBlockStorageDevice {
   // Direct mode (the store is open read-write): changed pages live in the store window only, never in RAM; reads of them go to the
   // window. A failed store write stops all further writes (a page the system was told is written must be on the medium).
   bool direct = false, directFailed = false;
+#if defined(NUWA_DATA_CANDIDATE)
+  NuwaData::Overlay dataOverlay;
+  size_t dataMapBytes = 0;
+  uint8_t *dataMaps = nullptr;
+  uint8_t *dataScratch = nullptr;
+#endif
   struct StoreOps {
     bool read(uint64_t b, uint32_t n, void *d) { __atomic_fetch_add(&native_data_persist_loaded, n, __ATOMIC_RELAXED); return native_ufs_store_read(b, n, d); }
     bool write(uint64_t b, uint32_t n, const void *s) { return native_ufs_store_write(b, n, s); }
@@ -103,13 +112,39 @@ public:
       const char *why = "";
       native_data_persist_pages = pages;
       native_data_persist_gpt = native_ufs_store_gpt_check();
-      int opened = native_ufs_store_open(persist::windowBlocks(pages), &first, &why);
+      uint64_t window = persist::windowBlocks(pages);
+#if defined(NUWA_DATA_CANDIDATE)
+      if (mode == 2) window = NuwaData::overlayBlocks(pages);
+#endif
+      int opened = native_ufs_store_open(window, &first, &why);
       nuwa_data_persist_open_why = nuwa_persist_open_reason(opened, why);
       if (!opened) {
         native_data_persist_state = 4;
         IOLog("NativeRamBlock: persistent store refused: %s\n", why);
       } else {
         native_data_persist_first_lba = first;
+#if defined(NUWA_DATA_CANDIDATE)
+        if (mode == 2) {
+          // Once a window is attached, never use the seed-only path for
+          // damaged, foreign, or indeterminate overlay state.
+          direct = true;
+          dataMapBytes = 2 * NuwaData::bitmapBlocks(pages) * NuwaData::Block;
+          dataMaps = static_cast<uint8_t *>(IOMallocZero(dataMapBytes));
+          dataScratch = static_cast<uint8_t *>(IOMallocZero(NuwaData::Block));
+          stage = static_cast<uint8_t *>(IOMallocZero(kStagePages * NuwaData::Block));
+          StoreOps ops;
+          auto result = stage && dataScratch && dataMaps
+                      ? dataOverlay.open(ops, pages, seedHash, dataMaps, dataScratch, true, discardRequested())
+                      : NuwaData::Overlay::Open::Failed;
+          directFailed = result == NuwaData::Overlay::Open::Failed;
+          native_data_persist_state = directFailed ? 4 :
+                                      result == NuwaData::Overlay::Open::Empty ? 1 :
+                                      dataOverlay.writable() ? 2 : 6;
+          native_data_persist_gpt_after = native_ufs_store_gpt_check();
+          IOLockUnlock(gate);
+          return;
+        }
+#endif
         uint64_t bb = persist::bitmapBlocks(pages);
         overlayBits = static_cast<uint8_t *>(IOMallocZero(bb * persist::kBlock));
         stage = static_cast<uint8_t *>(IOMallocZero(kStagePages * persist::kBlock));
@@ -353,6 +388,40 @@ IOReturn NativeRamBlock::doAsyncReadWrite(IOMemoryDescriptor *buffer, UInt64 blo
         uint64_t copy(uint64_t at,const void *p,uint64_t n){return buffer->writeBytes(at,p,n);}
       } bops={buffer};
       StoreOps store;bool storeError=false;
+      #if defined(NUWA_DATA_CANDIDATE)
+      actual = 0;
+      const uint64_t offset = block * 512;
+      while (!directFailed && actual < bytes) {
+        uint64_t at = offset + actual, page = at / NuwaData::Block, skip = at % NuwaData::Block;
+        uint64_t n = NuwaData::Block - skip;
+        if (n > bytes - actual) n = bytes - actual;
+        if (dataOverlay.has(page)) {
+          if (!dataOverlay.read(store, page, stage)) { storeError = true; break; }
+        } else {
+          const uint8_t *seed = isBig ? big.find(page) : sparse.find(page);
+          if (seed) memcpy(stage, seed, NuwaData::Block);
+          else memset(stage, 0, NuwaData::Block);
+        }
+        if (write) {
+          if (bops.read(actual, stage + skip, n) != n) break;
+          if (!dataOverlay.writeRun(store, page, 1, stage)) {
+            storeError = !dataOverlay.ready();
+            break;
+          }
+          actual += n;
+          __atomic_fetch_add(&native_data_persist_writes, 1, __ATOMIC_RELAXED);
+          __atomic_fetch_add(&native_data_persist_syncs, 1, __ATOMIC_RELAXED);
+        } else {
+          const uint64_t got = bops.copy(actual, stage + skip, n);
+          actual += got;
+          if (got != n) break;
+        }
+      }
+      if (storeError) {
+        directFailed = true;
+        native_data_persist_state=5;__atomic_fetch_add(&native_data_persist_errors,1,__ATOMIC_RELAXED);
+      }
+      #else
       if(write && directFailed)actual=0;
       else actual=isBig?directDiskIO(big,overlay,store,stage,kStagePages,write,block*512,bytes,bops,&storeError)
                        :directDiskIO(sparse,overlay,store,stage,kStagePages,write,block*512,bytes,bops,&storeError);
@@ -361,6 +430,7 @@ IOReturn NativeRamBlock::doAsyncReadWrite(IOMemoryDescriptor *buffer, UInt64 blo
         native_data_persist_state=5;__atomic_fetch_add(&native_data_persist_errors,1,__ATOMIC_RELAXED);
       }
       if(write && actual){__atomic_fetch_add(&native_data_persist_writes,(actual+4095)/4096,__ATOMIC_RELAXED);__atomic_fetch_add(&native_data_persist_syncs,1,__ATOMIC_RELAXED);native_data_persist_present=overlay.present;}
+      #endif
     } else {
     actual=ramSparseIO(sparse,write,block*512,bytes,ops,noMemory);
     }
@@ -402,6 +472,10 @@ void NativeRamBlock::stop(IOService *provider)
 
 void NativeRamBlock::free()
 {
+#if defined(NUWA_DATA_CANDIDATE)
+  if (dataMaps) { IOFree(dataMaps, dataMapBytes); dataMaps = nullptr; }
+  if (dataScratch) { IOFree(dataScratch, NuwaData::Block); dataScratch = nullptr; }
+#endif
   if (overlayBits) { IOFree(overlayBits, persist::bitmapBlocks(sparse.bytes / 4096) * persist::kBlock); overlayBits = nullptr; }
   if (stage) { IOFree(stage, kStagePages * persist::kBlock); stage = nullptr; }
   if (isBig) {
