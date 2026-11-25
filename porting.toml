@@ -186,6 +186,7 @@ inputs = ["Identify the display hardware, resources and existing component inter
 configuration = ["Record the board.toml fields, DTS properties and defconfig values used for display."]
 procedure = ["Follow the display stage in the porting guide and record the actual commands."]
 findings = [
+  "2026-11-25 reviewer display acceptance plan: INSUFFICIENT EVIDENCE; CHANGES REQUIRED. Known-frame photography and correlated per-request lifecycle, notification and timing evidence are pending; no device run. See docs/nuwa-display-acceptance-20261125.md.",
   "2026-11-25 official display acceptance is not met: parent-reported transport smoke only, reg=2 cli=4 vo=6 vb=0 co=6 cb=0 ret=6; co may include clears. No evidence of a known frame actually displayed, closed IOSurface lifetime and swap completion notification, or requested refresh rate and measured frame timing. bk/so/PIX split diagnostics are not acceptance criteria; self-checked record.",
   "Official display acceptance requires XNU to publish the display service; CPU presentation to confirm pixel layout, row stride, allocation size and cache handling and actually display a known frame; swap completion; closed IOSurface lifetime and swap completion notification; and separate requested refresh rate and measured frame timing records. Enable GPU presentation only after all these items are complete.",
   "2026-11-25 direction: freeze lsd crash analysis and focus on display wiring; next use reviewed pixsig outer 28d45ab6c3d7c5ec79cf14543af4836dadf04de7eddaa91fd876b36bc831dbcc to distinguish bk clears from so real surfaces, then decide between CA software backend, conversion/scanout or vsync investigation. No new device run.",
@@ -243,6 +244,7 @@ completion = ["A known frame appears with correct geometry and colors, then user
 limits = ["Hardware inputs and implementation are pending for nuwa."]
 next_action = ["Keep runtime gated until the 20H392 329/330 request lifecycle, actual userspace timer selection and strict Libm evidence gate are qualified; see sections 16 and 23 of docs/nuwa-display-abi-20261120.md."]
 evidence = [
+  { kind = "source", reference = "docs/nuwa-display-acceptance-20261125.md", result = "Parent-reported reviewer acceptance plan and stop conditions; self-checked record only, no ABI qualification or device acceptance." },
   { kind = "source", reference = "https://github.com/UniXNU/UniXNU/blob/693f5d9cae8a408dd18b39f3f9fdc4228c934241/docs/zh/porting/display.md#L30-L56", result = "Official display workflow and expected results; the acceptance record additionally applies the user-directed gate that all listed items precede GPU presentation." },
   { kind = "source", reference = "AGENTS.md", result = "Parent-reported transport smoke reg=2 cli=4 vo=6 vb=0 co=6 cb=0 ret=6 and acceptance gaps; no new device observation, self-checked record." },
   { kind = "source", reference = "docs/nuwa-lsd-crash-pc-20261125.md", result = "PC/LR symbolization record supporting the decision to freeze lsd crash analysis; no new device run." },

@@ -6,6 +6,7 @@
 小米 13 Pro（nuwa / SM8550）通过 UniXNU 运行 iOS 16（donor: iPhone10,3 / 16.7.16 / 20H392，xnu-8796 线）。
 
 ## 基线
+- 2026-11-25 显示验收方案（INSUFFICIENT EVIDENCE，reviewer 转述 / self-checked）：[记录](docs/nuwa-display-acceptance-20261125.md)。
 - **显示官方验收尚未通过**：以 `UniXNU/docs/zh/porting/display.md:30–56` 为准：XNU 发布显示服务；CPU 路径确认像素布局、行跨度、分配大小及缓存处理并实际显示已知画面；交换完成；IOSurface 生命周期与交换完成通知闭合；分别记录请求刷新率及实测帧时序；全部完成后才启用 GPU 呈现。
 - 当前仅传输链路冒烟（主控转述 / self-checked：`reg=2 cli=4 vo=6 vb=0 co=6 cb=0 ret=6`）；`co` 可能含清屏，缺已知画面显示、IOSurface 生命周期/通知闭环及请求刷新率/实测帧时序证据；`bk/so/PIX` 仅诊断拆分，不是验收标准。
 - 2026-11-25 PIX 源像素签名候选，仅主机 self-checked，未刷写：[记录](docs/nuwa-pixsig-20261125.md)。
