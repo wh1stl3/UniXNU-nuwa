@@ -81,6 +81,7 @@ def main():
     profile = ap.add_mutually_exclusive_group()
     profile.add_argument("--crashframes", action="store_true", help="use the pinned DSP counter outer")
     profile.add_argument("--pixsig", action="store_true", help="use the pinned crashframes outer")
+    profile.add_argument("--stage-channel", action="store_true", help="use the pinned PIX outer and keep STAGE dormant")
     profile.add_argument("--data-persist-diag", action="store_true", help="use the pinned PIX outer")
     ap.add_argument("--audit-only", action="store_true", help="read an existing outer and compare all FAT files")
     a = ap.parse_args()
@@ -90,7 +91,7 @@ def main():
     assert kernel.is_relative_to(ROOT / "out") and kernel.name == "kernel.macho"
     new_kernel = kernel.read_bytes()
     template, template_sha, template_chmh = (
-        (PIX_OUTER, PIX_SHA, PIX_CHMH) if a.data_persist_diag else
+        (PIX_OUTER, PIX_SHA, PIX_CHMH) if a.data_persist_diag or a.stage_channel else
         (FRAME_OUTER, FRAME_SHA, FRAME_CHMH) if a.pixsig else
         (DSP_OUTER, DSP_SHA, DSP_CHMH) if a.crashframes else (OLD, ROLLBACK, OLD_CHMH))
     old_outer = pinned(template / "vendor_boot.img", template_sha)
@@ -112,6 +113,8 @@ def main():
     for token in (b"nuwa-sb-stack=900", b"disable-jobs=com.apple.iconservices.iconservicesagent"):
         assert tokens.count(token) == 1
     assert not any(t.split(b"=", 1)[0] == b"sheng-smp" for t in tokens)
+    if a.stage_channel:
+        assert not any(t.split(b"=", 1)[0] == b"nuwa-init" for t in tokens)
     if a.data_persist_diag:
         assert not any(t.split(b"=", 1)[0] == b"sheng-data-reset" for t in tokens)
         for token in (b"sheng-data-persist=2", b"sheng-log-reserve=1024"):

@@ -531,6 +531,68 @@ def data_persist_row(src):
 """)
 
 
+def stage_channel(src):
+    src = replace_once(src, b"#include <kern/boot_progress.h>\n", b"""#include <kern/boot_progress.h>
+#include <kern/locks.h>
+#include <mach/thread_info.h>
+""")
+    exit_hook = b"void boot_progress_exit(int pid,const char *name,int status,unsigned ns,uint64_t code) {\n"
+    src = replace_once(src, exit_hook, b"""// The channel owns one thread reference until replacement or process exit.
+static LCK_GRP_DECLARE(stage_group, "nuwa-display-stage");
+static LCK_MTX_DECLARE(stage_lock, &stage_group);
+static thread_t stage_thread;
+static unsigned stage_pid;
+
+void boot_progress_stage_publish(unsigned pid, struct thread *thread);
+void boot_progress_stage_publish(unsigned pid, struct thread *thread) {
+  thread_reference(thread);
+  lck_mtx_lock(&stage_lock);
+  thread_t old=stage_thread;
+  stage_thread=thread;
+  __atomic_store_n(&stage_pid,pid,__ATOMIC_RELEASE);
+  lck_mtx_unlock(&stage_lock);
+  if(old) thread_deallocate(old);
+}
+
+static unsigned bp_stage_name(char name[MAXTHREADNAMESIZE]) {
+  if(!__atomic_load_n(&stage_pid,__ATOMIC_ACQUIRE)) return 0;
+  lck_mtx_lock(&stage_lock);
+  unsigned pid=__atomic_load_n(&stage_pid,__ATOMIC_RELAXED);
+  if(pid) thread_get_thread_name(stage_thread,name);
+  lck_mtx_unlock(&stage_lock);
+  // XNU thread names are best-effort samples; hash and print the same prefix.
+  name[40]='\\0';
+  for(unsigned i=0;name[i];++i)
+    if((unsigned char)name[i]<32 || (unsigned char)name[i]>126) name[i]='?';
+  return name[0] ? pid : 0;
+}
+
+""" + exit_hook + b"""  if((unsigned)pid==__atomic_load_n(&stage_pid,__ATOMIC_ACQUIRE) && pid>0) {
+    lck_mtx_lock(&stage_lock);
+    thread_t old=stage_thread;
+    stage_thread=THREAD_NULL;
+    __atomic_store_n(&stage_pid,0,__ATOMIC_RELEASE);
+    lck_mtx_unlock(&stage_lock);
+    if(old) thread_deallocate(old);
+  }
+""")
+    src = replace_once(src, b"  if(signature==banner_signature)return;\n", b"""  char stage_name[MAXTHREADNAMESIZE]={0};
+  unsigned stage=bp_stage_name(stage_name);
+  if(stage) {
+    uint64_t stage_sig=stage;
+    for(unsigned i=0;stage_name[i];++i)
+      stage_sig=stage_sig*131ULL+(unsigned char)stage_name[i];
+    signature+=stage_sig;
+  }
+  if(signature==banner_signature)return;
+""")
+    src = replace_once(src, b"  // Presentation cost: swaps in the last second",
+        b"""  if(stage) snprintf(rows[n++],120,"STAGE pid=%u name=%.40s",stage,stage_name);
+  // Presentation cost: swaps in the last second""")
+    return replace_once(src, b'!strncmp(s,"LOAD",4)) return 0;',
+                        b'!strncmp(s,"STAGE ",6) || !strncmp(s,"LOAD",4)) return 0;')
+
+
 def generate(src, *, mg_reset=False, smp_observe=False, pixsig=False):
     if sha256(src).hexdigest() != RENDERER_SHA:
         raise ValueError("expected the pinned r35l full renderer")

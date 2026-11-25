@@ -49,6 +49,9 @@ LINKER_SHA = "4f8a881dd4e4c1ff29c217a67bfd265582c1fb3bfebf989fdf5a3a4d9ba390a9"
 R35_BSD_SHA = "a6cbabcb09456936471bb8d9bceb93e9b9257c3dc6025f57c21005286245b4bc"
 R35_BUILD_SHA = "c2e8bcc0aae8a6736592079b4f0bd1fba9032490ddfa432f30df9e6fbc619979"
 R35_PROVENANCE_SHA = "1183fe650735557053d09ef8de36ce9d689fe0b5b2f85acc677a0fb544a8d62d"
+R35L_EXEC_SHA = "18943db0ecb642fdf64626b489a6657ea53ab39baa078c126b184cf9a8e7bd1b"
+R35L_EXEC_OBJECT_SHA = "e9d5f1552d1606ba8f6a7ad4f288cde700c61c23daa7c997b19911da5cff7ca3"
+STAGE_PATCH = ROOT / "patches/xnu/8796-nuwa-boot-progress.patch"
 EARLY_COUNTERS = ("_native_legacy_early_failures", "_native_legacy_early_retires")
 HOOKS = ("8796-offline-legacy-display-early.patch", "8796-offline-legacy-display-late.patch")
 # SMP bring-up gate (--smp-gate): the reset-vector affinity fix and the one-secondary admission.
@@ -258,8 +261,69 @@ def smp_gate_link(base, out, cwd, filelist, argv, *, smp_observe):
     return filelist
 
 
+def stage_sources(patch, source, header):
+    """Replay only the new additions onto the already-patched r35l tree."""
+    from generate_r35_display_diag import replace_once
+
+    def addition(start, end):
+        first = patch.splitlines(keepends=True)
+        a, = (i for i, line in enumerate(first) if line == b"+" + start + b"\n")
+        b = first.index(b"+" + end + b"\n", a + 1)
+        if not all(line.startswith(b"+") for line in first[a:b + 1]):
+            raise ValueError("stage-channel patch block contains non-additions")
+        return b"".join(line[1:] for line in first[a:b + 1])
+
+    hook = addition(b"#if defined(XNU_BOOT_PROGRESS) && XNU_BOOT_PROGRESS && defined(XNU_NUWA_STAGE_CHANNEL)",
+                    b"#endif /* XNU_NUWA_STAGE_CHANNEL */")
+    declaration = addition(b"#if defined(XNU_NUWA_STAGE_CHANNEL)", b"#endif")
+    point = b"\t\terror = proc_process_signature(p, &signature_failure_reason);\n"
+    return (replace_once(source, point, hook + point),
+            replace_once(header, b"#else\n", declaration + b"#else\n"))
+
+
+def stage_exec_link(r35, out, records, filelist, env):
+    recipe, = (r for r in records if r["label"] == "compile-kern_exec" and r["exit"] == 0)
+    command = list(recipe["argv"])
+    source_at, = (i for i, arg in enumerate(command) if arg.endswith("/tree/bsd/kern/kern_exec.c"))
+    original = Path(command[source_at])
+    recorded_tree = original.parents[2]
+    output_at = command.index("-o") + 1
+    old_obj = Path(command[output_at])
+    for location in (original, r35 / original.relative_to(recorded_tree.parent)):
+        require_pin(location, R35L_EXEC_SHA)
+    for location in (old_obj, r35 / old_obj.name):
+        require_pin(location, R35L_EXEC_OBJECT_SHA)
+    old_line = str(old_obj) + "\n"
+    if filelist.splitlines(keepends=True).count(old_line) != 1:
+        raise SystemExit("expected one pinned kern_exec.o in the native filelist")
+
+    work = out / "tree"
+    header = Path("osfmk/kern/boot_progress.h")
+    staged_source = work / original.relative_to(recorded_tree)
+    staged_header = work / header
+    staged_source.parent.mkdir(parents=True, exist_ok=True)
+    staged_header.parent.mkdir(parents=True, exist_ok=True)
+    require_pin(recorded_tree / header, digest(r35 / "tree" / header))
+    src, hdr = stage_sources(STAGE_PATCH.read_bytes().replace(b"\r\n", b"\n"), original.read_bytes(),
+                             (recorded_tree / header).read_bytes())
+    staged_source.write_bytes(src)
+    staged_header.write_bytes(hdr)
+
+    obj = out / old_obj.name
+    command[source_at] = str(staged_source)
+    command[output_at] = str(obj)
+    include_at, = (i for i in range(1, len(command)) if command[i - 1] == "-I"
+                   and command[i] == str(recorded_tree / "osfmk"))
+    command[include_at - 1:include_at - 1] = ["-I", str(work / "osfmk")]
+    command += [f"-ffile-prefix-map={work}={recorded_tree}", "-DXNU_NUWA_STAGE_CHANNEL=1"]
+    (out / "kern-exec-argv.json").write_text(json.dumps(command, indent=2) + "\n")
+    subprocess.run(command, cwd=recipe["cwd"], env=env, check=True)
+    return filelist.replace(old_line, str(obj) + "\n", 1)
+
+
 def candidate_link(r35, out, records, argv, env, *, bringup_diag, hid, mg_reset,
-                   smp_gate=False, smp_observe=False, crashcap=False, base=None, cwd=None):
+                    smp_gate=False, smp_observe=False, crashcap=False, stage=False,
+                    base=None, cwd=None):
     recipe, = [r for r in records if r["label"] == "compile-bsd_init" and r["exit"] == 0]
     command = list(recipe["argv"])
     source = r35 / "tree/bsd/kern/bsd_init.c"
@@ -361,6 +425,8 @@ def candidate_link(r35, out, records, argv, env, *, bringup_diag, hid, mg_reset,
         if base is None or cwd is None:
             raise SystemExit("--smp-gate requires the base checkout and the XNU build cwd")
         filelist = smp_gate_link(base, out, cwd, filelist, argv, smp_observe=smp_observe)
+    if stage:
+        filelist = stage_exec_link(r35, out, records, filelist, env)
     dest = out / "link.filelist"
     dest.write_text(filelist)
     adjusted = list(argv)
@@ -369,8 +435,8 @@ def candidate_link(r35, out, records, argv, env, *, bringup_diag, hid, mg_reset,
 
 
 def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False, pixsig=False,
-                 data_persist=False):
-    from generate_r35_display_diag import generate, data_persist_row
+                 data_persist=False, stage=False):
+    from generate_r35_display_diag import generate, data_persist_row, stage_channel
 
     source = out / "BootProgress.c"
     text = generate((r35 / "BootProgress.c").read_bytes(),
@@ -381,6 +447,8 @@ def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False, pixsig
         text = generate_banner(text)
     if data_persist:
         text = data_persist_row(text)
+    if stage:
+        text = stage_channel(text)
     source.write_bytes(text)
     shutil.copyfile(r35 / "BootProgressDisplay.h", out / "BootProgressDisplay.h")
     if pixsig:
@@ -396,6 +464,8 @@ def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False, pixsig
     expected = definitions(r35 / staged.name) + Counter({DSP_SET: 1, "_boot_progress_prop_set": 1})
     if crashcap:
         expected["_boot_progress_lsd_crash"] = 1
+    if stage:
+        expected["_boot_progress_stage_publish"] = 1
     if hid:
         for name in ("seq", "count", "xs", "ys"):
             require = expected.pop(f"_native_touch_{name}", 0)
@@ -640,7 +710,7 @@ extern "C" unsigned native_ufs_store_gpt_check (void)
 def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
                keep_link_debug, bringup_diag=False, hid_objects=(), mg_reset=False,
                smp_gate=False, smp_observe=False, crashcap=False, pixsig=False,
-               data_persist=False, data_gpt=None, base=None):
+               data_persist=False, data_gpt=None, stage=False, base=None):
     for name, pin in (R35L_PINS if bringup_diag else R35_PINS).items():
         require_pin(r35 / name, pin)
     require_pin(cpo, R35_CPO_SHA)
@@ -707,12 +777,12 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
             argv = candidate_link(r35, out, records, argv, env, bringup_diag=bringup_diag,
                                   hid=bool(hid_objects), mg_reset=mg_reset,
                                   smp_gate=smp_gate, smp_observe=smp_observe, crashcap=crashcap,
-                                  base=base, cwd=cwd)
+                                  stage=stage, base=base, cwd=cwd)
         if bringup_diag:
             argv = list(argv)
             diag = diag_archive(r35, out, hid=bool(hid_objects), mg_reset=mg_reset,
-                                smp_observe=smp_observe, crashcap=crashcap, pixsig=pixsig,
-                                data_persist=data_persist)
+                                 smp_observe=smp_observe, crashcap=crashcap, pixsig=pixsig,
+                                 data_persist=data_persist, stage=stage)
             argv[force_at] = f"-Wl,-force_load,{diag}"
         if data_persist:
             argv = persist_diag_link(r35, out, records, argv, env, data_candidate=data_gpt is not None)
@@ -944,6 +1014,8 @@ def main():
                    help="compile out the GOP software timer lifecycle (requires --cpu-only)")
     p.add_argument("--pixsig", action="store_true",
                    help="add bounded CPU source pixel diagnostics to the crashframes replay")
+    p.add_argument("--stage-channel", action="store_true",
+                   help="add the default-off initproc thread-name row to the PIX candidate")
     p.add_argument("--data-persist-diag", action="store_true",
                    help="show the unchanged Data store open's reason in the PIX candidate")
     p.add_argument("--data-candidate-gpt", type=Path,
@@ -997,6 +1069,8 @@ def main():
         p.error("--crashcap requires the pinned single-core --r35l-dir candidate")
     if a.pixsig and not (a.crashcap and a.no_software_vsync):
         p.error("--pixsig requires --crashcap and --no-software-vsync")
+    if a.stage_channel and not (a.pixsig and not a.data_persist_diag):
+        p.error("--stage-channel requires the single-core PIX candidate without Data changes")
     if a.data_persist_diag and not (a.pixsig and not a.smp_gate):
         p.error("--data-persist-diag requires --pixsig and the single-core candidate")
     if a.data_candidate_gpt and not a.data_persist_diag:
@@ -1031,8 +1105,8 @@ def main():
                               keep_link_debug=a.keep_link_debug, bringup_diag=bool(a.r35l_dir),
                               hid_objects=hid_objects, mg_reset=a.mg_reset,
                               smp_gate=a.smp_gate, smp_observe=a.smp_observe, crashcap=a.crashcap,
-                              pixsig=a.pixsig, data_persist=a.data_persist_diag,
-                              data_gpt=a.data_candidate_gpt, base=base)
+                               pixsig=a.pixsig, data_persist=a.data_persist_diag,
+                               data_gpt=a.data_candidate_gpt, stage=a.stage_channel, base=base)
     else:
         # Replay XNU's exported link inputs, without its historical map output.
         stem = "mach.development.bcm2837"

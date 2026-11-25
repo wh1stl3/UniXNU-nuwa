@@ -6,6 +6,8 @@
 
 **2026-11-25 方向切换：冻结 lsd 崩溃分析，转显示接线与 pixsig 区分清屏/真实 surface（self-checked）。** [PC/LR](docs/nuwa-lsd-crash-pc-20261125.md)；[横向对比](docs/nuwa-beyond-seed-comparison-20261125.md)；[pixsig](docs/nuwa-pixsig-20261125.md)。
 
+**2026-11-25 线程名阶段通道已出包，默认关闭，未刷写（self-checked）。**[记录](docs/nuwa-stage-channel-20261125.md)。
+
 **2026-11-25 PIX 源像素签名候选，仅主机 self-checked，未刷写。**[记录](docs/nuwa-pixsig-20261125.md)。
 
 **2026-11-25 Data 持久窗口 `st=4`：只读 provider 拒绝 mode 2；诊断包 self-checked，未修复、未刷写。**[记录](docs/nuwa-data-persist-fix-20261125.md)。
