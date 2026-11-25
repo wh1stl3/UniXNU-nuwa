@@ -1,6 +1,7 @@
 // Included only in the pinned nuwa retained-root provider, after StoreGeometry.
 #include "RetainedWrite.inc"
 struct CandidatePort : RetainedWritePort {
+  NuwaData::ReinitAttempt reinit;
   void lock() { IOLockLock(gHost.lock); }
   void unlock() { IOLockUnlock(gHost.lock); }
   bool readyLocked() { return retainedReadyLocked(); }
@@ -8,6 +9,11 @@ struct CandidatePort : RetainedWritePort {
   uint64_t capacityLocked() { return combined_state.blocks; }
   unsigned blockSizeLocked() { return combined_state.block; }
   bool isolationArmedLocked() { return true; } // RetainedRead's terminal, shared latch.
+  NuwaData::ReinitResult tryReinitLocked() {
+    // No proof that old DMA is blocked, or that this domain can survive an
+    // HCE/PHY/clock/ICE/link transition. Do not touch hardware after isolation.
+    return reinit.beginLocked(retainedSlot, {});
+  }
   NuwaData::ColdStartIdentity coldStartIdentityLocked(const NuwaData::GptIdentity &,
                                                      NuwaData::Window) {
     return {}; // No trusted boot/session, domain or media identifier source.

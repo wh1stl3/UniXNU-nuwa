@@ -1,5 +1,6 @@
 #pragma once
 #include "Gate.h"
+#include "Reinit.h"
 
 namespace NuwaData {
 // Production default. The transport must separately prove cold-start qualification and FUA

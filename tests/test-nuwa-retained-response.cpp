@@ -627,4 +627,14 @@ int main() {
   testAttachRace(false);
   testParts();
   testWrites();
+  // testWrites ended with an orphan in the actual candidate Port.
+  const auto before = combined_hardware.mmioReads;
+  const auto submissions = combined_hardware.submissions;
+  IOLockLock(gHost.lock);
+  assert(dataPort.tryReinitLocked() == NuwaData::ReinitResult::PlatformUnproven);
+  assert(dataPort.tryReinitLocked() == NuwaData::ReinitResult::AlreadyAttempted);
+  IOLockUnlock(gHost.lock);
+  assert(combined_hardware.mmioReads == before && combined_hardware.submissions == submissions &&
+         !retainedSlot.rootAllowed());
+  std::puts("PASS candidate re-init refuses without old-DMA/platform proof; MMIO=0, submissions=0");
 }

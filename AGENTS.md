@@ -64,6 +64,7 @@
 
 ## 阻塞
 - Data retained r8 仅主机 self-checked，写门关闭；冷启动资格及介质 FUA 持久性未证明：[记录](docs/nuwa-data-write-design-20261125.md)。
+- UFS re-init 阻塞于旧 DMA 排除与板级初始化合同；仅主机模型 self-checked：[记录](docs/nuwa-ufs-reinit-20261125.md)。
 - 卡点优先查 [已知差异与跨项目关停手段清单](docs/nuwa-open-deltas-20261125.md)。
 - 2026-11-22：持久 Data 与显示/交互仍受阻，认证 NOT REACHED；主控转述实机与深审、主机 self-checked，详见 [本轮结论](docs/nuwa-session-20261122-findings.md)。
 - CPU-only 显示 ON 候选按 329 止损条件冻结，OFF 诊断路径保留，329 guard 不动；这是 deferral，非绕过。三项止损均未闭合，解除条件及证据见 [329 决策记录](docs/nuwa-329-stop-20261121.md)；ON 产物保留分支、不上机。self-checked。
