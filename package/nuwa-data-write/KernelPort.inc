@@ -1,5 +1,6 @@
 // Included only in the pinned nuwa retained-root provider, after StoreGeometry.
-struct CandidatePort {
+#include "RetainedWrite.inc"
+struct CandidatePort : RetainedWritePort {
   void lock() { IOLockLock(gHost.lock); }
   void unlock() { IOLockUnlock(gHost.lock); }
   bool readyLocked() { return retainedReadyLocked(); }
@@ -22,11 +23,6 @@ struct CandidatePort {
     if (retainedReadLocked(lba, 1) != CombinedRead::End::Success) return false;
     memcpy(dst, combined_hardware.virt + CombinedRead::Data, NuwaData::Block);
     return true;
-  }
-  NuwaData::Evidence writePageLocked(const uint8_t (&)[10], const uint8_t *) {
-    // No retained write backend before FUA and cold-start qualification.
-    // Do not touch descriptors, doorbell, mapping or the bounce buffer.
-    return NuwaData::Evidence::Unowned;
   }
 };
 static CandidatePort dataPort;

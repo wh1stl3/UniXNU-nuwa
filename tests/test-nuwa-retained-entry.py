@@ -26,7 +26,9 @@ def main(build, base):
     (build / "FixtureBlock.inc").write_text(body(ufs, "IOReturn NativeUfsBlock::doAsyncReadWrite"))
     (build / "FixtureStore.inc").write_text(
         body(ufs, 'extern "C" int native_ufs_store_open (') +
-        body(ufs, 'extern "C" unsigned native_ufs_store_gpt_check ('))
+        body(ufs, 'extern "C" unsigned native_ufs_store_gpt_check (') +
+        body(ufs, 'extern "C" int native_ufs_store_write (') +
+        body(ufs, 'extern "C" int native_ufs_store_sync ('))
     (build / "FixturePart.inc").write_text(
         body(ufs, 'extern "C" int native_ufs_part_find (') +
         body(ufs, 'extern "C" int native_ufs_part_read ('))

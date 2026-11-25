@@ -1,6 +1,7 @@
 #include "../package/nuwa-data-write/Gate.h"
 #include "../package/nuwa-data-write/Provider.h"
 #include "../package/nuwa-data-write/Overlay.h"
+#include "NuwaDataFixtureGpt.h"
 #include <cassert>
 #include <cstdio>
 #include <future>
@@ -14,43 +15,7 @@ static void put(uint8_t *p, uint64_t value, unsigned bytes = 8) {
   for (unsigned i = 0; i < bytes; ++i) p[i] = uint8_t(value >> (8 * i));
 }
 
-struct Disk {
-  GptIdentity id{61850624, 6, 61850618, 3110976, 61850618, {1}, {2}, {3}};
-  uint8_t p[Block]{}, b[Block]{}, pe[Block]{}, be[Block]{};
-  Disk() {
-    auto *e = pe + 31 * 128;
-    memcpy(e, id.type, 16);
-    memcpy(e + 16, id.partition, 16);
-    put(e + 32, id.userdataFirst);
-    put(e + 40, id.userdataLast);
-    for (unsigned i = 0; i < 8; ++i) e[56 + i * 2] = "userdata"[i];
-    memcpy(be, pe, Block);
-    for (auto *h : {&p, &b}) {
-      const bool backup = h == &b;
-      memcpy(*h, "EFI PART", 8);
-      put(*h + 8, 0x10000, 4);
-      put(*h + 12, 92, 4);
-      put(*h + 24, backup ? id.capacity - 1 : 1);
-      put(*h + 32, backup ? 1 : id.capacity - 1);
-      put(*h + 40, id.firstUsable);
-      put(*h + 48, id.lastUsable);
-      memcpy(*h + 56, id.disk, 16);
-      put(*h + 72, backup ? id.capacity - 2 : 2);
-      put(*h + 80, 32, 4);
-      put(*h + 84, 128, 4);
-    }
-    repair();
-  }
-  void repair() {
-    put(p + 88, crc(pe, Block), 4);
-    put(b + 88, crc(be, Block), 4);
-    put(p + 16, crc(p, 92, 16), 4);
-    put(b + 16, crc(b, 92, 16), 4);
-  }
-  bool accept(unsigned lun = 0, unsigned block = Block) const {
-    return gpt(lun, block, id, {1, 2, p, pe}, {id.capacity - 1, id.capacity - 2, b, be});
-  }
-};
+using Disk = FixtureGpt;
 
 struct MemoryStore {
   uint8_t bytes[8][Block]{};
@@ -162,13 +127,14 @@ struct MockPort {
   bool fuaProvenLocked() { assert(locked); return fua; }
   bool readPageLocked(uint64_t lba, void *dst) {
     assert(locked);
-    const uint8_t *src = lba == 1 ? disk.p : lba == 2 ? disk.pe :
-                         lba == disk.id.capacity - 1 ? disk.b : disk.be;
+    const uint8_t *src = disk.at(lba);
+    assert(src);
     memcpy(dst, src, Block);
     return true;
   }
-  Evidence writePageLocked(const uint8_t (&cdb)[10], const uint8_t *) {
-    assert(locked && ownership && cdb[0] == 0x2a && cdb[1] == 8 && cdb[8] == 1);
+  Evidence writePageLocked(unsigned lun, Window window, uint64_t lba,
+                           unsigned blocks, const uint8_t *) {
+    assert(locked && ownership && blocks == 1 && window.contains(lun, Block, lba, blocks));
     ++writes;
     return result;
   }
@@ -200,7 +166,7 @@ static void providerTest(Disk &disk, Window w) {
   port.fua = true;
   assert(optIn.open(disk.id, 0, Block, 8446279680ULL, 262144, w, buffers, true));
   assert(!optIn.write(w.blocks - 1, 2, zeroBlock) && !port.writes);
-  assert(optIn.write(0, 2, zeroBlock) && port.writes == 2 && !optIn.sync());
+  assert(optIn.write(0, 2, zeroBlock) && port.writes == 2 && optIn.sync());
   port.result = Evidence::Timeout;
   assert(!optIn.write(0, 2, zeroBlock) && port.writes == 3);
   assert(!optIn.write(0, 1, zeroBlock) && !optIn.sync() &&
@@ -349,7 +315,7 @@ int main() {
   assert(good.complete(Evidence::FullFua) && good.dataAllowed(true));
   std::puts("PASS Data gate rejects SUBMITTED and accepts attributed FUA completion");
   Slot cmdErr;
-  assert(cmdErr.submit(true, true) && !cmdErr.complete(Evidence::AttributedCommandError));
+  assert(cmdErr.submitRead(true, true) && !cmdErr.complete(Evidence::AttributedCommandError));
   assert(cmdErr.state() == State::COMPLETED_CMDERR && cmdErr.rootAllowed() &&
          !cmdErr.dataAllowed(true) && !cmdErr.submit(true, true));
   std::puts("PASS attributed command error is sticky for Data");

@@ -2,10 +2,10 @@
 static NuwaData::Slot retainedSlot;
 
 // Caller holds gHost.lock. Preserve every allocation and mapping on failure.
-static bool retainedReadyLocked() {
-  return gHost.ready && !gHost.poisoned && !combined_state.quarantined &&
-         retainedSlot.rootAllowed();
+static bool retainedHostUsableLocked() {
+  return gHost.ready && !gHost.poisoned && !combined_state.quarantined;
 }
+static bool retainedReadyLocked() { return retainedHostUsableLocked() && retainedSlot.rootAllowed(); }
 
 // Before bring-up the lock may not exist. Once services are published, it
 // is retained. A snapshot is only a precheck; never hold it across admission.
@@ -17,10 +17,26 @@ static bool retainedReadySnapshot() {
   return ready;
 }
 
-static void retainQuarantineLocked() {
-  retainedSlot.quarantine();
+static void blockRetainedHostLocked() {
   combined_state.quarantined = gHost.poisoned = true;
   gHost.ready = false;
+}
+
+static void retainQuarantineLocked() {
+  retainedSlot.quarantine();
+  blockRetainedHostLocked();
+}
+
+static NuwaData::Evidence retainedCompletion(CombinedRead::End end, bool write) {
+  using CombinedRead::End;
+  using NuwaData::Evidence;
+  if (end == End::Success) return write ? Evidence::FullFua : Evidence::ReadOk;
+  if (end == End::Scsi) return Evidence::AttributedCommandError;
+  const auto &poll = combined_state.poll;
+  // Transfer means timeout only if poll saw neither completion nor fatal.
+  if (end == End::Transport && poll.ocs == 15 && !(poll.doorbellSeen & ~1U) &&
+      !(poll.interruptSeen & kUfsFatalStatus)) return Evidence::Timeout;
+  return Evidence::Unowned;
 }
 
 static bool retainedOwnershipLocked() {
@@ -31,7 +47,6 @@ static bool retainedOwnershipLocked() {
 
 static CombinedRead::End retainedReadLocked(uint64_t lba, unsigned blocks) {
   using CombinedRead::End;
-  using NuwaData::Evidence;
   if (!retainedReadyLocked()) return End::Guard;
   if (!RootReadSession::span(combined_state, 0, lba, blocks)) return End::Capacity;
   if (!retainedSlot.submitRead(true, retainedOwnershipLocked())) return End::Guard;
@@ -41,15 +56,7 @@ static CombinedRead::End retainedReadLocked(uint64_t lba, unsigned blocks) {
   // the doorbell. Unlike RootReadSession::read, it exposes attributed Scsi.
   const auto end = CombinedRead::issue(combined_hardware, combined_state,
                                       CombinedRead::Command::Read);
-  const auto &poll = combined_state.poll;
-  // Transfer means timeout only if poll never observed completion (including
-  // an OCS error) or fatal. A post-poll fault is not classified by wall time.
-  const bool timeout = end == End::Transport && poll.ocs == 15 &&
-                       !(poll.doorbellSeen & ~1U) &&
-                       !(poll.interruptSeen & kUfsFatalStatus);
-  retainedSlot.complete(end == End::Success ? Evidence::ReadOk :
-                        end == End::Scsi ? Evidence::AttributedCommandError :
-                        timeout ? Evidence::Timeout : Evidence::Unowned);
+  retainedSlot.complete(retainedCompletion(end, false));
   if (!retainedSlot.rootAllowed()) retainQuarantineLocked();
   return end;
 }

@@ -92,6 +92,7 @@ public:
            state_ == State::COMPLETED_CMDERR;
   }
   bool dataAllowed(bool ready) const { return ready && rootAllowed() && !writeError_; }
+  bool writeInFlight() const { return state_ == State::SUBMITTED && writing_; }
   void quarantine() {
     writeError_ = true;
     // Neither a late response nor a second fault can reclaim an orphan.
@@ -110,7 +111,8 @@ public:
         state_ = State::COMPLETED_OK;
         return true;
       case Evidence::AttributedCommandError: // Returned slot, attributed SCSI error.
-        state_ = State::COMPLETED_CMDERR;
+        if (writing_) quarantine(); // No resume after a failed Data write.
+        else state_ = State::COMPLETED_CMDERR;
         break;
       case Evidence::Timeout: // No proof the controller stopped accessing DMA.
         state_ = State::TIMEOUT_ORPHAN;

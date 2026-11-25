@@ -88,10 +88,8 @@ public:
       const uint64_t lba = data_.first + rel + i;
       if (!data_.contains(0, Block, lba, 1) || !canTouchLocked() ||
           !slot_.submit(port_.readyLocked(), true)) return false;
-      uint8_t cdb[10];
-      write10(cdb, uint32_t(lba));
-      if (!slot_.complete(port_.writePageLocked(cdb, static_cast<const uint8_t *>(src) +
-                                               uint64_t(i) * Block))) return false;
+      if (!slot_.complete(port_.writePageLocked(0, data_, lba, 1,
+                        static_cast<const uint8_t *>(src) + uint64_t(i) * Block))) return false;
     }
     return true;
   }
@@ -102,7 +100,13 @@ public:
     open_ = writeEnabled_ = false;
   }
 
-  static bool sync() { return false; }
+  // Completion barrier for this window, not SYNCHRONIZE CACHE on the LUN.
+  bool sync() {
+    if constexpr (!BuildEnabled) return false;
+    Lock lock(port_);
+    return open_ && writeEnabled_ && slot_.dataAllowed(port_.readyLocked()) &&
+           port_.fuaProvenLocked();
+  }
   static bool writeLog() { return false; }
   static bool writeExport() { return false; }
   static bool writePanic() { return false; }

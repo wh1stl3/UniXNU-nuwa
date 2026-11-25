@@ -1,6 +1,7 @@
 // Compile against the candidate's staged CombinedRead.h, not the baseline copy.
 #include "../package/nuwa-data-write/Provider.h"
 #include "../package/nuwa-data-write/Overlay.h"
+#include "NuwaDataFixtureGpt.h"
 #include "../package/nuwa-ramblock/PersistOpenReason.h"
 #include "PersistOverlay.h"
 #include <cassert>
@@ -61,8 +62,11 @@ static struct Hardware {
   alignas(4096) uint8_t virt[CombinedRead::Bytes]{};
   Response wire{};
   unsigned prepares = 0, submissions = 0, seen = 0, ocsReads = 0, mmioReads = 0;
+  unsigned writeSubmissions = 0, writeOcsReads = 0;
   uint64_t preparedLba = 0;
-  bool active = false, partMedia = false;
+  bool active = false, partMedia = false, writing = false;
+  const NuwaData::FixtureGpt *gpt = nullptr;
+  uint8_t lastCdb[10]{}, written[NuwaData::Block]{};
   std::promise<void> *submitted = nullptr;
   std::future<void> *allowCompletion = nullptr;
   uint32_t sread(unsigned off) const {
@@ -110,8 +114,19 @@ static struct Hardware {
     r[36] = 5;
     r[41] = 6;
     auto *data = virt + CombinedRead::Data;
-    memset(data, 0xa5, NuwaData::Block);
-    if (partMedia && (preparedLba == 1 || preparedLba == 2)) {
+    assert(virt[4112] != 0x35);
+    if (writing) {
+      ++writeSubmissions;
+      memcpy(lastCdb, virt + 4112, sizeof lastCdb);
+      memcpy(written, data, sizeof written);
+      assert(virt[4097] == 0x20 && virt[4098] == 0 &&
+             CombinedRead::be32(virt + 4108) == NuwaData::Block);
+      assert((NuwaData::le32(virt) & (3U << 25)) == (1U << 25));
+      assert(NuwaData::le64(virt + 5120) == Dma + CombinedRead::Data &&
+             NuwaData::le32(virt + 5132) == NuwaData::Block - 1);
+    } else if (gpt && gpt->at(preparedLba)) {
+      memcpy(data, gpt->at(preparedLba), NuwaData::Block);
+    } else if (partMedia && (preparedLba == 1 || preparedLba == 2)) {
       // Fixture GPT header and a single 128-byte entry named "modem".
       memset(data, 0, NuwaData::Block);
       if (preparedLba == 1) {
@@ -124,18 +139,21 @@ static struct Hardware {
         NuwaData::putLE(data + 40, 15, 8);
         for (unsigned i = 0; i < 5; ++i) data[56 + 2*i] = "modem"[i];
       }
-    }
+    } else memset(data, 0xa5, NuwaData::Block);
     if (submitted) {
       submitted->set_value();
       assert(allowCompletion->wait_for(std::chrono::seconds(2)) == std::future_status::ready);
     }
   }
   bool prepare(uint64_t pa, CombinedRead::Command c, unsigned tag, unsigned block,
-               uint64_t lba, unsigned blocks) {
-    assert(heldLocks && pa == Dma && c == CombinedRead::Command::Read);
+               uint64_t lba, unsigned blocks, const uint8_t *writeSource) {
+    assert(heldLocks && pa == Dma && (c == CombinedRead::Command::Read ||
+                                    c == CombinedRead::Command::WriteFua));
     ++prepares;
     preparedLba = lba;
-    return CombinedRead::encode(virt, pa, c, tag, block, lba, blocks);
+    ocsReads = 0;
+    writing = c == CombinedRead::Command::WriteFua;
+    return CombinedRead::encode(virt, pa, c, tag, block, lba, blocks, writeSource);
   }
   uint32_t doorbell() {
     if (!active) return 0;
@@ -144,7 +162,7 @@ static struct Hardware {
     return 0;
   }
   uint32_t interrupt() const { return active && wire.fatal ? kUfsFatalStatus : 0; }
-  uint32_t completedOcs() { ++ocsReads; return wire.ocs; }
+  uint32_t completedOcs() { ++ocsReads; if (writing) ++writeOcsReads; return wire.ocs; }
   void deadline() {}
   void barrier() {}
   bool expired() const { return wire.timedOut && ocsReads > 1; }
@@ -214,8 +232,6 @@ static uint64_t reserveBlocks() { return 262144; }
 
 static unsigned native_ufs_store_mode() { return storeMode(); }
 static int native_ufs_store_read(uint64_t, uint32_t, void *) { assert(false); return 0; }
-static int native_ufs_store_write(uint64_t, uint32_t, const void *) { assert(false); return 0; }
-static int native_ufs_store_sync() { assert(false); return 0; }
 static void IOLog(const char *, ...) {}
 static uint32_t native_data_persist_state, native_data_persist_header, native_data_persist_gpt,
                 native_data_persist_gpt_after;
@@ -413,6 +429,94 @@ static void testParts() {
   }
 }
 
+// Only this fixture can supply positive cold-start/FUA proofs.
+struct QualifiedWritePort : CandidatePort {
+  static constexpr NuwaData::ColdStartIdentity Identity{11, 22, 33};
+  NuwaData::ColdStartIdentity coldStartIdentityLocked(const NuwaData::GptIdentity &,
+                                                      NuwaData::Window) { return Identity; }
+  NuwaData::ColdStartEvidence coldStartEvidenceLocked(const NuwaData::GptIdentity &,
+                                                      NuwaData::Window) {
+    const NuwaData::ColdStartFact f{Identity, true};
+    return {f, f, f, f, f, f, f, f};
+  }
+  bool fuaProvenLocked() { return true; }
+};
+
+static void testWrites() {
+  using namespace NuwaData;
+  constexpr Window window{59491258, 2097217};
+  constexpr uint64_t rootBytes = 8446279680ULL, reserve = 262144;
+  FixtureGpt disk;
+  GptBuffers g{};
+  uint8_t page[Block];
+  for (unsigned i = 0; i < Block; ++i) page[i] = uint8_t(i ^ 0x96U);
+  startMockBoot({});
+  combined_hardware.gpt = &disk;
+  assert(!dataProvider.open(disk.id, 0, Block, rootBytes, reserve, window, g, true));
+  assert(dataProvider.open(disk.id, 0, Block, rootBytes, reserve, window, g));
+  const unsigned reads = combined_hardware.submissions;
+  const unsigned mmio = combined_hardware.mmioReads;
+  assert(reads == 4 && !native_ufs_store_write(0, 1, page) && !native_ufs_store_sync() &&
+         combined_hardware.submissions == reads && combined_hardware.mmioReads == mmio &&
+         !combined_hardware.writeSubmissions);
+  dataProvider.close();
+  std::puts("PASS production write/sync: even an open read-only window submits no write or MMIO");
+
+  startMockBoot({});
+  combined_hardware.gpt = &disk;
+  QualifiedWritePort port;
+  Provider<QualifiedWritePort, true> provider(port, retainedSlot);
+  assert(provider.open(disk.id, 0, Block, rootBytes, reserve, window, g, true));
+  assert(combined_hardware.submissions == 4 && !combined_hardware.writeSubmissions);
+  assert(!provider.write(window.blocks, 1, page) && combined_hardware.submissions == 4);
+  assert(provider.write(0, 1, page));
+  const uint8_t *cdb = combined_hardware.lastCdb;
+  assert(cdb[0] == 0x2a && cdb[1] == 0x08 && CombinedRead::be32(cdb + 2) == window.first &&
+         cdb[6] == 0 && cdb[7] == 0 && cdb[8] == 1 && cdb[9] == 0);
+  assert(!memcmp(page, combined_hardware.written, Block) && combined_hardware.submissions == 5 &&
+         combined_hardware.writeSubmissions == 1 && combined_hardware.writeOcsReads == 1);
+  const auto afterWrite = combined_hardware.mmioReads;
+  assert(provider.sync() && combined_hardware.mmioReads == afterWrite &&
+         combined_hardware.submissions == 5);
+  std::puts("PASS real WRITE(10): LUN0, FUA=1, 4096 B, DB0 once, GOOD; sync no hardware");
+
+  IOLockLock(gHost.lock);
+  assert(retainedSlot.submit(true, true));
+  assert(port.writePageLocked(1, window, window.first, 1, page) == Evidence::Unowned);
+  assert(port.writePageLocked(0, window, window.first + window.blocks, 1, page) == Evidence::Unowned);
+  assert(port.writePageLocked(0, window, window.first, 2, page) == Evidence::Unowned);
+  IOLockUnlock(gHost.lock);
+  assert(!provider.sync() && combined_hardware.submissions == 5 &&
+         combined_hardware.prepares == 5 && combined_hardware.mmioReads == afterWrite);
+  provider.close();
+  std::puts("PASS write port rejects non-LUN0, out-of-window and multi-block before DMA; sync rejects in-flight");
+
+  for (unsigned fault = 0; fault < 3; ++fault) {
+    startMockBoot({});
+    combined_hardware.gpt = &disk;
+    assert(provider.open(disk.id, 0, Block, rootBytes, reserve, window, g, true));
+    auto &r = combined_hardware.wire;
+    if (fault == 0) { r.status = 2; r.dl = 16; }
+    if (fault == 1) { r.flags = 0x20; r.residual = 512; }
+    if (fault == 2) { r.timedOut = true; r.ocs = 15; }
+    assert(!provider.write(0, 1, page));
+    assert(retainedSlot.state() == (fault == 2 ? State::TIMEOUT_ORPHAN : State::FATAL_QUARANTINED));
+    assert(!retainedSlot.rootAllowed() && gHost.poisoned && !gHost.ready);
+    uint8_t saved[CombinedRead::Bytes];
+    memcpy(saved, combined_hardware.virt, sizeof saved);
+    const auto failedMmio = combined_hardware.mmioReads;
+    combined_hardware.wire = {};
+    assert(!provider.sync() && !provider.write(0, 1, page));
+    provider.close();
+    assert(!provider.open(disk.id, 0, Block, rootBytes, reserve, window, g, true));
+    assert(combined_hardware.submissions == 5 && combined_hardware.writeSubmissions == 1 &&
+           combined_hardware.mmioReads == failedMmio &&
+           !memcmp(saved, combined_hardware.virt, sizeof saved));
+    std::printf("PASS write %s: isolated; sync/reopen denied; no replay or DMA reuse\n",
+                fault == 0 ? "CHECK CONDITION" : fault == 1 ? "residual" : "timeout");
+  }
+}
+
 static void testTerminal(bool timeout) {
   using NuwaData::State;
   using namespace std::chrono_literals;
@@ -522,4 +626,5 @@ int main() {
   testAttachRace(true);
   testAttachRace(false);
   testParts();
+  testWrites();
 }

@@ -484,6 +484,38 @@ def data_candidate_link(out, argv, env, gpt):
 
     text = f'#include "{code / "Provider.h"}"\n' + text
     combined_text = combined.read_text()
+    for old, new in (
+        ("Capacity, Read, Sense };", "Capacity, Read, Sense, WriteFua };"),
+        ("c == Command::Read ? block :", "(c == Command::Read || c == Command::WriteFua) ? block :"),
+        ("unsigned blocks = 1) {\n  if (c == Command::Read",
+         "unsigned blocks = 1, const uint8_t *writeSource = nullptr) {\n"
+         "  if ((c == Command::WriteFua) != bool(writeSource) ||\n"
+         "      (writeSource && (block != NuwaData::Block || blocks != 1 || lba > UINT32_MAX))) return false;\n"
+         "  if (c == Command::Read"),
+        ("w[0] = 0x10000000U | (n ? 2U << 25 : 0);",
+         "w[0] = 0x10000000U | (n ? (writeSource ? 1U : 2U) << 25 : 0);"),
+        ("u[1] = n ? 0x40 : 0;", "u[1] = n ? (writeSource ? 0x20 : 0x40) : 0;"),
+        ("    case Command::Sense: u[16]",
+         "    case Command::WriteFua: {\n"
+         "      uint8_t cdb[10];\n"
+         "      NuwaData::write10(cdb, uint32_t(lba));\n"
+         "      memcpy(u + 16, cdb, sizeof cdb);\n"
+         "      memcpy(v + Data, writeSource, NuwaData::Block);\n"
+         "      break;\n"
+         "    }\n"
+         "    case Command::Sense: u[16]"),
+        ("static End issue(P &p, State &s, Command c) {",
+         "static End issue(P &p, State &s, Command c, const uint8_t *writeSource = nullptr) {"),
+        ("s.readLba, s.readBlocks))", "s.readLba, s.readBlocks, writeSource))"),
+    ):
+        if combined_text.count(old) != 1:
+            raise SystemExit("unexpected retained WRITE(10) splice anchor")
+        combined_text = combined_text.replace(old, new)
+    replace("unsigned blocks = 1) {\n    // Bounded pre-command markers",
+            "unsigned blocks = 1, const uint8_t *writeSource = nullptr) {\n"
+            "    // Bounded pre-command markers")
+    replace("CombinedRead::encode(virt, pa, c, tag, block, lba, blocks)",
+            "CombinedRead::encode(virt, pa, c, tag, block, lba, blocks, writeSource)")
     start = combined_text.index("// Valid CHECK CONDITION is a SCSI endpoint")
     end = combined_text.index("template<class P> static bool guard", start)
     combined_text = (combined_text[:start] + f'#include "{code / "RetainedResponse.inc"}"\n' +
@@ -538,7 +570,7 @@ def data_candidate_link(out, argv, env, gpt):
 
 extern "C" int native_ufs_store_sync (void)
 {
-  return 0;
+  return storeMode () == 2 && gHost.lock && dataProvider.sync ();
 }
 
 ''' + text[write_end:]

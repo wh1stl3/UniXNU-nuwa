@@ -3,7 +3,59 @@
 **单核候选已链接 provider 骨架和双槽 overlay；Data 写门禁关闭。**
 此包不验证可写性或持久化，未接触设备。保留 PU why。
 
-## r7：part 入口 readiness 快照（当前候选，self-checked）
+## r8：实际 WRITE(10) FUA 后端，候选写门关闭（当前候选，self-checked）
+
+`Provider::write` 在已有 host 锁内逐块把授权窗口、LUN、LBA 和 CPU
+数据交给 `RetainedWritePort::writePageLocked`。后端再次要求 LUN 0、
+已验证的 4096 B geometry、窗口内的一个 LBA 和当前 slot 的写提交状态。
+复用 `Gate.h` 中源自 ShengUfs `f020bd69` 的窗口和 `WRITE(10)` FUA CDB；
+不接入上游多槽写路径。实际命令经现有 `CombinedRead::issue` 提交：
+
+- UTRD direction 为 host→device；UPIU LUN 0、write flag `0x20`、
+  expected data length 4096。CDB opcode `0x2a`、FUA bit `0x08`、transfer
+  length 1。单 PRD 仍指向 retained bounce，长度编码为 4095。
+- 复用 prepare 的 cache 发布、提交前 ownership guard 与 DB bit 0 单次提交，
+  不改 MMIO/映射。`GOOD`、无残余、同 tag/LUN/type 和正常 OCS 才计
+  `FullFua`。任何失败的 Data 写（含归属明确的 CHECK CONDITION）终止
+  本会话并锁存隔离；timeout 保持 orphan。不重放、不 teardown 或重开。
+  已归属的**根读**命令错误仍采用 r7 的分类。
+- `sync` 是 Data 完成屏障：已授权、slot 无在途、无粘滞错误且 FUA
+  资格仍成立才成功，不发任何命令（无全 LUN `SYNCHRONIZE CACHE 0x35`）。
+  双槽 overlay/header-last 未改；生产仍固定
+  `Provider<CandidatePort, false>`，未启用编译 opt-in；当前冷启动与 FUA
+  硬件资格均 false。无真介质 FUA 持久性证明。
+
+复跑用下文 r5 命令，fresh `B`/`P`（本轮
+`out/nuwa-ufs-recovery-candidate-20261125-build-r8` /
+`out/nuwa-ufs-recovery-candidate-20261125-package-r8`）。
+33 项入口/transport 与 37 项 Data/冷启动用例 self-checked。新增输出：
+
+```text
+PASS production write/sync: even an open read-only window submits no write or MMIO
+PASS real WRITE(10): LUN0, FUA=1, 4096 B, DB0 once, GOOD; sync no hardware
+PASS write port rejects non-LUN0, out-of-window and multi-block before DMA; sync rejects in-flight
+PASS write CHECK CONDITION: isolated; sync/reopen denied; no replay or DMA reuse
+PASS write residual: isolated; sync/reopen denied; no replay or DMA reuse
+PASS write timeout: isolated; sync/reopen denied; no replay or DMA reuse
+```
+
+“real WRITE(10)” 是实际后端代码运行在 mock 硬件上；正授权仅由
+fixture 提供。生产反汇编的 `native_ufs_store_write/sync` 只执行
+软件门禁并返回 0，没有硬件调用，独立的 `RetainedWritePort` 发写路径
+未链接。linked crashcap、outer/FAT audit 与 `fsck.fat -vn`
+self-checked。单核，561 B args/seed/trust 不变，仅替换 kernel 和重绑
+的 ADT CHMH；FAT 余 **11042304 B**。UniXNU 上游 HEAD 前后均为
+`b04f131da9151182dbb26ce4e638fa8acc2933ac`，未改 pin。
+
+| 产物 | 哈希 |
+| --- | --- |
+| Kernel SHA-256 | `c60c7bcc9198def8ea3f0ce3035ad1f9206ac99831d8f311211e63d84628e35a` |
+| Outer SHA-256 | `a8aa47b8db18a313c2a6738a773b99ce58961ef8a5c19e6bed2ab2ac5051c90e` |
+| CHMH SHA-384 | `e6ba8f76ebced1484d33c385a7be42a5b4d09063a0012e1c912e7bdf7b5ecbf5d7e0fa23e8502514a837b907a73f4c00` |
+| 回读 FAT SHA-256 | `e06bf85050e950a89e05a324e910f9f6e50c9f542041f3256facfc8bacecbc40` |
+| Seed SHA-256 | `3c81135b384d8e090521205f2d69b3c197521e6d03c63682419d021bf0f24e5e` |
+
+## r7：part 入口 readiness 快照（历史候选，self-checked）
 
 `native_ufs_part_find` / `native_ufs_part_read` 先在 `gHost.lock` 内读
 readiness 快照，释放锁后才进入原路径。快照只可提前拒绝，任何实际
