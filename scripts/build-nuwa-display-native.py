@@ -258,7 +258,7 @@ def smp_gate_link(base, out, cwd, filelist, argv, *, smp_observe):
 
 
 def candidate_link(r35, out, records, argv, env, *, bringup_diag, hid, mg_reset,
-                   smp_gate=False, smp_observe=False, base=None, cwd=None):
+                   smp_gate=False, smp_observe=False, crashcap=False, base=None, cwd=None):
     recipe, = [r for r in records if r["label"] == "compile-bsd_init" and r["exit"] == 0]
     command = list(recipe["argv"])
     source = r35 / "tree/bsd/kern/bsd_init.c"
@@ -322,6 +322,40 @@ def candidate_link(r35, out, records, argv, env, *, bringup_diag, hid, mg_reset,
             "replacement_object_sha256": digest(policy_obj),
         }, indent=2) + "\n")
         filelist = filelist.replace(old_line, str(policy_obj) + "\n", 1)
+    if crashcap:
+        from generate_nuwa_crashcap import generate_handler, generate_ux
+
+        ux, = (r for r in records if r["label"] == "compile-ux_exception" and r["exit"] == 0)
+        command = list(ux["argv"])
+        old_obj = Path(command[command.index("-o") + 1])
+        old_source = old_obj.with_suffix(".c")
+        require_pin(old_source, digest(r35 / old_source.name))
+        require_pin(old_obj, digest(r35 / old_obj.name))
+        new_source = out / old_source.name
+        new_source.write_bytes(generate_ux(old_source.read_bytes()))
+        new_obj = new_source.with_suffix(".o")
+        command[command.index(str(old_source))] = str(new_source)
+        command[command.index("-o") + 1] = str(new_obj)
+        (out / "ux-exception-argv.json").write_text(json.dumps(command, indent=2) + "\n")
+        subprocess.run(command, cwd=ux["cwd"], env=env, check=True)
+        old_line = str(old_obj) + "\n"
+        if filelist.splitlines(keepends=True).count(old_line) != 1:
+            raise SystemExit("expected one pinned ux_exception.o in the native filelist")
+        filelist = filelist.replace(old_line, str(new_obj) + "\n", 1)
+        handler_obj = cwd / "osfmk/DEVELOPMENT/ux_handler.o"
+        record = json.loads(handler_obj.with_suffix(".o.json").read_text().strip().rstrip(","))
+        command = list(record["arguments"])
+        source = out / "ux_handler.c"
+        source.write_bytes(generate_handler(Path(record["file"]).read_bytes()))
+        obj = source.with_suffix(".o")
+        command[command.index(record["file"])] = str(source)
+        command[command.index("-o") + 1] = str(obj)
+        (out / "ux-handler-argv.json").write_text(json.dumps(command, indent=2) + "\n")
+        subprocess.run(command, cwd=record["directory"], env=env, check=True)
+        old_line = str(handler_obj) + "\n"
+        if filelist.splitlines(keepends=True).count(old_line) != 1:
+            raise SystemExit("expected one ux_handler.o in the native filelist")
+        filelist = filelist.replace(old_line, str(obj) + "\n", 1)
     if smp_gate:
         if base is None or cwd is None:
             raise SystemExit("--smp-gate requires the base checkout and the XNU build cwd")
@@ -333,12 +367,17 @@ def candidate_link(r35, out, records, argv, env, *, bringup_diag, hid, mg_reset,
     return adjusted
 
 
-def diag_archive(r35, out, *, hid, mg_reset, smp_observe):
+def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False):
     from generate_r35_display_diag import generate
 
     source = out / "BootProgress.c"
-    source.write_bytes(generate((r35 / "BootProgress.c").read_bytes(),
-                                mg_reset=mg_reset, smp_observe=smp_observe))
+    text = generate((r35 / "BootProgress.c").read_bytes(),
+                    mg_reset=mg_reset, smp_observe=smp_observe)
+    if crashcap:
+        from generate_nuwa_crashcap import generate_banner
+
+        text = generate_banner(text)
+    source.write_bytes(text)
     shutil.copyfile(r35 / "BootProgressDisplay.h", out / "BootProgressDisplay.h")
     stubs = ROOT / "package/boot-progress-r13/nuwa_boot_progress_stubs.c"
     require_pin(stubs, "14817837f64b37f36c65ac5e6debd187c2d8e6a24e8b0396eb280239108c6b47")
@@ -349,19 +388,21 @@ def diag_archive(r35, out, *, hid, mg_reset, smp_observe):
          "--define", "NUWA_BOLD_GLYPHS=1", *hid_define])
     staged = out / "libBootProgress.a"
     expected = definitions(r35 / staged.name) + Counter({DSP_SET: 1, "_boot_progress_prop_set": 1})
+    if crashcap:
+        expected["_boot_progress_lsd_crash"] = 1
     if hid:
         for name in ("seq", "count", "xs", "ys"):
             require = expected.pop(f"_native_touch_{name}", 0)
             if require != 1:
                 raise SystemExit(f"expected one original renderer alias for native_touch_{name}")
     if definitions(staged) != expected:
-        raise SystemExit("r35l renderer changed global definitions beyond DSP")
+        raise SystemExit("r35l renderer global definitions differ from the selected features")
     return staged
 
 
 def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
                keep_link_debug, bringup_diag=False, hid_objects=(), mg_reset=False,
-               smp_gate=False, smp_observe=False, base=None):
+               smp_gate=False, smp_observe=False, crashcap=False, base=None):
     for name, pin in (R35L_PINS if bringup_diag else R35_PINS).items():
         require_pin(r35 / name, pin)
     require_pin(cpo, R35_CPO_SHA)
@@ -427,11 +468,12 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
         if candidate:
             argv = candidate_link(r35, out, records, argv, env, bringup_diag=bringup_diag,
                                   hid=bool(hid_objects), mg_reset=mg_reset,
-                                  smp_gate=smp_gate, smp_observe=smp_observe, base=base, cwd=cwd)
+                                  smp_gate=smp_gate, smp_observe=smp_observe, crashcap=crashcap,
+                                  base=base, cwd=cwd)
         if bringup_diag:
             argv = list(argv)
             diag = diag_archive(r35, out, hid=bool(hid_objects), mg_reset=mg_reset,
-                                smp_observe=smp_observe)
+                                smp_observe=smp_observe, crashcap=crashcap)
             argv[force_at] = f"-Wl,-force_load,{diag}"
         argv = [*argv, "-Wl,-ignore_optimization_hints", f"-Wl,-force_load,{archive}", *map(str, hid_objects)]
         if not candidate or keep_link_debug:
@@ -671,6 +713,8 @@ def main():
                    help="rebuild start.o and ArmCpu.o: reset-vector affinity fix plus one-secondary admission")
     p.add_argument("--smp-observe", action="store_true",
                    help="show CPU_ON and secondary affinity observations; does not enable SMP")
+    p.add_argument("--crashcap", action="store_true",
+                   help="include the lsd-only saved-register recorder in the single-core candidate")
     p.add_argument("--out", type=Path, required=True, help="new directory under out/")
     a = p.parse_args()
     base, cpo, linker, out = (x.resolve() for x in (a.base, a.cpo, a.linker_dir, a.out))
@@ -700,6 +744,8 @@ def main():
         p.error("--smp-gate requires --candidate --cpu-only")
     if a.smp_observe and not (a.smp_gate and a.r35l_dir):
         p.error("--smp-observe requires --smp-gate and the pinned --r35l-dir candidate")
+    if a.crashcap and (not a.r35l_dir or a.smp_gate):
+        p.error("--crashcap requires the pinned single-core --r35l-dir candidate")
     out.mkdir(parents=True, exist_ok=False)
     donor = base / "out/ipsw/20H392/kernelcache.decompressed"
     hid_objects = []
@@ -728,7 +774,8 @@ def main():
                               cpu_only=a.cpu_only, candidate=a.candidate,
                               keep_link_debug=a.keep_link_debug, bringup_diag=bool(a.r35l_dir),
                               hid_objects=hid_objects, mg_reset=a.mg_reset,
-                              smp_gate=a.smp_gate, smp_observe=a.smp_observe, base=base)
+                              smp_gate=a.smp_gate, smp_observe=a.smp_observe, crashcap=a.crashcap,
+                              base=base)
     else:
         # Replay XNU's exported link inputs, without its historical map output.
         stem = "mach.development.bcm2837"
