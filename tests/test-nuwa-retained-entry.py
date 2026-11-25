@@ -17,6 +17,9 @@ def body(source, signature, closing="}"):
 
 def main(build, base):
     stage = build / "nuwa-data-provider"
+    banner = (build / "BootProgress.c").read_text()
+    assert '!strncmp(s,"UFS2 ",5)' in banner
+    assert "if (n < 64 && &nuwa_ufs_mode_row)\n" in banner
     ufs = (stage / "NativeUfs.cpp").read_text()
     commands = (stage / "RootCommands.h").read_text()
     ram = (ROOT / "package/nuwa-ramblock/NativeRamBlock.cpp").read_text()
@@ -46,6 +49,7 @@ def main(build, base):
         "-o", binary,
     ], check=True)
     subprocess.run([binary], check=True)
+    print("PASS UFS2 banner: cached hook, bounded row capacity")
 
 
 if __name__ == "__main__":

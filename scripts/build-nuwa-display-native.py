@@ -450,12 +450,15 @@ def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False, pixsig
         from generate_r35_display_diag import replace_once
         text = replace_once(text, b"static unsigned bp_banner_priority(",
                             b"extern unsigned nuwa_ufs_desc_row(char *, size_t) __attribute__((weak_import));\n"
+                            b"extern unsigned nuwa_ufs_mode_row(char *, size_t) __attribute__((weak_import));\n"
                             b"static unsigned bp_banner_priority(")
         text = replace_once(text, b'!strncmp(s,"PROC",4) ||',
-                            b'!strncmp(s,"UFS lu=",7) || !strncmp(s,"UFS err=",8) || !strncmp(s,"PROC",4) ||')
+                            b'!strncmp(s,"UFS lu=",7) || !strncmp(s,"UFS err=",8) || !strncmp(s,"UFS2 ",5) || !strncmp(s,"PROC",4) ||')
         text = replace_once(text, b"    uint32_t icon=__atomic_load_n(",
                             b"    if (n < 64 && &nuwa_ufs_desc_row)\n"
                             b"      n += nuwa_ufs_desc_row(rows[n], sizeof rows[0]);\n"
+                            b"    if (n < 64 && &nuwa_ufs_mode_row)\n"
+                            b"      n += nuwa_ufs_mode_row(rows[n], sizeof rows[0]);\n"
                             b"    uint32_t icon=__atomic_load_n(")
     if stage:
         text = stage_channel(text)
@@ -565,9 +568,11 @@ def data_candidate_link(out, argv, env, gpt):
     text = f'#include "{code / "Provider.h"}"\n#include "{code / "Descriptor.h"}"\n' + text
     combined_text = combined.read_text()
     for old, new in (
-        ("Capacity, Read, Sense };", "Capacity, Read, Sense, WriteFua, QueryDesc };"),
+        ("Capacity, Read, Sense };", "Capacity, Read, Sense, WriteFua, QueryDesc, ModeSense };"),
         ("Capacity, Claimed };", "Capacity, Claimed, QueryError };"),
         ("  PreservedNop::State setup;", "  PreservedNop::State setup;\n  NuwaUfsDesc::Request desc;"),
+        ("  return c == Command::Capacity ? 8 :", "  if (c == Command::ModeSense) return NuwaUfsDesc::ModeBytes;\n"
+         "  return c == Command::Capacity ? 8 :"),
         ("c == Command::Read ? block :", "(c == Command::Read || c == Command::WriteFua) ? block :"),
         ("unsigned blocks = 1) {\n  if (c == Command::Read",
          "unsigned blocks = 1, const uint8_t *writeSource = nullptr, NuwaUfsDesc::Request desc = {}) {\n"
@@ -581,6 +586,7 @@ def data_candidate_link(out, argv, env, gpt):
         ("  if (c == Command::Query) {", "  if (c == Command::QueryDesc) return NuwaUfsDesc::encode(desc, u);\n"
                                        "  if (c == Command::Query) {"),
         ("    case Command::Sense: u[16]",
+         "    case Command::ModeSense: memcpy(u + 16, NuwaUfsDesc::ModeCdb, sizeof NuwaUfsDesc::ModeCdb); break;\n"
          "    case Command::WriteFua: {\n"
          "      uint8_t cdb[10];\n"
          "      NuwaData::write10(cdb, uint32_t(lba));\n"
@@ -631,8 +637,10 @@ def data_candidate_link(out, argv, env, gpt):
             f'#include "{code / "RetainedRead.inc"}"\n#include "{code / "RetainedDesc.inc"}"\n'
             '#include "RootCommands.h"')
     replace('extern "C" void native_ufs_progress_text (char *out, size_t size)',
-            'extern "C" unsigned nuwa_ufs_desc_row (char *out, size_t size)\n'
-            '{\n  return cachedUfsDescRow(out, size);\n}\n\n'
+             'extern "C" unsigned nuwa_ufs_desc_row (char *out, size_t size)\n'
+             '{\n  return cachedUfsDescRow(out, size);\n}\n\n'
+             'extern "C" unsigned nuwa_ufs_mode_row (char *out, size_t size)\n'
+             '{\n  return cachedUfsModeRow(out, size);\n}\n\n'
             'extern "C" void native_ufs_progress_text (char *out, size_t size)')
     replace("  gPendingProvider->release ();  // Balanced with successful thread dispatch.",
             "  if (result.phase == UfsRootPhase::Complete) probeUfsDescriptors();\n"
@@ -722,7 +730,7 @@ extern "C" unsigned native_ufs_store_gpt_check (void)
     require_pin(Path(original), "150bc8439d365249a884033011ef255537618909f97c42fc9bdfad6476a89c75")
     dst = private / Path(original).name
     run([ar, mode, dst, late_obj, *members])
-    if definitions(dst) != definitions(Path(original)) + Counter({"_nuwa_ufs_desc_row": 1}):
+    if definitions(dst) != definitions(Path(original)) + Counter({"_nuwa_ufs_desc_row": 1, "_nuwa_ufs_mode_row": 1}):
         raise SystemExit("restricted provider changed the retained archive export inventory")
     args = list(argv)
     at, = (i for i, arg in enumerate(args) if arg == f"-Wl,-force_load,{original}")

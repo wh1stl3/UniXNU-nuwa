@@ -12,6 +12,8 @@
 
 **2026-11-26 Data v3 双 Bank 日志接入主机候选；生产写门关闭，未上机（self-checked）。** [记录](docs/nuwa-dualbank-integration-20261126.md)。
 
+**2026-11-26 UFS MODE SENSE 与 live GPT 摘要，只读候选（self-checked）。** [记录](docs/nuwa-ufs-modeprobe-20261126.md)。
+
 卡点优先查 [已知差异与跨项目关停手段清单](docs/nuwa-open-deltas-20261125.md)。
 
 **2026-11-25 lsd 异常帧链候选，仅主机 self-checked，未刷写：**[记录](docs/nuwa-crashframes-20261125.md)。

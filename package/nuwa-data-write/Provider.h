@@ -12,6 +12,7 @@ constexpr bool BuildWriteOptIn = false;
 #endif
 
 struct GptBuffers { uint8_t ph[Block], pe[Block], bh[Block], be[Block]; };
+enum class LiveGpt : unsigned { Unknown, Ok, Bad };
 
 // Port contract: methods suffixed Locked run under the same lock as root
 // reads. ownershipLocked inspects evidence without accessing shared DMA.
@@ -44,8 +45,10 @@ public:
   Provider &operator=(const Provider &) = delete;
 
   bool open(const GptIdentity &id, unsigned lun, unsigned block, uint64_t rootBytes,
-            uint64_t reserve, Window window, GptBuffers &g, bool requestWrite = false) {
+            uint64_t reserve, Window window, GptBuffers &g, bool requestWrite = false,
+            LiveGpt *live = nullptr) {
     Lock lock(port_);
+    if (live) *live = LiveGpt::Unknown;
     if (open_ || !slot_.rootAllowed() || !port_.readyLocked() ||
         lun != 0 || block != Block || id.capacity < 4 ||
         port_.capacityLocked() != id.capacity ||
@@ -59,9 +62,15 @@ public:
     if (!readLocked(1, g.ph) || !readLocked(2, g.pe) ||
         !readLocked(id.capacity - 1, g.bh)) return false;
     const uint64_t backup = le64(g.bh + 72);
-    if (backup <= id.lastUsable || backup >= id.capacity - 1 ||
-        !readLocked(backup, g.be) || !gpt(lun, block, id, {1, 2, g.ph, g.pe},
-                                        {id.capacity - 1, backup, g.bh, g.be})) return false;
+    if (backup <= id.lastUsable || backup >= id.capacity - 1) {
+      if (live) *live = LiveGpt::Bad;
+      return false;
+    }
+    if (!readLocked(backup, g.be)) return false;
+    const bool valid = gpt(lun, block, id, {1, 2, g.ph, g.pe},
+                           {id.capacity - 1, backup, g.bh, g.be});
+    if (live) *live = valid ? LiveGpt::Ok : LiveGpt::Bad;
+    if (!valid) return false;
     // Recheck the sticky write gate after the GPT reads.
     if (requestWrite && !slot_.dataAllowed(port_.readyLocked())) return false;
     data_ = window;

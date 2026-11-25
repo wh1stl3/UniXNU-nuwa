@@ -33,6 +33,10 @@ struct CandidatePort : RetainedWritePort {
 };
 static CandidatePort dataPort;
 static NuwaData::Provider<CandidatePort, false> dataProvider(dataPort, retainedSlot);
+static unsigned liveGptStatus;
+static NuwaData::LiveGpt cachedLiveGpt() {
+  return static_cast<NuwaData::LiveGpt>(__atomic_load_n(&liveGptStatus, __ATOMIC_RELAXED));
+}
 
 static bool openCandidateData(uint64_t first, uint64_t blocks, uint64_t reserve) {
   if (!gHost.lock || gStoreGeometry.first != nuwaDataIdentity.userdataFirst ||
@@ -43,8 +47,10 @@ static bool openCandidateData(uint64_t first, uint64_t blocks, uint64_t reserve)
     return false;
   auto *g = static_cast<NuwaData::GptBuffers *>(IOMallocZero(sizeof(NuwaData::GptBuffers)));
   if (!g) return false;
+  NuwaData::LiveGpt live;
   bool result = dataProvider.open(nuwaDataIdentity, 0, NuwaData::Block, gStoreGeometry.imageBytes,
-                                  reserve, {first, blocks}, *g, true);
+                                   reserve, {first, blocks}, *g, true, &live);
+  __atomic_store_n(&liveGptStatus, unsigned(live), __ATOMIC_RELAXED);
   IOFree(g, sizeof(NuwaData::GptBuffers));
   return result;
 }

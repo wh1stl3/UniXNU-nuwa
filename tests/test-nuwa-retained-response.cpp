@@ -69,7 +69,9 @@ static struct Hardware {
   unsigned writeSubmissions = 0, writeOcsReads = 0;
   uint64_t preparedLba = 0;
   bool active = false, partMedia = false, writing = false;
-  bool descriptor = false;
+  bool descriptor = false, modeSense = false, dpofua = false, wce = false;
+  Response modeWire{};
+  unsigned modeCount = 0;
   unsigned descCount = 0, queryCode = 0, descLength = 0;
   const NuwaData::FixtureGpt *gpt = nullptr;
   uint8_t lastCdb[10]{}, written[NuwaData::Block]{};
@@ -157,7 +159,21 @@ static struct Hardware {
     r[41] = 6;
     auto *data = virt + CombinedRead::Data;
     assert(virt[4112] != 0x35);
-    if (writing) {
+    if (modeSense) {
+      ++modeCount;
+      const auto *u = virt + 4096;
+      constexpr uint8_t cdb[] = {0x5a, 8, 8, 0, 0, 0, 0, 0, 0x40, 0};
+      assert(!memcmp(u + 16, cdb, sizeof cdb) && u[0] == 1 && u[1] == 0x40 && u[2] == 0 &&
+             CombinedRead::be32(u + 12) == 64 && (NuwaData::le32(virt) & (3U << 25)) == (2U << 25) &&
+             (NuwaData::le32(virt + 28) & 0xffff) == 1 &&
+             NuwaData::le64(virt + 5120) == Dma + CombinedRead::Data &&
+             NuwaData::le32(virt + 5132) == 63);
+      data[1] = 26; // 8 B header + 20 B Caching page.
+      data[3] = dpofua ? 0x10 : 0;
+      data[8] = 0x88; // PS bit is not part of the page code.
+      data[9] = 18;
+      data[10] = wce ? 4 : 0;
+    } else if (writing) {
       ++writeSubmissions;
       memcpy(lastCdb, virt + 4112, sizeof lastCdb);
       memcpy(written, data, sizeof written);
@@ -191,12 +207,15 @@ static struct Hardware {
                uint64_t lba, unsigned blocks, const uint8_t *writeSource, NuwaUfsDesc::Request desc) {
     assert(heldLocks && pa == Dma && (c == CombinedRead::Command::Read ||
                                      c == CombinedRead::Command::WriteFua ||
-                                     c == CombinedRead::Command::QueryDesc));
+                                      c == CombinedRead::Command::QueryDesc ||
+                                      c == CombinedRead::Command::ModeSense));
     ++prepares;
     preparedLba = lba;
     ocsReads = 0;
     writing = c == CombinedRead::Command::WriteFua;
     descriptor = c == CombinedRead::Command::QueryDesc;
+    modeSense = c == CombinedRead::Command::ModeSense;
+    if (modeSense) wire = modeWire;
     return CombinedRead::encode(virt, pa, c, tag, block, lba, blocks, writeSource, desc);
   }
   uint32_t doorbell() {
@@ -213,6 +232,7 @@ static struct Hardware {
   void delay() {}
   void invalidateAll() {}
   const volatile uint8_t *response() const { return virt + 4608; }
+  const volatile uint8_t *data() const { return virt + CombinedRead::Data; }
 } combined_hardware;
 
 static CombinedRead::State combined_state;
@@ -373,8 +393,9 @@ static void startMockBoot(Response wire) {
   gStoreRegionFirst = gStoreRegionBlocks = 0;
   // Fixture-only process replacement across independent test scenarios.
   new (&retainedSlot) NuwaData::Slot;
-  descOptIn = ufsDescClaimed = ufsDescPublished = 0;
+  descOptIn = ufsDescClaimed = ufsDescPublished = liveGptStatus = 0;
   ufsDescSnapshot = {};
+  ufsModeSnapshot = {};
 }
 
 static void testAttach(const char *state) {
@@ -746,7 +767,7 @@ static void testDescriptors() {
   descOptIn = 2;
   probeUfsDescriptors();
   assert(!cachedUfsDescRow(row, sizeof row) && !combined_hardware.mmioReads &&
-         !combined_hardware.submissions);
+          !cachedUfsModeRow(row, sizeof row) && !combined_hardware.submissions);
   std::puts("PASS READ_DESC default and invalid opt-in: no MMIO, no row");
 
   DescriptorPort port;
@@ -760,7 +781,8 @@ static void testDescriptors() {
   descOptIn = 1;
   probeUfsDescriptors();
   probeUfsDescriptors();
-  assert(combined_hardware.submissions == 5 && combined_hardware.descCount == 5 &&
+  assert(combined_hardware.submissions == 6 && combined_hardware.descCount == 5 &&
+          combined_hardware.modeCount == 1 &&
          !combined_hardware.writeSubmissions && retainedSlot.rootAllowed());
   assert(ufsDescSnapshot.bootEnable == 1 && ufsDescSnapshot.lus == 2 &&
          ufsDescSnapshot.units[0].blockSize == 4096 && ufsDescSnapshot.units[3].blocks == 60 &&
@@ -792,7 +814,8 @@ static void testDescriptors() {
     probeUfsDescriptors();
     assert(ufsDescSnapshot.result.status == statuses[fault] &&
            cachedUfsDescRow(row, sizeof row) && !strncmp(row, "UFS err=", 8));
-    assert(combined_hardware.submissions == 1 && combined_hardware.descCount == 1 &&
+    assert(combined_hardware.submissions == (fault < 2 ? 2U : 1U) &&
+           combined_hardware.modeCount == (fault < 2 ? 1U : 0U) && combined_hardware.descCount == 1 &&
            !combined_hardware.writeSubmissions && retainedSlot.rootAllowed() == (fault < 2));
     const auto mmio = combined_hardware.mmioReads;
     if (fault >= 2) {
@@ -805,10 +828,93 @@ static void testDescriptors() {
     } else {
       combined_hardware.wire = {};
       uint8_t page[NuwaData::Block]{};
-      assert(native_ufs_part_read(0, 10, 1, page) && combined_hardware.submissions == 2);
+      assert(native_ufs_part_read(0, 10, 1, page) && combined_hardware.submissions == 3);
     }
     std::printf("PASS READ_DESC %s: %s, next root=%s\n", labels[fault],
                 row, fault < 2 ? "allowed" : "isolated");
+  }
+}
+
+static void testModeSense() {
+  using namespace NuwaUfsDesc;
+  char row[79]{};
+  for (unsigned value = 0; value < 4; ++value) {
+    startMockBoot({});
+    descOptIn = 1;
+    combined_hardware.dpofua = value & 2;
+    combined_hardware.wce = value & 1;
+    // Normal underflow: complete 28-byte parameter list in a 64-byte allocation.
+    combined_hardware.modeWire.residual = 36;
+    combined_hardware.modeWire.flags = 0x20;
+    probeUfsDescriptors();
+    probeUfsDescriptors();
+    char expected[79];
+    snprintf(expected, sizeof expected, "UFS2 dpofua=%u wce=%u gpt=unk", value >> 1, value & 1);
+    const auto mmio = combined_hardware.mmioReads;
+    assert(cachedUfsModeRow(row, sizeof row) && !strcmp(row, expected) &&
+           combined_hardware.modeCount == 1 && combined_hardware.submissions == 6 &&
+           !combined_hardware.writeSubmissions && combined_hardware.mmioReads == mmio);
+    std::printf("PASS MODE SENSE(10) read-only once: %s\n", row);
+  }
+  for (unsigned fault = 0; fault < 4; ++fault) {
+    startMockBoot({});
+    descOptIn = 1;
+    auto &r = combined_hardware.modeWire;
+    if (fault < 2) { r.flags = 0x20; r.residual = fault == 0 ? 57 : 54; }
+    if (fault == 2) { r.status = 2; r.dl = 16; }
+    if (fault == 3) { r.ocs = 15; r.timedOut = true; }
+    static constexpr const char *rows[] = {
+        "UFS2 err=6 sc=000000", "UFS2 err=6 sc=000000",
+        "UFS2 err=3 sc=050000", "UFS2 err=5 sc=000000"
+    };
+    static constexpr const char *labels[] = {"short header", "short caching page", "CHECK CONDITION", "timeout"};
+    probeUfsDescriptors();
+    assert(cachedUfsModeRow(row, sizeof row) && !strcmp(row, rows[fault]) &&
+           combined_hardware.modeCount == 1 && combined_hardware.submissions == 6 &&
+           !combined_hardware.writeSubmissions && retainedSlot.rootAllowed() == (fault != 3));
+    if (fault == 3) {
+      const auto mmio = combined_hardware.mmioReads;
+      uint8_t page[NuwaData::Block]{};
+      assert(retainedSlot.state() == NuwaData::State::TIMEOUT_ORPHAN);
+      probeUfsDescriptors();
+      assert(!native_ufs_part_read(0, 10, 1, page) && combined_hardware.mmioReads == mmio &&
+             combined_hardware.submissions == 6);
+    }
+    std::printf("PASS MODE SENSE %s: %s\n", labels[fault], row);
+  }
+  uint8_t raw[ModeBytes]{};
+  raw[1] = 6; raw[3] = 0x10;
+  const auto header = parseMode(raw, 8);
+  assert(header.result.status == Status::Ok && header.dpofua == Bit::Set && header.wce == Bit::Unknown);
+  raw[1] = 12; raw[8] = raw[11] = 0x08; raw[9] = raw[12] = 1;
+  assert(parseMode(raw, 14).result.status == Status::Malformed);
+  raw[1] = 8; raw[8] = 0x48; raw[9] = 1;
+  assert(parseMode(raw, 10).result.status == Status::Malformed);
+
+  for (const bool valid : {false, true}) {
+    using namespace NuwaData;
+    startMockBoot({});
+    FixtureGpt gpt;
+    if (!valid) gpt.be[0] ^= 1;
+    combined_hardware.gpt = &gpt;
+    GptBuffers buffers{};
+    LiveGpt live = LiveGpt::Bad;
+    constexpr uint64_t root = 8446279680ULL, reserve = 262144;
+    assert(!dataProvider.open(gpt.id, 0, Block, root, reserve, DataOverlay::Media, buffers, true, &live)
+           && live == LiveGpt::Unknown && !combined_hardware.submissions);
+    assert(dataProvider.open(gpt.id, 0, Block, root, reserve, DataOverlay::Media, buffers, false, &live) == valid);
+    assert(live == (valid ? LiveGpt::Ok : LiveGpt::Bad) && combined_hardware.submissions == 4);
+    // Simulate publication from an open that reached GPT validation. Production
+    // mode 2 deliberately never reaches it with the current write gate.
+    __atomic_store_n(&liveGptStatus, unsigned(live), __ATOMIC_RELAXED);
+    descOptIn = 1;
+    probeUfsDescriptors();
+    const auto mmio = combined_hardware.mmioReads;
+    assert(cachedUfsModeRow(row, sizeof row) && strstr(row, valid ? "gpt=ok" : "gpt=bad") &&
+           combined_hardware.submissions == 10 && combined_hardware.mmioReads == mmio &&
+           !combined_hardware.writeSubmissions);
+    dataProvider.close();
+    std::printf("PASS live dual GPT from existing open, no extra I/O: %s\n", row);
   }
 }
 
@@ -933,6 +1039,7 @@ int main() {
          !retainedSlot.rootAllowed());
   std::puts("PASS candidate re-init refuses without old-DMA/platform proof; MMIO=0, submissions=0");
   testDescriptors();
+  testModeSense();
   testRamOverlay();
   testRamAmplification();
 }

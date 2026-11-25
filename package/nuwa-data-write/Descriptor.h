@@ -3,6 +3,8 @@
 
 namespace NuwaUfsDesc {
 constexpr unsigned MaxBytes = 255, MaxLuns = 32;
+constexpr uint8_t ModeCdb[] = {0x5a, 0x08, 0x08, 0, 0, 0, 0, 0, 0x40, 0};
+constexpr unsigned ModeBytes = ModeCdb[8];
 struct Request {
   unsigned type = 0, index = 0;
   constexpr bool valid() const {
@@ -50,6 +52,33 @@ struct Result {
   Status status;
   unsigned bytes = 0, code = 0;
 };
+enum class Bit : unsigned { Unknown, Clear, Set };
+struct Mode {
+  Result result{Status::NotReady};
+  Bit dpofua = Bit::Unknown, wce = Bit::Unknown;
+};
+
+inline Mode parseMode(const uint8_t *p, unsigned n) {
+  const Mode bad{{Status::Malformed}};
+  if (n < 8 || n > ModeBytes) return bad;
+  const unsigned end = (unsigned(p[0]) << 8 | p[1]) + 2;
+  const unsigned start = 8 + (unsigned(p[6]) << 8 | p[7]);
+  if (start > end || end > n) return bad;
+  Mode mode{{Status::Ok, n}, p[3] & 0x10 ? Bit::Set : Bit::Clear};
+  for (unsigned i = start; i < end;) {
+    if (end - i < 2) return bad;
+    const bool subpage = p[i] & 0x40;
+    if (subpage && end - i < 4) return bad;
+    const unsigned length = subpage ? 4 + (unsigned(p[i + 2]) << 8 | p[i + 3]) : 2 + p[i + 1];
+    if (length > end - i) return bad;
+    if (!subpage && (p[i] & 0x3f) == 8) {
+      if (length < 3 || mode.wce != Bit::Unknown) return bad;
+      mode.wce = p[i + 2] & 4 ? Bit::Set : Bit::Clear;
+    }
+    i += length;
+  }
+  return mode;
+}
 struct Unit {
   bool enabled = false;
   unsigned wp = 0, blockSize = 0;
