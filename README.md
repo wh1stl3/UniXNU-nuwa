@@ -161,7 +161,7 @@ python3 scripts/porting-record.py check --device .
 
 ## 文档
 
-- Data retained r5 候选：根读故障回调、GPT 诊断缓存、冷启动身份门禁，写门关闭，仅主机 self-checked：[设计与结果](docs/nuwa-data-write-design-20261125.md)。
+- Data retained r6 候选：store-open readiness 在 host 锁内采样，写门关闭，仅主机 self-checked：[设计与结果](docs/nuwa-data-write-design-20261125.md)。
 - 移植流程：<https://unixnu.com/zh/porting/steps>
 - 设备仓规范：<https://unixnu.com/zh/porting/device-repository>
 - 迁移指南：<https://unixnu.com/zh/porting/migration>

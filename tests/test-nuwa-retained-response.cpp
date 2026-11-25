@@ -25,15 +25,35 @@ static struct Host {
   bool ready, poisoned;
   IOLock *lock;
 } gHost;
-static IOLock hostLock, windowLock;
+static IOLock hostLock, windowLock, ramGate;
 static thread_local unsigned heldLocks;
 static thread_local std::promise<void> *waitingWindow;
+struct SnapshotSchedule {
+  bool after;
+  std::promise<void> &atBoundary;
+  std::future<void> *resume;
+};
+static thread_local SnapshotSchedule *snapshotSchedule;
+static void snapshotBoundary(IOLock *l, bool after) {
+  if (l != &hostLock || !snapshotSchedule || snapshotSchedule->after != after) return;
+  auto &hook = *snapshotSchedule;
+  snapshotSchedule = nullptr;
+  hook.atBoundary.set_value();
+  if (hook.resume)
+    assert(hook.resume->wait_for(std::chrono::seconds(2)) == std::future_status::ready);
+}
 static void IOLockLock(IOLock *l) {
   if (l == &windowLock && waitingWindow) waitingWindow->set_value();
+  snapshotBoundary(l, false);
   l->mutex.lock();
   ++heldLocks;
 }
-static void IOLockUnlock(IOLock *l) { assert(heldLocks); --heldLocks; l->mutex.unlock(); }
+static void IOLockUnlock(IOLock *l) {
+  assert(heldLocks);
+  --heldLocks;
+  l->mutex.unlock();
+  snapshotBoundary(l, true);
+}
 
 static struct Hardware {
   static constexpr uint32_t Dma = 0x10000;
@@ -183,7 +203,7 @@ static uint64_t native_data_persist_pages, native_data_persist_loaded, native_da
                 native_data_persist_present, native_ram_block_resident_bytes;
 static const char *nuwa_data_persist_open_why;
 struct NativeRamBlock {
-  IOLock *gate = &windowLock;
+  IOLock *gate = &ramGate;
   struct { uint64_t bytes, resident; uint8_t **pages; } sparse{};
   struct { uint64_t bytes = 8589934592ULL; } big;
   bool isBig = true, storeAttached = false, direct = false, directFailed = false;
@@ -280,6 +300,60 @@ struct Request {
     assert(callbacks == 1);
   }
 };
+
+static void testAttachRace(bool snapshotFirst) {
+  using namespace std::chrono_literals;
+  Response wire{};
+  wire.timedOut = true;
+  wire.ocs = 15;
+  startMockBoot(wire);
+  NativeUfsBlock block;
+  Request read;
+  std::promise<void> boundary, resume, doorbell, complete;
+  auto atBoundary = boundary.get_future(), attachResume = resume.get_future();
+  auto rung = doorbell.get_future(), allowCompletion = complete.get_future();
+  std::future<void> root;
+  if (!snapshotFirst) {
+    // Root owns the transport lock when attach tries to sample readiness.
+    combined_hardware.submitted = &doorbell;
+    combined_hardware.allowCompletion = &allowCompletion;
+    root = std::async(std::launch::async, [&] { read.issue(block); });
+    assert(rung.wait_for(2s) == std::future_status::ready);
+  }
+
+  SnapshotSchedule schedule{snapshotFirst, boundary, snapshotFirst ? &attachResume : nullptr};
+  auto attach = std::async(std::launch::async, [&] {
+    snapshotSchedule = &schedule;
+    NativeRamBlock ram;
+    ram.attachStore();
+    assert(!heldLocks && ram.storeAttached && native_data_persist_state == 4);
+  });
+  assert(atBoundary.wait_for(2s) == std::future_status::ready);
+  assert(attach.wait_for(0s) == std::future_status::timeout);
+  if (snapshotFirst)
+    root = std::async(std::launch::async, [&] { read.issue(block); });
+  else
+    complete.set_value();
+  assert(root.wait_for(2s) == std::future_status::ready);
+  root.get();
+  if (snapshotFirst) resume.set_value();
+  assert(attach.wait_for(2s) == std::future_status::ready);
+  attach.get();
+  assert(read.status == kIOReturnTimeout && read.callbacks == 1);
+  assert(!strcmp(nuwa_data_persist_open_why, snapshotFirst ? "window" : "nolayout"));
+  assert(native_data_persist_gpt == 0 && combined_hardware.submissions == 1 &&
+         combined_hardware.prepares == 1);
+  // Even bypassing the early snapshot, the real Provider must refuse a
+  // geometrically valid read-only reopen before touching any GPT blocks.
+  const auto mmio = combined_hardware.mmioReads;
+  NuwaData::GptBuffers g{};
+  constexpr NuwaData::Window w{59491258, 2097217};
+  assert(!dataProvider.open(nuwaDataIdentity, 0, NuwaData::Block, 8446279680ULL, 262144, w, g));
+  assert(!dataProvider.open(nuwaDataIdentity, 0, NuwaData::Block, 8446279680ULL, 262144, w, g, true));
+  assert(combined_hardware.mmioReads == mmio && combined_hardware.submissions == 1);
+  std::printf("PASS attach race %s: no deadlock, extra UFS submissions=0, write denied\n",
+              snapshotFirst ? "snapshot before isolation" : "isolation before snapshot");
+}
 
 static void testTerminal(bool timeout) {
   using NuwaData::State;
@@ -387,4 +461,6 @@ int main() {
   testAttach("write gate closed");
   testTerminal(true);
   testTerminal(false);
+  testAttachRace(true);
+  testAttachRace(false);
 }

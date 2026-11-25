@@ -517,6 +517,10 @@ def data_candidate_link(out, argv, env, gpt):
             "{61850624, 6, 61850618, 3110976, 61850618, " + guids + "};\n"
             f'#include "{code / "KernelPort.inc"}"')
     replace("!hostStoreOpen (first, blocks)", "!openCandidateData (first, blocks, reserve)")
+    replace('if (!storeMode ()) reason = "off";\n'
+            '  else if (!gStoreGeometry.valid || !gHost.ready) reason = "no root layout";',
+            'if (!storeMode ()) reason = "off";\n'
+            '  else if (!gStoreGeometry.valid || !storeReadySnapshot()) reason = "no root layout";')
     replace("  if (!gStoreRegionBlocks || !dst || !blocks || rel >= gStoreRegionBlocks || blocks > gStoreRegionBlocks - rel) return 0;",
             "  if (storeMode () == 2) return gHost.lock && dataProvider.read (rel, blocks, dst);\n"
             "  if (!gStoreRegionBlocks || !dst || !blocks || rel >= gStoreRegionBlocks || blocks > gStoreRegionBlocks - rel) return 0;")

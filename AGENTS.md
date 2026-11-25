@@ -62,7 +62,7 @@
 - 2026-11-25：lsd 崩溃分析冻结，主线转显示接线；下一版用已审的 pixsig 探针（outer `28d45ab6c3d7c5ec79cf14543af4836dadf04de7eddaa91fd876b36bc831dbcc`）区分 `bk` 清屏与 `so` 真 surface，再按结果决定是否处理 CA 软件后端、转换/扫描输出或 vsync。
 
 ## 阻塞
-- Data retained r5 仅主机 self-checked，写门关闭；旧 DMA 排除与可信 boot/domain/media 身份来源未证明：[记录](docs/nuwa-data-write-design-20261125.md)。
+- Data retained r6 仅主机 self-checked，写门关闭；旧 DMA 排除与可信 boot/domain/media 身份来源未证明：[记录](docs/nuwa-data-write-design-20261125.md)。
 - 卡点优先查 [已知差异与跨项目关停手段清单](docs/nuwa-open-deltas-20261125.md)。
 - 2026-11-22：持久 Data 与显示/交互仍受阻，认证 NOT REACHED；主控转述实机与深审、主机 self-checked，详见 [本轮结论](docs/nuwa-session-20261122-findings.md)。
 - CPU-only 显示 ON 候选按 329 止损条件冻结，OFF 诊断路径保留，329 guard 不动；这是 deferral，非绕过。三项止损均未闭合，解除条件及证据见 [329 决策记录](docs/nuwa-329-stop-20261121.md)；ON 产物保留分支、不上机。self-checked。

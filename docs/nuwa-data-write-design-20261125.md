@@ -3,7 +3,43 @@
 **单核候选已链接 provider 骨架和双槽 overlay；Data 写门禁关闭。**
 此包不验证可写性或持久化，未接触设备。保留 PU why。
 
-## r5：根读 completion、GPT 缓存与冷启动身份（当前候选，self-checked）
+## r6：store-open readiness 快照（当前候选，self-checked）
+
+`attachStore()` 的 ramblock gate 不保护 `gHost.ready`。候选
+`native_ufs_store_open()` 在 `gHost.lock` 内通过 `retainedReadyLocked()`
+采样 ready/poison/slot 隔离，随后**先释放 host 锁**，才进入 mode 2
+准入路径。快照只用于提前拒绝，不能作为授权；`Provider::open()`
+仍自行取同一把锁，并在 GPT 探测之前重查 readiness/slot。没有用
+`volatile` 替代同步，也没有改变写门、隔离或锁序。
+
+候选入口 fixture 使用独立的 ramblock gate、根窗口锁和 host 锁，
+覆盖实际 `attachStore()`、store-open 与根读超时交错。先采样时允许
+走到窗口拒绝，先隔离时提前拒绝；两者均只有原根读的一次提交。
+绕过前置快照直接尝试 Provider 开窗仍在 GPT I/O 前拒绝。实际输出：
+
+```text
+PASS attach race snapshot before isolation: no deadlock, extra UFS submissions=0, write denied
+PASS attach race isolation before snapshot: no deadlock, extra UFS submissions=0, write denied
+```
+
+沿用 r5 复跑配方，换 fresh `B`/`P`（本轮
+`out/nuwa-ufs-recovery-candidate-20261125-build-r6` /
+`out/nuwa-ufs-recovery-candidate-20261125-package-r6`）。22 项
+入口/retained 和 37 项 Data/冷启动用例、linked crashcap、outer/FAT
+audit、`fsck.fat -vn` 均 self-checked。反汇编确认 store-open 快照的
+host 锁边界、Data 写与 sync 无真实发送路径。仅替换 kernel 与重绑的
+ADT CHMH，561 B args、seed、trust 不变；FAT 余 **11042304 B**。
+UniXNU 上游 HEAD 前后是 `b04f131da9151182dbb26ce4e638fa8acc2933ac`，未改 pin。
+
+| 产物 | 哈希 |
+| --- | --- |
+| Kernel SHA-256 | `af6fa4d9cc74116dd912765f12d706f69b2a34f9ada6add9694de44c69e57128` |
+| Outer SHA-256 | `fa09160f8700707fd8fd5fffe0af3f7e64f2a7fcf18831dd6c649f3847afeaed` |
+| CHMH SHA-384 | `a8fd63f18b5f7dd0023bc47de2d73b77314568d14b440c1ae4d181272b4e2e13d652ff6754e0df2170b55518fccdc80e` |
+| 回读 FAT SHA-256 | `02c2a6a1bede87c9875c8129f6f47ad80e3952a04b29b2cc6aaf4eb42e80c64e` |
+| Seed SHA-256 | `3c81135b384d8e090521205f2d69b3c197521e6d03c63682419d021bf0f24e5e` |
+
+## r5：根读 completion、GPT 缓存与冷启动身份（历史候选，self-checked）
 
 - `NativeUfsBlock::doAsyncReadWrite` 的已接受根读不再调用
   `rootReadFailureVisible`。`hostRead4k` 先释放 transport 锁，
