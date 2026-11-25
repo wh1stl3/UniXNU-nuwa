@@ -18,6 +18,7 @@
 #include "SparseDisk.h"
 #include "PersistOverlay.h"
 #include "DirectDisk.h"
+#include "PersistOpenReason.h"
 
 extern "C" {
 extern unsigned long gPhysBase, gPhysSize;
@@ -42,6 +43,7 @@ unsigned native_ufs_store_gpt_check(void) __attribute__((weak_import));
 // error, 6 resumed read-only (probe), 7 kept: the store holds no Data of this seed and no reset was asked, so it is left untouched and
 // this boot's Data runs from the seed alone (header: why). header: persist::checkHeader result.
 volatile uint32_t native_data_persist_state = 0, native_data_persist_header = 9, native_data_persist_gpt = 0xff, native_data_persist_gpt_after = 0xff;
+const char *volatile nuwa_data_persist_open_why = nullptr;
 // r24 (nuwa fork of this upstream driver): why native_ram_block_volume_seed() failed, for the
 // DATA row's serr field.  0 = not run or success, 1 = the disk object is not ready,
 // 2 = no IOMedia matched the volume UUID, 3 = a match lacks its UUID or BSD properties,
@@ -101,7 +103,9 @@ public:
       const char *why = "";
       native_data_persist_pages = pages;
       native_data_persist_gpt = native_ufs_store_gpt_check();
-      if (!native_ufs_store_open(persist::windowBlocks(pages), &first, &why)) {
+      int opened = native_ufs_store_open(persist::windowBlocks(pages), &first, &why);
+      nuwa_data_persist_open_why = nuwa_persist_open_reason(opened, why);
+      if (!opened) {
         native_data_persist_state = 4;
         IOLog("NativeRamBlock: persistent store refused: %s\n", why);
       } else {

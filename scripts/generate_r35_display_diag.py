@@ -517,6 +517,20 @@ def add_smp_observe(src):
         b"  bp_smp_entry_title(head,sizeof head,build_tag,now,crashes,failed);")
 
 
+def data_persist_row(src):
+    anchor = b"static void ext_data_rows(void) {"
+    src = replace_once(src, anchor, b"extern const char *volatile nuwa_data_persist_open_why;\n" + anchor)
+    return replace_once(src, b"""  char a[48],b[48];
+  snprintf(a,sizeof a,"DATA st=%u hdr=%u gpt=%x/%x lba=%llx",native_data_persist_state,native_data_persist_header,
+    native_data_persist_gpt,native_data_persist_gpt_after,(unsigned long long)native_data_persist_first_lba);
+""", b"""  char a[48]={0},b[48]={0};
+  const char *why = nuwa_data_persist_open_why;
+  snprintf(a,sizeof a,"DATA st=%u h=%u g=%x/%x why=%s l=%llx",
+    native_data_persist_state,native_data_persist_header,native_data_persist_gpt,
+    native_data_persist_gpt_after,why ? why : "-", (unsigned long long)native_data_persist_first_lba);
+""")
+
+
 def generate(src, *, mg_reset=False, smp_observe=False, pixsig=False):
     if sha256(src).hexdigest() != RENDERER_SHA:
         raise ValueError("expected the pinned r35l full renderer")

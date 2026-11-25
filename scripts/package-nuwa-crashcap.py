@@ -24,6 +24,10 @@ FRAME_OUTER = ROOT / "out/nuwa-crashframes-20261125-package"
 FRAME_SHA = "b83021a7799cacb3bd4086162cae9474f267dc6dc6294eb11d5c4f0c6374e157"
 FRAME_CHMH = bytes.fromhex(
     "0cf294e7bb627e97cbefc374476b2a6ff99dc2be649d48c78472d6f6cd17413059aca226947baf25ff6163fdc789415a")
+PIX_OUTER = ROOT / "out/nuwa-pixsig-20261125-package"
+PIX_SHA = "28d45ab6c3d7c5ec79cf14543af4836dadf04de7eddaa91fd876b36bc831dbcc"
+PIX_CHMH = bytes.fromhex(
+    "4d752ffcbe7e174d0dac4bddec403a8bc0bf809eb161cb08d81a1770f357832b6bb1aa713d185a73dc96127c00f55599")
 PAYLOAD = "EFI/UniXNU/Payloads/"
 KERNEL, ADT, TRUST, SCRATCH = (PAYLOAD + name for name in
     ("kernel.macho", "kernel.macho.adt", "kernel.macho.trustcache", "scratch-data.img"))
@@ -77,14 +81,16 @@ def main():
     profile = ap.add_mutually_exclusive_group()
     profile.add_argument("--crashframes", action="store_true", help="use the pinned DSP counter outer")
     profile.add_argument("--pixsig", action="store_true", help="use the pinned crashframes outer")
+    profile.add_argument("--data-persist-diag", action="store_true", help="use the pinned PIX outer")
     ap.add_argument("--audit-only", action="store_true", help="read an existing outer and compare all FAT files")
     a = ap.parse_args()
     out = a.out.resolve()
-    assert out.is_relative_to(ROOT / "out") and out not in (ROOT / "out", OLD, DSP_OUTER, FRAME_OUTER)
+    assert out.is_relative_to(ROOT / "out") and out not in (ROOT / "out", OLD, DSP_OUTER, FRAME_OUTER, PIX_OUTER)
     kernel = a.kernel.resolve()
     assert kernel.is_relative_to(ROOT / "out") and kernel.name == "kernel.macho"
     new_kernel = kernel.read_bytes()
     template, template_sha, template_chmh = (
+        (PIX_OUTER, PIX_SHA, PIX_CHMH) if a.data_persist_diag else
         (FRAME_OUTER, FRAME_SHA, FRAME_CHMH) if a.pixsig else
         (DSP_OUTER, DSP_SHA, DSP_CHMH) if a.crashframes else (OLD, ROLLBACK, OLD_CHMH))
     old_outer = pinned(template / "vendor_boot.img", template_sha)
@@ -106,6 +112,10 @@ def main():
     for token in (b"nuwa-sb-stack=900", b"disable-jobs=com.apple.iconservices.iconservicesagent"):
         assert tokens.count(token) == 1
     assert not any(t.split(b"=", 1)[0] == b"sheng-smp" for t in tokens)
+    if a.data_persist_diag:
+        assert not any(t.split(b"=", 1)[0] == b"sheng-data-reset" for t in tokens)
+        for token in (b"sheng-data-persist=2", b"sheng-log-reserve=1024"):
+            assert tokens.count(token) == 1
 
     chmh = runpy.run_path(str(ROOT / "scripts/build-chmh-only-payload.py"))["digest_material"]
     loader = pinned(ROOT / ".cache/boot-stage12-v4-r4.img",

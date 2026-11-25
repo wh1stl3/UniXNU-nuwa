@@ -367,8 +367,9 @@ def candidate_link(r35, out, records, argv, env, *, bringup_diag, hid, mg_reset,
     return adjusted
 
 
-def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False, pixsig=False):
-    from generate_r35_display_diag import generate
+def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False, pixsig=False,
+                 data_persist=False):
+    from generate_r35_display_diag import generate, data_persist_row
 
     source = out / "BootProgress.c"
     text = generate((r35 / "BootProgress.c").read_bytes(),
@@ -377,6 +378,8 @@ def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False, pixsig
         from generate_nuwa_crashcap import generate_banner
 
         text = generate_banner(text)
+    if data_persist:
+        text = data_persist_row(text)
     source.write_bytes(text)
     shutil.copyfile(r35 / "BootProgressDisplay.h", out / "BootProgressDisplay.h")
     if pixsig:
@@ -402,9 +405,48 @@ def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False, pixsig
     return staged
 
 
+def persist_diag_link(r35, out, records, argv, env):
+    recipe, = (r for r in records if r["label"] == "compile-NativeRamBlock" and r["exit"] == 0)
+    archive_recipe, = (r for r in records if r["label"] == "archive-NativeRamBlock" and r["exit"] == 0)
+    command = list(recipe["argv"])
+    at, = (i for i, arg in enumerate(command) if arg.endswith("/nuwa-ramblock/NativeRamBlock.cpp"))
+    command[at] = str(ROOT / "package/nuwa-ramblock/NativeRamBlock.cpp")
+    obj = out / "NativeRamBlock.o"
+    command[command.index("-o") + 1] = str(obj)
+    (out / "ramblock-argv.json").write_text(json.dumps(command, indent=2) + "\n")
+    with (out / "compile-NativeRamBlock.log").open("wb") as log:
+        subprocess.run(command, cwd=recipe["cwd"], env=env, stdout=log, stderr=subprocess.STDOUT, check=True)
+
+    spec = importlib.util.spec_from_file_location("nuwa_late", ROOT / "scripts/build-nuwa-platform-power.py")
+    late = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(late)
+    late.INIT_NAME = "__GLOBAL__sub_I_NativeRamBlock.cpp"
+    late_obj = out / "NativeRamBlock.late.o"
+    late.late_transform(obj, late_obj, late.INIT_NAME)
+    late.verify_late(late_obj.read_bytes())
+    # Prove the reused transformer reproduces the historical late object.
+    control = out / "ramblock-late-control.o"
+    late.late_transform(r35 / obj.name, control, late.INIT_NAME)
+    require_pin(control, digest(r35 / late_obj.name))
+
+    dest = out / "libNativeRamBlock.a"
+    original = Path(archive_recipe["argv"][2])
+    pin = "fe0c663a1fd9ec6346d0498b11e7f0228c18e9cf743242fc69378b5d490ef6fa"
+    require_pin(original, pin)
+    require_pin(r35 / dest.name, pin)
+    run([*archive_recipe["argv"][:2], dest, late_obj])
+    if definitions(dest) != definitions(original) + Counter({"_nuwa_data_persist_open_why": 1}):
+        raise SystemExit("RamBlock diagnostic archive definitions changed beyond the reason field")
+    args = list(argv)
+    force_at, = (i for i, arg in enumerate(args) if arg == f"-Wl,-force_load,{original}")
+    args[force_at] = f"-Wl,-force_load,{dest}"
+    return args
+
+
 def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
                keep_link_debug, bringup_diag=False, hid_objects=(), mg_reset=False,
-               smp_gate=False, smp_observe=False, crashcap=False, pixsig=False, base=None):
+               smp_gate=False, smp_observe=False, crashcap=False, pixsig=False,
+               data_persist=False, base=None):
     for name, pin in (R35L_PINS if bringup_diag else R35_PINS).items():
         require_pin(r35 / name, pin)
     require_pin(cpo, R35_CPO_SHA)
@@ -475,8 +517,11 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
         if bringup_diag:
             argv = list(argv)
             diag = diag_archive(r35, out, hid=bool(hid_objects), mg_reset=mg_reset,
-                                smp_observe=smp_observe, crashcap=crashcap, pixsig=pixsig)
+                                smp_observe=smp_observe, crashcap=crashcap, pixsig=pixsig,
+                                data_persist=data_persist)
             argv[force_at] = f"-Wl,-force_load,{diag}"
+        if data_persist:
+            argv = persist_diag_link(r35, out, records, argv, env)
         argv = [*argv, "-Wl,-ignore_optimization_hints", f"-Wl,-force_load,{archive}", *map(str, hid_objects)]
         if not candidate or keep_link_debug:
             return link("native-link", native, argv)
@@ -703,6 +748,8 @@ def main():
                    help="compile out the GOP software timer lifecycle (requires --cpu-only)")
     p.add_argument("--pixsig", action="store_true",
                    help="add bounded CPU source pixel diagnostics to the crashframes replay")
+    p.add_argument("--data-persist-diag", action="store_true",
+                   help="show the unchanged Data store open's reason in the PIX candidate")
     p.add_argument("--candidate", action="store_true",
                    help="apply device hooks and write the r35-display diagnostic kernel")
     p.add_argument("--r35l-dir", type=Path,
@@ -752,6 +799,8 @@ def main():
         p.error("--crashcap requires the pinned single-core --r35l-dir candidate")
     if a.pixsig and not (a.crashcap and a.no_software_vsync):
         p.error("--pixsig requires --crashcap and --no-software-vsync")
+    if a.data_persist_diag and not (a.pixsig and not a.smp_gate):
+        p.error("--data-persist-diag requires --pixsig and the single-core candidate")
     out.mkdir(parents=True, exist_ok=False)
     donor = base / "out/ipsw/20H392/kernelcache.decompressed"
     hid_objects = []
@@ -782,7 +831,7 @@ def main():
                               keep_link_debug=a.keep_link_debug, bringup_diag=bool(a.r35l_dir),
                               hid_objects=hid_objects, mg_reset=a.mg_reset,
                               smp_gate=a.smp_gate, smp_observe=a.smp_observe, crashcap=a.crashcap,
-                              pixsig=a.pixsig, base=base)
+                              pixsig=a.pixsig, data_persist=a.data_persist_diag, base=base)
     else:
         # Replay XNU's exported link inputs, without its historical map output.
         stem = "mach.development.bcm2837"
