@@ -165,6 +165,7 @@ python3 scripts/porting-record.py check --device .
 
 - Data retained r8 候选：接入单块 WRITE(10) FUA 后端，生产写门关闭，仅主机 self-checked：[设计与结果](docs/nuwa-data-write-design-20261125.md)。
 - UFS re-init 仅通过主机模型，候选不执行硬件 re-init：[寄存器盘点与结果](docs/nuwa-ufs-reinit-20261125.md)。
+- UFS 只读 READ_DESC opt-in 候选，写门关闭、仅主机 self-checked：[记录](docs/nuwa-ufs-desc-20261125.md)。
 - 移植流程：<https://unixnu.com/zh/porting/steps>
 - 设备仓规范：<https://unixnu.com/zh/porting/device-repository>
 - 迁移指南：<https://unixnu.com/zh/porting/migration>

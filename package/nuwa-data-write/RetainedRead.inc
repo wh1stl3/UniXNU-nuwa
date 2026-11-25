@@ -31,7 +31,7 @@ static NuwaData::Evidence retainedCompletion(CombinedRead::End end, bool write) 
   using CombinedRead::End;
   using NuwaData::Evidence;
   if (end == End::Success) return write ? Evidence::FullFua : Evidence::ReadOk;
-  if (end == End::Scsi) return Evidence::AttributedCommandError;
+  if (end == End::Scsi || end == End::QueryError) return Evidence::AttributedCommandError;
   const auto &poll = combined_state.poll;
   // Transfer means timeout only if poll saw neither completion nor fatal.
   if (end == End::Transport && poll.ocs == 15 && !(poll.doorbellSeen & ~1U) &&

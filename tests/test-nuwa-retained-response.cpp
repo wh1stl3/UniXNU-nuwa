@@ -1,5 +1,6 @@
 // Compile against the candidate's staged CombinedRead.h, not the baseline copy.
 #include "../package/nuwa-data-write/Provider.h"
+#include "../package/nuwa-data-write/Descriptor.h"
 #include "../package/nuwa-data-write/Overlay.h"
 #include "NuwaDataFixtureGpt.h"
 #include "../package/nuwa-ramblock/PersistOpenReason.h"
@@ -65,6 +66,8 @@ static struct Hardware {
   unsigned writeSubmissions = 0, writeOcsReads = 0;
   uint64_t preparedLba = 0;
   bool active = false, partMedia = false, writing = false;
+  bool descriptor = false;
+  unsigned descCount = 0, queryCode = 0, descLength = 0;
   const NuwaData::FixtureGpt *gpt = nullptr;
   uint8_t lastCdb[10]{}, written[NuwaData::Block]{};
   std::promise<void> *submitted = nullptr;
@@ -101,6 +104,42 @@ static struct Hardware {
     seen = 0;
     active = true;
     auto *r = virt + 4608;
+    if (descriptor) {
+      ++descCount;
+      const auto *u = virt + 4096;
+      assert(u[0] == 0x16 && !u[1] && !u[2] && u[5] == 1 &&
+             !u[10] && !u[11] && u[12] == 1 && !u[15] && !u[18] && u[19] == 255 &&
+             !(NuwaData::le32(virt) & (3U << 25)) &&
+             !(NuwaData::le32(virt + 28) & 0xffff));
+      r[0] = 0x36;
+      r[3] = u[3] ^ unsigned(wire.badTag);
+      r[5] = 1;
+      memcpy(r + 12, u + 12, 4);
+      r[6] = queryCode;
+      if (!r[6] && u[13] == 2 && u[14] == 2) r[6] = 0xfc;
+      if (r[6]) return;
+      const unsigned n = descLength ? descLength : 32;
+      r[10] = n >> 8;
+      r[11] = n;
+      r[18] = r[10];
+      r[19] = r[11];
+      uint8_t *d = r + 32;
+      d[0] = n;
+      d[1] = u[13];
+      if (!u[13]) {
+        d[6] = 2;
+        d[8] = 1;
+        d[0x18] = 1;
+        d[0x19] = 0xce;
+      } else {
+        d[2] = u[14];
+        d[3] = u[14] == 0 || u[14] == 3;
+        d[5] = u[14] == 3 ? 2 : 0;
+        d[0xa] = 12;
+        d[0x12] = 60;
+      }
+      return;
+    }
     r[0] = wire.type;
     r[1] = wire.flags;
     r[2] = wire.lun;
@@ -146,14 +185,16 @@ static struct Hardware {
     }
   }
   bool prepare(uint64_t pa, CombinedRead::Command c, unsigned tag, unsigned block,
-               uint64_t lba, unsigned blocks, const uint8_t *writeSource) {
+               uint64_t lba, unsigned blocks, const uint8_t *writeSource, NuwaUfsDesc::Request desc) {
     assert(heldLocks && pa == Dma && (c == CombinedRead::Command::Read ||
-                                    c == CombinedRead::Command::WriteFua));
+                                     c == CombinedRead::Command::WriteFua ||
+                                     c == CombinedRead::Command::QueryDesc));
     ++prepares;
     preparedLba = lba;
     ocsReads = 0;
     writing = c == CombinedRead::Command::WriteFua;
-    return CombinedRead::encode(virt, pa, c, tag, block, lba, blocks, writeSource);
+    descriptor = c == CombinedRead::Command::QueryDesc;
+    return CombinedRead::encode(virt, pa, c, tag, block, lba, blocks, writeSource, desc);
   }
   uint32_t doorbell() {
     if (!active) return 0;
@@ -179,11 +220,18 @@ static struct { bool valid; uint64_t first, last, imageBytes; } gStoreGeometry;
 static constexpr NuwaData::GptIdentity nuwaDataIdentity{
   61850624, 6, 61850618, 3110976, 61850618, {1}, {2}, {3}
 };
-static bool PE_parse_boot_argn(const char *, void *, size_t) { return false; }
+static unsigned descOptIn;
+static bool PE_parse_boot_argn(const char *name, void *value, size_t n) {
+  if (strcmp(name, "nuwa-ufs-desc") || !descOptIn) return false;
+  assert(n == sizeof descOptIn);
+  memcpy(value, &descOptIn, n);
+  return true;
+}
 static void *IOMallocZero(size_t) { assert(false); return nullptr; }
 static void *IOMalloc(size_t n) { return std::malloc(n); }
 static void IOFree(void *p, size_t) { std::free(p); }
 #include "../package/nuwa-data-write/KernelPort.inc"
+#include "../package/nuwa-data-write/RetainedDesc.inc"
 
 using IOReturn = int;
 using UInt64 = uint64_t;
@@ -271,6 +319,8 @@ static void startMockBoot(Response wire) {
   gStoreGeometry = {true, nuwaDataIdentity.userdataFirst, nuwaDataIdentity.userdataLast, 8446279680ULL};
   // Fixture-only process replacement across independent test scenarios.
   new (&retainedSlot) NuwaData::Slot;
+  descOptIn = ufsDescClaimed = ufsDescPublished = 0;
+  ufsDescSnapshot = {};
 }
 
 static void testAttach(const char *state) {
@@ -517,6 +567,80 @@ static void testWrites() {
   }
 }
 
+static void testDescriptors() {
+  using namespace NuwaUfsDesc;
+  char row[79]{};
+  startMockBoot({});
+  probeUfsDescriptors();
+  descOptIn = 2;
+  probeUfsDescriptors();
+  assert(!cachedUfsDescRow(row, sizeof row) && !combined_hardware.mmioReads &&
+         !combined_hardware.submissions);
+  std::puts("PASS READ_DESC default and invalid opt-in: no MMIO, no row");
+
+  DescriptorPort port;
+  uint8_t buf[MaxBytes]{};
+  assert(port.read_descriptor(2, MaxLuns, buf).status == Status::Invalid &&
+         port.read_descriptor(2, 0xc4, buf).status == Status::Invalid &&
+         port.read_descriptor(0, 1, buf).status == Status::Invalid &&
+         !combined_hardware.mmioReads && !combined_hardware.submissions);
+  std::puts("PASS READ_DESC invalid and well-known LUNs rejected before MMIO");
+
+  descOptIn = 1;
+  probeUfsDescriptors();
+  probeUfsDescriptors();
+  assert(combined_hardware.submissions == 5 && combined_hardware.descCount == 5 &&
+         !combined_hardware.writeSubmissions && retainedSlot.rootAllowed());
+  assert(ufsDescSnapshot.bootEnable == 1 && ufsDescSnapshot.lus == 2 &&
+         ufsDescSnapshot.units[0].blockSize == 4096 && ufsDescSnapshot.units[3].blocks == 60 &&
+         !ufsDescSnapshot.units[1].enabled && !ufsDescSnapshot.units[2].enabled &&
+         ufsDescSnapshot.wp == 8);
+  const auto before = combined_hardware.mmioReads;
+  assert(cachedUfsDescRow(row, sizeof row) &&
+         !strcmp(row, "UFS lu=2 bs=4096 wp=00000008 mfr=01ce"));
+  assert(combined_hardware.mmioReads == before);
+  std::printf("PASS READ_DESC opt-in once: 5 read-only Query UPIUs, %s\n", row);
+
+  for (unsigned fault = 0; fault < 5; ++fault) {
+    startMockBoot({});
+    descOptIn = 1;
+    if (fault == 0) combined_hardware.queryCode = 0xfe;
+    if (fault == 1) combined_hardware.descLength = 8; // bounded, attributed, too short
+    if (fault == 2) combined_hardware.descLength = 256; // unowned envelope
+    if (fault == 3) combined_hardware.wire.badTag = true;
+    if (fault == 4) {
+      combined_hardware.wire.timedOut = true;
+      combined_hardware.wire.ocs = 15;
+    }
+    static constexpr Status statuses[] = {
+      Status::CommandError, Status::Malformed, Status::Unowned, Status::Unowned, Status::Timeout
+    };
+    static constexpr const char *labels[] = {
+      "query result FE", "short descriptor", "oversize envelope", "wrong tag", "timeout"
+    };
+    probeUfsDescriptors();
+    assert(ufsDescSnapshot.result.status == statuses[fault] &&
+           cachedUfsDescRow(row, sizeof row) && !strncmp(row, "UFS err=", 8));
+    assert(combined_hardware.submissions == 1 && combined_hardware.descCount == 1 &&
+           !combined_hardware.writeSubmissions && retainedSlot.rootAllowed() == (fault < 2));
+    const auto mmio = combined_hardware.mmioReads;
+    if (fault >= 2) {
+      uint8_t held[CombinedRead::Bytes], page[NuwaData::Block]{};
+      memcpy(held, combined_hardware.virt, sizeof held);
+      probeUfsDescriptors();
+      assert(!native_ufs_part_read(0, 10, 1, page));
+      assert(combined_hardware.submissions == 1 && combined_hardware.mmioReads == mmio &&
+             !memcmp(held, combined_hardware.virt, sizeof held));
+    } else {
+      combined_hardware.wire = {};
+      uint8_t page[NuwaData::Block]{};
+      assert(native_ufs_part_read(0, 10, 1, page) && combined_hardware.submissions == 2);
+    }
+    std::printf("PASS READ_DESC %s: %s, next root=%s\n", labels[fault],
+                row, fault < 2 ? "allowed" : "isolated");
+  }
+}
+
 static void testTerminal(bool timeout) {
   using NuwaData::State;
   using namespace std::chrono_literals;
@@ -637,4 +761,5 @@ int main() {
   assert(combined_hardware.mmioReads == before && combined_hardware.submissions == submissions &&
          !retainedSlot.rootAllowed());
   std::puts("PASS candidate re-init refuses without old-DMA/platform proof; MMIO=0, submissions=0");
+  testDescriptors();
 }

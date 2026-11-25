@@ -83,8 +83,11 @@ def main():
     profile.add_argument("--pixsig", action="store_true", help="use the pinned crashframes outer")
     profile.add_argument("--stage-channel", action="store_true", help="use the pinned PIX outer and keep STAGE dormant")
     profile.add_argument("--data-persist-diag", action="store_true", help="use the pinned PIX outer")
+    ap.add_argument("--ufs-desc", action="store_true", help="append the read-only UFS descriptor opt-in")
     ap.add_argument("--audit-only", action="store_true", help="read an existing outer and compare all FAT files")
     a = ap.parse_args()
+    if a.ufs_desc and not a.data_persist_diag:
+        ap.error("--ufs-desc requires --data-persist-diag")
     out = a.out.resolve()
     assert out.is_relative_to(ROOT / "out") and out not in (ROOT / "out", OLD, DSP_OUTER, FRAME_OUTER, PIX_OUTER)
     kernel = a.kernel.resolve()
@@ -129,6 +132,16 @@ def main():
              "args": args, "parent-adt": parent}
     assert chmh(bound)[1] == template_chmh and before[ADT].count(template_chmh) == 1
     bound["kernel"] = new_kernel
+    expected_config = before[CONFIG]
+    changed = {KERNEL, ADT}
+    if a.ufs_desc:
+        assert not any(t.split(b"=", 1)[0] == b"nuwa-ufs-desc" for t in tokens)
+        prefix = b'args = "' + args + b'"'
+        assert expected_config.count(prefix) == 1
+        args += b" nuwa-ufs-desc=1"
+        expected_config = expected_config.replace(prefix, b'args = "' + args + b'"')
+        bound["args"] = args
+        changed.add(CONFIG)
     digest = chmh(bound)[1]
     expected_adt = before[ADT].replace(template_chmh, digest, 1)
     assert digest != template_chmh
@@ -143,7 +156,12 @@ def main():
         fat.write_bytes(old_fat)
         new_adt = out / "kernel.macho.adt"
         new_adt.write_bytes(expected_adt)
-        for source, dest in ((kernel, KERNEL), (new_adt, ADT)):
+        payloads = [(kernel, KERNEL), (new_adt, ADT)]
+        if a.ufs_desc:
+            config_file = out / "unixnu.toml"
+            config_file.write_bytes(expected_config)
+            payloads.append((config_file, CONFIG))
+        for source, dest in payloads:
             subprocess.run(["mcopy", "-o", "-i", fat, source, "::/" + dest], check=True)
         base = a.base.resolve()
         config = ROOT / "out/nuwa-peer-probe-20261125-staging/build-input.toml"
@@ -158,8 +176,10 @@ def main():
     fs = FAT32(rb)
     after = files(fs)
     assert before.keys() == after.keys()
-    assert {path for path in before if before[path] != after[path]} == {KERNEL, ADT}
-    assert after[KERNEL] == new_kernel and after[ADT] == expected_adt
+    assert {path for path in before if before[path] != after[path]} == changed
+    assert after[KERNEL] == new_kernel and after[ADT] == expected_adt and after[CONFIG] == expected_config
+    entry_after, = (e for e in tomllib.loads(after[CONFIG].decode())["entry"] if e["id"] == "xnu")
+    assert entry_after["args"].encode() == args
     chosen = parse_adt(after[ADT])["/chosen"]
     assert chosen["boot-manifest-hash"] == digest
     assert chosen["display-scale"] == bytes.fromhex("03000000") and "text-fixups" not in chosen
@@ -168,7 +188,7 @@ def main():
     assert free >= 8 * 1024 * 1024
     report = dict(kernel_sha256=sha(after[KERNEL]), outer_sha256=sha(blob),
                   chmh_sha384=digest.hex(), fat_sha256=sha(rb), seed_sha256=sha(after[SCRATCH]),
-                  fat_free_bytes=free, changed_files=sorted((KERNEL, ADT)), args_bytes=len(args))
+                  fat_free_bytes=free, changed_files=sorted(changed), args_bytes=len(args))
     if a.audit_only:
         assert rb == readback.read_bytes()
     else:

@@ -1,9 +1,17 @@
 // Included inside CombinedRead after senseValid() and senseCode().
 static End response(State &s, const volatile uint8_t *r) {
-  const unsigned type = s.command == Command::Query ? 0x36 : 0x21;
+  const unsigned type = s.command == Command::Query || s.command == Command::QueryDesc ? 0x36 : 0x21;
   const unsigned dl = unsigned(r[10]) << 8 | r[11];
   if (r[0] != type || r[2] != lun(s.command) || r[3] != s.tag ||
       r[8] || dl > 480) return End::Response;
+  if (s.command == Command::QueryDesc) {
+    s.queryResult = r[6];
+    switch (NuwaUfsDesc::response(s.desc, r, dl)) {
+      case NuwaUfsDesc::Reply::Good: return End::Success;
+      case NuwaUfsDesc::Reply::Rejected: return End::QueryError;
+      case NuwaUfsDesc::Reply::Unowned: return End::Response;
+    }
+  }
   if (s.command == Command::Query) {
     s.queryResult = r[6];
     if (dl || r[1] || r[5] != 1 || r[6] || r[7] || r[12] != 3 ||
