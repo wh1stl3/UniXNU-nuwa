@@ -1,5 +1,7 @@
 # UniXNU-nuwa
 
+**显示适配尚未通过官方验收**（主控转述 / self-checked）；完整验收口径及当前证据缺口见 [机型记录](AGENTS.md) 和 `porting.toml` 的 display 区域，依据 `UniXNU/docs/zh/porting/display.md:30–56`；`bk/so/PIX` 仅为诊断拆分。
+
 **2026-11-25 方向切换：冻结 lsd 崩溃分析，转显示接线与 pixsig 区分清屏/真实 surface（self-checked）。** [PC/LR](docs/nuwa-lsd-crash-pc-20261125.md)；[横向对比](docs/nuwa-beyond-seed-comparison-20261125.md)；[pixsig](docs/nuwa-pixsig-20261125.md)。
 
 **2026-11-25 PIX 源像素签名候选，仅主机 self-checked，未刷写。**[记录](docs/nuwa-pixsig-20261125.md)。
