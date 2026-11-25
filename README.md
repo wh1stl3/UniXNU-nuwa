@@ -2,6 +2,8 @@
 
 **显示分支（2026-11-20）：**[FAT 计数更正：ON 通过、原 r35 OFF 低于门槛](docs/nuwa-r35-display-fat-correction-20261120-observation.md)（主机 self-checked，未上机）。
 
+**UFS 事实汇总（2026-11-25）：**[GPT/LUN/OSS 平台/provider/未知项](docs/nuwa-ufs-info-20261125.md)（self-checked，未上机；写授权前须 live 重读 GPT）。
+
 **当前（2026-11-15）：原生 UFS 根卷挂载成功，launchd 进入用户态；交互目标未达成。**
 `userdata` 前 8446279680 B 写入并整镜像回读 `sha256=da429da6…68d7`；根卷
 `boot-uuid=DADD93F8-DBBF-4B17-A1DF-0F11E64172F7`、`native-ufs-root=1`、无 ramdisk。
