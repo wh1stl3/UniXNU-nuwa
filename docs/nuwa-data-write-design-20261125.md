@@ -3,7 +3,66 @@
 **单核候选已链接 provider 骨架和双槽 overlay；Data 写门禁关闭。**
 此包不验证可写性或持久化，未接触设备。保留 PU why。
 
-## r4：隔离到经验证冷启动（当前合同，self-checked）
+## r5：根读 completion、GPT 缓存与冷启动身份（当前候选，self-checked）
+
+- `NativeUfsBlock::doAsyncReadWrite` 的已接受根读不再调用
+  `rootReadFailureVisible`。`hostRead4k` 先释放 transport 锁，
+  `ufsReadWindow` 再释放窗口锁，之后只调用一次 completion。首次
+  timeout/fatal 保留原 Timeout/IOError；隔离后的请求为 NotReady，
+  不访问硬件。方法返回 Success 表示请求已接收，错误由 callback
+  传递；两处不同时报错。没有 action/有效 request 的输入在接收前
+  返回 BadArgument，不能调用缺失的 callback；入口拒绝不走 panic。
+  启动发布失败的 `rootFailureVisible` 不属于块请求 completion。
+- Data 候选的 `native_ufs_store_gpt_check` 现在仅返回根布局资格已有的
+  `gStoreGeometry.valid` 缓存，`attachStore()` 的前后快照不读取介质。
+  PU 的 GPT 值是布局曾通过的快照，不是隔离后活读，也不是双 GPT 写授权。
+  `Provider::open` 独立的主备 GPT 读取及窗口验证没有删除。
+- 每项冷启动 proof 都带非零的 `boot_session_id` / `domain_id` /
+  `media_id`，必须逐项匹配从**当前**会话、域和请求介质独立取得的预期
+  元组；不得从 proof 反填预期。全真旧 boot、跨 domain、混合介质、
+  空来源均拒绝。当前无可信硬件来源，预期与 proof 缺省为空，门禁不变。
+
+使用下文单核 build/package 配方，用 fresh `B`/`P`（本轮
+`out/nuwa-ufs-recovery-candidate-20261125-build-r5` /
+`out/nuwa-ufs-recovery-candidate-20261125-package-r5`）。r5 复跑：
+
+```sh
+"$PY" -B tests/test-nuwa-retained-entry.py "$B" "$BASE"
+c++ -std=c++17 -Wall -Wextra -Werror -pthread -fsanitize=undefined \
+  tests/test-nuwa-data-write.cpp -o "$B/test-nuwa-data-write"
+"$B/test-nuwa-data-write"
+```
+
+20 项入口/retained 用例和 37 项 Data/冷启动模型均 self-checked。入口
+fixture 编译候选暂存的块方法、host transport、GPT cache/store open 和
+`NativeRamBlock::attachStore()` 方法，使用 host 硬件/锁 shim。实际输出：
+
+```text
+PASS attachStore write gate closed: cached GPT; diagnostic UFS submissions=0
+PASS block entry timeout: first/waiter/later complete once unlocked; waiter/later NotReady
+PASS attachStore isolated: cached GPT; diagnostic UFS submissions=0
+PASS block entry fatal: first/waiter/later complete once unlocked; waiter/later NotReady
+PASS cold start rejects all-true old boot session
+PASS cold start rejects cross-domain proof
+PASS cold start rejects mixed-media proof
+PASS cold start rejects all-true empty provenance
+```
+
+linked crashcap、outer/FAT audit、`fsck.fat -vn`、反汇编均 self-checked。
+反汇编没有根读 panic helper、Data 写命令或 GPT 诊断 transport 调用。
+561 B args、seed、trust 不变，仅替换 kernel 与重绑的 ADT CHMH，
+FAT 余 **11042304 B**；UniXNU 上游 HEAD 构建前后
+`b04f131da9151182dbb26ce4e638fa8acc2933ac`，未改 pin。
+
+| 产物 | 哈希 |
+| --- | --- |
+| Kernel SHA-256 | `cbf816d37942c6e1953c7c7b824cc50099344230971fbe93eb01a3d3af9b54e4` |
+| Outer SHA-256 | `8a12db32c5c90b78d4aa86d10ba021e7ec3e3c7a7aa36c39fe34f0043be5a468` |
+| CHMH SHA-384 | `2943e42ce91efb855e4ac8e1e8a3df5b2516756638c3b34e048bb7e29f0f9bed8da85f2c404a6a53e034b12bc0546229` |
+| 回读 FAT SHA-256 | `d24481b16005ba5fdb1ee10af55301bf9b30d17638656d9bd31459f734cd5cce` |
+| Seed SHA-256 | `3c81135b384d8e090521205f2d69b3c197521e6d03c63682419d021bf0f24e5e` |
+
+## r4：隔离到经验证冷启动（历史候选，self-checked）
 
 **没有旧 DMA 排空保证，不做活体回收。** 下文 r2 的 `tryRecover` /
 `RECOVERY_PROVEN` 是历史模型，r4 已删除；隔离中的旧 slot 不可解禁。

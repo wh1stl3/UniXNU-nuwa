@@ -140,6 +140,7 @@ static void powercuts() {
 struct MockPort {
   Disk &disk;
   bool locked = false, fua = false, isolation = false, ownership = true;
+  ColdStartIdentity expected{21, 31, 41};
   ColdStartEvidence boot{};
   unsigned writes = 0;
   Evidence result = Evidence::FullFua;
@@ -150,6 +151,10 @@ struct MockPort {
   uint64_t capacityLocked() { assert(locked); return disk.id.capacity; }
   unsigned blockSizeLocked() { assert(locked); return Block; }
   bool isolationArmedLocked() { assert(locked); return isolation; }
+  ColdStartIdentity coldStartIdentityLocked(const GptIdentity &, Window) {
+    assert(locked);
+    return expected;
+  }
   ColdStartEvidence coldStartEvidenceLocked(const GptIdentity &, Window) {
     assert(locked);
     return boot;
@@ -169,7 +174,12 @@ struct MockPort {
   }
 };
 
-static constexpr ColdStartEvidence Qualified{true, true, true, true, true, true, true, true};
+static constexpr ColdStartEvidence qualifiedFrom(ColdStartIdentity source) {
+  const ColdStartFact fact{source, true};
+  return {fact, fact, fact, fact, fact, fact, fact, fact};
+}
+static constexpr ColdStartIdentity Current{21, 31, 41};
+static constexpr ColdStartEvidence Qualified = qualifiedFrom(Current);
 
 static void providerTest(Disk &disk, Window w) {
   Slot slot;
@@ -202,7 +212,7 @@ static void providerTest(Disk &disk, Window w) {
 }
 
 static void coldStartTest(Disk &disk, Window w) {
-  constexpr std::pair<const char *, bool ColdStartEvidence::*> facts[] = {
+  constexpr std::pair<const char *, ColdStartFact ColdStartEvidence::*> facts[] = {
     {"firmware reinit", &ColdStartEvidence::firmwareReinitialized},
     {"old DMA exclusion", &ColdStartEvidence::oldDmaExcluded},
     {"LUN", &ColdStartEvidence::lunMatches},
@@ -215,23 +225,41 @@ static void coldStartTest(Disk &disk, Window w) {
   GptBuffers g{};
   Slot old;
   assert(old.submitRead(true, true) && !old.complete(Evidence::Timeout));
-  assert(!ColdStartEvidence{}.qualified());
+  assert(!ColdStartEvidence{}.qualified(Current));
   MockPort port{disk};
   port.fua = port.isolation = true;
   Slot initial;
   Provider<MockPort, true> probe(port, initial);
   for (auto [name, field] : facts) {
     port.boot = Qualified;
-    port.boot.*field = false;
-    Slot denied(port.boot);
+    (port.boot.*field).verified = false;
+    Slot denied(Current, port.boot);
     assert(!denied.rootAllowed());
     assert(!probe.open(disk.id, 0, Block, 8446279680ULL, 262144, w, g, true));
     std::printf("PASS cold start missing %s: isolated; write open denied\n", name);
   }
+  auto reject = [&](const char *name, ColdStartEvidence evidence) {
+    port.boot = evidence;
+    Slot denied(Current, evidence);
+    assert(!denied.rootAllowed());
+    assert(!probe.open(disk.id, 0, Block, 8446279680ULL, 262144, w, g, true));
+    std::printf("PASS cold start rejects %s\n", name);
+  };
+  reject("all-true old boot session", qualifiedFrom({20, 31, 41}));
+  auto mixed = Qualified;
+  mixed.oldDmaExcluded.source.domain_id++;
+  reject("cross-domain proof", mixed);
+  mixed = Qualified;
+  mixed.backupGptMatches.source.media_id++;
+  reject("mixed-media proof", mixed);
+  reject("all-true empty provenance", qualifiedFrom({}));
+  port.expected = {};
+  assert(!Qualified.qualified(port.expected));
+  port.expected = Current;
   port.boot = Qualified;
   port.isolation = false;
   assert(!probe.open(disk.id, 0, Block, 8446279680ULL, 262144, w, g, true));
-  Slot successor(Qualified);
+  Slot successor(Current, Qualified);
   assert(successor.rootAllowed() && !old.rootAllowed() && !old.complete(Evidence::ReadOk));
   std::puts("PASS all cold-start proofs admit only a fresh slot; old slot remains isolated");
 }

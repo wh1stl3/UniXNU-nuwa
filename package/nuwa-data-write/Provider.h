@@ -52,7 +52,8 @@ public:
       return false;
     if (requestWrite && (!BuildEnabled || !slot_.dataAllowed(true) ||
                          !port_.isolationArmedLocked() ||
-                         !port_.coldStartEvidenceLocked(id, window).qualified() ||
+                         !port_.coldStartEvidenceLocked(id, window).qualified(
+                             port_.coldStartIdentityLocked(id, window)) ||
                          !port_.fuaProvenLocked())) return false;
     if (!readLocked(1, g.ph) || !readLocked(2, g.pe) ||
         !readLocked(id.capacity - 1, g.bh)) return false;

@@ -7,6 +7,10 @@ struct CandidatePort {
   uint64_t capacityLocked() { return combined_state.blocks; }
   unsigned blockSizeLocked() { return combined_state.block; }
   bool isolationArmedLocked() { return true; } // RetainedRead's terminal, shared latch.
+  NuwaData::ColdStartIdentity coldStartIdentityLocked(const NuwaData::GptIdentity &,
+                                                     NuwaData::Window) {
+    return {}; // No trusted boot/session, domain or media identifier source.
+  }
   NuwaData::ColdStartEvidence coldStartEvidenceLocked(const NuwaData::GptIdentity &,
                                                      NuwaData::Window) {
     // No hardware evidence that old DMA is excluded after a firmware restart.

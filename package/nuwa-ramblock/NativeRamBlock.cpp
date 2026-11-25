@@ -111,6 +111,8 @@ public:
       uint64_t pages = (isBig ? big.bytes : sparse.bytes) / 4096, first = 0;
       const char *why = "";
       native_data_persist_pages = pages;
+      // The retained Data candidate exports a cached root-layout result, not
+      // a diagnostic I/O. Write authorization independently validates both GPTs.
       native_data_persist_gpt = native_ufs_store_gpt_check();
       uint64_t window = persist::windowBlocks(pages);
 #if defined(NUWA_DATA_CANDIDATE)

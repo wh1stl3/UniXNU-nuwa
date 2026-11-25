@@ -1,5 +1,8 @@
 // Compile against the candidate's staged CombinedRead.h, not the baseline copy.
 #include "../package/nuwa-data-write/Provider.h"
+#include "../package/nuwa-data-write/Overlay.h"
+#include "../package/nuwa-ramblock/PersistOpenReason.h"
+#include "PersistOverlay.h"
 #include <cassert>
 #include <cstdio>
 #include <future>
@@ -17,14 +20,20 @@ struct Response {
   bool badTag = false, badSense = false, timedOut = false, fatal = false;
 };
 
+struct IOLock { std::mutex mutex; };
 static struct Host {
   bool ready, poisoned;
-  bool *lock;
+  IOLock *lock;
 } gHost;
-static bool locked;
-static std::mutex mutex;
-static void IOLockLock(bool *l) { mutex.lock(); assert(!*l); *l = true; }
-static void IOLockUnlock(bool *l) { assert(*l); *l = false; mutex.unlock(); }
+static IOLock hostLock, windowLock;
+static thread_local unsigned heldLocks;
+static thread_local std::promise<void> *waitingWindow;
+static void IOLockLock(IOLock *l) {
+  if (l == &windowLock && waitingWindow) waitingWindow->set_value();
+  l->mutex.lock();
+  ++heldLocks;
+}
+static void IOLockUnlock(IOLock *l) { assert(heldLocks); --heldLocks; l->mutex.unlock(); }
 
 static struct Hardware {
   static constexpr uint32_t Dma = 0x10000;
@@ -32,6 +41,8 @@ static struct Hardware {
   Response wire{};
   unsigned prepares = 0, submissions = 0, seen = 0, ocsReads = 0, mmioReads = 0;
   bool active = false;
+  std::promise<void> *submitted = nullptr;
+  std::future<void> *allowCompletion = nullptr;
   uint32_t sread(unsigned off) const {
     switch (off) {
       case 0: return 0;
@@ -59,7 +70,7 @@ static struct Hardware {
     }
   }
   void hwrite(unsigned off, uint32_t val) {
-    assert(locked && off == 0x58 && val == 1 && !active);
+    assert(heldLocks && off == 0x58 && val == 1 && !active);
     ++submissions;
     seen = 0;
     active = true;
@@ -77,10 +88,14 @@ static struct Hardware {
     r[36] = 5;
     r[41] = 6;
     memset(virt + CombinedRead::Data, 0xa5, NuwaData::Block);
+    if (submitted) {
+      submitted->set_value();
+      assert(allowCompletion->wait_for(std::chrono::seconds(2)) == std::future_status::ready);
+    }
   }
   bool prepare(uint64_t pa, CombinedRead::Command c, unsigned tag, unsigned block,
                uint64_t lba, unsigned blocks) {
-    assert(locked && pa == Dma && c == CombinedRead::Command::Read);
+    assert(heldLocks && pa == Dma && c == CombinedRead::Command::Read);
     ++prepares;
     return CombinedRead::encode(virt, pa, c, tag, block, lba, blocks);
   }
@@ -104,7 +119,7 @@ static CombinedRead::State combined_state;
 #include "../package/nuwa-data-write/RetainedRead.inc"
 
 // Minimal kernel-only glue for the actual candidate provider.
-static struct { uint64_t first, last, imageBytes; } gStoreGeometry;
+static struct { bool valid; uint64_t first, last, imageBytes; } gStoreGeometry;
 static constexpr NuwaData::GptIdentity nuwaDataIdentity{
   61850624, 6, 61850618, 3110976, 61850618, {1}, {2}, {3}
 };
@@ -112,6 +127,80 @@ static bool PE_parse_boot_argn(const char *, void *, size_t) { return false; }
 static void *IOMallocZero(size_t) { assert(false); return nullptr; }
 static void IOFree(void *, size_t) { assert(false); }
 #include "../package/nuwa-data-write/KernelPort.inc"
+
+using IOReturn = int;
+using UInt64 = uint64_t;
+constexpr IOReturn kIOReturnSuccess = 0, kIOReturnBadArgument = 1, kIOReturnNotReady = 2,
+                    kIOReturnTimeout = 3, kIOReturnIOError = 4, kIOReturnNotWritable = 5;
+constexpr unsigned kIODirectionIn = 1;
+constexpr size_t kDataMax = CombinedRead::Max;
+static struct {
+  uint64_t lba;
+  unsigned command, ocs, dbSeen, isSeen, scsi, sense, result;
+} gRootDiagnostic;
+static uint64_t native_ufs_read_ticks, native_ufs_block_reads, native_ufs_block_failures;
+static uint64_t timerTicks() { return 0; }
+struct IOMemoryDescriptor {
+  uint8_t data[512]{};
+  size_t getLength() { return sizeof data; }
+  unsigned getDirection() { return kIODirectionIn; }
+  uint64_t writeBytes(uint64_t off, const void *src, uint64_t n) {
+    assert(off <= sizeof data && n <= sizeof data - off);
+    memcpy(data + off, src, n);
+    return n;
+  }
+};
+struct IOStorageAttributes {};
+struct IOStorageCompletion {
+  void *target, *parameter;
+  void (*action)(void *, void *, IOReturn, uint64_t);
+};
+struct NativeUfsBlock {
+  uint64_t absolute = 10 * 4096, bytes = 4096;
+  uint8_t bounce[kDataMax]{};
+  IOLock *windowLock = &::windowLock;
+  bool online = true;
+  IOReturn doAsyncReadWrite(IOMemoryDescriptor *, UInt64, UInt64,
+                           IOStorageAttributes *, IOStorageCompletion *);
+};
+#include "FixtureRoot.inc"
+#include "RootWindowRead.h"
+#include "FixtureBlock.inc"
+
+static uint64_t gStoreRegionFirst, gStoreRegionBlocks;
+static unsigned storeMode() { return 2; }
+static uint64_t reserveBlocks() { return 262144; }
+#include "FixtureStore.inc"
+
+static unsigned native_ufs_store_mode() { return storeMode(); }
+static int native_ufs_store_read(uint64_t, uint32_t, void *) { assert(false); return 0; }
+static int native_ufs_store_write(uint64_t, uint32_t, const void *) { assert(false); return 0; }
+static int native_ufs_store_sync() { assert(false); return 0; }
+static void IOLog(const char *, ...) {}
+static uint32_t native_data_persist_state, native_data_persist_header, native_data_persist_gpt,
+                native_data_persist_gpt_after;
+static uint64_t native_data_persist_pages, native_data_persist_loaded, native_data_persist_first_lba,
+                native_data_persist_present, native_ram_block_resident_bytes;
+static const char *nuwa_data_persist_open_why;
+struct NativeRamBlock {
+  IOLock *gate = &windowLock;
+  struct { uint64_t bytes, resident; uint8_t **pages; } sparse{};
+  struct { uint64_t bytes = 8589934592ULL; } big;
+  bool isBig = true, storeAttached = false, direct = false, directFailed = false;
+  uint8_t seedHash[32]{};
+  persist::Overlay overlay{};
+  NuwaData::Overlay dataOverlay{};
+  size_t dataMapBytes = 0;
+  uint8_t *overlayBits = nullptr, *stage = nullptr, *dataMaps = nullptr, *dataScratch = nullptr;
+  static constexpr uint32_t kStagePages = 32;
+  static bool discardRequested() { return false; }
+  struct StoreOps {
+    bool read(uint64_t b, uint32_t n, void *d) { return native_ufs_store_read(b, n, d); }
+    bool write(uint64_t b, uint32_t n, const void *p) { return native_ufs_store_write(b, n, p); }
+    bool sync() { return native_ufs_store_sync(); }
+  };
+#include "FixtureAttach.inc"
+};
 
 static void startMockBoot(Response wire) {
   combined_hardware = {};
@@ -122,9 +211,23 @@ static void startMockBoot(Response wire) {
   combined_state.capacity = combined_state.blocks * NuwaData::Block;
   combined_state.setup.dma = Hardware::Dma;
   assert(PreservedNop::domain(combined_hardware, combined_state.setup));
-  gHost = {true, false, &locked};
+  gHost = {true, false, &hostLock};
+  gStoreGeometry = {true, nuwaDataIdentity.userdataFirst, nuwaDataIdentity.userdataLast, 8446279680ULL};
   // Fixture-only process replacement across independent test scenarios.
   new (&retainedSlot) NuwaData::Slot;
+}
+
+static void testAttach(const char *state) {
+  const auto before = combined_hardware.submissions;
+  const auto mmio = combined_hardware.mmioReads;
+  NativeRamBlock ram;
+  native_data_persist_state = 0;
+  native_data_persist_gpt = 0xff;
+  ram.attachStore();
+  assert(!heldLocks && ram.storeAttached && native_data_persist_state == 4 &&
+         native_data_persist_gpt == 0 && combined_hardware.submissions == before &&
+         combined_hardware.mmioReads == mmio);
+  std::printf("PASS attachStore %s: cached GPT; diagnostic UFS submissions=0\n", state);
 }
 
 static void test(const char *label, Response wire, CombinedRead::End end, NuwaData::State state,
@@ -161,8 +264,24 @@ static void test(const char *label, Response wire, CombinedRead::End end, NuwaDa
               label, allowRoot ? "allowed" : "denied");
 }
 
+struct Request {
+  IOMemoryDescriptor buffer;
+  unsigned callbacks = 0;
+  IOReturn status = -1;
+  uint64_t bytes = 0;
+  IOStorageCompletion completion{this, this, [](void *target, void *cookie, IOReturn result, uint64_t n) {
+    auto &self = *static_cast<Request *>(target);
+    assert(cookie == target && !heldLocks && ++self.callbacks == 1);
+    self.status = result;
+    self.bytes = n;
+  }};
+  void issue(NativeUfsBlock &block) {
+    assert(block.doAsyncReadWrite(&buffer, 0, 1, nullptr, &completion) == kIOReturnSuccess);
+    assert(callbacks == 1);
+  }
+};
+
 static void testTerminal(bool timeout) {
-  using CombinedRead::End;
   using NuwaData::State;
   using namespace std::chrono_literals;
   Response wire{};
@@ -174,20 +293,28 @@ static void testTerminal(bool timeout) {
   const auto dma = combined_state.setup.dma;
   uint8_t snapshot[CombinedRead::Bytes];
   uint8_t waitingBlock[NuwaData::Block]{};
-  std::promise<void> waiting;
-  auto entered = waiting.get_future();
-  IOLockLock(gHost.lock);
+  NativeUfsBlock block;
+  Request first, waiter, later;
+  std::promise<void> submitted, allowCompletion, waiting;
+  auto entered = waiting.get_future(), rung = submitted.get_future(), release = allowCompletion.get_future();
+  combined_hardware.submitted = &submitted;
+  combined_hardware.allowCompletion = &release;
+  auto firstDone = std::async(std::launch::async, [&] { first.issue(block); });
+  assert(rung.wait_for(2s) == std::future_status::ready);
   auto result = std::async(std::launch::async, [&] {
-    waiting.set_value();
-    IOLockLock(gHost.lock);
-    auto end = retainedReadLocked(11, 1);
-    IOLockUnlock(gHost.lock);
-    return end;
+    waitingWindow = &waiting;
+    waiter.issue(block);
   });
   assert(entered.wait_for(2s) == std::future_status::ready);
   assert(result.wait_for(0s) == std::future_status::timeout);
-  assert(retainedReadLocked(10, 1) == End::Transport);
+  allowCompletion.set_value();
+  assert(firstDone.wait_for(2s) == std::future_status::ready);
+  firstDone.get();
+  assert(result.wait_for(2s) == std::future_status::ready);
+  result.get();
   assert(retainedSlot.state() == (timeout ? State::TIMEOUT_ORPHAN : State::FATAL_QUARANTINED));
+  assert(first.status == (timeout ? kIOReturnTimeout : kIOReturnIOError) &&
+         waiter.status == kIOReturnNotReady && first.bytes == 0 && waiter.bytes == 0);
   // Hardware changes the old DMA after the fault. Check the software leaves
   // that region untouched even with DB=0, good OCS and new payload bytes.
   combined_hardware.wire = {};
@@ -196,8 +323,8 @@ static void testTerminal(bool timeout) {
   combined_hardware.virt[CombinedRead::Data] = 0x77;
   memcpy(snapshot, mapping, sizeof snapshot);
   const auto mmioReads = combined_hardware.mmioReads;
-  IOLockUnlock(gHost.lock);
-  assert(result.wait_for(2s) == std::future_status::ready && result.get() == End::Guard);
+  later.issue(block);
+  assert(later.status == kIOReturnNotReady && later.bytes == 0);
   dataProvider.close();
   NuwaData::GptBuffers g{};
   constexpr NuwaData::Window window{59491258, 2097217};
@@ -212,8 +339,12 @@ static void testTerminal(bool timeout) {
   assert(combined_hardware.prepares == 1 && combined_hardware.submissions == 1 &&
          combined_hardware.mmioReads == mmioReads && combined_hardware.virt == mapping &&
          combined_state.setup.dma == dma && !memcmp(snapshot, mapping, sizeof snapshot));
+  assert(first.callbacks == 1 && waiter.callbacks == 1 && later.callbacks == 1);
+  std::printf("PASS block entry %s: first/waiter/later complete once unlocked; waiter/later NotReady\n",
+              timeout ? "timeout" : "fatal");
   std::printf("PASS %s + late completion: waiter denied; close/reopen denied; no DMA/MMIO reuse\n",
               timeout ? "timeout" : "fatal");
+  if (timeout) testAttach("isolated");
 }
 
 int main() {
@@ -252,6 +383,8 @@ int main() {
   test("wrong LUN", bad, End::Response, fatal, false);
   bad = check; bad.dl = 481;
   test("oversized UPIU length", bad, End::Response, fatal, false);
+  startMockBoot({});
+  testAttach("write gate closed");
   testTerminal(true);
   testTerminal(false);
 }

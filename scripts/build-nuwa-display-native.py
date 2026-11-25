@@ -534,7 +534,7 @@ extern "C" int native_ufs_store_sync (void)
 
 ''' + text[write_end:]
     log_start = text.index('extern "C" int native_ufs_log_open ')
-    log_end = text.index("// Re-read the GPT header", log_start)
+    log_end = text.index("// One read-only window of the root image", log_start)
     text = text[:log_start] + '''extern "C" int native_ufs_log_open (uint64_t *, uint64_t *, const char **why)
 {
   if (why) *why = "UFS diagnostics disabled";
@@ -546,7 +546,24 @@ extern "C" int native_ufs_export_write (uint64_t, uint32_t, const void *) { retu
 extern "C" int native_ufs_log_sync (void) { return 0; }
 extern "C" int native_ufs_log_panic (void) { return 0; }
 
+// Snapshot only: successful root layout qualification already checked GPT.
+// Publish before the block services. This is not a fresh media observation.
+extern "C" unsigned native_ufs_store_gpt_check (void)
+{
+  return gStoreGeometry.valid ? 0 : 1;
+}
+
 ''' + text[log_end:]
+    panic_start = text.index("__attribute__((noinline, noreturn)) static void rootReadFailureVisible(")
+    panic_end = text.index("static void rootDiagnosticFailure", panic_start)
+    text = text[:panic_start] + text[panic_end:]
+    replace('''    // Failure is terminal; never call completion after publishing the panic.
+    rootReadFailureVisible(operations.verifyStatus ? "integrity" :
+      operations.copyFailed ? "short copy" :
+      !operations.snapshot.attempted ? "transport rejected" : "transport failed",
+      operations.snapshot, operations.verifyIndex, operations.verifyStatus, result);''',
+            '''    // Complete accepted I/O after both guards have released their locks.
+    // Return success below to acknowledge dispatch, not disk success.''')
     staged = private / source.name
     staged.write_text(text)
     records = json.loads((root / "commands.json").read_text())

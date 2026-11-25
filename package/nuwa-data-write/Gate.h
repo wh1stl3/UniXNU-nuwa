@@ -35,14 +35,32 @@ enum class Evidence { ReadOk, FullFua, AttributedCommandError, Timeout, Unowned 
 
 // Evidence for a NEW firmware/transport domain, never a transition of the
 // old Slot. Each fact must refer to the same new domain and expected media.
+struct ColdStartIdentity {
+  uint64_t boot_session_id = 0, domain_id = 0, media_id = 0;
+  constexpr bool matches(ColdStartIdentity expected) const {
+    return boot_session_id && domain_id && media_id &&
+           boot_session_id == expected.boot_session_id &&
+           domain_id == expected.domain_id && media_id == expected.media_id;
+  }
+};
+struct ColdStartFact {
+  ColdStartIdentity source{};
+  bool verified = false;
+  constexpr bool validFor(ColdStartIdentity expected) const {
+    return verified && source.matches(expected);
+  }
+};
 struct ColdStartEvidence {
-  bool firmwareReinitialized = false, oldDmaExcluded = false;
-  bool lunMatches = false, primaryGptMatches = false, backupGptMatches = false;
-  bool windowMatches = false, knownRootMatches = false, overlayGenerationMatches = false;
-  constexpr bool qualified() const {
-    return firmwareReinitialized && oldDmaExcluded && lunMatches &&
-           primaryGptMatches && backupGptMatches && windowMatches &&
-           knownRootMatches && overlayGenerationMatches;
+  ColdStartFact firmwareReinitialized, oldDmaExcluded;
+  ColdStartFact lunMatches, primaryGptMatches, backupGptMatches;
+  ColdStartFact windowMatches, knownRootMatches, overlayGenerationMatches;
+  // expected must come independently from the current session/domain and
+  // requested media, never be copied from the submitted evidence.
+  constexpr bool qualified(ColdStartIdentity expected) const {
+    return firmwareReinitialized.validFor(expected) && oldDmaExcluded.validFor(expected) &&
+           lunMatches.validFor(expected) && primaryGptMatches.validFor(expected) &&
+           backupGptMatches.validFor(expected) && windowMatches.validFor(expected) &&
+           knownRootMatches.validFor(expected) && overlayGenerationMatches.validFor(expected);
   }
 };
 
@@ -63,9 +81,9 @@ public:
   constexpr Slot() = default;
   // Host model of a successor to a quarantined domain. The ordinary initial
   // read-only session does not certify a cold restart or enable Data writes.
-  explicit constexpr Slot(ColdStartEvidence boot)
-      : state_(boot.qualified() ? State::IDLE : State::FATAL_QUARANTINED),
-        writeError_(!boot.qualified()) {}
+  explicit constexpr Slot(ColdStartIdentity expected, ColdStartEvidence boot)
+      : state_(boot.qualified(expected) ? State::IDLE : State::FATAL_QUARANTINED),
+        writeError_(!boot.qualified(expected)) {}
   Slot(const Slot &) = delete;
   Slot &operator=(const Slot &) = delete;
   State state() const { return state_; }
