@@ -2,6 +2,8 @@
 
 卡点优先查 [已知差异与跨项目关停手段清单](docs/nuwa-open-deltas-20261125.md)。
 
+**2026-11-25 DSP 回调计数候选，仅主机 self-checked，未刷写：**[记录](docs/nuwa-dspcount-20261125.md)。
+
 **2026-11-25 lsd 900 秒采样候选：仅主机 self-checked，未刷写、待深审：**[记录](docs/nuwa-stack900-20261125.md)。
 
 **2026-11-25 lsd 异常寄存器采集候选：仅主机 self-checked，未刷写、待深审：**[记录](docs/nuwa-crashcap-20261125.md)。

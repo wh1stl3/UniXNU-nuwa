@@ -278,7 +278,14 @@ bool native_legacy_prepare_scanout(void) {
 bool native_legacy_gpu_offer(void *, IOMemoryDescriptor *, uint64_t, uint32_t, uint32_t, uint32_t) { return false; }
 void native_legacy_gpu_fallback_observed(int) {}
 #endif
-void native_legacy_registration_observed(IOService *) {}
+volatile uint32_t nuwa_dsp_reg, nuwa_dsp_cli, nuwa_dsp_vo, nuwa_dsp_vb, nuwa_dsp_ret;
+volatile uint32_t nuwa_dsp_co, nuwa_dsp_cb, nuwa_dsp_vy;
+#if defined(NUWA_DISPLAY_HOST_NO_SOFTWARE_VSYNC)
+volatile uint32_t nuwa_dsp_ve = 0;
+#endif
+void native_legacy_registration_observed(IOService *) {
+  __atomic_fetch_add(&nuwa_dsp_reg, 1u, __ATOMIC_RELAXED);
+}
 void native_legacy_swap_stage(unsigned) {}
 // High word is the count, low word is the latest independent value. CAS
 // permits overlapping callers without a lock or a fabricated enter/exit pair.
@@ -307,6 +314,8 @@ void native_legacy_client_enter(task_t task, uint32_t type) {
                                         __ATOMIC_RELAXED, __ATOMIC_RELAXED));
 }
 void native_legacy_client_observed(IOReturn result, IOUserClient *) {
+  if (result == kIOReturnSuccess)
+    __atomic_fetch_add(&nuwa_dsp_cli, 1u, __ATOMIC_RELAXED);
   uint64_t old = __atomic_load_n(&nuwa_cli_observed, __ATOMIC_RELAXED);
   uint64_t next;
   do {
@@ -317,13 +326,22 @@ void native_legacy_client_observed(IOReturn result, IOUserClient *) {
 void native_legacy_pm_observed(unsigned, IOReturn, unsigned long) {}
 void native_legacy_frame_observed(unsigned, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t) {}
 void native_legacy_frame_colors_observed(const uint32_t *, const uint64_t *, uint64_t) {}
-void native_legacy_swap_validation_observed(bool, unsigned, const void *, const void *) {}
+void native_legacy_swap_validation_observed(bool accepted, unsigned, const void *, const void *) {
+  __atomic_fetch_add(accepted ? &nuwa_dsp_vo : &nuwa_dsp_vb, 1u, __ATOMIC_RELAXED);
+}
 void native_legacy_surface_rejected(uint64_t, uint64_t, uint32_t, uint32_t, uint64_t, uint64_t, uint64_t) {}
-void native_legacy_transfer_observed(IOReturn, const void *, uint64_t) {}
+void native_legacy_transfer_observed(IOReturn status, const void *, uint64_t) {
+  __atomic_fetch_add(status == kIOReturnSuccess ? &nuwa_dsp_co : &nuwa_dsp_cb,
+                     1u, __ATOMIC_RELAXED);
+}
 void native_legacy_copy_timing_observed(uint64_t, uint64_t) {}
-void native_legacy_retirement_observed(IOService *) {}
+void native_legacy_retirement_observed(IOService *) {
+  __atomic_fetch_add(&nuwa_dsp_ret, 1u, __ATOMIC_RELAXED);
+}
 #if !defined(NUWA_DISPLAY_HOST_NO_SOFTWARE_VSYNC)
-void native_legacy_vsync_observed(unsigned, unsigned) {}
+void native_legacy_vsync_observed(unsigned event, unsigned) {
+  if (event == 1) __atomic_fetch_add(&nuwa_dsp_vy, 1u, __ATOMIC_RELAXED);
+}
 #endif
 __attribute__((noreturn)) void native_legacy_backend_guard(unsigned slot, void *, void *) {
   panic("NuwaLegacyDisplay: unqualified backend slot %u", slot);

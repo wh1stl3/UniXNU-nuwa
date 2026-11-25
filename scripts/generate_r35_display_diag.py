@@ -12,7 +12,8 @@ static unsigned bp_banner_priority(const char *s, unsigned previous) {
   if (s[0]==' ') return previous;
   if (!strncmp(s,"SHOT",4) || !strncmp(s,"T0 ",3) ||
       !strncmp(s,"T0+",3) || !strncmp(s,"EXIT",4) ||
-      !strncmp(s,"PROC",4) || !strncmp(s,"PEER",4) || !strncmp(s,"SC ",3) ||
+      !strncmp(s,"PROC",4) || !strncmp(s,"PEER",4) || !strncmp(s,"DSP ",4) ||
+      !strncmp(s,"DSP+",4) || !strncmp(s,"SC ",3) ||
       !strncmp(s,"LOAD",4)) return 0;
   if (!strncmp(s,"CRASH",5) || !strncmp(s,"REASON",6) ||
       !strncmp(s,"PANIC",5) || !strncmp(s,"XR",2) ||
@@ -37,7 +38,11 @@ static unsigned bp_banner_select(char rows[][120], unsigned n, unsigned budget) 
     }
     memcpy(rows[j],row,120); priority[j]=p;
   }
-  return n<budget?n:budget;
+  unsigned kept=n<budget?n:budget;
+  // The two DSP rows are a single group; never return only its first half.
+  if (kept && kept<n && !strncmp(rows[kept-1],"DSP ",4) &&
+      !strncmp(rows[kept],"DSP+",4)) --kept;
+  return kept;
 }
 """
 
@@ -625,6 +630,15 @@ extern uint64_t nuwa_cli_identity __attribute__((weak_import));
 extern uint32_t nuwa_sc_calls __attribute__((weak_import));
 extern uint32_t nuwa_sc_rejects __attribute__((weak_import));
 extern uint32_t nuwa_sc_ok __attribute__((weak_import));
+extern volatile uint32_t nuwa_dsp_reg __attribute__((weak_import));
+extern volatile uint32_t nuwa_dsp_cli __attribute__((weak_import));
+extern volatile uint32_t nuwa_dsp_vo __attribute__((weak_import));
+extern volatile uint32_t nuwa_dsp_vb __attribute__((weak_import));
+extern volatile uint32_t nuwa_dsp_ret __attribute__((weak_import));
+extern volatile uint32_t nuwa_dsp_co __attribute__((weak_import));
+extern volatile uint32_t nuwa_dsp_cb __attribute__((weak_import));
+extern volatile uint32_t nuwa_dsp_vy __attribute__((weak_import));
+extern volatile uint32_t nuwa_dsp_ve __attribute__((weak_import));
 #if NUWA_HID_STANDIN
 extern uint32_t nuwa_hid_stage;
 #endif
@@ -716,6 +730,21 @@ void boot_progress_prop_set(uint16_t properties) {
     if(exit_ring_count) snprintf(rows[n++],120,"%s",xr);
   }
   __atomic_store_n(&exit_lock,0,__ATOMIC_RELEASE);
+  {
+#define DSP_VALUE(x) (&(x) ? __atomic_load_n(&(x),__ATOMIC_RELAXED) : 0u)
+    snprintf(rows[n++],120,"DSP reg=%u cli=%u vo=%u vb=%u",
+      DSP_VALUE(nuwa_dsp_reg),DSP_VALUE(nuwa_dsp_cli),
+      DSP_VALUE(nuwa_dsp_vo),DSP_VALUE(nuwa_dsp_vb));
+    if (&nuwa_dsp_ve)
+      snprintf(rows[n++],120,"DSP+ co=%u cb=%u ret=%u vy=%u ve=%u",
+        DSP_VALUE(nuwa_dsp_co),DSP_VALUE(nuwa_dsp_cb),DSP_VALUE(nuwa_dsp_ret),
+        DSP_VALUE(nuwa_dsp_vy),DSP_VALUE(nuwa_dsp_ve));
+    else
+      snprintf(rows[n++],120,"DSP+ co=%u cb=%u ret=%u vy=%u ve=?",
+        DSP_VALUE(nuwa_dsp_co),DSP_VALUE(nuwa_dsp_cb),DSP_VALUE(nuwa_dsp_ret),
+        DSP_VALUE(nuwa_dsp_vy));
+#undef DSP_VALUE
+  }
   // Presentation cost: swaps in the last second""")
     src = replace_once(src, b"  // Presentation cost: swaps in the last second", b"""  // Sample the bridge after handoff, not the earlier diagnostic page.
   {
