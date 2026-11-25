@@ -3,7 +3,10 @@
 #include "../package/nuwa-data-write/Overlay.h"
 #include <cassert>
 #include <cstdio>
+#include <future>
 #include <initializer_list>
+#include <mutex>
+#include <thread>
 
 using namespace NuwaData;
 
@@ -187,6 +190,176 @@ static void providerTest(Disk &disk, Window w) {
   std::puts("PASS opt-in mock uses one FUA per page, stops on orphan without replay");
 }
 
+struct RecoveryModel {
+  Slot slot;
+  uint8_t dma[Block]{}, expected[Block]{}, scratch[Block]{};
+  unsigned mapping = 17, writes = 0, rebuilds = 0, validationReads = 0;
+  unsigned db = 1, liveTags = 1;
+  bool stopped = false, delayed = true, deviceOwnsDma = true;
+  bool queueRebuilt = true, identityMatches = true, wrongBlock = false;
+  bool validationTimeout = false;
+  static constexpr uint64_t Root = 3110976;
+
+  RecoveryModel() { memset(expected, 0xa5, Block); }
+  void failWrite(Evidence e) {
+    assert(slot.submit(true, true));
+    ++writes;
+    memset(dma, 0x3c, Block);
+    assert(!slot.complete(e));
+  }
+  ReclaimFence fenceLocked() {
+    assert(slot.state() == State::RECOVERING && !slot.rootAllowed());
+    // A raw DB snapshot, reset-return or a new software tag isn't a fence.
+    return {stopped, !delayed && db == 0 && liveTags == 0, !deviceOwnsDma};
+  }
+  bool rebuildLocked() {
+    assert(!deviceOwnsDma && !delayed && !liveTags && !db);
+    ++rebuilds;
+    return queueRebuilt;
+  }
+  Evidence validateLayoutLocked() {
+    assert(!slot.rootAllowed());
+    return identityMatches ? Evidence::ReadOk : Evidence::Unowned;
+  }
+  Evidence readKnownRootLocked(uint64_t lba, uint8_t (&dst)[Block]) {
+    assert(!slot.rootAllowed() && lba == Root);
+    ++validationReads;
+    if (validationTimeout) {
+      deviceOwnsDma = delayed = true;
+      liveTags = db = 1;
+      stopped = false;
+      return Evidence::Timeout;
+    }
+    memcpy(dst, expected, Block);
+    if (wrongBlock) dst[Block - 1] ^= 1;
+    return Evidence::ReadOk;
+  }
+  bool reclaim() { return slot.tryRecover(*this, Root, expected, scratch); }
+  void fenced() {
+    stopped = true;
+    delayed = deviceOwnsDma = false;
+    liveTags = db = 0;
+  }
+  bool root(uint8_t (&dst)[Block]) {
+    if (!slot.submitRead(true, true)) return false;
+    memcpy(dma, expected, Block);
+    assert(slot.complete(Evidence::ReadOk));
+    memcpy(dst, dma, Block);
+    return true;
+  }
+  void blocked(unsigned expectedRebuilds = 0) {
+    uint8_t dst[Block]{};
+    assert(!root(dst) && zero(dst, Block) && !slot.submit(true, true) &&
+           !slot.sync(true) && writes == 1 && mapping == 17 &&
+           rebuilds == expectedRebuilds);
+    for (uint8_t b : dma) assert(b == 0x3c);
+  }
+};
+
+static void recoveryTest() {
+  RecoveryModel orphan;
+  orphan.failWrite(Evidence::Timeout);
+  assert(orphan.slot.state() == State::TIMEOUT_ORPHAN);
+  assert(!orphan.slot.complete(Evidence::FullFua) && !orphan.reclaim());
+  orphan.blocked();
+  std::puts("PASS orphan and failed abort reject late completion without touching DMA");
+
+  orphan.db = orphan.liveTags = 0;
+  orphan.stopped = true;
+  orphan.delayed = false;
+  assert(!orphan.reclaim()); // Only the DMA return proof is missing.
+  orphan.blocked();
+  std::puts("PASS DB=0 and task termination without DMA return are insufficient");
+
+  RecoveryModel fatal;
+  fatal.failWrite(Evidence::Unowned);
+  assert(fatal.slot.state() == State::FATAL_QUARANTINED);
+  fatal.fenced();
+  fatal.delayed = true;
+  assert(!fatal.reclaim());
+  fatal.blocked();
+  fatal.delayed = false;
+  fatal.liveTags = 2;
+  assert(!fatal.reclaim());
+  fatal.blocked();
+  std::puts("PASS fatal, pending late completion and foreign tags remain quarantined");
+
+  fatal.fenced();
+  fatal.queueRebuilt = false;
+  assert(!fatal.reclaim());
+  fatal.blocked(1);
+  fatal.queueRebuilt = true;
+  fatal.identityMatches = false;
+  assert(!fatal.reclaim() && fatal.validationReads == 0);
+  fatal.blocked(2);
+  std::puts("PASS queue rebuild and matching LUN/layout/GPT are required");
+
+  fatal.identityMatches = true;
+  fatal.wrongBlock = true;
+  assert(!fatal.reclaim() && fatal.validationReads == 1);
+  fatal.blocked(3);
+  std::puts("PASS reset and queue rebuild do not admit root after wrong known-block bytes");
+
+  fatal.wrongBlock = false;
+  fatal.validationTimeout = true;
+  assert(!fatal.reclaim() && fatal.slot.state() == State::TIMEOUT_ORPHAN);
+  assert(!fatal.reclaim()); // Earlier fence cannot be reused.
+  fatal.blocked(4);
+  std::puts("PASS recovery timeout invalidates earlier proofs");
+
+  fatal.validationTimeout = false;
+  fatal.fenced();
+  assert(fatal.reclaim() && fatal.slot.state() == State::RECOVERY_PROVEN);
+  uint8_t data[Block]{};
+  assert(fatal.root(data) && !memcmp(data, fatal.expected, Block) &&
+         !fatal.slot.submit(true, true) && !fatal.slot.sync(true) &&
+         fatal.writes == 1 && fatal.mapping == 17);
+  std::puts("PASS all six proofs admit root bytes only; Data writes never replay or rearm");
+
+  Slot residual;
+  assert(residual.submitRead(true, true) && !residual.complete(Evidence::Unowned) &&
+         !residual.rootAllowed());
+  Slot cmdErr;
+  assert(cmdErr.submitRead(true, true) && !cmdErr.complete(Evidence::AttributedCommandError) &&
+         cmdErr.submitRead(true, true) && cmdErr.complete(Evidence::ReadOk) && !cmdErr.sync(true));
+  std::puts("PASS unexplained residual quarantines; attributed error allows root only");
+}
+
+struct WaitingPort : MockPort {
+  explicit WaitingPort(Disk &disk) : MockPort{disk} {}
+  std::mutex mutex;
+  std::promise<void> *arrival = nullptr;
+  void lock() {
+    if (arrival) arrival->set_value();
+    mutex.lock();
+    MockPort::lock();
+  }
+  void unlock() { MockPort::unlock(); mutex.unlock(); }
+};
+
+static void waitingWriterTest(Disk &disk, Window w) {
+  WaitingPort port(disk);
+  Slot slot;
+  Provider<WaitingPort, true> provider(port, slot);
+  GptBuffers buffers{};
+  port.fua = port.recover = true;
+  assert(provider.open(disk.id, 0, Block, 8446279680ULL, 262144, w, buffers, true));
+  port.lock(); // Root owns the shared submission lock and slot.
+  assert(slot.submitRead(true, true));
+  std::promise<void> arrival;
+  auto waiting = arrival.get_future();
+  port.arrival = &arrival;
+  uint8_t src[Block]{};
+  bool written = true;
+  std::thread writer([&] { written = provider.write(0, 1, src); });
+  waiting.get();
+  assert(!slot.complete(Evidence::Timeout));
+  port.unlock();
+  writer.join();
+  assert(!written && port.writes == 0 && !slot.rootAllowed());
+  std::puts("PASS Data waits for root lock, rechecks orphan state and submits nothing");
+}
+
 int main() {
   Disk disk;
   assert(disk.accept());
@@ -243,9 +416,9 @@ int main() {
   Slot orphan;
   assert(orphan.submit(true, true) && !orphan.complete(Evidence::Timeout));
   assert(orphan.state() == State::TIMEOUT_ORPHAN && !orphan.complete(Evidence::FullFua) &&
-         !orphan.tryRecover() && !orphan.sync(true) && !orphan.rootAllowed() &&
+         !orphan.sync(true) && !orphan.rootAllowed() &&
          !orphan.submit(true, true));
-  std::puts("PASS orphan rejects late completion, recovery, root and Data");
+  std::puts("PASS orphan rejects late completion, root and Data");
   Slot fatal;
   assert(fatal.submit(true, true) && !fatal.complete(Evidence::Unowned));
   assert(fatal.state() == State::FATAL_QUARANTINED && !fatal.rootAllowed() && !fatal.sync(true));
@@ -253,5 +426,7 @@ int main() {
   assert(!unowned.submit(true, false) && unowned.state() == State::FATAL_QUARANTINED);
   std::puts("PASS unowned before/after submission quarantines slot");
   providerTest(disk, w);
+  recoveryTest();
+  waitingWriterTest(disk, w);
   powercuts();
 }

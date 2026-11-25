@@ -3,6 +3,120 @@
 **单核候选已链接 provider 骨架和双槽 overlay；Data 写门禁关闭。**
 此包不验证可写性或持久化，未接触设备。保留 PU why。
 
+## r3：retained 响应分类收紧（self-checked）
+
+当前候选只将 **`CHECK CONDITION (0x02)` + 合法 autosense** 认作可归属命令错误：
+必须匹配响应类型/LUN/tag，UPIU response code 为 0，sense 段长度正确且满足
+固定/描述符 sense 格式；只允许无残量或 underflow 位与非零、未超界残量一致。
+`GOOD (0x00)` 必须无 sense、无残量（原 REQUEST SENSE 短传输例外仍保留）。
+拒绝 `CONDITION MET 04`、`BUSY 08`、`INTERMEDIATE 10`、
+`INTERMEDIATE-CONDITION MET 14`、`RESERVATION CONFLICT 18`、
+`COMMAND TERMINATED 22`、`TASK SET FULL 28`、`ACA ACTIVE 30`、
+`TASK ABORTED 40` 和所有其余/保留值（含 `ff`）。任何异常响应、捕获到的外槽 DB
+位或完成 OCS 非零都不归属；OCS `0xf` 是尚未完成的初值，若持续到期限则保持
+timeout orphan 而不认作完成。这些路径全部拒绝新 I/O，并保留 DMA 与映射。
+
+沿用下文单核构建/打包配方，用 fresh `B`/`P`（本轮
+`out/nuwa-ufs-recovery-candidate-20261125-build-r3` /
+`out/nuwa-ufs-recovery-candidate-20261125-package-r3`）。新 fixture 从候选
+stage 的 `CombinedRead::issue` 经实际 `response()` 驱动 `retainedSlot` 和
+`CandidatePort`，只替换硬件/内核胶水，不注入预先分类的 Evidence：
+
+```sh
+S=out/nuwa-ufs-apfs-root-integration-20261114/run-r5-visible-candidate/source
+c++ -std=c++17 -Wall -Wextra -Werror -Wno-unused-function -fsanitize=undefined \
+  -I "$B/nuwa-data-provider" -I "$S" tests/test-nuwa-retained-response.cpp \
+  -o "$B/test-retained-response"
+"$B/test-retained-response"
+```
+
+```text
+PASS CHECK CONDITION + valid sense  next root=allowed Data write/sync=denied
+PASS CHECK CONDITION + underflow    next root=allowed Data write/sync=denied
+PASS reserved status ff             next root=denied Data write/sync=denied
+PASS unsupported BUSY status        next root=denied Data write/sync=denied
+PASS CHECK CONDITION without sense  next root=denied Data write/sync=denied
+PASS invalid sense                  next root=denied Data write/sync=denied
+PASS wrong tag                      next root=denied Data write/sync=denied
+PASS contradictory residual         next root=denied Data write/sync=denied
+PASS oversized residual             next root=denied Data write/sync=denied
+PASS foreign DB bit then clear      next root=denied Data write/sync=denied
+PASS nonzero OCS                    next root=denied Data write/sync=denied
+PASS wrong UPIU type                next root=denied Data write/sync=denied
+PASS wrong LUN                      next root=denied Data write/sync=denied
+PASS oversized UPIU length          next root=denied Data write/sync=denied
+```
+
+32 项 Data/回收模型、linked crashcap、反汇编写拒绝检查、outer/FAT audit 与
+`fsck.fat -vn` 同轮 self-checked。561 B args、seed 与 trust 不变，只换
+kernel 与重绑的 ADT CHMH；outer 100663296 B，FAT 余 **11042304 B**。
+UniXNU 上游 HEAD 前后为 `b04f131da9151182dbb26ce4e638fa8acc2933ac`，未改 pin。
+
+| 产物 | 哈希 |
+| --- | --- |
+| Kernel SHA-256 | `b84af43d0327b7bd83d26197d4a54935f36b9152cc9fee63fd1806abede63590` |
+| Outer SHA-256 | `1ad194532b20ac5ea270ce14d1d07233dc2b1a9e8e7e3305657a266a250e1f0b` |
+| CHMH SHA-384 | `4929d19e406071f06a9b4654751b541e2aace5aeba43b96ed432a0aa6d272220a606a0313adef3805ba0a07d35e781ae` |
+| 回读 FAT SHA-256 | `1c6b41819d86bf4210a0e745715da62ab3373751c848055837b5e79a7fe02adc` |
+| Seed SHA-256 | `3c81135b384d8e090521205f2d69b3c197521e6d03c63682419d021bf0f24e5e` |
+
+## 单 slot DMA 回收候选（self-checked）
+
+主机模型可恢复根读，候选内核没有硬件恢复后端；写门禁关闭。本节 r2 产物与下文旧 Data v2 产物均为基线。
+
+### 寄存器与调用链
+
+`retained/` 指构建 pin 内的 `out/nuwa-ufs-apfs-root-integration-20261114/run-r5-visible-candidate/source/`。
+寄存器定义参考本地 [mu_basecore@cfb93724 的 `UfsHci.h`](https://github.com/microsoft/mu_basecore/blob/cfb93724a06ff86ff5ba971413368a7809ee42a5/MdePkg/Include/IndustryStandard/UfsHci.h)（BSD-2-Clause-Patent，引用 UFSHCI 2.0）。
+
+| 路径 | 寄存器 / 证据 |
+| --- | --- |
+| 两列表 | UTRL BA/U `0x50/54`、DB `0x58`（slot bitmap）、CLR `0x5c`、RSR `0x60` bit 0；UTMR BA/U `0x70/74`、DB `0x78`、CLR `0x7c`（DB/CLR `[7:0]`）、RSR `0x80` bit 0；两 BA 低寄存器 `[31:10]`，1 KiB 对齐（`UfsHci.h:295–363`）。`retained/PreservedNop.h:68–128` 只在接管时确认两 DB 空、屏蔽 IE、停两列表、换 UTRL BA/U、重启 UTRL；不改 UTMR BA/U、不重启 UTMR、不用 CLR。 |
+| 控制器与 IRQ | HCE `0x34` bit 0；HCS `0x30` bits 0/1/2/3 = DP/UTRLRDY/UTMRLRDY/UCRDY；IS/IE `0x20/24`，`UfsHci.h:152–229`。`retained/TransferPoll.h:8–26` 使用 fatal mask `0x71880`（bits 7/11/12/16/17/18；2.0 参考不定义 bit 18 的错误语义）。`CombinedRead.h:122–141` 每次复查 HCE/HCS、SMMU/domain、队列与 BA。 |
+| 提交与归属 | `retained/CombinedRead.h:39–70,92–153`：slot 0，DB bit 0，UPIU byte 3 的 tag 在 `1…255` 循环，不能当作隔离代号。连续 DMA 147456 B：UTRD `0`（OCS `+8`，初值 `0xf`）、UCD `4096`、response `4608`、PRDT `5120`、data `16384`。`NativeUfs.cpp:295–352` cache/barrier、poll IS/DB/OCS、1 s 单调期限。DB 全清、OCS=0、无 fatal、UPIU 类型/LUN/tag/长度吻合及 residual 合法后才归属；候选额外拒绝看见过外槽 DB 的完成。 |
+| CRYPTODMA / 厂商 UTRL 配置 | `retained/GccUfs.h:9–26` 仅有 GCC PHY ICE core clock `0x77074`、公用 clock enable bit 0；不是 CRYPTODMA idle/reset。板上 CRYPTODMA/ICE 和厂商 UTRL 配置寄存器地址、位义及 reset 持久性 **unknown**，候选不读写。 |
+| abort/TM 与 reset/link | retained 和 [ShengUfs@f020bd69](https://github.com/UniXNU/ShengUfs/tree/f020bd693c34790c04e97c52720af3cd842336fb) 未见 Abort Task 或 TM submit。上游 `NativeUfs.cpp:234–238,481–490` 接管不切 HCE/链路；`:1833` 的 UIC `0x90` 是 DME_GET。本地 `UfsPassThruHci.c:1853–1929,1945–1990,2001–2157,2176–2224` 有 HCE disable/enable/readback、两列表重建、controller stop、LINK_STARTUP（`0x90` opcode `0x16`，参数 `0x94/98/9c`，`UfsHci.h:59–62,395–406`），未找到发 Abort Task 的路径。这是通用初始化参考，不是 SM8550 DMA drain 证据。Linux v6.12 `include/ufs/ufshci.h` 请求 HTTP 429，未重试。 |
+| 上游与 retained domain | 上游 `RootCommands.h:5–63,150–195,268–334,554–610` 用 slot→entry/DB bit、SCSI tag=entry、`gOutstanding/gSlotGen` 跟踪；超时保持 DMA、poison，不取消/重放。`retained/PreservedNop.h:27–71,80–128` 沿用 OEM link/HCE/clock、SID `0x60` 的 SMR/S2CR 与 CBAR/CBA2R/SCTLR；`NativeUfs.cpp:248–315,810–828` 保持 HC/SMMU MMIO 映射与自有 DMA，软件 claim 防二次接管。**Reset 后各寄存器、SID 映射、UTM/UTR 归属和 link 有效性都未证**；CPU pin 不是 DMA 排空。 |
+
+### 状态与接入
+
+- `IDLE → SUBMITTED → COMPLETED_OK`；归属明确的命令错误进入 `COMPLETED_CMDERR`，允许根读，Data 写和 sync 本会话不再允许。
+- `TIMEOUT_ORPHAN` / `FATAL_QUARANTINED` 拒绝新请求，保留 DMA 与映射，不因迟到完成解禁，不重放。
+- 显式 `tryRecover` 进入 `RECOVERING`，拒绝普通 I/O。先证明任务终止或 controller 停止、排除迟到完成、slot 与 DMA 归还，才可重建队列；随后验证 LUN/布局/GPT 和已知 LBA 整块内容。失败不缓存证明，再超时重新 orphan。六项全部成立才进入 `RECOVERY_PROVEN`，只恢复根读。
+- `RetainedRead.inc` 在现有 `hostRead4k` 锁内跟踪根读，与 Data 共用 `Slot`。`Provider<CandidatePort, false>` 强制关闭写入；`KernelPort.inc` 的硬件回收/FUA 门禁恒假。TODO：取得 SM8550 task/HC stop、总线/SMMU drain 与 stale completion exclusion 的证据，再资格化队列、LUN/GPT、预期根块。DB=0、abort/reset 返回、软件换 tag 均不是独立证明。
+
+32 项 host 断言组通过（原 23 + 新 9）：共享锁等待时根读先超时、迟到完成/abort 失败、DB=0 但 DMA 未归还、fatal、外槽/残余、重建/identity 失败、reset 后根块错误、恢复再超时、六步完成后只恢复根读。检查 DMA 字节、mapping ID 和写次数。
+
+```sh
+c++ -std=c++17 -Wall -Wextra -Werror -pthread -fsanitize=undefined \
+  tests/test-nuwa-data-write.cpp -o out/nuwa-ufs-recovery-fixture-20261125
+./out/nuwa-ufs-recovery-fixture-20261125
+```
+
+### 候选与复跑
+
+沿用下文 Data v2 构建/打包配方，换 fresh `B`/`P`：本轮为
+`out/nuwa-ufs-recovery-candidate-20261125-build-r2` /
+`out/nuwa-ufs-recovery-candidate-20261125-package`。UniXNU 上游 HEAD
+前后均为 `b04f131da9151182dbb26ce4e638fa8acc2933ac`，未改本地 pin。
+linked crashcap、outer/FAT audit 与 `fsck.fat -vn` 均 self-checked。
+Outer 100663296 B，FAT 剩余 **11042304 B**；只有 kernel 与 ADT CHMH
+改变，561 B args、seed、trust 保持不变。
+
+用 `llvm-objdump -d --disassemble-symbols=… "$B/native.macho"` 核对：
+`native_ufs_store_write/sync` 只调用 boot 参数解析、锁获取/释放并返回 0；
+log write/sync/panic、export write 直接返回 0。`retainedReadLocked` 进入
+`CombinedRead::issue`，READ CDB `0x28` 向 UTRL DB 写 `1`，不是介质写；
+无 linked `hostWrite4k`/`hostScsi*` 发送路径或硬件恢复后端。
+
+| 产物 | 哈希 |
+| --- | --- |
+| Kernel SHA-256 | `d8ffa51d4bef97d944422c54d8a4bf5274981e280b9bc9088ef954a63176157c` |
+| Outer SHA-256 | `e2beeeb6b81e4fdf5a66d85306f9670d971d0eef6c3868242f1ed664b58732e6` |
+| CHMH SHA-384 | `70254221750d328e3cce1d5c3da7cf9ad91bc68ebcbc6e244866c9475933e4c441933a173fda786507ca3b71c4d29c83` |
+| 回读 FAT SHA-256 | `6286169bbef0310ae760584ebc789da0a8bf0193fcbcbcb61b13e6937c1a58d7` |
+| Seed SHA-256 | `3c81135b384d8e090521205f2d69b3c197521e6d03c63682419d021bf0f24e5e` |
+
 ## 复用设计
 
 | 来源 | 采用方式 |

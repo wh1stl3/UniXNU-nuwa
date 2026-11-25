@@ -451,6 +451,8 @@ def data_candidate_link(out, argv, env, gpt):
     source = root / "source/NativeUfs.cpp"
     require_pin(source, "bb994c583382755ddfae954b23aff94d77a97428c7c933232b574ad3cd64b2bf")
     require_pin(source.with_name("RootCommands.h"), "a16e55e1c1b3665231ec5d4c07fe9b1cdeb7edf834bd48f79e3aa80d6f8fa13a")
+    combined = source.with_name("CombinedRead.h")
+    require_pin(combined, "1adfeb01ca8c1621d83499179fdc0a026abb083f2f22c6eedc02c9b0b3eaaa5d")
     raw = gpt.read_bytes()
     h, table = raw[4096:8192], raw[8192:12288]
     u = table[31 * 128:]
@@ -481,6 +483,35 @@ def data_candidate_link(out, argv, env, gpt):
         text = text.replace(old, new)
 
     text = f'#include "{code / "Provider.h"}"\n' + text
+    combined_text = combined.read_text()
+    start = combined_text.index("// Valid CHECK CONDITION is a SCSI endpoint")
+    end = combined_text.index("template<class P> static bool guard", start)
+    combined_text = (combined_text[:start] + f'#include "{code / "RetainedResponse.inc"}"\n' +
+                     combined_text[end:])
+    old = "if (s.finaldb || s.poll.ocs || (p.hread(0x20) & kUfsFatalStatus))"
+    if combined_text.count(old) != 1:
+        raise SystemExit("unexpected retained completion splice anchor")
+    (private / combined.name).write_text(combined_text.replace(
+        old, "if ((s.poll.doorbellSeen & ~1U) || s.finaldb || s.poll.ocs ||\n"
+        "      (p.hread(0x20) & kUfsFatalStatus))"))
+    commands = source.with_name("RootCommands.h").read_text()
+    for old, new in (
+        ("gHost.ready && !gHost.poisoned && !combined_state.quarantined",
+         "retainedReadyLocked()"),
+        ("RootReadSession::read(combined_hardware, combined_state, lba, blocks)",
+         "retainedReadLocked(lba, blocks)"),
+        ("gHost.ready = false; gHost.poisoned = true;\n"
+         "        result = end == CombinedRead::End::Transport &&\n"
+         "                 combined_hardware.expired() ? kIOReturnTimeout : kIOReturnIOError;",
+         "result = retainedSlot.state() == NuwaData::State::TIMEOUT_ORPHAN ?\n"
+         "                 kIOReturnTimeout : kIOReturnIOError;"),
+    ):
+        if commands.count(old) != 1:
+            raise SystemExit("unexpected retained root read splice anchor")
+        commands = commands.replace(old, new)
+    (private / "RootCommands.h").write_text(commands)
+    replace('#include "RootCommands.h"',
+            f'#include "{code / "RetainedRead.inc"}"\n#include "RootCommands.h"')
     replace("\nStoreGeometry gStoreGeometry;", "\nStoreGeometry gStoreGeometry;\n"
             "static constexpr NuwaData::GptIdentity nuwaDataIdentity = "
             "{61850624, 6, 61850618, 3110976, 61850618, " + guids + "};\n"

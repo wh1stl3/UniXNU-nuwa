@@ -29,15 +29,29 @@ inline void write10(uint8_t (&cdb)[10], uint32_t lba) {
 
 enum class State {
   IDLE, SUBMITTED, COMPLETED_OK, COMPLETED_CMDERR, TIMEOUT_ORPHAN,
-  FATAL_QUARANTINED, RECOVERY_PROVEN
+  FATAL_QUARANTINED, RECOVERING, RECOVERY_PROVEN
 };
-enum class Evidence { FullFua, AttributedCommandError, Timeout, Unowned };
+enum class Evidence { ReadOk, FullFua, AttributedCommandError, Timeout, Unowned };
+
+struct ReclaimFence {
+  bool taskTerminatedOrControllerStopped;
+  bool lateCompletionExcluded;
+  bool slotAndDmaReturned;
+};
 
 // All access, including sync and root submission admission, requires the
 // same host lock. No method touches DMA or acknowledges controller state.
 class Slot {
   State state_ = State::IDLE;
   bool writeError_ = false;
+  bool writing_ = false;
+  bool submitCommand(bool ready, bool owned, bool writing) {
+    if (!ready || !rootAllowed() || (writing && writeError_)) return false;
+    if (!owned) { quarantine(); return false; }
+    writing_ = writing;
+    state_ = State::SUBMITTED;
+    return true;
+  }
 public:
   State state() const { return state_; }
   bool rootAllowed() const {
@@ -51,17 +65,15 @@ public:
     if (state_ != State::TIMEOUT_ORPHAN) state_ = State::FATAL_QUARANTINED;
   }
   bool submit(bool ready, bool owned) {
-    if (!ready || !rootAllowed() || writeError_) return false;
-    if (!owned) { quarantine(); return false; }
-    // Queue ownership and window must have been checked before DMA staging;
-    // this transition is immediately before the one permitted doorbell.
-    state_ = State::SUBMITTED;
-    return true;
+    return submitCommand(ready, owned, true);
   }
+  bool submitRead(bool ready, bool owned) { return submitCommand(ready, owned, false); }
   bool complete(Evidence evidence) {
     if (state_ != State::SUBMITTED) return false; // stale or late evidence
     switch (evidence) {
-      case Evidence::FullFua: // Attributed GOOD, no residual, slot returned.
+      case Evidence::ReadOk:
+      case Evidence::FullFua:
+        if (writing_ != (evidence == Evidence::FullFua)) { quarantine(); return false; }
         state_ = State::COMPLETED_OK;
         return true;
       case Evidence::AttributedCommandError: // Returned slot, attributed SCSI error.
@@ -77,10 +89,37 @@ public:
     writeError_ = true;
     return false;
   }
-  // TODO: transition to RECOVERY_PROVEN only with proof that the original
-  // controller queue and mapping are idle and exclusively CPU-owned.
-  // DB=0, a late completion and an abort attempt are not such proof.
-  bool tryRecover() const { return false; }
+  // Recovery is explicit, under the host lock, and never replays a command.
+  // The fence operation must not stage DMA, unmap, or recycle the old queue.
+  // After all three fence facts hold, only the private recovery port may use
+  // the rebuilt queue. A failed step ends this attempt; no proofs are cached.
+  // Layout and read operations classify completion just like ordinary reads.
+  template<class RecoveryPort>
+  bool tryRecover(RecoveryPort &port, uint64_t rootLba,
+                  const uint8_t (&expected)[Block], uint8_t (&scratch)[Block]) {
+    if (state_ != State::TIMEOUT_ORPHAN && state_ != State::FATAL_QUARANTINED)
+      return false;
+    state_ = State::RECOVERING;
+    const ReclaimFence f = port.fenceLocked();
+    if (!f.taskTerminatedOrControllerStopped || !f.lateCompletionExcluded ||
+        !f.slotAndDmaReturned || !port.rebuildLocked()) {
+      quarantine();
+      return false;
+    }
+    Evidence e = port.validateLayoutLocked();
+    if (e == Evidence::ReadOk) {
+      // A partial/stale copy must not match the known block by accident.
+      for (unsigned i = 0; i < Block; ++i) scratch[i] = uint8_t(~expected[i]);
+      e = port.readKnownRootLocked(rootLba, scratch);
+      if (e == Evidence::ReadOk && !memcmp(scratch, expected, Block)) {
+        state_ = State::RECOVERY_PROVEN;
+        return true;
+      }
+    }
+    if (e == Evidence::Timeout) state_ = State::TIMEOUT_ORPHAN;
+    else quarantine();
+    return false;
+  }
 };
 
 inline uint32_t le32(const uint8_t *p) {
