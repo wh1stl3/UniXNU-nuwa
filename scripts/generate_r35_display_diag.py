@@ -13,6 +13,7 @@ static unsigned bp_banner_priority(const char *s, unsigned previous) {
   if (!strncmp(s,"SHOT",4) || !strncmp(s,"T0 ",3) ||
       !strncmp(s,"T0+",3) || !strncmp(s,"EXIT",4) ||
       !strncmp(s,"PROC",4) || !strncmp(s,"PEER",4) || !strncmp(s,"DSP ",4) ||
+      !strncmp(s,"PIX ",4) || !strncmp(s,"PIX+",4) ||
       !strncmp(s,"DSP+",4) || !strncmp(s,"SC ",3) ||
       !strncmp(s,"LOAD",4)) return 0;
   if (!strncmp(s,"CRASH",5) || !strncmp(s,"REASON",6) ||
@@ -43,6 +44,22 @@ static unsigned bp_banner_select(char rows[][120], unsigned n, unsigned budget) 
   if (kept && kept<n && !strncmp(rows[kept-1],"DSP ",4) &&
       !strncmp(rows[kept],"DSP+",4)) --kept;
   return kept;
+}
+"""
+
+PIX_ROWS = b"""
+static unsigned bp_pix_rows(char rows[][120], const struct nuwa_pix *p, unsigned cols) {
+  snprintf(rows[0],120,"PIX bk=%u so=%u unk=%u chg=%u",p->bk,p->so,p->unk,p->chg);
+  if (!p->valid && !p->w) return 1;
+  if (p->valid) {
+    int len=snprintf(rows[1],120,"PIX+ w=%u h=%u st=%llx fmt=%08x crc=%08x nz=%u uc=%u",
+      p->w,p->h,(unsigned long long)p->st,p->fmt,p->crc,p->nz,p->uc);
+    if (len>(int)cols)
+      snprintf(rows[1],120,"PIX+ w=%u h=%u st=%llx fmt=%08x crc=%08x nz=%u",
+        p->w,p->h,(unsigned long long)p->st,p->fmt,p->crc,p->nz);
+  } else snprintf(rows[1],120,"PIX+ w=%u h=%u st=%llx fmt=%08x crc=- nz=- uc=-",
+      p->w,p->h,(unsigned long long)p->st,p->fmt);
+  return 2;
 }
 """
 
@@ -500,7 +517,7 @@ def add_smp_observe(src):
         b"  bp_smp_entry_title(head,sizeof head,build_tag,now,crashes,failed);")
 
 
-def generate(src, *, mg_reset=False, smp_observe=False):
+def generate(src, *, mg_reset=False, smp_observe=False, pixsig=False):
     if sha256(src).hexdigest() != RENDERER_SHA:
         raise ValueError("expected the pinned r35l full renderer")
     # stack_snapshot_from_kernel and the STACKSHOT_* flags live in <kern/debug.h>
@@ -808,4 +825,19 @@ void boot_progress_prop_set(uint16_t properties) {
                            b'dsp_stage,dsp_reason,ds,mg,(unsigned)(in>>32)')
         src = replace_once(src, b' CLI unavailable",dsp_stage,dsp_reason);',
                            b' DS=%u%s CLI unavailable",dsp_stage,dsp_reason,ds,mg);')
+    if pixsig:
+        anchor = b"#include <string.h>\n"
+        src = replace_once(src, anchor, anchor + b'#include "NuwaPixelSig.h"\n')
+        anchor = b"static void crash_banner(unsigned now) {"
+        src = replace_once(src, anchor, PIX_ROWS + anchor)
+        anchor = b"  if(signature==banner_signature)return;"
+        src = replace_once(src, anchor, b"""  signature+=__atomic_load_n(&nuwa_pix_state.epoch,__ATOMIC_ACQUIRE)*262147ULL;
+""" + anchor)
+        anchor = b"#undef DSP_VALUE\n  }\n"
+        src = replace_once(src, anchor, anchor + b"""  {
+    struct nuwa_pix p;
+    if (nuwa_pix_read(&nuwa_pix_state,&p))
+      n+=bp_pix_rows(rows+n,&p,cols<78?cols:78);
+  }
+""")
     return add_smp_observe(src) if smp_observe else src

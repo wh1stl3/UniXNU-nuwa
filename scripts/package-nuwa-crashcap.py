@@ -20,6 +20,10 @@ DSP_OUTER = ROOT / "out/nuwa-dspcount-20261125-package"
 DSP_SHA = "7c8ee0d61e61951a6115e955dd650461848a0ab16111a89ce2816d6b2e7aba73"
 DSP_CHMH = bytes.fromhex(
     "54ea450840ba0cd9ba4f2a02b7f2686653e459993f9822edc7a5df093ee71f2ad66bf5b97309134fdf6bbb58339b2ea2")
+FRAME_OUTER = ROOT / "out/nuwa-crashframes-20261125-package"
+FRAME_SHA = "b83021a7799cacb3bd4086162cae9474f267dc6dc6294eb11d5c4f0c6374e157"
+FRAME_CHMH = bytes.fromhex(
+    "0cf294e7bb627e97cbefc374476b2a6ff99dc2be649d48c78472d6f6cd17413059aca226947baf25ff6163fdc789415a")
 PAYLOAD = "EFI/UniXNU/Payloads/"
 KERNEL, ADT, TRUST, SCRATCH = (PAYLOAD + name for name in
     ("kernel.macho", "kernel.macho.adt", "kernel.macho.trustcache", "scratch-data.img"))
@@ -70,15 +74,18 @@ def main():
     ap.add_argument("--base", type=Path, required=True, help="existing pinned UniXNU checkout")
     ap.add_argument("--kernel", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
-    ap.add_argument("--crashframes", action="store_true", help="use the pinned DSP counter outer")
+    profile = ap.add_mutually_exclusive_group()
+    profile.add_argument("--crashframes", action="store_true", help="use the pinned DSP counter outer")
+    profile.add_argument("--pixsig", action="store_true", help="use the pinned crashframes outer")
     ap.add_argument("--audit-only", action="store_true", help="read an existing outer and compare all FAT files")
     a = ap.parse_args()
     out = a.out.resolve()
-    assert out.is_relative_to(ROOT / "out") and out not in (ROOT / "out", OLD, DSP_OUTER)
+    assert out.is_relative_to(ROOT / "out") and out not in (ROOT / "out", OLD, DSP_OUTER, FRAME_OUTER)
     kernel = a.kernel.resolve()
     assert kernel.is_relative_to(ROOT / "out") and kernel.name == "kernel.macho"
     new_kernel = kernel.read_bytes()
     template, template_sha, template_chmh = (
+        (FRAME_OUTER, FRAME_SHA, FRAME_CHMH) if a.pixsig else
         (DSP_OUTER, DSP_SHA, DSP_CHMH) if a.crashframes else (OLD, ROLLBACK, OLD_CHMH))
     old_outer = pinned(template / "vendor_boot.img", template_sha)
     head, old_fat, tail = regions(old_outer)

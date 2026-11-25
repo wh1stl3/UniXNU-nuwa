@@ -1,5 +1,7 @@
 # UniXNU-nuwa
 
+**2026-11-25 PIX 源像素签名候选，仅主机 self-checked，未刷写。**[记录](docs/nuwa-pixsig-20261125.md)。
+
 卡点优先查 [已知差异与跨项目关停手段清单](docs/nuwa-open-deltas-20261125.md)。
 
 **2026-11-25 lsd 异常帧链候选，仅主机 self-checked，未刷写：**[记录](docs/nuwa-crashframes-20261125.md)。

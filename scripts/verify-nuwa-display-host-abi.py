@@ -87,6 +87,46 @@ def adapt_source(text, original):
     return text
 
 
+def pixsig_source(text, original):
+    # The CPU-only replay has no GPU completion or direct scanout path.
+    # Read the already mapped source only after a successful CPU store.
+    for before, after in (
+        ('#include "NuwaDisplayRefresh.h"',
+         '''#include "NuwaDisplayRefresh.h"
+#include "NuwaPixelSig.h"
+#include <machine/machine_routines.h>
+// XNU 8796 arm/cpu_data.h declares this under MACH_KERNEL_PRIVATE.
+extern "C" int get_preemption_level(void);
+struct nuwa_pix_state nuwa_pix_state;'''),
+        ('            native_legacy_transfer_observed(kIOReturnSuccess,request,blankLength);',
+         '''            nuwa_pix_blank(&nuwa_pix_state);
+            native_legacy_transfer_observed(kIOReturnSuccess,request,blankLength);'''),
+        ('            shadowValid=false;OSSafeReleaseNULL(source);transferred=true;',
+         '''            observeCopiedSource(surface,source,allocation,width,height,sourceStride);
+            shadowValid=false;OSSafeReleaseNULL(source);transferred=true;'''),
+        ('        OSSafeReleaseNULL(source);transferred=true;\n',
+         '''        observeCopiedSource(surface,source,allocation,width,height,sourceStride);
+        OSSafeReleaseNULL(source);transferred=true;
+'''),
+        ('    void kickOnce() {',
+         '''    static void observeCopiedSource(OSObject *surface,IOMemoryMap *source,
+        uint64_t allocation,uint32_t width,uint32_t height,uint64_t stride) {
+        const bool threadContext=!ml_at_interrupt_context() && ml_get_interrupts_enabled() &&
+            get_preemption_level()==0;
+        const auto *bytes=threadContext ?
+            reinterpret_cast<const uint8_t *>(source->getVirtualAddress()) : nullptr;
+        nuwa_pix_surface(&nuwa_pix_state,bytes,allocation,width,height,stride,
+            native_legacy_surface_format(surface),native_legacy_surface_planes(surface),
+            mach_absolute_time());
+    }
+    void kickOnce() {'''),
+    ):
+        if text.count(before) != 1:
+            raise SystemExit(f'{original}: pixel hook anchor mismatch at {before.strip()}')
+        text = text.replace(before, after, 1)
+    return text
+
+
 def cpu_only_source(text, original):
     """Pinned e47c1b8 overlay: omit offload and direct scanout, not just imports."""
     # Each range starts/ends on one exact line. The revision/cleanliness gate
@@ -504,12 +544,15 @@ def main():
     parser.add_argument('--cpu-only', action='store_true', help='exclude GPU and DPU scanout at compile time')
     parser.add_argument('--no-software-vsync', action='store_true',
                         help='exclude the GOP software timer lifecycle (requires --cpu-only)')
+    parser.add_argument('--pixsig', action='store_true', help='sample CPU swap sources in the replay')
     parser.add_argument('--strip-debug', action='store_true',
                         help='compile the display members with -g0; preserve relocations and symbols')
     parser.add_argument('--bringup-diag', action='store_true')
     args = parser.parse_args()
     if args.no_software_vsync and not args.cpu_only:
         parser.error('--no-software-vsync requires --cpu-only')
+    if args.pixsig and not args.no_software_vsync:
+        parser.error('--pixsig requires --no-software-vsync')
     base, cpo, out = (p.resolve() for p in (args.base, args.cpo, args.out))
     if (ROOT / 'out').resolve() not in out.parents:
         parser.error('--out must be below the device out/ directory')
@@ -539,6 +582,8 @@ def main():
         text = cpu_only_source(text, original)
         if args.no_software_vsync:
             text = no_software_vsync_source(text, original)
+        if args.pixsig:
+            text = pixsig_source(text, original)
         original.write_text(text)
     source, obj = (out / ('NativeLegacyDisplay' + suffix) for suffix in ('.cpp', '.o'))
     # Clang's integrated assembler exports the exact synthetic constructor
@@ -549,6 +594,8 @@ def main():
     refresh_obj = out / 'NuwaDisplayRefresh.o'
     refresh_cmd = compile_args(record, refresh, refresh_obj, driver)
     command = compile_args(record, source, obj, driver) + ['-iquote', str(refresh.parent)]
+    if args.pixsig:
+        command += ['-iquote', str(ROOT / 'package')]
     provider = ROOT / 'package/NuwaLegacyDisplay.cpp'
     provider_obj = out / 'NuwaLegacyDisplay.o'
     provider_cmd = compile_args(record, provider, provider_obj, driver)
@@ -611,6 +658,17 @@ def main():
     # Identity probe adds exactly these four strong board imports; removes none.
     # Check them separately so all existing profile fingerprints remain strict.
     unresolved = audit['unresolved'].copy()
+    if args.pixsig:
+        for symbol in ('_ml_at_interrupt_context', '_ml_get_interrupts_enabled', '_get_preemption_level'):
+            imports = unresolved.get(symbol, [])
+            owner = ('NativeLegacyDisplay.manual.o', False)
+            if imports.count(owner) != 1:
+                raise SystemExit(f'expected pixel sample context check {symbol}')
+            imports = [entry for entry in imports if entry != owner]
+            if imports:
+                unresolved[symbol] = imports
+            else:
+                del unresolved[symbol]
     for symbol in ('_current_task', '_pid_from_task', '_proc_selfname', '_strcmp'):
         if unresolved.pop(symbol, None) != [(provider_obj.name, False)]:
             raise SystemExit(f'unexpected identity import {symbol}')

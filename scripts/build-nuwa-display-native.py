@@ -367,18 +367,20 @@ def candidate_link(r35, out, records, argv, env, *, bringup_diag, hid, mg_reset,
     return adjusted
 
 
-def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False):
+def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False, pixsig=False):
     from generate_r35_display_diag import generate
 
     source = out / "BootProgress.c"
     text = generate((r35 / "BootProgress.c").read_bytes(),
-                    mg_reset=mg_reset, smp_observe=smp_observe)
+                    mg_reset=mg_reset, smp_observe=smp_observe, pixsig=pixsig)
     if crashcap:
         from generate_nuwa_crashcap import generate_banner
 
         text = generate_banner(text)
     source.write_bytes(text)
     shutil.copyfile(r35 / "BootProgressDisplay.h", out / "BootProgressDisplay.h")
+    if pixsig:
+        shutil.copyfile(ROOT / "package/NuwaPixelSig.h", out / "NuwaPixelSig.h")
     stubs = ROOT / "package/boot-progress-r13/nuwa_boot_progress_stubs.c"
     require_pin(stubs, "14817837f64b37f36c65ac5e6debd187c2d8e6a24e8b0396eb280239108c6b47")
     hid_define = ["--define", "NUWA_HID_STANDIN=1"] if hid else []
@@ -402,7 +404,7 @@ def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False):
 
 def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
                keep_link_debug, bringup_diag=False, hid_objects=(), mg_reset=False,
-               smp_gate=False, smp_observe=False, crashcap=False, base=None):
+               smp_gate=False, smp_observe=False, crashcap=False, pixsig=False, base=None):
     for name, pin in (R35L_PINS if bringup_diag else R35_PINS).items():
         require_pin(r35 / name, pin)
     require_pin(cpo, R35_CPO_SHA)
@@ -473,7 +475,7 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
         if bringup_diag:
             argv = list(argv)
             diag = diag_archive(r35, out, hid=bool(hid_objects), mg_reset=mg_reset,
-                                smp_observe=smp_observe, crashcap=crashcap)
+                                smp_observe=smp_observe, crashcap=crashcap, pixsig=pixsig)
             argv[force_at] = f"-Wl,-force_load,{diag}"
         argv = [*argv, "-Wl,-ignore_optimization_hints", f"-Wl,-force_load,{archive}", *map(str, hid_objects)]
         if not candidate or keep_link_debug:
@@ -699,6 +701,8 @@ def main():
                    help="compile out GPU/DPU paths in the host display TU (requires --r35-dir)")
     p.add_argument("--no-software-vsync", action="store_true",
                    help="compile out the GOP software timer lifecycle (requires --cpu-only)")
+    p.add_argument("--pixsig", action="store_true",
+                   help="add bounded CPU source pixel diagnostics to the crashframes replay")
     p.add_argument("--candidate", action="store_true",
                    help="apply device hooks and write the r35-display diagnostic kernel")
     p.add_argument("--r35l-dir", type=Path,
@@ -746,6 +750,8 @@ def main():
         p.error("--smp-observe requires --smp-gate and the pinned --r35l-dir candidate")
     if a.crashcap and (not a.r35l_dir or a.smp_gate):
         p.error("--crashcap requires the pinned single-core --r35l-dir candidate")
+    if a.pixsig and not (a.crashcap and a.no_software_vsync):
+        p.error("--pixsig requires --crashcap and --no-software-vsync")
     out.mkdir(parents=True, exist_ok=False)
     donor = base / "out/ipsw/20H392/kernelcache.decompressed"
     hid_objects = []
@@ -761,6 +767,7 @@ def main():
         require_pin(link.parent / "osfmk/DEVELOPMENT/startup.o.json", STARTUP_RECORD_SHA)
     features = [name for enabled, name in ((a.cpu_only, "--cpu-only"),
                  (a.no_software_vsync, "--no-software-vsync"),
+                  (a.pixsig, "--pixsig"),
                   (a.candidate, "--strip-debug"),
                   (a.r35l_dir, "--bringup-diag")) if enabled]
     archive = build_archive(ROOT, base, donor, cpo, out, features)
@@ -775,7 +782,7 @@ def main():
                               keep_link_debug=a.keep_link_debug, bringup_diag=bool(a.r35l_dir),
                               hid_objects=hid_objects, mg_reset=a.mg_reset,
                               smp_gate=a.smp_gate, smp_observe=a.smp_observe, crashcap=a.crashcap,
-                              base=base)
+                              pixsig=a.pixsig, base=base)
     else:
         # Replay XNU's exported link inputs, without its historical map output.
         stem = "mach.development.bcm2837"
