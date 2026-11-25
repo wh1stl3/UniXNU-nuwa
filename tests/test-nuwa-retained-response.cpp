@@ -4,6 +4,7 @@
 #include "../package/nuwa-ramblock/PersistOpenReason.h"
 #include "PersistOverlay.h"
 #include <cassert>
+#include <cstdlib>
 #include <cstdio>
 #include <future>
 #include <mutex>
@@ -60,7 +61,8 @@ static struct Hardware {
   alignas(4096) uint8_t virt[CombinedRead::Bytes]{};
   Response wire{};
   unsigned prepares = 0, submissions = 0, seen = 0, ocsReads = 0, mmioReads = 0;
-  bool active = false;
+  uint64_t preparedLba = 0;
+  bool active = false, partMedia = false;
   std::promise<void> *submitted = nullptr;
   std::future<void> *allowCompletion = nullptr;
   uint32_t sread(unsigned off) const {
@@ -107,7 +109,22 @@ static struct Hardware {
     r[34] = wire.badSense ? 0 : 0x70;
     r[36] = 5;
     r[41] = 6;
-    memset(virt + CombinedRead::Data, 0xa5, NuwaData::Block);
+    auto *data = virt + CombinedRead::Data;
+    memset(data, 0xa5, NuwaData::Block);
+    if (partMedia && (preparedLba == 1 || preparedLba == 2)) {
+      // Fixture GPT header and a single 128-byte entry named "modem".
+      memset(data, 0, NuwaData::Block);
+      if (preparedLba == 1) {
+        memcpy(data, "EFI PART", 8);
+        NuwaData::putLE(data + 72, 2, 8);
+        NuwaData::putLE(data + 80, 1, 4);
+        NuwaData::putLE(data + 84, 128, 4);
+      } else {
+        NuwaData::putLE(data + 32, 10, 8);
+        NuwaData::putLE(data + 40, 15, 8);
+        for (unsigned i = 0; i < 5; ++i) data[56 + 2*i] = "modem"[i];
+      }
+    }
     if (submitted) {
       submitted->set_value();
       assert(allowCompletion->wait_for(std::chrono::seconds(2)) == std::future_status::ready);
@@ -117,6 +134,7 @@ static struct Hardware {
                uint64_t lba, unsigned blocks) {
     assert(heldLocks && pa == Dma && c == CombinedRead::Command::Read);
     ++prepares;
+    preparedLba = lba;
     return CombinedRead::encode(virt, pa, c, tag, block, lba, blocks);
   }
   uint32_t doorbell() {
@@ -145,7 +163,8 @@ static constexpr NuwaData::GptIdentity nuwaDataIdentity{
 };
 static bool PE_parse_boot_argn(const char *, void *, size_t) { return false; }
 static void *IOMallocZero(size_t) { assert(false); return nullptr; }
-static void IOFree(void *, size_t) { assert(false); }
+static void *IOMalloc(size_t n) { return std::malloc(n); }
+static void IOFree(void *p, size_t) { std::free(p); }
 #include "../package/nuwa-data-write/KernelPort.inc"
 
 using IOReturn = int;
@@ -191,6 +210,7 @@ static uint64_t gStoreRegionFirst, gStoreRegionBlocks;
 static unsigned storeMode() { return 2; }
 static uint64_t reserveBlocks() { return 262144; }
 #include "FixtureStore.inc"
+#include "FixturePart.inc"
 
 static unsigned native_ufs_store_mode() { return storeMode(); }
 static int native_ufs_store_read(uint64_t, uint32_t, void *) { assert(false); return 0; }
@@ -301,7 +321,8 @@ struct Request {
   }
 };
 
-static void testAttachRace(bool snapshotFirst) {
+template<class Entry>
+static void runIsolationRace(bool snapshotFirst, Entry entry) {
   using namespace std::chrono_literals;
   Response wire{};
   wire.timedOut = true;
@@ -322,14 +343,13 @@ static void testAttachRace(bool snapshotFirst) {
   }
 
   SnapshotSchedule schedule{snapshotFirst, boundary, snapshotFirst ? &attachResume : nullptr};
-  auto attach = std::async(std::launch::async, [&] {
+  auto concurrent = std::async(std::launch::async, [&] {
     snapshotSchedule = &schedule;
-    NativeRamBlock ram;
-    ram.attachStore();
-    assert(!heldLocks && ram.storeAttached && native_data_persist_state == 4);
+    entry();
+    assert(!heldLocks);
   });
   assert(atBoundary.wait_for(2s) == std::future_status::ready);
-  assert(attach.wait_for(0s) == std::future_status::timeout);
+  assert(concurrent.wait_for(0s) == std::future_status::timeout);
   if (snapshotFirst)
     root = std::async(std::launch::async, [&] { read.issue(block); });
   else
@@ -337,12 +357,20 @@ static void testAttachRace(bool snapshotFirst) {
   assert(root.wait_for(2s) == std::future_status::ready);
   root.get();
   if (snapshotFirst) resume.set_value();
-  assert(attach.wait_for(2s) == std::future_status::ready);
-  attach.get();
+  assert(concurrent.wait_for(2s) == std::future_status::ready);
+  concurrent.get();
   assert(read.status == kIOReturnTimeout && read.callbacks == 1);
+  assert(combined_hardware.submissions == 1 && combined_hardware.prepares == 1);
+}
+
+static void testAttachRace(bool snapshotFirst) {
+  runIsolationRace(snapshotFirst, [] {
+    NativeRamBlock ram;
+    ram.attachStore();
+    assert(ram.storeAttached && native_data_persist_state == 4);
+  });
   assert(!strcmp(nuwa_data_persist_open_why, snapshotFirst ? "window" : "nolayout"));
-  assert(native_data_persist_gpt == 0 && combined_hardware.submissions == 1 &&
-         combined_hardware.prepares == 1);
+  assert(native_data_persist_gpt == 0);
   // Even bypassing the early snapshot, the real Provider must refuse a
   // geometrically valid read-only reopen before touching any GPT blocks.
   const auto mmio = combined_hardware.mmioReads;
@@ -353,6 +381,36 @@ static void testAttachRace(bool snapshotFirst) {
   assert(combined_hardware.mmioReads == mmio && combined_hardware.submissions == 1);
   std::printf("PASS attach race %s: no deadlock, extra UFS submissions=0, write denied\n",
               snapshotFirst ? "snapshot before isolation" : "isolation before snapshot");
+}
+
+static void testParts() {
+  startMockBoot({});
+  combined_hardware.partMedia = true;
+  uint32_t lun = 99;
+  uint64_t first = 0, blocks = 0;
+  uint8_t page[NuwaData::Block]{};
+  assert(native_ufs_part_find("modem", &lun, &first, &blocks));
+  assert(lun == 0 && first == 10 && blocks == 6 && combined_hardware.submissions == 2);
+  assert(native_ufs_part_read(lun, first, 1, page) && combined_hardware.submissions == 3);
+  for (auto b : page) assert(b == 0xa5);
+  std::puts("PASS part_find/part_read ready: expected LUN, range and payload; 2+1 submissions");
+  for (bool find : {true, false}) for (bool firstSnapshot : {true, false}) {
+    runIsolationRace(firstSnapshot, [find] {
+      uint32_t lun = 99;
+      uint64_t first = 0, blocks = 0;
+      uint8_t page[NuwaData::Block]{};
+      if (find) {
+        assert(!native_ufs_part_find("modem", &lun, &first, &blocks));
+        assert(lun == 99 && !first && !blocks);
+      } else {
+        assert(!native_ufs_part_read(0, 10, 1, page));
+        assert(NuwaData::zero(page, sizeof page));
+      }
+    });
+    std::printf("PASS part_%s %s: refused, no deadlock, extra UFS submissions=0\n",
+                find ? "find" : "read", firstSnapshot ? "snapshot-before-isolation" :
+                "isolation-before-snapshot");
+  }
 }
 
 static void testTerminal(bool timeout) {
@@ -463,4 +521,5 @@ int main() {
   testTerminal(false);
   testAttachRace(true);
   testAttachRace(false);
+  testParts();
 }

@@ -7,6 +7,16 @@ static bool retainedReadyLocked() {
          retainedSlot.rootAllowed();
 }
 
+// Before bring-up the lock may not exist. Once services are published, it
+// is retained. A snapshot is only a precheck; never hold it across admission.
+static bool retainedReadySnapshot() {
+  if (!gHost.lock) return false;
+  IOLockLock(gHost.lock);
+  const bool ready = retainedReadyLocked();
+  IOLockUnlock(gHost.lock);
+  return ready;
+}
+
 static void retainQuarantineLocked() {
   retainedSlot.quarantine();
   combined_state.quarantined = gHost.poisoned = true;

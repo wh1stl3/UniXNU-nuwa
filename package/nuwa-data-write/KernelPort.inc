@@ -32,17 +32,6 @@ struct CandidatePort {
 static CandidatePort dataPort;
 static NuwaData::Provider<CandidatePort, false> dataProvider(dataPort, retainedSlot);
 
-// The host lock pointer is published at bring-up and never freed/replaced
-// while the block services are online. This snapshot is an early rejection
-// only: Provider::open rechecks readiness under this same lock.
-static bool storeReadySnapshot() {
-  if (!gHost.lock) return false;
-  IOLockLock(gHost.lock);
-  const bool ready = retainedReadyLocked();
-  IOLockUnlock(gHost.lock);
-  return ready;
-}
-
 static bool openCandidateData(uint64_t first, uint64_t blocks, uint64_t reserve) {
   if (!gHost.lock || gStoreGeometry.first != nuwaDataIdentity.userdataFirst ||
       gStoreGeometry.last != nuwaDataIdentity.userdataLast) return false;

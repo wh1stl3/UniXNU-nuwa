@@ -3,7 +3,52 @@
 **单核候选已链接 provider 骨架和双槽 overlay；Data 写门禁关闭。**
 此包不验证可写性或持久化，未接触设备。保留 PU why。
 
-## r6：store-open readiness 快照（当前候选，self-checked）
+## r7：part 入口 readiness 快照（当前候选，self-checked）
+
+`native_ufs_part_find` / `native_ufs_part_read` 先在 `gHost.lock` 内读
+readiness 快照，释放锁后才进入原路径。快照只可提前拒绝，任何实际
+提交继续由 `hostRead4k` 持原锁重查。未使用 volatile、未改变锁序、
+常规 GPT 查找和分区读取路径不变。
+
+检查 r7 暂存 `NativeUfs.cpp`、`RootCommands.h` 及其 provider include 后，
+唯一 `gHost.ready` 读表达式为 `RetainedRead.inc:6`：
+
+| 调用路径 | `gHost.ready` 读取时的锁 |
+| --- | --- |
+| `hostBringUp`（暂存 `NativeUfs.cpp:835`） | `retainedReadySnapshot` 内持 host 锁；锁尚未建立时直接返回 false，不读 ready。`hostAdoptClaimed:828` 是发布服务前的初始化写。 |
+| `native_ufs_store_open:925`；`native_ufs_part_find:1019`；`native_ufs_part_read:1059` | 同一 snapshot，先释放再调用 Provider 或 `hostRead4k`。 |
+| `hostRead4k`（暂存 `RootCommands.h:263`）与 `retainedReadLocked`（`RetainedRead.inc:35`） | `hostRead4k` 在自己的 host 锁内直接检查，后者由 `hostRead4k` 或持该锁的 Port 调用。 |
+| `CandidatePort::readyLocked`（`KernelPort.inc:5`） | `Provider` 的 RAII host 锁已持有。 |
+
+fixture 直接编译候选两入口。正常成功读到模拟 GPT 的名称、LUN/范围和整块数据；
+两个入口分别覆盖快照先/隔离先。实际输出：
+
+```text
+PASS part_find/part_read ready: expected LUN, range and payload; 2+1 submissions
+PASS part_find snapshot-before-isolation: refused, no deadlock, extra UFS submissions=0
+PASS part_find isolation-before-snapshot: refused, no deadlock, extra UFS submissions=0
+PASS part_read snapshot-before-isolation: refused, no deadlock, extra UFS submissions=0
+PASS part_read isolation-before-snapshot: refused, no deadlock, extra UFS submissions=0
+```
+
+沿用 r5 复跑命令，fresh `B`/`P`（本轮
+`out/nuwa-ufs-recovery-candidate-20261125-build-r7` /
+`out/nuwa-ufs-recovery-candidate-20261125-package-r7`）。27 项入口/retained、
+37 项模型、linked crashcap、outer/FAT audit 与 `fsck.fat -vn` 均 self-checked。
+反汇编确认两个 part 的快照锁先释放再调用 `hostRead4k`，写/sync 仍拒绝。
+单核，561 B args、seed、trust 不变，只有 kernel 与重绑 ADT CHMH 改变；
+FAT 余 **11042304 B**。UniXNU 上游 HEAD 前后均为
+`b04f131da9151182dbb26ce4e638fa8acc2933ac`，未改 pin。
+
+| 产物 | 哈希 |
+| --- | --- |
+| Kernel SHA-256 | `20f3d18012aca5e5959100e9db3693e1b02518db0a9e782c5892e0e4f43bce67` |
+| Outer SHA-256 | `5bd36a5927f05f367f3dbc493387d44865499c1a99287771af4729af008fde9b` |
+| CHMH SHA-384 | `5e3af01ca3c56e6116f968fde7511fc20998b1d04a21ed517c34c6fe21d5ca1b852028babd3529ffc12c3fc93b09f8e9` |
+| 回读 FAT SHA-256 | `8aa2f72292b73f8d2c7d111d37bf0fc269b85614e0ff985dc9c7614820f744bd` |
+| Seed SHA-256 | `3c81135b384d8e090521205f2d69b3c197521e6d03c63682419d021bf0f24e5e` |
+
+## r6：store-open readiness 快照（历史候选，self-checked）
 
 `attachStore()` 的 ramblock gate 不保护 `gHost.ready`。候选
 `native_ufs_store_open()` 在 `gHost.lock` 内通过 `retainedReadyLocked()`

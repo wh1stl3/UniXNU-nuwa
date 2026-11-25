@@ -27,6 +27,9 @@ def main(build, base):
     (build / "FixtureStore.inc").write_text(
         body(ufs, 'extern "C" int native_ufs_store_open (') +
         body(ufs, 'extern "C" unsigned native_ufs_store_gpt_check ('))
+    (build / "FixturePart.inc").write_text(
+        body(ufs, 'extern "C" int native_ufs_part_find (') +
+        body(ufs, 'extern "C" int native_ufs_part_read ('))
     (build / "FixtureAttach.inc").write_text(body(ram, "  void attachStore()", "  }"))
     binary = build / "test-retained-response"
     subprocess.run([
