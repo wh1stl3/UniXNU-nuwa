@@ -7,11 +7,15 @@ static bool retainedReadyLocked() {
          retainedSlot.rootAllowed();
 }
 
-static bool retainedOwnershipLocked() {
-  if (CombinedRead::guard(combined_hardware, combined_state)) return true;
+static void retainQuarantineLocked() {
   retainedSlot.quarantine();
   combined_state.quarantined = gHost.poisoned = true;
   gHost.ready = false;
+}
+
+static bool retainedOwnershipLocked() {
+  if (CombinedRead::guard(combined_hardware, combined_state)) return true;
+  retainQuarantineLocked();
   return false;
 }
 
@@ -36,9 +40,6 @@ static CombinedRead::End retainedReadLocked(uint64_t lba, unsigned blocks) {
   retainedSlot.complete(end == End::Success ? Evidence::ReadOk :
                         end == End::Scsi ? Evidence::AttributedCommandError :
                         timeout ? Evidence::Timeout : Evidence::Unowned);
-  if (!retainedSlot.rootAllowed()) {
-    combined_state.quarantined = gHost.poisoned = true;
-    gHost.ready = false;
-  }
+  if (!retainedSlot.rootAllowed()) retainQuarantineLocked();
   return end;
 }

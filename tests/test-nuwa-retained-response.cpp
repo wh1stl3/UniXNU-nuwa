@@ -2,6 +2,10 @@
 #include "../package/nuwa-data-write/Provider.h"
 #include <cassert>
 #include <cstdio>
+#include <future>
+#include <mutex>
+#include <new>
+#include <thread>
 #include "TransferPoll.h"
 #include "PreservedNop.h"
 #include "CombinedRead.h"
@@ -10,7 +14,7 @@
 struct Response {
   unsigned status = 0, flags = 0, residual = 0, ocs = 0, foreignDb = 0;
   unsigned type = 0x21, lun = 0, dl = 0;
-  bool badTag = false, badSense = false;
+  bool badTag = false, badSense = false, timedOut = false, fatal = false;
 };
 
 static struct Host {
@@ -18,14 +22,15 @@ static struct Host {
   bool *lock;
 } gHost;
 static bool locked;
-static void IOLockLock(bool *l) { assert(!*l); *l = true; }
-static void IOLockUnlock(bool *l) { assert(*l); *l = false; }
+static std::mutex mutex;
+static void IOLockLock(bool *l) { mutex.lock(); assert(!*l); *l = true; }
+static void IOLockUnlock(bool *l) { assert(*l); *l = false; mutex.unlock(); }
 
 static struct Hardware {
   static constexpr uint32_t Dma = 0x10000;
   alignas(4096) uint8_t virt[CombinedRead::Bytes]{};
   Response wire{};
-  unsigned prepares = 0, submissions = 0, seen = 0, ocsReads = 0;
+  unsigned prepares = 0, submissions = 0, seen = 0, ocsReads = 0, mmioReads = 0;
   bool active = false;
   uint32_t sread(unsigned off) const {
     switch (off) {
@@ -42,6 +47,7 @@ static struct Hardware {
     }
   }
   uint32_t hread(unsigned off) {
+    ++mmioReads;
     switch (off) {
       case 0x34: return 1;
       case 0x30: return 11;
@@ -84,11 +90,11 @@ static struct Hardware {
     active = false;
     return 0;
   }
-  uint32_t interrupt() const { return 0; }
+  uint32_t interrupt() const { return active && wire.fatal ? kUfsFatalStatus : 0; }
   uint32_t completedOcs() { ++ocsReads; return wire.ocs; }
   void deadline() {}
   void barrier() {}
-  bool expired() const { return ocsReads > 1; }
+  bool expired() const { return wire.timedOut && ocsReads > 1; }
   void delay() {}
   void invalidateAll() {}
   const volatile uint8_t *response() const { return virt + 4608; }
@@ -99,31 +105,38 @@ static CombinedRead::State combined_state;
 
 // Minimal kernel-only glue for the actual candidate provider.
 static struct { uint64_t first, last, imageBytes; } gStoreGeometry;
-static constexpr NuwaData::GptIdentity nuwaDataIdentity{};
+static constexpr NuwaData::GptIdentity nuwaDataIdentity{
+  61850624, 6, 61850618, 3110976, 61850618, {1}, {2}, {3}
+};
 static bool PE_parse_boot_argn(const char *, void *, size_t) { return false; }
 static void *IOMallocZero(size_t) { assert(false); return nullptr; }
 static void IOFree(void *, size_t) { assert(false); }
 #include "../package/nuwa-data-write/KernelPort.inc"
 
-static void test(const char *label, Response wire, CombinedRead::End end, NuwaData::State state,
-                 bool allowRoot) {
+static void startMockBoot(Response wire) {
   combined_hardware = {};
   combined_hardware.wire = wire;
   combined_state = {};
   combined_state.block = NuwaData::Block;
-  combined_state.blocks = 100;
-  combined_state.capacity = 100 * NuwaData::Block;
+  combined_state.blocks = nuwaDataIdentity.capacity;
+  combined_state.capacity = combined_state.blocks * NuwaData::Block;
   combined_state.setup.dma = Hardware::Dma;
   assert(PreservedNop::domain(combined_hardware, combined_state.setup));
   gHost = {true, false, &locked};
-  retainedSlot = {};
+  // Fixture-only process replacement across independent test scenarios.
+  new (&retainedSlot) NuwaData::Slot;
+}
+
+static void test(const char *label, Response wire, CombinedRead::End end, NuwaData::State state,
+                 bool allowRoot) {
+  startMockBoot(wire);
   uint8_t block[NuwaData::Block]{};
   assert(!openCandidateData(0, 1, 1));
   assert(!dataProvider.write(0, 1, block) && !dataProvider.sync());
   IOLockLock(gHost.lock);
   assert(retainedReadLocked(10, 1) == end && retainedSlot.state() == state);
   assert(retainedReadyLocked() == allowRoot && gHost.poisoned == !allowRoot);
-  assert(!retainedSlot.sync(true)); // Faults also disarm the underlying Data slot.
+  assert(!retainedSlot.dataAllowed(true)); // Faults also disarm the underlying Data slot.
   IOLockUnlock(gHost.lock);
   assert(!dataProvider.write(0, 1, block) && !dataProvider.sync());
   assert(combined_hardware.prepares == 1 && combined_hardware.submissions == 1);
@@ -138,7 +151,7 @@ static void test(const char *label, Response wire, CombinedRead::End end, NuwaDa
   if (allowRoot) {
     for (auto b : block) assert(b == 0xa5);
     assert(combined_hardware.prepares == 2 && combined_hardware.submissions == 2);
-    assert(!retainedSlot.sync(true));
+    assert(!retainedSlot.dataAllowed(true));
   } else {
     assert(NuwaData::zero(block, sizeof block));
     assert(!memcmp(previous, combined_hardware.virt, sizeof previous));
@@ -146,6 +159,61 @@ static void test(const char *label, Response wire, CombinedRead::End end, NuwaDa
   }
   std::printf("PASS %-30s next root=%s Data write/sync=denied\n",
               label, allowRoot ? "allowed" : "denied");
+}
+
+static void testTerminal(bool timeout) {
+  using CombinedRead::End;
+  using NuwaData::State;
+  using namespace std::chrono_literals;
+  Response wire{};
+  wire.timedOut = timeout;
+  wire.ocs = timeout ? 15 : 0;
+  wire.fatal = !timeout;
+  startMockBoot(wire);
+  const auto *const mapping = combined_hardware.virt;
+  const auto dma = combined_state.setup.dma;
+  uint8_t snapshot[CombinedRead::Bytes];
+  uint8_t waitingBlock[NuwaData::Block]{};
+  std::promise<void> waiting;
+  auto entered = waiting.get_future();
+  IOLockLock(gHost.lock);
+  auto result = std::async(std::launch::async, [&] {
+    waiting.set_value();
+    IOLockLock(gHost.lock);
+    auto end = retainedReadLocked(11, 1);
+    IOLockUnlock(gHost.lock);
+    return end;
+  });
+  assert(entered.wait_for(2s) == std::future_status::ready);
+  assert(result.wait_for(0s) == std::future_status::timeout);
+  assert(retainedReadLocked(10, 1) == End::Transport);
+  assert(retainedSlot.state() == (timeout ? State::TIMEOUT_ORPHAN : State::FATAL_QUARANTINED));
+  // Hardware changes the old DMA after the fault. Check the software leaves
+  // that region untouched even with DB=0, good OCS and new payload bytes.
+  combined_hardware.wire = {};
+  combined_hardware.active = false;
+  combined_hardware.virt[8] = 0;
+  combined_hardware.virt[CombinedRead::Data] = 0x77;
+  memcpy(snapshot, mapping, sizeof snapshot);
+  const auto mmioReads = combined_hardware.mmioReads;
+  IOLockUnlock(gHost.lock);
+  assert(result.wait_for(2s) == std::future_status::ready && result.get() == End::Guard);
+  dataProvider.close();
+  NuwaData::GptBuffers g{};
+  constexpr NuwaData::Window window{59491258, 2097217};
+  assert(NuwaData::placement(nuwaDataIdentity, 8446279680ULL, 262144, window));
+  assert(!dataProvider.open(nuwaDataIdentity, 0, NuwaData::Block, 8446279680ULL, 262144, window, g));
+  assert(!openCandidateData(1, 1, 1));
+  IOLockLock(gHost.lock);
+  assert(!dataPort.readPageLocked(10, waitingBlock));
+  IOLockUnlock(gHost.lock);
+  assert(!dataProvider.write(0, 1, waitingBlock) && !dataProvider.sync());
+  assert(NuwaData::zero(waitingBlock, sizeof waitingBlock));
+  assert(combined_hardware.prepares == 1 && combined_hardware.submissions == 1 &&
+         combined_hardware.mmioReads == mmioReads && combined_hardware.virt == mapping &&
+         combined_state.setup.dma == dma && !memcmp(snapshot, mapping, sizeof snapshot));
+  std::printf("PASS %s + late completion: waiter denied; close/reopen denied; no DMA/MMIO reuse\n",
+              timeout ? "timeout" : "fatal");
 }
 
 int main() {
@@ -184,4 +252,6 @@ int main() {
   test("wrong LUN", bad, End::Response, fatal, false);
   bad = check; bad.dl = 481;
   test("oversized UPIU length", bad, End::Response, fatal, false);
+  testTerminal(true);
+  testTerminal(false);
 }

@@ -6,9 +6,13 @@ struct CandidatePort {
   bool ownershipLocked() { return retainedOwnershipLocked(); }
   uint64_t capacityLocked() { return combined_state.blocks; }
   unsigned blockSizeLocked() { return combined_state.block; }
-  // TODO: no retained task termination/DMA drain or restart contract.
-  // Do not invoke Slot::tryRecover or clear the transport quarantine here.
-  bool recoveryProvenLocked() { return false; }
+  bool isolationArmedLocked() { return true; } // RetainedRead's terminal, shared latch.
+  NuwaData::ColdStartEvidence coldStartEvidenceLocked(const NuwaData::GptIdentity &,
+                                                     NuwaData::Window) {
+    // No hardware evidence that old DMA is excluded after a firmware restart.
+    // Never infer qualification from boot args, a reset indication or DB=0.
+    return {};
+  }
   bool fuaProvenLocked() { return false; }
   bool readPageLocked(uint64_t lba, void *dst) {
     if (retainedReadLocked(lba, 1) != CombinedRead::End::Success) return false;
@@ -16,7 +20,7 @@ struct CandidatePort {
     return true;
   }
   NuwaData::Evidence writePageLocked(const uint8_t (&)[10], const uint8_t *) {
-    // No retained write backend before FUA and DMA reclamation are proven.
+    // No retained write backend before FUA and cold-start qualification.
     // Do not touch descriptors, doorbell, mapping or the bounce buffer.
     return NuwaData::Evidence::Unowned;
   }

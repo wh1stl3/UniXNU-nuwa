@@ -3,9 +3,82 @@
 **单核候选已链接 provider 骨架和双槽 overlay；Data 写门禁关闭。**
 此包不验证可写性或持久化，未接触设备。保留 PU why。
 
+## r4：隔离到经验证冷启动（当前合同，self-checked）
+
+**没有旧 DMA 排空保证，不做活体回收。** 下文 r2 的 `tryRecover` /
+`RECOVERY_PROVEN` 是历史模型，r4 已删除；隔离中的旧 slot 不可解禁。
+
+### 公开资料复核结论
+
+- SDB 下 UTRLCLR + DB=0 只说明请求槽资源清掉；控制器已经取走请求时 DB
+  也可能是 0，因此等零不保证数据 DMA 结束。
+- 通用 controller reset/stop 等待 HCE=0；Linux `ufshcd` host reset
+  路径以 “h/w cleared requests” 为前提处理软件请求，并不验证总线 DMA
+  已停止。不能把该假设转作 nuwa 的证据。
+- Linux mainline [7cfdfdd655](https://github.com/torvalds/linux/commit/7cfdfdd655)
+  记录 abort 与同一请求的迟到完成可以并存；abort 返回不是 fence。
+- 没有公开资料说明 SM8550 SMMU SID `0x60` 的 reset/retained DMA 语义；
+  MCQ cleanup complete 不适用于当前 SDB。固件重启事件、HCE=0 或软件
+  换代均不能单独资格化。
+
+### 接入与验证
+
+- `Provider::open` 在根读共用锁内先拒绝隔离/未就绪。写请求必须有编译开关、
+  显式 opt-in、已启用的终止隔离、经验证的冷启动证据与 FUA；随后仍实际读
+  主备 GPT、检查身份与窗口，写路径仍逐块检查范围及 FUA 完成。生产实例
+  固定 `<CandidatePort, false>`，冷启动证据缺省全 false。
+- `retainedReadLocked` 将 timeout/fatal/Unowned 锁存到共享 slot 与 host
+  门禁。原软件锁在请求返回时释放；等待者拿锁后返回错误，不重新轮询
+  MMIO 或提交。描述符、DMA 页、映射全部保留，无 abort、reset、replay
+  或 teardown。`Provider::close` 只关软件句柄，不能改变 transport；
+  reopen 也不能越过隔离。保留现有每命令 1 s 轮询期限；不是硬实时调度上界。
+- 诊断保留内存状态/现有屏幕出口；log open/write/sync、panic、export 和
+  Data sync 均直接拒绝。没有 panic 路径改变锁行为。
+- 冷启动模型要求**同一新域**的八项独立证据：固件已重新初始化、旧 DMA
+  不可能再到达、LUN 正确、主 GPT 正确、备 GPT 正确、窗口正确、已知根块
+  正确、overlay 世代正确。任一不成立，新会话保持隔离；全部成立也只允许
+  新会话，永不复用/解禁旧 slot。当前没有持久隔离标记或硬件验证器；不能
+  将正常只读启动当作故障后的已验证冷启动，更不能据此打开写门。
+
+两份 UBSan fixture 为 **16 + 33 项**。下文 r3 命令用于 r4 时须加
+`-pthread` 并引用 r4 `B`；Data fixture 命令见下文。新增场景实际输出：
+
+```text
+PASS timeout + late completion: waiter denied; close/reopen denied; no DMA/MMIO reuse
+PASS fatal + late completion: waiter denied; close/reopen denied; no DMA/MMIO reuse
+PASS cold start missing firmware reinit: isolated; write open denied
+PASS cold start missing old DMA exclusion: isolated; write open denied
+PASS cold start missing LUN: isolated; write open denied
+PASS cold start missing primary GPT: isolated; write open denied
+PASS cold start missing backup GPT: isolated; write open denied
+PASS cold start missing window: isolated; write open denied
+PASS cold start missing known root block: isolated; write open denied
+PASS cold start missing overlay generation: isolated; write open denied
+PASS all cold-start proofs admit only a fresh slot; old slot remains isolated
+```
+
+### 候选
+
+沿用单核配方，使用 fresh `B`/`P`（本轮
+`out/nuwa-ufs-recovery-candidate-20261125-build-r4` /
+`out/nuwa-ufs-recovery-candidate-20261125-package-r4`）。Linked crashcap、
+outer/FAT 回读、`fsck.fat -vn`、反汇编均 self-checked。Data write 只有
+boot 参数解析、锁获取/释放后返回 0；Data sync 与磁盘诊断不发送命令。
+只换 kernel 与其重绑 ADT CHMH；561 B args、seed、trust 不变，outer
+100663296 B，FAT 余 **11042304 B**。UniXNU 上游 HEAD 构建前后为
+`b04f131da9151182dbb26ce4e638fa8acc2933ac`，未改 pin。
+
+| 产物 | 哈希 |
+| --- | --- |
+| Kernel SHA-256 | `0a5f102951787100ad74b9c0b78c85c19f2aedce4d57d534443560a7370aed3c` |
+| Outer SHA-256 | `a29ddb4b5f0c5cd5164cf6ddedb76dd2448734eff1e4d1e59ded79a1ef5fce50` |
+| CHMH SHA-384 | `ec21a94d9788a4615764842efc278cabcd08ce45ca6dd28f7f9edb516007275e09e1ef6b96a05e68c206d0e1613384d8` |
+| 回读 FAT SHA-256 | `6be848d927e1020c567e17d1c764213b3cdacd66dc04ee69650ba67496006028` |
+| Seed SHA-256 | `3c81135b384d8e090521205f2d69b3c197521e6d03c63682419d021bf0f24e5e` |
+
 ## r3：retained 响应分类收紧（self-checked）
 
-当前候选只将 **`CHECK CONDITION (0x02)` + 合法 autosense** 认作可归属命令错误：
+r3 起只将 **`CHECK CONDITION (0x02)` + 合法 autosense** 认作可归属命令错误：
 必须匹配响应类型/LUN/tag，UPIU response code 为 0，sense 段长度正确且满足
 固定/描述符 sense 格式；只允许无残量或 underflow 位与非零、未超界残量一致。
 `GOOD (0x00)` 必须无 sense、无残量（原 REQUEST SENSE 短传输例外仍保留）。

@@ -2,7 +2,7 @@
 #include "Gate.h"
 
 namespace NuwaData {
-// Production default. The transport must separately prove recovery and FUA
+// Production default. The transport must separately prove cold-start qualification and FUA
 // durability; a boot request alone must never grant writes.
 #ifdef NUWA_DATA_WRITE_OPT_IN
 constexpr bool BuildWriteOptIn = NUWA_DATA_WRITE_OPT_IN == 1;
@@ -45,21 +45,26 @@ public:
   bool open(const GptIdentity &id, unsigned lun, unsigned block, uint64_t rootBytes,
             uint64_t reserve, Window window, GptBuffers &g, bool requestWrite = false) {
     Lock lock(port_);
-    if (open_ || lun != 0 || block != Block || id.capacity < 4 ||
+    if (open_ || !slot_.rootAllowed() || !port_.readyLocked() ||
+        lun != 0 || block != Block || id.capacity < 4 ||
         port_.capacityLocked() != id.capacity ||
-        port_.blockSizeLocked() != block || !placement(id, rootBytes, reserve, window) ||
-        !readLocked(1, g.ph) || !readLocked(2, g.pe) ||
+        port_.blockSizeLocked() != block || !placement(id, rootBytes, reserve, window))
+      return false;
+    if (requestWrite && (!BuildEnabled || !slot_.dataAllowed(true) ||
+                         !port_.isolationArmedLocked() ||
+                         !port_.coldStartEvidenceLocked(id, window).qualified() ||
+                         !port_.fuaProvenLocked())) return false;
+    if (!readLocked(1, g.ph) || !readLocked(2, g.pe) ||
         !readLocked(id.capacity - 1, g.bh)) return false;
     const uint64_t backup = le64(g.bh + 72);
     if (backup <= id.lastUsable || backup >= id.capacity - 1 ||
         !readLocked(backup, g.be) || !gpt(lun, block, id, {1, 2, g.ph, g.pe},
                                         {id.capacity - 1, backup, g.bh, g.be})) return false;
+    // Recheck the sticky write gate after the GPT reads.
+    if (requestWrite && !slot_.dataAllowed(port_.readyLocked())) return false;
     data_ = window;
     open_ = true;
-    writeEnabled_ = BuildEnabled && requestWrite && port_.recoveryProvenLocked() &&
-                    port_.fuaProvenLocked();
-    // A write request is not silently downgraded to read-only.
-    if (requestWrite && !writeEnabled_) { open_ = false; return false; }
+    writeEnabled_ = BuildEnabled && requestWrite;
     return true;
   }
 
@@ -77,7 +82,7 @@ public:
     Lock lock(port_);
     if (!open_ || !writeEnabled_ || !src || rel >= data_.blocks ||
         !data_.contains(0, Block, data_.first + rel, n) ||
-        !port_.fuaProvenLocked() || !slot_.sync(port_.readyLocked())) return false;
+        !slot_.dataAllowed(port_.readyLocked()) || !port_.fuaProvenLocked()) return false;
     for (uint32_t i = 0; i < n; ++i) {
       const uint64_t lba = data_.first + rel + i;
       if (!data_.contains(0, Block, lba, 1) || !canTouchLocked() ||
@@ -90,11 +95,13 @@ public:
     return true;
   }
 
-  bool sync() {
+  // Logical handle only. This has no transport teardown or recovery callback.
+  void close() {
     Lock lock(port_);
-    return open_ && writeEnabled_ && port_.fuaProvenLocked() && slot_.sync(port_.readyLocked());
+    open_ = writeEnabled_ = false;
   }
 
+  static bool sync() { return false; }
   static bool writeLog() { return false; }
   static bool writeExport() { return false; }
   static bool writePanic() { return false; }

@@ -161,7 +161,7 @@ python3 scripts/porting-record.py check --device .
 
 ## 文档
 
-- Data 双槽与 retained 响应分类 r3 候选，写门关闭，仅主机 self-checked：[设计与结果](docs/nuwa-data-write-design-20261125.md)。
+- Data retained 冷启动隔离 r4 候选，写门关闭，仅主机 self-checked：[设计与结果](docs/nuwa-data-write-design-20261125.md)。
 - 移植流程：<https://unixnu.com/zh/porting/steps>
 - 设备仓规范：<https://unixnu.com/zh/porting/device-repository>
 - 迁移指南：<https://unixnu.com/zh/porting/migration>

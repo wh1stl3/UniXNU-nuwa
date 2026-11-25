@@ -29,14 +29,21 @@ inline void write10(uint8_t (&cdb)[10], uint32_t lba) {
 
 enum class State {
   IDLE, SUBMITTED, COMPLETED_OK, COMPLETED_CMDERR, TIMEOUT_ORPHAN,
-  FATAL_QUARANTINED, RECOVERING, RECOVERY_PROVEN
+  FATAL_QUARANTINED
 };
 enum class Evidence { ReadOk, FullFua, AttributedCommandError, Timeout, Unowned };
 
-struct ReclaimFence {
-  bool taskTerminatedOrControllerStopped;
-  bool lateCompletionExcluded;
-  bool slotAndDmaReturned;
+// Evidence for a NEW firmware/transport domain, never a transition of the
+// old Slot. Each fact must refer to the same new domain and expected media.
+struct ColdStartEvidence {
+  bool firmwareReinitialized = false, oldDmaExcluded = false;
+  bool lunMatches = false, primaryGptMatches = false, backupGptMatches = false;
+  bool windowMatches = false, knownRootMatches = false, overlayGenerationMatches = false;
+  constexpr bool qualified() const {
+    return firmwareReinitialized && oldDmaExcluded && lunMatches &&
+           primaryGptMatches && backupGptMatches && windowMatches &&
+           knownRootMatches && overlayGenerationMatches;
+  }
 };
 
 // All access, including sync and root submission admission, requires the
@@ -53,12 +60,20 @@ class Slot {
     return true;
   }
 public:
+  constexpr Slot() = default;
+  // Host model of a successor to a quarantined domain. The ordinary initial
+  // read-only session does not certify a cold restart or enable Data writes.
+  explicit constexpr Slot(ColdStartEvidence boot)
+      : state_(boot.qualified() ? State::IDLE : State::FATAL_QUARANTINED),
+        writeError_(!boot.qualified()) {}
+  Slot(const Slot &) = delete;
+  Slot &operator=(const Slot &) = delete;
   State state() const { return state_; }
   bool rootAllowed() const {
     return state_ == State::IDLE || state_ == State::COMPLETED_OK ||
-           state_ == State::COMPLETED_CMDERR || state_ == State::RECOVERY_PROVEN;
+           state_ == State::COMPLETED_CMDERR;
   }
-  bool sync(bool ready) const { return ready && rootAllowed() && !writeError_; }
+  bool dataAllowed(bool ready) const { return ready && rootAllowed() && !writeError_; }
   void quarantine() {
     writeError_ = true;
     // Neither a late response nor a second fault can reclaim an orphan.
@@ -87,37 +102,6 @@ public:
         break;
     }
     writeError_ = true;
-    return false;
-  }
-  // Recovery is explicit, under the host lock, and never replays a command.
-  // The fence operation must not stage DMA, unmap, or recycle the old queue.
-  // After all three fence facts hold, only the private recovery port may use
-  // the rebuilt queue. A failed step ends this attempt; no proofs are cached.
-  // Layout and read operations classify completion just like ordinary reads.
-  template<class RecoveryPort>
-  bool tryRecover(RecoveryPort &port, uint64_t rootLba,
-                  const uint8_t (&expected)[Block], uint8_t (&scratch)[Block]) {
-    if (state_ != State::TIMEOUT_ORPHAN && state_ != State::FATAL_QUARANTINED)
-      return false;
-    state_ = State::RECOVERING;
-    const ReclaimFence f = port.fenceLocked();
-    if (!f.taskTerminatedOrControllerStopped || !f.lateCompletionExcluded ||
-        !f.slotAndDmaReturned || !port.rebuildLocked()) {
-      quarantine();
-      return false;
-    }
-    Evidence e = port.validateLayoutLocked();
-    if (e == Evidence::ReadOk) {
-      // A partial/stale copy must not match the known block by accident.
-      for (unsigned i = 0; i < Block; ++i) scratch[i] = uint8_t(~expected[i]);
-      e = port.readKnownRootLocked(rootLba, scratch);
-      if (e == Evidence::ReadOk && !memcmp(scratch, expected, Block)) {
-        state_ = State::RECOVERY_PROVEN;
-        return true;
-      }
-    }
-    if (e == Evidence::Timeout) state_ = State::TIMEOUT_ORPHAN;
-    else quarantine();
     return false;
   }
 };

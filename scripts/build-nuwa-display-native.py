@@ -529,10 +529,24 @@ def data_candidate_link(out, argv, env, gpt):
 
 extern "C" int native_ufs_store_sync (void)
 {
-  return storeMode () == 2 && gHost.lock && dataProvider.sync ();
+  return 0;
 }
 
 ''' + text[write_end:]
+    log_start = text.index('extern "C" int native_ufs_log_open ')
+    log_end = text.index("// Re-read the GPT header", log_start)
+    text = text[:log_start] + '''extern "C" int native_ufs_log_open (uint64_t *, uint64_t *, const char **why)
+{
+  if (why) *why = "UFS diagnostics disabled";
+  return 0;
+}
+extern "C" int native_ufs_log_write (uint64_t, uint32_t, const void *) { return 0; }
+extern "C" uint64_t native_ufs_export_blocks (void) { return 0; }
+extern "C" int native_ufs_export_write (uint64_t, uint32_t, const void *) { return 0; }
+extern "C" int native_ufs_log_sync (void) { return 0; }
+extern "C" int native_ufs_log_panic (void) { return 0; }
+
+''' + text[log_end:]
     staged = private / source.name
     staged.write_text(text)
     records = json.loads((root / "commands.json").read_text())
