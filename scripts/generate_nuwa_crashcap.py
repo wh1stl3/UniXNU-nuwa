@@ -1,11 +1,11 @@
-"""Inject the opt-in, lsd-only saved-register recorder and banner rows."""
+"""Inject the opt-in lsd register/frame recorder and banner rows."""
 from hashlib import sha256
 
 from generate_r35_display_diag import replace_once
 
 UX_SHA = "df306fd79bf6af2827485eab4f2f8bb644ed1d986c7421217b8c012454eb32b1"
 HANDLER_SHA = "f467f4441893103ee5efa6b7775c0be5104eefb52508276ae950d84caeae4791"
-PROTOTYPE = b"""void boot_progress_lsd_crash(int pid, unsigned sig, uint64_t code,
+PROTOTYPE = b"""void boot_progress_lsd_crash(thread_t thread, int pid, unsigned sig, uint64_t code,
     uint64_t pc, uint64_t lr, uint64_t sp, uint64_t fp, uint64_t fa, uint64_t k)"""
 CAPTURE = b"""void nuwa_ux_capture_lsd(thread_t thread, int pid, unsigned sig, uint64_t code, uint64_t fa)"""
 HOOK = b"""	/* Record the final BSD signal and the target's kernel-saved user state. */
@@ -36,11 +36,12 @@ def generate_handler(src):
 extern """ + PROTOTYPE + b";\n" + CAPTURE + b";\n\n" + CAPTURE + b"""
 {
 	const arm_saved_state_t *saved = get_user_regs(thread);
-	boot_progress_lsd_crash(pid, sig, code,
+	const int state64 = saved && is_saved_state64(saved);
+	boot_progress_lsd_crash(thread, pid, sig, code,
 	    saved ? get_saved_state_pc(saved) : 0,
 	    saved ? get_saved_state_lr(saved) : 0,
-	    saved ? get_saved_state_sp(saved) : 0,
-	    saved ? get_saved_state_fp(saved) : 0, fa,
+	    state64 ? get_saved_state_sp(saved) : 0,
+	    state64 ? get_saved_state_fp(saved) : 0, fa,
 	    VM_KERNEL_UNSLIDE(thread->continuation));
 }
 """)
@@ -48,11 +49,16 @@ extern """ + PROTOTYPE + b";\n" + CAPTURE + b";\n\n" + CAPTURE + b"""
 
 RECORDER = b"""
 enum { BP_CR_FREE, BP_CR_WRITING, BP_CR_VALID, BP_CR_MASK = 3 };
-#define BP_CR_FIELDS(F) F(pid) F(sig) F(code) F(pc) F(lr) F(sp) F(fp) F(fa) F(k)
+enum { BP_CRS_MAX = 8, BP_CRS_WINDOW = 1u << 20 };
+enum { BP_CRS_NA, BP_CRS_LIMIT, BP_CRS_BADFP, BP_CRS_READFAIL, BP_CRS_ZERO };
+static const char *const bp_crs_stops[] = {"na", "limit", "badfp", "readfail", "zero"};
+#define BP_CR_REGS(F) F(pid) F(sig) F(code) F(pc) F(lr) F(sp) F(fp) F(fa) F(k)
 struct bp_cr_data {
 #define BP_CR_FIELD(f) uint64_t f;
-  BP_CR_FIELDS(BP_CR_FIELD)
+  BP_CR_REGS(BP_CR_FIELD)
+  BP_CR_FIELD(count) BP_CR_FIELD(stop)
 #undef BP_CR_FIELD
+  uint64_t frames[BP_CRS_MAX];
 };
 // State is the low pair of bits; CAS includes the generation to reject ABA.
 // A single SC order for metadata and payload makes the bracketed read a
@@ -90,6 +96,29 @@ static struct bp_cr_slot *bp_cr_reserve(void) {
   return NULL;
 }
 
+static int bp_crs_fp_ok(uint64_t fp, uint64_t sp) {
+  return !(fp & 7u) && fp >= sp && fp - sp <= BP_CRS_WINDOW - 16;
+}
+
+static unsigned bp_crs_walk(struct bp_cr_data *data, thread_t thread,
+    uint64_t sp, uint64_t fp, unsigned *count) {
+  if (thread != current_thread()) return BP_CRS_NA;
+  if (!sp || sp > UINT64_MAX - BP_CRS_WINDOW || !bp_crs_fp_ok(fp, sp))
+    return BP_CRS_BADFP;
+  // copyin may block on a page fault. This is a bounded read of the current
+  // thread's user stack only: up to eight 16-byte frame records, no map switch.
+  while (*count < BP_CRS_MAX) {
+    uint64_t record[2];
+    if (copyin(fp, record, sizeof(record))) return BP_CRS_READFAIL;
+    if (!record[1]) return BP_CRS_ZERO;
+    BP_CR_STORE(&data->frames[(*count)++], record[1]);
+    // The current LR is usable even if its link to the next frame is bad.
+    if (record[0] <= fp || !bp_crs_fp_ok(record[0], sp)) return BP_CRS_BADFP;
+    fp = record[0];
+  }
+  return BP_CRS_LIMIT;
+}
+
 """ + PROTOTYPE + b";\n" + PROTOTYPE + b""" {
   struct bp_cr_slot *slot = bp_cr_reserve();
   if (!slot) {
@@ -97,8 +126,12 @@ static struct bp_cr_slot *bp_cr_reserve(void) {
     return;
   }
 #define BP_CR_PUT(f) BP_CR_STORE(&slot->data.f, f);
-  BP_CR_FIELDS(BP_CR_PUT)
+  BP_CR_REGS(BP_CR_PUT)
 #undef BP_CR_PUT
+  unsigned count = 0;
+  unsigned stop = bp_crs_walk(&slot->data, thread, sp, fp, &count);
+  BP_CR_STORE(&slot->data.count, count);
+  BP_CR_STORE(&slot->data.stop, stop);
   uint64_t gen = __atomic_fetch_add(&bp_cr_wr_seq, 1, __ATOMIC_SEQ_CST) + 1;
   BP_CR_STORE(&slot->metadata, (gen << 2) | BP_CR_VALID); // release publication
 }
@@ -110,8 +143,11 @@ static int bp_cr_read(struct bp_cr_slot *slot, struct bp_cr_data *out, uint64_t 
     if (before == BP_CR_FREE) return BP_CR_EMPTY; // free is never restored
     if ((before & BP_CR_MASK) != BP_CR_VALID) continue;
 #define BP_CR_GET(f) out->f = BP_CR_LOAD(&slot->data.f);
-    BP_CR_FIELDS(BP_CR_GET)
+    BP_CR_REGS(BP_CR_GET)
+    BP_CR_GET(count) BP_CR_GET(stop)
 #undef BP_CR_GET
+    for (unsigned i=0; i<out->count; ++i)
+      out->frames[i] = BP_CR_LOAD(&slot->data.frames[i]);
     if (before == BP_CR_LOAD(&slot->metadata)) {
       *gen = before >> 2;
       return BP_CR_STABLE;
@@ -119,7 +155,7 @@ static int bp_cr_read(struct bp_cr_slot *slot, struct bp_cr_data *out, uint64_t 
   }
   return BP_CR_TORN;
 }
-#undef BP_CR_FIELDS
+#undef BP_CR_REGS
 
 static unsigned bp_cr_rows(char rows[][120], unsigned budget) {
   struct bp_cr_data data[2];
@@ -145,17 +181,28 @@ static unsigned bp_cr_rows(char rows[][120], unsigned budget) {
       (unsigned long long)s->sp,(unsigned long long)s->fp);
   snprintf(rows[3],120,"CR+ fa=%016llx k=%016llx",
       (unsigned long long)s->fa,(unsigned long long)s->k);
-  if (budget < 5 || a != BP_CR_STABLE || b != BP_CR_STABLE) return 4;
+  unsigned n = 4, count = (unsigned)s->count;
+  unsigned minimum = count < 4 ? count : 4;
+  if (budget - n >= 1 + minimum) {
+    unsigned room = budget - n - 1;
+    // Preserve a row for SHOT/other diagnostics when that still fits the prefix.
+    if (room > minimum) --room;
+    if (count > room) count = room;
+    snprintf(rows[n++],120,"CRS n=%u stop=%s",count,bp_crs_stops[s->stop]);
+    for (unsigned i=0; i<count; ++i)
+      snprintf(rows[n++],120,"CRS+%u pc=%016llx",i+1,(unsigned long long)s->frames[i]);
+  }
+  if (budget - n < 2 || a != BP_CR_STABLE || b != BP_CR_STABLE) return n;
   s = &data[latest ^ 1];
-  snprintf(rows[4],120,"CR2 p%u lsd sig=%u pc=%016llx",
+  snprintf(rows[n++],120,"CR2 p%u lsd sig=%u pc=%016llx",
       (unsigned)s->pid,(unsigned)s->sig&127u,(unsigned long long)s->pc);
-  return 5;
+  return n;
 }
 
 static int bp_cr_check_yield(unsigned row, unsigned cr) {
-  // After starting the group, finish its three continuation rows before
+  // After starting the group, finish the selected crash rows before
   // yielding. The existing render_busy owner keeps the frame mapped.
-  return row == 0 || row >= 4 || cr < 4;
+  return row == 0 || row >= cr;
 }
 """
 
@@ -168,6 +215,8 @@ GEOMETRY = b"""  unsigned cell=14*display.scale,cols=display.width/(6*display.sc
 
 
 def generate_banner(src):
+    anchor = b"#include <kern/misc_protos.h>\n"
+    src = replace_once(src, anchor, anchor + b"#include <libkern/copyio.h>\n")
     anchor = b"static void crash_banner(unsigned now) {"
     src = replace_once(src, anchor, RECORDER + anchor)
     src = replace_once(src, GEOMETRY + b"  n=bp_banner_select(rows,n,budget);",

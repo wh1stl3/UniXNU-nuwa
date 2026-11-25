@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Repack and audit a crashcap kernel against the pinned stack900 outer (host only)."""
+"""Repack and audit a crash kernel against a pinned diagnostic outer (host only)."""
 import argparse
 from hashlib import sha256
 import json
@@ -16,6 +16,10 @@ ROLLBACK = "66efdc7164d1385978309967f40f0495497237c3c7a92c43b7697496a55f6486"
 SEED = "3c81135b384d8e090521205f2d69b3c197521e6d03c63682419d021bf0f24e5e"
 OLD_CHMH = bytes.fromhex(
     "ecdd6f98859f52abe1ebe71dd32dc30d8859cb66a93bcfdaa96cd66f51ab140a43c90db09a2a9b7e38af1293286deced")
+DSP_OUTER = ROOT / "out/nuwa-dspcount-20261125-package"
+DSP_SHA = "7c8ee0d61e61951a6115e955dd650461848a0ab16111a89ce2816d6b2e7aba73"
+DSP_CHMH = bytes.fromhex(
+    "54ea450840ba0cd9ba4f2a02b7f2686653e459993f9822edc7a5df093ee71f2ad66bf5b97309134fdf6bbb58339b2ea2")
 PAYLOAD = "EFI/UniXNU/Payloads/"
 KERNEL, ADT, TRUST, SCRATCH = (PAYLOAD + name for name in
     ("kernel.macho", "kernel.macho.adt", "kernel.macho.trustcache", "scratch-data.img"))
@@ -66,14 +70,17 @@ def main():
     ap.add_argument("--base", type=Path, required=True, help="existing pinned UniXNU checkout")
     ap.add_argument("--kernel", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
+    ap.add_argument("--crashframes", action="store_true", help="use the pinned DSP counter outer")
     ap.add_argument("--audit-only", action="store_true", help="read an existing outer and compare all FAT files")
     a = ap.parse_args()
     out = a.out.resolve()
-    assert out.is_relative_to(ROOT / "out") and out not in (ROOT / "out", OLD)
+    assert out.is_relative_to(ROOT / "out") and out not in (ROOT / "out", OLD, DSP_OUTER)
     kernel = a.kernel.resolve()
     assert kernel.is_relative_to(ROOT / "out") and kernel.name == "kernel.macho"
     new_kernel = kernel.read_bytes()
-    old_outer = pinned(OLD / "vendor_boot.img", ROLLBACK)
+    template, template_sha, template_chmh = (
+        (DSP_OUTER, DSP_SHA, DSP_CHMH) if a.crashframes else (OLD, ROLLBACK, OLD_CHMH))
+    old_outer = pinned(template / "vendor_boot.img", template_sha)
     head, old_fat, tail = regions(old_outer)
 
     # Reuse the prior Python reader, not the rollback audit's executable main.
@@ -100,11 +107,11 @@ def main():
                     "885094de4597fb2d1734ba4092c805968097d021c8f482653b238436586d27a4")
     bound = {"kernel": before[KERNEL], "loader": loader, "trust": before[TRUST],
              "args": args, "parent-adt": parent}
-    assert chmh(bound)[1] == OLD_CHMH and before[ADT].count(OLD_CHMH) == 1
+    assert chmh(bound)[1] == template_chmh and before[ADT].count(template_chmh) == 1
     bound["kernel"] = new_kernel
     digest = chmh(bound)[1]
-    expected_adt = before[ADT].replace(OLD_CHMH, digest, 1)
-    assert digest != OLD_CHMH
+    expected_adt = before[ADT].replace(template_chmh, digest, 1)
+    assert digest != template_chmh
 
     outer = out / "vendor_boot.img"
     fat = out / "payload.img"
