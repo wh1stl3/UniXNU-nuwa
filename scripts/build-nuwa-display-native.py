@@ -452,6 +452,17 @@ def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False, pixsig
                             b"extern unsigned nuwa_ufs_desc_row(char *, size_t) __attribute__((weak_import));\n"
                             b"extern unsigned nuwa_ufs_mode_row(char *, size_t) __attribute__((weak_import));\n"
                             b"static unsigned bp_banner_priority(")
+        text = replace_once(text, b"extern void native_ufs_progress_text(char *, size_t);",
+                            b"extern void native_ufs_progress_text(char *, size_t);\n"
+                            b"extern unsigned nuwa_ufs_neon_rows(char (*)[120], unsigned) __attribute__((weak_import));")
+        text = replace_once(text, b"#if NUWA_GLYPH_SELFTEST\n  nuwa_glyph_selftest(now);",
+                            b"  if (&nuwa_ufs_neon_rows) {\n"
+                            b"    char evidence[6][120]; unsigned used=nuwa_ufs_neon_rows(evidence,6);\n"
+                            b"    for (unsigned i=0;i<used;++i) line(37+i,evidence[i],0xff00ffcc);\n"
+                            b"  }\n#if NUWA_GLYPH_SELFTEST\n  nuwa_glyph_selftest(now);")
+        text = replace_once(text, b"  unsigned cr=bp_cr_rows(rows,budget),n=cr;",
+                            b"  unsigned neon=&nuwa_ufs_neon_rows ? nuwa_ufs_neon_rows(rows,budget) : 0;\n"
+                            b"  unsigned cr=neon+bp_cr_rows(rows+neon,budget-neon),n=cr;")
         text = replace_once(text, b'!strncmp(s,"PROC",4) ||',
                             b'!strncmp(s,"UFS lu=",7) || !strncmp(s,"UFS err=",8) || !strncmp(s,"UFS2 ",5) || !strncmp(s,"PROC",4) ||')
         text = replace_once(text, b"    uint32_t icon=__atomic_load_n(",
@@ -565,7 +576,40 @@ def data_candidate_link(out, argv, env, gpt):
             raise SystemExit("unexpected retained provider splice anchor")
         text = text.replace(old, new)
 
-    text = f'#include "{code / "Provider.h"}"\n#include "{code / "Descriptor.h"}"\n' + text
+    text = f'#include "{code / "Provider.h"}"\n#include "{code / "Neon.h"}"\n' + text
+    preserved = source.with_name("PreservedNop.h")
+    # Keep the exact order and short-circuiting of the pre-write HC reads.
+    # Cache only values already read; never read old bases or RSR for NEON.
+    preserved_text = preserved.read_text()
+    from generate_r35_display_diag import replace_once
+    old = b"  if (!p.claim()) return End::Claimed;\n  s.stage = 1;"
+    preserved_text = replace_once(preserved_text.encode(), old, old.replace(
+        b"  s.stage = 1;", b"  const bool neon = neonBegin();\n  s.stage = 1;")).decode()
+    start = preserved_text.index("  if (!s.dma ||")
+    stop = preserved_text.index("  s.stage = 2;", start)
+    prereq = preserved_text[start:stop].replace("  if (", "  const bool reject = (", 1)
+    if not prereq.endswith("\n    return End::Prerequisite;\n"):
+        raise SystemExit("unexpected retained NEON prerequisites")
+    prereq = prereq.removesuffix("\n    return End::Prerequisite;\n") + ";\n"
+    for i, offset in enumerate(("0", "0x34", "0x30", "0x58", "0x78", "0x20")):
+        old = f"p.hread({offset})"
+        if prereq.count(old) != 1:
+            raise SystemExit(f"unexpected retained NEON HC read {offset}")
+        prereq = prereq.replace(old, f"hcRead({i}, {offset})")
+    (private / preserved.name).write_text(
+        f'#include "{code / "Neon.h"}"\n'
+        "static bool neonBegin();\nstatic void neonPre(const NuwaNeon::Hc &);\n" +
+        preserved_text[:start] +
+        "  NuwaNeon::Hc pre;\n"
+        "  const auto hcRead = [&](unsigned i, unsigned off) {\n"
+        "    const auto value = p.hread(off);\n"
+        "    return neon ? pre.record(i, value) : value;\n"
+        "  };\n" + prereq +
+        "  if (neon) neonPre(pre);\n  if (reject) return End::Prerequisite;\n" +
+        preserved_text[stop:])
+    replace('#include "PreservedNop.h"',
+            f'#define NUWA_NEON_SETUP\n#include "{code / "RetainedNeon.inc"}"\n'
+            '#undef NUWA_NEON_SETUP\n#include "PreservedNop.h"')
     combined_text = combined.read_text()
     for old, new in (
         ("Capacity, Read, Sense };", "Capacity, Read, Sense, WriteFua, QueryDesc, ModeSense };"),
@@ -643,7 +687,10 @@ def data_candidate_link(out, argv, env, gpt):
              '{\n  return cachedUfsModeRow(out, size);\n}\n\n'
             'extern "C" void native_ufs_progress_text (char *out, size_t size)')
     replace("  gPendingProvider->release ();  // Balanced with successful thread dispatch.",
-            "  if (result.phase == UfsRootPhase::Complete) probeUfsDescriptors();\n"
+            "  if (result.phase == UfsRootPhase::Complete) {\n"
+            "    if (__atomic_load_n(&neonPhase, __ATOMIC_ACQUIRE) == 2U) probeNeon();\n"
+            "    else probeUfsDescriptors();\n"
+            "  }\n"
             "  gPendingProvider->release ();  // Balanced with successful thread dispatch.")
     replace("if (gHost.ready) return true;", "if (retainedReadySnapshot()) return true;")
     replace("if (!gHost.ready || !name || !lun || !first || !blocks) return 0;",
@@ -653,7 +700,11 @@ def data_candidate_link(out, argv, env, gpt):
     replace("\nStoreGeometry gStoreGeometry;", "\nStoreGeometry gStoreGeometry;\n"
             "static constexpr NuwaData::GptIdentity nuwaDataIdentity = "
             "{61850624, 6, 61850618, 3110976, 61850618, " + guids + "};\n"
-            f'#include "{code / "KernelPort.inc"}"')
+            f'#include "{code / "KernelPort.inc"}"\n'
+            'constexpr uint32_t kDefaultReserveMiB = 1024;\n'
+            f'#include "{code / "RetainedNeon.inc"}"')
+    replace("constexpr uint32_t kDefaultReserveMiB = 1024;\nstatic uint64_t",
+            "static uint64_t")
     replace("!hostStoreOpen (first, blocks)", "!openCandidateData (first, blocks, reserve)")
     replace('if (!storeMode ()) reason = "off";\n'
             '  else if (!gStoreGeometry.valid || !gHost.ready) reason = "no root layout";',
@@ -730,7 +781,8 @@ extern "C" unsigned native_ufs_store_gpt_check (void)
     require_pin(Path(original), "150bc8439d365249a884033011ef255537618909f97c42fc9bdfad6476a89c75")
     dst = private / Path(original).name
     run([ar, mode, dst, late_obj, *members])
-    if definitions(dst) != definitions(Path(original)) + Counter({"_nuwa_ufs_desc_row": 1, "_nuwa_ufs_mode_row": 1}):
+    if definitions(dst) != definitions(Path(original)) + Counter(
+            {"_nuwa_ufs_desc_row": 1, "_nuwa_ufs_mode_row": 1, "_nuwa_ufs_neon_rows": 1}):
         raise SystemExit("restricted provider changed the retained archive export inventory")
     args = list(argv)
     at, = (i for i, arg in enumerate(args) if arg == f"-Wl,-force_load,{original}")

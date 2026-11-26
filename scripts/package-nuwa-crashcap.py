@@ -84,10 +84,13 @@ def main():
     profile.add_argument("--stage-channel", action="store_true", help="use the pinned PIX outer and keep STAGE dormant")
     profile.add_argument("--data-persist-diag", action="store_true", help="use the pinned PIX outer")
     ap.add_argument("--ufs-desc", action="store_true", help="append the read-only UFS descriptor opt-in")
+    ap.add_argument("--ufs-neon", action="store_true", help="append the staged read-only UFS evidence opt-in")
     ap.add_argument("--audit-only", action="store_true", help="read an existing outer and compare all FAT files")
     a = ap.parse_args()
     if a.ufs_desc and not a.data_persist_diag:
         ap.error("--ufs-desc requires --data-persist-diag")
+    if a.ufs_neon and (not a.data_persist_diag or a.ufs_desc):
+        ap.error("--ufs-neon requires --data-persist-diag and excludes --ufs-desc")
     out = a.out.resolve()
     assert out.is_relative_to(ROOT / "out") and out not in (ROOT / "out", OLD, DSP_OUTER, FRAME_OUTER, PIX_OUTER)
     kernel = a.kernel.resolve()
@@ -134,11 +137,14 @@ def main():
     bound["kernel"] = new_kernel
     expected_config = before[CONFIG]
     changed = {KERNEL, ADT}
-    if a.ufs_desc:
-        assert not any(t.split(b"=", 1)[0] == b"nuwa-ufs-desc" for t in tokens)
+    if a.ufs_desc or a.ufs_neon:
+        assert not {t.split(b"=", 1)[0] for t in tokens} & {
+            b"nuwa-ufs-desc", b"nuwa-ufs-neon", b"nuwa-data-write", b"sheng-data-reset", b"sheng-log"}
+        if a.ufs_neon:
+            assert b"NEON build=ufs-neon-20261126 cid=N261126A\0" in new_kernel
         prefix = b'args = "' + args + b'"'
         assert expected_config.count(prefix) == 1
-        args += b" nuwa-ufs-desc=1"
+        args += b" nuwa-ufs-neon=1" if a.ufs_neon else b" nuwa-ufs-desc=1"
         expected_config = expected_config.replace(prefix, b'args = "' + args + b'"')
         bound["args"] = args
         changed.add(CONFIG)
@@ -157,7 +163,7 @@ def main():
         new_adt = out / "kernel.macho.adt"
         new_adt.write_bytes(expected_adt)
         payloads = [(kernel, KERNEL), (new_adt, ADT)]
-        if a.ufs_desc:
+        if a.ufs_desc or a.ufs_neon:
             config_file = out / "unixnu.toml"
             config_file.write_bytes(expected_config)
             payloads.append((config_file, CONFIG))
@@ -189,6 +195,9 @@ def main():
     report = dict(kernel_sha256=sha(after[KERNEL]), outer_sha256=sha(blob),
                   chmh_sha384=digest.hex(), fat_sha256=sha(rb), seed_sha256=sha(after[SCRATCH]),
                   fat_free_bytes=free, changed_files=sorted(changed), args_bytes=len(args))
+    if a.ufs_neon:
+        report.update(trust_sha256=sha(after[TRUST]), template_outer_sha256=template_sha,
+                      diagnostic_arg="nuwa-ufs-neon=1", device_release=False)
     if a.audit_only:
         assert rb == readback.read_bytes()
     else:

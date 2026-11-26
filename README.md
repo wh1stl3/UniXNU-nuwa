@@ -1,5 +1,7 @@
 # UniXNU-nuwa
 
+**2026-11-26 UFS 只读采样画面（主控转述 vision / self-checked 记录）：**[观察](docs/nuwa-ufs-neon-20261126-observation.md)。
+
 **2026-11-25 显示验收方案（INSUFFICIENT EVIDENCE，reviewer 转述 / self-checked）：**[记录](docs/nuwa-display-acceptance-20261125.md)。
 
 **显示适配尚未通过官方验收**（主控转述 / self-checked）；完整验收口径及当前证据缺口见 [机型记录](AGENTS.md) 和 `porting.toml` 的 display 区域，依据 `UniXNU/docs/zh/porting/display.md:30–56`；`bk/so/PIX` 仅为诊断拆分。
