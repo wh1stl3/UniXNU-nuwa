@@ -2,6 +2,11 @@
 #include "../package/nuwa-data-write/Provider.h"
 #include "../package/nuwa-data-write/Descriptor.h"
 #include "../package/nuwa-data-write/DualBankLogOverlay.h"
+#if defined(NUWA_DISPOSABLE_FIXTURE)
+#include "../package/nuwa-data-write/DisposableData.h"
+static uint8_t native_ram_block_seed_sha256[32];
+static unsigned disposableArg;
+#endif
 #include "NuwaDataFixtureGpt.h"
 #include "../package/nuwa-ramblock/PersistOpenReason.h"
 #include "PersistOverlay.h"
@@ -248,6 +253,9 @@ static struct Hardware {
   bool prepare(uint64_t pa, CombinedRead::Command c, unsigned tag, unsigned block,
                uint64_t lba, unsigned blocks, const uint8_t *writeSource, NuwaUfsDesc::Request desc) {
     assert(heldLocks && pa == Dma && (c == CombinedRead::Command::Read ||
+#if defined(NUWA_DISPOSABLE_FIXTURE)
+                                      c == CombinedRead::Command::WriteVolatile ||
+#endif
                                      c == CombinedRead::Command::WriteFua ||
                                       c == CombinedRead::Command::QueryDesc ||
                                       c == CombinedRead::Command::ModeSense));
@@ -255,6 +263,9 @@ static struct Hardware {
     preparedLba = lba;
     ocsReads = 0;
     writing = c == CombinedRead::Command::WriteFua;
+#if defined(NUWA_DISPOSABLE_FIXTURE)
+    writing |= c == CombinedRead::Command::WriteVolatile;
+#endif
     descriptor = c == CombinedRead::Command::QueryDesc;
     modeSense = c == CombinedRead::Command::ModeSense;
     if (modeSense) wire = modeWire;
@@ -293,6 +304,9 @@ static constexpr NuwaData::GptIdentity nuwaDataIdentity{
 static unsigned descOptIn, dataWriteArg;
 static bool PE_parse_boot_argn(const char *name, void *value, size_t n) {
   const unsigned arg = !strcmp(name, "nuwa-ufs-desc") ? descOptIn :
+#if defined(NUWA_DISPOSABLE_FIXTURE)
+                       !strcmp(name, "nuwa-disposable-data") ? disposableArg :
+#endif
                        !strcmp(name, "nuwa-data-write") ? dataWriteArg : 0;
   if (!arg) return false;
   assert(n == sizeof arg);
@@ -311,6 +325,9 @@ static void IOFree(void *p, size_t n) {
   std::free(p);
 }
 #include "../package/nuwa-data-write/KernelPort.inc"
+#if defined(NUWA_DISPOSABLE_FIXTURE)
+#include "../package/nuwa-data-write/DisposablePort.inc"
+#endif
 #include "../package/nuwa-data-write/RetainedDesc.inc"
 
 using IOReturn = int;
@@ -1223,6 +1240,75 @@ static void testSb0Experiment() {
 #endif
 
 int main() {
+#if defined(NUWA_DISPOSABLE_FIXTURE)
+  using namespace NuwaData;
+  const auto media = Disposable::Overlay::Media;
+  FixtureGpt disk;
+  uint8_t page[Block]{};
+  for (unsigned fault = 0; fault < 3; ++fault) {
+    startMockBoot({});
+    disposableOpen = false;
+    disposableArg = 1;
+    memcpy(native_ram_block_seed_sha256, Disposable::Seed, sizeof Disposable::Seed);
+    FixtureGpt broken;
+    if (fault < 2) (fault ? broken.b : broken.p)[16] ^= 1;
+    else { broken.be[70] ^= 1; broken.repair(); }
+    combined_hardware.gpt = &broken;
+    assert(!openDisposableData(media.first, media.blocks, Disposable::Reserve));
+    assert(!disposableWrite(Disposable::Overlay::Log, 1, page));
+    assert(combined_hardware.submissions == 4 && !combined_hardware.writeSubmissions);
+  }
+  Response scsi{};
+  scsi.status = 2;
+  scsi.dl = 16;
+  Response timeout{};
+  timeout.ocs = 15;
+  timeout.timedOut = true;
+  Response shortWrite{};
+  shortWrite.flags = 0x20;
+  shortWrite.residual = 1;
+  Response badTag{};
+  badTag.badTag = true;
+  for (const Response wire : {Response{}, scsi, timeout, shortWrite, badTag}) {
+    startMockBoot({});
+    disposableOpen = false;
+    combined_hardware.gpt = &disk;
+    memset(native_ram_block_seed_sha256, 0, sizeof native_ram_block_seed_sha256);
+    disposableArg = 0;
+    assert(!openDisposableData(media.first, media.blocks, Disposable::Reserve));
+    disposableArg = 1;
+    assert(!openDisposableData(media.first, media.blocks, Disposable::Reserve));
+    memcpy(native_ram_block_seed_sha256, Disposable::Seed, sizeof Disposable::Seed);
+    dataWriteArg = 1;
+    assert(!openDisposableData(media.first, media.blocks, Disposable::Reserve));
+    dataWriteArg = 0;
+    assert(!openDisposableData(media.first + 1, media.blocks, Disposable::Reserve));
+    assert(!combined_hardware.submissions);
+    const char *why = nullptr;
+    uint64_t first = 0;
+    assert(native_ufs_store_open(media.blocks, &first, &why) && first == media.first);
+    assert(combined_hardware.submissions == 4 && !combined_hardware.writeSubmissions);
+    assert(!native_ufs_store_write(0, 1, page) && !native_ufs_store_write(media.blocks, 1, page));
+    assert(!native_ufs_store_sync() && disposableOrder() && combined_hardware.submissions == 4);
+    combined_hardware.wire = wire;
+    const bool good = !wire.status && !wire.timedOut && !wire.residual && !wire.badTag;
+    assert(bool(native_ufs_store_write(Disposable::Overlay::Log, 1, page)) == good);
+    assert(combined_hardware.submissions == 5 && combined_hardware.writeSubmissions == 1);
+    assert(combined_hardware.lastCdb[0] == 0x2a && combined_hardware.lastCdb[1] == 0 &&
+           CombinedRead::be32(combined_hardware.lastCdb + 2) == first + Disposable::Overlay::Log);
+    assert(!native_ufs_store_sync() && disposableOrder() == good);
+    if (!good) {
+      const auto *dma = combined_hardware.virt;
+      assert(!retainedSlot.rootAllowed() && combined_state.quarantined &&
+             retainedSlot.state() == (wire.timedOut ? State::TIMEOUT_ORPHAN : State::FATAL_QUARANTINED));
+      assert(!retainedSlot.complete(Evidence::FullWrite) &&
+             !native_ufs_store_write(Disposable::Overlay::Log, 1, page) &&
+             !disposableRead(0, 1, page) && combined_hardware.virt == dma &&
+             combined_hardware.submissions == 5);
+    }
+  }
+  puts("PASS staged disposable: 4 GPT reads, non-FUA WRITE(10), full completion only, sticky failures, no flush");
+#else
   using CombinedRead::End;
   using NuwaData::State;
   const auto fatal = State::FATAL_QUARANTINED;
@@ -1283,5 +1369,6 @@ int main() {
   testSb0ProductionClosed();
 #if defined(NUWA_SB0_HOST_FIXTURE) && NUWA_SB0_HOST_FIXTURE == 1
   testSb0Experiment();
+#endif
 #endif
 }

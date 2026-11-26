@@ -22,6 +22,9 @@
 #if defined(NUWA_DATA_CANDIDATE)
 #include "../nuwa-data-write/DualBankLogOverlay.h"
 #endif
+#if defined(NUWA_DISPOSABLE_DATA)
+#include "../nuwa-data-write/DisposableData.h"
+#endif
 
 extern "C" {
 extern unsigned long gPhysBase, gPhysSize;
@@ -41,6 +44,9 @@ int native_ufs_store_open(uint64_t, uint64_t *, const char **) __attribute__((we
 int native_ufs_store_read(uint64_t, uint32_t, void *) __attribute__((weak_import));
 int native_ufs_store_write(uint64_t, uint32_t, const void *) __attribute__((weak_import));
 int native_ufs_store_sync(void) __attribute__((weak_import));
+#if defined(NUWA_DISPOSABLE_DATA)
+int native_ufs_store_order(void);
+#endif
 unsigned native_ufs_store_gpt_check(void) __attribute__((weak_import));
 // Diagnostics. state: 0 off, 1 blank (read-only probe), 2 resumed, 3 fresh (Install and boot), 4 refused/failed, 5 degraded after an I/O
 // error, 6 resumed read-only (probe), 7 kept: the store holds no Data of this seed and no reset was asked, so it is left untouched and
@@ -81,7 +87,11 @@ class NativeRamBlock : public IOBlockStorageDevice {
   // window. A failed store write stops all further writes (a page the system was told is written must be on the medium).
   bool direct = false, directFailed = false;
 #if defined(NUWA_DATA_CANDIDATE)
+#if defined(NUWA_DISPOSABLE_DATA)
+  using DataOverlay = NuwaData::Disposable::Overlay;
+#else
   using DataOverlay = NuwaData::DualBankLogOverlay<>;
+#endif
   DataOverlay dataOverlay;
   DataOverlay::Workspace *dataWorkspace = nullptr;
 #endif
@@ -90,13 +100,22 @@ class NativeRamBlock : public IOBlockStorageDevice {
     bool write(uint64_t b, uint32_t n, const void *s) { return native_ufs_store_write(b, n, s); }
     bool sync() { return native_ufs_store_sync(); }
   };
+#if defined(NUWA_DISPOSABLE_DATA)
+  struct DisposableOps : StoreOps {
+    bool sync() { return native_ufs_store_order(); } // Internal sequencing only.
+  };
+#endif
   void persistFailed() { overlay.active = false; native_data_persist_state = 5; __atomic_fetch_add(&native_data_persist_errors, 1, __ATOMIC_RELAXED); }
 #if defined(NUWA_DATA_CANDIDATE)
   // Caller holds gate. Bytes in a write run are acknowledged only after its
   // single commit succeeds. A short descriptor read never submits that run.
   template<class BufferOps>
   uint64_t candidateIO(bool write, uint64_t offset, uint64_t bytes, BufferOps &buffer) {
+#if defined(NUWA_DISPOSABLE_DATA)
+    DisposableOps store;
+#else
     StoreOps store;
+#endif
     const auto load = [&](uint64_t page, uint8_t *dst) {
       if (dataOverlay.has(page)) return dataOverlay.read(store, page, dst);
       const uint8_t *seed = isBig ? big.find(page) : sparse.find(page);
@@ -140,7 +159,9 @@ class NativeRamBlock : public IOBlockStorageDevice {
       }
       actual += runBytes;
       __atomic_fetch_add(&native_data_persist_writes, runCount, __ATOMIC_RELAXED);
+#if !defined(NUWA_DISPOSABLE_DATA)
       __atomic_fetch_add(&native_data_persist_syncs, 1, __ATOMIC_RELAXED);
+#endif
       native_data_persist_present = dataOverlay.presentCount();
     }
     if (storeError) {
@@ -180,6 +201,9 @@ public:
       int opened = native_ufs_store_open(window, &first, &why);
       nuwa_data_persist_open_why = nuwa_persist_open_reason(opened, why);
       if (!opened) {
+#if defined(NUWA_DISPOSABLE_DATA)
+        direct = directFailed = true;
+#endif
         native_data_persist_state = 4;
         IOLog("NativeRamBlock: persistent store refused: %s\n", why);
       } else {
@@ -192,14 +216,26 @@ public:
           dataWorkspace = static_cast<DataOverlay::Workspace *>(IOMallocZero(sizeof(DataOverlay::Workspace)));
           auto *seenScratch = static_cast<DataOverlay::SeenScratch *>(IOMallocZero(sizeof(DataOverlay::SeenScratch)));
           stage = static_cast<uint8_t *>(IOMallocZero(kStagePages * NuwaData::Block));
+#if defined(NUWA_DISPOSABLE_DATA)
+          DisposableOps ops;
+          auto result = stage && seenScratch && dataWorkspace &&
+                        NuwaData::Disposable::seedMatches(seedHash)
+                       ? dataOverlay.open(ops, seedHash, *dataWorkspace, *seenScratch, true, false)
+                       : DataOverlay::Open::Failed;
+#else
           StoreOps ops;
           auto result = stage && seenScratch && dataWorkspace
                        ? dataOverlay.open(ops, seedHash, *dataWorkspace, *seenScratch, true, discardRequested())
                        : DataOverlay::Open::Failed;
+#endif
           if (seenScratch) IOFree(seenScratch, sizeof(DataOverlay::SeenScratch));
           directFailed = result == DataOverlay::Open::Failed;
           native_data_persist_state = directFailed ? 4 :
+#if defined(NUWA_DISPOSABLE_DATA)
+                                      !dataOverlay.generation() ? 3 :
+#else
                                       result == DataOverlay::Open::Empty ? 1 :
+#endif
                                       dataOverlay.writable() ? 2 : 6;
           native_data_persist_present = dataOverlay.presentCount();
           native_data_persist_gpt_after = native_ufs_store_gpt_check();
@@ -294,7 +330,11 @@ public:
     if (!gate) return kIOReturnNotReady;
     IOLockLock(gate);
     const IOReturn status = !online ? kIOReturnNotReady :
+#if defined(NUWA_DISPOSABLE_DATA)
+                            directFailed ? kIOReturnIOError : kIOReturnUnsupported;
+#else
                             directFailed ? kIOReturnIOError : kIOReturnSuccess;
+#endif
     IOLockUnlock(gate);
     return status;
 #else
@@ -304,7 +344,11 @@ public:
 #endif
   }
   IOReturn doSynchronize(UInt64, UInt64, IOOptionBits) override { return doSynchronizeCache(); }
+#if defined(NUWA_DISPOSABLE_DATA)
+  IOReturn getWriteCacheState(bool *) override { return kIOReturnUnsupported; }
+#else
   IOReturn getWriteCacheState(bool *value) override { *value = false; return kIOReturnSuccess; }
+#endif
   IOReturn setWriteCacheState(bool) override { return kIOReturnUnsupported; }
   IOReturn doAsyncReadWrite(IOMemoryDescriptor *, UInt64, UInt64, IOStorageAttributes *, IOStorageCompletion *) override;
 };
@@ -408,11 +452,17 @@ bool NativeRamBlock::start(IOService *provider)
 }
 
 IOReturn NativeRamBlock::doAsyncReadWrite(IOMemoryDescriptor *buffer, UInt64 block, UInt64 count,
-    IOStorageAttributes *, IOStorageCompletion *completion)
+    IOStorageAttributes *attributes __attribute__((unused)), IOStorageCompletion *completion)
 {
   if (!buffer || !completion || !completion->action || !count || block >= capacity ||
       count > capacity - block || buffer->getLength() < count * 512 ||
       (buffer->getDirection() != kIODirectionIn && buffer->getDirection() != kIODirectionOut)) return kIOReturnBadArgument;
+#if defined(NUWA_DISPOSABLE_DATA)
+  // IOBlockStorageDriver propagates a dispatch error to the completion chain.
+  // Reject before copying, staging DMA, or acknowledging any bytes.
+  if (attributes && (attributes->options & kIOStorageOptionForceUnitAccess))
+    return kIOReturnUnsupported;
+#endif
   if (!gate) return kIOReturnNotReady;
   const uint64_t bytes = count * 512;
   IOLockLock(gate);

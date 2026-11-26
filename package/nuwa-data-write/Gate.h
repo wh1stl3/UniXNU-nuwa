@@ -31,7 +31,7 @@ enum class State {
   IDLE, SUBMITTED, COMPLETED_OK, COMPLETED_CMDERR, TIMEOUT_ORPHAN,
   FATAL_QUARANTINED
 };
-enum class Evidence { ReadOk, FullFua, AttributedCommandError, Timeout, Unowned };
+enum class Evidence { ReadOk, FullFua, AttributedCommandError, Timeout, Unowned, FullWrite };
 
 // Evidence for a NEW firmware/transport domain, never a transition of the
 // old Slot. Each fact must refer to the same new domain and expected media.
@@ -107,7 +107,8 @@ public:
     switch (evidence) {
       case Evidence::ReadOk:
       case Evidence::FullFua:
-        if (writing_ != (evidence == Evidence::FullFua)) { quarantine(); return false; }
+      case Evidence::FullWrite: // Attributed full transfer; makes no durability claim.
+        if (writing_ != (evidence != Evidence::ReadOk)) { quarantine(); return false; }
         state_ = State::COMPLETED_OK;
         return true;
       case Evidence::AttributedCommandError: // Returned slot, attributed SCSI error.

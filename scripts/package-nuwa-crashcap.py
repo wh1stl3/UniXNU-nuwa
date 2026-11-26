@@ -28,6 +28,12 @@ PIX_OUTER = ROOT / "out/nuwa-pixsig-20261125-package"
 PIX_SHA = "28d45ab6c3d7c5ec79cf14543af4836dadf04de7eddaa91fd876b36bc831dbcc"
 PIX_CHMH = bytes.fromhex(
     "4d752ffcbe7e174d0dac4bddec403a8bc0bf809eb161cb08d81a1770f357832b6bb1aa713d185a73dc96127c00f55599")
+DISPOSABLE_TEMPLATE_SHA = "18fa4941696667d1813442022ea71fc48e4c414b1abadb1caf73774fcc76202a"
+DISPOSABLE_TEMPLATE_CHMH = bytes.fromhex(
+    "e78df504dfaad23a15627d2651ce9c2bce7a1790e652dcfb2df24413ba3e37e96c4623008b8201a984d2ce43efccbc43")
+DISPOSABLE_RAW_SHA = "26957263676b0312f3bebe213c2985deb8ce5652ac2ce3e99d59da77aba89584"
+DISPOSABLE_SEED_ID = "a106b0ce026771e221f578125e104a4854c2cbcda7c1b8390f6e056a47c63743"
+DISPOSABLE_ARG = b"nuwa-disposable-data=1"
 PAYLOAD = "EFI/UniXNU/Payloads/"
 KERNEL, ADT, TRUST, SCRATCH = (PAYLOAD + name for name in
     ("kernel.macho", "kernel.macho.adt", "kernel.macho.trustcache", "scratch-data.img"))
@@ -73,6 +79,34 @@ def files(fs):
     return result
 
 
+def disposable_seed(base, seed):
+    # Decode the bytes parsed from this outer, not an independently named seed.
+    decoder = runpy.run_path(str(base / "drivers/DarwinBoot/Test/packed_ramdisk.py"))
+    size, extents = decoder["regions"](seed)
+    if size != 8 * 1024**3:
+        raise SystemExit("disposable Data requires the pinned 8 GiB logical seed")
+    logical = sha256()
+    zeros = bytes(1024 * 1024)
+
+    def pad(n):
+        q, r = divmod(n, len(zeros))
+        for _ in range(q):
+            logical.update(zeros)
+        logical.update(zeros[:r])
+
+    end = 0
+    for offset, data in extents:
+        pad(offset - end)
+        logical.update(data)
+        end = offset + len(data)
+    pad(size - end)
+    out = {"seed_logical_bytes": size, "seed_raw_sha256": logical.hexdigest(),
+           "seed_identity": decoder["seed_identity"](size, extents), "seed_extents": len(extents)}
+    if (out["seed_raw_sha256"], out["seed_identity"]) != (DISPOSABLE_RAW_SHA, DISPOSABLE_SEED_ID):
+        raise SystemExit(f"disposable FAT seed decoded identity mismatch: {out}")
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--base", type=Path, required=True, help="existing pinned UniXNU checkout")
@@ -83,6 +117,8 @@ def main():
     profile.add_argument("--pixsig", action="store_true", help="use the pinned crashframes outer")
     profile.add_argument("--stage-channel", action="store_true", help="use the pinned PIX outer and keep STAGE dormant")
     profile.add_argument("--data-persist-diag", action="store_true", help="use the pinned PIX outer")
+    profile.add_argument("--disposable-data-template", type=Path,
+                         help="use the exact 18fa4941 read-root outer and append the experiment gate")
     ap.add_argument("--ufs-desc", action="store_true", help="append the read-only UFS descriptor opt-in")
     ap.add_argument("--ufs-neon", action="store_true", help="append the staged read-only UFS evidence opt-in")
     ap.add_argument("--audit-only", action="store_true", help="read an existing outer and compare all FAT files")
@@ -91,16 +127,18 @@ def main():
         ap.error("--ufs-desc requires --data-persist-diag")
     if a.ufs_neon and (not a.data_persist_diag or a.ufs_desc):
         ap.error("--ufs-neon requires --data-persist-diag and excludes --ufs-desc")
+    disposable = a.disposable_data_template is not None
     out = a.out.resolve()
     assert out.is_relative_to(ROOT / "out") and out not in (ROOT / "out", OLD, DSP_OUTER, FRAME_OUTER, PIX_OUTER)
     kernel = a.kernel.resolve()
     assert kernel.is_relative_to(ROOT / "out") and kernel.name == "kernel.macho"
     new_kernel = kernel.read_bytes()
     template, template_sha, template_chmh = (
+        (a.disposable_data_template.parent, DISPOSABLE_TEMPLATE_SHA, DISPOSABLE_TEMPLATE_CHMH) if disposable else
         (PIX_OUTER, PIX_SHA, PIX_CHMH) if a.data_persist_diag or a.stage_channel else
         (FRAME_OUTER, FRAME_SHA, FRAME_CHMH) if a.pixsig else
         (DSP_OUTER, DSP_SHA, DSP_CHMH) if a.crashframes else (OLD, ROLLBACK, OLD_CHMH))
-    old_outer = pinned(template / "vendor_boot.img", template_sha)
+    old_outer = pinned(a.disposable_data_template if disposable else template / "vendor_boot.img", template_sha)
     head, old_fat, tail = regions(old_outer)
 
     # Reuse the prior Python reader, not the rollback audit's executable main.
@@ -112,16 +150,17 @@ def main():
     before = files(FAT32(old_fat))
     assert before[KERNEL] != new_kernel
     assert sha(before[SCRATCH]) == SEED
+    seed_report = disposable_seed(a.base.resolve(), before[SCRATCH]) if disposable else {}
     entry, = (e for e in tomllib.loads(before[CONFIG].decode())["entry"] if e["id"] == "xnu")
     args = entry["args"].encode()
     tokens = args.split()
-    assert len(args) == 561
+    assert len(args) == (577 if disposable else 561)
     for token in (b"nuwa-sb-stack=900", b"disable-jobs=com.apple.iconservices.iconservicesagent"):
         assert tokens.count(token) == 1
     assert not any(t.split(b"=", 1)[0] == b"sheng-smp" for t in tokens)
     if a.stage_channel:
         assert not any(t.split(b"=", 1)[0] == b"nuwa-init" for t in tokens)
-    if a.data_persist_diag:
+    if a.data_persist_diag or disposable:
         assert not any(t.split(b"=", 1)[0] == b"sheng-data-reset" for t in tokens)
         for token in (b"sheng-data-persist=2", b"sheng-log-reserve=1024"):
             assert tokens.count(token) == 1
@@ -137,7 +176,21 @@ def main():
     bound["kernel"] = new_kernel
     expected_config = before[CONFIG]
     changed = {KERNEL, ADT}
-    if a.ufs_desc or a.ufs_neon:
+    if disposable:
+        assert b"_native_ufs_store_order\0" in new_kernel and DISPOSABLE_ARG not in tokens
+        assert b"nuwa-ufs-neon=1" in tokens and tokens.count(b"build-tag=nuwa-r35") == 1
+        assert not {t.split(b"=", 1)[0] for t in tokens} & {
+            b"nuwa-data-write", b"nuwa-disposable-data", b"sheng-data-reset", b"sheng-log"}
+        prefix = b'args = "' + args + b'"'
+        assert expected_config.count(prefix) == 1
+        args = args.replace(b"build-tag=nuwa-r35", b"build-tag=data-trial") + b" " + DISPOSABLE_ARG
+        # The actual 8796 arm64 consumer has 608 bytes including NUL,
+        # smaller than the loader's generic 1024-byte buffer.
+        assert len(args) < 608
+        expected_config = expected_config.replace(prefix, b'args = "' + args + b'"')
+        bound["args"] = args
+        changed.add(CONFIG)
+    elif a.ufs_desc or a.ufs_neon:
         assert not {t.split(b"=", 1)[0] for t in tokens} & {
             b"nuwa-ufs-desc", b"nuwa-ufs-neon", b"nuwa-data-write", b"sheng-data-reset", b"sheng-log"}
         if a.ufs_neon:
@@ -163,7 +216,7 @@ def main():
         new_adt = out / "kernel.macho.adt"
         new_adt.write_bytes(expected_adt)
         payloads = [(kernel, KERNEL), (new_adt, ADT)]
-        if a.ufs_desc or a.ufs_neon:
+        if CONFIG in changed:
             config_file = out / "unixnu.toml"
             config_file.write_bytes(expected_config)
             payloads.append((config_file, CONFIG))
@@ -198,6 +251,10 @@ def main():
     if a.ufs_neon:
         report.update(trust_sha256=sha(after[TRUST]), template_outer_sha256=template_sha,
                       diagnostic_arg="nuwa-ufs-neon=1", device_release=False)
+    if disposable:
+        report.update(seed_report, trust_sha256=sha(after[TRUST]),
+                      template_outer_sha256=template_sha, diagnostic_arg=DISPOSABLE_ARG.decode(),
+                      device_release=False)
     if a.audit_only:
         assert rb == readback.read_bytes()
     else:

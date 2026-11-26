@@ -500,7 +500,7 @@ def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False, pixsig
     return staged
 
 
-def persist_diag_link(r35, out, records, argv, env, data_candidate=False):
+def persist_diag_link(r35, out, records, argv, env, data_candidate=False, disposable=False):
     recipe, = (r for r in records if r["label"] == "compile-NativeRamBlock" and r["exit"] == 0)
     archive_recipe, = (r for r in records if r["label"] == "archive-NativeRamBlock" and r["exit"] == 0)
     command = list(recipe["argv"])
@@ -510,6 +510,8 @@ def persist_diag_link(r35, out, records, argv, env, data_candidate=False):
     command[command.index("-o") + 1] = str(obj)
     if data_candidate:
         command.append("-DNUWA_DATA_CANDIDATE=1")
+    if disposable:
+        command.append("-DNUWA_DISPOSABLE_DATA=1")
     (out / "ramblock-argv.json").write_text(json.dumps(command, indent=2) + "\n")
     with (out / "compile-NativeRamBlock.log").open("wb") as log:
         subprocess.run(command, cwd=recipe["cwd"], env=env, stdout=log, stderr=subprocess.STDOUT, check=True)
@@ -540,7 +542,7 @@ def persist_diag_link(r35, out, records, argv, env, data_candidate=False):
     return args
 
 
-def data_candidate_link(out, argv, env, gpt):
+def data_candidate_link(out, argv, env, gpt, disposable=False):
     root = ROOT / "out/nuwa-ufs-apfs-root-integration-20261114/run-r5-visible-candidate"
     source = root / "source/NativeUfs.cpp"
     require_pin(source, "bb994c583382755ddfae954b23aff94d77a97428c7c933232b574ad3cd64b2bf")
@@ -573,10 +575,13 @@ def data_candidate_link(out, argv, env, gpt):
     def replace(old, new):
         nonlocal text
         if text.count(old) != 1:
-            raise SystemExit("unexpected retained provider splice anchor")
+            raise SystemExit(f"unexpected retained provider splice anchor: {old[:100]!r}")
         text = text.replace(old, new)
 
     text = f'#include "{code / "Provider.h"}"\n#include "{code / "Neon.h"}"\n' + text
+    if disposable:
+        text = (f'#include "{code / "DisposableData.h"}"\n'
+                'extern "C" uint8_t native_ram_block_seed_sha256[32];\n' + text)
     preserved = source.with_name("PreservedNop.h")
     # Keep the exact order and short-circuiting of the pre-write HC reads.
     # Cache only values already read; never read old bases or RSR for NEON.
@@ -646,6 +651,18 @@ def data_candidate_link(out, argv, env, gpt):
         if combined_text.count(old) != 1:
             raise SystemExit("unexpected retained WRITE(10) splice anchor")
         combined_text = combined_text.replace(old, new)
+    if disposable:
+        for old, new in (
+            ("WriteFua, QueryDesc", "WriteFua, WriteVolatile, QueryDesc"),
+            ("c == Command::WriteFua", "(c == Command::WriteFua || c == Command::WriteVolatile)"),
+            ("case Command::WriteFua: {", "case Command::WriteVolatile:\n    case Command::WriteFua: {"),
+            ("NuwaData::write10(cdb, uint32_t(lba));",
+             "NuwaData::write10(cdb, uint32_t(lba));\n"
+             "      if (c == Command::WriteVolatile) cdb[1] = 0; // no FUA"),
+        ):
+            if old not in combined_text:
+                raise SystemExit("unexpected disposable WRITE(10) splice anchor")
+            combined_text = combined_text.replace(old, new)
     replace("unsigned blocks = 1) {\n    // Bounded pre-command markers",
             "unsigned blocks = 1, const uint8_t *writeSource = nullptr, NuwaUfsDesc::Request desc = {}) {\n"
             "    // Bounded pre-command markers")
@@ -726,6 +743,19 @@ extern "C" int native_ufs_store_sync (void)
 }
 
 ''' + text[write_end:]
+    if disposable:
+        replace("return static_cast<unsigned> (cached);\n}\n}\n\nextern \"C\" unsigned native_ufs_store_mode",
+                "return cached == 2 && disposableRequested() ? 2U : 0U;\n}\n}\n\n"
+                "extern \"C\" unsigned native_ufs_store_mode")
+        replace("!openCandidateData (first, blocks, reserve)", "!openDisposableData (first, blocks, reserve)")
+        replace("gHost.lock && dataProvider.read (rel, blocks, dst)", "disposableRead (rel, blocks, dst)")
+        replace("gHost.lock && dataProvider.write (rel, blocks, src)", "disposableWrite (rel, blocks, src)")
+        replace("return storeMode () == 2 && gHost.lock && dataProvider.sync ();",
+                "return 0; // No exposed durability contract.")
+        replace("// ---- Read-only access",
+                'extern "C" int native_ufs_store_order (void)\n'
+                '{\n  return storeMode () == 2 && disposableOrder ();\n}\n\n'
+                "// ---- Read-only access")
     log_start = text.index('extern "C" int native_ufs_log_open ')
     log_end = text.index("// One read-only window of the root image", log_start)
     text = text[:log_start] + '''extern "C" int native_ufs_log_open (uint64_t *, uint64_t *, const char **why)
@@ -767,6 +797,9 @@ extern "C" unsigned native_ufs_store_gpt_check (void)
     obj = private / "NativeUfs.o"
     command[command.index("-o") + 1] = str(obj)
     command.extend(("-I", str(source.parent), "-Wno-unused-function"))
+    if disposable:
+        command.append("-DNUWA_DISPOSABLE_DATA=1")
+    (out / "data-provider-argv.json").write_text(json.dumps(command, indent=2) + "\n")
     with (out / "compile-data-provider.log").open("wb") as log:
         subprocess.run(command, cwd=recipe["cwd"], env=env, stdout=log, stderr=subprocess.STDOUT, check=True)
     spec = importlib.util.spec_from_file_location("ufs_late", ROOT / "scripts/build-nuwa-platform-power.py")
@@ -781,8 +814,10 @@ extern "C" unsigned native_ufs_store_gpt_check (void)
     require_pin(Path(original), "150bc8439d365249a884033011ef255537618909f97c42fc9bdfad6476a89c75")
     dst = private / Path(original).name
     run([ar, mode, dst, late_obj, *members])
-    if definitions(dst) != definitions(Path(original)) + Counter(
-            {"_nuwa_ufs_desc_row": 1, "_nuwa_ufs_mode_row": 1, "_nuwa_ufs_neon_rows": 1}):
+    added = Counter({"_nuwa_ufs_desc_row": 1, "_nuwa_ufs_mode_row": 1, "_nuwa_ufs_neon_rows": 1})
+    if disposable:
+        added["_native_ufs_store_order"] = 1
+    if definitions(dst) != definitions(Path(original)) + added:
         raise SystemExit("restricted provider changed the retained archive export inventory")
     args = list(argv)
     at, = (i for i, arg in enumerate(args) if arg == f"-Wl,-force_load,{original}")
@@ -793,7 +828,7 @@ extern "C" unsigned native_ufs_store_gpt_check (void)
 def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
                keep_link_debug, bringup_diag=False, hid_objects=(), mg_reset=False,
                smp_gate=False, smp_observe=False, crashcap=False, pixsig=False,
-               data_persist=False, data_gpt=None, stage=False, base=None):
+               data_persist=False, data_gpt=None, disposable=False, stage=False, base=None):
     for name, pin in (R35L_PINS if bringup_diag else R35_PINS).items():
         require_pin(r35 / name, pin)
     require_pin(cpo, R35_CPO_SHA)
@@ -868,9 +903,10 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
                                  data_persist=data_persist, stage=stage)
             argv[force_at] = f"-Wl,-force_load,{diag}"
         if data_persist:
-            argv = persist_diag_link(r35, out, records, argv, env, data_candidate=data_gpt is not None)
+            argv = persist_diag_link(r35, out, records, argv, env, data_candidate=data_gpt is not None,
+                                     disposable=disposable)
         if data_gpt is not None:
-            argv = data_candidate_link(out, argv, env, data_gpt)
+            argv = data_candidate_link(out, argv, env, data_gpt, disposable=disposable)
         argv = [*argv, "-Wl,-ignore_optimization_hints", f"-Wl,-force_load,{archive}", *map(str, hid_objects)]
         if not candidate or keep_link_debug:
             return link("native-link", native, argv)
@@ -1103,6 +1139,8 @@ def main():
                    help="show the unchanged Data store open's reason in the PIX candidate")
     p.add_argument("--data-candidate-gpt", type=Path,
                    help="link the write-disabled v2 Data candidate using this local 4 KiB GPT capture")
+    p.add_argument("--disposable-data", action="store_true",
+                   help="compile the opt-in disposable Data experiment (no durability or initialization)")
     p.add_argument("--candidate", action="store_true",
                    help="apply device hooks and write the r35-display diagnostic kernel")
     p.add_argument("--r35l-dir", type=Path,
@@ -1158,6 +1196,8 @@ def main():
         p.error("--data-persist-diag requires --pixsig and the single-core candidate")
     if a.data_candidate_gpt and not a.data_persist_diag:
         p.error("--data-candidate-gpt requires --data-persist-diag")
+    if a.disposable_data and not a.data_candidate_gpt:
+        p.error("--disposable-data requires the pinned single-core Data GPT candidate")
     out.mkdir(parents=True, exist_ok=False)
     donor = base / "out/ipsw/20H392/kernelcache.decompressed"
     hid_objects = []
@@ -1189,7 +1229,8 @@ def main():
                               hid_objects=hid_objects, mg_reset=a.mg_reset,
                               smp_gate=a.smp_gate, smp_observe=a.smp_observe, crashcap=a.crashcap,
                                pixsig=a.pixsig, data_persist=a.data_persist_diag,
-                               data_gpt=a.data_candidate_gpt, stage=a.stage_channel, base=base)
+                               data_gpt=a.data_candidate_gpt, disposable=a.disposable_data,
+                               stage=a.stage_channel, base=base)
     else:
         # Replay XNU's exported link inputs, without its historical map output.
         stem = "mach.development.bcm2837"

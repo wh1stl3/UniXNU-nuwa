@@ -4,8 +4,9 @@
 
 namespace NuwaData {
 // Caller serializes the overlay and supplies an already qualified window.
-// Ops uses Provider's relative read/write/sync contract; write must be FUA.
-template<uint32_t RingBlocks = 512>
+// Production Ops uses Provider's FUA contract. The disposable format uses only
+// ordered command completion, never checkpoints/reuses log slots, and cannot create.
+template<uint32_t RingBlocks = 512, bool Disposable = false>
 class DualBankLogOverlay {
 public:
   static constexpr uint64_t Pages = 2097152;
@@ -38,6 +39,8 @@ private:
     uint32_t count;
   };
   static constexpr size_t SbHeader = 96, LogHeader = 80, EntryBytes = 16;
+  static constexpr const char *SbMagic = Disposable ? "NUWAXSB3" : "NUWADSB3";
+  static constexpr const char *LogMagic = Disposable ? "NUWAXLOG" : "NUWADLOG";
   static constexpr size_t Tail = Block - 16, BlockCrc = Block - 4;
   static_assert(LogHeader + EntryBytes * MaxRun == Tail, "log framing");
   Workspace *w_ = nullptr;
@@ -78,7 +81,7 @@ private:
   static void encodeSuperblock(uint8_t *b, const uint8_t *seed, const uint8_t *maps,
                                uint32_t slot, uint32_t head, uint64_t gen, uint64_t count) {
     memset(b, 0, Block);
-    memcpy(b, "NUWADSB3", 8);
+    memcpy(b, SbMagic, 8);
     put(b + 8, 3, 4);
     put(b + 12, slot, 4);
     put(b + 16, Pages, 8);
@@ -95,11 +98,11 @@ private:
   Header superblock(uint32_t slot, Checkpoint &cp) const {
     const auto *b = w_->block;
     if (zero(b, Block)) return Header::Empty;
-    if (memcmp(b, "NUWADSB3", 8)) {
+    if (memcmp(b, SbMagic, 8)) {
       // A torn first write to the alternate SB can leave only its tail,
       // or a prefix of the magic over an all-zero header.
       for (size_t i = 1; i < 8; ++i)
-        if (!memcmp(b, "NUWADSB3", i) && zero(b + i, Tail - i))
+        if (!memcmp(b, SbMagic, i) && zero(b + i, Tail - i))
           return Header::Damaged;
       if (zero(b, Tail) && le32(b + Tail + 8) == slot && le64(b + Tail))
         return Header::Damaged;
@@ -135,7 +138,7 @@ private:
     if (zero(b, Block)) return Record::Empty;
     if (le32(b + BlockCrc) != crc(b, Block, BlockCrc)) return Record::Corrupt;
     r = {le64(b + 16), le64(b + 24), le32(b + 64)};
-    if (memcmp(b, "NUWADLOG", 8) || le32(b + 8) != 3 || le32(b + 12) != physical ||
+    if (memcmp(b, LogMagic, 8) || le32(b + 8) != 3 || le32(b + 12) != physical ||
         memcmp(b + 32, seed_, 32) || !r.count || r.count > MaxRun ||
         le32(b + 68) || le32(b + 72) != crc(b, LogHeader, 72) || le32(b + 76) ||
         le64(b + Tail) != r.gen || le32(b + Tail + 8) != physical ||
@@ -158,7 +161,8 @@ private:
       if (!ops.read(Log + physical, 1, w_->block)) return false;
       LogRecord r{};
       const auto state = record(physical, r);
-      if (state == Record::Invalid || (state == Record::Corrupt && i != used_)) return false;
+      if (state == Record::Invalid || (state == Record::Corrupt && (Disposable || i != used_)))
+        return false;
       if (state != Record::Valid) continue;
       if (r.gen - r.epoch != uint64_t(i) + 1) return false;
       if (r.epoch < epoch_) {
@@ -250,6 +254,12 @@ public:
       if (headers[i] == Header::Foreign) return Open::Failed;
     }
     const bool a = headers[0] == Header::Valid, b = headers[1] == Header::Valid;
+    if constexpr (Disposable) {
+      // The separate initializer produces only SB0 and zero maps/ring.
+      // Without FUA there is no unchecked checkpoint and no in-kernel create.
+      if (!a || headers[1] != Header::Empty || cp[0].gen || cp[0].count || cp[0].head)
+        return Open::Failed;
+    }
     if (!a && !b) {
       if (headers[0] != Header::Empty || headers[1] != Header::Empty) return Open::Failed;
       for (uint64_t i = 2; i < Data0; ++i)
@@ -274,7 +284,7 @@ public:
     head_ = latest.head;
     if (!replay(ops, seen)) return Open::Failed;
     anchored_ = ready_ = true;
-    writable_ = write && gen_ != UINT64_MAX;
+    writable_ = write && gen_ != UINT64_MAX && (!Disposable || used_ < LogBlocks);
     return Open::Resumed;
   }
 
@@ -287,7 +297,11 @@ public:
   template<class Ops> bool writeRun(Ops &ops, uint64_t first, uint32_t count, const void *src) {
     if (!writable_ || !src || first >= Pages || !count || count > MaxRun ||
         count > Pages - first || gen_ == UINT64_MAX) return stop();
-    if ((!anchored_ || used_ == LogBlocks) && !checkpoint(ops)) return stop();
+    if constexpr (Disposable) {
+      if (!anchored_ || used_ == LogBlocks) return stop();
+    } else {
+      if ((!anchored_ || used_ == LogBlocks) && !checkpoint(ops)) return stop();
+    }
     const auto physical = ring(used_);
     const auto *data = static_cast<const uint8_t *>(src);
     auto *b = w_->block;
@@ -302,7 +316,7 @@ public:
       if (!ops.write(dataLba(bank, page), 1, data + size_t(i) * Block)) return stop();
     }
     if (!ops.sync()) return stop();
-    memcpy(b, "NUWADLOG", 8);
+    memcpy(b, LogMagic, 8);
     put(b + 8, 3, 4);
     put(b + 12, physical, 4);
     put(b + 16, gen_ + 1, 8);
@@ -314,7 +328,7 @@ public:
     for (uint32_t i = 0; i < count; ++i) apply(first + i, entry(b, i)[12]);
     ++gen_;
     ++used_;
-    if (gen_ == UINT64_MAX) writable_ = false;
+    if (gen_ == UINT64_MAX || (Disposable && used_ == LogBlocks)) writable_ = false;
     return true;
   }
 };

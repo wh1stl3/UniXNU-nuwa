@@ -15,7 +15,7 @@ def body(source, signature, closing="}"):
     return "\n".join(lines[start:end + 1]) + "\n"
 
 
-def main(build, base, output, sb0):
+def main(build, base, output, sb0, disposable=False):
     stage = build / "nuwa-data-provider"
     output.mkdir(parents=True, exist_ok=True)
     banner = (build / "BootProgress.c").read_text()
@@ -54,6 +54,7 @@ def main(build, base, output, sb0):
         "-fsanitize=undefined,address", "-fno-sanitize-recover=all",
         "-DNUWA_DATA_CANDIDATE=1", "-DNUWA_DATA_WRITE_OPT_IN=1",
         *(["-DNUWA_SB0_HOST_FIXTURE=1"] if sb0 else []),
+        *(["-DNUWA_DISPOSABLE_FIXTURE=1"] if disposable else []),
         "-I", output, "-I", stage, "-I", source,
         "-I", base / "drivers/RamBlock", ROOT / "tests/test-nuwa-retained-response.cpp",
         "-o", binary,
@@ -68,6 +69,7 @@ if __name__ == "__main__":
     parser.add_argument("base", type=Path)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--sb0", action="store_true")
+    parser.add_argument("--disposable", action="store_true")
     args = parser.parse_args()
     main(args.build.resolve(), args.base.resolve(),
-         (args.output or args.build).resolve(), args.sb0)
+         (args.output or args.build).resolve(), args.sb0, args.disposable)

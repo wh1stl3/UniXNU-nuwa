@@ -1,5 +1,7 @@
 # UniXNU-nuwa
 
+**2026-11-26 disposable Data 主机候选（self-checked，未上机，待终审）：** [记录](docs/nuwa-disposable-data-20261126.md)。
+
 **2026-11-26 UFS 只读采样画面（主控转述 vision / self-checked 记录）：**[观察](docs/nuwa-ufs-neon-20261126-observation.md)。
 
 **2026-11-25 显示验收方案（INSUFFICIENT EVIDENCE，reviewer 转述 / self-checked）：**[记录](docs/nuwa-display-acceptance-20261125.md)。

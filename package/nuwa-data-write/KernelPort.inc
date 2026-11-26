@@ -54,3 +54,7 @@ static bool openCandidateData(uint64_t first, uint64_t blocks, uint64_t reserve)
   IOFree(g, sizeof(NuwaData::GptBuffers));
   return result;
 }
+
+#if defined(NUWA_DISPOSABLE_DATA)
+#include "DisposablePort.inc"
+#endif
