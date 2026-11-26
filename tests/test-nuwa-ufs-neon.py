@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Replay actual NEON formatting, pre-write predicate, and probe on the host."""
+import argparse
 import os
 from pathlib import Path
 import re
 import subprocess
-import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -146,9 +146,10 @@ int main() {
 '''
 
 
-def main(build, base):
+def main(build, base, fixtures, output):
     stage = build / "nuwa-data-provider"
-    baseline = ROOT / "out/nuwa-ufs-apfs-root-integration-20261114/run-r5-visible-candidate/source"
+    baseline = build.parent / "nuwa-ufs-apfs-root-integration-20261114/run-r5-visible-candidate/source"
+    output.mkdir(parents=True, exist_ok=True)
     renderer = (build / "BootProgress.c").read_text()
     assert "nuwa_ufs_neon_rows(evidence,6)" in renderer and "line(37+i,evidence[i]" in renderer
     assert "nuwa_ufs_neon_rows(rows,budget)" in renderer
@@ -163,18 +164,18 @@ def main(build, base):
     first_write = preserved.index("  p.hwrite(0x24, 0);")
     assert preserved.index("if (neon) neonPre(pre);") < first_write
     snippet = preserved[preserved.index("  NuwaNeon::Hc pre;"):preserved.index("  s.stage = 2;")]
-    (build / "NeonPrerequisite.inc").write_text(snippet)
+    (output / "NeonPrerequisite.inc").write_text(snippet)
     harness = (ROOT / "tests/test-nuwa-retained-response.cpp").read_text()
     assert harness.count("\nint main() {") == 1
-    (build / "NeonRetainedHarness.inc").write_text(harness.split("\nint main() {", 1)[0])
-    source = build / "test-neon.cpp"
+    (output / "NeonRetainedHarness.inc").write_text(harness.split("\nint main() {", 1)[0])
+    source = output / "test-neon.cpp"
     source.write_text(CPP)
-    binary = build / "test-neon"
+    binary = output / "test-neon"
     subprocess.run([
         os.environ.get("CXX", "c++"), "-std=c++17", "-Wall", "-Wextra", "-Werror",
         "-Wno-unused-function", "-Wno-address", "-pthread", "-O2", "-no-pie",
         "-fsanitize=undefined,address", "-fno-sanitize-recover=all",
-        "-DNUWA_DATA_CANDIDATE=1", "-I", build, "-I", stage, "-I", baseline,
+        "-DNUWA_DATA_CANDIDATE=1", "-I", fixtures, "-I", stage, "-I", baseline,
         "-I", ROOT / "tests", "-I", ROOT / "package/nuwa-data-write",
         "-I", base / "drivers/RamBlock", source, "-o", binary,
     ], check=True)
@@ -182,4 +183,11 @@ def main(build, base):
 
 
 if __name__ == "__main__":
-    main(Path(sys.argv[1]).resolve(), Path(sys.argv[2]).resolve())
+    parser = argparse.ArgumentParser()
+    parser.add_argument("build", type=Path)
+    parser.add_argument("base", type=Path)
+    parser.add_argument("--fixtures", type=Path, help="output of test-nuwa-retained-entry.py")
+    parser.add_argument("--output", type=Path)
+    args = parser.parse_args()
+    main(args.build.resolve(), args.base.resolve(),
+         (args.fixtures or args.build).resolve(), (args.output or args.build).resolve())

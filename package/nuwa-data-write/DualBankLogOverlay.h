@@ -75,6 +75,22 @@ private:
     put(b + headerCrc, crc(b, header, headerCrc), 4);
     put(b + BlockCrc, crc(b, Block, BlockCrc), 4);
   }
+  static void encodeSuperblock(uint8_t *b, const uint8_t *seed, const uint8_t *maps,
+                               uint32_t slot, uint32_t head, uint64_t gen, uint64_t count) {
+    memset(b, 0, Block);
+    memcpy(b, "NUWADSB3", 8);
+    put(b + 8, 3, 4);
+    put(b + 12, slot, 4);
+    put(b + 16, Pages, 8);
+    put(b + 24, gen, 8);
+    memcpy(b + 32, seed, 32);
+    put(b + 64, MapBlocks, 4);
+    put(b + 68, LogBlocks, 4);
+    put(b + 72, head, 4);
+    put(b + 80, count, 8);
+    put(b + 88, crc(maps, 2 * MapBytes), 4);
+    seal(b, SbHeader, 92, gen, slot);
+  }
 
   Header superblock(uint32_t slot, Checkpoint &cp) const {
     const auto *b = w_->block;
@@ -190,19 +206,7 @@ private:
     // On first use, open already verified BMP0 is entirely zero.
     const auto nextHead = ring(used_);
     auto *b = w_->block;
-    memset(b, 0, Block);
-    memcpy(b, "NUWADSB3", 8);
-    put(b + 8, 3, 4);
-    put(b + 12, next, 4);
-    put(b + 16, Pages, 8);
-    put(b + 24, gen_, 8);
-    memcpy(b + 32, seed_, 32);
-    put(b + 64, MapBlocks, 4);
-    put(b + 68, LogBlocks, 4);
-    put(b + 72, nextHead, 4);
-    put(b + 80, present_, 8);
-    put(b + 88, crc(w_->maps, sizeof w_->maps), 4);
-    seal(b, SbHeader, 92, gen_, next);
+    encodeSuperblock(b, seed_, w_->maps, next, nextHead, gen_, present_);
     if (!ops.write(next, 1, b) || !ops.sync()) return false;
     slot_ = next;
     epoch_ = gen_;
@@ -213,6 +217,13 @@ private:
   }
 
 public:
+  // Pure format helper: no admission, transport, ownership or durability claim.
+  static bool initialSuperblock(uint8_t (&out)[Block], const uint8_t (&seed)[32],
+                                const Workspace &workspace) {
+    if (!zero(workspace.maps, sizeof workspace.maps)) return false;
+    encodeSuperblock(out, seed, workspace.maps, 0, 0, 0, 0);
+    return true;
+  }
   DualBankLogOverlay() = default;
   DualBankLogOverlay(const DualBankLogOverlay &) = delete;
   DualBankLogOverlay &operator=(const DualBankLogOverlay &) = delete;

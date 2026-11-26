@@ -148,6 +148,23 @@ static void layout() {
   checkEvent(d, 253, 'W', Full::Log);
   checkEvent(d, 254, 'S');
   const auto &sb = d.pages.at(0);
+  uint8_t initial[Block];
+  const std::unique_ptr<Full::Workspace> empty{new Full::Workspace{}};
+  CHECK(Full::initialSuperblock(initial, Seed, *empty));
+  CHECK(!memcmp(initial, sb.data(), Block));
+  // Independent transcription of the pre-extraction initial checkpoint.
+  Page reference{};
+  memcpy(reference.data(), "NUWADSB3", 8);
+  put(reference, 8, 3);
+  put(reference, 16, Full::Pages, 8);
+  memcpy(reference.data() + 32, Seed, sizeof Seed);
+  put(reference, 64, Full::MapBlocks);
+  put(reference, 68, Full::LogBlocks);
+  put(reference, 88, crc(empty->maps, sizeof empty->maps));
+  reseal(reference, 96, 92);
+  CHECK(!memcmp(initial, reference.data(), Block));
+  empty->maps[123] = 1;
+  CHECK(!Full::initialSuperblock(initial, Seed, *empty));
   CHECK(!memcmp(sb.data(), "NUWADSB3", 8) && le32(sb.data() + 8) == 3 &&
         le64(sb.data() + 16) == Full::Pages && le64(sb.data() + 24) == 0 &&
         le32(sb.data() + 64) == 64 && le32(sb.data() + 68) == 512 &&
