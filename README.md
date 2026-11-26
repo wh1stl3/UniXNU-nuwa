@@ -1,6 +1,8 @@
 # UniXNU-nuwa
 
-**2026-11-27 R1 BLANK / W 回执 UNKNOWN / R2 EXACT-SB0；只恢复候选 DATA `st=3`、`tzinit[17] exit 45`，未拍到 `DATA mnt`（self-checked）：** [观察](docs/nuwa-sb0-rw-device-20261127-observation.md)。
+**2026-11-27 实机：Data SB0 锚点写入、R 独立读回、受控关机后非空恢复（DATA `st=2`、`gpt=0/0`、`lba=36bc0f9`）已获单次状态级证据；reviewer PASS。** W 回执仍 `UNKNOWN`；突发断电耐久与文件级保留延期，用户已接受。文件系统挂载与交互未验收，认证 **NOT REACHED**；下一目标用户态启动判明与显示服务。
+
+[观察](docs/nuwa-sb0-rw-device-20261127-observation.md)。
 
 **2026-11-26 disposable Data 主机候选（self-checked，未上机，待终审）：** [记录](docs/nuwa-disposable-data-20261126.md)。
 

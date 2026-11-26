@@ -10,7 +10,8 @@
 - 2026-11-26 UFS 只读采样画面（主控转述 vision / self-checked 记录）：[观察](docs/nuwa-ufs-neon-20261126-observation.md)。
 - 2026-11-26 UFS 只读 MODE SENSE + GPT 摘要候选，生产写门关闭、未上机（self-checked）：[记录](docs/nuwa-ufs-modeprobe-20261126.md)。
 - 2026-11-26 持久 Data v3 接入单核主机候选，生产写门关闭、未上机（self-checked）：[记录](docs/nuwa-dualbank-integration-20261126.md)。
-- 2026-11-27 R1 `BLANK`（`r_1.jpg`）→ W 手动选择后约 4.5 秒 IRQ-off hard lock、无结果行（回执 UNKNOWN）→ R2 `EXACT-SB0`（`r_2.jpg`）；reviewer 接受 W 写入效果经 R 独立读回证实（`ses_de7382000ffesoU8SSOnqOcwcU`）。只恢复候选 `6695…` 启动：93 秒 DATA `st=3`（seed 匹配、空映射/空日志、未自行初始化；`wr=26` 为本轮页次）、112 秒 `tzinit[17] exit 45`；未拍到 `DATA mnt`。下一轮断电重启判据：`gpt=0/0`、`lba=36bc0f9`、`st=2`、`pres>0`、`er=0`；`st=6` 环满只读，`st=3` 不通过。见 [记录](docs/nuwa-sb0-rw-device-20261127-observation.md)。
+- 2026-11-27 实机（reviewer PASS `ses_de72a2665ffe1B5ch6qJ7GJVQF`）：Data SB0 锚点写入、R 独立读回（`EXACT-SB0`）、UniXNU 菜单 `Power off` 后按键冷启动的非空恢复（DATA `st=2`、`gpt=0/0`、`lba=36bc0f9`、`pres=27`、`er=0`）已获单次、状态级证据；W 回执仍 `UNKNOWN`。突发断电耐久与文件级保留延期，用户已接受该风险。
+- 文件系统挂载（未拍到 `DATA mnt`）与交互未验收；认证仍 **NOT REACHED**；下一目标为用户态启动判明与显示服务。见 [记录](docs/nuwa-sb0-rw-device-20261127-observation.md)。
 - 2026-11-25 显示验收方案（INSUFFICIENT EVIDENCE，reviewer 转述 / self-checked）：[记录](docs/nuwa-display-acceptance-20261125.md)。
 - **显示官方验收尚未通过**：以 `UniXNU/docs/zh/porting/display.md:30–56` 为准：XNU 发布显示服务；CPU 路径确认像素布局、行跨度、分配大小及缓存处理并实际显示已知画面；交换完成；IOSurface 生命周期与交换完成通知闭合；分别记录请求刷新率及实测帧时序；全部完成后才启用 GPU 呈现。
 - 当前仅传输链路冒烟（主控转述 / self-checked：`reg=2 cli=4 vo=6 vb=0 co=6 cb=0 ret=6`）；`co` 可能含清屏，缺已知画面显示、IOSurface 生命周期/通知闭环及请求刷新率/实测帧时序证据；`bk/so/PIX` 仅诊断拆分，不是验收标准。

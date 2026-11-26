@@ -1,10 +1,10 @@
-# nuwa SB0 R 前检、WX 与只恢复候选 — 2026-11-27 实机观察
+# nuwa SB0 R 前检、WX、只恢复候选与受控冷启动 — 2026-11-27 实机观察
 
-状态：设备动作已执行，主机日志 self-checked；R1/R2 与只恢复候选屏幕结果来自
-用户照片（主控转述）。W 回执 UNKNOWN，R2 为 EXACT-SB0；只恢复候选 93 s 的 DATA
-行为 `st=3`、112 s 的 `tzinit[17]` exit 45，未拍到 `DATA mnt`。reviewer 结论
-PASS WITH CONDITIONS（`ses_de7302407ffeQUPMTwmr0IAt9q`）。本记录不是认证、DMA
-独占或掉电持久性证据。
+状态：设备动作已执行，主机日志 self-checked；R1/R2、只恢复候选和受控关机冷启动
+结果来自用户照片（主控转述）。W 回执 UNKNOWN，R2 为 EXACT-SB0；受控关机冷启动
+68 s 的 DATA 行为 `st=2`，reviewer PASS（`ses_de72a2665ffe1B5ch6qJ7GJVQF`）。
+该冷启动是非空恢复的**单次、状态级**证据；突发断电耐久与文件级内容保留延期，
+未拍到 `DATA mnt`。本记录不是认证或文件系统挂载验收。
 
 ## 范围与授权
 
@@ -297,6 +297,73 @@ reviewer 验收结论（session `ses_de7302407ffeQUPMTwmr0IAt9q`）为
 - `st=6` 记为非空重放成功，但环满只读。
 - `st=3` 不通过非空恢复验收。
 
+该判据已由 2026-11-27 的受控关机冷启动满足，结果见下节。
+
+## 受控关机后冷启动（`6695_2.jpg`）
+
+### 过程事实
+
+- 用户从 UniXNU 菜单选择 `Power off` 正常关机，随后按键冷启动；同一候选自动进入。
+- 期间没有重刷启动分区、没有重新初始化、没有写 SB0；主机未连接设备，本轮为纯
+  记录整理。
+- reviewer 验收 session `ses_de72a2665ffe1B5ch6qJ7GJVQF`，结论 PASS。
+
+### 照片与转录
+
+照片只留在本地 `media/`，**不入 Git**；下表 SHA-256 为本地文件哈希。
+
+| 文件 | 字节 | SHA-256 | 屏幕采样 | 本地 mtime（+08） |
+| --- | --- | --- | --- | --- |
+| `6695_2.jpg` | 5,103,000 | `cbfa59080390afcf9827edfe869f91094dde3ff5218cf9ba59b3879a78dc8f96` | `t=68s` | 2026-11-27 01:08:28 |
+| `6695_stuck_2.jpg` | 4,180,865 | `ac81bd3e722c7c940fb7a73887df973e6a03dbcc9bacbfd808f135745a02b24d` | `t=112s` | 2026-11-27 01:08:36 |
+
+采样时刻以屏幕 `t=` 行为准；本地 mtime 是落盘/复制时间。
+
+**68 秒（`6695_2.jpg`）vision 转录摘要**：顶部状态行
+`nuwa-r35] t=68s n=58 np=1 i=0s q=1438* =0 r=0 f=1165268`；关键 DATA 行：
+
+```text
+DATA hdr=9 gpt=0/0 lba=36bc0f9 | pres=27 ld=726 wr=2 sy=0 er=0 st=2
+```
+
+同屏可读的还有：
+
+```text
+OBS worker=2 anchor=0 bind=3 result=0 depth=32 base=fffffff151400000
+UFS TIME vf=3046ms rd=45812ms blk=495229 1934MiB req=17093
+```
+
+DATA 行完整、无遮挡；屏幕四边在画面内，照片略倾斜，底部自检字形没有覆盖
+DATA 行。
+
+**112 秒（`6695_stuck_2.jpg`）vision 转录摘要**：顶部状态行
+`nuwa-r35] t=112s n=97 np=2 i=0s q=197* l=0 r=0 f=1048609`；
+
+```text
+EX1 p9 MSUEar sig=1 code=0x00000000 n=1 pc=...
+EX2 p6 launch sig=1 code=0x00000000 n=1 pc=...
+tzinit[17] exited -- no exit reason available -- (signal 0, exit status 45 )
+```
+
+随后是可读的 `frames ...` 列表和 `pages=0x000000000126bac`、
+`free=0x0000000000ffd39`。EX1/EX2 与 `tzinit[17]` 块完整；顶部状态行贴近
+屏幕上缘，行首标记可能被曲面边缘裁掉，但 `t=112s` 及关键字段可读，无关键行截断。
+
+### 结论
+
+1. **`st=2` = 非空重放成功（状态级）**：命中预设判据 `gpt=0/0`、同一
+   `lba=36bc0f9`、`st=2`、`pres=27>0`、`er=0`。这是单次实机、状态级证据，
+   不是突发断电耐久或文件级内容保留证明。
+2. **`pres 22→27` 与 `wr 26→2` 不能相减解读**：两者是不同启动的采样/计数，
+   不是可做差值的累计量，也不能据此推算写入页数或持久化进度。
+3. **112 秒用户态退出不推翻 68 秒读数**：同一轮 112 秒仍出现 `tzinit[17]`
+   exit 45、`p6 launch sig=1`、`p9 MSUEar sig=1`，这是用户态退出记录；68 秒的
+   DATA 行独立成立。
+4. **未拍到 `DATA mnt`**：不验收文件系统挂载，也不声称 APFS 在 `/private/var`
+   可写。
+5. **证据等级与延期项**：reviewer 判据为上述 DATA 行；结论仅覆盖一次受控关机
+   冷启动、状态级非空恢复。突发断电耐久与文件级保留为延期项，用户已接受该风险。
+
 ## 边界
 
 - R 的 `BLANK` 只说明读到 770 页零页且 `writes=0`；不证明旧固件 DMA 已撤销、SMMU
@@ -309,10 +376,12 @@ reviewer 验收结论（session `ses_de7302407ffeQUPMTwmr0IAt9q`）为
 - 本记录不把 R 基线当作 W 的授权，也不把本次 R 读回当作再次选择 W 的许可。
 - 只恢复候选 93 s 的 `st=3` 是空 generation 0 SB0 的可读状态，不满足非空恢复；
   `wr=26` 是本轮写入页次，不是掉电落盘回执。
+- 受控关机冷启动 68 s 的 `st=2` 是非空重放的单次、状态级证据；`pres 22→27` 与
+  `wr 26→2` 不能相减解读。突发断电耐久与文件级保留为延期项，用户已接受该风险。
 - 未拍到 `DATA mnt`，不声称 APFS 在 `/private/var` 可写挂载；112 s 的
   `tzinit[17]` exit 45 和 `p6 launch sig=1`、`p9 MSUEar sig=1` 只作为本轮
-  用户态退出记录，不归因历史 SIGTRAP。
-- 两张照片只留在本地 `media/`，不入 Git；本文件只保留文件名、哈希、采样时刻和
+  用户态退出记录，不归因历史 SIGTRAP，也不推翻 68 s 的 DATA 行。
+- 所有照片只留在本地 `media/`，不入 Git；本文件只保留文件名、哈希、采样时刻和
   转录摘要。
 - 原始命令输出与时间线仅在 `out/sb0-r-precheck-20261127/`、`out/sb0-wx-flash-20261127/`、
   `out/sb0-r-readback-20261127/`、`out/sb0-resume-20261127/`（Git 忽略，序列号已或
