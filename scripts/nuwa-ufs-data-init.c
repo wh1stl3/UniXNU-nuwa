@@ -16,6 +16,9 @@
 #include <sys/statfs.h>
 #include <sys/sysmacros.h>
 #include <unistd.h>
+#ifdef NUWA_RAM_PID1
+#include <sys/mount.h>
+#endif
 
 #include <linux/fs.h>
 #include <linux/magic.h>
@@ -36,6 +39,10 @@ static _Alignas(65536) unsigned char io[BYTES];
 static _Alignas(65536) unsigned char payload[BYTES];
 static volatile sig_atomic_t interrupted;
 static const char *last_write;
+#if defined(NUWA_RAM_PID1) && !NUWA_RAM_ARMED
+#define NUWA_STRICT_READ_ONLY
+static bool recovery_sb0;
+#endif
 #ifndef NUWA_HOST_FIXTURE
 static int target_fd = -1, disk_fd = -1, receipt_fd = -1;
 #endif
@@ -73,6 +80,7 @@ static void check(int result, const char *why)
     if (result < 0) sysfail(why);
 }
 
+#ifndef NUWA_STRICT_READ_ONLY
 static void receipts(int dir, const char *name)
 {
     int fd = openat(dir, name, O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW | O_CLOEXEC, 0600);
@@ -95,6 +103,7 @@ static void write_meta(int fd, size_t len, const char *why)
     check(fsync(fd), "target fsync");
     if (interrupted) refuse("interrupted after fsync");
 }
+#endif
 
 static void gpt_check(int disk)
 {
@@ -113,6 +122,15 @@ static void gpt_check(int disk)
 
 static void transaction(int fd, bool authorize, int dir)
 {
+#ifdef NUWA_STRICT_READ_ONLY
+    (void)dir;
+    if (authorize) refuse("read-only recovery build");
+    exact(pread(fd, io, BYTES, OFFSET), BYTES, "recovery metadata read");
+    recovery_sb0 = !memcmp(io, sb0, PAGE);
+    if (memcmp(io + PAGE, payload + PAGE, BYTES - PAGE)
+        || (!recovery_sb0 && memcmp(io, payload, PAGE)))
+        refuse("recovery metadata neither blank nor exact initial SB0");
+#else
     read_meta(fd, "metadata preimage not zero or unreadable");
     if (!authorize) return;
     write_meta(fd, BYTES, "prepare write");
@@ -122,14 +140,17 @@ static void transaction(int fd, bool authorize, int dir)
     write_meta(fd, PAGE, "SB0 write");
     read_meta(fd, "SB0 direct readback");
     receipts(dir, "commit-readback.bin");
+#endif
 }
 
+#ifndef NUWA_RAM_PID1
 static bool mode(int argc, char **argv)
 {
     if (argc == 1) return false;
     if (argc == 2 && !strcmp(argv[1], AUTHORIZE)) return true;
     refuse("usage: nuwa-data-init [" AUTHORIZE "]");
 }
+#endif
 
 static void signals(void)
 {
@@ -355,6 +376,9 @@ static void close_checked(int *slot, const char *why)
 
 static void run(bool authorize)
 {
+#ifdef NUWA_STRICT_READ_ONLY
+    if (authorize) refuse("read-only recovery build");
+#endif
     struct stat st;
     if (geteuid() != 0) refuse("root recovery required");
     if (authorize) offline();
@@ -396,6 +420,9 @@ static void hold_pid1(void)
     }
 }
 
+#ifdef NUWA_RAM_PID1
+#include "nuwa-ufs-ram-pid1.h"
+#else
 int main(int argc, char **argv)
 {
     if (atexit(hold_pid1)) refuse("atexit");
@@ -406,6 +433,7 @@ int main(int argc, char **argv)
                    : "read-only: pinned GPT and blank metadata");
     return 0;
 }
+#endif
 #else
 // Native, separately built test entry: regular files only, inherited direct
 // descriptors; never shipped in the recovery ELF.
