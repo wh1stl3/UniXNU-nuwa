@@ -500,7 +500,7 @@ def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False, pixsig
     return staged
 
 
-def persist_diag_link(r35, out, records, argv, env, data_candidate=False, disposable=False):
+def persist_diag_link(r35, out, records, argv, env, data_candidate=False, disposable=False, sb0=None):
     recipe, = (r for r in records if r["label"] == "compile-NativeRamBlock" and r["exit"] == 0)
     archive_recipe, = (r for r in records if r["label"] == "archive-NativeRamBlock" and r["exit"] == 0)
     command = list(recipe["argv"])
@@ -512,6 +512,12 @@ def persist_diag_link(r35, out, records, argv, env, data_candidate=False, dispos
         command.append("-DNUWA_DATA_CANDIDATE=1")
     if disposable:
         command.append("-DNUWA_DISPOSABLE_DATA=1")
+    if sb0:
+        source = Path(command[at])
+        dest = out / source.name
+        dest.write_text(sb0_body(source.read_text(), "bool NativeRamBlock::start(", "return false;"))
+        command[at] = str(dest)
+        command.extend(("-I", str(source.parent)))
     (out / "ramblock-argv.json").write_text(json.dumps(command, indent=2) + "\n")
     with (out / "compile-NativeRamBlock.log").open("wb") as log:
         subprocess.run(command, cwd=recipe["cwd"], env=env, stdout=log, stderr=subprocess.STDOUT, check=True)
@@ -542,7 +548,71 @@ def persist_diag_link(r35, out, records, argv, env, data_candidate=False, dispos
     return args
 
 
-def data_candidate_link(out, argv, env, gpt, disposable=False):
+def sb0_body(text, signature, body):
+    lines = text.splitlines(keepends=True)
+    start, = (i for i, line in enumerate(lines) if line.startswith(signature))
+    braces, = (i for i in range(start, start + 4) if lines[i] == "{\n")
+    end = lines.index("}\n", braces + 1)
+    return "".join(lines[:braces + 1]) + f"  {body}\n" + "".join(lines[end:])
+
+
+def sb0_input(path, out):
+    require_pin(path, "b227e878961df9b0d30ccdd73663206e396d3d2a0466141377439d11f74a86f5")
+    page = path.read_bytes()
+    if len(page) != 4096 or page[:8] != b"NUWAXSB3":
+        raise SystemExit("unexpected fixed disposable SB0 format")
+    encoded_hash = bytes.fromhex("3c81135b384d8e090521205f2d69b3c197521e6d03c63682419d021bf0f24e5e")
+    def values(data):
+        return ", ".join(f"0x{v:02x}" for v in data)
+    (out / "Sb0CandidateInput.h").write_text(
+        "#pragma once\nnamespace NuwaData::Sb0 {\n"
+        f"constexpr uint8_t Payload[4096] = {{{values(page.rstrip(bytes(1)))}}};\n"
+        f"constexpr uint8_t EncodedHash[32] = {{{values(encoded_hash)}}};\n"
+        "constexpr uint64_t EncodedBytes = 2744480;\n}\n")
+
+
+def sb0_combined(text, role):
+    from generate_r35_display_diag import replace_once
+    write = "(c == Command::WriteFua || c == Command::WriteVolatile)"
+    if role == "R":
+        start = text.index("    case Command::WriteVolatile:")
+        stop = text.index("    case Command::Sense:", start)
+        text = text[:start] + text[stop:]
+        return text.replace(write, "false").replace("WriteFua, WriteVolatile, ", "")
+    text = text.replace(write, "c == Command::WriteVolatile").replace("WriteFua, ", "")
+    text = text.replace("    case Command::WriteVolatile:\n    case Command::WriteFua: {",
+                        "    case Command::WriteVolatile: {")
+    at = b"  p.deadline(); p.barrier(); ++s.count;\n  p.hwrite(0x58, 1);"
+    consume = (b"  if (c == Command::WriteVolatile && !p.sb0Consume(s, writeSource)) {\n"
+               b"    s.quarantined = true; return End::Guard;\n"
+               b"  }\n")
+    replacement = (b"  p.deadline(); p.barrier();\n" + consume +
+                   b"  ++s.count;\n  p.hwrite(0x58, 1);") if role == "WX" else consume + at
+    return replace_once(text.encode(), at, replacement).decode()
+
+
+def sb0_experiment_marker(source, private):
+    # Reuse the pinned translated-framebuffer row; no display stack or panic.
+    from generate_r35_display_diag import replace_once
+    marker = source.with_name("NuwaUfsMarker.h")
+    require_pin(marker, "eb90de9d270bffbcba59b4d1149805349bc6071b2a71944201e1417c2f61d09a")
+    text = marker.read_bytes()
+    for old, new in (
+        (b'"ROOT_PUBLISHED"};', b'"ROOT_PUBLISHED", "NUWA SB0-W EXPERIMENT"};'),
+        (b"stage > 12", b"stage > 13"),
+        (b"  if (stage >= 8) {",
+         b'  if (stage == 13) {\n'
+         b'    nuwa_ufs_text(g, " "); nuwa_ufs_text(g, NuwaData::Sb0::resultName(sequence));\n'
+         b'    nuwa_ufs_text(g, " writes="); nuwa_ufs_hex(g, completed, 1);\n'
+         b'    nuwa_ufs_text(g, " lba="); nuwa_ufs_hex(g, address, 8);\n'
+         b'    nuwa_ufs_text(g, " pages="); nuwa_ufs_hex(g, raw, 3);\n'
+         b'  } else if (stage >= 8) {'),
+    ):
+        text = replace_once(text, old, new)
+    (private / marker.name).write_bytes(text)
+
+
+def data_candidate_link(out, argv, env, gpt, disposable=False, sb0=None):
     root = ROOT / "out/nuwa-ufs-apfs-root-integration-20261114/run-r5-visible-candidate"
     source = root / "source/NativeUfs.cpp"
     require_pin(source, "bb994c583382755ddfae954b23aff94d77a97428c7c933232b574ad3cd64b2bf")
@@ -663,6 +733,10 @@ def data_candidate_link(out, argv, env, gpt, disposable=False):
             if old not in combined_text:
                 raise SystemExit("unexpected disposable WRITE(10) splice anchor")
             combined_text = combined_text.replace(old, new)
+    if sb0:
+        role, payload = sb0
+        sb0_input(payload, private)
+        combined_text = sb0_combined(combined_text, role)
     replace("unsigned blocks = 1) {\n    // Bounded pre-command markers",
             "unsigned blocks = 1, const uint8_t *writeSource = nullptr, NuwaUfsDesc::Request desc = {}) {\n"
             "    // Bounded pre-command markers")
@@ -785,8 +859,52 @@ extern "C" unsigned native_ufs_store_gpt_check (void)
       operations.copyFailed ? "short copy" :
       !operations.snapshot.attempted ? "transport rejected" : "transport failed",
       operations.snapshot, operations.verifyIndex, operations.verifyStatus, result);''',
-            '''    // Complete accepted I/O after both guards have released their locks.
-    // Return success below to acknowledge dispatch, not disk success.''')
+             '''    // Complete accepted I/O after both guards have released their locks.
+     // Return success below to acknowledge dispatch, not disk success.''')
+    if sb0:
+        text = ('#include <IOKit/IODeviceTreeSupport.h>\n#include <machine/machine_routines.h>\n'
+                f'#include "{code / "Sb0Candidate.h"}"\n'
+                'extern "C" { extern unsigned long gPhysBase, gPhysSize; }\n' + text)
+        replace(f'#include "{code / "KernelPort.inc"}"',
+                'static NuwaData::LiveGpt cachedLiveGpt() { return NuwaData::LiveGpt::Unknown; }')
+        replace(f'constexpr uint32_t kDefaultReserveMiB = 1024;\n#include "{code / "RetainedNeon.inc"}"',
+                'constexpr uint32_t kDefaultReserveMiB = 1024;\n'
+                'extern "C" unsigned nuwa_ufs_neon_rows(char (*)[120], unsigned) { return 0; }')
+        replace("  if (result.phase == UfsRootPhase::Complete) {\n"
+                "    if (__atomic_load_n(&neonPhase, __ATOMIC_ACQUIRE) == 2U) probeNeon();\n"
+                "    else probeUfsDescriptors();\n  }\n", "")
+        replace('bool NativeUfs::start (IOService *provider)',
+                f'#include "{code / "Sb0CandidatePort.inc"}"\n\n'
+                'bool NativeUfs::start (IOService *provider)')
+        # Preserve the existing once-claim before hostBringUp allocates its
+        # lock. No probe/alternate producer may bypass that claim here.
+        replace("  if (probe == 2 && !root) { inspect(); return false; }\n", "")
+        replace("  return startRoot(provider);", "  sb0Run();")
+        for signature in (
+                "bool NativeUfsBlock::start (", "bool NativeUfs::startRoot (", "static unsigned storeMode (",
+                'extern "C" int native_ufs_part_find (', 'extern "C" int native_ufs_part_read (',
+                'extern "C" int native_ufs_store_open (', 'extern "C" int native_ufs_store_read (',
+                'extern "C" int native_ufs_store_write (', 'extern "C" int native_ufs_store_order ('):
+            text = sb0_body(text, signature, "return 0;")
+        replace('extern "C" unsigned native_ufs_store_mode (void) { return storeMode (); }',
+                'extern "C" unsigned native_ufs_store_mode (void) { return 0; }')
+        if role == "WX":
+            sb0_experiment_marker(source, private)
+            replace("struct CombinedHardware {",
+                    "struct CombinedHardware {\n"
+                    "  NuwaData::Sb0::BootWriteOnce sb0BootWrite;\n"
+                    "  __attribute__((noinline)) bool sb0Consume(CombinedRead::State &s, const uint8_t *src) {\n"
+                    "    return NuwaData::Sb0::checkAndConsume(virt, s.setup.dma, s.tag, s.block,\n"
+                    "        s.readLba, s.readBlocks, src,\n"
+                    "        [&] { return CombinedRead::guard(*this, s) && sb0BootWrite.consume(); });\n"
+                    "  }")
+        elif role == "W":
+            replace("struct CombinedHardware {",
+                    "struct CombinedHardware {\n"
+                    "  bool sb0Consume(const CombinedRead::State &s, const uint8_t *src) {\n"
+                    "    return NuwaData::Sb0::checkAndConsume(virt, s.setup.dma, s.tag, s.block,\n"
+                    "        s.readLba, s.readBlocks, src, [] { return false; });\n"
+                    "  }")
     staged = private / source.name
     staged.write_text(text)
     records = json.loads((root / "commands.json").read_text())
@@ -799,6 +917,8 @@ extern "C" unsigned native_ufs_store_gpt_check (void)
     command.extend(("-I", str(source.parent), "-Wno-unused-function"))
     if disposable:
         command.append("-DNUWA_DISPOSABLE_DATA=1")
+    if sb0:
+        command.extend(("-I", str(private), f"-DNUWA_SB0_PROFILE={ {'W': 1, 'R': 2, 'WX': 3}[role]}"))
     (out / "data-provider-argv.json").write_text(json.dumps(command, indent=2) + "\n")
     with (out / "compile-data-provider.log").open("wb") as log:
         subprocess.run(command, cwd=recipe["cwd"], env=env, stdout=log, stderr=subprocess.STDOUT, check=True)
@@ -828,7 +948,7 @@ extern "C" unsigned native_ufs_store_gpt_check (void)
 def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
                keep_link_debug, bringup_diag=False, hid_objects=(), mg_reset=False,
                smp_gate=False, smp_observe=False, crashcap=False, pixsig=False,
-               data_persist=False, data_gpt=None, disposable=False, stage=False, base=None):
+               data_persist=False, data_gpt=None, disposable=False, stage=False, base=None, sb0=None):
     for name, pin in (R35L_PINS if bringup_diag else R35_PINS).items():
         require_pin(r35 / name, pin)
     require_pin(cpo, R35_CPO_SHA)
@@ -904,9 +1024,9 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
             argv[force_at] = f"-Wl,-force_load,{diag}"
         if data_persist:
             argv = persist_diag_link(r35, out, records, argv, env, data_candidate=data_gpt is not None,
-                                     disposable=disposable)
+                                      disposable=disposable, sb0=sb0)
         if data_gpt is not None:
-            argv = data_candidate_link(out, argv, env, data_gpt, disposable=disposable)
+            argv = data_candidate_link(out, argv, env, data_gpt, disposable=disposable, sb0=sb0)
         argv = [*argv, "-Wl,-ignore_optimization_hints", f"-Wl,-force_load,{archive}", *map(str, hid_objects)]
         if not candidate or keep_link_debug:
             return link("native-link", native, argv)
@@ -1141,6 +1261,9 @@ def main():
                    help="link the write-disabled v2 Data candidate using this local 4 KiB GPT capture")
     p.add_argument("--disposable-data", action="store_true",
                    help="compile the opt-in disposable Data experiment (no durability or initialization)")
+    p.add_argument("--sb0-profile", choices=("W", "R", "WX"),
+                   help="WX explicitly builds a one-write experiment; W remains unbound and R read-only")
+    p.add_argument("--sb0-payload", type=Path)
     p.add_argument("--candidate", action="store_true",
                    help="apply device hooks and write the r35-display diagnostic kernel")
     p.add_argument("--r35l-dir", type=Path,
@@ -1198,6 +1321,8 @@ def main():
         p.error("--data-candidate-gpt requires --data-persist-diag")
     if a.disposable_data and not a.data_candidate_gpt:
         p.error("--disposable-data requires the pinned single-core Data GPT candidate")
+    if bool(a.sb0_profile) != bool(a.sb0_payload) or (a.sb0_profile and not a.disposable_data):
+        p.error("SB0 requires --sb0-profile, --sb0-payload and --disposable-data together")
     out.mkdir(parents=True, exist_ok=False)
     donor = base / "out/ipsw/20H392/kernelcache.decompressed"
     hid_objects = []
@@ -1230,7 +1355,8 @@ def main():
                               smp_gate=a.smp_gate, smp_observe=a.smp_observe, crashcap=a.crashcap,
                                pixsig=a.pixsig, data_persist=a.data_persist_diag,
                                data_gpt=a.data_candidate_gpt, disposable=a.disposable_data,
-                               stage=a.stage_channel, base=base)
+                                stage=a.stage_channel, base=base,
+                                sb0=(a.sb0_profile, a.sb0_payload) if a.sb0_profile else None)
     else:
         # Replay XNU's exported link inputs, without its historical map output.
         stem = "mach.development.bcm2837"

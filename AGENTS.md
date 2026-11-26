@@ -10,6 +10,7 @@
 - 2026-11-26 UFS 只读采样画面（主控转述 vision / self-checked 记录）：[观察](docs/nuwa-ufs-neon-20261126-observation.md)。
 - 2026-11-26 UFS 只读 MODE SENSE + GPT 摘要候选，生产写门关闭、未上机（self-checked）：[记录](docs/nuwa-ufs-modeprobe-20261126.md)。
 - 2026-11-26 持久 Data v3 接入单核主机候选，生产写门关闭、未上机（self-checked）：[记录](docs/nuwa-dualbank-integration-20261126.md)。
+- 2026-11-27 R 前检实机 BLANK（用户照片）：`NUWA SB0-R READONLY BLANK LU0 target=57393401 pages=770 writes=0`；WX 菜单 outer `7f1f3c3d…` 已刷并重启，W 结果待用户照片。见 [记录](docs/nuwa-sb0-rw-device-20261127-observation.md)。
 - 2026-11-25 显示验收方案（INSUFFICIENT EVIDENCE，reviewer 转述 / self-checked）：[记录](docs/nuwa-display-acceptance-20261125.md)。
 - **显示官方验收尚未通过**：以 `UniXNU/docs/zh/porting/display.md:30–56` 为准：XNU 发布显示服务；CPU 路径确认像素布局、行跨度、分配大小及缓存处理并实际显示已知画面；交换完成；IOSurface 生命周期与交换完成通知闭合；分别记录请求刷新率及实测帧时序；全部完成后才启用 GPU 呈现。
 - 当前仅传输链路冒烟（主控转述 / self-checked：`reg=2 cli=4 vo=6 vb=0 co=6 cb=0 ret=6`）；`co` 可能含清屏，缺已知画面显示、IOSurface 生命周期/通知闭环及请求刷新率/实测帧时序证据；`bk/so/PIX` 仅诊断拆分，不是验收标准。

@@ -34,6 +34,9 @@ DISPOSABLE_TEMPLATE_CHMH = bytes.fromhex(
 DISPOSABLE_RAW_SHA = "26957263676b0312f3bebe213c2985deb8ce5652ac2ce3e99d59da77aba89584"
 DISPOSABLE_SEED_ID = "a106b0ce026771e221f578125e104a4854c2cbcda7c1b8390f6e056a47c63743"
 DISPOSABLE_ARG = b"nuwa-disposable-data=1"
+SB0_TEMPLATE_SHA = "6695da9842f4da4d26c1f028adc48f3ffb8f6f369420653492028a74bf362fa5"
+SB0_TEMPLATE_CHMH = bytes.fromhex(
+    "3abedb47bc3a96f1cfca1b27779e44c89f5553456535caffbf02da0a07d32dc6e275e06f1d43aef498a2ad92c6e33a2f")
 PAYLOAD = "EFI/UniXNU/Payloads/"
 KERNEL, ADT, TRUST, SCRATCH = (PAYLOAD + name for name in
     ("kernel.macho", "kernel.macho.adt", "kernel.macho.trustcache", "scratch-data.img"))
@@ -107,6 +110,37 @@ def disposable_seed(base, seed):
     return out
 
 
+WX_BOOT = {"timeout": 10, "default": "shutdown", "rotate": 60, "fallback_timeout": 10}
+WX_CONFIRM = "Run ONE experimental SB0 write? After any attempt use R, not W."
+
+
+def wx_manual_config(raw):
+    # Put shutdown first as well as naming it: the r4 loader falls back to
+    # entry zero if the named default cannot be resolved.
+    head, *entries = raw.split(b"[[entry]]\n")
+    assert len(entries) == 4
+    assert head.count(b'timeout = 3\ndefault = "xnu"\n') == 1
+    head = head.replace(b'timeout = 3\ndefault = "xnu"\n',
+                        b'timeout = 10\ndefault = "shutdown"\nrotate = 60\nfallback_timeout = 10\n')
+    wx, reset, shutdown, tools = entries
+    assert wx.startswith(b'id = "xnu"\ntitle = "UniXNU"\ntype = "xnu"\n')
+    assert b'confirm' not in wx
+    wx = wx.replace(b'title = "UniXNU"\n', b'title = "SB0 W - MANUAL ONE-WRITE EXPERIMENT"\n'
+                    + b'confirm = "' + WX_CONFIRM.encode() + b'"\n', 1)
+    return b"[[entry]]\n".join([head, shutdown, wx, reset, tools])
+
+
+def wx_readback_config(blob, args):
+    config = tomllib.loads(blob.decode())
+    assert config["boot"] == WX_BOOT
+    shutdown, wx, reset, tools = config["entry"]
+    assert shutdown == {"id": "shutdown", "type": "action", "action": "shutdown", "title": "Power off"}
+    assert wx["id"] == "xnu" and wx["type"] == "xnu" and wx["path"] == "Payloads/kernel.macho"
+    assert wx["confirm"] == WX_CONFIRM and wx["args"].encode() == args
+    assert not {"confirm_args", "confirm_titles"} & wx.keys()
+    assert (reset["id"], tools["id"]) == ("reset", "tools")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--base", type=Path, required=True, help="existing pinned UniXNU checkout")
@@ -119,6 +153,8 @@ def main():
     profile.add_argument("--data-persist-diag", action="store_true", help="use the pinned PIX outer")
     profile.add_argument("--disposable-data-template", type=Path,
                          help="use the exact 18fa4941 read-root outer and append the experiment gate")
+    profile.add_argument("--sb0-template", type=Path, help="use the exact 6695da98 disposable outer")
+    ap.add_argument("--sb0-profile", choices=("W", "R", "WX"))
     ap.add_argument("--ufs-desc", action="store_true", help="append the read-only UFS descriptor opt-in")
     ap.add_argument("--ufs-neon", action="store_true", help="append the staged read-only UFS evidence opt-in")
     ap.add_argument("--audit-only", action="store_true", help="read an existing outer and compare all FAT files")
@@ -127,6 +163,9 @@ def main():
         ap.error("--ufs-desc requires --data-persist-diag")
     if a.ufs_neon and (not a.data_persist_diag or a.ufs_desc):
         ap.error("--ufs-neon requires --data-persist-diag and excludes --ufs-desc")
+    if bool(a.sb0_profile) != bool(a.sb0_template):
+        ap.error("SB0 needs both --sb0-profile and --sb0-template")
+    sb0 = a.sb0_profile
     disposable = a.disposable_data_template is not None
     out = a.out.resolve()
     assert out.is_relative_to(ROOT / "out") and out not in (ROOT / "out", OLD, DSP_OUTER, FRAME_OUTER, PIX_OUTER)
@@ -134,11 +173,12 @@ def main():
     assert kernel.is_relative_to(ROOT / "out") and kernel.name == "kernel.macho"
     new_kernel = kernel.read_bytes()
     template, template_sha, template_chmh = (
+        (a.sb0_template.parent, SB0_TEMPLATE_SHA, SB0_TEMPLATE_CHMH) if sb0 else
         (a.disposable_data_template.parent, DISPOSABLE_TEMPLATE_SHA, DISPOSABLE_TEMPLATE_CHMH) if disposable else
         (PIX_OUTER, PIX_SHA, PIX_CHMH) if a.data_persist_diag or a.stage_channel else
         (FRAME_OUTER, FRAME_SHA, FRAME_CHMH) if a.pixsig else
         (DSP_OUTER, DSP_SHA, DSP_CHMH) if a.crashframes else (OLD, ROLLBACK, OLD_CHMH))
-    old_outer = pinned(a.disposable_data_template if disposable else template / "vendor_boot.img", template_sha)
+    old_outer = pinned(a.sb0_template or a.disposable_data_template or template / "vendor_boot.img", template_sha)
     head, old_fat, tail = regions(old_outer)
 
     # Reuse the prior Python reader, not the rollback audit's executable main.
@@ -150,11 +190,13 @@ def main():
     before = files(FAT32(old_fat))
     assert before[KERNEL] != new_kernel
     assert sha(before[SCRATCH]) == SEED
-    seed_report = disposable_seed(a.base.resolve(), before[SCRATCH]) if disposable else {}
+    seed_report = disposable_seed(a.base.resolve(), before[SCRATCH]) if disposable or sb0 else {}
+    if sb0:
+        assert len(before[SCRATCH]) == 2744480
     entry, = (e for e in tomllib.loads(before[CONFIG].decode())["entry"] if e["id"] == "xnu")
     args = entry["args"].encode()
     tokens = args.split()
-    assert len(args) == (577 if disposable else 561)
+    assert len(args) == (602 if sb0 else 577 if disposable else 561)
     for token in (b"nuwa-sb-stack=900", b"disable-jobs=com.apple.iconservices.iconservicesagent"):
         assert tokens.count(token) == 1
     assert not any(t.split(b"=", 1)[0] == b"sheng-smp" for t in tokens)
@@ -176,7 +218,26 @@ def main():
     bound["kernel"] = new_kernel
     expected_config = before[CONFIG]
     changed = {KERNEL, ADT}
-    if disposable:
+    if sb0:
+        identity = {"W": b"NUWA SB0-W UNBOUND", "R": b"NUWA SB0-R READONLY",
+                    "WX": b"NUWA SB0-W EXPERIMENT"}[sb0]
+        assert identity + b"\0" in new_kernel
+        drop = (DISPOSABLE_ARG, b"nuwa-ufs-neon=1", b"sheng-data-persist=2",
+                b"sheng-log-reserve=1024", b"build-tag=data-trial")
+        assert all(tokens.count(t) == 1 for t in drop)
+        assert tokens.count(b"native-ufs-root=1") == tokens.count(b"native-ufs-lun=0") == 1
+        prefix = b'args = "' + args + b'"'
+        assert expected_config.count(prefix) == 1
+        # Keep the existing matching selector, not the normal root behaviour.
+        # The linked build, not a boot argument, enforces the exclusive mode.
+        args = b" ".join(t for t in tokens if t not in drop) + b" build-tag=nuwa-sb0-" + sb0.encode()
+        assert len(args) < 608
+        expected_config = expected_config.replace(prefix, b'args = "' + args + b'"')
+        if sb0 == "WX":
+            expected_config = wx_manual_config(expected_config)
+        bound["args"] = args
+        changed.add(CONFIG)
+    elif disposable:
         assert b"_native_ufs_store_order\0" in new_kernel and DISPOSABLE_ARG not in tokens
         assert b"nuwa-ufs-neon=1" in tokens and tokens.count(b"build-tag=nuwa-r35") == 1
         assert not {t.split(b"=", 1)[0] for t in tokens} & {
@@ -239,6 +300,8 @@ def main():
     assert after[KERNEL] == new_kernel and after[ADT] == expected_adt and after[CONFIG] == expected_config
     entry_after, = (e for e in tomllib.loads(after[CONFIG].decode())["entry"] if e["id"] == "xnu")
     assert entry_after["args"].encode() == args
+    if sb0 == "WX":
+        wx_readback_config(after[CONFIG], args)
     chosen = parse_adt(after[ADT])["/chosen"]
     assert chosen["boot-manifest-hash"] == digest
     assert chosen["display-scale"] == bytes.fromhex("03000000") and "text-fixups" not in chosen
@@ -255,6 +318,14 @@ def main():
         report.update(seed_report, trust_sha256=sha(after[TRUST]),
                       template_outer_sha256=template_sha, diagnostic_arg=DISPOSABLE_ARG.decode(),
                       device_release=False)
+    if sb0:
+        report.update(seed_report, trust_sha256=sha(after[TRUST]), adt_sha256=sha(after[ADT]),
+                      template_outer_sha256=template_sha, sb0_profile=sb0, authority_bound=False,
+                      device_release=False)
+        if sb0 == "WX":
+            report.update(write_policy="explicit WX build, one write per boot after preflight",
+                          cross_boot_replay_prevention=False, menu_default="shutdown",
+                          menu_timeout_seconds=WX_BOOT["timeout"], menu_write_confirmation=True)
     if a.audit_only:
         assert rb == readback.read_bytes()
     else:
