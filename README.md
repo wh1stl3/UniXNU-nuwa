@@ -1,6 +1,6 @@
 # UniXNU-nuwa
 
-**2026-11-27 R1 BLANK / W 回执 UNKNOWN / R2 EXACT-SB0，reviewer 接受 W 写入效果经 R 独立读回证实（self-checked）：** [观察](docs/nuwa-sb0-rw-device-20261127-observation.md)。
+**2026-11-27 R1 BLANK / W 回执 UNKNOWN / R2 EXACT-SB0；只恢复候选 DATA `st=3`、`tzinit[17] exit 45`，未拍到 `DATA mnt`（self-checked）：** [观察](docs/nuwa-sb0-rw-device-20261127-observation.md)。
 
 **2026-11-26 disposable Data 主机候选（self-checked，未上机，待终审）：** [记录](docs/nuwa-disposable-data-20261126.md)。
 

@@ -1,9 +1,10 @@
-# nuwa SB0 R 前检与 WX 刷入 — 2026-11-27 实机观察
+# nuwa SB0 R 前检、WX 与只恢复候选 — 2026-11-27 实机观察
 
-状态：设备动作已执行，主机日志 self-checked；R1/R2 屏幕结果来自用户照片
-（`r_1.jpg` BLANK、`r_2.jpg` EXACT-SB0，主控转述）。W 已由用户手动选择并确认，
-reviewer 判定 W 回执 UNKNOWN；reviewer 同时接受「W 写入效果经复位后 R 独立读回
-证实」。本记录不是认证、DMA 独占或掉电持久性证据。
+状态：设备动作已执行，主机日志 self-checked；R1/R2 与只恢复候选屏幕结果来自
+用户照片（主控转述）。W 回执 UNKNOWN，R2 为 EXACT-SB0；只恢复候选 93 s 的 DATA
+行为 `st=3`、112 s 的 `tzinit[17]` exit 45，未拍到 `DATA mnt`。reviewer 结论
+PASS WITH CONDITIONS（`ses_de7302407ffeQUPMTwmr0IAt9q`）。本记录不是认证、DMA
+独占或掉电持久性证据。
 
 ## 范围与授权
 
@@ -210,6 +211,92 @@ reviewer 验收 W/R 证据链（session `ses_de7382000ffesoU8SSOnqOcwcU`）：
 - **写入效果已读回**：复位后由 R2 独立读回为 `EXACT-SB0`，证明目标 LBA 的页内容
   与预期写页一致；这是观测到的介质效果，不是 W 命令回执，也不证明 FUA 或掉电保持。
 
+## 只恢复候选启动（outer `6695da98…`）
+
+候选在 `2026-11-26T16:59:10Z` 启动；60 秒轮询内设备未枚举，随后用户照片给出
+93 s / 112 s 两个采样。本轮没有再次启动或刷写，以下均为该次启动的照片转录。
+
+### 身份与刷写
+
+- 唯一 nuwa fastboot；`product=nuwa`、`is-userspace=no`、`current-slot=a`、
+  `partition-size:vendor_boot_a=0x6000000`、`partition-size:boot_a=0xC000000`。
+- 候选 outer：100,663,296 B，SHA-256
+  `6695da9842f4da4d26c1f028adc48f3ffb8f6f369420653492028a74bf362fa5`；
+  `boot_a` 仍为 r4 loader
+  `692cfcca51af81230fecbba15425cf598182fbe53abb362b6046dec0f24dc2e5`。
+- 刷前分区字节回读不可用：bootloader 不支持 `fetch`，`getvar` 不含分区哈希。
+  身份来源是功能链：R2 的 `EXACT-SB0` 由当前 `vendor_boot_a` 的 R outer
+  `3f5ffaee…` 产生，`boot_a` 自 r4 写入后无主机写入，r4 loader 实际启动了
+  R/WX；本轮 `getvar` 的 product、槽位、容量一致。**这不是新的分区字节哈希。**
+- 只刷一次：
+
+```text
+fastboot -s <nuwa-serial> flash vendor_boot_a <...>/nuwa-disposable-data-package-r2/vendor_boot.img
+  Sending 'vendor_boot_a' (98304 KB)  OKAY [2.259s]
+  Writing 'vendor_boot_a'             OKAY [0.035s]
+  Finished. Total time: 2.327s
+```
+
+  exit 0。`fastboot reboot` exit 0，时间 `2026-11-26T16:59:10.164Z`。
+- 60 秒内每约 4 秒轮询：nuwa 始终未出现在 adb/fastboot；在场的只有 enuma
+  bootloader；Windows PnP 也只有 enuma 的 Android Bootloader Interface。
+  主机未发送 adb 写、挂载或菜单选择命令。
+
+### 照片与转录
+
+照片只留在本地 `media/`，**不入 Git**；下表 SHA-256 为本地文件哈希。
+
+| 文件 | 字节 | SHA-256 | 屏幕采样 | 本地 mtime（+08） |
+| --- | --- | --- | --- | --- |
+| `6695.jpg` | 5,103,914 | `e094161ebda8ccf9ed95f3b2c69f5489f5165bbbe943e3370d6ff38f3a87a645` | `t=93s` | 2026-11-27 01:01:54 |
+| `6695_stuck.jpg` | 4,274,713 | `7fbe3f9f4ab7d8a90410fe23135aca8291442cc8d49bbbe3c19b1f58fd5fd126` | `t=112s` | 2026-11-27 01:02:01 |
+
+采样时刻以屏幕 `t=` 行为准；本地 mtime 是落盘/复制时间，两者不用于换算。
+
+**93 秒（`6695.jpg`）vision 转录摘要**：顶部状态行
+`nuwa-r35] t=93s n=80 np=2 i=0s q=1807 =0 r=0 f=1057813`；关键 DATA 行：
+
+```text
+DATA hdr=9 gpt=0/0 lba=36bc0f9 | pres=22 ld=642 wr=26 sy=0 er=0 st=3
+```
+
+同屏可读的还有 `NEON LU ... ok`、`NEON MS ...`、`OBS worker=2 ...` 和
+`UFS TIME ...`。DATA 行完整、无遮挡；整块屏幕在画面内，照片略倾斜，底部白色
+横条和 `0123456789` 自检字形没有覆盖 DATA 行。
+
+**112 秒（`6695_stuck.jpg`）vision 转录摘要**：顶部状态行
+`nuwa-r35] t=112s n=97 np=2 i=0s q=198* l=0 r=0 f=1048363`；
+
+```text
+EX2 p6 launch sig=1 code=0x00000000 n=1 pc=...
+EX1 p9 MSUEar sig=1 code=0x00000000 n=1 pc=...
+tzinit[17] exited -- no exit reason available -- (signal 0, exit status 45 )
+```
+
+随后是可读的 `frames ...` 列表和 `pages=0x000000000126baa`、
+`free=0x0000000000ffd43`。EX1/EX2 与 `tzinit[17]` 块完整；顶部状态行贴近屏幕上缘，
+行首标记可能被曲面边缘裁掉，但 `t=112s` 及关键字段可读，无关键行截断。
+
+### 三个独立结论
+
+1. **93 秒 DATA 行，`st=3`**：reviewer 判读为打开时 seed 匹配、接受 generation 0
+   SB0、空映射与空日志，候选**未自行初始化**。`wr=26` 是本轮写入页次，不是
+   断电落盘回执。
+2. **112 秒用户态退出**：`tzinit[17]` exit status 45、`p6 launch sig=1`、
+   `p9 MSUEar sig=1`。这是本轮用户态退出记录，不归因历史 SIGTRAP。
+3. **未拍到 `DATA mnt`**：因此不声称 APFS 已在 `/private/var` 可写挂载。
+
+reviewer 验收结论（session `ses_de7302407ffeQUPMTwmr0IAt9q`）为
+**PASS WITH CONDITIONS**。此前 W 回执 `UNKNOWN` 与 R2 `EXACT-SB0` 的区别继续保留：
+`st=3` 本轮结果不改变 W 回执，也不把 R2 的写入效果扩展为 W 命令完成或 FUA 证明。
+
+### 下一轮判据
+
+- 断电重启后拍全 DATA 行；判据为 `gpt=0/0`、同一 `lba=36bc0f9`、`st=2`、
+  `pres>0`、`er=0`。
+- `st=6` 记为非空重放成功，但环满只读。
+- `st=3` 不通过非空恢复验收。
+
 ## 边界
 
 - R 的 `BLANK` 只说明读到 770 页零页且 `writes=0`；不证明旧固件 DMA 已撤销、SMMU
@@ -220,5 +307,13 @@ reviewer 验收 W/R 证据链（session `ses_de7382000ffesoU8SSOnqOcwcU`）：
   不补出 W 的命令完成回执，也不证明 FUA/掉电保持。
 - R2 的 `EXACT-SB0` 与 W 回执 `UNKNOWN` 必须并列保留，不能用一个覆盖另一个。
 - 本记录不把 R 基线当作 W 的授权，也不把本次 R 读回当作再次选择 W 的许可。
+- 只恢复候选 93 s 的 `st=3` 是空 generation 0 SB0 的可读状态，不满足非空恢复；
+  `wr=26` 是本轮写入页次，不是掉电落盘回执。
+- 未拍到 `DATA mnt`，不声称 APFS 在 `/private/var` 可写挂载；112 s 的
+  `tzinit[17]` exit 45 和 `p6 launch sig=1`、`p9 MSUEar sig=1` 只作为本轮
+  用户态退出记录，不归因历史 SIGTRAP。
+- 两张照片只留在本地 `media/`，不入 Git；本文件只保留文件名、哈希、采样时刻和
+  转录摘要。
 - 原始命令输出与时间线仅在 `out/sb0-r-precheck-20261127/`、`out/sb0-wx-flash-20261127/`、
-  `out/sb0-r-readback-20261127/`（Git 忽略，序列号已或可脱敏），本文件只保留结论与哈希。
+  `out/sb0-r-readback-20261127/`、`out/sb0-resume-20261127/`（Git 忽略，序列号已或
+  可脱敏），本文件只保留结论与哈希。
