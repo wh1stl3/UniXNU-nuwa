@@ -1,8 +1,9 @@
 # nuwa SB0 R 前检与 WX 刷入 — 2026-11-27 实机观察
 
-状态：设备动作已执行，主机日志 self-checked；R 屏幕结果来自用户照片（主控转述）。
-W 已由用户手动选择并确认，但 reviewer 判定提交状态 UNKNOWN；R 读回载荷已刷入，
-读回屏幕仍待用户照片。本轮不是认证、DMA 独占或掉电持久性证据。
+状态：设备动作已执行，主机日志 self-checked；R1/R2 屏幕结果来自用户照片
+（`r_1.jpg` BLANK、`r_2.jpg` EXACT-SB0，主控转述）。W 已由用户手动选择并确认，
+reviewer 判定 W 回执 UNKNOWN；reviewer 同时接受「W 写入效果经复位后 R 独立读回
+证实」。本记录不是认证、DMA 独占或掉电持久性证据。
 
 ## 范围与授权
 
@@ -178,8 +179,36 @@ fastboot flash vendor_boot_a <...>/R-package-r4/vendor_boot.img
 adb/fastboot：nuwa 均未出现；在场的只有 enuma bootloader；Windows PnP 也没有新的
 nuwa/ADB/QDLoader 接口。主机未发送 adb 写、挂载或菜单选择命令。
 
-R 读回屏幕尚未取得，需用户拍照。可能的分类包括 `BLANK`、`EXACT-SB0`、
-`MISMATCH`、`IO-FAIL`，本记录不预设；在拿到用户照片前不得称 R 读回通过或失败。
+用户照片 `r_2.jpg` 的 R 读回结果为 `EXACT-SB0`：R2 独立读回确认 SB0 页字节与
+原写页一致，其余 769 页为零（按 R 合同；照片转录只给出该分类）。主机未读屏。
+
+## 两次 R、W 与刷写顺序
+
+| 顺序 | 操作 | `boot_a` | `vendor_boot_a` | 结果 |
+| --- | --- | --- | --- | --- |
+| 1 | R1 刷入并启动 | r4 `692cfcca…` | R `3f5ffaee…` | 照片 `r_1.jpg`：`BLANK`，770 页，`writes=0` |
+| 2 | 用户从 R 停屏按电源+音量减进入 fastboot | 不变 | 不变 | 主机重新识别唯一 nuwa |
+| 3 | 刷 WX 菜单 outer 并启动 | 不变 | WX `7f1f3c3d…` | 用户选择并确认 W；约 4.5 秒后 IRQ-off hard lock，无 `NUWA SB0-W` 结果行；W 回执 UNKNOWN |
+| 4 | 用户从 W 停屏按电源+音量减回到 fastboot | 不变 | 不变 | 主机重新识别唯一 nuwa |
+| 5 | 只刷 R outer 并启动（R2） | 不变 | R `3f5ffaee…` | 照片 `r_2.jpg`：`EXACT-SB0` |
+| 6 | 用户从 R2 停屏按电源+音量减回到 fastboot | 不变 | 不变 | 下一轮开始状态 |
+
+R1 写入为 `boot_a` 与 `vendor_boot_a` 各一次；WX 与 R2 均只写
+`vendor_boot_a` 一次。所有写入均 `Sending/Writing OKAY`、exit 0；没有 recovery、
+B 槽、`userdata`/`metadata` 写入或初始化。复位/回 fastboot 均由用户按键完成，
+主机未发送除刷写后的 `fastboot reboot` 之外的复位命令。
+
+## 证据链验收
+
+reviewer 验收 W/R 证据链（session `ses_de7382000ffesoU8SSOnqOcwcU`）：
+接受「W 写入效果经复位后 R 独立读回证实」，即 R2 的 `EXACT-SB0` 证明 W 的目标页
+字节确实存在；同时 W 自身的命令完成回执仍是 `UNKNOWN`，FUA/断电保持未证。
+本记录把两个结论分开保留：
+
+- **W 回执 UNKNOWN**：屏幕没有 `NUWA SB0-W` 结果行，不能据此判定 WRITE(10) 是否
+  完成、是否 FULL GOOD 或是否被设备侧记为已消费。
+- **写入效果已读回**：复位后由 R2 独立读回为 `EXACT-SB0`，证明目标 LBA 的页内容
+  与预期写页一致；这是观测到的介质效果，不是 W 命令回执，也不证明 FUA 或掉电保持。
 
 ## 边界
 
@@ -187,8 +216,9 @@ R 读回屏幕尚未取得，需用户拍照。可能的分类包括 `BLANK`、`
   独占、掉电持久性或认证。
 - WX 的 W 路径仍是一次非 FUA 的 `WRITE(10)`；即使屏幕报 GOOD，也只证明命令完成，
   不是持久性。任何 `UNKNOWN` 或没有终态记录都必须按 R 处理，不得重试 W。
-- W 提交状态为 reviewer 判定的 `UNKNOWN`；屏幕没有 `NUWA SB0-W` 结果行，不能据此
-  认定写入已提交或未提交。是否发生写入等待 R 读回照片。
+- W 回执为 reviewer 判定的 `UNKNOWN`；R2 的 `EXACT-SB0` 只证明目标页的写入效果，
+  不补出 W 的命令完成回执，也不证明 FUA/掉电保持。
+- R2 的 `EXACT-SB0` 与 W 回执 `UNKNOWN` 必须并列保留，不能用一个覆盖另一个。
 - 本记录不把 R 基线当作 W 的授权，也不把本次 R 读回当作再次选择 W 的许可。
 - 原始命令输出与时间线仅在 `out/sb0-r-precheck-20261127/`、`out/sb0-wx-flash-20261127/`、
   `out/sb0-r-readback-20261127/`（Git 忽略，序列号已或可脱敏），本文件只保留结论与哈希。
