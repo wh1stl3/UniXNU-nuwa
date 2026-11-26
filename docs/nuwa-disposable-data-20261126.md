@@ -65,10 +65,12 @@ open after selection does not switch to writable volatile Data.
   write. The host generator emits `prepare.bin` (770 zero pages; clears both
   anchors, both map pairs and the entire old ring) and `commit-sb0.bin` (one
   seed-bound empty anchor). Any separately authorized workflow must establish
-  an exclusive offline writer and verified restorable preimage for the full
-  window first. Treat these as one consumed preparation/commit claim, never
+  an exclusive offline writer. A verified restorable preimage for the full
+  window is required only when restoration of its old contents is required;
+  otherwise explicitly accept that old contents cannot be restored. Treat
+  these as one consumed preparation/commit claim, never
   reinitialize a resumed run. For a specifically authorized nonempty
-  preimage, only accept the zeroed metadata after full readback; commit SB0
+  initial state, only accept the zeroed metadata after full readback; commit SB0
   last, and verify resulting metadata against the exact expected contents.
   If interrupted or media state is ambiguous, stop: no completed receipt,
   no resume or automatic reapplication. Stale bank pages are not read
@@ -90,10 +92,63 @@ open after selection does not switch to writable volatile Data.
 The static census covers the staged kernel/RamBlock and the linked entry points,
 not firmware/fabric inactivity or a simultaneous external raw writer. The
 `18fa4941…` read-root outer is a boot-payload rollback reference only; it does
-not restore changed Data. Any media rollback requires the separately verified
-restorable window preimage; a write error/timeout does not imply no change.
+not restore changed Data. Restoring old media contents requires the separately
+verified restorable window preimage; a write error/timeout does not imply no change.
 Retain existing boot backups. Initializing, booting, writing or rollback
 would each require applicable round-specific authorization.
+
+## Proposed offline initialization scope — not authorization
+
+The shortest evidenced route is a separately available **offline root adb
+environment** with raw block access and a usable `dd`: the earlier
+[device record](pmap-ret-device-run-20261111.md) documents binary
+`adb exec-out su -c` reads, and [firmware record](step5-firmware.md) documents
+push and root `dd` writes. These are historical examples, not proof that the
+current device has root recovery, that its `dd` supports the required flags,
+or that its writes are durable. Fastboot has no usable fetch here. Obtaining
+or booting an environment is a separate decision and authorization; do not
+assume a recovery is running or flash/boot an unreviewed recovery image.
+
+Before any write, identify exactly one nuwa by model, fix the serial, and
+re-identify after any authorized mode change. In the offline environment
+verify root, raw read/write access, `dd` seek/count semantics, available
+temporary storage and an exclusive writer: no mounted userdata, device mapper
+consumer, active OS or other producer of the target. Resolve
+`/dev/block/by-name/userdata` to its actual partition and parent LU, read
+live primary **and** backup GPT and validate both headers and arrays,
+geometry, partition bounds and identity against the admission above. Do not
+derive an absolute LU write offset from an unverified symlink. Read the
+complete 770-page metadata region before deciding: an already valid fresh
+anchor or valid resumable state must be preserved, not cleared; foreign,
+damaged, ambiguous or interrupted state stops for explicit disposition.
+An actually blank region may be initialized only under the one-time claim;
+nonblank disposable/foreign contents require explicit authorization to
+destroy those contents, not a guess based solely on magic bytes.
+
+Proposed user authorization, once the environment and review gates are met:
+one offline prepare then one commit, only within LU0 absolute 4096-byte
+blocks `[57393401,57394171)` (bytes `[235083370496,235086524416)`).
+Via a verified userdata partition node the starting offset is block
+`54282425`, byte `222340812800`; `prepare.bin` writes 770 pages there,
+then `commit-sb0.bin` writes one page at the same start. No bank, GPT,
+boot partition, erase, automatic retry, OS boot or rollback is included.
+If old contents must be restored, first obtain and independently verify a
+restorable preimage of the **full** `[57393401,61588475)` window; otherwise
+explicitly accept loss of restoration capability. Boot payload backups do
+not substitute for it.
+
+After prepare, read all 770 pages (3,153,920 bytes) and compare byte-for-byte
+with `prepare.bin`; only then write SB0 last. After commit, independently
+read all 770 pages again and compare byte-for-byte with `commit-sb0.bin`
+followed by 769 zero pages (equivalently prepare with its first page
+replaced by commit). Check transfer status and exact length for each write
+and read, not just hashes or `dd` exit status; retain the readbacks and
+receipt locally. Flush/readback capability and the exclusion contract must
+be established for the actual environment, not inferred from these host
+files. Any mismatch, short transfer, I/O error, timeout, lost exclusivity,
+identity/GPT mismatch, uncertain completion or interruption means stop:
+no commit after failed prepare, no automatic reapplication, no completed
+receipt. Readback verifies observed bytes, not power-loss durability.
 
 ## Exact host artifacts and reproduction
 
