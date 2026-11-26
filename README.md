@@ -1,6 +1,6 @@
 # UniXNU-nuwa
 
-**2026-11-27 R 前检 BLANK（用户照片）与 WX 菜单刷入（self-checked）：** [观察](docs/nuwa-sb0-rw-device-20261127-observation.md)。
+**2026-11-27 R 前检 BLANK（用户照片），W 尝试后 reviewer 判 UNKNOWN，R 读回已刷入（self-checked）：** [观察](docs/nuwa-sb0-rw-device-20261127-observation.md)。
 
 **2026-11-26 disposable Data 主机候选（self-checked，未上机，待终审）：** [记录](docs/nuwa-disposable-data-20261126.md)。
 

@@ -1,7 +1,8 @@
 # nuwa SB0 R 前检与 WX 刷入 — 2026-11-27 实机观察
 
-状态：设备动作已执行，主机日志 self-checked；R 屏幕结果来自用户照片（主控转述），
-WX 结果尚未取得。本轮不是认证、DMA 独占或掉电持久性证据。
+状态：设备动作已执行，主机日志 self-checked；R 屏幕结果来自用户照片（主控转述）。
+W 已由用户手动选择并确认，但 reviewer 判定提交状态 UNKNOWN；R 读回载荷已刷入，
+读回屏幕仍待用户照片。本轮不是认证、DMA 独占或掉电持久性证据。
 
 ## 范围与授权
 
@@ -123,9 +124,62 @@ exit 0。`fastboot reboot` exit 0，时间 `2026-11-26T16:49:19.214Z`。30 秒�
 adb/fastboot：nuwa 均未出现；在场的只有 enuma bootloader；Windows PnP 也没有新的
 nuwa/ADB/QDLoader 接口。主机未发送 adb 写、挂载或菜单选择命令，未代选、未改配置。
 
-WX 菜单默认 10 秒无输入进入 Power off，第二项 W 需要用户自行选择并确认。本轮结束时
-菜单选择结果、W 是否执行以及屏幕终态均未取得，需用户拍照或转述。不得把「30 秒无
-USB」当作 W 成功、失败或设备关机的原因。
+WX 菜单默认 10 秒无输入进入 Power off，第二项 W 需要用户自行选择并确认。上述 30 秒
+轮询结束时菜单尚未选择；后续用户已手动选择并确认，见下节。不得把「30 秒无 USB」
+当作 W 成功、失败或设备关机的原因。
+
+## W 尝试（用户操作）与 reviewer 判定
+
+用户在 WX 菜单中手动选择第二项并确认（主机未代选、未改配置）。用户照片转录：
+
+```text
+屏幕停在约 4.5 秒
+出现 IRQ-off hard lock 提示
+未见 NUWA SB0-W 结果行
+```
+
+没有可读的 W 终态记录。reviewer 判定 W 提交状态为 **UNKNOWN**
+（session `ses_de73aed4effeI37YjM1d49ytt0`）。按实验约束，UNKNOWN 不得重试 W，
+必须以 R 读回确认 SB0 页的实际字节；本次不再次选择 W。
+
+W 硬锁停屏后，用户按电源+音量减进入 fastboot；主机重新识别到唯一 nuwa。
+
+## R 读回刷写与启动
+
+fastboot 身份与容量：
+
+```text
+product: nuwa
+is-userspace: no
+current-slot: a
+slot-count: 2
+partition-size:vendor_boot_a: 0x6000000
+partition-size:boot_a:         0xC000000
+```
+
+只读内容核对仍受 bootloader 限制：`fastboot fetch` 不支持（见上节错误），
+`fastboot getvar all` 不提供分区哈希，因此没有对当前 `vendor_boot_a`/`boot_a`
+做新的字节回读。当前 `vendor_boot_a` 为 W outer 的依据是本会话按
+`7f1f3c3d…` 精确写入、WX 菜单与 W 实际执行；`boot_a` 自 r4 loader 写入后没有
+主机写入，且同一 r4 loader 实际启动了 WX 菜单。该证据不替代字节哈希。
+
+按 UNKNOWN 后只选 R 的约束，只把 R outer 再刷入 `vendor_boot_a` 一次：
+
+```text
+fastboot flash vendor_boot_a <...>/R-package-r4/vendor_boot.img
+  Sending 'vendor_boot_a' (98304 KB)  OKAY [2.260s]
+  Writing 'vendor_boot_a'             OKAY [0.030s]
+  Finished. Total time: 2.323s
+```
+
+输入 100,663,296 B，SHA-256
+`3f5ffaee9b88439cd7ecbb6f630b4e133b5dbe5a3e5d488d61831c02ee3b7668`，exit 0。
+`fastboot reboot` exit 0，时间 `2026-11-26T16:53:09.916Z`。随后 30 秒内轮询
+adb/fastboot：nuwa 均未出现；在场的只有 enuma bootloader；Windows PnP 也没有新的
+nuwa/ADB/QDLoader 接口。主机未发送 adb 写、挂载或菜单选择命令。
+
+R 读回屏幕尚未取得，需用户拍照。可能的分类包括 `BLANK`、`EXACT-SB0`、
+`MISMATCH`、`IO-FAIL`，本记录不预设；在拿到用户照片前不得称 R 读回通过或失败。
 
 ## 边界
 
@@ -133,6 +187,8 @@ USB」当作 W 成功、失败或设备关机的原因。
   独占、掉电持久性或认证。
 - WX 的 W 路径仍是一次非 FUA 的 `WRITE(10)`；即使屏幕报 GOOD，也只证明命令完成，
   不是持久性。任何 `UNKNOWN` 或没有终态记录都必须按 R 处理，不得重试 W。
-- 本记录不把 R 基线当作 W 的授权；W 的实际结果等待用户照片。
-- 原始命令输出与时间线仅在 `out/sb0-r-precheck-20261127/`、`out/sb0-wx-flash-20261127/`
-  （Git 忽略，序列号已或可脱敏），本文件只保留结论与哈希。
+- W 提交状态为 reviewer 判定的 `UNKNOWN`；屏幕没有 `NUWA SB0-W` 结果行，不能据此
+  认定写入已提交或未提交。是否发生写入等待 R 读回照片。
+- 本记录不把 R 基线当作 W 的授权，也不把本次 R 读回当作再次选择 W 的许可。
+- 原始命令输出与时间线仅在 `out/sb0-r-precheck-20261127/`、`out/sb0-wx-flash-20261127/`、
+  `out/sb0-r-readback-20261127/`（Git 忽略，序列号已或可脱敏），本文件只保留结论与哈希。
