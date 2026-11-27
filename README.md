@@ -1,5 +1,7 @@
 # UniXNU-nuwa
 
+**2026-11-27 R2 只读诊断候选实机（device/self-checked）：reviewer PASS WITH CONDITIONS（`ses_de28b9723ffePflNk4Jxlo2HWn`）；R2 outer `e4a8aaf1…b03d` 刷入 `vendor_boot_a` 一次，单次 reboot；90 s 内设备离开主机 USB、adb/fastboot 无 nuwa，R2 停屏摘要未取得。** [观察](docs/nuwa-sb0-r2-flash-20261127-observation.md)。
+
 **2026-11-27 R 只读候选第三次刷入（`3f5ffaee…b7668`，Sending/Writing OKAY、exit 0），单次 reboot 后 90 s 内未回 fastboot、完全不在主机 USB、adb 全程无设备；屏幕 Data 窗口分类本轮未取得。** [观察](docs/nuwa-sb0-r3-flash-20261127-observation.md)。
 
 **2026-11-27 实机：Data SB0 锚点写入、R 独立读回、受控关机后非空恢复（DATA `st=2`、`gpt=0/0`、`lba=36bc0f9`）已获单次状态级证据；reviewer PASS。** W 回执仍 `UNKNOWN`；突发断电耐久与文件级保留延期，用户已接受。文件系统挂载与交互未验收，认证 **NOT REACHED**；下一目标用户态启动判明与显示服务。

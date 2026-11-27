@@ -574,7 +574,7 @@ def sb0_input(path, out):
 def sb0_combined(text, role):
     from generate_r35_display_diag import replace_once
     write = "(c == Command::WriteFua || c == Command::WriteVolatile)"
-    if role == "R":
+    if role in ("R", "R2"):
         start = text.index("    case Command::WriteVolatile:")
         stop = text.index("    case Command::Sense:", start)
         text = text[:start] + text[stop:]
@@ -918,7 +918,7 @@ extern "C" unsigned native_ufs_store_gpt_check (void)
     if disposable:
         command.append("-DNUWA_DISPOSABLE_DATA=1")
     if sb0:
-        command.extend(("-I", str(private), f"-DNUWA_SB0_PROFILE={ {'W': 1, 'R': 2, 'WX': 3}[role]}"))
+        command.extend(("-I", str(private), f"-DNUWA_SB0_PROFILE={ {'W': 1, 'R': 2, 'WX': 3, 'R2': 4}[role]}"))
     (out / "data-provider-argv.json").write_text(json.dumps(command, indent=2) + "\n")
     with (out / "compile-data-provider.log").open("wb") as log:
         subprocess.run(command, cwd=recipe["cwd"], env=env, stdout=log, stderr=subprocess.STDOUT, check=True)
@@ -1261,7 +1261,7 @@ def main():
                    help="link the write-disabled v2 Data candidate using this local 4 KiB GPT capture")
     p.add_argument("--disposable-data", action="store_true",
                    help="compile the opt-in disposable Data experiment (no durability or initialization)")
-    p.add_argument("--sb0-profile", choices=("W", "R", "WX"),
+    p.add_argument("--sb0-profile", choices=("W", "R", "WX", "R2"),
                    help="WX explicitly builds a one-write experiment; W remains unbound and R read-only")
     p.add_argument("--sb0-payload", type=Path)
     p.add_argument("--candidate", action="store_true",

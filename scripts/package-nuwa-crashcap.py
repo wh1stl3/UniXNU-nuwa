@@ -154,7 +154,7 @@ def main():
     profile.add_argument("--disposable-data-template", type=Path,
                          help="use the exact 18fa4941 read-root outer and append the experiment gate")
     profile.add_argument("--sb0-template", type=Path, help="use the exact 6695da98 disposable outer")
-    ap.add_argument("--sb0-profile", choices=("W", "R", "WX"))
+    ap.add_argument("--sb0-profile", choices=("W", "R", "WX", "R2"))
     ap.add_argument("--ufs-desc", action="store_true", help="append the read-only UFS descriptor opt-in")
     ap.add_argument("--ufs-neon", action="store_true", help="append the staged read-only UFS evidence opt-in")
     ap.add_argument("--audit-only", action="store_true", help="read an existing outer and compare all FAT files")
@@ -220,7 +220,7 @@ def main():
     changed = {KERNEL, ADT}
     if sb0:
         identity = {"W": b"NUWA SB0-W UNBOUND", "R": b"NUWA SB0-R READONLY",
-                    "WX": b"NUWA SB0-W EXPERIMENT"}[sb0]
+                    "WX": b"NUWA SB0-W EXPERIMENT", "R2": b"NUWA SB0-R2 READONLY"}[sb0]
         assert identity + b"\0" in new_kernel
         drop = (DISPOSABLE_ARG, b"nuwa-ufs-neon=1", b"sheng-data-persist=2",
                 b"sheng-log-reserve=1024", b"build-tag=data-trial")
