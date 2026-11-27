@@ -436,7 +436,7 @@ def candidate_link(r35, out, records, argv, env, *, bringup_diag, hid, mg_reset,
 
 def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False, pixsig=False,
                  data_persist=False, stage=False, post_event=False, fua_permissive=False,
-                 disposable=False):
+                 sb_threads=False, disposable=False):
     from generate_r35_display_diag import generate, data_persist_row, stage_channel
 
     source = out / "BootProgress.c"
@@ -444,7 +444,7 @@ def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False, pixsig
                     mg_reset=mg_reset, smp_observe=smp_observe, pixsig=pixsig)
     if post_event:
         from generate_nuwa_postevent import generate as generate_postevent
-        text, _ = generate_postevent(text)
+        text, _ = generate_postevent(text, sb_threads=sb_threads)
     if crashcap:
         from generate_nuwa_crashcap import generate_banner
 
@@ -877,7 +877,7 @@ KERN_EXIT_PAINT_NEW = b"""\tproc_crash_coredump(p);
 \tif (p->p_exit_reason == OS_REASON_NULL) {"""
 
 
-def post_event_link(r35, out, records, argv, env):
+def post_event_link(r35, out, records, argv, env, *, sb_threads=False):
     """Recompile only the three diagnostic TUs the post-event row needs.
 
     nuwa_data_mount.c latches the completed first mount attempt, nuwa_systemos.c
@@ -894,11 +894,12 @@ def post_event_link(r35, out, records, argv, env):
             raise SystemExit("post-event: expected one " + old_obj.name + " in link.filelist")
         lines[lines.index(line)] = str(new_obj) + "\n"
 
-    def compile_record(record, source, obj, label):
+    def compile_record(record, source, obj, label, extra=()):
         command = list(record["argv"])
         source_at, = [i for i, arg in enumerate(command) if arg.endswith("/" + source.name)]
         command[source_at] = str(source)
         command[command.index("-o") + 1] = str(obj)
+        command.extend(extra)
         with (out / ("compile-" + label + ".log")).open("wb") as log:
             done = subprocess.run(command, cwd=record["cwd"], env=env, stdout=log,
                                   stderr=subprocess.STDOUT)
@@ -918,7 +919,8 @@ def post_event_link(r35, out, records, argv, env):
     sm_old, = [Path(line.strip()) for line in lines
                if line.strip().endswith("/nuwa_systemos.o")]
     sm_obj = compile_record(sm_record, ROOT / "package/nuwa-systemos/nuwa_systemos.c",
-                            out / "nuwa_systemos.o", "nuwa_systemos")
+                            out / "nuwa_systemos.o", "nuwa_systemos",
+                            ["-DNUWA_SB_THREADS=1"] if sb_threads else [])
     replace_line(sm_old, sm_obj)
 
     kx_old, = [Path(line.strip()) for line in lines if line.strip().endswith("/kern_exit.o")]
@@ -964,7 +966,7 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
                keep_link_debug, bringup_diag=False, hid_objects=(), mg_reset=False,
                smp_gate=False, smp_observe=False, crashcap=False, pixsig=False,
                data_persist=False, data_gpt=None, disposable=False, stage=False,
-               post_event=False, fua_permissive=False,
+               post_event=False, fua_permissive=False, sb_threads=False,
                data_v1_direct=False, base=None):
     for name, pin in (R35L_PINS if bringup_diag else R35_PINS).items():
         require_pin(r35 / name, pin)
@@ -1038,7 +1040,7 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
             diag = diag_archive(r35, out, hid=bool(hid_objects), mg_reset=mg_reset,
                                  smp_observe=smp_observe, crashcap=crashcap, pixsig=pixsig,
                                  data_persist=data_persist, stage=stage, post_event=post_event,
-                                 fua_permissive=fua_permissive,
+                                 fua_permissive=fua_permissive, sb_threads=sb_threads,
                                  disposable=disposable)
             argv[force_at] = f"-Wl,-force_load,{diag}"
         if data_persist:
@@ -1046,7 +1048,7 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
                                      data_candidate=data_gpt is not None and not data_v1_direct,
                                      disposable=disposable, fua_permissive=fua_permissive)
         if post_event:
-            argv = post_event_link(r35, out, records, argv, env)
+            argv = post_event_link(r35, out, records, argv, env, sb_threads=sb_threads)
         if data_gpt is not None:
             argv = data_candidate_link(out, argv, env, data_gpt, disposable=disposable)
         argv = [*argv, "-Wl,-ignore_optimization_hints", f"-Wl,-force_load,{archive}", *map(str, hid_objects)]
@@ -1307,6 +1309,8 @@ def main():
                    help="include the lsd-only saved-register recorder in the single-core candidate")
     p.add_argument("--post-event", action="store_true",
                    help="add the panic-safe pid 1/SpringBoard/exit-parent/Data-first-attempt summary")
+    p.add_argument("--sb-threads", action="store_true",
+                   help="sample SpringBoard user saved state using the --post-event process probe")
     p.add_argument("--out", type=Path, required=True, help="new directory under out/")
     a = p.parse_args()
     base, cpo, linker, out = (x.resolve() for x in (a.base, a.cpo, a.linker_dir, a.out))
@@ -1340,6 +1344,8 @@ def main():
         p.error("--crashcap requires the pinned single-core --r35l-dir candidate")
     if a.post_event and not (a.crashcap and a.data_persist_diag and not a.smp_gate):
         p.error("--post-event requires --crashcap --data-persist-diag and excludes --smp-gate")
+    if a.sb_threads and not a.post_event:
+        p.error("--sb-threads requires --post-event")
     if a.pixsig and not (a.crashcap and a.no_software_vsync):
         p.error("--pixsig requires --crashcap and --no-software-vsync")
     if a.stage_channel and not (a.pixsig and not a.data_persist_diag):
@@ -1388,7 +1394,7 @@ def main():
                                data_gpt=a.data_candidate_gpt, disposable=a.disposable_data,
                                 stage=a.stage_channel, post_event=a.post_event,
                                 fua_permissive=a.disposable_fua_permissive,
-                                data_v1_direct=a.data_v1_direct,
+                                sb_threads=a.sb_threads, data_v1_direct=a.data_v1_direct,
                                 base=base)
     else:
         # Replay XNU's exported link inputs, without its historical map output.

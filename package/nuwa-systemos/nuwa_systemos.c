@@ -62,6 +62,15 @@
 #include <libkern/libkern.h>
 #include <mach/mach_time.h>
 #include <kern/clock.h>
+#if NUWA_SB_THREADS
+#include <sys/bsdtask_info.h>
+#include <kern/task.h>
+#include <kern/thread.h>
+#include <arm/thread.h>
+#include <arm64/proc_reg.h>
+#include <mach/arm/thread_status.h>
+#include "NuwaSbThreads.h"
+#endif
 
 #ifndef NUWA_SYSTEMOS_VOLUME_UUID
 /* Measured from the SystemOS window of 087-86593-047.dmg (APSB block, +240):
@@ -510,7 +519,59 @@ struct nuwa_sb_local {
 	uint32_t pid;
 	uint32_t state;
 	int found;
+#if NUWA_SB_THREADS
+	task_t task;
+#endif
 };
+
+#if NUWA_SB_THREADS
+/* Keep the task alive across proc_iterate's release of the proc reference.
+ * fill_taskthreadlist and task_findtid own the existing queue synchronization.
+ * The latter returns a reference that also keeps the user PCB alive. */
+static __attribute__((noinline)) void
+nuwa_sbth_sample(task_t task, int found)
+{
+	if (!found || task == TASK_NULL) {
+		sbth_publish(found ? SBTH_DENIED : SBTH_NONE, NULL);
+		return;
+	}
+
+	uint64_t ids[SBTH_LIMIT + 1];
+	unsigned n = fill_taskthreadlist(task, ids, SBTH_LIMIT + 1, true) / sizeof(ids[0]);
+	struct sbth_walk walk = { 0 };
+	unsigned result = SBTH_DENIED;
+	if (!n || n > SBTH_LIMIT) {
+		goto done;
+	}
+	for (unsigned i = 0; i < n; ++i) {
+		thread_t thread = task_findtid(task, ids[i]);
+		if (thread == THREAD_NULL) {
+			goto done;
+		}
+		const arm_saved_state_t *ss = get_user_regs(thread);
+		if (!ss || !is_saved_state64(ss)) {
+			thread_deallocate(thread);
+			goto done;
+		}
+		const arm_saved_state64_t *regs = const_saved_state64(ss);
+		/* Four independent loads may span preemption. The reference pins the
+		 * PCB's lifetime, not its contents: this is not an unwind snapshot. */
+		unsigned cpsr = __atomic_load_n(&regs->cpsr, __ATOMIC_RELAXED);
+		uint64_t pc = __atomic_load_n(&regs->pc, __ATOMIC_RELAXED);
+		uint64_t lr = __atomic_load_n(&regs->lr, __ATOMIC_RELAXED);
+		uint64_t sp = __atomic_load_n(&regs->sp, __ATOMIC_RELAXED);
+		thread_deallocate(thread);
+		if (!pc || !PSR64_IS_USER64(cpsr)) {
+			goto done;
+		}
+		sbth_add(&walk, pc, lr, sp);
+	}
+	result = SBTH_OK;
+done:
+	task_deallocate(task);
+	sbth_publish(result, &walk);
+}
+#endif
 
 static int
 nuwa_sb_cb(proc_t candidate, void *arg)
@@ -521,6 +582,12 @@ nuwa_sb_cb(proc_t candidate, void *arg)
 		sb->pid = (uint32_t)candidate->p_pid;
 		sb->state = (uint32_t)(uint8_t)candidate->p_stat;
 		sb->found = 1;
+#if NUWA_SB_THREADS
+		sb->task = proc_task(candidate);
+		if (sb->task != TASK_NULL) {
+			task_reference(sb->task);
+		}
+#endif
 		return PROC_RETURNED_DONE;
 	}
 	return PROC_RETURNED;
@@ -535,7 +602,7 @@ nuwa_sb_cb(proc_t candidate, void *arg)
 static void
 nuwa_sb_sample(void)
 {
-	struct nuwa_sb_local sb = { 0, 0, 0 };
+	struct nuwa_sb_local sb = { 0 };
 	uint64_t old, word;
 
 	old = __atomic_load_n(&nuwa_sb_public, __ATOMIC_ACQUIRE);
@@ -547,6 +614,9 @@ nuwa_sb_sample(void)
 		    (uint64_t)(sb.state & 0xffffffffu);
 	}
 	__atomic_store_n(&nuwa_sb_public, word, __ATOMIC_RELEASE);
+#if NUWA_SB_THREADS
+	nuwa_sbth_sample(sb.task, sb.found);
+#endif
 }
 
 void

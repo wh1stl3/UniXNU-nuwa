@@ -32,6 +32,8 @@ import sys
 import tempfile
 from pathlib import Path
 
+from generate_nuwa_postevent import SBTH_PAINT
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -99,6 +101,8 @@ def test_data_row(renderer, cc, work, include_dirs):
 #include <string.h>
 #define BP_COLS 120
 static unsigned calls, last_row;
+static struct { unsigned yield_requested; } display;
+static void bp_sbth_paint(int critical) { (void)critical; }
 static char last_text[160];
 static char build_tag[32] = "data-trial";
 static int mount_state = 2, post_ready = 0;
@@ -168,6 +172,15 @@ def critical_harness(renderer, systemos_globals):
     critical = critical.replace('__asm__ volatile("dsb sy" ::: "memory");', ";")
     px = extract_between(text, "static void px_text(unsigned x0",
                          "extern volatile uint64_t native_legacy_copy_n")
+    sbth = ""
+    if SBTH_PAINT.decode() in text:
+        sbth = """
+unsigned nuwa_sbth_rows(char (*rows)[120], unsigned limit) {
+  if (!limit) return 0;
+  snprintf(rows[0], 120, "SBTH none");
+  return 1;
+}
+""" + SBTH_PAINT.decode()
     return """\
 #include <stdint.h>
 #include <stddef.h>
@@ -191,7 +204,7 @@ int nuwa_data_mount_summary(char *b, size_t n) {
   snprintf(b, n, "DATA0 st=4 err=0 ro=0 dev=12345678 seed=1 first-attempt"); return 2;
 }
 static void px_text(unsigned, unsigned, const char *, unsigned, uint32_t, uint32_t);
-""" + state + "\n" + px + "\n" + critical + """
+""" + state + "\n" + px + "\n" + sbth + critical + """
 int main(void) {
   size_t bytes = 1440u * 3200u * 4u;
   unsigned char *fb = calloc(1, bytes);
@@ -212,7 +225,7 @@ int main(void) {
   free(fb);
   if (!top) return 3;
   if (below) return 4;            /* strict y < height/8 */
-  if (top < 2u * 42u * 1440u) return 5;
+  if (top != """ + str(3 if sbth else 2) + """u * 42u * 1440u) return 5;
   return 0;
 }
 """
@@ -230,7 +243,7 @@ def test_critical_paint(renderer, cc, work, include_dirs):
         rc = compile_and_run(cc, code, include_dirs, work, "test_critical_paint_" + name,
                              extra=flags)
         check("critical paint / " + name, rc == 0,
-              "two px_text rows, no refresh/bound")
+              "DATA0 and S above y<h/8; plus row 0 with SBTH")
 
 
 def test_ppid(renderer, cc, work, include_dirs):
@@ -408,7 +421,7 @@ def test_disassembly(kernel, objdump, cc):
     positions = [prep.find("<" + name + ">") for name in order]
     check("linked critical order", all(p >= 0 for p in positions) and positions == sorted(positions),
           "capture < sync < paint < panic")
-    check("critical paint calls px_text twice", paint.count("<_px_text>") >= 2,
+    check("critical paint retains DATA0/S px_text calls", paint.count("<_px_text>") >= 2,
           f"px_text calls={paint.count('<_px_text>')}")
     check("critical paint bypasses refresh/prepare_scanout",
           "<_refresh>" not in paint and "<_boot_progress_prepare_scanout>" not in paint,

@@ -214,6 +214,29 @@ DRAW_END = b"""  {
   __asm__ volatile("dsb sy" ::: "memory");
   last_draw=now;"""
 
+SBTH_DECL = b"static void bp_sbth_paint(int);\n"
+SBTH_PAINT = b"""extern unsigned nuwa_sbth_rows(char (*)[120], unsigned);
+// The unused top row survives the panic clear. Detail rows occupy the
+// removed glyph-example area, before the retained comb (48*cell+344).
+static void bp_sbth_paint(int critical) {
+  if(!display.frame || !display.scale || !display.stride ||
+     !display.width || !display.height) return;
+  if(!critical && (!display.bound ||
+     __atomic_load_n(&display.yield_requested,__ATOMIC_ACQUIRE))) return;
+  char rows[5][120];
+  unsigned used=nuwa_sbth_rows(rows,critical?1:5);
+  unsigned cell=14u*display.scale, cols=display.width/(6u*display.scale);
+  if(cols>BP_COLS-1) cols=BP_COLS-1;
+  if(cell<=display.height/8u)
+    px_text(0,0,rows[0],cols,0xff00ffcc,0xff000000);
+  if(critical) return;
+  for(unsigned i=0;i<4 && (49u+i)*cell<=display.height && (i+1u)*cell<=344u;++i) {
+    if(__atomic_load_n(&display.yield_requested,__ATOMIC_ACQUIRE)) return;
+    px_text(0,(48u+i)*cell,i+1<used?rows[i+1]:"",cols,0xff00ffcc,0xff000000);
+  }
+}
+"""
+
 
 def replace_once(text, old, new):
     if text.count(old) != 1:
@@ -221,11 +244,20 @@ def replace_once(text, old, new):
     return text.replace(old, new, 1)
 
 
-def generate(src):
+def generate(src, *, sb_threads=False):
     digest = sha256(src).hexdigest()
     text = replace_once(src, STATE_ANCHOR, STATE_ANCHOR + STATE)
     text = replace_once(text, BOOT_EXIT_ANCHOR, CRITICAL_PAINT + BOOT_EXIT_ANCHOR)
     text = replace_once(text, BOOT_EXIT_ENABLED_ANCHOR,
                         BOOT_EXIT_ENABLED_ANCHOR + b"  bp_post_latch(pid,name,status,ns);\n")
     text = replace_once(text, DRAW_END_ANCHOR, DRAW_END)
+    if sb_threads:
+        text = replace_once(text, STATE_ANCHOR, STATE_ANCHOR + SBTH_DECL)
+        declaration = CRITICAL_PAINT.splitlines(keepends=True)[0]
+        text = replace_once(text, declaration, declaration + SBTH_PAINT)
+        text = replace_once(text, b"  unsigned row_data=7u,row_summary=8u;",
+                            b"  bp_sbth_paint(1);\n  unsigned row_data=7u,row_summary=8u;")
+        text = replace_once(text, DRAW_END_ANCHOR,
+                            b"  if(!__atomic_load_n(&display.yield_requested,__ATOMIC_ACQUIRE)) bp_sbth_paint(0);\n"
+                            + DRAW_END_ANCHOR)
     return text, digest
