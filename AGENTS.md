@@ -6,6 +6,7 @@
 小米 13 Pro（nuwa / SM8550）通过 UniXNU 运行 iOS 16（donor: iPhone10,3 / 16.7.16 / 20H392，xnu-8796 线）。
 
 ## 基线
+- 2026-11-27 SpringBoard banner r2 outer `7211a988…e4495`（审查结论主控转述 PASS WITH CONDITIONS）已刷入 `vendor_boot_a` 一次（Sending/Writing OKAY、exit 0、无 AVB footer 警告），随即单次 `fastboot reboot`（exit 0）；120 s 内 nuwa 未回 fastboot、完全离开主机 USB（非 adb/MTP/EDL），adb 全程无设备，设备现不在总线上。只证 bootloader 接受镜像；无屏幕/启动/用户态证据。见 [观察](docs/nuwa-sb-banner-20261127-observation.md)。
 - 2026-11-27 FUA-permissive 实验包（`NUWA_DISPOSABLE_FUA_PERMISSIVE`，接受 FUA 位、不承诺耐久；默认构建仍拒绝）outer `b5d1b9f1…` 已刷入 `vendor_boot_a`；在「拔 USB + 长按电源进菜单」启动下出现 Apple logo、运行到 ≥692 s、Data 挂载 `pub=1`，采样中 tzinit 未再以 45 退出。锁屏/桌面、文件级持久、断电耐久与认证（NOT REACHED）未证。深度终审与刷写细节见 [观察](docs/nuwa-fua-trial-20261127-observation.md)。
 - 2026-11-27 诊断增量候选（deep_reviewer 终审 PASS WITH CONDITIONS `ses_de6f88826ffePVthCKXnVOioO2`）：outer `b9103e97…` 已刷入 `vendor_boot_a` 一次（Sending/Writing OKAY、exit 0），**未重启、未启动**，设备留在 fastboot；无屏幕/运行时证据。见 [观察](docs/nuwa-postevent-20261127-observation.md)。
 - 2026-11-26 disposable Data 主机候选（self-checked，未上机，待终审）：[记录](docs/nuwa-disposable-data-20261126.md)。
@@ -65,6 +66,7 @@
 - 仍未验收：正常启动、平台服务发布、存储与用户态；内存所有权问题不因探针阳性自动关闭。ADT 身份/种子约定不变，root UUID 留待根卷阶段。`scripts/` 历史审计工具不再充当 ADT 生成器。
 
 ## 下一步
+- 2026-11-27：设备在本轮 reboot 后离开主机 USB，恢复需用户现场断电重入 fastboot；恢复前无设备动作可做。
 - 2026-11-25：lsd 崩溃分析冻结，主线转显示接线；下一版用已审的 pixsig 探针（outer `28d45ab6c3d7c5ec79cf14543af4836dadf04de7eddaa91fd876b36bc831dbcc`）区分 `bk` 清屏与 `so` 真 surface，再按结果决定是否处理 CA 软件后端、转换/扫描输出或 vsync。
 
 ## 阻塞

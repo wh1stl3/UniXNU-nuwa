@@ -1,5 +1,7 @@
 # UniXNU-nuwa
 
+**2026-11-27 SpringBoard banner r2 outer `7211a988…e4495` 已刷入 `vendor_boot_a`（Sending/Writing OKAY、exit 0），随后单次 `fastboot reboot` 的 120 s 采样内 nuwa 未回 fastboot、完全离开主机 USB、adb 全程无设备；只证 bootloader 接受镜像。** [观察](docs/nuwa-sb-banner-20261127-observation.md)。
+
 **2026-11-27 FUA-permissive 实验 outer `b5d1b9f1…`（`NUWA_DISPOSABLE_FUA_PERMISSIVE`，
 接受 FUA 位、不承诺耐久；默认构建仍拒绝）在「拔 USB + 长按电源进菜单」启动下出现
 Apple logo、运行到 ≥692 s、Data 挂载 `pub=1`，采样中 tzinit 未再以 45 退出；锁屏/桌面、
