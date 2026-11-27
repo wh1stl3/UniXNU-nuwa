@@ -6,6 +6,7 @@
 小米 13 Pro（nuwa / SM8550）通过 UniXNU 运行 iOS 16（donor: iPhone10,3 / 16.7.16 / 20H392，xnu-8796 线）。
 
 ## 基线
+- 2026-11-27 R 只读候选第三次刷入（self-checked）：门禁单进程连续 8/8，outer `3f5ffaee…b7668` 刷入 `vendor_boot_a` 一次（exit 0），单次 reboot；90 s 采样内未回 fastboot、完全离开主机 USB、adb 无设备，屏幕 Data 窗口分类未取得。见 [观察](docs/nuwa-sb0-r3-flash-20261127-observation.md)。
 - 2026-11-26 disposable Data 主机候选（self-checked，未上机，待终审）：[记录](docs/nuwa-disposable-data-20261126.md)。
 - 2026-11-26 UFS 只读采样画面（主控转述 vision / self-checked 记录）：[观察](docs/nuwa-ufs-neon-20261126-observation.md)。
 - 2026-11-26 UFS 只读 MODE SENSE + GPT 摘要候选，生产写门关闭、未上机（self-checked）：[记录](docs/nuwa-ufs-modeprobe-20261126.md)。
