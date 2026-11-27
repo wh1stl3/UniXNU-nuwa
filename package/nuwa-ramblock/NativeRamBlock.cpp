@@ -24,6 +24,12 @@
 #endif
 #if defined(NUWA_DISPOSABLE_DATA)
 #include "../nuwa-data-write/DisposableData.h"
+// Diagnostic experiment only: accept Force Unit Access as an ordinary request
+// and accept cache flushes without a media-durability claim. Off by default;
+// the production path and every ordinary build keep the FUA refusal.
+#ifndef NUWA_DISPOSABLE_FUA_PERMISSIVE
+#define NUWA_DISPOSABLE_FUA_PERMISSIVE 0
+#endif
 #endif
 
 extern "C" {
@@ -65,6 +71,13 @@ volatile int32_t nuwa_ram_block_reject = 0;
 volatile uint64_t native_data_persist_pages = 0, native_data_persist_loaded = 0, native_data_persist_writes = 0,
                   native_data_persist_syncs = 0, native_data_persist_errors = 0, native_data_persist_first_lba = 0,
                   native_data_persist_present = 0;
+#if defined(NUWA_DISPOSABLE_DATA)
+// Diagnostic counters for the FUA-permissive experiment: FUA requests seen at
+// the RamBlock gate and successful (non-durable) cache flushes. The renderer
+// reads them; no storage, boot or authentication decision reads them.
+volatile uint64_t nuwa_disposable_fua_requests = 0;
+volatile uint64_t nuwa_disposable_flushes = 0;
+#endif
 }
 
 class NativeRamBlock : public IOBlockStorageDevice {
@@ -329,11 +342,28 @@ public:
 #if defined(NUWA_DATA_CANDIDATE)
     if (!gate) return kIOReturnNotReady;
     IOLockLock(gate);
-    const IOReturn status = !online ? kIOReturnNotReady :
-#if defined(NUWA_DISPOSABLE_DATA)
-                            directFailed ? kIOReturnIOError : kIOReturnUnsupported;
+    IOReturn status;
+#if defined(NUWA_DISPOSABLE_DATA) && NUWA_DISPOSABLE_FUA_PERMISSIVE
+    // Diagnostic experiment only. Every overlay run is committed by writeRun()
+    // (data pages, order, log page, order) before its write is acknowledged, so
+    // no log is left staged here; native_ufs_store_order() rechecks the existing
+    // session after all earlier commands. This is not a media flush and makes
+    // no durability claim; a failed commit has already set directFailed.
+    if (!online) status = kIOReturnNotReady;
+    else if (directFailed) status = kIOReturnIOError;
+    else if (!direct) status = kIOReturnUnsupported;
+    else if (!native_ufs_store_order()) status = kIOReturnIOError;
+    else {
+      __atomic_fetch_add(&nuwa_disposable_flushes, 1, __ATOMIC_RELAXED);
+      status = kIOReturnSuccess;
+    }
 #else
-                            directFailed ? kIOReturnIOError : kIOReturnSuccess;
+    status = !online ? kIOReturnNotReady :
+#if defined(NUWA_DISPOSABLE_DATA)
+             directFailed ? kIOReturnIOError : kIOReturnUnsupported;
+#else
+             directFailed ? kIOReturnIOError : kIOReturnSuccess;
+#endif
 #endif
     IOLockUnlock(gate);
     return status;
@@ -459,9 +489,16 @@ IOReturn NativeRamBlock::doAsyncReadWrite(IOMemoryDescriptor *buffer, UInt64 blo
       (buffer->getDirection() != kIODirectionIn && buffer->getDirection() != kIODirectionOut)) return kIOReturnBadArgument;
 #if defined(NUWA_DISPOSABLE_DATA)
   // IOBlockStorageDriver propagates a dispatch error to the completion chain.
-  // Reject before copying, staging DMA, or acknowledging any bytes.
-  if (attributes && (attributes->options & kIOStorageOptionForceUnitAccess))
+  // Reject before copying, staging DMA, or acknowledging any bytes. The
+  // FUA-permissive experiment instead falls through to the ordinary path and
+  // counts the request; it does not turn FUA into a durability claim.
+  if (attributes && (attributes->options & kIOStorageOptionForceUnitAccess)) {
+#if NUWA_DISPOSABLE_FUA_PERMISSIVE
+    __atomic_fetch_add(&nuwa_disposable_fua_requests, 1, __ATOMIC_RELAXED);
+#else
     return kIOReturnUnsupported;
+#endif
+  }
 #endif
   if (!gate) return kIOReturnNotReady;
   const uint64_t bytes = count * 512;

@@ -1,5 +1,7 @@
 # UniXNU-nuwa
 
+**2026-11-27 FUA-permissive 实验 outer `b5d1b9f1…` 已刷入 `vendor_boot_a` 一次（Sending/Writing OKAY、exit 0），未重启、未启动，设备留在 fastboot；deep_reviewer 终审 PASS WITH CONDITIONS（`ses_de49ff134ffepX3A6SfemOc7pJ`）。** [观察](docs/nuwa-fua-trial-20261127-observation.md)。
+
 **2026-11-27 诊断增量 outer `b9103e97…` 已刷入 `vendor_boot_a`（Sending/Writing OKAY、exit 0），未重启、未启动，设备留在 fastboot；deep_reviewer 终审 PASS WITH CONDITIONS。** [观察](docs/nuwa-postevent-20261127-observation.md)。
 
 **2026-11-26 disposable Data 主机候选（self-checked，未上机，待终审）：** [记录](docs/nuwa-disposable-data-20261126.md)。

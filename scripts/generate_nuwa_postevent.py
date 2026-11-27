@@ -6,8 +6,13 @@ first-attempt result.  Row 0 is left empty because the renderer's line()/bar()
 guard drops row 0.  A photograph taken after the critical-process panic still
 carries the last user-space state:
 
-    row 7: [data-trial] DATA0 st=4 err=0 ro=0 dev=12345678 seed=1 first-attempt
+    row 7: [data-trial] DATA0 st=4 err=0 ro=0 dev=12345678 seed=1 first-attempt fua=N flush=N
     row 8: [data-trial] S p1=RUN sb=95:RUN EX=17:tzinit:0/45:pp=1
+
+  fua/flush  diagnostic counters from the disposable NativeRamBlock.  In the
+       FUA-permissive experiment (build define NUWA_FUA_TRIAL=1) row 7 also
+       carries " FUA-EXP-nodur"; that label is a non-durability statement, not
+       a write or flush success claim.
 
   p1   pid 1 state from the two-second process probe (absent when proc_find
        fails); this is a sample, not a live read at draw time.
@@ -48,7 +53,11 @@ static unsigned bp_post_lock;
 static volatile uint64_t bp_post_parent; // high 32: pid, low 32: parent pid
 """ + MARKER + b"""extern volatile uint32_t nuwa_pid1_present,nuwa_pid1_state;
 extern volatile uint64_t nuwa_sb_public;
+extern volatile uint64_t nuwa_disposable_fua_requests,nuwa_disposable_flushes;
 extern int nuwa_data_mount_summary(char *,size_t);
+#if defined(NUWA_FUA_TRIAL) && NUWA_FUA_TRIAL
+static const char bp_fua_trial_tag[] __attribute__((used)) = "NUWA-FUA-TRIAL-20261127";
+#endif
 void boot_progress_critical_capture(int pid,const char *name,int status,unsigned ns,
   uint64_t code,int ppid);
 void boot_progress_critical_capture(int pid,const char *name,int status,unsigned ns,
@@ -132,6 +141,22 @@ static int bp_post_event_row_direct(char *buf,size_t size) {
 static int bp_post_ready(void) {
   return (int)__atomic_load_n(&bp_post_exit.valid,__ATOMIC_ACQUIRE);
 }
+// Diagnostic only: accepted FUA requests and successful non-durable flushes.
+// FUA-EXP-nodur is present only in the compile-time experimental package; it
+// explicitly says the package is not a media-durability claim.
+static void bp_fua_suffix(char *buf,size_t size) {
+  size_t used=strlen(buf);
+  if(used>=size) return;
+  snprintf(buf+used,size-used," fua=%llu flush=%llu%s",
+    (unsigned long long)__atomic_load_n(&nuwa_disposable_fua_requests,__ATOMIC_RELAXED),
+    (unsigned long long)__atomic_load_n(&nuwa_disposable_flushes,__ATOMIC_RELAXED),
+#if defined(NUWA_FUA_TRIAL) && NUWA_FUA_TRIAL
+    " FUA-EXP-nodur"
+#else
+    ""
+#endif
+  );
+}
 """
 
 BOOT_EXIT_ANCHOR = b"void boot_progress_exit(int pid,const char *name,int status,unsigned ns,uint64_t code) {\n"
@@ -147,8 +172,9 @@ void boot_progress_critical_paint(void);
 void boot_progress_critical_paint(void) {
   if(!display.frame || !display.scale || !display.stride ||
      !display.width || !display.height) return;
-  char data[80],summary[80];
+  char data[BP_COLS],summary[80];
   (void)nuwa_data_mount_summary(data,sizeof data);
+  bp_fua_suffix(data,sizeof data);
   (void)bp_post_event_row_direct(summary,sizeof summary);
   unsigned cell=14u*display.scale;
   unsigned cols=display.width/(6u*display.scale);
@@ -164,9 +190,10 @@ void boot_progress_critical_paint(void) {
 
 DRAW_END_ANCHOR = b"  __asm__ volatile(\"dsb sy\" ::: \"memory\");\n  last_draw=now;"
 DRAW_END = b"""  {
-    char data[80],full[BP_COLS];
+    char data[BP_COLS],full[BP_COLS];
     int state=nuwa_data_mount_summary(data,sizeof data);
     if(state>0) {
+      bp_fua_suffix(data,sizeof data);
       if(build_tag[0] && snprintf(full,sizeof full,"[%s] %s",build_tag,data)<(int)sizeof full)
         line(7,full,0xffffaa00);
       else line(7,data,0xffffaa00);

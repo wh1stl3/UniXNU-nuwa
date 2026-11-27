@@ -8,7 +8,8 @@ executes them.  It then disassembles the linked native-with-stabs.macho to
 confirm the critical calls survived optimisation and their order.
 
 Covered:
-  * DATA0 is emitted on page row 7 through line(), not row 0 (line() drops 0).
+  * DATA0 is emitted on page row 7 through line(), not row 0 (line() drops 0);
+    the fua/flush suffix and the trial label are compiled and checked.
   * boot_progress_critical_paint() with display_owned=1 / bound=0 writes
     non-zero pixels into display.frame only above y = height/8.
   * an unmatched parent prints pp=?; a matched parent prints pp=<n>.
@@ -79,8 +80,14 @@ def compile_and_run(cc, code, include_dirs, work, name, extra=()):
 
 def test_data_row(renderer, cc, work, include_dirs):
     text = renderer.read_text()
-    block = extract_between(text, "  {\n    char data[80],full[BP_COLS];",
+    start = ("  {\n    char data[BP_COLS],full[BP_COLS];"
+             if "  {\n    char data[BP_COLS],full[BP_COLS];" in text else
+             "  {\n    char data[80],full[BP_COLS];")
+    block = extract_between(text, start,
                             "  __asm__ volatile(\"dsb sy\" ::: \"memory\");\n  last_draw=now;")
+    has_suffix = "static void bp_fua_suffix(char *buf,size_t size) {" in text
+    suffix = extract_braced(text, "static void bp_fua_suffix(char *buf,size_t size) {") \
+        if has_suffix else ""
     harness = """\
 #include <stdint.h>
 #include <stdio.h>
@@ -90,6 +97,7 @@ static unsigned calls, last_row;
 static char last_text[160];
 static char build_tag[32] = "data-trial";
 static int mount_state = 2, post_ready = 0;
+static volatile uint64_t nuwa_disposable_fua_requests = 7, nuwa_disposable_flushes = 3;
 static void line(unsigned row, const char *s, uint32_t c) {
   (void)c; calls++; last_row = row; snprintf(last_text, sizeof last_text, "%s", s);
 }
@@ -99,6 +107,7 @@ static int nuwa_data_mount_summary(char *b, size_t n) {
 }
 static int bp_post_ready(void) { return post_ready; }
 static int bp_post_event_row(char *b, size_t n) { (void)b; (void)n; return 0; }
+""" + suffix + """
 static void run_data_block(void) {
 """ + block + """
 }
@@ -108,6 +117,14 @@ int main(void) {
   run_data_block();
   if (!(calls > before && last_row == 7 && strstr(last_text, "DATA0") && strstr(last_text, "first-attempt")))
     return 1;
+#if HAVE_FUA_SUFFIX
+  if (!(strstr(last_text, "fua=7") && strstr(last_text, "flush=3")))
+    return 3;
+#endif
+#if EXPECT_FUA_LABEL
+  if (!strstr(last_text, "FUA-EXP-nodur"))
+    return 4;
+#endif
   before = calls; mount_state = 0; post_ready = 1;
   run_data_block();
   if (!(calls > before && last_row == 7 && strstr(last_text, "DATA0 not run")))
@@ -115,8 +132,12 @@ int main(void) {
   return 0;
 }
 """
-    rc = compile_and_run(cc, harness, include_dirs, work, "test_data_row")
-    check("DATA0 on non-zero row through line()", rc == 0, "row 7, not row 0")
+    extra = ["-DHAVE_FUA_SUFFIX=1"] if has_suffix else []
+    if "NUWA-FUA-TRIAL-20261127" in text:
+        extra += ["-DNUWA_FUA_TRIAL=1", "-DEXPECT_FUA_LABEL=1"]
+    rc = compile_and_run(cc, harness, include_dirs, work, "test_data_row", extra=extra)
+    check("DATA0 on non-zero row through line()", rc == 0,
+          "row 7, not row 0; fua/flush fields and trial label when present")
 
 
 def critical_harness(renderer, systemos_globals):
@@ -124,6 +145,8 @@ def critical_harness(renderer, systemos_globals):
     state = extract_between(text, "// NUWA-POSTEVENT-20261127: event-time summary",
                             "static int bp_post_ready(void) {")
     state += extract_braced(text[text.index("static int bp_post_ready(void) {"):], "static int bp_post_ready(void) {")
+    if "static void bp_fua_suffix(char *buf,size_t size) {" in text:
+        state += extract_braced(text, "static void bp_fua_suffix(char *buf,size_t size) {")
     critical = extract_braced(text, "void boot_progress_critical_paint(void) {")
     critical = critical.replace('__asm__ volatile("dsb sy" ::: "memory");', ";")
     px = extract_between(text, "static void px_text(unsigned x0",
@@ -139,6 +162,7 @@ def critical_harness(renderer, systemos_globals):
 #include "BootProgressDisplay.h"
 static struct bp_display display;
 static char build_tag[32] = "data-trial";
+volatile uint64_t nuwa_disposable_fua_requests = 7, nuwa_disposable_flushes = 3;
 volatile uint32_t nuwa_pid1_present = 1, nuwa_pid1_state = 2;
 volatile uint64_t nuwa_sb_public = (1ull << 63) | (1ull << 62) | ((uint64_t)95 << 32) | 2;
 static size_t strlcpy(char *d, const char *s, size_t n) {
@@ -193,6 +217,7 @@ def test_ppid(renderer, cc, work, include_dirs):
 #include <stdio.h>
 #include <string.h>
 static char build_tag[32] = "data-trial";
+volatile uint64_t nuwa_disposable_fua_requests = 7, nuwa_disposable_flushes = 3;
 volatile uint32_t nuwa_pid1_present = 1, nuwa_pid1_state = 2;
 volatile uint64_t nuwa_sb_public = (1ull << 63) | (1ull << 62) | ((uint64_t)95 << 32) | 2;
 static size_t strlcpy(char *d, const char *s, size_t n) {
