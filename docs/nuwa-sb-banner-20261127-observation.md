@@ -14,9 +14,9 @@
   每 10 s 采样 `fastboot devices`/`adb devices`；异常即停。
 - 明确不做：不刷其他分区、不切槽、不初始化、不写 `userdata`/`metadata`。
 - 产物：`out/nuwa-sb-banner-20261127-package-r2/vendor_boot.img`。**审查留痕**：本轮
-  写入前的最终审查结论由主控转述为 **PASS WITH CONDITIONS**；本记录未持有该审查的
-  agent 名、session 标识与条件原文，因此不复述条件内容，也**无法确认**它是否为
-  「方案 B 审查，未经 deep_reviewer」。写入按该转述结论放行。
+  写入前的审查来自 `reviewer` 会话 `ses_de2cdddc5ffePUw2gq6wva4G7o`，结论
+  **PASS WITH CONDITIONS**，不涉及 `deep_reviewer`。本记录未持有条件原文，故不复述
+  条件内容；写入按该审查结论放行。
 - `fastboot devices` 两台：`<serial>` = `product=enuma`（未操作）；nuwa serial 与前几轮
   相同（不入库），本轮固定使用。
 
@@ -156,6 +156,6 @@ fastboot -s <nuwa-serial> reboot
   具体触发条件仍未证。
 - 该 banner r2 包在 `docs/` 侧没有构建记录：生成/打包日志只在 `out/`
   （`nuwa-sb-banner-20261127-build-r2.log`、`nuwa-sb-banner-20261127-package-r2.log`，
-  均被 `.gitignore` 排除），产生该 outer 的生成器源码改动在本次提交时仍未提交。因此
-  本记录只凭包内 `audit.json` 保留镜像身份字段，**不能**声称该 outer 可从当前已提交
-  源码逐字节复现。
+  均被 `.gitignore` 排除）。生成该 outer 的源码与测试（11 个文件）已随源码提交
+  `3335a3d483da80214af36b4275e5e4aa03bf5523` 入库；**从已提交源码重建是否逐字节一致
+  尚未验证**。
