@@ -95,18 +95,19 @@ private:
     seal(b, SbHeader, 92, gen, slot);
   }
 
+  static bool tornSuperblockMarker(const uint8_t *b, uint32_t slot) {
+    for (size_t i = 1; i < 8; ++i)
+      if (!memcmp(b, SbMagic, i) && zero(b + i, Tail - i)) return true;
+    return zero(b, Tail) && le32(b + Tail + 8) == slot && le64(b + Tail);
+  }
+
   Header superblock(uint32_t slot, Checkpoint &cp) const {
     const auto *b = w_->block;
     if (zero(b, Block)) return Header::Empty;
     if (memcmp(b, SbMagic, 8)) {
       // A torn first write to the alternate SB can leave only its tail,
       // or a prefix of the magic over an all-zero header.
-      for (size_t i = 1; i < 8; ++i)
-        if (!memcmp(b, SbMagic, i) && zero(b + i, Tail - i))
-          return Header::Damaged;
-      if (zero(b, Tail) && le32(b + Tail + 8) == slot && le64(b + Tail))
-        return Header::Damaged;
-      return Header::Foreign;
+      return tornSuperblockMarker(b, slot) ? Header::Damaged : Header::Foreign;
     }
     if (le32(b + BlockCrc) != crc(b, Block, BlockCrc)) return Header::Damaged;
     if (le32(b + 8) != 3 || le64(b + 16) != Pages || memcmp(b + 32, seed_, 32) ||
@@ -221,6 +222,11 @@ private:
   }
 
 public:
+  // Marker recognition, not validation for replay: a foreign seed or bad CRC
+  // does not make a superblock safe for another format to overwrite.
+  static bool hasSuperblockMarker(const uint8_t *b, uint32_t slot) {
+    return !memcmp(b, SbMagic, 8) || tornSuperblockMarker(b, slot);
+  }
   // Pure format helper: no admission, transport, ownership or durability claim.
   static bool initialSuperblock(uint8_t (&out)[Block], const uint8_t (&seed)[32],
                                 const Workspace &workspace) {

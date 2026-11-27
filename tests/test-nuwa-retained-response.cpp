@@ -99,6 +99,7 @@ static struct Hardware {
   unsigned descCount = 0, queryCode = 0, descLength = 0;
   const NuwaData::FixtureGpt *gpt = nullptr;
   Sb0Media *sb0 = nullptr;
+  Response (*fileWrite)(uint64_t, const uint8_t *) = nullptr;
   uint8_t lastCdb[10]{}, written[NuwaData::Block]{};
   std::promise<void> *submitted = nullptr;
   std::future<void> *allowCompletion = nullptr;
@@ -170,6 +171,7 @@ static struct Hardware {
       }
       return;
     }
+    if (writing && fileWrite) wire = fileWrite(preparedLba, virt + CombinedRead::Data);
     r[0] = wire.type;
     r[1] = wire.flags;
     r[2] = wire.lun;
@@ -278,7 +280,7 @@ static struct Hardware {
   uint32_t doorbell() {
     if (!active) return 0;
     if (seen++ == 0) return 1 | wire.foreignDb; // Foreign bit can disappear by final read.
-    if (sb0 && wire.timedOut) return 1;
+    if ((sb0 || fileWrite) && wire.timedOut) return 1;
     active = false;
     return 0;
   }
@@ -286,7 +288,7 @@ static struct Hardware {
   uint32_t completedOcs() { ++ocsReads; if (writing) ++writeOcsReads; return wire.ocs; }
   void deadline() {}
   void barrier() {}
-  bool expired() const { return wire.timedOut && (sb0 ? seen > 2 : ocsReads > 1); }
+  bool expired() const { return wire.timedOut && ((sb0 || fileWrite) ? seen > 2 : ocsReads > 1); }
   void delay() {}
   void invalidateAll() {}
   const volatile uint8_t *response() const { return virt + 4608; }

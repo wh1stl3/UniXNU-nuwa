@@ -9,10 +9,10 @@ carries the last user-space state:
     row 7: [data-trial] DATA0 st=4 err=0 ro=0 dev=12345678 seed=1 first-attempt fua=N flush=N
     row 8: [data-trial] S p1=RUN sb=95:RUN EX=17:tzinit:0/45:pp=1
 
-  fua/flush  diagnostic counters from the disposable NativeRamBlock.  In the
-       FUA-permissive experiment (build define NUWA_FUA_TRIAL=1) row 7 also
-       carries " FUA-EXP-nodur"; that label is a non-durability statement, not
-       a write or flush success claim.
+  fua/flush  diagnostic counters from the disposable NativeRamBlock, omitted
+       in other builds.  In the FUA-permissive experiment (build define
+       NUWA_FUA_TRIAL=1) row 7 also carries " FUA-EXP-nodur"; that label is a
+       non-durability statement, not a write or flush success claim.
 
   p1   pid 1 state from the two-second process probe (absent when proc_find
        fails); this is a sample, not a live read at draw time.
@@ -53,7 +53,9 @@ static unsigned bp_post_lock;
 static volatile uint64_t bp_post_parent; // high 32: pid, low 32: parent pid
 """ + MARKER + b"""extern volatile uint32_t nuwa_pid1_present,nuwa_pid1_state;
 extern volatile uint64_t nuwa_sb_public;
+#if defined(NUWA_DISPOSABLE_DATA)
 extern volatile uint64_t nuwa_disposable_fua_requests,nuwa_disposable_flushes;
+#endif
 extern int nuwa_data_mount_summary(char *,size_t);
 #if defined(NUWA_FUA_TRIAL) && NUWA_FUA_TRIAL
 static const char bp_fua_trial_tag[] __attribute__((used)) = "NUWA-FUA-TRIAL-20261127";
@@ -145,6 +147,7 @@ static int bp_post_ready(void) {
 // FUA-EXP-nodur is present only in the compile-time experimental package; it
 // explicitly says the package is not a media-durability claim.
 static void bp_fua_suffix(char *buf,size_t size) {
+#if defined(NUWA_DISPOSABLE_DATA)
   size_t used=strlen(buf);
   if(used>=size) return;
   snprintf(buf+used,size-used," fua=%llu flush=%llu%s",
@@ -156,6 +159,10 @@ static void bp_fua_suffix(char *buf,size_t size) {
     ""
 #endif
   );
+#else
+  (void)buf;
+  (void)size;
+#endif
 }
 """
 

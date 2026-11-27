@@ -47,6 +47,16 @@ public:
   bool open(const GptIdentity &id, unsigned lun, unsigned block, uint64_t rootBytes,
             uint64_t reserve, Window window, GptBuffers &g, bool requestWrite = false,
             LiveGpt *live = nullptr) {
+    return openWithPreflight(id, lun, block, rootBytes, reserve, window, g, requestWrite,
+                             live, [](const auto &) { return true; });
+  }
+
+  // The write preflight may use the ownership-checked reader only during
+  // this call. No handle or write qualification is published before it passes.
+  template<class Preflight>
+  bool openWithPreflight(const GptIdentity &id, unsigned lun, unsigned block, uint64_t rootBytes,
+                         uint64_t reserve, Window window, GptBuffers &g, bool requestWrite,
+                         LiveGpt *live, Preflight preflight) {
     Lock lock(port_);
     if (live) *live = LiveGpt::Unknown;
     if (open_ || !slot_.rootAllowed() || !port_.readyLocked() ||
@@ -71,7 +81,9 @@ public:
                            {id.capacity - 1, backup, g.bh, g.be});
     if (live) *live = valid ? LiveGpt::Ok : LiveGpt::Bad;
     if (!valid) return false;
-    // Recheck the sticky write gate after the GPT reads.
+    if (requestWrite && !preflight([this](uint64_t lba, void *dst) { return readLocked(lba, dst); }))
+      return false;
+    // Recheck the sticky write gate after the GPT and preflight reads.
     if (requestWrite && !slot_.dataAllowed(port_.readyLocked())) return false;
     data_ = window;
     open_ = true;

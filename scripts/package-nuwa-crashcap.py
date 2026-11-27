@@ -34,6 +34,7 @@ DISPOSABLE_TEMPLATE_CHMH = bytes.fromhex(
 DISPOSABLE_RAW_SHA = "26957263676b0312f3bebe213c2985deb8ce5652ac2ce3e99d59da77aba89584"
 DISPOSABLE_SEED_ID = "a106b0ce026771e221f578125e104a4854c2cbcda7c1b8390f6e056a47c63743"
 DISPOSABLE_ARG = b"nuwa-disposable-data=1"
+V1_ARG = b"nuwa-data-write=1"
 PAYLOAD = "EFI/UniXNU/Payloads/"
 KERNEL, ADT, TRUST, SCRATCH = (PAYLOAD + name for name in
     ("kernel.macho", "kernel.macho.adt", "kernel.macho.trustcache", "scratch-data.img"))
@@ -49,6 +50,21 @@ def pinned(path, digest):
     if sha(blob) != digest:
         raise ValueError(f"{path}: SHA-256 mismatch")
     return blob
+
+
+def require_v1_kernel(kernel):
+    if any(symbol in kernel for symbol in (
+            b"_nuwa_disposable_fua_requests\0", b"_nuwa_disposable_flushes\0",
+            b"_native_ufs_store_order\0")):
+        raise SystemExit("v1 template excludes disposable kernel symbols")
+    if any(symbol not in kernel for symbol in (
+            b"_native_ufs_store_open\0", b"_native_ufs_store_write\0",
+            b"_native_ufs_store_sync\0")):
+        raise SystemExit("v1 template requires the Data provider")
+    marker = b"__ZL12directDiskIO"
+    at = kernel.find(marker)
+    if at < 0 or b"N7persist7Overlay" not in kernel[at:].partition(b"\0")[0]:
+        raise SystemExit("v1 template requires RamBlock's v1 directDiskIO")
 
 
 def regions(blob):
@@ -119,8 +135,10 @@ def main():
     profile.add_argument("--data-persist-diag", action="store_true", help="use the pinned PIX outer")
     profile.add_argument("--disposable-data-template", type=Path,
                          help="use the exact 18fa4941 read-root outer and append the experiment gate")
+    profile.add_argument("--v1-data-template", type=Path,
+                         help="use the exact 18fa4941 read-root outer and select v1 args (host only)")
     ap.add_argument("--post-event", action="store_true",
-                    help="require the panic-safe post-event summary marker; pairs with --disposable-data-template")
+                    help="require the panic-safe post-event summary marker; pairs with a Data template")
     ap.add_argument("--ufs-desc", action="store_true", help="append the read-only UFS descriptor opt-in")
     ap.add_argument("--ufs-neon", action="store_true", help="append the staged read-only UFS evidence opt-in")
     ap.add_argument("--audit-only", action="store_true", help="read an existing outer and compare all FAT files")
@@ -129,9 +147,10 @@ def main():
         ap.error("--ufs-desc requires --data-persist-diag")
     if a.ufs_neon and (not a.data_persist_diag or a.ufs_desc):
         ap.error("--ufs-neon requires --data-persist-diag and excludes --ufs-desc")
-    if a.post_event and a.disposable_data_template is None:
-        ap.error("--post-event requires --disposable-data-template")
+    if a.post_event and a.disposable_data_template is None and a.v1_data_template is None:
+        ap.error("--post-event requires a Data template")
     disposable = a.disposable_data_template is not None
+    data_template = a.disposable_data_template or a.v1_data_template
     out = a.out.resolve()
     assert out.is_relative_to(ROOT / "out") and out not in (ROOT / "out", OLD, DSP_OUTER, FRAME_OUTER, PIX_OUTER)
     kernel = a.kernel.resolve()
@@ -139,12 +158,18 @@ def main():
     new_kernel = kernel.read_bytes()
     if a.post_event and b"NUWA-POSTEVENT-20261127" not in new_kernel:
         raise SystemExit("--post-event kernel lacks the post-event summary marker")
+    if data_template:
+        if disposable:
+            if b"_native_ufs_store_order\0" not in new_kernel:
+                raise SystemExit("disposable template requires a disposable kernel")
+        else:
+            require_v1_kernel(new_kernel)
     template, template_sha, template_chmh = (
-        (a.disposable_data_template.parent, DISPOSABLE_TEMPLATE_SHA, DISPOSABLE_TEMPLATE_CHMH) if disposable else
+        (data_template.parent, DISPOSABLE_TEMPLATE_SHA, DISPOSABLE_TEMPLATE_CHMH) if data_template else
         (PIX_OUTER, PIX_SHA, PIX_CHMH) if a.data_persist_diag or a.stage_channel else
         (FRAME_OUTER, FRAME_SHA, FRAME_CHMH) if a.pixsig else
         (DSP_OUTER, DSP_SHA, DSP_CHMH) if a.crashframes else (OLD, ROLLBACK, OLD_CHMH))
-    old_outer = pinned(a.disposable_data_template if disposable else template / "vendor_boot.img", template_sha)
+    old_outer = pinned(data_template if data_template else template / "vendor_boot.img", template_sha)
     head, old_fat, tail = regions(old_outer)
 
     # Reuse the prior Python reader, not the rollback audit's executable main.
@@ -156,17 +181,17 @@ def main():
     before = files(FAT32(old_fat))
     assert before[KERNEL] != new_kernel
     assert sha(before[SCRATCH]) == SEED
-    seed_report = disposable_seed(a.base.resolve(), before[SCRATCH]) if disposable else {}
+    seed_report = disposable_seed(a.base.resolve(), before[SCRATCH]) if data_template else {}
     entry, = (e for e in tomllib.loads(before[CONFIG].decode())["entry"] if e["id"] == "xnu")
     args = entry["args"].encode()
     tokens = args.split()
-    assert len(args) == (577 if disposable else 561)
+    assert len(args) == (577 if data_template else 561)
     for token in (b"nuwa-sb-stack=900", b"disable-jobs=com.apple.iconservices.iconservicesagent"):
         assert tokens.count(token) == 1
     assert not any(t.split(b"=", 1)[0] == b"sheng-smp" for t in tokens)
     if a.stage_channel:
         assert not any(t.split(b"=", 1)[0] == b"nuwa-init" for t in tokens)
-    if a.data_persist_diag or disposable:
+    if a.data_persist_diag or data_template:
         assert not any(t.split(b"=", 1)[0] == b"sheng-data-reset" for t in tokens)
         for token in (b"sheng-data-persist=2", b"sheng-log-reserve=1024"):
             assert tokens.count(token) == 1
@@ -182,14 +207,15 @@ def main():
     bound["kernel"] = new_kernel
     expected_config = before[CONFIG]
     changed = {KERNEL, ADT}
-    if disposable:
-        assert b"_native_ufs_store_order\0" in new_kernel and DISPOSABLE_ARG not in tokens
+    if data_template:
+        assert DISPOSABLE_ARG not in tokens and V1_ARG not in tokens
         assert b"nuwa-ufs-neon=1" in tokens and tokens.count(b"build-tag=nuwa-r35") == 1
         assert not {t.split(b"=", 1)[0] for t in tokens} & {
             b"nuwa-data-write", b"nuwa-disposable-data", b"sheng-data-reset", b"sheng-log"}
         prefix = b'args = "' + args + b'"'
         assert expected_config.count(prefix) == 1
-        args = args.replace(b"build-tag=nuwa-r35", b"build-tag=data-trial") + b" " + DISPOSABLE_ARG
+        args = args.replace(b"build-tag=nuwa-r35", b"build-tag=data-trial") + b" " + (
+            DISPOSABLE_ARG if disposable else V1_ARG)
         # The actual 8796 arm64 consumer has 608 bytes including NUL,
         # smaller than the loader's generic 1024-byte buffer.
         assert len(args) < 608
@@ -257,10 +283,13 @@ def main():
     if a.ufs_neon:
         report.update(trust_sha256=sha(after[TRUST]), template_outer_sha256=template_sha,
                       diagnostic_arg="nuwa-ufs-neon=1", device_release=False)
-    if disposable:
+    if data_template:
         report.update(seed_report, trust_sha256=sha(after[TRUST]),
-                      template_outer_sha256=template_sha, diagnostic_arg=DISPOSABLE_ARG.decode(),
-                      device_release=False)
+                       template_outer_sha256=template_sha,
+                       diagnostic_arg=(DISPOSABLE_ARG if disposable else V1_ARG).decode(),
+                       device_release=False)
+        if not disposable:
+            report["data_profile"] = "v1-direct"
     if a.audit_only:
         assert rb == readback.read_bytes()
     else:

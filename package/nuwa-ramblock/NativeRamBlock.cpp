@@ -19,9 +19,7 @@
 #include "PersistOverlay.h"
 #include "DirectDisk.h"
 #include "PersistOpenReason.h"
-#if defined(NUWA_DATA_CANDIDATE)
 #include "../nuwa-data-write/DualBankLogOverlay.h"
-#endif
 #if defined(NUWA_DISPOSABLE_DATA)
 #include "../nuwa-data-write/DisposableData.h"
 // Diagnostic experiment only: accept Force Unit Access as an ordinary request
@@ -210,8 +208,14 @@ public:
       uint64_t window = persist::windowBlocks(pages);
 #if defined(NUWA_DATA_CANDIDATE)
       if (mode == 2) window = DataOverlay::overlayBlocks(pages);
-#endif
       int opened = native_ufs_store_open(window, &first, &why);
+#else
+      // Reserved size selects v3 in the retained write preflight. Never let
+      // a v1 caller select that route, even if its logical size happens to fit.
+      int opened = 0;
+      if (mode == 2 && window == NuwaData::DualBankLogOverlay<>::Media.blocks) why = "size";
+      else opened = native_ufs_store_open(window, &first, &why);
+#endif
       nuwa_data_persist_open_why = nuwa_persist_open_reason(opened, why);
       if (!opened) {
 #if defined(NUWA_DISPOSABLE_DATA)
@@ -339,10 +343,10 @@ public:
   IOReturn reportRemovability(bool *value) override { *value = false; return kIOReturnSuccess; }
   IOReturn reportWriteProtection(bool *value) override { *value = false; return kIOReturnSuccess; }
   IOReturn doSynchronizeCache() override {
-#if defined(NUWA_DATA_CANDIDATE)
     if (!gate) return kIOReturnNotReady;
     IOLockLock(gate);
     IOReturn status;
+#if defined(NUWA_DATA_CANDIDATE)
 #if defined(NUWA_DISPOSABLE_DATA) && NUWA_DISPOSABLE_FUA_PERMISSIVE
     // Diagnostic experiment only. Every overlay run is committed by writeRun()
     // (data pages, order, log page, order) before its write is acknowledged, so
@@ -365,13 +369,15 @@ public:
              directFailed ? kIOReturnIOError : kIOReturnSuccess;
 #endif
 #endif
+#else
+    // Each successful direct write is already durable; this checks that
+    // the store still stands behind that contract, not a new media flush.
+    StoreOps store;
+    status = !online ? kIOReturnNotReady :
+             direct && (directFailed || !store.sync()) ? kIOReturnIOError : kIOReturnSuccess;
+#endif
     IOLockUnlock(gate);
     return status;
-#else
-    if (!online) return kIOReturnNotReady;
-    // Every changed page is on the medium, with its bitmap bit, before its write completed (PersistOverlay.h): nothing to flush.
-    return kIOReturnSuccess;
-#endif
   }
   IOReturn doSynchronize(UInt64, UInt64, IOOptionBits) override { return doSynchronizeCache(); }
 #if defined(NUWA_DISPOSABLE_DATA)

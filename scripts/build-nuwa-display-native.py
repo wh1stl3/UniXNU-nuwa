@@ -435,7 +435,8 @@ def candidate_link(r35, out, records, argv, env, *, bringup_diag, hid, mg_reset,
 
 
 def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False, pixsig=False,
-                 data_persist=False, stage=False, post_event=False, fua_permissive=False):
+                 data_persist=False, stage=False, post_event=False, fua_permissive=False,
+                 disposable=False):
     from generate_r35_display_diag import generate, data_persist_row, stage_channel
 
     source = out / "BootProgress.c"
@@ -484,10 +485,11 @@ def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False, pixsig
     require_pin(stubs, "14817837f64b37f36c65ac5e6debd187c2d8e6a24e8b0396eb280239108c6b47")
     hid_define = ["--define", "NUWA_HID_STANDIN=1"] if hid else []
     fua_define = ["--define", "NUWA_FUA_TRIAL=1"] if fua_permissive else []
+    disposable_define = ["--define", "NUWA_DISPOSABLE_DATA=1"] if disposable else []
     run([sys.executable, "-B", r35 / "build-boot-progress-compact.py",
          "--out", out, "--tree", r35 / "tree", "--stubs", stubs, "--renderer", source,
          "--define", "NUWA_VIRTIO_STUBS=1", "--define", "NUWA_RENDER_FIXES=1",
-         "--define", "NUWA_BOLD_GLYPHS=1", *hid_define, *fua_define])
+         "--define", "NUWA_BOLD_GLYPHS=1", *hid_define, *fua_define, *disposable_define])
     staged = out / "libBootProgress.a"
     expected = definitions(r35 / staged.name) + Counter({DSP_SET: 1, "_boot_progress_prop_set": 1})
     if post_event:
@@ -962,7 +964,8 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
                keep_link_debug, bringup_diag=False, hid_objects=(), mg_reset=False,
                smp_gate=False, smp_observe=False, crashcap=False, pixsig=False,
                data_persist=False, data_gpt=None, disposable=False, stage=False,
-               post_event=False, fua_permissive=False, base=None):
+               post_event=False, fua_permissive=False,
+               data_v1_direct=False, base=None):
     for name, pin in (R35L_PINS if bringup_diag else R35_PINS).items():
         require_pin(r35 / name, pin)
     require_pin(cpo, R35_CPO_SHA)
@@ -1035,10 +1038,12 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
             diag = diag_archive(r35, out, hid=bool(hid_objects), mg_reset=mg_reset,
                                  smp_observe=smp_observe, crashcap=crashcap, pixsig=pixsig,
                                  data_persist=data_persist, stage=stage, post_event=post_event,
-                                 fua_permissive=fua_permissive)
+                                 fua_permissive=fua_permissive,
+                                 disposable=disposable)
             argv[force_at] = f"-Wl,-force_load,{diag}"
         if data_persist:
-            argv = persist_diag_link(r35, out, records, argv, env, data_candidate=data_gpt is not None,
+            argv = persist_diag_link(r35, out, records, argv, env,
+                                     data_candidate=data_gpt is not None and not data_v1_direct,
                                      disposable=disposable, fua_permissive=fua_permissive)
         if post_event:
             argv = post_event_link(r35, out, records, argv, env)
@@ -1276,6 +1281,9 @@ def main():
                    help="show the unchanged Data store open's reason in the PIX candidate")
     p.add_argument("--data-candidate-gpt", type=Path,
                    help="link the write-disabled v2 Data candidate using this local 4 KiB GPT capture")
+    p.add_argument("--data-v1-direct", action="store_true",
+                   help="link the Data provider but compile RamBlock's v1 mode-2 branch; "
+                        "host build only, production writes remain disabled")
     p.add_argument("--disposable-data", action="store_true",
                    help="compile the opt-in disposable Data experiment (no durability or initialization)")
     p.add_argument("--disposable-fua-permissive", action="store_true",
@@ -1340,6 +1348,8 @@ def main():
         p.error("--data-persist-diag requires --pixsig and the single-core candidate")
     if a.data_candidate_gpt and not a.data_persist_diag:
         p.error("--data-candidate-gpt requires --data-persist-diag")
+    if a.data_v1_direct and (not a.data_candidate_gpt or a.disposable_data or a.disposable_fua_permissive):
+        p.error("--data-v1-direct requires --data-candidate-gpt and excludes disposable options")
     if a.disposable_data and not a.data_candidate_gpt:
         p.error("--disposable-data requires the pinned single-core Data GPT candidate")
     if a.disposable_fua_permissive and not (a.disposable_data and a.post_event):
@@ -1376,8 +1386,10 @@ def main():
                               smp_gate=a.smp_gate, smp_observe=a.smp_observe, crashcap=a.crashcap,
                                pixsig=a.pixsig, data_persist=a.data_persist_diag,
                                data_gpt=a.data_candidate_gpt, disposable=a.disposable_data,
-                               stage=a.stage_channel, post_event=a.post_event,
-                               fua_permissive=a.disposable_fua_permissive, base=base)
+                                stage=a.stage_channel, post_event=a.post_event,
+                                fua_permissive=a.disposable_fua_permissive,
+                                data_v1_direct=a.data_v1_direct,
+                                base=base)
     else:
         # Replay XNU's exported link inputs, without its historical map output.
         stem = "mach.development.bcm2837"

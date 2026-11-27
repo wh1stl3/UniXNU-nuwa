@@ -9,7 +9,8 @@ confirm the critical calls survived optimisation and their order.
 
 Covered:
   * DATA0 is emitted on page row 7 through line(), not row 0 (line() drops 0);
-    the fua/flush suffix and the trial label are compiled and checked.
+    disposable counters and trial label are checked, and non-disposable builds
+    link without those counters or their fields.
   * the live banner's SB row renders never / gone / <pid>:<state> from the
     same packed word the panic-safe summary reads.
   * the deleted DSP/SC/SVC/PEER/LOAD/TIMER/UFS-L/NEON-HC..PL rows are absent and
@@ -101,7 +102,9 @@ static unsigned calls, last_row;
 static char last_text[160];
 static char build_tag[32] = "data-trial";
 static int mount_state = 2, post_ready = 0;
+#if defined(NUWA_DISPOSABLE_DATA)
 static volatile uint64_t nuwa_disposable_fua_requests = 7, nuwa_disposable_flushes = 3;
+#endif
 static void line(unsigned row, const char *s, uint32_t c) {
   (void)c; calls++; last_row = row; snprintf(last_text, sizeof last_text, "%s", s);
 }
@@ -121,9 +124,13 @@ int main(void) {
   run_data_block();
   if (!(calls > before && last_row == 7 && strstr(last_text, "DATA0") && strstr(last_text, "first-attempt")))
     return 1;
-#if HAVE_FUA_SUFFIX
+#if HAVE_FUA_SUFFIX && defined(NUWA_DISPOSABLE_DATA)
   if (!(strstr(last_text, "fua=7") && strstr(last_text, "flush=3")))
     return 3;
+#else
+  if (strstr(last_text, "fua=") || strstr(last_text, "flush=") ||
+      strstr(last_text, "FUA-EXP-nodur"))
+    return 5;
 #endif
 #if EXPECT_FUA_LABEL
   if (!strstr(last_text, "FUA-EXP-nodur"))
@@ -136,12 +143,18 @@ int main(void) {
   return 0;
 }
 """
-    extra = ["-DHAVE_FUA_SUFFIX=1"] if has_suffix else []
+    common = ["-DHAVE_FUA_SUFFIX=1"] if has_suffix else []
+    profiles = [("disposable", ["-DNUWA_DISPOSABLE_DATA=1"])]
     if "NUWA-FUA-TRIAL-20261127" in text:
-        extra += ["-DNUWA_FUA_TRIAL=1", "-DEXPECT_FUA_LABEL=1"]
-    rc = compile_and_run(cc, harness, include_dirs, work, "test_data_row", extra=extra)
-    check("DATA0 on non-zero row through line()", rc == 0,
-          "row 7, not row 0; fua/flush fields and trial label when present")
+        profiles.append(("fua_trial", ["-DNUWA_DISPOSABLE_DATA=1",
+                                      "-DNUWA_FUA_TRIAL=1", "-DEXPECT_FUA_LABEL=1"]))
+    if not has_suffix or "#if defined(NUWA_DISPOSABLE_DATA)" in suffix:
+        profiles.insert(0, ("non_disposable", []))
+    for name, flags in profiles:
+        rc = compile_and_run(cc, harness, include_dirs, work, "test_data_row_" + name,
+                             extra=common + flags)
+        check("DATA0 row / " + name, rc == 0,
+              "row 7; disposable counters only when available")
 
 
 def critical_harness(renderer, systemos_globals):
@@ -166,7 +179,9 @@ def critical_harness(renderer, systemos_globals):
 #include "BootProgressDisplay.h"
 static struct bp_display display;
 static char build_tag[32] = "data-trial";
+#if defined(NUWA_DISPOSABLE_DATA)
 volatile uint64_t nuwa_disposable_fua_requests = 7, nuwa_disposable_flushes = 3;
+#endif
 volatile uint32_t nuwa_pid1_present = 1, nuwa_pid1_state = 2;
 volatile uint64_t nuwa_sb_public = (1ull << 63) | (1ull << 62) | ((uint64_t)95 << 32) | 2;
 static size_t strlcpy(char *d, const char *s, size_t n) {
@@ -205,9 +220,17 @@ int main(void) {
 
 def test_critical_paint(renderer, cc, work, include_dirs):
     code = critical_harness(renderer, None)
-    rc = compile_and_run(cc, code, include_dirs, work, "test_critical_paint")
-    check("critical paint: bound=0 writes y<h/8 pixels", rc == 0,
-          "two px_text rows, no refresh/bound")
+    text = renderer.read_text()
+    has_suffix = "static void bp_fua_suffix(char *buf,size_t size) {" in text
+    suffix = extract_braced(text, "static void bp_fua_suffix(char *buf,size_t size) {") if has_suffix else ""
+    profiles = [("disposable", ["-DNUWA_DISPOSABLE_DATA=1"])]
+    if not has_suffix or "#if defined(NUWA_DISPOSABLE_DATA)" in suffix:
+        profiles.insert(0, ("non_disposable", []))
+    for name, flags in profiles:
+        rc = compile_and_run(cc, code, include_dirs, work, "test_critical_paint_" + name,
+                             extra=flags)
+        check("critical paint / " + name, rc == 0,
+              "two px_text rows, no refresh/bound")
 
 
 def test_ppid(renderer, cc, work, include_dirs):
