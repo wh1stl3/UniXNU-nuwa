@@ -6,7 +6,7 @@
 小米 13 Pro（nuwa / SM8550）通过 UniXNU 运行 iOS 16（donor: iPhone10,3 / 16.7.16 / 20H392，xnu-8796 线）。
 
 ## 基线
-- 2026-11-27 FUA-permissive 实验候选（deep_reviewer 终审 PASS WITH CONDITIONS `ses_de49ff134ffepX3A6SfemOc7pJ`）：outer `b5d1b9f1…` 已刷入 `vendor_boot_a` 一次（Sending/Writing OKAY、exit 0），**未重启、未启动**，设备留在 fastboot；无屏幕/运行时证据；FUA 位未下传介质、不声称持久性。见 [观察](docs/nuwa-fua-trial-20261127-observation.md)。
+- 2026-11-27 FUA-permissive 实验包（`NUWA_DISPOSABLE_FUA_PERMISSIVE`，接受 FUA 位、不承诺耐久；默认构建仍拒绝）outer `b5d1b9f1…` 已刷入 `vendor_boot_a`；在「拔 USB + 长按电源进菜单」启动下出现 Apple logo、运行到 ≥692 s、Data 挂载 `pub=1`，采样中 tzinit 未再以 45 退出。锁屏/桌面、文件级持久、断电耐久与认证（NOT REACHED）未证。深度终审与刷写细节见 [观察](docs/nuwa-fua-trial-20261127-observation.md)。
 - 2026-11-27 诊断增量候选（deep_reviewer 终审 PASS WITH CONDITIONS `ses_de6f88826ffePVthCKXnVOioO2`）：outer `b9103e97…` 已刷入 `vendor_boot_a` 一次（Sending/Writing OKAY、exit 0），**未重启、未启动**，设备留在 fastboot；无屏幕/运行时证据。见 [观察](docs/nuwa-postevent-20261127-observation.md)。
 - 2026-11-26 disposable Data 主机候选（self-checked，未上机，待终审）：[记录](docs/nuwa-disposable-data-20261126.md)。
 - 2026-11-26 UFS 只读采样画面（主控转述 vision / self-checked 记录）：[观察](docs/nuwa-ufs-neon-20261126-observation.md)。

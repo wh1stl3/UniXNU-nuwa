@@ -1,6 +1,9 @@
 # UniXNU-nuwa
 
-**2026-11-27 FUA-permissive 实验 outer `b5d1b9f1…` 已刷入 `vendor_boot_a` 一次（Sending/Writing OKAY、exit 0），未重启、未启动，设备留在 fastboot；deep_reviewer 终审 PASS WITH CONDITIONS（`ses_de49ff134ffepX3A6SfemOc7pJ`）。** [观察](docs/nuwa-fua-trial-20261127-observation.md)。
+**2026-11-27 FUA-permissive 实验 outer `b5d1b9f1…`（`NUWA_DISPOSABLE_FUA_PERMISSIVE`，
+接受 FUA 位、不承诺耐久；默认构建仍拒绝）在「拔 USB + 长按电源进菜单」启动下出现
+Apple logo、运行到 ≥692 s、Data 挂载 `pub=1`，采样中 tzinit 未再以 45 退出；锁屏/桌面、
+文件级持久、断电耐久与认证（NOT REACHED）未证。** [观察](docs/nuwa-fua-trial-20261127-observation.md)。
 
 **2026-11-27 诊断增量 outer `b9103e97…` 已刷入 `vendor_boot_a`（Sending/Writing OKAY、exit 0），未重启、未启动，设备留在 fastboot；deep_reviewer 终审 PASS WITH CONDITIONS。** [观察](docs/nuwa-postevent-20261127-observation.md)。
 
