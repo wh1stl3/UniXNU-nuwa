@@ -1,5 +1,7 @@
 # UniXNU-nuwa
 
+**2026-11-28 无字形示例 FUA 包单次刷写与 reboot（device/self-checked；屏幕待照片）：** [观察](docs/nuwa-no-glyph-flash-20261128-observation.md)。
+
 **2026-11-27 SpringBoard banner r2 outer `7211a988…e4495` 已刷入 `vendor_boot_a`（Sending/Writing OKAY、exit 0），随后单次 `fastboot reboot` 的 120 s 采样内 nuwa 未回 fastboot、完全离开主机 USB、adb 全程无设备；只证 bootloader 接受镜像。** [观察](docs/nuwa-sb-banner-20261127-observation.md)。
 
 **2026-11-27 FUA-permissive 实验 outer `b5d1b9f1…`（`NUWA_DISPOSABLE_FUA_PERMISSIVE`，

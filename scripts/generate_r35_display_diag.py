@@ -587,9 +587,24 @@ static unsigned bp_stage_name(char name[MAXTHREADNAMESIZE]) {
                         b'!strncmp(s,"STAGE ",6) || !strncmp(s,"LOAD",4)) return 0;')
 
 
+def remove_glyph_examples(src):
+    # Retain the independent pixel comb and rules at their original positions.
+    start = src.index(b"/*\n * nuwa r21: glyph path self test.")
+    end = src.index(b"#define ST_BAND_PAD 8\n", start)
+    src = replace_once(src, src[start:end],
+                       b"/* Retain the r21 non-glyph pixel probes at their original positions. */\n")
+    start = src.index(b"// One character cell with an explicit scale.")
+    end = src.index(b"static void st_bar(", start)
+    src = replace_once(src, src[start:end], b"")
+    start = src.index(b'  const char *l1="0123456789"')
+    end = src.index(b"  for(unsigned i=0;i<16;++i) st_bar(", start)
+    return replace_once(src, src[start:end], b"  unsigned y=top+336;\n")
+
+
 def generate(src, *, mg_reset=False, smp_observe=False, pixsig=False):
     if sha256(src).hexdigest() != RENDERER_SHA:
         raise ValueError("expected the pinned r35l full renderer")
+    src = remove_glyph_examples(src)
     # stack_snapshot_from_kernel and the STACKSHOT_* flags live in <kern/debug.h>
     # (XNU_KERNEL_PRIVATE), the same declaration kern_stackshot.c implements.
     src = replace_once(src, b"#include <kern/boot_progress.h>\n",
