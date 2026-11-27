@@ -435,12 +435,15 @@ def candidate_link(r35, out, records, argv, env, *, bringup_diag, hid, mg_reset,
 
 
 def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False, pixsig=False,
-                 data_persist=False, stage=False):
+                 data_persist=False, stage=False, post_event=False):
     from generate_r35_display_diag import generate, data_persist_row, stage_channel
 
     source = out / "BootProgress.c"
     text = generate((r35 / "BootProgress.c").read_bytes(),
                     mg_reset=mg_reset, smp_observe=smp_observe, pixsig=pixsig)
+    if post_event:
+        from generate_nuwa_postevent import generate as generate_postevent
+        text, _ = generate_postevent(text)
     if crashcap:
         from generate_nuwa_crashcap import generate_banner
 
@@ -486,6 +489,10 @@ def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False, pixsig
          "--define", "NUWA_BOLD_GLYPHS=1", *hid_define])
     staged = out / "libBootProgress.a"
     expected = definitions(r35 / staged.name) + Counter({DSP_SET: 1, "_boot_progress_prop_set": 1})
+    if post_event:
+        expected["_boot_progress_exit_parent"] = 1
+        expected["_boot_progress_critical_capture"] = 1
+        expected["_boot_progress_critical_paint"] = 1
     if crashcap:
         expected["_boot_progress_lsd_crash"] = 1
     if stage:
@@ -825,10 +832,134 @@ extern "C" unsigned native_ufs_store_gpt_check (void)
     return args
 
 
+KERN_EXIT_INPUT_SHA = "72073bac1f8df8e664eba539e7568229e2c863848808ffc9c349826e3e7fc691"
+KERN_EXIT_HOOK_OLD = b"""\tboot_progress_exit(proc_getpid(p),p->p_name,rv,
+\t    p->p_exit_reason ? p->p_exit_reason->osr_namespace : 0,
+\t    p->p_exit_reason ? p->p_exit_reason->osr_code : 0);
+
+\tif (p->p_crash_behavior != 0 || p == initproc) {
+\t\tproc_handle_critical_exit(p, rv);
+\t}"""
+KERN_EXIT_HOOK_NEW = b"""\tboot_progress_exit_parent(proc_getpid(p), p->p_ppid);
+\tboot_progress_exit(proc_getpid(p),p->p_name,rv,
+\t    p->p_exit_reason ? p->p_exit_reason->osr_namespace : 0,
+\t    p->p_exit_reason ? p->p_exit_reason->osr_code : 0);
+
+\tif (p->p_crash_behavior != 0 || p == initproc) {
+\t\tproc_handle_critical_exit(p, rv);
+\t}"""
+KERN_EXIT_CAPTURE_OLD = b"""#endif /* DEVELOPMENT */
+
+\tchar *exit_reason_desc = exit_reason_get_string_desc(p->p_exit_reason);"""
+KERN_EXIT_CAPTURE_NEW = b"""#endif /* DEVELOPMENT */
+
+\tboot_progress_critical_capture(proc_getpid(p), p->p_name, rv,
+\t    p->p_exit_reason ? p->p_exit_reason->osr_namespace : 0,
+\t    p->p_exit_reason ? p->p_exit_reason->osr_code : 0, p->p_ppid);
+
+\tchar *exit_reason_desc = exit_reason_get_string_desc(p->p_exit_reason);"""
+KERN_EXIT_PAINT_OLD = b"""\tproc_crash_coredump(p);
+
+\tsync(p, (void *)NULL, (int *)NULL);
+
+\tif (p->p_exit_reason == OS_REASON_NULL) {"""
+KERN_EXIT_PAINT_NEW = b"""\tproc_crash_coredump(p);
+
+\tsync(p, (void *)NULL, (int *)NULL);
+
+\tboot_progress_critical_paint();
+
+\tif (p->p_exit_reason == OS_REASON_NULL) {"""
+
+
+def post_event_link(r35, out, records, argv, env):
+    """Recompile only the three diagnostic TUs the post-event row needs.
+
+    nuwa_data_mount.c latches the completed first mount attempt, nuwa_systemos.c
+    publishes pid 1 and SpringBoard from the existing two-second probe, and
+    kern_exit.c supplies the parent pid and paints before the critical-exit
+    panic.  The filelist replacement keeps the same link order.
+    """
+    filelist = out / "link.filelist"
+    lines = filelist.read_text().splitlines(keepends=True)
+
+    def replace_line(old_obj, new_obj):
+        line = str(old_obj) + "\n"
+        if lines.count(line) != 1:
+            raise SystemExit("post-event: expected one " + old_obj.name + " in link.filelist")
+        lines[lines.index(line)] = str(new_obj) + "\n"
+
+    def compile_record(record, source, obj, label):
+        command = list(record["argv"])
+        source_at, = [i for i, arg in enumerate(command) if arg.endswith("/" + source.name)]
+        command[source_at] = str(source)
+        command[command.index("-o") + 1] = str(obj)
+        with (out / ("compile-" + label + ".log")).open("wb") as log:
+            done = subprocess.run(command, cwd=record["cwd"], env=env, stdout=log,
+                                  stderr=subprocess.STDOUT)
+        if done.returncode:
+            raise SystemExit(f"post-event: {label} exit {done.returncode}; see compile-{label}.log")
+        return obj
+
+    records = list(records)
+    dm_record, = (r for r in records if r["label"] == "compile-nuwa_data_mount" and r["exit"] == 0)
+    dm_old, = [Path(line.strip()) for line in lines
+               if line.strip().endswith("/nuwa_data_mount.o")]
+    dm_obj = compile_record(dm_record, ROOT / "package/nuwa-data/nuwa_data_mount.c",
+                            out / "nuwa_data_mount.o", "nuwa_data_mount")
+    replace_line(dm_old, dm_obj)
+
+    sm_record, = (r for r in records if r["label"] == "compile-nuwa_systemos" and r["exit"] == 0)
+    sm_old, = [Path(line.strip()) for line in lines
+               if line.strip().endswith("/nuwa_systemos.o")]
+    sm_obj = compile_record(sm_record, ROOT / "package/nuwa-systemos/nuwa_systemos.c",
+                            out / "nuwa_systemos.o", "nuwa_systemos")
+    replace_line(sm_old, sm_obj)
+
+    kx_old, = [Path(line.strip()) for line in lines if line.strip().endswith("/kern_exit.o")]
+    kx_recipe = json.loads((kx_old.parent / "commands.json").read_text())
+    kx_record, = (r for r in kx_recipe if r["label"] == "compile-kern_exit" and r["exit"] == 0)
+    kx_source, = [Path(arg) for arg in kx_record["argv"]
+                  if arg.endswith("/tree/bsd/kern/kern_exit.c")]
+    if hashlib.sha256(kx_source.read_bytes()).hexdigest() != KERN_EXIT_INPUT_SHA:
+        raise SystemExit("post-event: patched kern_exit.c input changed")
+    staged = out / "kern_exit.c"
+    data = kx_source.read_bytes()
+    if data.count(KERN_EXIT_HOOK_OLD) != 1:
+        raise SystemExit("post-event: kern_exit.c hook anchor changed")
+    data = data.replace(KERN_EXIT_HOOK_OLD, KERN_EXIT_HOOK_NEW, 1)
+    if data.count(KERN_EXIT_CAPTURE_OLD) != 1:
+        raise SystemExit("post-event: kern_exit.c critical-capture anchor changed")
+    data = data.replace(KERN_EXIT_CAPTURE_OLD, KERN_EXIT_CAPTURE_NEW, 1)
+    if data.count(KERN_EXIT_PAINT_OLD) != 1:
+        raise SystemExit("post-event: kern_exit.c critical-paint anchor changed")
+    data = data.replace(KERN_EXIT_PAINT_OLD, KERN_EXIT_PAINT_NEW, 1)
+    include = b"#include <kern/boot_progress.h>\n"
+    if data.count(include) != 1:
+        raise SystemExit("post-event: kern_exit.c include anchor changed")
+    data = data.replace(include, include +
+                        b"extern void boot_progress_exit_parent(int, int);\n"
+                        b"extern void boot_progress_critical_capture(int, const char *, int, unsigned, uint64_t, int);\n"
+                        b"extern void boot_progress_critical_paint(void);\n", 1)
+    staged.write_bytes(data)
+    kx_obj = compile_record(kx_record, staged, out / "kern_exit.o", "kern_exit")
+    replace_line(kx_old, kx_obj)
+
+    filelist.write_text("".join(lines))
+    (out / "post-event-inputs.json").write_text(json.dumps({
+        "kern_exit_source": {"path": str(kx_source), "sha256": KERN_EXIT_INPUT_SHA},
+        "kern_exit_staged": {"path": str(staged), "sha256": hashlib.sha256(data).hexdigest()},
+        "objects": {obj.name: {"path": str(obj), "sha256": digest(obj)}
+                    for obj in (dm_obj, sm_obj, kx_obj)},
+    }, indent=2) + "\n")
+    return argv
+
+
 def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
                keep_link_debug, bringup_diag=False, hid_objects=(), mg_reset=False,
                smp_gate=False, smp_observe=False, crashcap=False, pixsig=False,
-               data_persist=False, data_gpt=None, disposable=False, stage=False, base=None):
+               data_persist=False, data_gpt=None, disposable=False, stage=False,
+               post_event=False, base=None):
     for name, pin in (R35L_PINS if bringup_diag else R35_PINS).items():
         require_pin(r35 / name, pin)
     require_pin(cpo, R35_CPO_SHA)
@@ -900,11 +1031,13 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
             argv = list(argv)
             diag = diag_archive(r35, out, hid=bool(hid_objects), mg_reset=mg_reset,
                                  smp_observe=smp_observe, crashcap=crashcap, pixsig=pixsig,
-                                 data_persist=data_persist, stage=stage)
+                                 data_persist=data_persist, stage=stage, post_event=post_event)
             argv[force_at] = f"-Wl,-force_load,{diag}"
         if data_persist:
             argv = persist_diag_link(r35, out, records, argv, env, data_candidate=data_gpt is not None,
                                      disposable=disposable)
+        if post_event:
+            argv = post_event_link(r35, out, records, argv, env)
         if data_gpt is not None:
             argv = data_candidate_link(out, argv, env, data_gpt, disposable=disposable)
         argv = [*argv, "-Wl,-ignore_optimization_hints", f"-Wl,-force_load,{archive}", *map(str, hid_objects)]
@@ -1157,6 +1290,8 @@ def main():
                    help="show CPU_ON and secondary affinity observations; does not enable SMP")
     p.add_argument("--crashcap", action="store_true",
                    help="include the lsd-only saved-register recorder in the single-core candidate")
+    p.add_argument("--post-event", action="store_true",
+                   help="add the panic-safe pid 1/SpringBoard/exit-parent/Data-first-attempt summary")
     p.add_argument("--out", type=Path, required=True, help="new directory under out/")
     a = p.parse_args()
     base, cpo, linker, out = (x.resolve() for x in (a.base, a.cpo, a.linker_dir, a.out))
@@ -1188,6 +1323,8 @@ def main():
         p.error("--smp-observe requires --smp-gate and the pinned --r35l-dir candidate")
     if a.crashcap and (not a.r35l_dir or a.smp_gate):
         p.error("--crashcap requires the pinned single-core --r35l-dir candidate")
+    if a.post_event and not (a.crashcap and a.data_persist_diag and not a.smp_gate):
+        p.error("--post-event requires --crashcap --data-persist-diag and excludes --smp-gate")
     if a.pixsig and not (a.crashcap and a.no_software_vsync):
         p.error("--pixsig requires --crashcap and --no-software-vsync")
     if a.stage_channel and not (a.pixsig and not a.data_persist_diag):
@@ -1230,7 +1367,7 @@ def main():
                               smp_gate=a.smp_gate, smp_observe=a.smp_observe, crashcap=a.crashcap,
                                pixsig=a.pixsig, data_persist=a.data_persist_diag,
                                data_gpt=a.data_candidate_gpt, disposable=a.disposable_data,
-                               stage=a.stage_channel, base=base)
+                               stage=a.stage_channel, post_event=a.post_event, base=base)
     else:
         # Replay XNU's exported link inputs, without its historical map output.
         stem = "mach.development.bcm2837"

@@ -119,6 +119,8 @@ def main():
     profile.add_argument("--data-persist-diag", action="store_true", help="use the pinned PIX outer")
     profile.add_argument("--disposable-data-template", type=Path,
                          help="use the exact 18fa4941 read-root outer and append the experiment gate")
+    ap.add_argument("--post-event", action="store_true",
+                    help="require the panic-safe post-event summary marker; pairs with --disposable-data-template")
     ap.add_argument("--ufs-desc", action="store_true", help="append the read-only UFS descriptor opt-in")
     ap.add_argument("--ufs-neon", action="store_true", help="append the staged read-only UFS evidence opt-in")
     ap.add_argument("--audit-only", action="store_true", help="read an existing outer and compare all FAT files")
@@ -127,12 +129,16 @@ def main():
         ap.error("--ufs-desc requires --data-persist-diag")
     if a.ufs_neon and (not a.data_persist_diag or a.ufs_desc):
         ap.error("--ufs-neon requires --data-persist-diag and excludes --ufs-desc")
+    if a.post_event and a.disposable_data_template is None:
+        ap.error("--post-event requires --disposable-data-template")
     disposable = a.disposable_data_template is not None
     out = a.out.resolve()
     assert out.is_relative_to(ROOT / "out") and out not in (ROOT / "out", OLD, DSP_OUTER, FRAME_OUTER, PIX_OUTER)
     kernel = a.kernel.resolve()
     assert kernel.is_relative_to(ROOT / "out") and kernel.name == "kernel.macho"
     new_kernel = kernel.read_bytes()
+    if a.post_event and b"NUWA-POSTEVENT-20261127" not in new_kernel:
+        raise SystemExit("--post-event kernel lacks the post-event summary marker")
     template, template_sha, template_chmh = (
         (a.disposable_data_template.parent, DISPOSABLE_TEMPLATE_SHA, DISPOSABLE_TEMPLATE_CHMH) if disposable else
         (PIX_OUTER, PIX_SHA, PIX_CHMH) if a.data_persist_diag or a.stage_channel else

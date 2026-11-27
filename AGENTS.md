@@ -6,6 +6,7 @@
 小米 13 Pro（nuwa / SM8550）通过 UniXNU 运行 iOS 16（donor: iPhone10,3 / 16.7.16 / 20H392，xnu-8796 线）。
 
 ## 基线
+- 2026-11-27 诊断增量候选（deep_reviewer 终审 PASS WITH CONDITIONS `ses_de6f88826ffePVthCKXnVOioO2`）：outer `b9103e97…` 已刷入 `vendor_boot_a` 一次（Sending/Writing OKAY、exit 0），**未重启、未启动**，设备留在 fastboot；无屏幕/运行时证据。见 [观察](docs/nuwa-postevent-20261127-observation.md)。
 - 2026-11-26 disposable Data 主机候选（self-checked，未上机，待终审）：[记录](docs/nuwa-disposable-data-20261126.md)。
 - 2026-11-26 UFS 只读采样画面（主控转述 vision / self-checked 记录）：[观察](docs/nuwa-ufs-neon-20261126-observation.md)。
 - 2026-11-26 UFS 只读 MODE SENSE + GPT 摘要候选，生产写门关闭、未上机（self-checked）：[记录](docs/nuwa-ufs-modeprobe-20261126.md)。

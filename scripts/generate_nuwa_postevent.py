@@ -1,0 +1,197 @@
+"""Add the nuwa post-event summary row to the r35 diagnostic renderer.
+
+Diagnostic only.  Row 8 is drawn into the panic-safe band (page rows 0-8 at
+scale 3, below the panic screen's y = h/8 clear), and row 7 carries the Data
+first-attempt result.  Row 0 is left empty because the renderer's line()/bar()
+guard drops row 0.  A photograph taken after the critical-process panic still
+carries the last user-space state:
+
+    row 7: [data-trial] DATA0 st=4 err=0 ro=0 dev=12345678 seed=1 first-attempt
+    row 8: [data-trial] S p1=RUN sb=95:RUN EX=17:tzinit:0/45:pp=1
+
+  p1   pid 1 state from the two-second process probe (absent when proc_find
+       fails); this is a sample, not a live read at draw time.
+  sb   SpringBoard from the same probe: never / gone / <pid>:<state>.
+  EX   last recorded exit (every exit, including status 45 with signal 0):
+       pid, comm (12 chars), signal/exit status, parent pid.  pp=? when the
+       kernel hook did not supply a parent for that pid.
+  DATA0  the completed first Data mount attempt (st/err/ro/dev/seed), latched
+       by nuwa_data_mount_prepare before initproc exec.  DATA now is the
+       sampled in-progress stage; DATA0 not run means it never started.
+
+The kernel side supplies parent pids through boot_progress_exit_parent(),
+called immediately before boot_progress_exit() in proc_prepareexit(), and
+paints the two lines synchronously from proc_handle_critical_exit() after
+proc_crash_coredump()/sync() and immediately before panic_with_options().
+The critical paint writes directly through px_text() into the existing
+display.frame rows 7 and 8; it does not require display.bound, render_busy or
+exit_lock.  No boot, storage, authentication or write path reads any of this
+state.
+"""
+from hashlib import sha256
+
+MARKER = b"static const char bp_post_event_tag[] __attribute__((used)) = \"NUWA-POSTEVENT-20261127\";\n"
+
+STATE_ANCHOR = b"static char build_tag[32];\nconst char *boot_progress_tag(void) { return build_tag; }\n"
+
+STATE = b"""// NUWA-POSTEVENT-20261127: event-time summary for the panic-safe band.
+// Diagnostic only: no boot, storage, authentication or write decision reads it.
+struct bp_post_exit {
+  unsigned valid,pid,status,ns;
+  int ppid;
+  char comm[17];
+};
+static struct bp_post_exit bp_post_exit;
+static struct bp_post_exit bp_critical;
+static volatile unsigned bp_critical_valid;
+static unsigned bp_post_lock;
+static volatile uint64_t bp_post_parent; // high 32: pid, low 32: parent pid
+""" + MARKER + b"""extern volatile uint32_t nuwa_pid1_present,nuwa_pid1_state;
+extern volatile uint64_t nuwa_sb_public;
+extern int nuwa_data_mount_summary(char *,size_t);
+void boot_progress_critical_capture(int pid,const char *name,int status,unsigned ns,
+  uint64_t code,int ppid);
+void boot_progress_critical_capture(int pid,const char *name,int status,unsigned ns,
+  uint64_t code,int ppid) {
+  (void)code; // the summary shows the wait status, not the Mach exception code
+  bp_critical.valid=1;
+  bp_critical.pid=(unsigned)pid;
+  bp_critical.ppid=ppid;
+  bp_critical.status=(unsigned)status;
+  bp_critical.ns=ns;
+  strlcpy(bp_critical.comm,name?name:"?",sizeof bp_critical.comm);
+  __atomic_store_n(&bp_critical_valid,1,__ATOMIC_RELEASE);
+}
+void boot_progress_exit_parent(int pid,int ppid);
+void boot_progress_exit_parent(int pid,int ppid) {
+  __atomic_store_n(&bp_post_parent,
+    ((uint64_t)(uint32_t)pid<<32)|(uint32_t)ppid,__ATOMIC_RELEASE);
+}
+static int bp_post_parent_for(unsigned pid) {
+  uint64_t v=__atomic_load_n(&bp_post_parent,__ATOMIC_ACQUIRE);
+  return ((uint32_t)(v>>32)==pid)?(int32_t)(uint32_t)v:-1;
+}
+static void bp_post_latch(int pid,const char *name,int status,unsigned ns) {
+  if(__atomic_exchange_n(&bp_post_lock,1,__ATOMIC_ACQUIRE)) return;
+  bp_post_exit.valid=1;
+  bp_post_exit.pid=(unsigned)pid;
+  bp_post_exit.ppid=bp_post_parent_for((unsigned)pid);
+  bp_post_exit.status=(unsigned)status;
+  bp_post_exit.ns=ns;
+  strlcpy(bp_post_exit.comm,name?name:"?",sizeof bp_post_exit.comm);
+  __atomic_store_n(&bp_post_lock,0,__ATOMIC_RELEASE);
+}
+static int bp_post_snapshot(struct bp_post_exit *out) {
+  if(__atomic_exchange_n(&bp_post_lock,1,__ATOMIC_ACQUIRE)) return 0;
+  *out=bp_post_exit;
+  int valid=(int)out->valid;
+  __atomic_store_n(&bp_post_lock,0,__ATOMIC_RELEASE);
+  return valid;
+}
+static const char *bp_post_stat(unsigned stat) {
+  static const char *const names[]={"IDL","RUN","SLP","STP","ZMB"};
+  return (stat>=1 && stat<=5)?names[stat-1]:"?";
+}
+static const char *bp_post_sb(char *out,size_t size) {
+  uint64_t w=__atomic_load_n(&nuwa_sb_public,__ATOMIC_ACQUIRE);
+  if(!(w & (1ull<<63))) return "never";
+  if(!(w & (1ull<<62))) return "gone";
+  snprintf(out,size,"%u:%s",(unsigned)((w>>32)&0x3fffffffu),
+    bp_post_stat((unsigned)(w&0xffffffffu)));
+  return out;
+}
+static int bp_post_format(char *buf,size_t size,const struct bp_post_exit *e) {
+  char core[80],sb[24];
+  const char *p1=!__atomic_load_n(&nuwa_pid1_present,__ATOMIC_ACQUIRE)?"absent":
+    bp_post_stat(__atomic_load_n(&nuwa_pid1_state,__ATOMIC_ACQUIRE));
+  unsigned sig=e->status&127u, code=(e->status>>8)&255u;
+  if(e->ppid>=0)
+    snprintf(core,sizeof core,"S p1=%s sb=%s EX=%u:%.12s:%u/%u:pp=%d",p1,
+      bp_post_sb(sb,sizeof sb),e->pid,e->comm,sig,code,e->ppid);
+  else
+    snprintf(core,sizeof core,"S p1=%s sb=%s EX=%u:%.12s:%u/%u:pp=?",p1,
+      bp_post_sb(sb,sizeof sb),e->pid,e->comm,sig,code);
+  if(build_tag[0]) snprintf(buf,size,"[%s] %s",build_tag,core);
+  else snprintf(buf,size,"%s",core);
+  return 1;
+}
+static int bp_post_event_row(char *buf,size_t size) {
+  struct bp_post_exit e;
+  if(!bp_post_snapshot(&e)) return 0;
+  return bp_post_format(buf,size,&e);
+}
+// Same-thread read after boot_progress_critical_capture(); the critical paint
+// runs in the exiting thread after coredump/sync, so it uses the copy taken
+// before those calls and needs no render/exit lock.
+static int bp_post_event_row_direct(char *buf,size_t size) {
+  if(__atomic_load_n(&bp_critical_valid,__ATOMIC_ACQUIRE))
+    return bp_post_format(buf,size,&bp_critical);
+  if(!bp_post_exit.valid) return 0;
+  return bp_post_format(buf,size,&bp_post_exit);
+}
+static int bp_post_ready(void) {
+  return (int)__atomic_load_n(&bp_post_exit.valid,__ATOMIC_ACQUIRE);
+}
+"""
+
+BOOT_EXIT_ANCHOR = b"void boot_progress_exit(int pid,const char *name,int status,unsigned ns,uint64_t code) {\n"
+BOOT_EXIT_ENABLED_ANCHOR = b"  if(!enabled)return;\n"
+
+CRITICAL_PAINT = b"""static void px_text(unsigned,unsigned,const char *,unsigned,uint32_t,uint32_t);
+// Called only from proc_handle_critical_exit(), after proc_crash_coredump() and
+// sync(), immediately before panic_with_options().  Draws exactly two rows
+// through px_text() into the already-mapped display.frame, so it works after
+// boot_progress_prepare_scanout() cleared display.bound.  No full-page refresh,
+// no render_busy and no exit_lock.
+void boot_progress_critical_paint(void);
+void boot_progress_critical_paint(void) {
+  if(!display.frame || !display.scale || !display.stride ||
+     !display.width || !display.height) return;
+  char data[80],summary[80];
+  (void)nuwa_data_mount_summary(data,sizeof data);
+  (void)bp_post_event_row_direct(summary,sizeof summary);
+  unsigned cell=14u*display.scale;
+  unsigned cols=display.width/(6u*display.scale);
+  if(cols>BP_COLS-1) cols=BP_COLS-1;
+  unsigned limit=display.height/8u;
+  unsigned row_data=7u,row_summary=8u;
+  if((row_summary+1u)*cell>limit) { row_summary=7u; row_data=6u; }
+  if((row_data+1u)*cell<=limit) px_text(0,row_data*cell,data,cols,0xffffaa00,0xff000000);
+  if((row_summary+1u)*cell<=limit) px_text(0,row_summary*cell,summary,cols,0xffffff00,0xff000000);
+  __asm__ volatile("dsb sy" ::: "memory");
+}
+"""
+
+DRAW_END_ANCHOR = b"  __asm__ volatile(\"dsb sy\" ::: \"memory\");\n  last_draw=now;"
+DRAW_END = b"""  {
+    char data[80],full[BP_COLS];
+    int state=nuwa_data_mount_summary(data,sizeof data);
+    if(state>0) {
+      if(build_tag[0] && snprintf(full,sizeof full,"[%s] %s",build_tag,data)<(int)sizeof full)
+        line(7,full,0xffffaa00);
+      else line(7,data,0xffffaa00);
+    }
+    if(bp_post_ready()) {
+      char post[80];
+      if(bp_post_event_row(post,sizeof post)) line(8,post,0xffffff00);
+      if(state==0) line(7,"DATA0 not run",0xffffaa00);
+    }
+  }
+  __asm__ volatile("dsb sy" ::: "memory");
+  last_draw=now;"""
+
+
+def replace_once(text, old, new):
+    if text.count(old) != 1:
+        raise ValueError("post-event anchor changed: %r" % (old[:80],))
+    return text.replace(old, new, 1)
+
+
+def generate(src):
+    digest = sha256(src).hexdigest()
+    text = replace_once(src, STATE_ANCHOR, STATE_ANCHOR + STATE)
+    text = replace_once(text, BOOT_EXIT_ANCHOR, CRITICAL_PAINT + BOOT_EXIT_ANCHOR)
+    text = replace_once(text, BOOT_EXIT_ENABLED_ANCHOR,
+                        BOOT_EXIT_ENABLED_ANCHOR + b"  bp_post_latch(pid,name,status,ns);\n")
+    text = replace_once(text, DRAW_END_ANCHOR, DRAW_END)
+    return text, digest

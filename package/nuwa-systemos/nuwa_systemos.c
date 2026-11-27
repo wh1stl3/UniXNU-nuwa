@@ -204,6 +204,14 @@ char nuwa_systemos_device_path[64];
  * on row 4 (120 columns per row), so the buffer must stay above that but the text must
  * stay below ~200 to fit two rows. */
 char nuwa_pid1_row[224];
+/* Diagnostic only (NUWA-POSTEVENT-20261127): the same two-second probe publishes
+ * pid 1 and SpringBoard state for the panic-safe summary row.  No boot, mount,
+ * authentication or write decision reads these.  nuwa_sb_public packs
+ *   bit 63 = seen ever, bit 62 = live, bits 61..32 = pid, bits 31..0 = p_stat
+ * in one release store after the walk, so a reader cannot split a live sample
+ * into a transient "gone". */
+volatile uint32_t nuwa_pid1_present, nuwa_pid1_state;
+volatile uint64_t nuwa_sb_public;
 /* devfs_kernel_mount() takes a writable buffer (namei, UIO_SYSSPACE). */
 static char nuwa_preboot_scratch_point[] = NUWA_PREBOOT_MOUNT_POINT;
 
@@ -498,6 +506,49 @@ nuwa_keybagd_sample(void)
 	    (unsigned)nuwa_keybagd_ms);
 }
 
+struct nuwa_sb_local {
+	uint32_t pid;
+	uint32_t state;
+	int found;
+};
+
+static int
+nuwa_sb_cb(proc_t candidate, void *arg)
+{
+	struct nuwa_sb_local *sb = arg;
+
+	if (!strncmp(candidate->p_comm, "SpringBoard", sizeof("SpringBoard"))) {
+		sb->pid = (uint32_t)candidate->p_pid;
+		sb->state = (uint32_t)(uint8_t)candidate->p_stat;
+		sb->found = 1;
+		return PROC_RETURNED_DONE;
+	}
+	return PROC_RETURNED;
+}
+
+/* Diagnostic only: one allproc walk on the existing two-second probe.  The walk
+ * fills a stack-local result; only after it returns is one packed word
+ * published with release semantics.  A reader that acquires the word sees a
+ * complete seen/live/pid/state tuple, never a transient cleared "live" from an
+ * in-progress sample.  seen persists across samples; live=0 with seen=1 means
+ * SpringBoard started and is no longer present. */
+static void
+nuwa_sb_sample(void)
+{
+	struct nuwa_sb_local sb = { 0, 0, 0 };
+	uint64_t old, word;
+
+	old = __atomic_load_n(&nuwa_sb_public, __ATOMIC_ACQUIRE);
+	proc_iterate(PROC_ALLPROCLIST | PROC_NOWAITTRANS, nuwa_sb_cb, &sb, NULL, NULL);
+	word = old & (1ull << 63);
+	if (sb.found) {
+		word |= (1ull << 63) | (1ull << 62) |
+		    (((uint64_t)sb.pid & 0x3fffffffu) << 32) |
+		    (uint64_t)(sb.state & 0xffffffffu);
+	}
+	__atomic_store_n(&nuwa_sb_public, word, __ATOMIC_RELEASE);
+}
+
 void
 nuwa_pid1_sample(void)
 {
@@ -507,8 +558,12 @@ nuwa_pid1_sample(void)
 	size_t used;
 
 	if (p == PROC_NULL) {
+		nuwa_pid1_state = 0;
+		__atomic_store_n(&nuwa_pid1_present, 0, __ATOMIC_RELEASE);
 		used = snprintf(head, sizeof(head), "PID1 absent (proc_find(1)) nprocs=%d | ", nprocs);
 	} else {
+		nuwa_pid1_state = (uint32_t)(uint8_t)p->p_stat;
+		__atomic_store_n(&nuwa_pid1_present, 1, __ATOMIC_RELEASE);
 		if (p->p_stat >= SIDL && p->p_stat <= SZOMB) {
 			state[0] = nuwa_pid1_stat_names[(p->p_stat - SIDL) * 4 + 0];
 			state[1] = nuwa_pid1_stat_names[(p->p_stat - SIDL) * 4 + 1];
@@ -525,6 +580,7 @@ nuwa_pid1_sample(void)
 	}
 	memcpy(nuwa_pid1_row, head, used);
 	nuwa_systemos_fields1(nuwa_pid1_row + used, sizeof(nuwa_pid1_row) - used);
+	nuwa_sb_sample();
 	/* r30: same 2 s cadence: time bsd_init -> keybagd for the watchdog question. */
 	nuwa_keybagd_sample();
 }
