@@ -10,6 +10,10 @@ confirm the critical calls survived optimisation and their order.
 Covered:
   * DATA0 is emitted on page row 7 through line(), not row 0 (line() drops 0);
     the fua/flush suffix and the trial label are compiled and checked.
+  * the live banner's SB row renders never / gone / <pid>:<state> from the
+    same packed word the panic-safe summary reads.
+  * the deleted DSP/SC/SVC/PEER/LOAD/TIMER/UFS-L/NEON-HC..PL rows are absent and
+    the kept rows (PROC n/SB, PIX, UFS TIME, DATA, S, amfi/SYSOS/PID1) remain.
   * boot_progress_critical_paint() with display_owned=1 / bound=0 writes
     non-zero pixels into display.frame only above y = height/8.
   * an unmatched parent prints pp=?; a matched parent prints pp=<n>.
@@ -320,6 +324,53 @@ int main(void) {
           "high bits 0xc while present")
 
 
+def test_sb_row(renderer, cc, work, include_dirs):
+    text = renderer.read_text()
+    state = extract_braced(text, "static const char *bp_sb_state(unsigned stat) {")
+    row = extract_braced(text, "static void bp_sb_row(char *out, size_t size) {")
+    harness = """\
+#include <stdint.h>
+#include <stdio.h>
+#include <string.h>
+static volatile uint64_t nuwa_sb_public;
+""" + state + row + """
+static int expect(uint64_t word, const char *want) {
+  char row[32];
+  __atomic_store_n(&nuwa_sb_public, word, __ATOMIC_RELEASE);
+  bp_sb_row(row, sizeof row);
+  if (strcmp(row, want)) { printf("got %s want %s\\n", row, want); return 0; }
+  return 1;
+}
+int main(void) {
+  if (!expect(0, "SB never")) return 1;
+  if (!expect(1ull << 63, "SB gone")) return 2;
+  if (!expect((1ull << 63) | (1ull << 62) | ((uint64_t)95 << 32) | 2, "SB 95:RUN")) return 3;
+  if (!expect((1ull << 63) | (1ull << 62) | ((uint64_t)7 << 32) | 4, "SB 7:STP")) return 4;
+  if (!expect((1ull << 63) | (1ull << 62) | ((uint64_t)7 << 32) | 9, "SB 7:?")) return 5;
+  return 0;
+}
+"""
+    rc = compile_and_run(cc, harness, include_dirs, work, "test_sb_row")
+    check("live banner SB row: never/gone/pid:state", rc == 0,
+          "SB 95:RUN, SB 7:STP, unknown state -> ?")
+
+
+def test_row_set(renderer, systemos):
+    text = renderer.read_text()
+    os_text = systemos.read_text()
+    for gone in ('"DSP reg=', '"DSP+ ', '"PEER ', '"SVC ', '"SC n=',
+                 '"SC unavailable"', '"LOAD  user=', '"TIMER vct=',
+                 '"UFS L r=', '"NEON HC ', '"NEON DEV ', '"NEON LU ',
+                 '"NEON MS ', '"NEON PL '):
+        check(f"deleted row absent {gone}", gone not in text)
+    for kept in ('"SB never"', '"SB gone"', '"SB %u:%s"', '"PROC n=%d SB=%s"',
+                 '"PIX bk=%u so=%u unk=%u chg=%u"', 'UFS TIME vf=',
+                 '"DATA mnt ', '"DATA hdr=', '"S p1='):
+        check(f"kept row present {kept}", kept in text)
+    for kept in ('"PID1 st=%u(%s)', '"SYSOS st=%u err=%d"', '"amfi=%d cs=0x%x'):
+        check(f"kept systemos field {kept}", kept in os_text)
+
+
 def test_disassembly(kernel, objdump, cc):
     if not kernel.is_file():
         check("disassembly", False, f"missing {kernel}")
@@ -367,9 +418,9 @@ def test_disassembly(kernel, objdump, cc):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--renderer", type=Path, default=ROOT / "out/nuwa-postevent-20261127-build-r8/BootProgress.c")
+    ap.add_argument("--renderer", type=Path, default=ROOT / "out/nuwa-sb-banner-20261127-build-r2/BootProgress.c")
     ap.add_argument("--systemos", type=Path, default=ROOT / "package/nuwa-systemos/nuwa_systemos.c")
-    ap.add_argument("--kernel", type=Path, default=ROOT / "out/nuwa-postevent-20261127-build-r8/native-with-stabs.macho")
+    ap.add_argument("--kernel", type=Path, default=ROOT / "out/nuwa-sb-banner-20261127-build-r2/native-with-stabs.macho")
     ap.add_argument("--cc", default=os.environ.get("CC", "cc"))
     ap.add_argument("--objdump", default=os.environ.get("LLVM_OBJDUMP", "llvm-objdump"))
     ap.add_argument("--build-dir", type=Path, default=None)
@@ -382,6 +433,8 @@ def main():
         test_data_row(a.renderer, a.cc, work, include_dirs)
         test_critical_paint(a.renderer, a.cc, work, include_dirs)
         test_ppid(a.renderer, a.cc, work, include_dirs)
+        test_sb_row(a.renderer, a.cc, work, include_dirs)
+        test_row_set(a.renderer, a.systemos)
         test_sb_concurrency(a.systemos, a.renderer, a.cc, work, include_dirs)
         test_disassembly(a.kernel, a.objdump, a.cc)
     finally:

@@ -468,12 +468,12 @@ def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False, pixsig
                             b"  unsigned cr=neon+bp_cr_rows(rows+neon,budget-neon),n=cr;")
         text = replace_once(text, b'!strncmp(s,"PROC",4) ||',
                             b'!strncmp(s,"UFS lu=",7) || !strncmp(s,"UFS err=",8) || !strncmp(s,"UFS2 ",5) || !strncmp(s,"PROC",4) ||')
-        text = replace_once(text, b"    uint32_t icon=__atomic_load_n(",
-                            b"    if (n < 64 && &nuwa_ufs_desc_row)\n"
-                            b"      n += nuwa_ufs_desc_row(rows[n], sizeof rows[0]);\n"
-                            b"    if (n < 64 && &nuwa_ufs_mode_row)\n"
-                            b"      n += nuwa_ufs_mode_row(rows[n], sizeof rows[0]);\n"
-                            b"    uint32_t icon=__atomic_load_n(")
+        text = replace_once(text, b'    snprintf(rows[n++],120,"PROC n=%d SB=%s",nprocs,value);\n',
+                            b'    snprintf(rows[n++],120,"PROC n=%d SB=%s",nprocs,value);\n'
+                            b'    if (n < 64 && &nuwa_ufs_desc_row)\n'
+                            b'      n += nuwa_ufs_desc_row(rows[n], sizeof rows[0]);\n'
+                            b'    if (n < 64 && &nuwa_ufs_mode_row)\n'
+                            b'      n += nuwa_ufs_mode_row(rows[n], sizeof rows[0]);\n')
     if stage:
         text = stage_channel(text)
     source.write_bytes(text)
@@ -603,7 +603,7 @@ def data_candidate_link(out, argv, env, gpt, disposable=False):
     from generate_r35_display_diag import replace_once
     old = b"  if (!p.claim()) return End::Claimed;\n  s.stage = 1;"
     preserved_text = replace_once(preserved_text.encode(), old, old.replace(
-        b"  s.stage = 1;", b"  const bool neon = neonBegin();\n  s.stage = 1;")).decode()
+        b"  s.stage = 1;", b"  neonBegin();\n  s.stage = 1;")).decode()
     start = preserved_text.index("  if (!s.dma ||")
     stop = preserved_text.index("  s.stage = 2;", start)
     prereq = preserved_text[start:stop].replace("  if (", "  const bool reject = (", 1)
@@ -617,14 +617,12 @@ def data_candidate_link(out, argv, env, gpt, disposable=False):
         prereq = prereq.replace(old, f"hcRead({i}, {offset})")
     (private / preserved.name).write_text(
         f'#include "{code / "Neon.h"}"\n'
-        "static bool neonBegin();\nstatic void neonPre(const NuwaNeon::Hc &);\n" +
+        "static bool neonBegin();\n" +
         preserved_text[:start] +
-        "  NuwaNeon::Hc pre;\n"
-        "  const auto hcRead = [&](unsigned i, unsigned off) {\n"
-        "    const auto value = p.hread(off);\n"
-        "    return neon ? pre.record(i, value) : value;\n"
+        "  const auto hcRead = [&](unsigned, unsigned off) {\n"
+        "    return p.hread(off);\n"
         "  };\n" + prereq +
-        "  if (neon) neonPre(pre);\n  if (reject) return End::Prerequisite;\n" +
+        "  if (reject) return End::Prerequisite;\n" +
         preserved_text[stop:])
     replace('#include "PreservedNop.h"',
             f'#define NUWA_NEON_SETUP\n#include "{code / "RetainedNeon.inc"}"\n'
@@ -718,10 +716,8 @@ def data_candidate_link(out, argv, env, gpt, disposable=False):
              '{\n  return cachedUfsModeRow(out, size);\n}\n\n'
             'extern "C" void native_ufs_progress_text (char *out, size_t size)')
     replace("  gPendingProvider->release ();  // Balanced with successful thread dispatch.",
-            "  if (result.phase == UfsRootPhase::Complete) {\n"
-            "    if (__atomic_load_n(&neonPhase, __ATOMIC_ACQUIRE) == 2U) probeNeon();\n"
-            "    else probeUfsDescriptors();\n"
-            "  }\n"
+            "  if (result.phase == UfsRootPhase::Complete)\n"
+            "    probeUfsDescriptors();\n"
             "  gPendingProvider->release ();  // Balanced with successful thread dispatch.")
     replace("if (gHost.ready) return true;", "if (retainedReadySnapshot()) return true;")
     replace("if (!gHost.ready || !name || !lun || !first || !blocks) return 0;",

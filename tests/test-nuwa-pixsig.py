@@ -19,14 +19,14 @@ static unsigned char pixels[20*96];
 
 static void show(const char *label, uint32_t crc, unsigned nz, unsigned uc,
                  unsigned so, unsigned chg, unsigned unk) {
-  char rows[64][120]={{"DSP reg=2"},{"DSP+ co=6"},{"GPU x"}};
+  char rows[64][120]={{"PROC one"},{"PROC two"}};
   struct nuwa_pix p;
   assert(nuwa_pix_read(&state,&p));
   assert(p.crc==crc && p.nz==nz && p.uc==uc && p.so==so && p.chg==chg && p.unk==unk);
   assert(p.bk==1 && p.ticks==so);
-  unsigned n=3+bp_pix_rows(rows+3,&p,78);
+  unsigned n=2+bp_pix_rows(rows+2,&p,78);
   unsigned kept=bp_banner_select(rows,n,n-1);
-  assert(kept==n-1 && !strncmp(rows[1],"DSP+",4));
+  assert(kept==n-1 && !strncmp(rows[2],"PIX ",4));
   printf("%s\n",label);
   for(unsigned i=2;i<kept;++i) {
     assert(strlen(rows[i])<=78 && bp_banner_priority(rows[i],2)==bp_banner_priority("PROC x",2));

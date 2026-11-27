@@ -32,17 +32,17 @@ int main(void) {
     "PROC one","SVC one","SC one","FB one","SWAP one","GPUC one",
     "GPUW one","PROC two","LOAD one","UFS one","SCHED one","CPU one",
     "GPU1 one","GPU2 one"};
-  const char *expected[]={"EXIT one","PROC one","SC one","PROC two","LOAD one",
-    "CRASH one","      continuation","XR one","SVC one","UFS one","SCHED one",
-    "FB one","SWAP one","CPU one","GPUC one","GPUW one","GPU1 one","GPU2 one",
-    "STACK one"};
+  const char *expected[]={"EXIT one","PROC one","PROC two","CRASH one",
+    "      continuation","XR one","UFS one","SCHED one","SVC one","SC one",
+    "FB one","SWAP one","LOAD one","CPU one","GPUC one","GPUW one",
+    "GPU1 one","GPU2 one","STACK one"};
   unsigned n=bp_banner_select(rows,18,19);
   if(n<19) strcpy(rows[n++],"STACK one");
   assert(n==19);
   for(unsigned i=0;i<n;++i) assert(!strcmp(rows[i],expected[i]));
   char limited[48][120]={"GPU1","FB","LOAD","CRASH","EXIT","XR","PROC",
     "SVC","SC n","UFS","SCHED","GPU2"};
-  const char *first[]={"LOAD","EXIT","PROC","SC n","CRASH","XR","SVC","UFS","SCHED"};
+  const char *first[]={"EXIT","PROC","CRASH","XR","UFS","SCHED","FB","LOAD","SVC"};
   n=bp_banner_select(limited,12,9);
   assert(n==9);
   for(unsigned i=0;i<n;++i) {
