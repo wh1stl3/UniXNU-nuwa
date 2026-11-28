@@ -1,5 +1,7 @@
 # UniXNU-nuwa
 
+**2026-11-28 A 槽状态与单次 set_active（device/self-checked）：** [观察](docs/nuwa-v1-nodur-slot-reenable-20261128-observation.md)。
+
 **2026-11-28 V1-NODUR reset r2 单次刷写与 reboot（device/self-checked；reset 运行结果未知）：** [观察](docs/nuwa-v1-nodur-reset-boot-20261128-observation.md)。
 
 **2026-11-28 V1-NODUR daily r2 单次刷写与 reboot（device/self-checked；屏幕及运行结果未知）：** [观察](docs/nuwa-v1-nodur-daily-boot-20261128-observation.md)。
