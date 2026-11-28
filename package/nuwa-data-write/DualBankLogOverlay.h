@@ -101,8 +101,8 @@ private:
     return zero(b, Tail) && le32(b + Tail + 8) == slot && le64(b + Tail);
   }
 
-  Header superblock(uint32_t slot, Checkpoint &cp) const {
-    const auto *b = w_->block;
+  static Header decodeSuperblock(const uint8_t *b, const uint8_t *seed,
+                                 uint32_t slot, Checkpoint &cp) {
     if (zero(b, Block)) return Header::Empty;
     if (memcmp(b, SbMagic, 8)) {
       // A torn first write to the alternate SB can leave only its tail,
@@ -110,7 +110,7 @@ private:
       return tornSuperblockMarker(b, slot) ? Header::Damaged : Header::Foreign;
     }
     if (le32(b + BlockCrc) != crc(b, Block, BlockCrc)) return Header::Damaged;
-    if (le32(b + 8) != 3 || le64(b + 16) != Pages || memcmp(b + 32, seed_, 32) ||
+    if (le32(b + 8) != 3 || le64(b + 16) != Pages || memcmp(b + 32, seed, 32) ||
         le32(b + 64) != MapBlocks || le32(b + 68) != LogBlocks)
       return Header::Foreign;
     cp = {le64(b + 24), le64(b + 80), le32(b + 72), le32(b + 88)};
@@ -119,6 +119,9 @@ private:
         !zero(b + SbHeader, Tail - SbHeader) || le64(b + Tail) != cp.gen ||
         le32(b + Tail + 8) != slot) return Header::Foreign; // sealed, but impossible
     return Header::Valid;
+  }
+  Header superblock(uint32_t slot, Checkpoint &cp) const {
+    return decodeSuperblock(w_->block, seed_, slot, cp);
   }
 
   bool checkMap(const Checkpoint &cp) const {
@@ -226,6 +229,18 @@ public:
   // does not make a superblock safe for another format to overwrite.
   static bool hasSuperblockMarker(const uint8_t *b, uint32_t slot) {
     return !memcmp(b, SbMagic, 8) || tornSuperblockMarker(b, slot);
+  }
+  // Erasure requires the complete sealed header, not the weaker deny marker.
+  static bool validSuperblockForSeed(const uint8_t *b, uint32_t slot, const uint8_t *seed) {
+    Checkpoint cp{};
+    if (decodeSuperblock(b, seed, slot, cp) != Header::Valid) return false;
+    if constexpr (Disposable) {
+      // Disposable creation starts with zero maps and never checkpoints.
+      // IEEE CRC32 of 2 * MapBytes (524288) zero bytes, as in encodeSuperblock.
+      static_assert(MapBytes == 262144);
+      return !cp.gen && !cp.head && !cp.count && cp.mapCrc == 0x75660aacU;
+    }
+    return true;
   }
   // Pure format helper: no admission, transport, ownership or durability claim.
   static bool initialSuperblock(uint8_t (&out)[Block], const uint8_t (&seed)[32],

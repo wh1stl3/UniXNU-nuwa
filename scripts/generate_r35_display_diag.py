@@ -57,6 +57,19 @@ static unsigned bp_pix_rows(char rows[][120], const struct nuwa_pix *p, unsigned
 }
 """
 
+RETIRE_ROWS = b"""
+// Independent relaxed samples; the last-returned generation and count are
+// not an atomic pair. g is the latest allocated generation, not an in-flight
+// request identity and not evidence of notification or userspace consumption.
+extern volatile uint32_t nuwa_rg_entered,nuwa_rg_returned,nuwa_rg_returned_generation;
+static void bp_rg_row(char *out, size_t size) {
+  unsigned entered=__atomic_load_n(&nuwa_rg_entered,__ATOMIC_RELAXED);
+  unsigned returned=__atomic_load_n(&nuwa_rg_returned,__ATOMIC_RELAXED);
+  unsigned last=__atomic_load_n(&nuwa_rg_returned_generation,__ATOMIC_RELAXED);
+  snprintf(out,size,"RG en=%u ret=%u g=%u last=%u",entered,returned,entered,last);
+}
+"""
+
 # nuwa-sb-stack=<seconds>: one-shot lsd thread snapshot. The state and the
 # buffer are declared before the banner (which renders them) and the helpers before
 # touch_monitor (which arms and takes the snapshot).
@@ -601,6 +614,23 @@ def remove_glyph_examples(src):
     return replace_once(src, src[start:end], b"  unsigned y=top+336;\n")
 
 
+def retire_generation(src):
+    anchor = b"static void draw(unsigned now) {"
+    src = replace_once(src, anchor, RETIRE_ROWS + anchor)
+    src = replace_once(src, b'!strncmp(s,"PIX ",4)',
+                       b'!strncmp(s,"RG ",3) || !strncmp(s,"PIX ",4)')
+    src = replace_once(src, b"  nuwa_rows();\n",
+                       b"  nuwa_rows();\n  bp_rg_row(b,sizeof(b)); line(9,b,0xff00ffcc);\n")
+    src = replace_once(src, b'  { char sb[32]; bp_sb_row(sb,sizeof sb); snprintf(rows[n++],120,"%s",sb); }\n',
+                       b'  { char sb[32]; bp_sb_row(sb,sizeof sb); snprintf(rows[n++],120,"%s",sb); }\n'
+                       b'  bp_rg_row(rows[n++],120);\n')
+    anchor = b"  signature+=__atomic_load_n(&nuwa_pix_state.epoch,__ATOMIC_ACQUIRE)*262147ULL;\n"
+    return replace_once(src, anchor, anchor + b"""  signature+=(uint64_t)__atomic_load_n(&nuwa_rg_entered,__ATOMIC_RELAXED)*2097169ULL
+      +(uint64_t)__atomic_load_n(&nuwa_rg_returned,__ATOMIC_RELAXED)*4194319ULL
+      +(uint64_t)__atomic_load_n(&nuwa_rg_returned_generation,__ATOMIC_RELAXED)*8388617ULL;
+""")
+
+
 def generate(src, *, mg_reset=False, smp_observe=False, pixsig=False):
     if sha256(src).hexdigest() != RENDERER_SHA:
         raise ValueError("expected the pinned r35l full renderer")
@@ -808,8 +838,8 @@ void boot_progress_prop_set(uint16_t properties) {
     }
   }
   if(!n || display.height<(n+2)*cell+8)return;""")
-    # Row 9 stays empty: the DSP callback row was deleted (PIX covers the frame
-    # submission question).  The Data mount summary remains on row 39.
+    # The old DSP callback row is deleted; the optional RG row is added later.
+    # The Data mount summary remains on row 39.
     start = src.index(b"  // Row 9: the Data mount result")
     end = src.index(b"#endif\n", start)
     src = src[:start] + src[end:]
@@ -895,4 +925,5 @@ void boot_progress_prop_set(uint16_t properties) {
       n+=bp_pix_rows(rows+n,&p,cols<78?cols:78);
   }
 """)
+        src = retire_generation(src)
     return add_smp_observe(src) if smp_observe else src

@@ -17,7 +17,7 @@
   写入前的审查来自 `reviewer` 会话 `ses_de2cdddc5ffePUw2gq6wva4G7o`，结论
   **PASS WITH CONDITIONS**，不涉及 `deep_reviewer`。本记录未持有条件原文，故不复述
   条件内容；写入按该审查结论放行。
-- `fastboot devices` 两台：`<serial>` = `product=enuma`（未操作）；nuwa serial 与前几轮
+- `fastboot devices` 两台：一台为 `product=enuma`（未操作）；nuwa serial 与前几轮
   相同（不入库），本轮固定使用。
 
 ## 前置：断电复位前的 getvar 不稳定
@@ -123,9 +123,9 @@ fastboot -s <nuwa-serial> reboot
 
 - 时间线：`+0 s` 离开 fastboot 稳定态；`+10 s` 起连 `????????????` 行也不再出现，
   nuwa 从主机 USB 完全消失；到 `+120 s` 未回到 fastboot。`adb` 13 点全程无设备。
-- 采样窗口外一次确认（`21:39:30.223`）：`fastboot devices` 仅 `<serial>`；
+- 采样窗口外一次确认（`21:39:30.223`）：`fastboot devices` 仅 enuma；
   `adb devices -l` 无设备；Windows 在场 PnP 设备中唯一 Android 类节点是
-  `USB\VID_18D1&PID_D00D\<serial>`（enuma bootloader），无任何 nuwa 节点——既不是
+  `USB\VID_18D1&PID_D00D\<enuma-serial>`（enuma bootloader），无任何 nuwa 节点——既不是
   fastboot，也不是 adb/MTP，也不是 `VID_05C6&PID_9008`(EDL)。
 - 按指令「设备离开 fastboot 且持续不在即停止采样并报告」：120 s 窗口结束后未再重启、
   未重刷、未追加采样。

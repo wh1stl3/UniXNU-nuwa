@@ -32,7 +32,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-from generate_nuwa_postevent import SBTH_PAINT
+from generate_nuwa_postevent import SBTH_PAINT, V1_ROWS
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -87,7 +87,9 @@ def compile_and_run(cc, code, include_dirs, work, name, extra=()):
 
 def test_data_row(renderer, cc, work, include_dirs):
     text = renderer.read_text()
-    start = ("  {\n    char data[BP_COLS],full[BP_COLS];"
+    v1 = V1_ROWS.decode() in text
+    start = ("  {\n    char rows[3][BP_COLS]; bp_v1_rows(rows);"
+             if v1 else "  {\n    char data[BP_COLS],full[BP_COLS];"
              if "  {\n    char data[BP_COLS],full[BP_COLS];" in text else
              "  {\n    char data[80],full[BP_COLS];")
     block = extract_between(text, start,
@@ -104,13 +106,20 @@ static unsigned calls, last_row;
 static struct { unsigned yield_requested; } display;
 static void bp_sbth_paint(int critical) { (void)critical; }
 static char last_text[160];
+static char displayed[9][160];
 static char build_tag[32] = "data-trial";
 static int mount_state = 2, post_ready = 0;
+volatile uint32_t native_data_persist_state=4,native_data_persist_header=9;
+volatile uint64_t native_data_persist_present=0,native_data_persist_writes=2,native_data_persist_errors=1;
+const char *volatile nuwa_data_persist_open_why="legacy-v3";
+volatile uint64_t nuwa_v1_write_failure=(4ull<<32)|1,nuwa_v1_write_failure_attached=(7ull<<32)|2;
+volatile uint64_t nuwa_v1_ufs_write_failure=(5ull<<32)|(2ull<<24)|0x123456;
 #if defined(NUWA_DISPOSABLE_DATA)
 static volatile uint64_t nuwa_disposable_fua_requests = 7, nuwa_disposable_flushes = 3;
 #endif
 static void line(unsigned row, const char *s, uint32_t c) {
   (void)c; calls++; last_row = row; snprintf(last_text, sizeof last_text, "%s", s);
+  if (row < 9) snprintf(displayed[row],sizeof displayed[row],"%s",s);
 }
 static int nuwa_data_mount_summary(char *b, size_t n) {
   snprintf(b, n, "DATA0 st=4 err=0 ro=0 dev=12345678 seed=1 first-attempt");
@@ -118,7 +127,7 @@ static int nuwa_data_mount_summary(char *b, size_t n) {
 }
 static int bp_post_ready(void) { return post_ready; }
 static int bp_post_event_row(char *b, size_t n) { (void)b; (void)n; return 0; }
-""" + suffix + """
+""" + suffix + (V1_ROWS.decode() if v1 else "") + """
 static void run_data_block(void) {
 """ + block + """
 }
@@ -128,6 +137,22 @@ int main(void) {
   run_data_block();
   if (!(calls > before && last_row == 7 && strstr(last_text, "DATA0") && strstr(last_text, "first-attempt")))
     return 1;
+#if EXPECT_V1_ROWS
+  if (!strstr(displayed[4], "D1 st=4 h=9 pres=0 why=legacy-v3") ||
+      !strstr(displayed[5], "D2 wr=2 er=1 ufs=5:02:123456") ||
+      !strstr(displayed[6], "D3 first=inactive/00000001 after=ufs-w/00000002"))
+    return 6;
+  nuwa_data_persist_open_why="legacy-disposable";
+  native_data_persist_state=UINT32_MAX;
+  native_data_persist_header=UINT32_MAX;
+  native_data_persist_present=UINT64_MAX;
+  native_data_persist_writes=UINT64_MAX;
+  native_data_persist_errors=UINT64_MAX;
+  char rows[3][BP_COLS]; bp_v1_rows(rows);
+  if (!strstr(rows[0], "why=legacy-disposable") || !strstr(rows[1], "ufs=5:02:123456"))
+    return 7;
+  for (unsigned i=0;i<3;i++) if (strlen(rows[i]) > 80) return 8;
+#endif
 #if HAVE_FUA_SUFFIX && defined(NUWA_DISPOSABLE_DATA)
   if (!(strstr(last_text, "fua=7") && strstr(last_text, "flush=3")))
     return 3;
@@ -147,7 +172,7 @@ int main(void) {
   return 0;
 }
 """
-    common = ["-DHAVE_FUA_SUFFIX=1"] if has_suffix else []
+    common = (["-DHAVE_FUA_SUFFIX=1"] if has_suffix else []) + (["-DEXPECT_V1_ROWS=1"] if v1 else [])
     profiles = [("disposable", ["-DNUWA_DISPOSABLE_DATA=1"])]
     if "NUWA-FUA-TRIAL-20261127" in text:
         profiles.append(("fua_trial", ["-DNUWA_DISPOSABLE_DATA=1",
@@ -181,6 +206,7 @@ unsigned nuwa_sbth_rows(char (*rows)[120], unsigned limit) {
   return 1;
 }
 """ + SBTH_PAINT.decode()
+    v1 = V1_ROWS.decode() in text
     return """\
 #include <stdint.h>
 #include <stddef.h>
@@ -197,6 +223,10 @@ volatile uint64_t nuwa_disposable_fua_requests = 7, nuwa_disposable_flushes = 3;
 #endif
 volatile uint32_t nuwa_pid1_present = 1, nuwa_pid1_state = 2;
 volatile uint64_t nuwa_sb_public = (1ull << 63) | (1ull << 62) | ((uint64_t)95 << 32) | 2;
+volatile uint32_t native_data_persist_state=4,native_data_persist_header=9;
+volatile uint64_t native_data_persist_present=0,native_data_persist_writes=2,native_data_persist_errors=1;
+const char *volatile nuwa_data_persist_open_why="legacy-v3";
+volatile uint64_t nuwa_v1_write_failure=0,nuwa_v1_write_failure_attached=0,nuwa_v1_ufs_write_failure=0;
 static size_t strlcpy(char *d, const char *s, size_t n) {
   size_t l = strlen(s); if (n) { size_t c = l < n ? l : n - 1; memcpy(d, s, c); d[c] = 0; } return l;
 }
@@ -204,7 +234,7 @@ int nuwa_data_mount_summary(char *b, size_t n) {
   snprintf(b, n, "DATA0 st=4 err=0 ro=0 dev=12345678 seed=1 first-attempt"); return 2;
 }
 static void px_text(unsigned, unsigned, const char *, unsigned, uint32_t, uint32_t);
-""" + state + "\n" + px + "\n" + sbth + critical + """
+""" + state + "\n" + px + "\n" + sbth + (V1_ROWS.decode() if v1 else "") + critical + """
 int main(void) {
   size_t bytes = 1440u * 3200u * 4u;
   unsigned char *fb = calloc(1, bytes);
@@ -225,7 +255,7 @@ int main(void) {
   free(fb);
   if (!top) return 3;
   if (below) return 4;            /* strict y < height/8 */
-  if (top != """ + str(3 if sbth else 2) + """u * 42u * 1440u) return 5;
+  if (top != """ + str(2 + bool(sbth) + (3 if v1 else 0)) + """u * 42u * 1440u) return 5;
   return 0;
 }
 """
@@ -243,7 +273,7 @@ def test_critical_paint(renderer, cc, work, include_dirs):
         rc = compile_and_run(cc, code, include_dirs, work, "test_critical_paint_" + name,
                              extra=flags)
         check("critical paint / " + name, rc == 0,
-              "DATA0 and S above y<h/8; plus row 0 with SBTH")
+              "DATA0/S and selected diagnostics above y<h/8")
 
 
 def test_ppid(renderer, cc, work, include_dirs):

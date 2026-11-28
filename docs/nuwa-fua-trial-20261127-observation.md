@@ -164,7 +164,7 @@ exit 0
 
 ### 门禁与产物
 
-- `fastboot devices` 两台：`<serial>` = enuma（未操作）；`<serial>` = 唯一 nuwa
+- `fastboot devices` 两台：一台为 enuma（未操作）；另一台为唯一 nuwa
   （serial 不入库）。
 - 四项各连查 2 次，共 8 次全部成功、exit 0：`product=nuwa`、`current-slot=a`、
   `is-userspace=no`、`partition-size:vendor_boot_a=0x6000000`。

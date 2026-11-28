@@ -550,6 +550,8 @@ def persist_diag_link(r35, out, records, argv, env, data_candidate=False, dispos
     require_pin(r35 / dest.name, pin)
     run([*archive_recipe["argv"][:2], dest, late_obj])
     expected = definitions(original) + Counter({"_nuwa_data_persist_open_why": 1})
+    if retained_persist:
+        expected += Counter({"_nuwa_v1_write_failure": 1, "_nuwa_v1_write_failure_attached": 1})
     if disposable:
         expected += Counter({"_nuwa_disposable_fua_requests": 1, "_nuwa_disposable_flushes": 1})
     if definitions(dest) != expected:
@@ -864,6 +866,8 @@ extern "C" unsigned native_ufs_store_gpt_check (void)
     added = Counter({"_nuwa_ufs_desc_row": 1, "_nuwa_ufs_mode_row": 1, "_nuwa_ufs_neon_rows": 1})
     if disposable:
         added["_native_ufs_store_order"] = 1
+    if retained_persist:
+        added["_nuwa_v1_ufs_write_failure"] = 1
     if definitions(dst) != definitions(Path(original)) + added:
         raise SystemExit("restricted provider changed the retained archive export inventory")
     args = list(argv)

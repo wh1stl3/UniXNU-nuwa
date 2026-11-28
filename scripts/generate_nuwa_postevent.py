@@ -195,6 +195,32 @@ void boot_progress_critical_paint(void) {
 }
 """
 
+V1_ROWS = b"""extern const char *volatile nuwa_data_persist_open_why;
+extern volatile uint64_t nuwa_v1_write_failure,nuwa_v1_write_failure_attached;
+extern volatile uint64_t nuwa_v1_ufs_write_failure;
+static const char *bp_v1_write_source(unsigned source) {
+  static const char *const names[]={"-","arg","gate","offline","inactive",
+                                    "prior","ufs-r","ufs-w","copy","overlay","memory"};
+  return source < sizeof names / sizeof names[0] ? names[source] : "?";
+}
+static void bp_v1_rows(char rows[3][BP_COLS]) {
+  const char *why=nuwa_data_persist_open_why;
+  uint64_t first=__atomic_load_n(&nuwa_v1_write_failure,__ATOMIC_RELAXED);
+  uint64_t after=__atomic_load_n(&nuwa_v1_write_failure_attached,__ATOMIC_RELAXED);
+  uint64_t ufs=__atomic_load_n(&nuwa_v1_ufs_write_failure,__ATOMIC_RELAXED);
+  snprintf(rows[0],BP_COLS,"D1 st=%u h=%u pres=%llu why=%s",
+    native_data_persist_state,native_data_persist_header,
+    (unsigned long long)native_data_persist_present,why?why:"-");
+  snprintf(rows[1],BP_COLS,"D2 wr=%llu er=%llu ufs=%x:%02x:%06x",
+    (unsigned long long)native_data_persist_writes,
+    (unsigned long long)native_data_persist_errors,(unsigned)(ufs>>32),
+    (unsigned)(ufs>>24)&0xffu,(unsigned)ufs&0xffffffu);
+  snprintf(rows[2],BP_COLS,"D3 first=%s/%08x after=%s/%08x",
+    bp_v1_write_source((unsigned)(first>>32)),(unsigned)first,
+    bp_v1_write_source((unsigned)(after>>32)),(unsigned)after);
+}
+"""
+
 DRAW_END_ANCHOR = b"  __asm__ volatile(\"dsb sy\" ::: \"memory\");\n  last_draw=now;"
 DRAW_END = b"""  {
     char data[BP_COLS],full[BP_COLS];
@@ -252,6 +278,23 @@ def generate(src, *, sb_threads=False, v1_nodur=False):
                         BOOT_EXIT_ENABLED_ANCHOR + b"  bp_post_latch(pid,name,status,ns);\n")
     text = replace_once(text, DRAW_END_ANCHOR, DRAW_END)
     if v1_nodur:
+        text = replace_once(text, STATE_ANCHOR,
+                            STATE_ANCHOR + b"static void bp_v1_rows(char rows[3][BP_COLS]);\n")
+        declaration = CRITICAL_PAINT.splitlines(keepends=True)[0]
+        text = replace_once(text, declaration, declaration + V1_ROWS)
+        text = replace_once(text, b"  unsigned row_data=7u,row_summary=8u;\n"
+                                  b"  if((row_summary+1u)*cell>limit) { row_summary=7u; row_data=6u; }",
+                            b"  unsigned row_data=7u,row_summary=8u;\n"
+                            b"  if((row_summary+1u)*cell>limit) { row_summary=7u; row_data=6u; }\n"
+                            b"  if(row_data>=3u && (row_data+1u)*cell<=limit) {\n"
+                            b"    char rows[3][BP_COLS]; bp_v1_rows(rows);\n"
+                            b"    for(unsigned i=0;i<3;++i)\n"
+                            b"      px_text(0,(row_data-3u+i)*cell,rows[i],cols,0xff00ffcc,0xff000000);\n"
+                            b"  }")
+        text = replace_once(text, b"    char data[BP_COLS],full[BP_COLS];",
+                            b"    char rows[3][BP_COLS]; bp_v1_rows(rows);\n"
+                            b"    for(unsigned i=0;i<3;++i) line(4u+i,rows[i],0xff00ffcc);\n"
+                            b"    char data[BP_COLS],full[BP_COLS];")
         text = replace_once(text, b'line(7,"DATA0 not run",',
                             b'line(7,"[V1-NODUR] DATA0 not run",')
         text = replace_once(text, b"  char data[BP_COLS],summary[80];\n"

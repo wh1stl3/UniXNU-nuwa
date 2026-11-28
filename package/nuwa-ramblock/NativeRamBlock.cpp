@@ -20,6 +20,9 @@
 #include "DirectDisk.h"
 #include "PersistOpenReason.h"
 #include "../nuwa-data-write/DualBankLogOverlay.h"
+#if defined(NUWA_V1_NODUR)
+#include "../nuwa-data-write/V1ResetMarker.h"
+#endif
 #if defined(NUWA_DISPOSABLE_DATA)
 #include "../nuwa-data-write/DisposableData.h"
 // Diagnostic experiment only: accept Force Unit Access as an ordinary request
@@ -69,6 +72,11 @@ volatile int32_t nuwa_ram_block_reject = 0;
 volatile uint64_t native_data_persist_pages = 0, native_data_persist_loaded = 0, native_data_persist_writes = 0,
                   native_data_persist_syncs = 0, native_data_persist_errors = 0, native_data_persist_first_lba = 0,
                   native_data_persist_present = 0;
+#if defined(NUWA_V1_NODUR)
+// High word: diagnostic source; low word: the actual IOReturn. Separate
+// latches retain the first failure overall and the first after attach begins.
+volatile uint64_t nuwa_v1_write_failure = 0, nuwa_v1_write_failure_attached = 0;
+#endif
 #if defined(NUWA_DISPOSABLE_DATA)
 // Diagnostic counters for the FUA-permissive experiment: FUA requests seen at
 // the RamBlock gate and successful (non-durable) cache flushes. The renderer
@@ -77,6 +85,20 @@ volatile uint64_t nuwa_disposable_fua_requests = 0;
 volatile uint64_t nuwa_disposable_flushes = 0;
 #endif
 }
+
+#if defined(NUWA_V1_NODUR)
+static void nuwaV1WriteFailure(unsigned source, IOReturn status, bool attached) {
+  const uint64_t value = (uint64_t(source) << 32) | uint32_t(status);
+  uint64_t expected = 0;
+  __atomic_compare_exchange_n(&nuwa_v1_write_failure, &expected, value, false,
+                              __ATOMIC_RELAXED, __ATOMIC_RELAXED);
+  if (attached) {
+    expected = 0;
+    __atomic_compare_exchange_n(&nuwa_v1_write_failure_attached, &expected, value, false,
+                                __ATOMIC_RELAXED, __ATOMIC_RELAXED);
+  }
+}
+#endif
 
 class NativeRamBlock : public IOBlockStorageDevice {
   OSDeclareDefaultStructors(NativeRamBlock)
@@ -109,8 +131,33 @@ class NativeRamBlock : public IOBlockStorageDevice {
   struct StoreOps {
     // With V1-NODUR the upstream PersistOverlay.h FUA/durable-write assumption
     // does not hold: write/sync counters describe command completion, not media durability.
+#if defined(NUWA_V1_NODUR)
+    unsigned failedOp = 0;
+    uint8_t *resetHeader = nullptr;
+    bool read(uint64_t b, uint32_t n, void *d) {
+      __atomic_fetch_add(&native_data_persist_loaded, n, __ATOMIC_RELAXED);
+      int ok = native_ufs_store_read(b, n, d);
+      if (!ok) failedOp = 1;
+      return ok;
+    }
+    bool write(uint64_t b, uint32_t n, const void *s) {
+      if (resetHeader && b == 0 && n == 1) {
+        memcpy(resetHeader, s, persist::kBlock);
+        NuwaData::V1ResetMarker::set(resetHeader);
+        s = resetHeader;
+      }
+      int ok = native_ufs_store_write(b, n, s);
+      if (!ok) failedOp = 2;
+      return ok;
+    }
+    bool finishReset() {
+      NuwaData::V1ResetMarker::clear(resetHeader);
+      return native_ufs_store_write(0, 1, resetHeader) && native_ufs_store_sync();
+    }
+#else
     bool read(uint64_t b, uint32_t n, void *d) { __atomic_fetch_add(&native_data_persist_loaded, n, __ATOMIC_RELAXED); return native_ufs_store_read(b, n, d); }
     bool write(uint64_t b, uint32_t n, const void *s) { return native_ufs_store_write(b, n, s); }
+#endif
     bool sync() { return native_ufs_store_sync(); }
   };
 #if defined(NUWA_DISPOSABLE_DATA)
@@ -270,8 +317,22 @@ public:
         overlayBits = static_cast<uint8_t *>(IOMallocZero(bb * persist::kBlock));
         stage = static_cast<uint8_t *>(IOMallocZero(kStagePages * persist::kBlock));
         StoreOps ops;
+#if defined(NUWA_V1_NODUR)
+        const bool resetting = mode == 2 && discardRequested();
+        if (resetting) ops.resetHeader = stage;
+#endif
         persist::Open result = overlayBits && stage ? overlay.open(ops, pages, seedHash, mode == 1, overlayBits, discardRequested())
                                                           : persist::Open::Failed;
+#if defined(NUWA_V1_NODUR)
+        if (resetting && result == persist::Open::Fresh) {
+          if (!ops.finishReset()) {
+            nuwa_data_persist_open_why = "ok rst=commitfail";
+            result = persist::Open::Failed;
+          } else {
+            nuwa_data_persist_open_why = nuwa_persist_reset_done_reason(why);
+          }
+        }
+#endif
         if (mode == 2) directFailed = result == persist::Open::Failed;
         native_data_persist_header = static_cast<uint32_t>(overlay.header);
         if (result == persist::Open::Failed) {
@@ -499,7 +560,13 @@ IOReturn NativeRamBlock::doAsyncReadWrite(IOMemoryDescriptor *buffer, UInt64 blo
 {
   if (!buffer || !completion || !completion->action || !count || block >= capacity ||
       count > capacity - block || buffer->getLength() < count * 512 ||
-      (buffer->getDirection() != kIODirectionIn && buffer->getDirection() != kIODirectionOut)) return kIOReturnBadArgument;
+      (buffer->getDirection() != kIODirectionIn && buffer->getDirection() != kIODirectionOut)) {
+#if defined(NUWA_V1_NODUR)
+    if (buffer && buffer->getDirection() == kIODirectionOut)
+      nuwaV1WriteFailure(1, kIOReturnBadArgument, false);
+#endif
+    return kIOReturnBadArgument;
+  }
 #if defined(NUWA_DISPOSABLE_DATA)
   // IOBlockStorageDriver propagates a dispatch error to the completion chain.
   // Reject before copying, staging DMA, or acknowledging any bytes. The
@@ -513,10 +580,23 @@ IOReturn NativeRamBlock::doAsyncReadWrite(IOMemoryDescriptor *buffer, UInt64 blo
 #endif
   }
 #endif
-  if (!gate) return kIOReturnNotReady;
+  if (!gate) {
+#if defined(NUWA_V1_NODUR)
+    if (buffer->getDirection() == kIODirectionOut) nuwaV1WriteFailure(2, kIOReturnNotReady, false);
+#endif
+    return kIOReturnNotReady;
+  }
   const uint64_t bytes = count * 512;
   IOLockLock(gate);
-  if (!online) { IOLockUnlock(gate); return kIOReturnNotReady; }
+  if (!online) {
+#if defined(NUWA_V1_NODUR)
+    if (buffer->getDirection() == kIODirectionOut) nuwaV1WriteFailure(3, kIOReturnNotReady, storeAttached);
+#endif
+    IOLockUnlock(gate); return kIOReturnNotReady;
+  }
+#if defined(NUWA_V1_NODUR)
+  unsigned writeFailureSource = 8; // descriptor short copy unless a more specific failure is seen
+#endif
   uint64_t actual;bool noMemory=false;
   if(isBig && !direct) {
     // Before the store is attached (APFS probes the disk for its volume UUID long before the kernel asks for the Data volume, which is what
@@ -542,6 +622,9 @@ IOReturn NativeRamBlock::doAsyncReadWrite(IOMemoryDescriptor *buffer, UInt64 blo
       completion->action(completion->target,completion->parameter,early,done);
       return kIOReturnSuccess;
     }
+#if defined(NUWA_V1_NODUR)
+    nuwaV1WriteFailure(4, kIOReturnNotReady, storeAttached);
+#endif
     IOLockUnlock(gate);return kIOReturnNotReady;
   }
   if(sparse.pages||isBig){
@@ -562,10 +645,17 @@ IOReturn NativeRamBlock::doAsyncReadWrite(IOMemoryDescriptor *buffer, UInt64 blo
       actual = candidateIO(write, block * 512, bytes, bops);
       #else
       StoreOps store;bool storeError=false;
+#if defined(NUWA_V1_NODUR)
+      if (write && directFailed) writeFailureSource = 5;
+      else if (write && (!overlay.active || overlay.readOnly)) writeFailureSource = 4;
+#endif
       if(write && directFailed)actual=0;
       else actual=isBig?directDiskIO(big,overlay,store,stage,kStagePages,write,block*512,bytes,bops,&storeError)
-                       :directDiskIO(sparse,overlay,store,stage,kStagePages,write,block*512,bytes,bops,&storeError);
+                        :directDiskIO(sparse,overlay,store,stage,kStagePages,write,block*512,bytes,bops,&storeError);
       if(storeError){
+#if defined(NUWA_V1_NODUR)
+        if (write) writeFailureSource = store.failedOp == 1 ? 6 : store.failedOp == 2 ? 7 : 9;
+#endif
         if(write)directFailed=true;
         native_data_persist_state=5;__atomic_fetch_add(&native_data_persist_errors,1,__ATOMIC_RELAXED);
       }
@@ -598,6 +688,10 @@ IOReturn NativeRamBlock::doAsyncReadWrite(IOMemoryDescriptor *buffer, UInt64 blo
     __atomic_fetch_add(&native_ram_block_writes, 1, __ATOMIC_RELAXED);
   }
   IOReturn status = actual == bytes ? kIOReturnSuccess : noMemory ? kIOReturnNoMemory : kIOReturnIOError;
+#if defined(NUWA_V1_NODUR)
+  if (status && buffer->getDirection() == kIODirectionOut)
+    nuwaV1WriteFailure(noMemory ? 10 : writeFailureSource, status, storeAttached);
+#endif
   if (status) __atomic_fetch_add(&native_ram_block_failures, 1, __ATOMIC_RELAXED);
   IOLockUnlock(gate);
   completion->action(completion->target, completion->parameter, status, actual);
