@@ -190,13 +190,19 @@ def fixture():
     print("SBTH host fixtures: none, exact identity, 128 threads, top four, denied, panic/geometry")
 
 
-def audit(build, baseline):
+def audit(build, baseline, normal_build=False):
     renderer = (build / "BootProgress.c").read_bytes()
     for part in (SBTH_DECL, SBTH_PAINT, b"  bp_sbth_paint(1);\n",
                  b"  if(!__atomic_load_n(&display.yield_requested,__ATOMIC_ACQUIRE)) bp_sbth_paint(0);\n"):
         assert renderer.count(part) == 1
         renderer = renderer.replace(part, b"", 1)
-    assert renderer == baseline.read_bytes() and DRAW_END_ANCHOR in renderer
+    assert DRAW_END_ANCHOR in renderer
+    if not normal_build:
+        assert renderer == baseline.read_bytes()
+    else:
+        assert b'line(4u+i,rows[i]' in renderer
+        assert b'bp_rg_row(b,sizeof(b)); line(9,b' in renderer
+        assert b'"XP p%u pc=%s b=%s"' in renderer
     obj = build / "nuwa_systemos.o"
     assert not re.search(r"^\s*U _thread_info$", subprocess.check_output(
         ["llvm-nm", "-u", obj], text=True), re.M)
@@ -249,11 +255,15 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--build", type=Path)
     parser.add_argument("--baseline", type=Path)
+    parser.add_argument("--normal-build", action="store_true",
+                        help="audit the combined normal source build rather than a frozen baseline")
     parser.add_argument("--outer", type=Path)
     parser.add_argument("--baseline-outer", type=Path)
     args = parser.parse_args()
     fixture()
     if args.build:
-        audit(args.build, args.baseline)
+        if not args.normal_build and not args.baseline:
+            parser.error("--build requires --baseline or --normal-build")
+        audit(args.build, args.baseline, args.normal_build)
     if args.outer:
         audit_outer(args.outer, args.baseline_outer)

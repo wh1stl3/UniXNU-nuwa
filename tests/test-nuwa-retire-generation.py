@@ -24,7 +24,11 @@ diag = load("display_diag", ROOT / "scripts/generate_r35_display_diag.py")
 parser = argparse.ArgumentParser()
 parser.add_argument("--base", type=Path, default=ROOT.parents[1] / "UniXNU")
 parser.add_argument("--build", type=Path, help="also check the actual generated build source")
+parser.add_argument("--normal-build", action="store_true",
+                    help="check a normal source build instead of the frozen binary-input replay")
 args = parser.parse_args()
+if args.normal_build and not args.build:
+    parser.error("--normal-build requires --build")
 upstream = args.base / "drivers/GopFramebuffer/NativeLegacyDisplay.cpp"
 text = adapter.adapt_source(upstream.read_text(), upstream)
 text = adapter.cpu_only_source(text, upstream)
@@ -47,7 +51,9 @@ assert method.index("nuwa_retire_entered()") < method.index("completeCurrentSwap
 assert method.index("completeCurrentSwap()") < method.index("nuwa_retire_returned(retirementGeneration)")
 assert "request" not in method[method.index("completeCurrentSwap()"):]
 if args.build:
-    actual = (args.build / "NativeLegacyDisplay.cpp").read_text()
+    source = (args.build / "archive/NativeLegacyDisplay.cpp" if args.normal_build else
+              args.build / "NativeLegacyDisplay.cpp")
+    actual = source.read_text()
     assert retirement(actual) == method
 
 renderer = diag.generate((ROOT / "out/nuwa-r35l-regs-full-20261121/BootProgress.c").read_bytes(),
@@ -62,8 +68,9 @@ assert "nuwa_rg_entered" not in diag.generate(
     (ROOT / "out/nuwa-r35l-regs-full-20261121/BootProgress.c").read_bytes()).decode()
 if args.build:
     built_renderer = (args.build / "BootProgress.c").read_text()
-    baseline_renderer = (ROOT / "out/nuwa-v1-nodur-diag-20261128-build-r3/BootProgress.c").read_bytes()
-    assert built_renderer.encode() == diag.retire_generation(baseline_renderer)
+    if not args.normal_build:
+        baseline_renderer = (ROOT / "out/nuwa-v1-nodur-diag-20261128-build-r3/BootProgress.c").read_bytes()
+        assert built_renderer.encode() == diag.retire_generation(baseline_renderer)
     assert 'bp_rg_row(b,sizeof(b)); line(9,b,0xff00ffcc);' in built_renderer
     assert 'bp_rg_row(rows[n++],120);' in built_renderer
     for row in ('"D1 st=', '"D2 wr=', '"D3 first='):

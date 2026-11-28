@@ -72,6 +72,8 @@ def main(build=None):
             if v1:
                 assert text.count(b"bp_v1_status_suffix(data,sizeof data);") == 2
                 assert b'"DATA0 not run dur=?"' in text
+                assert text.index(b"static void bp_v1_status_suffix(char *,size_t);") < text.index(
+                    b"bp_v1_status_suffix(data,sizeof data);")
             texts.append(text)
 
     packer = runpy.run_path(str(ROOT / "scripts/package-nuwa-crashcap.py"))

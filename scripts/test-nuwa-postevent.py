@@ -36,6 +36,19 @@ from generate_nuwa_postevent import SBTH_PAINT, V1_ROWS
 
 ROOT = Path(__file__).resolve().parents[1]
 
+XP_STUB = """\
+typedef struct { uint64_t pc; } arm_saved_state_t;
+struct xp_task { uint64_t mach_header_vm_address; };
+static struct xp_task xp_task = { 0x100012340ULL };
+static arm_saved_state_t xp_saved = { 0x123456789abcdef0ULL };
+static int xp_missing;
+static int proc_selfpid(void) { return 17; }
+static int current_thread(void) { return 1; }
+static struct xp_task *current_task(void) { return &xp_task; }
+static const arm_saved_state_t *get_user_regs(int t) { (void)t; return xp_missing ? 0 : &xp_saved; }
+static uint64_t get_saved_state_pc(const arm_saved_state_t *s) { return s->pc; }
+"""
+
 
 def check(label, ok, detail=""):
     print(f"{label:46} {'PASS' if ok else 'FAIL'} {detail}")
@@ -240,6 +253,7 @@ unsigned nuwa_sbth_rows(char (*rows)[120], unsigned limit) {
 #include "BootProgressCore.h"
 #include "BootProgressDisplay.h"
 static struct bp_display display;
+""" + (XP_STUB if "bp_xp_sample(" in text else "") + """
 static char build_tag[32] = "data-trial";
 #if defined(NUWA_DISPOSABLE_DATA)
 volatile uint64_t nuwa_disposable_fua_requests = 7, nuwa_disposable_flushes = 3;
@@ -265,7 +279,20 @@ int main(void) {
   display.frame = (uintptr_t)fb;
   display.bound = 0;              /* after boot_progress_prepare_scanout() */
   display.width = 1440; display.height = 3200; display.stride = 5760; display.scale = 3;
+#if EXPECT_XP
+  boot_progress_critical_capture(18, "other", 45, 0, 0, 1);
+  if (bp_critical.pc_valid || bp_critical.image_base_valid) return 6;
+  xp_missing=1;
   boot_progress_critical_capture(17, "tzinit", 45, 0, 0, 1);
+  if (bp_critical.pc_valid || !bp_critical.image_base_valid ||
+      bp_critical.image_base != 0x100012340ULL) return 7;
+  xp_missing=0;
+#endif
+  boot_progress_critical_capture(17, "tzinit", 45, 0, 0, 1);
+#if EXPECT_XP
+  if (!bp_critical.pc_valid || bp_critical.pc != 0x123456789abcdef0ULL ||
+      !bp_critical.image_base_valid || bp_critical.image_base != 0x100012340ULL) return 8;
+#endif
   boot_progress_critical_paint();
   unsigned long top = 0, below = 0;
   for (unsigned y = 0; y < 3200; ++y)
@@ -293,6 +320,8 @@ def test_critical_paint(renderer, cc, work, include_dirs):
     if not has_suffix or "#if defined(NUWA_DISPOSABLE_DATA)" in suffix:
         profiles.insert(0, ("non_disposable", []))
     for name, flags in profiles:
+        if "bp_xp_sample(" in text:
+            flags = flags + ["-DEXPECT_XP=1"]
         rc = compile_and_run(cc, code, include_dirs, work, "test_critical_paint_" + name,
                              extra=flags)
         check("critical paint / " + name, rc == 0,
@@ -310,6 +339,7 @@ def test_ppid(renderer, cc, work, include_dirs):
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
+""" + (XP_STUB if "bp_xp_sample(" in text else "") + """
 static char build_tag[32] = "data-trial";
 volatile uint64_t nuwa_disposable_fua_requests = 7, nuwa_disposable_flushes = 3;
 volatile uint32_t nuwa_pid1_present = 1, nuwa_pid1_state = 2;

@@ -46,6 +46,8 @@ struct bp_post_exit {
   unsigned valid,pid,status,ns;
   int ppid;
   char comm[17];
+  uint64_t pc,image_base;
+  unsigned pc_valid,image_base_valid;
 };
 static struct bp_post_exit bp_post_exit;
 static struct bp_post_exit bp_critical;
@@ -61,6 +63,17 @@ extern int nuwa_data_mount_summary(char *,size_t);
 #if defined(NUWA_FUA_TRIAL) && NUWA_FUA_TRIAL
 static const char bp_fua_trial_tag[] __attribute__((used)) = "NUWA-FUA-TRIAL-20261127";
 #endif
+// Best-effort current-thread snapshot. The task field's writer uses task_lock;
+// this relaxed sample intentionally does not acquire it or dereference user memory.
+static void bp_xp_sample(int pid,uint64_t *pc,unsigned *pc_valid,
+  uint64_t *base,unsigned *base_valid) {
+  *pc=0; *pc_valid=0; *base=0; *base_valid=0;
+  if(pid!=proc_selfpid()) return;
+  const arm_saved_state_t *saved=get_user_regs(current_thread());
+  if(saved) { *pc=get_saved_state_pc(saved); *pc_valid=1; }
+  *base=__atomic_load_n(&current_task()->mach_header_vm_address,__ATOMIC_RELAXED);
+  *base_valid=1;
+}
 void boot_progress_critical_capture(int pid,const char *name,int status,unsigned ns,
   uint64_t code,int ppid);
 void boot_progress_critical_capture(int pid,const char *name,int status,unsigned ns,
@@ -72,6 +85,8 @@ void boot_progress_critical_capture(int pid,const char *name,int status,unsigned
   bp_critical.status=(unsigned)status;
   bp_critical.ns=ns;
   strlcpy(bp_critical.comm,name?name:"?",sizeof bp_critical.comm);
+  bp_xp_sample(pid,&bp_critical.pc,&bp_critical.pc_valid,
+    &bp_critical.image_base,&bp_critical.image_base_valid);
   __atomic_store_n(&bp_critical_valid,1,__ATOMIC_RELEASE);
 }
 void boot_progress_exit_parent(int pid,int ppid);
@@ -275,14 +290,39 @@ def replace_once(text, old, new):
 
 def generate(src, *, sb_threads=False, v1_nodur=False):
     digest = sha256(src).hexdigest()
-    text = replace_once(src, STATE_ANCHOR, STATE_ANCHOR + STATE)
+    text = replace_once(src, b"#include <arm/thread.h>\n",
+                        b"#include <arm/thread.h>\n#include <kern/task.h>\n")
+    text = replace_once(text, b"  uint64_t code, pc;\n",
+                        b"  uint64_t code, pc, image_base;\n  unsigned image_base_valid;\n")
+    text = replace_once(text, b"""      if(pid==proc_selfpid()) {
+        const arm_saved_state_t *saved=get_user_regs(current_thread());
+        if(saved) { exit_ring[0].pc=get_saved_state_pc(saved); exit_ring[0].pc_valid=1; }
+      }""",
+                        b"""      bp_xp_sample(pid,&exit_ring[0].pc,&exit_ring[0].pc_valid,
+        &exit_ring[0].image_base,&exit_ring[0].image_base_valid);""")
+    text = replace_once(text, b'  if (!strncmp(s,"UFS",3) || !strncmp(s,"SCHED",5)) return 2;',
+                        b'  if (!strncmp(s,"XP ",3)) return 6;\n'
+                        b'  if (!strncmp(s,"UFS",3) || !strncmp(s,"SCHED",5)) return 2;')
+    text = replace_once(text, b'    if(exit_ring_count) snprintf(rows[n++],120,"%s",xr);',
+                        b"""    if(exit_ring_count) snprintf(rows[n++],120,"%s",xr);
+    if(exit_ring_count && n<64) {
+      const struct bp_exit_ring_entry *e=&exit_ring[0];
+      char pc[17],base[17];
+      if(e->pc_valid) snprintf(pc,sizeof pc,"%016llx",(unsigned long long)e->pc);
+      else snprintf(pc,sizeof pc,"-");
+      if(e->image_base_valid) snprintf(base,sizeof base,"%016llx",(unsigned long long)e->image_base);
+      else snprintf(base,sizeof base,"-");
+      snprintf(rows[n++],120,"XP p%u pc=%s b=%s",e->pid,pc,base);
+    }""")
+    text = replace_once(text, STATE_ANCHOR, STATE_ANCHOR + STATE)
     text = replace_once(text, BOOT_EXIT_ANCHOR, CRITICAL_PAINT + BOOT_EXIT_ANCHOR)
     text = replace_once(text, BOOT_EXIT_ENABLED_ANCHOR,
                         BOOT_EXIT_ENABLED_ANCHOR + b"  bp_post_latch(pid,name,status,ns);\n")
     text = replace_once(text, DRAW_END_ANCHOR, DRAW_END)
     if v1_nodur:
         text = replace_once(text, STATE_ANCHOR,
-                            STATE_ANCHOR + b"static void bp_v1_rows(char rows[3][BP_COLS]);\n")
+                            STATE_ANCHOR + b"static void bp_v1_rows(char rows[3][BP_COLS]);\n"
+                            b"static void bp_v1_status_suffix(char *,size_t);\n")
         declaration = CRITICAL_PAINT.splitlines(keepends=True)[0]
         text = replace_once(text, declaration, declaration + V1_ROWS)
         text = replace_once(text, b"  unsigned row_data=7u,row_summary=8u;\n"
