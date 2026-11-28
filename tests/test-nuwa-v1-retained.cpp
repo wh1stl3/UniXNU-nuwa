@@ -29,7 +29,9 @@ static FixtureGpt gptFixture;
 static const auto &nuwaDataIdentity = gptFixture.id;
 extern "C" { uint8_t native_ram_block_seed_sha256[32]; }
 static uint64_t native_data_persist_loaded, native_data_persist_pages, native_data_persist_first_lba,
-                native_data_persist_present, native_ram_block_resident_bytes;
+                native_data_persist_present, native_ram_block_resident_bytes, native_data_persist_errors,
+                native_data_persist_writes, native_data_persist_syncs, native_ram_block_reads,
+                native_ram_block_writes, native_ram_block_failures;
 static unsigned native_data_persist_gpt, native_data_persist_gpt_after, native_data_persist_header,
                 native_data_persist_state;
 static const char *nuwa_data_persist_open_why;
@@ -46,7 +48,7 @@ static bool PE_parse_boot_argn(const char *arg, void *ptr, size_t n) {
   if (!strcmp(arg, "sheng-data-persist")) *static_cast<uint32_t *>(ptr) = 2;
   else if (!strcmp(arg, "sheng-log-reserve") && scenario == "overlap-log")
     *static_cast<uint32_t *>(ptr) = 287;
-  else if (!strcmp(arg, "sheng-data-reset") && (scenario == "reset" || prefix("sync-")))
+  else if (!strcmp(arg, "sheng-data-reset") && prefix("reset"))
     *static_cast<uint32_t *>(ptr) = 1;
   else return false;
   return true;
@@ -80,8 +82,8 @@ static struct Hardware {
   std::map<uint64_t, Page> media;
   struct Event { uint8_t op, flags; unsigned n; uint64_t lba; };
   std::vector<Event> events;
-  unsigned prepares = 0, syncs = 0, polls = 0;
-  bool submitted = false, timedOut = false;
+  unsigned prepares = 0, polls = 0;
+  bool submitted = false, timedOut = false, ownershipLost = false, faultRead = false;
   std::promise<void> *writeRung = nullptr;
   std::future<void> *resume = nullptr;
   persist::Overlay *observeBits = nullptr;
@@ -105,7 +107,7 @@ static struct Hardware {
     switch (off) {
       case 0x34: case 0x60: return 1;
       case 0x30: return 11;
-      case 0x50: return Dma;
+      case 0x50: return ownershipLost ? Dma + 4096 : Dma;
       case 0x58: return doorbell();
       case 0x20: case 0x24: case 0x54: case 0x78: case 0x80: return 0;
       default: assert(false); return 0;
@@ -142,8 +144,12 @@ static struct Hardware {
         const auto *page = it == media.end() ? gptFixture.at(lba + i) : it->second.data();
         if (page) memcpy(data + i * Block, page, Block);
       }
+      if (faultRead) {
+        if (scenario == "sync-timeout") timedOut = true;
+        else if (scenario == "sync-unowned") r[3] ^= 1;
+      }
     } else if (c[0] == 0x2a) {
-      assert(c[1] == 8 && u[1] == 0x20 && n && Window({First, Size}).contains(0, Block, lba, n));
+      assert(c[1] == 0 && u[1] == 0x20 && n && Window({First, Size}).contains(0, Block, lba, n));
       assert((le32(virt) & (3U << 25)) == 1U << 25);
       if (observeBits) {
         const auto bitmap = First + 1 + observePage / (Block * 8);
@@ -154,18 +160,14 @@ static struct Hardware {
         assert(resume->wait_for(std::chrono::seconds(2)) == std::future_status::ready);
         writeRung = nullptr;
       }
-      for (unsigned i = 0; i < n; ++i)
-        memcpy(media[lba + i].data(), data + i * Block, Block);
-    } else {
-      assert(c[0] == 0x35 && zero(c + 1, 9) && !u[1] && !(le32(virt) & (3U << 25)));
-      ++syncs;
-      if ((scenario == "sync-scsi" && syncs == 1) || (scenario == "sync-header" && syncs == 2)) {
+      if (scenario == "reset-scsi") {
         r[7] = 2; r[11] = 16; r[33] = 14; r[34] = 0x70; r[41] = 6;
-      } else if (scenario == "sync-unowned") {
-        r[3] ^= 1;
-      } else if (scenario == "sync-timeout") {
-        timedOut = true;
+      } else {
+        for (unsigned i = 0; i < n; ++i)
+          memcpy(media[lba + i].data(), data + i * Block, Block);
       }
+    } else {
+      assert(false && "unexpected command (including SYNCHRONIZE CACHE)");
     }
     if (c[0] != 0x28)
       printf("CDB=%02x byte1=%02x LBA=%u blocks=%u\n", c[0], c[1], lba, n);
@@ -182,7 +184,13 @@ static struct Hardware {
   void barrier() {}
   bool expired() const { return timedOut && polls > 2; }
   void delay() {}
-  void invalidateAll() {}
+  void invalidateAll() {
+    const auto &e = events.back();
+    if (e.op == 0x2a &&
+        ((scenario == "reset-order-before-header" && e.lba == First + persist::bitmapBlocks(Pages)) ||
+         (scenario == "reset-order-after-header" && e.lba == First)))
+      ownershipLost = true;
+  }
   const uint8_t *response() const { return virt + 4608; }
 } combined_hardware;
 
@@ -194,9 +202,30 @@ static CombinedRead::State combined_state;
 using UInt64 = uint64_t;
 using IOOptionBits = uint32_t;
 using IOReturn = int;
-constexpr IOReturn kIOReturnSuccess = 0, kIOReturnNotReady = 1, kIOReturnIOError = 2;
+constexpr IOReturn kIOReturnSuccess = 0, kIOReturnNotReady = 1, kIOReturnIOError = 2,
+                   kIOReturnBadArgument = 3, kIOReturnNoMemory = 4, kIOReturnUnsupported = 5;
+constexpr IOOptionBits kIOStorageOptionForceUnitAccess = 1;
+struct IOStorageAttributes { IOOptionBits options; };
+enum { kIODirectionIn, kIODirectionOut };
+struct IOMemoryDescriptor {
+  Page &bytes;
+  size_t getLength() { return bytes.size(); }
+  int getDirection() { return kIODirectionOut; }
+  uint64_t writeBytes(uint64_t at, const void *p, uint64_t n) {
+    assert(at + n <= bytes.size()); memcpy(bytes.data() + at, p, n); return n;
+  }
+  uint64_t readBytes(uint64_t at, void *p, uint64_t n) {
+    assert(at + n <= bytes.size()); memcpy(p, bytes.data() + at, n); return n;
+  }
+};
+struct IOStorageCompletion {
+  void *target, *parameter;
+  void (*action)(void *, void *, IOReturn, uint64_t);
+};
 struct NativeRamBlock {
   IOLock ramGate, *gate = &ramGate;
+  uint8_t *memory = nullptr;
+  const uint64_t capacity = Pages * Block / 512;
   bool online = true, isBig = true, storeAttached = false, direct = false, directFailed = false;
   RamSparseDisk sparse{};
   SeedDisk big{};
@@ -206,13 +235,36 @@ struct NativeRamBlock {
   static constexpr uint32_t kStagePages = 32;
   NativeRamBlock() { big.bytes = Pages * Block; memcpy(seedHash, Disposable::Seed, sizeof seedHash); }
   ~NativeRamBlock() { free(overlayBits); free(stage); }
+  IOReturn doAsyncReadWrite(IOMemoryDescriptor *, UInt64, UInt64, IOStorageAttributes *, IOStorageCompletion *);
 #include "RamBlock.inc"
 };
+#include "RamIO.inc"
+
+static void checkSync(NativeRamBlock &ram, IOReturn expected, unsigned locks = 2) {
+  const auto count = combined_hardware.events.size();
+  const auto prepares = combined_hardware.prepares;
+  const auto acquires = hostAcquires;
+  const auto tag = combined_state.tag;
+  assert(ram.doSynchronizeCache() == expected && ram.doSynchronize(0, 8, 0) == expected);
+  assert(combined_hardware.events.size() == count && combined_hardware.prepares == prepares &&
+         combined_state.tag == tag && hostAcquires == acquires + locks);
+  printf("both IOKit sync entries: %s; zero command preparations/submissions\n",
+         expected == kIOReturnSuccess ? "Success" : "IOError");
+}
 
 int main(int argc, char **argv) {
   assert(argc == 2);
   scenario = argv[1];
   printf("case=%s\n", argv[1]);
+  if (scenario == "cache-state") {
+    NativeRamBlock ram;
+    for (bool initial : {false, true}) {
+      bool value = initial;
+      assert(ram.getWriteCacheState(&value) == kIOReturnUnsupported && value == initial);
+    }
+    puts("getWriteCacheState: Unsupported; output unchanged");
+    return 0;
+  }
   combined_state.setup.dma = Hardware::Dma;
   assert(PreservedNop::domain(combined_hardware, combined_state.setup));
   combined_state.block = Block;
@@ -222,24 +274,26 @@ int main(int argc, char **argv) {
                     Disposable::RootBytes};
   memcpy(native_ram_block_seed_sha256, Disposable::Seed, 32);
   if (scenario == "wrong-boot-seed") native_ram_block_seed_sha256[0] ^= 1;
+  if (scenario == "wrong-primary-gpt") gptFixture.pe[0] ^= 1;
+  if (scenario == "wrong-backup-gpt") gptFixture.be[0] ^= 1;
   if (scenario == "legacy-v3" || scenario == "legacy-disposable")
     memcpy(combined_hardware.media[Legacy.first + 1].data(),
            scenario == "legacy-v3" ? "NUWADSB3" : "NUWAXSB3", 8);
   uint64_t lba = 0;
   const char *why = nullptr;
-  if (scenario == "wrong-boot-seed" || prefix("legacy-") || prefix("overlap-")) {
+  if (scenario == "wrong-boot-seed" || prefix("legacy-") || prefix("overlap-") ||
+      scenario == "wrong-primary-gpt" || scenario == "wrong-backup-gpt") {
     assert(!native_ufs_store_open(scenario == "overlap-root" ? 57000000 : Size, &lba, &why));
     Page p{};
     assert(why && *why && !native_ufs_store_write(0, 1, p.data()) && !native_ufs_store_sync());
     if (scenario != "overlap-root") {
       NativeRamBlock ram;
       ram.attachStore();
-      const auto acquires = hostAcquires;
       assert(native_data_persist_state == 4 && !ram.direct && !ram.overlay.active);
-      assert(ram.doSynchronizeCache() == kIOReturnIOError &&
-             ram.doSynchronize(0, 8, 0) == kIOReturnIOError && hostAcquires == acquires);
+      checkSync(ram, kIOReturnIOError, 0);
     }
     for (auto e : combined_hardware.events) assert(e.op == 0x28);
+    puts("refused window: zero writes");
     return 0;
   }
   assert(native_ufs_store_mode() == 2);
@@ -247,7 +301,7 @@ int main(int argc, char **argv) {
   auto &overlay = ram.overlay;
   NativeRamBlock::StoreOps ops;
   auto &hw = combined_hardware;
-  if (scenario == "retained" || scenario == "wrong-header-seed") {
+  if (scenario == "retained" || scenario == "wrong-header-seed" || prefix("sync-")) {
     auto &header = hw.media[First];
     Page seed{};
     memcpy(seed.data(), Disposable::Seed, 32);
@@ -261,47 +315,66 @@ int main(int argc, char **argv) {
   // Primary/backup GPT (4 commands) and two legacy anchors precede the header.
   constexpr unsigned before = 6;
   if (scenario == "wrong-header-seed") {
-    const auto acquires = hostAcquires;
     assert(native_data_persist_state == 7 && !overlay.active && hw.events.size() == before + 1 &&
            hw.events.back().op == 0x28);
-    assert(ram.doSynchronizeCache() == kIOReturnSuccess &&
-           ram.doSynchronize(0, 8, 0) == kIOReturnSuccess && hostAcquires == acquires);
+    checkSync(ram, kIOReturnSuccess, 0);
+    puts("foreign v1 header kept: zero writes");
     return 0;
   }
-  if (prefix("sync-")) {
+  if (prefix("reset-")) {
     assert(native_data_persist_state == 4 && !overlay.active && !ram.direct &&
-           retainedSlot.state() == (scenario == "sync-timeout" ? State::TIMEOUT_ORPHAN : State::FATAL_QUARANTINED));
-    const bool last = scenario == "sync-header";
-    assert(hw.media.count(First) == last && hw.syncs == (last ? 2U : 1U));
+           retainedSlot.state() == State::FATAL_QUARANTINED);
+    const auto bb = persist::bitmapBlocks(Pages);
+    const bool last = scenario == "reset-order-after-header";
+    const auto writes = scenario == "reset-scsi" ? 1 : bb + last;
+    assert(hw.media.count(First) == last && hw.events.size() == before + 1 + writes);
     const auto count = hw.events.size();
     const auto acquires = hostAcquires;
     ram.attachStore(); // The failed attempt stays latched; no reattach or sync retry.
-    assert(ram.doSynchronizeCache() == kIOReturnIOError);
-    assert(ram.doSynchronize(0, 8, 0) == kIOReturnIOError);
+    checkSync(ram, kIOReturnIOError, 0);
     assert(hw.events.size() == count && hostAcquires == acquires);
     puts("attachStore failed: both IOKit sync entries return IOError; no retained re-entry");
     return 0;
   }
   if (scenario == "reset") {
     const auto bb = persist::bitmapBlocks(Pages);
-    assert(native_data_persist_state == 3 && overlay.active && ram.direct && hw.events.size() == before + bb + 4);
+    assert(native_data_persist_state == 3 && overlay.active && ram.direct && hw.events.size() == before + bb + 2);
     const auto *e = hw.events.data() + before;
     assert(e[0].op == 0x28);
     for (unsigned i = 1; i <= bb; ++i)
       assert(e[i].op == 0x2a && e[i].lba == First + i && e[i].n == 1);
-    assert(e[bb + 1].op == 0x35 && e[bb + 2].lba == First &&
-           e[bb + 2].n == 1 && e[bb + 3].op == 0x35);
-    assert(ram.doSynchronizeCache() == kIOReturnSuccess && hw.syncs == 3 &&
-           hw.events.back().op == 0x35);
+    assert(e[bb + 1].op == 0x2a && e[bb + 1].lba == First && e[bb + 1].n == 1);
+    checkSync(ram, kIOReturnSuccess);
     return 0;
   }
   assert(native_data_persist_state == 2 && overlay.active && ram.direct);
+  if (prefix("sync-")) {
+    checkSync(ram, kIOReturnSuccess);
+    if (scenario == "sync-ownership") {
+      hw.ownershipLost = true;
+    } else {
+      hw.faultRead = true;
+      IOLockLock(gHost.lock);
+      const auto end = retainedReadLocked(gStoreGeometry.first, 1);
+      IOLockUnlock(gHost.lock);
+      assert(end == (scenario == "sync-timeout" ? CombinedRead::End::Transport : CombinedRead::End::Response));
+    }
+    checkSync(ram, kIOReturnIOError);
+    assert(retainedSlot.state() ==
+           (scenario == "sync-timeout" ? State::TIMEOUT_ORPHAN : State::FATAL_QUARANTINED));
+    Page p{};
+    const auto count = hw.events.size();
+    assert(!ram.directFailed && !ops.write(persist::pageBlock(Pages, 0), 1, p.data()) &&
+           hw.events.size() == count);
+    return 0;
+  }
   std::vector<uint8_t> data(33 * Block, 0x5a);
   for (unsigned i = 0; i < 33; ++i) data[i * Block] = uint8_t(i);
   const auto count = hw.events.size();
   assert(!ops.write(Size - 1, 2, data.data()) && !ops.write(Size, 1, data.data()) &&
          !ops.read(UINT64_MAX, 1, data.data()) && !ops.write(0, 0, data.data()) &&
          hw.events.size() == count);
+  puts("out of window: zero writes");
   hw.observeBits = &overlay;
   hw.observePage = 9;
   std::promise<void> rung, rootWaiting, release;
@@ -331,4 +404,21 @@ int main(int argc, char **argv) {
   for (unsigned i = 0; i < 33; ++i) assert(!memcmp(hw.media[page + i].data(), data.data() + i * Block, Block));
   assert(hw.media[First + 1][1] == 0xfe && hw.media[First + 1][5] == 0x03);
   puts("writeRun: data completed before set bits and bitmap write; root waits on same host lock");
+  hw.observeBits = nullptr;
+  Page payload{};
+  payload.fill(0xab);
+  IOMemoryDescriptor buffer{payload};
+  IOStorageAttributes attributes{kIOStorageOptionForceUnitAccess};
+  bool completed = false;
+  IOStorageCompletion completion{&completed, nullptr, [](void *target, void *, IOReturn status, uint64_t bytes) {
+    assert(status == kIOReturnSuccess && bytes == Block);
+    *static_cast<bool *>(target) = true;
+  }};
+  const auto beforeFua = hw.events.size();
+  assert(ram.doAsyncReadWrite(&buffer, 9 * (Block / 512), Block / 512, &attributes, &completion) ==
+         kIOReturnSuccess && completed);
+  assert(hw.events.size() == beforeFua + 1 && hw.events.back().op == 0x2a &&
+         !hw.events.back().flags && hw.events.back().lba == page && hw.media[page] == payload);
+  puts("FUA attribute: dispatch and completion Success, plain WRITE(10)");
+  checkSync(ram, kIOReturnSuccess);
 }

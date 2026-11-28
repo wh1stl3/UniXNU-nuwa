@@ -244,13 +244,21 @@ def replace_once(text, old, new):
     return text.replace(old, new, 1)
 
 
-def generate(src, *, sb_threads=False):
+def generate(src, *, sb_threads=False, v1_nodur=False):
     digest = sha256(src).hexdigest()
     text = replace_once(src, STATE_ANCHOR, STATE_ANCHOR + STATE)
     text = replace_once(text, BOOT_EXIT_ANCHOR, CRITICAL_PAINT + BOOT_EXIT_ANCHOR)
     text = replace_once(text, BOOT_EXIT_ENABLED_ANCHOR,
                         BOOT_EXIT_ENABLED_ANCHOR + b"  bp_post_latch(pid,name,status,ns);\n")
     text = replace_once(text, DRAW_END_ANCHOR, DRAW_END)
+    if v1_nodur:
+        text = replace_once(text, b'line(7,"DATA0 not run",',
+                            b'line(7,"[V1-NODUR] DATA0 not run",')
+        text = replace_once(text, b"  char data[BP_COLS],summary[80];\n"
+                                  b"  (void)nuwa_data_mount_summary(data,sizeof data);",
+                            b'  char data[BP_COLS]="[V1-NODUR] ",summary[80];\n'
+                            b'  const size_t prefix=sizeof "[V1-NODUR] "-1;\n'
+                            b'  (void)nuwa_data_mount_summary(data+prefix,sizeof data-prefix);')
     if sb_threads:
         text = replace_once(text, STATE_ANCHOR, STATE_ANCHOR + SBTH_DECL)
         declaration = CRITICAL_PAINT.splitlines(keepends=True)[0]

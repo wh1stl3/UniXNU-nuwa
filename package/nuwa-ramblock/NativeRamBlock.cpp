@@ -107,6 +107,8 @@ class NativeRamBlock : public IOBlockStorageDevice {
   DataOverlay::Workspace *dataWorkspace = nullptr;
 #endif
   struct StoreOps {
+    // With V1-NODUR the upstream PersistOverlay.h FUA/durable-write assumption
+    // does not hold: write/sync counters describe command completion, not media durability.
     bool read(uint64_t b, uint32_t n, void *d) { __atomic_fetch_add(&native_data_persist_loaded, n, __ATOMIC_RELAXED); return native_ufs_store_read(b, n, d); }
     bool write(uint64_t b, uint32_t n, const void *s) { return native_ufs_store_write(b, n, s); }
     bool sync() { return native_ufs_store_sync(); }
@@ -385,7 +387,7 @@ public:
     return status;
   }
   IOReturn doSynchronize(UInt64, UInt64, IOOptionBits) override { return doSynchronizeCache(); }
-#if defined(NUWA_DISPOSABLE_DATA)
+#if defined(NUWA_DISPOSABLE_DATA) || defined(NUWA_V1_NODUR)
   IOReturn getWriteCacheState(bool *) override { return kIOReturnUnsupported; }
 #else
   IOReturn getWriteCacheState(bool *value) override { *value = false; return kIOReturnSuccess; }

@@ -436,7 +436,7 @@ def candidate_link(r35, out, records, argv, env, *, bringup_diag, hid, mg_reset,
 
 def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False, pixsig=False,
                  data_persist=False, stage=False, post_event=False, fua_permissive=False,
-                 sb_threads=False, disposable=False):
+                 sb_threads=False, disposable=False, retained_persist=False):
     from generate_r35_display_diag import generate, data_persist_row, stage_channel
 
     source = out / "BootProgress.c"
@@ -444,7 +444,7 @@ def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False, pixsig
                     mg_reset=mg_reset, smp_observe=smp_observe, pixsig=pixsig)
     if post_event:
         from generate_nuwa_postevent import generate as generate_postevent
-        text, _ = generate_postevent(text, sb_threads=sb_threads)
+        text, _ = generate_postevent(text, sb_threads=sb_threads, v1_nodur=retained_persist)
     if crashcap:
         from generate_nuwa_crashcap import generate_banner
 
@@ -511,7 +511,7 @@ def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False, pixsig
 
 
 def persist_diag_link(r35, out, records, argv, env, data_candidate=False, disposable=False,
-                      fua_permissive=False):
+                      fua_permissive=False, retained_persist=False):
     recipe, = (r for r in records if r["label"] == "compile-NativeRamBlock" and r["exit"] == 0)
     archive_recipe, = (r for r in records if r["label"] == "archive-NativeRamBlock" and r["exit"] == 0)
     command = list(recipe["argv"])
@@ -525,6 +525,8 @@ def persist_diag_link(r35, out, records, argv, env, data_candidate=False, dispos
         command.append("-DNUWA_DISPOSABLE_DATA=1")
     if fua_permissive:
         command.append("-DNUWA_DISPOSABLE_FUA_PERMISSIVE=1")
+    if retained_persist:
+        command.append("-DNUWA_V1_NODUR=1")
     (out / "ramblock-argv.json").write_text(json.dumps(command, indent=2) + "\n")
     with (out / "compile-NativeRamBlock.log").open("wb") as log:
         subprocess.run(command, cwd=recipe["cwd"], env=env, stdout=log, stderr=subprocess.STDOUT, check=True)
@@ -678,18 +680,20 @@ def data_candidate_link(out, argv, env, gpt, disposable=False, retained_persist=
                 raise SystemExit("unexpected disposable WRITE(10) splice anchor")
             combined_text = combined_text.replace(old, new)
     if retained_persist:
+        # This profile only has a non-FUA writer; do not compile a flush command.
+        combined_text = combined_text.replace("WriteFua", "WriteVolatile")
         for old, new in (
-            ("WriteFua, QueryDesc", "WriteFua, SyncCache, QueryDesc"),
             ("unsigned length(Command c, unsigned block)", "unsigned length(Command c, unsigned block, unsigned blocks = 1)"),
-            ("(c == Command::Read || c == Command::WriteFua) ? block", "c == Command::WriteFua ? block * blocks : c == Command::Read ? block"),
+            ("(c == Command::Read || c == Command::WriteVolatile) ? block",
+             "c == Command::WriteVolatile ? block * blocks : c == Command::Read ? block"),
             ("blocks != 1 || lba > UINT32_MAX",
              "!blocks || blocks > Max / NuwaData::Block || lba > UINT32_MAX || blocks - 1 > UINT32_MAX - lba"),
             ("length(c, block);", "length(c, block, blocks);"),
             ("length(c, s.block)) - s.residual", "length(c, s.block, s.readBlocks)) - s.residual"),
-            ("NuwaData::write10(cdb, uint32_t(lba));", "NuwaData::write10(cdb, uint32_t(lba), uint8_t(blocks));"),
+            ("NuwaData::write10(cdb, uint32_t(lba));",
+             "NuwaData::write10(cdb, uint32_t(lba), uint8_t(blocks));\n"
+             "      cdb[1] = 0; // no FUA"),
             ("writeSource, NuwaData::Block);", "writeSource, n);"),
-            ("    case Command::Sense: u[16]", "    case Command::SyncCache: u[16] = 0x35; break;\n"
-             "    case Command::Sense: u[16]"),
         ):
             if combined_text.count(old) != 1:
                 raise SystemExit(f"unexpected retained persistence encoder anchor: {old}")
@@ -1072,12 +1076,13 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
                                  smp_observe=smp_observe, crashcap=crashcap, pixsig=pixsig,
                                  data_persist=data_persist, stage=stage, post_event=post_event,
                                  fua_permissive=fua_permissive, sb_threads=sb_threads,
-                                 disposable=disposable)
+                                  disposable=disposable, retained_persist=retained_persist)
             argv[force_at] = f"-Wl,-force_load,{diag}"
         if data_persist:
             argv = persist_diag_link(r35, out, records, argv, env,
                                      data_candidate=data_gpt is not None and not (data_v1_direct or retained_persist),
-                                     disposable=disposable, fua_permissive=fua_permissive)
+                                     disposable=disposable, fua_permissive=fua_permissive,
+                                     retained_persist=retained_persist)
         if post_event:
             argv = post_event_link(r35, out, records, argv, env, sb_threads=sb_threads)
         if data_gpt is not None:
@@ -1390,9 +1395,9 @@ def main():
         p.error("--data-candidate-gpt requires --data-persist-diag")
     if a.data_v1_direct and (not a.data_candidate_gpt or a.disposable_data or a.disposable_fua_permissive):
         p.error("--data-v1-direct requires --data-candidate-gpt and excludes disposable options")
-    if a.data_v1_retained and (not a.data_candidate_gpt or a.data_v1_direct or a.disposable_data or
+    if a.data_v1_retained and (not a.data_candidate_gpt or not a.post_event or a.data_v1_direct or a.disposable_data or
                                a.disposable_fua_permissive):
-        p.error("--data-v1-retained requires --data-candidate-gpt and excludes the old v1/disposable options")
+        p.error("--data-v1-retained requires --data-candidate-gpt --post-event and excludes the old v1/disposable options")
     if a.disposable_data and not a.data_candidate_gpt:
         p.error("--disposable-data requires the pinned single-core Data GPT candidate")
     if a.disposable_fua_permissive and not (a.disposable_data and a.post_event):

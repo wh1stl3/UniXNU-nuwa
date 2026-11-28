@@ -49,19 +49,17 @@ static bool persistCheckMediaLocked(Window window, GptBuffers &g) {
   return retainedSlot.dataAllowed(retainedReadyLocked());
 }
 
-static bool persistSubmitLocked(CombinedRead::Command command, uint64_t lba, unsigned n,
-                                const uint8_t *src) {
-  const bool sync = command == CombinedRead::Command::SyncCache;
+static bool persistWriteLocked(uint64_t lba, unsigned n, const uint8_t *src) {
   if (!retainedSlot.dataAllowed(retainedReadyLocked()) ||
-      (!sync && !RootReadSession::span(combined_state, 0, lba, n)) ||
+      !RootReadSession::span(combined_state, 0, lba, n) ||
       !retainedSlot.submit(true, retainedOwnershipLocked())) return false;
   combined_state.readLba = lba;
   combined_state.readBlocks = n;
-  const auto end = CombinedRead::issue(combined_hardware, combined_state, command, src);
-  auto evidence = retainedCompletion(end, !sync);
-  if (end == CombinedRead::End::Success)
-    evidence = combined_state.returned != n * Block ? Evidence::Unowned :
-               sync ? Evidence::FullSync : Evidence::FullFua;
+  const auto end = CombinedRead::issue(combined_hardware, combined_state,
+                                       CombinedRead::Command::WriteVolatile, src);
+  const auto evidence = end == CombinedRead::End::Success
+      ? (combined_state.returned == n * Block ? Evidence::FullWrite : Evidence::Unowned)
+      : retainedCompletion(end, false);
   if (retainedSlot.complete(evidence)) return true;
   retainQuarantineLocked();
   return false;
@@ -136,8 +134,7 @@ extern "C" int native_ufs_store_write (uint64_t rel, uint32_t blocks, const void
   const auto *p = static_cast<const uint8_t *>(src);
   for (uint32_t done = 0; done < blocks;) {
     const auto n = blocks - done > persistMax ? persistMax : blocks - done;
-    if (!persistSubmitLocked(CombinedRead::Command::WriteFua, persistWindow.first + rel + done,
-                             n, p + uint64_t(done) * Block)) return 0;
+    if (!persistWriteLocked(persistWindow.first + rel + done, n, p + uint64_t(done) * Block)) return 0;
     done += n;
   }
   return 1;
@@ -147,5 +144,8 @@ extern "C" int native_ufs_store_sync (void)
 {
   if (!gHost.lock) return 0;
   PersistHostLock lock;
-  return persistWindow.blocks && persistSubmitLocked(CombinedRead::Command::SyncCache, 0, 0, nullptr);
+  // V1-NODUR: prior commands completed under this lock. This orders host
+  // operations and rechecks ownership; it does not flush the device cache.
+  return persistWindow.blocks && retainedSlot.dataAllowed(retainedReadyLocked()) &&
+         retainedOwnershipLocked();
 }

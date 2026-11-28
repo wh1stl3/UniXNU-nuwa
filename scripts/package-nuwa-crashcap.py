@@ -35,6 +35,7 @@ DISPOSABLE_RAW_SHA = "26957263676b0312f3bebe213c2985deb8ce5652ac2ce3e99d59da77ab
 DISPOSABLE_SEED_ID = "a106b0ce026771e221f578125e104a4854c2cbcda7c1b8390f6e056a47c63743"
 DISPOSABLE_ARG = b"nuwa-disposable-data=1"
 V1_ARG = b"nuwa-data-write=1"
+V1_NODUR = b"V1-NODUR"
 PAYLOAD = "EFI/UniXNU/Payloads/"
 KERNEL, ADT, TRUST, SCRATCH = (PAYLOAD + name for name in
     ("kernel.macho", "kernel.macho.adt", "kernel.macho.trustcache", "scratch-data.img"))
@@ -173,6 +174,8 @@ def main():
             require_v1_kernel(new_kernel)
             if retained != (b"retained persistence window refused\0" in new_kernel):
                 raise SystemExit("v1 kernel and selected retained/provider template profile differ")
+            if retained and b"[" + V1_NODUR + b"] DATA0 not run\0" not in new_kernel:
+                raise SystemExit("retained v1 template requires the V1-NODUR screen marker")
     template, template_sha, template_chmh = (
         (data_template.parent, DISPOSABLE_TEMPLATE_SHA, DISPOSABLE_TEMPLATE_CHMH) if data_template else
         (PIX_OUTER, PIX_SHA, PIX_CHMH) if a.data_persist_diag or a.stage_channel else
@@ -224,7 +227,7 @@ def main():
         prefix = b'args = "' + args + b'"'
         assert expected_config.count(prefix) == 1
         if retained:
-            args = args.replace(b"build-tag=nuwa-r35", b"build-tag=v1-retained")
+            args = args.replace(b"build-tag=nuwa-r35", b"build-tag=" + V1_NODUR)
             if a.v1_reset:
                 args += b" sheng-data-reset=1"
         else:
@@ -301,7 +304,8 @@ def main():
         report.update(seed_report, trust_sha256=sha(after[TRUST]),
                       template_outer_sha256=template_sha, device_release=False)
         if retained:
-            report.update(data_profile="v1-retained", reset=a.v1_reset, args=args.decode())
+            report.update(data_profile="v1-retained", durability=V1_NODUR.decode(),
+                          reset=a.v1_reset, args=args.decode())
         else:
             report["diagnostic_arg"] = (DISPOSABLE_ARG if disposable else V1_ARG).decode()
         if not disposable and not retained:
