@@ -1,5 +1,7 @@
 # UniXNU-nuwa
 
+**2026-11-28 V1-NODUR reset r2 单次刷写与 reboot（device/self-checked；reset 运行结果未知）：** [观察](docs/nuwa-v1-nodur-reset-boot-20261128-observation.md)。
+
 **2026-11-28 V1-NODUR daily r2 单次刷写与 reboot（device/self-checked；屏幕及运行结果未知）：** [观察](docs/nuwa-v1-nodur-daily-boot-20261128-observation.md)。
 
 **2026-11-28 retained v1 reset r3 单次 reboot（device/self-checked；reset 与目标离开 fastboot 均未知）：** [观察](docs/nuwa-v1-retained-reset-reboot-20261128-observation.md)。
