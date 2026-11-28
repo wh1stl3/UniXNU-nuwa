@@ -88,10 +88,13 @@ def compile_and_run(cc, code, include_dirs, work, name, extra=()):
 def test_data_row(renderer, cc, work, include_dirs):
     text = renderer.read_text()
     v1 = V1_ROWS.decode() in text
+    neutral = "    char data[BP_COLS];" in text
     start = ("  {\n    char rows[3][BP_COLS]; bp_v1_rows(rows);"
-             if v1 else "  {\n    char data[BP_COLS],full[BP_COLS];"
+             if v1 else "  {\n    char data[BP_COLS];" if neutral else
+             "  {\n    char data[BP_COLS],full[BP_COLS];"
              if "  {\n    char data[BP_COLS],full[BP_COLS];" in text else
              "  {\n    char data[80],full[BP_COLS];")
+    warning = "dur=?" if neutral else "FUA-EXP-nodur"
     block = extract_between(text, start,
                             "  __asm__ volatile(\"dsb sy\" ::: \"memory\");\n  last_draw=now;")
     has_suffix = "static void bp_fua_suffix(char *buf,size_t size) {" in text
@@ -137,7 +140,11 @@ int main(void) {
   run_data_block();
   if (!(calls > before && last_row == 7 && strstr(last_text, "DATA0") && strstr(last_text, "first-attempt")))
     return 1;
+#if EXPECT_NEUTRAL
+  if (strstr(last_text, "data-trial") || strlen(last_text) >= BP_COLS) return 9;
+#endif
 #if EXPECT_V1_ROWS
+  if (!strstr(last_text, "dur=?") || strlen(last_text) > 80) return 12;
   if (!strstr(displayed[4], "D1 st=4 h=9 pres=0 why=legacy-v3") ||
       !strstr(displayed[5], "D2 wr=2 er=1 ufs=5:02:123456") ||
       !strstr(displayed[6], "D3 first=inactive/00000001 after=ufs-w/00000002"))
@@ -157,24 +164,37 @@ int main(void) {
   if (!(strstr(last_text, "fua=7") && strstr(last_text, "flush=3")))
     return 3;
 #else
-  if (strstr(last_text, "fua=") || strstr(last_text, "flush=") ||
-      strstr(last_text, "FUA-EXP-nodur"))
-    return 5;
+  if (strstr(last_text, "fua=") || strstr(last_text, "flush=")) return 5;
+#if !EXPECT_V1_ROWS
+  if (strstr(last_text, "DURABILITY_WARNING")) return 5;
+#endif
 #endif
 #if EXPECT_FUA_LABEL
-  if (!strstr(last_text, "FUA-EXP-nodur"))
+  if (!strstr(last_text, "DURABILITY_WARNING"))
     return 4;
+#if EXPECT_NEUTRAL
+  if (strlen(last_text) > 80) return 11;
+#endif
 #endif
   before = calls; mount_state = 0; post_ready = 1;
   run_data_block();
   if (!(calls > before && last_row == 7 && strstr(last_text, "DATA0 not run")))
     return 2;
+#if EXPECT_NEUTRAL
+  if (strstr(last_text, "data-trial") || strstr(last_text, "V1-NODUR")) return 10;
+#endif
+#if EXPECT_V1_ROWS
+  if (!strstr(last_text, "dur=?")) return 13;
+#endif
   return 0;
 }
 """
-    common = (["-DHAVE_FUA_SUFFIX=1"] if has_suffix else []) + (["-DEXPECT_V1_ROWS=1"] if v1 else [])
-    profiles = [("disposable", ["-DNUWA_DISPOSABLE_DATA=1"])]
-    if "NUWA-FUA-TRIAL-20261127" in text:
+    harness = harness.replace("DURABILITY_WARNING", warning)
+    common = ((["-DHAVE_FUA_SUFFIX=1"] if has_suffix else []) +
+              (["-DEXPECT_V1_ROWS=1"] if v1 else []) +
+              (["-DEXPECT_NEUTRAL=1"] if neutral else []))
+    profiles = [] if v1 else [("disposable", ["-DNUWA_DISPOSABLE_DATA=1"])]
+    if not v1 and "NUWA-FUA-TRIAL-20261127" in text:
         profiles.append(("fua_trial", ["-DNUWA_DISPOSABLE_DATA=1",
                                       "-DNUWA_FUA_TRIAL=1", "-DEXPECT_FUA_LABEL=1"]))
     if not has_suffix or "#if defined(NUWA_DISPOSABLE_DATA)" in suffix:
@@ -184,6 +204,9 @@ int main(void) {
                              extra=common + flags)
         check("DATA0 row / " + name, rc == 0,
               "row 7; disposable counters only when available")
+        if v1:
+            check("v1 diagnostic marker / " + name,
+                  b"NUWA-V1-DIAG-20261128\0" in (work / ("test_data_row_" + name)).read_bytes())
 
 
 def critical_harness(renderer, systemos_globals):
@@ -266,7 +289,7 @@ def test_critical_paint(renderer, cc, work, include_dirs):
     text = renderer.read_text()
     has_suffix = "static void bp_fua_suffix(char *buf,size_t size) {" in text
     suffix = extract_braced(text, "static void bp_fua_suffix(char *buf,size_t size) {") if has_suffix else ""
-    profiles = [("disposable", ["-DNUWA_DISPOSABLE_DATA=1"])]
+    profiles = [] if V1_ROWS.decode() in text else [("disposable", ["-DNUWA_DISPOSABLE_DATA=1"])]
     if not has_suffix or "#if defined(NUWA_DISPOSABLE_DATA)" in suffix:
         profiles.insert(0, ("non_disposable", []))
     for name, flags in profiles:
@@ -278,6 +301,7 @@ def test_critical_paint(renderer, cc, work, include_dirs):
 
 def test_ppid(renderer, cc, work, include_dirs):
     text = renderer.read_text()
+    neutral = 'snprintf(buf,size,"[%s] %s",build_tag,core)' not in text
     state = extract_between(text, "// NUWA-POSTEVENT-20261127: event-time summary",
                             "static int bp_post_ready(void) {")
     state += extract_braced(text[text.index("static int bp_post_ready(void) {"):], "static int bp_post_ready(void) {")
@@ -300,14 +324,15 @@ int main(void) {
   boot_progress_exit_parent(999, 1);           /* different pid */
   bp_post_latch(17, "tzinit", 45, 0);
   if (!bp_post_event_row(row, sizeof row)) return 2;
-  if (!strstr(row, "pp=?")) return 3;
+  if (strcmp(row, "ROW_PREFIX" "S p1=RUN sb=95:RUN EX=17:tzinit:45/0:pp=?")) return 3;
   boot_progress_exit_parent(17, 7);            /* same pid */
   bp_post_latch(17, "tzinit", 45, 0);
   if (!bp_post_event_row(row, sizeof row)) return 4;
-  if (!strstr(row, "pp=7")) return 5;
+  if (strcmp(row, "ROW_PREFIX" "S p1=RUN sb=95:RUN EX=17:tzinit:45/0:pp=7")) return 5;
   return 0;
 }
 """
+    harness = harness.replace("ROW_PREFIX", "" if neutral else "[data-trial] ")
     rc = compile_and_run(cc, harness, include_dirs, work, "test_ppid")
     check("unmatched parent prints pp=?; matched pp=<n>", rc == 0, "single 64-bit publish")
 
@@ -490,6 +515,8 @@ def main():
     ap.add_argument("--cc", default=os.environ.get("CC", "cc"))
     ap.add_argument("--objdump", default=os.environ.get("LLVM_OBJDUMP", "llvm-objdump"))
     ap.add_argument("--build-dir", type=Path, default=None)
+    ap.add_argument("--source-only", action="store_true",
+                    help="test the generated source without auditing a linked kernel")
     a = ap.parse_args()
     build_dir = (a.build_dir or a.renderer.parent).resolve()
     include_dirs = [build_dir, ROOT / "package/boot-progress",
@@ -502,10 +529,12 @@ def main():
         test_sb_row(a.renderer, a.cc, work, include_dirs)
         test_row_set(a.renderer, a.systemos)
         test_sb_concurrency(a.systemos, a.renderer, a.cc, work, include_dirs)
-        test_disassembly(a.kernel, a.objdump, a.cc)
+        if not a.source_only:
+            test_disassembly(a.kernel, a.objdump, a.cc)
     finally:
         shutil.rmtree(work, ignore_errors=True)
-    print("post-event host tests and linked disassembly: PASS")
+    print("post-event host source tests: PASS" if a.source_only else
+          "post-event host tests and linked disassembly: PASS")
 
 
 if __name__ == "__main__":

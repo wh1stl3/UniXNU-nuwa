@@ -502,9 +502,10 @@ static void bp_smp_entry_page(char *out, size_t len) {
 static void bp_smp_entry_title(char *out, size_t len, const char *tag, unsigned now,
                                unsigned crashes, unsigned failed) {
   char rc[12],aff[11];
+  (void)tag;
   bp_smp_entry_values(rc,aff);
   // Use the title slot so diagnostics and stacks keep exactly their original budget.
-  snprintf(out,len," LIVE rc=%s aff=%s %.8s %us C%u E%u",rc,aff,tag,now,crashes,failed);
+  snprintf(out,len," LIVE rc=%s aff=%s %us C%u E%u",rc,aff,now,crashes,failed);
 }
 """
 
@@ -926,4 +927,14 @@ void boot_progress_prop_set(uint16_t properties) {
   }
 """)
         src = retire_generation(src)
-    return add_smp_observe(src) if smp_observe else src
+    if smp_observe:
+        src = add_smp_observe(src)
+    else:
+        src = replace_once(src, b"""  snprintf(head,sizeof head," UniXNU live diagnostics%s%s%s  t=%us  crashes=%u exits=%u",build_tag[0]?"  [":"",build_tag,
+    build_tag[0]?"]":"",now,crashes,failed);""",
+                           b'  snprintf(head,sizeof head," UniXNU live diagnostics  t=%us  crashes=%u exits=%u",now,crashes,failed);')
+    src = replace_once(src, b'"[nuwa-r35] t=%us m=%llu np=%d i=%us q=%llu l=%u r=%d f=%u"',
+                       b'"t=%us m=%llu np=%d i=%us q=%llu l=%u r=%d f=%u"')
+    src = replace_once(src, b'"[nuwa-r35] t=%us m=%llu np=%d"',
+                       b'"t=%us m=%llu np=%d"')
+    return src

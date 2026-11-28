@@ -6,13 +6,14 @@ first-attempt result.  Row 0 is left empty because the renderer's line()/bar()
 guard drops row 0.  A photograph taken after the critical-process panic still
 carries the last user-space state:
 
-    row 7: [data-trial] DATA0 st=4 err=0 ro=0 dev=12345678 seed=1 first-attempt fua=N flush=N
-    row 8: [data-trial] S p1=RUN sb=95:RUN EX=17:tzinit:0/45:pp=1
+    row 7: DATA0 st=4 err=0 ro=0 dev=12345678 seed=1 first-attempt fua=N flush=N
+    row 8: S p1=RUN sb=95:RUN EX=17:tzinit:0/45:pp=1
 
   fua/flush  diagnostic counters from the disposable NativeRamBlock, omitted
        in other builds.  In the FUA-permissive experiment (build define
-       NUWA_FUA_TRIAL=1) row 7 also carries " FUA-EXP-nodur"; that label is a
-       non-durability statement, not a write or flush success claim.
+       NUWA_FUA_TRIAL=1) row 7 also carries " dur=?": media durability is
+       unproven, not a write or flush success claim. Retained v1 uses the same
+       warning, including when its Data mount has not run.
 
   p1   pid 1 state from the two-second process probe (absent when proc_find
        fails); this is a sample, not a live read at draw time.
@@ -122,8 +123,7 @@ static int bp_post_format(char *buf,size_t size,const struct bp_post_exit *e) {
   else
     snprintf(core,sizeof core,"S p1=%s sb=%s EX=%u:%.12s:%u/%u:pp=?",p1,
       bp_post_sb(sb,sizeof sb),e->pid,e->comm,sig,code);
-  if(build_tag[0]) snprintf(buf,size,"[%s] %s",build_tag,core);
-  else snprintf(buf,size,"%s",core);
+  snprintf(buf,size,"%s",core);
   return 1;
 }
 static int bp_post_event_row(char *buf,size_t size) {
@@ -144,7 +144,7 @@ static int bp_post_ready(void) {
   return (int)__atomic_load_n(&bp_post_exit.valid,__ATOMIC_ACQUIRE);
 }
 // Diagnostic only: accepted FUA requests and successful non-durable flushes.
-// FUA-EXP-nodur is present only in the compile-time experimental package; it
+// The warning is present only in the compile-time experimental package; it
 // explicitly says the package is not a media-durability claim.
 static void bp_fua_suffix(char *buf,size_t size) {
 #if defined(NUWA_DISPOSABLE_DATA)
@@ -154,7 +154,7 @@ static void bp_fua_suffix(char *buf,size_t size) {
     (unsigned long long)__atomic_load_n(&nuwa_disposable_fua_requests,__ATOMIC_RELAXED),
     (unsigned long long)__atomic_load_n(&nuwa_disposable_flushes,__ATOMIC_RELAXED),
 #if defined(NUWA_FUA_TRIAL) && NUWA_FUA_TRIAL
-    " FUA-EXP-nodur"
+    " dur=?"
 #else
     ""
 #endif
@@ -196,8 +196,13 @@ void boot_progress_critical_paint(void) {
 """
 
 V1_ROWS = b"""extern const char *volatile nuwa_data_persist_open_why;
+static const char bp_v1_diag_tag[] __attribute__((used)) = "NUWA-V1-DIAG-20261128";
 extern volatile uint64_t nuwa_v1_write_failure,nuwa_v1_write_failure_attached;
 extern volatile uint64_t nuwa_v1_ufs_write_failure;
+static void bp_v1_status_suffix(char *buf,size_t size) {
+  size_t used=strlen(buf);
+  if(used<size) snprintf(buf+used,size-used," dur=?");
+}
 static const char *bp_v1_write_source(unsigned source) {
   static const char *const names[]={"-","arg","gate","offline","inactive",
                                     "prior","ufs-r","ufs-w","copy","overlay","memory"};
@@ -223,13 +228,11 @@ static void bp_v1_rows(char rows[3][BP_COLS]) {
 
 DRAW_END_ANCHOR = b"  __asm__ volatile(\"dsb sy\" ::: \"memory\");\n  last_draw=now;"
 DRAW_END = b"""  {
-    char data[BP_COLS],full[BP_COLS];
+    char data[BP_COLS];
     int state=nuwa_data_mount_summary(data,sizeof data);
     if(state>0) {
       bp_fua_suffix(data,sizeof data);
-      if(build_tag[0] && snprintf(full,sizeof full,"[%s] %s",build_tag,data)<(int)sizeof full)
-        line(7,full,0xffffaa00);
-      else line(7,data,0xffffaa00);
+      line(7,data,0xffffaa00);
     }
     if(bp_post_ready()) {
       char post[80];
@@ -291,17 +294,22 @@ def generate(src, *, sb_threads=False, v1_nodur=False):
                             b"    for(unsigned i=0;i<3;++i)\n"
                             b"      px_text(0,(row_data-3u+i)*cell,rows[i],cols,0xff00ffcc,0xff000000);\n"
                             b"  }")
-        text = replace_once(text, b"    char data[BP_COLS],full[BP_COLS];",
+        text = replace_once(text, b"    char data[BP_COLS];",
                             b"    char rows[3][BP_COLS]; bp_v1_rows(rows);\n"
                             b"    for(unsigned i=0;i<3;++i) line(4u+i,rows[i],0xff00ffcc);\n"
-                            b"    char data[BP_COLS],full[BP_COLS];")
+                            b"    char data[BP_COLS];")
+        text = replace_once(text, b"  bp_fua_suffix(data,sizeof data);\n"
+                                  b"  (void)bp_post_event_row_direct",
+                            b"  bp_fua_suffix(data,sizeof data);\n"
+                            b"  bp_v1_status_suffix(data,sizeof data);\n"
+                            b"  (void)bp_post_event_row_direct")
+        text = replace_once(text, b"      bp_fua_suffix(data,sizeof data);\n"
+                                  b"      line(7,data,",
+                            b"      bp_fua_suffix(data,sizeof data);\n"
+                            b"      bp_v1_status_suffix(data,sizeof data);\n"
+                            b"      line(7,data,")
         text = replace_once(text, b'line(7,"DATA0 not run",',
-                            b'line(7,"[V1-NODUR] DATA0 not run",')
-        text = replace_once(text, b"  char data[BP_COLS],summary[80];\n"
-                                  b"  (void)nuwa_data_mount_summary(data,sizeof data);",
-                            b'  char data[BP_COLS]="[V1-NODUR] ",summary[80];\n'
-                            b'  const size_t prefix=sizeof "[V1-NODUR] "-1;\n'
-                            b'  (void)nuwa_data_mount_summary(data+prefix,sizeof data-prefix);')
+                            b'line(7,"DATA0 not run dur=?",')
     if sb_threads:
         text = replace_once(text, STATE_ANCHOR, STATE_ANCHOR + SBTH_DECL)
         declaration = CRITICAL_PAINT.splitlines(keepends=True)[0]

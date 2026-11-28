@@ -5,7 +5,7 @@
 namespace NuwaNeon {
 using namespace NuwaData;
 using Overlay = DualBankLogOverlay<>;
-constexpr char Identity[] = "NEON build=ufs-neon-20261126 cid=N261126A";
+constexpr char Identity[] = "IO cid=N261126A";
 constexpr unsigned Rows = 6, Cols = 66;
 struct Hc {
   unsigned seen = 0;

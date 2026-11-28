@@ -68,6 +68,20 @@ def require_v1_kernel(kernel):
         raise SystemExit("v1 template requires RamBlock's v1 directDiskIO")
 
 
+def require_retained_diagnostics(kernel, *, audit_only):
+    marker = b"NUWA-V1-DIAG-20261128\0"
+    legacy = b"[" + V1_NODUR + b"] DATA0 not run\0"
+    if marker not in kernel and not (audit_only and legacy in kernel):
+        raise SystemExit("retained v1 template requires the v1 diagnostic marker")
+
+
+def require_ufs_status(kernel, *, audit_only):
+    marker = b"IO cid=N261126A\0"
+    legacy = b"NEON build=ufs-neon-20261126 cid=N261126A\0"
+    if marker not in kernel and not (audit_only and legacy in kernel):
+        raise SystemExit("UFS survey template requires the neutral status marker")
+
+
 def regions(blob):
     page, size = struct.unpack_from("<I8xI", blob, 12)
     assert blob[:8] == b"VNDRBOOT" and len(blob) == 100663296
@@ -174,8 +188,8 @@ def main():
             require_v1_kernel(new_kernel)
             if retained != (b"retained persistence window refused\0" in new_kernel):
                 raise SystemExit("v1 kernel and selected retained/provider template profile differ")
-            if retained and b"[" + V1_NODUR + b"] DATA0 not run\0" not in new_kernel:
-                raise SystemExit("retained v1 template requires the V1-NODUR screen marker")
+            if retained:
+                require_retained_diagnostics(new_kernel, audit_only=a.audit_only)
     template, template_sha, template_chmh = (
         (data_template.parent, DISPOSABLE_TEMPLATE_SHA, DISPOSABLE_TEMPLATE_CHMH) if data_template else
         (PIX_OUTER, PIX_SHA, PIX_CHMH) if a.data_persist_diag or a.stage_channel else
@@ -243,7 +257,7 @@ def main():
         assert not {t.split(b"=", 1)[0] for t in tokens} & {
             b"nuwa-ufs-desc", b"nuwa-ufs-neon", b"nuwa-data-write", b"sheng-data-reset", b"sheng-log"}
         if a.ufs_neon:
-            assert b"NEON build=ufs-neon-20261126 cid=N261126A\0" in new_kernel
+            require_ufs_status(new_kernel, audit_only=a.audit_only)
         prefix = b'args = "' + args + b'"'
         assert expected_config.count(prefix) == 1
         args += b" nuwa-ufs-neon=1" if a.ufs_neon else b" nuwa-ufs-desc=1"
