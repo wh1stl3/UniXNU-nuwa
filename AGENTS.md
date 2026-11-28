@@ -6,6 +6,7 @@
 小米 13 Pro（nuwa / SM8550）通过 UniXNU 运行 iOS 16（donor: iPhone10,3 / 16.7.16 / 20H392，xnu-8796 线）。
 
 ## 基线
+- 2026-11-28 retained v1 与 V1-NODUR 失败观察（主控转述 vision / self-checked）：[观察](docs/nuwa-v1-nodur-failure-20261128-observation.md)。
 - 2026-11-28 A 槽恢复后 reset r2 单次 reboot（device/self-checked；屏幕与 reset 结果未知）：[观察](docs/nuwa-v1-nodur-reset-slot-restored-reboot-20261128-observation.md)。
 - 2026-11-28 A 槽状态与单次 set_active（device/self-checked）：[观察](docs/nuwa-v1-nodur-slot-reenable-20261128-observation.md)。
 - 2026-11-28 V1-NODUR reset r2 单次刷写与 reboot（device/self-checked；reset 运行结果未知）：[观察](docs/nuwa-v1-nodur-reset-boot-20261128-observation.md)。
