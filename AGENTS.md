@@ -6,6 +6,7 @@
 小米 13 Pro（nuwa / SM8550）通过 UniXNU 运行 iOS 16（donor: iPhone10,3 / 16.7.16 / 20H392，xnu-8796 线）。
 
 ## 基线
+- 2026-11-28 retained v1 reset r3 单次 reboot（device/self-checked；reset 与目标离开 fastboot 均未知）：[观察](docs/nuwa-v1-retained-reset-reboot-20261128-observation.md)。
 - 2026-11-28 retained v1 reset r3 单次刷写、未重启（device/self-checked）：[观察](docs/nuwa-v1-retained-reset-flash-20261128-observation.md)。
 - 2026-11-28 无字形示例 FUA 包单次刷写与 reboot（device/self-checked；屏幕待照片）：[观察](docs/nuwa-no-glyph-flash-20261128-observation.md)。
 - 2026-11-27 SpringBoard banner r2 outer `7211a988…e4495`（审查结论主控转述 PASS WITH CONDITIONS）已刷入 `vendor_boot_a` 一次（Sending/Writing OKAY、exit 0、无 AVB footer 警告），随即单次 `fastboot reboot`（exit 0）；120 s 内 nuwa 未回 fastboot、完全离开主机 USB（非 adb/MTP/EDL），adb 全程无设备，设备现不在总线上。只证 bootloader 接受镜像；无屏幕/启动/用户态证据。见 [观察](docs/nuwa-sb-banner-20261127-observation.md)。

@@ -1,5 +1,7 @@
 # UniXNU-nuwa
 
+**2026-11-28 retained v1 reset r3 单次 reboot（device/self-checked；reset 与目标离开 fastboot 均未知）：** [观察](docs/nuwa-v1-retained-reset-reboot-20261128-observation.md)。
+
 **2026-11-28 retained v1 reset r3 单次刷写、未重启（device/self-checked）：** [观察](docs/nuwa-v1-retained-reset-flash-20261128-observation.md)。
 
 **2026-11-28 无字形示例 FUA 包单次刷写与 reboot（device/self-checked；屏幕待照片）：** [观察](docs/nuwa-no-glyph-flash-20261128-observation.md)。
