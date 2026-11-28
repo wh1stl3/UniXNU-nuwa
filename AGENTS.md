@@ -6,6 +6,7 @@
 小米 13 Pro（nuwa / SM8550）通过 UniXNU 运行 iOS 16（donor: iPhone10,3 / 16.7.16 / 20H392，xnu-8796 线）。
 
 ## 基线
+- 2026-11-28 retained v1 reset r3 单次刷写、未重启（device/self-checked）：[观察](docs/nuwa-v1-retained-reset-flash-20261128-observation.md)。
 - 2026-11-28 无字形示例 FUA 包单次刷写与 reboot（device/self-checked；屏幕待照片）：[观察](docs/nuwa-no-glyph-flash-20261128-observation.md)。
 - 2026-11-27 SpringBoard banner r2 outer `7211a988…e4495`（审查结论主控转述 PASS WITH CONDITIONS）已刷入 `vendor_boot_a` 一次（Sending/Writing OKAY、exit 0、无 AVB footer 警告），随即单次 `fastboot reboot`（exit 0）；120 s 内 nuwa 未回 fastboot、完全离开主机 USB（非 adb/MTP/EDL），adb 全程无设备，设备现不在总线上。只证 bootloader 接受镜像；无屏幕/启动/用户态证据。见 [观察](docs/nuwa-sb-banner-20261127-observation.md)。
 - 2026-11-27 FUA-permissive 实验包（`NUWA_DISPOSABLE_FUA_PERMISSIVE`，接受 FUA 位、不承诺耐久；默认构建仍拒绝）outer `b5d1b9f1…` 已刷入 `vendor_boot_a`；在「拔 USB + 长按电源进菜单」启动下出现 Apple logo、运行到 ≥692 s、Data 挂载 `pub=1`，采样中 tzinit 未再以 45 退出。锁屏/桌面、文件级持久、断电耐久与认证（NOT REACHED）未证。深度终审与刷写细节见 [观察](docs/nuwa-fua-trial-20261127-observation.md)。

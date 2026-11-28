@@ -95,7 +95,7 @@ class NativeRamBlock : public IOBlockStorageDevice {
   static constexpr uint32_t kStagePages = 32;
   bool storeAttached = false;
   // Direct mode (the store is open read-write): changed pages live in the store window only, never in RAM; reads of them go to the
-  // window. A failed store write stops all further writes (a page the system was told is written must be on the medium).
+  // window. A failed store write stops further writes. In v1, directFailed also records a failed mode-2 attach.
   bool direct = false, directFailed = false;
 #if defined(NUWA_DATA_CANDIDATE)
 #if defined(NUWA_DISPOSABLE_DATA)
@@ -186,7 +186,7 @@ class NativeRamBlock : public IOBlockStorageDevice {
 public:
   // Called once, before the Data volume is mounted (native_ram_block_volume_seed): open the store window, put the pages that
   // earlier boots changed back into the sparse disk, and from then on write changed pages through. The seed identity
-  // (seedHash) is not affected. Any refusal or error leaves the disk volatile, exactly as without persistence.
+  // (seedHash) is not affected. A failed mode-2 attach must not be acknowledged as a successful synchronize.
   // sheng-data-reset=1 or 2 (the boot menu's Install and boot) starts the overlay over (the old pages are dropped, not applied); 2 also
   // asks for Setup (BootWatchdogPolicy.c). It is the only way the store is made anew: a store of another seed, a blank or a damaged one
   // is kept as it is on any other boot.
@@ -197,6 +197,10 @@ public:
     if (storeAttached) { IOLockUnlock(gate); return; }
     storeAttached = true;
     unsigned mode = &native_ufs_store_mode ? native_ufs_store_mode() : 0;
+#if !defined(NUWA_DATA_CANDIDATE)
+    // A mode-2 request fails unless the v1 overlay classifies the window.
+    directFailed = mode == 2;
+#endif
     if (mode && (sparse.pages || isBig) && &native_ufs_store_open && &native_ufs_store_read && &native_ufs_store_write &&
         &native_ufs_store_sync && &native_ufs_store_gpt_check) {
       uint64_t pages = (isBig ? big.bytes : sparse.bytes) / 4096, first = 0;
@@ -266,6 +270,7 @@ public:
         StoreOps ops;
         persist::Open result = overlayBits && stage ? overlay.open(ops, pages, seedHash, mode == 1, overlayBits, discardRequested())
                                                           : persist::Open::Failed;
+        if (mode == 2) directFailed = result == persist::Open::Failed;
         native_data_persist_header = static_cast<uint32_t>(overlay.header);
         if (result == persist::Open::Failed) {
           native_data_persist_state = 4;
@@ -370,11 +375,11 @@ public:
 #endif
 #endif
 #else
-    // Each successful direct write is already durable; this checks that
-    // the store still stands behind that contract, not a new media flush.
+    // A failed mode-2 attach is an error even without an active direct store.
+    // A kept overlay or a disk not using persistence has nothing to flush.
     StoreOps store;
     status = !online ? kIOReturnNotReady :
-             direct && (directFailed || !store.sync()) ? kIOReturnIOError : kIOReturnSuccess;
+             (directFailed || (direct && !store.sync())) ? kIOReturnIOError : kIOReturnSuccess;
 #endif
     IOLockUnlock(gate);
     return status;

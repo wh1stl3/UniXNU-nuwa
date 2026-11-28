@@ -19,11 +19,11 @@ struct Window {
   }
 };
 
-// Exactly one 4 KiB LBA, FUA mandatory. Caller must validate the window
+// FUA mandatory. Caller must validate the 4 KiB LBA span and command limit
 // under the shared transport lock before preparing anything in shared DMA.
-inline void write10(uint8_t (&cdb)[10], uint32_t lba) {
+inline void write10(uint8_t (&cdb)[10], uint32_t lba, uint8_t blocks = 1) {
   const uint8_t wire[10] = {0x2a, 0x08, uint8_t(lba >> 24), uint8_t(lba >> 16),
-                            uint8_t(lba >> 8), uint8_t(lba), 0, 0, 1, 0};
+                            uint8_t(lba >> 8), uint8_t(lba), 0, 0, blocks, 0};
   memcpy(cdb, wire, sizeof(wire));
 }
 
@@ -31,7 +31,7 @@ enum class State {
   IDLE, SUBMITTED, COMPLETED_OK, COMPLETED_CMDERR, TIMEOUT_ORPHAN,
   FATAL_QUARANTINED
 };
-enum class Evidence { ReadOk, FullFua, AttributedCommandError, Timeout, Unowned, FullWrite };
+enum class Evidence { ReadOk, FullFua, AttributedCommandError, Timeout, Unowned, FullWrite, FullSync };
 
 // Evidence for a NEW firmware/transport domain, never a transition of the
 // old Slot. Each fact must refer to the same new domain and expected media.
@@ -107,6 +107,7 @@ public:
     switch (evidence) {
       case Evidence::ReadOk:
       case Evidence::FullFua:
+      case Evidence::FullSync:
       case Evidence::FullWrite: // Attributed full transfer; makes no durability claim.
         if (writing_ != (evidence != Evidence::ReadOk)) { quarantine(); return false; }
         state_ = State::COMPLETED_OK;

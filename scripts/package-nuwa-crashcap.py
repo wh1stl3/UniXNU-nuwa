@@ -137,6 +137,10 @@ def main():
                          help="use the exact 18fa4941 read-root outer and append the experiment gate")
     profile.add_argument("--v1-data-template", type=Path,
                          help="use the exact 18fa4941 read-root outer and select v1 args (host only)")
+    profile.add_argument("--v1-retained-template", type=Path,
+                         help="use the exact 18fa4941 read-root outer for retained v1 (host only)")
+    ap.add_argument("--v1-reset", action="store_true",
+                    help="add sheng-data-reset=1 to a separate retained v1 host package")
     ap.add_argument("--post-event", action="store_true",
                     help="require the panic-safe post-event summary marker; pairs with a Data template")
     ap.add_argument("--ufs-desc", action="store_true", help="append the read-only UFS descriptor opt-in")
@@ -147,10 +151,13 @@ def main():
         ap.error("--ufs-desc requires --data-persist-diag")
     if a.ufs_neon and (not a.data_persist_diag or a.ufs_desc):
         ap.error("--ufs-neon requires --data-persist-diag and excludes --ufs-desc")
-    if a.post_event and a.disposable_data_template is None and a.v1_data_template is None:
-        ap.error("--post-event requires a Data template")
     disposable = a.disposable_data_template is not None
-    data_template = a.disposable_data_template or a.v1_data_template
+    retained = a.v1_retained_template is not None
+    data_template = a.disposable_data_template or a.v1_data_template or a.v1_retained_template
+    if a.v1_reset and not retained:
+        ap.error("--v1-reset requires --v1-retained-template")
+    if a.post_event and not data_template:
+        ap.error("--post-event requires a Data template")
     out = a.out.resolve()
     assert out.is_relative_to(ROOT / "out") and out not in (ROOT / "out", OLD, DSP_OUTER, FRAME_OUTER, PIX_OUTER)
     kernel = a.kernel.resolve()
@@ -164,6 +171,8 @@ def main():
                 raise SystemExit("disposable template requires a disposable kernel")
         else:
             require_v1_kernel(new_kernel)
+            if retained != (b"retained persistence window refused\0" in new_kernel):
+                raise SystemExit("v1 kernel and selected retained/provider template profile differ")
     template, template_sha, template_chmh = (
         (data_template.parent, DISPOSABLE_TEMPLATE_SHA, DISPOSABLE_TEMPLATE_CHMH) if data_template else
         (PIX_OUTER, PIX_SHA, PIX_CHMH) if a.data_persist_diag or a.stage_channel else
@@ -214,8 +223,13 @@ def main():
             b"nuwa-data-write", b"nuwa-disposable-data", b"sheng-data-reset", b"sheng-log"}
         prefix = b'args = "' + args + b'"'
         assert expected_config.count(prefix) == 1
-        args = args.replace(b"build-tag=nuwa-r35", b"build-tag=data-trial") + b" " + (
-            DISPOSABLE_ARG if disposable else V1_ARG)
+        if retained:
+            args = args.replace(b"build-tag=nuwa-r35", b"build-tag=v1-retained")
+            if a.v1_reset:
+                args += b" sheng-data-reset=1"
+        else:
+            args = args.replace(b"build-tag=nuwa-r35", b"build-tag=data-trial") + b" " + (
+                DISPOSABLE_ARG if disposable else V1_ARG)
         # The actual 8796 arm64 consumer has 608 bytes including NUL,
         # smaller than the loader's generic 1024-byte buffer.
         assert len(args) < 608
@@ -285,10 +299,12 @@ def main():
                       diagnostic_arg="nuwa-ufs-neon=1", device_release=False)
     if data_template:
         report.update(seed_report, trust_sha256=sha(after[TRUST]),
-                       template_outer_sha256=template_sha,
-                       diagnostic_arg=(DISPOSABLE_ARG if disposable else V1_ARG).decode(),
-                       device_release=False)
-        if not disposable:
+                      template_outer_sha256=template_sha, device_release=False)
+        if retained:
+            report.update(data_profile="v1-retained", reset=a.v1_reset, args=args.decode())
+        else:
+            report["diagnostic_arg"] = (DISPOSABLE_ARG if disposable else V1_ARG).decode()
+        if not disposable and not retained:
             report["data_profile"] = "v1-direct"
     if a.audit_only:
         assert rb == readback.read_bytes()

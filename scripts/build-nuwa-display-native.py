@@ -558,7 +558,7 @@ def persist_diag_link(r35, out, records, argv, env, data_candidate=False, dispos
     return args
 
 
-def data_candidate_link(out, argv, env, gpt, disposable=False):
+def data_candidate_link(out, argv, env, gpt, disposable=False, retained_persist=False):
     root = ROOT / "out/nuwa-ufs-apfs-root-integration-20261114/run-r5-visible-candidate"
     source = root / "source/NativeUfs.cpp"
     require_pin(source, "bb994c583382755ddfae954b23aff94d77a97428c7c933232b574ad3cd64b2bf")
@@ -582,7 +582,7 @@ def data_candidate_link(out, argv, env, gpt, disposable=False):
             u[56:128] != "userdata".encode("utf-16-le").ljust(72, b"\0") or
             not all(any(x) for x in (h[56:72], u[:16], u[16:32]))):
         raise SystemExit("local nuwa GPT identity capture failed validation")
-    private = out / "nuwa-data-provider"
+    private = out / ("nuwa-retained-persist" if retained_persist else "nuwa-data-provider")
     private.mkdir()
     code = ROOT / "package/nuwa-data-write"
     guids = ", ".join("{" + ",".join(map(str, value)) + "}" for value in (h[56:72], u[:16], u[16:32]))
@@ -677,6 +677,23 @@ def data_candidate_link(out, argv, env, gpt, disposable=False):
             if old not in combined_text:
                 raise SystemExit("unexpected disposable WRITE(10) splice anchor")
             combined_text = combined_text.replace(old, new)
+    if retained_persist:
+        for old, new in (
+            ("WriteFua, QueryDesc", "WriteFua, SyncCache, QueryDesc"),
+            ("unsigned length(Command c, unsigned block)", "unsigned length(Command c, unsigned block, unsigned blocks = 1)"),
+            ("(c == Command::Read || c == Command::WriteFua) ? block", "c == Command::WriteFua ? block * blocks : c == Command::Read ? block"),
+            ("blocks != 1 || lba > UINT32_MAX",
+             "!blocks || blocks > Max / NuwaData::Block || lba > UINT32_MAX || blocks - 1 > UINT32_MAX - lba"),
+            ("length(c, block);", "length(c, block, blocks);"),
+            ("length(c, s.block)) - s.residual", "length(c, s.block, s.readBlocks)) - s.residual"),
+            ("NuwaData::write10(cdb, uint32_t(lba));", "NuwaData::write10(cdb, uint32_t(lba), uint8_t(blocks));"),
+            ("writeSource, NuwaData::Block);", "writeSource, n);"),
+            ("    case Command::Sense: u[16]", "    case Command::SyncCache: u[16] = 0x35; break;\n"
+             "    case Command::Sense: u[16]"),
+        ):
+            if combined_text.count(old) != 1:
+                raise SystemExit(f"unexpected retained persistence encoder anchor: {old}")
+            combined_text = combined_text.replace(old, new)
     replace("unsigned blocks = 1) {\n    // Bounded pre-command markers",
             "unsigned blocks = 1, const uint8_t *writeSource = nullptr, NuwaUfsDesc::Request desc = {}) {\n"
             "    // Bounded pre-command markers")
@@ -684,7 +701,15 @@ def data_candidate_link(out, argv, env, gpt, disposable=False):
             "CombinedRead::encode(virt, pa, c, tag, block, lba, blocks, writeSource, desc)")
     start = combined_text.index("// Valid CHECK CONDITION is a SCSI endpoint")
     end = combined_text.index("template<class P> static bool guard", start)
-    combined_text = (combined_text[:start] + f'#include "{code / "RetainedResponse.inc"}"\n' +
+    response = code / "RetainedResponse.inc"
+    if retained_persist:
+        old = "length(s.command, s.block);"
+        response_text = response.read_text()
+        if response_text.count(old) != 1:
+            raise SystemExit("unexpected retained persistence response length anchor")
+        response = private / response.name
+        response.write_text(response_text.replace(old, "length(s.command, s.block, s.readBlocks);"))
+    combined_text = (combined_text[:start] + f'#include "{response}"\n' +
                      combined_text[end:])
     old = "if (s.finaldb || s.poll.ocs || (p.hread(0x20) & kUfsFatalStatus))"
     if combined_text.count(old) != 1:
@@ -729,22 +754,28 @@ def data_candidate_link(out, argv, env, gpt, disposable=False):
     replace("\nStoreGeometry gStoreGeometry;", "\nStoreGeometry gStoreGeometry;\n"
             "static constexpr NuwaData::GptIdentity nuwaDataIdentity = "
             "{61850624, 6, 61850618, 3110976, 61850618, " + guids + "};\n"
-            f'#include "{code / "KernelPort.inc"}"\n'
-            'constexpr uint32_t kDefaultReserveMiB = 1024;\n'
-            f'#include "{code / "RetainedNeon.inc"}"')
+             + ("" if retained_persist else f'#include "{code / "KernelPort.inc"}"\n') +
+             'constexpr uint32_t kDefaultReserveMiB = 1024;\n'
+             f'#include "{code / "RetainedNeon.inc"}"')
     replace("constexpr uint32_t kDefaultReserveMiB = 1024;\nstatic uint64_t",
             "static uint64_t")
-    replace("!hostStoreOpen (first, blocks)", "!openCandidateData (first, blocks, reserve)")
-    replace('if (!storeMode ()) reason = "off";\n'
+    if retained_persist:
+        replace("uint64_t gStoreRegionFirst, gStoreRegionBlocks;\n", "")
+        start = text.index("static uint64_t reserveBlocks (void)")
+        end = text.index("// ---- Read-only access", start)
+        text = text[:start] + '}\n\n' + f'#include "{code / "RetainedPersist.inc"}"\n\n' + text[end:]
+    else:
+        replace("!hostStoreOpen (first, blocks)", "!openCandidateData (first, blocks, reserve)")
+        replace('if (!storeMode ()) reason = "off";\n'
             '  else if (!gStoreGeometry.valid || !gHost.ready) reason = "no root layout";',
             'if (!storeMode ()) reason = "off";\n'
             '  else if (!gStoreGeometry.valid || !retainedReadySnapshot()) reason = "no root layout";')
-    replace("  if (!gStoreRegionBlocks || !dst || !blocks || rel >= gStoreRegionBlocks || blocks > gStoreRegionBlocks - rel) return 0;",
+        replace("  if (!gStoreRegionBlocks || !dst || !blocks || rel >= gStoreRegionBlocks || blocks > gStoreRegionBlocks - rel) return 0;",
             "  if (storeMode () == 2) return gHost.lock && dataProvider.read (rel, blocks, dst);\n"
             "  if (!gStoreRegionBlocks || !dst || !blocks || rel >= gStoreRegionBlocks || blocks > gStoreRegionBlocks - rel) return 0;")
-    write_start = text.index('extern "C" int native_ufs_store_write ')
-    write_end = text.index("// ---- Read-only access", write_start)
-    text = text[:write_start] + '''extern "C" int native_ufs_store_write (uint64_t rel, uint32_t blocks, const void *src)
+        write_start = text.index('extern "C" int native_ufs_store_write ')
+        write_end = text.index("// ---- Read-only access", write_start)
+        text = text[:write_start] + '''extern "C" int native_ufs_store_write (uint64_t rel, uint32_t blocks, const void *src)
 {
   return storeMode () == 2 && gHost.lock && dataProvider.write (rel, blocks, src);
 }
@@ -967,7 +998,7 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
                smp_gate=False, smp_observe=False, crashcap=False, pixsig=False,
                data_persist=False, data_gpt=None, disposable=False, stage=False,
                post_event=False, fua_permissive=False, sb_threads=False,
-               data_v1_direct=False, base=None):
+                data_v1_direct=False, retained_persist=False, base=None):
     for name, pin in (R35L_PINS if bringup_diag else R35_PINS).items():
         require_pin(r35 / name, pin)
     require_pin(cpo, R35_CPO_SHA)
@@ -1045,12 +1076,13 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
             argv[force_at] = f"-Wl,-force_load,{diag}"
         if data_persist:
             argv = persist_diag_link(r35, out, records, argv, env,
-                                     data_candidate=data_gpt is not None and not data_v1_direct,
+                                     data_candidate=data_gpt is not None and not (data_v1_direct or retained_persist),
                                      disposable=disposable, fua_permissive=fua_permissive)
         if post_event:
             argv = post_event_link(r35, out, records, argv, env, sb_threads=sb_threads)
         if data_gpt is not None:
-            argv = data_candidate_link(out, argv, env, data_gpt, disposable=disposable)
+            argv = data_candidate_link(out, argv, env, data_gpt, disposable=disposable,
+                                       retained_persist=retained_persist)
         argv = [*argv, "-Wl,-ignore_optimization_hints", f"-Wl,-force_load,{archive}", *map(str, hid_objects)]
         if not candidate or keep_link_debug:
             return link("native-link", native, argv)
@@ -1285,7 +1317,9 @@ def main():
                    help="link the write-disabled v2 Data candidate using this local 4 KiB GPT capture")
     p.add_argument("--data-v1-direct", action="store_true",
                    help="link the Data provider but compile RamBlock's v1 mode-2 branch; "
-                        "host build only, production writes remain disabled")
+                         "host build only, production writes remain disabled")
+    p.add_argument("--data-v1-retained", action="store_true",
+                   help="compile the upstream v1 overlay with single-slot retained FUA and cache sync")
     p.add_argument("--disposable-data", action="store_true",
                    help="compile the opt-in disposable Data experiment (no durability or initialization)")
     p.add_argument("--disposable-fua-permissive", action="store_true",
@@ -1356,6 +1390,9 @@ def main():
         p.error("--data-candidate-gpt requires --data-persist-diag")
     if a.data_v1_direct and (not a.data_candidate_gpt or a.disposable_data or a.disposable_fua_permissive):
         p.error("--data-v1-direct requires --data-candidate-gpt and excludes disposable options")
+    if a.data_v1_retained and (not a.data_candidate_gpt or a.data_v1_direct or a.disposable_data or
+                               a.disposable_fua_permissive):
+        p.error("--data-v1-retained requires --data-candidate-gpt and excludes the old v1/disposable options")
     if a.disposable_data and not a.data_candidate_gpt:
         p.error("--disposable-data requires the pinned single-core Data GPT candidate")
     if a.disposable_fua_permissive and not (a.disposable_data and a.post_event):
@@ -1394,7 +1431,8 @@ def main():
                                data_gpt=a.data_candidate_gpt, disposable=a.disposable_data,
                                 stage=a.stage_channel, post_event=a.post_event,
                                 fua_permissive=a.disposable_fua_permissive,
-                                sb_threads=a.sb_threads, data_v1_direct=a.data_v1_direct,
+                                 sb_threads=a.sb_threads, data_v1_direct=a.data_v1_direct,
+                                 retained_persist=a.data_v1_retained,
                                 base=base)
     else:
         # Replay XNU's exported link inputs, without its historical map output.
