@@ -1,5 +1,34 @@
 # UniXNU-nuwa
 
+**2026-11-28 retained v1 与 V1-NODUR 失败观察（主控转述 vision / self-checked）：** [观察](docs/nuwa-v1-nodur-failure-20261128-observation.md)。
+
+**2026-11-28 A 槽恢复后 reset r2 单次 reboot（device/self-checked；屏幕与 reset 结果未知）：** [观察](docs/nuwa-v1-nodur-reset-slot-restored-reboot-20261128-observation.md)。
+
+**2026-11-28 A 槽状态与单次 set_active（device/self-checked）：** [观察](docs/nuwa-v1-nodur-slot-reenable-20261128-observation.md)。
+
+**2026-11-28 V1-NODUR reset r2 单次刷写与 reboot（device/self-checked；reset 运行结果未知）：** [观察](docs/nuwa-v1-nodur-reset-boot-20261128-observation.md)。
+
+**2026-11-28 V1-NODUR daily r2 单次刷写与 reboot（device/self-checked；屏幕及运行结果未知）：** [观察](docs/nuwa-v1-nodur-daily-boot-20261128-observation.md)。
+
+**2026-11-28 retained v1 reset r3 单次 reboot（device/self-checked；reset 与目标离开 fastboot 均未知）：** [观察](docs/nuwa-v1-retained-reset-reboot-20261128-observation.md)。
+
+**2026-11-28 retained v1 reset r3 单次刷写、未重启（device/self-checked）：** [观察](docs/nuwa-v1-retained-reset-flash-20261128-observation.md)。
+
+**2026-11-28 无字形示例 FUA 包单次刷写与 reboot（device/self-checked；屏幕待照片）：** [观察](docs/nuwa-no-glyph-flash-20261128-observation.md)。
+
+**2026-11-27 SpringBoard banner r2 outer `7211a988…e4495` 已刷入 `vendor_boot_a`（Sending/Writing OKAY、exit 0），随后单次 `fastboot reboot` 的 120 s 采样内 nuwa 未回 fastboot、完全离开主机 USB、adb 全程无设备；只证 bootloader 接受镜像。** [观察](docs/nuwa-sb-banner-20261127-observation.md)。
+
+**2026-11-27 FUA-permissive 实验 outer `b5d1b9f1…`（`NUWA_DISPOSABLE_FUA_PERMISSIVE`，
+接受 FUA 位、不承诺耐久；默认构建仍拒绝）在「拔 USB + 长按电源进菜单」启动下出现
+Apple logo、运行到 ≥692 s、Data 挂载 `pub=1`，采样中 tzinit 未再以 45 退出；锁屏/桌面、
+文件级持久、断电耐久与认证（NOT REACHED）未证。** [观察](docs/nuwa-fua-trial-20261127-observation.md)。
+
+**2026-11-27 诊断增量 outer `b9103e97…` 已刷入 `vendor_boot_a`（Sending/Writing OKAY、exit 0），未重启、未启动，设备留在 fastboot；deep_reviewer 终审 PASS WITH CONDITIONS。** [观察](docs/nuwa-postevent-20261127-observation.md)。
+
+**2026-11-26 disposable Data 主机候选（self-checked，未上机，待终审）：** [记录](docs/nuwa-disposable-data-20261126.md)。
+
+**2026-11-26 UFS 只读采样画面（主控转述 vision / self-checked 记录）：**[观察](docs/nuwa-ufs-neon-20261126-observation.md)。
+
 **2026-11-25 显示验收方案（INSUFFICIENT EVIDENCE，reviewer 转述 / self-checked）：**[记录](docs/nuwa-display-acceptance-20261125.md)。
 
 **显示适配尚未通过官方验收**（主控转述 / self-checked）；完整验收口径及当前证据缺口见 [机型记录](AGENTS.md) 和 `porting.toml` 的 display 区域，依据 `UniXNU/docs/zh/porting/display.md:30–56`；`bk/so/PIX` 仅为诊断拆分。
@@ -10,7 +39,9 @@
 
 **2026-11-25 PIX 源像素签名候选，仅主机 self-checked，未刷写。**[记录](docs/nuwa-pixsig-20261125.md)。
 
-**2026-11-25 Data 持久窗口 `st=4`：只读 provider 拒绝 mode 2；诊断包 self-checked，未修复、未刷写。**[记录](docs/nuwa-data-persist-fix-20261125.md)。
+**2026-11-26 Data v3 双 Bank 日志接入主机候选；生产写门关闭，未上机（self-checked）。** [记录](docs/nuwa-dualbank-integration-20261126.md)。
+
+**2026-11-26 UFS MODE SENSE 与 live GPT 摘要，只读候选（self-checked）。** [记录](docs/nuwa-ufs-modeprobe-20261126.md)。
 
 卡点优先查 [已知差异与跨项目关停手段清单](docs/nuwa-open-deltas-20261125.md)。
 

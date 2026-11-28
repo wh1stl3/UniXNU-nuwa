@@ -247,6 +247,17 @@ volatile int32_t nuwa_data_verify_result = -1;
 volatile dev_t nuwa_data_device = NODEV;
 volatile uint32_t nuwa_data_seed_ok;
 volatile int32_t nuwa_data_seed_error = -1;
+/* Diagnostic only (NUWA-POSTEVENT-20261127): the completed first mount attempt,
+ * latched before initproc exec so the panic-safe page row can distinguish a
+ * finished attempt ("first-attempt") from a sampled in-progress stage ("now").
+ * Nothing reads these for a mount, storage or write decision. */
+volatile uint32_t nuwa_data_attempted;
+volatile uint32_t nuwa_data_first_done;
+static uint32_t nuwa_data_first_stage;
+static int32_t nuwa_data_first_status;
+static int32_t nuwa_data_first_readonly;
+static uint32_t nuwa_data_first_device;
+static uint32_t nuwa_data_first_seed;
 volatile uint32_t nuwa_data_mount_flags;
 volatile uint32_t nuwa_ram_block_init_calls;
 uint64_t nuwa_data_seed_base;
@@ -335,6 +346,44 @@ nuwa_data_rows(int stage, int status, int readonly, dev_t device, uint32_t seed_
 	    (unsigned)(nuwa_data_seed_bytes >> 12));
 }
 
+/* Diagnostic only: latch the completed first mount attempt.  Called once from the
+ * success and failure exits of nuwa_data_mount_prepare(), before initproc exec. */
+static void
+nuwa_data_first_record(unsigned stage, int status, int readonly, dev_t device, uint32_t seed)
+{
+	if (__atomic_load_n(&nuwa_data_first_done, __ATOMIC_ACQUIRE)) {
+		return;
+	}
+	nuwa_data_first_stage = stage;
+	nuwa_data_first_status = status;
+	nuwa_data_first_readonly = readonly;
+	nuwa_data_first_device = (uint32_t)device;
+	nuwa_data_first_seed = seed;
+	__atomic_store_n(&nuwa_data_first_done, 1, __ATOMIC_RELEASE);
+}
+
+/* Page row for the post-event summary: DATA0 is the completed first attempt
+ * (st/err/ro/dev/seed), DATA now is the sampled in-progress stage.  Returns
+ * 2 when the first attempt completed, 1 while it is running, 0 when it never
+ * started; the text is always written. */
+int
+nuwa_data_mount_summary(char *buf, size_t size)
+{
+	if (__atomic_load_n(&nuwa_data_first_done, __ATOMIC_ACQUIRE)) {
+		snprintf(buf, size, "DATA0 st=%u err=%d ro=%d dev=%x seed=%u first-attempt",
+		    nuwa_data_first_stage, nuwa_data_first_status,
+		    nuwa_data_first_readonly, nuwa_data_first_device, nuwa_data_first_seed);
+		return 2;
+	}
+	if (!__atomic_load_n(&nuwa_data_attempted, __ATOMIC_RELAXED)) {
+		snprintf(buf, size, "DATA0 not run");
+		return 0;
+	}
+	snprintf(buf, size, "DATA now st=%u (sampled; first attempt running)",
+	    (unsigned)nuwa_data_stage);
+	return 1;
+}
+
 /* r30: after the Data mount verified, record whether /private/var/keybags, /private/var/db
  * and /private/var/tmp exist and look writable.  Read-only by design: a write probe would
  * need a create + remove on the volume launchd is about to use, and the mode bits answer the
@@ -405,6 +454,7 @@ nuwa_data_mount_prepare(proc_t p, user_addr_t scratch)
 	const char *why = "not run";
 
 	nuwa_data_stage = 0;
+	__atomic_store_n(&nuwa_data_attempted, 1, __ATOMIC_RELAXED);
 	if (PE_parse_boot_argn("nuwa-data-ro", &readonly_probe, sizeof(readonly_probe)) && readonly_probe) {
 		mount_flags = MNT_RDONLY;
 	}
@@ -514,6 +564,7 @@ nuwa_data_mount_prepare(proc_t p, user_addr_t scratch)
 	 * page the mount used is free at +0x200 and +0x800. */
 	(void)nuwa_boot_watchdog_policy(p, scratch);
 	nuwa_data_stage = 4;
+	nuwa_data_first_record(4, 0, readonly, device, nuwa_data_seed_ok);
 	nuwa_data_flush();
 	return 0;
 
@@ -522,6 +573,8 @@ done:
 		vnode_put(vp);
 	}
 	nuwa_data_status = error;
+	nuwa_data_first_record(nuwa_data_stage, error, nuwa_data_readonly,
+	    nuwa_data_device, nuwa_data_seed_ok);
 	nuwa_data_rows(nuwa_data_stage, error, nuwa_data_readonly, nuwa_data_device, nuwa_data_seed_ok);
 	printf("nuwa: Data mount not completed at stage %u: %s (%d)\n", nuwa_data_stage, why, error);
 	nuwa_data_flush();

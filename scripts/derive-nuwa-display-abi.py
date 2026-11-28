@@ -392,13 +392,31 @@ def inspect_unbound_timing(family, display):
                 'refresh publishes IOMFBDisplayRefresh')
     check_string(family, '4f67d52', 'IOMFBDisplayRefresh')
     check_word(family, va('5c237e4'), 0x12000100, 'refresh returns bool')
-    check_words(family, '5c0dc28', (0xf94b1401, 0xf94b1802, 0xf94b1c03, 0x94003701),
-                'donor VBL send from recorded timestamps')
+    # The fake-timer writer stores interval, continuous timestamp and count
+    # in +5688, +5680 and +5672 respectively; the sender takes those three
+    # 64-bit values in x1/x2/x3, not six 32-bit function arguments.
+    check_words(family, '5c0dbb4', (0xf90b1d28, 0xf85e83a8, 0xf90b1928,
+                                    0xf94b1528, 0x91000508, 0xf90b1528),
+                'fake VBL stores interval, timestamp and incremented count')
+    check_words(family, '5c0dc24', (0xf9400be0, 0xf94b1401, 0xf94b1802,
+                                    0xf94b1c03, 0x94003701),
+                'fake VBL calls sender with count, timestamp and interval')
     check_words(family, '5c1b844', (0xf81f83a0, 0xf81f03a1, 0xf81e83a2, 0xf81e03a3),
                 'VBL sender saves four 64-bit arguments')
+    # The sender expands each of those three values to low/high 32-bit
+    # scalars stored as six uint64_t message elements.
+    check_words(family, '5c1b90c', (0xb85f03a9, 0xf90007e9, 0xf85f03a9,
+                                    0xd360fd29, 0xf9000be9, 0xb85e83a9,
+                                    0xf9000fe9, 0xf85e83a9, 0xd360fd29,
+                                    0xf90013e9, 0xb85e03a9, 0xf90017e9,
+                                    0xf85e03a9, 0xd360fd29, 0xf9001be9),
+                'VBL sender packs six count, timestamp and interval words')
     check_word(family, va('5c1b948'), 0xf949c108, 'VBL sender loads client queue')
+    check_words(family, '5c1b968', (0xf85d83a8, 0x91006100, 0x52800001,
+                                    0x910023e2, 0x528000c3, 0x52800024,
+                                    0x97ff8a36), 'VBL sender sends six words')
     check_words(family, '5c1b9b0', (0xf85d83a8, 0xf9400108, 0xf81d83a8, 0x17ffffe6),
-                'VBL sender walks next links directly')
+                'VBL sender dereferences borrowed node after send')
     check_string(family, '4f66ddf', 'dropped VBL message\n')
     return dict(refresh=dict(target=hex(va('5c23610')), caller=hex(va('5ccfc74')),
                              bound=False),

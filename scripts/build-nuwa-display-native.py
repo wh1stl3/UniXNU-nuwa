@@ -435,12 +435,16 @@ def candidate_link(r35, out, records, argv, env, *, bringup_diag, hid, mg_reset,
 
 
 def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False, pixsig=False,
-                 data_persist=False, stage=False):
+                 data_persist=False, stage=False, post_event=False, fua_permissive=False,
+                 sb_threads=False, disposable=False, retained_persist=False):
     from generate_r35_display_diag import generate, data_persist_row, stage_channel
 
     source = out / "BootProgress.c"
     text = generate((r35 / "BootProgress.c").read_bytes(),
                     mg_reset=mg_reset, smp_observe=smp_observe, pixsig=pixsig)
+    if post_event:
+        from generate_nuwa_postevent import generate as generate_postevent
+        text, _ = generate_postevent(text, sb_threads=sb_threads, v1_nodur=retained_persist)
     if crashcap:
         from generate_nuwa_crashcap import generate_banner
 
@@ -450,13 +454,27 @@ def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False, pixsig
         from generate_r35_display_diag import replace_once
         text = replace_once(text, b"static unsigned bp_banner_priority(",
                             b"extern unsigned nuwa_ufs_desc_row(char *, size_t) __attribute__((weak_import));\n"
+                            b"extern unsigned nuwa_ufs_mode_row(char *, size_t) __attribute__((weak_import));\n"
                             b"static unsigned bp_banner_priority(")
+        text = replace_once(text, b"extern void native_ufs_progress_text(char *, size_t);",
+                            b"extern void native_ufs_progress_text(char *, size_t);\n"
+                            b"extern unsigned nuwa_ufs_neon_rows(char (*)[120], unsigned) __attribute__((weak_import));")
+        text = replace_once(text, b"#if NUWA_GLYPH_SELFTEST\n  nuwa_glyph_selftest(now);",
+                            b"  if (&nuwa_ufs_neon_rows) {\n"
+                            b"    char evidence[6][120]; unsigned used=nuwa_ufs_neon_rows(evidence,6);\n"
+                            b"    for (unsigned i=0;i<used;++i) line(37+i,evidence[i],0xff00ffcc);\n"
+                            b"  }\n#if NUWA_GLYPH_SELFTEST\n  nuwa_glyph_selftest(now);")
+        text = replace_once(text, b"  unsigned cr=bp_cr_rows(rows,budget),n=cr;",
+                            b"  unsigned neon=&nuwa_ufs_neon_rows ? nuwa_ufs_neon_rows(rows,budget) : 0;\n"
+                            b"  unsigned cr=neon+bp_cr_rows(rows+neon,budget-neon),n=cr;")
         text = replace_once(text, b'!strncmp(s,"PROC",4) ||',
-                            b'!strncmp(s,"UFS lu=",7) || !strncmp(s,"UFS err=",8) || !strncmp(s,"PROC",4) ||')
-        text = replace_once(text, b"    uint32_t icon=__atomic_load_n(",
-                            b"    if (n < 64 && &nuwa_ufs_desc_row)\n"
-                            b"      n += nuwa_ufs_desc_row(rows[n], sizeof rows[0]);\n"
-                            b"    uint32_t icon=__atomic_load_n(")
+                            b'!strncmp(s,"UFS lu=",7) || !strncmp(s,"UFS err=",8) || !strncmp(s,"UFS2 ",5) || !strncmp(s,"PROC",4) ||')
+        text = replace_once(text, b'    snprintf(rows[n++],120,"PROC n=%d SB=%s",nprocs,value);\n',
+                            b'    snprintf(rows[n++],120,"PROC n=%d SB=%s",nprocs,value);\n'
+                            b'    if (n < 64 && &nuwa_ufs_desc_row)\n'
+                            b'      n += nuwa_ufs_desc_row(rows[n], sizeof rows[0]);\n'
+                            b'    if (n < 64 && &nuwa_ufs_mode_row)\n'
+                            b'      n += nuwa_ufs_mode_row(rows[n], sizeof rows[0]);\n')
     if stage:
         text = stage_channel(text)
     source.write_bytes(text)
@@ -466,12 +484,18 @@ def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False, pixsig
     stubs = ROOT / "package/boot-progress-r13/nuwa_boot_progress_stubs.c"
     require_pin(stubs, "14817837f64b37f36c65ac5e6debd187c2d8e6a24e8b0396eb280239108c6b47")
     hid_define = ["--define", "NUWA_HID_STANDIN=1"] if hid else []
+    fua_define = ["--define", "NUWA_FUA_TRIAL=1"] if fua_permissive else []
+    disposable_define = ["--define", "NUWA_DISPOSABLE_DATA=1"] if disposable else []
     run([sys.executable, "-B", r35 / "build-boot-progress-compact.py",
          "--out", out, "--tree", r35 / "tree", "--stubs", stubs, "--renderer", source,
          "--define", "NUWA_VIRTIO_STUBS=1", "--define", "NUWA_RENDER_FIXES=1",
-         "--define", "NUWA_BOLD_GLYPHS=1", *hid_define])
+         "--define", "NUWA_BOLD_GLYPHS=1", *hid_define, *fua_define, *disposable_define])
     staged = out / "libBootProgress.a"
     expected = definitions(r35 / staged.name) + Counter({DSP_SET: 1, "_boot_progress_prop_set": 1})
+    if post_event:
+        expected["_boot_progress_exit_parent"] = 1
+        expected["_boot_progress_critical_capture"] = 1
+        expected["_boot_progress_critical_paint"] = 1
     if crashcap:
         expected["_boot_progress_lsd_crash"] = 1
     if stage:
@@ -486,7 +510,8 @@ def diag_archive(r35, out, *, hid, mg_reset, smp_observe, crashcap=False, pixsig
     return staged
 
 
-def persist_diag_link(r35, out, records, argv, env, data_candidate=False):
+def persist_diag_link(r35, out, records, argv, env, data_candidate=False, disposable=False,
+                      fua_permissive=False, retained_persist=False):
     recipe, = (r for r in records if r["label"] == "compile-NativeRamBlock" and r["exit"] == 0)
     archive_recipe, = (r for r in records if r["label"] == "archive-NativeRamBlock" and r["exit"] == 0)
     command = list(recipe["argv"])
@@ -496,6 +521,12 @@ def persist_diag_link(r35, out, records, argv, env, data_candidate=False):
     command[command.index("-o") + 1] = str(obj)
     if data_candidate:
         command.append("-DNUWA_DATA_CANDIDATE=1")
+    if disposable:
+        command.append("-DNUWA_DISPOSABLE_DATA=1")
+    if fua_permissive:
+        command.append("-DNUWA_DISPOSABLE_FUA_PERMISSIVE=1")
+    if retained_persist:
+        command.append("-DNUWA_V1_NODUR=1")
     (out / "ramblock-argv.json").write_text(json.dumps(command, indent=2) + "\n")
     with (out / "compile-NativeRamBlock.log").open("wb") as log:
         subprocess.run(command, cwd=recipe["cwd"], env=env, stdout=log, stderr=subprocess.STDOUT, check=True)
@@ -518,15 +549,20 @@ def persist_diag_link(r35, out, records, argv, env, data_candidate=False):
     require_pin(original, pin)
     require_pin(r35 / dest.name, pin)
     run([*archive_recipe["argv"][:2], dest, late_obj])
-    if definitions(dest) != definitions(original) + Counter({"_nuwa_data_persist_open_why": 1}):
-        raise SystemExit("RamBlock diagnostic archive definitions changed beyond the reason field")
+    expected = definitions(original) + Counter({"_nuwa_data_persist_open_why": 1})
+    if retained_persist:
+        expected += Counter({"_nuwa_v1_write_failure": 1, "_nuwa_v1_write_failure_attached": 1})
+    if disposable:
+        expected += Counter({"_nuwa_disposable_fua_requests": 1, "_nuwa_disposable_flushes": 1})
+    if definitions(dest) != expected:
+        raise SystemExit("RamBlock diagnostic archive definitions changed beyond the reason and FUA counters")
     args = list(argv)
     force_at, = (i for i, arg in enumerate(args) if arg == f"-Wl,-force_load,{original}")
     args[force_at] = f"-Wl,-force_load,{dest}"
     return args
 
 
-def data_candidate_link(out, argv, env, gpt):
+def data_candidate_link(out, argv, env, gpt, disposable=False, retained_persist=False):
     root = ROOT / "out/nuwa-ufs-apfs-root-integration-20261114/run-r5-visible-candidate"
     source = root / "source/NativeUfs.cpp"
     require_pin(source, "bb994c583382755ddfae954b23aff94d77a97428c7c933232b574ad3cd64b2bf")
@@ -550,7 +586,7 @@ def data_candidate_link(out, argv, env, gpt):
             u[56:128] != "userdata".encode("utf-16-le").ljust(72, b"\0") or
             not all(any(x) for x in (h[56:72], u[:16], u[16:32]))):
         raise SystemExit("local nuwa GPT identity capture failed validation")
-    private = out / "nuwa-data-provider"
+    private = out / ("nuwa-retained-persist" if retained_persist else "nuwa-data-provider")
     private.mkdir()
     code = ROOT / "package/nuwa-data-write"
     guids = ", ".join("{" + ",".join(map(str, value)) + "}" for value in (h[56:72], u[:16], u[16:32]))
@@ -559,15 +595,51 @@ def data_candidate_link(out, argv, env, gpt):
     def replace(old, new):
         nonlocal text
         if text.count(old) != 1:
-            raise SystemExit("unexpected retained provider splice anchor")
+            raise SystemExit(f"unexpected retained provider splice anchor: {old[:100]!r}")
         text = text.replace(old, new)
 
-    text = f'#include "{code / "Provider.h"}"\n#include "{code / "Descriptor.h"}"\n' + text
+    text = f'#include "{code / "Provider.h"}"\n#include "{code / "Neon.h"}"\n' + text
+    if disposable:
+        text = (f'#include "{code / "DisposableData.h"}"\n'
+                'extern "C" uint8_t native_ram_block_seed_sha256[32];\n' + text)
+    preserved = source.with_name("PreservedNop.h")
+    # Keep the exact order and short-circuiting of the pre-write HC reads.
+    # Cache only values already read; never read old bases or RSR for NEON.
+    preserved_text = preserved.read_text()
+    from generate_r35_display_diag import replace_once
+    old = b"  if (!p.claim()) return End::Claimed;\n  s.stage = 1;"
+    preserved_text = replace_once(preserved_text.encode(), old, old.replace(
+        b"  s.stage = 1;", b"  neonBegin();\n  s.stage = 1;")).decode()
+    start = preserved_text.index("  if (!s.dma ||")
+    stop = preserved_text.index("  s.stage = 2;", start)
+    prereq = preserved_text[start:stop].replace("  if (", "  const bool reject = (", 1)
+    if not prereq.endswith("\n    return End::Prerequisite;\n"):
+        raise SystemExit("unexpected retained NEON prerequisites")
+    prereq = prereq.removesuffix("\n    return End::Prerequisite;\n") + ";\n"
+    for i, offset in enumerate(("0", "0x34", "0x30", "0x58", "0x78", "0x20")):
+        old = f"p.hread({offset})"
+        if prereq.count(old) != 1:
+            raise SystemExit(f"unexpected retained NEON HC read {offset}")
+        prereq = prereq.replace(old, f"hcRead({i}, {offset})")
+    (private / preserved.name).write_text(
+        f'#include "{code / "Neon.h"}"\n'
+        "static bool neonBegin();\n" +
+        preserved_text[:start] +
+        "  const auto hcRead = [&](unsigned, unsigned off) {\n"
+        "    return p.hread(off);\n"
+        "  };\n" + prereq +
+        "  if (reject) return End::Prerequisite;\n" +
+        preserved_text[stop:])
+    replace('#include "PreservedNop.h"',
+            f'#define NUWA_NEON_SETUP\n#include "{code / "RetainedNeon.inc"}"\n'
+            '#undef NUWA_NEON_SETUP\n#include "PreservedNop.h"')
     combined_text = combined.read_text()
     for old, new in (
-        ("Capacity, Read, Sense };", "Capacity, Read, Sense, WriteFua, QueryDesc };"),
+        ("Capacity, Read, Sense };", "Capacity, Read, Sense, WriteFua, QueryDesc, ModeSense };"),
         ("Capacity, Claimed };", "Capacity, Claimed, QueryError };"),
         ("  PreservedNop::State setup;", "  PreservedNop::State setup;\n  NuwaUfsDesc::Request desc;"),
+        ("  return c == Command::Capacity ? 8 :", "  if (c == Command::ModeSense) return NuwaUfsDesc::ModeBytes;\n"
+         "  return c == Command::Capacity ? 8 :"),
         ("c == Command::Read ? block :", "(c == Command::Read || c == Command::WriteFua) ? block :"),
         ("unsigned blocks = 1) {\n  if (c == Command::Read",
          "unsigned blocks = 1, const uint8_t *writeSource = nullptr, NuwaUfsDesc::Request desc = {}) {\n"
@@ -581,6 +653,7 @@ def data_candidate_link(out, argv, env, gpt):
         ("  if (c == Command::Query) {", "  if (c == Command::QueryDesc) return NuwaUfsDesc::encode(desc, u);\n"
                                        "  if (c == Command::Query) {"),
         ("    case Command::Sense: u[16]",
+         "    case Command::ModeSense: memcpy(u + 16, NuwaUfsDesc::ModeCdb, sizeof NuwaUfsDesc::ModeCdb); break;\n"
          "    case Command::WriteFua: {\n"
          "      uint8_t cdb[10];\n"
          "      NuwaData::write10(cdb, uint32_t(lba));\n"
@@ -596,6 +669,37 @@ def data_candidate_link(out, argv, env, gpt):
         if combined_text.count(old) != 1:
             raise SystemExit("unexpected retained WRITE(10) splice anchor")
         combined_text = combined_text.replace(old, new)
+    if disposable:
+        for old, new in (
+            ("WriteFua, QueryDesc", "WriteFua, WriteVolatile, QueryDesc"),
+            ("c == Command::WriteFua", "(c == Command::WriteFua || c == Command::WriteVolatile)"),
+            ("case Command::WriteFua: {", "case Command::WriteVolatile:\n    case Command::WriteFua: {"),
+            ("NuwaData::write10(cdb, uint32_t(lba));",
+             "NuwaData::write10(cdb, uint32_t(lba));\n"
+             "      if (c == Command::WriteVolatile) cdb[1] = 0; // no FUA"),
+        ):
+            if old not in combined_text:
+                raise SystemExit("unexpected disposable WRITE(10) splice anchor")
+            combined_text = combined_text.replace(old, new)
+    if retained_persist:
+        # This profile only has a non-FUA writer; do not compile a flush command.
+        combined_text = combined_text.replace("WriteFua", "WriteVolatile")
+        for old, new in (
+            ("unsigned length(Command c, unsigned block)", "unsigned length(Command c, unsigned block, unsigned blocks = 1)"),
+            ("(c == Command::Read || c == Command::WriteVolatile) ? block",
+             "c == Command::WriteVolatile ? block * blocks : c == Command::Read ? block"),
+            ("blocks != 1 || lba > UINT32_MAX",
+             "!blocks || blocks > Max / NuwaData::Block || lba > UINT32_MAX || blocks - 1 > UINT32_MAX - lba"),
+            ("length(c, block);", "length(c, block, blocks);"),
+            ("length(c, s.block)) - s.residual", "length(c, s.block, s.readBlocks)) - s.residual"),
+            ("NuwaData::write10(cdb, uint32_t(lba));",
+             "NuwaData::write10(cdb, uint32_t(lba), uint8_t(blocks));\n"
+             "      cdb[1] = 0; // no FUA"),
+            ("writeSource, NuwaData::Block);", "writeSource, n);"),
+        ):
+            if combined_text.count(old) != 1:
+                raise SystemExit(f"unexpected retained persistence encoder anchor: {old}")
+            combined_text = combined_text.replace(old, new)
     replace("unsigned blocks = 1) {\n    // Bounded pre-command markers",
             "unsigned blocks = 1, const uint8_t *writeSource = nullptr, NuwaUfsDesc::Request desc = {}) {\n"
             "    // Bounded pre-command markers")
@@ -603,7 +707,15 @@ def data_candidate_link(out, argv, env, gpt):
             "CombinedRead::encode(virt, pa, c, tag, block, lba, blocks, writeSource, desc)")
     start = combined_text.index("// Valid CHECK CONDITION is a SCSI endpoint")
     end = combined_text.index("template<class P> static bool guard", start)
-    combined_text = (combined_text[:start] + f'#include "{code / "RetainedResponse.inc"}"\n' +
+    response = code / "RetainedResponse.inc"
+    if retained_persist:
+        old = "length(s.command, s.block);"
+        response_text = response.read_text()
+        if response_text.count(old) != 1:
+            raise SystemExit("unexpected retained persistence response length anchor")
+        response = private / response.name
+        response.write_text(response_text.replace(old, "length(s.command, s.block, s.readBlocks);"))
+    combined_text = (combined_text[:start] + f'#include "{response}"\n' +
                      combined_text[end:])
     old = "if (s.finaldb || s.poll.ocs || (p.hread(0x20) & kUfsFatalStatus))"
     if combined_text.count(old) != 1:
@@ -631,11 +743,14 @@ def data_candidate_link(out, argv, env, gpt):
             f'#include "{code / "RetainedRead.inc"}"\n#include "{code / "RetainedDesc.inc"}"\n'
             '#include "RootCommands.h"')
     replace('extern "C" void native_ufs_progress_text (char *out, size_t size)',
-            'extern "C" unsigned nuwa_ufs_desc_row (char *out, size_t size)\n'
-            '{\n  return cachedUfsDescRow(out, size);\n}\n\n'
+             'extern "C" unsigned nuwa_ufs_desc_row (char *out, size_t size)\n'
+             '{\n  return cachedUfsDescRow(out, size);\n}\n\n'
+             'extern "C" unsigned nuwa_ufs_mode_row (char *out, size_t size)\n'
+             '{\n  return cachedUfsModeRow(out, size);\n}\n\n'
             'extern "C" void native_ufs_progress_text (char *out, size_t size)')
     replace("  gPendingProvider->release ();  // Balanced with successful thread dispatch.",
-            "  if (result.phase == UfsRootPhase::Complete) probeUfsDescriptors();\n"
+            "  if (result.phase == UfsRootPhase::Complete)\n"
+            "    probeUfsDescriptors();\n"
             "  gPendingProvider->release ();  // Balanced with successful thread dispatch.")
     replace("if (gHost.ready) return true;", "if (retainedReadySnapshot()) return true;")
     replace("if (!gHost.ready || !name || !lun || !first || !blocks) return 0;",
@@ -645,18 +760,28 @@ def data_candidate_link(out, argv, env, gpt):
     replace("\nStoreGeometry gStoreGeometry;", "\nStoreGeometry gStoreGeometry;\n"
             "static constexpr NuwaData::GptIdentity nuwaDataIdentity = "
             "{61850624, 6, 61850618, 3110976, 61850618, " + guids + "};\n"
-            f'#include "{code / "KernelPort.inc"}"')
-    replace("!hostStoreOpen (first, blocks)", "!openCandidateData (first, blocks, reserve)")
-    replace('if (!storeMode ()) reason = "off";\n'
+             + ("" if retained_persist else f'#include "{code / "KernelPort.inc"}"\n') +
+             'constexpr uint32_t kDefaultReserveMiB = 1024;\n'
+             f'#include "{code / "RetainedNeon.inc"}"')
+    replace("constexpr uint32_t kDefaultReserveMiB = 1024;\nstatic uint64_t",
+            "static uint64_t")
+    if retained_persist:
+        replace("uint64_t gStoreRegionFirst, gStoreRegionBlocks;\n", "")
+        start = text.index("static uint64_t reserveBlocks (void)")
+        end = text.index("// ---- Read-only access", start)
+        text = text[:start] + '}\n\n' + f'#include "{code / "RetainedPersist.inc"}"\n\n' + text[end:]
+    else:
+        replace("!hostStoreOpen (first, blocks)", "!openCandidateData (first, blocks, reserve)")
+        replace('if (!storeMode ()) reason = "off";\n'
             '  else if (!gStoreGeometry.valid || !gHost.ready) reason = "no root layout";',
             'if (!storeMode ()) reason = "off";\n'
             '  else if (!gStoreGeometry.valid || !retainedReadySnapshot()) reason = "no root layout";')
-    replace("  if (!gStoreRegionBlocks || !dst || !blocks || rel >= gStoreRegionBlocks || blocks > gStoreRegionBlocks - rel) return 0;",
+        replace("  if (!gStoreRegionBlocks || !dst || !blocks || rel >= gStoreRegionBlocks || blocks > gStoreRegionBlocks - rel) return 0;",
             "  if (storeMode () == 2) return gHost.lock && dataProvider.read (rel, blocks, dst);\n"
             "  if (!gStoreRegionBlocks || !dst || !blocks || rel >= gStoreRegionBlocks || blocks > gStoreRegionBlocks - rel) return 0;")
-    write_start = text.index('extern "C" int native_ufs_store_write ')
-    write_end = text.index("// ---- Read-only access", write_start)
-    text = text[:write_start] + '''extern "C" int native_ufs_store_write (uint64_t rel, uint32_t blocks, const void *src)
+        write_start = text.index('extern "C" int native_ufs_store_write ')
+        write_end = text.index("// ---- Read-only access", write_start)
+        text = text[:write_start] + '''extern "C" int native_ufs_store_write (uint64_t rel, uint32_t blocks, const void *src)
 {
   return storeMode () == 2 && gHost.lock && dataProvider.write (rel, blocks, src);
 }
@@ -667,6 +792,19 @@ extern "C" int native_ufs_store_sync (void)
 }
 
 ''' + text[write_end:]
+    if disposable:
+        replace("return static_cast<unsigned> (cached);\n}\n}\n\nextern \"C\" unsigned native_ufs_store_mode",
+                "return cached == 2 && disposableRequested() ? 2U : 0U;\n}\n}\n\n"
+                "extern \"C\" unsigned native_ufs_store_mode")
+        replace("!openCandidateData (first, blocks, reserve)", "!openDisposableData (first, blocks, reserve)")
+        replace("gHost.lock && dataProvider.read (rel, blocks, dst)", "disposableRead (rel, blocks, dst)")
+        replace("gHost.lock && dataProvider.write (rel, blocks, src)", "disposableWrite (rel, blocks, src)")
+        replace("return storeMode () == 2 && gHost.lock && dataProvider.sync ();",
+                "return 0; // No exposed durability contract.")
+        replace("// ---- Read-only access",
+                'extern "C" int native_ufs_store_order (void)\n'
+                '{\n  return storeMode () == 2 && disposableOrder ();\n}\n\n'
+                "// ---- Read-only access")
     log_start = text.index('extern "C" int native_ufs_log_open ')
     log_end = text.index("// One read-only window of the root image", log_start)
     text = text[:log_start] + '''extern "C" int native_ufs_log_open (uint64_t *, uint64_t *, const char **why)
@@ -708,6 +846,9 @@ extern "C" unsigned native_ufs_store_gpt_check (void)
     obj = private / "NativeUfs.o"
     command[command.index("-o") + 1] = str(obj)
     command.extend(("-I", str(source.parent), "-Wno-unused-function"))
+    if disposable:
+        command.append("-DNUWA_DISPOSABLE_DATA=1")
+    (out / "data-provider-argv.json").write_text(json.dumps(command, indent=2) + "\n")
     with (out / "compile-data-provider.log").open("wb") as log:
         subprocess.run(command, cwd=recipe["cwd"], env=env, stdout=log, stderr=subprocess.STDOUT, check=True)
     spec = importlib.util.spec_from_file_location("ufs_late", ROOT / "scripts/build-nuwa-platform-power.py")
@@ -722,7 +863,12 @@ extern "C" unsigned native_ufs_store_gpt_check (void)
     require_pin(Path(original), "150bc8439d365249a884033011ef255537618909f97c42fc9bdfad6476a89c75")
     dst = private / Path(original).name
     run([ar, mode, dst, late_obj, *members])
-    if definitions(dst) != definitions(Path(original)) + Counter({"_nuwa_ufs_desc_row": 1}):
+    added = Counter({"_nuwa_ufs_desc_row": 1, "_nuwa_ufs_mode_row": 1, "_nuwa_ufs_neon_rows": 1})
+    if disposable:
+        added["_native_ufs_store_order"] = 1
+    if retained_persist:
+        added["_nuwa_v1_ufs_write_failure"] = 1
+    if definitions(dst) != definitions(Path(original)) + added:
         raise SystemExit("restricted provider changed the retained archive export inventory")
     args = list(argv)
     at, = (i for i, arg in enumerate(args) if arg == f"-Wl,-force_load,{original}")
@@ -730,10 +876,137 @@ extern "C" unsigned native_ufs_store_gpt_check (void)
     return args
 
 
+KERN_EXIT_INPUT_SHA = "72073bac1f8df8e664eba539e7568229e2c863848808ffc9c349826e3e7fc691"
+KERN_EXIT_HOOK_OLD = b"""\tboot_progress_exit(proc_getpid(p),p->p_name,rv,
+\t    p->p_exit_reason ? p->p_exit_reason->osr_namespace : 0,
+\t    p->p_exit_reason ? p->p_exit_reason->osr_code : 0);
+
+\tif (p->p_crash_behavior != 0 || p == initproc) {
+\t\tproc_handle_critical_exit(p, rv);
+\t}"""
+KERN_EXIT_HOOK_NEW = b"""\tboot_progress_exit_parent(proc_getpid(p), p->p_ppid);
+\tboot_progress_exit(proc_getpid(p),p->p_name,rv,
+\t    p->p_exit_reason ? p->p_exit_reason->osr_namespace : 0,
+\t    p->p_exit_reason ? p->p_exit_reason->osr_code : 0);
+
+\tif (p->p_crash_behavior != 0 || p == initproc) {
+\t\tproc_handle_critical_exit(p, rv);
+\t}"""
+KERN_EXIT_CAPTURE_OLD = b"""#endif /* DEVELOPMENT */
+
+\tchar *exit_reason_desc = exit_reason_get_string_desc(p->p_exit_reason);"""
+KERN_EXIT_CAPTURE_NEW = b"""#endif /* DEVELOPMENT */
+
+\tboot_progress_critical_capture(proc_getpid(p), p->p_name, rv,
+\t    p->p_exit_reason ? p->p_exit_reason->osr_namespace : 0,
+\t    p->p_exit_reason ? p->p_exit_reason->osr_code : 0, p->p_ppid);
+
+\tchar *exit_reason_desc = exit_reason_get_string_desc(p->p_exit_reason);"""
+KERN_EXIT_PAINT_OLD = b"""\tproc_crash_coredump(p);
+
+\tsync(p, (void *)NULL, (int *)NULL);
+
+\tif (p->p_exit_reason == OS_REASON_NULL) {"""
+KERN_EXIT_PAINT_NEW = b"""\tproc_crash_coredump(p);
+
+\tsync(p, (void *)NULL, (int *)NULL);
+
+\tboot_progress_critical_paint();
+
+\tif (p->p_exit_reason == OS_REASON_NULL) {"""
+
+
+def post_event_link(r35, out, records, argv, env, *, sb_threads=False):
+    """Recompile only the three diagnostic TUs the post-event row needs.
+
+    nuwa_data_mount.c latches the completed first mount attempt, nuwa_systemos.c
+    publishes pid 1 and SpringBoard from the existing two-second probe, and
+    kern_exit.c supplies the parent pid and paints before the critical-exit
+    panic.  The filelist replacement keeps the same link order.
+    """
+    filelist = out / "link.filelist"
+    lines = filelist.read_text().splitlines(keepends=True)
+
+    def replace_line(old_obj, new_obj):
+        line = str(old_obj) + "\n"
+        if lines.count(line) != 1:
+            raise SystemExit("post-event: expected one " + old_obj.name + " in link.filelist")
+        lines[lines.index(line)] = str(new_obj) + "\n"
+
+    def compile_record(record, source, obj, label, extra=()):
+        command = list(record["argv"])
+        source_at, = [i for i, arg in enumerate(command) if arg.endswith("/" + source.name)]
+        command[source_at] = str(source)
+        command[command.index("-o") + 1] = str(obj)
+        command.extend(extra)
+        with (out / ("compile-" + label + ".log")).open("wb") as log:
+            done = subprocess.run(command, cwd=record["cwd"], env=env, stdout=log,
+                                  stderr=subprocess.STDOUT)
+        if done.returncode:
+            raise SystemExit(f"post-event: {label} exit {done.returncode}; see compile-{label}.log")
+        return obj
+
+    records = list(records)
+    dm_record, = (r for r in records if r["label"] == "compile-nuwa_data_mount" and r["exit"] == 0)
+    dm_old, = [Path(line.strip()) for line in lines
+               if line.strip().endswith("/nuwa_data_mount.o")]
+    dm_obj = compile_record(dm_record, ROOT / "package/nuwa-data/nuwa_data_mount.c",
+                            out / "nuwa_data_mount.o", "nuwa_data_mount")
+    replace_line(dm_old, dm_obj)
+
+    sm_record, = (r for r in records if r["label"] == "compile-nuwa_systemos" and r["exit"] == 0)
+    sm_old, = [Path(line.strip()) for line in lines
+               if line.strip().endswith("/nuwa_systemos.o")]
+    sm_obj = compile_record(sm_record, ROOT / "package/nuwa-systemos/nuwa_systemos.c",
+                            out / "nuwa_systemos.o", "nuwa_systemos",
+                            ["-DNUWA_SB_THREADS=1"] if sb_threads else [])
+    replace_line(sm_old, sm_obj)
+
+    kx_old, = [Path(line.strip()) for line in lines if line.strip().endswith("/kern_exit.o")]
+    kx_recipe = json.loads((kx_old.parent / "commands.json").read_text())
+    kx_record, = (r for r in kx_recipe if r["label"] == "compile-kern_exit" and r["exit"] == 0)
+    kx_source, = [Path(arg) for arg in kx_record["argv"]
+                  if arg.endswith("/tree/bsd/kern/kern_exit.c")]
+    if hashlib.sha256(kx_source.read_bytes()).hexdigest() != KERN_EXIT_INPUT_SHA:
+        raise SystemExit("post-event: patched kern_exit.c input changed")
+    staged = out / "kern_exit.c"
+    data = kx_source.read_bytes()
+    if data.count(KERN_EXIT_HOOK_OLD) != 1:
+        raise SystemExit("post-event: kern_exit.c hook anchor changed")
+    data = data.replace(KERN_EXIT_HOOK_OLD, KERN_EXIT_HOOK_NEW, 1)
+    if data.count(KERN_EXIT_CAPTURE_OLD) != 1:
+        raise SystemExit("post-event: kern_exit.c critical-capture anchor changed")
+    data = data.replace(KERN_EXIT_CAPTURE_OLD, KERN_EXIT_CAPTURE_NEW, 1)
+    if data.count(KERN_EXIT_PAINT_OLD) != 1:
+        raise SystemExit("post-event: kern_exit.c critical-paint anchor changed")
+    data = data.replace(KERN_EXIT_PAINT_OLD, KERN_EXIT_PAINT_NEW, 1)
+    include = b"#include <kern/boot_progress.h>\n"
+    if data.count(include) != 1:
+        raise SystemExit("post-event: kern_exit.c include anchor changed")
+    data = data.replace(include, include +
+                        b"extern void boot_progress_exit_parent(int, int);\n"
+                        b"extern void boot_progress_critical_capture(int, const char *, int, unsigned, uint64_t, int);\n"
+                        b"extern void boot_progress_critical_paint(void);\n", 1)
+    staged.write_bytes(data)
+    kx_obj = compile_record(kx_record, staged, out / "kern_exit.o", "kern_exit")
+    replace_line(kx_old, kx_obj)
+
+    filelist.write_text("".join(lines))
+    (out / "post-event-inputs.json").write_text(json.dumps({
+        "kern_exit_source": {"path": str(kx_source), "sha256": KERN_EXIT_INPUT_SHA},
+        "kern_exit_staged": {"path": str(staged), "sha256": hashlib.sha256(data).hexdigest()},
+        "objects": {obj.name: {"path": str(obj), "sha256": digest(obj)}
+                    for obj in (dm_obj, sm_obj, kx_obj)},
+    }, indent=2) + "\n")
+    return argv
+
+
 def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
                keep_link_debug, bringup_diag=False, hid_objects=(), mg_reset=False,
                smp_gate=False, smp_observe=False, crashcap=False, pixsig=False,
-               data_persist=False, data_gpt=None, stage=False, base=None):
+               data_persist=False, data_gpt=None, disposable=False, stage=False,
+               post_event=False, fua_permissive=False, sb_threads=False,
+                data_v1_direct=False, retained_persist=False, base=None):
     for name, pin in (R35L_PINS if bringup_diag else R35_PINS).items():
         require_pin(r35 / name, pin)
     require_pin(cpo, R35_CPO_SHA)
@@ -805,12 +1078,20 @@ def replay_r35(r35, linker, cpo, out, archive, native, *, cpu_only, candidate,
             argv = list(argv)
             diag = diag_archive(r35, out, hid=bool(hid_objects), mg_reset=mg_reset,
                                  smp_observe=smp_observe, crashcap=crashcap, pixsig=pixsig,
-                                 data_persist=data_persist, stage=stage)
+                                 data_persist=data_persist, stage=stage, post_event=post_event,
+                                 fua_permissive=fua_permissive, sb_threads=sb_threads,
+                                  disposable=disposable, retained_persist=retained_persist)
             argv[force_at] = f"-Wl,-force_load,{diag}"
         if data_persist:
-            argv = persist_diag_link(r35, out, records, argv, env, data_candidate=data_gpt is not None)
+            argv = persist_diag_link(r35, out, records, argv, env,
+                                     data_candidate=data_gpt is not None and not (data_v1_direct or retained_persist),
+                                     disposable=disposable, fua_permissive=fua_permissive,
+                                     retained_persist=retained_persist)
+        if post_event:
+            argv = post_event_link(r35, out, records, argv, env, sb_threads=sb_threads)
         if data_gpt is not None:
-            argv = data_candidate_link(out, argv, env, data_gpt)
+            argv = data_candidate_link(out, argv, env, data_gpt, disposable=disposable,
+                                       retained_persist=retained_persist)
         argv = [*argv, "-Wl,-ignore_optimization_hints", f"-Wl,-force_load,{archive}", *map(str, hid_objects)]
         if not candidate or keep_link_debug:
             return link("native-link", native, argv)
@@ -1043,6 +1324,16 @@ def main():
                    help="show the unchanged Data store open's reason in the PIX candidate")
     p.add_argument("--data-candidate-gpt", type=Path,
                    help="link the write-disabled v2 Data candidate using this local 4 KiB GPT capture")
+    p.add_argument("--data-v1-direct", action="store_true",
+                   help="link the Data provider but compile RamBlock's v1 mode-2 branch; "
+                         "host build only, production writes remain disabled")
+    p.add_argument("--data-v1-retained", action="store_true",
+                   help="compile the upstream v1 overlay with single-slot retained FUA and cache sync")
+    p.add_argument("--disposable-data", action="store_true",
+                   help="compile the opt-in disposable Data experiment (no durability or initialization)")
+    p.add_argument("--disposable-fua-permissive", action="store_true",
+                   help="diagnostic experiment: accept FUA and flushes without a durability claim; "
+                        "requires --disposable-data --post-event and is off by default")
     p.add_argument("--candidate", action="store_true",
                    help="apply device hooks and write the r35-display diagnostic kernel")
     p.add_argument("--r35l-dir", type=Path,
@@ -1059,6 +1350,10 @@ def main():
                    help="show CPU_ON and secondary affinity observations; does not enable SMP")
     p.add_argument("--crashcap", action="store_true",
                    help="include the lsd-only saved-register recorder in the single-core candidate")
+    p.add_argument("--post-event", action="store_true",
+                   help="add the panic-safe pid 1/SpringBoard/exit-parent/Data-first-attempt summary")
+    p.add_argument("--sb-threads", action="store_true",
+                   help="sample SpringBoard user saved state using the --post-event process probe")
     p.add_argument("--out", type=Path, required=True, help="new directory under out/")
     a = p.parse_args()
     base, cpo, linker, out = (x.resolve() for x in (a.base, a.cpo, a.linker_dir, a.out))
@@ -1090,6 +1385,10 @@ def main():
         p.error("--smp-observe requires --smp-gate and the pinned --r35l-dir candidate")
     if a.crashcap and (not a.r35l_dir or a.smp_gate):
         p.error("--crashcap requires the pinned single-core --r35l-dir candidate")
+    if a.post_event and not (a.crashcap and a.data_persist_diag and not a.smp_gate):
+        p.error("--post-event requires --crashcap --data-persist-diag and excludes --smp-gate")
+    if a.sb_threads and not a.post_event:
+        p.error("--sb-threads requires --post-event")
     if a.pixsig and not (a.crashcap and a.no_software_vsync):
         p.error("--pixsig requires --crashcap and --no-software-vsync")
     if a.stage_channel and not (a.pixsig and not a.data_persist_diag):
@@ -1098,6 +1397,15 @@ def main():
         p.error("--data-persist-diag requires --pixsig and the single-core candidate")
     if a.data_candidate_gpt and not a.data_persist_diag:
         p.error("--data-candidate-gpt requires --data-persist-diag")
+    if a.data_v1_direct and (not a.data_candidate_gpt or a.disposable_data or a.disposable_fua_permissive):
+        p.error("--data-v1-direct requires --data-candidate-gpt and excludes disposable options")
+    if a.data_v1_retained and (not a.data_candidate_gpt or not a.post_event or a.data_v1_direct or a.disposable_data or
+                               a.disposable_fua_permissive):
+        p.error("--data-v1-retained requires --data-candidate-gpt --post-event and excludes the old v1/disposable options")
+    if a.disposable_data and not a.data_candidate_gpt:
+        p.error("--disposable-data requires the pinned single-core Data GPT candidate")
+    if a.disposable_fua_permissive and not (a.disposable_data and a.post_event):
+        p.error("--disposable-fua-permissive requires --disposable-data --post-event")
     out.mkdir(parents=True, exist_ok=False)
     donor = base / "out/ipsw/20H392/kernelcache.decompressed"
     hid_objects = []
@@ -1129,7 +1437,12 @@ def main():
                               hid_objects=hid_objects, mg_reset=a.mg_reset,
                               smp_gate=a.smp_gate, smp_observe=a.smp_observe, crashcap=a.crashcap,
                                pixsig=a.pixsig, data_persist=a.data_persist_diag,
-                               data_gpt=a.data_candidate_gpt, stage=a.stage_channel, base=base)
+                               data_gpt=a.data_candidate_gpt, disposable=a.disposable_data,
+                                stage=a.stage_channel, post_event=a.post_event,
+                                fua_permissive=a.disposable_fua_permissive,
+                                 sb_threads=a.sb_threads, data_v1_direct=a.data_v1_direct,
+                                 retained_persist=a.data_v1_retained,
+                                base=base)
     else:
         # Replay XNU's exported link inputs, without its historical map output.
         stem = "mach.development.bcm2837"

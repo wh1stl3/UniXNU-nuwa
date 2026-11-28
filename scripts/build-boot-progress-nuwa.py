@@ -27,7 +27,7 @@ SOURCE = ROOT / 'package/boot-progress'
 RENDERER = SOURCE / 'BootProgress.c'
 STUBS = SOURCE / 'nuwa_boot_progress_stubs.c'
 PINS = {
-    'BootProgress.c': '6b49a811288703fb009f03e37eb26f601a64d6d62e08a3bda864a8ed3f64e213',
+    'BootProgress.c': '31411c57a01917c19f97f91e67cd3b6c10c83c628a49bcbb96957d36f16c8972',
     'BootProgressCore.h': 'b336397b7aa1e903705ecc78f668f67dd31d7136e8a47acfc801322ada30ee04',
     'BootProgressDisplay.h': '231f580758e4e98592fd7f41203be00ca5670b912508a520bf83fb82d3af10d9',
     'BootProgressLifecycle.h': 'a885fceac1215b4d18ae4e96d141586a257b734bd6a88d8945786f00d8a6b272',

@@ -283,8 +283,7 @@ static void draw(unsigned now) {
           visible->reason == 1 ? "STOP: NO STAGE / IO ACTIVITY FOR 30s - diagnostic snapshot" :
           visible->reason == 2 ? "STOP: 120s OBSERVATION LIMIT - activity does not prove forward progress" :
           "UniXNU boot diagnostics - live XNU - native 4K - no automatic reboot";
-  // Session/build label from the build-tag boot argument (e.g. ks-001, gpu-003), so a photograph says which image it is.
-  if(build_tag[0]) snprintf(b,sizeof(b)," [%s] %s",build_tag,title); else snprintf(b,sizeof(b)," %s",title);
+  snprintf(b,sizeof(b)," %s",title);
   bar(0, b, 0xffffffff, visible->reason && !visible->continuous ? BP_BAR_STOP : BP_BAR_LIVE);
   snprintf(b,sizeof(b),"time=%us idle=%us IRQ=%llu monitor=%llu lost=%u root=%d procs=%d free=%u",
     now, now-visible->activity_at, irq_count, thread_count, visible->dropped,
@@ -1117,8 +1116,7 @@ static void crash_banner(unsigned now) {
     }
   banner_top=title;
   char head[120];
-  snprintf(head,sizeof head," UniXNU live diagnostics%s%s%s  t=%us  crashes=%u exits=%u",build_tag[0]?"  [":"",build_tag,
-    build_tag[0]?"]":"",now,crashes,failed);
+  snprintf(head,sizeof head," UniXNU live diagnostics  t=%us  crashes=%u exits=%u",now,crashes,failed);
   px_text(0,title,head,cols,0xffffffff,BP_BAR_LIVE);
   memcpy(boot_progress_banner_text[0],head,120);
   for(unsigned i=0;i<n;++i)memcpy(boot_progress_banner_text[i+1],rows[i],120);

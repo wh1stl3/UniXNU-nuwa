@@ -1,17 +1,26 @@
 // Compile against the candidate's staged CombinedRead.h, not the baseline copy.
 #include "../package/nuwa-data-write/Provider.h"
 #include "../package/nuwa-data-write/Descriptor.h"
-#include "../package/nuwa-data-write/Overlay.h"
+#include "../package/nuwa-data-write/DualBankLogOverlay.h"
+#if defined(NUWA_DISPOSABLE_FIXTURE)
+#include "../package/nuwa-data-write/DisposableData.h"
+static uint8_t native_ram_block_seed_sha256[32];
+static unsigned disposableArg;
+#endif
 #include "NuwaDataFixtureGpt.h"
 #include "../package/nuwa-ramblock/PersistOpenReason.h"
 #include "PersistOverlay.h"
 #include <cassert>
+#include <array>
 #include <cstdlib>
 #include <cstdio>
 #include <future>
+#include <memory>
 #include <mutex>
 #include <new>
 #include <thread>
+#include <unordered_map>
+#include <vector>
 #include "TransferPoll.h"
 #include "PreservedNop.h"
 #include "CombinedRead.h"
@@ -21,6 +30,24 @@ struct Response {
   unsigned status = 0, flags = 0, residual = 0, ocs = 0, foreignDb = 0;
   unsigned type = 0x21, lun = 0, dl = 0;
   bool badTag = false, badSense = false, timedOut = false, fatal = false;
+};
+
+#if defined(NUWA_SB0_HOST_FIXTURE) && NUWA_SB0_HOST_FIXTURE == 1
+#ifdef KERNEL
+#error SB0 fixture is not a kernel entry
+#endif
+#include "NuwaSb0Experiment.h"
+#endif
+
+using MediaPage = std::array<uint8_t, NuwaData::Block>;
+struct Sb0Media {
+  enum class Cut { None, LostOnPowerCut, Torn, ErrorAlreadyWritten };
+  Cut cut = Cut::None;
+  Response writeWire{};
+  uint64_t corruptAt = UINT64_MAX, readErrorAt = UINT64_MAX;
+  bool guardAfterPrepare = false;
+  std::vector<uint64_t> reads;
+  MediaPage existing{}, persisted{};
 };
 
 struct IOLock { std::mutex mutex; };
@@ -66,9 +93,13 @@ static struct Hardware {
   unsigned writeSubmissions = 0, writeOcsReads = 0;
   uint64_t preparedLba = 0;
   bool active = false, partMedia = false, writing = false;
-  bool descriptor = false;
+  bool descriptor = false, modeSense = false, dpofua = false, wce = false;
+  Response modeWire{};
+  unsigned modeCount = 0;
   unsigned descCount = 0, queryCode = 0, descLength = 0;
   const NuwaData::FixtureGpt *gpt = nullptr;
+  Sb0Media *sb0 = nullptr;
+  Response (*fileWrite)(uint64_t, const uint8_t *) = nullptr;
   uint8_t lastCdb[10]{}, written[NuwaData::Block]{};
   std::promise<void> *submitted = nullptr;
   std::future<void> *allowCompletion = nullptr;
@@ -92,7 +123,7 @@ static struct Hardware {
       case 0x34: return 1;
       case 0x30: return 11;
       case 0x60: return 1;
-      case 0x50: return Dma;
+      case 0x50: return Dma + (sb0 && writing && sb0->guardAfterPrepare ? 0x1000 : 0);
       case 0x58: return doorbell();
       case 0x20: case 0x24: case 0x54: case 0x78: case 0x80: return 0;
       default: assert(false); return 0;
@@ -140,6 +171,7 @@ static struct Hardware {
       }
       return;
     }
+    if (writing && fileWrite) wire = fileWrite(preparedLba, virt + CombinedRead::Data);
     r[0] = wire.type;
     r[1] = wire.flags;
     r[2] = wire.lun;
@@ -154,7 +186,21 @@ static struct Hardware {
     r[41] = 6;
     auto *data = virt + CombinedRead::Data;
     assert(virt[4112] != 0x35);
-    if (writing) {
+    if (modeSense) {
+      ++modeCount;
+      const auto *u = virt + 4096;
+      constexpr uint8_t cdb[] = {0x5a, 8, 8, 0, 0, 0, 0, 0, 0x40, 0};
+      assert(!memcmp(u + 16, cdb, sizeof cdb) && u[0] == 1 && u[1] == 0x40 && u[2] == 0 &&
+             CombinedRead::be32(u + 12) == 64 && (NuwaData::le32(virt) & (3U << 25)) == (2U << 25) &&
+             (NuwaData::le32(virt + 28) & 0xffff) == 1 &&
+             NuwaData::le64(virt + 5120) == Dma + CombinedRead::Data &&
+             NuwaData::le32(virt + 5132) == 63);
+      data[1] = 26; // 8 B header + 20 B Caching page.
+      data[3] = dpofua ? 0x10 : 0;
+      data[8] = 0x88; // PS bit is not part of the page code.
+      data[9] = 18;
+      data[10] = wce ? 4 : 0;
+    } else if (writing) {
       ++writeSubmissions;
       memcpy(lastCdb, virt + 4112, sizeof lastCdb);
       memcpy(written, data, sizeof written);
@@ -163,6 +209,28 @@ static struct Hardware {
       assert((NuwaData::le32(virt) & (3U << 25)) == (1U << 25));
       assert(NuwaData::le64(virt + 5120) == Dma + CombinedRead::Data &&
              NuwaData::le32(virt + 5132) == NuwaData::Block - 1);
+      if (sb0) {
+        assert(preparedLba == NuwaData::DualBankLogOverlay<>::Media.first);
+        assert(sb0->reads.size() == 5 + NuwaData::DualBankLogOverlay<>::Data0);
+        const auto cut = sb0->cut;
+        if (cut == Sb0Media::Cut::Torn) memcpy(sb0->persisted.data(), data, NuwaData::Block / 2);
+        else if (cut == Sb0Media::Cut::ErrorAlreadyWritten ||
+                 (!wire.badTag && !wire.lun &&
+                  !wire.residual && !wire.status && !wire.timedOut))
+          memcpy(sb0->persisted.data(), data, NuwaData::Block);
+        if (wire.timedOut) r[0] = 0; // Completion is not yet present in the old DMA.
+      }
+    } else if (sb0) {
+      const auto *cdb = virt + 4112;
+      assert(virt[4097] == 0x40 && virt[4098] == 0 &&
+             CombinedRead::be32(virt + 4108) == NuwaData::Block &&
+             cdb[0] == 0x28 && CombinedRead::be32(cdb + 2) == preparedLba &&
+             cdb[7] == 0 && cdb[8] == 1);
+      sb0->reads.push_back(preparedLba);
+      const auto *page = gpt->at(preparedLba);
+      if (page) memcpy(data, page, NuwaData::Block);
+      else if (preparedLba == sb0->corruptAt) memcpy(data, sb0->existing.data(), NuwaData::Block);
+      else memset(data, 0, NuwaData::Block);
     } else if (gpt && gpt->at(preparedLba)) {
       memcpy(data, gpt->at(preparedLba), NuwaData::Block);
     } else if (partMedia && (preparedLba == 1 || preparedLba == 2)) {
@@ -187,18 +255,32 @@ static struct Hardware {
   bool prepare(uint64_t pa, CombinedRead::Command c, unsigned tag, unsigned block,
                uint64_t lba, unsigned blocks, const uint8_t *writeSource, NuwaUfsDesc::Request desc) {
     assert(heldLocks && pa == Dma && (c == CombinedRead::Command::Read ||
+#if defined(NUWA_DISPOSABLE_FIXTURE)
+                                      c == CombinedRead::Command::WriteVolatile ||
+#endif
                                      c == CombinedRead::Command::WriteFua ||
-                                     c == CombinedRead::Command::QueryDesc));
+                                      c == CombinedRead::Command::QueryDesc ||
+                                      c == CombinedRead::Command::ModeSense));
     ++prepares;
     preparedLba = lba;
     ocsReads = 0;
     writing = c == CombinedRead::Command::WriteFua;
+#if defined(NUWA_DISPOSABLE_FIXTURE)
+    writing |= c == CombinedRead::Command::WriteVolatile;
+#endif
     descriptor = c == CombinedRead::Command::QueryDesc;
+    modeSense = c == CombinedRead::Command::ModeSense;
+    if (modeSense) wire = modeWire;
+    if (sb0) {
+      wire = writing ? sb0->writeWire : Response{};
+      if (!writing && lba == sb0->readErrorAt) { wire.status = 2; wire.dl = 16; }
+    }
     return CombinedRead::encode(virt, pa, c, tag, block, lba, blocks, writeSource, desc);
   }
   uint32_t doorbell() {
     if (!active) return 0;
     if (seen++ == 0) return 1 | wire.foreignDb; // Foreign bit can disappear by final read.
+    if ((sb0 || fileWrite) && wire.timedOut) return 1;
     active = false;
     return 0;
   }
@@ -206,10 +288,11 @@ static struct Hardware {
   uint32_t completedOcs() { ++ocsReads; if (writing) ++writeOcsReads; return wire.ocs; }
   void deadline() {}
   void barrier() {}
-  bool expired() const { return wire.timedOut && ocsReads > 1; }
+  bool expired() const { return wire.timedOut && ((sb0 || fileWrite) ? seen > 2 : ocsReads > 1); }
   void delay() {}
   void invalidateAll() {}
   const volatile uint8_t *response() const { return virt + 4608; }
+  const volatile uint8_t *data() const { return virt + CombinedRead::Data; }
 } combined_hardware;
 
 static CombinedRead::State combined_state;
@@ -220,17 +303,33 @@ static struct { bool valid; uint64_t first, last, imageBytes; } gStoreGeometry;
 static constexpr NuwaData::GptIdentity nuwaDataIdentity{
   61850624, 6, 61850618, 3110976, 61850618, {1}, {2}, {3}
 };
-static unsigned descOptIn;
+static unsigned descOptIn, dataWriteArg;
 static bool PE_parse_boot_argn(const char *name, void *value, size_t n) {
-  if (strcmp(name, "nuwa-ufs-desc") || !descOptIn) return false;
-  assert(n == sizeof descOptIn);
-  memcpy(value, &descOptIn, n);
+  const unsigned arg = !strcmp(name, "nuwa-ufs-desc") ? descOptIn :
+#if defined(NUWA_DISPOSABLE_FIXTURE)
+                       !strcmp(name, "nuwa-disposable-data") ? disposableArg :
+#endif
+                       !strcmp(name, "nuwa-data-write") ? dataWriteArg : 0;
+  if (!arg) return false;
+  assert(n == sizeof arg);
+  memcpy(value, &arg, n);
   return true;
 }
-static void *IOMallocZero(size_t) { assert(false); return nullptr; }
+static size_t seenAllocations, seenFrees;
+using DataOverlay = NuwaData::DualBankLogOverlay<>;
+static void *IOMallocZero(size_t n) {
+  if (n == sizeof(DataOverlay::SeenScratch)) ++seenAllocations;
+  return std::calloc(1, n);
+}
 static void *IOMalloc(size_t n) { return std::malloc(n); }
-static void IOFree(void *p, size_t) { std::free(p); }
+static void IOFree(void *p, size_t n) {
+  if (n == sizeof(DataOverlay::SeenScratch)) ++seenFrees;
+  std::free(p);
+}
 #include "../package/nuwa-data-write/KernelPort.inc"
+#if defined(NUWA_DISPOSABLE_FIXTURE)
+#include "../package/nuwa-data-write/DisposablePort.inc"
+#endif
 #include "../package/nuwa-data-write/RetainedDesc.inc"
 
 using IOReturn = int;
@@ -275,7 +374,44 @@ struct NativeUfsBlock {
 static uint64_t gStoreRegionFirst, gStoreRegionBlocks;
 static unsigned storeMode() { return 2; }
 static uint64_t reserveBlocks() { return 262144; }
+struct RamMedia {
+  std::unordered_map<uint64_t, MediaPage> pages;
+  size_t reads = 0, writes = 0, syncs = 0;
+  bool failLog = false, failed = false;
+  bool read(uint64_t b, uint32_t n, void *d) {
+    assert(b < DataOverlay::Media.blocks && n == 1);
+    ++reads;
+    const auto i = pages.find(b);
+    if (i == pages.end()) memset(d, 0, NuwaData::Block);
+    else memcpy(d, i->second.data(), NuwaData::Block);
+    return true;
+  }
+  bool write(uint64_t b, uint32_t n, const void *p) {
+    assert(!failed && b < DataOverlay::Media.blocks && n == 1);
+    ++writes;
+    if (failLog && b >= DataOverlay::Log && b < DataOverlay::Data0) {
+      failed = true;
+      return false;
+    }
+    memcpy(pages[b].data(), p, NuwaData::Block);
+    return true;
+  }
+  bool sync() { assert(!failed); ++syncs; return true; }
+};
+static RamMedia *ramMedia;
+static uint64_t candidateFirst, candidateBlocks;
+static bool fixtureOpenCandidateData(uint64_t first, uint64_t blocks, uint64_t reserve) {
+  candidateFirst = first;
+  candidateBlocks = blocks;
+  if (ramMedia) {
+    assert(NuwaData::placement(nuwaDataIdentity, gStoreGeometry.imageBytes, reserve, {first, blocks}));
+    return !ramMedia->failed;
+  }
+  return openCandidateData(first, blocks, reserve);
+}
+#define openCandidateData fixtureOpenCandidateData
 #include "FixtureStore.inc"
+#undef openCandidateData
 #include "FixturePart.inc"
 
 static unsigned native_ufs_store_mode() { return storeMode(); }
@@ -284,26 +420,30 @@ static void IOLog(const char *, ...) {}
 static uint32_t native_data_persist_state, native_data_persist_header, native_data_persist_gpt,
                 native_data_persist_gpt_after;
 static uint64_t native_data_persist_pages, native_data_persist_loaded, native_data_persist_first_lba,
-                native_data_persist_present, native_ram_block_resident_bytes;
+                 native_data_persist_present, native_ram_block_resident_bytes, native_data_persist_writes,
+                 native_data_persist_syncs, native_data_persist_errors;
 static const char *nuwa_data_persist_open_why;
+static const MediaPage seedPage = [] { MediaPage p{}; p.fill(0x5e); return p; }();
 struct NativeRamBlock {
   IOLock *gate = &ramGate;
-  struct { uint64_t bytes, resident; uint8_t **pages; } sparse{};
-  struct { uint64_t bytes = 8589934592ULL; } big;
-  bool isBig = true, storeAttached = false, direct = false, directFailed = false;
+  struct { uint64_t bytes, resident; uint8_t **pages; const uint8_t *find(uint64_t) { return nullptr; } } sparse{};
+  struct { uint64_t bytes = 8589934592ULL; const uint8_t *find(uint64_t) { return seedPage.data(); } } big;
+  bool online = true, isBig = true, storeAttached = false, direct = false, directFailed = false;
   uint8_t seedHash[32]{};
   persist::Overlay overlay{};
-  NuwaData::Overlay dataOverlay{};
-  size_t dataMapBytes = 0;
-  uint8_t *overlayBits = nullptr, *stage = nullptr, *dataMaps = nullptr, *dataScratch = nullptr;
+  DataOverlay dataOverlay{};
+  DataOverlay::Workspace *dataWorkspace = nullptr;
+  uint8_t *overlayBits = nullptr, *stage = nullptr;
   static constexpr uint32_t kStagePages = 32;
-  static bool discardRequested() { return false; }
+  static bool discardRequested() { return ramMedia != nullptr; }
   struct StoreOps {
-    bool read(uint64_t b, uint32_t n, void *d) { return native_ufs_store_read(b, n, d); }
-    bool write(uint64_t b, uint32_t n, const void *p) { return native_ufs_store_write(b, n, p); }
-    bool sync() { return native_ufs_store_sync(); }
+    bool read(uint64_t b, uint32_t n, void *d) { return ramMedia ? ramMedia->read(b, n, d) : native_ufs_store_read(b, n, d); }
+    bool write(uint64_t b, uint32_t n, const void *p) { return ramMedia ? ramMedia->write(b, n, p) : native_ufs_store_write(b, n, p); }
+    bool sync() { return ramMedia ? ramMedia->sync() : native_ufs_store_sync(); }
   };
+  ~NativeRamBlock() { std::free(dataWorkspace); std::free(stage); std::free(overlayBits); }
 #include "FixtureAttach.inc"
+#include "FixtureRamIO.inc"
 };
 
 static void startMockBoot(Response wire) {
@@ -317,10 +457,12 @@ static void startMockBoot(Response wire) {
   assert(PreservedNop::domain(combined_hardware, combined_state.setup));
   gHost = {true, false, &hostLock};
   gStoreGeometry = {true, nuwaDataIdentity.userdataFirst, nuwaDataIdentity.userdataLast, 8446279680ULL};
+  gStoreRegionFirst = gStoreRegionBlocks = 0;
   // Fixture-only process replacement across independent test scenarios.
   new (&retainedSlot) NuwaData::Slot;
-  descOptIn = ufsDescClaimed = ufsDescPublished = 0;
+  dataWriteArg = descOptIn = ufsDescClaimed = ufsDescPublished = liveGptStatus = 0;
   ufsDescSnapshot = {};
+  ufsModeSnapshot = {};
 }
 
 static void testAttach(const char *state) {
@@ -334,6 +476,123 @@ static void testAttach(const char *state) {
          native_data_persist_gpt == 0 && combined_hardware.submissions == before &&
          combined_hardware.mmioReads == mmio);
   std::printf("PASS attachStore %s: cached GPT; diagnostic UFS submissions=0\n", state);
+}
+
+struct RamBuffer {
+  std::vector<uint8_t> data;
+  size_t limit = SIZE_MAX;
+  RamBuffer(size_t n, uint8_t byte) : data(n, byte) {}
+  uint64_t read(uint64_t at, void *dst, uint64_t n) {
+    assert(at <= data.size() && n <= data.size() - at);
+    if (at + n > limit) return 0;
+    memcpy(dst, data.data() + at, n);
+    return n;
+  }
+  uint64_t copy(uint64_t at, const void *src, uint64_t n) {
+    assert(at <= data.size() && n <= data.size() - at);
+    memcpy(data.data() + at, src, n);
+    return n;
+  }
+};
+
+static size_t ramIO(NativeRamBlock &ram, bool write, uint64_t offset, RamBuffer &buffer) {
+  IOLockLock(ram.gate);
+  const auto n = ram.candidateIO(write, offset, buffer.data.size(), buffer);
+  IOLockUnlock(ram.gate);
+  return n;
+}
+
+static void testRamOverlay() {
+  constexpr size_t block = NuwaData::Block, page = 32767, offset = page * block;
+  startMockBoot({});
+  RamMedia media;
+  ramMedia = &media;
+  NativeRamBlock ram;
+  const auto allocations = seenAllocations, frees = seenFrees;
+  ram.attachStore();
+  assert(seenAllocations == allocations + 1 && seenFrees == frees + 1);
+  assert(ram.direct && native_data_persist_state == 1 && native_data_persist_present == 0);
+  assert(candidateFirst == 57393401 && candidateBlocks == 4195074 &&
+         candidateFirst + candidateBlocks == 61588475 && gStoreRegionFirst == candidateFirst);
+  RamBuffer one(block, 0x11);
+  assert(ramIO(ram, true, offset, one) == one.data.size() && native_data_persist_present == 1);
+  const auto reads = media.reads;
+  one.data.assign(block, 0x22);
+  assert(ramIO(ram, true, offset, one) == one.data.size() && media.reads == reads &&
+         native_data_persist_present == 1);
+  assert(media.pages.at(DataOverlay::Data0 + page).front() == 0x11 &&
+         media.pages.at(DataOverlay::Data1 + page).front() == 0x22);
+  std::puts("PASS RamBlock first write and full overwrite: bank 0/1, overwrite reads=0");
+
+  RamBuffer partial(31 * block, 0x33); // touches 32 pages, first & last are RMW
+  const auto commits = native_data_persist_syncs;
+  const auto writes = media.writes;
+  assert(ramIO(ram, true, offset + 512, partial) == partial.data.size());
+  assert(native_data_persist_syncs == commits + 1 && media.writes == writes + 33 &&
+         media.reads == reads + 1 && native_data_persist_present == 32);
+  RamBuffer payload(32 * block, 0);
+  const auto checkBatch = [&](NativeRamBlock &disk) {
+    assert(ramIO(disk, false, offset, payload) == payload.data.size());
+    for (size_t i = 0; i < payload.data.size(); ++i)
+      assert(payload.data[i] == (i < 512 ? 0x22 : i < 31 * block + 512 ? 0x33 : 0x5e));
+  };
+  checkBatch(ram);
+  assert(ramIO(ram, true, offset, payload) == payload.data.size()); // bank 1 across boundary
+  std::puts("PASS RamBlock 32-page batch: one log, partial edges preserved, one media RMW read");
+
+  // Fill the first epoch by updating a separate page; fail the next log
+  // after its checkpoint and both inactive data writes have persisted.
+  for (uint32_t i = 4; i < DataOverlay::LogBlocks; ++i)
+    assert(ramIO(ram, true, 0, one) == one.data.size());
+  RamBuffer shortSource(3 * block, 0xff);
+  shortSource.limit = 2 * block;
+  const auto beforeShort = media.writes;
+  assert(ramIO(ram, true, offset, shortSource) == 0 && media.writes == beforeShort && !ram.directFailed);
+  media.failLog = true;
+  RamBuffer cut(2 * block, 0x44);
+  assert(ramIO(ram, true, offset, cut) == 0 && ram.directFailed && native_data_persist_state == 5);
+  const auto submitted = media.writes, synced = media.syncs, loaded = media.reads;
+  assert(ramIO(ram, true, offset, cut) == 0 && ram.doSynchronizeCache() == kIOReturnIOError);
+  ram.attachStore();
+  assert(native_data_persist_state == 5 && media.writes == submitted && media.syncs == synced &&
+         media.reads == loaded);
+  std::puts("PASS RamBlock state=5: write/sync/reopen refused, extra submissions=0");
+
+  startMockBoot({});
+  media.failed = media.failLog = false;
+  NativeRamBlock resumed;
+  resumed.attachStore();
+  assert(native_data_persist_state == 2 && native_data_persist_present == 33 &&
+         resumed.dataOverlay.generation() == DataOverlay::LogBlocks &&
+         seenAllocations == allocations + 2 && seenFrees == frees + 2);
+  checkBatch(resumed);
+  // Inspect both sides of the bitmap-block boundary in the checkpoint, as
+  // well as the actual page data recovered across it.
+  assert((media.pages.at(DataOverlay::Map1)[4095] & 0x80) != 0 &&
+         (media.pages.at(DataOverlay::Map1 + 1)[0] & 1) != 0);
+  assert((media.pages.at(DataOverlay::Map1 + DataOverlay::MapBlocks)[4095] & 0x80) != 0 &&
+         (media.pages.at(DataOverlay::Map1 + DataOverlay::MapBlocks + 1)[0] & 1) != 0);
+  std::puts("PASS RamBlock checkpoint recovery: old batch across bitmap-block boundary, present=33");
+  ramMedia = nullptr;
+}
+
+static void testRamAmplification() {
+  for (const size_t run : {1, 32}) {
+    startMockBoot({});
+    RamMedia media;
+    ramMedia = &media;
+    NativeRamBlock ram;
+    ram.attachStore();
+    RamBuffer input(run * NuwaData::Block, 0x66);
+    assert(ramIO(ram, true, 0, input) == input.data.size());
+    const auto initial = media.writes;
+    for (uint32_t i = 0; i < DataOverlay::LogBlocks; ++i)
+      assert(ramIO(ram, true, 0, input) == input.data.size());
+    const auto user = DataOverlay::LogBlocks * run;
+    assert(media.writes - initial == user + DataOverlay::LogBlocks + 129);
+    std::printf("PASS RamBlock %zu-page amplification: %.6fx\n", run, double(media.writes - initial) / user);
+    ramMedia = nullptr;
+  }
 }
 
 static void test(const char *label, Response wire, CombinedRead::End end, NuwaData::State state,
@@ -441,7 +700,7 @@ static void testAttachRace(bool snapshotFirst) {
   // geometrically valid read-only reopen before touching any GPT blocks.
   const auto mmio = combined_hardware.mmioReads;
   NuwaData::GptBuffers g{};
-  constexpr NuwaData::Window w{59491258, 2097217};
+  constexpr auto w = DataOverlay::Media;
   assert(!dataProvider.open(nuwaDataIdentity, 0, NuwaData::Block, 8446279680ULL, 262144, w, g));
   assert(!dataProvider.open(nuwaDataIdentity, 0, NuwaData::Block, 8446279680ULL, 262144, w, g, true));
   assert(combined_hardware.mmioReads == mmio && combined_hardware.submissions == 1);
@@ -494,7 +753,7 @@ struct QualifiedWritePort : CandidatePort {
 
 static void testWrites() {
   using namespace NuwaData;
-  constexpr Window window{59491258, 2097217};
+  constexpr auto window = DataOverlay::Media;
   constexpr uint64_t rootBytes = 8446279680ULL, reserve = 262144;
   FixtureGpt disk;
   GptBuffers g{};
@@ -575,7 +834,7 @@ static void testDescriptors() {
   descOptIn = 2;
   probeUfsDescriptors();
   assert(!cachedUfsDescRow(row, sizeof row) && !combined_hardware.mmioReads &&
-         !combined_hardware.submissions);
+          !cachedUfsModeRow(row, sizeof row) && !combined_hardware.submissions);
   std::puts("PASS READ_DESC default and invalid opt-in: no MMIO, no row");
 
   DescriptorPort port;
@@ -589,7 +848,8 @@ static void testDescriptors() {
   descOptIn = 1;
   probeUfsDescriptors();
   probeUfsDescriptors();
-  assert(combined_hardware.submissions == 5 && combined_hardware.descCount == 5 &&
+  assert(combined_hardware.submissions == 6 && combined_hardware.descCount == 5 &&
+          combined_hardware.modeCount == 1 &&
          !combined_hardware.writeSubmissions && retainedSlot.rootAllowed());
   assert(ufsDescSnapshot.bootEnable == 1 && ufsDescSnapshot.lus == 2 &&
          ufsDescSnapshot.units[0].blockSize == 4096 && ufsDescSnapshot.units[3].blocks == 60 &&
@@ -621,7 +881,8 @@ static void testDescriptors() {
     probeUfsDescriptors();
     assert(ufsDescSnapshot.result.status == statuses[fault] &&
            cachedUfsDescRow(row, sizeof row) && !strncmp(row, "UFS err=", 8));
-    assert(combined_hardware.submissions == 1 && combined_hardware.descCount == 1 &&
+    assert(combined_hardware.submissions == (fault < 2 ? 2U : 1U) &&
+           combined_hardware.modeCount == (fault < 2 ? 1U : 0U) && combined_hardware.descCount == 1 &&
            !combined_hardware.writeSubmissions && retainedSlot.rootAllowed() == (fault < 2));
     const auto mmio = combined_hardware.mmioReads;
     if (fault >= 2) {
@@ -634,10 +895,93 @@ static void testDescriptors() {
     } else {
       combined_hardware.wire = {};
       uint8_t page[NuwaData::Block]{};
-      assert(native_ufs_part_read(0, 10, 1, page) && combined_hardware.submissions == 2);
+      assert(native_ufs_part_read(0, 10, 1, page) && combined_hardware.submissions == 3);
     }
     std::printf("PASS READ_DESC %s: %s, next root=%s\n", labels[fault],
                 row, fault < 2 ? "allowed" : "isolated");
+  }
+}
+
+static void testModeSense() {
+  using namespace NuwaUfsDesc;
+  char row[79]{};
+  for (unsigned value = 0; value < 4; ++value) {
+    startMockBoot({});
+    descOptIn = 1;
+    combined_hardware.dpofua = value & 2;
+    combined_hardware.wce = value & 1;
+    // Normal underflow: complete 28-byte parameter list in a 64-byte allocation.
+    combined_hardware.modeWire.residual = 36;
+    combined_hardware.modeWire.flags = 0x20;
+    probeUfsDescriptors();
+    probeUfsDescriptors();
+    char expected[79];
+    snprintf(expected, sizeof expected, "UFS2 dpofua=%u wce=%u gpt=unk", value >> 1, value & 1);
+    const auto mmio = combined_hardware.mmioReads;
+    assert(cachedUfsModeRow(row, sizeof row) && !strcmp(row, expected) &&
+           combined_hardware.modeCount == 1 && combined_hardware.submissions == 6 &&
+           !combined_hardware.writeSubmissions && combined_hardware.mmioReads == mmio);
+    std::printf("PASS MODE SENSE(10) read-only once: %s\n", row);
+  }
+  for (unsigned fault = 0; fault < 4; ++fault) {
+    startMockBoot({});
+    descOptIn = 1;
+    auto &r = combined_hardware.modeWire;
+    if (fault < 2) { r.flags = 0x20; r.residual = fault == 0 ? 57 : 54; }
+    if (fault == 2) { r.status = 2; r.dl = 16; }
+    if (fault == 3) { r.ocs = 15; r.timedOut = true; }
+    static constexpr const char *rows[] = {
+        "UFS2 err=6 sc=000000", "UFS2 err=6 sc=000000",
+        "UFS2 err=3 sc=050000", "UFS2 err=5 sc=000000"
+    };
+    static constexpr const char *labels[] = {"short header", "short caching page", "CHECK CONDITION", "timeout"};
+    probeUfsDescriptors();
+    assert(cachedUfsModeRow(row, sizeof row) && !strcmp(row, rows[fault]) &&
+           combined_hardware.modeCount == 1 && combined_hardware.submissions == 6 &&
+           !combined_hardware.writeSubmissions && retainedSlot.rootAllowed() == (fault != 3));
+    if (fault == 3) {
+      const auto mmio = combined_hardware.mmioReads;
+      uint8_t page[NuwaData::Block]{};
+      assert(retainedSlot.state() == NuwaData::State::TIMEOUT_ORPHAN);
+      probeUfsDescriptors();
+      assert(!native_ufs_part_read(0, 10, 1, page) && combined_hardware.mmioReads == mmio &&
+             combined_hardware.submissions == 6);
+    }
+    std::printf("PASS MODE SENSE %s: %s\n", labels[fault], row);
+  }
+  uint8_t raw[ModeBytes]{};
+  raw[1] = 6; raw[3] = 0x10;
+  const auto header = parseMode(raw, 8);
+  assert(header.result.status == Status::Ok && header.dpofua == Bit::Set && header.wce == Bit::Unknown);
+  raw[1] = 12; raw[8] = raw[11] = 0x08; raw[9] = raw[12] = 1;
+  assert(parseMode(raw, 14).result.status == Status::Malformed);
+  raw[1] = 8; raw[8] = 0x48; raw[9] = 1;
+  assert(parseMode(raw, 10).result.status == Status::Malformed);
+
+  for (const bool valid : {false, true}) {
+    using namespace NuwaData;
+    startMockBoot({});
+    FixtureGpt gpt;
+    if (!valid) gpt.be[0] ^= 1;
+    combined_hardware.gpt = &gpt;
+    GptBuffers buffers{};
+    LiveGpt live = LiveGpt::Bad;
+    constexpr uint64_t root = 8446279680ULL, reserve = 262144;
+    assert(!dataProvider.open(gpt.id, 0, Block, root, reserve, DataOverlay::Media, buffers, true, &live)
+           && live == LiveGpt::Unknown && !combined_hardware.submissions);
+    assert(dataProvider.open(gpt.id, 0, Block, root, reserve, DataOverlay::Media, buffers, false, &live) == valid);
+    assert(live == (valid ? LiveGpt::Ok : LiveGpt::Bad) && combined_hardware.submissions == 4);
+    // Simulate publication from an open that reached GPT validation. Production
+    // mode 2 deliberately never reaches it with the current write gate.
+    __atomic_store_n(&liveGptStatus, unsigned(live), __ATOMIC_RELAXED);
+    descOptIn = 1;
+    probeUfsDescriptors();
+    const auto mmio = combined_hardware.mmioReads;
+    assert(cachedUfsModeRow(row, sizeof row) && strstr(row, valid ? "gpt=ok" : "gpt=bad") &&
+           combined_hardware.submissions == 10 && combined_hardware.mmioReads == mmio &&
+           !combined_hardware.writeSubmissions);
+    dataProvider.close();
+    std::printf("PASS live dual GPT from existing open, no extra I/O: %s\n", row);
   }
 }
 
@@ -687,7 +1031,7 @@ static void testTerminal(bool timeout) {
   assert(later.status == kIOReturnNotReady && later.bytes == 0);
   dataProvider.close();
   NuwaData::GptBuffers g{};
-  constexpr NuwaData::Window window{59491258, 2097217};
+  constexpr auto window = DataOverlay::Media;
   assert(NuwaData::placement(nuwaDataIdentity, 8446279680ULL, 262144, window));
   assert(!dataProvider.open(nuwaDataIdentity, 0, NuwaData::Block, 8446279680ULL, 262144, window, g));
   assert(!openCandidateData(1, 1, 1));
@@ -707,7 +1051,266 @@ static void testTerminal(bool timeout) {
   if (timeout) testAttach("isolated");
 }
 
+static void testSb0ProductionClosed() {
+  using namespace NuwaData;
+  startMockBoot({});
+  assert(BuildWriteOptIn); // Even the old build opt-in cannot bypass false.
+  FixtureGpt disk;
+  combined_hardware.gpt = &disk;
+  for (const unsigned arg : {0U, 1U}) {
+    dataWriteArg = arg;
+    const char *why = nullptr;
+    uint64_t first = 0;
+    uint8_t page[Block]{};
+    assert(!native_ufs_store_open(DataOverlay::Media.blocks, &first, &why) &&
+           !strcmp(why, "window refused") && !first && !gStoreRegionBlocks);
+    assert(!native_ufs_store_write(0, 1, page) && !native_ufs_store_sync());
+  }
+  assert(!combined_hardware.prepares && !combined_hardware.submissions);
+  std::puts("PASS SB0 ordinary mode 2 with and without production write arg: zero commands");
+}
+
+#if defined(NUWA_SB0_HOST_FIXTURE) && NUWA_SB0_HOST_FIXTURE == 1
+static void testSb0Experiment() {
+  using namespace NuwaSb0Fixture;
+  using Overlay = DataOverlay;
+  using Cut = Sb0Media::Cut;
+  constexpr auto first = Overlay::Media.first;
+  static_assert(first == 57393401 && Overlay::Data0 == 770);
+  struct FixturePort : CandidatePort {
+    void quarantineLocked() { retainQuarantineLocked(); }
+  } port;
+
+  enum Case { ArgOnly, NoArg, NoOwner, NoBackup, WrongLun, WrongBlock, WrongCapacity,
+              WrongWindow, WrongReserve, WrongRoot, WrongSeed, MissingSeed,
+              Primary, Backup, GptDisagree, NonemptySb, DamagedMap, LastRing, Legacy,
+              MetadataError, Guard, Tag, Lun, Short, Scsi, TimeoutLate, Lost, Torn,
+              ErrorAlreadyWritten, Good, Count };
+  constexpr const char *labels[] = {
+    "arg only", "no arg", "missing owner", "missing backup", "wrong LU", "wrong block",
+    "wrong capacity", "wrong window", "wrong reserve", "wrong root", "wrong seed", "missing seed",
+    "primary CRC", "backup CRC", "valid copies disagree", "existing SB0", "damaged map",
+    "last ring page", "legacy anchor", "metadata read error", "guard after prepare",
+    "wrong tag", "wrong response LUN", "short response", "attributed command error",
+    "timeout + late completion", "GOOD then power loss", "torn + timeout",
+    "error but already written", "GOOD"
+  };
+  static_assert(sizeof labels / sizeof *labels == Count);
+  for (unsigned which = 0; which < Count; ++which) {
+    startMockBoot({});
+    FixtureGpt disk;
+    Sb0Media media;
+    combined_hardware.gpt = &disk;
+    combined_hardware.sb0 = &media;
+    Trial trial;
+    NuwaSb0Fixture::Request request;
+    request.arg = 1;
+    request.seed[0] = 0x5e;
+    MockBinding binding{true, true, {0x5e}};
+    GptBuffers g{};
+    auto w = std::make_unique<Overlay::Workspace>();
+    MediaPage expected{};
+    uint8_t expectedPage[Block]{};
+    assert(Overlay::initialSuperblock(expectedPage, request.seed, *w));
+    memcpy(expected.data(), expectedPage, Block);
+    Result want = Result::Geometry;
+    size_t preflight = 0;
+    switch (which) {
+      case ArgOnly: case NoArg:
+        request.arg = which == ArgOnly;
+        want = Result::Disabled;
+        break;
+      case NoOwner: binding.windowOwned = false; want = Result::Binding; break;
+      case NoBackup: binding.backupRestorable = false; want = Result::Binding; break;
+      case WrongLun: request.lun = 1; break;
+      case WrongBlock: combined_state.block = 512; break;
+      case WrongCapacity: --combined_state.blocks; break;
+      case WrongWindow: ++request.window.first; break;
+      case WrongReserve: --request.reserve; break;
+      case WrongRoot: ++request.rootBytes; break;
+      case WrongSeed: request.seed[0] ^= 1; want = Result::Binding; break;
+      case MissingSeed: request.seed[0] = binding.backupSeed[0] = 0; want = Result::Binding; break;
+      case Primary: disk.p[16] ^= 1; want = Result::Gpt; preflight = 4; break;
+      case Backup: disk.b[16] ^= 1; want = Result::Gpt; preflight = 4; break;
+      case GptDisagree: disk.be[31 * 128 + 48] ^= 1; disk.repair();
+        want = Result::Gpt; preflight = 4; break;
+      case NonemptySb: media.existing = expected; media.corruptAt = first;
+        want = Result::Nonempty; preflight = 5; break;
+      case DamagedMap: media.corruptAt = first + Overlay::Map1 + 23; media.existing.back() = 1;
+        want = Result::Nonempty; preflight = 5 + Overlay::Map1 + 23; break;
+      case LastRing: media.corruptAt = first + Overlay::Data0 - 1; media.existing.back() = 1;
+        want = Result::Nonempty; preflight = 4 + Overlay::Data0; break;
+      case Legacy: media.corruptAt = first + Overlay::LegacyHeader1; media.existing[0] = 1;
+        want = Result::Nonempty; preflight = 5 + Overlay::Data0; break;
+      case MetadataError: media.readErrorAt = first + Overlay::LegacyHeader0;
+        want = Result::ReadError; preflight = 5 + Overlay::LegacyHeader0; break;
+      default:
+        preflight = 5 + Overlay::Data0;
+        want = Result::NotCompleted;
+        if (which == Guard) media.guardAfterPrepare = true;
+        if (which == Tag) media.writeWire.badTag = true;
+        if (which == Lun) media.writeWire.lun = 1;
+        if (which == Short) { media.writeWire.flags = 0x20; media.writeWire.residual = 1; }
+        if (which == Scsi || which == ErrorAlreadyWritten) {
+          media.writeWire.status = 2; media.writeWire.dl = 16;
+        }
+        if (which == TimeoutLate || which == Torn) {
+          media.writeWire.timedOut = true; media.writeWire.ocs = 15;
+        }
+        if (which == Lost) media.cut = Cut::LostOnPowerCut;
+        if (which == Torn) media.cut = Cut::Torn;
+        if (which == ErrorAlreadyWritten) media.cut = Cut::ErrorAlreadyWritten;
+        if (which == Lost || which == Good) want = Result::CommandCompleted;
+        break;
+    }
+
+    IOLockLock(gHost.lock);
+    const auto result = which == ArgOnly
+      ? trial.runLocked<false>(port, retainedSlot, request, binding, nuwaDataIdentity, g, *w)
+      : trial.runLocked<true>(port, retainedSlot, request, binding, nuwaDataIdentity, g, *w);
+    IOLockUnlock(gHost.lock);
+    assert(result == want && media.reads.size() == preflight);
+    const uint64_t gptReads[] = {1, 2, disk.id.capacity - 1, disk.id.capacity - 2};
+    for (size_t i = 0; i < preflight; ++i)
+      assert(media.reads[i] == (i < 4 ? gptReads[i] : first +
+             (i - 4 == Overlay::Data0 ? Overlay::LegacyHeader1 : i - 4)));
+    const unsigned writes = which > Guard;
+    assert(combined_hardware.writeSubmissions == writes &&
+           combined_hardware.submissions == preflight + writes &&
+           combined_hardware.prepares == preflight + unsigned(which >= Guard));
+    if (writes) {
+      const uint8_t cdb[] = {0x2a, 0x08, uint8_t(first >> 24), uint8_t(first >> 16),
+                             uint8_t(first >> 8), uint8_t(first), 0, 0, 1, 0};
+      assert(!memcmp(combined_hardware.lastCdb, cdb, sizeof cdb) &&
+             !memcmp(combined_hardware.written, expected.data(), Block));
+    }
+    if (media.cut == Cut::LostOnPowerCut) {
+      assert(media.persisted == expected); // Visible after GOOD, before the simulated cut.
+      media.persisted.fill(0);
+    }
+    MediaPage persisted{};
+    if (which == Good || which == ErrorAlreadyWritten) persisted = expected;
+    if (which == Torn) memcpy(persisted.data(), expected.data(), Block / 2);
+    assert(media.persisted == persisted);
+
+    const bool terminal = which == MetadataError || want == Result::NotCompleted;
+    if (terminal) {
+      const bool orphan = which == TimeoutLate || which == Torn;
+      assert(gHost.poisoned && combined_state.quarantined &&
+             retainedSlot.state() == (orphan ? State::TIMEOUT_ORPHAN : State::FATAL_QUARANTINED));
+      if (orphan) {
+        assert(combined_hardware.active); // DB still owned by the old command.
+        combined_hardware.active = false;
+        combined_hardware.wire = {};
+        combined_hardware.virt[8] = 0;
+        auto *late = combined_hardware.virt + 4608;
+        memset(late, 0, 512);
+        late[0] = 0x21;
+        late[3] = combined_hardware.virt[4099];
+        combined_hardware.virt[CombinedRead::Data] ^= 0xff;
+      }
+    }
+    uint8_t dma[CombinedRead::Bytes];
+    memcpy(dma, combined_hardware.virt, sizeof dma);
+    const auto mmio = combined_hardware.mmioReads;
+    IOLockLock(gHost.lock);
+    if (terminal) assert(!dataPort.readPageLocked(10, w->data));
+    if (want != Result::Disabled) {
+      assert(trial.runLocked<true>(port, retainedSlot, request, binding, nuwaDataIdentity, g, *w) ==
+             Result::Used);
+      if (terminal) {
+        Trial another;
+        assert(another.runLocked<true>(port, retainedSlot, request, binding, nuwaDataIdentity, g, *w) ==
+               Result::Geometry);
+      }
+    }
+    IOLockUnlock(gHost.lock);
+    if (terminal) {
+      NativeUfsBlock block;
+      ::Request root;
+      root.issue(block);
+      assert(root.status == kIOReturnNotReady && root.bytes == 0);
+      assert(!dataProvider.open(disk.id, 0, Block, RootBytes, Reserve, Overlay::Media, g));
+    }
+    assert(!gStoreRegionBlocks && !native_ufs_store_write(0, 1, w->block) &&
+           !native_ufs_store_sync() && combined_hardware.mmioReads == mmio &&
+           combined_hardware.writeSubmissions == writes &&
+           media.persisted == persisted && !memcmp(dma, combined_hardware.virt, sizeof dma));
+    std::printf("PASS SB0 %-26s reads=%zu write DB0=%u\n", labels[which], preflight, writes);
+  }
+}
+#endif
+
 int main() {
+#if defined(NUWA_DISPOSABLE_FIXTURE)
+  using namespace NuwaData;
+  const auto media = Disposable::Overlay::Media;
+  FixtureGpt disk;
+  uint8_t page[Block]{};
+  for (unsigned fault = 0; fault < 3; ++fault) {
+    startMockBoot({});
+    disposableOpen = false;
+    disposableArg = 1;
+    memcpy(native_ram_block_seed_sha256, Disposable::Seed, sizeof Disposable::Seed);
+    FixtureGpt broken;
+    if (fault < 2) (fault ? broken.b : broken.p)[16] ^= 1;
+    else { broken.be[70] ^= 1; broken.repair(); }
+    combined_hardware.gpt = &broken;
+    assert(!openDisposableData(media.first, media.blocks, Disposable::Reserve));
+    assert(!disposableWrite(Disposable::Overlay::Log, 1, page));
+    assert(combined_hardware.submissions == 4 && !combined_hardware.writeSubmissions);
+  }
+  Response scsi{};
+  scsi.status = 2;
+  scsi.dl = 16;
+  Response timeout{};
+  timeout.ocs = 15;
+  timeout.timedOut = true;
+  Response shortWrite{};
+  shortWrite.flags = 0x20;
+  shortWrite.residual = 1;
+  Response badTag{};
+  badTag.badTag = true;
+  for (const Response wire : {Response{}, scsi, timeout, shortWrite, badTag}) {
+    startMockBoot({});
+    disposableOpen = false;
+    combined_hardware.gpt = &disk;
+    memset(native_ram_block_seed_sha256, 0, sizeof native_ram_block_seed_sha256);
+    disposableArg = 0;
+    assert(!openDisposableData(media.first, media.blocks, Disposable::Reserve));
+    disposableArg = 1;
+    assert(!openDisposableData(media.first, media.blocks, Disposable::Reserve));
+    memcpy(native_ram_block_seed_sha256, Disposable::Seed, sizeof Disposable::Seed);
+    dataWriteArg = 1;
+    assert(!openDisposableData(media.first, media.blocks, Disposable::Reserve));
+    dataWriteArg = 0;
+    assert(!openDisposableData(media.first + 1, media.blocks, Disposable::Reserve));
+    assert(!combined_hardware.submissions);
+    const char *why = nullptr;
+    uint64_t first = 0;
+    assert(native_ufs_store_open(media.blocks, &first, &why) && first == media.first);
+    assert(combined_hardware.submissions == 4 && !combined_hardware.writeSubmissions);
+    assert(!native_ufs_store_write(0, 1, page) && !native_ufs_store_write(media.blocks, 1, page));
+    assert(!native_ufs_store_sync() && disposableOrder() && combined_hardware.submissions == 4);
+    combined_hardware.wire = wire;
+    const bool good = !wire.status && !wire.timedOut && !wire.residual && !wire.badTag;
+    assert(bool(native_ufs_store_write(Disposable::Overlay::Log, 1, page)) == good);
+    assert(combined_hardware.submissions == 5 && combined_hardware.writeSubmissions == 1);
+    assert(combined_hardware.lastCdb[0] == 0x2a && combined_hardware.lastCdb[1] == 0 &&
+           CombinedRead::be32(combined_hardware.lastCdb + 2) == first + Disposable::Overlay::Log);
+    assert(!native_ufs_store_sync() && disposableOrder() == good);
+    if (!good) {
+      const auto *dma = combined_hardware.virt;
+      assert(!retainedSlot.rootAllowed() && combined_state.quarantined &&
+             retainedSlot.state() == (wire.timedOut ? State::TIMEOUT_ORPHAN : State::FATAL_QUARANTINED));
+      assert(!retainedSlot.complete(Evidence::FullWrite) &&
+             !native_ufs_store_write(Disposable::Overlay::Log, 1, page) &&
+             !disposableRead(0, 1, page) && combined_hardware.virt == dma &&
+             combined_hardware.submissions == 5);
+    }
+  }
+  puts("PASS staged disposable: 4 GPT reads, non-FUA WRITE(10), full completion only, sticky failures, no flush");
+#else
   using CombinedRead::End;
   using NuwaData::State;
   const auto fatal = State::FATAL_QUARANTINED;
@@ -762,4 +1365,12 @@ int main() {
          !retainedSlot.rootAllowed());
   std::puts("PASS candidate re-init refuses without old-DMA/platform proof; MMIO=0, submissions=0");
   testDescriptors();
+  testModeSense();
+  testRamOverlay();
+  testRamAmplification();
+  testSb0ProductionClosed();
+#if defined(NUWA_SB0_HOST_FIXTURE) && NUWA_SB0_HOST_FIXTURE == 1
+  testSb0Experiment();
+#endif
+#endif
 }

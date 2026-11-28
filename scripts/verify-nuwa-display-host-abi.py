@@ -94,10 +94,24 @@ def pixsig_source(text, original):
         ('#include "NuwaDisplayRefresh.h"',
          '''#include "NuwaDisplayRefresh.h"
 #include "NuwaPixelSig.h"
+#include "NuwaRetireGeneration.h"
 #include <machine/machine_routines.h>
 // XNU 8796 arm/cpu_data.h declares this under MACH_KERNEL_PRIVATE.
 extern "C" int get_preemption_level(void);
+extern "C" {
+volatile uint32_t nuwa_rg_entered,nuwa_rg_returned,nuwa_rg_returned_generation;
+}
 struct nuwa_pix_state nuwa_pix_state;'''),
+        ('''        if(!activateOnlyPendingSwap(request))return false;
+        stat(11);note(6,-1,request);''',
+         '''        if(!activateOnlyPendingSwap(request))return false;
+        const uint32_t retirementGeneration=nuwa_retire_entered();
+        stat(11);note(6,-1,request);'''),
+        ('''        IOMobileFramebufferLegacy::completeCurrentSwap();
+        native_legacy_retirement_observed(this);''',
+         '''        IOMobileFramebufferLegacy::completeCurrentSwap();
+        nuwa_retire_returned(retirementGeneration);
+        native_legacy_retirement_observed(this);'''),
         ('            native_legacy_transfer_observed(kIOReturnSuccess,request,blankLength);',
          '''            nuwa_pix_blank(&nuwa_pix_state);
             native_legacy_transfer_observed(kIOReturnSuccess,request,blankLength);'''),
@@ -626,6 +640,7 @@ def main():
         'driver_revision': DRIVER_REV, 'adapted_source_sha256': sha256(source),
         'cpu_only': args.cpu_only,
         'no_software_vsync': args.no_software_vsync,
+        'retire_generation_header_sha256': sha256(ROOT / 'package/NuwaRetireGeneration.h') if args.pixsig else None,
         'strip_debug': args.strip_debug,
         'board_source_sha256': sha256(provider), 'bindings_source_sha256': sha256(bindings),
     })

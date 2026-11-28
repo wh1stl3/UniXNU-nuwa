@@ -200,7 +200,7 @@ int main(void) {
     }
     unsigned n = bp_shot_format(full, &s, 0x100000000ULL, 0, 0);
     const char *extra[] = {"EXIT a", "EXIT b", "EXIT c", "XR x", "PROC n=6",
-      "SVC x", "SC n=12", "SC +0", "LOAD x", "UFS x", "SCHED x",
+      "SB 95:RUN", "PIX bk=1", "UFS x", "SCHED x",
       "SS x", "SU x", "FB x", "SWAP x", "GPU1 x", "GPU2 x",
       "GPU3 x", "GPU4 x", "GPU5 x", "GPU6 x", "GPU7 x", "GPU8 x"};
     for (unsigned i = 0; i < sizeof(extra)/sizeof(extra[0]); ++i)
@@ -210,7 +210,7 @@ int main(void) {
     assert(n > 24);
     n = bp_banner_select(full, n, 24);
     const char *must[] = {"SHOT lsd", "SHOT2 ", "T0 ", "T0+4 ", "T0+8 ",
-      "EXIT a", "EXIT b", "EXIT c", "PROC n=", "SC n=", "SC +", "LOAD "};
+      "EXIT a", "EXIT b", "EXIT c", "PROC n=", "SB 95:RUN", "PIX bk="};
     for (unsigned i = 0; i < sizeof(must)/sizeof(must[0]); ++i) {
       int found = 0;
       for (unsigned j = 0; j < n; ++j)

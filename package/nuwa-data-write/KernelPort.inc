@@ -1,5 +1,6 @@
 // Included only in the pinned nuwa retained-root provider, after StoreGeometry.
 #include "RetainedWrite.inc"
+#include "DualBankLogOverlay.h"
 struct CandidatePort : RetainedWritePort {
   NuwaData::ReinitAttempt reinit;
   void lock() { IOLockLock(gHost.lock); }
@@ -33,6 +34,10 @@ struct CandidatePort : RetainedWritePort {
 };
 static CandidatePort dataPort;
 static NuwaData::Provider<CandidatePort, false> dataProvider(dataPort, retainedSlot);
+static unsigned liveGptStatus;
+static NuwaData::LiveGpt cachedLiveGpt() {
+  return static_cast<NuwaData::LiveGpt>(__atomic_load_n(&liveGptStatus, __ATOMIC_RELAXED));
+}
 
 static bool openCandidateData(uint64_t first, uint64_t blocks, uint64_t reserve) {
   if (!gHost.lock || gStoreGeometry.first != nuwaDataIdentity.userdataFirst ||
@@ -43,8 +48,27 @@ static bool openCandidateData(uint64_t first, uint64_t blocks, uint64_t reserve)
     return false;
   auto *g = static_cast<NuwaData::GptBuffers *>(IOMallocZero(sizeof(NuwaData::GptBuffers)));
   if (!g) return false;
-  bool result = dataProvider.open(nuwaDataIdentity, 0, NuwaData::Block, gStoreGeometry.imageBytes,
-                                  reserve, {first, blocks}, *g, true);
+  NuwaData::LiveGpt live;
+  const auto preflight = [&](const auto &read) {
+    using DualBank = NuwaData::DualBankLogOverlay<>;
+    using Disposable = NuwaData::DualBankLogOverlay<512, true>;
+    constexpr auto legacy = DualBank::Media;
+    // This store size is reserved for v3. Its normal open/replay stays intact.
+    if (blocks == legacy.blocks || first >= legacy.first + legacy.blocks ||
+        (first < legacy.first && blocks <= legacy.first - first)) return true;
+    static_assert(Disposable::Media.first == legacy.first && Disposable::Media.blocks == legacy.blocks);
+    for (uint32_t slot = 0; slot < 2; ++slot)
+      if (!read(legacy.first + slot, g->ph) || DualBank::hasSuperblockMarker(g->ph, slot) ||
+          Disposable::hasSuperblockMarker(g->ph, slot)) return false;
+    return true;
+  };
+  bool result = dataProvider.openWithPreflight(nuwaDataIdentity, 0, NuwaData::Block,
+      gStoreGeometry.imageBytes, reserve, {first, blocks}, *g, true, &live, preflight);
+  __atomic_store_n(&liveGptStatus, unsigned(live), __ATOMIC_RELAXED);
   IOFree(g, sizeof(NuwaData::GptBuffers));
   return result;
 }
+
+#if defined(NUWA_DISPOSABLE_DATA)
+#include "DisposablePort.inc"
+#endif

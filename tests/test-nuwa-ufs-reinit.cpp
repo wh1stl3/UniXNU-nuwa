@@ -85,6 +85,17 @@ static void failed(R result, unsigned stages, const char *name) {
   std::printf("PASS %s: isolated, no retry, old DMA unchanged\n", name);
 }
 
+static void deniedPermit(ReinitPermit permit) {
+  Slot old;
+  assert(old.submitRead(true, true) && !old.complete(Evidence::Timeout));
+  MockPort port;
+  ReinitAttempt attempt;
+  assert(attempt.tryReinitLocked(old, permit, port).result == R::PlatformUnproven);
+  assert(port.stages == 0 && port.reads == 0 && !old.rootAllowed());
+  assert(attempt.tryReinitLocked(old, Permit, port).result == R::AlreadyAttempted);
+  assert(port.stages == 0 && port.reads == 0);
+}
+
 int main() {
   Slot old;
   MockPort port;
@@ -102,6 +113,26 @@ int main() {
     assert(!wrong.qualified());
   }
   std::puts("PASS missing DMA fence/invalid fresh identity: no re-init operations");
+  for (unsigned missing = 0; missing < 4; ++missing) {
+    auto permit = Permit;
+    switch (missing) {
+      case 0: permit.otherProducersExcluded = false; break;
+      case 1: permit.oldDmaExcluded = false; break;
+      case 2: permit.freshQueuesDisjoint = false; break;
+      case 3: permit.platformInitQualified = false; break;
+    }
+    deniedPermit(permit);
+  }
+  for (auto invalid : {Permit.oldDomain, ColdStartIdentity{17, 31, 41},
+                       ColdStartIdentity{18, 31, 40}, ColdStartIdentity{}}) {
+    auto permit = Permit;
+    permit.freshDomain = invalid;
+    deniedPermit(permit);
+  }
+  auto noOldIdentity = Permit;
+  noOldIdentity.oldDomain = {};
+  deniedPermit(noOldIdentity);
+  std::puts("PASS each missing permit or invalid identity: zero operations, no retry");
   failed(R::HceStop, 1, "HCE stop not observed");
   failed(R::HceStart, 2, "HCE 1-to-0-to-1 unproven");
   failed(R::InterruptPolicy, 3, "interrupt aggregation/IE mismatch");

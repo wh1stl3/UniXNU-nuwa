@@ -6,7 +6,21 @@
 小米 13 Pro（nuwa / SM8550）通过 UniXNU 运行 iOS 16（donor: iPhone10,3 / 16.7.16 / 20H392，xnu-8796 线）。
 
 ## 基线
-- 2026-11-25 持久 Data `st=4` 定位为只读 provider 拒绝 mode 2；仅主机诊断包，未修复、未刷写：[记录](docs/nuwa-data-persist-fix-20261125.md)。
+- 2026-11-28 retained v1 与 V1-NODUR 失败观察（主控转述 vision / self-checked）：[观察](docs/nuwa-v1-nodur-failure-20261128-observation.md)。
+- 2026-11-28 A 槽恢复后 reset r2 单次 reboot（device/self-checked；屏幕与 reset 结果未知）：[观察](docs/nuwa-v1-nodur-reset-slot-restored-reboot-20261128-observation.md)。
+- 2026-11-28 A 槽状态与单次 set_active（device/self-checked）：[观察](docs/nuwa-v1-nodur-slot-reenable-20261128-observation.md)。
+- 2026-11-28 V1-NODUR reset r2 单次刷写与 reboot（device/self-checked；reset 运行结果未知）：[观察](docs/nuwa-v1-nodur-reset-boot-20261128-observation.md)。
+- 2026-11-28 V1-NODUR daily r2 单次刷写与 reboot（device/self-checked；屏幕及运行结果未知）：[观察](docs/nuwa-v1-nodur-daily-boot-20261128-observation.md)。
+- 2026-11-28 retained v1 reset r3 单次 reboot（device/self-checked；reset 与目标离开 fastboot 均未知）：[观察](docs/nuwa-v1-retained-reset-reboot-20261128-observation.md)。
+- 2026-11-28 retained v1 reset r3 单次刷写、未重启（device/self-checked）：[观察](docs/nuwa-v1-retained-reset-flash-20261128-observation.md)。
+- 2026-11-28 无字形示例 FUA 包单次刷写与 reboot（device/self-checked；屏幕待照片）：[观察](docs/nuwa-no-glyph-flash-20261128-observation.md)。
+- 2026-11-27 SpringBoard banner r2 outer `7211a988…e4495`（审查结论主控转述 PASS WITH CONDITIONS）已刷入 `vendor_boot_a` 一次（Sending/Writing OKAY、exit 0、无 AVB footer 警告），随即单次 `fastboot reboot`（exit 0）；120 s 内 nuwa 未回 fastboot、完全离开主机 USB（非 adb/MTP/EDL），adb 全程无设备，设备现不在总线上。只证 bootloader 接受镜像；无屏幕/启动/用户态证据。见 [观察](docs/nuwa-sb-banner-20261127-observation.md)。
+- 2026-11-27 FUA-permissive 实验包（`NUWA_DISPOSABLE_FUA_PERMISSIVE`，接受 FUA 位、不承诺耐久；默认构建仍拒绝）outer `b5d1b9f1…` 已刷入 `vendor_boot_a`；在「拔 USB + 长按电源进菜单」启动下出现 Apple logo、运行到 ≥692 s、Data 挂载 `pub=1`，采样中 tzinit 未再以 45 退出。锁屏/桌面、文件级持久、断电耐久与认证（NOT REACHED）未证。深度终审与刷写细节见 [观察](docs/nuwa-fua-trial-20261127-observation.md)。
+- 2026-11-27 诊断增量候选（deep_reviewer 终审 PASS WITH CONDITIONS `ses_de6f88826ffePVthCKXnVOioO2`）：outer `b9103e97…` 已刷入 `vendor_boot_a` 一次（Sending/Writing OKAY、exit 0），**未重启、未启动**，设备留在 fastboot；无屏幕/运行时证据。见 [观察](docs/nuwa-postevent-20261127-observation.md)。
+- 2026-11-26 disposable Data 主机候选（self-checked，未上机，待终审）：[记录](docs/nuwa-disposable-data-20261126.md)。
+- 2026-11-26 UFS 只读采样画面（主控转述 vision / self-checked 记录）：[观察](docs/nuwa-ufs-neon-20261126-observation.md)。
+- 2026-11-26 UFS 只读 MODE SENSE + GPT 摘要候选，生产写门关闭、未上机（self-checked）：[记录](docs/nuwa-ufs-modeprobe-20261126.md)。
+- 2026-11-26 持久 Data v3 接入单核主机候选，生产写门关闭、未上机（self-checked）：[记录](docs/nuwa-dualbank-integration-20261126.md)。
 - 2026-11-25 显示验收方案（INSUFFICIENT EVIDENCE，reviewer 转述 / self-checked）：[记录](docs/nuwa-display-acceptance-20261125.md)。
 - **显示官方验收尚未通过**：以 `UniXNU/docs/zh/porting/display.md:30–56` 为准：XNU 发布显示服务；CPU 路径确认像素布局、行跨度、分配大小及缓存处理并实际显示已知画面；交换完成；IOSurface 生命周期与交换完成通知闭合；分别记录请求刷新率及实测帧时序；全部完成后才启用 GPU 呈现。
 - 当前仅传输链路冒烟（主控转述 / self-checked：`reg=2 cli=4 vo=6 vb=0 co=6 cb=0 ret=6`）；`co` 可能含清屏，缺已知画面显示、IOSurface 生命周期/通知闭环及请求刷新率/实测帧时序证据；`bk/so/PIX` 仅诊断拆分，不是验收标准。
@@ -60,6 +74,7 @@
 - 仍未验收：正常启动、平台服务发布、存储与用户态；内存所有权问题不因探针阳性自动关闭。ADT 身份/种子约定不变，root UUID 留待根卷阶段。`scripts/` 历史审计工具不再充当 ADT 生成器。
 
 ## 下一步
+- 2026-11-27：设备在本轮 reboot 后离开主机 USB，恢复需用户现场断电重入 fastboot；恢复前无设备动作可做。
 - 2026-11-25：lsd 崩溃分析冻结，主线转显示接线；下一版用已审的 pixsig 探针（outer `28d45ab6c3d7c5ec79cf14543af4836dadf04de7eddaa91fd876b36bc831dbcc`）区分 `bk` 清屏与 `so` 真 surface，再按结果决定是否处理 CA 软件后端、转换/扫描输出或 vsync。
 
 ## 阻塞

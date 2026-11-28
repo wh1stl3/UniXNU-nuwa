@@ -32,8 +32,9 @@ static End response(State &s, const volatile uint8_t *r) {
       s.residual > expected) return End::Response;
 
   switch (s.status) {
-    case 0x00: // GOOD: no sense segment; only REQUEST SENSE can be short.
-      if (dl || (s.command == Command::Sense ? expected - s.residual < 8 : s.residual != 0))
+    case 0x00: // MODE SENSE payload length is checked by its bounded parser.
+      if (dl || (s.command == Command::Sense ? expected - s.residual < 8 :
+                 s.command != Command::ModeSense && s.residual))
         return End::Response;
       return End::Success;
     case 0x02: { // CHECK CONDITION: require well-formed autosense.

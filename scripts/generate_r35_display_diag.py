@@ -12,13 +12,10 @@ static unsigned bp_banner_priority(const char *s, unsigned previous) {
   if (s[0]==' ') return previous;
   if (!strncmp(s,"SHOT",4) || !strncmp(s,"T0 ",3) ||
       !strncmp(s,"T0+",3) || !strncmp(s,"EXIT",4) ||
-      !strncmp(s,"PROC",4) || !strncmp(s,"PEER",4) || !strncmp(s,"DSP ",4) ||
-      !strncmp(s,"PIX ",4) || !strncmp(s,"PIX+",4) ||
-      !strncmp(s,"DSP+",4) || !strncmp(s,"SC ",3) ||
-      !strncmp(s,"LOAD",4)) return 0;
+      !strncmp(s,"PROC",4) || !strncmp(s,"SB ",3) ||
+      !strncmp(s,"PIX ",4) || !strncmp(s,"PIX+",4)) return 0;
   if (!strncmp(s,"CRASH",5) || !strncmp(s,"REASON",6) ||
       !strncmp(s,"PANIC",5) || !strncmp(s,"XR",2) ||
-      !strncmp(s,"SVC",3) ||
       (s[0]=='T' && s[1]>='1' && s[1]<='3' && s[2]==' ')) return 1;
   if (!strncmp(s,"UFS",3) || !strncmp(s,"SCHED",5)) return 2;
   if (s[0]=='T' && s[1]>='1' && s[1]<='3' && s[2]=='+') return 5;
@@ -40,9 +37,6 @@ static unsigned bp_banner_select(char rows[][120], unsigned n, unsigned budget) 
     memcpy(rows[j],row,120); priority[j]=p;
   }
   unsigned kept=n<budget?n:budget;
-  // The two DSP rows are a single group; never return only its first half.
-  if (kept && kept<n && !strncmp(rows[kept-1],"DSP ",4) &&
-      !strncmp(rows[kept],"DSP+",4)) --kept;
   return kept;
 }
 """
@@ -60,6 +54,19 @@ static unsigned bp_pix_rows(char rows[][120], const struct nuwa_pix *p, unsigned
   } else snprintf(rows[1],120,"PIX+ w=%u h=%u st=%llx fmt=%08x crc=- nz=- uc=-",
       p->w,p->h,(unsigned long long)p->st,p->fmt);
   return 2;
+}
+"""
+
+RETIRE_ROWS = b"""
+// Independent relaxed samples; the last-returned generation and count are
+// not an atomic pair. g is the latest allocated generation, not an in-flight
+// request identity and not evidence of notification or userspace consumption.
+extern volatile uint32_t nuwa_rg_entered,nuwa_rg_returned,nuwa_rg_returned_generation;
+static void bp_rg_row(char *out, size_t size) {
+  unsigned entered=__atomic_load_n(&nuwa_rg_entered,__ATOMIC_RELAXED);
+  unsigned returned=__atomic_load_n(&nuwa_rg_returned,__ATOMIC_RELAXED);
+  unsigned last=__atomic_load_n(&nuwa_rg_returned_generation,__ATOMIC_RELAXED);
+  snprintf(out,size,"RG en=%u ret=%u g=%u last=%u",entered,returned,entered,last);
 }
 """
 
@@ -495,9 +502,10 @@ static void bp_smp_entry_page(char *out, size_t len) {
 static void bp_smp_entry_title(char *out, size_t len, const char *tag, unsigned now,
                                unsigned crashes, unsigned failed) {
   char rc[12],aff[11];
+  (void)tag;
   bp_smp_entry_values(rc,aff);
   // Use the title slot so diagnostics and stacks keep exactly their original budget.
-  snprintf(out,len," LIVE rc=%s aff=%s %.8s %us C%u E%u",rc,aff,tag,now,crashes,failed);
+  snprintf(out,len," LIVE rc=%s aff=%s %us C%u E%u",rc,aff,now,crashes,failed);
 }
 """
 
@@ -593,14 +601,63 @@ static unsigned bp_stage_name(char name[MAXTHREADNAMESIZE]) {
                         b'!strncmp(s,"STAGE ",6) || !strncmp(s,"LOAD",4)) return 0;')
 
 
+def remove_glyph_examples(src):
+    # Retain the independent pixel comb and rules at their original positions.
+    start = src.index(b"/*\n * nuwa r21: glyph path self test.")
+    end = src.index(b"#define ST_BAND_PAD 8\n", start)
+    src = replace_once(src, src[start:end],
+                       b"/* Retain the r21 non-glyph pixel probes at their original positions. */\n")
+    start = src.index(b"// One character cell with an explicit scale.")
+    end = src.index(b"static void st_bar(", start)
+    src = replace_once(src, src[start:end], b"")
+    start = src.index(b'  const char *l1="0123456789"')
+    end = src.index(b"  for(unsigned i=0;i<16;++i) st_bar(", start)
+    return replace_once(src, src[start:end], b"  unsigned y=top+336;\n")
+
+
+def retire_generation(src):
+    anchor = b"static void draw(unsigned now) {"
+    src = replace_once(src, anchor, RETIRE_ROWS + anchor)
+    src = replace_once(src, b'!strncmp(s,"PIX ",4)',
+                       b'!strncmp(s,"RG ",3) || !strncmp(s,"PIX ",4)')
+    src = replace_once(src, b"  nuwa_rows();\n",
+                       b"  nuwa_rows();\n  bp_rg_row(b,sizeof(b)); line(9,b,0xff00ffcc);\n")
+    src = replace_once(src, b'  { char sb[32]; bp_sb_row(sb,sizeof sb); snprintf(rows[n++],120,"%s",sb); }\n',
+                       b'  { char sb[32]; bp_sb_row(sb,sizeof sb); snprintf(rows[n++],120,"%s",sb); }\n'
+                       b'  bp_rg_row(rows[n++],120);\n')
+    anchor = b"  signature+=__atomic_load_n(&nuwa_pix_state.epoch,__ATOMIC_ACQUIRE)*262147ULL;\n"
+    return replace_once(src, anchor, anchor + b"""  signature+=(uint64_t)__atomic_load_n(&nuwa_rg_entered,__ATOMIC_RELAXED)*2097169ULL
+      +(uint64_t)__atomic_load_n(&nuwa_rg_returned,__ATOMIC_RELAXED)*4194319ULL
+      +(uint64_t)__atomic_load_n(&nuwa_rg_returned_generation,__ATOMIC_RELAXED)*8388617ULL;
+""")
+
+
 def generate(src, *, mg_reset=False, smp_observe=False, pixsig=False):
     if sha256(src).hexdigest() != RENDERER_SHA:
         raise ValueError("expected the pinned r35l full renderer")
+    src = remove_glyph_examples(src)
     # stack_snapshot_from_kernel and the STACKSHOT_* flags live in <kern/debug.h>
     # (XNU_KERNEL_PRIVATE), the same declaration kern_stackshot.c implements.
     src = replace_once(src, b"#include <kern/boot_progress.h>\n",
                        b"#include <kern/boot_progress.h>\n#include <kern/debug.h>\n")
     src = replace_once(src, b"static void crash_banner(unsigned now) {", b"""
+// SpringBoard from the two-second process probe (nuwa_systemos.c:
+// nuwa_pid1_sample -> nuwa_sb_sample), the same packed word the panic-safe
+// summary reads: bit 63 seen, bit 62 live, bits 61..32 pid, bits 31..0 p_stat.
+// A reader acquires one release store, so it never splits a live sample into a
+// transient "gone".  A kernel without the probe reads as "never".
+extern volatile uint64_t nuwa_sb_public __attribute__((weak_import));
+static const char *bp_sb_state(unsigned stat) {
+  static const char *const names[] = {"IDL","RUN","SLP","STP","ZMB"};
+  return (stat>=1 && stat<=5)?names[stat-1]:"?";
+}
+static void bp_sb_row(char *out, size_t size) {
+  uint64_t w=&nuwa_sb_public?__atomic_load_n(&nuwa_sb_public,__ATOMIC_ACQUIRE):0;
+  if(!(w & (1ull<<63))) { snprintf(out,size,"SB never"); return; }
+  if(!(w & (1ull<<62))) { snprintf(out,size,"SB gone"); return; }
+  snprintf(out,size,"SB %u:%s",(unsigned)((w>>32)&0x3fffffffu),
+    bp_sb_state((unsigned)(w & 0xffffffffu)));
+}
 // At most six characters including unit; a prefix denotes rounding down.
 static void bp_short_value(char out[7], uint64_t value, const char *unit) {
   static const char prefix[] = " kMGTPE";
@@ -611,15 +668,39 @@ static void bp_short_value(char out[7], uint64_t value, const char *unit) {
   } else snprintf(out,7,"%llu%s",(unsigned long long)value,unit);
 }
 static void crash_banner(unsigned now) {""")
-    src = replace_once(src, b"""      snprintf(rows[n++],120,"UFS   since last: verify=%llums read=%llums blocks=%llu reqs=%llu | total verify=%llums read=%llums reqs=%llu",
+    src = replace_once(src, b"  if(signature==banner_signature)return;",
+        b"  signature+=(&nuwa_sb_public?__atomic_load_n(&nuwa_sb_public,__ATOMIC_ACQUIRE):0)*524287ULL;\n"
+        b"  if(signature==banner_signature)return;")
+    # The banner keeps only the rows this stage reads.  LOAD, the short UFS row and
+    # the host_statistics64/UFS-tick reads that fed them are gone; the page still
+    # carries UFS TIME (row 46) and the DATA rows.
+    src = replace_once(src, b"""  // Where the time goes: scheduler ticks since the last paint (user/system/idle percent over all cores) and UFS work since then
+  // (hashing/verification ms, transport read ms, 4 KiB blocks verified, read requests).
+  {
+    host_cpu_load_info_data_t load;mach_msg_type_number_t count=HOST_CPU_LOAD_INFO_COUNT;
+    if(host_statistics64(&realhost,HOST_CPU_LOAD_INFO,(host_info_t)&load,&count)==KERN_SUCCESS) {
+      uint32_t d[4]={load.cpu_ticks[CPU_STATE_USER]-banner_load[0],load.cpu_ticks[CPU_STATE_SYSTEM]-banner_load[1],
+                     load.cpu_ticks[CPU_STATE_IDLE]-banner_load[2],load.cpu_ticks[CPU_STATE_NICE]-banner_load[3]};
+      uint64_t sum=(uint64_t)d[0]+d[1]+d[2]+d[3];if(!sum)sum=1;
+      for(unsigned i=0;i<4;++i)banner_load[i]=((uint32_t *)&load.cpu_ticks)[i];
+      snprintf(rows[n++],120,"LOAD  user=%llu%% sys=%llu%% idle=%llu%% (ticks %llu)",(unsigned long long)(d[0]*100ULL/sum),
+        (unsigned long long)(d[1]*100ULL/sum),(unsigned long long)(d[2]*100ULL/sum),(unsigned long long)sum);
+    }
+    if(&native_ufs_verify_ticks && &native_ufs_read_ticks) {
+      uint64_t f=0;__asm__ volatile("mrs %0, cntfrq_el0":"=r"(f));if(!f)f=19200000;
+      uint64_t v=native_ufs_verify_ticks,r=native_ufs_read_ticks,b=native_ufs_verified_blocks,q=native_ufs_block_reads;
+      snprintf(rows[n++],120,"UFS   since last: verify=%llums read=%llums blocks=%llu reqs=%llu | total verify=%llums read=%llums reqs=%llu",
         (unsigned long long)((v-banner_ufs_v)*1000/f),(unsigned long long)((r-banner_ufs_r)*1000/f),(unsigned long long)(b-banner_ufs_b),
-        (unsigned long long)(q-banner_ufs_n),(unsigned long long)(v*1000/f),(unsigned long long)(r*1000/f),(unsigned long long)q);""", b"""      char lr[7],ld[7],tr[7],td[7];
-      bp_short_value(lr,q-banner_ufs_n,"");
-      bp_short_value(ld,(r-banner_ufs_r)*1000/f,"ms");
-      bp_short_value(tr,q,"");
-      bp_short_value(td,r*1000/f,"ms");
-      (void)(v-banner_ufs_v); (void)(b-banner_ufs_b);
-      snprintf(rows[n++],120,"UFS L r=%s rd=%s T r=%s rd=%s",lr,ld,tr,td);""")
+        (unsigned long long)(q-banner_ufs_n),(unsigned long long)(v*1000/f),(unsigned long long)(r*1000/f),(unsigned long long)q);
+      banner_ufs_v=v;banner_ufs_r=r;banner_ufs_b=b;banner_ufs_n=q;
+    }
+  }
+""", b"")
+    src = replace_once(src, b"static uint64_t banner_copy_n,banner_signature,banner_ufs_v,banner_ufs_r,banner_ufs_n,banner_ufs_b;\n"
+                            b"static uint32_t banner_load[4];\n",
+                       b"static uint64_t banner_copy_n,banner_signature;\n")
+    src = replace_once(src, b"  // They take only what the panel's height leaves after the rows below (load, UFS, scheduler, CPU, eight GPU rows, three panic rows).",
+                       b"  // They take only what the panel's height leaves after the rows below (scheduler, CPU, eight GPU rows, three panic rows).")
     src = replace_once(src, b"""    snprintf(rows[n++],120,"SCHED 30ms sleeps since last: n=%llu mean_late_us=%llu max_late_us=%llu >50ms=%llu | irq timer=%llu ipi=%llu",
       (unsigned long long)(sn-banner_sleep_n),(unsigned long long)((ss-banner_sleep_sum)/dn),(unsigned long long)sm,
       (unsigned long long)(sl-banner_sleep_late),(unsigned long long)(ti-banner_tint),(unsigned long long)(ip-banner_ipi));""", b"""    char count[7],mean[7],max[7],late[7];
@@ -629,6 +710,18 @@ static void crash_banner(unsigned now) {""")
     bp_short_value(late,sl-banner_sleep_late,"");
     (void)(ti-banner_tint); (void)(ip-banner_ipi);
     snprintf(rows[n++],120,"SCHED n=%s m=%s x=%s >50=%s",count,mean,max,late);""")
+    # The TIMER sample existed only for the deleted row; the four counter reads go
+    # with it.  Row 42 is now only the touch summary when that probe is requested.
+    src = replace_once(src, b"""  if(&armcpu_irq_phase){
+    uint64_t vct,cval,ctl,daif;
+    __asm__ volatile("mrs %0,cntvct_el0" : "=r"(vct));
+    __asm__ volatile("mrs %0,cntv_cval_el0" : "=r"(cval));
+    __asm__ volatile("mrs %0,cntv_ctl_el0" : "=r"(ctl));
+    __asm__ volatile("mrs %0,daif" : "=r"(daif));
+    snprintf(b,sizeof(b),"TIMER vct=%llx cval=%llx ctl=%llx DAIF=%llx (read-only monitor sample)",vct,cval,ctl,daif);
+    if(!(&native_touch_stage_req && native_touch_stage_req))line(42,b,0xffaaaaaa);
+""", b"  if(&armcpu_irq_phase){\n")
+    src = replace_once(src, b"extern kern_return_t host_statistics64(host_t host, host_flavor_t flavor, host_info_t info, mach_msg_type_number_t *count);\n", b"")
     src = replace_once(src, b'#include <string.h>\n', b"""#include <string.h>
 struct proc;
 extern struct proc *proc_find(int);
@@ -638,8 +731,10 @@ extern void psignal(struct proc *, int);
 """)
     src = replace_once(src, b"static void touch_monitor(void *arg, wait_result_t result) {", b"""
 // Only touch_monitor calls this, before acquiring render_busy.
+// SpringBoard fills the PROC row; lsd names the stackshot target.  The other
+// process labels belonged to the deleted PEER/SVC rows.
 static void bp_proc_census(unsigned restart, unsigned now) {
-  uint32_t found[6]={0}, icon_pid=0, services=0;
+  uint32_t sb=0, lsd=0;
   unsigned killed_pid=0;
   for (int pid=1;pid<=4096;++pid) {
     struct proc *p=proc_find(pid);
@@ -647,24 +742,13 @@ static void bp_proc_census(unsigned restart, unsigned now) {
     char name[32];
     proc_name(pid,name,sizeof(name));
     if (!strcmp(name,"SpringBoard")) {
-      found[0]=(uint32_t)pid;
+      sb=(uint32_t)pid;
       if (restart && !killed_pid) {
         killed_pid=(unsigned)pid;
         psignal(p,9);
       }
     }
-    else if (!strcmp(name,"backboardd")) found[1]=(uint32_t)pid;
-    else if (!strcmp(name,"lsd")) found[2]=(uint32_t)pid;
-    else if (!strcmp(name,"launchd")) found[3]=(uint32_t)pid;
-    else if (!strcmp(name,"lockdownd")) found[4]=(uint32_t)pid;
-    else if (!strcmp(name,"containermanager")) found[5]=(uint32_t)pid;
-    else if (!strcmp(name,"iconservicesagen")) icon_pid=(uint32_t)pid;
-    else if (!strcmp(name,"runningboardd")) services|=1u<<0;
-    else if (!strcmp(name,"distnoted")) services|=1u<<1;
-    else if (!strcmp(name,"cfprefsd")) services|=1u<<2;
-    else if (!strcmp(name,"notifyd")) services|=1u<<3;
-    else if (!strcmp(name,"securityd")) services|=1u<<4;
-    else if (!strcmp(name,"mobileactivation")) services|=1u<<5;
+    else if (!strcmp(name,"lsd")) lsd=(uint32_t)pid;
     proc_rele(p);
   }
   if (restart) {
@@ -674,9 +758,8 @@ static void bp_proc_census(unsigned restart, unsigned now) {
     printf("nuwa-sb-restart: attempt=%u time=%u pid=%u psignal=%s\\n",
       restart,now,killed_pid,killed_pid ? "called" : "not-called");
   }
-  for (unsigned i=0;i<6;++i) __atomic_store_n(&bp_proc_pid[i],found[i],__ATOMIC_RELAXED);
-  __atomic_store_n(&bp_icon_pid,icon_pid,__ATOMIC_RELAXED);
-  __atomic_store_n(&bp_svc_mask,services,__ATOMIC_RELAXED);
+  __atomic_store_n(&bp_proc_pid[0],sb,__ATOMIC_RELAXED);
+  __atomic_store_n(&bp_proc_pid[2],lsd,__ATOMIC_RELAXED);
   __atomic_fetch_add(&bp_proc_generation,1,__ATOMIC_RELEASE);
 }
 static void touch_monitor(void *arg, wait_result_t result) {""")
@@ -710,35 +793,15 @@ static void touch_monitor(void *arg, wait_result_t result) {""")
     touch_overlay();
     bp_shot_take(now);""")
     anchor = b"char boot_progress_page_text[48][BP_COLS];"
-    src = replace_once(src, anchor, SHOT_STATE + b"""static uint32_t bp_proc_pid[6], bp_proc_generation, bp_svc_mask, bp_sb_restart_state;
-static uint32_t bp_icon_pid;
+    src = replace_once(src, anchor, SHOT_STATE + b"""static uint32_t bp_proc_pid[6], bp_proc_generation, bp_sb_restart_state;
 // FDR exits are independent of the best-effort exit ring.
 static uint64_t bp_fdr_exit;
-// Diagnostic only: two independent byte samples; no synchronization of display state.
-static uint8_t bp_dsp_stage, bp_dsp_reason;
+// Diagnostic only: the display property readback, shown by the PROP row.
 static uint16_t bp_dsp_properties;
-extern uint64_t nuwa_cli_enter __attribute__((weak_import));
-extern uint64_t nuwa_cli_observed __attribute__((weak_import));
-extern uint64_t nuwa_cli_identity __attribute__((weak_import));
-extern uint32_t nuwa_sc_calls __attribute__((weak_import));
-extern uint32_t nuwa_sc_rejects __attribute__((weak_import));
-extern uint32_t nuwa_sc_ok __attribute__((weak_import));
-extern volatile uint32_t nuwa_dsp_reg __attribute__((weak_import));
-extern volatile uint32_t nuwa_dsp_cli __attribute__((weak_import));
-extern volatile uint32_t nuwa_dsp_vo __attribute__((weak_import));
-extern volatile uint32_t nuwa_dsp_vb __attribute__((weak_import));
-extern volatile uint32_t nuwa_dsp_ret __attribute__((weak_import));
-extern volatile uint32_t nuwa_dsp_co __attribute__((weak_import));
-extern volatile uint32_t nuwa_dsp_cb __attribute__((weak_import));
-extern volatile uint32_t nuwa_dsp_vy __attribute__((weak_import));
-extern volatile uint32_t nuwa_dsp_ve __attribute__((weak_import));
-#if NUWA_HID_STANDIN
-extern uint32_t nuwa_hid_stage;
-#endif
 void boot_progress_diag_set(uint8_t stage, uint8_t reason);
 void boot_progress_diag_set(uint8_t stage, uint8_t reason) {
-  __atomic_store_n(&bp_dsp_reason,reason,__ATOMIC_RELAXED);
-  __atomic_store_n(&bp_dsp_stage,stage,__ATOMIC_RELAXED);
+  // The callback-count row was deleted; the hook stays for the display ABI.
+  (void)stage; (void)reason;
 }
 void boot_progress_prop_set(uint16_t properties);
 void boot_progress_prop_set(uint16_t properties) {
@@ -756,7 +819,7 @@ void boot_progress_prop_set(uint16_t properties) {
     src = replace_once(src, b"static void crash_banner(unsigned now) {",
                        BANNER_SELECTION + b"static void crash_banner(unsigned now) {")
     start = src.index(b"  // SpringBoard's threads as the stack tracer")
-    end = src.index(b"  // Where the time goes:", start)
+    end = src.index(b"  {\n    uint64_t sn=sleep_n", start)
     src = src[:start] + b"  unsigned stack_rows=0;\n" + src[end:]
     src = replace_once(src,
         b"  if(!n)return;\n  unsigned cell=14*display.scale,cols=display.width/(6*display.scale);if(cols>119)cols=119;\n  if(display.height<(n+2)*cell+8)return;",
@@ -776,22 +839,11 @@ void boot_progress_prop_set(uint16_t properties) {
     }
   }
   if(!n || display.height<(n+2)*cell+8)return;""")
-    # Use the short DATA-summary slot; its full detail remains on row 39.
+    # The old DSP callback row is deleted; the optional RG row is added later.
+    # The Data mount summary remains on row 39.
     start = src.index(b"  // Row 9: the Data mount result")
     end = src.index(b"#endif\n", start)
-    src = src[:start] + b"""  unsigned dsp_stage = __atomic_load_n(&bp_dsp_stage,__ATOMIC_RELAXED);
-  unsigned dsp_reason = __atomic_load_n(&bp_dsp_reason,__ATOMIC_RELAXED);
-  if (&nuwa_cli_enter && &nuwa_cli_observed && &nuwa_cli_identity) {
-    uint64_t in = __atomic_load_n(&nuwa_cli_enter,__ATOMIC_RELAXED);
-    uint64_t out = __atomic_load_n(&nuwa_cli_observed,__ATOMIC_RELAXED);
-    uint64_t identity = __atomic_load_n(&nuwa_cli_identity,__ATOMIC_RELAXED);
-    char bb = ((identity >> 32) || (identity & 2)) ? '?' : ((identity & 1) ? '1' : '0');
-    snprintf(b,sizeof(b),"DSP s=%u r=%u CLI in=%u out=%u ret=%08x bb=%c",
-      dsp_stage,dsp_reason,(unsigned)(in>>32),(unsigned)(out>>32),
-      (unsigned)out,bb);
-  } else snprintf(b,sizeof(b),"DSP s=%u r=%u CLI unavailable",dsp_stage,dsp_reason);
-  line(9,b,dsp_reason ? 0xffffaa00 : 0xff00ffcc);
-""" + src[end:]
+    src = src[:start] + src[end:]
     src = replace_once(src, b"  nuwa_rows();\n", b"""  nuwa_rows();
   uint64_t fdr = __atomic_load_n(&bp_fdr_exit,__ATOMIC_RELAXED);
   unsigned prop = __atomic_load_n(&bp_dsp_properties,__ATOMIC_RELAXED);
@@ -800,13 +852,6 @@ void boot_progress_prop_set(uint16_t properties) {
       (unsigned)((fdr>>16)&0xffffu),(unsigned)(fdr&0xffu));
   else snprintf(b,sizeof(b),"PROP %04x FDR no exit seen",prop);
   line(10,b,0xff00ffcc);
-  if (&nuwa_sc_calls && &nuwa_sc_rejects && &nuwa_sc_ok)
-    snprintf(b,sizeof(b),"SC n=%u r=%u o=%u",
-      __atomic_load_n(&nuwa_sc_calls,__ATOMIC_RELAXED),
-      __atomic_load_n(&nuwa_sc_rejects,__ATOMIC_RELAXED),
-      __atomic_load_n(&nuwa_sc_ok,__ATOMIC_RELAXED));
-  else snprintf(b,sizeof(b),"SC unavailable");
-  line(11,b,0xff00ffcc);
 """)
     src = replace_once(src, b"  __atomic_store_n(&exit_lock,0,__ATOMIC_RELEASE);\n  // Presentation cost: swaps in the last second", b"""  // exit_lock already protects both rings; XR describes only exit_ring.
   {
@@ -823,57 +868,19 @@ void boot_progress_prop_set(uint16_t properties) {
     if(exit_ring_count) snprintf(rows[n++],120,"%s",xr);
   }
   __atomic_store_n(&exit_lock,0,__ATOMIC_RELEASE);
-  {
-#define DSP_VALUE(x) (&(x) ? __atomic_load_n(&(x),__ATOMIC_RELAXED) : 0u)
-    snprintf(rows[n++],120,"DSP reg=%u cli=%u vo=%u vb=%u",
-      DSP_VALUE(nuwa_dsp_reg),DSP_VALUE(nuwa_dsp_cli),
-      DSP_VALUE(nuwa_dsp_vo),DSP_VALUE(nuwa_dsp_vb));
-    if (&nuwa_dsp_ve)
-      snprintf(rows[n++],120,"DSP+ co=%u cb=%u ret=%u vy=%u ve=%u",
-        DSP_VALUE(nuwa_dsp_co),DSP_VALUE(nuwa_dsp_cb),DSP_VALUE(nuwa_dsp_ret),
-        DSP_VALUE(nuwa_dsp_vy),DSP_VALUE(nuwa_dsp_ve));
-    else
-      snprintf(rows[n++],120,"DSP+ co=%u cb=%u ret=%u vy=%u ve=?",
-        DSP_VALUE(nuwa_dsp_co),DSP_VALUE(nuwa_dsp_cb),DSP_VALUE(nuwa_dsp_ret),
-        DSP_VALUE(nuwa_dsp_vy));
-#undef DSP_VALUE
-  }
   // Presentation cost: swaps in the last second""")
-    src = replace_once(src, b"  // Presentation cost: swaps in the last second", b"""  // Sample the bridge after handoff, not the earlier diagnostic page.
+    src = replace_once(src, b"  // Presentation cost: swaps in the last second", b"""  // PROC keeps only the live process count and SpringBoard's pid from the
+  // ten-second census; the other labels were the PEER/SVC rows.
   {
-    uint32_t pid[6];
-    char value[6][12];
-    for (unsigned i=0;i<6;++i) {
-      pid[i]=__atomic_load_n(&bp_proc_pid[i],__ATOMIC_RELAXED);
-      if(pid[i]) snprintf(value[i],sizeof(value[i]),"%u",pid[i]);
-      else { value[i][0]='-'; value[i][1]=0; }
-    }
-    snprintf(rows[n++],120,"PROC n=%d SB=%s bb=%s lsd=%s ld=%s lk=%s cm=%s",
-      nprocs,value[0],value[1],value[2],value[3],value[4],value[5]);
-    uint32_t icon=__atomic_load_n(&bp_icon_pid,__ATOMIC_RELAXED);
-    char icon_value[12]="-";
-    if(icon) snprintf(icon_value,sizeof(icon_value),"%u",icon);
-    snprintf(rows[n++],120,"PEER icon=%s cm=%s lsd=%s SB=%s",
-      icon_value,value[5],value[2],value[0]);
+    char value[12]="-";
+    uint32_t sb=__atomic_load_n(&bp_proc_pid[0],__ATOMIC_RELAXED);
+    if(sb) snprintf(value,sizeof(value),"%u",sb);
+    snprintf(rows[n++],120,"PROC n=%d SB=%s",nprocs,value);
   }
-  unsigned restart_state=__atomic_load_n(&bp_sb_restart_state,__ATOMIC_RELAXED);
-  unsigned hid_stage=0;
-#if NUWA_HID_STANDIN
-  hid_stage=__atomic_load_n(&nuwa_hid_stage,__ATOMIC_RELAXED);
-#endif
-  snprintf(rows[n++],120,"SVC %02x K=%ux%u H=%u",__atomic_load_n(&bp_svc_mask,__ATOMIC_RELAXED),
-    restart_state&255u,restart_state>>8,hid_stage);
-  if (&nuwa_sc_calls && &nuwa_sc_rejects && &nuwa_sc_ok) {
-    static unsigned previous_calls, previous_time;
-    unsigned calls = __atomic_load_n(&nuwa_sc_calls,__ATOMIC_RELAXED);
-    unsigned rejects = __atomic_load_n(&nuwa_sc_rejects,__ATOMIC_RELAXED);
-    unsigned ok = __atomic_load_n(&nuwa_sc_ok,__ATOMIC_RELAXED);
-    snprintf(rows[n++],120,"SC n=%u r=%u o=%u",calls,rejects,ok);
-    if (previous_time)
-      snprintf(rows[n++],120,"SC +%u in %us",calls-previous_calls,now-previous_time);
-    else snprintf(rows[n++],120,"SC interval unavailable");
-    previous_calls=calls; previous_time=now;
-  } else snprintf(rows[n++],120,"SC unavailable");
+  // SpringBoard's seen/live/pid/state from the two-second process probe: the
+  // same packed word the panic-safe summary reads, refreshed every sample.
+  // The row itself is placed first in the selectable group so it survives the
+  // banner budget ahead of every other priority-0 row.
   // Presentation cost: swaps in the last second""")
     src = replace_once(src, b"  census_note(name,1);\n", b"""  if(name && !strcmp(name,"IOMFB_FDR_Loader")) {
     uint64_t fdr = ((uint64_t)seconds()<<32) | (((uint64_t)(unsigned)status&0xffffu)<<16) |
@@ -885,22 +892,25 @@ void boot_progress_prop_set(uint16_t properties) {
     src = replace_once(src, b"  if(signal || ns) {\n",
                        b'  if((signal || ns) && !(name && !strcmp(name,"IOMFB_FDR_Loader"))) {\n')
     src = replace_once(src, b"  char rows[48][120];unsigned n=0;\n",
-                       b"  char rows[64][120];unsigned n=0;\n" + SHOT_ROWS)
+                       b"  char rows[64][120];unsigned n=0;\n"
+                       b"  { char sb[32]; bp_sb_row(sb,sizeof sb); snprintf(rows[n++],120,\"%s\",sb); }\n"
+                       + SHOT_ROWS)
     if mg_reset:
         src = replace_once(src, anchor, b"extern uint32_t nuwa_mg_reset_diag;\n" + anchor)
-        src = replace_once(src, b"  if (&nuwa_cli_enter", b"""  unsigned ds = &native_data_persist_state ? native_data_persist_state : 0;
+        # The DSP row is gone; the memory-gate result rides the kept PROP row.
+        src = replace_once(src, b"  nuwa_rows();\n", b"""  nuwa_rows();
   char mg[16] = "";
   uint32_t mr = __atomic_load_n(&nuwa_mg_reset_diag,__ATOMIC_RELAXED);
-  if (mr & 0x400u)
-    snprintf(mg,sizeof(mg)," MG skip");
+  if (mr & 0x400u) snprintf(mg,sizeof(mg)," MG skip");
   else if (mr & 0x100u)
     snprintf(mg,sizeof(mg)," MG r=%u/%u%s",mr&15u,(mr>>4)&15u,(mr&0x200u)?" j!":"");
-  if (&nuwa_cli_enter""")
-        src = replace_once(src, b'DSP s=%u r=%u CLI in=', b'DSP s=%u r=%u DS=%u%s CLI in=')
-        src = replace_once(src, b'dsp_stage,dsp_reason,(unsigned)(in>>32)',
-                           b'dsp_stage,dsp_reason,ds,mg,(unsigned)(in>>32)')
-        src = replace_once(src, b' CLI unavailable",dsp_stage,dsp_reason);',
-                           b' DS=%u%s CLI unavailable",dsp_stage,dsp_reason,ds,mg);')
+""")
+        src = replace_once(src, b'"PROP %04x FDR %us st=%u sig=%u",prop,(unsigned)(fdr>>32),',
+                           b'"PROP %04x FDR %us st=%u sig=%u%s",prop,(unsigned)(fdr>>32),')
+        src = replace_once(src, b'(unsigned)((fdr>>16)&0xffffu),(unsigned)(fdr&0xffu));',
+                           b'(unsigned)((fdr>>16)&0xffffu),(unsigned)(fdr&0xffu),mg);')
+        src = replace_once(src, b'"PROP %04x FDR no exit seen",prop);',
+                           b'"PROP %04x FDR no exit seen%s",prop,mg);')
     if pixsig:
         anchor = b"#include <string.h>\n"
         src = replace_once(src, anchor, anchor + b'#include "NuwaPixelSig.h"\n')
@@ -909,11 +919,22 @@ void boot_progress_prop_set(uint16_t properties) {
         anchor = b"  if(signature==banner_signature)return;"
         src = replace_once(src, anchor, b"""  signature+=__atomic_load_n(&nuwa_pix_state.epoch,__ATOMIC_ACQUIRE)*262147ULL;
 """ + anchor)
-        anchor = b"#undef DSP_VALUE\n  }\n"
+        anchor = b'    snprintf(rows[n++],120,"PROC n=%d SB=%s",nprocs,value);\n  }\n'
         src = replace_once(src, anchor, anchor + b"""  {
     struct nuwa_pix p;
     if (nuwa_pix_read(&nuwa_pix_state,&p))
       n+=bp_pix_rows(rows+n,&p,cols<78?cols:78);
   }
 """)
-    return add_smp_observe(src) if smp_observe else src
+        src = retire_generation(src)
+    if smp_observe:
+        src = add_smp_observe(src)
+    else:
+        src = replace_once(src, b"""  snprintf(head,sizeof head," UniXNU live diagnostics%s%s%s  t=%us  crashes=%u exits=%u",build_tag[0]?"  [":"",build_tag,
+    build_tag[0]?"]":"",now,crashes,failed);""",
+                           b'  snprintf(head,sizeof head," UniXNU live diagnostics  t=%us  crashes=%u exits=%u",now,crashes,failed);')
+    src = replace_once(src, b'"[nuwa-r35] t=%us m=%llu np=%d i=%us q=%llu l=%u r=%d f=%u"',
+                       b'"t=%us m=%llu np=%d i=%us q=%llu l=%u r=%d f=%u"')
+    src = replace_once(src, b'"[nuwa-r35] t=%us m=%llu np=%d"',
+                       b'"t=%us m=%llu np=%d"')
+    return src

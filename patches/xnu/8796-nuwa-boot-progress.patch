@@ -268,10 +268,26 @@ Dropped for the same reason as sleh.c: boot_progress_user_breakpoint().
  /*
   * Copyright (c) 2000-2016 Apple Inc. All rights reserved.
   *
-@@ -1845,6 +1846,10 @@
+@@ -1790,3 +1790,7 @@
+ #endif /* DEVELOPMENT */
+ 
++	boot_progress_critical_capture(proc_getpid(p), p->p_name, rv,
++	    p->p_exit_reason ? p->p_exit_reason->osr_namespace : 0,
++	    p->p_exit_reason ? p->p_exit_reason->osr_code : 0, p->p_ppid);
++
+ 	char *exit_reason_desc = exit_reason_get_string_desc(p->p_exit_reason);
+@@ -1820,5 +1820,6 @@
+ 	proc_crash_coredump(p);
+ 
+ 	sync(p, (void *)NULL, (int *)NULL);
++	boot_progress_critical_paint();
+ 
+ 	if (p->p_exit_reason == OS_REASON_NULL) {
+@@ -1845,6 +1846,11 @@
  	int kr = 0;
  	int create_corpse = FALSE;
  
++	boot_progress_exit_parent(proc_getpid(p), p->p_ppid);
 +	boot_progress_exit(proc_getpid(p),p->p_name,rv,
 +	    p->p_exit_reason ? p->p_exit_reason->osr_namespace : 0,
 +	    p->p_exit_reason ? p->p_exit_reason->osr_code : 0);
@@ -281,7 +297,7 @@ Dropped for the same reason as sleh.c: boot_progress_user_breakpoint().
  	}
 --- /dev/null
 +++ b/osfmk/kern/boot_progress.h
-@@ -0,0 +1,38 @@
+@@ -0,0 +1,44 @@
 +// SPDX-License-Identifier: MIT
 +#ifndef XNU_BOOT_PROGRESS_H
 +#define XNU_BOOT_PROGRESS_H
@@ -300,6 +316,9 @@ Dropped for the same reason as sleh.c: boot_progress_user_breakpoint().
 +void boot_progress_critical_exit(int, char *, unsigned long);
 +void boot_progress_process_stage(int, const char *, const char *);
 +void boot_progress_exit(int, const char *, int, unsigned, uint64_t);
++void boot_progress_exit_parent(int, int);
++void boot_progress_critical_capture(int, const char *, int, unsigned, uint64_t, int);
++void boot_progress_critical_paint(void);
 +#if defined(XNU_NUWA_STAGE_CHANNEL)
 +struct thread;
 +void boot_progress_stage_publish(unsigned, struct thread *);
@@ -318,5 +337,8 @@ Dropped for the same reason as sleh.c: boot_progress_user_breakpoint().
 +#define boot_progress_critical_exit(...) ((void)0)
 +#define boot_progress_process_stage(...) ((void)0)
 +#define boot_progress_exit(...) ((void)0)
++#define boot_progress_exit_parent(...) ((void)0)
++#define boot_progress_critical_capture(...) ((void)0)
++#define boot_progress_critical_paint() ((void)0)
 +#endif
 +#endif
